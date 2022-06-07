@@ -384,7 +384,7 @@ SmlComparisonExpression returns SmlAbstractExpression
 
 SmlComparisonOperator
     : '<'
-    | '<=' 
+    | '<='
     | '>='
     | '>'
     ;
@@ -445,7 +445,7 @@ SmlLiteral returns SmlAbstractLiteral
     | SmlInt
     | SmlNull
     | SmlString
-    ;    
+    ;
 
 SmlBoolean
     : true?='true'
@@ -578,11 +578,22 @@ SmlTypeParameter
     : annotationCalls+=SmlAnnotationCall*
       variance=SmlTypeParameterVariance?
       name=ID
+      ('::' kind=SmlTypeParameterKind)?
     ;
 
 SmlTypeParameterVariance
     : 'in'
     | 'out'
+    ;
+
+SmlTypeParameterKind
+    : '$SchemaType'
+    | '$ExpressionType'
+    | '$IntType'
+    | '$FloatType'
+    | '$BooleanType'
+    | '$StringType'
+    | '$NamedType'
     ;
 
 SmlConstraintList

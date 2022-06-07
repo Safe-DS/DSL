@@ -245,6 +245,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SmlTypeParameter" eSuperTypes="#//SmlAbstractNamedTypeDeclaration">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="variance" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" />
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" />
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SmlTypeArgumentList" eSuperTypes="#//SmlAbstractObject">
         <eStructuralFeatures xsi:type="ecore:EReference" name="typeArguments" upperBound="-1" eType="#//SmlTypeArgument" containment="true" />

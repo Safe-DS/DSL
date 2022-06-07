@@ -4,6 +4,7 @@ package de.unibonn.simpleml.emf
 
 import de.unibonn.simpleml.constant.SmlFileExtension
 import de.unibonn.simpleml.constant.SmlInfixOperationOperator
+import de.unibonn.simpleml.constant.SmlKind
 import de.unibonn.simpleml.constant.SmlPrefixOperationOperator
 import de.unibonn.simpleml.constant.SmlProtocolQuantifiedTermQuantifier
 import de.unibonn.simpleml.constant.SmlProtocolTokenClassValue
@@ -1281,12 +1282,14 @@ fun createSmlTypeArgumentList(typeArguments: List<SmlTypeArgument>): SmlTypeArgu
 fun createSmlTypeParameter(
     name: String,
     annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    variance: SmlVariance = SmlVariance.Invariant
+    variance: SmlVariance = SmlVariance.Invariant,
+    kind: SmlKind = SmlKind.NoKind
 ): SmlTypeParameter {
     return factory.createSmlTypeParameter().apply {
         this.name = name
         this.annotationCalls += annotationCalls
         this.variance = variance.variance
+        this.kind = kind.kind
     }
 }
 
