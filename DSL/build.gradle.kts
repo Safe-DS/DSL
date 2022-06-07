@@ -40,6 +40,7 @@ idea {
 
 kover {
     coverageEngine.set(kotlinx.kover.api.CoverageEngine.INTELLIJ)
+    intellijEngineVersion.set("1.0.669")
     this.disabledProjects = setOf(
         "Simple-ML.DSL",
         "de.unibonn.simpleml.vscode"
