@@ -1,0 +1,6 @@
+// no_syntax_error
+
+workflow test {
+    a[1];
+    a[b];
+}

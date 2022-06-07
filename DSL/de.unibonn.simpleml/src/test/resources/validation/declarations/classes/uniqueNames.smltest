@@ -1,0 +1,41 @@
+package tests.uniqueNames
+
+class MyClass(
+    // semantic_error "A parameter with name 'duplicateParameter' exists already in this class."
+    »duplicateParameter«: Int,
+    // semantic_error "A parameter with name 'duplicateParameter' exists already in this class."
+    »duplicateParameter«: Int,
+    // no_semantic_error "A parameter with name 'uniqueParameter' exists already in this class."
+    »uniqueParameter«: Int,
+) {
+
+	// semantic_error "A declaration with name 'myAttribute' exists already in this class."
+    attr »myAttribute«: Int
+    // semantic_error "A declaration with name 'myAttribute' exists already in this class."
+    attr »myAttribute«: Int
+
+    // semantic_error "A declaration with name 'MyClass' exists already in this class."
+    class »MyClass«
+    // semantic_error "A declaration with name 'MyClass' exists already in this class."
+    class »MyClass«
+
+    // semantic_error "A declaration with name 'myFun' exists already in this class."
+    fun »myFun«()
+    // semantic_error "A declaration with name 'myFun' exists already in this class."
+    fun »myFun«()
+
+    // semantic_error "A declaration with name 'MyEnum' exists already in this class."
+    enum »MyEnum«
+    // semantic_error "A declaration with name 'MyEnum' exists already in this class."
+    enum »MyEnum«
+
+
+    // semantic_error "A declaration with name 'Bla' exists already in this class."
+    attr »Bla«: Int
+    // semantic_error "A declaration with name 'Bla' exists already in this class."
+    class »Bla«
+    // semantic_error "A declaration with name 'Bla' exists already in this class."
+    fun »Bla«()
+    // semantic_error "A declaration with name 'Bla' exists already in this class."
+    enum »Bla«
+}

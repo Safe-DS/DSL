@@ -1,0 +1,10 @@
+package tests.trailingComma.inEnumVariantParameterList
+
+// no_syntax_error
+
+enum E {
+    A(
+        a: Int,
+        b: Int,
+    )
+}

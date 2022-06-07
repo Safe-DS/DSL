@@ -1,0 +1,42 @@
+package validation.expressions.elvis.unnecessaryElvisOperator
+
+fun f() -> result: Any?
+
+workflow test {
+
+    // semantic_info "The left operand is never null so the elvis operator is unnecessary (keep left operand)."
+    »1 ?: 2«;
+    // semantic_info "The left operand is never null so the elvis operator is unnecessary (keep left operand)."
+    »1 ?: null«;
+    // no_semantic_info "The left operand is never null so the elvis operator is unnecessary (keep left operand)."
+    »null ?: 2«;
+    // no_semantic_info "The left operand is never null so the elvis operator is unnecessary (keep left operand)."
+    »null ?: null«;
+
+    // no_semantic_info "The left operand is always null so the elvis operator is unnecessary (keep right operand)."
+    »1 ?: 2«;
+    // no_semantic_info "The left operand is always null so the elvis operator is unnecessary (keep right operand)."
+    »1 ?: null«;
+    // semantic_info "The left operand is always null so the elvis operator is unnecessary (keep right operand)."
+    »null ?: 2«;
+    // no_semantic_info "The left operand is always null so the elvis operator is unnecessary (keep right operand)."
+    »null ?: null«;
+
+    // no_semantic_info "The right operand is always null so the elvis operator is unnecessary (keep left operand)."
+    »1 ?: 2«;
+    // semantic_info "The right operand is always null so the elvis operator is unnecessary (keep left operand)."
+    »f() ?: null«;
+    // no_semantic_info "The right operand is always null so the elvis operator is unnecessary (keep left operand)."
+    »null ?: 2«;
+    // no_semantic_info "The right operand is always null so the elvis operator is unnecessary (keep left operand)."
+    »null ?: null«;
+
+    // no_semantic_info "Both operands are always null so the elvis operator is unnecessary (replace with null)."
+    »1 ?: 2«;
+    // no_semantic_info "Both operands are always null so the elvis operator is unnecessary (replace with null)."
+    »1 ?: null«;
+    // no_semantic_info "Both operands are always null so the elvis operator is unnecessary (replace with null)."
+    »null ?: 2«;
+    // semantic_info "Both operands are always null so the elvis operator is unnecessary (replace with null)."
+    »null ?: null«;
+}

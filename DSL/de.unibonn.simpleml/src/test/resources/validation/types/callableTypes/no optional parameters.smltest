@@ -1,0 +1,4 @@
+package tests.validation.types.callableTypes.noOptionalParameters
+
+// semantic_error "Parameters in callable types must not be optional."
+fun f(g: (param: Int = »1«) -> ())

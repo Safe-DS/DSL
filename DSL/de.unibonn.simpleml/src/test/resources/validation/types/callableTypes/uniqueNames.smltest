@@ -1,0 +1,23 @@
+package tests.uniqueNames
+
+step s(
+    f: (
+        // semantic_error "A parameter or result with name 'duplicateParameter' exists already in this callable type."
+        »duplicateParameter«: Int,
+        // semantic_error "A parameter or result with name 'duplicateParameter' exists already in this callable type."
+        »duplicateParameter«: Int,
+        // no_semantic_error "A parameter or result with name 'uniqueParameter' exists already in this callable type."
+        »uniqueParameter«: Int,
+        // semantic_error "A parameter or result with name 'parameterAndResult' exists already in this callable type."
+        »parameterAndResult«: Int
+    ) -> (
+        // semantic_error "A parameter or result with name 'duplicateResult' exists already in this callable type."
+        »duplicateResult«: Int,
+        // semantic_error "A parameter or result with name 'duplicateResult' exists already in this callable type."
+        »duplicateResult«: Int,
+        // no_semantic_error "A parameter or result with name 'uniqueResult' exists already in this callable type."
+        »uniqueResult«: Int,
+        // semantic_error "A parameter or result with name 'parameterAndResult' exists already in this callable type."
+        »parameterAndResult«: Int
+    )
+) {}

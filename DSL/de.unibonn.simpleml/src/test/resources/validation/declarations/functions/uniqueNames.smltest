@@ -1,0 +1,21 @@
+package tests.uniqueNames
+
+fun f(
+    // semantic_error "A parameter or result with name 'duplicateParameter' exists already in this function."
+    »duplicateParameter«: Int,
+    // semantic_error "A parameter or result with name 'duplicateParameter' exists already in this function."
+    »duplicateParameter«: Int,
+    // no_semantic_error "A parameter or result with name 'uniqueParameter' exists already in this function."
+    »uniqueParameter«: Int,
+    // semantic_error "A parameter or result with name 'parameterAndResult' exists already in this function."
+    »parameterAndResult«: Int
+) -> (
+    // semantic_error "A parameter or result with name 'duplicateResult' exists already in this function."
+    »duplicateResult«: Int,
+    // semantic_error "A parameter or result with name 'duplicateResult' exists already in this function."
+    »duplicateResult«: Int,
+    // no_semantic_error "A parameter or result with name 'uniqueResult' exists already in this function."
+    »uniqueResult«: Int,
+    // semantic_error "A parameter or result with name 'parameterAndResult' exists already in this function."
+    »parameterAndResult«: Int
+)

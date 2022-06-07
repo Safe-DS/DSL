@@ -1,0 +1,7 @@
+// syntax_error
+
+package test
+
+@AnnotationCall
+
+import someDeclaration

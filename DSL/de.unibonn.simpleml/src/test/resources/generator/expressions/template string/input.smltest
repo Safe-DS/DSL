@@ -1,0 +1,12 @@
+package tests.generator.templateString
+
+fun f(param: Any?)
+
+fun g() -> result: Int
+
+workflow test {
+    f("start
+{{ g() }}
+inner {{ g() }}
+end");
+}

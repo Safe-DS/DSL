@@ -1,0 +1,5 @@
+// semantic_error "A file with declarations must declare its package."
+class »C«
+
+// no_semantic_error "A file with declarations must declare its package."
+class »D«

@@ -1,0 +1,5 @@
+package tests.validation.declarations.parameters.variadicParametersMustNotHaveDefaultValue
+
+// no_semantic_error "Variadic parameters must not have default values."
+// semantic_error "Variadic parameters must not have default values."
+fun f(»a«: Int = 1, vararg »b«: Int = 2)

@@ -1,0 +1,47 @@
+package tests.uniqueNamesInStubFile
+
+// semantic_error "A declaration with name 'MyImport' exists already in this file."
+import »somePackage.MyImport«
+// semantic_error "A declaration with name 'MyImport' exists already in this file."
+import »somePackage.MyImport«
+
+// semantic_error "A declaration with name 'MyAliasedImport' exists already in this file."
+import somePackage.MyImport as »MyAliasedImport«
+// semantic_error "A declaration with name 'MyAliasedImport' exists already in this file."
+import somePackage.MyImport as »MyAliasedImport«
+
+// semantic_error "A declaration with name 'Bla' exists already in this file."
+import »somePackage.Bla«
+// semantic_error "A declaration with name 'Bla' exists already in this file."
+import somePackage.Blup as »Bla«
+
+
+// semantic_error "A declaration with name 'MyAnnotation' exists already in this file."
+annotation »MyAnnotation«
+// semantic_error "A declaration with name 'MyAnnotation' exists already in this file."
+annotation »MyAnnotation«
+
+// semantic_error "A declaration with name 'MyClass' exists already in this file."
+class »MyClass«
+// semantic_error "A declaration with name 'MyClass' exists already in this file."
+class »MyClass«
+
+// semantic_error "A declaration with name 'MyEnum' exists already in this file."
+enum »MyEnum«
+// semantic_error "A declaration with name 'MyEnum' exists already in this file."
+enum »MyEnum«
+
+// semantic_error "A declaration with name 'myFun' exists already in this file."
+fun »myFun«()
+// semantic_error "A declaration with name 'myFun' exists already in this file."
+fun »myFun«()
+
+
+// semantic_error "A declaration with name 'Bla' exists already in this file."
+annotation »Bla«
+// semantic_error "A declaration with name 'Bla' exists already in this file."
+class »Bla«
+// semantic_error "A declaration with name 'Bla' exists already in this file."
+enum »Bla«
+// semantic_error "A declaration with name 'Bla' exists already in this file."
+fun »Bla«()

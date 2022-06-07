@@ -1,0 +1,21 @@
+package tests.astToPrologFactbase.statements
+
+annotation MySimpleAnnotation
+
+step myFunctionalStep() -> a {
+
+    // Assignment with placeholder, wildcard, and yield
+    val mySimplePlaceholder, val myComplexPlaceholder, _, yield a = f();
+
+    // Expression statement
+    () {
+
+        // Lambda result
+        yield mySimpleLambdaResult = 1;
+        yield myComplexLambdaResult = 1;
+    };
+}
+
+step myStepWithUnresolvedYield() {
+    yield myUnresolvedResult = f();
+}

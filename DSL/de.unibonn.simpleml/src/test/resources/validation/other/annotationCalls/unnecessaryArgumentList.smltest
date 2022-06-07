@@ -1,0 +1,35 @@
+package tests.validation.other.annotationCalls.unnecessaryArgumentList
+
+@Repeatable
+annotation AnnotationWithoutParameterList
+
+@Repeatable
+annotation AnnotationWithEmptyParameterList()
+
+@Repeatable
+annotation AnnotationWithoutRequiredParameters(a: Int = 0)
+
+@Repeatable
+annotation AnnotationWithRequiredParameters(a: Int)
+
+// semantic_info "Unnecessary argument list."
+@AnnotationWithoutParameterList»()«
+// no_semantic_info "Unnecessary argument list."
+@AnnotationWithoutParameterList»(1)«
+// semantic_info "Unnecessary argument list."
+@AnnotationWithEmptyParameterList»()«
+// no_semantic_info "Unnecessary argument list."
+@AnnotationWithEmptyParameterList»(1)«
+// semantic_info "Unnecessary argument list."
+@AnnotationWithoutRequiredParameters»()«
+// no_semantic_info "Unnecessary argument list."
+@AnnotationWithoutRequiredParameters»(1)«
+// no_semantic_info "Unnecessary argument list."
+@AnnotationWithParameters»()«
+// no_semantic_info "Unnecessary argument list."
+@AnnotationWithParameters»(1)«
+// no_semantic_info "Unnecessary argument list."
+@UnresolvedAnnotation»()«
+// no_semantic_info "Unnecessary argument list."
+@UnresolvedAnnotation»(1)«
+class MyClass

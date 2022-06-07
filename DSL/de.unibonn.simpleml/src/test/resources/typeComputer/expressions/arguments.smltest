@@ -1,0 +1,8 @@
+package tests.typeComputer.expressions.parenthesizedExpressions
+
+fun f(x: Any?)
+
+workflow myWorkflow {
+    f(1);
+    f(x = "");
+}

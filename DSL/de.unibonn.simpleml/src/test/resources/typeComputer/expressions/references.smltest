@@ -1,0 +1,10 @@
+package tests.typeComputer.expressions.references
+
+workflow myWorkflow {
+    val a = 1;
+    val b = "";
+
+    a;
+    b;
+    unresolved;
+}

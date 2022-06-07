@@ -1,0 +1,5 @@
+// no_syntax_error
+
+step s(
+    f: (Int)
+) {}

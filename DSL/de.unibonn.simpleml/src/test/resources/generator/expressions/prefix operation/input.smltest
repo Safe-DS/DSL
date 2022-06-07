@@ -1,0 +1,12 @@
+package tests.generator.prefixOperation
+
+fun f(param: Any?)
+
+fun g() -> result: Boolean
+
+fun h() -> result: Int
+
+workflow test {
+    f(not g());
+    f(-h());
+}

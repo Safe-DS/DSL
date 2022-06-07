@@ -1,0 +1,42 @@
+package tests.validation.declarations.classes.mustInheritOnlyOneClass
+
+class MyClass1 {
+    attr attribute1: Int
+    attr attribute2: Int
+
+    fun method1()
+    fun method2()
+}
+class MyClass2 {
+    attr attribute1: Int
+    attr method2: Int
+
+    fun method1()
+    fun attribute2()
+}
+class MyClass3 sub MyClass1
+
+
+// semantic_error "Inherits multiple members called 'attribute1'."
+class »MyClass4« sub MyClass1, MyClass2
+
+// semantic_error "Inherits multiple members called 'attribute2'."
+class »MyClass5« sub MyClass1, MyClass2
+
+// semantic_error "Inherits multiple members called 'method1'."
+class »MyClass6« sub MyClass1, MyClass2
+
+// semantic_error "Inherits multiple members called 'method2'."
+class »MyClass7« sub MyClass1, MyClass2
+
+// no_semantic_error "Inherits multiple members called 'attribute1'."
+class »MyClass8« sub MyClass1, MyClass3
+
+// no_semantic_error "Inherits multiple members called 'method1'."
+class »MyClass9« sub MyClass1, MyClass3
+
+// no_semantic_error "Inherits multiple members called 'attribute1'."
+class »MyClass10« sub MyClass1
+
+// no_semantic_error "Inherits multiple members called 'method1'."
+class »MyClass11« sub MyClass1

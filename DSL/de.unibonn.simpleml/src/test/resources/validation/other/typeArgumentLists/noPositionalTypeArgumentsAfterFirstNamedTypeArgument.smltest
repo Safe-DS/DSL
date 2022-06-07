@@ -1,0 +1,25 @@
+package tests.noPositionalTypeArgumentsAfterFirstNamedTypeArgument
+
+// no_semantic_error "After the first named type argument all type arguments must be named."
+// no_semantic_error "After the first named type argument all type arguments must be named."
+// semantic_error "After the first named type argument all type arguments must be named."
+// no_semantic_error "After the first named type argument all type arguments must be named."
+step myStep1(
+    f: MyClass<»Int«, »A = Int«, »Int«, »B = Int«>
+) {}
+
+// no_semantic_error "After the first named type argument all type arguments must be named."
+step myStep2(
+    f: MyClass<»Int«>
+) {}
+
+workflow myWorkflow {
+    // no_semantic_error "After the first named type argument all type arguments must be named."
+    // no_semantic_error "After the first named type argument all type arguments must be named."
+    // semantic_error "After the first named type argument all type arguments must be named."
+    // no_semantic_error "After the first named type argument all type arguments must be named."
+    call<»Int«, »A = Int«, »Int«, »B = Int«>();
+
+    // no_semantic_error "After the first named type argument all type arguments must be named."
+    call<»Int«>();
+}

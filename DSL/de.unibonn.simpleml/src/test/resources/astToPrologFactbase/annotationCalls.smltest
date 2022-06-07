@@ -1,0 +1,12 @@
+package tests.astToPrologFactbase.annotationCalls
+
+annotation MyAnnotation
+
+@MyAnnotation
+class MyClassWithSimpleAnnotationCall
+
+@MyAnnotation(1, 2)
+class MyClassWithComplexAnnotationCall
+
+@MyUnresolvedAnnotation
+class MyClassWithUnresolvedAnnotationCall

@@ -1,0 +1,22 @@
+  import    tests  .   formatting1   import tests.formatting2
+import tests.formatting3
+
+
+    workflow    w1    {       } workflow w2 {}
+workflow w3 {
+
+
+
+}
+
+// -----------------------------------------------------------------------------
+
+import tests.formatting1
+import tests.formatting2
+import tests.formatting3
+
+workflow w1 {}
+
+workflow w2 {}
+
+workflow w3 {}

@@ -1,0 +1,11 @@
+step s1(f: OuterClass   .    InnerClass) {}
+
+step s2(f: OuterClass   <A   ,   B  >  ?
+.   MiddleClass <  C ,
+    D   > ?) {}
+
+// -----------------------------------------------------------------------------
+
+step s1(f: OuterClass.InnerClass) {}
+
+step s2(f: OuterClass<A, B>?.MiddleClass<C, D>?) {}

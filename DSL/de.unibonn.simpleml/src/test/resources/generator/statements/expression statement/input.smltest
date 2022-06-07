@@ -1,0 +1,17 @@
+package tests.generator.expressionStatement
+
+fun f(param: () -> ())
+
+fun g() -> result: Int
+
+workflow testFlow {
+    g();
+
+    f(() {
+        g();
+    });
+}
+
+step testStep() {
+    g();
+}

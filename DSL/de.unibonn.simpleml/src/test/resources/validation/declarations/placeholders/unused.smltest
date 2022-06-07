@@ -1,0 +1,45 @@
+package tests.validation.declarations.placeholders.unused
+
+step myFunction() {
+    call(unused);
+
+    // semantic_warning "This placeholder is unused."
+    val »unused« = 1;
+
+    // no_semantic_warning "This placeholder is unused."
+    val »used« = 1;
+    call(used);
+
+    // no_semantic_warning "This placeholder is unused."
+    val »last« = 1;
+}
+
+workflow myWorkflow1 {
+    call(unused);
+
+    // semantic_warning "This placeholder is unused."
+    val »unused« = 1;
+
+    // no_semantic_warning "This placeholder is unused."
+    val »used« = 1;
+    call(used);
+
+    // no_semantic_warning "This placeholder is unused."
+    val »last« = 1;
+}
+
+workflow myWorkflow2 {
+    () {
+        call(unused);
+
+        // semantic_warning "This placeholder is unused."
+        val »unused« = 1;
+
+        // no_semantic_warning "This placeholder is unused."
+        val »used« = 1;
+        call(used);
+
+        // no_semantic_warning "This placeholder is unused."
+        val »last« = 1;
+    };
+}

@@ -1,0 +1,17 @@
+package tests.partialEvaluation.memberAccesses
+
+workflow successfulResultAccess {
+    val lambda = () {
+        yield result = 1;
+    };
+
+    lambda().result;
+}
+
+workflow failedResultAccess {
+    val lambda = () {
+        yield result = 1;
+    };
+
+    lambda().result1;
+}

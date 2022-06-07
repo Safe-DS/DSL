@@ -1,0 +1,21 @@
+package tests.numberOfTypeArguments
+
+// semantic_error "A union type must have least one type argument."
+step myStep1(
+    f: »union<>«
+) {}
+
+// semantic_info "A union type with one type argument is equivalent to the the type argument itself."
+step myStep1(
+    f: »union<Int>«
+) {}
+
+// no_semantic_error "A union type must have least one type argument."
+step myStep1(
+    f: »union<Int, Float>«
+) {}
+
+// no_semantic_info "A union type with one type argument is equivalent to the the type argument itself."
+step myStep1(
+    f: »union<Int, Float>«
+) {}

@@ -1,0 +1,40 @@
+package tests.validation.expressions.calls.unnecessaryArgumentList
+
+enum MyEnum {
+    A
+    B()
+    C(c: Int = 0)
+    D(d: Int)
+    E<T>
+}
+
+workflow test {
+    // semantic_info "Unnecessary argument list."
+    MyEnum.A»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.A»(1)«;
+    // semantic_info "Unnecessary argument list."
+    MyEnum.B»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.B»(1)«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.C»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.C»(1)«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.D»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.D»(1)«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.E»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.E»(1)«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.E<Int>»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.E<Int>»(1)«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.Unresolved»()«;
+    // no_semantic_info "Unnecessary argument list."
+    MyEnum.Unresolved»(1)«;
+}

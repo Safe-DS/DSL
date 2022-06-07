@@ -1,0 +1,19 @@
+package tests.validation.typeChecking.defaultValues
+
+fun myFun(
+    // no_semantic_error "An default value of type 'Int' cannot be assigned to a parameter of type 'Int'."
+    param1: Int = »1«,
+
+    // semantic_error "A default value of type 'String' cannot be assigned to a parameter of type 'Int'."
+    param2: Int = »""«,
+)
+
+fun myOtherFun(callback: (a: Int) -> ())
+
+step myStep() {
+    // no_semantic_error "An default value of type 'Int' cannot be assigned to a parameter of type 'Int'."
+    myOtherFun((a = »1«) {});
+
+    // semantic_error "A default value of type 'String' cannot be assigned to a parameter of type 'Int'."
+    myOtherFun((a = »""«) {});
+}

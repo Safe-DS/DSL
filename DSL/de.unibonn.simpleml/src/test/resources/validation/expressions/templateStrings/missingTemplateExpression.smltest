@@ -1,0 +1,10 @@
+package validation.expressions.templateStrings.missingTemplateExpression
+
+workflow test {
+    // semantic_error "There must be a template expression between two template string parts."
+    // semantic_error "There must be a template expression between two template string parts."
+    "start {{ »}} inner {{« »}} end"«;
+    // no_semantic_error "There must be a template expression between two template string parts."
+    // no_semantic_error "There must be a template expression between two template string parts."
+    "start {{ 1 »}} inner {{« 1 »}} end"«;
+}

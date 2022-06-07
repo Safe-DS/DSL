@@ -1,0 +1,2 @@
+@PythonModule("python_module")
+package compilationUnitWithUniquePythonModule

@@ -1,0 +1,33 @@
+package tests.validation.other.annotationCalls.cardinality
+
+@Unrepeatable
+annotation ExplicitlySingleUse
+
+annotation ImplicitlySingleUse
+
+@Repeatable
+annotation ExplicitlyMultiUse
+
+// no_semantic_error "This annotation can only be used once."
+»@ExplicitlySingleUse«
+// no_semantic_error "This annotation can only be used once."
+»@ImplicitlySingleUse«
+// no_semantic_error "This annotation can only be used once."
+»@ExplicitlyMultiUse«
+// no_semantic_error "This annotation can only be used once."
+»@ExplicitlyMultiUse«
+// no_semantic_error "This annotation can only be used once."
+»@UnresolvedAnnotation«
+// no_semantic_error "This annotation can only be used once."
+»@UnresolvedAnnotation«
+class CorrectUse
+
+// semantic_error "This annotation can only be used once."
+»@ExplicitlySingleUse«
+// semantic_error "This annotation can only be used once."
+»@ExplicitlySingleUse«
+// semantic_error "This annotation can only be used once."
+»@ImplicitlySingleUse«
+// semantic_error "This annotation can only be used once."
+»@ImplicitlySingleUse«
+class IncorrectUse

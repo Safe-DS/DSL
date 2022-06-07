@@ -1,0 +1,39 @@
+package tests.validation.typeChecking.indexedAccesses
+
+step f(a: Int, vararg b: Int) {
+    // semantic_error "The receiver of an indexed access must refer to a variadic parameter."
+    »a«[0];
+
+    // no_semantic_error "The receiver of an indexed access must refer to a variadic parameter."
+    »b«[0];
+
+    // no_semantic_error "The receiver of an indexed access must refer to a variadic parameter."
+    »unresolved«[0];
+
+    // no_semantic_error "The receiver of an indexed access must refer to a variadic parameter."
+    »C.unresolved«[0];
+
+    // no_semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»0«];
+
+    // semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»""«];
+
+    // semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»g«];
+
+    // semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»h()«];
+
+    // semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»b«];
+
+    // no_semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»unresolved«];    
+    
+    // no_semantic_error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»C.unresolved«];
+}
+
+fun g()
+fun h() -> index: Int?

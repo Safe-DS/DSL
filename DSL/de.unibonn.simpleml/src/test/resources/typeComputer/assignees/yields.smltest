@@ -1,0 +1,8 @@
+package tests.typeComputer.assignees.yields
+
+fun f(p: Any)
+
+step myStep() -> (r: Int, s: String) {
+    yield r = 1;
+    yield s = "";
+}

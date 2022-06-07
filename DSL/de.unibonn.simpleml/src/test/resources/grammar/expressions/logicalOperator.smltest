@@ -1,0 +1,9 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    false and true;
+    true or true;
+    not true;
+
+    not true and false or true;
+}

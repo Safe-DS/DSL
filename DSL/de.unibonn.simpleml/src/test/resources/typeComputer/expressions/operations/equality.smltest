@@ -1,0 +1,6 @@
+package tests.typeComputer.operations.equality
+
+workflow myWorkflow {
+    val equals = (1 == 1);
+    val notEquals = (1 != 1);
+}

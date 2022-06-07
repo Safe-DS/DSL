@@ -1,0 +1,78 @@
+package tests.validation.statements.expressionStatements.hasNoEffect
+
+fun impureFunction()
+@Pure fun pureFunction() -> a: Int
+
+class MyClass() {
+    fun impureFunction()
+    @Pure fun pureFunction()
+}
+
+step pureStep() {
+    val a = pureFunction();
+}
+
+step impureStep() {
+    impureFunction();
+}
+
+step recursiveA() {
+    recursiveB();
+}
+
+step recursiveB() {
+    recursiveA();
+}
+
+step myStep() {
+    // semantic_warning "This statement does nothing."
+    »1 + 2;«
+    // semantic_warning "This statement does nothing."
+    »pureFunction();«
+    // semantic_warning "This statement does nothing."
+    »MyClass().pureFunction();«
+
+    // no_semantic_warning "This statement does nothing."
+    »impureFunction();«
+    // no_semantic_warning "This statement does nothing."
+    »MyClass().impureFunction();«
+
+    () {
+        // semantic_warning "This statement does nothing."
+        »1 + 2;«
+        // semantic_warning "This statement does nothing."
+        »pureFunction();«
+        // semantic_warning "This statement does nothing."
+        »MyClass().pureFunction();«
+
+        // no_semantic_warning "This statement does nothing."
+        »impureFunction();«
+        // no_semantic_warning "This statement does nothing."
+        »MyClass().impureFunction();«
+    };
+
+    // semantic_warning "This statement does nothing."
+    »(() {
+        pureFunction();
+        MyClass().pureFunction();
+    })();«
+
+    // semantic_warning "This statement does nothing."
+    »pureStep();«
+
+    // no_semantic_warning "This statement does nothing."
+    »(() {
+        impureFunction();
+    })();«
+
+    // no_semantic_warning "This statement does nothing."
+    »(() {
+        MyClass().impureFunction();
+    })();«
+
+    // no_semantic_warning "This statement does nothing."
+    »impureStep();«
+
+    // no_semantic_warning "This statement does nothing."
+    »recursiveA();«
+}

@@ -1,0 +1,6 @@
+package tests.typeComputer.declarations.results
+
+step myStep() -> (r: Int, s: String) {
+    yield r = 1;
+    yield s = "";
+}

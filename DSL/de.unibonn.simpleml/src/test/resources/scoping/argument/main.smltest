@@ -1,0 +1,40 @@
+package tests.languageTests.scoping.argument1
+
+import tests.languageTests.scoping.argument2.functionInOtherPackage1
+
+annotation AnnotationInSameFile(parameterInAnnotationInSameFile: Int)
+
+class ClassInSameFile(parameterInClassInSameFile: Int)
+
+enum EnumInSameFile {
+    EnumVariantInSameFile(parameterInEnumVariantInSameFile: Int)
+}
+
+@AnnotationInSameFile(parameterInAnnotationInSameFile = 1)
+fun functionInSameFile(parameterInFunctionSameFile: Int)
+
+step stepInSameFile(parameterInStepInSameFile: Int) {}
+
+enum notAParameter
+
+step stepForArgument(callableInSameStep: (parameterInCallableInSameStep: Int) -> ()) {
+    val blockLambdaInSameStep = (parameterInBlockLambdaInSameStep) {};
+    val expressionLambdaInSameStep = (parameterInExpressionLambdaInSameStep) -> 1;
+
+    blockLambdaInSameStep(parameterInBlockLambdaInSameStep = 1);
+    callableInSameStep(parameterInCallableInSameStep = 1);
+    ClassInSameFile(parameterInClassInSameFile = 1);
+    EnumInSameFile.EnumVariantInSameFile(parameterInEnumVariantInSameFile = 1);
+    expressionLambdaInSameStep(parameterInExpressionLambdaInSameStep = 1);
+    functionInSameFile(parameterInFunctionSameFile = 1);
+    stepInSameFile(parameterInStepInSameFile = 1);
+    
+    functionInSamePackage(parameterInSamePackage = 1);
+    functionInOtherPackage1(parameterInOtherPackage1 = 1);
+    functionInOtherPackage2(parameterInOtherPackage2 = 1);
+    functionInSameFile(parameterInSamePackage = 1);
+    functionInSameFile(parameterInOtherPackage1 = 1);
+    functionInSameFile(parameterInOtherPackage2 = 1);
+    functionInSameFile(unresolvedParameter = 1);
+    functionInSameFile(notAParameter = 1);
+}

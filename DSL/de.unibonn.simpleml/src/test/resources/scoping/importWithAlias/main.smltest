@@ -1,0 +1,18 @@
+package tests.languageTests.scoping.importWithAlias1
+
+import tests.languageTests.scoping.importWithAlias1.ClassInSameFile as Cls1
+import tests.languageTests.scoping.importWithAlias1.ClassInSamePackage as Cls2
+import tests.languageTests.scoping.importWithAlias2.ClassInOtherPackage as Cls3
+
+class ClassInSameFile
+
+fun importWithAlias(
+    aliasNameInSameFile: Cls1,
+    originalNameInSameFile: ClassInSameFile,
+
+    aliasNameInSamePackage: Cls2,
+    originalNameInSamePackage: ClassInSamePackage,
+
+    aliasNameInOtherPackage: Cls3,
+    originalNameInOtherPackage: ClassInOtherPackage
+)

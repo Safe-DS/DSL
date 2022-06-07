@@ -1,0 +1,74 @@
+package tests.validation.expressions.calls.receiverMustBeCallable
+
+annotation MyAnnotation
+
+class MyClass {
+    attr myAttribute: Int
+    class MyClass
+    enum MyEnum
+    fun myFunction()
+}
+
+enum MyEnum {
+    MySimpleEnumInstance
+    MyComplexEnumInstance()
+}
+
+fun myFunction()
+
+workflow myWorkflow {}
+
+step test(a: Int, b: () -> ()) {
+    val c = 1;
+    val d = () {};
+    val e = () -> 1;
+
+    /* References cannot point to annotations in the first place. */
+    // no_semantic_error "This expression must not be called."
+    »MyAnnotation«();
+    // no_semantic_error "This expression must not be called."
+    »MyClass«();
+    // semantic_error "This expression must not be called."
+    »MyClass().myAttribute«();
+    // no_semantic_error "This expression must not be called."
+    »MyClass.MyClass«();
+    // semantic_error "This expression must not be called."
+    »MyClass.MyEnum«();
+    // no_semantic_error "This expression must not be called."
+    »MyClass().myFunction«();
+    // semantic_error "This expression must not be called."
+    »MyEnum«();
+    // no_semantic_error "This expression must not be called."
+    »MyEnum.MySimpleEnumInstance«();
+    // no_semantic_error "This expression must not be called."
+    »MyEnum.MyComplexEnumInstance«();
+    // no_semantic_error "This expression must not be called."
+    »myFunction«();
+    /* References cannot point to workflows in the first place. */
+    // no_semantic_error "This expression must not be called."
+    »myWorkflow«();
+    // semantic_error "This expression must not be called."
+    »a«();
+    // no_semantic_error "This expression must not be called."
+    »b«();
+    // semantic_error "This expression must not be called."
+    »c«();
+    // no_semantic_error "This expression must not be called."
+    »d«();
+    // no_semantic_error "This expression must not be called."
+    »e«();
+    // no_semantic_error "This expression must not be called."
+    »(d)«();
+    // no_semantic_error "This expression must not be called."
+    »(e)«();
+
+
+    /******************************************************************************************************************
+     * If a declaration is not in scope we already show a different error.
+     ******************************************************************************************************************/
+
+    // no_semantic_error "This expression must not be called."
+    »unknownGlobal«();
+    // no_semantic_error "This expression must not be called."
+    »MyClass().unknownMember«();
+}

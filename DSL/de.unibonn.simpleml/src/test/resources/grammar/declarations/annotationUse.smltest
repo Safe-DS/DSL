@@ -1,0 +1,3 @@
+// no_syntax_error
+
+@AnnotationUse(1, b = 2, A.B) class MyClass

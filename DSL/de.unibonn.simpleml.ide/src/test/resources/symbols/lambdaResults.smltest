@@ -1,0 +1,6 @@
+// Function "myWorkflow"
+workflow »myWorkflow« {
+    lambda {
+        yield a = 1;
+    };
+}

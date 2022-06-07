@@ -1,0 +1,8 @@
+step myStep1(
+    // semantic_warning "This parameter is unused."
+    »unused«: Int,
+    // no_semantic_warning "This parameter is unused."
+    »used«: Int
+) {
+    call(used);
+}

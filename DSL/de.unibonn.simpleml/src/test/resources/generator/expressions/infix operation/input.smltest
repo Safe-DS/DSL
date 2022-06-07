@@ -1,0 +1,31 @@
+package tests.generator.infixOperation
+
+fun f(param: Any?)
+
+fun g() -> result: Boolean
+
+fun h() -> result: Int
+
+fun i() -> result: Int?
+
+workflow test {
+    f(g() or g());
+    f(g() and g());
+
+    f(h() == h());
+    f(h() != h());
+    f(h() === h());
+    f(h() !== h());
+
+    f(h() < h());
+    f(h() <= h());
+    f(h() >= h());
+    f(h() > h());
+
+    f(h() + h());
+    f(h() - h());
+    f(h() * h());
+    f(h() / h());
+
+    f(i() ?: i());
+}

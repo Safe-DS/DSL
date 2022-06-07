@@ -1,0 +1,14 @@
+package tests.validation.expressions.calls.calledClassMustHaveConstructor
+
+class A
+
+class B()
+
+workflow test {
+
+    // semantic_error "Cannot create an instance of a class that has no constructor."
+    val a = »A«();
+
+    // no_semantic_error "Cannot create an instance of a class that has no constructor."
+    val b = »B«();
+}

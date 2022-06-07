@@ -1,0 +1,6 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    true;
+    false;
+}

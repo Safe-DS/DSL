@@ -1,0 +1,11 @@
+package tests.generator.twoWorkflows
+
+fun f()
+
+workflow test1 {
+    f();
+}
+
+workflow test2 {
+    f();
+}

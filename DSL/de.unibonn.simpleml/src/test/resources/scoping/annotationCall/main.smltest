@@ -1,0 +1,15 @@
+package tests.languageTests.scoping.annotationCall1
+
+import tests.languageTests.scoping.annotationCall2.AnnotationInOtherPackage1
+
+annotation AnnotationInSameFile
+
+class NotAnAnnotation
+
+@AnnotationInSameFile
+@AnnotationInSamePackage
+@AnnotationInOtherPackage1
+@AnnotationInOtherPackage2
+@UnresolvedAnnotation
+@NotAnAnnotation
+class MyClass

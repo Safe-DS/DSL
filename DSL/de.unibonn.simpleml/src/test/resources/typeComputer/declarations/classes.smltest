@@ -1,0 +1,3 @@
+package tests.typeComputer.declarations.classes
+
+class C

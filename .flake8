@@ -1,0 +1,9 @@
+[flake8]
+extend-ignore =
+    # line too long (black handles that)
+    E501,
+    # Line break occurred before a binary operator (seems to conflict with the linter)
+    W503
+per-file-ignores =
+    # imported but unused
+    __init__.py: F401

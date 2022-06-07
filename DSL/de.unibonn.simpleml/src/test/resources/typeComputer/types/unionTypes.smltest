@@ -1,0 +1,3 @@
+package tests.typeComputer.types.unionTypes
+
+fun myFun(a: union<Int, String>)

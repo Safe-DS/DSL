@@ -1,0 +1,9 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    () {};
+
+    (a, vararg b = 1) {
+        val a = 1;
+    };
+}

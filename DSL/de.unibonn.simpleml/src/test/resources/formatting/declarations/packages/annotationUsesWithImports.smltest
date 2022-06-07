@@ -1,0 +1,11 @@
+                @AnnotationUse1
+
+    @AnnotationUse2
+   import   myPackage          .   MyClass
+
+// -----------------------------------------------------------------------------
+
+@AnnotationUse1
+@AnnotationUse2
+
+import myPackage.MyClass

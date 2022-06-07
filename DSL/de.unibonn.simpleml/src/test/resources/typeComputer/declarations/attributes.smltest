@@ -1,0 +1,5 @@
+package tests.typeComputer.declarations.attributes
+
+class C {
+    attr a: Int
+}

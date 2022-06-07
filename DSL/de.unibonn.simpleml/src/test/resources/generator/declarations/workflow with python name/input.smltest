@@ -1,0 +1,8 @@
+package tests.generator.workflowWithPythonName
+
+fun f()
+
+@PythonName("test_flow")
+workflow testFlow {
+    f();
+}

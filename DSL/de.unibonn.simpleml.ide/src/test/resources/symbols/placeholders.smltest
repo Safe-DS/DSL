@@ -1,0 +1,4 @@
+// Function "myWorkflow"
+workflow »myWorkflow« {
+    val a = 1;
+}

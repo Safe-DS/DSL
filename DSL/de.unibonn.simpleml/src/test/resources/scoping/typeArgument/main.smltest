@@ -1,0 +1,28 @@
+package tests.languageTests.scoping.typeArgument1
+
+import tests.languageTests.scoping.typeArgument2.functionInOtherPackage1
+
+class ClassInSameFile<TYPE_PARAMETER_IN_CLASS_IN_SAME_FILE>
+
+enum EnumInSameFile{
+      EnumVariantInSameFile<TYPE_PARAMETER_IN_ENUM_VARIANT_IN_SAME_FILE>()
+}
+
+fun functionInSameFile<TYPE_PARAMETER_IN_FUNCTION_IN_SAME_FILE>()
+
+step NOT_A_TYPE_PARAMETER1() {}
+
+workflow workflowForTypeArgument {
+    ClassInSameFile<TYPE_PARAMETER_IN_CLASS_IN_SAME_FILE = *>();
+    EnumInSameFile.EnumVariantInSameFile<TYPE_PARAMETER_IN_ENUM_VARIANT_IN_SAME_FILE = *>();
+    functionInSameFile<TYPE_PARAMETER_IN_FUNCTION_IN_SAME_FILE = *>();
+    functionInSamePackage<TYPE_PARAMETER_IN_SAME_PACKAGE = *>();
+    functionInOtherPackage1<TYPE_PARAMETER_IN_OTHER_PACKAGE1 = *>();
+    functionInOtherPackage2<TYPE_PARAMETER_IN_OTHER_PACKAGE2 = *>();
+
+    functionInSameFile<TYPE_PARAMETER_IN_SAME_PACKAGE = *>();
+    functionInSameFile<TYPE_PARAMETER_IN_OTHER_PACKAGE1 = *>();
+    functionInSameFile<TYPE_PARAMETER_IN_OTHER_PACKAGE2 = *>();
+    functionInSameFile<UNRESOLVED_TYPE_PARAMETER = *>();
+    functionInSameFile<NOT_A_TYPE_PARAMETER1 = *>();
+}

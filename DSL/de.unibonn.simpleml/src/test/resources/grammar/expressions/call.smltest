@@ -1,0 +1,6 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    f();
+    f<*, in Number, out Number, T = Number>(1, b = 2);
+}

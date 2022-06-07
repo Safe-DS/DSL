@@ -1,0 +1,7 @@
+package tests.trailingComma.inCallTypeArgumentList
+
+// no_syntax_error
+
+workflow w {
+    f<Int, Int, >();
+}

@@ -1,0 +1,14 @@
+package tests.validation.declarations.steps.duplicateYield
+
+step testStep() -> (a: Int, b: Int) {
+    // no_semantic_error "This result is assigned multiple times."
+    yield »a« = 1;
+    // semantic_error "This result is assigned multiple times."
+    yield »b« = 1;
+    // semantic_error "This result is assigned multiple times."
+    yield »b« = 1;
+    // no_semantic_error "This result is assigned multiple times."
+    yield »c« = 1;
+    // no_semantic_error "This result is assigned multiple times."
+    yield »c« = 1;
+}
