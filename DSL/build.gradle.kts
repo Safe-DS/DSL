@@ -21,7 +21,7 @@ import org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
 
 plugins {
     kotlin("jvm") version "1.6.21" apply false
-    id("com.github.node-gradle.node") version "3.2.1" apply false
+    id("com.github.node-gradle.node") version "3.3.0" apply false
 
     base
     idea
