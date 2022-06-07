@@ -124,7 +124,7 @@ More information about calls can be found in the [linked document][calls].
 [parameters]: ../common/parameters.md
 [results]: ../common/results.md
 [types]: ../common/types.md
-[packages]: ./packages.md
+[packages]: ../common/packages.md
 [statements]: ./statements.md
 [assignments]: ./statements.md#assignments
 [assignments-to-placeholders]: ./statements.md#assigning-placeholders

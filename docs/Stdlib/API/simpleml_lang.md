@@ -27,7 +27,7 @@
 
 ----------
 
-## Class `Any`
+## <a name="class-Any"></a>Class `Any`
 The common superclass of all classes.
 
 **Constructor:** _Class has no constructor._
@@ -35,7 +35,7 @@ The common superclass of all classes.
 
 ----------
 
-## Class `Boolean`
+## <a name="class-Boolean"></a>Class `Boolean`
 A truth value.
 
 **Constructor:** _Class has no constructor._
@@ -43,7 +43,7 @@ A truth value.
 
 ----------
 
-## Class `Float`
+## <a name="class-Float"></a>Class `Float`
 A floating-point number.
 
 **Constructor:** _Class has no constructor._
@@ -51,7 +51,7 @@ A floating-point number.
 
 ----------
 
-## Class `Int`
+## <a name="class-Int"></a>Class `Int`
 An integer.
 
 **Constructor:** _Class has no constructor._
@@ -59,7 +59,7 @@ An integer.
 
 ----------
 
-## Class `Nothing`
+## <a name="class-Nothing"></a>Class `Nothing`
 The common subclass of all classes.
 
 **Constructor:** _Class has no constructor._
@@ -67,7 +67,7 @@ The common subclass of all classes.
 
 ----------
 
-## Class `Number`
+## <a name="class-Number"></a>Class `Number`
 A number.
 
 **Constructor:** _Class has no constructor._
@@ -75,13 +75,13 @@ A number.
 
 ----------
 
-## Class `String`
+## <a name="class-String"></a>Class `String`
 Some text.
 
 **Constructor:** _Class has no constructor._
 
 
-## Enum `AnnotationTarget`
+## <a name="enum-AnnotationTarget"></a>Enum `AnnotationTarget`
 The declaration types that can be targeted by annotations.
 ### Enum Variant `Annotation`
 The annotation can be called on annotations.
@@ -156,13 +156,13 @@ The annotation can be called on workflows.
 
 
 
-## Annotation `Constant`
+## <a name="annotation-Constant"></a>Annotation `Constant`
 Values assigned to this parameter must be constant.
 
 **Valid targets:**
 * Parameter
 
-## Annotation `Deprecated`
+## <a name="annotation-Deprecated"></a>Annotation `Deprecated`
 The declaration should no longer be used.
 
 **Parameters:**
@@ -183,7 +183,7 @@ The declaration should no longer be used.
 * Step
 * TypeParameter
 
-## Annotation `Description`
+## <a name="annotation-Description"></a>Annotation `Description`
 The purpose of a declaration.
 
 **Parameters:**
@@ -203,25 +203,25 @@ The purpose of a declaration.
 * TypeParameter
 * Workflow
 
-## Annotation `Expert`
+## <a name="annotation-Expert"></a>Annotation `Expert`
 This parameter should only be used by expert users.
 
 **Valid targets:**
 * Parameter
 
-## Annotation `NoSideEffects`
+## <a name="annotation-NoSideEffects"></a>Annotation `NoSideEffects`
 The function has no side effects.
 
 **Valid targets:**
 * Function
 
-## Annotation `Pure`
+## <a name="annotation-Pure"></a>Annotation `Pure`
 The function has no side effects and returns the same results for the same arguments.
 
 **Valid targets:**
 * Function
 
-## Annotation `PythonModule`
+## <a name="annotation-PythonModule"></a>Annotation `PythonModule`
 The qualified name of the corresponding Python module (default is the qualified name of the package).
 
 **Parameters:**
@@ -230,7 +230,7 @@ The qualified name of the corresponding Python module (default is the qualified 
 **Valid targets:**
 * CompilationUnit
 
-## Annotation `PythonName`
+## <a name="annotation-PythonName"></a>Annotation `PythonName`
 The name of the corresponding API element in Python (default is the name of the declaration in the stubs).
 
 **Parameters:**
@@ -246,13 +246,13 @@ The name of the corresponding API element in Python (default is the name of the 
 * Step
 * Workflow
 
-## Annotation `Repeatable`
+## <a name="annotation-Repeatable"></a>Annotation `Repeatable`
 The annotation can be called multiple times for the same declaration.
 
 **Valid targets:**
 * Annotation
 
-## Annotation `Since`
+## <a name="annotation-Since"></a>Annotation `Since`
 The version in which a declaration was added.
 
 **Parameters:**
@@ -272,7 +272,7 @@ The version in which a declaration was added.
 * TypeParameter
 * Workflow
 
-## Annotation `Target`
+## <a name="annotation-Target"></a>Annotation `Target`
 The annotation can target these declaration types. If the @Target annotation is not used any declaration type can be targeted.
 
 **Parameters:**

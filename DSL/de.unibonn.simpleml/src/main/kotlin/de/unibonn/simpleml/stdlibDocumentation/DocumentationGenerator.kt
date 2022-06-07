@@ -166,7 +166,7 @@ private fun createPackageDocumentation(
 private fun createAnnotationDocumentation(annotation: SmlAnnotation) = buildString {
 
     // Heading
-    appendLine("## Annotation `${annotation.name}`")
+    appendLine("## <a name=\"annotation-${annotation.name}\"></a>Annotation `${annotation.name}`")
 
     // Description
     appendLine(annotation.descriptionOrAltText())
@@ -220,7 +220,7 @@ private fun createClassDocumentation(`class`: SmlClass, nestingLevel: Int): Stri
 
     // Heading
     if (isGlobal(nestingLevel)) {
-        appendLine("## Class `${`class`.name}`")
+        appendLine("## <a name=\"class-${`class`.name}\"></a>Class `${`class`.name}`")
     } else {
         appendLine("${heading(nestingLevel)} Nested Class `${`class`.name}")
     }
@@ -274,7 +274,7 @@ private fun createEnumDocumentation(enum: SmlEnum, nestingLevel: Int) = buildStr
 
     // Heading
     if (isGlobal(nestingLevel)) {
-        appendLine("## Enum `${enum.name}`")
+        appendLine("## <a name=\"enum-${enum.name}\"></a>Enum `${enum.name}`")
     } else {
         appendLine("${heading(nestingLevel)} Nested Enum `${enum.name}")
     }
@@ -308,7 +308,7 @@ private fun createFunctionDocumentation(function: SmlFunction, nestingLevel: Int
 
     // Heading
     if (isGlobalFunction) {
-        appendLine("## Global Function `${function.name}`")
+        appendLine("## <a name=\"global-function-${function.name}\"></a>Global Function `${function.name}`")
     } else if (function.isStatic) {
         appendLine("${heading(nestingLevel)} `${function.name}` (Static Method)")
     } else {
