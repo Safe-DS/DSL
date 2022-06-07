@@ -1,0 +1,11 @@
+// no_syntax_error
+
+predicate GoalArgs(){
+    goal(myRef, "String", 3, null, 4.4, false)
+}
+
+predicate GoalNesting(){
+    goal(
+        goalInner("Str", 3)
+    )
+}

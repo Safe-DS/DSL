@@ -4,9 +4,10 @@ import tests.languageTests.scoping.reference2.AnnotationInOtherPackage1
 import tests.languageTests.scoping.reference2.ClassInOtherPackage1
 import tests.languageTests.scoping.reference2.EnumInOtherPackage1
 import tests.languageTests.scoping.reference2.globalFunctionInOtherPackage1
-import tests.languageTests.scoping.reference2.stepInOtherPackage1
 import tests.languageTests.scoping.reference2.internalStepInOtherPackage
+import tests.languageTests.scoping.reference2.PredicateInOtherPackage1
 import tests.languageTests.scoping.reference2.privateStepInOtherPackage
+import tests.languageTests.scoping.reference2.stepInOtherPackage1
 import tests.languageTests.scoping.reference2.workflowInOtherPackage1
 
 annotation AnnotationInSameFile
@@ -84,6 +85,8 @@ enum EnumForResultMemberAccess {
     result
 }
 
+predicate PredicateInSameFile() {
+}
 
 // Direct references -----------------------------------------------------------
 
@@ -203,6 +206,13 @@ step shadowedReferences(ClassInSameFile: Int) {
     };
 }
 
+predicate directReferencesToPredicates() {
+    PredicateInSameFile(),
+    PredicateInSamePackage(),
+    PredicateInOtherPackage1(),
+    PredicateInOtherPackage2()
+}
+
 // Access to own members -------------------------------------------------------
 
 step referencesToClassMembers() {
@@ -320,7 +330,7 @@ step referencesToLambdaResults() {
         yield result1 = 1;
         yield result2 = 1;
     };
-    
+
     lambdaWithOneResult().singleResult;
     lambdaWithOneResultWithIdenticalMember().result;
     lambdaWithTwoResults().result1;

@@ -11,8 +11,9 @@ import de.unibonn.simpleml.simpleML.SmlAbstractAssignee
 import de.unibonn.simpleml.simpleML.SmlAbstractCallable
 import de.unibonn.simpleml.simpleML.SmlAbstractClassMember
 import de.unibonn.simpleml.simpleML.SmlAbstractCompilationUnitMember
-import de.unibonn.simpleml.simpleML.SmlAbstractConstraint
+import de.unibonn.simpleml.simpleML.SmlAbstractConstraintGoal
 import de.unibonn.simpleml.simpleML.SmlAbstractDeclaration
+import de.unibonn.simpleml.simpleML.SmlAbstractGoal
 import de.unibonn.simpleml.simpleML.SmlAbstractLambda
 import de.unibonn.simpleml.simpleML.SmlAbstractLocalVariable
 import de.unibonn.simpleml.simpleML.SmlAbstractObject
@@ -30,16 +31,19 @@ import de.unibonn.simpleml.simpleML.SmlBlockLambdaResult
 import de.unibonn.simpleml.simpleML.SmlCall
 import de.unibonn.simpleml.simpleML.SmlCallableType
 import de.unibonn.simpleml.simpleML.SmlClass
+import de.unibonn.simpleml.simpleML.SmlClassBody
 import de.unibonn.simpleml.simpleML.SmlCompilationUnit
-import de.unibonn.simpleml.simpleML.SmlConstraintList
+import de.unibonn.simpleml.simpleML.SmlConstraint
 import de.unibonn.simpleml.simpleML.SmlEnum
 import de.unibonn.simpleml.simpleML.SmlEnumVariant
 import de.unibonn.simpleml.simpleML.SmlExpressionLambda
 import de.unibonn.simpleml.simpleML.SmlFunction
+import de.unibonn.simpleml.simpleML.SmlFunctionBody
 import de.unibonn.simpleml.simpleML.SmlImport
 import de.unibonn.simpleml.simpleML.SmlNamedType
 import de.unibonn.simpleml.simpleML.SmlParameter
 import de.unibonn.simpleml.simpleML.SmlPlaceholder
+import de.unibonn.simpleml.simpleML.SmlPredicate
 import de.unibonn.simpleml.simpleML.SmlProtocol
 import de.unibonn.simpleml.simpleML.SmlProtocolBody
 import de.unibonn.simpleml.simpleML.SmlProtocolComplement
@@ -99,8 +103,8 @@ fun SmlAbstractDeclaration?.annotationCallsOrEmpty(): List<SmlAnnotationCall> {
 
 // SmlAnnotation -----------------------------------------------------------------------------------
 
-fun SmlAnnotation?.constraintsOrEmpty(): List<SmlAbstractConstraint> {
-    return this?.constraintList?.constraints.orEmpty()
+fun SmlAnnotation?.constraintsOrEmpty(): List<SmlAbstractGoal> {
+    return this?.constraint?.constraintList?.goals.orEmpty()
 }
 
 // SmlAnnotationCall -------------------------------------------------------------------------------
@@ -177,8 +181,10 @@ fun SmlClass?.parentTypesOrEmpty(): List<SmlAbstractType> {
     return this?.parentTypeList?.parentTypes.orEmpty()
 }
 
-fun SmlClass?.constraintsOrEmpty(): List<SmlAbstractConstraint> {
-    return this?.constraintList?.constraints.orEmpty()
+fun SmlClass?.constraintsOrEmpty(): List<SmlAbstractConstraintGoal> {
+    return this?.body?.members
+        ?.filterIsInstance<SmlAbstractConstraintGoal>()
+        .orEmpty()
 }
 
 fun SmlClass?.objectsInBodyOrEmpty(): List<SmlAbstractObject> {
@@ -221,8 +227,8 @@ fun SmlEnumVariant?.typeParametersOrEmpty(): List<SmlTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-fun SmlEnumVariant?.constraintsOrEmpty(): List<SmlAbstractConstraint> {
-    return this?.constraintList?.constraints.orEmpty()
+fun SmlEnumVariant?.constraintsOrEmpty(): List<SmlAbstractGoal> {
+    return this?.constraint?.constraintList?.goals.orEmpty()
 }
 
 // SmlFunction -------------------------------------------------------------------------------------
@@ -235,8 +241,10 @@ fun SmlFunction?.typeParametersOrEmpty(): List<SmlTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-fun SmlFunction?.constraintsOrEmpty(): List<SmlAbstractConstraint> {
-    return this?.constraintList?.constraints.orEmpty()
+fun SmlFunction?.constraintsOrEmpty(): List<SmlAbstractConstraintGoal> {
+    return this?.body?.statements
+        ?.filterIsInstance<SmlAbstractConstraintGoal>()
+        .orEmpty()
 }
 
 // SmlImport ---------------------------------------------------------------------------------------
@@ -259,6 +267,12 @@ fun SmlImport.importedNameOrNull(): String? {
 
 fun SmlNamedType?.typeArgumentsOrEmpty(): List<SmlTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
+}
+
+// SmlPredicate -------------------------------------------------------------------------------------
+
+fun SmlPredicate?.goalsOrEmpty(): List<SmlAbstractGoal> {
+    return this?.goalList?.goals.orEmpty()
 }
 
 // SmlProtocol -------------------------------------------------------------------------------------
@@ -354,11 +368,25 @@ fun SmlAnnotationCall.targetOrNull(): SmlAbstractDeclaration? {
  * Accessing siblings                                                                                                 *
  * ********************************************************************************************************************/
 
-fun SmlConstraintList.typeParametersOrNull(): List<SmlTypeParameter>? {
+fun SmlConstraint.typeParametersOrNull(): List<SmlTypeParameter>? {
     return when (val parent = this.eContainer()) {
-        is SmlClass -> parent.typeParametersOrEmpty()
+        is SmlClassBody -> {
+            val parentClass: EObject = parent.eContainer()
+            if (parentClass is SmlClass) {
+                parentClass.typeParametersOrEmpty()
+            } else {
+                null
+            }
+        }
         is SmlEnumVariant -> return parent.typeParametersOrEmpty()
-        is SmlFunction -> parent.typeParametersOrEmpty()
+        is SmlFunctionBody -> {
+            val parentFunction: EObject = parent.eContainer()
+            if (parentFunction is SmlFunction) {
+                parentFunction.typeParametersOrEmpty()
+            } else {
+                null
+            }
+        }
         else -> null
     }
 }

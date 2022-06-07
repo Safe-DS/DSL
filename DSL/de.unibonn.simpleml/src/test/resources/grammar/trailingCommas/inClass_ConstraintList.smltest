@@ -2,4 +2,9 @@ package tests.trailingComma.inClassConstraintList
 
 // no_syntax_error
 
-class C<T> where T sub Any, T super Int,
+class C<T> {
+    constraint {
+        T sub Any,
+        T super Int
+    }
+}

@@ -12,6 +12,9 @@ enum EnumInOtherPackage2
 fun globalFunctionInOtherPackage1()
 fun globalFunctionInOtherPackage2()
 
+predicate PredicateInOtherPackage1()
+predicate PredicateInOtherPackage2()
+
 step stepInOtherPackage1() {}
 step stepInOtherPackage2() {}
 internal step internalStepInOtherPackage() {}

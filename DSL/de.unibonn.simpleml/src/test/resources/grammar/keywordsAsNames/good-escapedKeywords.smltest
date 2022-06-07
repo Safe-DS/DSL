@@ -24,6 +24,6 @@ class `true`
 class `union`
 class `val`
 class `vararg`
-class `where`
+class `constraint`
 class `workflow`
 class `yield`

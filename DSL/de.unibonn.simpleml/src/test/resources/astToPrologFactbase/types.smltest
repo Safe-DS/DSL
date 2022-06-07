@@ -45,9 +45,17 @@ workflow myWorkflowWithUnresolvedTypeArgument {
 
 
 // Type parameter constraints ------------------------------------------------------------------------------------------
-fun myFunctionWithResolvableTypeParameterConstraint<T>() where T sub Number
+fun myFunctionWithResolvableTypeParameterConstraint<T>() {
+    constraint {
+        T sub Number
+    }
+}
 
-fun myFunctionWithUnresolvableTypeParameterConstraint() where MY_UNRESOLVED_TYPE_PARAMETER sub Number
+fun myFunctionWithUnresolvableTypeParameterConstraint() {
+    constraint {
+        MY_UNRESOLVED_TYPE_PARAMETER sub Number
+    }
+}
 
 
 // Type projections ----------------------------------------------------------------------------------------------------

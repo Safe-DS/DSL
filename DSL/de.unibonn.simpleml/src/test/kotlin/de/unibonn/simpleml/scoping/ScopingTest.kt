@@ -15,10 +15,12 @@ import de.unibonn.simpleml.simpleML.SmlCompilationUnit
 import de.unibonn.simpleml.simpleML.SmlEnum
 import de.unibonn.simpleml.simpleML.SmlEnumVariant
 import de.unibonn.simpleml.simpleML.SmlFunction
+import de.unibonn.simpleml.simpleML.SmlGoalReference
 import de.unibonn.simpleml.simpleML.SmlMemberType
 import de.unibonn.simpleml.simpleML.SmlNamedType
 import de.unibonn.simpleml.simpleML.SmlParameter
 import de.unibonn.simpleml.simpleML.SmlPlaceholder
+import de.unibonn.simpleml.simpleML.SmlPredicate
 import de.unibonn.simpleml.simpleML.SmlProtocolReference
 import de.unibonn.simpleml.simpleML.SmlProtocolSubterm
 import de.unibonn.simpleml.simpleML.SmlReference
@@ -26,7 +28,7 @@ import de.unibonn.simpleml.simpleML.SmlResult
 import de.unibonn.simpleml.simpleML.SmlStep
 import de.unibonn.simpleml.simpleML.SmlTypeArgument
 import de.unibonn.simpleml.simpleML.SmlTypeParameter
-import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraint
+import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraintGoal
 import de.unibonn.simpleml.simpleML.SmlYield
 import de.unibonn.simpleml.testing.ParseHelper
 import de.unibonn.simpleml.testing.ResourceName
@@ -51,6 +53,7 @@ private const val IMPORT_WITH_ALIAS = "importWithAlias"
 private const val NAMED_TYPE = "namedType"
 private const val PROTOCOL_REFERENCE = "protocolReference"
 private const val REFERENCE = "reference"
+private const val GOAL_REFERENCE = "goalReference"
 private const val TYPE_ARGUMENT = "typeArgument"
 private const val TYPE_PARAMETER_CONSTRAINT = "typeParameterConstraint"
 private const val YIELD = "yield"
@@ -1088,6 +1091,52 @@ class ScopingTest {
             val step = findUniqueDeclarationOrFail<SmlStep>("directReferencesToGlobalFunctions")
 
             val references = step.descendants<SmlReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve goal in same file`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SmlPredicate>("directReferencesToPredicates")
+            val predicateInSameFile = findUniqueDeclarationOrFail<SmlPredicate>("PredicateInSameFile")
+
+            val references = predicate.descendants<SmlGoalReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(predicateInSameFile)
+        }
+
+        @Test
+        fun `should resolve goal in same package`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SmlPredicate>("directReferencesToPredicates")
+
+            val references = predicate.descendants<SmlGoalReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("PredicateInSamePackage")
+        }
+
+        @Test
+        fun `should resolve goal in another package if imported`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SmlPredicate>("directReferencesToPredicates")
+
+            val references = predicate.descendants<SmlGoalReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[2].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("PredicateInOtherPackage1")
+        }
+
+        @Test
+        fun `should not resolve goal in another package if not imported`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SmlPredicate>("directReferencesToPredicates")
+
+            val references = predicate.descendants<SmlGoalReference>().toList()
             references.shouldHaveSize(4)
             references[3].declaration.shouldNotBeResolved()
         }
@@ -2267,13 +2316,13 @@ class ScopingTest {
         @Test
         fun `should resolve type parameter in same class`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testClass = findUniqueDeclarationOrFail<SmlClass>("TestClass")
-            val typeParameterConstraints = testClass.descendants<SmlTypeParameterConstraint>().toList()
-            typeParameterConstraints.shouldHaveSize(1)
+            val typeParameterConstraintsGoal = testClass.descendants<SmlTypeParameterConstraintGoal>().toList()
+            typeParameterConstraintsGoal.shouldHaveSize(1)
 
             val typeParameterInSameDeclaration =
                 findUniqueDeclarationOrFail<SmlTypeParameter>("TYPE_PARAMETER_IN_SAME_CLASS")
 
-            val referencedTypeParameter = typeParameterConstraints[0].leftOperand
+            val referencedTypeParameter = typeParameterConstraintsGoal[0].leftOperand
             referencedTypeParameter.shouldBeResolved()
             referencedTypeParameter.shouldBe(typeParameterInSameDeclaration)
         }
@@ -2281,13 +2330,13 @@ class ScopingTest {
         @Test
         fun `should resolve type parameter in same enum variant`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testEnumVariant = findUniqueDeclarationOrFail<SmlEnumVariant>("TestEnumVariant")
-            val typeParameterConstraints = testEnumVariant.descendants<SmlTypeParameterConstraint>().toList()
-            typeParameterConstraints.shouldHaveSize(1)
+            val typeParameterConstraintsGoal = testEnumVariant.descendants<SmlTypeParameterConstraintGoal>().toList()
+            typeParameterConstraintsGoal.shouldHaveSize(1)
 
             val typeParameterInSameDeclaration =
                 findUniqueDeclarationOrFail<SmlTypeParameter>("TYPE_PARAMETER_IN_SAME_ENUM_VARIANT")
 
-            val referencedTypeParameter = typeParameterConstraints[0].leftOperand
+            val referencedTypeParameter = typeParameterConstraintsGoal[0].leftOperand
             referencedTypeParameter.shouldBeResolved()
             referencedTypeParameter.shouldBe(typeParameterInSameDeclaration)
         }
@@ -2295,13 +2344,13 @@ class ScopingTest {
         @Test
         fun `should resolve type parameter in same function`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-            val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-            typeParameterConstraints.shouldHaveSize(7)
+            val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+            typeParameterConstraintsGoal.shouldHaveSize(7)
 
             val typeParameterInSameDeclaration =
                 findUniqueDeclarationOrFail<SmlTypeParameter>("TYPE_PARAMETER_IN_SAME_FUNCTION")
 
-            val referencedTypeParameter = typeParameterConstraints[0].leftOperand
+            val referencedTypeParameter = typeParameterConstraintsGoal[0].leftOperand
             referencedTypeParameter.shouldBeResolved()
             referencedTypeParameter.shouldBe(typeParameterInSameDeclaration)
         }
@@ -2311,52 +2360,52 @@ class ScopingTest {
             TYPE_PARAMETER_CONSTRAINT
         ) {
             val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-            val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-            typeParameterConstraints.shouldHaveSize(7)
-            typeParameterConstraints[1].leftOperand.shouldNotBeResolved()
+            val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+            typeParameterConstraintsGoal.shouldHaveSize(7)
+            typeParameterConstraintsGoal[1].leftOperand.shouldNotBeResolved()
         }
 
         @Test
         fun `should not resolve type parameter in another declaration in same package`() =
             withResource(TYPE_PARAMETER_CONSTRAINT) {
                 val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-                val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-                typeParameterConstraints.shouldHaveSize(7)
-                typeParameterConstraints[2].leftOperand.shouldNotBeResolved()
+                val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+                typeParameterConstraintsGoal.shouldHaveSize(7)
+                typeParameterConstraintsGoal[2].leftOperand.shouldNotBeResolved()
             }
 
         @Test
         fun `should not resolve type parameter in another declaration that is imported and in another package`() =
             withResource(TYPE_PARAMETER_CONSTRAINT) {
                 val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-                val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-                typeParameterConstraints.shouldHaveSize(7)
-                typeParameterConstraints[3].leftOperand.shouldNotBeResolved()
+                val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+                typeParameterConstraintsGoal.shouldHaveSize(7)
+                typeParameterConstraintsGoal[3].leftOperand.shouldNotBeResolved()
             }
 
         @Test
         fun `should not resolve type parameter in another declaration that is not imported and in another package`() =
             withResource(TYPE_PARAMETER_CONSTRAINT) {
                 val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-                val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-                typeParameterConstraints.shouldHaveSize(7)
-                typeParameterConstraints[4].leftOperand.shouldNotBeResolved()
+                val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+                typeParameterConstraintsGoal.shouldHaveSize(7)
+                typeParameterConstraintsGoal[4].leftOperand.shouldNotBeResolved()
             }
 
         @Test
         fun `should not resolve unknown declaration`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-            val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-            typeParameterConstraints.shouldHaveSize(7)
-            typeParameterConstraints[5].leftOperand.shouldNotBeResolved()
+            val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+            typeParameterConstraintsGoal.shouldHaveSize(7)
+            typeParameterConstraintsGoal[5].leftOperand.shouldNotBeResolved()
         }
 
         @Test
         fun `should not something that is not a type parameter`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testFunction = findUniqueDeclarationOrFail<SmlFunction>("testFunction")
-            val typeParameterConstraints = testFunction.descendants<SmlTypeParameterConstraint>().toList()
-            typeParameterConstraints.shouldHaveSize(7)
-            typeParameterConstraints[6].leftOperand.shouldNotBeResolved()
+            val typeParameterConstraintsGoal = testFunction.descendants<SmlTypeParameterConstraintGoal>().toList()
+            typeParameterConstraintsGoal.shouldHaveSize(7)
+            typeParameterConstraintsGoal[6].leftOperand.shouldNotBeResolved()
         }
     }
 

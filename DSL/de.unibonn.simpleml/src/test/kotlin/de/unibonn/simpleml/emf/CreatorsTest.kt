@@ -273,14 +273,16 @@ class CreatorsTest {
         `class`.typeParameterList.shouldBeNull()
     }
 
-    @Test
-    fun `createSmlClass should omit empty constraint list`() {
-        val `class` = createSmlClass(
-            "Test",
-            constraints = emptyList()
-        )
-        `class`.constraintList.shouldBeNull()
-    }
+//    constraints are now a member, doesn't make sense
+//
+//    @Test
+//    fun `createSmlClass should omit empty constraint list`() {
+//        val `class` = createSmlClass(
+//            "Test",
+//            constraints = emptyList()
+//        )
+//        `class`.constraintList.shouldBeNull()
+//    }
 
     @Test
     fun `smlClass should add the created class to the receiving class`() {
@@ -388,10 +390,9 @@ class CreatorsTest {
     @Test
     fun `createSmlEnumVariant should omit empty constraint list`() {
         val enum = createSmlEnumVariant(
-            "Test",
-            constraints = emptyList()
+            "Test"
         )
-        enum.constraintList.shouldBeNull()
+        enum.constraint.shouldBeNull()
     }
 
     @Test
@@ -501,14 +502,16 @@ class CreatorsTest {
         function.typeParameterList.shouldBeNull()
     }
 
-    @Test
-    fun `createSmlFunction should omit empty constraint list`() {
-        val function = createSmlFunction(
-            "test",
-            constraints = emptyList()
-        )
-        function.constraintList.shouldBeNull()
-    }
+//    constraints are now a "member" statement, doesn't make sense
+//
+//    @Test
+//    fun `createSmlFunction should omit empty constraint list`() {
+//        val function = createSmlFunction(
+//            "test",
+//            constraints = emptyList()
+//        )
+//        function.constraintList.shouldBeNull()
+//    }
 
     @Test
     fun `smlFunction should add the created function to the receiving class`() {
@@ -727,8 +730,8 @@ class CreatorsTest {
     }
 
     @Test
-    fun `createTypeParameterConstraint should create an SmlTypeParameter when only a name is passed`() {
-        val constraint = createSmlTypeParameterConstraint(
+    fun `createTypeParameterConstraintGoal should create an SmlTypeParameter when only a name is passed`() {
+        val constraint = createSmlTypeParameterConstraintGoal(
             "Test",
             SmlTypeParameterConstraintOperator.SubclassOf,
             createSmlNamedType(createSmlClass("Test"))

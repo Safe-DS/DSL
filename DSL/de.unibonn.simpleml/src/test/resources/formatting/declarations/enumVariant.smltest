@@ -5,21 +5,23 @@ enum myEnum {
 
     @Annotation1       @Annotation2
               MyVariant2     <
-   @AnnotationUse 
-               
-       T1, in T2,    out 
-       T3    >    
+   @AnnotationUse
+
+       T1, in T2,    out
+       T3    >
        (
-         
-         @AnnotationUse 
-     a : 
-   Int ,  vararg 
-               
-               b: 
+
+         @AnnotationUse
+     a :
+   Int ,  vararg
+
+               b:
       Int   =  3
-       )         where    T2 
+       )         constraint
+       {    T2
   super  Number   ,    T3   sub
      Number
+       }
 }
 
 // -----------------------------------------------------------------------------
@@ -29,5 +31,8 @@ enum myEnum {
 
     @Annotation1
     @Annotation2
-    MyVariant2<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) where T2 super Number, T3 sub Number
+    MyVariant2<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) constraint {
+        T2 super Number,
+        T3 sub Number
+    }
 }

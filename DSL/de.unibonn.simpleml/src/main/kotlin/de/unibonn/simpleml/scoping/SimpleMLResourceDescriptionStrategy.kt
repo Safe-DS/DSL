@@ -10,6 +10,7 @@ import de.unibonn.simpleml.simpleML.SmlEnum
 import de.unibonn.simpleml.simpleML.SmlEnumVariant
 import de.unibonn.simpleml.simpleML.SmlFunction
 import de.unibonn.simpleml.simpleML.SmlParameter
+import de.unibonn.simpleml.simpleML.SmlPredicate
 import de.unibonn.simpleml.simpleML.SmlStep
 import de.unibonn.simpleml.simpleML.SmlTypeParameter
 import org.eclipse.emf.ecore.EObject
@@ -43,6 +44,9 @@ class SimpleMLResourceDescriptionStrategy : DefaultResourceDescriptionStrategy()
                 super.createEObjectDescriptions(eObject, acceptor)
             }
             is SmlFunction -> {
+                super.createEObjectDescriptions(eObject, acceptor)
+            }
+            is SmlPredicate -> {
                 super.createEObjectDescriptions(eObject, acceptor)
             }
             is SmlParameter -> {

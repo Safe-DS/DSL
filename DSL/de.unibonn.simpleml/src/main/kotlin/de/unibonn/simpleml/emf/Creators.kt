@@ -4,6 +4,7 @@ package de.unibonn.simpleml.emf
 
 import de.unibonn.simpleml.constant.SmlFileExtension
 import de.unibonn.simpleml.constant.SmlInfixOperationOperator
+import de.unibonn.simpleml.constant.SmlKind
 import de.unibonn.simpleml.constant.SmlPrefixOperationOperator
 import de.unibonn.simpleml.constant.SmlProtocolQuantifiedTermQuantifier
 import de.unibonn.simpleml.constant.SmlProtocolTokenClassValue
@@ -14,9 +15,11 @@ import de.unibonn.simpleml.simpleML.SimpleMLFactory
 import de.unibonn.simpleml.simpleML.SmlAbstractAssignee
 import de.unibonn.simpleml.simpleML.SmlAbstractClassMember
 import de.unibonn.simpleml.simpleML.SmlAbstractCompilationUnitMember
-import de.unibonn.simpleml.simpleML.SmlAbstractConstraint
+import de.unibonn.simpleml.simpleML.SmlAbstractConstraintGoal
 import de.unibonn.simpleml.simpleML.SmlAbstractDeclaration
 import de.unibonn.simpleml.simpleML.SmlAbstractExpression
+import de.unibonn.simpleml.simpleML.SmlAbstractGoal
+import de.unibonn.simpleml.simpleML.SmlAbstractGoalExpression
 import de.unibonn.simpleml.simpleML.SmlAbstractLambda
 import de.unibonn.simpleml.simpleML.SmlAbstractNamedTypeDeclaration
 import de.unibonn.simpleml.simpleML.SmlAbstractObject
@@ -32,6 +35,7 @@ import de.unibonn.simpleml.simpleML.SmlArgument
 import de.unibonn.simpleml.simpleML.SmlArgumentList
 import de.unibonn.simpleml.simpleML.SmlAssigneeList
 import de.unibonn.simpleml.simpleML.SmlAssignment
+import de.unibonn.simpleml.simpleML.SmlAssignmentGoal
 import de.unibonn.simpleml.simpleML.SmlAttribute
 import de.unibonn.simpleml.simpleML.SmlBlock
 import de.unibonn.simpleml.simpleML.SmlBlockLambda
@@ -41,13 +45,19 @@ import de.unibonn.simpleml.simpleML.SmlCall
 import de.unibonn.simpleml.simpleML.SmlCallableType
 import de.unibonn.simpleml.simpleML.SmlClass
 import de.unibonn.simpleml.simpleML.SmlCompilationUnit
-import de.unibonn.simpleml.simpleML.SmlConstraintList
+import de.unibonn.simpleml.simpleML.SmlConstraint
 import de.unibonn.simpleml.simpleML.SmlEnum
 import de.unibonn.simpleml.simpleML.SmlEnumVariant
+import de.unibonn.simpleml.simpleML.SmlExpressionGoal
 import de.unibonn.simpleml.simpleML.SmlExpressionLambda
 import de.unibonn.simpleml.simpleML.SmlExpressionStatement
 import de.unibonn.simpleml.simpleML.SmlFloat
 import de.unibonn.simpleml.simpleML.SmlFunction
+import de.unibonn.simpleml.simpleML.SmlGoalArgument
+import de.unibonn.simpleml.simpleML.SmlGoalArgumentList
+import de.unibonn.simpleml.simpleML.SmlGoalCall
+import de.unibonn.simpleml.simpleML.SmlGoalList
+import de.unibonn.simpleml.simpleML.SmlGoalReference
 import de.unibonn.simpleml.simpleML.SmlImport
 import de.unibonn.simpleml.simpleML.SmlImportAlias
 import de.unibonn.simpleml.simpleML.SmlIndexedAccess
@@ -62,8 +72,10 @@ import de.unibonn.simpleml.simpleML.SmlParameter
 import de.unibonn.simpleml.simpleML.SmlParameterList
 import de.unibonn.simpleml.simpleML.SmlParentTypeList
 import de.unibonn.simpleml.simpleML.SmlParenthesizedExpression
+import de.unibonn.simpleml.simpleML.SmlParenthesizedGoalExpression
 import de.unibonn.simpleml.simpleML.SmlParenthesizedType
 import de.unibonn.simpleml.simpleML.SmlPlaceholder
+import de.unibonn.simpleml.simpleML.SmlPredicate
 import de.unibonn.simpleml.simpleML.SmlPrefixOperation
 import de.unibonn.simpleml.simpleML.SmlProtocol
 import de.unibonn.simpleml.simpleML.SmlProtocolAlternative
@@ -85,7 +97,7 @@ import de.unibonn.simpleml.simpleML.SmlTemplateString
 import de.unibonn.simpleml.simpleML.SmlTypeArgument
 import de.unibonn.simpleml.simpleML.SmlTypeArgumentList
 import de.unibonn.simpleml.simpleML.SmlTypeParameter
-import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraint
+import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraintGoal
 import de.unibonn.simpleml.simpleML.SmlTypeParameterList
 import de.unibonn.simpleml.simpleML.SmlTypeProjection
 import de.unibonn.simpleml.simpleML.SmlUnionType
@@ -275,6 +287,25 @@ fun SmlStep.smlAssignment(assignees: List<SmlAbstractAssignee>, expression: SmlA
 }
 
 /**
+ * Returns a new object of class [SmlAssignmentGoal].
+ */
+fun createSmlAssignmentGoal(placeholderName: String, expression: SmlAbstractGoalExpression): SmlAssignmentGoal {
+    return factory.createSmlAssignmentGoal().apply {
+        this.placeholder = factory.createSmlGoalPlaceholder().apply {
+            this.name = placeholderName
+        }
+        this.expression = expression
+    }
+}
+
+/**
+ * Adds a new object of class [SmlAssignmentGoal] to the receiver.
+ */
+fun SmlPredicate.smlAssignmentGoal(placeholderName: String, expression: SmlAbstractGoalExpression) {
+    this.addGoal(createSmlAssignmentGoal(placeholderName, expression))
+}
+
+/**
  * Returns a new object of class [SmlAttribute].
  */
 fun createSmlAttribute(
@@ -395,7 +426,7 @@ fun createSmlClass(
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter>? = null, // null and emptyList() are semantically different
     parentTypes: List<SmlAbstractType> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList(),
+    constraint: SmlConstraint? = null,
     protocol: SmlProtocol? = null,
     members: List<SmlAbstractClassMember> = emptyList(),
     init: SmlClass.() -> Unit = {}
@@ -406,8 +437,8 @@ fun createSmlClass(
         this.typeParameterList = typeParameters.nullIfEmptyElse(::createSmlTypeParameterList)
         this.parameterList = parameters?.let { createSmlParameterList(it) }
         this.parentTypeList = parentTypes.nullIfEmptyElse(::createSmlParentTypeList)
-        this.constraintList = constraints.nullIfEmptyElse(::createSmlConstraintList)
         protocol?.let { addMember(it) }
+        constraint?.let { addMember(it) }
         members.forEach { addMember(it) }
         this.init()
     }
@@ -422,7 +453,7 @@ fun SmlClass.smlClass(
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter>? = null,
     parentTypes: List<SmlAbstractType> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList(),
+    constraint: SmlConstraint? = null,
     protocol: SmlProtocol? = null,
     members: List<SmlAbstractClassMember> = emptyList(),
     init: SmlClass.() -> Unit = {}
@@ -434,7 +465,7 @@ fun SmlClass.smlClass(
             typeParameters,
             parameters,
             parentTypes,
-            constraints,
+            constraint,
             protocol,
             members,
             init
@@ -451,7 +482,7 @@ fun SmlCompilationUnit.smlClass(
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter>? = null,
     parentTypes: List<SmlAbstractType> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList(),
+    constraint: SmlConstraint? = null,
     protocol: SmlProtocol? = null,
     members: List<SmlAbstractClassMember> = emptyList(),
     init: SmlClass.() -> Unit = {}
@@ -463,7 +494,7 @@ fun SmlCompilationUnit.smlClass(
             typeParameters,
             parameters,
             parentTypes,
-            constraints,
+            constraint,
             protocol,
             members,
             init
@@ -509,11 +540,11 @@ private fun SmlCompilationUnit.addMember(member: SmlAbstractCompilationUnitMembe
 }
 
 /**
- * Returns a new object of class [SmlConstraintList].
+ * Returns a new object of class [SmlConstraint].
  */
-fun createSmlConstraintList(constraints: List<SmlAbstractConstraint>): SmlConstraintList {
-    return factory.createSmlConstraintList().apply {
-        this.constraints += constraints
+fun createSmlConstraint(goals: List<SmlAbstractConstraintGoal>): SmlConstraint {
+    return factory.createSmlConstraint().apply {
+        this.constraintList = createSmlGoalList(goals)
     }
 }
 
@@ -577,14 +608,14 @@ fun createSmlEnumVariant(
     annotationCalls: List<SmlAnnotationCall> = emptyList(),
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList()
+    constraint: SmlConstraint? = null,
 ): SmlEnumVariant {
     return factory.createSmlEnumVariant().apply {
         this.name = name
         this.annotationCalls += annotationCalls
         this.typeParameterList = typeParameters.nullIfEmptyElse(::createSmlTypeParameterList)
         this.parameterList = parameters.nullIfEmptyElse(::createSmlParameterList)
-        this.constraintList = constraints.nullIfEmptyElse(::createSmlConstraintList)
+        this.constraint = constraint
     }
 }
 
@@ -596,9 +627,25 @@ fun SmlEnum.smlEnumVariant(
     annotationCalls: List<SmlAnnotationCall> = emptyList(),
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList()
+    constraint: SmlConstraint? = null
 ) {
-    this.addVariant(createSmlEnumVariant(name, annotationCalls, typeParameters, parameters, constraints))
+    this.addVariant(createSmlEnumVariant(name, annotationCalls, typeParameters, parameters, constraint))
+}
+
+/**
+ * Returns a new object of class [SmlExpressionGoal].
+ */
+fun createSmlExpressionGoal(expression: SmlAbstractGoalExpression): SmlExpressionGoal {
+    return factory.createSmlExpressionGoal().apply {
+        this.expression = expression
+    }
+}
+
+/**
+ * Adds a new object of class [SmlExpressionGoal] to the receiver.
+ */
+fun SmlPredicate.smlExpressionGoal(expression: SmlAbstractGoalExpression) {
+    this.addGoal(createSmlExpressionGoal(expression))
 }
 
 /**
@@ -669,7 +716,7 @@ fun createSmlFunction(
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter> = emptyList(),
     results: List<SmlResult> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList()
+    constraint: SmlConstraint? = null
 ): SmlFunction {
     return factory.createSmlFunction().apply {
         this.name = name
@@ -678,8 +725,19 @@ fun createSmlFunction(
         this.typeParameterList = typeParameters.nullIfEmptyElse(::createSmlTypeParameterList)
         this.parameterList = createSmlParameterList(parameters)
         this.resultList = results.nullIfEmptyElse(::createSmlResultList)
-        this.constraintList = constraints.nullIfEmptyElse(::createSmlConstraintList)
+        constraint?.let { addStatement(it) }
     }
+}
+
+/**
+ * Adds a new statement to the receiver.
+ */
+private fun SmlFunction.addStatement(statement: SmlAbstractObject) {
+    if (this.body == null) {
+        this.body = factory.createSmlFunctionBody()
+    }
+
+    this.body.statements += statement
 }
 
 /**
@@ -692,7 +750,7 @@ fun SmlClass.smlFunction(
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter> = emptyList(),
     results: List<SmlResult> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList()
+    constraint: SmlConstraint? = null
 ) {
     this.addMember(
         createSmlFunction(
@@ -702,7 +760,7 @@ fun SmlClass.smlFunction(
             typeParameters,
             parameters,
             results,
-            constraints
+            constraint
         )
     )
 }
@@ -717,7 +775,7 @@ fun SmlCompilationUnit.smlFunction(
     typeParameters: List<SmlTypeParameter> = emptyList(),
     parameters: List<SmlParameter> = emptyList(),
     results: List<SmlResult> = emptyList(),
-    constraints: List<SmlAbstractConstraint> = emptyList()
+    constraint: SmlConstraint? = null
 ) {
     this.addMember(
         createSmlFunction(
@@ -727,9 +785,60 @@ fun SmlCompilationUnit.smlFunction(
             typeParameters,
             parameters,
             results,
-            constraints
+            constraint
         )
     )
+}
+
+/**
+ * Returns a new object of class [SmlGoalArgument].
+ */
+fun createSmlGoalArgument(value: SmlAbstractGoalExpression, parameter: SmlParameter? = null): SmlGoalArgument {
+    return factory.createSmlGoalArgument().apply {
+        this.value = value
+        this.parameter = parameter
+    }
+}
+
+/**
+ * Returns a new object of class [SmlGoalArgument] that points to a parameter with the given name.
+ */
+fun createSmlGoalArgument(value: SmlAbstractGoalExpression, parameterName: String): SmlGoalArgument {
+    return createSmlGoalArgument(
+        value,
+        createSmlParameter(parameterName)
+    )
+}
+
+/**
+ * Returns a new object of class [SmlGoalArgumentList].
+ */
+fun createSmlGoalArgumentList(arguments: List<SmlGoalArgument>): SmlGoalArgumentList {
+    return factory.createSmlGoalArgumentList().apply {
+        this.arguments += arguments
+    }
+}
+
+/**
+ * Returns a new object of class [SmlGoalCall].
+ */
+fun createSmlGoalCall(
+    receiver: SmlAbstractGoalExpression,
+    arguments: List<SmlGoalArgument>
+): SmlGoalCall {
+    return factory.createSmlGoalCall().apply {
+        this.receiver = receiver
+        this.argumentList = createSmlGoalArgumentList(arguments)
+    }
+}
+
+/**
+ * Returns a new object of class [SmlGoalList].
+ */
+fun createSmlGoalList(goals: List<SmlAbstractGoal>): SmlGoalList {
+    return factory.createSmlGoalList().apply {
+        this.goals += goals
+    }
 }
 
 /**
@@ -739,6 +848,15 @@ fun createSmlImport(importedNamespace: String, alias: String? = null): SmlImport
     return factory.createSmlImport().apply {
         this.importedNamespace = importedNamespace
         this.alias = createSmlImportAlias(alias)
+    }
+}
+
+/**
+ * Returns a new object of class [SmlGoalReference].
+ */
+fun createSmlGoalReference(declaration: SmlAbstractDeclaration): SmlGoalReference {
+    return factory.createSmlGoalReference().apply {
+        this.declaration = declaration
     }
 }
 
@@ -892,6 +1010,15 @@ fun createSmlParenthesizedExpression(expression: SmlAbstractExpression): SmlPare
 }
 
 /**
+ * Returns a new object of class [SmlParenthesizedGoalExpression].
+ */
+fun createSmlParenthesizedGoalExpression(expressions: List<SmlAbstractGoalExpression>): SmlParenthesizedGoalExpression {
+    return factory.createSmlParenthesizedGoalExpression().apply {
+        this.expressions += expressions
+    }
+}
+
+/**
  * Returns a new object of class [SmlParenthesizedType].
  */
 fun createSmlParenthesizedType(type: SmlAbstractType): SmlParenthesizedType {
@@ -916,6 +1043,57 @@ fun createSmlPlaceholder(name: String): SmlPlaceholder {
     return factory.createSmlPlaceholder().apply {
         this.name = name
     }
+}
+
+/**
+ * Returns a new object of class [SmlPredicate].
+ */
+fun createSmlPredicate(
+    name: String,
+    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    parameters: List<SmlParameter> = emptyList(),
+    results: List<SmlResult> = emptyList(),
+    goals: List<SmlAbstractGoal> = emptyList(),
+): SmlPredicate {
+    return factory.createSmlPredicate().apply {
+        this.name = name
+        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
+        this.parameterList = createSmlParameterList(parameters)
+        this.resultList = results.nullIfEmptyElse(::createSmlResultList)
+        goals.forEach { addGoal(it) }
+    }
+}
+
+/**
+ * Adds a new object of class [SmlPredicate] to the receiver.
+ */
+fun SmlCompilationUnit.smlPredicate(
+    name: String,
+    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    parameters: List<SmlParameter> = emptyList(),
+    results: List<SmlResult> = emptyList(),
+    goals: List<SmlAbstractGoal> = emptyList(),
+) {
+    this.addMember(
+        createSmlPredicate(
+            name,
+            annotationCalls,
+            parameters,
+            results,
+            goals
+        )
+    )
+}
+
+/**
+ * Adds a new goal to the receiver.
+ */
+private fun SmlPredicate.addGoal(goal: SmlAbstractGoal) {
+    if (this.goalList == null) {
+        this.goalList = factory.createSmlGoalList()
+    }
+
+    this.goalList.goals += goal
 }
 
 /**
@@ -1281,12 +1459,14 @@ fun createSmlTypeArgumentList(typeArguments: List<SmlTypeArgument>): SmlTypeArgu
 fun createSmlTypeParameter(
     name: String,
     annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    variance: SmlVariance = SmlVariance.Invariant
+    variance: SmlVariance = SmlVariance.Invariant,
+    kind: SmlKind = SmlKind.NoKind
 ): SmlTypeParameter {
     return factory.createSmlTypeParameter().apply {
         this.name = name
         this.annotationCalls += annotationCalls
         this.variance = variance.variance
+        this.kind = kind.kind
     }
 }
 
@@ -1300,14 +1480,14 @@ fun createSmlTypeParameterList(typeParameters: List<SmlTypeParameter>): SmlTypeP
 }
 
 /**
- * Returns a new object of class [SmlTypeParameterConstraint].
+ * Returns a new object of class [SmlTypeParameterConstraintGoal].
  */
-fun createSmlTypeParameterConstraint(
+fun createSmlTypeParameterConstraintGoal(
     leftOperand: SmlTypeParameter,
     operator: SmlTypeParameterConstraintOperator,
     rightOperand: SmlAbstractType
-): SmlTypeParameterConstraint {
-    return factory.createSmlTypeParameterConstraint().apply {
+): SmlTypeParameterConstraintGoal {
+    return factory.createSmlTypeParameterConstraintGoal().apply {
         this.leftOperand = leftOperand
         this.operator = operator.operator
         this.rightOperand = rightOperand
@@ -1315,14 +1495,14 @@ fun createSmlTypeParameterConstraint(
 }
 
 /**
- * Returns a new object of class [SmlTypeParameterConstraint] that points to a type parameter with the given name.
+ * Returns a new object of class [SmlTypeParameterConstraintGoal] that points to a type parameter with the given name.
  */
-fun createSmlTypeParameterConstraint(
+fun createSmlTypeParameterConstraintGoal(
     leftOperandName: String,
     operator: SmlTypeParameterConstraintOperator,
     rightOperand: SmlAbstractType
-): SmlTypeParameterConstraint {
-    return createSmlTypeParameterConstraint(
+): SmlTypeParameterConstraintGoal {
+    return createSmlTypeParameterConstraintGoal(
         createSmlTypeParameter(leftOperandName),
         operator,
         rightOperand
