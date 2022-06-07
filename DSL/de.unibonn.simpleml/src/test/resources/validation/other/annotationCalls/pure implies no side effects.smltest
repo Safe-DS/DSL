@@ -1,0 +1,10 @@
+package tests.validation.other.annotationCalls.pureImpliesNoSideEffects
+
+// no_semantic_info "Purity implies absence of side effects (remove this annotation call)."
+»@NoSideEffects«
+fun functionWithoutSideEffects()
+
+// semantic_info "Purity implies absence of side effects (remove this annotation call)."
+»@NoSideEffects«
+@Pure
+fun pureFunctionWithoutSideEffects()

@@ -1,0 +1,19 @@
+workflow w {
+    (  1
+    );
+    ( true   ) or false;
+    not (  true );
+    (  f
+    )((  3 ));
+    (  c  ).member;
+}
+
+// -----------------------------------------------------------------------------
+
+workflow w {
+    (1);
+    (true) or false;
+    not (true);
+    (f)((3));
+    (c).member;
+}

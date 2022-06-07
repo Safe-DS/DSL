@@ -1,0 +1,15 @@
+package tests.unresolvedNamespace
+
+// semantic_error "No declaration with qualified name 'simpleml.langs.Any' exists."
+import »simpleml.langs.Any«
+// no_semantic_error "No declaration with qualified name 'simpleml.lang.Any' exists."
+import »simpleml.lang.Any«
+// no_semantic_error "No declaration with qualified name 'tests.unresolvedNamespace.C' exists."
+import »tests.unresolvedNamespace.C«
+
+// semantic_error "No package with qualified name 'simpleml.langs' exists."
+import »simpleml.langs.*«
+// no_semantic_error "No package with qualified name 'simpleml.model' exists."
+import »simpleml.lang.*«
+
+class C

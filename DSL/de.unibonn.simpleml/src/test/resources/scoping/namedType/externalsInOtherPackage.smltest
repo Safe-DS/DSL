@@ -1,0 +1,6 @@
+package tests.languageTests.scoping.namedType2
+
+class ClassInOtherPackage1<TYPE_PARAMETER_IN_OTHER_PACKAGE>
+class ClassInOtherPackage2
+enum EnumInOtherPackage1
+enum EnumInOtherPackage2

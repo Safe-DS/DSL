@@ -1,0 +1,6 @@
+package tests.typeComputer.expressions.parenthesizedExpressions
+
+workflow myWorkflow {
+    (1);
+    ("");
+}

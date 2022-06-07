@@ -1,0 +1,8 @@
+package tests.trailingComma.inFunctionResultList
+
+// no_syntax_error
+
+fun f() -> (
+	first: Int,
+	second: Int,
+)

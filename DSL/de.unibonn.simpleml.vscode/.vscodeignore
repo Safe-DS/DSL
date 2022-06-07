@@ -1,0 +1,20 @@
+# Git
+.gitignore
+
+# Gradle
+build.gradle.kts
+
+# Typescript
+**/*.ts
+**/tsconfig.json
+
+# NPM
+**/node_modules
+
+# VS Code
+.vscode/**
+.vscode-test/**
+vsc-extension-quickstart.md
+
+# Sources
+src/

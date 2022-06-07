@@ -1,0 +1,15 @@
+class C sub ( Int  ) where T sub ( Int  ) {
+    attr a: (  Int   )
+}
+
+step s(p1: ( Int
+), p2: union<(  Int )>) -> r: (
+ Int ) {}
+
+// -----------------------------------------------------------------------------
+
+class C sub (Int) where T sub (Int) {
+    attr a: (Int)
+}
+
+step s(p1: (Int), p2: union<(Int)>) -> r: (Int) {}

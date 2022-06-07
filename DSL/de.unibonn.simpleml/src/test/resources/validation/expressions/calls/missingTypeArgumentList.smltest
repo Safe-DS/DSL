@@ -1,0 +1,19 @@
+package tests.validation.expressions.calls.missingTypeArgumentList
+
+fun functionWithoutTypeParameters()
+fun functionWithTypeParameters<T>()
+
+workflow myWorkflow {
+    // no_semantic_error "Missing type argument list."
+    »functionWithoutTypeParameters«();
+    // no_semantic_error "Missing type argument list."
+    »functionWithoutTypeParameters«();
+    // semantic_error "Missing type argument list."
+    »functionWithTypeParameters«();
+    // semantic_error "Missing type argument list."
+    »functionWithTypeParameters«();
+    // no_semantic_error "Missing type argument list."
+    »unresolvedFunction«();
+    // no_semantic_error "Missing type argument list."
+    »unresolvedFunction«();
+}

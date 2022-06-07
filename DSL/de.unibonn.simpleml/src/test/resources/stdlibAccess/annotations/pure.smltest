@@ -1,0 +1,4 @@
+fun impureFunction()
+
+@Pure
+fun pureFunction()

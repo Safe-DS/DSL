@@ -1,0 +1,42 @@
+package tests.partialEvaluation.callables
+
+// Preparation -----------------------------------------------------------------
+
+fun impureFunction() -> result: Int
+
+@Pure
+fun pureFunction() -> result: Int
+
+// Test data -------------------------------------------------------------------
+
+workflow workflowWithImpureAndPureLambdas {
+    val impureBlockLambda = () {
+        impureFunction();
+    };
+
+    val pureBlockLambda = () {
+        pureFunction();
+    };
+
+    val recursiveBlockLambda = () {
+        recursiveStep();
+    };
+
+    val impureExpressionLambda = () -> impureFunction();
+
+    val pureExpressionLambda = () -> pureFunction();
+
+    val recursiveExpressionLambda = () -> recursiveStep();
+}
+
+step impureStep() {
+    impureFunction();
+}
+
+step pureStep() {
+    pureFunction();
+}
+
+step recursiveStep() -> result: Int {
+    yield result = recursiveStep();
+}

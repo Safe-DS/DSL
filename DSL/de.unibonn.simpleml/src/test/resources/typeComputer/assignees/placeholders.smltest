@@ -1,0 +1,8 @@
+package tests.typeComputer.assignees.placeholders
+
+fun f(p: Any)
+
+workflow myWorkflow {
+    val a = 1;
+    val b = "";
+}

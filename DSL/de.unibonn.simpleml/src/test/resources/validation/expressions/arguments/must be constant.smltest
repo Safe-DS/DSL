@@ -1,0 +1,33 @@
+package tests.validation.expressions.arguments.argumentsMustBeConstant
+
+fun myFunction() -> res: Int
+
+fun myFunctionWithConstantParameter(
+    @Constant constantParam: Int
+)
+
+fun myFunctionWithNormalParameter(
+    param: Int
+)
+
+
+workflow testWorkflow {
+    // no_semantic_error "Arguments assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»1«);
+    // no_semantic_error "Arguments assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»1 + 2«);
+    // semantic_error "Arguments assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»myFunction()«);
+    // semantic_error "Arguments assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(constantParam = »myFunction()«);
+
+    // no_semantic_error "Arguments assigned to constant parameters must be constant."
+   myFunctionWithNormalParameter(»myFunction()«);
+    // no_semantic_error "Arguments assigned to constant parameters must be constant."
+   myFunctionWithNormalParameter(param = »myFunction()«);
+
+    // no_semantic_error "Arguments assigned to constant parameters must be constant."
+   unresolved(»myFunction()«);
+    // no_semantic_error "Arguments assigned to constant parameters must be constant."
+   myFunctionWithConstantParameter(unresolved = »myFunction()«);
+}

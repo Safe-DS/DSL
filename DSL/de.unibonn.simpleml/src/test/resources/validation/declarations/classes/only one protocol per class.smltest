@@ -1,0 +1,15 @@
+package tests.validation.declarations.classes.onlyOneProtocolPerClass
+
+class MyClass1 {
+
+    // semantic_error "A class must have only one protocol."
+    »protocol {}«
+    // semantic_error "A class must have only one protocol."
+    »protocol {}«
+}
+
+class MyClass2 {
+    
+    // no_semantic_error "A class must have only one protocol."
+    »protocol {}«
+}

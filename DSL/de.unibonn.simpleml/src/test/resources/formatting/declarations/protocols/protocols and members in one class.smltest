@@ -1,0 +1,24 @@
+class C {
+    attr a: Int    protocol
+       {
+
+   } fun f()
+
+        protocol
+        
+            {
+
+}
+}
+
+// -----------------------------------------------------------------------------
+
+class C {
+    attr a: Int
+
+    protocol {}
+
+    fun f()
+
+    protocol {}
+}

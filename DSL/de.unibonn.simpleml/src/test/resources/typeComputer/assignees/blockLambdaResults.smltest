@@ -1,0 +1,10 @@
+package tests.typeComputer.assignees.blockLambdaResults
+
+fun f(p: Any)
+
+workflow myWorkflow {
+    f(() {
+        yield r = 1;
+        yield s = "";
+    });
+}

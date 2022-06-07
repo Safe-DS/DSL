@@ -1,0 +1,82 @@
+package tests.validation.other.argumentLists.missingRequiredParameter
+
+annotation A(a: Int, b: Int = 0)
+
+// semantic_error "The parameter 'a' is required and must be set here."
+@A»()«
+class C(a: Int, b: Int = 0)
+
+enum E {
+    V(a: Int, b: Int = 0)
+}
+
+// no_semantic_error "The parameter 'a' is required and must be set here."
+@A»(a = 1)«
+// no_semantic_error "The parameter 'b' is required and must be set here."
+@A»(a = 1, b = 1)«
+// no_semantic_error "The parameter 'a' is required and must be set here."
+@A»(1, 2, 3)«
+fun f(a: Int, b: Int = 0)
+
+step g(f: (a: Int, b: Int = 0) -> ()) {
+    // semantic_error "The parameter 'a' is required and must be set here."
+    f»()«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    f»(a = 1)«;
+    // no_semantic_error "The parameter 'b' is required and must be set here."
+    f»(a = 1, b = 1)«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    f»(1, 2, 3)«;
+}
+
+step stepWithVariadicParameter(vararg values: Int) {}
+
+workflow myWorkflow {
+    // semantic_error "The parameter 'a' is required and must be set here."
+    C»()«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    C»(a = 1)«;
+    // no_semantic_error "The parameter 'b' is required and must be set here."
+    C»(a = 1, b = 1)«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    C»(1, 2, 3)«;
+
+    // semantic_error "The parameter 'a' is required and must be set here."
+    E.V»()«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    E.V»(a = 1)«;
+    // no_semantic_error "The parameter 'b' is required and must be set here."
+    E.V»(a = 1, b = 1)«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    E.V»(1, 2, 3)«;
+
+    // semantic_error "The parameter 'a' is required and must be set here."
+    f»()«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    f»(a = 1)«;
+    // no_semantic_error "The parameter 'b' is required and must be set here."
+    f»(a = 1, b = 1)«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    f»(1, 2, 3)«;
+
+    // semantic_error "The parameter 'a' is required and must be set here."
+    ((a, b) {})»()«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    ((a, b) {})»(a = 1)«;
+    // no_semantic_error "The parameter 'b' is required and must be set here."
+    ((a, b) {})»(a = 1, b = 1)«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    ((a, b) {})»(1, 2, 3)«;
+
+    // semantic_error "The parameter 'a' is required and must be set here."
+    ((a, b) -> 1)»()«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    ((a, b) -> 1)»(a = 1)«;
+    // no_semantic_error "The parameter 'b' is required and must be set here."
+    ((a, b) -> 1)»(a = 1, b = 1)«;
+    // no_semantic_error "The parameter 'a' is required and must be set here."
+    ((a, b) -> 1)»(1, 2, 3)«;
+
+    // no_semantic_error "The parameter 'values' is required and must be set here."
+    stepWithVariadicParameter();
+}

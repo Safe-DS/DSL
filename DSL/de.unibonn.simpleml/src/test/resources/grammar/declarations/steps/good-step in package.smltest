@@ -1,0 +1,14 @@
+// no_syntax_error
+
+package myPackage
+
+step mySimpleStep() {}
+
+internal step myInternalStep() {}
+
+step myStepWithOneResult() -> a: Int {}
+
+@AnnotationUse
+private step myComplexStep(@AnnotationUse a: Int, vararg b: Int = 3) -> (a: Int, b: Int) {
+    val a = 1;
+}

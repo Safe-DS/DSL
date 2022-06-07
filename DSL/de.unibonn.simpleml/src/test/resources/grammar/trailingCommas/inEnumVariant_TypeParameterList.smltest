@@ -1,0 +1,7 @@
+package tests.trailingComma.inEnumVariantTypeParameterList
+
+// no_syntax_error
+
+enum E {
+    A<T> where T sub Any, T super Int,
+}

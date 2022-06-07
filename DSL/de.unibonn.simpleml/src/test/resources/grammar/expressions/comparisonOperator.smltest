@@ -1,0 +1,12 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    1 < 2;
+    1 <= 2;
+    1 == 2;
+    1 === 2;
+    1 != 2;
+    1 !== 2;
+    1 >= 2;
+    1 > 2;
+}

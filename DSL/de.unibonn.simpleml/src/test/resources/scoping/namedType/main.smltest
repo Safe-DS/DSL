@@ -1,0 +1,65 @@
+package tests.languageTests.scoping.namedType1
+
+import tests.languageTests.scoping.namedType2.ClassInOtherPackage1
+import tests.languageTests.scoping.namedType2.EnumInOtherPackage1
+
+class SuperClass {
+    class ClassInSuperClass
+    enum EnumInSuperClass
+}
+class ClassInSameFile<TYPE_PARAMETER_IN_SAME_FILE> sub SuperClass {
+    class ClassInClassInSameFile
+    enum EnumInClassInSameFile
+}
+
+enum EnumInSameFile {
+    EnumVariantInSameFile
+}
+
+fun NotANamedTypeDeclaration()
+
+fun directNamedTypes<TYPE_PARAMETER_IN_SAME_FUNCTION>(
+    paramClassInSameFile: ClassInSameFile<*>,
+    paramEnumInSameFile: EnumInSameFile,
+
+    paramClassInSamePackage: ClassInSamePackage<*>,
+    paramEnumInSamePackage: EnumInSamePackage,
+
+    paramClassInOtherPackage1: ClassInOtherPackage1<*>,
+    paramEnumInOtherPackage1: EnumInOtherPackage1,
+
+    paramClassInOtherPackage2: ClassInOtherPackage2<*>,
+    paramEnumInOtherPackage2: EnumInOtherPackage2,
+
+    paramTypeParameterInSameFunction: TYPE_PARAMETER_IN_SAME_FUNCTION,
+    paramTypeParameterInSameFile: TYPE_PARAMETER_IN_SAME_FILE,
+    paramTypeParameterInSamePackage: TYPE_PARAMETER_IN_SAME_PACKAGE,
+    paramTypeParameterInOtherPackage: TYPE_PARAMETER_IN_OTHER_PACKAGE,
+
+    paramUnresolvedNamedTypeDeclaration: UnresolvedNamedTypeDeclaration,
+    paramNotANamedTypeDeclaration: NotANamedTypeDeclaration
+)
+
+fun memberTypes(
+    paramClassInClassInSameFile: ClassInSameFile<*>.ClassInClassInSameFile,
+    paramEnumInClassInSameFile: ClassInSameFile<*>.EnumInClassInSameFile,
+    paramEnumVariantInSameFile: EnumInSameFile.EnumVariantInSameFile,
+
+    paramUnqualifiedClassInClassInSameFile: ClassInClassInSameFile,
+    paramUnqualifiedEnumInClassInSameFile: EnumInClassInSameFile,
+    paramUnqualifiedEnumVariantInSameFile: EnumVariantInSameFile,
+)
+
+fun inheritedMemberTypes(
+    paramClassInSuperClass: ClassInSameFile<*>.ClassInSuperClass,
+    paramEnumInSuperClass: ClassInSameFile<*>.EnumInSuperClass,
+)
+
+class ClassWithTypeParameter<TYPE_PARAMETER_IN_OUTER_CLASS> {
+    attr attributeInClassWithTypeParameter: TYPE_PARAMETER_IN_OUTER_CLASS
+    class NestedClass(paramClassInClassWithTypeParameter: TYPE_PARAMETER_IN_OUTER_CLASS)
+    enum NestedEnum {
+        Variant(paramEnumInClassWithTypeParameter: TYPE_PARAMETER_IN_OUTER_CLASS)
+    }
+    fun method(paramMethodInClassWithTypeParameter: TYPE_PARAMETER_IN_OUTER_CLASS)
+}

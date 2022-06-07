@@ -1,0 +1,45 @@
+package tests.validation.other.argumentLists.noPositionalArgumentsAfterFirstNamedArgument
+
+annotation MyAnnotation(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
+
+// no_semantic_error "After the first named argument all arguments must be named."
+// no_semantic_error "After the first named argument all arguments must be named."
+// semantic_error "After the first named argument all arguments must be named."
+// no_semantic_error "After the first named argument all arguments must be named."
+// semantic_error "After the first named argument all arguments must be named."
+@MyAnnotation(»0«, »a = 1«, »2«, »b = 3«, »4«) class MyClass1
+
+// no_semantic_error "After the first named argument all arguments must be named."
+@MyAnnotation(»0«) class MyClass2
+
+// no_semantic_error "After the first named argument all arguments must be named."
+// no_semantic_error "After the first named argument all arguments must be named."
+// semantic_error "After the first named argument all arguments must be named."
+// no_semantic_error "After the first named argument all arguments must be named."
+@UnresolvedAnnotation(»0«, »a = 1«, »2«, »b = 3«) class MyClass3
+
+// no_semantic_error "After the first named argument all arguments must be named."
+@UnresolvedAnnotation(»0«) class MyClass4
+
+fun f(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
+
+workflow myWorkflow {
+    // no_semantic_error "After the first named argument all arguments must be named."
+    // no_semantic_error "After the first named argument all arguments must be named."
+    // semantic_error "After the first named argument all arguments must be named."
+    // no_semantic_error "After the first named argument all arguments must be named."
+    // semantic_error "After the first named argument all arguments must be named."
+    f(»0«, »a = 1«, »2«, »b = 3«, »4«);
+
+    // no_semantic_error "After the first named argument all arguments must be named."
+    f(»0«);
+
+    // no_semantic_error "After the first named argument all arguments must be named."
+    // no_semantic_error "After the first named argument all arguments must be named."
+    // semantic_error "After the first named argument all arguments must be named."
+    // no_semantic_error "After the first named argument all arguments must be named."
+    unresolvedCallable(»0«, »a = 1«, »2«, »b = 3«);
+
+    // no_semantic_error "After the first named argument all arguments must be named."
+    unresolvedCallable(»0«);
+}

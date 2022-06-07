@@ -1,0 +1,5 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    "}} template {{ a }}";
+}

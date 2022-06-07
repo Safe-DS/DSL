@@ -1,0 +1,9 @@
+@PythonModule("special_module")
+
+package tests.generator.pythonModule
+
+fun f()
+
+step test() {
+    f();
+}

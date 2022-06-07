@@ -1,0 +1,24 @@
+package tests.languageTests.scoping.typeParameterConstraint1
+
+import tests.languageTests.scoping.typeParameterConstraint2.functionInOtherPackage1
+
+fun functionInSameFile<TYPE_PARAMETER_IN_SAME_FILE>()
+
+annotation NOT_A_TYPE_PARAMETER
+
+class TestClass<TYPE_PARAMETER_IN_SAME_CLASS>
+where TYPE_PARAMETER_IN_SAME_CLASS sub Int
+
+enum TestEnum {
+    TestEnumVariant<TYPE_PARAMETER_IN_SAME_ENUM_VARIANT>
+    where TYPE_PARAMETER_IN_SAME_ENUM_VARIANT sub Int 
+}
+
+fun testFunction<TYPE_PARAMETER_IN_SAME_FUNCTION>() 
+where TYPE_PARAMETER_IN_SAME_FUNCTION sub Int, 
+      TYPE_PARAMETER_IN_SAME_FILE sub Int, 
+      TYPE_PARAMETER_IN_SAME_PACKAGE sub Int, 
+      TYPE_PARAMETER_IN_OTHER_PACKAGE1 sub Int, 
+      TYPE_PARAMETER_IN_OTHER_PACKAGE2 sub Int, 
+      NOT_A_TYPE_PARAMETER sub Int, 
+      UNRESOLVED_TYPE_PARAMETER sub Int

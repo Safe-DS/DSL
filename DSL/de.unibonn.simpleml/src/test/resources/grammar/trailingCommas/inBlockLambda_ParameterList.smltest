@@ -1,0 +1,7 @@
+package tests.trailingComma.inBlockLambdaParameterList
+
+// no_syntax_error
+
+workflow w {
+    (first, second, ) {};
+}

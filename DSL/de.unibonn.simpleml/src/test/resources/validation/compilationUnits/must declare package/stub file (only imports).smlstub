@@ -1,0 +1,3 @@
+// no_semantic_error "A file with declarations must declare its package."
+
+import myPackage

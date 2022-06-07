@@ -1,0 +1,36 @@
+package tests.validation.declarations.parameters.mustHaveType
+
+// semantic_error "A parameter must have a type."
+// no_semantic_error "A parameter must have a type."
+annotation MyAnnotation(»a«, »b«: Int)
+
+// semantic_error "A parameter must have a type."
+// no_semantic_error "A parameter must have a type."
+class MyClass(»a«, »b«: Int) {
+    // semantic_error "A parameter must have a type."
+    // no_semantic_error "A parameter must have a type."
+    class MyClass(»a«, »b«: Int) {}
+
+    // semantic_error "A parameter must have a type."
+    // no_semantic_error "A parameter must have a type."
+    fun myFunction(»a«, »b«: Int)
+}
+
+// semantic_error "A parameter must have a type."
+// no_semantic_error "A parameter must have a type."
+fun myFunction(»a«, »b«: Int)
+
+workflow myWorkflow {
+    // no_semantic_error "A parameter must have a type."
+    (»a«) {};
+}
+
+// semantic_error "A parameter must have a type."
+// no_semantic_error "A parameter must have a type."
+step myStep1(»a«, »b«: Int) {}
+
+// semantic_error "A parameter must have a type."
+// no_semantic_error "A parameter must have a type."
+step myStep2(
+    f: (»a«, »b«: Int) -> ()
+) {}

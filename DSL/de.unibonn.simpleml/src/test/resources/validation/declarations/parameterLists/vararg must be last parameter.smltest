@@ -1,0 +1,12 @@
+package tests.validation.declarations.parameterLists.varargMustBeLastParameter
+
+// no_semantic_error "After a variadic parameter no more parameters must be specified."
+// no_semantic_error "After a variadic parameter no more parameters must be specified."
+// no_semantic_error "After a variadic parameter no more parameters must be specified."
+fun validFunction(»a«: Int, »b«: Int = 1, vararg »c«: Int)
+
+// no_semantic_error "After a variadic parameter no more parameters must be specified."
+// semantic_error "After a variadic parameter no more parameters must be specified."
+// semantic_error "After a variadic parameter no more parameters must be specified."
+// semantic_error "After a variadic parameter no more parameters must be specified."
+fun invalidFunction(vararg »a«: Int, »b«: Int, »c«: Int = 1, vararg »d«: Int)

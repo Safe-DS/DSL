@@ -1,0 +1,36 @@
+package tests.validation.references.mustNotStaticallyReferenceEnum
+
+enum Enum {
+    Variant
+}
+
+class ClassWithEnum {
+    enum Enum {
+        Variant
+    }
+
+    class ClassWithEnum {
+        enum Enum {
+            Variant
+        }
+    }
+}
+
+workflow test {
+    // semantic_error "Must not statically reference enum."
+    »Enum«;    
+    // semantic_error "Must not statically reference enum."
+    »Enum«();
+    // no_semantic_error "Must not statically reference enum."
+    »Enum«.Variant;        
+    // no_semantic_error "Must not statically reference enum."
+    »Enum«.unresolved;    
+    // semantic_error "Must not statically reference enum."
+    ClassWithEnum.»Enum«;
+    // no_semantic_error "Must not statically reference enum."
+    ClassWithEnum.»Enum«.Variant;    
+    // semantic_error "Must not statically reference enum."
+    ClassWithEnum.ClassWithEnum.»Enum«;
+    // no_semantic_error "Must not statically reference enum."
+    ClassWithEnum.ClassWithEnum.»Enum«.Variant;
+}

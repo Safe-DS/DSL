@@ -1,0 +1,8 @@
+fun functionWithoutDescription()
+
+@Description("Lorem ipsum")
+fun functionWithUniqueDescription()
+
+@Description("Lorem ipsum 1")
+@Description("Lorem ipsum 2")
+fun functionWithMultipleDescriptions()

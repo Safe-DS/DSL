@@ -1,0 +1,10 @@
+package tests.uniqueNames
+
+enum MyEnum {
+    // semantic_error "A declaration with name 'INSTANCE1' exists already in this enum."
+    »INSTANCE1«
+    // semantic_error "A declaration with name 'INSTANCE1' exists already in this enum."
+    »INSTANCE1«
+    // no_semantic_error "A declaration with name 'INSTANCE2' exists already in this enum."
+    »INSTANCE2«
+}

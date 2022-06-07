@@ -1,0 +1,4 @@
+annotation UnrepeatableAnnotation
+
+@Repeatable
+annotation RepeatableAnnotation

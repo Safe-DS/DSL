@@ -1,0 +1,8 @@
+fun functionWithoutSince()
+
+@Since("1.0.0")
+fun functionWithUniqueSince()
+
+@Since("1.0.0")
+@Since("2.0.0")
+fun functionWithMultipleSinces()

@@ -1,0 +1,11 @@
+workflow myWorkflow {
+           not     true and not       false;
+         -    1;
+}
+
+// -----------------------------------------------------------------------------
+
+workflow myWorkflow {
+    not true and not false;
+    -1;
+}

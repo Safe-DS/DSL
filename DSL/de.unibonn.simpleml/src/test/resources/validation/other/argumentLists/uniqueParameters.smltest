@@ -1,0 +1,162 @@
+package tests.validation.other.argumentLists.uniqueParameters
+
+annotation A(a: Int, b: Int = 0)
+
+@A(
+    // semantic_error "The parameter 'a' is already set."
+    »1«,
+    // semantic_error "The parameter 'a' is already set."
+    »a = 1«
+)
+@A(
+    // semantic_error "The parameter 'b' is already set."
+    »b = 1«,
+    // semantic_error "The parameter 'b' is already set."
+    »b = 1«
+)
+class C(a: Int, b: Int = 0)
+
+enum E {
+    V(a: Int, b: Int = 0)
+}
+
+@A(
+    // no_semantic_error "The parameter 'a' is already set."
+    »a = 1«,
+    // no_semantic_error "The parameter 'b' is already set."
+    »b = 1«
+)
+fun f(a: Int, b: Int = 0, vararg c: Int)
+
+step g(f: (a: Int, b: Int = 0) -> ()) {
+    f(
+        // semantic_error "The parameter 'a' is already set."
+        »1«,
+        // semantic_error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    f(
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«,
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    f(
+        // no_semantic_error "The parameter 'a' is already set."
+        »a = 1«,
+        // no_semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    f(
+        // no_semantic_error "The parameter 'c' is already set."
+        »c = 1«,
+        // no_semantic_error "The parameter 'c' is already set."
+        »c = 1«
+    );
+    f(
+        1,
+        2,
+        // no_semantic_error "The parameter 'c' is already set."
+        »3«,
+        // no_semantic_error "The parameter 'c' is already set."
+        »4«
+    );
+}
+
+workflow test {
+    C(
+        // semantic_error "The parameter 'a' is already set."
+        »1«,
+        // semantic_error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    C(
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«,
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    C(
+        // no_semantic_error "The parameter 'a' is already set."
+        »a = 1«,
+        // no_semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+
+    E.V(
+        // semantic_error "The parameter 'a' is already set."
+        »1«,
+        // semantic_error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    E.V(
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«,
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    E.V(
+        // no_semantic_error "The parameter 'a' is already set."
+        »a = 1«,
+        // no_semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+
+
+    f(
+        // semantic_error "The parameter 'a' is already set."
+        »1«,
+        // semantic_error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    f(
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«,
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    f(
+        // no_semantic_error "The parameter 'a' is already set."
+        »a = 1«,
+        // no_semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+
+    ((a, b) {})(
+        // semantic_error "The parameter 'a' is already set."
+        »1«,
+        // semantic_error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    ((a, b) {})(
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«,
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    ((a, b) {})(
+        // no_semantic_error "The parameter 'a' is already set."
+        »a = 1«,
+        // no_semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+
+    ((a, b) -> 1)(
+        // semantic_error "The parameter 'a' is already set."
+        »1«,
+        // semantic_error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    ((a, b) -> 1)(
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«,
+        // semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    ((a, b) -> 1)(
+        // no_semantic_error "The parameter 'a' is already set."
+        »a = 1«,
+        // no_semantic_error "The parameter 'b' is already set."
+        »b = 1«
+    );
+}

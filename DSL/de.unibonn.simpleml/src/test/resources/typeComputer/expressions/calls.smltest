@@ -1,0 +1,37 @@
+package tests.typeComputer.expressions.calls
+
+class C()
+enum E {
+    V(a: Int)
+}
+fun f1() -> r: String
+fun f2() -> (r: String, s: Int)
+step s1() -> r: String{
+    yield r = "";
+}
+step s2() -> (r: String, s: Int) {
+    yield r = "";
+    yield s = 1;
+}
+
+step mySteps(
+    p1: () -> r: String,
+    p2: () -> (r: String, s: Int)
+) {
+    val classCall = C();
+    val callableTypeCall1 = p1();
+    val callableTypeCall2 = p2();
+    val enumVariantCall = E.V(1);
+    val functionCall1 = f1();    
+    val functionCall2 = f2();
+    val blockLambdaCall1 = (() {
+        yield r = "";
+    })();
+    val blockLambdaCall2 = (() {
+        yield r = "";
+        yield s = 1;
+    })();
+    val expressionLambdaCall = (() -> 1)();
+    val stepCall1 = s1();
+    val stepCall2 = s2();
+}

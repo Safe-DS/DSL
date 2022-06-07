@@ -1,0 +1,7 @@
+// no_syntax_error
+
+workflow myWorkflow {
+    () -> 1;
+
+    (a, vararg b = 1) -> 1;
+}

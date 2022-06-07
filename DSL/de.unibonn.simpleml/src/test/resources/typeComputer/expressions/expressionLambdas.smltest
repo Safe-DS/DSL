@@ -1,0 +1,27 @@
+package tests.typeComputer.expressions.expressionLambdas
+
+fun f(
+    parameter: (a: String, b: Int) -> r: String
+)
+
+step lambdasWithExplicitParameterTypes() -> (
+    result: (a: String, b: Int) -> r: String
+) {
+    val myLambda = (a: Int, b: String) -> 1;
+    yield result = (a: Int, b: String) -> 1;
+    f((a: Int, b: String) -> 1);
+}
+
+step lambdasWithExplicitVariadicType() {
+    val myLambda = (a: Int, vararg b: String) -> 1;
+}
+
+step yieldedLambda() -> (
+    result: (a: String, b: Int) -> r: String
+) {
+    yield result = (a, b) -> 1;
+}
+
+step argumentLambda() {
+    f((a, b) -> 1);
+}

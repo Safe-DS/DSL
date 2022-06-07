@@ -1,0 +1,10 @@
+package tests.generator.reference
+
+fun f(param: Any?)
+
+@PythonName("explain_model")
+fun explainModel() -> result: Int
+
+workflow test {
+    f(explainModel());
+}

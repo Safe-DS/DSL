@@ -1,0 +1,8 @@
+package tests.validation.declarations.workflows.uniqueNames
+
+workflow w {
+	// semantic_error "A declaration with name 'myPlaceholder' exists already in this workflow."
+    val »myPlaceholder« = 1;
+    // semantic_error "A declaration with name 'myPlaceholder' exists already in this workflow."
+    val »myPlaceholder« = 1;
+}

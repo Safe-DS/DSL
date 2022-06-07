@@ -1,0 +1,51 @@
+package tests.partialEvaluation.references
+
+workflow successfulRecordAssignment {
+    val lambda = () {
+        yield result = 1;
+    };
+    val placeholder = lambda();
+
+    placeholder;
+}
+
+workflow failedRecordAssignment {
+    val lambda = () {
+        yield result = 1;
+    };
+    _, val placeholder = lambda();
+
+    placeholder;
+}
+
+step myStep1() -> (a: Int, b: Int) {
+    yield b = 1;
+    yield a = 2;
+}
+
+workflow recordAssignmentWithDifferentYieldOrder {
+    val placeholder1, val placeholder2 = myStep1();
+
+    placeholder1 - placeholder2;
+}
+
+step myStep2() -> (a: Int, b: Int) {
+    yield b = 1;
+}
+
+workflow recordAssignmentWithMissingYield {
+    _, val placeholder = myStep2();
+    
+    placeholder;
+}
+
+step myStep3() -> (a: Int) {
+    yield b = 2;
+    yield a = 1;
+}
+
+workflow recordAssignmentWithAdditionalYield {
+    val placeholder = myStep3();
+
+    placeholder;
+}

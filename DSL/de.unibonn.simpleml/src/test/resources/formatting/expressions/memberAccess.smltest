@@ -1,0 +1,11 @@
+workflow myWorkflow {
+    a     .          member;
+    a   ?   .    member;
+}
+
+// -----------------------------------------------------------------------------
+
+workflow myWorkflow {
+    a.member;
+    a?.member;
+}

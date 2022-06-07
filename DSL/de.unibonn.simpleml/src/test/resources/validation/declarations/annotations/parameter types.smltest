@@ -1,0 +1,52 @@
+package tests.validation.declarations.annotations.parameterTypes
+
+class MyClass
+
+enum ConstantEnum {
+    Variant1
+    Variant2
+}
+
+enum NonConstantEnum {
+    Variant1(param: Int)
+    Variant2
+}
+
+annotation MyAnnotation(
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    booleanParam: »Boolean«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableBooleanParam: »Boolean?«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    floatParam: »Float«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableFloatParam: »Float?«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    intParam: »Int«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableIntParam: »Int?«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    stringParam: »String«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableStringParam: »String?«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    constantEnumParam: »ConstantEnum«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableConstantEnumParam: »ConstantEnum?«,
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nonConstantEnumParam: »NonConstantEnum«,
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableNonConstantEnumParam: »NonConstantEnum?«,
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    classParam: »MyClass«,
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableClassParam: »MyClass?«,
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    unresolvedParam: »Unresolved«,
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableUnresolvedParam: »Unresolved?«,    
+    // semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    callableParam: »() -> ()«,
+    // no_semantic_error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    vararg variadicParameter: »Int«,
+)

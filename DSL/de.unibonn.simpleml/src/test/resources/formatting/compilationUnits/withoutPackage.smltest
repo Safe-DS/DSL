@@ -1,0 +1,14 @@
+    workflow    w1    {       } workflow w2 {}
+workflow w3 {
+
+
+
+}
+
+// -----------------------------------------------------------------------------
+
+workflow w1 {}
+
+workflow w2 {}
+
+workflow w3 {}

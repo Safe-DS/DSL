@@ -1,0 +1,65 @@
+package tests.ignoresResultOfCall
+
+class MyClass {
+    static fun oneResult() -> first: Int
+    static fun twoResults() -> (first: Int, second: Int)
+}
+
+fun functionOneResult() -> first: Int
+fun functionTwoResults() -> (first: Int, second: Int)
+
+step stepOneResult() -> first: Int {}
+step stepTwoResults() -> (first: Int, second: Int) {}
+
+step test(
+    paramOneResult: () -> first: Int,
+    paramTwoResults: () -> (first: Int, second: Int)
+) {
+    val lambdaOneResult = () {
+        yield first = 1;
+    };
+    val lambdaTwoResults = () {
+        yield first = 1;
+        yield second = 2;
+    };
+
+	// no_semantic_warning "The result 'first' is implicitly ignored."
+    »val methodResult1« = MyClass.oneResult();
+    // no_semantic_warning "The result 'first' is implicitly ignored."
+    »val methodResult2« = MyClass.twoResults();
+    // semantic_warning "The result 'second' is implicitly ignored."
+    »val methodResult3« = MyClass.twoResults();
+
+	// no_semantic_warning "The result 'first' is implicitly ignored."
+    »val functionResult1« = functionOneResult();
+    // no_semantic_warning "The result 'first' is implicitly ignored."
+    »val functionResult2« = functionTwoResults();
+    // semantic_warning "The result 'second' is implicitly ignored."
+    »val functionResult3« = functionTwoResults();
+
+	// no_semantic_warning "The result 'first' is implicitly ignored."
+    »val stepResult1« = stepOneResult();
+    // no_semantic_warning "The result 'first' is implicitly ignored."
+    »val stepResult2« = stepTwoResults();
+    // semantic_warning "The result 'second' is implicitly ignored."
+    »val stepResult3« = stepTwoResults();
+
+	// no_semantic_warning "The result 'first' is implicitly ignored."
+    »val callableResult1« = paramOneResult();
+    // no_semantic_warning "The result 'first' is implicitly ignored."
+    »val callableResult2« = paramTwoResults();
+    // semantic_warning "The result 'second' is implicitly ignored."
+    »val callableResult3« = paramTwoResults();
+
+	// no_semantic_warning "The result 'first' is implicitly ignored."
+    »val lambdaResult1« = paramOneResult();
+    // no_semantic_warning "The result 'first' is implicitly ignored."
+    »val lambdaResult2« = paramTwoResults();
+    // semantic_warning "The result 'second' is implicitly ignored."
+    »val lambdaResult3« = paramTwoResults();
+
+    /* If the call cannot be resolved, no additional error should be displayed. */
+
+    // no_semantic_warning "The result '???' is implicitly ignored."
+    »val unresolved« = bla();
+}

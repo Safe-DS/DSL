@@ -1,0 +1,32 @@
+package tests.validation.declarations.parameters.expertMustBeOptional
+
+// semantic_error "An expert parameter must be optional."
+// no_semantic_error "An expert parameter must be optional."
+annotation MyAnnotation(»@Expert« a: Int, »@Expert« b: Int = 3)
+
+// semantic_error "An expert parameter must be optional."
+// no_semantic_error "An expert parameter must be optional."
+class MyClass(»@Expert« a: Int, »@Expert« b: Int = 3) {
+
+    // semantic_error "An expert parameter must be optional."
+    // no_semantic_error "An expert parameter must be optional."
+    class MyClass(»@Expert« a: Int, »@Expert« b: Int = 3)
+
+    // semantic_error "An expert parameter must be optional."
+    // no_semantic_error "An expert parameter must be optional."
+    fun myFunction(»@Expert« a: Int, »@Expert« b: Int = 3)
+}
+
+// semantic_error "An expert parameter must be optional."
+// no_semantic_error "An expert parameter must be optional."
+fun myFunction(»@Expert« a: Int, »@Expert« b: Int = 3)
+
+// semantic_error "An expert parameter must be optional."
+// no_semantic_error "An expert parameter must be optional."
+step myStep1(»@Expert« a: Int, »@Expert« b: Int = 3) {}
+
+// semantic_error "An expert parameter must be optional."
+// no_semantic_error "An expert parameter must be optional."
+step myStep2(
+    f: (»@Expert« a: Int, »@Expert« b: Int = 3) -> ()
+) {}

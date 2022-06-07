@@ -1,0 +1,9 @@
+package tests.typeComputer.expressions.literals
+
+workflow myWorkflow {
+    val booleanLiteral = true;
+    val floatLiteral = 1.0;
+    val intLiteral = 1;
+    val nullLiteral = null;
+    val stringLiteral = "myString";
+}

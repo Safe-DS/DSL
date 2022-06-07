@@ -1,0 +1,13 @@
+workflow myWorkflow {
+    "template {{
+        
+        a
+        
+    }}";
+}
+
+// -----------------------------------------------------------------------------
+
+workflow myWorkflow {
+    "template {{ a }}";
+}

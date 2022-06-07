@@ -1,0 +1,30 @@
+package tests.validation.typeArgumentLists.uniqueTypeParameters
+
+class MyClass<A, B>
+
+step myStep(
+    f: MyClass<
+        // semantic_error "The type parameter 'A' is already set."
+        »Int«,
+        // semantic_error "The type parameter 'A' is already set."
+        »A = Int«
+    >,
+    g: MyClass<
+        // semantic_error "The type parameter 'B' is already set."
+        »B = Int«,
+        // semantic_error "The type parameter 'B' is already set."
+        »B = Int«
+    >,
+    h: MyClass<
+        // no_semantic_error r"The type parameter '\w+' is already set\."
+        »A = Int«,
+        // no_semantic_error r"The type parameter '\w+' is already set\."
+        »B = Int«
+    >,
+    i: MyClass<
+        // no_semantic_error r"The type parameter '\w+' is already set\."
+        »Unresolved = Int«,
+        // no_semantic_error r"The type parameter '\w+' is already set\."
+        »Unresolved = Int«
+    >
+) {}

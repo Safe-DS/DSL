@@ -1,0 +1,8 @@
+package tests.trailingComma.inFunctionParameterList
+
+// no_syntax_error
+
+fun f(
+    a: Int,
+    b: Int,
+)
