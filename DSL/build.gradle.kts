@@ -25,7 +25,7 @@ plugins {
 
     base
     idea
-    id("org.jetbrains.kotlinx.kover") version "0.5.0"
+    id("org.jetbrains.kotlinx.kover") version "0.5.1"
 }
 
 repositories {
