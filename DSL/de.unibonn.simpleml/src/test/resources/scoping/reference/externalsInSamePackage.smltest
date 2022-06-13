@@ -5,8 +5,6 @@ class ClassInSamePackage
 enum EnumInSamePackage
 fun globalFunctionInSamePackage()
 
-predicate PredicateInSamePackage()
-
 step stepInSamePackage() {}
 internal step internalStepInSamePackage() {}
 private step privateStepInSamePackage() {}

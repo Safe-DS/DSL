@@ -5,7 +5,6 @@ import tests.languageTests.scoping.reference2.ClassInOtherPackage1
 import tests.languageTests.scoping.reference2.EnumInOtherPackage1
 import tests.languageTests.scoping.reference2.globalFunctionInOtherPackage1
 import tests.languageTests.scoping.reference2.internalStepInOtherPackage
-import tests.languageTests.scoping.reference2.PredicateInOtherPackage1
 import tests.languageTests.scoping.reference2.privateStepInOtherPackage
 import tests.languageTests.scoping.reference2.stepInOtherPackage1
 import tests.languageTests.scoping.reference2.workflowInOtherPackage1
@@ -83,9 +82,6 @@ class ClassForResultMemberAccess() {
 }
 enum EnumForResultMemberAccess {
     result
-}
-
-predicate PredicateInSameFile() {
 }
 
 // Direct references -----------------------------------------------------------
@@ -204,13 +200,6 @@ step shadowedReferences(ClassInSameFile: Int) {
         val ClassInSameFile = 1;
         ClassInSameFile;
     };
-}
-
-predicate directReferencesToPredicates() {
-    PredicateInSameFile(),
-    PredicateInSamePackage(),
-    PredicateInOtherPackage1(),
-    PredicateInOtherPackage2()
 }
 
 // Access to own members -------------------------------------------------------
