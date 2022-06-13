@@ -1,9 +1,9 @@
 package de.unibonn.simpleml.constant
 
-import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraint
+import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraintGoal
 
 /**
- * The possible operators for an [SmlTypeParameterConstraint].
+ * The possible operators for an [SmlTypeParameterConstraintGoal].
  */
 enum class SmlTypeParameterConstraintOperator(val operator: String) {
 
@@ -25,11 +25,11 @@ enum class SmlTypeParameterConstraintOperator(val operator: String) {
 }
 
 /**
- * Returns the [SmlTypeParameterConstraintOperator] of this [SmlTypeParameterConstraint].
+ * Returns the [SmlTypeParameterConstraintOperator] of this [SmlTypeParameterConstraintGoal].
  *
  * @throws IllegalArgumentException If the operator is unknown.
  */
-fun SmlTypeParameterConstraint.operator(): SmlTypeParameterConstraintOperator {
+fun SmlTypeParameterConstraintGoal.operator(): SmlTypeParameterConstraintOperator {
     return SmlTypeParameterConstraintOperator.values().firstOrNull { it.operator == this.operator }
         ?: throw IllegalArgumentException("Unknown type parameter constraint operator '$operator'.")
 }

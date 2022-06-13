@@ -17,7 +17,7 @@ class ValidClass {
 enum DeprecatedEnum
 enum ValidEnum {
     @Deprecated DeprecatedEnumVariant
-    ValidEnumVariant 
+    ValidEnumVariant
 }
 
 @Deprecated
@@ -26,21 +26,23 @@ fun validFunction(
     @Deprecated deprecatedParameter: Int = 1,
     validParameter: Int = 1
 ) -> (
-    @Deprecated deprecatedResult: Int, 
+    @Deprecated deprecatedResult: Int,
     validResult: Int
-) 
+)
 
-fun functionWithTypeParameters<@Deprecated DeprecatedTypeParameter, ValidTypeParameter>() where
+fun functionWithTypeParameters<@Deprecated DeprecatedTypeParameter, ValidTypeParameter>() {
 
-    /* 
+    /*
     * Showing an error for yields is pointless, since constraints must stay.
     * Deprecation is only relevant for callers.
     */
-
-    // no_semantic_warning "The referenced declaration is deprecated."
-    »DeprecatedTypeParameter« sub Int,
-    // no_semantic_warning "The referenced declaration is deprecated."
-    »ValidTypeParameter« sub Int,
+    constraint {
+        // no_semantic_warning "The referenced declaration is deprecated."
+        »DeprecatedTypeParameter« sub Int,
+        // no_semantic_warning "The referenced declaration is deprecated."
+        »ValidTypeParameter« sub Int
+    }
+}
 
 @Deprecated step deprecatedStep() {}
 step validStep() {}
@@ -66,7 +68,7 @@ step testStep1(
     param5: »Unresolved« = 1
 )
 -> (
-    @Deprecated deprecatedResult: Int, 
+    @Deprecated deprecatedResult: Int,
     validResult: Int
 ) {
 
@@ -140,7 +142,7 @@ step testStep1(
     // no_semantic_warning "The referenced declaration is deprecated."
     »unresolved«;
 
-    /* 
+    /*
      * Showing an error for yields is pointless, since we must yield something.
      * Deprecation is only relevant for callers.
      */
@@ -155,8 +157,8 @@ step testStep2() -> (result1: Int, result2: Int, result3: Int) {
     // semantic_warning "The assigned declaration is deprecated."
     // no_semantic_warning "The assigned declaration is deprecated."
     // no_semantic_warning "The assigned declaration is deprecated."
-    »val a«, »val b«, »val c« = validFunction();    
-    
+    »val a«, »val b«, »val c« = validFunction();
+
     // semantic_warning "The assigned declaration is deprecated."
     // no_semantic_warning "The assigned declaration is deprecated."
     // no_semantic_warning "The assigned declaration is deprecated."

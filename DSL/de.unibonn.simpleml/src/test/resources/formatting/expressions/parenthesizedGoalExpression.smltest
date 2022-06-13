@@ -1,0 +1,28 @@
+
+predicate MyPredicate() -> dataset: Dataset {
+    goal1(   arg1    ,    arg2   )    ,   (  goal2(   arg3   ,    arg4    ),(( goal3(   arg5    , arg6    )
+
+                ,       goal4(   arg7   ,     arg8)                  )    ,   goal5(
+                  arg9    ,    arg10   )
+)     ,   (    goal6(arg11   , arg12    )   )
+                   )
+}
+
+// -----------------------------------------------------------------------------
+
+predicate MyPredicate() -> dataset: Dataset {
+    goal1(arg1, arg2),
+    (
+        goal2(arg3, arg4),
+        (
+            (
+                goal3(arg5, arg6),
+                goal4(arg7, arg8)
+            ),
+            goal5(arg9, arg10)
+        ),
+        (
+            goal6(arg11, arg12)
+        )
+    )
+}

@@ -2,4 +2,7 @@ package tests.trailingComma.inAnnotationConstraintList
 
 // no_syntax_error
 
-annotation A where T sub Any, T super Int,
+annotation A constraint {
+    T sub Any,
+    T super Int
+}

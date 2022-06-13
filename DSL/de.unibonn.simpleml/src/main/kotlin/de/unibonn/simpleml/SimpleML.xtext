@@ -29,14 +29,13 @@ SmlCompilationUnitMember returns SmlAbstractAnnotatedObject
     ( {SmlAnnotation.annotationCallList=current}
           'annotation' name=ID
           parameterList=SmlParameterList?
-          constraintList=SmlConstraintList?
+          constraint=SmlConstraint?
 
     | {SmlClass.annotationCallList=current}
           'class' name=ID
           typeParameterList=SmlTypeParameterList?
           parameterList=SmlParameterList?
           parentTypeList=SmlParentTypeList?
-          constraintList=SmlConstraintList?
           body=SmlClassBody?
 
     | {SmlEnum.annotationCallList=current}
@@ -48,7 +47,7 @@ SmlCompilationUnitMember returns SmlAbstractAnnotatedObject
           typeParameterList=SmlTypeParameterList?
           parameterList=SmlParameterList
           resultList=SmlResultList?
-          constraintList=SmlConstraintList?
+          body=SmlFunctionBody?
 
     | {SmlStep.annotationCallList=current}
           visibility=('internal'|'private')?
@@ -60,6 +59,12 @@ SmlCompilationUnitMember returns SmlAbstractAnnotatedObject
     | {SmlWorkflow.annotationCallList=current}
           'workflow' name=ID
           body=SmlBlock
+
+    | {SmlPredicate.annotationCallList=current}
+          'predicate' name=ID
+          parameterList=SmlParameterList
+          resultList=SmlResultList?
+          goalList=SmlGoalList
     )
     ;
 
@@ -113,6 +118,7 @@ SmlClassBody
 SmlClassMember returns SmlAbstractObject
     : SmlAnnotatedClassMember
     | SmlProtocol
+    | SmlConstraint
     ;
 
 SmlAnnotatedClassMember returns SmlAbstractAnnotatedObject
@@ -127,7 +133,6 @@ SmlAnnotatedClassMember returns SmlAbstractAnnotatedObject
           typeParameterList=SmlTypeParameterList?
           parameterList=SmlParameterList?
           parentTypeList=SmlParentTypeList?
-          constraintList=SmlConstraintList?
           body=SmlClassBody?
 
     | {SmlEnum.annotationCallList=current}
@@ -140,8 +145,12 @@ SmlAnnotatedClassMember returns SmlAbstractAnnotatedObject
           typeParameterList=SmlTypeParameterList?
           parameterList=SmlParameterList
           resultList=SmlResultList?
-          constraintList=SmlConstraintList?
+          body=SmlFunctionBody?
     )
+    ;
+
+SmlConstraint
+    : 'constraint' constraintList=SmlGoalList
     ;
 
 SmlProtocol
@@ -245,7 +254,7 @@ SmlEnumVariant
       name=ID
       typeParameterList=SmlTypeParameterList?
       parameterList=SmlParameterList?
-      constraintList=SmlConstraintList?
+      constraint=SmlConstraint?
     ;
 
 
@@ -280,7 +289,15 @@ SmlResult
       name=ID (':' type=SmlType)?
     ;
 
+// Function -------------------------------------------------------------------------------------------------------------
 
+SmlFunctionBody
+    : {SmlFunctionBody} '{' statements+=SmlFunctionStatement* '}'
+    ;
+
+SmlFunctionStatement returns SmlAbstractObject
+    : SmlConstraint
+    ;
 
 /**********************************************************************************************************************
  * Statements
@@ -498,6 +515,66 @@ SmlTemplateStringEnd
     ;
 
 
+/**********************************************************************************************************************
+ * Predicates
+ **********************************************************************************************************************/
+
+SmlGoalList
+    : {SmlGoalList} '{' ( goals+=SmlGoal (',' goals+=SmlGoal)* )? '}'
+    ;
+
+SmlGoal returns SmlAbstractGoal
+    : SmlExpressionGoal
+    | SmlAssignmentGoal
+    | SmlAbstractConstraintGoal
+    ;
+
+SmlAssignmentGoal
+    : placeholder=SmlGoalPlaceholder "=" expression=SmlGoalExpression
+    ;
+
+SmlGoalPlaceholder
+    : 'val' name=ID
+    ;
+
+SmlExpressionGoal
+    : expression=SmlGoalExpression
+    ;
+
+SmlGoalExpression returns SmlAbstractGoalExpression
+    : SmlChainedGoalExpression
+    ;
+
+SmlChainedGoalExpression returns SmlAbstractGoalExpression
+    : SmlGoalCall
+    ;
+
+SmlGoalCall returns SmlAbstractGoalExpression
+    : SmlPrimaryGoalExpression ( {SmlGoalCall.receiver=current}'(' (argumentList=SmlGoalArgumentList)? ')' )?
+    ;
+
+SmlGoalArgumentList
+    : {SmlGoalArgumentList} arguments+=SmlGoalArgument (',' arguments+=SmlGoalArgument)*
+    ;
+
+SmlGoalArgument
+    : (parameter=[SmlParameter] "=")? value=SmlGoalExpression
+    ;
+
+SmlPrimaryGoalExpression returns SmlAbstractGoalExpression
+    : SmlGoalReference
+    | SmlParenthesizedGoalExpression
+    | SmlLiteral
+    ;
+
+SmlGoalReference
+    : declaration=[SmlAbstractDeclaration]
+    ;
+
+SmlParenthesizedGoalExpression
+    : '(' expressions+=SmlGoalExpression  (',' expressions+=SmlGoalExpression)* ')'
+    ;
+
 
 /**********************************************************************************************************************
  * Names
@@ -596,11 +673,11 @@ SmlTypeParameterKind
     | '$NamedType'
     ;
 
-SmlConstraintList
-    : 'where' constraints+=SmlTypeParameterConstraint (',' constraints+=SmlTypeParameterConstraint)* ','?
+SmlAbstractConstraintGoal
+    : SmlTypeParameterConstraintGoal
     ;
 
-SmlTypeParameterConstraint
+SmlTypeParameterConstraintGoal
     : leftOperand=[SmlTypeParameter] operator=SmlTypeParameterConstraintOperator rightOperand=SmlType
     ;
 

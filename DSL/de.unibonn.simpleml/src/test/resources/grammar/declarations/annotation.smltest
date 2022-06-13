@@ -5,4 +5,7 @@ annotation MySimpleAnnotation
 @AnnotationUse annotation MyComplexAnnotation(
     @AnnotationUse a: Int,
     vararg b: Int = 3
-) where T2 super Number, T3 sub Number
+) constraint {
+    T2 super Number,
+    T3 sub Number
+}

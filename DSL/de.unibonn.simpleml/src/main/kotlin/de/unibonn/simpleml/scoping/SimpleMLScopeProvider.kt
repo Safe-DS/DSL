@@ -30,8 +30,9 @@ import de.unibonn.simpleml.simpleML.SmlBlock
 import de.unibonn.simpleml.simpleML.SmlCall
 import de.unibonn.simpleml.simpleML.SmlClass
 import de.unibonn.simpleml.simpleML.SmlCompilationUnit
-import de.unibonn.simpleml.simpleML.SmlConstraintList
+import de.unibonn.simpleml.simpleML.SmlConstraint
 import de.unibonn.simpleml.simpleML.SmlEnum
+import de.unibonn.simpleml.simpleML.SmlGoalReference
 import de.unibonn.simpleml.simpleML.SmlMemberAccess
 import de.unibonn.simpleml.simpleML.SmlMemberType
 import de.unibonn.simpleml.simpleML.SmlNamedType
@@ -43,7 +44,7 @@ import de.unibonn.simpleml.simpleML.SmlReference
 import de.unibonn.simpleml.simpleML.SmlStep
 import de.unibonn.simpleml.simpleML.SmlTypeArgument
 import de.unibonn.simpleml.simpleML.SmlTypeArgumentList
-import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraint
+import de.unibonn.simpleml.simpleML.SmlTypeParameterConstraintGoal
 import de.unibonn.simpleml.simpleML.SmlWorkflow
 import de.unibonn.simpleml.simpleML.SmlYield
 import de.unibonn.simpleml.staticAnalysis.classHierarchy.superClassMembers
@@ -75,11 +76,12 @@ class SimpleMLScopeProvider : AbstractSimpleMLScopeProvider() {
     override fun getScope(context: EObject, reference: EReference): IScope {
         return when (context) {
             is SmlArgument -> scopeForArgumentParameter(context)
+            is SmlGoalReference -> scopeForGoalReferenceDeclaration(context)
             is SmlNamedType -> scopeForNamedTypeDeclaration(context)
             is SmlProtocolReference -> scopeForProtocolReferenceToken(context)
             is SmlReference -> scopeForReferenceDeclaration(context)
             is SmlTypeArgument -> scopeForTypeArgumentTypeParameter(context)
-            is SmlTypeParameterConstraint -> scopeForTypeParameterConstraintLeftOperand(context)
+            is SmlTypeParameterConstraintGoal -> scopeForTypeParameterConstraintLeftOperand(context)
             is SmlAnnotationCall, is SmlYield -> {
                 super.getScope(context, reference)
             }
@@ -93,6 +95,24 @@ class SimpleMLScopeProvider : AbstractSimpleMLScopeProvider() {
             ?.parametersOrNull()
             ?: emptyList()
         return Scopes.scopeFor(parameters)
+    }
+
+    private fun scopeForGoalReferenceDeclaration(context: SmlGoalReference): IScope {
+        val resource = context.eResource()
+        val packageName = context.containingCompilationUnitOrNull()?.qualifiedNameOrNull()
+
+        // Declarations in other files
+        var result: IScope = FilteringScope(
+            super.delegateGetScope(context, SimpleMLPackage.Literals.SML_GOAL_REFERENCE__DECLARATION)
+        ) {
+            it.isReferencableExternalDeclaration(resource, packageName)
+        }
+
+        // Declarations in this file
+        result = declarationsInSameFile(resource, result)
+
+        // Declarations in this package
+        return declarationsInSamePackageDeclaration(resource, result)
     }
 
     private fun scopeForReferenceDeclaration(context: SmlReference): IScope {
@@ -350,9 +370,9 @@ class SimpleMLScopeProvider : AbstractSimpleMLScopeProvider() {
         return Scopes.scopeFor(typeParameters)
     }
 
-    private fun scopeForTypeParameterConstraintLeftOperand(smlTypeParameterConstraint: SmlTypeParameterConstraint): IScope {
-        val typeParameters = smlTypeParameterConstraint
-            .closestAncestorOrNull<SmlConstraintList>()
+    private fun scopeForTypeParameterConstraintLeftOperand(smlTypeParameterConstraintGoal: SmlTypeParameterConstraintGoal): IScope {
+        val typeParameters = smlTypeParameterConstraintGoal
+            .closestAncestorOrNull<SmlConstraint>()
             ?.typeParametersOrNull()
             ?: emptyList()
 

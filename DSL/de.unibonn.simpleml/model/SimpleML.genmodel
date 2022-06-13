@@ -18,8 +18,9 @@
         <genClasses image="false" ecoreClass="SimpleML.ecore#//SmlAbstractNamedTypeDeclaration" />
         <genClasses image="false" ecoreClass="SimpleML.ecore#//SmlAbstractProtocolToken" />
         <genClasses image="false" ecoreClass="SimpleML.ecore#//SmlAbstractResult" />
+        <!-- Annotation -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlAnnotation">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlAnnotation/constraintList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlAnnotation/constraint" />
         </genClasses>
         <genClasses ecoreClass="SimpleML.ecore#//SmlAnnotationCallList" />
         <genClasses ecoreClass="SimpleML.ecore#//SmlAnnotationCall">
@@ -30,15 +31,20 @@
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlAttribute/static" />
             <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlAttribute/type" />
         </genClasses>
+        <!-- Class -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlClass">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlClass/typeParameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlClass/parentTypeList" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlClass/constraintList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlClass/body" />
         </genClasses>
         <genClasses ecoreClass="SimpleML.ecore#//SmlClassBody">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlClassBody/members" />
         </genClasses>
+        <!-- Constraint -->
+        <genClasses ecoreClass="SimpleML.ecore#//SmlConstraint">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlConstraint/constraintList" />
+        </genClasses>
+        <!-- Protocol -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlProtocol">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlProtocol/body" />
         </genClasses>
@@ -79,6 +85,7 @@
         <genClasses ecoreClass="SimpleML.ecore#//SmlProtocolParenthesizedTerm">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlProtocolParenthesizedTerm/term" />
         </genClasses>
+        <!-- Compilation Unit -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlCompilationUnit">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlCompilationUnit/imports" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlCompilationUnit/members" />
@@ -90,6 +97,7 @@
         <genClasses ecoreClass="SimpleML.ecore#//SmlImportAlias">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlImportAlias/name" />
         </genClasses>
+        <!-- Enum -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlEnum">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlEnum/body" />
         </genClasses>
@@ -98,13 +106,62 @@
         </genClasses>
         <genClasses ecoreClass="SimpleML.ecore#//SmlEnumVariant">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlEnumVariant/typeParameterList" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlEnumVariant/constraintList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlEnumVariant/constraint" />
         </genClasses>
+        <!-- Predicate  -->
+        <genClasses ecoreClass="SimpleML.ecore#//SmlPredicate">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlPredicate/parameterList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlPredicate/resultList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlPredicate/goalList" />
+        </genClasses>
+        <!-- TODO -->
+        <!-- <genClasses ecoreClass="SimpleML.ecore#//SmlGoalParameterList">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalParameterList/parameter" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalParameter">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalParameter/defaultValue" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalParameter/type" />
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlGoalParameter/variadic" />
+        </genClasses> -->
+        <!-- Goal -->
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalList">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalList/goals" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlAbstractGoal"/>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlAssignmentGoal">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlAssignmentGoal/placeholder" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlAssignmentGoal/expression" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalPlaceholder"/>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlExpressionGoal">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlExpressionGoal/expression" />
+        </genClasses>
+        <!-- Goal call -->
+        <genClasses ecoreClass="SimpleML.ecore#//SmlAbstractChainedGoalExpression">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlAbstractChainedGoalExpression/receiver" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalCall">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalCall/argumentList" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalArgumentList">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalArgumentList/arguments" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalArgument">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalArgument/parameter" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalArgument/value" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlGoalReference">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlGoalReference/declaration" />
+        </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlParenthesizedGoalExpression">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlParenthesizedGoalExpression/expression" />
+        </genClasses>
+        <!-- Function -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlFunction">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlFunction/static" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlFunction/typeParameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlFunction/resultList" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlFunction/constraintList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlFunction/body" />
         </genClasses>
         <genClasses ecoreClass="SimpleML.ecore#//SmlParameterList">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlParameterList/parameters" />
@@ -120,11 +177,16 @@
         <genClasses ecoreClass="SimpleML.ecore#//SmlResult">
             <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlResult/type" />
         </genClasses>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlFunctionBody">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlFunctionBody/statements" />
+        </genClasses>
+        <!-- Step -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlStep">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlStep/visibility" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlWorkflowStep/resultList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlWorkflowStep/body" />
         </genClasses>
+        <!-- Workflow -->
         <genClasses ecoreClass="SimpleML.ecore#//SmlWorkflow">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlWorkflow/body" />
         </genClasses>
@@ -260,14 +322,11 @@
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlTypeProjection/type" />
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlTypeProjection/variance" />
         </genClasses>
-        <genClasses ecoreClass="SimpleML.ecore#//SmlConstraintList">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlConstraintList/constraints" />
-        </genClasses>
-        <genClasses ecoreClass="SimpleML.ecore#//SmlAbstractConstraint" />
-        <genClasses ecoreClass="SimpleML.ecore#//SmlTypeParameterConstraint">
-            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlTypeParameterConstraint/leftOperand" />
-            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlTypeParameterConstraint/operator" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlTypeParameterConstraint/rightOperand" />
+        <genClasses ecoreClass="SimpleML.ecore#//SmlAbstractConstraintGoal"/>
+        <genClasses ecoreClass="SimpleML.ecore#//SmlTypeParameterConstraintGoal">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlTypeParameterConstraintGoal/leftOperand" />
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlTypeParameterConstraintGoal/operator" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlTypeParameterConstraintGoal/rightOperand" />
         </genClasses>
     </genPackages>
 </genmodel:GenModel>

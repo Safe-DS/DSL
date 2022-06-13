@@ -1,4 +1,8 @@
-class C sub ( Int  ) where T sub ( Int  ) {
+class C sub ( Int  ) {
+    constraint
+     { T
+     sub (
+         Int  )}
     attr a: (  Int   )
 }
 
@@ -8,7 +12,11 @@ step s(p1: ( Int
 
 // -----------------------------------------------------------------------------
 
-class C sub (Int) where T sub (Int) {
+class C sub (Int) {
+    constraint {
+        T sub (Int)
+    }
+
     attr a: (Int)
 }
 

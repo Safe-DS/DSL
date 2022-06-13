@@ -5,6 +5,8 @@ enum MySimpleEnum
     MySimpleVariant
     @AnnotationUse MyComplexVariant
         <@AnnotationUse T1, in T2, out T3>
-        (@AnnotationUse a: Int, vararg b: Int = 3)
-        where T2 super Number, T3 sub Number
+        (@AnnotationUse a: Int, vararg b: Int = 3) constraint {
+            T2 super Number,
+            T3 sub Number
+        }
 }
