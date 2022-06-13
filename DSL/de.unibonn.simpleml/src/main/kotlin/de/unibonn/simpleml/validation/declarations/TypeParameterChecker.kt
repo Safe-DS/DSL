@@ -13,7 +13,7 @@ import org.eclipse.xtext.validation.Check
 class TypeParameterChecker : AbstractSimpleMLChecker() {
 
     @Check
-    fun nonStaticPropagates(smlTypeParameter: SmlTypeParameter) {
+    fun mustNotHaveVarianceAndKind(smlTypeParameter: SmlTypeParameter) {
         if (smlTypeParameter.variance() != SmlVariance.Invariant && smlTypeParameter.kind() != SmlKind.NoKind) {
             error(
                 "Can not use variance and kind together",

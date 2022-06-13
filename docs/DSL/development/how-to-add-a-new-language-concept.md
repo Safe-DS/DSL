@@ -52,13 +52,6 @@
    1. Update the [formatter][formatting].
    1. Run the tests again (`./gradlew test`). Tests should now pass.
 
-1. Update the converter to Prolog.
-   1. Create [classes for facts][prolog-facts].
-   1. Create [tests][prolog-tests].
-   1. Run the tests (`./gradlew test`). There should be failures.
-   1. Update the [converter to Prolog][prolog-converter].
-   1. Run the tests again (`./gradlew test`). Tests should now pass.
-
 1. Update the [tutorial][tutorial].
 
 <!-- Links -->
@@ -100,11 +93,5 @@
 [formatting-tests]: ../../../DSL/de.unibonn.simpleml/src/test/resources/formatting
 
 [formatting]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/formatting2/SimpleMLFormatter.kt
-
-[prolog-facts]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/prologBridge/model/facts/Facts.kt
-
-[prolog-tests]: ../../../DSL/de.unibonn.simpleml/src/test/kotlin/de/unibonn/simpleml/prologBridge/AstToPrologFactbaseTest.kt
-
-[prolog-converter]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/prologBridge/converters/AstToPrologFactbase.kt
 
 [tutorial]: ../tutorial/README.md

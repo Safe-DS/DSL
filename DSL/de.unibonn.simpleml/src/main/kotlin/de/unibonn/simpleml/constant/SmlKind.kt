@@ -16,18 +16,14 @@ enum class SmlKind(val kind: String?) {
     NamedKind("\$NamedType");
 
     override fun toString(): String {
-        if (kind != null) {
-            return kind
-        } else {
-            return "NoKind"
-        }
+        return kind ?: "NoKind"
     }
 }
 
 /**
  * Returns the [SmlKind] of this [SmlTypeParameter].
  *
- * @throws IllegalArgumentException If the Kind is unknown.
+ * @throws IllegalArgumentException If the kind is unknown.
  */
 fun SmlTypeParameter.kind(): SmlKind {
     return SmlKind.values().firstOrNull { it.kind == this.kind }

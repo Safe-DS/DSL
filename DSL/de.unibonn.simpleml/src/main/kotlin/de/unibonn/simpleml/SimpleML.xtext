@@ -59,6 +59,7 @@ SmlCompilationUnitMember returns SmlAbstractAnnotatedObject
     | {SmlWorkflow.annotationCallList=current}
           'workflow' name=ID
           body=SmlBlock
+
     | {SmlPredicate.annotationCallList=current}
           'predicate' name=ID
           parameterList=SmlParameterList
