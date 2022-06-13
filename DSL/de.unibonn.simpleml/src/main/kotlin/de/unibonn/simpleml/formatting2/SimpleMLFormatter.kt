@@ -16,6 +16,7 @@ import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_STEP__VISIBILIT
 import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_TYPE_ARGUMENT__TYPE_PARAMETER
 import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_TYPE_PARAMETER_CONSTRAINT__LEFT_OPERAND
 import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_TYPE_PARAMETER_CONSTRAINT__OPERATOR
+import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_TYPE_PARAMETER__KIND
 import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_TYPE_PARAMETER__VARIANCE
 import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_TYPE_PROJECTION__VARIANCE
 import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals.SML_YIELD__RESULT
@@ -1039,6 +1040,10 @@ class SimpleMLFormatter : AbstractFormatter2() {
 
                 // Feature "name"
                 doc.formatFeature(obj, SML_ABSTRACT_DECLARATION__NAME)
+
+                // Feature "kind"
+                doc.formatKeyword(obj, "::", oneSpace, oneSpace)
+                doc.formatFeature(obj, SML_TYPE_PARAMETER__KIND)
             }
             is SmlConstraintList -> {
 

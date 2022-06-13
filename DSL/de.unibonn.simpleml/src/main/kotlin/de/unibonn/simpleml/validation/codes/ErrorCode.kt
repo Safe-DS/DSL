@@ -90,5 +90,7 @@ enum class ErrorCode {
 
     WrongType,
 
+    VarianceAndKind,
+
     ExpertMustBeOptional
 }

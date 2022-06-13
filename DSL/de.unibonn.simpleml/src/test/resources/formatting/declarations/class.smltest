@@ -1,12 +1,13 @@
      class
    MyClass1
 
-          class    MyClass2 {  }      
+          class    MyClass2 {  }
 
    @Annotation1    @Annotation2            class   MyClass3
       < @AnnotationUse
             T1 ,   in
-      T2  ,   out  T3    >
+      T2  ,   out  T3, T4   ::  $SchemaType, T5     ::   $ExpressionType ,
+      T6  ::    $BooleanType   ,  T7     ::    $NamedType   >
          (
   @AnnotationUse
         a  :
@@ -25,7 +26,7 @@ class MyClass2 {}
 
 @Annotation1
 @Annotation2
-class MyClass3<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) sub SuperClass, SuperInterface where T2 super Number, T3 sub Number {
+class MyClass3<@AnnotationUse T1, in T2, out T3, T4 :: $SchemaType, T5 :: $ExpressionType, T6 :: $BooleanType, T7 :: $NamedType>(@AnnotationUse a: Int, vararg b: Int = 3) sub SuperClass, SuperInterface where T2 super Number, T3 sub Number {
     attr myAttribute1
 
     attr myAttribute2

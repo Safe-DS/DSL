@@ -245,6 +245,7 @@
         </genClasses>
         <genClasses ecoreClass="SimpleML.ecore#//SmlTypeParameter">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlTypeParameter/variance" />
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimpleML.ecore#//SmlTypeParameter/kind" />
         </genClasses>
         <genClasses ecoreClass="SimpleML.ecore#//SmlTypeArgumentList">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SimpleML.ecore#//SmlTypeArgumentList/typeArguments" />

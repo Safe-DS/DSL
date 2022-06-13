@@ -4,7 +4,7 @@ class MySimpleClass
 
 @AnnotationUse
 class MyComplexClass
-    <@AnnotationUse T1, in T2, out T3>
+    <@AnnotationUse T1, in T2, out T3, T4 :: $SchemaType, T5 :: $ExpressionType, T6 :: $IntType, T7 :: $FloatType, T8 :: $BooleanType, T9 :: $StringType, T10 :: $NamedType>
     (@AnnotationUse a: Int, vararg b: Int = 3)
     sub SuperClass1, SuperClass2
     where T2 super Number, T3 sub Number
