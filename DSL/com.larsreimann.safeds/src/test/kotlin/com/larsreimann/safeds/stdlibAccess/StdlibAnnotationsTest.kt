@@ -6,7 +6,7 @@ import com.larsreimann.safeds.safeDS.SdsAnnotation
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 private const val testRoot = "stdlibAccess/annotations"
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class StdlibAnnotationsTest {
 
     @Inject

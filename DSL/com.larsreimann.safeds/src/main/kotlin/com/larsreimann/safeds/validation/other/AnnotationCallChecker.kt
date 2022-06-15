@@ -202,7 +202,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
         val target = smlAnnotationCall.targetOrNull() as? SdsCompilationUnit ?: return
         if (target.name == target.pythonModuleOrNull()) {
             info(
-                "Python module is identical to Simple-ML package (can remove annotation call).",
+                "Python module is identical to Safe-DS package (can remove annotation call).",
                 null,
                 InfoCode.IdenticalPythonModule
             )
@@ -218,7 +218,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
         val target = smlAnnotationCall.targetOrNull() ?: return
         if (target.name == target.pythonNameOrNull()) {
             info(
-                "Python name is identical to Simple-ML name (can remove annotation call).",
+                "Python name is identical to Safe-DS name (can remove annotation call).",
                 null,
                 InfoCode.IdenticalPythonName
             )

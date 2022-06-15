@@ -3,4 +3,4 @@
 EXTENDS: https://raw.githubusercontent.com/lars-reimann/.github/main/.mega-linter.yml
 
 # Config
-FILTER_REGEX_EXCLUDE: (\.github/workflows/|DSL/de\.unibonn\.simpleml/src/test/resources/)
+FILTER_REGEX_EXCLUDE: (\.github/workflows/|DSL/com\.larsreimann\.safeds/src/test/resources/)

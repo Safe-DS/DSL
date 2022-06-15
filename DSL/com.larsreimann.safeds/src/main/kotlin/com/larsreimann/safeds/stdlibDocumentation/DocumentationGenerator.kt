@@ -64,7 +64,7 @@ private fun createReadme(outputDirectory: Path, packagesToDeclarations: Map<Stri
 
     outputDirectory.resolve("README.md").writeText(
         """
-            |# Simple-ML API Documentation
+            |# Safe-DS API Documentation
             |
             |## Packages
             |

@@ -1,6 +1,6 @@
 # Types
 
-Types describe the values that a declaration can accept. Simple-ML has various categories of types, which are explained in this document.
+Types describe the values that a declaration can accept. Safe-DS has various categories of types, which are explained in this document.
 
 ## Categories of Types
 
@@ -350,7 +350,7 @@ To improve clarity, parts of a type or the entire type can be enclosed in parent
 
 **Note:** This section is only relevant if you are interested in the [stub language][stub-language].
 
-Optionally, [type hints][type-hints] can be used in Python to denote the type of a declaration. This is generally advisable, since IDEs can use this information to offer additional feature, like improved refactorings. Moreover, static type checker like [mypy][mypy] can detect misuse of an API without running the code. We will now briefly describe how to best use Python's [type hints][type-hints] and explain how they relate to Simple-ML types.
+Optionally, [type hints][type-hints] can be used in Python to denote the type of a declaration. This is generally advisable, since IDEs can use this information to offer additional feature, like improved refactorings. Moreover, static type checker like [mypy][mypy] can detect misuse of an API without running the code. We will now briefly describe how to best use Python's [type hints][type-hints] and explain how they relate to Safe-DS types.
 
 First, to get [type hints][type-hints] in Python closer to the expected behavior, add the following import to your Python file:
 
@@ -364,9 +364,9 @@ Also add the following import, which brings the declarations that are used by th
 from typing import Callable, Optional, Tuple, TypeVar, Union
 ```
 
-The following table shows how Simple-ML types can be written as Python [type hints][type-hints]:
+The following table shows how Safe-DS types can be written as Python [type hints][type-hints]:
 
-| Simple-ML Type                         | Python Type Hint                                                   |
+| Safe-DS Type                         | Python Type Hint                                                   |
 |----------------------------------------|--------------------------------------------------------------------|
 | `Boolean`                              | `bool`                                                             |
 | `Float`                                | `float`                                                            |

@@ -8,7 +8,7 @@ import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic
 import org.eclipse.xtext.serializer.tokens.CrossReferenceSerializer
 
-class SafeSDCrossReferenceSerializer : CrossReferenceSerializer() {
+class SafeDSCrossReferenceSerializer : CrossReferenceSerializer() {
 
     override fun getCrossReferenceNameFromScope(
         semanticObject: EObject,

@@ -5,8 +5,8 @@ package com.larsreimann.safeds.generator
 import com.larsreimann.safeds.constant.SdsFileExtension
 import com.larsreimann.safeds.emf.createSdsCompilationUnit
 import com.larsreimann.safeds.emf.createSdsDummyResource
-import com.larsreimann.safeds.simpleML.SimpleMLFactory
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.safeDS.SafeDSFactory
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class GeneratorUtilsTest {
 
     @Nested
@@ -37,7 +37,7 @@ class GeneratorUtilsTest {
         }
 
         @Test
-        fun `should remove all characters that are not legal in Simple-ML identifiers except spaces`() {
+        fun `should remove all characters that are not legal in Safe-DS identifiers except spaces`() {
             val resource = createSdsDummyResource(
                 "MyöáúName1",
                 SdsFileExtension.Flow,
@@ -167,7 +167,7 @@ class GeneratorUtilsTest {
             val resource = createSdsDummyResource(
                 "file",
                 SdsFileExtension.Test,
-                SimpleMLFactory.eINSTANCE.createSdsCompilationUnit()
+                SafeDSFactory.eINSTANCE.createSdsCompilationUnit()
             )
 
             resource.baseGeneratedFilePathOrNull().shouldBeNull()

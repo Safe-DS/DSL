@@ -13,7 +13,7 @@ import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsInt
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
-class SafeSDINTValueConverterTest {
+@InjectWith(SafeDSInjectorProvider::class)
+class SafeDSINTValueConverterTest {
 
     @Inject
     private lateinit var parseHelper: ParseHelper

@@ -6,7 +6,7 @@ import org.eclipse.xtext.documentation.IEObjectDocumentationProvider
 import org.eclipse.xtext.ide.labels.INameLabelProvider
 import org.eclipse.xtext.ide.server.hover.HoverService
 
-class SafeSDHoverService @Inject constructor(
+class SafeDSHoverService @Inject constructor(
     private val documentationProvider: IEObjectDocumentationProvider,
     private val nameLabelProvider: INameLabelProvider
 ) : HoverService() {

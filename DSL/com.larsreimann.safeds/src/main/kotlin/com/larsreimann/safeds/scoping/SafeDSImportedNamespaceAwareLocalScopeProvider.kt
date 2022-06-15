@@ -8,7 +8,7 @@ import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.scoping.impl.ImportNormalizer
 import org.eclipse.xtext.scoping.impl.ImportedNamespaceAwareLocalScopeProvider
 
-class SafeSDImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLocalScopeProvider() {
+class SafeDSImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLocalScopeProvider() {
 
     /**
      * Import all declarations from the listed packages implicitly, such as "safeds.lang".

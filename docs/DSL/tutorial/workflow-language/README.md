@@ -1,6 +1,6 @@
 # Workflow Language
 
-The workflow language is the part of the Simple-ML DSL that is designed to solve specific machine learning problems. It has the following concepts:
+The workflow language is the part of the Safe-DS DSL that is designed to solve specific machine learning problems. It has the following concepts:
 
 * [Packages][packages] help avoid conflicts that could arise if two declarations have the same name.
 * [Imports][imports] make declarations in other packages accessible.

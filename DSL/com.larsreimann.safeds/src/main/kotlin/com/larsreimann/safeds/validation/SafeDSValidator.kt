@@ -104,4 +104,4 @@ import org.eclipse.xtext.validation.ComposedChecks
         TypeArgumentListChecker::class,
     ]
 )
-class SafeSDValidator : AbstractSafeDSValidator()
+class SafeDSValidator : AbstractSafeDSValidator()

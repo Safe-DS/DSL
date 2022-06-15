@@ -1,6 +1,6 @@
 {
     "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-    "name": "Simple-ML",
+    "name": "Safe-DS",
     "patterns": [
         {
             "include": "#comment"
@@ -16,12 +16,12 @@
         "comment": {
             "patterns": [
                 {
-                    "name": "comment.block.simpleml",
+                    "name": "comment.block.safe-ds",
                     "begin": "/\\*",
                     "end": "\\*/"
                 },
                 {
-                    "name": "comment.line.double-slash.simpleml",
+                    "name": "comment.line.double-slash.safe-ds",
                     "begin": "//",
                     "end": "(?=$)"
                 }
@@ -30,22 +30,22 @@
         "keywords": {
             "patterns": [
                 {
-                    "name": "keyword.control.simple-ml",
+                    "name": "keyword.control.safe-ds",
                     "match": "\\b(_|and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|private|protocol|static|step|sub|subterm|super|true|union|val|vararg|where|workflow|yield)\\b"
                 }
             ]
         },
         "strings": {
-            "name": "string.quoted.double.simple-ml",
+            "name": "string.quoted.double.safe-ds",
             "begin": "\"",
             "end": "\"",
             "patterns": [
                 {
-                    "name": "constant.character.escape.simple-ml",
+                    "name": "constant.character.escape.safe-ds",
                     "match": "\\\\."
                 }
             ]
         }
     },
-    "scopeName": "source.simpleml"
+    "scopeName": "source.safe-ds"
 }

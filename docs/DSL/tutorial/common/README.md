@@ -1,6 +1,6 @@
 # Common Parts of Workflow Language and Stub Language
 
-Several parts of the Simple-ML DSL are shared between the [workflow lanugage][workflow-language] and the [stub language][stub-language]. Here is the list:
+Several parts of the Safe-DS DSL are shared between the [workflow lanugage][workflow-language] and the [stub language][stub-language]. Here is the list:
 
 * [Packages][packages] help avoid conflicts that could arise if two declarations have the same name.
 * [Imports][imports] make declarations in other packages accessible.

@@ -7,7 +7,7 @@ import org.eclipse.xtext.ide.server.commands.IExecutableCommandService
 import org.eclipse.xtext.service.OperationCanceledManager
 import org.eclipse.xtext.util.CancelIndicator
 
-class SafeSDExecutableCommandService : IExecutableCommandService {
+class SafeDSExecutableCommandService : IExecutableCommandService {
 
     @Inject
     private lateinit var operationCanceledManager: OperationCanceledManager

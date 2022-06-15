@@ -8,7 +8,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 
 /**
- * Returns the base file name of the resource, i.e. the last segment of its [URI] with any Simple-ML extension removed,
+ * Returns the base file name of the resource, i.e. the last segment of its [URI] with any Safe-DS extension removed,
  * or `null` if the resource has no [URI].
  */
 fun Resource.baseFileNameOrNull(): String? {

@@ -6,7 +6,7 @@ import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainValue
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class ProposalsTest {
 
     @Inject

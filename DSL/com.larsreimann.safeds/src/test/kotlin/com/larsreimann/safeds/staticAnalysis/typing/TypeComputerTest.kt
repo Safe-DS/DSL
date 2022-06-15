@@ -40,7 +40,7 @@ import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.assignedOrNull
 import com.larsreimann.safeds.stdlibAccess.StdlibClasses
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import com.larsreimann.safeds.testing.getResourcePath
 import io.kotest.assertions.forEachAsClue
@@ -61,7 +61,7 @@ import java.nio.file.Path
 
 @Suppress("PrivatePropertyName")
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class TypeComputerTest {
 
     @Inject

@@ -9,4 +9,4 @@ import com.google.inject.Singleton
  * Example: The string `"myString \{"` in a DSL program has the value `myString {`.
  */
 @Singleton
-class SafeSDSTRINGValueConverter : AbstractSafeDSStringValueConverter("\"", "\"")
+class SafeDSSTRINGValueConverter : AbstractSafeDSStringValueConverter("\"", "\"")

@@ -14,7 +14,7 @@ import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -26,14 +26,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
-class SafeSDTEMPLATE_STRING_ENDValueConverterTest {
+@InjectWith(SafeDSInjectorProvider::class)
+class SafeDSTEMPLATE_STRING_ENDValueConverterTest {
 
     @Inject
     private lateinit var parseHelper: ParseHelper
 
     @Inject
-    private lateinit var templateStringEndValueConverter: SimpleMLTEMPLATE_STRING_ENDValueConverter
+    private lateinit var templateStringEndValueConverter: SafeDSTEMPLATE_STRING_ENDValueConverter
 
     @Nested
     inner class toValue {

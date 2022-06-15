@@ -12,7 +12,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-lan
 let client: LanguageClient
 
 export const activate = (context: ExtensionContext) => {
-    let launcher = os.platform() === 'win32' ? 'de.unibonn.simpleml.ide.bat' : 'de.unibonn.simpleml.ide';
+    let launcher = os.platform() === 'win32' ? 'com.larsreimann.safeds.ide.bat' : 'com.larsreimann.safeds.ide';
     let script = context.asAbsolutePath(path.join('ls', 'bin', launcher));
 
     const serverOptions: ServerOptions = {
@@ -29,16 +29,16 @@ export const activate = (context: ExtensionContext) => {
     // Options to control the language client
     let clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{ scheme: 'file', language: 'simple-ml' }],
+        documentSelector: [{ scheme: 'file', language: 'safe-ds' }],
         synchronize: {
             // Notify the server about file changes to '.clientrc files contained in the workspace
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc'),
         },
-        outputChannelName: 'Simple-ML Language Server',
+        outputChannelName: 'Safe-DS Language Server',
     }
 
     // Create the language client and start the client.
-    client = new LanguageClient('simpleml', 'Simple-ML', serverOptions, clientOptions)
+    client = new LanguageClient('safeds', 'Safe-DS', serverOptions, clientOptions)
 
     // Start the client. This will also launch the server
     client.start()

@@ -9,7 +9,7 @@ import com.larsreimann.safeds.emf.resourceSetOrNull
 import com.larsreimann.safeds.testing.CategorizedTest
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.ResourceName
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.stringify
 import com.larsreimann.safeds.testing.createDynamicTestsFromResourceFolder
 import com.larsreimann.safeds.testing.getResourcePath
@@ -39,8 +39,8 @@ import kotlin.io.path.readText
 import kotlin.streams.asSequence
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
-class SafeSDGeneratorTest {
+@InjectWith(SafeDSInjectorProvider::class)
+class SafeDSGeneratorTest {
 
     @Inject
     private lateinit var compilationTestHelper: CompilationTestHelper

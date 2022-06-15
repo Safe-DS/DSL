@@ -111,7 +111,7 @@ import org.eclipse.xtext.xbase.lib.Procedures
 import kotlin.reflect.KFunction1
 import org.eclipse.xtext.formatting2.IHiddenRegionFormatter as Format
 
-class SafeSDFormatter : AbstractFormatter2() {
+class SafeDSFormatter : AbstractFormatter2() {
 
     private val indent = Format::indent
     private val noSpace = Format::noSpace

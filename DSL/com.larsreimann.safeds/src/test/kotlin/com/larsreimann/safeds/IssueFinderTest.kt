@@ -5,7 +5,7 @@ import com.larsreimann.safeds.emf.OriginalFilePath
 import com.larsreimann.safeds.testing.CategorizedTest
 import com.larsreimann.safeds.testing.FindTestRangesResult
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.ExpectedIssue
 import com.larsreimann.safeds.testing.assertions.shouldHaveNoIssue
 import com.larsreimann.safeds.testing.assertions.shouldHaveNoSemanticError
@@ -63,7 +63,7 @@ private val semanticSeverities = setOf(
 )
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class IssueFinderTest {
 
     @Inject

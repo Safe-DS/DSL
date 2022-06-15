@@ -14,7 +14,7 @@ import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
-class SafeSDSTRINGValueConverterTest {
+@InjectWith(SafeDSInjectorProvider::class)
+class SafeDSSTRINGValueConverterTest {
 
     @Inject
     private lateinit var parseHelper: ParseHelper

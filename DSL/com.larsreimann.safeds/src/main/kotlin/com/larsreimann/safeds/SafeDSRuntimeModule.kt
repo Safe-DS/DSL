@@ -29,7 +29,7 @@ import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 @Suppress("unused")
-open class SafeSDRuntimeModule : AbstractSafeDSRuntimeModule() {
+open class SafeDSRuntimeModule : AbstractSafeDSRuntimeModule() {
     fun bindICrossReferenceSerializer(): Class<out ICrossReferenceSerializer> {
         return SafeDSCrossReferenceSerializer::class.java
     }

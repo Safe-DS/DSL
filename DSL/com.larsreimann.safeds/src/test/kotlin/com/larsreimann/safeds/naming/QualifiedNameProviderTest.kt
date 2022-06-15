@@ -4,7 +4,7 @@ package com.larsreimann.safeds.naming
 
 import com.larsreimann.safeds.emf.createSdsClass
 import com.larsreimann.safeds.emf.createSdsCompilationUnit
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import io.kotest.matchers.shouldBe
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.extensions.InjectionExtension
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class QualifiedNameProviderTest {
 
     @Nested

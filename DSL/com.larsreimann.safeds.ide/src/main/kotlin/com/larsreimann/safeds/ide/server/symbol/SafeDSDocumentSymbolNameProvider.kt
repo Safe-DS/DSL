@@ -5,7 +5,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ide.server.symbol.DocumentSymbolMapper
 import org.eclipse.xtext.resource.IEObjectDescription
 
-class SafeSDDocumentSymbolNameProvider : DocumentSymbolMapper.DocumentSymbolNameProvider() {
+class SafeDSDocumentSymbolNameProvider : DocumentSymbolMapper.DocumentSymbolNameProvider() {
     override fun getName(obj: EObject): String? {
         return (obj as? SdsAbstractDeclaration)?.name
     }

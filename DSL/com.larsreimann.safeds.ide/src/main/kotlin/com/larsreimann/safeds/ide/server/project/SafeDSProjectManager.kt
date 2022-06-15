@@ -5,7 +5,7 @@ import org.eclipse.xtext.build.IncrementalBuilder
 import org.eclipse.xtext.ide.server.ProjectManager
 import org.eclipse.xtext.util.CancelIndicator
 
-class SafeSDProjectManager : ProjectManager() {
+class SafeDSProjectManager : ProjectManager() {
 
     override fun doInitialBuild(cancelIndicator: CancelIndicator): IncrementalBuilder.Result {
 

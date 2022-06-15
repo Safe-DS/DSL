@@ -7,7 +7,7 @@ import com.larsreimann.safeds.emf.createSdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SafeDSPackage
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -21,13 +21,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class SerializerExtensionsTest {
 
     @Inject
     private lateinit var parseHelper: ParseHelper
 
-    private val factory = SafeDSPackage.eINSTANCE.simpleMLFactory
+    private val factory = SafeDSPackage.eINSTANCE.safeDSFactory
 
     @Nested
     inner class serializeToFormattedString {

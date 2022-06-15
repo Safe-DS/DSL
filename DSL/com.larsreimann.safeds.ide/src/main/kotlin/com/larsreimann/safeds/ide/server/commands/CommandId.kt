@@ -4,6 +4,6 @@ enum class CommandId {
     RemoveOnceOtherCommandsAreAdded;
 
     override fun toString(): String {
-        return "simple-ml." + this.name
+        return "safe-ds." + this.name
     }
 }

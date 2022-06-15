@@ -82,14 +82,14 @@ import org.eclipse.xtext.generator.IGeneratorContext
  *
  * See [Xtext Code Generation](https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation).
  */
-class SafeSDGenerator : AbstractGenerator() {
+class SafeDSGenerator : AbstractGenerator() {
 
     private val codegenPackage = "safeds.codegen"
     private val runtimeBridgePackage = "runtimeBridge"
     private val indent = "    "
 
     /**
-     * Creates Python workflow and declaration files if the [resource] is either a Simple-ML flow or test file.
+     * Creates Python workflow and declaration files if the [resource] is either a Safe-DS flow or test file.
      */
     override fun doGenerate(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {
         if (resource.isFlowFile() || resource.isTestFile()) {
@@ -103,13 +103,13 @@ class SafeSDGenerator : AbstractGenerator() {
      * workflow. This way we can run the Python interpreter with the created file to run the workflow.
      *
      * **Example:** Given the following situation
-     *  * Simple-ML package: "com.example"
-     *  * Simple-ML file:    "test.safeds"
+     *  * Safe-DS package: "com.example"
+     *  * Safe-DS file:    "test.safeds"
      *  * Workflow names:    "workflow1", "workflow2"
      *
-     * we create two files in the folder "com/example" (determined by the Simple-ML package). The file for "workflow1"
+     * we create two files in the folder "com/example" (determined by the Safe-DS package). The file for "workflow1"
      * is called "test_workflow1.py" and the file for "workflow2" is called "test_workflow2.py". The names are created
-     * by taking the Simple-ML file name, removing the file extension, appending an underscore, and then the workflow
+     * by taking the Safe-DS file name, removing the file extension, appending an underscore, and then the workflow
      * name.
      */
     private fun generateWorkflowFiles(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {

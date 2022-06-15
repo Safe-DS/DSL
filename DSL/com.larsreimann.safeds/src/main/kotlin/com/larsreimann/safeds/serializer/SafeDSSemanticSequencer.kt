@@ -1,3 +1,3 @@
 package com.larsreimann.safeds.serializer
 
-internal class SafeSDSemanticSequencer : AbstractSafeDSSemanticSequencer()
+internal class SafeDSSemanticSequencer : AbstractSafeDSSemanticSequencer()

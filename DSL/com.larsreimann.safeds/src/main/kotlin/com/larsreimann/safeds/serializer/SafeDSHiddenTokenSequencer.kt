@@ -1,15 +1,15 @@
 package com.larsreimann.safeds.serializer
 
 import com.google.inject.Inject
-import com.larsreimann.safeds.services.SimpleMLGrammarAccess
+import com.larsreimann.safeds.services.SafeDSGrammarAccess
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.nodemodel.ICompositeNode
 import org.eclipse.xtext.serializer.sequencer.HiddenTokenSequencer
 
 @Suppress("unused")
-class SafeSDHiddenTokenSequencer @Inject constructor(
-        private val grammarAccess: SimpleMLGrammarAccess
+class SafeDSHiddenTokenSequencer @Inject constructor(
+        private val grammarAccess: SafeDSGrammarAccess
 ) : HiddenTokenSequencer() {
 
     override fun enterAssignedParserRuleCall(rc: RuleCall, semanticChild: EObject, node: ICompositeNode?): Boolean {

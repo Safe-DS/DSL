@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EPackage
  * Initialization support for running Xtext languages without Equinox extension registry.
  */
 @Suppress("unused")
-open class SafeSDStandaloneSetup : SimpleMLStandaloneSetupGenerated() {
+open class SafeDSStandaloneSetup : SafeDSStandaloneSetupGenerated() {
 
     override fun register(injector: Injector) {
         EPackage.Registry.INSTANCE.putIfAbsent(SafeDSPackage.eNS_URI, SafeDSPackage.eINSTANCE)
@@ -17,7 +17,7 @@ open class SafeSDStandaloneSetup : SimpleMLStandaloneSetupGenerated() {
 
     companion object {
         fun doSetup() {
-            SimpleMLStandaloneSetup().createInjectorAndDoEMFRegistration()
+            SafeDSStandaloneSetup().createInjectorAndDoEMFRegistration()
         }
     }
 }

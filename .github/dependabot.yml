@@ -17,7 +17,7 @@ updates:
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
-    directory: "/DSL/de.unibonn.simpleml.vscode"
+    directory: "/DSL/com.larsreimann.safeds.vscode"
     schedule:
       interval: "monthly"
 

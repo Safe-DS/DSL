@@ -15,7 +15,7 @@ import org.eclipse.xtext.nodemodel.INode
  * converter. See the Eclipse forum for more information: [https://www.eclipse.org/forums/index.php/t/1088504/].
  */
 @Singleton
-class SafeSDIDValueConverter : IDValueConverter() {
+class SafeDSIDValueConverter : IDValueConverter() {
 
     /**
      * Syntax of valid identifiers.

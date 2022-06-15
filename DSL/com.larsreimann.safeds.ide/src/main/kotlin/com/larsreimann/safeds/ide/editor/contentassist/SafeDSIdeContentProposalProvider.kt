@@ -1,7 +1,7 @@
 package com.larsreimann.safeds.ide.editor.contentassist
 
 import com.google.inject.Inject
-import com.larsreimann.safeds.services.SimpleMLGrammarAccess
+import com.larsreimann.safeds.services.SafeDSGrammarAccess
 import com.larsreimann.safeds.safeDS.SdsArgumentList
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
@@ -13,8 +13,8 @@ import org.eclipse.xtext.ide.editor.contentassist.IIdeContentProposalAcceptor
 import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 import org.eclipse.xtext.scoping.IScopeProvider
 
-class SafeSDIdeContentProposalProvider @Inject constructor(
-    private val grammarAccess: SimpleMLGrammarAccess,
+class SafeDSIdeContentProposalProvider @Inject constructor(
+    private val grammarAccess: SafeDSGrammarAccess,
     private val scopeProvider2: IScopeProvider
 ) : IdeContentProposalProvider() {
 
@@ -37,7 +37,7 @@ class SafeSDIdeContentProposalProvider @Inject constructor(
             model is SdsCompilationUnit -> {
                 completeGlobalSnippets(context, acceptor)
             }
-            model is SdsArgumentList && rule == grammarAccess.smlCallArgumentRule -> {
+            model is SdsArgumentList && rule == grammarAccess.sdsCallArgumentRule -> {
                 completeSdsCallArguments(model, context, acceptor)
             }
         }

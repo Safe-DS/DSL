@@ -5,7 +5,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 
 /**
- * Different file extensions associated with Simple-ML programs. The dot that separates file name and file extension is
+ * Different file extensions associated with Safe-DS programs. The dot that separates file name and file extension is
  * not included.
  */
 enum class SdsFileExtension(val extension: String) {

@@ -11,4 +11,4 @@ import com.google.inject.Singleton
  * Example: The template string inner part `}}inner{{` in a DSL program has the value `inner`.
  */
 @Singleton
-class SafeSDTEMPLATE_STRING_INNERValueConverter : AbstractSafeDSStringValueConverter("}}", "{{")
+class SafeDSTEMPLATE_STRING_INNERValueConverter : AbstractSafeDSStringValueConverter("}}", "{{")

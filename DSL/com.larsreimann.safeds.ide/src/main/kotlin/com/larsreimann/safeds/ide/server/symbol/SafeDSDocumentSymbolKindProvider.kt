@@ -9,7 +9,7 @@ import org.eclipse.lsp4j.SymbolKind
 import org.eclipse.xtext.ide.server.symbol.DocumentSymbolMapper
 import org.eclipse.xtext.resource.IEObjectDescription
 
-class SafeSDDocumentSymbolKindProvider : DocumentSymbolMapper.DocumentSymbolKindProvider() {
+class SafeDSDocumentSymbolKindProvider : DocumentSymbolMapper.DocumentSymbolKindProvider() {
     override fun getSymbolKind(obj: EObject?): SymbolKind? {
         if (obj is SdsFunction && obj.isClassMember()) {
             return SymbolKind.Method

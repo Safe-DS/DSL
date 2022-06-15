@@ -71,7 +71,7 @@ import org.eclipse.xtext.scoping.impl.FilteringScope
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
  * on how and when to use it.
  */
-class SafeSDScopeProvider : AbstractSafeDSScopeProvider() {
+class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
 
     override fun getScope(context: EObject, reference: EReference): IScope {
         return when (context) {

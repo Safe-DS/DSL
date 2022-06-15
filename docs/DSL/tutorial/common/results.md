@@ -57,9 +57,9 @@ The notable exception are [callable types][callable-types], where the result lis
 
 **Note:** This section is only relevant if you are interested in the [stub language][stub-language].
 
-Results must be ordered the same way in Python as they are in Simple-ML. Moreover, the Simple-ML type of a result should capture the possible values of this result accurately. Ideally, the Python result should also have a matching [type hint][types-python].
+Results must be ordered the same way in Python as they are in Safe-DS. Moreover, the Safe-DS type of a result should capture the possible values of this result accurately. Ideally, the Python result should also have a matching [type hint][types-python].
 
-Since Python results do not have a name, the names of Simple-ML results can be arbitrary. Naturally, a name should be chosen that captures the purpose of the result.
+Since Python results do not have a name, the names of Safe-DS results can be arbitrary. Naturally, a name should be chosen that captures the purpose of the result.
 
 
 [stub-language]: ../stub-language/README.md

@@ -1,4 +1,4 @@
-# Package `simpleml.lang`
+# Package `safeds.lang`
 
 ## Table of Contents
 

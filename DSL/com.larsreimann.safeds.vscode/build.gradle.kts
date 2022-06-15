@@ -26,7 +26,7 @@ idea {
 
 // Tasks ---------------------------------------------------------------------------------------------------------------
 
-val extensionPath = "dist/simple-ml-${project.version}.vsix"
+val extensionPath = "dist/safe-ds-${project.version}.vsix"
 
 tasks.register<Sync>("copyApplication") {
     val installDistTask = project(":com.larsreimann.safeds.ide").tasks.named("installDist")

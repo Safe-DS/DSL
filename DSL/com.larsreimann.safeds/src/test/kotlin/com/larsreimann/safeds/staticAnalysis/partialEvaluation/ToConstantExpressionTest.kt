@@ -28,7 +28,7 @@ import com.larsreimann.safeds.emf.createSdsString
 import com.larsreimann.safeds.emf.createSdsTemplateString
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.statementsOrEmpty
-import com.larsreimann.safeds.simpleML.SimpleMLFactory
+import com.larsreimann.safeds.safeDS.SafeDSFactory
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
 import com.larsreimann.safeds.safeDS.SdsBlockLambda
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
@@ -37,7 +37,7 @@ import com.larsreimann.safeds.safeDS.SdsExpressionStatement
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
@@ -54,13 +54,13 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class ToConstantExpressionTest {
 
     @Inject
     private lateinit var parseHelper: ParseHelper
 
-    private val factory = SimpleMLFactory.eINSTANCE
+    private val factory = SafeDSFactory.eINSTANCE
 
     private lateinit var impureBlockLambda: SdsBlockLambda
     private lateinit var pureBlockLambda: SdsBlockLambda

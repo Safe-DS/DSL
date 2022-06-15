@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import com.larsreimann.safeds.emf.OriginalFilePath
 import com.larsreimann.safeds.stdlibAccess.listStdlibFiles
 import com.larsreimann.safeds.testing.ParseHelper
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.shouldHaveNoErrorsOrWarnings
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.eclipse.xtext.testing.InjectWith
@@ -18,7 +18,7 @@ import java.nio.file.Files
 import java.util.stream.Stream
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class StdlibTest {
 
     @Inject

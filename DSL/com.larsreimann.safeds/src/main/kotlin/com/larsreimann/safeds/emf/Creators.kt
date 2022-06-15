@@ -11,7 +11,7 @@ import com.larsreimann.safeds.constant.SdsProtocolTokenClassValue
 import com.larsreimann.safeds.constant.SdsTypeParameterConstraintOperator
 import com.larsreimann.safeds.constant.SdsVariance
 import com.larsreimann.safeds.constant.SdsVisibility
-import com.larsreimann.safeds.simpleML.SimpleMLFactory
+import com.larsreimann.safeds.safeDS.SafeDSFactory
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractClassMember
 import com.larsreimann.safeds.safeDS.SdsAbstractCompilationUnitMember
@@ -110,7 +110,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.resource.XtextResource
 import kotlin.math.absoluteValue
 
-private val factory = SimpleMLFactory.eINSTANCE
+private val factory = SafeDSFactory.eINSTANCE
 
 /**
  * Returns a new [Resource].

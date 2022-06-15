@@ -16,7 +16,7 @@ import org.eclipse.xtext.conversion.impl.STRINGValueConverter
  * Converters for ID, INT, and STRING.
  */
 @Singleton
-open class SafeSDValueConverterService : AbstractDeclarativeValueConverterService() {
+open class SafeDSValueConverterService : AbstractDeclarativeValueConverterService() {
 
     @Inject
     private lateinit var idValueConverter: IDValueConverter
@@ -39,19 +39,19 @@ open class SafeSDValueConverterService : AbstractDeclarativeValueConverterServic
     fun STRING() = stringValueConverter
 
     @Inject
-    private lateinit var templateStringStartValueConverter: SimpleMLTEMPLATE_STRING_STARTValueConverter
+    private lateinit var templateStringStartValueConverter: SafeDSTEMPLATE_STRING_STARTValueConverter
 
     @ValueConverter(rule = "TEMPLATE_STRING_START")
     fun TEMPLATE_STRING_START() = templateStringStartValueConverter
 
     @Inject
-    private lateinit var templateStringInnerValueConverter: SimpleMLTEMPLATE_STRING_INNERValueConverter
+    private lateinit var templateStringInnerValueConverter: SafeDSTEMPLATE_STRING_INNERValueConverter
 
     @ValueConverter(rule = "TEMPLATE_STRING_INNER")
     fun TEMPLATE_STRING_INNER() = templateStringInnerValueConverter
 
     @Inject
-    private lateinit var templateStringEndValueConverter: SimpleMLTEMPLATE_STRING_ENDValueConverter
+    private lateinit var templateStringEndValueConverter: SafeDSTEMPLATE_STRING_ENDValueConverter
 
     @ValueConverter(rule = "TEMPLATE_STRING_END")
     fun TEMPLATE_STRING_END() = templateStringEndValueConverter

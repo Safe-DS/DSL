@@ -2,7 +2,7 @@ package com.larsreimann.safeds.stdlibDocumentation
 
 import com.google.inject.Inject
 import com.google.inject.Provider
-import com.larsreimann.safeds.SimpleMLStandaloneSetup
+import com.larsreimann.safeds.SafeDSStandaloneSetup
 import com.larsreimann.safeds.emf.compilationUnitOrNull
 import com.larsreimann.safeds.stdlibAccess.loadStdlib
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -57,7 +57,7 @@ fun main(args: Array<String>) {
         exitProcess(10)
     }
 
-    val injector = SimpleMLStandaloneSetup().createInjectorAndDoEMFRegistration()
+    val injector = SafeDSStandaloneSetup().createInjectorAndDoEMFRegistration()
     val main = injector.getInstance(Main::class.java)
     main.runStdlibDocumentationGenerator(Path.of(args[0]))
 }

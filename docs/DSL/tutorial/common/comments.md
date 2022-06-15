@@ -2,7 +2,7 @@
 
 Comments are mostly used to add explanations to the code for future readers - which can be yourself. They can also be used to "comment out" code that you want to keep but that should not be run right now, since comments are ignored by the compiler.
 
-Simple-ML has two types of comments, namely _line comments_, which end at a linebreak, and _block comments_, which can cover multiple lines.
+Safe-DS has two types of comments, namely _line comments_, which end at a linebreak, and _block comments_, which can cover multiple lines.
 
 ## Line Comments
 

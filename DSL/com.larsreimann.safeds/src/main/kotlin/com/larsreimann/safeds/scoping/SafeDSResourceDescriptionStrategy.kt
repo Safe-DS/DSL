@@ -21,7 +21,7 @@ import org.eclipse.xtext.util.IAcceptor
 /**
  * Describes which objects are exported to other resources.
  */
-class SafeSDResourceDescriptionStrategy : DefaultResourceDescriptionStrategy() {
+class SafeDSResourceDescriptionStrategy : DefaultResourceDescriptionStrategy() {
     override fun createEObjectDescriptions(eObject: EObject, acceptor: IAcceptor<IEObjectDescription>): Boolean {
         return when (eObject) {
             is SdsCompilationUnit -> {

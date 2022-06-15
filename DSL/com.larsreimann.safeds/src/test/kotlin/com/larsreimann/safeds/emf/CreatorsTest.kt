@@ -15,7 +15,7 @@ import com.larsreimann.safeds.safeDS.SdsProtocol
 import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
 import com.larsreimann.safeds.safeDS.SdsTemplateStringInner
 import com.larsreimann.safeds.safeDS.SdsTemplateStringStart
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.shouldBeCloseTo
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldNotThrow
@@ -46,7 +46,7 @@ import org.junit.jupiter.api.extension.ExtendWith
  * - Union type requires at least one type argument
  */
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class CreatorsTest {
 
     @Test

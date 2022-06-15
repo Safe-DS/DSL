@@ -1,15 +1,15 @@
 # How to add a new language concept
 
 1. Create new classes in the EMF model (_abstract syntax_):
-   1. [Update the Ecore file][SimpleML.ecore]. Ensure that `SmlAbstractObject` is either a direct of transitive supertype.
-   1. [Update the Genmodel file][SimpleML.genmodel].
+   1. [Update the Ecore file][SafeDS.ecore]. Ensure that `SmlAbstractObject` is either a direct of transitive supertype.
+   1. [Update the Genmodel file][SafeDS.genmodel].
 
 1. Update the grammar (_concrete syntax_).
    1. Create [grammar tests][grammar-tests]:
       1. Positive tests (with comment `// no_syntax_error`)
       1. Negative tests (with comment `// syntax_error`)
    1. Run the tests (`./gradlew test`). There should be failures.
-   1. Update the [Xtext grammar file][SimpleML.xtext].
+   1. Update the [Xtext grammar file][SafeDS.xtext].
    1. Run the tests again (`./gradlew test`). Tests should now pass.
 
 1. Update the [constants][constants] if the concrete syntax of your concept has terminals that need to be accessed programmatically (e.g. operators or modifiers).
@@ -56,42 +56,42 @@
 
 <!-- Links -->
 
-[SimpleML.ecore]: ../../../DSL/de.unibonn.simpleml/model/SimpleML.ecore
+[SafeDS.ecore]: ../../../DSL/com.larsreimann.safeds/model/SafeDS.ecore
 
-[SimpleML.genmodel]: ../../../DSL/de.unibonn.simpleml/model/SimpleML.genmodel
+[SafeDS.genmodel]: ../../../DSL/com.larsreimann.safeds/model/SafeDS.genmodel
 
-[grammar-tests]: ../../../DSL/de.unibonn.simpleml/src/test/resources/grammar
+[grammar-tests]: ../../../DSL/com.larsreimann.safeds/src/test/resources/grammar
 
-[SimpleML.xtext]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/SimpleML.xtext
+[SafeDS.xtext]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/SafeDS.xtext
 
-[converter-tests]: ../../../DSL/de.unibonn.simpleml/src/test/kotlin/de/unibonn/simpleml/conversion
+[converter-tests]: ../../../DSL/com.larsreimann.safeds/src/test/kotlin/com.larsreimann/safeds/conversion
 
-[converters]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/conversion
+[converters]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/conversion
 
-[scoping-tests]: ../../../DSL/de.unibonn.simpleml/src/test/kotlin/de/unibonn/simpleml/scoping/ScopingTest.kt
+[scoping-tests]: ../../../DSL/com.larsreimann.safeds/src/test/kotlin/com.larsreimann/safeds/scoping/ScopingTest.kt
 
-[local-scope-provider]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/scoping/SimpleMLScopeProvider.kt
+[local-scope-provider]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/scoping/SafeDSScopeProvider.kt
 
-[resource-description-strategy]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/scoping/SimpleMLResourceDescriptionStrategy.kt
+[resource-description-strategy]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/scoping/SafeDSResourceDescriptionStrategy.kt
 
-[static-analysis]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/staticAnalysis
+[static-analysis]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/staticAnalysis
 
-[validation-tests]: ../../../DSL/de.unibonn.simpleml/src/test/resources/validation
+[validation-tests]: ../../../DSL/com.larsreimann.safeds/src/test/resources/validation
 
-[validators]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/validation
+[validators]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/validation
 
-[constants]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/constant
+[constants]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/constant
 
-[creators]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/emf/Creators.kt
+[creators]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/emf/Creators.kt
 
-[shortcuts]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/emf/SimpleShortcuts.kt
+[shortcuts]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/emf/SimpleShortcuts.kt
 
-[generator-tests]: ../../../DSL/de.unibonn.simpleml/src/test/resources/generator
+[generator-tests]: ../../../DSL/com.larsreimann.safeds/src/test/resources/generator
 
-[generator]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/generator/SimpleMLGenerator.kt
+[generator]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/generator/SafeDSGenerator.kt
 
-[formatting-tests]: ../../../DSL/de.unibonn.simpleml/src/test/resources/formatting
+[formatting-tests]: ../../../DSL/com.larsreimann.safeds/src/test/resources/formatting
 
-[formatting]: ../../../DSL/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/formatting2/SimpleMLFormatter.kt
+[formatting]: ../../../DSL/com.larsreimann.safeds/src/main/kotlin/com.larsreimann/safeds/formatting2/SafeDSFormatter.kt
 
 [tutorial]: ../tutorial/README.md

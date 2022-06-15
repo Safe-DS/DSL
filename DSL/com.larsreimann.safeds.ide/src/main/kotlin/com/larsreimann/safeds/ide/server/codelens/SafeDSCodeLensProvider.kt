@@ -11,7 +11,7 @@ import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.service.OperationCanceledManager
 import org.eclipse.xtext.util.CancelIndicator
 
-class SafeSDCodeLensProvider : ICodeLensResolver, ICodeLensService {
+class SafeDSCodeLensProvider : ICodeLensResolver, ICodeLensService {
 
     @Inject
     private lateinit var operationCanceledManager: OperationCanceledManager

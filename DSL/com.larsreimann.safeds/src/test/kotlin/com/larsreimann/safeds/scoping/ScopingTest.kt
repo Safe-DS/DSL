@@ -32,7 +32,7 @@ import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraintGoal
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.ResourceName
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
 import com.larsreimann.safeds.testing.assertions.shouldBeResolved
 import com.larsreimann.safeds.testing.assertions.shouldNotBeResolved
@@ -59,7 +59,7 @@ private const val TYPE_PARAMETER_CONSTRAINT = "typeParameterConstraint"
 private const val YIELD = "yield"
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class ScopingTest {
 
     @Inject

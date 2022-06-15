@@ -1,6 +1,6 @@
 # Statements
 
-Statements are used in the [workflow language][workflow-language] to run a specific action. Simple-ML supports only two type of statements, namely
+Statements are used in the [workflow language][workflow-language] to run a specific action. Safe-DS supports only two type of statements, namely
 * [expression statements](#expression-statements), which are used to evaluate an expression exactly once and discard any results, and
 * [assignments](#assignments), which also evaluate an expression exactly once, but can then [assign selected results to placeholders](#declaring-placeholders) or [assign them to own results](#yielding-results).
 
@@ -8,7 +8,7 @@ Other types of statements such as
 * if-statements to conditionally execute code or
 * while-statements to repeatedly execute code
 
-are not planned since we want to keep the language small and easy to learn. Moreover, we want to refrain from developing yet another general-purpose programming language. Instead, code that depends on such features can be implemented in Python, integrated into Simple-ML using the [stub language][stub-language], and called in a Simple-ML program using the provided statements.
+are not planned since we want to keep the language small and easy to learn. Moreover, we want to refrain from developing yet another general-purpose programming language. Instead, code that depends on such features can be implemented in Python, integrated into Safe-DS using the [stub language][stub-language], and called in a Safe-DS program using the provided statements.
 
 ## Expression Statements
 

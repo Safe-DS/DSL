@@ -2,7 +2,7 @@ package com.larsreimann.safeds.formatting2
 
 import com.google.inject.Inject
 import com.larsreimann.safeds.testing.CategorizedTest
-import com.larsreimann.safeds.testing.SimpleMLInjectorProvider
+import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.createDynamicTestsFromResourceFolder
 import com.larsreimann.safeds.testing.getResourcePath
 import com.larsreimann.safeds.testing.testDisplayName
@@ -18,7 +18,7 @@ import java.nio.file.Path
 import java.util.stream.Stream
 
 @ExtendWith(InjectionExtension::class)
-@InjectWith(SimpleMLInjectorProvider::class)
+@InjectWith(SafeDSInjectorProvider::class)
 class FormatterTest {
 
     @Inject
