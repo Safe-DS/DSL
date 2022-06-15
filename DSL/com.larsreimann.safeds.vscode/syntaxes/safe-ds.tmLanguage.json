@@ -16,12 +16,12 @@
         "comment": {
             "patterns": [
                 {
-                    "name": "comment.block.safe-ds",
+                    "name": "comment.block.safeds",
                     "begin": "/\\*",
                     "end": "\\*/"
                 },
                 {
-                    "name": "comment.line.double-slash.safe-ds",
+                    "name": "comment.line.double-slash.safeds",
                     "begin": "//",
                     "end": "(?=$)"
                 }
@@ -30,22 +30,22 @@
         "keywords": {
             "patterns": [
                 {
-                    "name": "keyword.control.safe-ds",
+                    "name": "keyword.control.safeds",
                     "match": "\\b(_|and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|private|protocol|static|step|sub|subterm|super|true|union|val|vararg|where|workflow|yield)\\b"
                 }
             ]
         },
         "strings": {
-            "name": "string.quoted.double.safe-ds",
+            "name": "string.quoted.double.safeds",
             "begin": "\"",
             "end": "\"",
             "patterns": [
                 {
-                    "name": "constant.character.escape.safe-ds",
+                    "name": "constant.character.escape.safeds",
                     "match": "\\\\."
                 }
             ]
         }
     },
-    "scopeName": "source.safe-ds"
+    "scopeName": "source.safeds"
 }
