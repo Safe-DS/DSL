@@ -144,14 +144,14 @@ Here is a breakdown of this:
 
 It is important to note that the `@PythonModule` annotation only affects the one Safe-DS file that contains it rather than the entire Safe-DS package. This allows different Safe-DS files in the same package to point to different [Python modules][python-modules].
 
-[stub-language]: ../stub-language/README.md
-[annotations]: ../stub-language/annotations.md
-[annotation-calls]: ../stub-language/annotations.md#calling-an-annotation
-[imports]: ./imports.md
-[classes]: ../stub-language/classes.md
-[steps]: ../workflow-language/steps.md
-[workflows]: ../workflow-language/workflows.md
-[string-literals]: ../workflow-language/expressions.md#string-literals
+[stub-language]: docs/DSL/stub-languagenguage/README.md
+[annotations]: docs/DSL/stub-languagenguage/annotations.md
+[annotation-calls]: docs/DSL/stub-languagenguage/annotations.md#calling-an-annotation
+[imports]: docs/DSL/common/imports.md
+[classes]: docs/DSL/stub-languagenguage/classes.md
+[steps]: docs/DSL/workflow-languagenguage/steps.md
+[workflows]: docs/DSL/workflow-languagenguage/workflows.md
+[string-literals]: docs/DSL/workflow-languagenguage/expressions.md#string-literals
 
 [python-modules]: https://docs.python.org/3/tutorial/modules.html#modules
 [python-packages]: https://docs.python.org/3/tutorial/modules.html#packages

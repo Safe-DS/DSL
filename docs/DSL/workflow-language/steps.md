@@ -120,16 +120,16 @@ val features, val target = loadMovieRatingsSample(nInstances = 1000);
 
 More information about calls can be found in the [linked document][calls].
 
-[imports]: ../common/imports.md
-[parameters]: ../common/parameters.md
-[results]: ../common/results.md
-[types]: ../common/types.md
-[packages]: ../common/packages.md
-[statements]: ./statements.md
-[assignments]: ./statements.md#assignments
-[assignments-to-placeholders]: ./statements.md#assigning-placeholders
-[expression-statements]: ./statements.md#expression-statements
-[calls]: ./expressions.md#calls
-[lambdas]: ./expressions.md#lambdas
-[references]: ./expressions.md#references
-[workflows]: ./workflows.md
+[imports]: docs/DSL/commoncommon/imports.md
+[parameters]: docs/DSL/commoncommon/parameters.md
+[results]: docs/DSL/commoncommon/results.md
+[types]: docs/DSL/commoncommon/types.md
+[packages]: docs/DSL/commoncommon/packages.md
+[statements]: docs/DSL/workflow-language/statements.md
+[assignments]: docs/DSL/workflow-language/statements.md#assignments
+[assignments-to-placeholders]: docs/DSL/workflow-language/statements.md#assigning-placeholders
+[expression-statements]: docs/DSL/workflow-language/statements.md#expression-statements
+[calls]: docs/DSL/workflow-language/expressions.md#calls
+[lambdas]: docs/DSL/workflow-language/expressions.md#lambdas
+[references]: docs/DSL/workflow-language/expressions.md#references
+[workflows]: docs/DSL/workflow-language/workflows.md
