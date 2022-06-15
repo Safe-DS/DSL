@@ -72,15 +72,15 @@ The following table sums up the syntax of [declaration-site variance][declaratio
 |Covariant|`class Stack<out T>`|`Stack<out T>`
 |Contravariant|`class Stack<in T>`|`Stack<in T>`|
 
-[types]: ./types.md
-[named-types]: ./types.md#named-types
-[type-arguments]: ./types.md#type-arguments
-[use-site-variance]: ./types.md#use-site-variance
-[parameters]: ./parameters.md
-[results]: ./results.md
+[types]: docs/DSL/common/types.md
+[named-types]: docs/DSL/common/types.md#named-types
+[type-arguments]: docs/DSL/common/types.md#type-arguments
+[use-site-variance]: docs/DSL/common/types.md#use-site-variance
+[parameters]: docs/DSL/common/parameters.md
+[results]: docs/DSL/common/results.md
 
-[classes]: ../stub-language/classes.md
-[methods]: ../stub-language/classes.md#defining-methods
-[subclassing]: ../stub-language/classes.md#subclassing
-[type-parameters]: ../stub-language/type-parameters.md
-[declaration-site-variance]: ../stub-language/type-parameters.md#declaration-site-variance
+[classes]: docs/DSL/stub-languagenguage/classes.md
+[methods]: docs/DSL/stub-languagenguage/classes.md#defining-methods
+[subclassing]: docs/DSL/stub-languagenguage/classes.md#subclassing
+[type-parameters]: docs/DSL/stub-languagenguage/type-parameters.md
+[declaration-site-variance]: docs/DSL/stub-languagenguage/type-parameters.md#declaration-site-variance

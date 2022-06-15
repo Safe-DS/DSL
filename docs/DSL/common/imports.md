@@ -70,7 +70,7 @@ Note that declarations in subpackages, i.e. packages that have a different name 
 
 
 
-[stub-language]: ../stub-language/README.md
-[classes]: ../stub-language/classes.md
-[packages]: ./packages.md
-[calls]: ../workflow-language/expressions.md#calls
+[stub-language]: docs/DSL/stub-languagenguage/README.md
+[classes]: docs/DSL/stub-languagenguage/classes.md
+[packages]: docs/DSL/common/packages.md
+[calls]: docs/DSL/workflow-languagenguage/expressions.md#calls
