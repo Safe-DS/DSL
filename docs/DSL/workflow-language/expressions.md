@@ -35,7 +35,7 @@ String literals describe text. Their syntax is simply text enclosed by double qu
 
 String literals can contain also contain raw line breaks:
 
-```
+```txt
 "Hello,
 
 world!"
@@ -115,7 +115,7 @@ Safe-DS also has shorthand versions for negated equality checks which should be 
 
 The elvis operator `?:` (given its name because it resembles Elvis's haircut) is used to specify a default value that should be used instead if the left operand is `null`. This operator is not short-circuited, so both operand are always evaluated. In the following example the whole expression evaluates to `nullableExpression` if this value is not `null` and to `42` if it is:
 
-```
+```txt
 nullableExpression ?: 42
 ```
 
@@ -123,7 +123,7 @@ nullableExpression ?: 42
 
 [String literals](#string-literals) can only be used to denote a fixed string. Sometimes, however, parts of the string have to be computed and then interpolated into the remaining text. This is done with template strings. Here is an example:
 
-```
+```txt
 "1 + 2 = {{ 1 + 2 }}"
 ```
 
@@ -135,7 +135,7 @@ These template expressions are evaluated, converted to a string and inserted int
 
 References are used to refer to a declaration, such as a [class][classes] or a [placeholder][placeholders]. The syntax is simply the name of the declaration, as shown in the next snippet where we first declare a [placeholder][placeholders] called `one` and then refer to it when computing the value for the [placeholder][placeholders] called `two`:
 
-```
+```txt
 val one = 1;
 val two = one + one;
 ```
@@ -148,7 +148,7 @@ Calls are used to trigger the execution of a specific action, which can, for exa
 
 First, we show the code of the [step][steps] that we want to call.
 
-```
+```txt
 step createDecisionTree(maxDepth: Int = 10) {
     // ... do something ...
 }
@@ -156,7 +156,7 @@ step createDecisionTree(maxDepth: Int = 10) {
 
 This [step][steps] has a single [parameter][parameters] `maxDepth`, which must have [type][types] `Int`, and has the default value `10`. Since it has a default value, we are not required to specify a value when we call this [step][steps]. The most basic legal call of the [step][steps] is, thus, this:
 
-```
+```txt
 createDecisionTree()
 ```
 
@@ -170,7 +170,7 @@ If we want to override the default value of an optional [parameter][parameters] 
 
 In the case of positional arguments, they are mapped to parameters by position, i.e. the first argument is assigned to the first parameter, the second argument is assigned to the second parameter and so forth. We do this in the following example to set `maxDepth` to 5:
 
-```
+```txt
 createDecisionTree(5)
 ```
 
@@ -178,7 +178,7 @@ The syntax for positional argument is simply the expression we want to pass as v
 
 Named arguments, however, are mapped to parameters by name. On the one hand, this can improve readability of the code, since the meaning of a value becomes obvious. On the other hand, it allows to override only specific optional parameters and keep the rest unchanged. Here is how to set `maxDepth` to 5 using a named argument:
 
-```
+```txt
 createDecisionTree(maxDepth = 5)
 ```
 
@@ -191,7 +191,7 @@ These are the syntactic elements:
 
 We now add another parameter to the `createDecisionTree` [step][steps]:
 
-```
+```txt
 step createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
     // ... do something ...
 }
@@ -199,7 +199,7 @@ step createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
 
 This allows us to show how multiple arguments can be passed:
 
-```
+```txt
 createDecisionTree(isBinary = true, maxDepth = 5)
 ```
 
@@ -247,7 +247,7 @@ A member access is used to refer to members of a complex data structure such as
 * the [result record](#result-record) of a [call](#calls).
 
 The general syntax of a member access is this:
-```
+```txt
 <receiver>.<member>
 ```
 
@@ -257,7 +257,7 @@ Here, the receiver is some expression (the legal choices are explained below), w
 
 To understand how we can access members of a [class][classes] we must first look briefly at a declaration of the [class][classes] we use in the following examples:
 
-```
+```txt
 class DecisionTree() {
     static attr verboseTraining: Boolean
 
@@ -273,7 +273,7 @@ Moreover, the class has an instance [attribute][attributes]`maxDepth`, which is 
 
 Let us look at how to access the static [attribute][attributes] `verboseTraining` to retrieve its value:
 
-```
+```txt
 DecisionTree.verboseTraining
 ```
 
@@ -288,7 +288,7 @@ Note that we cannot access a static member from an instance of the class. We mus
 
 Contrary to static member accesses, we can only access instance members on an instance of a class:
 
-```
+```txt
 DecisionTree().maxDepth
 ```
 
@@ -305,7 +305,7 @@ If an expression could be `null` it cannot be used as the receiver of a regular 
 
 The syntax is identical to a normal member access except that we replace the dot with the operator `?.`:
 
-```
+```txt
 nullableExpression?.member
 ```
 
@@ -313,7 +313,7 @@ nullableExpression?.member
 
 A member access can also be used to access the [variants][enum-variants] of an [enum][enums]. Here is the declaration of the [enum][enums] that we use in the example:
 
-```
+```txt
 enum SvmKernel {
     Linear,
     RBF
@@ -324,7 +324,7 @@ This [enum][enums] is called `SvmKernel` and has the two [variants][enum-variant
 
 We can access the [variant][enum-variants] `Linear` using this member access:
 
-```
+```txt
 SvmKernel.Linear
 ```
 
@@ -339,7 +339,7 @@ This syntax is identical to the [member access of static class members](#member-
 
 If the [result record](#result-record) that is produced by a [call](#calls) has multiple results, we can use a member access to select a single one. Here is the [global function][global-functions] we use to explain this concept:
 
-```
+```txt
 fun divideWithRemainder(dividend: Int, divisor: Int) -> (quotient: Int, remainder: Int)
 ```
 
@@ -347,7 +347,7 @@ The [global function][global-functions] `divideWithRemainder` has two [parameter
 
 If we are only interested in the remainder of `12` divided by `5`, we can use a member access:
 
-```
+```txt
 divideWithRemainder(12, 5).remainder
 ```
 
@@ -360,7 +360,7 @@ While it is also possible to access the result by name if the [result record](#r
 
 To explain this concept further, we need the following declarations:
 
-```
+```txt
 class ValueWrapper {
     attr value: Int
 }
@@ -372,7 +372,7 @@ We first declare a [class][classes] called `ValueWrapper`, which has an [attribu
 
 Let us now look at this member access:
 
-```
+```txt
 createValueWrapper().value
 ```
 
@@ -380,7 +380,7 @@ This evaluates to the [attribute][attributes], i.e. an integer, rather than the 
 
 If you want the result instead, simply omit the member access:
 
-```
+```txt
 createValueWrapper()
 ```
 
@@ -388,7 +388,7 @@ createValueWrapper()
 
 An indexed access is currently only used to access one value assigned to a [variadic parameter][variadic-parameters]. In the following example, we use an index access to retrieve the first value that is assigned to the [variadic parameter][variadic-parameters] `values` of the step `printFirst`:
 
-```
+```txt
 step printFirst(vararg values: Int) {
     print(values[0]);
 }
@@ -406,7 +406,7 @@ Note that accessing a value at an index outside the bounds of the value list cur
 
 Multiple [calls](#calls), [member accesses](#member-accesses), and [indexed accesses](#member-accesses) can be chained together. Let us first look at the declaration of the [class][classes] we need for the example:
 
-```
+```txt
 class LinearRegression() {
     fun drawAsGraph()
 }
@@ -416,7 +416,7 @@ This is a [class][classes] `LinearRegression`, which has a constructor and an in
 
 We can then use those declarations in a [step][steps]:
 
-```
+```txt
 step myStep(vararg regressions: LinearRegression) {
     regressions[0].drawAsGraph();
 }
@@ -433,7 +433,7 @@ In the body of the step we then
 
 If you want to write reusable blocks of code, use a [step][steps]. However, sometimes you need to create a highly application-specific callable that can be passed as argument to some function or returned as the result of a [step][steps]. We will explain this concept by filtering a list. Here are the relevant declarations:
 
-```
+```txt
 class IntList {
     fun filter(filterFunction: (element: Int) -> shouldKeep: Boolean) -> filteredList: IntList
 }
@@ -447,7 +447,7 @@ Second, we declare a [global function][global-functions] `intListOf` that is sup
 
 Say, we now want to keep only the elements in the list that are less than `10`. We can do this by declaring a [step][steps]:
 
-```
+```txt
 step keepLessThan10(a: Int) -> shouldKeep: Boolean {
     yield shouldKeep = a < 10;
 }
@@ -455,7 +455,7 @@ step keepLessThan10(a: Int) -> shouldKeep: Boolean {
 
 Here is how to solve the task of keeping only elements below `10` with this [step][steps]:
 
-```
+```txt
 intListOf(1, 4, 11).filter(keepLessThan10)
 ```
 
@@ -467,7 +467,7 @@ The problem here is that this solution is very cumbersome and verbose. We need t
 
 We will first rewrite the above solution using a _block lambda_, which is essentially a [step][steps] without a name and more concise syntax that can be declared where it is needed:
 
-```
+```txt
 intListOf(1, 4, 11).filter(
     (a) { yield shouldKeep = a < 10; }
 )
@@ -485,7 +485,7 @@ The results of a block lambda are [declared in its body using assignments][assig
 
 Often, the body of a [block lambda](#block-lambdas) only consists of yielding a single result, as is the case in the example above. The syntax of [block lambdas](#block-lambdas) is quite verbose for such a common use-case, which is why Safe-DS has _expression lambdas_ as a shorter but less flexible alternative. Using an expression lambda we can rewrite the example above as
 
-```
+```txt
 intListOf(1, 4, 11).filter(
     (a) -> a < 10
 )
@@ -502,7 +502,7 @@ These are the syntactic elements:
 
 Both [block lambdas](#block-lambdas) and [expression lambdas](#expression-lambdas) are closures, which means they remember the values of [placeholders][placeholders] and [parameters][parameters] that can be accessed within their body at the time of their creation. Here is an example:
 
-```
+```txt
 step lazyValue(value: Int) -> result: () -> storedValue: Int {
     yield result = () -> value
 }

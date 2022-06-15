@@ -11,7 +11,7 @@ To define a class we use the following syntax:
 * To define the constructor of the class we list the _parameters_ (inputs) necessary to create an instance. This list is enclosed in parentheses and separated by commas, `(regularizationStrength: Float)` in the following snippet. For each parameter, we list the name of the parameter followed by a colon and its type.
 * Finally, we have the _body_ of the class, which lists the members ([attributes](#defining-attributes) for data and [methods](#defining-methods) for operations on this data, as explained in the following sections) of the class enclosed by curly braces.
 
-```
+```txt
 class Lasso(regularizationStrength: Float) {
     // ...
 }

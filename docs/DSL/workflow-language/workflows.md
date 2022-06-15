@@ -8,7 +8,7 @@ Workflows are Machine Learning programs designed to solve a specific task. They 
 
 Let's look at a minimal example of a workflow:
 
-```
+```txt
 workflow predictSpeed {}
 ```
 
@@ -21,7 +21,7 @@ This declaration of a workflow has the following syntactic elements:
 
 In order to describe what should be done when the workflow is executed, we need to add [statements][statements] to its body, as shown in this example:
 
-```
+```txt
 workflow predictSpeed {
     val adac = loadDataset("ADAC");
     val adacSample = adac.sample(1000);
