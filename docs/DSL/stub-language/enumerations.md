@@ -41,4 +41,4 @@ class Ridge(solver: RidgeSolver) {
 }
 ```
 
-[classes]: docs/DSL/stub-language/classes.md
+[classes]: classes.md
