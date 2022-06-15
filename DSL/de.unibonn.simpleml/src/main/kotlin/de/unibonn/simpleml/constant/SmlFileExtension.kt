@@ -16,7 +16,7 @@ enum class SmlFileExtension(val extension: String) {
      * @see isInFlowFile
      * @see isFlowFile
      */
-    Flow("smlflow"),
+    Flow("sdsflow"),
 
     /**
      * Marks the file as a stub file, which describes an external API.
@@ -24,7 +24,7 @@ enum class SmlFileExtension(val extension: String) {
      * @see isInStubFile
      * @see isStubFile
      */
-    Stub("smlstub"),
+    Stub("sdsstub"),
 
     /**
      * Marks the file as a test file, which disables some checks to simplify its use as input of test cases. This file
@@ -33,7 +33,7 @@ enum class SmlFileExtension(val extension: String) {
      * @see isInTestFile
      * @see isTestFile
      */
-    Test("smltest");
+    Test("sdstest");
 
     override fun toString(): String {
         return extension

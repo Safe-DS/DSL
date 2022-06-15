@@ -92,7 +92,7 @@ class GeneratorUtilsTest {
         }
 
         @Test
-        fun `should remove 'smlflow' extension`() {
+        fun `should remove 'sdsflow' extension`() {
             val resource = createSmlDummyResource(
                 "file",
                 SmlFileExtension.Flow,
@@ -103,7 +103,7 @@ class GeneratorUtilsTest {
         }
 
         @Test
-        fun `should remove 'smlstub' extension`() {
+        fun `should remove 'sdsstub' extension`() {
             val resource = createSmlDummyResource(
                 "file",
                 SmlFileExtension.Stub,
@@ -114,7 +114,7 @@ class GeneratorUtilsTest {
         }
 
         @Test
-        fun `should remove 'smltest' extension`() {
+        fun `should remove 'sdstest' extension`() {
             val resource = createSmlDummyResource(
                 "file",
                 SmlFileExtension.Test,

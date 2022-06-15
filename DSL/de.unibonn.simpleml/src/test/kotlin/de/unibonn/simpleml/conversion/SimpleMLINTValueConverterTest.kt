@@ -45,7 +45,7 @@ class SimpleMLINTValueConverterTest {
         @Test
         fun `should convert string to int (file)`() {
             val compilationUnit = parseHelper.parseResource(
-                "conversion/intValueConverter.smltest"
+                "conversion/intValueConverter.sdstest"
             ) // readProgramTextFromResource(resourceName)?.let { parseHelper.parse(it) }
             compilationUnit.shouldNotBeNull()
 

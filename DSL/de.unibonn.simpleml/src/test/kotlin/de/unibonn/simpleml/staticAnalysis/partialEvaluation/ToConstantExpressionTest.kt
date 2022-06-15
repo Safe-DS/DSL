@@ -74,7 +74,7 @@ class ToConstantExpressionTest {
 
     @BeforeEach
     fun reset() {
-        val compilationUnit = parseHelper.parseResource("partialEvaluation/callables.smltest")
+        val compilationUnit = parseHelper.parseResource("partialEvaluation/callables.sdstest")
         compilationUnit.shouldNotBeNull()
 
         val blockLambdas = compilationUnit.descendants<SmlBlockLambda>().toList()
@@ -1125,7 +1125,7 @@ class ToConstantExpressionTest {
 
         @BeforeEach
         fun reset() {
-            compilationUnit = parseHelper.parseResource("partialEvaluation/calls.smltest")!!
+            compilationUnit = parseHelper.parseResource("partialEvaluation/calls.sdstest")!!
         }
 
         @Test
@@ -1266,7 +1266,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should access the result of a call by name if result exists`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/memberAccesses.smltest")
+                parseHelper.parseResource("partialEvaluation/memberAccesses.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>("successfulResultAccess")
@@ -1278,7 +1278,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should return null if accessed result does not exist`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/memberAccesses.smltest")
+                parseHelper.parseResource("partialEvaluation/memberAccesses.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>("failedResultAccess")
@@ -1416,7 +1416,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should return value of placeholders inside valid assignment with call as expression`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/references.smltest")
+                parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>("successfulRecordAssignment")
@@ -1428,7 +1428,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should return null for references to placeholders inside invalid assignment with call as expression`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/references.smltest")
+                parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>("failedRecordAssignment")
@@ -1440,7 +1440,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should evaluate references to placeholders (assigned, called step has different yield order)`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/references.smltest")
+                parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>(
@@ -1454,7 +1454,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should evaluate references to placeholders (assigned, called step has missing yield)`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/references.smltest")
+                parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>("recordAssignmentWithMissingYield")
@@ -1466,7 +1466,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should evaluate references to placeholders (assigned, called step has additional yield)`() {
             val compilationUnit =
-                parseHelper.parseResource("partialEvaluation/references.smltest")
+                parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
             val workflow = compilationUnit.findUniqueDeclarationOrFail<SmlWorkflow>(

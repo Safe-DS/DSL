@@ -35,7 +35,7 @@ class DecisionTree:
 This file contains the actual implementation of the Python class `DecisionTree`. We now want to make this Python class available in Simple-ML, which requires the following Simple-ML stub file:
 
 ```
-// Simple-ML file "simpleml/model/regression/_decision_tree/DecisionTree.smlstub"
+// Simple-ML file "simpleml/model/regression/_decision_tree/DecisionTree.sdsstub"
 
 package simpleml.model.regression._decision_tree
 
@@ -85,7 +85,7 @@ from simpleml.model.regression import DecisionTree
 Note the omission of the suffix `._decision_tree` after `simpleml.model.regression`. Likewise, we can now update the Simple-ML stub code. We again just take everything between `from` and `import` and use this as the Simple-ML package name:
 
 ```
-// Simple-ML file "simpleml/model/regression/DecisionTree.smlstub"
+// Simple-ML file "simpleml/model/regression/DecisionTree.sdsstub"
 
 package simpleml.model.regression
 
@@ -114,7 +114,7 @@ class DecisionTree:
 Our original solution leads to a warning because the Simple-ML package name contains the segment `_decision_tree`, which is not `lowerCamelCase` due to the underscores:
 
 ```
-// Simple-ML file "simpleml/model/regression/_decision_tree/DecisionTree.smlstub"
+// Simple-ML file "simpleml/model/regression/_decision_tree/DecisionTree.sdsstub"
 
 package simpleml.model.regression._decision_tree
 
@@ -124,7 +124,7 @@ class DecisionTree()
 By [calling][annotation-calls] the [annotation][annotations] `@PythonModule`, we can also specify the corresponding [Python module][python-modules], however. If this [annotation][annotations] is [called][annotation-calls], it takes precedence over the Simple-ML package name. This allows us to pick an arbitrary Simple-ML package that respects the Simple-ML naming convention. We can even group multiple [Python modules][python-modules] together in one Simple-ML package without relying on Python's `__init__.py` files:
 
 ```
-// Simple-ML file "simpleml/model/regression/DecisionTree.smlstub"
+// Simple-ML file "simpleml/model/regression/DecisionTree.sdsstub"
 
 @PythonModule("simpleml.model.regression._decision_tree")
 

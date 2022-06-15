@@ -36,7 +36,7 @@ class RecursionTest {
     @BeforeAll
     fun reset() {
         compilationUnit = parseHelper
-            .parseResource("staticAnalysis/recursion.smltest")
+            .parseResource("staticAnalysis/recursion.sdstest")
             .shouldNotBeNull()
     }
 

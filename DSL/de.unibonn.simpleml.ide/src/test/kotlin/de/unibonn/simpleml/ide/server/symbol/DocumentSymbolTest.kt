@@ -122,7 +122,7 @@ private data class ExpectedSymbol(
     override fun toString() = buildString {
         appendLine("symbol \"$name\" {")
         appendLine("${indent}kind: ${kind.value}")
-        appendLine("${indent}location: MyModel.smltest $range")
+        appendLine("${indent}location: MyModel.sdstest $range")
 
         if (!containerName.isNullOrEmpty()) {
             appendLine("${indent}container: \"$containerName\"")

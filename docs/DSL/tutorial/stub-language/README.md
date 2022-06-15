@@ -10,7 +10,7 @@ The stub language is the part of the Simple-ML DSL that is used to integrate fun
 * [Annotations][annotations] attach additional metainformation to declarations.
 * [Comments][comments] document the code.
 
-Files that use the stub language must have the extension `.smlstub`.
+Files that use the stub language must have the extension `.sdsstub`.
 
 [packages]: ../common/packages.md
 [imports]: ../common/imports.md

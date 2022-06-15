@@ -45,7 +45,7 @@ class SimpleMLTEMPLATE_STRING_INNERValueConverterTest {
         @Test
         fun `should remove delimiters (file)`() {
             val compilationUnit = parseHelper.parseResource(
-                "conversion/templateStringPartValueConverter.smltest"
+                "conversion/templateStringPartValueConverter.sdstest"
             ) // readProgramTextFromResource(resourceName)?.let { parseHelper.parse(it) }
             compilationUnit.shouldNotBeNull()
 

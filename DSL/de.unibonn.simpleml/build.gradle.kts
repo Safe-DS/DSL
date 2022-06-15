@@ -48,8 +48,8 @@ sourceSets {
         java.srcDirs("emf-gen", "src-gen")
         resources.srcDirs("src-gen")
         resources.include(
-            "**/*.smlflow",
-            "**/*.smlstub",
+            "**/*.sdsflow",
+            "**/*.sdsstub",
             "**/*.tokens",
             "**/*.xtextbin"
         )

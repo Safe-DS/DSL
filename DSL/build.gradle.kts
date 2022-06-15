@@ -157,7 +157,7 @@ tasks.register("generateXtextLanguage") {
 
                 standardLanguage {
                     setName("de.unibonn.simpleml.SimpleML")
-                    setFileExtensions("smlflow,smlstub,smltest")
+                    setFileExtensions("sdsflow,sdsstub,sdstest")
                     addReferencedResource("platform:/resource/de.unibonn.simpleml/model/SimpleML.genmodel")
 
                     setFormatter(

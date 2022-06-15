@@ -47,7 +47,7 @@ class SimpleMLQualifiedNameValueConverterTest {
         @Test
         fun `should remove backticks (file, no wildcard)`() {
             val compilationUnit =
-                parseHelper.parseResource("conversion/qualifiedNameValueConverter.smltest")
+                parseHelper.parseResource("conversion/qualifiedNameValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
             compilationUnit.name shouldBe "simpleml.package"
@@ -56,7 +56,7 @@ class SimpleMLQualifiedNameValueConverterTest {
         @Test
         fun `should remove backticks (file, with wildcard)`() {
             val compilationUnit =
-                parseHelper.parseResource("conversion/qualifiedNameValueConverter.smltest")
+                parseHelper.parseResource("conversion/qualifiedNameValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
             compilationUnit.name.shouldNotBeNull()
