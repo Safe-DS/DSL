@@ -65,7 +65,7 @@ In addition to the [declaration of placeholders](#declaring-placeholders), assig
 
 The following snippet shows how we can assign a value to a declared [result][results] of a [step][steps]:
 
-```
+```txt
 step trulyRandomInt() -> result: Int {
     yield result = 1;
 }
