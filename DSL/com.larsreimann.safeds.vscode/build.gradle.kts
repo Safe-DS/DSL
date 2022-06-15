@@ -48,7 +48,6 @@ tasks.register<NpxTask>("vsCodeExtension") {
 
     dependsOn("npmInstall")
 
-    inputs.dir("icons")
     inputs.dir("ls")
     inputs.dir("src")
     inputs.dir("syntaxes")
