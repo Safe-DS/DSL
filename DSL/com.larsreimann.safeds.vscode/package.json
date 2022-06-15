@@ -2,7 +2,7 @@
     "name": "safe-ds",
     "displayName": "Safe-DS",
     "description": "Statically checked Data Science programs.",
-    "publisher": "Lars Reimann",
+    "publisher": "larsreimann",
     "repository": {
         "url": "https://github.com/lars-reimann/safe-data-science"
     },

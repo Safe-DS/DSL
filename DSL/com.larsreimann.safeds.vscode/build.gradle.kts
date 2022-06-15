@@ -91,6 +91,29 @@ tasks.register<Exec>("launchVSCode") {
     }
 }
 
+tasks.register<NpxTask>("publishVSCE") {
+    group = "other"
+    description = "Publish the extension to the VS Code marketplace"
+
+    dependsOn("npmInstall")
+
+    inputs.dir("ls")
+    inputs.dir("src")
+    inputs.dir("syntaxes")
+    inputs.files(
+        ".vscodeignore",
+        "CHANGELOG.md",
+        "language-configuration.json",
+        "package.json",
+        "README.md",
+        "tsconfig.json"
+    )
+    outputs.dirs("dist")
+
+    command.set("vsce")
+    args.set(listOf("publish"))
+}
+
 tasks {
     build {
         dependsOn("vsCodeExtension")
