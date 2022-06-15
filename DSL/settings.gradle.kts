@@ -1,7 +1,7 @@
-rootProject.name = "Simple-ML.DSL"
+rootProject.name = "Safe-DS.DSL"
 
 include(
-    "de.unibonn.simpleml",
-    "de.unibonn.simpleml.ide",
-    "de.unibonn.simpleml.vscode"
+    "com.larsreimann.safeds",
+    "com.larsreimann.safeds.ide",
+    "com.larsreimann.safeds.vscode"
 )

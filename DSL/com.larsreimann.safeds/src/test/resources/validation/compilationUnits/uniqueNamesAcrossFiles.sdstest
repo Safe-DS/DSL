@@ -1,0 +1,19 @@
+package safeds.lang
+
+// semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
+annotation »Any«
+
+// semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
+class »Any«
+
+// semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
+enum »Any«
+
+// semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
+fun »Any«()
+
+// semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
+step »Any«() {}
+
+// semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
+workflow »Any« {}

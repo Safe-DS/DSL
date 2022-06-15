@@ -1,0 +1,3 @@
+// semantic_info "Python module is identical to Safe-DS package (can remove annotation call)."
+»@PythonModule("tests.validation.other.annotationCalls.identicalPythonModule")«
+package tests.validation.other.annotationCalls.identicalPythonModule

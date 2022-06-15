@@ -1,0 +1,90 @@
+package safeds.lang
+
+@Description("The annotation can target these declaration types. If the @Target annotation is not used any declaration type can be targeted.")
+@Target(AnnotationTarget.Annotation)
+annotation Target(
+    @Description("The valid targets.")
+    vararg targets: AnnotationTarget
+)
+
+@Description("The declaration types that can be targeted by annotations.")
+enum AnnotationTarget {
+    @Description("The annotation can be called on annotations.")
+    Annotation
+
+    @Description("The annotation can be called on attributes.")
+    Attribute
+
+    @Description("The annotation can be called on classes.")
+    Class
+
+    @Description("The annotation can be called on compilation units (i.e. files).")
+    CompilationUnit
+
+    @Description("The annotation can be called on enums.")
+    Enum
+
+    @Description("The annotation can be called on enum variants.")
+    EnumVariant
+
+    @Description("The annotation can be called on functions.")
+    Function
+
+    @Description("The annotation can be called on parameters.")
+    Parameter
+
+    @Description("The annotation can be called on results.")
+    Result
+
+    @Description("The annotation can be called on steps.")
+    Step
+
+    @Description("The annotation can be called on type parameters.")
+    TypeParameter
+
+    @Description("The annotation can be called on workflows.")
+    Workflow
+}
+
+@Description("The annotation can be called multiple times for the same declaration.")
+@Target(AnnotationTarget.Annotation)
+annotation Repeatable
+
+@Description("The declaration should no longer be used.")
+@Target(
+    AnnotationTarget.Annotation,
+    AnnotationTarget.Attribute,
+    AnnotationTarget.Class,
+    AnnotationTarget.Enum,
+    AnnotationTarget.EnumVariant,
+    AnnotationTarget.Function,
+    AnnotationTarget.Parameter,
+    AnnotationTarget.Result,
+    AnnotationTarget.Step,
+    AnnotationTarget.TypeParameter,
+)
+annotation Deprecated(
+    @Description("What to use instead.")
+    alternative: String? = null,
+
+    @Description("Why the declaration was deprecated.")
+    reason: String? = null,
+
+    @Description("When the declaration was deprecated.")
+    sinceVersion: String? = null,
+
+    @Description("When the declaration will be removed.")
+    removalVersion: String? = null,
+)
+
+@Description("The function has no side effects and returns the same results for the same arguments.")
+@Target(AnnotationTarget.Function)
+annotation Pure
+
+@Description("The function has no side effects.")
+@Target(AnnotationTarget.Function)
+annotation NoSideEffects
+
+@Description("Values assigned to this parameter must be constant.")
+@Target(AnnotationTarget.Parameter)
+annotation Constant

@@ -1,0 +1,51 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Safe-DS",
+    "patterns": [
+        {
+            "include": "#comment"
+        },
+        {
+            "include": "#keywords"
+        },
+        {
+            "include": "#strings"
+        }
+    ],
+    "repository": {
+        "comment": {
+            "patterns": [
+                {
+                    "name": "comment.block.safeds",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                },
+                {
+                    "name": "comment.line.double-slash.safeds",
+                    "begin": "//",
+                    "end": "(?=$)"
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "keyword.control.safeds",
+                    "match": "\\b(_|and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|private|protocol|static|step|sub|subterm|super|true|union|val|vararg|where|workflow|yield)\\b"
+                }
+            ]
+        },
+        "strings": {
+            "name": "string.quoted.double.safeds",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.safeds",
+                    "match": "\\\\."
+                }
+            ]
+        }
+    },
+    "scopeName": "source.safeds"
+}

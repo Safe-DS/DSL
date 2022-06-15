@@ -1,6 +1,6 @@
 # Expressions
 
-Expressions are the parts of the [workflow language][workflow-language] that evaluate to some value. A multitude of different expression types known from other programming languages are supported by Simple-ML, from basic [literals](#literals) to [lambdas](#lambdas).
+Expressions are the parts of the [workflow language][workflow-language] that evaluate to some value. A multitude of different expression types known from other programming languages are supported by Safe-DS, from basic [literals](#literals) to [lambdas](#lambdas).
 
 ## Literals
 
@@ -14,7 +14,7 @@ Int literals denote integers. They use the expected syntax. For example, the int
 
 Float literals denote floating point numbers. There are two ways to specify them:
 * **Decimal form**: One half can be written as `0.5`. Note that neither the integer part nor the decimal part can be omitted, so `.5` and `0.` are syntax errors.
-* **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Simple-ML as `1.0e-3` or `1.0E-3`. You can read this as `1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `1e-3` or `1E-3`.
+* **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Safe-DS as `1.0e-3` or `1.0E-3`. You can read this as `1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `1e-3` or `1E-3`.
 
 ### String Literals
 
@@ -45,7 +45,7 @@ In order to interpolate text with other computed values, use [template strings](
 
 ### Boolean Literals
 
-To work with truthiness, Simple-ML has the two boolean literals `false` and `true`.
+To work with truthiness, Safe-DS has the two boolean literals `false` and `true`.
 
 ### `null` Literal
 
@@ -53,7 +53,7 @@ To denote that a value is unknown or absent, use the literal `null`.
 
 ## Operations
 
-Operations are special functions that can be applied to one or two expressions. Simple-ML has a fixed set of operations that cannot be extended. We distinguish between
+Operations are special functions that can be applied to one or two expressions. Safe-DS has a fixed set of operations that cannot be extended. We distinguish between
 * prefix operations (general form `<operator> <operand>`), and
 * infix operations (general form `<left operand> <operator> <right operand>`).
 
@@ -69,7 +69,7 @@ The usual arithmetic operations are also supported for integers, floats and comb
 * Multiplication: `1.1 * 3` (result is a float)
 * Division: `1.0 / 4.2` (result is a float)
 
-Finally, two numbers can be compared, which results in a boolean. The integer `3` for example is less than the integer `5`. Simple-ML offers operators to do such checks for order:
+Finally, two numbers can be compared, which results in a boolean. The integer `3` for example is less than the integer `5`. Safe-DS offers operators to do such checks for order:
 
 * Less than: `5 < 6`
 * Less than or equal: `1 <= 3`
@@ -78,7 +78,7 @@ Finally, two numbers can be compared, which results in a boolean. The integer `3
 
 ### Logical Operations
 
-To work with logic, Simple-ML has the two boolean literals `false` and `true` as well as operations to work with them:
+To work with logic, Safe-DS has the two boolean literals `false` and `true` as well as operations to work with them:
 * (Logical) **negation** (example `not a`): Output is `true` if and only if the operand is false:
 
 `not a` | false | true
@@ -101,12 +101,12 @@ To work with logic, Simple-ML has the two boolean literals `false` and `true` as
 
 ### Equality Checks
 
-There are two different types of equality in Simple-ML, _identity_ and _structural equality_. Identity checks if two objects are one and the same, whereas structural equality checks if two objects have the same structure and content. Using a real world example, two phones of the same type would be structurally equal but not identical. Both types of equality checks return a boolean literal `true` if the check was positive and `false` if the check was negative. The syntax for these operations is as follows:
+There are two different types of equality in Safe-DS, _identity_ and _structural equality_. Identity checks if two objects are one and the same, whereas structural equality checks if two objects have the same structure and content. Using a real world example, two phones of the same type would be structurally equal but not identical. Both types of equality checks return a boolean literal `true` if the check was positive and `false` if the check was negative. The syntax for these operations is as follows:
 
 * Identity: `1 === 2`
 * Structural equality: `1 == 2`
 
-Simple-ML also has shorthand versions for negated equality checks which should be used instead of an explicit logical negation with the `not` operator:
+Safe-DS also has shorthand versions for negated equality checks which should be used instead of an explicit logical negation with the `not` operator:
 
 * Negated identity: `1 !== 2`
 * Negated structural equality: `1 != 2`
@@ -222,9 +222,9 @@ Depending on the callee, a call can do different things. The following table lis
 | [Enum Variant][enum-variants]       | Creates a new instance of the enum variant. Enum variants are always callable. The call evaluates to this new instance.        |
 | [Global Function][global-functions] | Invokes the function and runs the associated Python code. The call evaluates to the result record of the function.             |
 | [Method][methods]                   | Invokes the method and runs the associated Python code. The call evaluates to the result record of the method.                 |
-|[Step][steps]|Invokes the step and runs the Simple-ML code in its body. The call evaluates to the result record of the step.||
-|[Block Lambda](#block-lambdas)|Invokes the lambda and runs the Simple-ML code in its body. The call evaluates to the result record of the lambda.||
-|[Expression Lambda](#expression-lambdas)|Invokes the lambda and runs the Simple-ML code in its body. The call evaluates to the result record of the lambda.||
+|[Step][steps]|Invokes the step and runs the Safe-DS code in its body. The call evaluates to the result record of the step.||
+|[Block Lambda](#block-lambdas)|Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.||
+|[Expression Lambda](#expression-lambdas)|Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.||
 |Declaration with [Callable Type][callable-types]|Call whatever the value of the declaration is.
 
 #### Result Record
@@ -260,7 +260,7 @@ To understand how we can access members of a [class][classes] we must first look
 ```
 class DecisionTree() {
     static attr verboseTraining: Boolean
-    
+
     attr maxDepth: Int
 }
 ```
@@ -483,7 +483,7 @@ The results of a block lambda are [declared in its body using assignments][assig
 
 ### Expression Lambdas
 
-Often, the body of a [block lambda](#block-lambdas) only consists of yielding a single result, as is the case in the example above. The syntax of [block lambdas](#block-lambdas) is quite verbose for such a common use-case, which is why Simple-ML has _expression lambdas_ as a shorter but less flexible alternative. Using an expression lambda we can rewrite the example above as
+Often, the body of a [block lambda](#block-lambdas) only consists of yielding a single result, as is the case in the example above. The syntax of [block lambdas](#block-lambdas) is quite verbose for such a common use-case, which is why Safe-DS has _expression lambdas_ as a shorter but less flexible alternative. Using an expression lambda we can rewrite the example above as
 
 ```
 intListOf(1, 4, 11).filter(

@@ -6,27 +6,27 @@
 version: 2
 updates:
   # Root
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
 
   # DSL
-  - package-ecosystem: "gradle"
-    directory: "/DSL"
+  - package-ecosystem: 'gradle'
+    directory: '/DSL'
     schedule:
-      interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "/DSL/de.unibonn.simpleml.vscode"
+      interval: 'monthly'
+  - package-ecosystem: 'npm'
+    directory: '/DSL/com.larsreimann.safeds.vscode'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
 
   # Runtime
-  - package-ecosystem: "pip"
-    directory: "/Runtime/safe-ds"
+  - package-ecosystem: 'pip'
+    directory: '/Runtime/safe-ds'
     schedule:
-      interval: "monthly"
-  - package-ecosystem: "pip"
-    directory: "/Runtime/safe-ds-runner"
+      interval: 'monthly'
+  - package-ecosystem: 'pip'
+    directory: '/Runtime/safe-ds-runner'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'

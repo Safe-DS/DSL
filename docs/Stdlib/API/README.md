@@ -1,8 +1,8 @@
-# Simple-ML API Documentation
+# Safe-DS API Documentation
 
 ## Packages
 
-* [simpleml.lang](./simpleml_lang.md)
+* [safeds.lang](./safeds_lang.md)
 
 ----------
 

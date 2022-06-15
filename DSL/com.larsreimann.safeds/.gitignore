@@ -1,0 +1,7 @@
+/META-INF/
+emf-gen/
+src-gen/
+build.properties
+plugin.properties
+plugin.xml
+*.xtend

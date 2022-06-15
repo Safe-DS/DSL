@@ -1,6 +1,6 @@
 # Annotations
 
-Annotations attach additional metainformation to declarations. Annotations must first be [declared](#declaring-an-annotation), so Simple-ML knows the annotation exists and which inputs are expected. Afterwards, annotations can be [called](#calling-an-annotation), which is the step that truly attaches metainformation to declarations.
+Annotations attach additional metainformation to declarations. Annotations must first be [declared](#declaring-an-annotation), so Safe-DS knows the annotation exists and which inputs are expected. Afterwards, annotations can be [called](#calling-an-annotation), which is the step that truly attaches metainformation to declarations.
 
 ## Declaring an Annotation
 
@@ -52,7 +52,7 @@ To attach metainformation to a declaration, the annotation must be called on tha
 * [Type parameters][type-parameters]
 * [Workflows][workflows]
 
-The valid targets of an annotation can be restricted with the [`Target`][simpleml-lang-target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][simpleml-lang-repeatable].
+The valid targets of an annotation can be restricted with the [`Target`][safeds-lang-target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds-lang-repeatable].
 
 Annotation calls are always located right in front of their target. Exception: In the case of compilations units they are located at the very top of the file. Here is an example that demonstrates how to call the annotation `OnlyForExperts` that we defined above on a [class][classes]:
 
@@ -85,10 +85,10 @@ The same [restrictions to arguments][argument-restrictions] as for [calls][calls
 
 ## Built-in Annotations
 
-The package `simpleml.lang` contains several annotations that are processed by Simple-ML. Refer to the [API documentation][simpleml-lang] for more details. Particularly important are the annotations
+The package `safeds.lang` contains several annotations that are processed by Safe-DS. Refer to the [API documentation][safeds-lang] for more details. Particularly important are the annotations
 
-* [`Target`][simpleml-lang-target], which can restrict the possible targets of an annotation, and
-* [`Repeatable`][simpleml-lang-repeatable], which allows an annotation to be called multiple times on the same declaration.
+* [`Target`][safeds-lang-target], which can restrict the possible targets of an annotation, and
+* [`Repeatable`][safeds-lang-repeatable], which allows an annotation to be called multiple times on the same declaration.
 
 [parameters]: ../common/parameters.md
 [types]: ../common/types.md
@@ -102,8 +102,8 @@ The package `simpleml.lang` contains several annotations that are processed by S
 [steps]: ../workflow-language/steps.md
 [type-parameters]: ./type-parameters.md
 [workflows]: ../workflow-language/workflows.md
-[simpleml-lang]: ../../../Stdlib/API/simpleml_lang.md
-[simpleml-lang-repeatable]: ../../../Stdlib/API/simpleml_lang.md#annotation-repeatable
-[simpleml-lang-target]: ../../../Stdlib/API/simpleml_lang.md#annotation-target
+[safeds-lang]: ../../../Stdlib/API/safeds_lang.md
+[safeds-lang-repeatable]: ../../../Stdlib/API/safeds_lang.md#annotation-repeatable
+[safeds-lang-target]: ../../../Stdlib/API/safeds_lang.md#annotation-target
 [calls]: ../workflow-language/expressions.md#calls
 [argument-restrictions]: ../workflow-language/expressions.md#restrictions-for-arguments

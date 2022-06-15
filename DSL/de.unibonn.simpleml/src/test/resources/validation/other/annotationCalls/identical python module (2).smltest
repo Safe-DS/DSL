@@ -1,7 +1,0 @@
-// no_semantic_info "Python module is identical to Simple-ML package (can remove annotation call)."
-»@PythonModule("tests.validation.other.annotation_calls.identical_python_module")«
-package tests.validation.other.annotationCalls.identicalPythonModule
-
-// no_semantic_info "Python module is identical to Simple-ML package (can remove annotation call)."
-»@PythonModule("TestClass")«
-class TestClass
