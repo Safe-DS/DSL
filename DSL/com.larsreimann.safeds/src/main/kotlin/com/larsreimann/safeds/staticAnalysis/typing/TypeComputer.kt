@@ -2,14 +2,14 @@
 
 package com.larsreimann.safeds.staticAnalysis.typing
 
-import de.unibonn.simpleml.emf.blockLambdaResultsOrEmpty
-import de.unibonn.simpleml.emf.closestAncestorOrNull
-import de.unibonn.simpleml.emf.containingEnumOrNull
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.resultsOrEmpty
-import de.unibonn.simpleml.emf.typeArgumentsOrEmpty
-import de.unibonn.simpleml.emf.yieldsOrEmpty
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.emf.blockLambdaResultsOrEmpty
+import com.larsreimann.safeds.emf.closestAncestorOrNull
+import com.larsreimann.safeds.emf.containingEnumOrNull
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.resultsOrEmpty
+import com.larsreimann.safeds.emf.typeArgumentsOrEmpty
+import com.larsreimann.safeds.emf.yieldsOrEmpty
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
@@ -52,20 +52,20 @@ import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsYield
-import de.unibonn.simpleml.staticAnalysis.assignedOrNull
-import de.unibonn.simpleml.staticAnalysis.callableOrNull
-import de.unibonn.simpleml.staticAnalysis.classHierarchy.superClasses
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.stdlibAccess.StdlibClasses
-import de.unibonn.simpleml.stdlibAccess.getStdlibClassOrNull
+import com.larsreimann.safeds.staticAnalysis.assignedOrNull
+import com.larsreimann.safeds.staticAnalysis.callableOrNull
+import com.larsreimann.safeds.staticAnalysis.classHierarchy.superClasses
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.stdlibAccess.StdlibClasses
+import com.larsreimann.safeds.stdlibAccess.getStdlibClassOrNull
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 
-fun SmlAbstractObject.type(): Type {
+fun SdsAbstractObject.type(): Type {
     return inferType(this)
 }
 
-fun SmlAbstractObject.hasPrimitiveType(): Boolean {
+fun SdsAbstractObject.hasPrimitiveType(): Boolean {
     val type = type()
     if (type !is ClassType) {
         return false
@@ -83,20 +83,20 @@ fun SmlAbstractObject.hasPrimitiveType(): Boolean {
 private fun EObject.inferType(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
-        this is SmlAbstractAssignee -> this.inferTypeForAssignee(context)
-        this is SmlAbstractDeclaration -> this.inferTypeForDeclaration(context)
-        this is SmlAbstractExpression -> this.inferTypeExpression(context)
-        this is SmlAbstractType -> this.inferTypeForType(context)
-        this is SmlTypeArgument -> this.value.inferType(context)
-        this is SmlTypeProjection -> this.type.inferTypeForType(context)
+        this is SdsAbstractAssignee -> this.inferTypeForAssignee(context)
+        this is SdsAbstractDeclaration -> this.inferTypeForDeclaration(context)
+        this is SdsAbstractExpression -> this.inferTypeExpression(context)
+        this is SdsAbstractType -> this.inferTypeForType(context)
+        this is SdsTypeArgument -> this.value.inferType(context)
+        this is SdsTypeProjection -> this.type.inferTypeForType(context)
         else -> Any(context)
     }
 }
 
-private fun SmlAbstractAssignee.inferTypeForAssignee(context: EObject): Type {
+private fun SdsAbstractAssignee.inferTypeForAssignee(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
-        this is SmlBlockLambdaResult || this is SmlPlaceholder || this is SmlYield -> {
+        this is SdsBlockLambdaResult || this is SdsPlaceholder || this is SdsYield -> {
             val assigned = assignedOrNull() ?: return Nothing(context)
             assigned.inferType(context)
         }
@@ -104,18 +104,18 @@ private fun SmlAbstractAssignee.inferTypeForAssignee(context: EObject): Type {
     }
 }
 
-private fun SmlAbstractDeclaration.inferTypeForDeclaration(context: EObject): Type {
+private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
-        this is SmlAttribute -> type.inferTypeForType(context)
-        this is SmlClass -> ClassType(this, isNullable = false)
-        this is SmlEnum -> EnumType(this, isNullable = false)
-        this is SmlEnumVariant -> EnumVariantType(this, isNullable = false)
-        this is SmlFunction -> CallableType(
+        this is SdsAttribute -> type.inferTypeForType(context)
+        this is SdsClass -> ClassType(this, isNullable = false)
+        this is SdsEnum -> EnumType(this, isNullable = false)
+        this is SdsEnumVariant -> EnumVariantType(this, isNullable = false)
+        this is SdsFunction -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
         )
-        this is SmlParameter -> {
+        this is SdsParameter -> {
 
             // Declared parameter type
             if (this.type != null) {
@@ -127,12 +127,12 @@ private fun SmlAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
             }
 
             // Inferred lambda parameter type
-            val callable = this.closestAncestorOrNull<SmlAbstractCallable>()
+            val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
             val thisIndex = callable.parametersOrEmpty().indexOf(this)
-            if (callable is SmlAbstractLambda) {
+            if (callable is SdsAbstractLambda) {
                 val containerType = when (val container = callable.eContainer()) {
-                    is SmlArgument -> container.parameterOrNull()?.inferType(context)
-                    is SmlAssignment ->
+                    is SdsArgument -> container.parameterOrNull()?.inferType(context)
+                    is SdsAssignment ->
                         container
                             .yieldsOrEmpty()
                             .find { it.assignedOrNull() == callable }
@@ -150,8 +150,8 @@ private fun SmlAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
             // We don't know better
             return Any(context)
         }
-        this is SmlResult -> type.inferTypeForType(context)
-        this is SmlStep -> CallableType(
+        this is SdsResult -> type.inferTypeForType(context)
+        this is SdsStep -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
         )
@@ -159,54 +159,54 @@ private fun SmlAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
     }
 }
 
-private fun SmlAbstractExpression.inferTypeExpression(context: EObject): Type {
+private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
     return when {
 
         // Terminal cases
         this.eIsProxy() -> UnresolvedType
-        this is SmlBoolean -> Boolean(context)
-        this is SmlFloat -> Float(context)
-        this is SmlInt -> Int(context)
-        this is SmlNull -> Nothing(context, isNullable = true)
-        this is SmlString -> String(context)
-        this is SmlTemplateString -> String(context)
+        this is SdsBoolean -> Boolean(context)
+        this is SdsFloat -> Float(context)
+        this is SdsInt -> Int(context)
+        this is SdsNull -> Nothing(context, isNullable = true)
+        this is SdsString -> String(context)
+        this is SdsTemplateString -> String(context)
 
         // Recursive cases
-        this is SmlArgument -> this.value.inferTypeExpression(context)
-        this is SmlBlockLambda -> CallableType(
+        this is SdsArgument -> this.value.inferTypeExpression(context)
+        this is SdsBlockLambda -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) }
         )
-        this is SmlCall -> when (val callable = callableOrNull()) {
-            is SmlClass -> ClassType(callable, isNullable = false)
-            is SmlCallableType -> {
+        this is SdsCall -> when (val callable = callableOrNull()) {
+            is SdsClass -> ClassType(callable, isNullable = false)
+            is SdsCallableType -> {
                 val results = callable.resultsOrEmpty()
                 when (results.size) {
                     1 -> results.first().inferTypeForDeclaration(context)
                     else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
                 }
             }
-            is SmlFunction -> {
+            is SdsFunction -> {
                 val results = callable.resultsOrEmpty()
                 when (results.size) {
                     1 -> results.first().inferTypeForDeclaration(context)
                     else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
                 }
             }
-            is SmlBlockLambda -> {
+            is SdsBlockLambda -> {
                 val results = callable.blockLambdaResultsOrEmpty()
                 when (results.size) {
                     1 -> results.first().inferTypeForAssignee(context)
                     else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
                 }
             }
-            is SmlEnumVariant -> {
+            is SdsEnumVariant -> {
                 EnumVariantType(callable, isNullable = false)
             }
-            is SmlExpressionLambda -> {
+            is SdsExpressionLambda -> {
                 callable.result.inferTypeExpression(context)
             }
-            is SmlStep -> {
+            is SdsStep -> {
                 val results = callable.resultsOrEmpty()
                 when (results.size) {
                     1 -> results.first().inferTypeForDeclaration(context)
@@ -215,18 +215,18 @@ private fun SmlAbstractExpression.inferTypeExpression(context: EObject): Type {
             }
             else -> Any(context)
         }
-        this is SmlExpressionLambda -> CallableType(
+        this is SdsExpressionLambda -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             listOf(result.inferTypeExpression(context))
         )
-        this is SmlIndexedAccess -> {
+        this is SdsIndexedAccess -> {
             when (val receiverType = this.receiver.inferTypeExpression(context)) {
                 is UnresolvedType -> UnresolvedType
                 is VariadicType -> receiverType.elementType
                 else -> Nothing(context)
             }
         }
-        this is SmlInfixOperation -> when (operator) {
+        this is SdsInfixOperation -> when (operator) {
             "<", "<=", ">=", ">" -> Boolean(context)
             "==", "!=" -> Boolean(context)
             "===", "!==" -> Boolean(context)
@@ -252,12 +252,12 @@ private fun SmlAbstractExpression.inferTypeExpression(context: EObject): Type {
             }
             else -> Nothing(context)
         }
-        this is SmlMemberAccess -> {
+        this is SdsMemberAccess -> {
             val memberType = this.member.inferTypeExpression(context)
             memberType.setIsNullableOnCopy(this.isNullSafe || memberType.isNullable)
         }
-        this is SmlParenthesizedExpression -> this.expression.inferTypeExpression(context)
-        this is SmlPrefixOperation -> when (operator) {
+        this is SdsParenthesizedExpression -> this.expression.inferTypeExpression(context)
+        this is SdsPrefixOperation -> when (operator) {
             "not" -> Boolean(context)
             "-" -> when (this.operand.inferTypeExpression(context)) {
                 Int(context) -> Int(context)
@@ -265,28 +265,28 @@ private fun SmlAbstractExpression.inferTypeExpression(context: EObject): Type {
             }
             else -> Nothing(context)
         }
-        this is SmlReference -> this.declaration.inferType(context)
+        this is SdsReference -> this.declaration.inferType(context)
         else -> Any(context)
     }
 }
 
-private fun SmlAbstractType.inferTypeForType(context: EObject): Type {
+private fun SdsAbstractType.inferTypeForType(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
-        this is SmlCallableType -> CallableType(
+        this is SdsCallableType -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
         )
-        this is SmlMemberType -> {
+        this is SdsMemberType -> {
             this.member.inferTypeForType(context)
         }
-        this is SmlNamedType -> {
+        this is SdsNamedType -> {
             this.declaration.inferTypeForDeclaration(context).setIsNullableOnCopy(this.isNullable)
         }
-        this is SmlParenthesizedType -> {
+        this is SdsParenthesizedType -> {
             this.type.inferTypeForType(context)
         }
-        this is SmlUnionType -> {
+        this is SdsUnionType -> {
             UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
         }
         else -> Any(context)

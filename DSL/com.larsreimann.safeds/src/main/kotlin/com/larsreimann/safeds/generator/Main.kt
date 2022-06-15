@@ -2,8 +2,8 @@ package com.larsreimann.safeds.generator
 
 import com.google.inject.Inject
 import com.google.inject.Provider
-import de.unibonn.simpleml.SimpleMLStandaloneSetup
-import de.unibonn.simpleml.stdlibAccess.loadStdlib
+import com.larsreimann.safeds.SimpleMLStandaloneSetup
+import com.larsreimann.safeds.stdlibAccess.loadStdlib
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.diagnostics.Severity

@@ -1,6 +1,6 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotation
 import com.larsreimann.safeds.safeDS.SdsAttribute
@@ -17,15 +17,15 @@ import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsWorkflow
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.WarningCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.WarningCode
 import org.eclipse.xtext.validation.Check
 
-class NameConventionChecker : AbstractSimpleMLChecker() {
+class NameConventionChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun segmentsShouldBeLowercase(smlCompilationUnit: SmlCompilationUnit) {
+    fun segmentsShouldBeLowercase(smlCompilationUnit: SdsCompilationUnit) {
         val hasInvalidSegments = smlCompilationUnit.name
             .split('.')
             .any { !it.isLowerCamelCase() }
@@ -33,108 +33,108 @@ class NameConventionChecker : AbstractSimpleMLChecker() {
         if (hasInvalidSegments) {
             warning(
                 "All segments of the qualified name of a package should be lowerCamelCase.",
-                Literals.SML_ABSTRACT_DECLARATION__NAME,
+                Literals.SDS_ABSTRACT_DECLARATION__NAME,
                 WarningCode.SegmentsShouldBeLowerCamelCase
             )
         }
     }
 
     @Check
-    fun blockLambdaPrefix(smlDeclaration: SmlAbstractDeclaration) {
+    fun blockLambdaPrefix(smlDeclaration: SdsAbstractDeclaration) {
         if (smlDeclaration.name.startsWith("__block_lambda_")) {
             error(
                 "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas.",
-                Literals.SML_ABSTRACT_DECLARATION__NAME,
+                Literals.SDS_ABSTRACT_DECLARATION__NAME,
                 ErrorCode.BlockLambdaPrefix
             )
         }
     }
 
     @Check
-    fun annotationNamesShouldBeUpperCamelCase(smlAnnotation: SmlAnnotation) {
+    fun annotationNamesShouldBeUpperCamelCase(smlAnnotation: SdsAnnotation) {
         smlAnnotation.nameShouldBeUpperCamelCase("annotations")
     }
 
     @Check
-    fun attributeNamesShouldBeLowerCamelCase(smlAttribute: SmlAttribute) {
+    fun attributeNamesShouldBeLowerCamelCase(smlAttribute: SdsAttribute) {
         smlAttribute.nameShouldBeLowerCamelCase("attributes")
     }
 
     @Check
-    fun classNamesShouldBeUpperCamelCase(smlClass: SmlClass) {
+    fun classNamesShouldBeUpperCamelCase(smlClass: SdsClass) {
         smlClass.nameShouldBeUpperCamelCase("classes")
     }
 
     @Check
-    fun enumNamesShouldBeUpperCamelCase(smlEnum: SmlEnum) {
+    fun enumNamesShouldBeUpperCamelCase(smlEnum: SdsEnum) {
         smlEnum.nameShouldBeUpperCamelCase("enums")
     }
 
     @Check
-    fun enumVariantNamesShouldBeUpperCamelCase(smlEnumVariant: SmlEnumVariant) {
+    fun enumVariantNamesShouldBeUpperCamelCase(smlEnumVariant: SdsEnumVariant) {
         smlEnumVariant.nameShouldBeUpperCamelCase("enum variants")
     }
 
     @Check
-    fun functionNamesShouldBeLowerCamelCase(smlFunction: SmlFunction) {
+    fun functionNamesShouldBeLowerCamelCase(smlFunction: SdsFunction) {
         smlFunction.nameShouldBeLowerCamelCase("functions")
     }
 
     @Check
-    fun lambdaResultNamesShouldBeLowerCamelCase(smlBlockLambdaResult: SmlBlockLambdaResult) {
+    fun lambdaResultNamesShouldBeLowerCamelCase(smlBlockLambdaResult: SdsBlockLambdaResult) {
         smlBlockLambdaResult.nameShouldBeLowerCamelCase("lambda results")
     }
 
     @Check
-    fun parameterNamesShouldBeLowerCamelCase(smlParameter: SmlParameter) {
+    fun parameterNamesShouldBeLowerCamelCase(smlParameter: SdsParameter) {
         smlParameter.nameShouldBeLowerCamelCase("parameters")
     }
 
     @Check
-    fun placeholderNamesShouldBeLowerCamelCase(smlPlaceholder: SmlPlaceholder) {
+    fun placeholderNamesShouldBeLowerCamelCase(smlPlaceholder: SdsPlaceholder) {
         smlPlaceholder.nameShouldBeLowerCamelCase("placeholders")
     }
 
     @Check
-    fun protocolSubtermNamesShouldBeLowerCamelCase(smlProtocolSubterm: SmlProtocolSubterm) {
+    fun protocolSubtermNamesShouldBeLowerCamelCase(smlProtocolSubterm: SdsProtocolSubterm) {
         smlProtocolSubterm.nameShouldBeLowerCamelCase("protocol subterms")
     }
 
     @Check
-    fun resultNamesShouldBeLowerCamelCase(smlResult: SmlResult) {
+    fun resultNamesShouldBeLowerCamelCase(smlResult: SdsResult) {
         smlResult.nameShouldBeLowerCamelCase("results")
     }
 
     @Check
-    fun stepNamesShouldBeLowerCamelCase(smlStep: SmlStep) {
+    fun stepNamesShouldBeLowerCamelCase(smlStep: SdsStep) {
         smlStep.nameShouldBeLowerCamelCase("steps")
     }
 
     @Check
-    fun typeParameterNamesShouldBeUpperCamelCase(smlTypeParameter: SmlTypeParameter) {
+    fun typeParameterNamesShouldBeUpperCamelCase(smlTypeParameter: SdsTypeParameter) {
         smlTypeParameter.nameShouldBeUpperCamelCase("type parameters")
     }
 
     @Check
-    fun workflowNamesShouldBeLowerCamelCase(smlWorkflow: SmlWorkflow) {
+    fun workflowNamesShouldBeLowerCamelCase(smlWorkflow: SdsWorkflow) {
         smlWorkflow.nameShouldBeLowerCamelCase("workflows")
     }
 
-    private fun SmlAbstractDeclaration.nameShouldBeUpperCamelCase(declarationType: String) {
+    private fun SdsAbstractDeclaration.nameShouldBeUpperCamelCase(declarationType: String) {
         if (this.name != null && !this.name.isUpperCamelCase()) {
             warning(
                 "Names of $declarationType should be UpperCamelCase.",
-                Literals.SML_ABSTRACT_DECLARATION__NAME,
+                Literals.SDS_ABSTRACT_DECLARATION__NAME,
                 WarningCode.NameShouldBeUpperCamelCase
             )
         }
     }
 
-    private fun SmlAbstractDeclaration.nameShouldBeLowerCamelCase(declarationType: String) {
+    private fun SdsAbstractDeclaration.nameShouldBeLowerCamelCase(declarationType: String) {
         if (this.name != null && !this.name.isLowerCamelCase()) {
             warning(
                 "Names of $declarationType should be lowerCamelCase.",
-                Literals.SML_ABSTRACT_DECLARATION__NAME,
+                Literals.SDS_ABSTRACT_DECLARATION__NAME,
                 WarningCode.NameShouldBeLowerCamelCase
             )
         }

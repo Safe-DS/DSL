@@ -1,7 +1,7 @@
 package com.larsreimann.safeds.staticAnalysis
 
-import de.unibonn.simpleml.emf.assigneesOrEmpty
-import de.unibonn.simpleml.emf.immediateCalls
+import com.larsreimann.safeds.emf.assigneesOrEmpty
+import com.larsreimann.safeds.emf.immediateCalls
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
 import com.larsreimann.safeds.safeDS.SdsAbstractLambda
@@ -15,20 +15,20 @@ import com.larsreimann.safeds.safeDS.SdsExpressionStatement
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWildcard
-import de.unibonn.simpleml.stdlibAccess.hasNoSideEffects
+import com.larsreimann.safeds.stdlibAccess.hasNoSideEffects
 
 /**
- * Whether this [SmlAbstractStatement] has no side effects and, thus, can be removed.
+ * Whether this [SdsAbstractStatement] has no side effects and, thus, can be removed.
  *
  * @param resultIfUnknown What to return if neither purity nor impurity can be proven. Note that external functions are
  * still always assumed to have side effects unless they are marked with `@Pure` or `@NoSideEffects.
  */
-fun SmlAbstractStatement.statementHasNoSideEffects(resultIfUnknown: Boolean = false): Boolean {
+fun SdsAbstractStatement.statementHasNoSideEffects(resultIfUnknown: Boolean = false): Boolean {
     return when (this) {
-        is SmlAssignment -> {
-            assigneesOrEmpty().all { it is SmlWildcard } && expression.expressionHasNoSideEffects(resultIfUnknown)
+        is SdsAssignment -> {
+            assigneesOrEmpty().all { it is SdsWildcard } && expression.expressionHasNoSideEffects(resultIfUnknown)
         }
-        is SmlExpressionStatement -> {
+        is SdsExpressionStatement -> {
             expression.expressionHasNoSideEffects(resultIfUnknown)
         }
         else -> {
@@ -38,35 +38,35 @@ fun SmlAbstractStatement.statementHasNoSideEffects(resultIfUnknown: Boolean = fa
 }
 
 /**
- * Whether this [SmlAbstractExpression] has no side effects and, thus, can be removed.
+ * Whether this [SdsAbstractExpression] has no side effects and, thus, can be removed.
  *
  * @param resultIfUnknown What to return if neither purity nor impurity can be proven. Note that external functions are
  * still always assumed to have side effects unless they are marked with `@Pure` or `@NoSideEffects.
  */
-fun SmlAbstractExpression.expressionHasNoSideEffects(resultIfUnknown: Boolean = false): Boolean {
+fun SdsAbstractExpression.expressionHasNoSideEffects(resultIfUnknown: Boolean = false): Boolean {
     return when (this) {
-        is SmlCall -> !isRecursive() && callableOrNull().callableHasNoSideEffects(resultIfUnknown)
+        is SdsCall -> !isRecursive() && callableOrNull().callableHasNoSideEffects(resultIfUnknown)
         else -> true
     }
 }
 
 /**
- * Whether this [SmlAbstractCallable] has no side effects, so calls to this can be removed.
+ * Whether this [SdsAbstractCallable] has no side effects, so calls to this can be removed.
  *
  * @param resultIfUnknown What to return if neither purity nor impurity can be proven. Note that external functions are
  * still always assumed to have side effects unless they are marked with `@Pure` or `@NoSideEffects.
  */
-fun SmlAbstractCallable?.callableHasNoSideEffects(resultIfUnknown: Boolean = false): Boolean {
+fun SdsAbstractCallable?.callableHasNoSideEffects(resultIfUnknown: Boolean = false): Boolean {
     return when (this) {
         null -> resultIfUnknown
 
-        is SmlAbstractLambda -> immediateCalls().all { it.expressionHasNoSideEffects(resultIfUnknown) }
-        is SmlStep -> immediateCalls().all { it.expressionHasNoSideEffects(resultIfUnknown) }
+        is SdsAbstractLambda -> immediateCalls().all { it.expressionHasNoSideEffects(resultIfUnknown) }
+        is SdsStep -> immediateCalls().all { it.expressionHasNoSideEffects(resultIfUnknown) }
 
-        is SmlCallableType -> resultIfUnknown
-        is SmlClass -> true
-        is SmlEnumVariant -> true
-        is SmlFunction -> hasNoSideEffects()
+        is SdsCallableType -> resultIfUnknown
+        is SdsClass -> true
+        is SdsEnumVariant -> true
+        is SdsFunction -> hasNoSideEffects()
 
         else -> throw IllegalArgumentException("Cannot handle callable of type '${this::class.simpleName}'.")
     }

@@ -1,27 +1,27 @@
 package com.larsreimann.safeds.validation
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage
+import com.larsreimann.safeds.safeDS.SafeDSPackage
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
-import de.unibonn.simpleml.validation.codes.WarningCode
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
+import com.larsreimann.safeds.validation.codes.WarningCode
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
-abstract class AbstractSimpleMLChecker : AbstractSimpleMLValidator() {
+abstract class AbstractSafeDSChecker : AbstractSafeDSValidator() {
     override fun register(registrar: EValidatorRegistrar) {
         // This is overridden to prevent duplicate validation errors.
     }
 
-    protected fun List<SmlAbstractDeclaration>.reportDuplicateNames(message: (SmlAbstractDeclaration) -> String) {
+    protected fun List<SdsAbstractDeclaration>.reportDuplicateNames(message: (SdsAbstractDeclaration) -> String) {
         this.duplicatesBy { it.name }
             .forEach {
                 error(
                     message(it),
                     it,
-                    SimpleMLPackage.Literals.SML_ABSTRACT_DECLARATION__NAME,
+                    SafeDSPackage.Literals.SDS_ABSTRACT_DECLARATION__NAME,
                     ErrorCode.REDECLARATION
                 )
             }

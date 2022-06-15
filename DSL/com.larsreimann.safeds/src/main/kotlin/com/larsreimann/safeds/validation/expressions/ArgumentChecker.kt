@@ -1,37 +1,37 @@
 package com.larsreimann.safeds.validation.expressions
 
-import de.unibonn.simpleml.emf.isNamed
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.isNamed
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsArgument
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
-import de.unibonn.simpleml.stdlibAccess.isConstant
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
+import com.larsreimann.safeds.stdlibAccess.isConstant
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class ArgumentChecker : AbstractSimpleMLChecker() {
+class ArgumentChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun argumentMustBeConstant(smlArgument: SmlArgument) {
+    fun argumentMustBeConstant(smlArgument: SdsArgument) {
         val parameterIsConstant = smlArgument.parameterOrNull()?.isConstant() ?: false
 
         if (parameterIsConstant && smlArgument.value?.toConstantExpressionOrNull() == null) {
             error(
                 "Arguments assigned to constant parameters must be constant.",
-                Literals.SML_ARGUMENT__VALUE,
+                Literals.SDS_ARGUMENT__VALUE,
                 ErrorCode.MustBeConstant
             )
         }
     }
 
     @Check
-    fun variadicParameterMustNotBeAssignedByName(smlArgument: SmlArgument) {
+    fun variadicParameterMustNotBeAssignedByName(smlArgument: SdsArgument) {
         if (smlArgument.isNamed() && (smlArgument.parameterOrNull()?.isVariadic == true)) {
             error(
                 "A variadic parameter must not be assigned by name.",
-                Literals.SML_ARGUMENT__PARAMETER,
+                Literals.SDS_ARGUMENT__PARAMETER,
                 ErrorCode.VariadicParameterMustNotBeAssignedByName
             )
         }

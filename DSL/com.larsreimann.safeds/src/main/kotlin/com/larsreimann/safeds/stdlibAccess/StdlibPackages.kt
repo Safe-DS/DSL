@@ -12,5 +12,5 @@ object StdlibPackages {
     /**
      * Core package that is implicitly imported into all Simple-ML programs.
      */
-    val lang: QualifiedName = QualifiedName.create("simpleml", "lang")
+    val lang: QualifiedName = QualifiedName.create("safeds", "lang")
 }

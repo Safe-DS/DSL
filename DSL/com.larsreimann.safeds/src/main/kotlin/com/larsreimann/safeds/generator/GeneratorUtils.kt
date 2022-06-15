@@ -1,9 +1,9 @@
 package com.larsreimann.safeds.generator
 
-import de.unibonn.simpleml.constant.SmlFileExtension
-import de.unibonn.simpleml.emf.compilationUnitOrNull
+import com.larsreimann.safeds.constant.SdsFileExtension
+import com.larsreimann.safeds.emf.compilationUnitOrNull
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
-import de.unibonn.simpleml.stdlibAccess.pythonModuleOrNull
+import com.larsreimann.safeds.stdlibAccess.pythonModuleOrNull
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 
@@ -14,9 +14,9 @@ import org.eclipse.emf.ecore.resource.Resource
 fun Resource.baseFileNameOrNull(): String? {
     return uri
         ?.lastSegment()
-        ?.removeSuffix(".${SmlFileExtension.Stub}")
-        ?.removeSuffix(".${SmlFileExtension.Test}")
-        ?.removeSuffix(".${SmlFileExtension.Flow}")
+        ?.removeSuffix(".${SdsFileExtension.Stub}")
+        ?.removeSuffix(".${SdsFileExtension.Test}")
+        ?.removeSuffix(".${SdsFileExtension.Flow}")
         ?.replace(Regex("%2520"), "_") // Twice URL encoded space
         ?.replace(Regex("[ .-]"), "_")
         ?.replace(Regex("\\W"), "")
@@ -25,8 +25,8 @@ fun Resource.baseFileNameOrNull(): String? {
 /**
  * Returns the prefix of the path of all generated files, or `null` if this [Resource] does not provide enough
  * information to deduce this prefix. This can be caused if either
- * - the [Resource] contains no [SmlCompilationUnit],
- * - the [SmlCompilationUnit] has no package,
+ * - the [Resource] contains no [SdsCompilationUnit],
+ * - the [SdsCompilationUnit] has no package,
  * - the [Resource] has no [URI].
  */
 fun Resource.baseGeneratedFilePathOrNull(): String? {

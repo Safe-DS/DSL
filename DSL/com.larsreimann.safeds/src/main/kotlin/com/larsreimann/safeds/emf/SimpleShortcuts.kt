@@ -56,7 +56,7 @@ import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
-import de.unibonn.simpleml.utils.uniqueOrNull
+import com.larsreimann.safeds.utils.uniqueOrNull
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -75,185 +75,185 @@ fun EObject.resourceSetOrNull(): ResourceSet? {
 
 // Resource ----------------------------------------------------------------------------------------
 
-fun Resource.compilationUnitOrNull(): SmlCompilationUnit? {
+fun Resource.compilationUnitOrNull(): SdsCompilationUnit? {
     return this.allContents
         ?.asSequence()
-        ?.filterIsInstance<SmlCompilationUnit>()
+        ?.filterIsInstance<SdsCompilationUnit>()
         ?.firstOrNull()
 }
 
-// SmlAbstractCallable -----------------------------------------------------------------------------
+// SdsAbstractCallable -----------------------------------------------------------------------------
 
-fun SmlAbstractCallable?.parametersOrEmpty(): List<SmlParameter> {
+fun SdsAbstractCallable?.parametersOrEmpty(): List<SdsParameter> {
     return this?.parameterList?.parameters.orEmpty()
 }
 
 /**
- * Returns all calls that are actually executed immediately when this [SmlAbstractCallable] is called.
+ * Returns all calls that are actually executed immediately when this [SdsAbstractCallable] is called.
  */
-fun SmlAbstractCallable.immediateCalls(): List<SmlCall> {
-    return descendants<SmlCall> { it is SmlAbstractLambda }.toList()
+fun SdsAbstractCallable.immediateCalls(): List<SdsCall> {
+    return descendants<SdsCall> { it is SdsAbstractLambda }.toList()
 }
 
-// SmlAbstractDeclaration --------------------------------------------------------------------------
+// SdsAbstractDeclaration --------------------------------------------------------------------------
 
-fun SmlAbstractDeclaration?.annotationCallsOrEmpty(): List<SmlAnnotationCall> {
+fun SdsAbstractDeclaration?.annotationCallsOrEmpty(): List<SdsAnnotationCall> {
     return this?.annotationCallList?.annotationCalls ?: this?.annotationCalls.orEmpty()
 }
 
-// SmlAnnotation -----------------------------------------------------------------------------------
+// SdsAnnotation -----------------------------------------------------------------------------------
 
-fun SmlAnnotation?.constraintsOrEmpty(): List<SmlAbstractGoal> {
+fun SdsAnnotation?.constraintsOrEmpty(): List<SdsAbstractGoal> {
     return this?.constraint?.constraintList?.goals.orEmpty()
 }
 
-// SmlAnnotationCall -------------------------------------------------------------------------------
+// SdsAnnotationCall -------------------------------------------------------------------------------
 
-fun SmlAnnotationCall?.argumentsOrEmpty(): List<SmlArgument> {
+fun SdsAnnotationCall?.argumentsOrEmpty(): List<SdsArgument> {
     return this?.argumentList?.arguments.orEmpty()
 }
 
-// SmlAssignment -----------------------------------------------------------------------------------
+// SdsAssignment -----------------------------------------------------------------------------------
 
-fun SmlAssignment?.assigneesOrEmpty(): List<SmlAbstractAssignee> {
+fun SdsAssignment?.assigneesOrEmpty(): List<SdsAbstractAssignee> {
     return this?.assigneeList?.assignees
-        ?.filterIsInstance<SmlAbstractAssignee>()
+        ?.filterIsInstance<SdsAbstractAssignee>()
         .orEmpty()
 }
 
-fun SmlAssignment?.blockLambdaResultsOrEmpty(): List<SmlBlockLambdaResult> {
-    return this.assigneesOrEmpty().filterIsInstance<SmlBlockLambdaResult>()
+fun SdsAssignment?.blockLambdaResultsOrEmpty(): List<SdsBlockLambdaResult> {
+    return this.assigneesOrEmpty().filterIsInstance<SdsBlockLambdaResult>()
 }
 
-fun SmlAssignment?.placeholdersOrEmpty(): List<SmlPlaceholder> {
-    return this.assigneesOrEmpty().filterIsInstance<SmlPlaceholder>()
+fun SdsAssignment?.placeholdersOrEmpty(): List<SdsPlaceholder> {
+    return this.assigneesOrEmpty().filterIsInstance<SdsPlaceholder>()
 }
 
-fun SmlAssignment?.yieldsOrEmpty(): List<SmlYield> {
-    return this.assigneesOrEmpty().filterIsInstance<SmlYield>()
+fun SdsAssignment?.yieldsOrEmpty(): List<SdsYield> {
+    return this.assigneesOrEmpty().filterIsInstance<SdsYield>()
 }
 
-// SmlBlockLambda ----------------------------------------------------------------------------------
+// SdsBlockLambda ----------------------------------------------------------------------------------
 
-fun SmlBlockLambda?.blockLambdaResultsOrEmpty(): List<SmlBlockLambdaResult> {
+fun SdsBlockLambda?.blockLambdaResultsOrEmpty(): List<SdsBlockLambdaResult> {
     return this.statementsOrEmpty()
-        .filterIsInstance<SmlAssignment>()
+        .filterIsInstance<SdsAssignment>()
         .flatMap { it.blockLambdaResultsOrEmpty() }
 }
 
-fun SmlBlockLambda?.localVariablesOrEmpty(): List<SmlAbstractLocalVariable> {
+fun SdsBlockLambda?.localVariablesOrEmpty(): List<SdsAbstractLocalVariable> {
     return this.parametersOrEmpty() + this.placeholdersOrEmpty()
 }
 
-fun SmlBlockLambda?.placeholdersOrEmpty(): List<SmlPlaceholder> {
+fun SdsBlockLambda?.placeholdersOrEmpty(): List<SdsPlaceholder> {
     return this.statementsOrEmpty()
-        .filterIsInstance<SmlAssignment>()
+        .filterIsInstance<SdsAssignment>()
         .flatMap { it.placeholdersOrEmpty() }
 }
 
-fun SmlBlockLambda?.statementsOrEmpty(): List<SmlAbstractStatement> {
+fun SdsBlockLambda?.statementsOrEmpty(): List<SdsAbstractStatement> {
     return this?.body?.statements.orEmpty()
 }
 
-// SmlCall -----------------------------------------------------------------------------------------
+// SdsCall -----------------------------------------------------------------------------------------
 
-fun SmlCall?.argumentsOrEmpty(): List<SmlArgument> {
+fun SdsCall?.argumentsOrEmpty(): List<SdsArgument> {
     return this?.argumentList?.arguments.orEmpty()
 }
 
-fun SmlCall?.typeArgumentsOrEmpty(): List<SmlTypeArgument> {
+fun SdsCall?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SmlCallableType ---------------------------------------------------------------------------------
+// SdsCallableType ---------------------------------------------------------------------------------
 
-fun SmlCallableType?.resultsOrEmpty(): List<SmlResult> {
+fun SdsCallableType?.resultsOrEmpty(): List<SdsResult> {
     return this?.resultList?.results.orEmpty()
 }
 
-// SmlClass ----------------------------------------------------------------------------------------
+// SdsClass ----------------------------------------------------------------------------------------
 
-fun SmlClass?.typeParametersOrEmpty(): List<SmlTypeParameter> {
+fun SdsClass?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-fun SmlClass?.parentTypesOrEmpty(): List<SmlAbstractType> {
+fun SdsClass?.parentTypesOrEmpty(): List<SdsAbstractType> {
     return this?.parentTypeList?.parentTypes.orEmpty()
 }
 
-fun SmlClass?.constraintsOrEmpty(): List<SmlAbstractConstraintGoal> {
+fun SdsClass?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
     return this?.body?.members
-        ?.filterIsInstance<SmlAbstractConstraintGoal>()
+        ?.filterIsInstance<SdsAbstractConstraintGoal>()
         .orEmpty()
 }
 
-fun SmlClass?.objectsInBodyOrEmpty(): List<SmlAbstractObject> {
+fun SdsClass?.objectsInBodyOrEmpty(): List<SdsAbstractObject> {
     return this?.body?.members.orEmpty()
 }
 
-fun SmlClass?.classMembersOrEmpty(): List<SmlAbstractClassMember> {
+fun SdsClass?.classMembersOrEmpty(): List<SdsAbstractClassMember> {
     return this?.body?.members
-        ?.filterIsInstance<SmlAbstractClassMember>()
+        ?.filterIsInstance<SdsAbstractClassMember>()
         .orEmpty()
 }
 
-fun SmlClass?.protocolsOrEmpty(): List<SmlProtocol> {
+fun SdsClass?.protocolsOrEmpty(): List<SdsProtocol> {
     return this?.body?.members
-        ?.filterIsInstance<SmlProtocol>()
+        ?.filterIsInstance<SdsProtocol>()
         .orEmpty()
 }
 
-fun SmlClass.uniqueProtocolOrNull(): SmlProtocol? {
+fun SdsClass.uniqueProtocolOrNull(): SdsProtocol? {
     return this.protocolsOrEmpty().uniqueOrNull()
 }
 
-// SmlCompilationUnit ------------------------------------------------------------------------------
+// SdsCompilationUnit ------------------------------------------------------------------------------
 
-fun SmlCompilationUnit?.compilationUnitMembersOrEmpty(): List<SmlAbstractCompilationUnitMember> {
+fun SdsCompilationUnit?.compilationUnitMembersOrEmpty(): List<SdsAbstractCompilationUnitMember> {
     return this?.members
-        ?.filterIsInstance<SmlAbstractCompilationUnitMember>()
+        ?.filterIsInstance<SdsAbstractCompilationUnitMember>()
         .orEmpty()
 }
 
-// SmlEnum -----------------------------------------------------------------------------------------
+// SdsEnum -----------------------------------------------------------------------------------------
 
-fun SmlEnum?.variantsOrEmpty(): List<SmlEnumVariant> {
+fun SdsEnum?.variantsOrEmpty(): List<SdsEnumVariant> {
     return this?.body?.variants.orEmpty()
 }
 
-// SmlEnumVariant ----------------------------------------------------------------------------------
+// SdsEnumVariant ----------------------------------------------------------------------------------
 
-fun SmlEnumVariant?.typeParametersOrEmpty(): List<SmlTypeParameter> {
+fun SdsEnumVariant?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-fun SmlEnumVariant?.constraintsOrEmpty(): List<SmlAbstractGoal> {
+fun SdsEnumVariant?.constraintsOrEmpty(): List<SdsAbstractGoal> {
     return this?.constraint?.constraintList?.goals.orEmpty()
 }
 
-// SmlFunction -------------------------------------------------------------------------------------
+// SdsFunction -------------------------------------------------------------------------------------
 
-fun SmlFunction?.resultsOrEmpty(): List<SmlResult> {
+fun SdsFunction?.resultsOrEmpty(): List<SdsResult> {
     return this?.resultList?.results.orEmpty()
 }
 
-fun SmlFunction?.typeParametersOrEmpty(): List<SmlTypeParameter> {
+fun SdsFunction?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-fun SmlFunction?.constraintsOrEmpty(): List<SmlAbstractConstraintGoal> {
+fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
     return this?.body?.statements
-        ?.filterIsInstance<SmlAbstractConstraintGoal>()
+        ?.filterIsInstance<SdsAbstractConstraintGoal>()
         .orEmpty()
 }
 
-// SmlImport ---------------------------------------------------------------------------------------
+// SdsImport ---------------------------------------------------------------------------------------
 
-fun SmlImport.aliasNameOrNull(): String? {
+fun SdsImport.aliasNameOrNull(): String? {
     return this.alias?.name
 }
 
-fun SmlImport.importedNameOrNull(): String? {
+fun SdsImport.importedNameOrNull(): String? {
     return when (alias) {
         null -> when {
             isQualified() -> importedNamespace.split(".").last()
@@ -263,81 +263,81 @@ fun SmlImport.importedNameOrNull(): String? {
     }
 }
 
-// SmlNamedType ------------------------------------------------------------------------------------
+// SdsNamedType ------------------------------------------------------------------------------------
 
-fun SmlNamedType?.typeArgumentsOrEmpty(): List<SmlTypeArgument> {
+fun SdsNamedType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SmlPredicate -------------------------------------------------------------------------------------
+// SdsPredicate -------------------------------------------------------------------------------------
 
-fun SmlPredicate?.goalsOrEmpty(): List<SmlAbstractGoal> {
+fun SdsPredicate?.goalsOrEmpty(): List<SdsAbstractGoal> {
     return this?.goalList?.goals.orEmpty()
 }
 
-// SmlProtocol -------------------------------------------------------------------------------------
+// SdsProtocol -------------------------------------------------------------------------------------
 
-fun SmlProtocol?.subtermsOrEmpty(): List<SmlProtocolSubterm> {
+fun SdsProtocol?.subtermsOrEmpty(): List<SdsProtocolSubterm> {
     return this?.body.subtermsOrEmpty()
 }
 
-fun SmlProtocol.termOrNull(): SmlAbstractProtocolTerm? {
+fun SdsProtocol.termOrNull(): SdsAbstractProtocolTerm? {
     return this.body?.term
 }
 
-// SmlProtocolBody ---------------------------------------------------------------------------------
+// SdsProtocolBody ---------------------------------------------------------------------------------
 
-fun SmlProtocolBody?.subtermsOrEmpty(): List<SmlProtocolSubterm> {
+fun SdsProtocolBody?.subtermsOrEmpty(): List<SdsProtocolSubterm> {
     return this?.subtermList?.subterms.orEmpty()
 }
 
-// SmlProtocolComplement ---------------------------------------------------------------------------
+// SdsProtocolComplement ---------------------------------------------------------------------------
 
-fun SmlProtocolComplement?.referencesOrEmpty(): List<SmlProtocolReference> {
+fun SdsProtocolComplement?.referencesOrEmpty(): List<SdsProtocolReference> {
     return this?.referenceList?.references.orEmpty()
 }
 
-// SmlUnionType ------------------------------------------------------------------------------------
+// SdsUnionType ------------------------------------------------------------------------------------
 
-fun SmlUnionType?.typeArgumentsOrEmpty(): List<SmlTypeArgument> {
+fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SmlWorkflow -------------------------------------------------------------------------------------
+// SdsWorkflow -------------------------------------------------------------------------------------
 
-fun SmlWorkflow?.placeholdersOrEmpty(): List<SmlPlaceholder> {
+fun SdsWorkflow?.placeholdersOrEmpty(): List<SdsPlaceholder> {
     return this.statementsOrEmpty()
-        .filterIsInstance<SmlAssignment>()
+        .filterIsInstance<SdsAssignment>()
         .flatMap { it.placeholdersOrEmpty() }
 }
 
-fun SmlWorkflow?.statementsOrEmpty(): List<SmlAbstractStatement> {
+fun SdsWorkflow?.statementsOrEmpty(): List<SdsAbstractStatement> {
     return this?.body?.statements.orEmpty()
 }
 
-// SmlWorkflowStep ---------------------------------------------------------------------------------
+// SdsWorkflowStep ---------------------------------------------------------------------------------
 
-fun SmlStep?.localVariablesOrEmpty(): List<SmlAbstractLocalVariable> {
+fun SdsStep?.localVariablesOrEmpty(): List<SdsAbstractLocalVariable> {
     return this.parametersOrEmpty() + this.placeholdersOrEmpty()
 }
 
-fun SmlStep?.placeholdersOrEmpty(): List<SmlPlaceholder> {
+fun SdsStep?.placeholdersOrEmpty(): List<SdsPlaceholder> {
     return this.statementsOrEmpty()
-        .filterIsInstance<SmlAssignment>()
+        .filterIsInstance<SdsAssignment>()
         .flatMap { it.placeholdersOrEmpty() }
 }
 
-fun SmlStep?.resultsOrEmpty(): List<SmlResult> {
+fun SdsStep?.resultsOrEmpty(): List<SdsResult> {
     return this?.resultList?.results.orEmpty()
 }
 
-fun SmlStep?.statementsOrEmpty(): List<SmlAbstractStatement> {
+fun SdsStep?.statementsOrEmpty(): List<SdsAbstractStatement> {
     return this?.body?.statements.orEmpty()
 }
 
-fun SmlStep?.yieldsOrEmpty(): List<SmlYield> {
+fun SdsStep?.yieldsOrEmpty(): List<SdsYield> {
     return this.statementsOrEmpty()
-        .filterIsInstance<SmlAssignment>()
+        .filterIsInstance<SdsAssignment>()
         .flatMap { it.yieldsOrEmpty() }
 }
 
@@ -345,21 +345,21 @@ fun SmlStep?.yieldsOrEmpty(): List<SmlYield> {
  * Accessing ancestors                                                                                                *
  * ********************************************************************************************************************/
 
-fun EObject.containingBlockLambdaOrNull() = this.closestAncestorOrNull<SmlBlockLambda>()
-fun EObject.containingCallableOrNull() = this.closestAncestorOrNull<SmlAbstractCallable>()
-fun EObject.containingClassOrNull() = this.closestAncestorOrNull<SmlClass>()
-fun EObject.containingCompilationUnitOrNull() = this.closestAncestorOrNull<SmlCompilationUnit>()
-fun EObject.containingDeclarationOrNull() = this.closestAncestorOrNull<SmlAbstractDeclaration>()
-fun EObject.containingEnumOrNull() = this.closestAncestorOrNull<SmlEnum>()
-fun EObject.containingExpressionLambdaOrNull() = this.closestAncestorOrNull<SmlExpressionLambda>()
-fun EObject.containingFunctionOrNull() = this.closestAncestorOrNull<SmlFunction>()
-fun EObject.containingProtocolOrNull() = this.closestAncestorOrNull<SmlProtocol>()
-fun EObject.containingStepOrNull() = this.closestAncestorOrNull<SmlStep>()
-fun EObject.containingWorkflowOrNull() = this.closestAncestorOrNull<SmlWorkflow>()
+fun EObject.containingBlockLambdaOrNull() = this.closestAncestorOrNull<SdsBlockLambda>()
+fun EObject.containingCallableOrNull() = this.closestAncestorOrNull<SdsAbstractCallable>()
+fun EObject.containingClassOrNull() = this.closestAncestorOrNull<SdsClass>()
+fun EObject.containingCompilationUnitOrNull() = this.closestAncestorOrNull<SdsCompilationUnit>()
+fun EObject.containingDeclarationOrNull() = this.closestAncestorOrNull<SdsAbstractDeclaration>()
+fun EObject.containingEnumOrNull() = this.closestAncestorOrNull<SdsEnum>()
+fun EObject.containingExpressionLambdaOrNull() = this.closestAncestorOrNull<SdsExpressionLambda>()
+fun EObject.containingFunctionOrNull() = this.closestAncestorOrNull<SdsFunction>()
+fun EObject.containingProtocolOrNull() = this.closestAncestorOrNull<SdsProtocol>()
+fun EObject.containingStepOrNull() = this.closestAncestorOrNull<SdsStep>()
+fun EObject.containingWorkflowOrNull() = this.closestAncestorOrNull<SdsWorkflow>()
 
-fun SmlAnnotationCall.targetOrNull(): SmlAbstractDeclaration? {
+fun SdsAnnotationCall.targetOrNull(): SdsAbstractDeclaration? {
     return when (val declaration = this.containingDeclarationOrNull() ?: return null) {
-        is SmlAnnotationCallList -> declaration.containingDeclarationOrNull()
+        is SdsAnnotationCallList -> declaration.containingDeclarationOrNull()
         else -> declaration
     }
 }
@@ -368,20 +368,20 @@ fun SmlAnnotationCall.targetOrNull(): SmlAbstractDeclaration? {
  * Accessing siblings                                                                                                 *
  * ********************************************************************************************************************/
 
-fun SmlConstraint.typeParametersOrNull(): List<SmlTypeParameter>? {
+fun SdsConstraint.typeParametersOrNull(): List<SdsTypeParameter>? {
     return when (val parent = this.eContainer()) {
-        is SmlClassBody -> {
+        is SdsClassBody -> {
             val parentClass: EObject = parent.eContainer()
-            if (parentClass is SmlClass) {
+            if (parentClass is SdsClass) {
                 parentClass.typeParametersOrEmpty()
             } else {
                 null
             }
         }
-        is SmlEnumVariant -> return parent.typeParametersOrEmpty()
-        is SmlFunctionBody -> {
+        is SdsEnumVariant -> return parent.typeParametersOrEmpty()
+        is SdsFunctionBody -> {
             val parentFunction: EObject = parent.eContainer()
-            if (parentFunction is SmlFunction) {
+            if (parentFunction is SdsFunction) {
                 parentFunction.typeParametersOrEmpty()
             } else {
                 null
@@ -395,42 +395,42 @@ fun SmlConstraint.typeParametersOrNull(): List<SmlTypeParameter>? {
  * Checks                                                                                                             *
  * ********************************************************************************************************************/
 
-// SmlAbstractClassMember --------------------------------------------------------------------------
+// SdsAbstractClassMember --------------------------------------------------------------------------
 
 /**
- * Returns whether this [SmlAbstractClassMember] is truly contained in a class and static.
+ * Returns whether this [SdsAbstractClassMember] is truly contained in a class and static.
  */
-fun SmlAbstractClassMember.isStatic(): Boolean {
+fun SdsAbstractClassMember.isStatic(): Boolean {
     return when {
         !this.isClassMember() -> false
-        this is SmlClass || this is SmlEnum -> true
-        this is SmlAttribute && this.isStatic -> true
-        this is SmlFunction && this.isStatic -> true
+        this is SdsClass || this is SdsEnum -> true
+        this is SdsAttribute && this.isStatic -> true
+        this is SdsFunction && this.isStatic -> true
         else -> false
     }
 }
 
-// SmlAbstractDeclaration --------------------------------------------------------------------------
+// SdsAbstractDeclaration --------------------------------------------------------------------------
 
 /**
- * Returns whether this [SmlAbstractDeclaration] is contained in a class.
+ * Returns whether this [SdsAbstractDeclaration] is contained in a class.
  */
-fun SmlAbstractDeclaration.isClassMember(): Boolean {
-    return this is SmlAbstractClassMember && containingClassOrNull() != null
+fun SdsAbstractDeclaration.isClassMember(): Boolean {
+    return this is SdsAbstractClassMember && containingClassOrNull() != null
 }
 
 /**
- * Returns whether this [SmlAbstractDeclaration] is a global declaration.
+ * Returns whether this [SdsAbstractDeclaration] is a global declaration.
  */
-fun SmlAbstractDeclaration.isGlobal(): Boolean {
-    return !isClassMember() && this is SmlAbstractCompilationUnitMember
+fun SdsAbstractDeclaration.isGlobal(): Boolean {
+    return !isClassMember() && this is SdsAbstractCompilationUnitMember
 }
 
 /**
- * Returns whether this [SmlAbstractDeclaration] is resolved, i.e. not a proxy.
+ * Returns whether this [SdsAbstractDeclaration] is resolved, i.e. not a proxy.
  */
 @OptIn(ExperimentalContracts::class)
-fun SmlAbstractDeclaration?.isResolved(): Boolean {
+fun SdsAbstractDeclaration?.isResolved(): Boolean {
     contract {
         returns(true) implies (this@isResolved != null)
     }
@@ -438,52 +438,52 @@ fun SmlAbstractDeclaration?.isResolved(): Boolean {
     return (this != null) && !this.eIsProxy()
 }
 
-// SmlArgument -------------------------------------------------------------------------------------
+// SdsArgument -------------------------------------------------------------------------------------
 
-fun SmlArgument.isNamed() = parameter != null
-fun SmlArgument.isPositional() = parameter == null
+fun SdsArgument.isNamed() = parameter != null
+fun SdsArgument.isPositional() = parameter == null
 
-// SmlEnum -----------------------------------------------------------------------------------------
+// SdsEnum -----------------------------------------------------------------------------------------
 
 /**
- * Returns whether no [SmlEnumVariant]s of this [SmlEnum] have non-empty parameter list. Only those enums can be
- * processed by the compiler, so non-constant [SmlEnum]s cannot be used as the type of parameters of annotations.
+ * Returns whether no [SdsEnumVariant]s of this [SdsEnum] have non-empty parameter list. Only those enums can be
+ * processed by the compiler, so non-constant [SdsEnum]s cannot be used as the type of parameters of annotations.
  */
-fun SmlEnum.isConstant(): Boolean {
+fun SdsEnum.isConstant(): Boolean {
     return variantsOrEmpty().all { it.parametersOrEmpty().isEmpty() }
 }
 
-// SmlFunction -----------------------------------------------------------------------------------
+// SdsFunction -----------------------------------------------------------------------------------
 
-fun SmlFunction.isMethod() = containingClassOrNull() != null
+fun SdsFunction.isMethod() = containingClassOrNull() != null
 
-// SmlImport ---------------------------------------------------------------------------------------
+// SdsImport ---------------------------------------------------------------------------------------
 
-fun SmlImport.isQualified() = !importedNamespace.endsWith(".*")
-fun SmlImport.isWildcard() = importedNamespace.endsWith(".*")
+fun SdsImport.isQualified() = !importedNamespace.endsWith(".*")
+fun SdsImport.isWildcard() = importedNamespace.endsWith(".*")
 
-// SmlParameter ------------------------------------------------------------------------------------
+// SdsParameter ------------------------------------------------------------------------------------
 
-fun SmlParameter.isRequired() = defaultValue == null && !isVariadic
-fun SmlParameter.isOptional() = defaultValue != null
+fun SdsParameter.isRequired() = defaultValue == null && !isVariadic
+fun SdsParameter.isOptional() = defaultValue != null
 
-// SmlTypeArgument ---------------------------------------------------------------------------------
+// SdsTypeArgument ---------------------------------------------------------------------------------
 
-fun SmlTypeArgument.isNamed() = typeParameter != null
-fun SmlTypeArgument.isPositional() = typeParameter == null
+fun SdsTypeArgument.isNamed() = typeParameter != null
+fun SdsTypeArgument.isPositional() = typeParameter == null
 
 /* ********************************************************************************************************************
  * Conversions                                                                                                        *
  * ********************************************************************************************************************/
 
-// SmlAbstractDeclaration --------------------------------------------------------------------------
+// SdsAbstractDeclaration --------------------------------------------------------------------------
 
 /**
- * Returns this [SmlAbstractDeclaration] if it is resolved, otherwise `null`.
+ * Returns this [SdsAbstractDeclaration] if it is resolved, otherwise `null`.
  *
  * @see isResolved
  */
-fun <T : SmlAbstractDeclaration> T.asResolvedOrNull(): T? {
+fun <T : SdsAbstractDeclaration> T.asResolvedOrNull(): T? {
     return when {
         isResolved() -> this
         else -> null

@@ -1,23 +1,23 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.constant.SmlKind
-import de.unibonn.simpleml.constant.SmlVariance
-import de.unibonn.simpleml.constant.kind
-import de.unibonn.simpleml.constant.variance
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.constant.SdsKind
+import com.larsreimann.safeds.constant.SdsVariance
+import com.larsreimann.safeds.constant.kind
+import com.larsreimann.safeds.constant.variance
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class TypeParameterChecker : AbstractSimpleMLChecker() {
+class TypeParameterChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustNotHaveVarianceAndKind(smlTypeParameter: SmlTypeParameter) {
-        if (smlTypeParameter.variance() != SmlVariance.Invariant && smlTypeParameter.kind() != SmlKind.NoKind) {
+    fun mustNotHaveVarianceAndKind(smlTypeParameter: SdsTypeParameter) {
+        if (smlTypeParameter.variance() != SdsVariance.Invariant && smlTypeParameter.kind() != SdsKind.NoKind) {
             error(
                 "Can not use variance and kind together",
-                Literals.SML_ABSTRACT_DECLARATION__NAME,
+                Literals.SDS_ABSTRACT_DECLARATION__NAME,
                 ErrorCode.VarianceAndKind
             )
         }

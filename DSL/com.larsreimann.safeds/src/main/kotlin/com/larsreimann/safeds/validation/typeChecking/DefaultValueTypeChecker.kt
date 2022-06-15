@@ -1,19 +1,19 @@
 package com.larsreimann.safeds.validation.typeChecking
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsParameter
-import de.unibonn.simpleml.staticAnalysis.typing.UnresolvedType
-import de.unibonn.simpleml.staticAnalysis.typing.isSubstitutableFor
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
+import com.larsreimann.safeds.staticAnalysis.typing.isSubstitutableFor
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class DefaultValueTypeChecker : AbstractSimpleMLChecker() {
+class DefaultValueTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun defaultValue(smlParameter: SmlParameter) {
+    fun defaultValue(smlParameter: SdsParameter) {
         val defaultValue = smlParameter.defaultValue ?: return
         val defaultValueType = defaultValue.type()
         if (defaultValueType is UnresolvedType) {
@@ -33,7 +33,7 @@ class DefaultValueTypeChecker : AbstractSimpleMLChecker() {
 
             error(
                 "A default value of type '$defaultValueTypeString' cannot be assigned to a parameter of type '$parameterTypeString'.",
-                Literals.SML_PARAMETER__DEFAULT_VALUE,
+                Literals.SDS_PARAMETER__DEFAULT_VALUE,
                 ErrorCode.WrongType
             )
         }

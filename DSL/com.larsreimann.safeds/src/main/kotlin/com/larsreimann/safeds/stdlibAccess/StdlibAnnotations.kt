@@ -2,22 +2,22 @@
 
 package com.larsreimann.safeds.stdlibAccess
 
-import de.unibonn.simpleml.emf.annotationCallsOrEmpty
-import de.unibonn.simpleml.emf.argumentsOrEmpty
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.emf.annotationCallsOrEmpty
+import com.larsreimann.safeds.emf.argumentsOrEmpty
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotation
 import com.larsreimann.safeds.safeDS.SdsAnnotationCall
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsParameter
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.staticAnalysis.partialEvaluation.SmlConstantEnumVariant
-import de.unibonn.simpleml.staticAnalysis.partialEvaluation.SmlConstantExpression
-import de.unibonn.simpleml.staticAnalysis.partialEvaluation.SmlConstantString
-import de.unibonn.simpleml.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
-import de.unibonn.simpleml.stdlibAccess.StdlibEnums.AnnotationTarget
-import de.unibonn.simpleml.utils.uniqueOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.partialEvaluation.SdsConstantEnumVariant
+import com.larsreimann.safeds.staticAnalysis.partialEvaluation.SdsConstantExpression
+import com.larsreimann.safeds.staticAnalysis.partialEvaluation.SdsConstantString
+import com.larsreimann.safeds.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
+import com.larsreimann.safeds.stdlibAccess.StdlibEnums.AnnotationTarget
+import com.larsreimann.safeds.utils.uniqueOrNull
 import org.eclipse.xtext.naming.QualifiedName
 
 /**
@@ -106,7 +106,7 @@ object StdlibAnnotations {
 /**
  * Returns all calls of the annotation with the given qualified name.
  */
-fun SmlAbstractDeclaration.annotationCallsOrEmpty(qualifiedName: QualifiedName): List<SmlAnnotationCall> {
+fun SdsAbstractDeclaration.annotationCallsOrEmpty(qualifiedName: QualifiedName): List<SdsAnnotationCall> {
     return this.annotationCallsOrEmpty().filter {
         it.annotation.qualifiedNameOrNull() == qualifiedName
     }
@@ -115,95 +115,95 @@ fun SmlAbstractDeclaration.annotationCallsOrEmpty(qualifiedName: QualifiedName):
 /**
  * Returns the unique use of the annotation with the given qualified name or `null` if none or multiple exist.
  */
-fun SmlAbstractDeclaration.uniqueAnnotationCallOrNull(qualifiedName: QualifiedName): SmlAnnotationCall? {
+fun SdsAbstractDeclaration.uniqueAnnotationCallOrNull(qualifiedName: QualifiedName): SdsAnnotationCall? {
     return this.annotationCallsOrEmpty(qualifiedName).uniqueOrNull()
 }
 
 /**
- * Returns the description attached to the declaration with a `simpleml.lang.Description` annotation.
+ * Returns the description attached to the declaration with a `safeds.lang.Description` annotation.
  */
-fun SmlAbstractDeclaration.descriptionOrNull(): String? {
+fun SdsAbstractDeclaration.descriptionOrNull(): String? {
     val value = annotationCallArgumentValueOrNull(StdlibAnnotations.Description, "description")
-    return (value as? SmlConstantString)?.value
+    return (value as? SdsConstantString)?.value
 }
 
 /**
- * Checks if the parameter is annotated with the `simpleml.lang.Constant` annotation.
+ * Checks if the parameter is annotated with the `safeds.lang.Constant` annotation.
  */
-fun SmlParameter.isConstant(): Boolean {
+fun SdsParameter.isConstant(): Boolean {
     return hasAnnotationCallTo(StdlibAnnotations.Constant)
 }
 
 /**
- * Checks if the declaration is annotated with the `simpleml.lang.Deprecated` annotation.
+ * Checks if the declaration is annotated with the `safeds.lang.Deprecated` annotation.
  */
-fun SmlAbstractDeclaration.isDeprecated(): Boolean {
+fun SdsAbstractDeclaration.isDeprecated(): Boolean {
     return hasAnnotationCallTo(StdlibAnnotations.Deprecated)
 }
 
 /**
- * Checks if the parameter is annotated with the `simpleml.lang.Expert` annotation.
+ * Checks if the parameter is annotated with the `safeds.lang.Expert` annotation.
  */
-fun SmlParameter.isExpert(): Boolean {
+fun SdsParameter.isExpert(): Boolean {
     return hasAnnotationCallTo(StdlibAnnotations.Expert)
 }
 
 /**
- * Checks if the function is annotated with the `simpleml.lang.Pure` annotation.
+ * Checks if the function is annotated with the `safeds.lang.Pure` annotation.
  */
-fun SmlFunction.isPure(): Boolean {
+fun SdsFunction.isPure(): Boolean {
     return hasAnnotationCallTo(StdlibAnnotations.Pure)
 }
 
 /**
- * Checks if the annotation is annotated with the `simpleml.lang.Repeatable` annotation.
+ * Checks if the annotation is annotated with the `safeds.lang.Repeatable` annotation.
  */
-fun SmlAnnotation.isRepeatable(): Boolean {
+fun SdsAnnotation.isRepeatable(): Boolean {
     return hasAnnotationCallTo(StdlibAnnotations.Repeatable)
 }
 
 /**
- * Checks if the function is annotated with the `simpleml.lang.Pure` or the `simpleml.lang.NoSideEffects`
+ * Checks if the function is annotated with the `safeds.lang.Pure` or the `safeds.lang.NoSideEffects`
  * annotation.
  */
-fun SmlFunction.hasNoSideEffects(): Boolean {
+fun SdsFunction.hasNoSideEffects(): Boolean {
     return isPure() || hasAnnotationCallTo(StdlibAnnotations.NoSideEffects)
 }
 
 /**
  * Returns the qualified name of the Python module that corresponds to this compilation unit. It is attached to the
- * compilation unit with a `simpleml.lang.PythonModule` annotation.
+ * compilation unit with a `safeds.lang.PythonModule` annotation.
  */
-fun SmlCompilationUnit.pythonModuleOrNull(): String? {
+fun SdsCompilationUnit.pythonModuleOrNull(): String? {
     val value = annotationCallArgumentValueOrNull(
         StdlibAnnotations.PythonModule,
         "qualifiedName"
     )
-    return (value as? SmlConstantString)?.value
+    return (value as? SdsConstantString)?.value
 }
 
 /**
  * Returns the name of the Python API element that corresponds to this declaration. It is attached to the declaration
- * with a `simpleml.lang.PythonName` annotation.
+ * with a `safeds.lang.PythonName` annotation.
  */
-fun SmlAbstractDeclaration.pythonNameOrNull(): String? {
+fun SdsAbstractDeclaration.pythonNameOrNull(): String? {
     val value = annotationCallArgumentValueOrNull(StdlibAnnotations.PythonName, "name")
-    return (value as? SmlConstantString)?.value
+    return (value as? SdsConstantString)?.value
 }
 
 /**
- * Returns the version when the declaration was added. This is attached to the declaration with a `simpleml.lang.Since`
+ * Returns the version when the declaration was added. This is attached to the declaration with a `safeds.lang.Since`
  * annotation.
  */
-fun SmlAbstractDeclaration.sinceVersionOrNull(): String? {
+fun SdsAbstractDeclaration.sinceVersionOrNull(): String? {
     val value = annotationCallArgumentValueOrNull(StdlibAnnotations.Since, "version")
-    return (value as? SmlConstantString)?.value
+    return (value as? SdsConstantString)?.value
 }
 
 /**
  * Returns the possible targets of this annotation.
  */
-fun SmlAnnotation.validTargets(): List<AnnotationTarget> {
+fun SdsAnnotation.validTargets(): List<AnnotationTarget> {
     val targetAnnotationCall = uniqueAnnotationCallOrNull(StdlibAnnotations.Target)
         ?: return AnnotationTarget.values().toList()
 
@@ -211,7 +211,7 @@ fun SmlAnnotation.validTargets(): List<AnnotationTarget> {
         .argumentsOrEmpty()
         .asSequence()
         .mapNotNull { it.value.toConstantExpressionOrNull() }
-        .filterIsInstance<SmlConstantEnumVariant>()
+        .filterIsInstance<SdsConstantEnumVariant>()
         .mapNotNull { it.value.qualifiedNameOrNull() }
         .filter { it.segmentCount == 4 && it.skipLast(1) == AnnotationTarget.enum }
         .mapNotNull { AnnotationTarget.valueOfOrNull(it.lastSegment) }
@@ -219,10 +219,10 @@ fun SmlAnnotation.validTargets(): List<AnnotationTarget> {
 }
 
 /**
- * Returns whether this [SmlAbstractDeclaration] has at least one annotation call to the annotation with the given
+ * Returns whether this [SdsAbstractDeclaration] has at least one annotation call to the annotation with the given
  * qualified name.
  */
-private fun SmlAbstractDeclaration.hasAnnotationCallTo(qualifiedName: QualifiedName): Boolean {
+private fun SdsAbstractDeclaration.hasAnnotationCallTo(qualifiedName: QualifiedName): Boolean {
     return annotationCallsOrEmpty().any {
         it.annotation.qualifiedNameOrNull() == qualifiedName
     }
@@ -232,10 +232,10 @@ private fun SmlAbstractDeclaration.hasAnnotationCallTo(qualifiedName: QualifiedN
  * Finds the unique call to a declaration with the given qualified name and looks up the value assigned to the parameter
  * with the given name.
  */
-private fun SmlAbstractDeclaration.annotationCallArgumentValueOrNull(
+private fun SdsAbstractDeclaration.annotationCallArgumentValueOrNull(
     qualifiedName: QualifiedName,
     parameterName: String
-): SmlConstantExpression? {
+): SdsConstantExpression? {
     return uniqueAnnotationCallOrNull(qualifiedName)
         .argumentsOrEmpty()
         .uniqueOrNull { it.parameterOrNull()?.name == parameterName }

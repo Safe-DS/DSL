@@ -1,20 +1,20 @@
 package com.larsreimann.safeds.validation.other
 
-import de.unibonn.simpleml.emf.isNamed
-import de.unibonn.simpleml.emf.isPositional
-import de.unibonn.simpleml.emf.isRequired
+import com.larsreimann.safeds.emf.isNamed
+import com.larsreimann.safeds.emf.isPositional
+import com.larsreimann.safeds.emf.isRequired
 import com.larsreimann.safeds.safeDS.SdsArgumentList
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.staticAnalysis.linking.parametersOrNull
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class ArgumentListChecker : AbstractSimpleMLChecker() {
+class ArgumentListChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingRequiredParameter(smlArgumentList: SmlArgumentList) {
+    fun missingRequiredParameter(smlArgumentList: SdsArgumentList) {
         val parameters = smlArgumentList.parametersOrNull() ?: return
         val requiredParameters = parameters.filter { it.isRequired() }
         val givenParameters = smlArgumentList.arguments.mapNotNull { it.parameterOrNull() }
@@ -30,7 +30,7 @@ class ArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun noPositionalArgumentsAfterFirstNamedArgument(smlArgumentList: SmlArgumentList) {
+    fun noPositionalArgumentsAfterFirstNamedArgument(smlArgumentList: SdsArgumentList) {
         val firstNamedArgumentIndex = smlArgumentList.arguments.indexOfFirst { it.isNamed() }
         if (firstNamedArgumentIndex == -1) {
             return
@@ -50,7 +50,7 @@ class ArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun tooManyArguments(smlArgumentList: SmlArgumentList) {
+    fun tooManyArguments(smlArgumentList: SdsArgumentList) {
         val parameters = smlArgumentList.parametersOrNull()
         if (parameters == null || parameters.any { it.isVariadic }) {
             return
@@ -84,7 +84,7 @@ class ArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun uniqueParameters(smlArgumentList: SmlArgumentList) {
+    fun uniqueParameters(smlArgumentList: SdsArgumentList) {
         smlArgumentList.arguments
             .duplicatesBy {
                 val parameter = it.parameterOrNull() ?: return@duplicatesBy null

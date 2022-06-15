@@ -1,35 +1,35 @@
 package com.larsreimann.safeds.validation.declarations
 
 import com.google.errorprone.annotations.Var
-import de.unibonn.simpleml.emf.isConstant
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.isConstant
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAnnotation
-import de.unibonn.simpleml.staticAnalysis.typing.ClassType
-import de.unibonn.simpleml.staticAnalysis.typing.EnumType
-import de.unibonn.simpleml.staticAnalysis.typing.VariadicType
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.stdlibAccess.StdlibClasses
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
+import com.larsreimann.safeds.staticAnalysis.typing.ClassType
+import com.larsreimann.safeds.staticAnalysis.typing.EnumType
+import com.larsreimann.safeds.staticAnalysis.typing.VariadicType
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.stdlibAccess.StdlibClasses
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
 import org.eclipse.xtext.validation.Check
 
-class AnnotationChecker : AbstractSimpleMLChecker() {
+class AnnotationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun uniqueNames(smlAnnotation: SmlAnnotation) {
+    fun uniqueNames(smlAnnotation: SdsAnnotation) {
         smlAnnotation.parametersOrEmpty().reportDuplicateNames {
             "A parameter with name '${it.name}' exists already in this annotation."
         }
     }
 
     @Check
-    fun unnecessaryParameterList(smlAnnotation: SmlAnnotation) {
+    fun unnecessaryParameterList(smlAnnotation: SdsAnnotation) {
         if (smlAnnotation.parameterList != null && smlAnnotation.parametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary parameter list.",
-                Literals.SML_ABSTRACT_CALLABLE__PARAMETER_LIST,
+                Literals.SDS_ABSTRACT_CALLABLE__PARAMETER_LIST,
                 InfoCode.UnnecessaryParameterList
             )
         }
@@ -43,7 +43,7 @@ class AnnotationChecker : AbstractSimpleMLChecker() {
     )
 
     @Check
-    fun parameterTypes(smlAnnotation: SmlAnnotation) {
+    fun parameterTypes(smlAnnotation: SdsAnnotation) {
         smlAnnotation.parametersOrEmpty().forEach {
             val unwrappedParameterType = when (val parameterType = it.type()) {
                 is VariadicType -> parameterType.elementType
@@ -60,7 +60,7 @@ class AnnotationChecker : AbstractSimpleMLChecker() {
                 error(
                     "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum.",
                     it,
-                    Literals.SML_PARAMETER__TYPE,
+                    Literals.SDS_PARAMETER__TYPE,
                     ErrorCode.UnsupportedAnnotationParameterType
                 )
             }

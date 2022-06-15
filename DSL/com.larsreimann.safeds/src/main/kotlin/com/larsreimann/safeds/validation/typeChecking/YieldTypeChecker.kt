@@ -1,19 +1,19 @@
 package com.larsreimann.safeds.validation.typeChecking
 
 import com.larsreimann.safeds.safeDS.SdsYield
-import de.unibonn.simpleml.staticAnalysis.assignedOrNull
-import de.unibonn.simpleml.staticAnalysis.typing.UnresolvedType
-import de.unibonn.simpleml.staticAnalysis.typing.isSubstitutableFor
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.assignedOrNull
+import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
+import com.larsreimann.safeds.staticAnalysis.typing.isSubstitutableFor
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class YieldTypeChecker : AbstractSimpleMLChecker() {
+class YieldTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun value(smlYield: SmlYield) {
+    fun value(smlYield: SdsYield) {
         val yieldedValue = smlYield.assignedOrNull() ?: return
         val yieldedValueType = yieldedValue.type()
         if (yieldedValueType is UnresolvedType) {

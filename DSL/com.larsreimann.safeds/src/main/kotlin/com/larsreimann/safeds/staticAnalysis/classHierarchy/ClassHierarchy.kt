@@ -1,24 +1,24 @@
 package com.larsreimann.safeds.staticAnalysis.classHierarchy
 
-import de.unibonn.simpleml.emf.classMembersOrEmpty
-import de.unibonn.simpleml.emf.closestAncestorOrNull
-import de.unibonn.simpleml.emf.parentTypesOrEmpty
+import com.larsreimann.safeds.emf.classMembersOrEmpty
+import com.larsreimann.safeds.emf.closestAncestorOrNull
+import com.larsreimann.safeds.emf.parentTypesOrEmpty
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAttribute
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsFunction
-import de.unibonn.simpleml.staticAnalysis.typing.ClassType
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.stdlibAccess.StdlibClasses
-import de.unibonn.simpleml.stdlibAccess.getStdlibClassOrNull
-import de.unibonn.simpleml.utils.uniqueOrNull
+import com.larsreimann.safeds.staticAnalysis.typing.ClassType
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.stdlibAccess.StdlibClasses
+import com.larsreimann.safeds.stdlibAccess.getStdlibClassOrNull
+import com.larsreimann.safeds.utils.uniqueOrNull
 
-fun SmlClass.isSubtypeOf(other: SmlClass) =
+fun SdsClass.isSubtypeOf(other: SdsClass) =
     this == this.getStdlibClassOrNull(StdlibClasses.Nothing) ||
         this == other || other in superClasses()
 
-fun SmlClass.superClasses() = sequence<SmlClass> {
-    val visited = mutableSetOf<SmlClass>()
+fun SdsClass.superClasses() = sequence<SdsClass> {
+    val visited = mutableSetOf<SdsClass>()
 
     // TODO: multiple parent classes
     var current = parentClassOrNull()
@@ -34,31 +34,31 @@ fun SmlClass.superClasses() = sequence<SmlClass> {
     }
 }
 
-fun SmlClass.superClassMembers() =
+fun SdsClass.superClassMembers() =
     this.superClasses().flatMap { it.classMembersOrEmpty().asSequence() }
 
 // TODO only static methods can be hidden
-fun SmlFunction.hiddenFunction(): SmlFunction? {
-    val containingClassOrInterface = closestAncestorOrNull<SmlClass>() ?: return null
+fun SdsFunction.hiddenFunction(): SdsFunction? {
+    val containingClassOrInterface = closestAncestorOrNull<SdsClass>() ?: return null
     return containingClassOrInterface.superClassMembers()
-        .filterIsInstance<SmlFunction>()
+        .filterIsInstance<SdsFunction>()
         .firstOrNull { it.name == name }
 }
 
-fun SmlClass?.inheritedNonStaticMembersOrEmpty(): Set<SmlAbstractDeclaration> {
+fun SdsClass?.inheritedNonStaticMembersOrEmpty(): Set<SdsAbstractDeclaration> {
     return this?.parentClassesOrEmpty()
         ?.flatMap { it.classMembersOrEmpty() }
-        ?.filter { it is SmlAttribute && !it.isStatic || it is SmlFunction && !it.isStatic }
+        ?.filter { it is SdsAttribute && !it.isStatic || it is SdsFunction && !it.isStatic }
         ?.toSet()
         .orEmpty()
 }
 
-fun SmlClass?.parentClassesOrEmpty(): List<SmlClass> {
+fun SdsClass?.parentClassesOrEmpty(): List<SdsClass> {
     return this.parentTypesOrEmpty().mapNotNull {
         (it.type() as? ClassType)?.smlClass
     }
 }
 
-fun SmlClass?.parentClassOrNull(): SmlClass? {
+fun SdsClass?.parentClassOrNull(): SdsClass? {
     return this.parentClassesOrEmpty().uniqueOrNull()
 }

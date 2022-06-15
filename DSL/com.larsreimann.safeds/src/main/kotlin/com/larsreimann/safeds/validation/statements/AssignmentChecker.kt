@@ -1,7 +1,7 @@
 package com.larsreimann.safeds.validation.statements
 
-import de.unibonn.simpleml.emf.assigneesOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.assigneesOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAssignment
 import com.larsreimann.safeds.safeDS.SdsBlockLambdaResult
@@ -9,21 +9,21 @@ import com.larsreimann.safeds.safeDS.SdsCall
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsWildcard
 import com.larsreimann.safeds.safeDS.SdsYield
-import de.unibonn.simpleml.staticAnalysis.AssignedResult
-import de.unibonn.simpleml.staticAnalysis.expressionHasNoSideEffects
-import de.unibonn.simpleml.staticAnalysis.maybeAssigned
-import de.unibonn.simpleml.staticAnalysis.resultsOrNull
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
-import de.unibonn.simpleml.validation.codes.WarningCode
+import com.larsreimann.safeds.staticAnalysis.AssignedResult
+import com.larsreimann.safeds.staticAnalysis.expressionHasNoSideEffects
+import com.larsreimann.safeds.staticAnalysis.maybeAssigned
+import com.larsreimann.safeds.staticAnalysis.resultsOrNull
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
+import com.larsreimann.safeds.validation.codes.WarningCode
 import org.eclipse.xtext.validation.Check
 
-class AssignmentChecker : AbstractSimpleMLChecker() {
+class AssignmentChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun unnecessaryAssigneeList(smlAssignment: SmlAssignment) {
-        if (smlAssignment.assigneesOrEmpty().all { it is SmlWildcard }) {
+    fun unnecessaryAssigneeList(smlAssignment: SdsAssignment) {
+        if (smlAssignment.assigneesOrEmpty().all { it is SdsWildcard }) {
             info(
                 "This assignment can be converted to an expression statement.",
                 null,
@@ -33,7 +33,7 @@ class AssignmentChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun assigneeWithoutValue(smlAssignment: SmlAssignment) {
+    fun assigneeWithoutValue(smlAssignment: SdsAssignment) {
         smlAssignment.assigneesOrEmpty()
             .filter { it.maybeAssigned() == AssignedResult.NotAssigned }
             .forEach {
@@ -47,9 +47,9 @@ class AssignmentChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun hasNoEffect(smlAssignment: SmlAssignment) {
+    fun hasNoEffect(smlAssignment: SdsAssignment) {
         if (smlAssignment.assigneesOrEmpty()
-            .any { it is SmlPlaceholder || it is SmlYield || it is SmlBlockLambdaResult }
+            .any { it is SdsPlaceholder || it is SdsYield || it is SdsBlockLambdaResult }
         ) {
             return
         }
@@ -64,18 +64,18 @@ class AssignmentChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun ignoredResultOfCall(smlAssignment: SmlAssignment) {
+    fun ignoredResultOfCall(smlAssignment: SdsAssignment) {
         val expression = smlAssignment.expression
-        if (expression is SmlCall) {
+        if (expression is SdsCall) {
             val results = (expression.resultsOrNull() ?: listOf())
             val unassignedResults = results.drop(smlAssignment.assigneesOrEmpty().size)
 
             unassignedResults
-                .filterIsInstance<SmlAbstractDeclaration>()
+                .filterIsInstance<SdsAbstractDeclaration>()
                 .forEach {
                     warning(
                         "The result '${it.name}' is implicitly ignored.",
-                        Literals.SML_ASSIGNMENT__ASSIGNEE_LIST,
+                        Literals.SDS_ASSIGNMENT__ASSIGNEE_LIST,
                         WarningCode.ImplicitlyIgnoredResultOfCall
                     )
                 }

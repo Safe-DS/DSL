@@ -3,14 +3,14 @@
 
 package com.larsreimann.safeds.stdlibDocumentation
 
-import de.unibonn.simpleml.emf.classMembersOrEmpty
-import de.unibonn.simpleml.emf.containingCompilationUnitOrNull
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.resultsOrEmpty
-import de.unibonn.simpleml.emf.variantsOrEmpty
-import de.unibonn.simpleml.scoping.allGlobalDeclarations
-import de.unibonn.simpleml.serializer.SerializationResult
-import de.unibonn.simpleml.serializer.serializeToFormattedString
+import com.larsreimann.safeds.emf.classMembersOrEmpty
+import com.larsreimann.safeds.emf.containingCompilationUnitOrNull
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.resultsOrEmpty
+import com.larsreimann.safeds.emf.variantsOrEmpty
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
+import com.larsreimann.safeds.serializer.SerializationResult
+import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotation
 import com.larsreimann.safeds.safeDS.SdsAttribute
@@ -20,8 +20,8 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsResult
-import de.unibonn.simpleml.stdlibAccess.descriptionOrNull
-import de.unibonn.simpleml.stdlibAccess.validTargets
+import com.larsreimann.safeds.stdlibAccess.descriptionOrNull
+import com.larsreimann.safeds.stdlibAccess.validTargets
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import java.nio.file.Path
@@ -92,10 +92,10 @@ private fun createPackageDocumentation(
     packageName: String,
     globalDeclarations: List<EObject>
 ) = buildString {
-    val classes = globalDeclarations.filterIsInstance<SmlClass>().sortedBy { it.name }
-    val globalFunctions = globalDeclarations.filterIsInstance<SmlFunction>().sortedBy { it.name }
-    val enums = globalDeclarations.filterIsInstance<SmlEnum>().sortedBy { it.name }
-    val annotations = globalDeclarations.filterIsInstance<SmlAnnotation>().sortedBy { it.name }
+    val classes = globalDeclarations.filterIsInstance<SdsClass>().sortedBy { it.name }
+    val globalFunctions = globalDeclarations.filterIsInstance<SdsFunction>().sortedBy { it.name }
+    val enums = globalDeclarations.filterIsInstance<SdsEnum>().sortedBy { it.name }
+    val annotations = globalDeclarations.filterIsInstance<SdsAnnotation>().sortedBy { it.name }
 
     appendLine("# Package `$packageName`")
 
@@ -163,7 +163,7 @@ private fun createPackageDocumentation(
     appendLine(autogenWarning)
 }
 
-private fun createAnnotationDocumentation(annotation: SmlAnnotation) = buildString {
+private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildString {
 
     // Heading
     appendLine("## <a name=\"annotation-${annotation.name}\"></a>Annotation `${annotation.name}`")
@@ -187,7 +187,7 @@ private fun createAnnotationDocumentation(annotation: SmlAnnotation) = buildStri
     appendLine(validTargets)
 }
 
-private fun createAttributeDocumentation(attribute: SmlAttribute) = buildString {
+private fun createAttributeDocumentation(attribute: SdsAttribute) = buildString {
 
     // Remember description before annotation calls are removed
     val description = attribute.descriptionOrAltText()
@@ -212,11 +212,11 @@ private fun createAttributeDocumentation(attribute: SmlAttribute) = buildString 
     appendLine(" - $description")
 }
 
-private fun createClassDocumentation(`class`: SmlClass, nestingLevel: Int): String = buildString {
-    val attributes = `class`.classMembersOrEmpty().filterIsInstance<SmlAttribute>().sortedBy { it.name }
-    val methods = `class`.classMembersOrEmpty().filterIsInstance<SmlFunction>().sortedBy { it.name }
-    val classes = `class`.classMembersOrEmpty().filterIsInstance<SmlClass>().sortedBy { it.name }
-    val enums = `class`.classMembersOrEmpty().filterIsInstance<SmlEnum>().sortedBy { it.name }
+private fun createClassDocumentation(`class`: SdsClass, nestingLevel: Int): String = buildString {
+    val attributes = `class`.classMembersOrEmpty().filterIsInstance<SdsAttribute>().sortedBy { it.name }
+    val methods = `class`.classMembersOrEmpty().filterIsInstance<SdsFunction>().sortedBy { it.name }
+    val classes = `class`.classMembersOrEmpty().filterIsInstance<SdsClass>().sortedBy { it.name }
+    val enums = `class`.classMembersOrEmpty().filterIsInstance<SdsEnum>().sortedBy { it.name }
 
     // Heading
     if (isGlobal(nestingLevel)) {
@@ -256,7 +256,7 @@ private fun createClassDocumentation(`class`: SmlClass, nestingLevel: Int): Stri
     }
 }
 
-private fun createConstructorDocumentation(`class`: SmlClass) = buildString {
+private fun createConstructorDocumentation(`class`: SdsClass) = buildString {
     if (`class`.parameterList == null) {
         appendLine("**Constructor:** _Class has no constructor._")
     } else if (`class`.parametersOrEmpty().isEmpty()) {
@@ -269,7 +269,7 @@ private fun createConstructorDocumentation(`class`: SmlClass) = buildString {
     }
 }
 
-private fun createEnumDocumentation(enum: SmlEnum, nestingLevel: Int) = buildString {
+private fun createEnumDocumentation(enum: SdsEnum, nestingLevel: Int) = buildString {
     val variants = enum.variantsOrEmpty().sortedBy { it.name }
 
     // Heading
@@ -288,7 +288,7 @@ private fun createEnumDocumentation(enum: SmlEnum, nestingLevel: Int) = buildStr
     }
 }
 
-private fun createEnumVariantDocumentation(enumVariant: SmlEnumVariant, nestingLevel: Int) = buildString {
+private fun createEnumVariantDocumentation(enumVariant: SdsEnumVariant, nestingLevel: Int) = buildString {
 
     // Heading
     appendLine("${heading(nestingLevel)} Enum Variant `${enumVariant.name}`")
@@ -300,11 +300,11 @@ private fun createEnumVariantDocumentation(enumVariant: SmlEnumVariant, nestingL
     appendLine("\n" + createParametersDocumentation(enumVariant.parametersOrEmpty()))
 }
 
-private fun SmlAbstractDeclaration.descriptionOrAltText(): String {
+private fun SdsAbstractDeclaration.descriptionOrAltText(): String {
     return descriptionOrNull() ?: "_No description available._"
 }
 
-private fun createFunctionDocumentation(function: SmlFunction, nestingLevel: Int, isGlobalFunction: Boolean) = buildString {
+private fun createFunctionDocumentation(function: SdsFunction, nestingLevel: Int, isGlobalFunction: Boolean) = buildString {
 
     // Heading
     if (isGlobalFunction) {
@@ -325,7 +325,7 @@ private fun createFunctionDocumentation(function: SmlFunction, nestingLevel: Int
     append(createResultsDocumentation(function.resultsOrEmpty()))
 }
 
-private fun createParametersDocumentation(parameters: List<SmlParameter>) = buildString {
+private fun createParametersDocumentation(parameters: List<SdsParameter>) = buildString {
     if (parameters.isEmpty()) {
         appendLine("**Parameters:** _None expected._")
     } else {
@@ -336,7 +336,7 @@ private fun createParametersDocumentation(parameters: List<SmlParameter>) = buil
     }
 }
 
-private fun createParameterDocumentation(parameter: SmlParameter) = buildString {
+private fun createParameterDocumentation(parameter: SdsParameter) = buildString {
 
     // Remember description before annotation calls are removed
     val description = parameter.descriptionOrAltText()
@@ -361,7 +361,7 @@ private fun createParameterDocumentation(parameter: SmlParameter) = buildString 
     append(" - $description")
 }
 
-private fun createResultsDocumentation(result: List<SmlResult>) = buildString {
+private fun createResultsDocumentation(result: List<SdsResult>) = buildString {
     if (result.isEmpty()) {
         appendLine("**Results:** _None returned._")
     } else {
@@ -372,7 +372,7 @@ private fun createResultsDocumentation(result: List<SmlResult>) = buildString {
     }
 }
 
-private fun createResultDocumentation(result: SmlResult) = buildString {
+private fun createResultDocumentation(result: SdsResult) = buildString {
 
     // Remember description before annotation calls are removed
     val description = result.descriptionOrAltText()

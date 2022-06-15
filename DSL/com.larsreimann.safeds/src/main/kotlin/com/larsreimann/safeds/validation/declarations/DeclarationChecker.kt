@@ -1,21 +1,21 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.emf.annotationCallsOrEmpty
-import de.unibonn.simpleml.emf.isRequired
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.emf.annotationCallsOrEmpty
+import com.larsreimann.safeds.emf.isRequired
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsParameter
-import de.unibonn.simpleml.stdlibAccess.StdlibAnnotations
-import de.unibonn.simpleml.stdlibAccess.isRepeatable
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.stdlibAccess.StdlibAnnotations
+import com.larsreimann.safeds.stdlibAccess.isRepeatable
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class DeclarationChecker : AbstractSimpleMLChecker() {
+class DeclarationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun annotationCardinality(smlDeclaration: SmlAbstractDeclaration) {
+    fun annotationCardinality(smlDeclaration: SdsAbstractDeclaration) {
         smlDeclaration.annotationCallsOrEmpty()
             .filter { it.annotation != null && !it.annotation.eIsProxy() && !it.annotation.isRepeatable() }
             .duplicatesBy { it.annotation.qualifiedNameOrNull() }
@@ -30,7 +30,7 @@ class DeclarationChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun mustNotDeprecateRequiredParameter(smlParameter: SmlParameter) {
+    fun mustNotDeprecateRequiredParameter(smlParameter: SdsParameter) {
         if (smlParameter.isRequired()) {
             val deprecatedAnnotationOrNull = smlParameter.annotationCallsOrEmpty().firstOrNull {
                 it.annotation.qualifiedNameOrNull() == StdlibAnnotations.Deprecated

@@ -11,7 +11,7 @@ import java.util.WeakHashMap
 value class Id<out T : Any>(val value: Int)
 
 /**
- * Handles the mapping of objects, usually [SmlAbstractObject]s in the Simple-ML AST, to their IDs.
+ * Handles the mapping of objects, usually [SdsAbstractObject]s in the Simple-ML AST, to their IDs.
  */
 class IdManager<UPPER : Any> {
 

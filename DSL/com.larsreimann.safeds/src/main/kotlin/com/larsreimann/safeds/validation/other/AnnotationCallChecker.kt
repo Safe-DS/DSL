@@ -1,12 +1,12 @@
 package com.larsreimann.safeds.validation.other
 
-import de.unibonn.simpleml.emf.argumentsOrEmpty
-import de.unibonn.simpleml.emf.isRequired
-import de.unibonn.simpleml.emf.isResolved
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.targetOrNull
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.argumentsOrEmpty
+import com.larsreimann.safeds.emf.isRequired
+import com.larsreimann.safeds.emf.isResolved
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.targetOrNull
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAnnotation
 import com.larsreimann.safeds.safeDS.SdsAnnotationCall
 import com.larsreimann.safeds.safeDS.SdsAttribute
@@ -21,26 +21,26 @@ import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsWorkflow
-import de.unibonn.simpleml.staticAnalysis.linking.parametersOrNull
-import de.unibonn.simpleml.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
-import de.unibonn.simpleml.stdlibAccess.StdlibAnnotations
-import de.unibonn.simpleml.stdlibAccess.StdlibEnums.AnnotationTarget
-import de.unibonn.simpleml.stdlibAccess.isPure
-import de.unibonn.simpleml.stdlibAccess.pythonModuleOrNull
-import de.unibonn.simpleml.stdlibAccess.pythonNameOrNull
-import de.unibonn.simpleml.stdlibAccess.validTargets
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
-import de.unibonn.simpleml.validation.codes.WarningCode
+import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
+import com.larsreimann.safeds.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
+import com.larsreimann.safeds.stdlibAccess.StdlibAnnotations
+import com.larsreimann.safeds.stdlibAccess.StdlibEnums.AnnotationTarget
+import com.larsreimann.safeds.stdlibAccess.isPure
+import com.larsreimann.safeds.stdlibAccess.pythonModuleOrNull
+import com.larsreimann.safeds.stdlibAccess.pythonNameOrNull
+import com.larsreimann.safeds.stdlibAccess.validTargets
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
+import com.larsreimann.safeds.validation.codes.WarningCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class AnnotationCallChecker : AbstractSimpleMLChecker() {
+class AnnotationCallChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun duplicateTargetInTargetAnnotation(smlAnnotationCall: SmlAnnotationCall) {
+    fun duplicateTargetInTargetAnnotation(smlAnnotationCall: SdsAnnotationCall) {
         val annotation = smlAnnotationCall.annotation
         if (!annotation.isResolved() || annotation.qualifiedNameOrNull() != StdlibAnnotations.Target) {
             return
@@ -49,7 +49,7 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
         smlAnnotationCall
             .argumentsOrEmpty()
             .map { it.value }
-            .filterIsInstance<SmlMemberAccess>()
+            .filterIsInstance<SdsMemberAccess>()
             .duplicatesBy { it.member.declaration.qualifiedNameOrNull() }
             .forEach {
                 warning(
@@ -62,7 +62,7 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun missingArgumentList(smlAnnotationCall: SmlAnnotationCall) {
+    fun missingArgumentList(smlAnnotationCall: SdsAnnotationCall) {
         if (smlAnnotationCall.argumentList != null) {
             return
         }
@@ -76,14 +76,14 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
         if (parameters.any { it.isRequired() }) {
             error(
                 "Missing argument list.",
-                Literals.SML_ANNOTATION_CALL__ANNOTATION,
+                Literals.SDS_ANNOTATION_CALL__ANNOTATION,
                 ErrorCode.MISSING_ARGUMENT_LIST
             )
         }
     }
 
     @Check
-    fun target(smlAnnotationCall: SmlAnnotationCall) {
+    fun target(smlAnnotationCall: SdsAnnotationCall) {
 
         // Get target of annotation use
         val actualTarget = smlAnnotationCall.targetOrNull() ?: return
@@ -98,40 +98,40 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
 
         // Compare actual and legal targets
         val wrongTarget: String? = when {
-            actualTarget is SmlAnnotation && AnnotationTarget.Annotation !in legalTargets -> {
+            actualTarget is SdsAnnotation && AnnotationTarget.Annotation !in legalTargets -> {
                 "an annotation"
             }
-            actualTarget is SmlAttribute && AnnotationTarget.Attribute !in legalTargets -> {
+            actualTarget is SdsAttribute && AnnotationTarget.Attribute !in legalTargets -> {
                 "an attribute"
             }
-            actualTarget is SmlClass && AnnotationTarget.Class !in legalTargets -> {
+            actualTarget is SdsClass && AnnotationTarget.Class !in legalTargets -> {
                 "a class"
             }
-            actualTarget is SmlCompilationUnit && AnnotationTarget.CompilationUnit !in legalTargets -> {
+            actualTarget is SdsCompilationUnit && AnnotationTarget.CompilationUnit !in legalTargets -> {
                 "a compilation unit"
             }
-            actualTarget is SmlEnum && AnnotationTarget.Enum !in legalTargets -> {
+            actualTarget is SdsEnum && AnnotationTarget.Enum !in legalTargets -> {
                 "an enum"
             }
-            actualTarget is SmlEnumVariant && AnnotationTarget.EnumVariant !in legalTargets -> {
+            actualTarget is SdsEnumVariant && AnnotationTarget.EnumVariant !in legalTargets -> {
                 "an enum variant"
             }
-            actualTarget is SmlFunction && AnnotationTarget.Function !in legalTargets -> {
+            actualTarget is SdsFunction && AnnotationTarget.Function !in legalTargets -> {
                 "a function"
             }
-            actualTarget is SmlParameter && AnnotationTarget.Parameter !in legalTargets -> {
+            actualTarget is SdsParameter && AnnotationTarget.Parameter !in legalTargets -> {
                 "a parameter"
             }
-            actualTarget is SmlResult && AnnotationTarget.Result !in legalTargets -> {
+            actualTarget is SdsResult && AnnotationTarget.Result !in legalTargets -> {
                 "a result"
             }
-            actualTarget is SmlTypeParameter && AnnotationTarget.TypeParameter !in legalTargets -> {
+            actualTarget is SdsTypeParameter && AnnotationTarget.TypeParameter !in legalTargets -> {
                 "a type parameter"
             }
-            actualTarget is SmlWorkflow && AnnotationTarget.Workflow !in legalTargets -> {
+            actualTarget is SdsWorkflow && AnnotationTarget.Workflow !in legalTargets -> {
                 "a workflow"
             }
-            actualTarget is SmlStep && AnnotationTarget.Step !in legalTargets -> {
+            actualTarget is SdsStep && AnnotationTarget.Step !in legalTargets -> {
                 "a step"
             }
             else -> null
@@ -148,7 +148,7 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun unnecessaryArgumentList(smlAnnotationCall: SmlAnnotationCall) {
+    fun unnecessaryArgumentList(smlAnnotationCall: SdsAnnotationCall) {
         if (smlAnnotationCall.argumentList == null || smlAnnotationCall.argumentsOrEmpty().isNotEmpty()) {
             return
         }
@@ -157,20 +157,20 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
         if (parametersOrNull != null && parametersOrNull.none { it.isRequired() }) {
             info(
                 "Unnecessary argument list.",
-                Literals.SML_ABSTRACT_CALL__ARGUMENT_LIST,
+                Literals.SDS_ABSTRACT_CALL__ARGUMENT_LIST,
                 InfoCode.UnnecessaryArgumentList
             )
         }
     }
 
     @Check(CheckType.NORMAL)
-    fun argumentsMustBeConstant(smlAnnotationCall: SmlAnnotationCall) {
+    fun argumentsMustBeConstant(smlAnnotationCall: SdsAnnotationCall) {
         smlAnnotationCall.argumentsOrEmpty().forEach {
             if (it.value?.toConstantExpressionOrNull() == null) {
                 error(
                     "Arguments in annotation call must be constant.",
                     it,
-                    Literals.SML_ARGUMENT__VALUE,
+                    Literals.SDS_ARGUMENT__VALUE,
                     ErrorCode.MustBeConstant
                 )
             }
@@ -178,13 +178,13 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun pureImpliesNoSideEffects(smlAnnotationCall: SmlAnnotationCall) {
+    fun pureImpliesNoSideEffects(smlAnnotationCall: SdsAnnotationCall) {
         if (smlAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.NoSideEffects) {
             return
         }
 
         val target = smlAnnotationCall.targetOrNull() ?: return
-        if (target is SmlFunction && target.isPure()) {
+        if (target is SdsFunction && target.isPure()) {
             info(
                 "Purity implies absence of side effects (remove this annotation call).",
                 null,
@@ -194,12 +194,12 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun identicalPythonModule(smlAnnotationCall: SmlAnnotationCall) {
+    fun identicalPythonModule(smlAnnotationCall: SdsAnnotationCall) {
         if (smlAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.PythonModule) {
             return
         }
 
-        val target = smlAnnotationCall.targetOrNull() as? SmlCompilationUnit ?: return
+        val target = smlAnnotationCall.targetOrNull() as? SdsCompilationUnit ?: return
         if (target.name == target.pythonModuleOrNull()) {
             info(
                 "Python module is identical to Simple-ML package (can remove annotation call).",
@@ -210,7 +210,7 @@ class AnnotationCallChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun identicalPythonName(smlAnnotationCall: SmlAnnotationCall) {
+    fun identicalPythonName(smlAnnotationCall: SdsAnnotationCall) {
         if (smlAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.PythonName) {
             return
         }

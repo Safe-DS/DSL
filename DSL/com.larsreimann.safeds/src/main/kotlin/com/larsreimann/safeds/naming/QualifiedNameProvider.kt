@@ -18,7 +18,7 @@ internal object QualifiedNameProviderInjectionTarget {
 /**
  * Returns the qualified name of the declaration.
  */
-fun SmlAbstractDeclaration.qualifiedNameOrNull(): QualifiedName? {
+fun SdsAbstractDeclaration.qualifiedNameOrNull(): QualifiedName? {
     return QualifiedNameProviderInjectionTarget.qualifiedNameProvider.getFullyQualifiedName(this)
 }
 

@@ -1,39 +1,39 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.emf.asResolvedOrNull
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.placeholdersOrEmpty
-import de.unibonn.simpleml.emf.resultsOrEmpty
-import de.unibonn.simpleml.emf.yieldsOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.asResolvedOrNull
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.placeholdersOrEmpty
+import com.larsreimann.safeds.emf.resultsOrEmpty
+import com.larsreimann.safeds.emf.yieldsOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsStep
-import de.unibonn.simpleml.staticAnalysis.linking.yieldsOrEmpty
-import de.unibonn.simpleml.staticAnalysis.usesIn
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
-import de.unibonn.simpleml.validation.codes.WarningCode
+import com.larsreimann.safeds.staticAnalysis.linking.yieldsOrEmpty
+import com.larsreimann.safeds.staticAnalysis.usesIn
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
+import com.larsreimann.safeds.validation.codes.WarningCode
 import org.eclipse.xtext.validation.Check
 
-class StepChecker : AbstractSimpleMLChecker() {
+class StepChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun parameterIsUnused(smlStep: SmlStep) {
+    fun parameterIsUnused(smlStep: SdsStep) {
         smlStep.parametersOrEmpty()
             .filter { it.usesIn(smlStep).none() }
             .forEach {
                 warning(
                     "This parameter is unused.",
                     it,
-                    Literals.SML_ABSTRACT_DECLARATION__NAME,
+                    Literals.SDS_ABSTRACT_DECLARATION__NAME,
                     WarningCode.UnusedParameter
                 )
             }
     }
 
     @Check
-    fun uniqueNames(smlStep: SmlStep) {
+    fun uniqueNames(smlStep: SdsStep) {
         val declarations =
             smlStep.parametersOrEmpty() + smlStep.resultsOrEmpty() + smlStep.placeholdersOrEmpty()
         declarations.reportDuplicateNames {
@@ -42,24 +42,24 @@ class StepChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun unnecessaryResultList(smlStep: SmlStep) {
+    fun unnecessaryResultList(smlStep: SdsStep) {
         if (smlStep.resultList != null && smlStep.resultsOrEmpty().isEmpty()) {
             info(
                 "Unnecessary result list.",
-                Literals.SML_STEP__RESULT_LIST,
+                Literals.SDS_STEP__RESULT_LIST,
                 InfoCode.UnnecessaryResultList
             )
         }
     }
 
     @Check
-    fun unassignedResult(smlStep: SmlStep) {
+    fun unassignedResult(smlStep: SdsStep) {
         smlStep.resultsOrEmpty().forEach {
             if (it.yieldsOrEmpty().isEmpty()) {
                 error(
                     "No value is assigned to this result.",
                     it,
-                    Literals.SML_ABSTRACT_DECLARATION__NAME,
+                    Literals.SDS_ABSTRACT_DECLARATION__NAME,
                     ErrorCode.UnassignedResult
                 )
             }
@@ -67,14 +67,14 @@ class StepChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun duplicateResultAssignment(smlStep: SmlStep) {
+    fun duplicateResultAssignment(smlStep: SdsStep) {
         smlStep.yieldsOrEmpty()
             .duplicatesBy { it.result.asResolvedOrNull() }
             .forEach {
                 error(
                     "This result is assigned multiple times.",
                     it,
-                    Literals.SML_YIELD__RESULT,
+                    Literals.SDS_YIELD__RESULT,
                     ErrorCode.DuplicateResultAssignment
                 )
             }

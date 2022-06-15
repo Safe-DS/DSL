@@ -1,27 +1,27 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.emf.variantsOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.variantsOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsEnum
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.InfoCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.InfoCode
 import org.eclipse.xtext.validation.Check
 
-class EnumChecker : AbstractSimpleMLChecker() {
+class EnumChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun body(smlEnum: SmlEnum) {
+    fun body(smlEnum: SdsEnum) {
         if (smlEnum.body != null && smlEnum.variantsOrEmpty().isEmpty()) {
             info(
                 "Unnecessary enum body.",
-                Literals.SML_ENUM__BODY,
+                Literals.SDS_ENUM__BODY,
                 InfoCode.UnnecessaryBody
             )
         }
     }
 
     @Check
-    fun uniqueNames(smlEnum: SmlEnum) {
+    fun uniqueNames(smlEnum: SdsEnum) {
         smlEnum.variantsOrEmpty()
             .reportDuplicateNames { "A declaration with name '${it.name}' exists already in this enum." }
     }

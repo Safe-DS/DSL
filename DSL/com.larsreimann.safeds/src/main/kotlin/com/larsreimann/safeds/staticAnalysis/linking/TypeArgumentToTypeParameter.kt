@@ -1,9 +1,9 @@
 package com.larsreimann.safeds.staticAnalysis.linking
 
-import de.unibonn.simpleml.emf.closestAncestorOrNull
-import de.unibonn.simpleml.emf.isNamed
-import de.unibonn.simpleml.emf.isResolved
-import de.unibonn.simpleml.emf.typeParametersOrEmpty
+import com.larsreimann.safeds.emf.closestAncestorOrNull
+import com.larsreimann.safeds.emf.isNamed
+import com.larsreimann.safeds.emf.isResolved
+import com.larsreimann.safeds.emf.typeParametersOrEmpty
 import com.larsreimann.safeds.safeDS.SdsCall
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
@@ -12,16 +12,16 @@ import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import de.unibonn.simpleml.staticAnalysis.callableOrNull
+import com.larsreimann.safeds.staticAnalysis.callableOrNull
 
 /**
- * Returns the [SmlTypeParameter] that corresponds to this [SmlTypeArgument] or `null` if it cannot be resolved.
+ * Returns the [SdsTypeParameter] that corresponds to this [SdsTypeArgument] or `null` if it cannot be resolved.
  */
-fun SmlTypeArgument.typeParameterOrNull(): SmlTypeParameter? {
+fun SdsTypeArgument.typeParameterOrNull(): SdsTypeParameter? {
     return when {
         this.isNamed() -> typeParameter
         else -> {
-            val typeArgumentList = closestAncestorOrNull<SmlTypeArgumentList>() ?: return null
+            val typeArgumentList = closestAncestorOrNull<SdsTypeArgumentList>() ?: return null
 
             // Cannot match positional type argument if it is preceded by named type arguments
             val firstNamedTypeArgumentIndex = typeArgumentList.typeArguments.indexOfFirst { it.isNamed() }
@@ -36,25 +36,25 @@ fun SmlTypeArgument.typeParameterOrNull(): SmlTypeParameter? {
 }
 
 /**
- * Returns the list of [SmlTypeParameter]s that corresponds to this list of [SmlTypeArgument]s or `null` if it cannot
+ * Returns the list of [SdsTypeParameter]s that corresponds to this list of [SdsTypeArgument]s or `null` if it cannot
  * not be resolved.
  */
-fun SmlTypeArgumentList.typeParametersOrNull(): List<SmlTypeParameter>? {
+fun SdsTypeArgumentList.typeParametersOrNull(): List<SdsTypeParameter>? {
     return when (val parent = eContainer()) {
-        is SmlCall -> {
+        is SdsCall -> {
             when (val callable = parent.callableOrNull()) {
-                is SmlClass -> callable.typeParametersOrEmpty()
-                is SmlEnumVariant -> callable.typeParametersOrEmpty()
-                is SmlFunction -> callable.typeParametersOrEmpty()
+                is SdsClass -> callable.typeParametersOrEmpty()
+                is SdsEnumVariant -> callable.typeParametersOrEmpty()
+                is SdsFunction -> callable.typeParametersOrEmpty()
                 else -> null
             }
         }
-        is SmlNamedType -> {
+        is SdsNamedType -> {
             val declaration = parent.declaration
             when {
                 !declaration.isResolved() -> null
-                declaration is SmlClass -> declaration.typeParametersOrEmpty()
-                declaration is SmlEnumVariant -> declaration.typeParametersOrEmpty()
+                declaration is SdsClass -> declaration.typeParametersOrEmpty()
+                declaration is SdsEnumVariant -> declaration.typeParametersOrEmpty()
                 else -> null
             }
         }

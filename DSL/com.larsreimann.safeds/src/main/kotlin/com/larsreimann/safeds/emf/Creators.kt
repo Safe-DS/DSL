@@ -2,16 +2,16 @@
 
 package com.larsreimann.safeds.emf
 
-import de.unibonn.simpleml.constant.SmlFileExtension
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator
-import de.unibonn.simpleml.constant.SmlKind
-import de.unibonn.simpleml.constant.SmlPrefixOperationOperator
-import de.unibonn.simpleml.constant.SmlProtocolQuantifiedTermQuantifier
-import de.unibonn.simpleml.constant.SmlProtocolTokenClassValue
-import de.unibonn.simpleml.constant.SmlTypeParameterConstraintOperator
-import de.unibonn.simpleml.constant.SmlVariance
-import de.unibonn.simpleml.constant.SmlVisibility
-import de.unibonn.simpleml.simpleML.SimpleMLFactory
+import com.larsreimann.safeds.constant.SdsFileExtension
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator
+import com.larsreimann.safeds.constant.SdsKind
+import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
+import com.larsreimann.safeds.constant.SdsProtocolQuantifiedTermQuantifier
+import com.larsreimann.safeds.constant.SdsProtocolTokenClassValue
+import com.larsreimann.safeds.constant.SdsTypeParameterConstraintOperator
+import com.larsreimann.safeds.constant.SdsVariance
+import com.larsreimann.safeds.constant.SdsVisibility
+import com.larsreimann.safeds.simpleML.SimpleMLFactory
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractClassMember
 import com.larsreimann.safeds.safeDS.SdsAbstractCompilationUnitMember
@@ -104,7 +104,7 @@ import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsWildcard
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
-import de.unibonn.simpleml.utils.nullIfEmptyElse
+import com.larsreimann.safeds.utils.nullIfEmptyElse
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.resource.XtextResource
@@ -118,10 +118,10 @@ private val factory = SimpleMLFactory.eINSTANCE
  * This can be useful to serialize EObjects that were initialized with the creators in this file rather than generated
  * by the parser, since serialization requires EObjects to be contained in a resource.
  */
-fun createSmlDummyResource(
+fun createSdsDummyResource(
     fileName: String,
-    fileExtension: SmlFileExtension,
-    compilationUnit: SmlCompilationUnit
+    fileExtension: SdsFileExtension,
+    compilationUnit: SdsCompilationUnit
 ): Resource {
     val uri = URI.createURI("dummy:/$fileName.${fileExtension.extension}")
     return XtextResource(uri).apply {
@@ -135,15 +135,15 @@ fun createSmlDummyResource(
  * This can be useful to serialize EObjects that were initialized with the creators in this file rather than generated
  * by the parser, since serialization requires EObjects to be contained in a resource.
  */
-fun createSmlDummyResource(
+fun createSdsDummyResource(
     fileName: String,
-    fileExtension: SmlFileExtension,
+    fileExtension: SdsFileExtension,
     packageName: String,
-    init: SmlCompilationUnit.() -> Unit = {}
+    init: SdsCompilationUnit.() -> Unit = {}
 ): Resource {
     val uri = URI.createURI("dummy:/$fileName.${fileExtension.extension}")
     return XtextResource(uri).apply {
-        this.contents += createSmlCompilationUnit(
+        this.contents += createSdsCompilationUnit(
             packageName = packageName,
             init = init
         )
@@ -151,147 +151,147 @@ fun createSmlDummyResource(
 }
 
 /**
- * Returns a new object of class [SmlAnnotation].
+ * Returns a new object of class [SdsAnnotation].
  */
-fun createSmlAnnotation(
+fun createSdsAnnotation(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    parameters: List<SmlParameter> = emptyList()
-): SmlAnnotation {
-    return factory.createSmlAnnotation().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    parameters: List<SdsParameter> = emptyList()
+): SdsAnnotation {
+    return factory.createSdsAnnotation().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
-        this.parameterList = parameters.nullIfEmptyElse(::createSmlParameterList)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.parameterList = parameters.nullIfEmptyElse(::createSdsParameterList)
     }
 }
 
 /**
- * Adds a new object of class [SmlAnnotation] to the receiver.
+ * Adds a new object of class [SdsAnnotation] to the receiver.
  */
-fun SmlCompilationUnit.smlAnnotation(
+fun SdsCompilationUnit.smlAnnotation(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    parameters: List<SmlParameter> = emptyList()
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    parameters: List<SdsParameter> = emptyList()
 ) {
-    this.addMember(createSmlAnnotation(name, annotationCalls, parameters))
+    this.addMember(createSdsAnnotation(name, annotationCalls, parameters))
 }
 
 /**
- * Returns a new object of class [SmlAnnotationCall].
+ * Returns a new object of class [SdsAnnotationCall].
  */
-fun createSmlAnnotationCall(
-    annotation: SmlAnnotation,
-    arguments: List<SmlArgument> = emptyList()
-): SmlAnnotationCall {
-    return factory.createSmlAnnotationCall().apply {
+fun createSdsAnnotationCall(
+    annotation: SdsAnnotation,
+    arguments: List<SdsArgument> = emptyList()
+): SdsAnnotationCall {
+    return factory.createSdsAnnotationCall().apply {
         this.annotation = annotation
-        this.argumentList = arguments.nullIfEmptyElse(::createSmlArgumentList)
+        this.argumentList = arguments.nullIfEmptyElse(::createSdsArgumentList)
     }
 }
 
 /**
- * Returns a new object of class [SmlAnnotationCall] that points to an annotation with the given name.
+ * Returns a new object of class [SdsAnnotationCall] that points to an annotation with the given name.
  */
-fun createSmlAnnotationCall(
+fun createSdsAnnotationCall(
     annotationName: String,
-    arguments: List<SmlArgument> = emptyList()
-): SmlAnnotationCall {
-    return createSmlAnnotationCall(
-        createSmlAnnotation(annotationName),
+    arguments: List<SdsArgument> = emptyList()
+): SdsAnnotationCall {
+    return createSdsAnnotationCall(
+        createSdsAnnotation(annotationName),
         arguments
     )
 }
 
 /**
- * Returns a new object of class [SmlAnnotationCallList].
+ * Returns a new object of class [SdsAnnotationCallList].
  */
-private fun createSmlAnnotationCallList(annotationCalls: List<SmlAnnotationCall>): SmlAnnotationCallList {
-    return factory.createSmlAnnotationCallList().apply {
+private fun createSdsAnnotationCallList(annotationCalls: List<SdsAnnotationCall>): SdsAnnotationCallList {
+    return factory.createSdsAnnotationCallList().apply {
         this.annotationCalls += annotationCalls
     }
 }
 
 /**
- * Returns a new object of class [SmlArgument].
+ * Returns a new object of class [SdsArgument].
  */
-fun createSmlArgument(value: SmlAbstractExpression, parameter: SmlParameter? = null): SmlArgument {
-    return factory.createSmlArgument().apply {
+fun createSdsArgument(value: SdsAbstractExpression, parameter: SdsParameter? = null): SdsArgument {
+    return factory.createSdsArgument().apply {
         this.value = value
         this.parameter = parameter
     }
 }
 
 /**
- * Returns a new object of class [SmlArgument] that points to a parameter with the given name.
+ * Returns a new object of class [SdsArgument] that points to a parameter with the given name.
  */
-fun createSmlArgument(value: SmlAbstractExpression, parameterName: String): SmlArgument {
-    return createSmlArgument(
+fun createSdsArgument(value: SdsAbstractExpression, parameterName: String): SdsArgument {
+    return createSdsArgument(
         value,
-        createSmlParameter(parameterName)
+        createSdsParameter(parameterName)
     )
 }
 
 /**
- * Returns a new object of class [SmlArgumentList].
+ * Returns a new object of class [SdsArgumentList].
  */
-fun createSmlArgumentList(arguments: List<SmlArgument>): SmlArgumentList {
-    return factory.createSmlArgumentList().apply {
+fun createSdsArgumentList(arguments: List<SdsArgument>): SdsArgumentList {
+    return factory.createSdsArgumentList().apply {
         this.arguments += arguments
     }
 }
 
 /**
- * Returns a new object of class [SmlAssigneeList].
+ * Returns a new object of class [SdsAssigneeList].
  */
-fun createSmlAssigneeList(assignees: List<SmlAbstractAssignee>): SmlAssigneeList {
-    return factory.createSmlAssigneeList().apply {
+fun createSdsAssigneeList(assignees: List<SdsAbstractAssignee>): SdsAssigneeList {
+    return factory.createSdsAssigneeList().apply {
         this.assignees += assignees
     }
 }
 
 /**
- * Returns a new object of class [SmlAssignment].
+ * Returns a new object of class [SdsAssignment].
  *
  * @throws IllegalArgumentException If no assignees are passed.
  */
-fun createSmlAssignment(assignees: List<SmlAbstractAssignee>, expression: SmlAbstractExpression): SmlAssignment {
+fun createSdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression): SdsAssignment {
     if (assignees.isEmpty()) {
         throw IllegalArgumentException("Must have at least one assignee.")
     }
 
-    return factory.createSmlAssignment().apply {
-        this.assigneeList = createSmlAssigneeList(assignees)
+    return factory.createSdsAssignment().apply {
+        this.assigneeList = createSdsAssigneeList(assignees)
         this.expression = expression
     }
 }
 
 /**
- * Adds a new object of class [SmlAssignment] to the receiver.
+ * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SmlBlockLambda.smlAssignment(assignees: List<SmlAbstractAssignee>, expression: SmlAbstractExpression) {
-    this.addStatement(createSmlAssignment(assignees, expression))
+fun SdsBlockLambda.smlAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+    this.addStatement(createSdsAssignment(assignees, expression))
 }
 
 /**
- * Adds a new object of class [SmlAssignment] to the receiver.
+ * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SmlWorkflow.smlAssignment(assignees: List<SmlAbstractAssignee>, expression: SmlAbstractExpression) {
-    this.addStatement(createSmlAssignment(assignees, expression))
+fun SdsWorkflow.smlAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+    this.addStatement(createSdsAssignment(assignees, expression))
 }
 
 /**
- * Adds a new object of class [SmlAssignment] to the receiver.
+ * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SmlStep.smlAssignment(assignees: List<SmlAbstractAssignee>, expression: SmlAbstractExpression) {
-    this.addStatement(createSmlAssignment(assignees, expression))
+fun SdsStep.smlAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+    this.addStatement(createSdsAssignment(assignees, expression))
 }
 
 /**
- * Returns a new object of class [SmlAssignmentGoal].
+ * Returns a new object of class [SdsAssignmentGoal].
  */
-fun createSmlAssignmentGoal(placeholderName: String, expression: SmlAbstractGoalExpression): SmlAssignmentGoal {
-    return factory.createSmlAssignmentGoal().apply {
-        this.placeholder = factory.createSmlGoalPlaceholder().apply {
+fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression): SdsAssignmentGoal {
+    return factory.createSdsAssignmentGoal().apply {
+        this.placeholder = factory.createSdsGoalPlaceholder().apply {
             this.name = placeholderName
         }
         this.expression = expression
@@ -299,65 +299,65 @@ fun createSmlAssignmentGoal(placeholderName: String, expression: SmlAbstractGoal
 }
 
 /**
- * Adds a new object of class [SmlAssignmentGoal] to the receiver.
+ * Adds a new object of class [SdsAssignmentGoal] to the receiver.
  */
-fun SmlPredicate.smlAssignmentGoal(placeholderName: String, expression: SmlAbstractGoalExpression) {
-    this.addGoal(createSmlAssignmentGoal(placeholderName, expression))
+fun SdsPredicate.smlAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression) {
+    this.addGoal(createSdsAssignmentGoal(placeholderName, expression))
 }
 
 /**
- * Returns a new object of class [SmlAttribute].
+ * Returns a new object of class [SdsAttribute].
  */
-fun createSmlAttribute(
+fun createSdsAttribute(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
-    type: SmlAbstractType? = null
-): SmlAttribute {
-    return factory.createSmlAttribute().apply {
+    type: SdsAbstractType? = null
+): SdsAttribute {
+    return factory.createSdsAttribute().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
         this.isStatic = isStatic
         this.type = type
     }
 }
 
 /**
- * Adds a new object of class [SmlAttribute] to the receiver.
+ * Adds a new object of class [SdsAttribute] to the receiver.
  */
-fun SmlClass.smlAttribute(
+fun SdsClass.smlAttribute(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
-    type: SmlAbstractType? = null
+    type: SdsAbstractType? = null
 ) {
-    this.addMember(createSmlAttribute(name, annotationCalls, isStatic, type))
+    this.addMember(createSdsAttribute(name, annotationCalls, isStatic, type))
 }
 
 /**
- * Returns a new object of class [SmlBlock].
+ * Returns a new object of class [SdsBlock].
  */
-fun createSmlBlock(
-    statements: List<SmlAbstractStatement> = emptyList(),
-    init: SmlBlock.() -> Unit = {}
-): SmlBlock {
-    return factory.createSmlBlock().apply {
+fun createSdsBlock(
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsBlock.() -> Unit = {}
+): SdsBlock {
+    return factory.createSdsBlock().apply {
         this.statements += statements
         this.init()
     }
 }
 
 /**
- * Returns a new object of class [SmlBlockLambda].
+ * Returns a new object of class [SdsBlockLambda].
  */
-fun createSmlBlockLambda(
-    parameters: List<SmlParameter> = emptyList(),
-    statements: List<SmlAbstractStatement> = emptyList(),
-    init: SmlBlockLambda.() -> Unit = {}
-): SmlBlockLambda {
-    return factory.createSmlBlockLambda().apply {
-        this.parameterList = createSmlLambdaParameterList(parameters)
-        this.body = factory.createSmlBlock()
+fun createSdsBlockLambda(
+    parameters: List<SdsParameter> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsBlockLambda.() -> Unit = {}
+): SdsBlockLambda {
+    return factory.createSdsBlockLambda().apply {
+        this.parameterList = createSdsLambdaParameterList(parameters)
+        this.body = factory.createSdsBlock()
         statements.forEach { addStatement(it) }
         this.init()
     }
@@ -366,77 +366,77 @@ fun createSmlBlockLambda(
 /**
  * Adds a new statement to the receiver.
  */
-private fun SmlBlockLambda.addStatement(statement: SmlAbstractStatement) {
+private fun SdsBlockLambda.addStatement(statement: SdsAbstractStatement) {
     if (this.body == null) {
-        this.body = factory.createSmlBlock()
+        this.body = factory.createSdsBlock()
     }
 
     this.body.statements += statement
 }
 
 /**
- * Returns a new object of class [SmlBlockLambdaResult].
+ * Returns a new object of class [SdsBlockLambdaResult].
  */
-fun createSmlBlockLambdaResult(name: String): SmlBlockLambdaResult {
-    return factory.createSmlBlockLambdaResult().apply {
+fun createSdsBlockLambdaResult(name: String): SdsBlockLambdaResult {
+    return factory.createSdsBlockLambdaResult().apply {
         this.name = name
     }
 }
 
 /**
- * Returns a new object of class [SmlBoolean].
+ * Returns a new object of class [SdsBoolean].
  */
-fun createSmlBoolean(value: Boolean): SmlBoolean {
-    return factory.createSmlBoolean().apply {
+fun createSdsBoolean(value: Boolean): SdsBoolean {
+    return factory.createSdsBoolean().apply {
         this.isTrue = value
     }
 }
 
 /**
- * Returns a new object of class [SmlCall].
+ * Returns a new object of class [SdsCall].
  */
-fun createSmlCall(
-    receiver: SmlAbstractExpression,
-    typeArguments: List<SmlTypeArgument> = emptyList(),
-    arguments: List<SmlArgument> = emptyList()
-): SmlCall {
-    return factory.createSmlCall().apply {
+fun createSdsCall(
+    receiver: SdsAbstractExpression,
+    typeArguments: List<SdsTypeArgument> = emptyList(),
+    arguments: List<SdsArgument> = emptyList()
+): SdsCall {
+    return factory.createSdsCall().apply {
         this.receiver = receiver
-        this.typeArgumentList = typeArguments.nullIfEmptyElse(::createSmlTypeArgumentList)
-        this.argumentList = createSmlArgumentList(arguments)
+        this.typeArgumentList = typeArguments.nullIfEmptyElse(::createSdsTypeArgumentList)
+        this.argumentList = createSdsArgumentList(arguments)
     }
 }
 
 /**
- * Returns a new object of class [SmlCallableType].
+ * Returns a new object of class [SdsCallableType].
  */
-fun createSmlCallableType(parameters: List<SmlParameter>, results: List<SmlResult>): SmlCallableType {
-    return factory.createSmlCallableType().apply {
-        this.parameterList = createSmlParameterList(parameters)
-        this.resultList = createSmlResultList(results)
+fun createSdsCallableType(parameters: List<SdsParameter>, results: List<SdsResult>): SdsCallableType {
+    return factory.createSdsCallableType().apply {
+        this.parameterList = createSdsParameterList(parameters)
+        this.resultList = createSdsResultList(results)
     }
 }
 
 /**
- * Returns a new object of class [SmlClass].
+ * Returns a new object of class [SdsClass].
  */
-fun createSmlClass(
+fun createSdsClass(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter>? = null, // null and emptyList() are semantically different
-    parentTypes: List<SmlAbstractType> = emptyList(),
-    constraint: SmlConstraint? = null,
-    protocol: SmlProtocol? = null,
-    members: List<SmlAbstractClassMember> = emptyList(),
-    init: SmlClass.() -> Unit = {}
-): SmlClass {
-    return factory.createSmlClass().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter>? = null, // null and emptyList() are semantically different
+    parentTypes: List<SdsAbstractType> = emptyList(),
+    constraint: SdsConstraint? = null,
+    protocol: SdsProtocol? = null,
+    members: List<SdsAbstractClassMember> = emptyList(),
+    init: SdsClass.() -> Unit = {}
+): SdsClass {
+    return factory.createSdsClass().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
-        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSmlTypeParameterList)
-        this.parameterList = parameters?.let { createSmlParameterList(it) }
-        this.parentTypeList = parentTypes.nullIfEmptyElse(::createSmlParentTypeList)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSdsTypeParameterList)
+        this.parameterList = parameters?.let { createSdsParameterList(it) }
+        this.parentTypeList = parentTypes.nullIfEmptyElse(::createSdsParentTypeList)
         protocol?.let { addMember(it) }
         constraint?.let { addMember(it) }
         members.forEach { addMember(it) }
@@ -445,21 +445,21 @@ fun createSmlClass(
 }
 
 /**
- * Adds a new object of class [SmlClass] to the receiver.
+ * Adds a new object of class [SdsClass] to the receiver.
  */
-fun SmlClass.smlClass(
+fun SdsClass.smlClass(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter>? = null,
-    parentTypes: List<SmlAbstractType> = emptyList(),
-    constraint: SmlConstraint? = null,
-    protocol: SmlProtocol? = null,
-    members: List<SmlAbstractClassMember> = emptyList(),
-    init: SmlClass.() -> Unit = {}
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter>? = null,
+    parentTypes: List<SdsAbstractType> = emptyList(),
+    constraint: SdsConstraint? = null,
+    protocol: SdsProtocol? = null,
+    members: List<SdsAbstractClassMember> = emptyList(),
+    init: SdsClass.() -> Unit = {}
 ) {
     this.addMember(
-        createSmlClass(
+        createSdsClass(
             name,
             annotationCalls,
             typeParameters,
@@ -474,21 +474,21 @@ fun SmlClass.smlClass(
 }
 
 /**
- * Adds a new object of class [SmlClass] to the receiver.
+ * Adds a new object of class [SdsClass] to the receiver.
  */
-fun SmlCompilationUnit.smlClass(
+fun SdsCompilationUnit.smlClass(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter>? = null,
-    parentTypes: List<SmlAbstractType> = emptyList(),
-    constraint: SmlConstraint? = null,
-    protocol: SmlProtocol? = null,
-    members: List<SmlAbstractClassMember> = emptyList(),
-    init: SmlClass.() -> Unit = {}
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter>? = null,
+    parentTypes: List<SdsAbstractType> = emptyList(),
+    constraint: SdsConstraint? = null,
+    protocol: SdsProtocol? = null,
+    members: List<SdsAbstractClassMember> = emptyList(),
+    init: SdsClass.() -> Unit = {}
 ) {
     this.addMember(
-        createSmlClass(
+        createSdsClass(
             name,
             annotationCalls,
             typeParameters,
@@ -505,25 +505,25 @@ fun SmlCompilationUnit.smlClass(
 /**
  * Adds a new member to the receiver.
  */
-private fun SmlClass.addMember(member: SmlAbstractObject) {
+private fun SdsClass.addMember(member: SdsAbstractObject) {
     if (this.body == null) {
-        this.body = factory.createSmlClassBody()
+        this.body = factory.createSdsClassBody()
     }
 
     this.body.members += member
 }
 
 /**
- * Returns a new object of class [SmlCompilationUnit].
+ * Returns a new object of class [SdsCompilationUnit].
  */
-fun createSmlCompilationUnit(
+fun createSdsCompilationUnit(
     packageName: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    imports: List<SmlImport> = emptyList(),
-    members: List<SmlAbstractCompilationUnitMember> = emptyList(),
-    init: SmlCompilationUnit.() -> Unit = {}
-): SmlCompilationUnit {
-    return factory.createSmlCompilationUnit().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    imports: List<SdsImport> = emptyList(),
+    members: List<SdsAbstractCompilationUnitMember> = emptyList(),
+    init: SdsCompilationUnit.() -> Unit = {}
+): SdsCompilationUnit {
+    return factory.createSdsCompilationUnit().apply {
         this.name = packageName
         this.annotationCalls += annotationCalls
         this.imports += imports
@@ -535,196 +535,196 @@ fun createSmlCompilationUnit(
 /**
  * Adds a new member to the receiver.
  */
-private fun SmlCompilationUnit.addMember(member: SmlAbstractCompilationUnitMember) {
+private fun SdsCompilationUnit.addMember(member: SdsAbstractCompilationUnitMember) {
     this.members += member
 }
 
 /**
- * Returns a new object of class [SmlConstraint].
+ * Returns a new object of class [SdsConstraint].
  */
-fun createSmlConstraint(goals: List<SmlAbstractConstraintGoal>): SmlConstraint {
-    return factory.createSmlConstraint().apply {
-        this.constraintList = createSmlGoalList(goals)
+fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
+    return factory.createSdsConstraint().apply {
+        this.constraintList = createSdsGoalList(goals)
     }
 }
 
 /**
- * Returns a new object of class [SmlEnum].
+ * Returns a new object of class [SdsEnum].
  */
-fun createSmlEnum(
+fun createSdsEnum(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    variants: List<SmlEnumVariant> = emptyList(),
-    init: SmlEnum.() -> Unit = {}
-): SmlEnum {
-    return factory.createSmlEnum().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    variants: List<SdsEnumVariant> = emptyList(),
+    init: SdsEnum.() -> Unit = {}
+): SdsEnum {
+    return factory.createSdsEnum().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
         variants.forEach { addVariant(it) }
         this.init()
     }
 }
 
 /**
- * Adds a new object of class [SmlEnum] to the receiver.
+ * Adds a new object of class [SdsEnum] to the receiver.
  */
-fun SmlClass.smlEnum(
+fun SdsClass.smlEnum(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    variants: List<SmlEnumVariant> = emptyList(),
-    init: SmlEnum.() -> Unit = {}
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    variants: List<SdsEnumVariant> = emptyList(),
+    init: SdsEnum.() -> Unit = {}
 ) {
-    this.addMember(createSmlEnum(name, annotationCalls, variants, init))
+    this.addMember(createSdsEnum(name, annotationCalls, variants, init))
 }
 
 /**
- * Adds a new object of class [SmlEnum] to the receiver.
+ * Adds a new object of class [SdsEnum] to the receiver.
  */
-fun SmlCompilationUnit.smlEnum(
+fun SdsCompilationUnit.smlEnum(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    variants: List<SmlEnumVariant> = emptyList(),
-    init: SmlEnum.() -> Unit = {}
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    variants: List<SdsEnumVariant> = emptyList(),
+    init: SdsEnum.() -> Unit = {}
 ) {
-    this.addMember(createSmlEnum(name, annotationCalls, variants, init))
+    this.addMember(createSdsEnum(name, annotationCalls, variants, init))
 }
 
 /**
  * Adds a new variant to the receiver.
  */
-private fun SmlEnum.addVariant(variant: SmlEnumVariant) {
+private fun SdsEnum.addVariant(variant: SdsEnumVariant) {
     if (this.body == null) {
-        this.body = factory.createSmlEnumBody()
+        this.body = factory.createSdsEnumBody()
     }
 
     this.body.variants += variant
 }
 
 /**
- * Returns a new object of class [SmlEnumVariant].
+ * Returns a new object of class [SdsEnumVariant].
  */
-fun createSmlEnumVariant(
+fun createSdsEnumVariant(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    constraint: SmlConstraint? = null,
-): SmlEnumVariant {
-    return factory.createSmlEnumVariant().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    constraint: SdsConstraint? = null,
+): SdsEnumVariant {
+    return factory.createSdsEnumVariant().apply {
         this.name = name
         this.annotationCalls += annotationCalls
-        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSmlTypeParameterList)
-        this.parameterList = parameters.nullIfEmptyElse(::createSmlParameterList)
+        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSdsTypeParameterList)
+        this.parameterList = parameters.nullIfEmptyElse(::createSdsParameterList)
         this.constraint = constraint
     }
 }
 
 /**
- * Adds a new object of class [SmlEnumVariant] to the receiver.
+ * Adds a new object of class [SdsEnumVariant] to the receiver.
  */
-fun SmlEnum.smlEnumVariant(
+fun SdsEnum.smlEnumVariant(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    constraint: SmlConstraint? = null
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    constraint: SdsConstraint? = null
 ) {
-    this.addVariant(createSmlEnumVariant(name, annotationCalls, typeParameters, parameters, constraint))
+    this.addVariant(createSdsEnumVariant(name, annotationCalls, typeParameters, parameters, constraint))
 }
 
 /**
- * Returns a new object of class [SmlExpressionGoal].
+ * Returns a new object of class [SdsExpressionGoal].
  */
-fun createSmlExpressionGoal(expression: SmlAbstractGoalExpression): SmlExpressionGoal {
-    return factory.createSmlExpressionGoal().apply {
+fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressionGoal {
+    return factory.createSdsExpressionGoal().apply {
         this.expression = expression
     }
 }
 
 /**
- * Adds a new object of class [SmlExpressionGoal] to the receiver.
+ * Adds a new object of class [SdsExpressionGoal] to the receiver.
  */
-fun SmlPredicate.smlExpressionGoal(expression: SmlAbstractGoalExpression) {
-    this.addGoal(createSmlExpressionGoal(expression))
+fun SdsPredicate.smlExpressionGoal(expression: SdsAbstractGoalExpression) {
+    this.addGoal(createSdsExpressionGoal(expression))
 }
 
 /**
- * Returns a new object of class [SmlExpressionLambda].
+ * Returns a new object of class [SdsExpressionLambda].
  */
-fun createSmlExpressionLambda(
-    parameters: List<SmlParameter> = emptyList(),
-    result: SmlAbstractExpression
-): SmlExpressionLambda {
-    return factory.createSmlExpressionLambda().apply {
-        this.parameterList = createSmlLambdaParameterList(parameters)
+fun createSdsExpressionLambda(
+    parameters: List<SdsParameter> = emptyList(),
+    result: SdsAbstractExpression
+): SdsExpressionLambda {
+    return factory.createSdsExpressionLambda().apply {
+        this.parameterList = createSdsLambdaParameterList(parameters)
         this.result = result
     }
 }
 
 /**
- * Returns a new object of class [SmlExpressionStatement].
+ * Returns a new object of class [SdsExpressionStatement].
  */
-fun createSmlExpressionStatement(expression: SmlAbstractExpression): SmlExpressionStatement {
-    return factory.createSmlExpressionStatement().apply {
+fun createSdsExpressionStatement(expression: SdsAbstractExpression): SdsExpressionStatement {
+    return factory.createSdsExpressionStatement().apply {
         this.expression = expression
     }
 }
 
 /**
- * Adds a new object of class [SmlExpressionStatement] to the receiver.
+ * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SmlBlockLambda.smlExpressionStatement(expression: SmlAbstractExpression) {
-    this.addStatement(createSmlExpressionStatement(expression))
+fun SdsBlockLambda.smlExpressionStatement(expression: SdsAbstractExpression) {
+    this.addStatement(createSdsExpressionStatement(expression))
 }
 
 /**
- * Adds a new object of class [SmlExpressionStatement] to the receiver.
+ * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SmlWorkflow.smlExpressionStatement(expression: SmlAbstractExpression) {
-    this.addStatement(createSmlExpressionStatement(expression))
+fun SdsWorkflow.smlExpressionStatement(expression: SdsAbstractExpression) {
+    this.addStatement(createSdsExpressionStatement(expression))
 }
 
 /**
- * Adds a new object of class [SmlExpressionStatement] to the receiver.
+ * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SmlStep.smlExpressionStatement(expression: SmlAbstractExpression) {
-    this.addStatement(createSmlExpressionStatement(expression))
+fun SdsStep.smlExpressionStatement(expression: SdsAbstractExpression) {
+    this.addStatement(createSdsExpressionStatement(expression))
 }
 
 /**
- * Returns a new object of class [SmlFloat] if the value is non-negative. Otherwise, the absolute value will be wrapped
- * in a [SmlPrefixOperation] to negate it.
+ * Returns a new object of class [SdsFloat] if the value is non-negative. Otherwise, the absolute value will be wrapped
+ * in a [SdsPrefixOperation] to negate it.
  */
-fun createSmlFloat(value: Double): SmlAbstractExpression {
-    val float = factory.createSmlFloat().apply {
+fun createSdsFloat(value: Double): SdsAbstractExpression {
+    val float = factory.createSdsFloat().apply {
         this.value = value.absoluteValue
     }
 
     return when {
-        value < 0 -> createSmlPrefixOperation(SmlPrefixOperationOperator.Minus, float)
+        value < 0 -> createSdsPrefixOperation(SdsPrefixOperationOperator.Minus, float)
         else -> float
     }
 }
 
 /**
- * Returns a new object of class [SmlFunction].
+ * Returns a new object of class [SdsFunction].
  */
-fun createSmlFunction(
+fun createSdsFunction(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    constraint: SmlConstraint? = null
-): SmlFunction {
-    return factory.createSmlFunction().apply {
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    constraint: SdsConstraint? = null
+): SdsFunction {
+    return factory.createSdsFunction().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
         this.isStatic = isStatic
-        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSmlTypeParameterList)
-        this.parameterList = createSmlParameterList(parameters)
-        this.resultList = results.nullIfEmptyElse(::createSmlResultList)
+        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSdsTypeParameterList)
+        this.parameterList = createSdsParameterList(parameters)
+        this.resultList = results.nullIfEmptyElse(::createSdsResultList)
         constraint?.let { addStatement(it) }
     }
 }
@@ -732,28 +732,28 @@ fun createSmlFunction(
 /**
  * Adds a new statement to the receiver.
  */
-private fun SmlFunction.addStatement(statement: SmlAbstractObject) {
+private fun SdsFunction.addStatement(statement: SdsAbstractObject) {
     if (this.body == null) {
-        this.body = factory.createSmlFunctionBody()
+        this.body = factory.createSdsFunctionBody()
     }
 
     this.body.statements += statement
 }
 
 /**
- * Adds a new object of class [SmlFunction] to the receiver.
+ * Adds a new object of class [SdsFunction] to the receiver.
  */
-fun SmlClass.smlFunction(
+fun SdsClass.smlFunction(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    constraint: SmlConstraint? = null
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    constraint: SdsConstraint? = null
 ) {
     this.addMember(
-        createSmlFunction(
+        createSdsFunction(
             name,
             annotationCalls,
             isStatic,
@@ -766,19 +766,19 @@ fun SmlClass.smlFunction(
 }
 
 /**
- * Adds a new object of class [SmlFunction] to the receiver.
+ * Adds a new object of class [SdsFunction] to the receiver.
  */
-fun SmlCompilationUnit.smlFunction(
+fun SdsCompilationUnit.smlFunction(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
-    typeParameters: List<SmlTypeParameter> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    constraint: SmlConstraint? = null
+    typeParameters: List<SdsTypeParameter> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    constraint: SdsConstraint? = null
 ) {
     this.addMember(
-        createSmlFunction(
+        createSdsFunction(
             name,
             annotationCalls,
             isStatic,
@@ -791,108 +791,108 @@ fun SmlCompilationUnit.smlFunction(
 }
 
 /**
- * Returns a new object of class [SmlGoalArgument].
+ * Returns a new object of class [SdsGoalArgument].
  */
-fun createSmlGoalArgument(value: SmlAbstractGoalExpression, parameter: SmlParameter? = null): SmlGoalArgument {
-    return factory.createSmlGoalArgument().apply {
+fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameter: SdsParameter? = null): SdsGoalArgument {
+    return factory.createSdsGoalArgument().apply {
         this.value = value
         this.parameter = parameter
     }
 }
 
 /**
- * Returns a new object of class [SmlGoalArgument] that points to a parameter with the given name.
+ * Returns a new object of class [SdsGoalArgument] that points to a parameter with the given name.
  */
-fun createSmlGoalArgument(value: SmlAbstractGoalExpression, parameterName: String): SmlGoalArgument {
-    return createSmlGoalArgument(
+fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameterName: String): SdsGoalArgument {
+    return createSdsGoalArgument(
         value,
-        createSmlParameter(parameterName)
+        createSdsParameter(parameterName)
     )
 }
 
 /**
- * Returns a new object of class [SmlGoalArgumentList].
+ * Returns a new object of class [SdsGoalArgumentList].
  */
-fun createSmlGoalArgumentList(arguments: List<SmlGoalArgument>): SmlGoalArgumentList {
-    return factory.createSmlGoalArgumentList().apply {
+fun createSdsGoalArgumentList(arguments: List<SdsGoalArgument>): SdsGoalArgumentList {
+    return factory.createSdsGoalArgumentList().apply {
         this.arguments += arguments
     }
 }
 
 /**
- * Returns a new object of class [SmlGoalCall].
+ * Returns a new object of class [SdsGoalCall].
  */
-fun createSmlGoalCall(
-    receiver: SmlAbstractGoalExpression,
-    arguments: List<SmlGoalArgument>
-): SmlGoalCall {
-    return factory.createSmlGoalCall().apply {
+fun createSdsGoalCall(
+    receiver: SdsAbstractGoalExpression,
+    arguments: List<SdsGoalArgument>
+): SdsGoalCall {
+    return factory.createSdsGoalCall().apply {
         this.receiver = receiver
-        this.argumentList = createSmlGoalArgumentList(arguments)
+        this.argumentList = createSdsGoalArgumentList(arguments)
     }
 }
 
 /**
- * Returns a new object of class [SmlGoalList].
+ * Returns a new object of class [SdsGoalList].
  */
-fun createSmlGoalList(goals: List<SmlAbstractGoal>): SmlGoalList {
-    return factory.createSmlGoalList().apply {
+fun createSdsGoalList(goals: List<SdsAbstractGoal>): SdsGoalList {
+    return factory.createSdsGoalList().apply {
         this.goals += goals
     }
 }
 
 /**
- * Returns a new object of class [SmlImport].
+ * Returns a new object of class [SdsImport].
  */
-fun createSmlImport(importedNamespace: String, alias: String? = null): SmlImport {
-    return factory.createSmlImport().apply {
+fun createSdsImport(importedNamespace: String, alias: String? = null): SdsImport {
+    return factory.createSdsImport().apply {
         this.importedNamespace = importedNamespace
-        this.alias = createSmlImportAlias(alias)
+        this.alias = createSdsImportAlias(alias)
     }
 }
 
 /**
- * Returns a new object of class [SmlGoalReference].
+ * Returns a new object of class [SdsGoalReference].
  */
-fun createSmlGoalReference(declaration: SmlAbstractDeclaration): SmlGoalReference {
-    return factory.createSmlGoalReference().apply {
+fun createSdsGoalReference(declaration: SdsAbstractDeclaration): SdsGoalReference {
+    return factory.createSdsGoalReference().apply {
         this.declaration = declaration
     }
 }
 
 /**
- * Returns a new object of class [SmlImportAlias] or `null` if the parameter is `null`.
+ * Returns a new object of class [SdsImportAlias] or `null` if the parameter is `null`.
  */
-private fun createSmlImportAlias(name: String?): SmlImportAlias? {
+private fun createSdsImportAlias(name: String?): SdsImportAlias? {
     if (name == null) {
         return null
     }
 
-    return factory.createSmlImportAlias().apply {
+    return factory.createSdsImportAlias().apply {
         this.name = name
     }
 }
 
 /**
- * Returns a new object of class [SmlIndexedAccess].
+ * Returns a new object of class [SdsIndexedAccess].
  */
-fun createSmlIndexedAccess(
-    index: SmlAbstractExpression
-): SmlIndexedAccess {
-    return factory.createSmlIndexedAccess().apply {
+fun createSdsIndexedAccess(
+    index: SdsAbstractExpression
+): SdsIndexedAccess {
+    return factory.createSdsIndexedAccess().apply {
         this.index = index
     }
 }
 
 /**
- * Returns a new object of class [SmlInfixOperation].
+ * Returns a new object of class [SdsInfixOperation].
  */
-fun createSmlInfixOperation(
-    leftOperand: SmlAbstractExpression,
-    operator: SmlInfixOperationOperator,
-    rightOperand: SmlAbstractExpression
-): SmlInfixOperation {
-    return factory.createSmlInfixOperation().apply {
+fun createSdsInfixOperation(
+    leftOperand: SdsAbstractExpression,
+    operator: SdsInfixOperationOperator,
+    rightOperand: SdsAbstractExpression
+): SdsInfixOperation {
+    return factory.createSdsInfixOperation().apply {
         this.leftOperand = leftOperand
         this.operator = operator.operator
         this.rightOperand = rightOperand
@@ -900,29 +900,29 @@ fun createSmlInfixOperation(
 }
 
 /**
- * Returns a new object of class [SmlInt] if the value is non-negative. Otherwise, the absolute value will be wrapped in
- * a [SmlPrefixOperation] to negate it.
+ * Returns a new object of class [SdsInt] if the value is non-negative. Otherwise, the absolute value will be wrapped in
+ * a [SdsPrefixOperation] to negate it.
  */
-fun createSmlInt(value: Int): SmlAbstractExpression {
-    val int = factory.createSmlInt().apply {
+fun createSdsInt(value: Int): SdsAbstractExpression {
+    val int = factory.createSdsInt().apply {
         this.value = value.absoluteValue
     }
 
     return when {
-        value < 0 -> createSmlPrefixOperation(SmlPrefixOperationOperator.Minus, int)
+        value < 0 -> createSdsPrefixOperation(SdsPrefixOperationOperator.Minus, int)
         else -> int
     }
 }
 
 /**
- * Returns a new object of class [SmlMemberAccess].
+ * Returns a new object of class [SdsMemberAccess].
  */
-fun createSmlMemberAccess(
-    receiver: SmlAbstractExpression,
-    member: SmlReference,
+fun createSdsMemberAccess(
+    receiver: SdsAbstractExpression,
+    member: SdsReference,
     isNullSafe: Boolean = false
-): SmlMemberAccess {
-    return factory.createSmlMemberAccess().apply {
+): SdsMemberAccess {
+    return factory.createSdsMemberAccess().apply {
         this.receiver = receiver
         this.member = member
         this.isNullSafe = isNullSafe
@@ -930,48 +930,48 @@ fun createSmlMemberAccess(
 }
 
 /**
- * Returns a new object of class [SmlMemberType].
+ * Returns a new object of class [SdsMemberType].
  */
-fun createSmlMemberType(receiver: SmlAbstractType, member: SmlNamedType): SmlMemberType {
-    return factory.createSmlMemberType().apply {
+fun createSdsMemberType(receiver: SdsAbstractType, member: SdsNamedType): SdsMemberType {
+    return factory.createSdsMemberType().apply {
         this.receiver = receiver
         this.member = member
     }
 }
 
 /**
- * Returns a new object of class [SmlNamedType].
+ * Returns a new object of class [SdsNamedType].
  */
-fun createSmlNamedType(
-    declaration: SmlAbstractNamedTypeDeclaration,
-    typeArguments: List<SmlTypeArgument> = emptyList(),
+fun createSdsNamedType(
+    declaration: SdsAbstractNamedTypeDeclaration,
+    typeArguments: List<SdsTypeArgument> = emptyList(),
     isNullable: Boolean = false
-): SmlNamedType {
-    return factory.createSmlNamedType().apply {
+): SdsNamedType {
+    return factory.createSdsNamedType().apply {
         this.declaration = declaration
-        this.typeArgumentList = typeArguments.nullIfEmptyElse(::createSmlTypeArgumentList)
+        this.typeArgumentList = typeArguments.nullIfEmptyElse(::createSdsTypeArgumentList)
         this.isNullable = isNullable
     }
 }
 
 /**
- * Returns a new object of class [SmlNull].
+ * Returns a new object of class [SdsNull].
  */
-fun createSmlNull(): SmlNull {
-    return factory.createSmlNull()
+fun createSdsNull(): SdsNull {
+    return factory.createSdsNull()
 }
 
 /**
- * Returns a new object of class [SmlParameter].
+ * Returns a new object of class [SdsParameter].
  */
-fun createSmlParameter(
+fun createSdsParameter(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isVariadic: Boolean = false,
-    type: SmlAbstractType? = null,
-    defaultValue: SmlAbstractExpression? = null
-): SmlParameter {
-    return factory.createSmlParameter().apply {
+    type: SdsAbstractType? = null,
+    defaultValue: SdsAbstractExpression? = null
+): SdsParameter {
+    return factory.createSdsParameter().apply {
         this.name = name
         this.annotationCalls += annotationCalls
         this.isVariadic = isVariadic
@@ -981,101 +981,101 @@ fun createSmlParameter(
 }
 
 /**
- * Returns a new object of class [SmlParameterList].
+ * Returns a new object of class [SdsParameterList].
  */
-fun createSmlParameterList(parameters: List<SmlParameter>): SmlParameterList {
-    return factory.createSmlParameterList().apply {
+fun createSdsParameterList(parameters: List<SdsParameter>): SdsParameterList {
+    return factory.createSdsParameterList().apply {
         this.parameters += parameters
     }
 }
 
 /**
- * Returns a new object of class [SmlLambdaParameterList]. These have to be used as parameter lists of an
- * [SmlAbstractLambda]
+ * Returns a new object of class [SdsLambdaParameterList]. These have to be used as parameter lists of an
+ * [SdsAbstractLambda]
  */
 @Suppress("FunctionName")
-fun createSmlLambdaParameterList(parameters: List<SmlParameter>): SmlLambdaParameterList {
-    return factory.createSmlLambdaParameterList().apply {
+fun createSdsLambdaParameterList(parameters: List<SdsParameter>): SdsLambdaParameterList {
+    return factory.createSdsLambdaParameterList().apply {
         this.parameters += parameters
     }
 }
 
 /**
- * Returns a new object of class [SmlParenthesizedExpression].
+ * Returns a new object of class [SdsParenthesizedExpression].
  */
-fun createSmlParenthesizedExpression(expression: SmlAbstractExpression): SmlParenthesizedExpression {
-    return factory.createSmlParenthesizedExpression().apply {
+fun createSdsParenthesizedExpression(expression: SdsAbstractExpression): SdsParenthesizedExpression {
+    return factory.createSdsParenthesizedExpression().apply {
         this.expression = expression
     }
 }
 
 /**
- * Returns a new object of class [SmlParenthesizedGoalExpression].
+ * Returns a new object of class [SdsParenthesizedGoalExpression].
  */
-fun createSmlParenthesizedGoalExpression(expressions: List<SmlAbstractGoalExpression>): SmlParenthesizedGoalExpression {
-    return factory.createSmlParenthesizedGoalExpression().apply {
+fun createSdsParenthesizedGoalExpression(expressions: List<SdsAbstractGoalExpression>): SdsParenthesizedGoalExpression {
+    return factory.createSdsParenthesizedGoalExpression().apply {
         this.expressions += expressions
     }
 }
 
 /**
- * Returns a new object of class [SmlParenthesizedType].
+ * Returns a new object of class [SdsParenthesizedType].
  */
-fun createSmlParenthesizedType(type: SmlAbstractType): SmlParenthesizedType {
-    return factory.createSmlParenthesizedType().apply {
+fun createSdsParenthesizedType(type: SdsAbstractType): SdsParenthesizedType {
+    return factory.createSdsParenthesizedType().apply {
         this.type = type
     }
 }
 
 /**
- * Returns a new object of class [SmlParentTypeList].
+ * Returns a new object of class [SdsParentTypeList].
  */
-fun createSmlParentTypeList(parentTypes: List<SmlAbstractType>): SmlParentTypeList {
-    return factory.createSmlParentTypeList().apply {
+fun createSdsParentTypeList(parentTypes: List<SdsAbstractType>): SdsParentTypeList {
+    return factory.createSdsParentTypeList().apply {
         this.parentTypes += parentTypes
     }
 }
 
 /**
- * Returns a new object of class [SmlPlaceholder].
+ * Returns a new object of class [SdsPlaceholder].
  */
-fun createSmlPlaceholder(name: String): SmlPlaceholder {
-    return factory.createSmlPlaceholder().apply {
+fun createSdsPlaceholder(name: String): SdsPlaceholder {
+    return factory.createSdsPlaceholder().apply {
         this.name = name
     }
 }
 
 /**
- * Returns a new object of class [SmlPredicate].
+ * Returns a new object of class [SdsPredicate].
  */
-fun createSmlPredicate(
+fun createSdsPredicate(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    goals: List<SmlAbstractGoal> = emptyList(),
-): SmlPredicate {
-    return factory.createSmlPredicate().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    goals: List<SdsAbstractGoal> = emptyList(),
+): SdsPredicate {
+    return factory.createSdsPredicate().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
-        this.parameterList = createSmlParameterList(parameters)
-        this.resultList = results.nullIfEmptyElse(::createSmlResultList)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.parameterList = createSdsParameterList(parameters)
+        this.resultList = results.nullIfEmptyElse(::createSdsResultList)
         goals.forEach { addGoal(it) }
     }
 }
 
 /**
- * Adds a new object of class [SmlPredicate] to the receiver.
+ * Adds a new object of class [SdsPredicate] to the receiver.
  */
-fun SmlCompilationUnit.smlPredicate(
+fun SdsCompilationUnit.smlPredicate(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    goals: List<SmlAbstractGoal> = emptyList(),
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    goals: List<SdsAbstractGoal> = emptyList(),
 ) {
     this.addMember(
-        createSmlPredicate(
+        createSdsPredicate(
             name,
             annotationCalls,
             parameters,
@@ -1088,34 +1088,34 @@ fun SmlCompilationUnit.smlPredicate(
 /**
  * Adds a new goal to the receiver.
  */
-private fun SmlPredicate.addGoal(goal: SmlAbstractGoal) {
+private fun SdsPredicate.addGoal(goal: SdsAbstractGoal) {
     if (this.goalList == null) {
-        this.goalList = factory.createSmlGoalList()
+        this.goalList = factory.createSdsGoalList()
     }
 
     this.goalList.goals += goal
 }
 
 /**
- * Returns a new object of class [SmlPrefixOperation].
+ * Returns a new object of class [SdsPrefixOperation].
  */
-fun createSmlPrefixOperation(operator: SmlPrefixOperationOperator, operand: SmlAbstractExpression): SmlPrefixOperation {
-    return factory.createSmlPrefixOperation().apply {
+fun createSdsPrefixOperation(operator: SdsPrefixOperationOperator, operand: SdsAbstractExpression): SdsPrefixOperation {
+    return factory.createSdsPrefixOperation().apply {
         this.operator = operator.operator
         this.operand = operand
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocol].
+ * Returns a new object of class [SdsProtocol].
  */
-fun createSmlProtocol(
-    subterms: List<SmlProtocolSubterm> = emptyList(),
-    term: SmlAbstractProtocolTerm? = null,
-    init: SmlProtocol.() -> Unit = {}
-): SmlProtocol {
-    return factory.createSmlProtocol().apply {
-        this.body = factory.createSmlProtocolBody()
+fun createSdsProtocol(
+    subterms: List<SdsProtocolSubterm> = emptyList(),
+    term: SdsAbstractProtocolTerm? = null,
+    init: SdsProtocol.() -> Unit = {}
+): SdsProtocol {
+    return factory.createSdsProtocol().apply {
+        this.body = factory.createSdsProtocolBody()
         subterms.forEach { addSubterm(it) }
         this.body.term = term
         this.init()
@@ -1123,156 +1123,156 @@ fun createSmlProtocol(
 }
 
 /**
- * Adds a new object of class [SmlProtocol] to the receiver.
+ * Adds a new object of class [SdsProtocol] to the receiver.
  */
-fun SmlClass.smlProtocol(
-    subterms: List<SmlProtocolSubterm> = emptyList(),
-    term: SmlAbstractProtocolTerm? = null,
-    init: SmlProtocol.() -> Unit = {}
+fun SdsClass.smlProtocol(
+    subterms: List<SdsProtocolSubterm> = emptyList(),
+    term: SdsAbstractProtocolTerm? = null,
+    init: SdsProtocol.() -> Unit = {}
 ) {
-    this.addMember(createSmlProtocol(subterms, term, init))
+    this.addMember(createSdsProtocol(subterms, term, init))
 }
 
 /**
  * Adds a new subterm to the receiver.
  */
-private fun SmlProtocol.addSubterm(subterm: SmlProtocolSubterm) {
+private fun SdsProtocol.addSubterm(subterm: SdsProtocolSubterm) {
     if (this.body == null) {
-        this.body = factory.createSmlProtocolBody()
+        this.body = factory.createSdsProtocolBody()
     }
 
     if (this.body.subtermList == null) {
-        this.body.subtermList = factory.createSmlProtocolSubtermList()
+        this.body.subtermList = factory.createSdsProtocolSubtermList()
     }
 
     this.body.subtermList.subterms += subterm
 }
 
 /**
- * Returns a new object of class [SmlProtocolAlternative].
+ * Returns a new object of class [SdsProtocolAlternative].
  */
-fun createSmlProtocolAlternative(terms: List<SmlAbstractProtocolTerm>): SmlProtocolAlternative {
+fun createSdsProtocolAlternative(terms: List<SdsAbstractProtocolTerm>): SdsProtocolAlternative {
     if (terms.size < 2) {
         throw IllegalArgumentException("Must have at least two terms.")
     }
 
-    return factory.createSmlProtocolAlternative().apply {
+    return factory.createSdsProtocolAlternative().apply {
         this.terms += terms
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolComplement].
+ * Returns a new object of class [SdsProtocolComplement].
  */
-fun createSmlProtocolComplement(
-    universe: SmlProtocolTokenClass? = null,
-    references: List<SmlProtocolReference> = emptyList()
-): SmlProtocolComplement {
-    return factory.createSmlProtocolComplement().apply {
+fun createSdsProtocolComplement(
+    universe: SdsProtocolTokenClass? = null,
+    references: List<SdsProtocolReference> = emptyList()
+): SdsProtocolComplement {
+    return factory.createSdsProtocolComplement().apply {
         this.universe = universe
-        this.referenceList = references.nullIfEmptyElse(::createSmlProtocolReferenceList)
+        this.referenceList = references.nullIfEmptyElse(::createSdsProtocolReferenceList)
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolParenthesizedTerm].
+ * Returns a new object of class [SdsProtocolParenthesizedTerm].
  */
-fun createSmlProtocolParenthesizedTerm(term: SmlAbstractProtocolTerm): SmlProtocolParenthesizedTerm {
-    return factory.createSmlProtocolParenthesizedTerm().apply {
+fun createSdsProtocolParenthesizedTerm(term: SdsAbstractProtocolTerm): SdsProtocolParenthesizedTerm {
+    return factory.createSdsProtocolParenthesizedTerm().apply {
         this.term = term
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolQuantifiedTerm].
+ * Returns a new object of class [SdsProtocolQuantifiedTerm].
  */
-fun createSmlProtocolQuantifiedTerm(
-    term: SmlAbstractProtocolTerm,
-    quantifier: SmlProtocolQuantifiedTermQuantifier
-): SmlProtocolQuantifiedTerm {
-    return factory.createSmlProtocolQuantifiedTerm().apply {
+fun createSdsProtocolQuantifiedTerm(
+    term: SdsAbstractProtocolTerm,
+    quantifier: SdsProtocolQuantifiedTermQuantifier
+): SdsProtocolQuantifiedTerm {
+    return factory.createSdsProtocolQuantifiedTerm().apply {
         this.term = term
         this.quantifier = quantifier.quantifier
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolReference].
+ * Returns a new object of class [SdsProtocolReference].
  */
-fun createSmlProtocolReference(token: SmlAbstractProtocolToken): SmlProtocolReference {
-    return factory.createSmlProtocolReference().apply {
+fun createSdsProtocolReference(token: SdsAbstractProtocolToken): SdsProtocolReference {
+    return factory.createSdsProtocolReference().apply {
         this.token = token
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolReferenceList].
+ * Returns a new object of class [SdsProtocolReferenceList].
  */
-fun createSmlProtocolReferenceList(references: List<SmlProtocolReference>): SmlProtocolReferenceList {
-    return factory.createSmlProtocolReferenceList().apply {
+fun createSdsProtocolReferenceList(references: List<SdsProtocolReference>): SdsProtocolReferenceList {
+    return factory.createSdsProtocolReferenceList().apply {
         this.references += references
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolSequence].
+ * Returns a new object of class [SdsProtocolSequence].
  *
  * @throws IllegalArgumentException If `terms.size < 2`.
  */
-fun createSmlProtocolSequence(terms: List<SmlAbstractProtocolTerm>): SmlProtocolSequence {
+fun createSdsProtocolSequence(terms: List<SdsAbstractProtocolTerm>): SdsProtocolSequence {
     if (terms.size < 2) {
         throw IllegalArgumentException("Must have at least two terms.")
     }
 
-    return factory.createSmlProtocolSequence().apply {
+    return factory.createSdsProtocolSequence().apply {
         this.terms += terms
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolSubterm].
+ * Returns a new object of class [SdsProtocolSubterm].
  */
-fun createSmlProtocolSubterm(name: String, term: SmlAbstractProtocolTerm): SmlProtocolSubterm {
-    return factory.createSmlProtocolSubterm().apply {
+fun createSdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm): SdsProtocolSubterm {
+    return factory.createSdsProtocolSubterm().apply {
         this.name = name
         this.term = term
     }
 }
 
 /**
- * Returns a new object of class [SmlProtocolSubterm].
+ * Returns a new object of class [SdsProtocolSubterm].
  */
-fun SmlProtocol.smlProtocolSubterm(name: String, term: SmlAbstractProtocolTerm) {
-    this.addSubterm(createSmlProtocolSubterm(name, term))
+fun SdsProtocol.smlProtocolSubterm(name: String, term: SdsAbstractProtocolTerm) {
+    this.addSubterm(createSdsProtocolSubterm(name, term))
 }
 
 /**
- * Returns a new object of class [SmlProtocolTokenClass].
+ * Returns a new object of class [SdsProtocolTokenClass].
  */
-fun createSmlProtocolTokenClass(value: SmlProtocolTokenClassValue): SmlProtocolTokenClass {
-    return factory.createSmlProtocolTokenClass().apply {
+fun createSdsProtocolTokenClass(value: SdsProtocolTokenClassValue): SdsProtocolTokenClass {
+    return factory.createSdsProtocolTokenClass().apply {
         this.value = value.value
     }
 }
 
 /**
- * Returns a new object of class [SmlReference].
+ * Returns a new object of class [SdsReference].
  */
-fun createSmlReference(declaration: SmlAbstractDeclaration): SmlReference {
-    return factory.createSmlReference().apply {
+fun createSdsReference(declaration: SdsAbstractDeclaration): SdsReference {
+    return factory.createSdsReference().apply {
         this.declaration = declaration
     }
 }
 
 /**
- * Returns a new object of class [SmlResult].
+ * Returns a new object of class [SdsResult].
  */
-fun createSmlResult(
+fun createSdsResult(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    type: SmlAbstractType? = null
-): SmlResult {
-    return factory.createSmlResult().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    type: SdsAbstractType? = null
+): SdsResult {
+    return factory.createSdsResult().apply {
         this.name = name
         this.annotationCalls += annotationCalls
         this.type = type
@@ -1280,59 +1280,59 @@ fun createSmlResult(
 }
 
 /**
- * Returns a new object of class [SmlResultList].
+ * Returns a new object of class [SdsResultList].
  */
-fun createSmlResultList(results: List<SmlResult>): SmlResultList {
-    return factory.createSmlResultList().apply {
+fun createSdsResultList(results: List<SdsResult>): SdsResultList {
+    return factory.createSdsResultList().apply {
         this.results += results
     }
 }
 
 /**
- * Returns a new object of class [SmlStarProjection].
+ * Returns a new object of class [SdsStarProjection].
  */
-fun createSmlStarProjection(): SmlStarProjection {
-    return factory.createSmlStarProjection()
+fun createSdsStarProjection(): SdsStarProjection {
+    return factory.createSdsStarProjection()
 }
 
 /**
- * Returns a new object of class [SmlStep].
+ * Returns a new object of class [SdsStep].
  */
-fun createSmlStep(
+fun createSdsStep(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    visibility: SmlVisibility = SmlVisibility.Public,
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    statements: List<SmlAbstractStatement> = emptyList(),
-    init: SmlStep.() -> Unit = {}
-): SmlStep {
-    return factory.createSmlStep().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    visibility: SdsVisibility = SdsVisibility.Public,
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsStep.() -> Unit = {}
+): SdsStep {
+    return factory.createSdsStep().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
         this.visibility = visibility.visibility
-        this.parameterList = createSmlParameterList(parameters)
-        this.resultList = results.nullIfEmptyElse(::createSmlResultList)
-        this.body = factory.createSmlBlock()
+        this.parameterList = createSdsParameterList(parameters)
+        this.resultList = results.nullIfEmptyElse(::createSdsResultList)
+        this.body = factory.createSdsBlock()
         statements.forEach { addStatement(it) }
         this.init()
     }
 }
 
 /**
- * Adds a new object of class [SmlStep] to the receiver.
+ * Adds a new object of class [SdsStep] to the receiver.
  */
-fun SmlCompilationUnit.smlStep(
+fun SdsCompilationUnit.smlStep(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    visibility: SmlVisibility = SmlVisibility.Public,
-    parameters: List<SmlParameter> = emptyList(),
-    results: List<SmlResult> = emptyList(),
-    statements: List<SmlAbstractStatement> = emptyList(),
-    init: SmlStep.() -> Unit = {}
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    visibility: SdsVisibility = SdsVisibility.Public,
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsStep.() -> Unit = {}
 ) {
     this.addMember(
-        createSmlStep(
+        createSdsStep(
             name,
             annotationCalls,
             visibility,
@@ -1347,35 +1347,35 @@ fun SmlCompilationUnit.smlStep(
 /**
  * Adds a new statement to the receiver.
  */
-private fun SmlStep.addStatement(statement: SmlAbstractStatement) {
+private fun SdsStep.addStatement(statement: SdsAbstractStatement) {
     if (this.body == null) {
-        this.body = factory.createSmlBlock()
+        this.body = factory.createSdsBlock()
     }
 
     this.body.statements += statement
 }
 
 /**
- * Returns a new object of class [SmlString].
+ * Returns a new object of class [SdsString].
  */
-fun createSmlString(value: String): SmlString {
-    return factory.createSmlString().apply {
+fun createSdsString(value: String): SdsString {
+    return factory.createSdsString().apply {
         this.value = value
     }
 }
 
 /**
- * Returns a new object of class [SmlTemplateString]. String parts should not include delimiters (`"`, `{{`, `}}`).
+ * Returns a new object of class [SdsTemplateString]. String parts should not include delimiters (`"`, `{{`, `}}`).
  * Template expressions are inserted between the string parts.
  *
  * @throws IllegalArgumentException If `stringParts.size < 2`.
  * @throws IllegalArgumentException If `templateExpressions` is empty.
  * @throws IllegalArgumentException If `stringsParts.size` != `templateExpressions.size + 1`.
  */
-fun createSmlTemplateString(
+fun createSdsTemplateString(
     stringParts: List<String>,
-    templateExpressions: List<SmlAbstractExpression>
-): SmlTemplateString {
+    templateExpressions: List<SdsAbstractExpression>
+): SdsTemplateString {
 
     // One of the first two checks is sufficient but this allows better error messages.
     if (stringParts.size < 2) {
@@ -1386,23 +1386,23 @@ fun createSmlTemplateString(
         throw IllegalArgumentException("Must have exactly one more string part than there are template expressions.")
     }
 
-    return factory.createSmlTemplateString().apply {
+    return factory.createSdsTemplateString().apply {
         stringParts.forEachIndexed { index, value ->
 
             // Next template string part
             this.expressions += when (index) {
                 0 -> {
-                    factory.createSmlTemplateStringStart().apply {
+                    factory.createSdsTemplateStringStart().apply {
                         this.value = value
                     }
                 }
                 stringParts.size - 1 -> {
-                    factory.createSmlTemplateStringEnd().apply {
+                    factory.createSdsTemplateStringEnd().apply {
                         this.value = value
                     }
                 }
                 else -> {
-                    factory.createSmlTemplateStringInner().apply {
+                    factory.createSdsTemplateStringInner().apply {
                         this.value = value
                     }
                 }
@@ -1419,50 +1419,50 @@ fun createSmlTemplateString(
 }
 
 /**
- * Returns a new object of class [SmlTypeArgument].
+ * Returns a new object of class [SdsTypeArgument].
  */
-fun createSmlTypeArgument(
-    value: SmlAbstractTypeArgumentValue,
-    typeParameter: SmlTypeParameter? = null
-): SmlTypeArgument {
-    return factory.createSmlTypeArgument().apply {
+fun createSdsTypeArgument(
+    value: SdsAbstractTypeArgumentValue,
+    typeParameter: SdsTypeParameter? = null
+): SdsTypeArgument {
+    return factory.createSdsTypeArgument().apply {
         this.value = value
         this.typeParameter = typeParameter
     }
 }
 
 /**
- * Returns a new object of class [SmlTypeArgument] that points to a type parameter with the given name.
+ * Returns a new object of class [SdsTypeArgument] that points to a type parameter with the given name.
  */
-fun createSmlTypeArgument(
-    value: SmlAbstractTypeArgumentValue,
+fun createSdsTypeArgument(
+    value: SdsAbstractTypeArgumentValue,
     typeParameterName: String
-): SmlTypeArgument {
-    return createSmlTypeArgument(
+): SdsTypeArgument {
+    return createSdsTypeArgument(
         value,
-        createSmlTypeParameter(typeParameterName)
+        createSdsTypeParameter(typeParameterName)
     )
 }
 
 /**
- * Returns a new object of class [SmlTypeArgumentList].
+ * Returns a new object of class [SdsTypeArgumentList].
  */
-fun createSmlTypeArgumentList(typeArguments: List<SmlTypeArgument>): SmlTypeArgumentList {
-    return factory.createSmlTypeArgumentList().apply {
+fun createSdsTypeArgumentList(typeArguments: List<SdsTypeArgument>): SdsTypeArgumentList {
+    return factory.createSdsTypeArgumentList().apply {
         this.typeArguments += typeArguments
     }
 }
 
 /**
- * Returns a new object of class [SmlTypeParameter].
+ * Returns a new object of class [SdsTypeParameter].
  */
-fun createSmlTypeParameter(
+fun createSdsTypeParameter(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    variance: SmlVariance = SmlVariance.Invariant,
-    kind: SmlKind = SmlKind.NoKind
-): SmlTypeParameter {
-    return factory.createSmlTypeParameter().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    variance: SdsVariance = SdsVariance.Invariant,
+    kind: SdsKind = SdsKind.NoKind
+): SdsTypeParameter {
+    return factory.createSdsTypeParameter().apply {
         this.name = name
         this.annotationCalls += annotationCalls
         this.variance = variance.variance
@@ -1471,23 +1471,23 @@ fun createSmlTypeParameter(
 }
 
 /**
- * Returns a new object of class [SmlTypeParameterList].
+ * Returns a new object of class [SdsTypeParameterList].
  */
-fun createSmlTypeParameterList(typeParameters: List<SmlTypeParameter>): SmlTypeParameterList {
-    return factory.createSmlTypeParameterList().apply {
+fun createSdsTypeParameterList(typeParameters: List<SdsTypeParameter>): SdsTypeParameterList {
+    return factory.createSdsTypeParameterList().apply {
         this.typeParameters += typeParameters
     }
 }
 
 /**
- * Returns a new object of class [SmlTypeParameterConstraintGoal].
+ * Returns a new object of class [SdsTypeParameterConstraintGoal].
  */
-fun createSmlTypeParameterConstraintGoal(
-    leftOperand: SmlTypeParameter,
-    operator: SmlTypeParameterConstraintOperator,
-    rightOperand: SmlAbstractType
-): SmlTypeParameterConstraintGoal {
-    return factory.createSmlTypeParameterConstraintGoal().apply {
+fun createSdsTypeParameterConstraintGoal(
+    leftOperand: SdsTypeParameter,
+    operator: SdsTypeParameterConstraintOperator,
+    rightOperand: SdsAbstractType
+): SdsTypeParameterConstraintGoal {
+    return factory.createSdsTypeParameterConstraintGoal().apply {
         this.leftOperand = leftOperand
         this.operator = operator.operator
         this.rightOperand = rightOperand
@@ -1495,105 +1495,105 @@ fun createSmlTypeParameterConstraintGoal(
 }
 
 /**
- * Returns a new object of class [SmlTypeParameterConstraintGoal] that points to a type parameter with the given name.
+ * Returns a new object of class [SdsTypeParameterConstraintGoal] that points to a type parameter with the given name.
  */
-fun createSmlTypeParameterConstraintGoal(
+fun createSdsTypeParameterConstraintGoal(
     leftOperandName: String,
-    operator: SmlTypeParameterConstraintOperator,
-    rightOperand: SmlAbstractType
-): SmlTypeParameterConstraintGoal {
-    return createSmlTypeParameterConstraintGoal(
-        createSmlTypeParameter(leftOperandName),
+    operator: SdsTypeParameterConstraintOperator,
+    rightOperand: SdsAbstractType
+): SdsTypeParameterConstraintGoal {
+    return createSdsTypeParameterConstraintGoal(
+        createSdsTypeParameter(leftOperandName),
         operator,
         rightOperand
     )
 }
 
 /**
- * Returns a new object of class [SmlTypeProjection].
+ * Returns a new object of class [SdsTypeProjection].
  */
-fun createSmlTypeProjection(type: SmlAbstractType, variance: SmlVariance = SmlVariance.Invariant): SmlTypeProjection {
-    return factory.createSmlTypeProjection().apply {
+fun createSdsTypeProjection(type: SdsAbstractType, variance: SdsVariance = SdsVariance.Invariant): SdsTypeProjection {
+    return factory.createSdsTypeProjection().apply {
         this.type = type
         this.variance = variance.variance
     }
 }
 
 /**
- * Returns a new object of class [SmlUnionType].
+ * Returns a new object of class [SdsUnionType].
  *
  * @throws IllegalArgumentException If no type arguments are passed.
  */
-fun createSmlUnionType(typeArguments: List<SmlTypeArgument>): SmlUnionType {
+fun createSdsUnionType(typeArguments: List<SdsTypeArgument>): SdsUnionType {
     if (typeArguments.isEmpty()) {
         throw IllegalArgumentException("Must have at least one type argument.")
     }
 
-    return factory.createSmlUnionType().apply {
-        this.typeArgumentList = createSmlTypeArgumentList(typeArguments)
+    return factory.createSdsUnionType().apply {
+        this.typeArgumentList = createSdsTypeArgumentList(typeArguments)
     }
 }
 
 /**
- * Returns a new object of class [SmlWildcard].
+ * Returns a new object of class [SdsWildcard].
  */
-fun createSmlWildcard(): SmlWildcard {
-    return factory.createSmlWildcard()
+fun createSdsWildcard(): SdsWildcard {
+    return factory.createSdsWildcard()
 }
 
 /**
- * Returns a new object of class [SmlWorkflow].
+ * Returns a new object of class [SdsWorkflow].
  */
-fun createSmlWorkflow(
+fun createSdsWorkflow(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    statements: List<SmlAbstractStatement> = emptyList(),
-    init: SmlWorkflow.() -> Unit = {}
-): SmlWorkflow {
-    return factory.createSmlWorkflow().apply {
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsWorkflow.() -> Unit = {}
+): SdsWorkflow {
+    return factory.createSdsWorkflow().apply {
         this.name = name
-        this.annotationCallList = createSmlAnnotationCallList(annotationCalls)
-        this.body = factory.createSmlBlock()
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.body = factory.createSdsBlock()
         statements.forEach { addStatement(it) }
         this.init()
     }
 }
 
 /**
- * Adds a new object of class [SmlWorkflow] to the receiver.
+ * Adds a new object of class [SdsWorkflow] to the receiver.
  */
-fun SmlCompilationUnit.smlWorkflow(
+fun SdsCompilationUnit.smlWorkflow(
     name: String,
-    annotationCalls: List<SmlAnnotationCall> = emptyList(),
-    statements: List<SmlAbstractStatement> = emptyList(),
-    init: SmlWorkflow.() -> Unit = {}
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsWorkflow.() -> Unit = {}
 ) {
-    this.addMember(createSmlWorkflow(name, annotationCalls, statements, init))
+    this.addMember(createSdsWorkflow(name, annotationCalls, statements, init))
 }
 
 /**
  * Adds a new statement to the receiver.
  */
-private fun SmlWorkflow.addStatement(statement: SmlAbstractStatement) {
+private fun SdsWorkflow.addStatement(statement: SdsAbstractStatement) {
     if (this.body == null) {
-        this.body = factory.createSmlBlock()
+        this.body = factory.createSdsBlock()
     }
 
     this.body.statements += statement
 }
 
 /**
- * Returns a new object of class [SmlYield].
+ * Returns a new object of class [SdsYield].
  */
-fun createSmlYield(result: SmlResult): SmlYield {
-    return factory.createSmlYield().apply {
+fun createSdsYield(result: SdsResult): SdsYield {
+    return factory.createSdsYield().apply {
         this.result = result
     }
 }
 
 /**
- * Returns a new object of class [SmlYield] that points to a result with the given name.
+ * Returns a new object of class [SdsYield] that points to a result with the given name.
  */
-fun createSmlYield(resultName: String): SmlYield {
-    return createSmlYield(createSmlResult(resultName))
+fun createSdsYield(resultName: String): SdsYield {
+    return createSdsYield(createSdsResult(resultName))
 }

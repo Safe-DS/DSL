@@ -1,19 +1,19 @@
 package com.larsreimann.safeds.validation.types
 
-import de.unibonn.simpleml.emf.typeParametersOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage
+import com.larsreimann.safeds.emf.typeParametersOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsNamedType
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class NamedTypeChecker : AbstractSimpleMLChecker() {
+class NamedTypeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingTypeArgumentList(smlNamedType: SmlNamedType) {
+    fun missingTypeArgumentList(smlNamedType: SdsNamedType) {
         if (smlNamedType.typeArgumentList != null) {
             return
         }
@@ -21,16 +21,16 @@ class NamedTypeChecker : AbstractSimpleMLChecker() {
         val declaration = smlNamedType.declaration
         val typeParameters = when {
             declaration.eIsProxy() -> return
-            declaration is SmlClass -> declaration.typeParametersOrEmpty()
-            declaration is SmlEnumVariant -> declaration.typeParametersOrEmpty()
-            declaration is SmlFunction -> declaration.typeParametersOrEmpty()
+            declaration is SdsClass -> declaration.typeParametersOrEmpty()
+            declaration is SdsEnumVariant -> declaration.typeParametersOrEmpty()
+            declaration is SdsFunction -> declaration.typeParametersOrEmpty()
             else -> return
         }
 
         if (typeParameters.isNotEmpty()) {
             error(
                 "Missing type argument list.",
-                SimpleMLPackage.Literals.SML_NAMED_TYPE__DECLARATION,
+                SafeDSPackage.Literals.SDS_NAMED_TYPE__DECLARATION,
                 ErrorCode.MISSING_TYPE_ARGUMENT_LIST
             )
         }

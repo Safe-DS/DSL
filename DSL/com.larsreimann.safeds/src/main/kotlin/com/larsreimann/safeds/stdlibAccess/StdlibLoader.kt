@@ -1,8 +1,8 @@
 package com.larsreimann.safeds.stdlibAccess
 
-import de.unibonn.simpleml.constant.SmlFileExtension
-import de.unibonn.simpleml.emf.resourceSetOrNull
-import de.unibonn.simpleml.scoping.allGlobalDeclarations
+import com.larsreimann.safeds.constant.SdsFileExtension
+import com.larsreimann.safeds.emf.resourceSetOrNull
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsClass
 import org.eclipse.core.runtime.FileLocator
@@ -53,7 +53,7 @@ fun listStdlibFiles(): Sequence<Pair<Path, URI>> {
         }
 
         val stdlibFiles = Files.walk(stdlibBase)
-            .filter { it.toString().endsWith(".${SmlFileExtension.Stub}") }
+            .filter { it.toString().endsWith(".${SdsFileExtension.Stub}") }
 
         for (path in stdlibFiles) {
             val relativePath = path.toString().replace("stdlib/", "")
@@ -66,12 +66,12 @@ fun listStdlibFiles(): Sequence<Pair<Path, URI>> {
 }
 
 /**
- * Returns the [SmlClass] with the given [QualifiedName] within this context. If the declaration cannot be found, `null`
+ * Returns the [SdsClass] with the given [QualifiedName] within this context. If the declaration cannot be found, `null`
  * is returned.
  *
  * @receiver The context for the search.
  */
-fun EObject.getStdlibClassOrNull(qualifiedName: QualifiedName): SmlClass? {
+fun EObject.getStdlibClassOrNull(qualifiedName: QualifiedName): SdsClass? {
     return getStdlibDeclarationOrNull(qualifiedName)
 }
 
@@ -81,7 +81,7 @@ fun EObject.getStdlibClassOrNull(qualifiedName: QualifiedName): SmlClass? {
  *
  * @receiver The context for the search.
  */
-private inline fun <reified T : SmlAbstractDeclaration> EObject.getStdlibDeclarationOrNull(
+private inline fun <reified T : SdsAbstractDeclaration> EObject.getStdlibDeclarationOrNull(
     qualifiedName: QualifiedName
 ): T? {
     return try {
@@ -100,7 +100,7 @@ private inline fun <reified T : SmlAbstractDeclaration> EObject.getStdlibDeclara
  * @throws IllegalStateException If no declaration with the qualified name exists in the resource set.
  * @throws IllegalStateException If the declaration with the qualified name does not have the desired type.
  */
-private inline fun <reified T : SmlAbstractDeclaration> EObject.getStdlibDeclaration(qualifiedName: QualifiedName): T {
+private inline fun <reified T : SdsAbstractDeclaration> EObject.getStdlibDeclaration(qualifiedName: QualifiedName): T {
     val resourceSet = resourceSetOrNull() ?: throw IllegalStateException("This context is not in a resource set.")
     val cacheForResourceSet = cache.getOrPut(resourceSet) { WeakHashMap() }
 

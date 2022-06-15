@@ -1,9 +1,9 @@
 package com.larsreimann.safeds.staticAnalysis.typing
 
-import de.unibonn.simpleml.emf.variantsOrEmpty
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
-import de.unibonn.simpleml.staticAnalysis.classHierarchy.isSubtypeOf
-import de.unibonn.simpleml.stdlibAccess.StdlibClasses
+import com.larsreimann.safeds.emf.variantsOrEmpty
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.staticAnalysis.classHierarchy.isSubtypeOf
+import com.larsreimann.safeds.stdlibAccess.StdlibClasses
 
 fun Type.isSubstitutableFor(other: Type, resultIfUnresolved: Boolean = false): Boolean {
     if (other == UnresolvedType) {

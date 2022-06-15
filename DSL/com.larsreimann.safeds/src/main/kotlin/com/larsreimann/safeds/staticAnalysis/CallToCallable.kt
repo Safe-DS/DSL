@@ -1,8 +1,8 @@
 package com.larsreimann.safeds.staticAnalysis
 
-import de.unibonn.simpleml.emf.blockLambdaResultsOrEmpty
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.resultsOrEmpty
+import com.larsreimann.safeds.emf.blockLambdaResultsOrEmpty
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.resultsOrEmpty
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
@@ -23,7 +23,7 @@ import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import org.eclipse.emf.ecore.EObject
 
-fun SmlCall.callableOrNull(): SmlAbstractCallable? {
+fun SdsCall.callableOrNull(): SdsAbstractCallable? {
     return when (val maybeCallable = this.maybeCallable()) {
         is CallableResult.Callable -> maybeCallable.callable
         else -> null
@@ -33,10 +33,10 @@ fun SmlCall.callableOrNull(): SmlAbstractCallable? {
 sealed interface CallableResult {
     object Unresolvable : CallableResult
     object NotCallable : CallableResult
-    class Callable(val callable: SmlAbstractCallable) : CallableResult
+    class Callable(val callable: SdsAbstractCallable) : CallableResult
 }
 
-fun SmlCall.maybeCallable(): CallableResult {
+fun SdsCall.maybeCallable(): CallableResult {
     val visited = mutableSetOf<EObject>()
     var current: EObject? = this.receiver
     while (current != null && current !in visited) {
@@ -44,8 +44,8 @@ fun SmlCall.maybeCallable(): CallableResult {
 
         current = when {
             current.eIsProxy() -> return CallableResult.Unresolvable
-            current is SmlAbstractCallable -> return CallableResult.Callable(current)
-            current is SmlCall -> {
+            current is SdsAbstractCallable -> return CallableResult.Callable(current)
+            current is SdsCall -> {
                 val results = current.resultsOrNull()
                 if (results == null || results.size != 1) {
                     return CallableResult.Unresolvable
@@ -53,18 +53,18 @@ fun SmlCall.maybeCallable(): CallableResult {
 
                 results.first()
             }
-            current is SmlAbstractAssignee -> current.assignedOrNull()
-            current is SmlMemberAccess -> current.member.declaration
-            current is SmlParameter -> return when (val typeOrNull = current.type) {
+            current is SdsAbstractAssignee -> current.assignedOrNull()
+            current is SdsMemberAccess -> current.member.declaration
+            current is SdsParameter -> return when (val typeOrNull = current.type) {
                 null -> CallableResult.Unresolvable
-                is SmlCallableType -> CallableResult.Callable(typeOrNull)
+                is SdsCallableType -> CallableResult.Callable(typeOrNull)
                 else -> CallableResult.NotCallable
             }
-            current is SmlParenthesizedExpression -> current.expression
-            current is SmlReference -> current.declaration
-            current is SmlResult -> return when (val typeOrNull = current.type) {
+            current is SdsParenthesizedExpression -> current.expression
+            current is SdsReference -> current.declaration
+            current is SdsResult -> return when (val typeOrNull = current.type) {
                 null -> CallableResult.Unresolvable
-                is SmlCallableType -> CallableResult.Callable(typeOrNull)
+                is SdsCallableType -> CallableResult.Callable(typeOrNull)
                 else -> CallableResult.NotCallable
             }
             else -> return CallableResult.NotCallable
@@ -75,32 +75,32 @@ fun SmlCall.maybeCallable(): CallableResult {
 }
 
 /**
- * Returns the list of [SmlParameter]s of the called callable or `null` if it cannot be resolved.
+ * Returns the list of [SdsParameter]s of the called callable or `null` if it cannot be resolved.
  */
-fun SmlCall.parametersOrNull(): List<SmlParameter>? {
+fun SdsCall.parametersOrNull(): List<SdsParameter>? {
     return callableOrNull()?.parametersOrEmpty()
 }
 
 /**
- * Returns the list of [SmlAbstractObject]s that are returned by the called callable or `null` if it cannot be resolved.
+ * Returns the list of [SdsAbstractObject]s that are returned by the called callable or `null` if it cannot be resolved.
  * Possible types depend on the called callable:
- * - [SmlBlockLambda] -> [SmlBlockLambdaResult]
- * - [SmlCallableType] -> [SmlResult]
- * - [SmlClass] -> [SmlClass]
- * - [SmlEnumVariant] -> [SmlEnumVariant]
- * - [SmlExpressionLambda] -> [SmlAbstractExpression]
- * - [SmlFunction] -> [SmlResult]
- * - [SmlStep] -> [SmlResult]
+ * - [SdsBlockLambda] -> [SdsBlockLambdaResult]
+ * - [SdsCallableType] -> [SdsResult]
+ * - [SdsClass] -> [SdsClass]
+ * - [SdsEnumVariant] -> [SdsEnumVariant]
+ * - [SdsExpressionLambda] -> [SdsAbstractExpression]
+ * - [SdsFunction] -> [SdsResult]
+ * - [SdsStep] -> [SdsResult]
  */
-fun SmlCall.resultsOrNull(): List<SmlAbstractObject>? {
+fun SdsCall.resultsOrNull(): List<SdsAbstractObject>? {
     return when (val callable = this.callableOrNull()) {
-        is SmlBlockLambda -> callable.blockLambdaResultsOrEmpty()
-        is SmlCallableType -> callable.resultsOrEmpty()
-        is SmlClass -> listOf(callable)
-        is SmlEnumVariant -> listOf(callable)
-        is SmlExpressionLambda -> listOf(callable.result)
-        is SmlFunction -> callable.resultsOrEmpty()
-        is SmlStep -> callable.resultsOrEmpty()
+        is SdsBlockLambda -> callable.blockLambdaResultsOrEmpty()
+        is SdsCallableType -> callable.resultsOrEmpty()
+        is SdsClass -> listOf(callable)
+        is SdsEnumVariant -> listOf(callable)
+        is SdsExpressionLambda -> listOf(callable.result)
+        is SdsFunction -> callable.resultsOrEmpty()
+        is SdsStep -> callable.resultsOrEmpty()
         else -> null
     }
 }

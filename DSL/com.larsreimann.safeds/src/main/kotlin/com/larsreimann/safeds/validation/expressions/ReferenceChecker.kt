@@ -1,29 +1,29 @@
 package com.larsreimann.safeds.validation.expressions
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractChainedExpression
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnum
 import com.larsreimann.safeds.safeDS.SdsMemberAccess
 import com.larsreimann.safeds.safeDS.SdsReference
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
 
-class ReferenceChecker : AbstractSimpleMLChecker() {
+class ReferenceChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustNotStaticallyReferenceClass(smlReference: SmlReference) {
+    fun mustNotStaticallyReferenceClass(smlReference: SdsReference) {
         val declaration = smlReference.declaration
-        if (declaration !is SmlClass || declaration.parameterList != null) {
+        if (declaration !is SdsClass || declaration.parameterList != null) {
             return
         }
 
         // Reference must eventually be the receiver of a chained expression
         var previous: EObject = smlReference
         var current: EObject = previous.eContainer()
-        while (current is SmlAbstractChainedExpression) {
+        while (current is SdsAbstractChainedExpression) {
             if (current.receiver == previous) {
                 return
             }
@@ -33,21 +33,21 @@ class ReferenceChecker : AbstractSimpleMLChecker() {
 
         error(
             "Must not statically reference class.",
-            Literals.SML_REFERENCE__DECLARATION,
+            Literals.SDS_REFERENCE__DECLARATION,
             ErrorCode.MustNotStaticallyReferenceClass
         )
     }
 
     @Check
-    fun mustNotStaticallyReferenceEnum(smlReference: SmlReference) {
-        if (smlReference.declaration !is SmlEnum) {
+    fun mustNotStaticallyReferenceEnum(smlReference: SdsReference) {
+        if (smlReference.declaration !is SdsEnum) {
             return
         }
 
         // Reference must eventually be the receiver of a member access
         var previous: EObject = smlReference
         var current: EObject = previous.eContainer()
-        while (current is SmlMemberAccess) {
+        while (current is SdsMemberAccess) {
             if (current.receiver == previous) {
                 return
             }
@@ -57,7 +57,7 @@ class ReferenceChecker : AbstractSimpleMLChecker() {
 
         error(
             "Must not statically reference enum.",
-            Literals.SML_REFERENCE__DECLARATION,
+            Literals.SDS_REFERENCE__DECLARATION,
             ErrorCode.MustNotStaticallyReferenceEnum
         )
     }

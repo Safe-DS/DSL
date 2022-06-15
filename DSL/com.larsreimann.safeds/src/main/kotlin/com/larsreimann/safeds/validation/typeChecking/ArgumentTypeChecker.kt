@@ -1,20 +1,20 @@
 package com.larsreimann.safeds.validation.typeChecking
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsArgument
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.staticAnalysis.typing.UnresolvedType
-import de.unibonn.simpleml.staticAnalysis.typing.isSubstitutableFor
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
+import com.larsreimann.safeds.staticAnalysis.typing.isSubstitutableFor
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class ArgumentTypeChecker : AbstractSimpleMLChecker() {
+class ArgumentTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun value(smlArgument: SmlArgument) {
+    fun value(smlArgument: SdsArgument) {
         val argumentType = smlArgument.type()
         if (argumentType is UnresolvedType) {
             return // Scoping error already shown
@@ -33,7 +33,7 @@ class ArgumentTypeChecker : AbstractSimpleMLChecker() {
 
             error(
                 "An argument of type '$argumentTypeString' cannot be assigned to a parameter of type '$parameterTypeString'.",
-                Literals.SML_ARGUMENT__VALUE,
+                Literals.SDS_ARGUMENT__VALUE,
                 ErrorCode.WrongType
             )
         }

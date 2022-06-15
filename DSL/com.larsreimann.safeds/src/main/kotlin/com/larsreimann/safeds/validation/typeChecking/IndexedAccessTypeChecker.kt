@@ -1,22 +1,22 @@
 package com.larsreimann.safeds.validation.typeChecking
 
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
-import de.unibonn.simpleml.simpleML.SimpleMLPackage
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.safeDS.SafeDSPackage
 import com.larsreimann.safeds.safeDS.SdsIndexedAccess
-import de.unibonn.simpleml.staticAnalysis.typing.ClassType
-import de.unibonn.simpleml.staticAnalysis.typing.UnresolvedType
-import de.unibonn.simpleml.staticAnalysis.typing.VariadicType
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.stdlibAccess.StdlibClasses
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.typing.ClassType
+import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
+import com.larsreimann.safeds.staticAnalysis.typing.VariadicType
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.stdlibAccess.StdlibClasses
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class IndexedAccessTypeChecker : AbstractSimpleMLChecker() {
+class IndexedAccessTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun receiverMustBeVariadic(smlIndexedAccess: SmlIndexedAccess) {
+    fun receiverMustBeVariadic(smlIndexedAccess: SdsIndexedAccess) {
         val receiverType = smlIndexedAccess.receiver.type()
         if (receiverType is UnresolvedType) {
             return // Scoping error already shown
@@ -25,14 +25,14 @@ class IndexedAccessTypeChecker : AbstractSimpleMLChecker() {
         if (receiverType !is VariadicType) {
             error(
                 "The receiver of an indexed access must refer to a variadic parameter.",
-                SimpleMLPackage.Literals.SML_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
+                SafeDSPackage.Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
                 ErrorCode.WrongType
             )
         }
     }
 
     @Check
-    fun indexMustBeInt(smlIndexedAccess: SmlIndexedAccess) {
+    fun indexMustBeInt(smlIndexedAccess: SdsIndexedAccess) {
         val indexType = smlIndexedAccess.index.type()
         if (indexType is UnresolvedType) {
             return
@@ -45,7 +45,7 @@ class IndexedAccessTypeChecker : AbstractSimpleMLChecker() {
         if (hasWrongType) {
             error(
                 "The index of an indexed access must be an instance of the class 'Int'.",
-                SimpleMLPackage.Literals.SML_INDEXED_ACCESS__INDEX,
+                SafeDSPackage.Literals.SDS_INDEXED_ACCESS__INDEX,
                 ErrorCode.WrongType
             )
         }

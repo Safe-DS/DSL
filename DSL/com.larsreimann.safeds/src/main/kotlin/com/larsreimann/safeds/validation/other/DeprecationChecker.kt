@@ -1,6 +1,6 @@
 package com.larsreimann.safeds.validation.other
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotationCall
@@ -10,36 +10,36 @@ import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsWildcard
-import de.unibonn.simpleml.staticAnalysis.assignedOrNull
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.staticAnalysis.linking.typeParameterOrNull
-import de.unibonn.simpleml.stdlibAccess.isDeprecated
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.WarningCode
+import com.larsreimann.safeds.staticAnalysis.assignedOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.typeParameterOrNull
+import com.larsreimann.safeds.stdlibAccess.isDeprecated
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.WarningCode
 import org.eclipse.xtext.validation.Check
 
-class DeprecationChecker : AbstractSimpleMLChecker() {
+class DeprecationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun annotationUseReferenceDeprecatedAnnotation(smlAnnotationCall: SmlAnnotationCall) {
+    fun annotationUseReferenceDeprecatedAnnotation(smlAnnotationCall: SdsAnnotationCall) {
         val annotation = smlAnnotationCall.annotation ?: return
         if (annotation.isDeprecated()) {
             warning(
                 "The used annotation is deprecated.",
-                Literals.SML_ANNOTATION_CALL__ANNOTATION,
+                Literals.SDS_ANNOTATION_CALL__ANNOTATION,
                 WarningCode.ReferencedDeclarationIsDeprecated
             )
         }
     }
 
     @Check
-    fun assigneeAssignedToDeprecatedValue(smlAssignee: SmlAbstractAssignee) {
-        if (smlAssignee is SmlWildcard) {
+    fun assigneeAssignedToDeprecatedValue(smlAssignee: SdsAbstractAssignee) {
+        if (smlAssignee is SdsWildcard) {
             return
         }
 
         val assigned = smlAssignee.assignedOrNull() ?: return
-        if (assigned is SmlAbstractDeclaration && assigned.isDeprecated()) {
+        if (assigned is SdsAbstractDeclaration && assigned.isDeprecated()) {
             warning(
                 "The assigned declaration is deprecated.",
                 null,
@@ -49,7 +49,7 @@ class DeprecationChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun argumentReferencesDeprecatedParameter(smlArgument: SmlArgument) {
+    fun argumentReferencesDeprecatedParameter(smlArgument: SdsArgument) {
         val parameter = smlArgument.parameterOrNull() ?: return
         if (parameter.isDeprecated()) {
             warning(
@@ -61,31 +61,31 @@ class DeprecationChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun namedTypeReferencesDeprecatedDeclaration(smlNamedType: SmlNamedType) {
+    fun namedTypeReferencesDeprecatedDeclaration(smlNamedType: SdsNamedType) {
         val declaration = smlNamedType.declaration ?: return
         if (declaration.isDeprecated()) {
             warning(
                 "The referenced declaration is deprecated.",
-                Literals.SML_NAMED_TYPE__DECLARATION,
+                Literals.SDS_NAMED_TYPE__DECLARATION,
                 WarningCode.ReferencedDeclarationIsDeprecated
             )
         }
     }
 
     @Check
-    fun referenceReferencesDeprecatedDeclaration(smlReference: SmlReference) {
+    fun referenceReferencesDeprecatedDeclaration(smlReference: SdsReference) {
         val declaration = smlReference.declaration ?: return
-        if (declaration !is SmlParameter && declaration.isDeprecated()) {
+        if (declaration !is SdsParameter && declaration.isDeprecated()) {
             warning(
                 "The referenced declaration is deprecated.",
-                Literals.SML_REFERENCE__DECLARATION,
+                Literals.SDS_REFERENCE__DECLARATION,
                 WarningCode.ReferencedDeclarationIsDeprecated
             )
         }
     }
 
     @Check
-    fun typeArgumentReferencesDeprecatedTypeParameter(smlTypeArgument: SmlTypeArgument) {
+    fun typeArgumentReferencesDeprecatedTypeParameter(smlTypeArgument: SdsTypeArgument) {
         val typeParameter = smlTypeArgument.typeParameterOrNull() ?: return
         if (typeParameter.isDeprecated()) {
             warning(

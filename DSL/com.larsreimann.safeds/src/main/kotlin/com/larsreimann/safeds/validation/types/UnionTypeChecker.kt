@@ -1,16 +1,16 @@
 package com.larsreimann.safeds.validation.types
 
-import de.unibonn.simpleml.emf.typeArgumentsOrEmpty
+import com.larsreimann.safeds.emf.typeArgumentsOrEmpty
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
 import org.eclipse.xtext.validation.Check
 
-class UnionTypeChecker : AbstractSimpleMLChecker() {
+class UnionTypeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun numberOfTypeArguments(smlUnionType: SmlUnionType) {
+    fun numberOfTypeArguments(smlUnionType: SdsUnionType) {
         when (smlUnionType.typeArgumentsOrEmpty().size) {
             0 -> {
                 error(

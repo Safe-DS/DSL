@@ -1,28 +1,28 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.emf.classMembersOrEmpty
-import de.unibonn.simpleml.emf.objectsInBodyOrEmpty
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.parentTypesOrEmpty
-import de.unibonn.simpleml.emf.protocolsOrEmpty
-import de.unibonn.simpleml.emf.typeParametersOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.classMembersOrEmpty
+import com.larsreimann.safeds.emf.objectsInBodyOrEmpty
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.parentTypesOrEmpty
+import com.larsreimann.safeds.emf.protocolsOrEmpty
+import com.larsreimann.safeds.emf.typeParametersOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsClass
-import de.unibonn.simpleml.staticAnalysis.classHierarchy.inheritedNonStaticMembersOrEmpty
-import de.unibonn.simpleml.staticAnalysis.classHierarchy.isSubtypeOf
-import de.unibonn.simpleml.staticAnalysis.typing.ClassType
-import de.unibonn.simpleml.staticAnalysis.typing.UnresolvedType
-import de.unibonn.simpleml.staticAnalysis.typing.type
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
+import com.larsreimann.safeds.staticAnalysis.classHierarchy.inheritedNonStaticMembersOrEmpty
+import com.larsreimann.safeds.staticAnalysis.classHierarchy.isSubtypeOf
+import com.larsreimann.safeds.staticAnalysis.typing.ClassType
+import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
+import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
 import org.eclipse.xtext.validation.Check
 
-class ClassChecker : AbstractSimpleMLChecker() {
+class ClassChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun acyclicSuperTypes(smlClass: SmlClass) {
+    fun acyclicSuperTypes(smlClass: SdsClass) {
         smlClass.parentTypesOrEmpty()
             .filter {
                 val resolvedClass = (it.type() as? ClassType)?.smlClass
@@ -39,18 +39,18 @@ class ClassChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun body(smlClass: SmlClass) {
+    fun body(smlClass: SdsClass) {
         if (smlClass.body != null && smlClass.objectsInBodyOrEmpty().isEmpty()) {
             info(
                 "Unnecessary class body.",
-                Literals.SML_CLASS__BODY,
+                Literals.SDS_CLASS__BODY,
                 InfoCode.UnnecessaryBody
             )
         }
     }
 
     @Check
-    fun mustInheritOnlyClasses(smlClass: SmlClass) {
+    fun mustInheritOnlyClasses(smlClass: SdsClass) {
         smlClass.parentTypesOrEmpty()
             .filterNot {
                 val type = it.type()
@@ -67,14 +67,14 @@ class ClassChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun mustHaveUniqueInheritedMembers(smlClass: SmlClass) {
+    fun mustHaveUniqueInheritedMembers(smlClass: SdsClass) {
         smlClass.inheritedNonStaticMembersOrEmpty()
             .groupBy { it.name }
             .forEach { (name, declarationsWithName) ->
                 if (declarationsWithName.size > 1) {
                     error(
                         "Inherits multiple members called '$name'.",
-                        Literals.SML_ABSTRACT_DECLARATION__NAME,
+                        Literals.SDS_ABSTRACT_DECLARATION__NAME,
                         ErrorCode.CLASS_MUST_HAVE_UNIQUE_INHERITED_MEMBERS
                     )
                 }
@@ -82,7 +82,7 @@ class ClassChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun uniqueNames(smlClass: SmlClass) {
+    fun uniqueNames(smlClass: SdsClass) {
         smlClass.parametersOrEmpty()
             .reportDuplicateNames { "A parameter with name '${it.name}' exists already in this class." }
 
@@ -91,7 +91,7 @@ class ClassChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun uniqueParentTypes(smlClass: SmlClass) {
+    fun uniqueParentTypes(smlClass: SdsClass) {
         smlClass.parentTypesOrEmpty()
             .duplicatesBy { (it.type() as? ClassType)?.smlClass }
             .forEach {
@@ -105,18 +105,18 @@ class ClassChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun unnecessaryTypeParameterList(smlClass: SmlClass) {
+    fun unnecessaryTypeParameterList(smlClass: SdsClass) {
         if (smlClass.typeParameterList != null && smlClass.typeParametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary type parameter list.",
-                Literals.SML_CLASS__TYPE_PARAMETER_LIST,
+                Literals.SDS_CLASS__TYPE_PARAMETER_LIST,
                 InfoCode.UnnecessaryTypeParameterList
             )
         }
     }
 
     @Check
-    fun multipleProtocols(smlClass: SmlClass) {
+    fun multipleProtocols(smlClass: SdsClass) {
         val protocols = smlClass.protocolsOrEmpty()
         if (protocols.size > 1) {
             protocols.forEach {

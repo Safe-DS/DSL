@@ -1,20 +1,20 @@
 package com.larsreimann.safeds.validation.other
 
-import de.unibonn.simpleml.emf.isNamed
-import de.unibonn.simpleml.emf.isPositional
+import com.larsreimann.safeds.emf.isNamed
+import com.larsreimann.safeds.emf.isPositional
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
-import de.unibonn.simpleml.staticAnalysis.linking.typeParameterOrNull
-import de.unibonn.simpleml.staticAnalysis.linking.typeParametersOrNull
-import de.unibonn.simpleml.utils.duplicatesBy
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
-import de.unibonn.simpleml.validation.codes.InfoCode
+import com.larsreimann.safeds.staticAnalysis.linking.typeParameterOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.typeParametersOrNull
+import com.larsreimann.safeds.utils.duplicatesBy
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.codes.InfoCode
 import org.eclipse.xtext.validation.Check
 
-class TypeArgumentListChecker : AbstractSimpleMLChecker() {
+class TypeArgumentListChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingRequiredTypeParameter(smlTypeArgumentList: SmlTypeArgumentList) {
+    fun missingRequiredTypeParameter(smlTypeArgumentList: SdsTypeArgumentList) {
         val requiredTypeParameters = smlTypeArgumentList.typeParametersOrNull() ?: return
         val givenTypeParameters = smlTypeArgumentList.typeArguments.mapNotNull { it.typeParameterOrNull() }
         val missingRequiredTypeParameters = requiredTypeParameters - givenTypeParameters.toSet()
@@ -29,7 +29,7 @@ class TypeArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun noPositionalArgumentsAfterFirstNamedArgument(smlTypeArgumentList: SmlTypeArgumentList) {
+    fun noPositionalArgumentsAfterFirstNamedArgument(smlTypeArgumentList: SdsTypeArgumentList) {
         val firstNamedTypeArgumentIndex = smlTypeArgumentList.typeArguments.indexOfFirst { it.isNamed() }
         if (firstNamedTypeArgumentIndex == -1) {
             return
@@ -49,7 +49,7 @@ class TypeArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun tooManyTypeArguments(smlTypeArgumentList: SmlTypeArgumentList) {
+    fun tooManyTypeArguments(smlTypeArgumentList: SdsTypeArgumentList) {
         val typeParameter = smlTypeArgumentList.typeParametersOrNull() ?: return
 
         val maximumExpectedNumberOfArguments = typeParameter.size
@@ -76,7 +76,7 @@ class TypeArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun uniqueTypeParameters(smlTypeArgumentList: SmlTypeArgumentList) {
+    fun uniqueTypeParameters(smlTypeArgumentList: SdsTypeArgumentList) {
         smlTypeArgumentList.typeArguments
             .duplicatesBy { it.typeParameterOrNull()?.name }
             .forEach {
@@ -90,7 +90,7 @@ class TypeArgumentListChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun unnecessaryTypeArgumentList(smlTypeArgumentList: SmlTypeArgumentList) {
+    fun unnecessaryTypeArgumentList(smlTypeArgumentList: SdsTypeArgumentList) {
         val typeParametersOrNull = smlTypeArgumentList.typeParametersOrNull()
         if (typeParametersOrNull != null && typeParametersOrNull.isEmpty()) {
             info(

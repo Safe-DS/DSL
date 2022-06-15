@@ -1,25 +1,25 @@
 package com.larsreimann.safeds.validation.expressions
 
-import de.unibonn.simpleml.emf.assigneesOrEmpty
-import de.unibonn.simpleml.emf.blockLambdaResultsOrEmpty
-import de.unibonn.simpleml.emf.closestAncestorOrNull
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.placeholdersOrEmpty
+import com.larsreimann.safeds.emf.assigneesOrEmpty
+import com.larsreimann.safeds.emf.blockLambdaResultsOrEmpty
+import com.larsreimann.safeds.emf.closestAncestorOrNull
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.placeholdersOrEmpty
 import com.larsreimann.safeds.safeDS.SdsAbstractLambda
 import com.larsreimann.safeds.safeDS.SdsArgument
 import com.larsreimann.safeds.safeDS.SdsAssignment
 import com.larsreimann.safeds.safeDS.SdsBlockLambda
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsYield
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class LambdaChecker : AbstractSimpleMLChecker() {
+class LambdaChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun uniqueNames(smlBlockLambda: SmlBlockLambda) {
+    fun uniqueNames(smlBlockLambda: SdsBlockLambda) {
         val declarations =
             smlBlockLambda.parametersOrEmpty() + smlBlockLambda.placeholdersOrEmpty() + smlBlockLambda.blockLambdaResultsOrEmpty()
         declarations.reportDuplicateNames {
@@ -28,17 +28,17 @@ class LambdaChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun context(smlLambda: SmlAbstractLambda) {
-        val context = smlLambda.closestAncestorOrNull { it !is SmlParenthesizedExpression } ?: return
+    fun context(smlLambda: SdsAbstractLambda) {
+        val context = smlLambda.closestAncestorOrNull { it !is SdsParenthesizedExpression } ?: return
 
         val contextIsValid = when (context) {
-            is SmlArgument -> {
+            is SdsArgument -> {
                 when (val parameter = context.parameterOrNull()) {
                     null -> true // Resolution of parameter failed, so this already shows another error
                     else -> parameter.type != null
                 }
             }
-            is SmlAssignment -> context.assigneesOrEmpty().firstOrNull() is SmlYield
+            is SdsAssignment -> context.assigneesOrEmpty().firstOrNull() is SdsYield
             else -> false
         }
 

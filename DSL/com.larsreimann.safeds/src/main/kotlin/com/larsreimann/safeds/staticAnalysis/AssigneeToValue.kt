@@ -1,14 +1,14 @@
 package com.larsreimann.safeds.staticAnalysis
 
-import de.unibonn.simpleml.emf.assigneesOrEmpty
-import de.unibonn.simpleml.emf.closestAncestorOrNull
+import com.larsreimann.safeds.emf.assigneesOrEmpty
+import com.larsreimann.safeds.emf.closestAncestorOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
 import com.larsreimann.safeds.safeDS.SdsAbstractObject
 import com.larsreimann.safeds.safeDS.SdsAssignment
 import com.larsreimann.safeds.safeDS.SdsCall
 
-fun SmlAbstractAssignee.assignedOrNull(): SmlAbstractObject? {
+fun SdsAbstractAssignee.assignedOrNull(): SdsAbstractObject? {
     return when (val maybeAssigned = this.maybeAssigned()) {
         is AssignedResult.Assigned -> maybeAssigned.assigned
         else -> null
@@ -19,20 +19,20 @@ sealed interface AssignedResult {
     object Unresolved : AssignedResult
     object NotAssigned : AssignedResult
     sealed class Assigned : AssignedResult {
-        abstract val assigned: SmlAbstractObject
+        abstract val assigned: SdsAbstractObject
     }
 
-    class AssignedExpression(override val assigned: SmlAbstractExpression) : Assigned()
-    class AssignedDeclaration(override val assigned: SmlAbstractObject) : Assigned()
+    class AssignedExpression(override val assigned: SdsAbstractExpression) : Assigned()
+    class AssignedDeclaration(override val assigned: SdsAbstractObject) : Assigned()
 }
 
-fun SmlAbstractAssignee.maybeAssigned(): AssignedResult {
-    val assignment = this.closestAncestorOrNull<SmlAssignment>() ?: return AssignedResult.Unresolved
+fun SdsAbstractAssignee.maybeAssigned(): AssignedResult {
+    val assignment = this.closestAncestorOrNull<SdsAssignment>() ?: return AssignedResult.Unresolved
     val expression = assignment.expression ?: return AssignedResult.NotAssigned
 
     val thisIndex = assignment.assigneeList.assignees.indexOf(this)
     return when (expression) {
-        is SmlCall -> {
+        is SdsCall -> {
             val results = expression.resultsOrNull() ?: return AssignedResult.Unresolved
             val result = results.getOrNull(thisIndex) ?: return AssignedResult.NotAssigned
             AssignedResult.AssignedDeclaration(result)
@@ -44,7 +44,7 @@ fun SmlAbstractAssignee.maybeAssigned(): AssignedResult {
     }
 }
 
-fun SmlAbstractAssignee.indexOrNull(): Int? {
-    val assignment = closestAncestorOrNull<SmlAssignment>() ?: return null
+fun SdsAbstractAssignee.indexOrNull(): Int? {
+    val assignment = closestAncestorOrNull<SdsAssignment>() ?: return null
     return assignment.assigneesOrEmpty().indexOf(this)
 }

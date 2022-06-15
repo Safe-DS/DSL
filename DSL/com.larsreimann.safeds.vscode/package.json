@@ -1,12 +1,11 @@
 {
-  "name": "simple-ml",
-  "displayName": "Simple-ML",
-  "description": "Machine Learning made simple.",
-  "publisher": "Simple-ML",
+  "name": "safe-ds",
+  "displayName": "Safe-DS",
+  "description": "Statically checked Data Science programs.",
+  "publisher": "Lars Reimann",
   "repository": {
-    "url": "https://github.com/Simple-ML/Simple-ML"
+    "url": "https://github.com/lars-reimann/safe-data-science"
   },
-  "icon": "icons/icon.png",
   "galleryBanner": {
     "color": "#ffffff"
   },
@@ -22,12 +21,12 @@
   "contributes": {
     "languages": [
       {
-        "id": "simple-ml",
+        "id": "safe-ds",
         "aliases": [
-          "Simple-ML",
-          "simple-ml",
-          "SimpleML",
-          "simpleml"
+          "Safe-DS",
+          "safe-ds",
+          "SafeDS",
+          "safeds"
         ],
         "extensions": [
           ".sdsflow",
@@ -39,14 +38,14 @@
     ],
     "grammars": [
       {
-        "language": "simple-ml",
-        "scopeName": "source.simpleml",
-        "path": "./syntaxes/simple-ml.tmLanguage.json"
+        "language": "safe-ds",
+        "scopeName": "source.safeds",
+        "path": "./syntaxes/safe-ds.tmLanguage.json"
       }
     ]
   },
   "activationEvents": [
-    "onLanguage:simple-ml"
+    "onLanguage:safe-ds"
   ],
   "main": "./dist/extension.js",
   "scripts": {

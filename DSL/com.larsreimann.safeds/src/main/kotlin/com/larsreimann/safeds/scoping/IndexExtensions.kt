@@ -1,9 +1,9 @@
 package com.larsreimann.safeds.scoping
 
 import com.google.inject.Inject
-import de.unibonn.simpleml.scoping.IndexExtensionsInjectionTarget.containerManager
-import de.unibonn.simpleml.scoping.IndexExtensionsInjectionTarget.resourceDescriptionsProvider
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.scoping.IndexExtensionsInjectionTarget.containerManager
+import com.larsreimann.safeds.scoping.IndexExtensionsInjectionTarget.resourceDescriptionsProvider
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -92,10 +92,10 @@ private fun ResourceSet.resourceDescriptions(): IResourceDescriptions {
  */
 private fun IEObjectDescription.isGlobalDeclaration(): Boolean {
     return this.eClass in setOf(
-        Literals.SML_ANNOTATION,
-        Literals.SML_CLASS,
-        Literals.SML_ENUM,
-        Literals.SML_FUNCTION,
-        Literals.SML_STEP
+        Literals.SDS_ANNOTATION,
+        Literals.SDS_CLASS,
+        Literals.SDS_ENUM,
+        Literals.SDS_FUNCTION,
+        Literals.SDS_STEP
     )
 }

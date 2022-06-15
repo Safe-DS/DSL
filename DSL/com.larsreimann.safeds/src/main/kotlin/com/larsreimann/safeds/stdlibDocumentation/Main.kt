@@ -2,9 +2,9 @@ package com.larsreimann.safeds.stdlibDocumentation
 
 import com.google.inject.Inject
 import com.google.inject.Provider
-import de.unibonn.simpleml.SimpleMLStandaloneSetup
-import de.unibonn.simpleml.emf.compilationUnitOrNull
-import de.unibonn.simpleml.stdlibAccess.loadStdlib
+import com.larsreimann.safeds.SimpleMLStandaloneSetup
+import com.larsreimann.safeds.emf.compilationUnitOrNull
+import com.larsreimann.safeds.stdlibAccess.loadStdlib
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.util.CancelIndicator

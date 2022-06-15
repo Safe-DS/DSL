@@ -1,27 +1,27 @@
 package com.larsreimann.safeds.staticAnalysis.partialEvaluation
 
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.And
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.By
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.Elvis
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.Equals
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.GreaterThan
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.GreaterThanOrEquals
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.IdenticalTo
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.LessThan
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.LessThanOrEquals
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.NotEquals
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.NotIdenticalTo
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.Or
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.Plus
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.Times
-import de.unibonn.simpleml.constant.SmlPrefixOperationOperator.Not
-import de.unibonn.simpleml.constant.operator
-import de.unibonn.simpleml.emf.argumentsOrEmpty
-import de.unibonn.simpleml.emf.blockLambdaResultsOrEmpty
-import de.unibonn.simpleml.emf.closestAncestorOrNull
-import de.unibonn.simpleml.emf.isOptional
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.resultsOrEmpty
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.And
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.By
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Elvis
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Equals
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.GreaterThan
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.GreaterThanOrEquals
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.IdenticalTo
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.LessThan
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.LessThanOrEquals
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.NotEquals
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.NotIdenticalTo
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Or
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Plus
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Times
+import com.larsreimann.safeds.constant.SdsPrefixOperationOperator.Not
+import com.larsreimann.safeds.constant.operator
+import com.larsreimann.safeds.emf.argumentsOrEmpty
+import com.larsreimann.safeds.emf.blockLambdaResultsOrEmpty
+import com.larsreimann.safeds.emf.closestAncestorOrNull
+import com.larsreimann.safeds.emf.isOptional
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.resultsOrEmpty
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
 import com.larsreimann.safeds.safeDS.SdsArgument
@@ -48,65 +48,65 @@ import com.larsreimann.safeds.safeDS.SdsTemplateString
 import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
 import com.larsreimann.safeds.safeDS.SdsTemplateStringInner
 import com.larsreimann.safeds.safeDS.SdsTemplateStringStart
-import de.unibonn.simpleml.staticAnalysis.callableHasNoSideEffects
-import de.unibonn.simpleml.staticAnalysis.indexOrNull
-import de.unibonn.simpleml.staticAnalysis.linking.parameterOrNull
-import de.unibonn.simpleml.staticAnalysis.linking.uniqueYieldOrNull
-import de.unibonn.simpleml.utils.uniqueOrNull
-import de.unibonn.simpleml.constant.SmlInfixOperationOperator.Minus as InfixMinus
-import de.unibonn.simpleml.constant.SmlPrefixOperationOperator.Minus as PrefixMinus
+import com.larsreimann.safeds.staticAnalysis.callableHasNoSideEffects
+import com.larsreimann.safeds.staticAnalysis.indexOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.uniqueYieldOrNull
+import com.larsreimann.safeds.utils.uniqueOrNull
+import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Minus as InfixMinus
+import com.larsreimann.safeds.constant.SdsPrefixOperationOperator.Minus as PrefixMinus
 
 /**
- * Tries to evaluate this expression. On success a [SmlConstantExpression] is returned, otherwise `null`.
+ * Tries to evaluate this expression. On success a [SdsConstantExpression] is returned, otherwise `null`.
  */
-fun SmlAbstractExpression.toConstantExpressionOrNull(): SmlConstantExpression? {
+fun SdsAbstractExpression.toConstantExpressionOrNull(): SdsConstantExpression? {
     return toConstantExpressionOrNull(emptyMap())
 }
 
-internal fun SmlAbstractExpression.toConstantExpressionOrNull(substitutions: ParameterSubstitutions): SmlConstantExpression? {
+internal fun SdsAbstractExpression.toConstantExpressionOrNull(substitutions: ParameterSubstitutions): SdsConstantExpression? {
     return when (val simplifiedExpression = simplify(substitutions)) {
-        is SmlConstantExpression? -> simplifiedExpression
-        is SmlIntermediateRecord -> simplifiedExpression.unwrap() as? SmlConstantExpression
+        is SdsConstantExpression? -> simplifiedExpression
+        is SdsIntermediateRecord -> simplifiedExpression.unwrap() as? SdsConstantExpression
         else -> null
     }
 }
 
-internal fun SmlAbstractExpression.simplify(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
+internal fun SdsAbstractExpression.simplify(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
     return when (this) {
 
         // Base cases
-        is SmlBoolean -> SmlConstantBoolean(isTrue)
-        is SmlFloat -> SmlConstantFloat(value)
-        is SmlInt -> SmlConstantInt(value)
-        is SmlNull -> SmlConstantNull
-        is SmlString -> SmlConstantString(value)
-        is SmlTemplateStringStart -> SmlConstantString(value)
-        is SmlTemplateStringInner -> SmlConstantString(value)
-        is SmlTemplateStringEnd -> SmlConstantString(value)
-        is SmlBlockLambda -> simplifyBlockLambda(substitutions)
-        is SmlExpressionLambda -> simplifyExpressionLambda(substitutions)
+        is SdsBoolean -> SdsConstantBoolean(isTrue)
+        is SdsFloat -> SdsConstantFloat(value)
+        is SdsInt -> SdsConstantInt(value)
+        is SdsNull -> SdsConstantNull
+        is SdsString -> SdsConstantString(value)
+        is SdsTemplateStringStart -> SdsConstantString(value)
+        is SdsTemplateStringInner -> SdsConstantString(value)
+        is SdsTemplateStringEnd -> SdsConstantString(value)
+        is SdsBlockLambda -> simplifyBlockLambda(substitutions)
+        is SdsExpressionLambda -> simplifyExpressionLambda(substitutions)
 
         // Simple recursive cases
-        is SmlArgument -> value.simplify(substitutions)
-        is SmlInfixOperation -> simplifyInfixOp(substitutions)
-        is SmlParenthesizedExpression -> expression.simplify(substitutions)
-        is SmlPrefixOperation -> simplifyPrefixOp(substitutions)
-        is SmlTemplateString -> simplifyTemplateString(substitutions)
+        is SdsArgument -> value.simplify(substitutions)
+        is SdsInfixOperation -> simplifyInfixOp(substitutions)
+        is SdsParenthesizedExpression -> expression.simplify(substitutions)
+        is SdsPrefixOperation -> simplifyPrefixOp(substitutions)
+        is SdsTemplateString -> simplifyTemplateString(substitutions)
 
         // Complex recursive cases
-        is SmlCall -> simplifyCall(substitutions)
-        is SmlIndexedAccess -> simplifyIndexedAccess(substitutions)
-        is SmlMemberAccess -> simplifyMemberAccess(substitutions)
-        is SmlReference -> simplifyReference(substitutions)
+        is SdsCall -> simplifyCall(substitutions)
+        is SdsIndexedAccess -> simplifyIndexedAccess(substitutions)
+        is SdsMemberAccess -> simplifyMemberAccess(substitutions)
+        is SdsReference -> simplifyReference(substitutions)
 
         // Warn if case is missing
         else -> throw IllegalArgumentException("Missing case to handle $this.")
     }
 }
 
-private fun SmlBlockLambda.simplifyBlockLambda(substitutions: ParameterSubstitutions): SmlIntermediateBlockLambda? {
+private fun SdsBlockLambda.simplifyBlockLambda(substitutions: ParameterSubstitutions): SdsIntermediateBlockLambda? {
     return when {
-        callableHasNoSideEffects(resultIfUnknown = true) -> SmlIntermediateBlockLambda(
+        callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateBlockLambda(
             parameters = parametersOrEmpty(),
             results = blockLambdaResultsOrEmpty(),
             substitutionsOnCreation = substitutions
@@ -115,11 +115,11 @@ private fun SmlBlockLambda.simplifyBlockLambda(substitutions: ParameterSubstitut
     }
 }
 
-private fun SmlExpressionLambda.simplifyExpressionLambda(
+private fun SdsExpressionLambda.simplifyExpressionLambda(
     substitutions: ParameterSubstitutions
-): SmlIntermediateExpressionLambda? {
+): SdsIntermediateExpressionLambda? {
     return when {
-        callableHasNoSideEffects(resultIfUnknown = true) -> SmlIntermediateExpressionLambda(
+        callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
             parameters = parametersOrEmpty(),
             result = result,
             substitutionsOnCreation = substitutions
@@ -128,7 +128,7 @@ private fun SmlExpressionLambda.simplifyExpressionLambda(
     }
 }
 
-private fun SmlInfixOperation.simplifyInfixOp(substitutions: ParameterSubstitutions): SmlConstantExpression? {
+private fun SdsInfixOperation.simplifyInfixOp(substitutions: ParameterSubstitutions): SdsConstantExpression? {
 
     // By design none of the operators are short-circuited
     val constantLeft = leftOperand.toConstantExpressionOrNull(substitutions) ?: return null
@@ -137,10 +137,10 @@ private fun SmlInfixOperation.simplifyInfixOp(substitutions: ParameterSubstituti
     return when (operator()) {
         Or -> simplifyLogicalOp(constantLeft, Boolean::or, constantRight)
         And -> simplifyLogicalOp(constantLeft, Boolean::and, constantRight)
-        Equals -> SmlConstantBoolean(constantLeft == constantRight)
-        NotEquals -> SmlConstantBoolean(constantLeft != constantRight)
-        IdenticalTo -> SmlConstantBoolean(constantLeft == constantRight)
-        NotIdenticalTo -> SmlConstantBoolean(constantLeft != constantRight)
+        Equals -> SdsConstantBoolean(constantLeft == constantRight)
+        NotEquals -> SdsConstantBoolean(constantLeft != constantRight)
+        IdenticalTo -> SdsConstantBoolean(constantLeft == constantRight)
+        NotIdenticalTo -> SdsConstantBoolean(constantLeft != constantRight)
         LessThan -> simplifyComparisonOp(
             constantLeft,
             { a, b -> a < b },
@@ -184,7 +184,7 @@ private fun SmlInfixOperation.simplifyInfixOp(substitutions: ParameterSubstituti
             constantRight
         )
         By -> {
-            if (constantRight == SmlConstantFloat(0.0) || constantRight == SmlConstantInt(0)) {
+            if (constantRight == SdsConstantFloat(0.0) || constantRight == SdsConstantInt(0)) {
                 return null
             }
 
@@ -196,101 +196,101 @@ private fun SmlInfixOperation.simplifyInfixOp(substitutions: ParameterSubstituti
             )
         }
         Elvis -> when (constantLeft) {
-            SmlConstantNull -> constantRight
+            SdsConstantNull -> constantRight
             else -> constantLeft
         }
     }
 }
 
 private fun simplifyLogicalOp(
-    leftOperand: SmlConstantExpression,
+    leftOperand: SdsConstantExpression,
     operation: (Boolean, Boolean) -> Boolean,
-    rightOperand: SmlConstantExpression,
-): SmlConstantExpression? {
+    rightOperand: SdsConstantExpression,
+): SdsConstantExpression? {
 
     return when {
-        leftOperand is SmlConstantBoolean && rightOperand is SmlConstantBoolean -> {
-            SmlConstantBoolean(operation(leftOperand.value, rightOperand.value))
+        leftOperand is SdsConstantBoolean && rightOperand is SdsConstantBoolean -> {
+            SdsConstantBoolean(operation(leftOperand.value, rightOperand.value))
         }
         else -> null
     }
 }
 
 private fun simplifyComparisonOp(
-    leftOperand: SmlConstantExpression,
+    leftOperand: SdsConstantExpression,
     doubleOperation: (Double, Double) -> Boolean,
     intOperation: (Int, Int) -> Boolean,
-    rightOperand: SmlConstantExpression,
-): SmlConstantExpression? {
+    rightOperand: SdsConstantExpression,
+): SdsConstantExpression? {
 
     return when {
-        leftOperand is SmlConstantInt && rightOperand is SmlConstantInt -> {
-            SmlConstantBoolean(intOperation(leftOperand.value, rightOperand.value))
+        leftOperand is SdsConstantInt && rightOperand is SdsConstantInt -> {
+            SdsConstantBoolean(intOperation(leftOperand.value, rightOperand.value))
         }
-        leftOperand is SmlConstantNumber && rightOperand is SmlConstantNumber -> {
-            SmlConstantBoolean(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
+        leftOperand is SdsConstantNumber && rightOperand is SdsConstantNumber -> {
+            SdsConstantBoolean(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
         }
         else -> null
     }
 }
 
 private fun simplifyArithmeticOp(
-    leftOperand: SmlConstantExpression,
+    leftOperand: SdsConstantExpression,
     doubleOperation: (Double, Double) -> Double,
     intOperation: (Int, Int) -> Int,
-    rightOperand: SmlConstantExpression,
-): SmlConstantExpression? {
+    rightOperand: SdsConstantExpression,
+): SdsConstantExpression? {
 
     return when {
-        leftOperand is SmlConstantInt && rightOperand is SmlConstantInt -> {
-            SmlConstantInt(intOperation(leftOperand.value, rightOperand.value))
+        leftOperand is SdsConstantInt && rightOperand is SdsConstantInt -> {
+            SdsConstantInt(intOperation(leftOperand.value, rightOperand.value))
         }
-        leftOperand is SmlConstantNumber && rightOperand is SmlConstantNumber -> {
-            SmlConstantFloat(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
+        leftOperand is SdsConstantNumber && rightOperand is SdsConstantNumber -> {
+            SdsConstantFloat(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
         }
         else -> null
     }
 }
 
-private fun SmlPrefixOperation.simplifyPrefixOp(substitutions: ParameterSubstitutions): SmlConstantExpression? {
+private fun SdsPrefixOperation.simplifyPrefixOp(substitutions: ParameterSubstitutions): SdsConstantExpression? {
     val constantOperand = operand.toConstantExpressionOrNull(substitutions) ?: return null
 
     return when (operator()) {
         Not -> when (constantOperand) {
-            is SmlConstantBoolean -> SmlConstantBoolean(!constantOperand.value)
+            is SdsConstantBoolean -> SdsConstantBoolean(!constantOperand.value)
             else -> null
         }
         PrefixMinus -> when (constantOperand) {
-            is SmlConstantFloat -> SmlConstantFloat(-constantOperand.value)
-            is SmlConstantInt -> SmlConstantInt(-constantOperand.value)
+            is SdsConstantFloat -> SdsConstantFloat(-constantOperand.value)
+            is SdsConstantInt -> SdsConstantInt(-constantOperand.value)
             else -> null
         }
     }
 }
 
-private fun SmlTemplateString.simplifyTemplateString(substitutions: ParameterSubstitutions): SmlConstantExpression? {
+private fun SdsTemplateString.simplifyTemplateString(substitutions: ParameterSubstitutions): SdsConstantExpression? {
     val constExpressions = expressions.map {
         it.toConstantExpressionOrNull(substitutions) ?: return null
     }
 
-    return SmlConstantString(constExpressions.joinToString(""))
+    return SdsConstantString(constExpressions.joinToString(""))
 }
 
-private fun SmlCall.simplifyCall(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
+private fun SdsCall.simplifyCall(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
     val simpleReceiver = simplifyReceiver(substitutions) ?: return null
     val newSubstitutions = buildNewSubstitutions(simpleReceiver, substitutions)
 
     return when (simpleReceiver) {
-        is SmlIntermediateBlockLambda -> {
-            SmlIntermediateRecord(
+        is SdsIntermediateBlockLambda -> {
+            SdsIntermediateRecord(
                 simpleReceiver.results.map {
                     it to it.simplifyAssignee(newSubstitutions)
                 }
             )
         }
-        is SmlIntermediateExpressionLambda -> simpleReceiver.result.simplify(newSubstitutions)
-        is SmlIntermediateStep -> {
-            SmlIntermediateRecord(
+        is SdsIntermediateExpressionLambda -> simpleReceiver.result.simplify(newSubstitutions)
+        is SdsIntermediateStep -> {
+            SdsIntermediateRecord(
                 simpleReceiver.results.map {
                     it to it.uniqueYieldOrNull()?.simplifyAssignee(newSubstitutions)
                 }
@@ -299,22 +299,22 @@ private fun SmlCall.simplifyCall(substitutions: ParameterSubstitutions): SmlSimp
     }
 }
 
-private fun SmlCall.simplifyReceiver(substitutions: ParameterSubstitutions): SmlIntermediateCallable? {
+private fun SdsCall.simplifyReceiver(substitutions: ParameterSubstitutions): SdsIntermediateCallable? {
     return when (val simpleReceiver = receiver.simplify(substitutions)) {
-        is SmlIntermediateRecord -> simpleReceiver.unwrap() as? SmlIntermediateCallable
-        is SmlIntermediateCallable -> simpleReceiver
+        is SdsIntermediateRecord -> simpleReceiver.unwrap() as? SdsIntermediateCallable
+        is SdsIntermediateCallable -> simpleReceiver
         else -> return null
     }
 }
 
-private fun SmlCall.buildNewSubstitutions(
-    simpleReceiver: SmlIntermediateCallable,
+private fun SdsCall.buildNewSubstitutions(
+    simpleReceiver: SdsIntermediateCallable,
     oldSubstitutions: ParameterSubstitutions
 ): ParameterSubstitutions {
 
     val substitutionsOnCreation = when (simpleReceiver) {
-        is SmlIntermediateBlockLambda -> simpleReceiver.substitutionsOnCreation
-        is SmlIntermediateExpressionLambda -> simpleReceiver.substitutionsOnCreation
+        is SdsIntermediateBlockLambda -> simpleReceiver.substitutionsOnCreation
+        is SdsIntermediateExpressionLambda -> simpleReceiver.substitutionsOnCreation
         else -> emptyMap()
     }
 
@@ -323,7 +323,7 @@ private fun SmlCall.buildNewSubstitutions(
         .mapValues { (parameter, arguments) ->
             when {
                 parameter == null -> null
-                parameter.isVariadic -> SmlIntermediateVariadicArguments(
+                parameter.isVariadic -> SdsIntermediateVariadicArguments(
                     arguments.map { it.simplify(oldSubstitutions) }
                 )
                 else -> arguments.uniqueOrNull()?.simplify(oldSubstitutions)
@@ -340,49 +340,49 @@ private fun SmlCall.buildNewSubstitutions(
     }
 }
 
-private fun SmlIndexedAccess.simplifyIndexedAccess(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
-    val simpleReceiver = receiver.simplify(substitutions) as? SmlIntermediateVariadicArguments ?: return null
-    val simpleIndex = index.simplify(substitutions) as? SmlConstantInt ?: return null
+private fun SdsIndexedAccess.simplifyIndexedAccess(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
+    val simpleReceiver = receiver.simplify(substitutions) as? SdsIntermediateVariadicArguments ?: return null
+    val simpleIndex = index.simplify(substitutions) as? SdsConstantInt ?: return null
 
     return simpleReceiver.getArgumentByIndexOrNull(simpleIndex.value)
 }
 
-private fun SmlMemberAccess.simplifyMemberAccess(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
-    if (member.declaration is SmlEnumVariant) {
+private fun SdsMemberAccess.simplifyMemberAccess(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
+    if (member.declaration is SdsEnumVariant) {
         return member.simplifyReference(substitutions)
     }
 
     return when (val simpleReceiver = receiver.simplify(substitutions)) {
-        SmlConstantNull -> when {
-            isNullSafe -> SmlConstantNull
+        SdsConstantNull -> when {
+            isNullSafe -> SdsConstantNull
             else -> null
         }
-        is SmlIntermediateRecord -> simpleReceiver.getSubstitutionByReferenceOrNull(member)
+        is SdsIntermediateRecord -> simpleReceiver.getSubstitutionByReferenceOrNull(member)
         else -> null
     }
 }
 
-private fun SmlReference.simplifyReference(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
+private fun SdsReference.simplifyReference(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
     return when (val declaration = this.declaration) {
-        is SmlEnumVariant -> when {
-            declaration.parametersOrEmpty().isEmpty() -> SmlConstantEnumVariant(declaration)
+        is SdsEnumVariant -> when {
+            declaration.parametersOrEmpty().isEmpty() -> SdsConstantEnumVariant(declaration)
             else -> null
         }
-        is SmlPlaceholder -> declaration.simplifyAssignee(substitutions)
-        is SmlParameter -> declaration.simplifyParameter(substitutions)
-        is SmlStep -> declaration.simplifyStep()
+        is SdsPlaceholder -> declaration.simplifyAssignee(substitutions)
+        is SdsParameter -> declaration.simplifyParameter(substitutions)
+        is SdsStep -> declaration.simplifyStep()
         else -> null
     }
 }
 
-private fun SmlAbstractAssignee.simplifyAssignee(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
-    val simpleFullAssignedExpression = closestAncestorOrNull<SmlAssignment>()
+private fun SdsAbstractAssignee.simplifyAssignee(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
+    val simpleFullAssignedExpression = closestAncestorOrNull<SdsAssignment>()
         ?.expression
         ?.simplify(substitutions)
         ?: return null
 
     return when (simpleFullAssignedExpression) {
-        is SmlIntermediateRecord -> simpleFullAssignedExpression.getSubstitutionByIndexOrNull(indexOrNull())
+        is SdsIntermediateRecord -> simpleFullAssignedExpression.getSubstitutionByIndexOrNull(indexOrNull())
         else -> when {
             indexOrNull() == 0 -> simpleFullAssignedExpression
             else -> null
@@ -390,7 +390,7 @@ private fun SmlAbstractAssignee.simplifyAssignee(substitutions: ParameterSubstit
     }
 }
 
-private fun SmlParameter.simplifyParameter(substitutions: ParameterSubstitutions): SmlSimplifiedExpression? {
+private fun SdsParameter.simplifyParameter(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
     return when {
         this in substitutions -> substitutions[this]
         isOptional() -> defaultValue?.simplify(substitutions)
@@ -398,9 +398,9 @@ private fun SmlParameter.simplifyParameter(substitutions: ParameterSubstitutions
     }
 }
 
-private fun SmlStep.simplifyStep(): SmlIntermediateStep? {
+private fun SdsStep.simplifyStep(): SdsIntermediateStep? {
     return when {
-        callableHasNoSideEffects(resultIfUnknown = true) -> SmlIntermediateStep(
+        callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateStep(
             parameters = parametersOrEmpty(),
             results = resultsOrEmpty()
         )

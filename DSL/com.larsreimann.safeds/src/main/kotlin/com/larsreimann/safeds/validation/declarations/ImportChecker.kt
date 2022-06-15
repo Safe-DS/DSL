@@ -1,21 +1,21 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.emf.aliasNameOrNull
-import de.unibonn.simpleml.emf.isQualified
-import de.unibonn.simpleml.emf.isWildcard
-import de.unibonn.simpleml.scoping.allGlobalDeclarations
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.aliasNameOrNull
+import com.larsreimann.safeds.emf.isQualified
+import com.larsreimann.safeds.emf.isWildcard
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsImport
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
-class ImportChecker : AbstractSimpleMLChecker() {
+class ImportChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun unresolvedNamespace(smlImport: SmlImport) {
+    fun unresolvedNamespace(smlImport: SdsImport) {
         if (smlImport.isQualified()) {
             val importedNamespace = QualifiedName.create(
                 smlImport.importedNamespace.split(".")
@@ -28,7 +28,7 @@ class ImportChecker : AbstractSimpleMLChecker() {
             if (isUnresolved) {
                 error(
                     "No declaration with qualified name '$importedNamespace' exists.",
-                    Literals.SML_IMPORT__IMPORTED_NAMESPACE,
+                    Literals.SDS_IMPORT__IMPORTED_NAMESPACE,
                     ErrorCode.UNRESOLVED_IMPORTED_NAMESPACE
                 )
             }
@@ -44,7 +44,7 @@ class ImportChecker : AbstractSimpleMLChecker() {
             if (isUnresolved) {
                 error(
                     "No package with qualified name '$importedNamespace' exists.",
-                    Literals.SML_IMPORT__IMPORTED_NAMESPACE,
+                    Literals.SDS_IMPORT__IMPORTED_NAMESPACE,
                     ErrorCode.UNRESOLVED_IMPORTED_NAMESPACE
                 )
             }
@@ -52,11 +52,11 @@ class ImportChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun wildcardImportWithAlias(smlImport: SmlImport) {
+    fun wildcardImportWithAlias(smlImport: SdsImport) {
         if (smlImport.isWildcard() && smlImport.aliasNameOrNull() != null) {
             error(
                 "A wildcard import must not have an alias.",
-                Literals.SML_IMPORT__ALIAS,
+                Literals.SDS_IMPORT__ALIAS,
                 ErrorCode.WILDCARD_IMPORT_WITH_ALIAS
             )
         }

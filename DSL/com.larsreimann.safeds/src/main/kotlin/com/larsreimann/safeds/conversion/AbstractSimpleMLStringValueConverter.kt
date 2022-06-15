@@ -13,7 +13,7 @@ import org.eclipse.xtext.nodemodel.INode
  * Example: The string `"myString \{"` in a DSL program has the value `myString {`.
  */
 @Singleton
-abstract class AbstractSimpleMLStringValueConverter(
+abstract class AbstractSafeDSStringValueConverter(
     private val startDelimiter: String,
     private val endDelimiter: String
 ) : STRINGValueConverter() {

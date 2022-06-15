@@ -4,17 +4,17 @@ import com.larsreimann.safeds.safeDS.SdsAttribute
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsProtocolReference
 import com.larsreimann.safeds.safeDS.SdsProtocolSubtermList
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class ProtocolChecker : AbstractSimpleMLChecker() {
+class ProtocolChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustOnlyReferToInstanceMembers(smlProtocolReference: SmlProtocolReference) {
+    fun mustOnlyReferToInstanceMembers(smlProtocolReference: SdsProtocolReference) {
         val token = smlProtocolReference.token
-        val isStaticAttribute = token is SmlAttribute && token.isStatic
-        val isStaticFunction = token is SmlFunction && token.isStatic
+        val isStaticAttribute = token is SdsAttribute && token.isStatic
+        val isStaticFunction = token is SdsFunction && token.isStatic
 
         if (isStaticAttribute || isStaticFunction) {
             error(
@@ -26,7 +26,7 @@ class ProtocolChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun uniqueNames(smlProtocolSubtermList: SmlProtocolSubtermList) {
+    fun uniqueNames(smlProtocolSubtermList: SdsProtocolSubtermList) {
         smlProtocolSubtermList.subterms.reportDuplicateNames {
             "A subterm with name '${it.name}' exists already in this protocol."
         }

@@ -1,14 +1,14 @@
 package com.larsreimann.safeds.staticAnalysis
 
-import de.unibonn.simpleml.emf.containingCallableOrNull
-import de.unibonn.simpleml.emf.immediateCalls
+import com.larsreimann.safeds.emf.containingCallableOrNull
+import com.larsreimann.safeds.emf.immediateCalls
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsCall
 
 /**
  * Returns whether this call might lead to recursion.
  */
-fun SmlCall.isRecursive(): Boolean {
+fun SdsCall.isRecursive(): Boolean {
     val visited = buildSet {
         val containingCallable = containingCallableOrNull()
         if (containingCallable != null) {
@@ -22,9 +22,9 @@ fun SmlCall.isRecursive(): Boolean {
 /**
  * Returns whether this call might lead to recursion.
  */
-private fun SmlCall.isRecursive(visited: Set<SmlAbstractCallable>): Boolean {
+private fun SdsCall.isRecursive(visited: Set<SdsAbstractCallable>): Boolean {
     return when (val callable = this.callableOrNull()) {
-        is SmlAbstractCallable -> {
+        is SdsAbstractCallable -> {
             callable in visited || callable.immediateCalls().any {
                 it.isRecursive(visited + callable)
             }

@@ -1,7 +1,7 @@
 package com.larsreimann.safeds.staticAnalysis.typing
 
-import de.unibonn.simpleml.emf.containingEnumOrNull
-import de.unibonn.simpleml.naming.qualifiedNameOrNull
+import com.larsreimann.safeds.emf.containingEnumOrNull
+import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnum
@@ -68,7 +68,7 @@ data class CallableType(val parameters: List<Type>, val results: List<Type>) : T
     }
 }
 
-sealed class NamedType(smlDeclaration: SmlAbstractDeclaration) : Type() {
+sealed class NamedType(smlDeclaration: SdsAbstractDeclaration) : Type() {
     val simpleName: String = smlDeclaration.name
     val qualifiedName: QualifiedName = smlDeclaration.qualifiedNameOrNull()!!
 
@@ -88,7 +88,7 @@ sealed class NamedType(smlDeclaration: SmlAbstractDeclaration) : Type() {
 }
 
 data class ClassType(
-    val smlClass: SmlClass,
+    val smlClass: SdsClass,
     override val isNullable: Boolean
 ) : NamedType(smlClass) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
@@ -97,7 +97,7 @@ data class ClassType(
 }
 
 data class EnumType(
-    val smlEnum: SmlEnum,
+    val smlEnum: SdsEnum,
     override val isNullable: Boolean
 ) : NamedType(smlEnum) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
@@ -106,7 +106,7 @@ data class EnumType(
 }
 
 data class EnumVariantType(
-    val smlEnumVariant: SmlEnumVariant,
+    val smlEnumVariant: SdsEnumVariant,
     override val isNullable: Boolean
 ) : NamedType(smlEnumVariant) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)

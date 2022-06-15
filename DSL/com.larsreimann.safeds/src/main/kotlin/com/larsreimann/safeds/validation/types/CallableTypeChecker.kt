@@ -1,18 +1,18 @@
 package com.larsreimann.safeds.validation.types
 
-import de.unibonn.simpleml.emf.isOptional
-import de.unibonn.simpleml.emf.parametersOrEmpty
-import de.unibonn.simpleml.emf.resultsOrEmpty
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.emf.isOptional
+import com.larsreimann.safeds.emf.parametersOrEmpty
+import com.larsreimann.safeds.emf.resultsOrEmpty
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsCallableType
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class CallableTypeChecker : AbstractSimpleMLChecker() {
+class CallableTypeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun uniqueNames(smlCallableType: SmlCallableType) {
+    fun uniqueNames(smlCallableType: SdsCallableType) {
         val declarations = smlCallableType.parametersOrEmpty() + smlCallableType.resultsOrEmpty()
         declarations.reportDuplicateNames {
             "A parameter or result with name '${it.name}' exists already in this callable type."
@@ -20,13 +20,13 @@ class CallableTypeChecker : AbstractSimpleMLChecker() {
     }
 
     @Check
-    fun noOptionalParameters(smlCallableType: SmlCallableType) {
+    fun noOptionalParameters(smlCallableType: SdsCallableType) {
         smlCallableType.parametersOrEmpty().forEach {
             if (it.isOptional()) {
                 error(
                     "Parameters in callable types must not be optional.",
                     it,
-                    Literals.SML_PARAMETER__DEFAULT_VALUE,
+                    Literals.SDS_PARAMETER__DEFAULT_VALUE,
                     ErrorCode.NoOptionalParametersInCallableType
                 )
             }

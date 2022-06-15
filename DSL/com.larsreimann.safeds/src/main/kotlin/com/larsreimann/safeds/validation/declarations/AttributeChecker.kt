@@ -1,19 +1,19 @@
 package com.larsreimann.safeds.validation.declarations
 
-import de.unibonn.simpleml.simpleML.SimpleMLPackage.Literals
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAttribute
-import de.unibonn.simpleml.validation.AbstractSimpleMLChecker
-import de.unibonn.simpleml.validation.codes.ErrorCode
+import com.larsreimann.safeds.validation.AbstractSafeDSChecker
+import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class AttributeChecker : AbstractSimpleMLChecker() {
+class AttributeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun type(smlAttribute: SmlAttribute) {
+    fun type(smlAttribute: SdsAttribute) {
         if (smlAttribute.type == null) {
             error(
                 "An attribute must have a type.",
-                Literals.SML_ABSTRACT_DECLARATION__NAME,
+                Literals.SDS_ABSTRACT_DECLARATION__NAME,
                 ErrorCode.AttributeMustHaveType
             )
         }
