@@ -1,6 +1,5 @@
 package com.larsreimann.safeds.validation.declarations
 
-import com.google.errorprone.annotations.Var
 import com.larsreimann.safeds.emf.isConstant
 import com.larsreimann.safeds.emf.parametersOrEmpty
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals

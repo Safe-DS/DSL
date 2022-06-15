@@ -173,7 +173,7 @@ fun variadic(vararg a: Int)
 
 Most commonly, default values in Python are literals, since default values are only evaluated once in Python rather than every time the function is called. The following table shows how Safe-DS literals and Python literals correspond:
 
-| Safe-DS Literal                     | Python Literal         |
+| Safe-DS Literal                       | Python Literal         |
 |---------------------------------------|------------------------|
 | `1` ([int][int-literals])             | `1`                    |
 | `1.0` ([float][float-literals])       | `1.0`                  |

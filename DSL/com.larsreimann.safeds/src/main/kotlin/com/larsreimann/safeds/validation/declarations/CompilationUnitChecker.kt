@@ -6,13 +6,13 @@ import com.larsreimann.safeds.emf.compilationUnitMembersOrEmpty
 import com.larsreimann.safeds.emf.importedNameOrNull
 import com.larsreimann.safeds.emf.isQualified
 import com.larsreimann.safeds.naming.qualifiedNameOrNull
-import com.larsreimann.safeds.scoping.externalGlobalDeclarations
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.scoping.externalGlobalDeclarations
 import com.larsreimann.safeds.utils.duplicatesBy
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode

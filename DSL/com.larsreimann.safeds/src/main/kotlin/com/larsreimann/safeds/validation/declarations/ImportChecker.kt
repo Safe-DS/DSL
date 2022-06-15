@@ -3,9 +3,9 @@ package com.larsreimann.safeds.validation.declarations
 import com.larsreimann.safeds.emf.aliasNameOrNull
 import com.larsreimann.safeds.emf.isQualified
 import com.larsreimann.safeds.emf.isWildcard
-import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsImport
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.naming.QualifiedName

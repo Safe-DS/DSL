@@ -366,7 +366,7 @@ from typing import Callable, Optional, Tuple, TypeVar, Union
 
 The following table shows how Safe-DS types can be written as Python [type hints][type-hints]:
 
-| Safe-DS Type                         | Python Type Hint                                                   |
+| Safe-DS Type                           | Python Type Hint                                                   |
 |----------------------------------------|--------------------------------------------------------------------|
 | `Boolean`                              | `bool`                                                             |
 | `Float`                                | `float`                                                            |

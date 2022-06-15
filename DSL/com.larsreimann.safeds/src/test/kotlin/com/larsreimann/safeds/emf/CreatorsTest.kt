@@ -4,8 +4,6 @@ import com.larsreimann.safeds.constant.SdsFileExtension
 import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
 import com.larsreimann.safeds.constant.SdsProtocolTokenClassValue
 import com.larsreimann.safeds.constant.SdsTypeParameterConstraintOperator
-import com.larsreimann.safeds.serializer.SerializationResult
-import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsFloat
 import com.larsreimann.safeds.safeDS.SdsInt
 import com.larsreimann.safeds.safeDS.SdsLambdaParameterList
@@ -15,6 +13,8 @@ import com.larsreimann.safeds.safeDS.SdsProtocol
 import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
 import com.larsreimann.safeds.safeDS.SdsTemplateStringInner
 import com.larsreimann.safeds.safeDS.SdsTemplateStringStart
+import com.larsreimann.safeds.serializer.SerializationResult
+import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.shouldBeCloseTo
 import io.kotest.assertions.asClue

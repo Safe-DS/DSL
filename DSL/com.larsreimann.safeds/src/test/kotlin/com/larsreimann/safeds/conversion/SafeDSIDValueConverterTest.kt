@@ -7,9 +7,9 @@ import com.larsreimann.safeds.constant.SdsFileExtension
 import com.larsreimann.safeds.emf.createSdsClass
 import com.larsreimann.safeds.emf.createSdsCompilationUnit
 import com.larsreimann.safeds.emf.createSdsDummyResource
+import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
-import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail

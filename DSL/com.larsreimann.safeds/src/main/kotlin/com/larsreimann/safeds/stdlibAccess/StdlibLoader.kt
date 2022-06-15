@@ -2,9 +2,9 @@ package com.larsreimann.safeds.stdlibAccess
 
 import com.larsreimann.safeds.constant.SdsFileExtension
 import com.larsreimann.safeds.emf.resourceSetOrNull
-import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsClass
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject

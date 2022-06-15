@@ -74,7 +74,7 @@ private fun EnumType.isSubstitutableFor(other: Type): Boolean {
     return when (val unwrappedOther = unwrapVariadicType(other)) {
         is ClassType -> {
             (!this.isNullable || unwrappedOther.isNullable) &&
-                    unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
+                unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         }
         is EnumType -> {
             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnum == unwrappedOther.sdsEnum
@@ -90,11 +90,11 @@ private fun EnumVariantType.isSubstitutableFor(other: Type): Boolean {
     return when (val unwrappedOther = unwrapVariadicType(other)) {
         is ClassType -> {
             (!this.isNullable || unwrappedOther.isNullable) &&
-                    unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
+                unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         }
         is EnumType -> {
             (!this.isNullable || unwrappedOther.isNullable) &&
-                    this.sdsEnumVariant in unwrappedOther.sdsEnum.variantsOrEmpty()
+                this.sdsEnumVariant in unwrappedOther.sdsEnum.variantsOrEmpty()
         }
         is EnumVariantType -> {
             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnumVariant == unwrappedOther.sdsEnumVariant

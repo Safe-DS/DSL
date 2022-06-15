@@ -9,9 +9,9 @@ import com.larsreimann.safeds.emf.createSdsInt
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.sdsExpressionStatement
 import com.larsreimann.safeds.emf.sdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsInt
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
-import com.larsreimann.safeds.safeDS.SdsInt
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import io.kotest.matchers.collections.shouldHaveSize

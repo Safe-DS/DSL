@@ -6,7 +6,6 @@ import com.larsreimann.safeds.emf.isClassMember
 import com.larsreimann.safeds.emf.isGlobal
 import com.larsreimann.safeds.emf.parametersOrEmpty
 import com.larsreimann.safeds.emf.variantsOrEmpty
-import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsClass
@@ -15,6 +14,7 @@ import com.larsreimann.safeds.safeDS.SdsEnum
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsStep
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
 import com.larsreimann.safeds.staticAnalysis.typing.Type
 import com.larsreimann.safeds.staticAnalysis.typing.hasPrimitiveType
 import com.larsreimann.safeds.staticAnalysis.typing.isSubstitutableFor

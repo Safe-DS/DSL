@@ -3,13 +3,13 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as os from 'os'
-import * as path from 'path'
-import { workspace, ExtensionContext } from 'vscode'
+import * as os from 'os';
+import * as path from 'path';
+import { workspace, ExtensionContext } from 'vscode';
 
-import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node'
+import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
 
-let client: LanguageClient
+let client: LanguageClient;
 
 export const activate = (context: ExtensionContext) => {
     let launcher = os.platform() === 'win32' ? 'com.larsreimann.safeds.ide.bat' : 'com.larsreimann.safeds.ide';
@@ -24,7 +24,7 @@ export const activate = (context: ExtensionContext) => {
             command: script,
             args: ['-log', 'debug', '--trace-deprecation'],
         },
-    }
+    };
 
     // Options to control the language client
     let clientOptions: LanguageClientOptions = {
@@ -35,18 +35,18 @@ export const activate = (context: ExtensionContext) => {
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc'),
         },
         outputChannelName: 'Safe-DS Language Server',
-    }
+    };
 
     // Create the language client and start the client.
-    client = new LanguageClient('safeds', 'Safe-DS', serverOptions, clientOptions)
+    client = new LanguageClient('safeds', 'Safe-DS', serverOptions, clientOptions);
 
     // Start the client. This will also launch the server
-    client.start()
+    client.start();
 };
 
 export const deactivate = (): Thenable<void> | undefined => {
     if (!client) {
-        return undefined
+        return undefined;
     }
-    return client.stop()
+    return client.stop();
 };

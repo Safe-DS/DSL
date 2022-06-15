@@ -8,9 +8,6 @@ import com.larsreimann.safeds.emf.containingCompilationUnitOrNull
 import com.larsreimann.safeds.emf.parametersOrEmpty
 import com.larsreimann.safeds.emf.resultsOrEmpty
 import com.larsreimann.safeds.emf.variantsOrEmpty
-import com.larsreimann.safeds.scoping.allGlobalDeclarations
-import com.larsreimann.safeds.serializer.SerializationResult
-import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotation
 import com.larsreimann.safeds.safeDS.SdsAttribute
@@ -20,6 +17,9 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsResult
+import com.larsreimann.safeds.scoping.allGlobalDeclarations
+import com.larsreimann.safeds.serializer.SerializationResult
+import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.stdlibAccess.descriptionOrNull
 import com.larsreimann.safeds.stdlibAccess.validTargets
 import org.eclipse.emf.ecore.EObject

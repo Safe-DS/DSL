@@ -1,9 +1,9 @@
 package com.larsreimann.safeds.scoping
 
 import com.google.inject.Inject
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.scoping.IndexExtensionsInjectionTarget.containerManager
 import com.larsreimann.safeds.scoping.IndexExtensionsInjectionTarget.resourceDescriptionsProvider
-import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet

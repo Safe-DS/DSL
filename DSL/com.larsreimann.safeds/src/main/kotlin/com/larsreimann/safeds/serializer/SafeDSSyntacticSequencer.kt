@@ -1,3 +1,3 @@
 package com.larsreimann.safeds.serializer
 
-class SafeDSSyntacticSequencer: AbstractSafeDSSyntacticSequencer()
+class SafeDSSyntacticSequencer : AbstractSafeDSSyntacticSequencer()

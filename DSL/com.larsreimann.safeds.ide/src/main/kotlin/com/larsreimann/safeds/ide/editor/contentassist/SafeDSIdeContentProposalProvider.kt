@@ -1,9 +1,9 @@
 package com.larsreimann.safeds.ide.editor.contentassist
 
 import com.google.inject.Inject
-import com.larsreimann.safeds.services.SafeDSGrammarAccess
 import com.larsreimann.safeds.safeDS.SdsArgumentList
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
+import com.larsreimann.safeds.services.SafeDSGrammarAccess
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.Keyword

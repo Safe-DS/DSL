@@ -10,9 +10,9 @@ import com.larsreimann.safeds.naming.QualifiedNameProviderInjectionTarget
 import com.larsreimann.safeds.scoping.IndexExtensionsInjectionTarget
 import com.larsreimann.safeds.scoping.SafeDSImportedNamespaceAwareLocalScopeProvider
 import com.larsreimann.safeds.scoping.SafeDSResourceDescriptionStrategy
-import com.larsreimann.safeds.serializer.SerializerExtensionsInjectionTarget
 import com.larsreimann.safeds.serializer.SafeDSCrossReferenceSerializer
 import com.larsreimann.safeds.serializer.SafeDSHiddenTokenSequencer
+import com.larsreimann.safeds.serializer.SerializerExtensionsInjectionTarget
 import com.larsreimann.safeds.services.SafeDSGrammarAccess
 import org.eclipse.xtext.IGrammarAccess
 import org.eclipse.xtext.conversion.IValueConverterService
