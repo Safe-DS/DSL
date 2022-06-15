@@ -4,7 +4,7 @@
 
 Variance deals with the question which generic types are compatible with each other. We explain this concept using the following [class][classes]:
 
-```
+```txt
 class Stack<T>(vararg initialElements: T) {
     fun push(element: T)
 
@@ -40,7 +40,7 @@ As outlined above, we can only allow covariance if we forbid writing access.  Th
 
 In the `Stack` example, we can make the [class][classes] covariant by adding the keyword `out` to the [type parameter][type-parameters] `T` and removing the writing [method][methods] `push`:
 
-```
+```txt
 class Stack<out T> {
     fun pop() -> element: T
 }
@@ -54,7 +54,7 @@ As outlined above, we can only allow contravariance if we forbid reading access.
 
 In the `Stack` example, we can make the [class][classes] contravariant by adding the keyword `in` to the [type parameter][type-parameters] `T` and removing the reading [method][methods] `pop`:
 
-```
+```txt
 class Stack<in T> {
     fun push(element: T)
 }
@@ -72,15 +72,15 @@ The following table sums up the syntax of [declaration-site variance][declaratio
 |Covariant|`class Stack<out T>`|`Stack<out T>`
 |Contravariant|`class Stack<in T>`|`Stack<in T>`|
 
-[types]: docs/DSL/common/types.md
-[named-types]: docs/DSL/common/types.md#named-types
-[type-arguments]: docs/DSL/common/types.md#type-arguments
-[use-site-variance]: docs/DSL/common/types.md#use-site-variance
-[parameters]: docs/DSL/common/parameters.md
-[results]: docs/DSL/common/results.md
+[types]: types.md
+[named-types]: types.md#named-types
+[type-arguments]: types.md#type-arguments
+[use-site-variance]: types.md#use-site-variance
+[parameters]: parameters.md
+[results]: results.md
 
-[classes]: docs/DSL/stub-languagenguage/classes.md
-[methods]: docs/DSL/stub-languagenguage/classes.md#defining-methods
-[subclassing]: docs/DSL/stub-languagenguage/classes.md#subclassing
-[type-parameters]: docs/DSL/stub-languagenguage/type-parameters.md
-[declaration-site-variance]: docs/DSL/stub-languagenguage/type-parameters.md#declaration-site-variance
+[classes]: ../stub-language/classes.md
+[methods]: ../stub-language/classes.md#defining-methods
+[subclassing]: ../stub-language/classes.md#subclassing
+[type-parameters]: ../stub-language/type-parameters.md
+[declaration-site-variance]: ../stub-language/type-parameters.md#declaration-site-variance

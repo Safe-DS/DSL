@@ -8,7 +8,7 @@ Steps are used to extract a sequence of [statements][statements] from a Machine 
 
 Let's look at a minimal example of a step:
 
-```
+```txt
 step loadMovieRatingsSample() {}
 ```
 
@@ -27,7 +27,7 @@ Parameters must be declared in the header of the step so [callers](#calling-a-st
 
 In the following example, we give the step a single parameters with name `nInstances` and [type][types] `Int`.
 
-```
+```txt
 step loadMovieRatingsSample(nInstances: Int) {}
 ```
 
@@ -37,7 +37,7 @@ More information about parameters can be found in the [linked document][paramete
 
 Within the step we can access the value of a parameter using a [reference][references]. Here is a basic example where we print the value of the `nInstances` parameter to the console:
 
-```
+```txt
 step loadMovieRatingsSample(nInstances: Int) {
     print(nInstances);
 }
@@ -49,7 +49,7 @@ More information about references can be found in the [linked document][referenc
 
 In order to describe what should be done when the step is executed, we need to add [statements][statements] to its body. The previous example in the section ["References to Parameters"](#references-to-parameters) already contained a statement - an [expression statement][expression-statements] to be precise. Here is another example, this time showing an [assignment][assignments]:
 
-```
+```txt
 step loadMovieRatingsSample(nInstances: Int) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
 }
@@ -65,7 +65,7 @@ More information about statements can be found in the [linked document][statemen
 
 As with [parameters](#parameters) we first need to declare the available results in the headed. This tells [callers](#calling-a-step) that they can use these results and reminds us to [assign a value to them](#assigning-to-results) in the body of the step. Let's look at an example:
 
-```
+```txt
 step loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
 }
@@ -80,7 +80,7 @@ More information about the declaration of results can be found in the [linked do
 Currently, the program will not compile since we never assigned a value to these results. This can be done with an [assignment][assignments] and the `yield` keyword:
 
 
-```
+```txt
 step loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
     yield features = movieRatingsSample.keepAttributes(
@@ -102,7 +102,7 @@ The order of the [result declarations](#result-declaration) does not need to mat
 
 By default a step can be [imported][imports] in any other file and reused there. We say they have `public` visibility. However, it is possible to restrict the visibility of a step with modifiers:
 
-```
+```txt
 internal step internalStep() {}
 
 private step privateStep() {}
@@ -114,22 +114,22 @@ The step `internalStep` is only visible in files with the same [package][package
 
 Inside of a [workflow][workflows], another step, or a [lambda][lambdas] we can then [call][calls] a step, which means the step is executed when the call is reached: The results of a step can then be used as needed. In the following example, where we call the step `loadMovieRatingsSample` that we defined above, we [assign the results to placeholders][assignments-to-placeholders]:
 
-```
+```txt
 val features, val target = loadMovieRatingsSample(nInstances = 1000);
 ```
 
 More information about calls can be found in the [linked document][calls].
 
-[imports]: docs/DSL/commoncommon/imports.md
-[parameters]: docs/DSL/commoncommon/parameters.md
-[results]: docs/DSL/commoncommon/results.md
-[types]: docs/DSL/commoncommon/types.md
-[packages]: docs/DSL/commoncommon/packages.md
-[statements]: docs/DSL/workflow-language/statements.md
-[assignments]: docs/DSL/workflow-language/statements.md#assignments
-[assignments-to-placeholders]: docs/DSL/workflow-language/statements.md#assigning-placeholders
-[expression-statements]: docs/DSL/workflow-language/statements.md#expression-statements
-[calls]: docs/DSL/workflow-language/expressions.md#calls
-[lambdas]: docs/DSL/workflow-language/expressions.md#lambdas
-[references]: docs/DSL/workflow-language/expressions.md#references
-[workflows]: docs/DSL/workflow-language/workflows.md
+[imports]: ../common/imports.md
+[parameters]: ../common/parameters.md
+[results]: ../common/results.md
+[types]: ../common/types.md
+[packages]: ../common/packages.md
+[statements]: statements.md
+[assignments]: statements.md#assignments
+[assignments-to-placeholders]: statements.md#assigning-placeholders
+[expression-statements]: statements.md#expression-statements
+[calls]: expressions.md#calls
+[lambdas]: expressions.md#lambdas
+[references]: expressions.md#references
+[workflows]: workflows.md

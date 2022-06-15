@@ -8,7 +8,7 @@ Workflows are Machine Learning programs designed to solve a specific task. They 
 
 Let's look at a minimal example of a workflow:
 
-```
+```txt
 workflow predictSpeed {}
 ```
 
@@ -21,7 +21,7 @@ This declaration of a workflow has the following syntactic elements:
 
 In order to describe what should be done when the workflow is executed, we need to add [statements][statements] to its body, as shown in this example:
 
-```
+```txt
 workflow predictSpeed {
     val adac = loadDataset("ADAC");
     val adacSample = adac.sample(1000);
@@ -32,5 +32,5 @@ workflow predictSpeed {
 
 More information about statements can be found in the [linked document][statements]. Note particularly, that all statements must end with a semicolon.
 
-[steps]: docs/DSL/workflow-language/steps.md
-[statements]: docs/DSL/workflow-language/statements.md
+[steps]: steps.md
+[statements]: statements.md

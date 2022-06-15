@@ -2,7 +2,7 @@
 
 _Packages_ are used to prevent conflicts when multiple files have declarations with the same name. They accomplish this by grouping all declarations in a file into a namespace. Here is an example for a package declaration:
 
-```
+```txt
 package de.unibonn.speedPrediction
 ```
 
@@ -34,7 +34,7 @@ class DecisionTree:
 
 This file contains the actual implementation of the Python class `DecisionTree`. We now want to make this Python class available in Safe-DS, which requires the following Safe-DS stub file:
 
-```
+```txt
 // Safe-DS file "safeds/model/regression/_decision_tree/DecisionTree.sdsstub"
 
 package safeds.model.regression._decision_tree
@@ -84,7 +84,7 @@ from safeds.model.regression import DecisionTree
 
 Note the omission of the suffix `._decision_tree` after `safeds.model.regression`. Likewise, we can now update the Safe-DS stub code. We again just take everything between `from` and `import` and use this as the Safe-DS package name:
 
-```
+```txt
 // Safe-DS file "safeds/model/regression/DecisionTree.sdsstub"
 
 package safeds.model.regression
@@ -113,7 +113,7 @@ class DecisionTree:
 
 Our original solution leads to a warning because the Safe-DS package name contains the segment `_decision_tree`, which is not `lowerCamelCase` due to the underscores:
 
-```
+```txt
 // Safe-DS file "safeds/model/regression/_decision_tree/DecisionTree.sdsstub"
 
 package safeds.model.regression._decision_tree
@@ -123,7 +123,7 @@ class DecisionTree()
 
 By [calling][annotation-calls] the [annotation][annotations] `@PythonModule`, we can also specify the corresponding [Python module][python-modules], however. If this [annotation][annotations] is [called][annotation-calls], it takes precedence over the Safe-DS package name. This allows us to pick an arbitrary Safe-DS package that respects the Safe-DS naming convention. We can even group multiple [Python modules][python-modules] together in one Safe-DS package without relying on Python's `__init__.py` files:
 
-```
+```txt
 // Safe-DS file "safeds/model/regression/DecisionTree.sdsstub"
 
 @PythonModule("safeds.model.regression._decision_tree")
@@ -136,7 +136,7 @@ class DecisionTree()
 Here is a breakdown of this:
 * We [call][annotation-calls] the `@PythonModule` [annotation][annotations] before we declare the Safe-DS package. The [Python module][python-modules] that exports the Python declarations that correspond to the Safe-DS declarations in this stub file is passed as a [string literal][string-literals] (here `safeds.model.regression._decision_tree`). This is used only for code generation and does not affect users of Safe-DS.
 * We specify the Safe-DS package as usual. This must be used when we [import][imports] the declaration in another Safe-DS file:
-    ```
+    ```txt
     // Safe-DS
 
     import safeds.model.regression.DecisionTree
@@ -144,14 +144,14 @@ Here is a breakdown of this:
 
 It is important to note that the `@PythonModule` annotation only affects the one Safe-DS file that contains it rather than the entire Safe-DS package. This allows different Safe-DS files in the same package to point to different [Python modules][python-modules].
 
-[stub-language]: docs/DSL/stub-languagenguage/README.md
-[annotations]: docs/DSL/stub-languagenguage/annotations.md
-[annotation-calls]: docs/DSL/stub-languagenguage/annotations.md#calling-an-annotation
-[imports]: docs/DSL/common/imports.md
-[classes]: docs/DSL/stub-languagenguage/classes.md
-[steps]: docs/DSL/workflow-languagenguage/steps.md
-[workflows]: docs/DSL/workflow-languagenguage/workflows.md
-[string-literals]: docs/DSL/workflow-languagenguage/expressions.md#string-literals
+[stub-language]: ../stub-language/README.md
+[annotations]: ../stub-language/annotations.md
+[annotation-calls]: ../stub-language/annotations.md#calling-an-annotation
+[imports]: imports.md
+[classes]: ../stub-language/classes.md
+[steps]: ../workflow-language/steps.md
+[workflows]: ../workflow-language/workflows.md
+[string-literals]: ../workflow-language/expressions.md#string-literals
 
 [python-modules]: https://docs.python.org/3/tutorial/modules.html#modules
 [python-packages]: https://docs.python.org/3/tutorial/modules.html#packages

@@ -1,3 +1,10 @@
 {
-    "ignorePatterns": ["(^#.*)"]
+    "ignorePatterns": [
+        {
+            "pattern": "^(http|https)://localhost"
+        },
+        {
+            "pattern": "^#"
+        }
+    ]
 }

@@ -90,20 +90,20 @@ The package `safeds.lang` contains several annotations that are processed by Saf
 * [`Target`][safeds-lang-target], which can restrict the possible targets of an annotation, and
 * [`Repeatable`][safeds-lang-repeatable], which allows an annotation to be called multiple times on the same declaration.
 
-[parameters]: docs/DSL/commoncommon/parameters.md
-[types]: docs/DSL/commoncommon/types.md
-[attributes]: docs/DSL/stub-language/classes.md#defining-attributes
-[classes]: docs/DSL/stub-language/classes.md#defining-classes
-[enums]: docs/DSL/stub-language/enumerations.md#declaring-an-enumeration
-[enum-variants]: docs/DSL/stub-language/enumerations.md#enum-variants
-[global-functions]: docs/DSL/stub-language/global-functions.md
-[methods]: docs/DSL/stub-language/classes.md#defining-methods
-[results]: docs/DSL/commoncommon/parameters.md
-[steps]: docs/DSL/workflow-languagenguage/steps.md
-[type-parameters]: docs/DSL/stub-language/type-parameters.md
-[workflows]: docs/DSL/workflow-languagenguage/workflows.md
-[safeds-lang]: docs/Stdlib/API/safeds_lang.md
-[safeds-lang-repeatable]: docs/Stdlib/API/safeds_lang.md#annotation-repeatable
-[safeds-lang-target]: docs/Stdlib/API/safeds_lang.md#annotation-target
-[calls]: docs/DSL/workflow-languagenguage/expressions.md#calls
-[argument-restrictions]: docs/DSL/workflow-languagenguage/expressions.md#restrictions-for-arguments
+[parameters]: ../common/parameters.md
+[types]: ../common/types.md
+[attributes]: classes.md#defining-attributes
+[classes]: classes.md#defining-classes
+[enums]: enumerations.md#declaring-an-enumeration
+[enum-variants]: enumerations.md#enum-variants
+[global-functions]: global-functions.md
+[methods]: classes.md#defining-methods
+[results]: ../common/parameters.md
+[steps]: ../workflow-language/steps.md
+[type-parameters]: type-parameters.md
+[workflows]: ../workflow-language/workflows.md
+[safeds-lang]: ../../Stdlib/API/safeds_lang.md
+[safeds-lang-repeatable]: ../../Stdlib/API/safeds_lang.md#annotation-repeatable
+[safeds-lang-target]: ../../Stdlib/API/safeds_lang.md#annotation-target
+[calls]: ../workflow-language/expressions.md#calls
+[argument-restrictions]: ../workflow-language/expressions.md#restrictions-for-arguments

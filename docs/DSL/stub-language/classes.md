@@ -11,7 +11,7 @@ To define a class we use the following syntax:
 * To define the constructor of the class we list the _parameters_ (inputs) necessary to create an instance. This list is enclosed in parentheses and separated by commas, `(regularizationStrength: Float)` in the following snippet. For each parameter, we list the name of the parameter followed by a colon and its type.
 * Finally, we have the _body_ of the class, which lists the members ([attributes](#defining-attributes) for data and [methods](#defining-methods) for operations on this data, as explained in the following sections) of the class enclosed by curly braces.
 
-```
+```txt
 class Lasso(regularizationStrength: Float) {
     // ...
 }
@@ -26,7 +26,7 @@ The data of a class is called _attributes_. We differentiate _static attributes_
 * The name of the attribute ("regularizationStrength" in the following example).
 * A colon followed by the type of the attribute ("Float" in the next example).
 
-```
+```txt
 class Lasso(regularizationStrength: Float) {
     attr regularizationStrength: Float
 
@@ -44,7 +44,7 @@ _Methods_ represent operations on the attributes of a class. As with attributes 
 * The list of _parameters_ (inputs) enclosed in parentheses and separated by commas (`(features: Table, target: Table)` in the following snippet). For each parameter we list the name of the parameter followed by a colon and its type.
 * Optionally, we can list the _results_ (outputs) after the symbol `->`. If this section is missing it means the method does not produce results. The list of results is again enclosed in parentheses and we use commas to separate the entries. If there is exactly one result we can omit the parentheses (see `-> trainedModel: Lasso` in the following example). For each result we specify its name followed by a colon and its type.
 
-```
+```txt
 class Lasso(regularizationStrength: Float) {
     attr regularizationStrength: Float
 
@@ -64,6 +64,6 @@ class Lasso(regularizationStrength: Float) {
 
 To express that the type of a declaration is some class we simply write the name of the class as the type. For example, we could declare a function that plots the line learned by a ridge regression model like this:
 
-```
+```txt
 fun plotRidge(model: Ridge)
 ```
