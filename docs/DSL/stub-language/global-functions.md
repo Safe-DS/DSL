@@ -15,5 +15,5 @@ The syntax to define a global function is as follows:
 fun loadDataset(name: String) -> dataset: Dataset
 ```
 
-[classes]: ./classes.md
+[classes]: docs/DSL/stub-language/classes.md
 [stub-language]: README.md

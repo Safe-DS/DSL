@@ -541,28 +541,28 @@ We all know that `2 + 3 * 7` is `23` and not `35`. The reason is that the `*` op
 
 If the default precedence of operators is not sufficient, parentheses can be used to force a part of an expression to be evaluated first.
 
-[imports]: ../common/imports.md
-[packages]: ../common/packages.md
-[parameters]: ../common/parameters.md
-[required-parameters]: ../common/parameters.md#required-parameters
-[optional-parameters]: ../common/parameters.md#optional-parameters
-[variadic-parameters]: ../common/parameters.md#variadic-parameters
-[results]: ../common/results.md
-[types]: ../common/types.md
-[callable-types]: ../common/types.md#callable-types
+[imports]: docs/DSL/commoncommon/imports.md
+[packages]: docs/DSL/commoncommon/packages.md
+[parameters]: docs/DSL/commoncommon/parameters.md
+[required-parameters]: docs/DSL/commoncommon/parameters.md#required-parameters
+[optional-parameters]: docs/DSL/commoncommon/parameters.md#optional-parameters
+[variadic-parameters]: docs/DSL/commoncommon/parameters.md#variadic-parameters
+[results]: docs/DSL/commoncommon/results.md
+[types]: docs/DSL/commoncommon/types.md
+[callable-types]: docs/DSL/commoncommon/types.md#callable-types
 
-[classes]: ../stub-language/classes.md
-[attributes]: ../stub-language/classes.md#defining-attributes
-[methods]: ../stub-language/classes.md#defining-methods
-[enums]: ../stub-language/enumerations.md
-[enum-variants]: ../stub-language/enumerations.md#enum-variants
-[global-functions]: ../stub-language/global-functions.md
+[classes]: docs/DSL/stub-languagenguage/classes.md
+[attributes]: docs/DSL/stub-languagenguage/classes.md#defining-attributes
+[methods]: docs/DSL/stub-languagenguage/classes.md#defining-methods
+[enums]: docs/DSL/stub-languagenguage/enumerations.md
+[enum-variants]: docs/DSL/stub-languagenguage/enumerations.md#enum-variants
+[global-functions]: docs/DSL/stub-languagenguage/global-functions.md
 
-[workflow-language]: ./README.md
-[statements]: ./statements.md
-[assignment-multiple-assignees]: ./statements.md#multiple-assignees
-[assignments-to-step-results]: ./statements.md#yielding-results-of-steps
-[assignments-to-block-lambda-results]: ./statements.md#declare-results-of-block-lambdas
-[placeholders]: ./statements.md#declaring-placeholders
-[steps]: ./steps.md
-[step-body]: ./steps.md#statements
+[workflow-language]: README.md
+[statements]: docs/DSL/workflow-language/statements.md
+[assignment-multiple-assignees]: docs/DSL/workflow-language/statements.md#multiple-assignees
+[assignments-to-step-results]: docs/DSL/workflow-language/statements.md#yielding-results-of-steps
+[assignments-to-block-lambda-results]: docs/DSL/workflow-language/statements.md#declare-results-of-block-lambdas
+[placeholders]: docs/DSL/workflow-language/statements.md#declaring-placeholders
+[steps]: docs/DSL/workflow-language/steps.md
+[step-body]: docs/DSL/workflow-language/steps.md#statements

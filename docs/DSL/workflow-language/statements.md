@@ -130,12 +130,12 @@ Let us sum up the complete syntax of an assignment:
 
 Assignment happens by index, so the first result is assigned to the first assignee, the second result is assigned to the second assignee, and so forth. If there are more results than assignees, any trailing results are implicitly ignored.
 
-[results]: ../common/results.md
-[stub-language]: ../stub-language/README.md
-[workflow-language]: ./README.md
-[expressions]: ./expressions.md
-[block-lambdas]: ./expressions.md#block-lambdas
-[calls]: ./expressions.md#calls
-[references]: ./expressions.md#references
-[steps]: ./steps.md
-[workflows]: ./workflows.md
+[results]: docs/DSL/commoncommon/results.md
+[stub-language]: docs/DSL/stub-languagenguage/README.md
+[workflow-language]: README.md
+[expressions]: docs/DSL/workflow-language/expressions.md
+[block-lambdas]: docs/DSL/workflow-language/expressions.md#block-lambdas
+[calls]: docs/DSL/workflow-language/expressions.md#calls
+[references]: docs/DSL/workflow-language/expressions.md#references
+[steps]: docs/DSL/workflow-language/steps.md
+[workflows]: docs/DSL/workflow-language/workflows.md
