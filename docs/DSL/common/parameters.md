@@ -186,7 +186,7 @@ Most commonly, default values in Python are literals, since default values are o
 [types-python]: types.md#corresponding-python-code
 [steps]: ../workflow-language/steps.md
 [calls]: ../workflow-language/expressions.md#calls
-[stub-language]: ../stub-languageREADME.md
+[stub-language]: ../stub-language/README.md
 [literals]: ../workflow-language/expressions.md#literals
 [int-literals]: ../workflow-language/expressions.md#int-literals
 [float-literals]: ../workflow-language/expressions.md#float-literals

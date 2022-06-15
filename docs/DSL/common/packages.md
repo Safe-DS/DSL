@@ -147,7 +147,7 @@ It is important to note that the `@PythonModule` annotation only affects the one
 [stub-language]: ../stub-language/README.md
 [annotations]: ../stub-language/annotations.md
 [annotation-calls]: ../stub-language/annotations.md#calling-an-annotation
-[imports]: docs/DSL/common/imports.md
+[imports]: imports.md
 [classes]: ../stub-language/classes.md
 [steps]: ../workflow-language/steps.md
 [workflows]: ../workflow-language/workflows.md
