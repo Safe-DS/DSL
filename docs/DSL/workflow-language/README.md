@@ -12,11 +12,11 @@ The workflow language is the part of the Safe-DS DSL that is designed to solve s
 
 Files that use the workflow language must have the extension `.sdsflow`.
 
-[packages]: docs/DSL/commoncommon/packages.md
-[imports]: docs/DSL/commoncommon/imports.md
-[workflows]: docs/DSL/workflow-language/workflows.md
-[steps]: docs/DSL/workflow-language/steps.md
-[statements]: docs/DSL/workflow-language/statements.md
-[expressions]: docs/DSL/workflow-language/expressions.md
-[block-lambdas]: docs/DSL/workflow-language/expressions.md#block-lambdas
-[comments]: docs/DSL/commoncommon/comments.md
+[packages]: ../common/packages.md
+[imports]: ../common/imports.md
+[workflows]: workflows.md
+[steps]: steps.md
+[statements]: statements.md
+[expressions]: expressions.md
+[block-lambdas]: expressions.md#block-lambdas
+[comments]: ../common/comments.md
