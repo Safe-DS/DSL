@@ -401,29 +401,29 @@ Getting the `<result type`> depends on the number of results. If there is only a
 3. add the prefix `Tuple[`,
 4. add the suffix `]`.
 
-[variance]: docs/DSL/common/variance.md
-[parameters]: docs/DSL/common/parameters.md
-[results]: docs/DSL/common/results.md
+[variance]: variance.md
+[parameters]: parameters.md
+[results]: results.md
 
-[stub-language]: docs/DSL/stub-languagenguage/README.md
-[classes]: docs/DSL/stub-languagenguage/classes.md
-[subclassing]: docs/DSL/stub-languagenguage/classes.md#subclassing
-[enums]: docs/DSL/stub-languagenguage/enumerations.md
-[variants]: docs/DSL/stub-languagenguage/enumerations.md#enum-variants
-[type-parameters]: docs/DSL/stub-languagenguage/type-parameters.md
-[type-parameter-bounds]: docs/DSL/stub-languagenguage/type-parameters.md#bounds
-[declaration-site-variance]: docs/DSL/stub-languagenguage/type-parameters.md#declaration-site-variance
-[class-constructors]: docs/DSL/stub-languagenguage/classes.md
-[enum-variant-constructors]: docs/DSL/stub-languagenguage/enumerations.md#constructors
-[methods]: docs/DSL/stub-languagenguage/classes.md#defining-methods
-[global-functions]: docs/DSL/stub-languagenguage/global-functions.md
+[stub-language]: ../stub-language/README.md
+[classes]: ../stub-language/classes.md
+[subclassing]: ../stub-language/classes.md#subclassing
+[enums]: ../stub-language/enumerations.md
+[variants]: ../stub-language/enumerations.md#enum-variants
+[type-parameters]: ../stub-language/type-parameters.md
+[type-parameter-bounds]: ../stub-language/type-parameters.md#bounds
+[declaration-site-variance]: ../stub-language/type-parameters.md#declaration-site-variance
+[class-constructors]: ../stub-language/classes.md
+[enum-variant-constructors]: ../stub-language/enumerations.md#constructors
+[methods]: ../stub-language/classes.md#defining-methods
+[global-functions]: ../stub-language/global-functions.md
 
 
-[member-accesses]: docs/DSL/workflow-languagenguage/expressions.md#member-access-of-enum-variants
-[null-literal]: docs/DSL/workflow-languagenguage/expressions.md#null-literal
-[calls]: docs/DSL/workflow-languagenguage/expressions.md#calls
-[steps]: docs/DSL/workflow-languagenguage/steps.md
-[lambdas]: docs/DSL/workflow-languagenguage/expressions.md#lambdas
+[member-accesses]: ../workflow-language/expressions.md#member-access-of-enum-variants
+[null-literal]: ../workflow-language/expressions.md#null-literal
+[calls]: ../workflow-language/expressions.md#calls
+[steps]: ../workflow-language/steps.md
+[lambdas]: ../workflow-language/expressions.md#lambdas
 
 [mypy]: http://mypy-lang.org/
 [type-hints]: https://docs.python.org/3/library/typing.html

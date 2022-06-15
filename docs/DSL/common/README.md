@@ -9,12 +9,12 @@ Several parts of the Safe-DS DSL are shared between the [workflow lanugage][work
 * [Types][types] describe the values that a declaration can accept.
 * [Comments][comments] document the code.
 
-[workflow-language]: docs/DSL/workflow-languagenguage/README.md
-[stub-language]: docs/DSL/stub-languagenguage/README.md
-[calls]: docs/DSL/workflow-languagenguage/expressions.md#calls
-[packages]: docs/DSL/common/packages.md
-[imports]: docs/DSL/common/imports.md
-[parameters]: docs/DSL/common/parameters.md
-[results]: docs/DSL/common/results.md
-[types]: docs/DSL/common/types.md
-[comments]: docs/DSL/common/comments.md
+[workflow-language]: ../workflow-language/README.md
+[stub-language]: ../stub-language/README.md
+[calls]: ../workflow-language/expressions.md#calls
+[packages]: packages.md
+[imports]: imports.md
+[parameters]: parameters.md
+[results]: results.md
+[types]: types.md
+[comments]: comments.md

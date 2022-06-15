@@ -62,9 +62,9 @@ Results must be ordered the same way in Python as they are in Safe-DS. Moreover,
 Since Python results do not have a name, the names of Safe-DS results can be arbitrary. Naturally, a name should be chosen that captures the purpose of the result.
 
 
-[stub-language]: docs/DSL/stub-languagenguage/README.md
-[types]: docs/DSL/common/types.md
-[types-python]: docs/DSL/common/types.md#corresponding-python-code
-[callable-types]: docs/DSL/common/types.md#callable-type
-[steps]: docs/DSL/workflow-languagenguage/steps.md
-[calls]: docs/DSL/workflow-languagenguage/expressions.md#calls
+[stub-language]: ../stub-language/README.md
+[types]: types.md
+[types-python]: types.md#corresponding-python-code
+[callable-types]: types.md#callable-type
+[steps]: ../workflow-language/steps.md
+[calls]: ../workflow-language/expressions.md#calls

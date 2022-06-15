@@ -182,16 +182,17 @@ Most commonly, default values in Python are literals, since default values are o
 | `true` ([boolean][boolean-literals])  | `True`                 |
 | `null` ([null][null-literals])        | `None`                 |
 
-[types]: docs/DSL/common/types.md
-[types-python]: docs/DSL/common/types.md#corresponding-python-code
-[steps]: docs/DSL/workflow-languagenguage/steps.md
-[calls]: docs/DSL/workflow-languagenguage/expressions.md#calls
-[stub-language]: docs/DSL/stub-languagenguage/README.md
-[literals]: docs/DSL/workflow-languagenguage/expressions.md#literals
-[int-literals]: docs/DSL/workflow-languagenguage/expressions.md#int-literals
-[float-literals]: docs/DSL/workflow-languagenguage/expressions.md#float-literals
-[string-literals]: docs/DSL/workflow-languagenguage/expressions.md#string-literals
-[boolean-literals]: docs/DSL/workflow-languagenguage/expressions.md#boolean-literals
-[null-literals]: docs/DSL/workflow-languagenguage/expressions.md#null-literal
+[types]: types.md
+[types-python]: types.md#corresponding-python-code
+[steps]: ../workflow-language/steps.md
+[calls]: ../workflow-language/expressions.md#calls
+[stub-language]: ../stub-languageREADME.md
+[literals]: ../workflow-language/expressions.md#literals
+[int-literals]: ../workflow-language/expressions.md#int-literals
+[float-literals]: ../workflow-language/expressions.md#float-literals
+[string-literals]: ../workflow-language/expressions.md#string-literals
+[boolean-literals]: ../workflow-language/expressions.md#boolean-literals
+[null-literals]: ../workflow-language/expressions.md#null-literal
+
 [python-keyword-only]: https://peps.python.org/pep-3102/
 [python-positional-only]: https://peps.python.org/pep-0570/
