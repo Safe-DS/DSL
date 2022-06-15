@@ -9,8 +9,8 @@ import org.eclipse.xtext.validation.Check
 class TemplateStringChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingTemplateExpression(smlTemplateString: SdsTemplateString) {
-        smlTemplateString.expressions
+    fun missingTemplateExpression(sdsTemplateString: SdsTemplateString) {
+        sdsTemplateString.expressions
             .windowed(size = 2, step = 1)
             .forEach { (first, second) ->
                 if (first is SdsAbstractTemplateStringPart && second is SdsAbstractTemplateStringPart) {

@@ -12,16 +12,16 @@ import org.eclipse.xtext.validation.Check
 class CallableTypeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun uniqueNames(smlCallableType: SdsCallableType) {
-        val declarations = smlCallableType.parametersOrEmpty() + smlCallableType.resultsOrEmpty()
+    fun uniqueNames(sdsCallableType: SdsCallableType) {
+        val declarations = sdsCallableType.parametersOrEmpty() + sdsCallableType.resultsOrEmpty()
         declarations.reportDuplicateNames {
             "A parameter or result with name '${it.name}' exists already in this callable type."
         }
     }
 
     @Check
-    fun noOptionalParameters(smlCallableType: SdsCallableType) {
-        smlCallableType.parametersOrEmpty().forEach {
+    fun noOptionalParameters(sdsCallableType: SdsCallableType) {
+        sdsCallableType.parametersOrEmpty().forEach {
             if (it.isOptional()) {
                 error(
                     "Parameters in callable types must not be optional.",

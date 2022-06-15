@@ -19,9 +19,9 @@ import org.eclipse.xtext.validation.Check
 class StepChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun parameterIsUnused(smlStep: SdsStep) {
-        smlStep.parametersOrEmpty()
-            .filter { it.usesIn(smlStep).none() }
+    fun parameterIsUnused(sdsStep: SdsStep) {
+        sdsStep.parametersOrEmpty()
+            .filter { it.usesIn(sdsStep).none() }
             .forEach {
                 warning(
                     "This parameter is unused.",
@@ -33,17 +33,17 @@ class StepChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlStep: SdsStep) {
+    fun uniqueNames(sdsStep: SdsStep) {
         val declarations =
-            smlStep.parametersOrEmpty() + smlStep.resultsOrEmpty() + smlStep.placeholdersOrEmpty()
+            sdsStep.parametersOrEmpty() + sdsStep.resultsOrEmpty() + sdsStep.placeholdersOrEmpty()
         declarations.reportDuplicateNames {
             "A parameter, result or placeholder with name '${it.name}' exists already in this step."
         }
     }
 
     @Check
-    fun unnecessaryResultList(smlStep: SdsStep) {
-        if (smlStep.resultList != null && smlStep.resultsOrEmpty().isEmpty()) {
+    fun unnecessaryResultList(sdsStep: SdsStep) {
+        if (sdsStep.resultList != null && sdsStep.resultsOrEmpty().isEmpty()) {
             info(
                 "Unnecessary result list.",
                 Literals.SDS_STEP__RESULT_LIST,
@@ -53,8 +53,8 @@ class StepChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unassignedResult(smlStep: SdsStep) {
-        smlStep.resultsOrEmpty().forEach {
+    fun unassignedResult(sdsStep: SdsStep) {
+        sdsStep.resultsOrEmpty().forEach {
             if (it.yieldsOrEmpty().isEmpty()) {
                 error(
                     "No value is assigned to this result.",
@@ -67,8 +67,8 @@ class StepChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun duplicateResultAssignment(smlStep: SdsStep) {
-        smlStep.yieldsOrEmpty()
+    fun duplicateResultAssignment(sdsStep: SdsStep) {
+        sdsStep.yieldsOrEmpty()
             .duplicatesBy { it.result.asResolvedOrNull() }
             .forEach {
                 error(

@@ -19,9 +19,9 @@ import org.eclipse.xtext.validation.CheckType
 class ParameterChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun type(smlParameter: SdsParameter) {
-        val parameterList = smlParameter.closestAncestorOrNull<SdsParameterList>() ?: return
-        if (smlParameter.type == null && parameterList.eContainer() !is SdsAbstractLambda) {
+    fun type(sdsParameter: SdsParameter) {
+        val parameterList = sdsParameter.closestAncestorOrNull<SdsParameterList>() ?: return
+        if (sdsParameter.type == null && parameterList.eContainer() !is SdsAbstractLambda) {
             error(
                 "A parameter must have a type.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
@@ -31,8 +31,8 @@ class ParameterChecker : AbstractSafeDSChecker() {
     }
 
     @Check(CheckType.NORMAL)
-    fun defaultValueMustBeConstant(smlParameter: SdsParameter) {
-        val defaultValue = smlParameter.defaultValue ?: return
+    fun defaultValueMustBeConstant(sdsParameter: SdsParameter) {
+        val defaultValue = sdsParameter.defaultValue ?: return
         if (defaultValue.toConstantExpressionOrNull() == null) {
             error(
                 "Default values of parameters must be constant.",
@@ -43,8 +43,8 @@ class ParameterChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun variadicParametersMustHaveNoDefaultValue(smlParameter: SdsParameter) {
-        if (smlParameter.isVariadic && smlParameter.isOptional()) {
+    fun variadicParametersMustHaveNoDefaultValue(sdsParameter: SdsParameter) {
+        if (sdsParameter.isVariadic && sdsParameter.isOptional()) {
             error(
                 "Variadic parameters must not have default values.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
@@ -54,9 +54,9 @@ class ParameterChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun expertMustBeOptional(smlParameter: SdsParameter) {
-        if (smlParameter.isRequired() && smlParameter.isExpert()) {
-            smlParameter.annotationCallsOrEmpty(StdlibAnnotations.Expert).forEach {
+    fun expertMustBeOptional(sdsParameter: SdsParameter) {
+        if (sdsParameter.isRequired() && sdsParameter.isExpert()) {
+            sdsParameter.annotationCallsOrEmpty(StdlibAnnotations.Expert).forEach {
                 error(
                     "An expert parameter must be optional.",
                     it,

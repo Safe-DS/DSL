@@ -89,8 +89,8 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         }
     }
 
-    private fun scopeForArgumentParameter(smlArgument: SdsArgument): IScope {
-        val parameters = smlArgument
+    private fun scopeForArgumentParameter(sdsArgument: SdsArgument): IScope {
+        val parameters = sdsArgument
             .closestAncestorOrNull<SdsArgumentList>()
             ?.parametersOrNull()
             ?: emptyList()
@@ -217,14 +217,14 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return when {
             type.isNullable && !context.isNullSafe -> resultScope
             type is ClassType -> {
-                val members = type.smlClass.classMembersOrEmpty().filter { !it.isStatic() }
-                val superTypeMembers = type.smlClass.superClassMembers()
+                val members = type.sdsClass.classMembersOrEmpty().filter { !it.isStatic() }
+                val superTypeMembers = type.sdsClass.superClassMembers()
                     .filter { !it.isStatic() }
                     .toList()
 
                 Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
             }
-            type is EnumVariantType -> Scopes.scopeFor(type.smlEnumVariant.parametersOrEmpty())
+            type is EnumVariantType -> Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
             else -> resultScope
         }
     }
@@ -324,14 +324,14 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
             type.isNullable -> IScope.NULLSCOPE
             type is ClassType -> {
                 val members =
-                    type.smlClass.classMembersOrEmpty().filterIsInstance<SdsAbstractNamedTypeDeclaration>()
-                val superTypeMembers = type.smlClass.superClassMembers()
+                    type.sdsClass.classMembersOrEmpty().filterIsInstance<SdsAbstractNamedTypeDeclaration>()
+                val superTypeMembers = type.sdsClass.superClassMembers()
                     .filterIsInstance<SdsAbstractNamedTypeDeclaration>()
                     .toList()
 
                 Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers))
             }
-            type is EnumType -> Scopes.scopeFor(type.smlEnum.variantsOrEmpty())
+            type is EnumType -> Scopes.scopeFor(type.sdsEnum.variantsOrEmpty())
             else -> IScope.NULLSCOPE
         }
     }
@@ -361,8 +361,8 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return this.subtermsOrEmpty().takeWhile { it !== containingSubtermOrNull }
     }
 
-    private fun scopeForTypeArgumentTypeParameter(smlTypeArgument: SdsTypeArgument): IScope {
-        val typeParameters = smlTypeArgument
+    private fun scopeForTypeArgumentTypeParameter(sdsTypeArgument: SdsTypeArgument): IScope {
+        val typeParameters = sdsTypeArgument
             .closestAncestorOrNull<SdsTypeArgumentList>()
             ?.typeParametersOrNull()
             ?: emptyList()
@@ -370,8 +370,8 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return Scopes.scopeFor(typeParameters)
     }
 
-    private fun scopeForTypeParameterConstraintLeftOperand(smlTypeParameterConstraintGoal: SdsTypeParameterConstraintGoal): IScope {
-        val typeParameters = smlTypeParameterConstraintGoal
+    private fun scopeForTypeParameterConstraintLeftOperand(sdsTypeParameterConstraintGoal: SdsTypeParameterConstraintGoal): IScope {
+        val typeParameters = sdsTypeParameterConstraintGoal
             .closestAncestorOrNull<SdsConstraint>()
             ?.typeParametersOrNull()
             ?: emptyList()

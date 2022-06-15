@@ -19,17 +19,17 @@ import org.eclipse.xtext.validation.Check
 class LambdaChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun uniqueNames(smlBlockLambda: SdsBlockLambda) {
+    fun uniqueNames(sdsBlockLambda: SdsBlockLambda) {
         val declarations =
-            smlBlockLambda.parametersOrEmpty() + smlBlockLambda.placeholdersOrEmpty() + smlBlockLambda.blockLambdaResultsOrEmpty()
+            sdsBlockLambda.parametersOrEmpty() + sdsBlockLambda.placeholdersOrEmpty() + sdsBlockLambda.blockLambdaResultsOrEmpty()
         declarations.reportDuplicateNames {
             "A parameter, result or placeholder with name '${it.name}' exists already in this lambda."
         }
     }
 
     @Check
-    fun context(smlLambda: SdsAbstractLambda) {
-        val context = smlLambda.closestAncestorOrNull { it !is SdsParenthesizedExpression } ?: return
+    fun context(sdsLambda: SdsAbstractLambda) {
+        val context = sdsLambda.closestAncestorOrNull { it !is SdsParenthesizedExpression } ?: return
 
         val contextIsValid = when (context) {
             is SdsArgument -> {

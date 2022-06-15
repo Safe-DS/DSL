@@ -9,8 +9,8 @@ import org.eclipse.xtext.validation.Check
 class AttributeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun type(smlAttribute: SdsAttribute) {
-        if (smlAttribute.type == null) {
+    fun type(sdsAttribute: SdsAttribute) {
+        if (sdsAttribute.type == null) {
             error(
                 "An attribute must have a type.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,

@@ -82,9 +82,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlAnnotation should add the created annotation to the receiving compilation unit`() {
+    fun `sdsAnnotation should add the created annotation to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            smlAnnotation("Test")
+            sdsAnnotation("Test")
         }
 
         compilationUnit.members.shouldHaveSize(1)
@@ -116,16 +116,16 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlAssignment should throw if no type arguments are passed`() {
+    fun `sdsAssignment should throw if no type arguments are passed`() {
         shouldThrow<IllegalArgumentException> {
             createSdsAssignment(listOf(), createSdsInt(1))
         }
     }
 
     @Test
-    fun `smlAssignment should add the created assignment to the receiving lambda`() {
+    fun `sdsAssignment should add the created assignment to the receiving lambda`() {
         val lambda = createSdsBlockLambda {
-            smlAssignment(
+            sdsAssignment(
                 listOf(createSdsWildcard()),
                 createSdsInt(1)
             )
@@ -137,9 +137,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlAssignment should add the created assignment to the receiving workflow`() {
+    fun `sdsAssignment should add the created assignment to the receiving workflow`() {
         val workflow = createSdsWorkflow("Test") {
-            smlAssignment(
+            sdsAssignment(
                 listOf(createSdsWildcard()),
                 createSdsInt(1)
             )
@@ -151,9 +151,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlAssignment should add the created assignment to the receiving step`() {
+    fun `sdsAssignment should add the created assignment to the receiving step`() {
         val step = createSdsStep("Test") {
-            smlAssignment(
+            sdsAssignment(
                 listOf(createSdsWildcard()),
                 createSdsInt(1)
             )
@@ -179,9 +179,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlAttribute should add the created attribute to the receiver`() {
+    fun `sdsAttribute should add the created attribute to the receiver`() {
         val `class` = createSdsClass("Test") {
-            smlAttribute("Test")
+            sdsAttribute("Test")
         }
 
         val body = `class`.body
@@ -206,8 +206,8 @@ class CreatorsTest {
         val lambda = createSdsBlockLambda()
 
         createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-            smlWorkflow(name = "test") {
-                smlExpressionStatement(lambda)
+            sdsWorkflow(name = "test") {
+                sdsExpressionStatement(lambda)
             }
         }
 
@@ -285,9 +285,9 @@ class CreatorsTest {
 //    }
 
     @Test
-    fun `smlClass should add the created class to the receiving class`() {
+    fun `sdsClass should add the created class to the receiving class`() {
         val `class` = createSdsClass("Test") {
-            smlClass("Test")
+            sdsClass("Test")
         }
 
         val body = `class`.body
@@ -296,9 +296,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlClass should add the created class to the receiving compilation unit`() {
+    fun `sdsClass should add the created class to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            smlClass("Test")
+            sdsClass("Test")
         }
 
         compilationUnit.members.shouldHaveSize(1)
@@ -339,9 +339,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlEnum should add the created enum to the receiving class`() {
+    fun `sdsEnum should add the created enum to the receiving class`() {
         val `class` = createSdsClass("Test") {
-            smlEnum("Test")
+            sdsEnum("Test")
         }
 
         val body = `class`.body
@@ -350,9 +350,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlEnum should add the created enum to the receiving compilation unit`() {
+    fun `sdsEnum should add the created enum to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            smlEnum("Test")
+            sdsEnum("Test")
         }
 
         compilationUnit.members.shouldHaveSize(1)
@@ -396,9 +396,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlEnumVariant should add the created variant to the receiver`() {
+    fun `sdsEnumVariant should add the created variant to the receiver`() {
         val enum = createSdsEnum("Test") {
-            smlEnumVariant("Test")
+            sdsEnumVariant("Test")
         }
 
         val body = enum.body
@@ -417,8 +417,8 @@ class CreatorsTest {
         val lambda = createSdsExpressionLambda(result = createSdsNull())
 
         createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-            smlWorkflow(name = "test") {
-                smlExpressionStatement(lambda)
+            sdsWorkflow(name = "test") {
+                sdsExpressionStatement(lambda)
             }
         }
 
@@ -426,9 +426,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlExpressionStatement should add the created expression statement to the receiving lambda`() {
+    fun `sdsExpressionStatement should add the created expression statement to the receiving lambda`() {
         val lambda = createSdsBlockLambda {
-            smlExpressionStatement(createSdsInt(1))
+            sdsExpressionStatement(createSdsInt(1))
         }
 
         val body = lambda.body
@@ -437,9 +437,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlExpressionStatement should add the created expression statement to the receiving workflow`() {
+    fun `sdsExpressionStatement should add the created expression statement to the receiving workflow`() {
         val workflow = createSdsWorkflow("Test") {
-            smlExpressionStatement(createSdsInt(1))
+            sdsExpressionStatement(createSdsInt(1))
         }
 
         val body = workflow.body
@@ -448,9 +448,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlExpressionStatement should add the created expression statement to the receiving step`() {
+    fun `sdsExpressionStatement should add the created expression statement to the receiving step`() {
         val step = createSdsStep("Test") {
-            smlExpressionStatement(createSdsInt(1))
+            sdsExpressionStatement(createSdsInt(1))
         }
 
         val body = step.body
@@ -514,9 +514,9 @@ class CreatorsTest {
 //    }
 
     @Test
-    fun `smlFunction should add the created function to the receiving class`() {
+    fun `sdsFunction should add the created function to the receiving class`() {
         val `class` = createSdsClass("Test") {
-            smlFunction("test")
+            sdsFunction("test")
         }
 
         val body = `class`.body
@@ -525,9 +525,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlFunction should add the created function to the receiving compilation unit`() {
+    fun `sdsFunction should add the created function to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            smlFunction("test")
+            sdsFunction("test")
         }
 
         compilationUnit.members.shouldHaveSize(1)
@@ -573,9 +573,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlProtocol should add the created protocol to the receiving class`() {
+    fun `sdsProtocol should add the created protocol to the receiving class`() {
         val `class` = createSdsClass("Test") {
-            smlProtocol()
+            sdsProtocol()
         }
 
         `class`.body.shouldNotBeNull()
@@ -637,9 +637,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlProtocolSubterm should add the created subterm to the receiving protocol`() {
+    fun `sdsProtocolSubterm should add the created subterm to the receiving protocol`() {
         val protocol = createSdsProtocol {
-            smlProtocolSubterm("test", createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything))
+            sdsProtocolSubterm("test", createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything))
         }
 
         protocol.body.shouldNotBeNull()
@@ -790,9 +790,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlStep should add the created step to the receiving compilation unit`() {
+    fun `sdsStep should add the created step to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            smlStep("test")
+            sdsStep("test")
         }
 
         compilationUnit.members.shouldHaveSize(1)
@@ -813,9 +813,9 @@ class CreatorsTest {
     }
 
     @Test
-    fun `smlWorkflow should add the created workflow to the receiving compilation unit`() {
+    fun `sdsWorkflow should add the created workflow to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            smlWorkflow("test")
+            sdsWorkflow("test")
         }
 
         compilationUnit.members.shouldHaveSize(1)

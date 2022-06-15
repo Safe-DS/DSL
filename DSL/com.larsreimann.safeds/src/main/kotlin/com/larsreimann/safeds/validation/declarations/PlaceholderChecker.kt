@@ -19,8 +19,8 @@ import org.eclipse.xtext.validation.Check
 class PlaceholderChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun renamingOfDeclaration(smlPlaceholder: SdsPlaceholder) {
-        val assigned = smlPlaceholder.assignedOrNull()
+    fun renamingOfDeclaration(sdsPlaceholder: SdsPlaceholder) {
+        val assigned = sdsPlaceholder.assignedOrNull()
         if (assigned is SdsReference) {
             val declaration = assigned.declaration
             if (declaration is SdsClass || declaration is SdsEnum || declaration is SdsFunction || declaration is SdsParameter || declaration is SdsPlaceholder)
@@ -33,10 +33,10 @@ class PlaceholderChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unused(smlPlaceholder: SdsPlaceholder) {
-        val block = smlPlaceholder.closestAncestorOrNull<SdsBlock>() ?: return
-        val assignment = smlPlaceholder.closestAncestorOrNull<SdsAssignment>() ?: return
-        if (assignment != block.statements.lastOrNull() && smlPlaceholder.usesIn(block).none()) {
+    fun unused(sdsPlaceholder: SdsPlaceholder) {
+        val block = sdsPlaceholder.closestAncestorOrNull<SdsBlock>() ?: return
+        val assignment = sdsPlaceholder.closestAncestorOrNull<SdsAssignment>() ?: return
+        if (assignment != block.statements.lastOrNull() && sdsPlaceholder.usesIn(block).none()) {
             warning(
                 "This placeholder is unused.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,

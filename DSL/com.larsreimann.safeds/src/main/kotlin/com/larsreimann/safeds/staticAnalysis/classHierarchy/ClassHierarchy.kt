@@ -55,7 +55,7 @@ fun SdsClass?.inheritedNonStaticMembersOrEmpty(): Set<SdsAbstractDeclaration> {
 
 fun SdsClass?.parentClassesOrEmpty(): List<SdsClass> {
     return this.parentTypesOrEmpty().mapNotNull {
-        (it.type() as? ClassType)?.smlClass
+        (it.type() as? ClassType)?.sdsClass
     }
 }
 

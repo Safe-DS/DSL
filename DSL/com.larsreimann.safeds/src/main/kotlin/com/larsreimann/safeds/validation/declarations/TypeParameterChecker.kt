@@ -13,8 +13,8 @@ import org.eclipse.xtext.validation.Check
 class TypeParameterChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustNotHaveVarianceAndKind(smlTypeParameter: SdsTypeParameter) {
-        if (smlTypeParameter.variance() != SdsVariance.Invariant && smlTypeParameter.kind() != SdsKind.NoKind) {
+    fun mustNotHaveVarianceAndKind(sdsTypeParameter: SdsTypeParameter) {
+        if (sdsTypeParameter.variance() != SdsVariance.Invariant && sdsTypeParameter.kind() != SdsKind.NoKind) {
             error(
                 "Can not use variance and kind together",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,

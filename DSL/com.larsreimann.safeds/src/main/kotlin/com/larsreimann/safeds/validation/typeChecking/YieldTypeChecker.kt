@@ -13,14 +13,14 @@ import org.eclipse.xtext.validation.CheckType
 class YieldTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun value(smlYield: SdsYield) {
-        val yieldedValue = smlYield.assignedOrNull() ?: return
+    fun value(sdsYield: SdsYield) {
+        val yieldedValue = sdsYield.assignedOrNull() ?: return
         val yieldedValueType = yieldedValue.type()
         if (yieldedValueType is UnresolvedType) {
             return // Scoping error already shown
         }
 
-        val resultType = (smlYield.result ?: return).type()
+        val resultType = (sdsYield.result ?: return).type()
 
         if (!yieldedValueType.isSubstitutableFor(resultType)) {
             var yieldedValueTypeString = yieldedValueType.toSimpleString()

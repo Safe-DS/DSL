@@ -12,8 +12,8 @@ import org.eclipse.xtext.validation.Check
 class WorkflowChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun noYield(smlWorkflow: SdsWorkflow) {
-        smlWorkflow.statementsOrEmpty()
+    fun noYield(sdsWorkflow: SdsWorkflow) {
+        sdsWorkflow.statementsOrEmpty()
             .filterIsInstance<SdsAssignment>()
             .flatMap { it.yieldsOrEmpty() }
             .forEach {
@@ -27,8 +27,8 @@ class WorkflowChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlWorkflow: SdsWorkflow) {
-        smlWorkflow.placeholdersOrEmpty()
+    fun uniqueNames(sdsWorkflow: SdsWorkflow) {
+        sdsWorkflow.placeholdersOrEmpty()
             .reportDuplicateNames { "A declaration with name '${it.name}' exists already in this workflow." }
     }
 }

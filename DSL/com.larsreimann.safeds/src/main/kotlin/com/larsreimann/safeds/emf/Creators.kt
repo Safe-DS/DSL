@@ -168,7 +168,7 @@ fun createSdsAnnotation(
 /**
  * Adds a new object of class [SdsAnnotation] to the receiver.
  */
-fun SdsCompilationUnit.smlAnnotation(
+fun SdsCompilationUnit.sdsAnnotation(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     parameters: List<SdsParameter> = emptyList()
@@ -268,21 +268,21 @@ fun createSdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbs
 /**
  * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SdsBlockLambda.smlAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+fun SdsBlockLambda.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
     this.addStatement(createSdsAssignment(assignees, expression))
 }
 
 /**
  * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SdsWorkflow.smlAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+fun SdsWorkflow.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
     this.addStatement(createSdsAssignment(assignees, expression))
 }
 
 /**
  * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SdsStep.smlAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+fun SdsStep.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
     this.addStatement(createSdsAssignment(assignees, expression))
 }
 
@@ -301,7 +301,7 @@ fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoal
 /**
  * Adds a new object of class [SdsAssignmentGoal] to the receiver.
  */
-fun SdsPredicate.smlAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression) {
+fun SdsPredicate.sdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression) {
     this.addGoal(createSdsAssignmentGoal(placeholderName, expression))
 }
 
@@ -325,7 +325,7 @@ fun createSdsAttribute(
 /**
  * Adds a new object of class [SdsAttribute] to the receiver.
  */
-fun SdsClass.smlAttribute(
+fun SdsClass.sdsAttribute(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
@@ -447,7 +447,7 @@ fun createSdsClass(
 /**
  * Adds a new object of class [SdsClass] to the receiver.
  */
-fun SdsClass.smlClass(
+fun SdsClass.sdsClass(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
@@ -476,7 +476,7 @@ fun SdsClass.smlClass(
 /**
  * Adds a new object of class [SdsClass] to the receiver.
  */
-fun SdsCompilationUnit.smlClass(
+fun SdsCompilationUnit.sdsClass(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
@@ -568,7 +568,7 @@ fun createSdsEnum(
 /**
  * Adds a new object of class [SdsEnum] to the receiver.
  */
-fun SdsClass.smlEnum(
+fun SdsClass.sdsEnum(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     variants: List<SdsEnumVariant> = emptyList(),
@@ -580,7 +580,7 @@ fun SdsClass.smlEnum(
 /**
  * Adds a new object of class [SdsEnum] to the receiver.
  */
-fun SdsCompilationUnit.smlEnum(
+fun SdsCompilationUnit.sdsEnum(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     variants: List<SdsEnumVariant> = emptyList(),
@@ -622,7 +622,7 @@ fun createSdsEnumVariant(
 /**
  * Adds a new object of class [SdsEnumVariant] to the receiver.
  */
-fun SdsEnum.smlEnumVariant(
+fun SdsEnum.sdsEnumVariant(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
@@ -644,7 +644,7 @@ fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressio
 /**
  * Adds a new object of class [SdsExpressionGoal] to the receiver.
  */
-fun SdsPredicate.smlExpressionGoal(expression: SdsAbstractGoalExpression) {
+fun SdsPredicate.sdsExpressionGoal(expression: SdsAbstractGoalExpression) {
     this.addGoal(createSdsExpressionGoal(expression))
 }
 
@@ -673,21 +673,21 @@ fun createSdsExpressionStatement(expression: SdsAbstractExpression): SdsExpressi
 /**
  * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SdsBlockLambda.smlExpressionStatement(expression: SdsAbstractExpression) {
+fun SdsBlockLambda.sdsExpressionStatement(expression: SdsAbstractExpression) {
     this.addStatement(createSdsExpressionStatement(expression))
 }
 
 /**
  * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SdsWorkflow.smlExpressionStatement(expression: SdsAbstractExpression) {
+fun SdsWorkflow.sdsExpressionStatement(expression: SdsAbstractExpression) {
     this.addStatement(createSdsExpressionStatement(expression))
 }
 
 /**
  * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SdsStep.smlExpressionStatement(expression: SdsAbstractExpression) {
+fun SdsStep.sdsExpressionStatement(expression: SdsAbstractExpression) {
     this.addStatement(createSdsExpressionStatement(expression))
 }
 
@@ -743,7 +743,7 @@ private fun SdsFunction.addStatement(statement: SdsAbstractObject) {
 /**
  * Adds a new object of class [SdsFunction] to the receiver.
  */
-fun SdsClass.smlFunction(
+fun SdsClass.sdsFunction(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
@@ -768,7 +768,7 @@ fun SdsClass.smlFunction(
 /**
  * Adds a new object of class [SdsFunction] to the receiver.
  */
-fun SdsCompilationUnit.smlFunction(
+fun SdsCompilationUnit.sdsFunction(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     isStatic: Boolean = false,
@@ -1067,7 +1067,7 @@ fun createSdsPredicate(
 /**
  * Adds a new object of class [SdsPredicate] to the receiver.
  */
-fun SdsCompilationUnit.smlPredicate(
+fun SdsCompilationUnit.sdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
@@ -1125,7 +1125,7 @@ fun createSdsProtocol(
 /**
  * Adds a new object of class [SdsProtocol] to the receiver.
  */
-fun SdsClass.smlProtocol(
+fun SdsClass.sdsProtocol(
     subterms: List<SdsProtocolSubterm> = emptyList(),
     term: SdsAbstractProtocolTerm? = null,
     init: SdsProtocol.() -> Unit = {}
@@ -1242,7 +1242,7 @@ fun createSdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm): SdsPr
 /**
  * Returns a new object of class [SdsProtocolSubterm].
  */
-fun SdsProtocol.smlProtocolSubterm(name: String, term: SdsAbstractProtocolTerm) {
+fun SdsProtocol.sdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm) {
     this.addSubterm(createSdsProtocolSubterm(name, term))
 }
 
@@ -1322,7 +1322,7 @@ fun createSdsStep(
 /**
  * Adds a new object of class [SdsStep] to the receiver.
  */
-fun SdsCompilationUnit.smlStep(
+fun SdsCompilationUnit.sdsStep(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     visibility: SdsVisibility = SdsVisibility.Public,
@@ -1562,7 +1562,7 @@ fun createSdsWorkflow(
 /**
  * Adds a new object of class [SdsWorkflow] to the receiver.
  */
-fun SdsCompilationUnit.smlWorkflow(
+fun SdsCompilationUnit.sdsWorkflow(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     statements: List<SdsAbstractStatement> = emptyList(),

@@ -14,14 +14,14 @@ import org.eclipse.xtext.validation.Check
 class ReferenceChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustNotStaticallyReferenceClass(smlReference: SdsReference) {
-        val declaration = smlReference.declaration
+    fun mustNotStaticallyReferenceClass(sdsReference: SdsReference) {
+        val declaration = sdsReference.declaration
         if (declaration !is SdsClass || declaration.parameterList != null) {
             return
         }
 
         // Reference must eventually be the receiver of a chained expression
-        var previous: EObject = smlReference
+        var previous: EObject = sdsReference
         var current: EObject = previous.eContainer()
         while (current is SdsAbstractChainedExpression) {
             if (current.receiver == previous) {
@@ -39,13 +39,13 @@ class ReferenceChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun mustNotStaticallyReferenceEnum(smlReference: SdsReference) {
-        if (smlReference.declaration !is SdsEnum) {
+    fun mustNotStaticallyReferenceEnum(sdsReference: SdsReference) {
+        if (sdsReference.declaration !is SdsEnum) {
             return
         }
 
         // Reference must eventually be the receiver of a member access
-        var previous: EObject = smlReference
+        var previous: EObject = sdsReference
         var current: EObject = previous.eContainer()
         while (current is SdsMemberAccess) {
             if (current.receiver == previous) {

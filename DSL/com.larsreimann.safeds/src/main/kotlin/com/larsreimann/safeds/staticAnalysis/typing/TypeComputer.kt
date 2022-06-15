@@ -71,7 +71,7 @@ fun SdsAbstractObject.hasPrimitiveType(): Boolean {
         return false
     }
 
-    val qualifiedName = type.smlClass.qualifiedNameOrNull()
+    val qualifiedName = type.sdsClass.qualifiedNameOrNull()
     return qualifiedName in setOf(
         StdlibClasses.Boolean,
         StdlibClasses.Float,
@@ -306,13 +306,13 @@ private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
         candidate = when (candidate) {
             is CallableType -> Any(context, candidate.isNullable)
             is ClassType -> {
-                val superClass = candidate.smlClass.superClasses().firstOrNull()
+                val superClass = candidate.sdsClass.superClasses().firstOrNull()
                     ?: return Any(context, candidate.isNullable)
                 ClassType(superClass, candidate.isNullable)
             }
             is EnumType -> Any(context, candidate.isNullable)
             is EnumVariantType -> {
-                val containingEnum = candidate.smlEnumVariant.containingEnumOrNull()
+                val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
                     ?: return Any(context, candidate.isNullable)
                 EnumType(containingEnum, candidate.isNullable)
             }
@@ -336,7 +336,7 @@ private fun unwrapUnionTypes(types: List<Type>): List<Type> {
 }
 
 private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
-    if (candidate is ClassType && candidate.smlClass.qualifiedNameOrNull() == StdlibClasses.Any) {
+    if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
         return true
     }
 
@@ -361,8 +361,8 @@ private fun Nothing(context: EObject, isNullable: Boolean = false) = stdlibType(
 private fun String(context: EObject) = stdlibType(context, StdlibClasses.String)
 
 internal fun stdlibType(context: EObject, qualifiedName: QualifiedName, isNullable: Boolean = false): Type {
-    return when (val smlClass = context.getStdlibClassOrNull(qualifiedName)) {
+    return when (val sdsClass = context.getStdlibClassOrNull(qualifiedName)) {
         null -> UnresolvedType
-        else -> ClassType(smlClass, isNullable)
+        else -> ClassType(sdsClass, isNullable)
     }
 }

@@ -14,10 +14,10 @@ import org.eclipse.xtext.validation.Check
 class ArgumentListChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingRequiredParameter(smlArgumentList: SdsArgumentList) {
-        val parameters = smlArgumentList.parametersOrNull() ?: return
+    fun missingRequiredParameter(sdsArgumentList: SdsArgumentList) {
+        val parameters = sdsArgumentList.parametersOrNull() ?: return
         val requiredParameters = parameters.filter { it.isRequired() }
-        val givenParameters = smlArgumentList.arguments.mapNotNull { it.parameterOrNull() }
+        val givenParameters = sdsArgumentList.arguments.mapNotNull { it.parameterOrNull() }
         val missingRequiredParameters = requiredParameters - givenParameters.toSet()
 
         missingRequiredParameters.forEach {
@@ -30,13 +30,13 @@ class ArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun noPositionalArgumentsAfterFirstNamedArgument(smlArgumentList: SdsArgumentList) {
-        val firstNamedArgumentIndex = smlArgumentList.arguments.indexOfFirst { it.isNamed() }
+    fun noPositionalArgumentsAfterFirstNamedArgument(sdsArgumentList: SdsArgumentList) {
+        val firstNamedArgumentIndex = sdsArgumentList.arguments.indexOfFirst { it.isNamed() }
         if (firstNamedArgumentIndex == -1) {
             return
         }
 
-        smlArgumentList.arguments
+        sdsArgumentList.arguments
             .drop(firstNamedArgumentIndex + 1)
             .filter { it.isPositional() }
             .forEach {
@@ -50,14 +50,14 @@ class ArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun tooManyArguments(smlArgumentList: SdsArgumentList) {
-        val parameters = smlArgumentList.parametersOrNull()
+    fun tooManyArguments(sdsArgumentList: SdsArgumentList) {
+        val parameters = sdsArgumentList.parametersOrNull()
         if (parameters == null || parameters.any { it.isVariadic }) {
             return
         }
 
         val maximumExpectedNumberOfArguments = parameters.size
-        val actualNumberOfArguments = smlArgumentList.arguments.size
+        val actualNumberOfArguments = sdsArgumentList.arguments.size
 
         if (actualNumberOfArguments > maximumExpectedNumberOfArguments) {
             val minimumExpectedNumberOfArguments = parameters.filter { it.isRequired() }.size
@@ -84,8 +84,8 @@ class ArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueParameters(smlArgumentList: SdsArgumentList) {
-        smlArgumentList.arguments
+    fun uniqueParameters(sdsArgumentList: SdsArgumentList) {
+        sdsArgumentList.arguments
             .duplicatesBy {
                 val parameter = it.parameterOrNull() ?: return@duplicatesBy null
                 when {

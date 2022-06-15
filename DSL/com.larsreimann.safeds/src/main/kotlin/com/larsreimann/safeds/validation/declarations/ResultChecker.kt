@@ -9,8 +9,8 @@ import org.eclipse.xtext.validation.Check
 class ResultChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun type(smlResult: SdsResult) {
-        if (smlResult.type == null) {
+    fun type(sdsResult: SdsResult) {
+        if (sdsResult.type == null) {
             error(
                 "A result must have a type.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,

@@ -18,15 +18,15 @@ import org.eclipse.xtext.validation.Check
 class AnnotationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun uniqueNames(smlAnnotation: SdsAnnotation) {
-        smlAnnotation.parametersOrEmpty().reportDuplicateNames {
+    fun uniqueNames(sdsAnnotation: SdsAnnotation) {
+        sdsAnnotation.parametersOrEmpty().reportDuplicateNames {
             "A parameter with name '${it.name}' exists already in this annotation."
         }
     }
 
     @Check
-    fun unnecessaryParameterList(smlAnnotation: SdsAnnotation) {
-        if (smlAnnotation.parameterList != null && smlAnnotation.parametersOrEmpty().isEmpty()) {
+    fun unnecessaryParameterList(sdsAnnotation: SdsAnnotation) {
+        if (sdsAnnotation.parameterList != null && sdsAnnotation.parametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary parameter list.",
                 Literals.SDS_ABSTRACT_CALLABLE__PARAMETER_LIST,
@@ -43,8 +43,8 @@ class AnnotationChecker : AbstractSafeDSChecker() {
     )
 
     @Check
-    fun parameterTypes(smlAnnotation: SdsAnnotation) {
-        smlAnnotation.parametersOrEmpty().forEach {
+    fun parameterTypes(sdsAnnotation: SdsAnnotation) {
+        sdsAnnotation.parametersOrEmpty().forEach {
             val unwrappedParameterType = when (val parameterType = it.type()) {
                 is VariadicType -> parameterType.elementType
                 else -> parameterType
@@ -52,7 +52,7 @@ class AnnotationChecker : AbstractSafeDSChecker() {
 
             val isValid = when (unwrappedParameterType) {
                 is ClassType -> unwrappedParameterType.qualifiedName in validParameterTypes
-                is EnumType -> unwrappedParameterType.smlEnum.isConstant()
+                is EnumType -> unwrappedParameterType.sdsEnum.isConstant()
                 else -> false
             }
 

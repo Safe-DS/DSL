@@ -13,12 +13,12 @@ import org.eclipse.xtext.validation.Check
 class NamedTypeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingTypeArgumentList(smlNamedType: SdsNamedType) {
-        if (smlNamedType.typeArgumentList != null) {
+    fun missingTypeArgumentList(sdsNamedType: SdsNamedType) {
+        if (sdsNamedType.typeArgumentList != null) {
             return
         }
 
-        val declaration = smlNamedType.declaration
+        val declaration = sdsNamedType.declaration
         val typeParameters = when {
             declaration.eIsProxy() -> return
             declaration is SdsClass -> declaration.typeParametersOrEmpty()

@@ -19,27 +19,27 @@ import org.eclipse.xtext.validation.CheckType
 class InfixOperationTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun leftOperand(smlInfixOperation: SdsInfixOperation) {
-        checkOperand(smlInfixOperation, Literals.SDS_INFIX_OPERATION__LEFT_OPERAND)
+    fun leftOperand(sdsInfixOperation: SdsInfixOperation) {
+        checkOperand(sdsInfixOperation, Literals.SDS_INFIX_OPERATION__LEFT_OPERAND)
     }
 
     @Check(CheckType.NORMAL)
-    fun rightOperand(smlInfixOperation: SdsInfixOperation) {
-        checkOperand(smlInfixOperation, Literals.SDS_INFIX_OPERATION__RIGHT_OPERAND)
+    fun rightOperand(sdsInfixOperation: SdsInfixOperation) {
+        checkOperand(sdsInfixOperation, Literals.SDS_INFIX_OPERATION__RIGHT_OPERAND)
     }
 
-    private fun checkOperand(smlInfixOperation: SdsInfixOperation, feature: EReference) {
-        val operandType = operand(smlInfixOperation, feature).type()
+    private fun checkOperand(sdsInfixOperation: SdsInfixOperation, feature: EReference) {
+        val operandType = operand(sdsInfixOperation, feature).type()
         if (operandType is UnresolvedType) {
             return // Scoping error already shown
         }
 
-        when (smlInfixOperation.operator()) {
+        when (sdsInfixOperation.operator()) {
             SdsInfixOperationOperator.Or,
             SdsInfixOperationOperator.And -> {
                 val hasWrongType = operandType !is ClassType ||
                     operandType.isNullable ||
-                    operandType.smlClass.qualifiedNameOrNull() != StdlibClasses.Boolean
+                    operandType.sdsClass.qualifiedNameOrNull() != StdlibClasses.Boolean
 
                 if (hasWrongType) {
                     error(
@@ -56,7 +56,7 @@ class InfixOperationTypeChecker : AbstractSafeDSChecker() {
             SdsInfixOperationOperator.By -> {
                 val hasWrongType = operandType !is ClassType ||
                     operandType.isNullable ||
-                    operandType.smlClass.qualifiedNameOrNull() !in setOf(StdlibClasses.Float, StdlibClasses.Int)
+                    operandType.sdsClass.qualifiedNameOrNull() !in setOf(StdlibClasses.Float, StdlibClasses.Int)
 
                 if (hasWrongType) {
                     error(
@@ -73,7 +73,7 @@ class InfixOperationTypeChecker : AbstractSafeDSChecker() {
             SdsInfixOperationOperator.GreaterThan -> {
                 val hasWrongType = operandType !is ClassType ||
                     operandType.isNullable ||
-                    operandType.smlClass.qualifiedNameOrNull() !in setOf(StdlibClasses.Float, StdlibClasses.Int)
+                    operandType.sdsClass.qualifiedNameOrNull() !in setOf(StdlibClasses.Float, StdlibClasses.Int)
 
                 if (hasWrongType) {
                     error(
@@ -88,10 +88,10 @@ class InfixOperationTypeChecker : AbstractSafeDSChecker() {
         }
     }
 
-    private fun operand(smlInfixOperation: SdsInfixOperation, feature: EReference): SdsAbstractExpression {
+    private fun operand(sdsInfixOperation: SdsInfixOperation, feature: EReference): SdsAbstractExpression {
         return when (feature) {
-            Literals.SDS_INFIX_OPERATION__LEFT_OPERAND -> smlInfixOperation.leftOperand
-            Literals.SDS_INFIX_OPERATION__RIGHT_OPERAND -> smlInfixOperation.rightOperand
+            Literals.SDS_INFIX_OPERATION__LEFT_OPERAND -> sdsInfixOperation.leftOperand
+            Literals.SDS_INFIX_OPERATION__RIGHT_OPERAND -> sdsInfixOperation.rightOperand
             else -> throw IllegalArgumentException("Cannot handle feature '$feature'.")
         }
     }

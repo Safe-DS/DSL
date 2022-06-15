@@ -68,9 +68,9 @@ data class CallableType(val parameters: List<Type>, val results: List<Type>) : T
     }
 }
 
-sealed class NamedType(smlDeclaration: SdsAbstractDeclaration) : Type() {
-    val simpleName: String = smlDeclaration.name
-    val qualifiedName: QualifiedName = smlDeclaration.qualifiedNameOrNull()!!
+sealed class NamedType(sdsDeclaration: SdsAbstractDeclaration) : Type() {
+    val simpleName: String = sdsDeclaration.name
+    val qualifiedName: QualifiedName = sdsDeclaration.qualifiedNameOrNull()!!
 
     override fun toString() = buildString {
         append(qualifiedName)
@@ -88,34 +88,34 @@ sealed class NamedType(smlDeclaration: SdsAbstractDeclaration) : Type() {
 }
 
 data class ClassType(
-    val smlClass: SdsClass,
+    val sdsClass: SdsClass,
     override val isNullable: Boolean
-) : NamedType(smlClass) {
+) : NamedType(sdsClass) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
 
     override fun toString() = super.toString()
 }
 
 data class EnumType(
-    val smlEnum: SdsEnum,
+    val sdsEnum: SdsEnum,
     override val isNullable: Boolean
-) : NamedType(smlEnum) {
+) : NamedType(sdsEnum) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
 
     override fun toString() = super.toString()
 }
 
 data class EnumVariantType(
-    val smlEnumVariant: SdsEnumVariant,
+    val sdsEnumVariant: SdsEnumVariant,
     override val isNullable: Boolean
-) : NamedType(smlEnumVariant) {
+) : NamedType(sdsEnumVariant) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
 
     override fun toString() = super.toString()
 
     override fun toSimpleString() = buildString {
-        smlEnumVariant.containingEnumOrNull()?.let { append("${it.name}.") }
-        append(smlEnumVariant.name)
+        sdsEnumVariant.containingEnumOrNull()?.let { append("${it.name}.") }
+        append(sdsEnumVariant.name)
     }
 }
 

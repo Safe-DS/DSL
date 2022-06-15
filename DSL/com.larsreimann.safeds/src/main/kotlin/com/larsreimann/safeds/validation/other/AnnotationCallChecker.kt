@@ -40,13 +40,13 @@ import org.eclipse.xtext.validation.CheckType
 class AnnotationCallChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun duplicateTargetInTargetAnnotation(smlAnnotationCall: SdsAnnotationCall) {
-        val annotation = smlAnnotationCall.annotation
+    fun duplicateTargetInTargetAnnotation(sdsAnnotationCall: SdsAnnotationCall) {
+        val annotation = sdsAnnotationCall.annotation
         if (!annotation.isResolved() || annotation.qualifiedNameOrNull() != StdlibAnnotations.Target) {
             return
         }
 
-        smlAnnotationCall
+        sdsAnnotationCall
             .argumentsOrEmpty()
             .map { it.value }
             .filterIsInstance<SdsMemberAccess>()
@@ -62,17 +62,17 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun missingArgumentList(smlAnnotationCall: SdsAnnotationCall) {
-        if (smlAnnotationCall.argumentList != null) {
+    fun missingArgumentList(sdsAnnotationCall: SdsAnnotationCall) {
+        if (sdsAnnotationCall.argumentList != null) {
             return
         }
 
-        val annotation = smlAnnotationCall.annotation
+        val annotation = sdsAnnotationCall.annotation
         if (!annotation.isResolved()) {
             return
         }
 
-        val parameters = smlAnnotationCall.annotation.parametersOrEmpty()
+        val parameters = sdsAnnotationCall.annotation.parametersOrEmpty()
         if (parameters.any { it.isRequired() }) {
             error(
                 "Missing argument list.",
@@ -83,13 +83,13 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun target(smlAnnotationCall: SdsAnnotationCall) {
+    fun target(sdsAnnotationCall: SdsAnnotationCall) {
 
         // Get target of annotation use
-        val actualTarget = smlAnnotationCall.targetOrNull() ?: return
+        val actualTarget = sdsAnnotationCall.targetOrNull() ?: return
 
         // Get legal targets of used annotation
-        val annotation = smlAnnotationCall.annotation
+        val annotation = sdsAnnotationCall.annotation
         if (!annotation.isResolved()) {
             return
         }
@@ -148,12 +148,12 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unnecessaryArgumentList(smlAnnotationCall: SdsAnnotationCall) {
-        if (smlAnnotationCall.argumentList == null || smlAnnotationCall.argumentsOrEmpty().isNotEmpty()) {
+    fun unnecessaryArgumentList(sdsAnnotationCall: SdsAnnotationCall) {
+        if (sdsAnnotationCall.argumentList == null || sdsAnnotationCall.argumentsOrEmpty().isNotEmpty()) {
             return
         }
 
-        val parametersOrNull = smlAnnotationCall.argumentList.parametersOrNull()
+        val parametersOrNull = sdsAnnotationCall.argumentList.parametersOrNull()
         if (parametersOrNull != null && parametersOrNull.none { it.isRequired() }) {
             info(
                 "Unnecessary argument list.",
@@ -164,8 +164,8 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check(CheckType.NORMAL)
-    fun argumentsMustBeConstant(smlAnnotationCall: SdsAnnotationCall) {
-        smlAnnotationCall.argumentsOrEmpty().forEach {
+    fun argumentsMustBeConstant(sdsAnnotationCall: SdsAnnotationCall) {
+        sdsAnnotationCall.argumentsOrEmpty().forEach {
             if (it.value?.toConstantExpressionOrNull() == null) {
                 error(
                     "Arguments in annotation call must be constant.",
@@ -178,12 +178,12 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun pureImpliesNoSideEffects(smlAnnotationCall: SdsAnnotationCall) {
-        if (smlAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.NoSideEffects) {
+    fun pureImpliesNoSideEffects(sdsAnnotationCall: SdsAnnotationCall) {
+        if (sdsAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.NoSideEffects) {
             return
         }
 
-        val target = smlAnnotationCall.targetOrNull() ?: return
+        val target = sdsAnnotationCall.targetOrNull() ?: return
         if (target is SdsFunction && target.isPure()) {
             info(
                 "Purity implies absence of side effects (remove this annotation call).",
@@ -194,12 +194,12 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun identicalPythonModule(smlAnnotationCall: SdsAnnotationCall) {
-        if (smlAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.PythonModule) {
+    fun identicalPythonModule(sdsAnnotationCall: SdsAnnotationCall) {
+        if (sdsAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.PythonModule) {
             return
         }
 
-        val target = smlAnnotationCall.targetOrNull() as? SdsCompilationUnit ?: return
+        val target = sdsAnnotationCall.targetOrNull() as? SdsCompilationUnit ?: return
         if (target.name == target.pythonModuleOrNull()) {
             info(
                 "Python module is identical to Safe-DS package (can remove annotation call).",
@@ -210,12 +210,12 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun identicalPythonName(smlAnnotationCall: SdsAnnotationCall) {
-        if (smlAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.PythonName) {
+    fun identicalPythonName(sdsAnnotationCall: SdsAnnotationCall) {
+        if (sdsAnnotationCall.annotation.qualifiedNameOrNull() != StdlibAnnotations.PythonName) {
             return
         }
 
-        val target = smlAnnotationCall.targetOrNull() ?: return
+        val target = sdsAnnotationCall.targetOrNull() ?: return
         if (target.name == target.pythonNameOrNull()) {
             info(
                 "Python name is identical to Safe-DS name (can remove annotation call).",

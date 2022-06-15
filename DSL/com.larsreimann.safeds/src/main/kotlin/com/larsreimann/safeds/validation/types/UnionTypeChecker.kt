@@ -10,8 +10,8 @@ import org.eclipse.xtext.validation.Check
 class UnionTypeChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun numberOfTypeArguments(smlUnionType: SdsUnionType) {
-        when (smlUnionType.typeArgumentsOrEmpty().size) {
+    fun numberOfTypeArguments(sdsUnionType: SdsUnionType) {
+        when (sdsUnionType.typeArgumentsOrEmpty().size) {
             0 -> {
                 error(
                     "A union type must have least one type argument.",

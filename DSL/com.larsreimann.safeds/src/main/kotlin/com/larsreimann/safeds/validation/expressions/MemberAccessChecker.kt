@@ -17,10 +17,10 @@ import org.eclipse.xtext.validation.Check
 class MemberAccessChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustBeCalled(smlMemberAccess: SdsMemberAccess) {
-        when (val member = smlMemberAccess.member.declaration) {
+    fun mustBeCalled(sdsMemberAccess: SdsMemberAccess) {
+        when (val member = sdsMemberAccess.member.declaration) {
             is SdsFunction -> {
-                if (!member.isStatic && smlMemberAccess.eContainer() !is SdsCall) {
+                if (!member.isStatic && sdsMemberAccess.eContainer() !is SdsCall) {
                     error(
                         "An instance method must be called.",
                         Literals.SDS_MEMBER_ACCESS__MEMBER,
@@ -31,7 +31,7 @@ class MemberAccessChecker : AbstractSafeDSChecker() {
             is SdsEnumVariant -> {
                 val mustBeInstantiated =
                     member.typeParametersOrEmpty().isNotEmpty() || member.parametersOrEmpty().isNotEmpty()
-                if (mustBeInstantiated && smlMemberAccess.eContainer() !is SdsCall) {
+                if (mustBeInstantiated && sdsMemberAccess.eContainer() !is SdsCall) {
                     error(
                         "An enum variant with parameters or type parameters must be instantiated.",
                         Literals.SDS_MEMBER_ACCESS__MEMBER,
@@ -43,10 +43,10 @@ class MemberAccessChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unnecessarySafeAccess(smlMemberAccess: SdsMemberAccess) {
-        val type = smlMemberAccess.receiver.type()
+    fun unnecessarySafeAccess(sdsMemberAccess: SdsMemberAccess) {
+        val type = sdsMemberAccess.receiver.type()
 
-        if (smlMemberAccess.isNullSafe) {
+        if (sdsMemberAccess.isNullSafe) {
             if (!(type is NamedType && type.isNullable)) {
                 info(
                     "The receiver is never null so the safe access is unnecessary.",

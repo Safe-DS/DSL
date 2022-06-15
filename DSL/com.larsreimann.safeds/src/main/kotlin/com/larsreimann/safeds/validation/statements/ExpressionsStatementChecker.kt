@@ -9,8 +9,8 @@ import org.eclipse.xtext.validation.Check
 class ExpressionsStatementChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun hasNoEffect(smlExpressionStatement: SdsExpressionStatement) {
-        if (smlExpressionStatement.expression.expressionHasNoSideEffects()) {
+    fun hasNoEffect(sdsExpressionStatement: SdsExpressionStatement) {
+        if (sdsExpressionStatement.expression.expressionHasNoSideEffects()) {
             warning(
                 "This statement does nothing.",
                 null,

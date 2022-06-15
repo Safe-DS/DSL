@@ -11,8 +11,8 @@ import org.eclipse.xtext.validation.Check
 class ProtocolChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun mustOnlyReferToInstanceMembers(smlProtocolReference: SdsProtocolReference) {
-        val token = smlProtocolReference.token
+    fun mustOnlyReferToInstanceMembers(sdsProtocolReference: SdsProtocolReference) {
+        val token = sdsProtocolReference.token
         val isStaticAttribute = token is SdsAttribute && token.isStatic
         val isStaticFunction = token is SdsFunction && token.isStatic
 
@@ -26,8 +26,8 @@ class ProtocolChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlProtocolSubtermList: SdsProtocolSubtermList) {
-        smlProtocolSubtermList.subterms.reportDuplicateNames {
+    fun uniqueNames(sdsProtocolSubtermList: SdsProtocolSubtermList) {
+        sdsProtocolSubtermList.subterms.reportDuplicateNames {
             "A subterm with name '${it.name}' exists already in this protocol."
         }
     }

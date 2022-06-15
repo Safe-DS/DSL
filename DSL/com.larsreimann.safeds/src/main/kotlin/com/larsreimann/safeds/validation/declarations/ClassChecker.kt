@@ -22,11 +22,11 @@ import org.eclipse.xtext.validation.Check
 class ClassChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun acyclicSuperTypes(smlClass: SdsClass) {
-        smlClass.parentTypesOrEmpty()
+    fun acyclicSuperTypes(sdsClass: SdsClass) {
+        sdsClass.parentTypesOrEmpty()
             .filter {
-                val resolvedClass = (it.type() as? ClassType)?.smlClass
-                resolvedClass != null && resolvedClass.isSubtypeOf(smlClass)
+                val resolvedClass = (it.type() as? ClassType)?.sdsClass
+                resolvedClass != null && resolvedClass.isSubtypeOf(sdsClass)
             }
             .forEach {
                 error(
@@ -39,8 +39,8 @@ class ClassChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun body(smlClass: SdsClass) {
-        if (smlClass.body != null && smlClass.objectsInBodyOrEmpty().isEmpty()) {
+    fun body(sdsClass: SdsClass) {
+        if (sdsClass.body != null && sdsClass.objectsInBodyOrEmpty().isEmpty()) {
             info(
                 "Unnecessary class body.",
                 Literals.SDS_CLASS__BODY,
@@ -50,8 +50,8 @@ class ClassChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun mustInheritOnlyClasses(smlClass: SdsClass) {
-        smlClass.parentTypesOrEmpty()
+    fun mustInheritOnlyClasses(sdsClass: SdsClass) {
+        sdsClass.parentTypesOrEmpty()
             .filterNot {
                 val type = it.type()
                 type is ClassType || type is UnresolvedType
@@ -67,8 +67,8 @@ class ClassChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun mustHaveUniqueInheritedMembers(smlClass: SdsClass) {
-        smlClass.inheritedNonStaticMembersOrEmpty()
+    fun mustHaveUniqueInheritedMembers(sdsClass: SdsClass) {
+        sdsClass.inheritedNonStaticMembersOrEmpty()
             .groupBy { it.name }
             .forEach { (name, declarationsWithName) ->
                 if (declarationsWithName.size > 1) {
@@ -82,18 +82,18 @@ class ClassChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlClass: SdsClass) {
-        smlClass.parametersOrEmpty()
+    fun uniqueNames(sdsClass: SdsClass) {
+        sdsClass.parametersOrEmpty()
             .reportDuplicateNames { "A parameter with name '${it.name}' exists already in this class." }
 
-        smlClass.classMembersOrEmpty()
+        sdsClass.classMembersOrEmpty()
             .reportDuplicateNames { "A declaration with name '${it.name}' exists already in this class." }
     }
 
     @Check
-    fun uniqueParentTypes(smlClass: SdsClass) {
-        smlClass.parentTypesOrEmpty()
-            .duplicatesBy { (it.type() as? ClassType)?.smlClass }
+    fun uniqueParentTypes(sdsClass: SdsClass) {
+        sdsClass.parentTypesOrEmpty()
+            .duplicatesBy { (it.type() as? ClassType)?.sdsClass }
             .forEach {
                 error(
                     "Parent types must be unique.",
@@ -105,8 +105,8 @@ class ClassChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unnecessaryTypeParameterList(smlClass: SdsClass) {
-        if (smlClass.typeParameterList != null && smlClass.typeParametersOrEmpty().isEmpty()) {
+    fun unnecessaryTypeParameterList(sdsClass: SdsClass) {
+        if (sdsClass.typeParameterList != null && sdsClass.typeParametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary type parameter list.",
                 Literals.SDS_CLASS__TYPE_PARAMETER_LIST,
@@ -116,8 +116,8 @@ class ClassChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun multipleProtocols(smlClass: SdsClass) {
-        val protocols = smlClass.protocolsOrEmpty()
+    fun multipleProtocols(sdsClass: SdsClass) {
+        val protocols = sdsClass.protocolsOrEmpty()
         if (protocols.size > 1) {
             protocols.forEach {
                 error(

@@ -14,13 +14,13 @@ import org.eclipse.xtext.validation.CheckType
 class ArgumentTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun value(smlArgument: SdsArgument) {
-        val argumentType = smlArgument.type()
+    fun value(sdsArgument: SdsArgument) {
+        val argumentType = sdsArgument.type()
         if (argumentType is UnresolvedType) {
             return // Scoping error already shown
         }
 
-        val parameterType = (smlArgument.parameterOrNull() ?: return).type()
+        val parameterType = (sdsArgument.parameterOrNull() ?: return).type()
 
         if (!argumentType.isSubstitutableFor(parameterType)) {
             var argumentTypeString = argumentType.toSimpleString()

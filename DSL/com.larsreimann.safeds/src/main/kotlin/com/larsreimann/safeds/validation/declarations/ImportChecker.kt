@@ -15,13 +15,13 @@ import org.eclipse.xtext.validation.CheckType
 class ImportChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun unresolvedNamespace(smlImport: SdsImport) {
-        if (smlImport.isQualified()) {
+    fun unresolvedNamespace(sdsImport: SdsImport) {
+        if (sdsImport.isQualified()) {
             val importedNamespace = QualifiedName.create(
-                smlImport.importedNamespace.split(".")
+                sdsImport.importedNamespace.split(".")
             )
 
-            val isUnresolved = smlImport
+            val isUnresolved = sdsImport
                 .allGlobalDeclarations()
                 .none { it.qualifiedName == importedNamespace }
 
@@ -34,10 +34,10 @@ class ImportChecker : AbstractSafeDSChecker() {
             }
         } else {
             val importedNamespace = QualifiedName.create(
-                smlImport.importedNamespace.removeSuffix(".*").split(".")
+                sdsImport.importedNamespace.removeSuffix(".*").split(".")
             )
 
-            val isUnresolved = smlImport
+            val isUnresolved = sdsImport
                 .allGlobalDeclarations()
                 .none { it.qualifiedName.startsWith(importedNamespace) }
 
@@ -52,8 +52,8 @@ class ImportChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun wildcardImportWithAlias(smlImport: SdsImport) {
-        if (smlImport.isWildcard() && smlImport.aliasNameOrNull() != null) {
+    fun wildcardImportWithAlias(sdsImport: SdsImport) {
+        if (sdsImport.isWildcard() && sdsImport.aliasNameOrNull() != null) {
             error(
                 "A wildcard import must not have an alias.",
                 Literals.SDS_IMPORT__ALIAS,

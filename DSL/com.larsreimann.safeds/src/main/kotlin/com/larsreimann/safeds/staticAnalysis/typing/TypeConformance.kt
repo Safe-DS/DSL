@@ -49,7 +49,7 @@ private fun CallableType.isSubstitutableFor(other: Type): Boolean {
             true
         }
         is ClassType -> {
-            unwrappedOther.smlClass.qualifiedNameOrNull() == StdlibClasses.Any
+            unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         }
         is UnionType -> {
             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
@@ -61,7 +61,7 @@ private fun CallableType.isSubstitutableFor(other: Type): Boolean {
 private fun ClassType.isSubstitutableFor(other: Type): Boolean {
     return when (val unwrappedOther = unwrapVariadicType(other)) {
         is ClassType -> {
-            (!this.isNullable || unwrappedOther.isNullable) && this.smlClass.isSubtypeOf(unwrappedOther.smlClass)
+            (!this.isNullable || unwrappedOther.isNullable) && this.sdsClass.isSubtypeOf(unwrappedOther.sdsClass)
         }
         is UnionType -> {
             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
@@ -74,10 +74,10 @@ private fun EnumType.isSubstitutableFor(other: Type): Boolean {
     return when (val unwrappedOther = unwrapVariadicType(other)) {
         is ClassType -> {
             (!this.isNullable || unwrappedOther.isNullable) &&
-                    unwrappedOther.smlClass.qualifiedNameOrNull() == StdlibClasses.Any
+                    unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         }
         is EnumType -> {
-            (!this.isNullable || unwrappedOther.isNullable) && this.smlEnum == unwrappedOther.smlEnum
+            (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnum == unwrappedOther.sdsEnum
         }
         is UnionType -> {
             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
@@ -90,14 +90,14 @@ private fun EnumVariantType.isSubstitutableFor(other: Type): Boolean {
     return when (val unwrappedOther = unwrapVariadicType(other)) {
         is ClassType -> {
             (!this.isNullable || unwrappedOther.isNullable) &&
-                    unwrappedOther.smlClass.qualifiedNameOrNull() == StdlibClasses.Any
+                    unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         }
         is EnumType -> {
             (!this.isNullable || unwrappedOther.isNullable) &&
-                    this.smlEnumVariant in unwrappedOther.smlEnum.variantsOrEmpty()
+                    this.sdsEnumVariant in unwrappedOther.sdsEnum.variantsOrEmpty()
         }
         is EnumVariantType -> {
-            (!this.isNullable || unwrappedOther.isNullable) && this.smlEnumVariant == unwrappedOther.smlEnumVariant
+            (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnumVariant == unwrappedOther.sdsEnumVariant
         }
         is UnionType -> unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
         else -> false
@@ -113,7 +113,7 @@ private fun UnionType.isSubstitutableFor(other: Type): Boolean {
 
 private fun VariadicType.isSubstitutableFor(other: Type): Boolean {
     return when (other) {
-        is ClassType -> other.smlClass.qualifiedNameOrNull() == StdlibClasses.Any
+        is ClassType -> other.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         is VariadicType -> this.elementType.isSubstitutableFor(other)
         else -> false
     }

@@ -11,8 +11,8 @@ import org.eclipse.xtext.validation.Check
 class EnumVariantChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun typeParameterList(smlEnumVariant: SdsEnumVariant) {
-        if (smlEnumVariant.typeParameterList != null && smlEnumVariant.typeParametersOrEmpty().isEmpty()) {
+    fun typeParameterList(sdsEnumVariant: SdsEnumVariant) {
+        if (sdsEnumVariant.typeParameterList != null && sdsEnumVariant.typeParametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary type parameter list.",
                 Literals.SDS_ENUM_VARIANT__TYPE_PARAMETER_LIST,
@@ -22,8 +22,8 @@ class EnumVariantChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun parameterList(smlEnumVariant: SdsEnumVariant) {
-        if (smlEnumVariant.parameterList != null && smlEnumVariant.parametersOrEmpty().isEmpty()) {
+    fun parameterList(sdsEnumVariant: SdsEnumVariant) {
+        if (sdsEnumVariant.parameterList != null && sdsEnumVariant.parametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary parameter list.",
                 Literals.SDS_ABSTRACT_CALLABLE__PARAMETER_LIST,
@@ -33,8 +33,8 @@ class EnumVariantChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlEnumVariant: SdsEnumVariant) {
-        smlEnumVariant.parametersOrEmpty()
+    fun uniqueNames(sdsEnumVariant: SdsEnumVariant) {
+        sdsEnumVariant.parametersOrEmpty()
             .reportDuplicateNames { "A parameter with name '${it.name}' exists already in this enum variant." }
     }
 }

@@ -22,9 +22,9 @@ import org.eclipse.xtext.validation.CheckType
 class CompilationUnitChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun members(smlCompilationUnit: SdsCompilationUnit) {
-        if (smlCompilationUnit.isInStubFile()) {
-            smlCompilationUnit.compilationUnitMembersOrEmpty()
+    fun members(sdsCompilationUnit: SdsCompilationUnit) {
+        if (sdsCompilationUnit.isInStubFile()) {
+            sdsCompilationUnit.compilationUnitMembersOrEmpty()
                 .filter { it is SdsWorkflow || it is SdsStep }
                 .forEach {
                     error(
@@ -34,8 +34,8 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         ErrorCode.StubFileMustNotDeclareWorkflowsOrSteps
                     )
                 }
-        } else if (!smlCompilationUnit.isInTestFile()) {
-            smlCompilationUnit.compilationUnitMembersOrEmpty()
+        } else if (!sdsCompilationUnit.isInTestFile()) {
+            sdsCompilationUnit.compilationUnitMembersOrEmpty()
                 .filter { it !is SdsWorkflow && it !is SdsStep }
                 .forEach {
                     error(
@@ -49,13 +49,13 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniquePackageDeclaration(smlCompilationUnit: SdsCompilationUnit) {
-        if (smlCompilationUnit.isInTestFile()) {
+    fun uniquePackageDeclaration(sdsCompilationUnit: SdsCompilationUnit) {
+        if (sdsCompilationUnit.isInTestFile()) {
             return
         }
 
-        if (smlCompilationUnit.name == null) {
-            smlCompilationUnit.compilationUnitMembersOrEmpty().firstOrNull()?.let {
+        if (sdsCompilationUnit.name == null) {
+            sdsCompilationUnit.compilationUnitMembersOrEmpty().firstOrNull()?.let {
                 error(
                     "A file with declarations must declare its package.",
                     it,
@@ -67,8 +67,8 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlCompilationUnit: SdsCompilationUnit) {
-        val namedEObjects = smlCompilationUnit.imports.filter { it.isQualified() } + smlCompilationUnit.members
+    fun uniqueNames(sdsCompilationUnit: SdsCompilationUnit) {
+        val namedEObjects = sdsCompilationUnit.imports.filter { it.isQualified() } + sdsCompilationUnit.members
 
         namedEObjects.duplicatesBy {
             when (it) {
@@ -107,16 +107,16 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
     }
 
     @Check(CheckType.NORMAL)
-    fun uniqueNamesAcrossFiles(smlCompilationUnit: SdsCompilationUnit) {
+    fun uniqueNamesAcrossFiles(sdsCompilationUnit: SdsCompilationUnit) {
 
         // Since the stdlib is automatically loaded into a workspace, every declaration would be marked as a duplicate
         // when editing the stdlib
-        if (smlCompilationUnit.isInStubFile() && smlCompilationUnit.name.startsWith("safeds")) {
+        if (sdsCompilationUnit.isInStubFile() && sdsCompilationUnit.name.startsWith("safeds")) {
             return
         }
 
-        val externalGlobalDeclarations = smlCompilationUnit.externalGlobalDeclarations()
-        smlCompilationUnit.compilationUnitMembersOrEmpty().forEach { member ->
+        val externalGlobalDeclarations = sdsCompilationUnit.externalGlobalDeclarations()
+        sdsCompilationUnit.compilationUnitMembersOrEmpty().forEach { member ->
             val qualifiedName = member.qualifiedNameOrNull()
             if (externalGlobalDeclarations.any { it.qualifiedName == qualifiedName }) {
                 error(

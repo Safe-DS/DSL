@@ -16,8 +16,8 @@ import org.eclipse.xtext.validation.CheckType
 class IndexedAccessTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun receiverMustBeVariadic(smlIndexedAccess: SdsIndexedAccess) {
-        val receiverType = smlIndexedAccess.receiver.type()
+    fun receiverMustBeVariadic(sdsIndexedAccess: SdsIndexedAccess) {
+        val receiverType = sdsIndexedAccess.receiver.type()
         if (receiverType is UnresolvedType) {
             return // Scoping error already shown
         }
@@ -32,15 +32,15 @@ class IndexedAccessTypeChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun indexMustBeInt(smlIndexedAccess: SdsIndexedAccess) {
-        val indexType = smlIndexedAccess.index.type()
+    fun indexMustBeInt(sdsIndexedAccess: SdsIndexedAccess) {
+        val indexType = sdsIndexedAccess.index.type()
         if (indexType is UnresolvedType) {
             return
         }
 
         val hasWrongType = indexType !is ClassType ||
             indexType.isNullable ||
-            indexType.smlClass.qualifiedNameOrNull() != StdlibClasses.Int
+            indexType.sdsClass.qualifiedNameOrNull() != StdlibClasses.Int
 
         if (hasWrongType) {
             error(

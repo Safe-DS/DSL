@@ -18,20 +18,20 @@ import org.eclipse.xtext.validation.Check
 class InfixOperationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun dispatchCheckInfixOperation(smlInfixOperation: SdsInfixOperation) {
-        when (smlInfixOperation.operator) {
-            By.operator -> checkByOperator(smlInfixOperation)
-            Elvis.operator -> checkElvisOperator(smlInfixOperation)
+    fun dispatchCheckInfixOperation(sdsInfixOperation: SdsInfixOperation) {
+        when (sdsInfixOperation.operator) {
+            By.operator -> checkByOperator(sdsInfixOperation)
+            Elvis.operator -> checkElvisOperator(sdsInfixOperation)
         }
     }
 
-    private fun checkByOperator(smlInfixOperation: SdsInfixOperation) {
-        val leftType = smlInfixOperation.leftOperand.type()
+    private fun checkByOperator(sdsInfixOperation: SdsInfixOperation) {
+        val leftType = sdsInfixOperation.leftOperand.type()
         if (!(leftType is NamedType && leftType.qualifiedName in setOf(StdlibClasses.Float, StdlibClasses.Int))) {
             return
         }
 
-        val rightValue = smlInfixOperation.rightOperand.toConstantExpressionOrNull()
+        val rightValue = sdsInfixOperation.rightOperand.toConstantExpressionOrNull()
         if (rightValue in setOf(SdsConstantFloat(0.0), SdsConstantFloat(-0.0), SdsConstantInt(0))) {
             error(
                 "Division by zero.",
@@ -41,8 +41,8 @@ class InfixOperationChecker : AbstractSafeDSChecker() {
         }
     }
 
-    private fun checkElvisOperator(smlInfixOperation: SdsInfixOperation) {
-        val leftType = smlInfixOperation.leftOperand.type()
+    private fun checkElvisOperator(sdsInfixOperation: SdsInfixOperation) {
+        val leftType = sdsInfixOperation.leftOperand.type()
         if (!(leftType is NamedType && leftType.isNullable)) {
             info(
                 "The left operand is never null so the elvis operator is unnecessary (keep left operand).",
@@ -52,8 +52,8 @@ class InfixOperationChecker : AbstractSafeDSChecker() {
             return
         }
 
-        val leftValue = smlInfixOperation.leftOperand.toConstantExpressionOrNull()
-        val rightValue = smlInfixOperation.rightOperand.toConstantExpressionOrNull()
+        val leftValue = sdsInfixOperation.leftOperand.toConstantExpressionOrNull()
+        val rightValue = sdsInfixOperation.rightOperand.toConstantExpressionOrNull()
         if (leftValue is SdsConstantNull && rightValue is SdsConstantNull) {
             info(
                 "Both operands are always null so the elvis operator is unnecessary (replace with null).",

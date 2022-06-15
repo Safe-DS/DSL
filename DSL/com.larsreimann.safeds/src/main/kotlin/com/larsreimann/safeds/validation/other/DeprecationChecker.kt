@@ -21,8 +21,8 @@ import org.eclipse.xtext.validation.Check
 class DeprecationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun annotationUseReferenceDeprecatedAnnotation(smlAnnotationCall: SdsAnnotationCall) {
-        val annotation = smlAnnotationCall.annotation ?: return
+    fun annotationUseReferenceDeprecatedAnnotation(sdsAnnotationCall: SdsAnnotationCall) {
+        val annotation = sdsAnnotationCall.annotation ?: return
         if (annotation.isDeprecated()) {
             warning(
                 "The used annotation is deprecated.",
@@ -33,12 +33,12 @@ class DeprecationChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun assigneeAssignedToDeprecatedValue(smlAssignee: SdsAbstractAssignee) {
-        if (smlAssignee is SdsWildcard) {
+    fun assigneeAssignedToDeprecatedValue(sdsAssignee: SdsAbstractAssignee) {
+        if (sdsAssignee is SdsWildcard) {
             return
         }
 
-        val assigned = smlAssignee.assignedOrNull() ?: return
+        val assigned = sdsAssignee.assignedOrNull() ?: return
         if (assigned is SdsAbstractDeclaration && assigned.isDeprecated()) {
             warning(
                 "The assigned declaration is deprecated.",
@@ -49,8 +49,8 @@ class DeprecationChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun argumentReferencesDeprecatedParameter(smlArgument: SdsArgument) {
-        val parameter = smlArgument.parameterOrNull() ?: return
+    fun argumentReferencesDeprecatedParameter(sdsArgument: SdsArgument) {
+        val parameter = sdsArgument.parameterOrNull() ?: return
         if (parameter.isDeprecated()) {
             warning(
                 "The corresponding parameter is deprecated.",
@@ -61,8 +61,8 @@ class DeprecationChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun namedTypeReferencesDeprecatedDeclaration(smlNamedType: SdsNamedType) {
-        val declaration = smlNamedType.declaration ?: return
+    fun namedTypeReferencesDeprecatedDeclaration(sdsNamedType: SdsNamedType) {
+        val declaration = sdsNamedType.declaration ?: return
         if (declaration.isDeprecated()) {
             warning(
                 "The referenced declaration is deprecated.",
@@ -73,8 +73,8 @@ class DeprecationChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun referenceReferencesDeprecatedDeclaration(smlReference: SdsReference) {
-        val declaration = smlReference.declaration ?: return
+    fun referenceReferencesDeprecatedDeclaration(sdsReference: SdsReference) {
+        val declaration = sdsReference.declaration ?: return
         if (declaration !is SdsParameter && declaration.isDeprecated()) {
             warning(
                 "The referenced declaration is deprecated.",
@@ -85,8 +85,8 @@ class DeprecationChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun typeArgumentReferencesDeprecatedTypeParameter(smlTypeArgument: SdsTypeArgument) {
-        val typeParameter = smlTypeArgument.typeParameterOrNull() ?: return
+    fun typeArgumentReferencesDeprecatedTypeParameter(sdsTypeArgument: SdsTypeArgument) {
+        val typeParameter = sdsTypeArgument.typeParameterOrNull() ?: return
         if (typeParameter.isDeprecated()) {
             warning(
                 "The corresponding type parameter is deprecated.",

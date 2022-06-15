@@ -7,8 +7,8 @@ import com.larsreimann.safeds.constant.SdsFileExtension
 import com.larsreimann.safeds.emf.createSdsDummyResource
 import com.larsreimann.safeds.emf.createSdsInt
 import com.larsreimann.safeds.emf.descendants
-import com.larsreimann.safeds.emf.smlExpressionStatement
-import com.larsreimann.safeds.emf.smlWorkflow
+import com.larsreimann.safeds.emf.sdsExpressionStatement
+import com.larsreimann.safeds.emf.sdsWorkflow
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsInt
@@ -68,8 +68,8 @@ class SafeDSINTValueConverterTest {
             val int = createSdsInt(1)
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                smlWorkflow("test") {
-                    smlExpressionStatement(int)
+                sdsWorkflow("test") {
+                    sdsExpressionStatement(int)
                 }
             }
 

@@ -15,9 +15,9 @@ import org.eclipse.xtext.validation.Check
 class FunctionChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun nonStaticPropagates(smlFunction: SdsFunction) {
-        if (smlFunction.isStatic) {
-            val hiddenFunction = smlFunction.hiddenFunction()
+    fun nonStaticPropagates(sdsFunction: SdsFunction) {
+        if (sdsFunction.isStatic) {
+            val hiddenFunction = sdsFunction.hiddenFunction()
             if (hiddenFunction != null && !hiddenFunction.isStatic) {
                 error(
                     "One of the supertypes of this class declares a non-static function with this name, so this must be non-static as well.",
@@ -29,9 +29,9 @@ class FunctionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun purePropagates(smlFunction: SdsFunction) {
-        if (!smlFunction.isPure()) {
-            val hiddenFunction = smlFunction.hiddenFunction()
+    fun purePropagates(sdsFunction: SdsFunction) {
+        if (!sdsFunction.isPure()) {
+            val hiddenFunction = sdsFunction.hiddenFunction()
             if (hiddenFunction != null && hiddenFunction.isPure()) {
                 error(
                     "One of the supertypes of this class declares a pure function with this name, so this must be pure as well.",
@@ -43,9 +43,9 @@ class FunctionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun staticPropagates(smlFunction: SdsFunction) {
-        if (!smlFunction.isStatic) {
-            val hiddenFunction = smlFunction.hiddenFunction()
+    fun staticPropagates(sdsFunction: SdsFunction) {
+        if (!sdsFunction.isStatic) {
+            val hiddenFunction = sdsFunction.hiddenFunction()
             if (hiddenFunction != null && hiddenFunction.isStatic) {
                 error(
                     "One of the supertypes of this class declares a static function with this name, so this must be static as well.",
@@ -57,16 +57,16 @@ class FunctionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlFunction: SdsFunction) {
-        val declarations = smlFunction.parametersOrEmpty() + smlFunction.resultsOrEmpty()
+    fun uniqueNames(sdsFunction: SdsFunction) {
+        val declarations = sdsFunction.parametersOrEmpty() + sdsFunction.resultsOrEmpty()
         declarations.reportDuplicateNames {
             "A parameter or result with name '${it.name}' exists already in this function."
         }
     }
 
     @Check
-    fun unnecessaryResultList(smlFunction: SdsFunction) {
-        if (smlFunction.resultList != null && smlFunction.resultsOrEmpty().isEmpty()) {
+    fun unnecessaryResultList(sdsFunction: SdsFunction) {
+        if (sdsFunction.resultList != null && sdsFunction.resultsOrEmpty().isEmpty()) {
             info(
                 "Unnecessary result list.",
                 Literals.SDS_FUNCTION__RESULT_LIST,
@@ -76,8 +76,8 @@ class FunctionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unnecessaryTypeParameterList(smlFunction: SdsFunction) {
-        if (smlFunction.typeParameterList != null && smlFunction.typeParametersOrEmpty().isEmpty()) {
+    fun unnecessaryTypeParameterList(sdsFunction: SdsFunction) {
+        if (sdsFunction.typeParameterList != null && sdsFunction.typeParametersOrEmpty().isEmpty()) {
             info(
                 "Unnecessary type parameter list.",
                 Literals.SDS_FUNCTION__TYPE_PARAMETER_LIST,

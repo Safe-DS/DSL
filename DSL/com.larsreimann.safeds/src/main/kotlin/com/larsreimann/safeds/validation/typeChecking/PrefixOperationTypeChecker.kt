@@ -17,17 +17,17 @@ import org.eclipse.xtext.validation.CheckType
 class PrefixOperationTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun operand(smlPrefixOperation: SdsPrefixOperation) {
-        val operandType = smlPrefixOperation.operand.type()
+    fun operand(sdsPrefixOperation: SdsPrefixOperation) {
+        val operandType = sdsPrefixOperation.operand.type()
         if (operandType is UnresolvedType) {
             return // Scoping error already shown
         }
 
-        when (smlPrefixOperation.operator()) {
+        when (sdsPrefixOperation.operator()) {
             SdsPrefixOperationOperator.Not -> {
                 val hasWrongType = operandType !is ClassType ||
                     operandType.isNullable ||
-                    operandType.smlClass.qualifiedNameOrNull() != StdlibClasses.Boolean
+                    operandType.sdsClass.qualifiedNameOrNull() != StdlibClasses.Boolean
 
                 if (hasWrongType) {
                     error(
@@ -40,7 +40,7 @@ class PrefixOperationTypeChecker : AbstractSafeDSChecker() {
             SdsPrefixOperationOperator.Minus -> {
                 val hasWrongType = operandType !is ClassType ||
                     operandType.isNullable ||
-                    operandType.smlClass.qualifiedNameOrNull() !in setOf(StdlibClasses.Float, StdlibClasses.Int)
+                    operandType.sdsClass.qualifiedNameOrNull() !in setOf(StdlibClasses.Float, StdlibClasses.Int)
 
                 if (hasWrongType) {
                     error(

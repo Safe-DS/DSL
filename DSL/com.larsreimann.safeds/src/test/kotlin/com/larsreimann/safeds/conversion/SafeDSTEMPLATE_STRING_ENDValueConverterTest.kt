@@ -8,8 +8,8 @@ import com.larsreimann.safeds.emf.createSdsDummyResource
 import com.larsreimann.safeds.emf.createSdsNull
 import com.larsreimann.safeds.emf.createSdsTemplateString
 import com.larsreimann.safeds.emf.descendants
-import com.larsreimann.safeds.emf.smlExpressionStatement
-import com.larsreimann.safeds.emf.smlWorkflow
+import com.larsreimann.safeds.emf.sdsExpressionStatement
+import com.larsreimann.safeds.emf.sdsWorkflow
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
@@ -71,8 +71,8 @@ class SafeDSTEMPLATE_STRING_ENDValueConverterTest {
             )
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                smlWorkflow("test") {
-                    smlExpressionStatement(stringTemplate)
+                sdsWorkflow("test") {
+                    sdsExpressionStatement(stringTemplate)
                 }
             }
 

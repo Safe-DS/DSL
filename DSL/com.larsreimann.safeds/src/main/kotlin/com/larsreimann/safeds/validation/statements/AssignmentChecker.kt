@@ -22,8 +22,8 @@ import org.eclipse.xtext.validation.Check
 class AssignmentChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun unnecessaryAssigneeList(smlAssignment: SdsAssignment) {
-        if (smlAssignment.assigneesOrEmpty().all { it is SdsWildcard }) {
+    fun unnecessaryAssigneeList(sdsAssignment: SdsAssignment) {
+        if (sdsAssignment.assigneesOrEmpty().all { it is SdsWildcard }) {
             info(
                 "This assignment can be converted to an expression statement.",
                 null,
@@ -33,8 +33,8 @@ class AssignmentChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun assigneeWithoutValue(smlAssignment: SdsAssignment) {
-        smlAssignment.assigneesOrEmpty()
+    fun assigneeWithoutValue(sdsAssignment: SdsAssignment) {
+        sdsAssignment.assigneesOrEmpty()
             .filter { it.maybeAssigned() == AssignedResult.NotAssigned }
             .forEach {
                 error(
@@ -47,14 +47,14 @@ class AssignmentChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun hasNoEffect(smlAssignment: SdsAssignment) {
-        if (smlAssignment.assigneesOrEmpty()
+    fun hasNoEffect(sdsAssignment: SdsAssignment) {
+        if (sdsAssignment.assigneesOrEmpty()
             .any { it is SdsPlaceholder || it is SdsYield || it is SdsBlockLambdaResult }
         ) {
             return
         }
 
-        if (smlAssignment.expression.expressionHasNoSideEffects()) {
+        if (sdsAssignment.expression.expressionHasNoSideEffects()) {
             warning(
                 "This statement does nothing.",
                 null,
@@ -64,11 +64,11 @@ class AssignmentChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun ignoredResultOfCall(smlAssignment: SdsAssignment) {
-        val expression = smlAssignment.expression
+    fun ignoredResultOfCall(sdsAssignment: SdsAssignment) {
+        val expression = sdsAssignment.expression
         if (expression is SdsCall) {
             val results = (expression.resultsOrNull() ?: listOf())
-            val unassignedResults = results.drop(smlAssignment.assigneesOrEmpty().size)
+            val unassignedResults = results.drop(sdsAssignment.assigneesOrEmpty().size)
 
             unassignedResults
                 .filterIsInstance<SdsAbstractDeclaration>()

@@ -14,10 +14,10 @@ import org.eclipse.xtext.validation.CheckType
 class ArgumentChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun argumentMustBeConstant(smlArgument: SdsArgument) {
-        val parameterIsConstant = smlArgument.parameterOrNull()?.isConstant() ?: false
+    fun argumentMustBeConstant(sdsArgument: SdsArgument) {
+        val parameterIsConstant = sdsArgument.parameterOrNull()?.isConstant() ?: false
 
-        if (parameterIsConstant && smlArgument.value?.toConstantExpressionOrNull() == null) {
+        if (parameterIsConstant && sdsArgument.value?.toConstantExpressionOrNull() == null) {
             error(
                 "Arguments assigned to constant parameters must be constant.",
                 Literals.SDS_ARGUMENT__VALUE,
@@ -27,8 +27,8 @@ class ArgumentChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun variadicParameterMustNotBeAssignedByName(smlArgument: SdsArgument) {
-        if (smlArgument.isNamed() && (smlArgument.parameterOrNull()?.isVariadic == true)) {
+    fun variadicParameterMustNotBeAssignedByName(sdsArgument: SdsArgument) {
+        if (sdsArgument.isNamed() && (sdsArgument.parameterOrNull()?.isVariadic == true)) {
             error(
                 "A variadic parameter must not be assigned by name.",
                 Literals.SDS_ARGUMENT__PARAMETER,

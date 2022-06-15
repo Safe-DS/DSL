@@ -14,9 +14,9 @@ import org.eclipse.xtext.validation.Check
 class TypeArgumentListChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingRequiredTypeParameter(smlTypeArgumentList: SdsTypeArgumentList) {
-        val requiredTypeParameters = smlTypeArgumentList.typeParametersOrNull() ?: return
-        val givenTypeParameters = smlTypeArgumentList.typeArguments.mapNotNull { it.typeParameterOrNull() }
+    fun missingRequiredTypeParameter(sdsTypeArgumentList: SdsTypeArgumentList) {
+        val requiredTypeParameters = sdsTypeArgumentList.typeParametersOrNull() ?: return
+        val givenTypeParameters = sdsTypeArgumentList.typeArguments.mapNotNull { it.typeParameterOrNull() }
         val missingRequiredTypeParameters = requiredTypeParameters - givenTypeParameters.toSet()
 
         missingRequiredTypeParameters.forEach {
@@ -29,13 +29,13 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun noPositionalArgumentsAfterFirstNamedArgument(smlTypeArgumentList: SdsTypeArgumentList) {
-        val firstNamedTypeArgumentIndex = smlTypeArgumentList.typeArguments.indexOfFirst { it.isNamed() }
+    fun noPositionalArgumentsAfterFirstNamedArgument(sdsTypeArgumentList: SdsTypeArgumentList) {
+        val firstNamedTypeArgumentIndex = sdsTypeArgumentList.typeArguments.indexOfFirst { it.isNamed() }
         if (firstNamedTypeArgumentIndex == -1) {
             return
         }
 
-        smlTypeArgumentList.typeArguments
+        sdsTypeArgumentList.typeArguments
             .drop(firstNamedTypeArgumentIndex + 1)
             .filter { it.isPositional() }
             .forEach {
@@ -49,11 +49,11 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun tooManyTypeArguments(smlTypeArgumentList: SdsTypeArgumentList) {
-        val typeParameter = smlTypeArgumentList.typeParametersOrNull() ?: return
+    fun tooManyTypeArguments(sdsTypeArgumentList: SdsTypeArgumentList) {
+        val typeParameter = sdsTypeArgumentList.typeParametersOrNull() ?: return
 
         val maximumExpectedNumberOfArguments = typeParameter.size
-        val actualNumberOfArguments = smlTypeArgumentList.typeArguments.size
+        val actualNumberOfArguments = sdsTypeArgumentList.typeArguments.size
 
         if (actualNumberOfArguments > maximumExpectedNumberOfArguments) {
             val message = buildString {
@@ -76,8 +76,8 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueTypeParameters(smlTypeArgumentList: SdsTypeArgumentList) {
-        smlTypeArgumentList.typeArguments
+    fun uniqueTypeParameters(sdsTypeArgumentList: SdsTypeArgumentList) {
+        sdsTypeArgumentList.typeArguments
             .duplicatesBy { it.typeParameterOrNull()?.name }
             .forEach {
                 error(
@@ -90,8 +90,8 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unnecessaryTypeArgumentList(smlTypeArgumentList: SdsTypeArgumentList) {
-        val typeParametersOrNull = smlTypeArgumentList.typeParametersOrNull()
+    fun unnecessaryTypeArgumentList(sdsTypeArgumentList: SdsTypeArgumentList) {
+        val typeParametersOrNull = sdsTypeArgumentList.typeParametersOrNull()
         if (typeParametersOrNull != null && typeParametersOrNull.isEmpty()) {
             info(
                 "Unnecessary type argument list.",

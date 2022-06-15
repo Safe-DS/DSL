@@ -25,8 +25,8 @@ import org.eclipse.xtext.validation.Check
 class NameConventionChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun segmentsShouldBeLowercase(smlCompilationUnit: SdsCompilationUnit) {
-        val hasInvalidSegments = smlCompilationUnit.name
+    fun segmentsShouldBeLowercase(sdsCompilationUnit: SdsCompilationUnit) {
+        val hasInvalidSegments = sdsCompilationUnit.name
             .split('.')
             .any { !it.isLowerCamelCase() }
 
@@ -40,8 +40,8 @@ class NameConventionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun blockLambdaPrefix(smlDeclaration: SdsAbstractDeclaration) {
-        if (smlDeclaration.name.startsWith("__block_lambda_")) {
+    fun blockLambdaPrefix(sdsDeclaration: SdsAbstractDeclaration) {
+        if (sdsDeclaration.name.startsWith("__block_lambda_")) {
             error(
                 "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
@@ -51,73 +51,73 @@ class NameConventionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun annotationNamesShouldBeUpperCamelCase(smlAnnotation: SdsAnnotation) {
-        smlAnnotation.nameShouldBeUpperCamelCase("annotations")
+    fun annotationNamesShouldBeUpperCamelCase(sdsAnnotation: SdsAnnotation) {
+        sdsAnnotation.nameShouldBeUpperCamelCase("annotations")
     }
 
     @Check
-    fun attributeNamesShouldBeLowerCamelCase(smlAttribute: SdsAttribute) {
-        smlAttribute.nameShouldBeLowerCamelCase("attributes")
+    fun attributeNamesShouldBeLowerCamelCase(sdsAttribute: SdsAttribute) {
+        sdsAttribute.nameShouldBeLowerCamelCase("attributes")
     }
 
     @Check
-    fun classNamesShouldBeUpperCamelCase(smlClass: SdsClass) {
-        smlClass.nameShouldBeUpperCamelCase("classes")
+    fun classNamesShouldBeUpperCamelCase(sdsClass: SdsClass) {
+        sdsClass.nameShouldBeUpperCamelCase("classes")
     }
 
     @Check
-    fun enumNamesShouldBeUpperCamelCase(smlEnum: SdsEnum) {
-        smlEnum.nameShouldBeUpperCamelCase("enums")
+    fun enumNamesShouldBeUpperCamelCase(sdsEnum: SdsEnum) {
+        sdsEnum.nameShouldBeUpperCamelCase("enums")
     }
 
     @Check
-    fun enumVariantNamesShouldBeUpperCamelCase(smlEnumVariant: SdsEnumVariant) {
-        smlEnumVariant.nameShouldBeUpperCamelCase("enum variants")
+    fun enumVariantNamesShouldBeUpperCamelCase(sdsEnumVariant: SdsEnumVariant) {
+        sdsEnumVariant.nameShouldBeUpperCamelCase("enum variants")
     }
 
     @Check
-    fun functionNamesShouldBeLowerCamelCase(smlFunction: SdsFunction) {
-        smlFunction.nameShouldBeLowerCamelCase("functions")
+    fun functionNamesShouldBeLowerCamelCase(sdsFunction: SdsFunction) {
+        sdsFunction.nameShouldBeLowerCamelCase("functions")
     }
 
     @Check
-    fun lambdaResultNamesShouldBeLowerCamelCase(smlBlockLambdaResult: SdsBlockLambdaResult) {
-        smlBlockLambdaResult.nameShouldBeLowerCamelCase("lambda results")
+    fun lambdaResultNamesShouldBeLowerCamelCase(sdsBlockLambdaResult: SdsBlockLambdaResult) {
+        sdsBlockLambdaResult.nameShouldBeLowerCamelCase("lambda results")
     }
 
     @Check
-    fun parameterNamesShouldBeLowerCamelCase(smlParameter: SdsParameter) {
-        smlParameter.nameShouldBeLowerCamelCase("parameters")
+    fun parameterNamesShouldBeLowerCamelCase(sdsParameter: SdsParameter) {
+        sdsParameter.nameShouldBeLowerCamelCase("parameters")
     }
 
     @Check
-    fun placeholderNamesShouldBeLowerCamelCase(smlPlaceholder: SdsPlaceholder) {
-        smlPlaceholder.nameShouldBeLowerCamelCase("placeholders")
+    fun placeholderNamesShouldBeLowerCamelCase(sdsPlaceholder: SdsPlaceholder) {
+        sdsPlaceholder.nameShouldBeLowerCamelCase("placeholders")
     }
 
     @Check
-    fun protocolSubtermNamesShouldBeLowerCamelCase(smlProtocolSubterm: SdsProtocolSubterm) {
-        smlProtocolSubterm.nameShouldBeLowerCamelCase("protocol subterms")
+    fun protocolSubtermNamesShouldBeLowerCamelCase(sdsProtocolSubterm: SdsProtocolSubterm) {
+        sdsProtocolSubterm.nameShouldBeLowerCamelCase("protocol subterms")
     }
 
     @Check
-    fun resultNamesShouldBeLowerCamelCase(smlResult: SdsResult) {
-        smlResult.nameShouldBeLowerCamelCase("results")
+    fun resultNamesShouldBeLowerCamelCase(sdsResult: SdsResult) {
+        sdsResult.nameShouldBeLowerCamelCase("results")
     }
 
     @Check
-    fun stepNamesShouldBeLowerCamelCase(smlStep: SdsStep) {
-        smlStep.nameShouldBeLowerCamelCase("steps")
+    fun stepNamesShouldBeLowerCamelCase(sdsStep: SdsStep) {
+        sdsStep.nameShouldBeLowerCamelCase("steps")
     }
 
     @Check
-    fun typeParameterNamesShouldBeUpperCamelCase(smlTypeParameter: SdsTypeParameter) {
-        smlTypeParameter.nameShouldBeUpperCamelCase("type parameters")
+    fun typeParameterNamesShouldBeUpperCamelCase(sdsTypeParameter: SdsTypeParameter) {
+        sdsTypeParameter.nameShouldBeUpperCamelCase("type parameters")
     }
 
     @Check
-    fun workflowNamesShouldBeLowerCamelCase(smlWorkflow: SdsWorkflow) {
-        smlWorkflow.nameShouldBeLowerCamelCase("workflows")
+    fun workflowNamesShouldBeLowerCamelCase(sdsWorkflow: SdsWorkflow) {
+        sdsWorkflow.nameShouldBeLowerCamelCase("workflows")
     }
 
     private fun SdsAbstractDeclaration.nameShouldBeUpperCamelCase(declarationType: String) {

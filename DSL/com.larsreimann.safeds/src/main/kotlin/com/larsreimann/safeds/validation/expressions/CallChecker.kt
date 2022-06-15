@@ -25,12 +25,12 @@ import org.eclipse.xtext.validation.Check
 class CallChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun missingTypeArgumentList(smlCall: SdsCall) {
-        if (smlCall.typeArgumentList != null) {
+    fun missingTypeArgumentList(sdsCall: SdsCall) {
+        if (sdsCall.typeArgumentList != null) {
             return
         }
 
-        val typeParameters = when (val callable = smlCall.callableOrNull()) {
+        val typeParameters = when (val callable = sdsCall.callableOrNull()) {
             is SdsClass -> callable.typeParametersOrEmpty()
             is SdsEnumVariant -> callable.typeParametersOrEmpty()
             is SdsFunction -> callable.typeParametersOrEmpty()
@@ -47,25 +47,25 @@ class CallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun context(smlCall: SdsCall) {
-        val results = smlCall.resultsOrNull() ?: return
-        val source = when (smlCall.receiver) {
-            is SdsMemberAccess -> smlCall.receiver
-            else -> smlCall
+    fun context(sdsCall: SdsCall) {
+        val results = sdsCall.resultsOrNull() ?: return
+        val source = when (sdsCall.receiver) {
+            is SdsMemberAccess -> sdsCall.receiver
+            else -> sdsCall
         }
-        val feature = when (smlCall.receiver) {
+        val feature = when (sdsCall.receiver) {
             is SdsMemberAccess -> Literals.SDS_MEMBER_ACCESS__MEMBER
             else -> Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER
         }
 
-        if (results.isEmpty() && !smlCall.hasValidContextForCallWithoutResults()) {
+        if (results.isEmpty() && !sdsCall.hasValidContextForCallWithoutResults()) {
             error(
                 "A call that produces no results is not allowed in this context.",
                 source,
                 feature,
                 ErrorCode.CONTEXT_OF_CALL_WITHOUT_RESULTS
             )
-        } else if (results.size > 1 && !smlCall.hasValidContextForCallWithMultipleResults()) {
+        } else if (results.size > 1 && !sdsCall.hasValidContextForCallWithMultipleResults()) {
             error(
                 "A call that produces multiple results is not allowed in this context.",
                 source,
@@ -86,8 +86,8 @@ class CallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun recursion(smlCall: SdsCall) {
-        if (smlCall.isRecursive()) {
+    fun recursion(sdsCall: SdsCall) {
+        if (sdsCall.isRecursive()) {
             error(
                 "Recursive calls are not allowed.",
                 Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
@@ -97,8 +97,8 @@ class CallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun receiver(smlCall: SdsCall) {
-        when (val maybeCallable = smlCall.maybeCallable()) {
+    fun receiver(sdsCall: SdsCall) {
+        when (val maybeCallable = sdsCall.maybeCallable()) {
             CallableResult.NotCallable -> {
                 error(
                     "This expression must not be called.",
@@ -121,20 +121,20 @@ class CallChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun unnecessaryArgumentList(smlCall: SdsCall) {
+    fun unnecessaryArgumentList(sdsCall: SdsCall) {
 
         // Call has no argument list anyway
-        if (smlCall.argumentList == null) {
+        if (sdsCall.argumentList == null) {
             return
         }
 
         // Call is used to pass type arguments or arguments
-        if (smlCall.typeArgumentsOrEmpty().isNotEmpty() || smlCall.argumentsOrEmpty().isNotEmpty()) {
+        if (sdsCall.typeArgumentsOrEmpty().isNotEmpty() || sdsCall.argumentsOrEmpty().isNotEmpty()) {
             return
         }
 
         // Receiver is not callable or cannot be resolved
-        val callable = smlCall.callableOrNull() ?: return
+        val callable = sdsCall.callableOrNull() ?: return
 
         // Only calls to enum variants can sometimes be omitted without changing the meaning of the program
         if (callable !is SdsEnumVariant) {

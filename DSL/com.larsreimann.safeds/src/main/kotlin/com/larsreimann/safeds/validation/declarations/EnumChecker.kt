@@ -10,8 +10,8 @@ import org.eclipse.xtext.validation.Check
 class EnumChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun body(smlEnum: SdsEnum) {
-        if (smlEnum.body != null && smlEnum.variantsOrEmpty().isEmpty()) {
+    fun body(sdsEnum: SdsEnum) {
+        if (sdsEnum.body != null && sdsEnum.variantsOrEmpty().isEmpty()) {
             info(
                 "Unnecessary enum body.",
                 Literals.SDS_ENUM__BODY,
@@ -21,8 +21,8 @@ class EnumChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun uniqueNames(smlEnum: SdsEnum) {
-        smlEnum.variantsOrEmpty()
+    fun uniqueNames(sdsEnum: SdsEnum) {
+        sdsEnum.variantsOrEmpty()
             .reportDuplicateNames { "A declaration with name '${it.name}' exists already in this enum." }
     }
 }

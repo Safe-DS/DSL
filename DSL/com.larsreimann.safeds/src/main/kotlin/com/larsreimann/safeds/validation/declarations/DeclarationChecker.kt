@@ -15,8 +15,8 @@ import org.eclipse.xtext.validation.Check
 class DeclarationChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun annotationCardinality(smlDeclaration: SdsAbstractDeclaration) {
-        smlDeclaration.annotationCallsOrEmpty()
+    fun annotationCardinality(sdsDeclaration: SdsAbstractDeclaration) {
+        sdsDeclaration.annotationCallsOrEmpty()
             .filter { it.annotation != null && !it.annotation.eIsProxy() && !it.annotation.isRepeatable() }
             .duplicatesBy { it.annotation.qualifiedNameOrNull() }
             .forEach {
@@ -30,9 +30,9 @@ class DeclarationChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun mustNotDeprecateRequiredParameter(smlParameter: SdsParameter) {
-        if (smlParameter.isRequired()) {
-            val deprecatedAnnotationOrNull = smlParameter.annotationCallsOrEmpty().firstOrNull {
+    fun mustNotDeprecateRequiredParameter(sdsParameter: SdsParameter) {
+        if (sdsParameter.isRequired()) {
+            val deprecatedAnnotationOrNull = sdsParameter.annotationCallsOrEmpty().firstOrNull {
                 it.annotation.qualifiedNameOrNull() == StdlibAnnotations.Deprecated
             }
 

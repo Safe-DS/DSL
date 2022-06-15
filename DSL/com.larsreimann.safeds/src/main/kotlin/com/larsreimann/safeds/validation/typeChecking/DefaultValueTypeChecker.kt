@@ -13,14 +13,14 @@ import org.eclipse.xtext.validation.CheckType
 class DefaultValueTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun defaultValue(smlParameter: SdsParameter) {
-        val defaultValue = smlParameter.defaultValue ?: return
+    fun defaultValue(sdsParameter: SdsParameter) {
+        val defaultValue = sdsParameter.defaultValue ?: return
         val defaultValueType = defaultValue.type()
         if (defaultValueType is UnresolvedType) {
             return // Scoping error already shown
         }
 
-        val parameterType = smlParameter.type()
+        val parameterType = sdsParameter.type()
 
         if (!defaultValueType.isSubstitutableFor(parameterType)) {
             var defaultValueTypeString = defaultValueType.toSimpleString()

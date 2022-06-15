@@ -11,13 +11,13 @@ import org.eclipse.xtext.validation.Check
 class ParameterListChecker : AbstractSafeDSChecker() {
 
     @Check
-    fun noRequiredOrVariadicParametersAfterFirstOptionalParameter(smlParameterList: SdsParameterList) {
-        val firstOptionalParameterIndex = smlParameterList.parameters.indexOfFirst { it.isOptional() }
+    fun noRequiredOrVariadicParametersAfterFirstOptionalParameter(sdsParameterList: SdsParameterList) {
+        val firstOptionalParameterIndex = sdsParameterList.parameters.indexOfFirst { it.isOptional() }
         if (firstOptionalParameterIndex == -1) {
             return
         }
 
-        smlParameterList.parameters
+        sdsParameterList.parameters
             .drop(firstOptionalParameterIndex + 1)
             .forEach {
                 if (it.isRequired()) {
@@ -39,13 +39,13 @@ class ParameterListChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun noMoreParametersAfterVariadic(smlParameterList: SdsParameterList) {
-        val firstVariadicParameterIndex = smlParameterList.parameters.indexOfFirst { it.isVariadic }
+    fun noMoreParametersAfterVariadic(sdsParameterList: SdsParameterList) {
+        val firstVariadicParameterIndex = sdsParameterList.parameters.indexOfFirst { it.isVariadic }
         if (firstVariadicParameterIndex == -1) {
             return
         }
 
-        smlParameterList.parameters
+        sdsParameterList.parameters
             .drop(firstVariadicParameterIndex + 1)
             .forEach {
                 error(
