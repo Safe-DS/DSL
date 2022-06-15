@@ -1,14 +1,14 @@
-import de.unibonn.simpleml.xtextConfiguration.code
-import de.unibonn.simpleml.xtextConfiguration.configuration
-import de.unibonn.simpleml.xtextConfiguration.directoryCleaner
-import de.unibonn.simpleml.xtextConfiguration.ecoreGenerator
-import de.unibonn.simpleml.xtextConfiguration.execute
-import de.unibonn.simpleml.xtextConfiguration.project
-import de.unibonn.simpleml.xtextConfiguration.projectMapping
-import de.unibonn.simpleml.xtextConfiguration.standaloneSetup
-import de.unibonn.simpleml.xtextConfiguration.standardLanguage
-import de.unibonn.simpleml.xtextConfiguration.workflow
-import de.unibonn.simpleml.xtextConfiguration.xtextGenerator
+import com.larsreimann.safeds.xtextConfiguration.code
+import com.larsreimann.safeds.xtextConfiguration.configuration
+import com.larsreimann.safeds.xtextConfiguration.directoryCleaner
+import com.larsreimann.safeds.xtextConfiguration.ecoreGenerator
+import com.larsreimann.safeds.xtextConfiguration.execute
+import com.larsreimann.safeds.xtextConfiguration.project
+import com.larsreimann.safeds.xtextConfiguration.projectMapping
+import com.larsreimann.safeds.xtextConfiguration.standaloneSetup
+import com.larsreimann.safeds.xtextConfiguration.standardLanguage
+import com.larsreimann.safeds.xtextConfiguration.workflow
+import com.larsreimann.safeds.xtextConfiguration.xtextGenerator
 import org.eclipse.xtext.xtext.generator.formatting.Formatter2Fragment2
 import org.eclipse.xtext.xtext.generator.generator.GeneratorFragment2
 import org.eclipse.xtext.xtext.generator.junit.JUnitFragment
@@ -42,19 +42,19 @@ kover {
     coverageEngine.set(kotlinx.kover.api.CoverageEngine.INTELLIJ)
     intellijEngineVersion.set("1.0.669")
     this.disabledProjects = setOf(
-        "Simple-ML.DSL",
-        "de.unibonn.simpleml.vscode"
+        "Safe-DS.DSL",
+        "com.larsreimann.safeds.vscode"
     )
 }
 
 val koverExcludes = listOf(
-    "de.unibonn.simpleml.parser.antlr.*",
-    "de.unibonn.simpleml.serializer.AbstractSimpleMLSemanticSequencer",
-    "de.unibonn.simpleml.serializer.AbstractSimpleMLSyntacticSequencer",
-    "de.unibonn.simpleml.services.*",
-    "de.unibonn.simpleml.simpleML.*",
-    "de.unibonn.simpleml.testing.*",
-    "de.unibonn.simpleml.ide.contentassist.antlr.*"
+    "com.larsreimann.safeds.parser.antlr.*",
+    "com.larsreimann.safeds.serializer.AbstractSafeDSSemanticSequencer",
+    "com.larsreimann.safeds.serializer.AbstractSafeDSSyntacticSequencer",
+    "com.larsreimann.safeds.services.*",
+    "com.larsreimann.safeds.safeDS.*",
+    "com.larsreimann.safeds.testing.*",
+    "com.larsreimann.safeds.ide.contentassist.antlr.*"
 )
 
 // Variables -----------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ val xtextVersion by extra("2.27.0")
 // Subprojects ---------------------------------------------------------------------------------------------------------
 
 subprojects {
-    group = "de.unibonn.simpleml"
+    group = "com.larsreimann"
     version = "1.0.0-SNAPSHOT"
 
     repositories {
@@ -84,21 +84,21 @@ tasks.register("generateXtextLanguage") {
     outputs.cacheIf { true }
 
     inputs.files(
-        "$rootPath/de.unibonn.simpleml/model/SimpleML.ecore",
-        "$rootPath/de.unibonn.simpleml/model/SimpleML.genmodel",
-        "$rootPath/de.unibonn.simpleml/src/main/kotlin/de/unibonn/simpleml/SimpleML.xtext"
+        "$rootPath/com.larsreimann.safeds/model/SafeDS.ecore",
+        "$rootPath/com.larsreimann.safeds/model/SafeDS.genmodel",
+        "$rootPath/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/SafeDS.xtext"
     )
     outputs.dirs(
-        "$rootPath/de.unibonn.simpleml/META-INF",
-        "$rootPath/de.unibonn.simpleml/emf-gen",
-        "$rootPath/de.unibonn.simpleml/src-gen",
-        "$rootPath/de.unibonn.simpleml.ide/src-gen",
-        "$rootPath/de.unibonn.simpleml.tests"
+        "$rootPath/com.larsreimann.safeds/META-INF",
+        "$rootPath/com.larsreimann.safeds/emf-gen",
+        "$rootPath/com.larsreimann.safeds/src-gen",
+        "$rootPath/com.larsreimann.safeds.ide/src-gen",
+        "$rootPath/com.larsreimann.safeds.tests"
     )
     outputs.files(
-        "$rootPath/de.unibonn.simpleml/build.properties",
-        "$rootPath/de.unibonn.simpleml/plugin.properties",
-        "$rootPath/de.unibonn.simpleml/plugin.xml"
+        "$rootPath/com.larsreimann.safeds/build.properties",
+        "$rootPath/com.larsreimann.safeds/plugin.properties",
+        "$rootPath/com.larsreimann.safeds/plugin.xml"
     )
 
     doFirst {
@@ -108,36 +108,36 @@ tasks.register("generateXtextLanguage") {
                 setScanClassPath(true)
 
                 projectMapping(
-                    projectName = "de.unibonn.simpleml",
-                    path = "$rootPath/de.unibonn.simpleml"
+                    projectName = "com.larsreimann.safeds",
+                    path = "$rootPath/com.larsreimann.safeds"
                 )
 
                 projectMapping(
-                    projectName = "de.unibonn.simpleml.ide",
-                    path = "$rootPath/de.unibonn.simpleml.ide"
+                    projectName = "com.larsreimann.safeds.ide",
+                    path = "$rootPath/com.larsreimann.safeds.ide"
                 )
             }
 
-            directoryCleaner("$rootPath/de.unibonn.simpleml/emf-gen")
+            directoryCleaner("$rootPath/com.larsreimann.safeds/emf-gen")
 
             ecoreGenerator(
-                genModel = "platform:/resource/de.unibonn.simpleml/model/SimpleML.genmodel",
-                srcPaths = listOf("platform:/resource/de.unibonn.simpleml/src/main/kotlin")
+                genModel = "platform:/resource/com.larsreimann.safeds/model/SafeDS.genmodel",
+                srcPaths = listOf("platform:/resource/com.larsreimann.safeds/src/main/kotlin")
             )
 
             xtextGenerator {
                 configuration {
                     project {
-                        baseName = "de.unibonn.simpleml"
+                        baseName = "com.larsreimann.safeds"
                         this.rootPath = rootPath
 
                         runtime = RuntimeProjectConfig().apply {
-                            setSrc("$rootPath/de.unibonn.simpleml/src/main/kotlin")
+                            setSrc("$rootPath/com.larsreimann.safeds/src/main/kotlin")
                         }
 
                         genericIde = BundleProjectConfig().apply {
                             isEnabled = true
-                            setSrc("$rootPath/de.unibonn.simpleml.ide/src/main/kotlin")
+                            setSrc("$rootPath/com.larsreimann.safeds.ide/src/main/kotlin")
                         }
 
                         runtimeTest = BundleProjectConfig().apply {
@@ -156,9 +156,9 @@ tasks.register("generateXtextLanguage") {
                 }
 
                 standardLanguage {
-                    setName("de.unibonn.simpleml.SimpleML")
+                    setName("com.larsreimann.safeds.SafeDS")
                     setFileExtensions("sdsflow,sdsstub,sdstest")
-                    addReferencedResource("platform:/resource/de.unibonn.simpleml/model/SimpleML.genmodel")
+                    addReferencedResource("platform:/resource/com.larsreimann.safeds/model/SafeDS.genmodel")
 
                     setFormatter(
                         Formatter2Fragment2().apply {
@@ -197,16 +197,16 @@ tasks.register("generateXtextLanguage") {
 
     doLast {
         delete(
-            fileTree("$rootPath/de.unibonn.simpleml/src") {
+            fileTree("$rootPath/com.larsreimann.safeds/src") {
                 include("**/*.xtend")
             }
         )
         delete(
-            fileTree("$rootPath/de.unibonn.simpleml.ide/src") {
+            fileTree("$rootPath/com.larsreimann.safeds.ide/src") {
                 include("**/*.xtend")
             }
         )
-        delete(file("$rootPath/de.unibonn.simpleml.tests"))
+        delete(file("$rootPath/com.larsreimann.safeds.tests"))
     }
 }
 
