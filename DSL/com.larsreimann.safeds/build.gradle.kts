@@ -30,7 +30,6 @@ java {
     withSourcesJar()
 }
 
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
@@ -85,7 +84,6 @@ signing {
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
-
 
 idea {
     module {
