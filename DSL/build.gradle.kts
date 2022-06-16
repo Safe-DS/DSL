@@ -67,7 +67,7 @@ val xtextVersion by extra("2.27.0")
 
 subprojects {
     group = "com.larsreimann.safe-ds"
-    version = "1.0.0-SNAPSHOT"
+    version = "1.0.0"
 
     repositories {
         mavenCentral()

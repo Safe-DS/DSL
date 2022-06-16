@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "safe-ds-runner"
-version = "0.0.1"
+version = "1.0.0"
 description = "Run Safe-DS code."
 authors = ["Lars Reimann <mail@larsreimann.com>"]
 license = "MIT"
