@@ -115,6 +115,12 @@ dependencies {
 sourceSets {
     main {
         java.srcDirs("emf-gen", "src-gen")
+        java.exclude(
+            "**/*.sdsflow",
+            "**/*.sdsstub",
+            "**/*.tokens",
+            "**/*.xtextbin"
+        )
         resources.srcDirs("src-gen")
         resources.include(
             "**/*.sdsflow",
@@ -150,6 +156,10 @@ tasks {
     }
 
     processResources {
+        dependsOn(rootProject.tasks.named("generateXtextLanguage"))
+    }
+
+    named("sourcesJar") {
         dependsOn(rootProject.tasks.named("generateXtextLanguage"))
     }
 
