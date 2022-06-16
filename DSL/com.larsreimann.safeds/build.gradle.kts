@@ -1,20 +1,90 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 val javaVersion: Int by rootProject.extra
 val xtextVersion: String by rootProject.extra
 
 // Plugins -------------------------------------------------------------------------------------------------------------
 
 plugins {
+    idea
     `java-library`
     `java-test-fixtures`
     kotlin("jvm")
-    idea
+    `maven-publish`
+    signing
+    id("org.jetbrains.dokka")
 }
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(javaVersion))
     }
+    withJavadocJar()
+    withSourcesJar()
 }
+
+val javadocJar by tasks.creating(Jar::class) {
+    val dokkaHtml by tasks.getting(DokkaTask::class)
+    dependsOn(dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaHtml.outputDirectory)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "safe-ds-core"
+
+            val javaComponent = components["java"] as AdhocComponentWithVariants
+            javaComponent.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+            javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
+            from(javaComponent)
+
+            pom {
+                name.set("$groupId:$artifactId")
+                description.set("Safely develop Data Science programs with a statically checked DSL.")
+                url.set("https://github.com/lars-reimann/Safe-DS")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://github.com/lars-reimann/Safe-DS/blob/main/LICENSE")
+                    }
+                }
+                developers {
+                    developer {
+                        name.set("Lars Reimann")
+                        email.set("mail@larsreimann.com")
+                        organization.set("N/A")
+                        organizationUrl.set("https://github.com/lars-reimann")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:https://github.com/lars-reimann/Safe-DS.git")
+                    developerConnection.set("scm:git:https://github.com/lars-reimann/Safe-DS.git")
+                    url.set("https://github.com/lars-reimann/Safe-DS")
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications["mavenJava"])
+}
+
 
 idea {
     module {
