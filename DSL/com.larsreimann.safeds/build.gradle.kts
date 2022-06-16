@@ -163,6 +163,10 @@ tasks {
         dependsOn(rootProject.tasks.named("generateXtextLanguage"))
     }
 
+    named("dokkaHtml") {
+        dependsOn(rootProject.tasks.named("generateXtextLanguage"))
+    }
+
     clean {
         dependsOn(rootProject.tasks.named("cleanGenerateXtextLanguage"))
     }
