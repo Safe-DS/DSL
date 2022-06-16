@@ -1,6 +1,6 @@
 # Safe-DS
 
-[![Main](https://github.com/lars-reimann/safe-data-science/actions/workflows/main.yml/badge.svg)](https://github.com/lars-reimann/safe-data-science/actions/workflows/main.yml)
+[![Main](https://github.com/lars-reimann/Safe-DS/actions/workflows/main.yml/badge.svg)](https://github.com/lars-reimann/Safe-DS/actions/workflows/main.yml)
 
 Safely develop Data Science programs with a statically checked [DSL][dsl] or call our user-friendly [standard library][stdlib] (WIP) directly from Python.
 
