@@ -1,4 +1,4 @@
-# safe-data-science
+# Safe-DS
 
 [![Main](https://github.com/lars-reimann/safe-data-science/actions/workflows/main.yml/badge.svg)](https://github.com/lars-reimann/safe-data-science/actions/workflows/main.yml)
 
