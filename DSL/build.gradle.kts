@@ -20,12 +20,13 @@ import org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
 // Plugins -------------------------------------------------------------------------------------------------------------
 
 plugins {
-    kotlin("jvm") version "1.7.0" apply false
-    id("com.github.node-gradle.node") version "3.3.0" apply false
-
     base
     idea
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
+
+    kotlin("jvm") version "1.7.0" apply false
+    id("com.github.node-gradle.node") version "3.3.0" apply false
+    id("org.jetbrains.dokka") version "1.6.21" apply false
 }
 
 repositories {
@@ -65,7 +66,7 @@ val xtextVersion by extra("2.27.0")
 // Subprojects ---------------------------------------------------------------------------------------------------------
 
 subprojects {
-    group = "com.larsreimann"
+    group = "com.larsreimann.safe-ds"
     version = "1.0.0-SNAPSHOT"
 
     repositories {
