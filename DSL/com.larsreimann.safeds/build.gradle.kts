@@ -15,6 +15,13 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+val javadocJar by tasks.creating(Jar::class) {
+    val dokkaHtml by tasks.getting(DokkaTask::class)
+    dependsOn(dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaHtml.outputDirectory)
+}
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(javaVersion))
@@ -23,12 +30,6 @@ java {
     withSourcesJar()
 }
 
-val javadocJar by tasks.creating(Jar::class) {
-    val dokkaHtml by tasks.getting(DokkaTask::class)
-    dependsOn(dokkaHtml)
-    archiveClassifier.set("javadoc")
-    from(dokkaHtml.outputDirectory)
-}
 
 publishing {
     publications {
