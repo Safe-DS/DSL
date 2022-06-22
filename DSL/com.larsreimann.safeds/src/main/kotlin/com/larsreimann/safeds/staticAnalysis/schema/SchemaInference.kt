@@ -12,12 +12,11 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 import tech.tablesaw.api.Table
 
-
 fun inferSchema(context: EObject, name: String, path: String): SdsSchema? {
     try {
         var colList: List<SdsColumn> = emptyList()
 
-        val table = Table.read().csv(path);
+        val table = Table.read().csv(path)
 
         for (row in table.structure()) {
             val colName = row.getString(1)
@@ -32,14 +31,14 @@ fun inferSchema(context: EObject, name: String, path: String): SdsSchema? {
 
             val stdlibClass = context.getStdlibClassOrNull(colQualifiedName) ?: return null
 
-            colList+= createSdsColumn(
+            colList += createSdsColumn(
                 createSdsString(colName),
                 createSdsNamedType(stdlibClass, isNullable = true)
             )
         }
 
         return createSdsSchema(name, columns = colList)
-    } catch (e : Exception){
+    } catch (e: Exception) {
         return null
     }
 }
