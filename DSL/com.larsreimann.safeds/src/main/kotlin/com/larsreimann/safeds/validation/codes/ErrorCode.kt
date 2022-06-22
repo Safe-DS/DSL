@@ -12,8 +12,9 @@ enum class ErrorCode {
     REDECLARATION,
 
     FileMustDeclarePackage,
-    StubFileMustNotDeclareWorkflowsOrSteps,
+    StubFileMustNotDeclareWorkflowsSchemasOrSteps,
     WorkflowFileMustOnlyDeclareWorkflowsAndSteps,
+    SchemaFileMustOnlyDeclareSchemas,
 
     ANNOTATION_IS_SINGLE_USE,
     DEPRECATED_REQUIRED_PARAMETER,

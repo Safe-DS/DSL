@@ -49,6 +49,16 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
           resultList=SdsResultList?
           body=SdsFunctionBody?
 
+    | {SdsPredicate.annotationCallList=current}
+        'predicate' name=ID
+        parameterList=SdsParameterList
+        resultList=SdsResultList?
+        goalList=SdsGoalList
+
+    | {SdsSchema.annotationCallList=current}
+        'schema' name=ID
+        columnList=SdsColumnList
+
     | {SdsStep.annotationCallList=current}
           visibility=('internal'|'private')?
           'step' name=ID
@@ -59,12 +69,6 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
     | {SdsWorkflow.annotationCallList=current}
           'workflow' name=ID
           body=SdsBlock
-
-    | {SdsPredicate.annotationCallList=current}
-          'predicate' name=ID
-          parameterList=SdsParameterList
-          resultList=SdsResultList?
-          goalList=SdsGoalList
     )
     ;
 
@@ -516,7 +520,7 @@ SdsTemplateStringEnd
 
 
 /**********************************************************************************************************************
- * Predicates
+ * Predicates / Goals
  **********************************************************************************************************************/
 
 SdsGoalList
@@ -574,6 +578,19 @@ SdsGoalReference
 SdsParenthesizedGoalExpression
     : '(' expressions+=SdsGoalExpression  (',' expressions+=SdsGoalExpression)* ')'
     ;
+
+
+/**********************************************************************************************************************
+ * Schemas
+ **********************************************************************************************************************/
+
+SdsColumnList
+: {SdsColumnList} '{' ( columns+=SdsColumn (',' columns+=SdsColumn)* )? '}'
+;
+
+SdsColumn
+: columnName=SdsString ":" columnType=SdsType
+;
 
 
 /**********************************************************************************************************************

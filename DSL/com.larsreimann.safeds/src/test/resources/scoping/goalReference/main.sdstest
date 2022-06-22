@@ -1,13 +1,13 @@
 package tests.languageTests.scoping.goalReference1
 
-import tests.languageTests.scoping.goalReference2.PredicateInOtherPackage1
+import tests.languageTests.scoping.goalReference2.predicateInOtherPackage1
 
-predicate PredicateInSameFile() {
+predicate predicateInSameFile() {
 }
 
 predicate directReferencesToPredicates() {
-    PredicateInSameFile(),
-    PredicateInSamePackage(),
-    PredicateInOtherPackage1(),
-    PredicateInOtherPackage2()
+    predicateInSameFile(),
+    predicateInSamePackage(),
+    predicateInOtherPackage1(),
+    predicateInOtherPackage2()
 }

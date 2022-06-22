@@ -1,7 +1,7 @@
 # How to add a new language concept
 
 1. Create new classes in the EMF model (_abstract syntax_):
-   1. [Update the Ecore file][SafeDS.ecore]. Ensure that `SmlAbstractObject` is either a direct of transitive supertype.
+   1. [Update the Ecore file][SafeDS.ecore]. Ensure that `SdsAbstractObject` is either a direct of transitive supertype.
    1. [Update the Genmodel file][SafeDS.genmodel].
 
 1. Update the grammar (_concrete syntax_).

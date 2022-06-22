@@ -7,6 +7,7 @@
 
 package com.larsreimann.safeds.emf
 
+import com.larsreimann.safeds.constant.hasSchemaKind
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractClassMember
@@ -39,6 +40,8 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsFunctionBody
+import com.larsreimann.safeds.safeDS.SdsGoalArgument
+import com.larsreimann.safeds.safeDS.SdsGoalCall
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
@@ -177,6 +180,10 @@ fun SdsClass?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
+fun SdsClass?.hasSchema(): Boolean {
+    return this?.typeParametersOrEmpty()?.any { it.hasSchemaKind() } ?: false
+}
+
 fun SdsClass?.parentTypesOrEmpty(): List<SdsAbstractType> {
     return this?.parentTypeList?.parentTypes.orEmpty()
 }
@@ -245,6 +252,12 @@ fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
     return this?.body?.statements
         ?.filterIsInstance<SdsAbstractConstraintGoal>()
         .orEmpty()
+}
+
+// SdsGoalCall -------------------------------------------------------------------------------------
+
+fun SdsGoalCall?.argumentsOrEmpty(): List<SdsGoalArgument> {
+    return this?.argumentList?.arguments.orEmpty()
 }
 
 // SdsImport ---------------------------------------------------------------------------------------

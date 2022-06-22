@@ -1,0 +1,16 @@
+schema
+
+ MySchema  
+ 
+ {
+    
+    "column name1"    :    ColumnType1    ,   "column name2":     ColumnType2?    ,  
+             "column name3"    :ColumnType3   }
+
+// -----------------------------------------------------------------------------
+
+schema MySchema {
+    "column name1" : ColumnType1,
+    "column name2" : ColumnType2?,
+    "column name3" : ColumnType3
+}

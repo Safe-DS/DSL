@@ -19,6 +19,14 @@ enum class SdsFileExtension(val extension: String) {
     Flow("sdsflow"),
 
     /**
+     * Marks the file as a schema file.
+     *
+     * @see isInSchemaFile
+     * @see isSchemaFile
+     */
+    Schema("sdsschema"),
+
+    /**
      * Marks the file as a stub file, which describes an external API.
      *
      * @see isInStubFile
@@ -46,6 +54,11 @@ enum class SdsFileExtension(val extension: String) {
 fun EObject.isInFlowFile() = this.eResource().isFlowFile()
 
 /**
+ * Returns whether the object is contained in schema file.
+ */
+fun EObject.isInSchemaFile() = this.eResource().isSchemaFile()
+
+/**
  * Returns whether the object is contained in stub file.
  */
 fun EObject.isInStubFile() = this.eResource().isStubFile()
@@ -59,6 +72,11 @@ fun EObject.isInTestFile() = this.eResource().isTestFile()
  * Returns whether the resource represents a flow file.
  */
 fun Resource.isFlowFile() = this.hasExtension(SdsFileExtension.Flow)
+
+/**
+ * Returns whether the resource represents a schema file.
+ */
+fun Resource.isSchemaFile() = this.hasExtension(SdsFileExtension.Schema)
 
 /**
  * Returns whether the resource represents a stub file.

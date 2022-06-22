@@ -1,6 +1,6 @@
 // no_syntax_error
 
-predicate PredicateWithGoals(){
+predicate predicateWithGoals(){
     goal1(),
     (
         goal31(),
@@ -9,7 +9,7 @@ predicate PredicateWithGoals(){
     val intermediate1 = goal2()
 }
 
-predicate PredicateWithGoalsComplex(){
+predicate predicateWithGoalsComplex(){
     val intermediate2 = (
         goal41(dataset, columnName),
         goal42(dataset, columnName)

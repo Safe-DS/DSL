@@ -1,4 +1,4 @@
 package tests.languageTests.scoping.goalReference2
 
-predicate PredicateInOtherPackage1()
-predicate PredicateInOtherPackage2()
+predicate predicateInOtherPackage1()
+predicate predicateInOtherPackage2()
