@@ -1098,7 +1098,7 @@ class ScopingTest {
         @Test
         fun `should resolve goal in same file`() = withResource(GOAL_REFERENCE) {
             val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
-            val predicateInSameFile = findUniqueDeclarationOrFail<SdsPredicate>("PredicateInSameFile")
+            val predicateInSameFile = findUniqueDeclarationOrFail<SdsPredicate>("predicateInSameFile")
 
             val references = predicate.descendants<SdsGoalReference>().toList()
             references.shouldHaveSize(4)
@@ -1117,7 +1117,7 @@ class ScopingTest {
 
             val declaration = references[1].declaration
             declaration.shouldBeResolved()
-            declaration.name.shouldBe("PredicateInSamePackage")
+            declaration.name.shouldBe("predicateInSamePackage")
         }
 
         @Test
@@ -1129,7 +1129,7 @@ class ScopingTest {
 
             val declaration = references[2].declaration
             declaration.shouldBeResolved()
-            declaration.name.shouldBe("PredicateInOtherPackage1")
+            declaration.name.shouldBe("predicateInOtherPackage1")
         }
 
         @Test

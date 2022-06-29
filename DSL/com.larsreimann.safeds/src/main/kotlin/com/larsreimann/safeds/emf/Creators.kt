@@ -44,6 +44,7 @@ import com.larsreimann.safeds.safeDS.SdsBoolean
 import com.larsreimann.safeds.safeDS.SdsCall
 import com.larsreimann.safeds.safeDS.SdsCallableType
 import com.larsreimann.safeds.safeDS.SdsClass
+import com.larsreimann.safeds.safeDS.SdsColumn
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsConstraint
 import com.larsreimann.safeds.safeDS.SdsEnum
@@ -90,6 +91,7 @@ import com.larsreimann.safeds.safeDS.SdsProtocolTokenClass
 import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsResultList
+import com.larsreimann.safeds.safeDS.SdsSchema
 import com.larsreimann.safeds.safeDS.SdsStarProjection
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
@@ -545,6 +547,19 @@ private fun SdsCompilationUnit.addMember(member: SdsAbstractCompilationUnitMembe
 fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
     return factory.createSdsConstraint().apply {
         this.constraintList = createSdsGoalList(goals)
+    }
+}
+
+/**
+ * Returns a new object of class [SdsColumn].
+ */
+fun createSdsColumn(
+    columnName: SdsString,
+    columnType: SdsAbstractType
+): SdsColumn {
+    return factory.createSdsColumn().apply {
+        this.columnName = columnName
+        this.columnType = columnType
     }
 }
 
@@ -1293,6 +1308,48 @@ fun createSdsResultList(results: List<SdsResult>): SdsResultList {
  */
 fun createSdsStarProjection(): SdsStarProjection {
     return factory.createSdsStarProjection()
+}
+
+/**
+ * Returns a new object of class [SdsSchema].
+ */
+fun createSdsSchema(
+    name: String,
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    columns: List<SdsColumn> = emptyList()
+): SdsSchema {
+    return factory.createSdsSchema().apply {
+        this.name = name
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        columns.forEach { addColumn(it) }
+    }
+}
+
+/**
+ * Adds a new object of class [SdsSchema] to the receiver.
+ */
+fun SdsCompilationUnit.sdsSchema(
+    name: String,
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    columns: List<SdsColumn> = emptyList()
+) {
+    this.addMember(
+        createSdsSchema(
+            name,
+            annotationCalls,
+            columns
+        )
+    )
+}
+
+/**
+ * Adds a new column to the receiver.
+ */
+private fun SdsSchema.addColumn(column: SdsColumn) {
+    if (this.columnList == null) {
+        this.columnList = factory.createSdsColumnList()
+    }
+    this.columnList.columns += column
 }
 
 /**

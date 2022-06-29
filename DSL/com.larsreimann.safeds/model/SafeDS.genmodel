@@ -180,6 +180,17 @@
         <genClasses ecoreClass="SafeDS.ecore#//SdsFunctionBody">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsFunctionBody/statements" />
         </genClasses>
+        <!-- Schema -->
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchema">
+             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchema/columnList" />
+        </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsColumnList">
+             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumnList/columns" />
+        </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsColumn">
+             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnName" />
+             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnType" />
+        </genClasses>
         <!-- Step -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsStep">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsStep/visibility" />

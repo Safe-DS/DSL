@@ -158,7 +158,7 @@ tasks.register("generateXtextLanguage") {
 
                 standardLanguage {
                     setName("com.larsreimann.safeds.SafeDS")
-                    setFileExtensions("sdsflow,sdsstub,sdstest")
+                    setFileExtensions("sdsflow,sdsschema,sdsstub,sdstest")
                     addReferencedResource("platform:/resource/com.larsreimann.safeds/model/SafeDS.genmodel")
 
                     setFormatter(

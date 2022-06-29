@@ -37,6 +37,8 @@ import com.larsreimann.safeds.safeDS.SdsCall
 import com.larsreimann.safeds.safeDS.SdsCallableType
 import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsClassBody
+import com.larsreimann.safeds.safeDS.SdsColumn
+import com.larsreimann.safeds.safeDS.SdsColumnList
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsConstraint
 import com.larsreimann.safeds.safeDS.SdsEnum
@@ -80,6 +82,7 @@ import com.larsreimann.safeds.safeDS.SdsProtocolSubterm
 import com.larsreimann.safeds.safeDS.SdsProtocolSubtermList
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsResultList
+import com.larsreimann.safeds.safeDS.SdsSchema
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTemplateString
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
@@ -899,6 +902,67 @@ class SafeDSFormatter : AbstractFormatter2() {
                         doc.formatObject(it, null, oneSpace)
                     }
                 }
+            }
+
+            /**********************************************************************************************************
+             * Schema
+             **********************************************************************************************************/
+
+            is SdsSchema -> {
+
+                // Features "annotations"
+                doc.formatAnnotations(obj)
+
+                // Keyword "schema"
+                if (obj.annotationCallsOrEmpty().isEmpty()) {
+                    doc.formatKeyword(obj, "schema", noSpace, oneSpace)
+                } else {
+                    doc.formatKeyword(obj, "schema", oneSpace, oneSpace)
+                }
+
+                // Feature "name"
+                doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, null, oneSpace)
+
+                // EObject "columnList"
+                doc.formatObject(obj.columnList, oneSpace, null)
+            }
+            is SdsColumnList -> {
+
+                // Keyword "{"
+                val openingBrace = obj.regionForKeyword("{")
+                if (obj.columns.isEmpty()) {
+                    doc.append(openingBrace, noSpace)
+                } else {
+                    doc.append(openingBrace, newLine)
+                }
+
+                // Feature "columns"
+                obj.columns.forEach {
+                    doc.formatObject(it, newLine, noSpace)
+                }
+
+                // Keywords ","
+                doc.formatKeyword(obj, ",", noSpace, newLine)
+
+                // Keyword "}"
+                val closingBrace = obj.regionForKeyword("}")
+                if (obj.columns.isEmpty()) {
+                    doc.prepend(closingBrace, noSpace)
+                } else {
+                    doc.prepend(closingBrace, newLine)
+                }
+                doc.interior(openingBrace, closingBrace, indent)
+            }
+            is SdsColumn -> {
+
+                // EObject "columnName"
+                doc.formatObject(obj.columnName, null, oneSpace)
+
+                // Keyword ":"
+                doc.formatKeyword(obj, ":", oneSpace, oneSpace)
+
+                // EObject "columnType"
+                doc.formatObject(obj.columnType)
             }
 
             /**********************************************************************************************************

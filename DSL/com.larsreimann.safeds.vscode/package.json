@@ -30,6 +30,7 @@
                 ],
                 "extensions": [
                     ".sdsflow",
+                    ".sdsschema",
                     ".sdsstub",
                     ".sdstest"
                 ],

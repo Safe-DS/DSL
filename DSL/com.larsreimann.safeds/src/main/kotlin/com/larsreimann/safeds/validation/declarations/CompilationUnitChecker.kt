@@ -1,5 +1,7 @@
 package com.larsreimann.safeds.validation.declarations
 
+import com.larsreimann.safeds.constant.isInFlowFile
+import com.larsreimann.safeds.constant.isInSchemaFile
 import com.larsreimann.safeds.constant.isInStubFile
 import com.larsreimann.safeds.constant.isInTestFile
 import com.larsreimann.safeds.emf.compilationUnitMembersOrEmpty
@@ -10,6 +12,7 @@ import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsImport
+import com.larsreimann.safeds.safeDS.SdsSchema
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.scoping.externalGlobalDeclarations
@@ -25,16 +28,16 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
     fun members(sdsCompilationUnit: SdsCompilationUnit) {
         if (sdsCompilationUnit.isInStubFile()) {
             sdsCompilationUnit.compilationUnitMembersOrEmpty()
-                .filter { it is SdsWorkflow || it is SdsStep }
+                .filter { it is SdsWorkflow || it is SdsStep || it is SdsSchema }
                 .forEach {
                     error(
-                        "A stub file must not declare workflows or steps.",
+                        "A stub file must not declare workflows, schemas or steps.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.StubFileMustNotDeclareWorkflowsOrSteps
+                        ErrorCode.StubFileMustNotDeclareWorkflowsSchemasOrSteps
                     )
                 }
-        } else if (!sdsCompilationUnit.isInTestFile()) {
+        } else if (sdsCompilationUnit.isInFlowFile()) {
             sdsCompilationUnit.compilationUnitMembersOrEmpty()
                 .filter { it !is SdsWorkflow && it !is SdsStep }
                 .forEach {
@@ -43,6 +46,17 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
                         ErrorCode.WorkflowFileMustOnlyDeclareWorkflowsAndSteps
+                    )
+                }
+        } else if (sdsCompilationUnit.isInSchemaFile()) {
+            sdsCompilationUnit.compilationUnitMembersOrEmpty()
+                .filter { it !is SdsSchema }
+                .forEach {
+                    error(
+                        "A schema file must only declare schemas.",
+                        it,
+                        Literals.SDS_ABSTRACT_DECLARATION__NAME,
+                        ErrorCode.SchemaFileMustOnlyDeclareSchemas
                     )
                 }
         }

@@ -33,7 +33,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsAbstractType" containment="true" />
     </eClassifiers>
     <!-- Class -->
-    <eClassifiers xsi:type="ecore:EClass" name="SdsClass" abstract="false" eSuperTypes="#//SdsAbstractCallable #//SdsAbstractClassMember #//SdsAbstractCompilationUnitMember #//SdsAbstractNamedTypeDeclaration">
+    <eClassifiers xsi:type="ecore:EClass" name="SdsClass" eSuperTypes="#//SdsAbstractCallable #//SdsAbstractClassMember #//SdsAbstractCompilationUnitMember #//SdsAbstractNamedTypeDeclaration">
         <eStructuralFeatures xsi:type="ecore:EReference" name="typeParameterList" eType="#//SdsTypeParameterList" containment="true" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="parentTypeList" eType="#//SdsParentTypeList" containment="true" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//SdsClassBody" containment="true" />
@@ -182,6 +182,17 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SdsFunctionBody" eSuperTypes="#//SdsAbstractObject">
         <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1" eType="#//SdsAbstractObject" containment="true" />
+    </eClassifiers>
+    <!-- Schema -->
+    <eClassifiers xsi:type="ecore:EClass" name="SdsSchema" eSuperTypes="#//SdsAbstractCompilationUnitMember">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="columnList" eType="#//SdsColumnList" containment="true" />
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SdsColumnList" eSuperTypes="#//SdsAbstractObject">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="columns" upperBound="-1" eType="#//SdsColumn" containment="true" />
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SdsColumn" eSuperTypes="#//SdsAbstractObject">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="columnName" eType="#//SdsString" containment="true" />
+        <eStructuralFeatures xsi:type="ecore:EReference" name="columnType" eType="#//SdsAbstractType" containment="true" />
     </eClassifiers>
     <!-- Step -->
     <eClassifiers xsi:type="ecore:EClass" name="SdsStep" eSuperTypes="#//SdsAbstractCallable #//SdsAbstractCompilationUnitMember">

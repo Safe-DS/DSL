@@ -66,6 +66,7 @@ private fun isTestFile(filePath: Path): Boolean {
     return Files.isRegularFile(filePath) &&
         (
             filePath.fileName.toString().endsWith(".${SdsFileExtension.Flow}") ||
+                filePath.fileName.toString().endsWith(".${SdsFileExtension.Schema}") ||
                 filePath.fileName.toString().endsWith(".${SdsFileExtension.Stub}") ||
                 filePath.fileName.toString().endsWith(".${SdsFileExtension.Test}")
             ) &&
