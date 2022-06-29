@@ -26,7 +26,7 @@ plugins {
 
     kotlin("jvm") version "1.7.0" apply false
     id("com.github.node-gradle.node") version "3.3.0" apply false
-    id("org.jetbrains.dokka") version "1.6.21" apply false
+    id("org.jetbrains.dokka") version "1.7.0" apply false
 }
 
 repositories {

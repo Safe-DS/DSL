@@ -9,7 +9,7 @@ plugins {
 }
 
 node {
-    version.set("17.9.0")
+    version.set("16.15.1")
     download.set(true)
 }
 
