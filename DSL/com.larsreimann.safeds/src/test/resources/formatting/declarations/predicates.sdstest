@@ -1,4 +1,4 @@
-      predicate      MyPredicate1      (   a   :    Int   ,
+      predicate      myPredicate1      (   a   :    Int   ,
         vararg       b
         :    Int   =
           3)      ->         (a: Int,
@@ -6,17 +6,17 @@
 
 
   @Annotation1        @Annotation2
-                         predicate    MyPredicate2  ()  {
+                         predicate    myPredicate2  ()  {
               goal1()   ,    goal2()
        }
 
 // -----------------------------------------------------------------------------
 
-predicate MyPredicate1(a: Int, vararg b: Int = 3) -> (a: Int, b: Int) {}
+predicate myPredicate1(a: Int, vararg b: Int = 3) -> (a: Int, b: Int) {}
 
 @Annotation1
 @Annotation2
-predicate MyPredicate2() {
+predicate myPredicate2() {
     goal1(),
     goal2()
 }

@@ -1,4 +1,4 @@
-predicate MyPredicate() -> dataset: Dataset {
+predicate myPredicate() -> dataset: Dataset {
     val
 
     intermediate1    =       goal1(arg1    ,      arg2),
@@ -12,7 +12,7 @@ predicate MyPredicate() -> dataset: Dataset {
 }
 // -----------------------------------------------------------------------------
 
-predicate MyPredicate() -> dataset: Dataset {
+predicate myPredicate() -> dataset: Dataset {
     val intermediate1 = goal1(arg1, arg2),
     val intermediate2 = (
         goal2(arg3, arg4),
