@@ -97,6 +97,8 @@ dependencies {
     api(platform("org.eclipse.xtext:xtext-dev-bom:$xtextVersion"))
     implementation("org.eclipse.xtext:org.eclipse.xtext:$xtextVersion")
 
+    implementation("tech.tablesaw:tablesaw-core:0.43.1")
+
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
