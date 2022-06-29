@@ -16,7 +16,7 @@ fun inferInitialSchema(context: EObject, name: String, path: String): SdsSchema?
     try {
         var colList: List<SdsColumn> = emptyList()
 
-        val table = Table.read().csv(path);
+        val table = Table.read().csv(path)
 
         for (row in table.structure()) {
             val colName = row.getString(1)
@@ -31,14 +31,14 @@ fun inferInitialSchema(context: EObject, name: String, path: String): SdsSchema?
 
             val stdlibClass = context.getStdlibClassOrNull(colQualifiedName) ?: return null
 
-            colList+= createSdsColumn(
+            colList += createSdsColumn(
                 createSdsString(colName),
                 createSdsNamedType(stdlibClass, isNullable = true)
             )
         }
 
         return createSdsSchema(name, columns = colList)
-    } catch (e : IllegalStateException){
+    } catch (e: IllegalStateException) {
         return null
     }
 }
