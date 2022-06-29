@@ -28,18 +28,18 @@ class InitialSchemaInferenceTest {
         |package test
         |
         |schema TestSchema {
-        |    "PassengerId" : Int?,
-        |    "Survived" : Int?,
-        |    "Pclass" : Int?,
-        |    "Name" : String?,
-        |    "Sex" : String?,
-        |    "Age" : Float?,
-        |    "SibSp" : Int?,
-        |    "Parch" : Int?,
-        |    "Ticket" : String?,
-        |    "Fare" : Float?,
-        |    "Cabin" : String?,
-        |    "Embarked" : String?
+        |    "Column0" : Int?,
+        |    "Column1" : Int?,
+        |    "Column2" : Int?,
+        |    "Column3" : String?,
+        |    "Column4" : String?,
+        |    "Column5" : Int?,
+        |    "Column6" : Int?,
+        |    "Column7" : Int?,
+        |    "Column8" : String?,
+        |    "Column9" : Float?,
+        |    "Column10" : String?,
+        |    "Column11" : String?
         |}
     """.trimMargin()
 
@@ -48,7 +48,7 @@ class InitialSchemaInferenceTest {
         val context = parseHelper.parseProgramText("package test")
         context.shouldNotBeNull()
 
-        val csvPath = javaClass.classLoader.getResourcePath("schema/titanic.csv").toString()
+        val csvPath = javaClass.classLoader.getResourcePath("schema/dummyData.csv").toString()
         val schema = inferInitialSchema(context, "TestSchema", csvPath)
 
         schema.shouldNotBeNull()
