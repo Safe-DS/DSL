@@ -56,6 +56,7 @@ import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.uniqueOrNull
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
@@ -103,6 +104,7 @@ fun SdsAbstractDeclaration?.annotationCallsOrEmpty(): List<SdsAnnotationCall> {
 
 // SdsAnnotation -----------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsAnnotation?.constraintsOrEmpty(): List<SdsAbstractGoal> {
     return this?.constraint?.constraintList?.goals.orEmpty()
 }
@@ -181,6 +183,7 @@ fun SdsClass?.parentTypesOrEmpty(): List<SdsAbstractType> {
     return this?.parentTypeList?.parentTypes.orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsClass?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
     return this?.body?.members
         ?.filterIsInstance<SdsAbstractConstraintGoal>()
@@ -197,12 +200,14 @@ fun SdsClass?.classMembersOrEmpty(): List<SdsAbstractClassMember> {
         .orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsClass?.protocolsOrEmpty(): List<SdsProtocol> {
     return this?.body?.members
         ?.filterIsInstance<SdsProtocol>()
         .orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsClass.uniqueProtocolOrNull(): SdsProtocol? {
     return this.protocolsOrEmpty().uniqueOrNull()
 }
@@ -227,6 +232,7 @@ fun SdsEnumVariant?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsEnumVariant?.constraintsOrEmpty(): List<SdsAbstractGoal> {
     return this?.constraint?.constraintList?.goals.orEmpty()
 }
@@ -241,6 +247,7 @@ fun SdsFunction?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
     return this?.body?.statements
         ?.filterIsInstance<SdsAbstractConstraintGoal>()

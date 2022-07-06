@@ -16,6 +16,7 @@ import com.larsreimann.safeds.safeDS.SdsSchema
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.scoping.externalGlobalDeclarations
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.duplicatesBy
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
@@ -24,6 +25,7 @@ import org.eclipse.xtext.validation.CheckType
 
 class CompilationUnitChecker : AbstractSafeDSChecker() {
 
+    @OptIn(ExperimentalSdsApi::class)
     @Check
     fun members(sdsCompilationUnit: SdsCompilationUnit) {
         if (sdsCompilationUnit.isInStubFile()) {
@@ -34,7 +36,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         "A stub file must not declare workflows, schemas or steps.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.StubFileMustNotDeclareWorkflowsSchemasOrSteps
+                        ErrorCode.StubFileMustNotDeclareWorkflowsSchemasOrSteps,
                     )
                 }
         } else if (sdsCompilationUnit.isInFlowFile()) {
@@ -45,7 +47,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         "A workflow file must only declare workflows and steps.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.WorkflowFileMustOnlyDeclareWorkflowsAndSteps
+                        ErrorCode.WorkflowFileMustOnlyDeclareWorkflowsAndSteps,
                     )
                 }
         } else if (sdsCompilationUnit.isInSchemaFile()) {
@@ -56,7 +58,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         "A schema file must only declare schemas.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.SchemaFileMustOnlyDeclareSchemas
+                        ErrorCode.SchemaFileMustOnlyDeclareSchemas,
                     )
                 }
         }
@@ -74,7 +76,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                     "A file with declarations must declare its package.",
                     it,
                     Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                    ErrorCode.FileMustDeclarePackage
+                    ErrorCode.FileMustDeclarePackage,
                 )
             }
         }
@@ -97,7 +99,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         "A declaration with name '${it.importedNameOrNull()}' exists already in this file.",
                         it,
                         Literals.SDS_IMPORT__IMPORTED_NAMESPACE,
-                        ErrorCode.REDECLARATION
+                        ErrorCode.REDECLARATION,
                     )
                 }
                 it is SdsImport && it.alias != null -> {
@@ -105,7 +107,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         "A declaration with name '${it.importedNameOrNull()}' exists already in this file.",
                         it.alias,
                         Literals.SDS_IMPORT_ALIAS__NAME,
-                        ErrorCode.REDECLARATION
+                        ErrorCode.REDECLARATION,
                     )
                 }
                 it is SdsAbstractDeclaration -> {
@@ -113,7 +115,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         "A declaration with name '${it.name}' exists already in this file.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.REDECLARATION
+                        ErrorCode.REDECLARATION,
                     )
                 }
             }
@@ -122,7 +124,6 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
     fun uniqueNamesAcrossFiles(sdsCompilationUnit: SdsCompilationUnit) {
-
         // Since the stdlib is automatically loaded into a workspace, every declaration would be marked as a duplicate
         // when editing the stdlib
         if (sdsCompilationUnit.isInStubFile() && sdsCompilationUnit.name.startsWith("safeds")) {
@@ -137,7 +138,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                     "A declaration with qualified name '$qualifiedName' exists already.",
                     member,
                     Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                    ErrorCode.REDECLARATION_IN_OTHER_FILE
+                    ErrorCode.REDECLARATION_IN_OTHER_FILE,
                 )
             }
         }

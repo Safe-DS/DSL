@@ -16,6 +16,7 @@ import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
+@OptIn(ExperimentalSdsApi::class)
 class TypeArgumentToTypeParameterTest {
     private lateinit var typeParameter: SdsTypeParameter
 
@@ -40,7 +42,7 @@ class TypeArgumentToTypeParameterTest {
         typeParameter = createSdsTypeParameter(name = "T")
 
         positionalTypeArgument = createSdsTypeArgument(
-            value = createSdsStarProjection()
+            value = createSdsStarProjection(),
         )
         namedTypeArgument = createSdsTypeArgument(
             value = createSdsStarProjection(),
@@ -49,7 +51,7 @@ class TypeArgumentToTypeParameterTest {
 
         function = createSdsFunction(name = "f")
         call = createSdsCall(
-            createSdsReference(function)
+            createSdsReference(function),
         )
 
         `class` = createSdsClass(name = "C")

@@ -9,6 +9,7 @@ import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.getResourcePath
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -44,6 +45,7 @@ class InitialSchemaInferenceTest {
     """.trimMargin()
 
     @Test
+    @OptIn(ExperimentalSdsApi::class)
     fun inferInitialSchema() {
         val context = parseHelper.parseProgramText("package test")
         context.shouldNotBeNull()

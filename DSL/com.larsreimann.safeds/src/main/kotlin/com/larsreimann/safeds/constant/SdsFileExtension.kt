@@ -1,6 +1,7 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.emf.OriginalFilePath
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 
@@ -24,6 +25,7 @@ enum class SdsFileExtension(val extension: String) {
      * @see isInSchemaFile
      * @see isSchemaFile
      */
+    @ExperimentalSdsApi
     Schema("sdsschema"),
 
     /**
@@ -56,6 +58,7 @@ fun EObject.isInFlowFile() = this.eResource().isFlowFile()
 /**
  * Returns whether the object is contained in schema file.
  */
+@ExperimentalSdsApi
 fun EObject.isInSchemaFile() = this.eResource().isSchemaFile()
 
 /**
@@ -76,6 +79,7 @@ fun Resource.isFlowFile() = this.hasExtension(SdsFileExtension.Flow)
 /**
  * Returns whether the resource represents a schema file.
  */
+@ExperimentalSdsApi
 fun Resource.isSchemaFile() = this.hasExtension(SdsFileExtension.Schema)
 
 /**
@@ -92,7 +96,6 @@ fun Resource.isTestFile() = this.hasExtension(SdsFileExtension.Test)
  * Returns whether the resource represents a file with the given extension.
  */
 private fun Resource.hasExtension(fileExtension: SdsFileExtension): Boolean {
-
     // The original file path is normally lost for dynamic tests, so it's attached as an EMF adapter
     this.eAdapters().filterIsInstance<OriginalFilePath>().firstOrNull()?.let {
         return it.path.endsWith(".$fileExtension")

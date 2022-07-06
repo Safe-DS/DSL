@@ -1,10 +1,12 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
- * The possible Kinds for an [SdsTypeParameter].
+ * The possible kinds for an [SdsTypeParameter].
  */
+@ExperimentalSdsApi
 enum class SdsKind(val kind: String?) {
     NoKind(null),
     SchemaKind("\$SchemaType"),
@@ -25,6 +27,7 @@ enum class SdsKind(val kind: String?) {
  *
  * @throws IllegalArgumentException If the kind is unknown.
  */
+@ExperimentalSdsApi
 fun SdsTypeParameter.kind(): SdsKind {
     return SdsKind.values().firstOrNull { it.kind == this.kind }
         ?: throw IllegalArgumentException("Unknown kind '$kind'.")
