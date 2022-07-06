@@ -629,7 +629,7 @@ fun createSdsEnumVariant(
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
-    constraint: SdsConstraint? = null,
+    constraint: SdsConstraint? = null
 ): SdsEnumVariant {
     return factory.createSdsEnumVariant().apply {
         this.name = name
@@ -1073,7 +1073,7 @@ fun createSdsPredicate(
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
-    goals: List<SdsAbstractGoal> = emptyList(),
+    goals: List<SdsAbstractGoal> = emptyList()
 ): SdsPredicate {
     return factory.createSdsPredicate().apply {
         this.name = name
@@ -1092,7 +1092,7 @@ fun SdsCompilationUnit.sdsPredicate(
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
-    goals: List<SdsAbstractGoal> = emptyList(),
+    goals: List<SdsAbstractGoal> = emptyList()
 ) {
     this.addMember(
         createSdsPredicate(

@@ -120,7 +120,6 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
             resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
         )
         this is SdsParameter -> {
-
             // Declared parameter type
             if (this.type != null) {
                 val declaredParameterType = this.type.inferTypeForType(context)
@@ -165,7 +164,6 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
 
 private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
     return when {
-
         // Terminal cases
         this.eIsProxy() -> UnresolvedType
         this is SdsBoolean -> Boolean(context)
@@ -276,7 +274,6 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
 
 private fun SdsAbstractGoalExpression.inferTypeExpression(context: EObject): Type {
     return when {
-
         // Terminal cases
         this.eIsProxy() -> UnresolvedType
         this is SdsBoolean -> Boolean(context)

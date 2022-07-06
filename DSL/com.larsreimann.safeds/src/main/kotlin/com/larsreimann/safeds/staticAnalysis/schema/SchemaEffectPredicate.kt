@@ -12,9 +12,8 @@ import com.larsreimann.safeds.stdlibAccess.getStdlibClassOrNull
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 
-
 fun SdsSchemaEffectReference.schemaEffectPredicate(): SdsSchemaEffectPredicate? {
-    val params = when (effect()){
+    val params = when (effect()) {
         SdsSchemaEffect.ReadSchemaEffect ->
             mapOf(
                 "datasetName" to Pair(StdlibClasses.String, false),
@@ -30,15 +29,14 @@ private fun createSchemaEffectPredicate(
     effect: String,
     parameterMap: Map<String, Pair<QualifiedName, Boolean>>
 ): SdsSchemaEffectPredicate {
-
     val parametersList = parameterMap.mapNotNull { (name, props) ->
         val (typeName, isVariadic) = props
         val type = context.getStdlibClassOrNull(typeName)
         when {
-            type != null ->createSdsParameter(
+            type != null -> createSdsParameter(
                 name,
-                type=createSdsNamedType(type),
-                isVariadic=isVariadic
+                type = createSdsNamedType(type),
+                isVariadic = isVariadic
             )
             else -> null
         }
@@ -46,6 +44,6 @@ private fun createSchemaEffectPredicate(
 
     return createSdsSchemaEffectPredicate(
         effect,
-        parametersList,
+        parametersList
     )
 }
