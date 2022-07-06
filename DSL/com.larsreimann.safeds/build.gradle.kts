@@ -121,14 +121,14 @@ sourceSets {
             "**/*.sdsflow",
             "**/*.sdsstub",
             "**/*.tokens",
-            "**/*.xtextbin"
+            "**/*.xtextbin",
         )
         resources.srcDirs("src-gen")
         resources.include(
             "**/*.sdsflow",
             "**/*.sdsstub",
             "**/*.tokens",
-            "**/*.xtextbin"
+            "**/*.xtextbin",
         )
     }
 }
@@ -141,7 +141,7 @@ val koverExcludes = listOf(
     "com.larsreimann.safeds.serializer.AbstractSafeDSSyntacticSequencer",
     "com.larsreimann.safeds.services.*",
     "com.larsreimann.safeds.safeDS.*",
-    "com.larsreimann.safeds.testing.*"
+    "com.larsreimann.safeds.testing.*",
 )
 
 tasks {
