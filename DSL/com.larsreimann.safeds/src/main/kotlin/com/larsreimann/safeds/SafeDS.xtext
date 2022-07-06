@@ -569,6 +569,12 @@ SdsPrimaryGoalExpression returns SdsAbstractGoalExpression
     : SdsGoalReference
     | SdsParenthesizedGoalExpression
     | SdsLiteral
+    | {SdsSchemaEffectReference} effect=SdsSchemaEffect
+    ;
+
+SdsSchemaEffect
+    : '$ReadSchema'
+    | '$CheckColumn'
     ;
 
 SdsGoalReference

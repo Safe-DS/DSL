@@ -8,6 +8,7 @@ import com.larsreimann.safeds.constant.SdsKind
 import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
 import com.larsreimann.safeds.constant.SdsProtocolQuantifiedTermQuantifier
 import com.larsreimann.safeds.constant.SdsProtocolTokenClassValue
+import com.larsreimann.safeds.constant.SdsSchemaEffect
 import com.larsreimann.safeds.constant.SdsTypeParameterConstraintOperator
 import com.larsreimann.safeds.constant.SdsVariance
 import com.larsreimann.safeds.constant.SdsVisibility
@@ -92,6 +93,8 @@ import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsResultList
 import com.larsreimann.safeds.safeDS.SdsSchema
+import com.larsreimann.safeds.safeDS.SdsSchemaEffectPredicate
+import com.larsreimann.safeds.safeDS.SdsSchemaEffectReference
 import com.larsreimann.safeds.safeDS.SdsStarProjection
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
@@ -1368,6 +1371,32 @@ private fun SdsSchema.addColumn(column: SdsColumn) {
         this.columnList = factory.createSdsColumnList()
     }
     this.columnList.columns += column
+}
+
+/**
+ * Returns a new object of class [SdsSchemaEffectPredicate].
+ */
+fun createSdsSchemaEffectPredicate(
+    effect: String,
+    parameters: List<SdsParameter> = emptyList(),
+    results: List<SdsResult> = emptyList()
+): SdsSchemaEffectPredicate {
+    return factory.createSdsSchemaEffectPredicate().apply {
+        this.effect = effect
+        this.parameterList = createSdsParameterList(parameters)
+        this.resultList = results.nullIfEmptyElse(::createSdsResultList)
+    }
+}
+
+/**
+ * Returns a new object of class [SdsSchemaEffectReference].
+ */
+fun createSdsSchemaEffectReference(
+    schemaEffect: SdsSchemaEffect = SdsSchemaEffect.NoSchemaEffect
+): SdsSchemaEffectReference {
+    return factory.createSdsSchemaEffectReference().apply {
+        this.effect = schemaEffect.effect
+    }
 }
 
 /**

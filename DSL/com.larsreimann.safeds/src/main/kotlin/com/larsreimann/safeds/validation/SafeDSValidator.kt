@@ -33,6 +33,7 @@ import com.larsreimann.safeds.validation.statements.AssignmentChecker
 import com.larsreimann.safeds.validation.statements.ExpressionsStatementChecker
 import com.larsreimann.safeds.validation.typeChecking.ArgumentTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.DefaultValueTypeChecker
+import com.larsreimann.safeds.validation.typeChecking.GoalArgumentTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.IndexedAccessTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.InfixOperationTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.PrefixOperationTypeChecker
@@ -86,6 +87,7 @@ import org.eclipse.xtext.validation.ComposedChecks
         // Type Checking
         ArgumentTypeChecker::class,
         DefaultValueTypeChecker::class,
+        GoalArgumentTypeChecker::class,
         IndexedAccessTypeChecker::class,
         InfixOperationTypeChecker::class,
         PrefixOperationTypeChecker::class,

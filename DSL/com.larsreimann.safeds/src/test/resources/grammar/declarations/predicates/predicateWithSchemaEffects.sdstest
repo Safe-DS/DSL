@@ -1,0 +1,6 @@
+// no_syntax_error
+
+predicate predicateWithSchemaEffectGoals() {
+    $ReadSchema("datasetNameStr", "datasetPathStr"),
+    $CheckColumn(schemaInObj, "columnNameStr1", "columnNameStr2")
+}

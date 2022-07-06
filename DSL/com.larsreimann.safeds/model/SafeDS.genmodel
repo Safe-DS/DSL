@@ -12,6 +12,7 @@
         <genClasses image="false" ecoreClass="SafeDS.ecore#//SdsAbstractCallable">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsAbstractCallable/parameterList" />
         </genClasses>
+        <genClasses image="false" ecoreClass="SafeDS.ecore#//SdsAbstractGoalCallable" />
         <genClasses image="false" ecoreClass="SafeDS.ecore#//SdsAbstractClassMember" />
         <genClasses image="false" ecoreClass="SafeDS.ecore#//SdsAbstractCompilationUnitMember" />
         <genClasses image="false" ecoreClass="SafeDS.ecore#//SdsAbstractLocalVariable" />
@@ -153,6 +154,9 @@
         <genClasses ecoreClass="SafeDS.ecore#//SdsGoalReference">
             <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalReference/declaration" />
         </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchemaEffectReference">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsSchemaEffectReference/effect" />
+        </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsParenthesizedGoalExpression">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParenthesizedGoalExpression/expression" />
         </genClasses>
@@ -182,14 +186,19 @@
         </genClasses>
         <!-- Schema -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsSchema">
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchema/columnList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchema/columnList" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsColumnList">
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumnList/columns" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumnList/columns" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsColumn">
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnName" />
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnType" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnName" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnType" />
+        </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchemaEffectPredicate">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsSchemaEffectPredicate/effect" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchemaEffectPredicate/SdsParameterList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchemaEffectPredicate/SdsResultList" />
         </genClasses>
         <!-- Step -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsStep">

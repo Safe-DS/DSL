@@ -7,6 +7,7 @@
 
 package com.larsreimann.safeds.emf
 
+import com.larsreimann.safeds.constant.hasSchemaKind
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractClassMember
@@ -39,6 +40,8 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsFunctionBody
+import com.larsreimann.safeds.safeDS.SdsGoalArgument
+import com.larsreimann.safeds.safeDS.SdsGoalCall
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
@@ -50,6 +53,7 @@ import com.larsreimann.safeds.safeDS.SdsProtocolComplement
 import com.larsreimann.safeds.safeDS.SdsProtocolReference
 import com.larsreimann.safeds.safeDS.SdsProtocolSubterm
 import com.larsreimann.safeds.safeDS.SdsResult
+import com.larsreimann.safeds.safeDS.SdsSchemaEffectPredicate
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
@@ -179,6 +183,10 @@ fun SdsClass?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
+fun SdsClass?.hasSchema(): Boolean {
+    return this?.typeParametersOrEmpty()?.any { it.hasSchemaKind() } ?: false
+}
+
 fun SdsClass?.parentTypesOrEmpty(): List<SdsAbstractType> {
     return this?.parentTypeList?.parentTypes.orEmpty()
 }
@@ -247,12 +255,28 @@ fun SdsFunction?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
+<<<<<<< HEAD
 @ExperimentalSdsApi
 fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
+=======
+fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractGoal> {
+>>>>>>> 97192a5... feat: Add atomic schema effects (#81)
     return this?.body?.statements
-        ?.filterIsInstance<SdsAbstractConstraintGoal>()
+        ?.filterIsInstance<SdsConstraint>()
+        ?.flatMap { it.constraintList?.goals.orEmpty() }
         .orEmpty()
 }
+
+// SdsGoalCall -------------------------------------------------------------------------------------
+
+fun SdsGoalCall?.argumentsOrEmpty(): List<SdsGoalArgument> {
+    return this?.argumentList?.arguments.orEmpty()
+}
+
+// SdsGoalArgument ---------------------------------------------------------------------------------
+
+fun SdsGoalArgument.isNamed() = parameter != null
+fun SdsGoalArgument.isPositional() = parameter == null
 
 // SdsImport ---------------------------------------------------------------------------------------
 
@@ -276,10 +300,14 @@ fun SdsNamedType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SdsPredicate -------------------------------------------------------------------------------------
+// SdsPredicate ------------------------------------------------------------------------------------
 
 fun SdsPredicate?.goalsOrEmpty(): List<SdsAbstractGoal> {
     return this?.goalList?.goals.orEmpty()
+}
+
+fun SdsPredicate?.parametersOrEmpty(): List<SdsParameter> {
+    return this?.parameterList?.parameters.orEmpty()
 }
 
 // SdsProtocol -------------------------------------------------------------------------------------
@@ -308,6 +336,12 @@ fun SdsProtocolComplement?.referencesOrEmpty(): List<SdsProtocolReference> {
 
 fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
+}
+
+// SdsSchemaEffectPredicate ------------------------------------------------------------------------
+
+fun SdsSchemaEffectPredicate?.parametersOrEmpty(): List<SdsParameter> {
+    return this?.parameterList?.parameters.orEmpty()
 }
 
 // SdsWorkflow -------------------------------------------------------------------------------------
@@ -460,7 +494,7 @@ fun SdsEnum.isConstant(): Boolean {
     return variantsOrEmpty().all { it.parametersOrEmpty().isEmpty() }
 }
 
-// SdsFunction -----------------------------------------------------------------------------------
+// SdsFunction -------------------------------------------------------------------------------------
 
 fun SdsFunction.isMethod() = containingClassOrNull() != null
 

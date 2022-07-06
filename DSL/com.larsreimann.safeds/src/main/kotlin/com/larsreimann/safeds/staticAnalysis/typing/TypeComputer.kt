@@ -14,6 +14,7 @@ import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
+import com.larsreimann.safeds.safeDS.SdsAbstractGoalExpression
 import com.larsreimann.safeds.safeDS.SdsAbstractLambda
 import com.larsreimann.safeds.safeDS.SdsAbstractObject
 import com.larsreimann.safeds.safeDS.SdsAbstractType
@@ -31,6 +32,8 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFloat
 import com.larsreimann.safeds.safeDS.SdsFunction
+import com.larsreimann.safeds.safeDS.SdsGoalArgument
+import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsIndexedAccess
 import com.larsreimann.safeds.safeDS.SdsInfixOperation
 import com.larsreimann.safeds.safeDS.SdsInt
@@ -86,6 +89,7 @@ private fun EObject.inferType(context: EObject): Type {
         this is SdsAbstractAssignee -> this.inferTypeForAssignee(context)
         this is SdsAbstractDeclaration -> this.inferTypeForDeclaration(context)
         this is SdsAbstractExpression -> this.inferTypeExpression(context)
+        this is SdsAbstractGoalExpression -> this.inferTypeExpression(context)
         this is SdsAbstractType -> this.inferTypeForType(context)
         this is SdsTypeArgument -> this.value.inferType(context)
         this is SdsTypeProjection -> this.type.inferTypeForType(context)
@@ -266,6 +270,24 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
             else -> Nothing(context)
         }
         this is SdsReference -> this.declaration.inferType(context)
+        else -> Any(context)
+    }
+}
+
+private fun SdsAbstractGoalExpression.inferTypeExpression(context: EObject): Type {
+    return when {
+
+        // Terminal cases
+        this.eIsProxy() -> UnresolvedType
+        this is SdsBoolean -> Boolean(context)
+        this is SdsFloat -> Float(context)
+        this is SdsInt -> Int(context)
+        this is SdsNull -> Nothing(context, isNullable = true)
+        this is SdsString -> String(context)
+        this is SdsTemplateString -> String(context)
+
+        this is SdsGoalArgument -> this.value.inferTypeExpression(context)
+        this is SdsGoalReference -> this.declaration.inferType(context)
         else -> Any(context)
     }
 }
