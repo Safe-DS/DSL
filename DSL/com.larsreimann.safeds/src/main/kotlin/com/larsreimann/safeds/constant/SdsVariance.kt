@@ -2,10 +2,12 @@ package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
  * The possible variances for an [SdsTypeParameter] or [SdsTypeProjection].
  */
+@ExperimentalSdsApi
 enum class SdsVariance(val variance: String?) {
 
     /**
@@ -52,6 +54,7 @@ enum class SdsVariance(val variance: String?) {
  *
  * @throws IllegalArgumentException If the variance is unknown.
  */
+@ExperimentalSdsApi
 fun SdsTypeParameter.variance(): SdsVariance {
     return SdsVariance.values().firstOrNull { it.variance == this.variance }
         ?: throw IllegalArgumentException("Unknown variance '$variance'.")
@@ -62,6 +65,7 @@ fun SdsTypeParameter.variance(): SdsVariance {
  *
  * @throws IllegalArgumentException If the variance is unknown.
  */
+@ExperimentalSdsApi
 fun SdsTypeProjection.variance(): SdsVariance {
     return SdsVariance.values().firstOrNull { it.variance == this.variance }
         ?: throw IllegalArgumentException("Unknown variance '$variance'.")

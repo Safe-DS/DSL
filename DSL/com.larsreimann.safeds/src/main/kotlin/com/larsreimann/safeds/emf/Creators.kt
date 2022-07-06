@@ -106,6 +106,7 @@ import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsWildcard
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.nullIfEmptyElse
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
@@ -544,6 +545,7 @@ private fun SdsCompilationUnit.addMember(member: SdsAbstractCompilationUnitMembe
 /**
  * Returns a new object of class [SdsConstraint].
  */
+@ExperimentalSdsApi
 fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
     return factory.createSdsConstraint().apply {
         this.constraintList = createSdsGoalList(goals)
@@ -553,13 +555,14 @@ fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
 /**
  * Returns a new object of class [SdsColumn].
  */
+@ExperimentalSdsApi
 fun createSdsColumn(
-    columnName: SdsString,
-    columnType: SdsAbstractType
+    name: String,
+    type: SdsAbstractType
 ): SdsColumn {
     return factory.createSdsColumn().apply {
-        this.columnName = columnName
-        this.columnType = columnType
+        this.columnName = createSdsString(name)
+        this.columnType = type
     }
 }
 
@@ -1008,7 +1011,6 @@ fun createSdsParameterList(parameters: List<SdsParameter>): SdsParameterList {
  * Returns a new object of class [SdsLambdaParameterList]. These have to be used as parameter lists of an
  * [SdsAbstractLambda]
  */
-@Suppress("FunctionName")
 fun createSdsLambdaParameterList(parameters: List<SdsParameter>): SdsLambdaParameterList {
     return factory.createSdsLambdaParameterList().apply {
         this.parameters += parameters
@@ -1124,6 +1126,7 @@ fun createSdsPrefixOperation(operator: SdsPrefixOperationOperator, operand: SdsA
 /**
  * Returns a new object of class [SdsProtocol].
  */
+@ExperimentalSdsApi
 fun createSdsProtocol(
     subterms: List<SdsProtocolSubterm> = emptyList(),
     term: SdsAbstractProtocolTerm? = null,
@@ -1140,6 +1143,7 @@ fun createSdsProtocol(
 /**
  * Adds a new object of class [SdsProtocol] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsClass.sdsProtocol(
     subterms: List<SdsProtocolSubterm> = emptyList(),
     term: SdsAbstractProtocolTerm? = null,
@@ -1151,6 +1155,7 @@ fun SdsClass.sdsProtocol(
 /**
  * Adds a new subterm to the receiver.
  */
+@ExperimentalSdsApi
 private fun SdsProtocol.addSubterm(subterm: SdsProtocolSubterm) {
     if (this.body == null) {
         this.body = factory.createSdsProtocolBody()
@@ -1166,6 +1171,7 @@ private fun SdsProtocol.addSubterm(subterm: SdsProtocolSubterm) {
 /**
  * Returns a new object of class [SdsProtocolAlternative].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolAlternative(terms: List<SdsAbstractProtocolTerm>): SdsProtocolAlternative {
     if (terms.size < 2) {
         throw IllegalArgumentException("Must have at least two terms.")
@@ -1179,6 +1185,7 @@ fun createSdsProtocolAlternative(terms: List<SdsAbstractProtocolTerm>): SdsProto
 /**
  * Returns a new object of class [SdsProtocolComplement].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolComplement(
     universe: SdsProtocolTokenClass? = null,
     references: List<SdsProtocolReference> = emptyList()
@@ -1192,6 +1199,7 @@ fun createSdsProtocolComplement(
 /**
  * Returns a new object of class [SdsProtocolParenthesizedTerm].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolParenthesizedTerm(term: SdsAbstractProtocolTerm): SdsProtocolParenthesizedTerm {
     return factory.createSdsProtocolParenthesizedTerm().apply {
         this.term = term
@@ -1201,6 +1209,7 @@ fun createSdsProtocolParenthesizedTerm(term: SdsAbstractProtocolTerm): SdsProtoc
 /**
  * Returns a new object of class [SdsProtocolQuantifiedTerm].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolQuantifiedTerm(
     term: SdsAbstractProtocolTerm,
     quantifier: SdsProtocolQuantifiedTermQuantifier
@@ -1214,6 +1223,7 @@ fun createSdsProtocolQuantifiedTerm(
 /**
  * Returns a new object of class [SdsProtocolReference].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolReference(token: SdsAbstractProtocolToken): SdsProtocolReference {
     return factory.createSdsProtocolReference().apply {
         this.token = token
@@ -1223,6 +1233,7 @@ fun createSdsProtocolReference(token: SdsAbstractProtocolToken): SdsProtocolRefe
 /**
  * Returns a new object of class [SdsProtocolReferenceList].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolReferenceList(references: List<SdsProtocolReference>): SdsProtocolReferenceList {
     return factory.createSdsProtocolReferenceList().apply {
         this.references += references
@@ -1234,6 +1245,7 @@ fun createSdsProtocolReferenceList(references: List<SdsProtocolReference>): SdsP
  *
  * @throws IllegalArgumentException If `terms.size < 2`.
  */
+@ExperimentalSdsApi
 fun createSdsProtocolSequence(terms: List<SdsAbstractProtocolTerm>): SdsProtocolSequence {
     if (terms.size < 2) {
         throw IllegalArgumentException("Must have at least two terms.")
@@ -1247,6 +1259,7 @@ fun createSdsProtocolSequence(terms: List<SdsAbstractProtocolTerm>): SdsProtocol
 /**
  * Returns a new object of class [SdsProtocolSubterm].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm): SdsProtocolSubterm {
     return factory.createSdsProtocolSubterm().apply {
         this.name = name
@@ -1257,6 +1270,7 @@ fun createSdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm): SdsPr
 /**
  * Returns a new object of class [SdsProtocolSubterm].
  */
+@ExperimentalSdsApi
 fun SdsProtocol.sdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm) {
     this.addSubterm(createSdsProtocolSubterm(name, term))
 }
@@ -1264,6 +1278,7 @@ fun SdsProtocol.sdsProtocolSubterm(name: String, term: SdsAbstractProtocolTerm) 
 /**
  * Returns a new object of class [SdsProtocolTokenClass].
  */
+@ExperimentalSdsApi
 fun createSdsProtocolTokenClass(value: SdsProtocolTokenClassValue): SdsProtocolTokenClass {
     return factory.createSdsProtocolTokenClass().apply {
         this.value = value.value
@@ -1313,6 +1328,7 @@ fun createSdsStarProjection(): SdsStarProjection {
 /**
  * Returns a new object of class [SdsSchema].
  */
+@ExperimentalSdsApi
 fun createSdsSchema(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
@@ -1328,6 +1344,7 @@ fun createSdsSchema(
 /**
  * Adds a new object of class [SdsSchema] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsCompilationUnit.sdsSchema(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
@@ -1345,6 +1362,7 @@ fun SdsCompilationUnit.sdsSchema(
 /**
  * Adds a new column to the receiver.
  */
+@ExperimentalSdsApi
 private fun SdsSchema.addColumn(column: SdsColumn) {
     if (this.columnList == null) {
         this.columnList = factory.createSdsColumnList()
@@ -1491,6 +1509,7 @@ fun createSdsTypeArgument(
 /**
  * Returns a new object of class [SdsTypeArgument] that points to a type parameter with the given name.
  */
+@OptIn(ExperimentalSdsApi::class)
 fun createSdsTypeArgument(
     value: SdsAbstractTypeArgumentValue,
     typeParameterName: String
@@ -1513,6 +1532,7 @@ fun createSdsTypeArgumentList(typeArguments: List<SdsTypeArgument>): SdsTypeArgu
 /**
  * Returns a new object of class [SdsTypeParameter].
  */
+@ExperimentalSdsApi
 fun createSdsTypeParameter(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
@@ -1539,6 +1559,7 @@ fun createSdsTypeParameterList(typeParameters: List<SdsTypeParameter>): SdsTypeP
 /**
  * Returns a new object of class [SdsTypeParameterConstraintGoal].
  */
+@ExperimentalSdsApi
 fun createSdsTypeParameterConstraintGoal(
     leftOperand: SdsTypeParameter,
     operator: SdsTypeParameterConstraintOperator,
@@ -1554,6 +1575,7 @@ fun createSdsTypeParameterConstraintGoal(
 /**
  * Returns a new object of class [SdsTypeParameterConstraintGoal] that points to a type parameter with the given name.
  */
+@ExperimentalSdsApi
 fun createSdsTypeParameterConstraintGoal(
     leftOperandName: String,
     operator: SdsTypeParameterConstraintOperator,
@@ -1569,6 +1591,7 @@ fun createSdsTypeParameterConstraintGoal(
 /**
  * Returns a new object of class [SdsTypeProjection].
  */
+@ExperimentalSdsApi
 fun createSdsTypeProjection(type: SdsAbstractType, variance: SdsVariance = SdsVariance.Invariant): SdsTypeProjection {
     return factory.createSdsTypeProjection().apply {
         this.type = type

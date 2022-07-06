@@ -1,6 +1,7 @@
 package com.larsreimann.safeds.testing
 
 import com.larsreimann.safeds.constant.SdsFileExtension
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.emf.common.util.URI
 import org.junit.jupiter.api.DynamicContainer
@@ -62,6 +63,7 @@ private fun createDynamicTestFromResource(
     }
 }
 
+@OptIn(ExperimentalSdsApi::class)
 private fun isTestFile(filePath: Path): Boolean {
     return Files.isRegularFile(filePath) &&
         (

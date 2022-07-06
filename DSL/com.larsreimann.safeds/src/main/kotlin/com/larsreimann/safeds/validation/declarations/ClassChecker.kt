@@ -13,6 +13,7 @@ import com.larsreimann.safeds.staticAnalysis.classHierarchy.isSubtypeOf
 import com.larsreimann.safeds.staticAnalysis.typing.ClassType
 import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
 import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.duplicatesBy
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
@@ -115,6 +116,7 @@ class ClassChecker : AbstractSafeDSChecker() {
         }
     }
 
+    @OptIn(ExperimentalSdsApi::class)
     @Check
     fun multipleProtocols(sdsClass: SdsClass) {
         val protocols = sdsClass.protocolsOrEmpty()

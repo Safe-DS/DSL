@@ -17,6 +17,7 @@ import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.shouldBeCloseTo
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.extension.ExtendWith
  * - Template string creator should check structure of template string
  * - Union type requires at least one type argument
  */
+@OptIn(ExperimentalSdsApi::class)
 @ExtendWith(InjectionExtension::class)
 @InjectWith(SafeDSInjectorProvider::class)
 class CreatorsTest {

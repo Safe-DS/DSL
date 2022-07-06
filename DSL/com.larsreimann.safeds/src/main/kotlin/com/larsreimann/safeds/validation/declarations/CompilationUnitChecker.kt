@@ -16,6 +16,7 @@ import com.larsreimann.safeds.safeDS.SdsSchema
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.scoping.externalGlobalDeclarations
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.duplicatesBy
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
@@ -24,6 +25,7 @@ import org.eclipse.xtext.validation.CheckType
 
 class CompilationUnitChecker : AbstractSafeDSChecker() {
 
+    @OptIn(ExperimentalSdsApi::class)
     @Check
     fun members(sdsCompilationUnit: SdsCompilationUnit) {
         if (sdsCompilationUnit.isInStubFile()) {

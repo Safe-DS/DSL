@@ -1,10 +1,12 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.safeDS.SdsProtocolTokenClass
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
  * The possible values for an [SdsProtocolTokenClass].
  */
+@ExperimentalSdsApi
 enum class SdsProtocolTokenClassValue(val value: String) {
 
     /**
@@ -32,6 +34,7 @@ enum class SdsProtocolTokenClassValue(val value: String) {
  *
  * @throws IllegalArgumentException If the value is unknown.
  */
+@ExperimentalSdsApi
 fun SdsProtocolTokenClass.value(): SdsProtocolTokenClassValue {
     return SdsProtocolTokenClassValue.values().firstOrNull { it.value == this.value }
         ?: throw IllegalArgumentException("Unknown token class value value '$value'.")
