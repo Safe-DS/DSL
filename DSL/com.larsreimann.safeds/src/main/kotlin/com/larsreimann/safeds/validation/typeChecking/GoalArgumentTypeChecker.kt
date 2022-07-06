@@ -6,11 +6,13 @@ import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
 import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
 import com.larsreimann.safeds.staticAnalysis.typing.isSubstitutableFor
 import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
 
+@OptIn(ExperimentalSdsApi::class)
 class GoalArgumentTypeChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)

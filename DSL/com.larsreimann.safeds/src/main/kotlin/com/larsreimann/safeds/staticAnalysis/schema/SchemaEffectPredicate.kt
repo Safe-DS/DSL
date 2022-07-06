@@ -9,9 +9,11 @@ import com.larsreimann.safeds.safeDS.SdsSchemaEffectPredicate
 import com.larsreimann.safeds.safeDS.SdsSchemaEffectReference
 import com.larsreimann.safeds.stdlibAccess.StdlibClasses
 import com.larsreimann.safeds.stdlibAccess.getStdlibClassOrNull
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 
+@ExperimentalSdsApi
 fun SdsSchemaEffectReference.schemaEffectPredicate(): SdsSchemaEffectPredicate? {
     val params = when (effect()) {
         SdsSchemaEffect.ReadSchemaEffect ->
@@ -24,6 +26,7 @@ fun SdsSchemaEffectReference.schemaEffectPredicate(): SdsSchemaEffectPredicate? 
     return createSchemaEffectPredicate(this, effect, params)
 }
 
+@ExperimentalSdsApi
 private fun createSchemaEffectPredicate(
     context: EObject,
     effect: String,

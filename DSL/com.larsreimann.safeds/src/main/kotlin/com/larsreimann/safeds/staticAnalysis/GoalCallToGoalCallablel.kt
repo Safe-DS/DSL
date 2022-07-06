@@ -9,8 +9,10 @@ import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsSchemaEffectPredicate
 import com.larsreimann.safeds.safeDS.SdsSchemaEffectReference
 import com.larsreimann.safeds.staticAnalysis.schema.schemaEffectPredicate
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 
+@ExperimentalSdsApi
 fun SdsGoalCall.goalCallableOrNull(): SdsAbstractGoalCallable? {
     return when (val maybeCallable = this.maybeCallable()) {
         is GoalCallableResult.Callable -> maybeCallable.callable
@@ -18,12 +20,14 @@ fun SdsGoalCall.goalCallableOrNull(): SdsAbstractGoalCallable? {
     }
 }
 
+@ExperimentalSdsApi
 sealed interface GoalCallableResult {
     object Unresolvable : GoalCallableResult
     object NotCallable : GoalCallableResult
     class Callable(val callable: SdsAbstractGoalCallable) : GoalCallableResult
 }
 
+@ExperimentalSdsApi
 fun SdsGoalCall.maybeCallable(): GoalCallableResult {
     val visited = mutableSetOf<EObject>()
     var current: EObject? = this.receiver
@@ -45,6 +49,7 @@ fun SdsGoalCall.maybeCallable(): GoalCallableResult {
 /**
  * Returns the list of [SdsParameter]s of the called goalCallable or `null` if it cannot be resolved.
  */
+@ExperimentalSdsApi
 fun SdsGoalCall.parametersOrNull(): List<SdsParameter>? {
     return when (val goalCallable = goalCallableOrNull()) {
         is SdsPredicate -> goalCallable.parametersOrEmpty()

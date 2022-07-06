@@ -56,6 +56,7 @@ import com.larsreimann.safeds.staticAnalysis.typing.EnumType
 import com.larsreimann.safeds.staticAnalysis.typing.EnumVariantType
 import com.larsreimann.safeds.staticAnalysis.typing.NamedType
 import com.larsreimann.safeds.staticAnalysis.typing.type
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.resource.Resource
@@ -325,6 +326,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return Scopes.scopeFor(containingProtocol.subtermsUpTo(containingSubtermOrNull), resultScope)
     }
 
+    @OptIn(ExperimentalSdsApi::class)
     private fun SdsProtocol.subtermsUpTo(containingSubtermOrNull: SdsProtocolSubterm?): List<SdsProtocolSubterm> {
         if (containingSubtermOrNull == null) {
             return this.subtermsOrEmpty()

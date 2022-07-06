@@ -13,6 +13,7 @@ import com.larsreimann.safeds.safeDS.SdsGoalArgumentList
 import com.larsreimann.safeds.safeDS.SdsGoalCall
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.staticAnalysis.parametersOrNull
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
  * Returns the [SdsParameter] that corresponds to this [SdsArgument] or `null` if it cannot be resolved.
@@ -52,6 +53,7 @@ fun SdsArgumentList.parametersOrNull(): List<SdsParameter>? {
 /**
  * Returns the [SdsParameter] that corresponds to this [SdsGoalArgument] or `null` if it cannot be resolved.
  */
+@ExperimentalSdsApi
 fun SdsGoalArgument.parameterOrNull(): SdsParameter? {
     return when {
         isNamed() -> parameter.asResolvedOrNull()
@@ -76,6 +78,7 @@ fun SdsGoalArgument.parameterOrNull(): SdsParameter? {
  * Returns the list of [SdsParameter]s that corresponds to this list of [SdsGoalArgument]s or `null` if it cannot be
  * resolved.
  */
+@ExperimentalSdsApi
 fun SdsGoalArgumentList.parametersOrNull(): List<SdsParameter>? {
     return when (val parent = this.eContainer()) {
         is SdsGoalCall -> parent.parametersOrNull()

@@ -270,13 +270,17 @@ fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractGoal> {
 
 // SdsGoalCall -------------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsGoalCall?.argumentsOrEmpty(): List<SdsGoalArgument> {
     return this?.argumentList?.arguments.orEmpty()
 }
 
 // SdsGoalArgument ---------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsGoalArgument.isNamed() = parameter != null
+
+@ExperimentalSdsApi
 fun SdsGoalArgument.isPositional() = parameter == null
 
 // SdsImport ---------------------------------------------------------------------------------------
@@ -303,32 +307,38 @@ fun SdsNamedType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
 
 // SdsPredicate ------------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsPredicate?.goalsOrEmpty(): List<SdsAbstractGoal> {
     return this?.goalList?.goals.orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsPredicate?.parametersOrEmpty(): List<SdsParameter> {
     return this?.parameterList?.parameters.orEmpty()
 }
 
 // SdsProtocol -------------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsProtocol?.subtermsOrEmpty(): List<SdsProtocolSubterm> {
     return this?.body.subtermsOrEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsProtocol.termOrNull(): SdsAbstractProtocolTerm? {
     return this.body?.term
 }
 
 // SdsProtocolBody ---------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsProtocolBody?.subtermsOrEmpty(): List<SdsProtocolSubterm> {
     return this?.subtermList?.subterms.orEmpty()
 }
 
 // SdsProtocolComplement ---------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsProtocolComplement?.referencesOrEmpty(): List<SdsProtocolReference> {
     return this?.referenceList?.references.orEmpty()
 }
@@ -341,6 +351,7 @@ fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
 
 // SdsSchemaEffectPredicate ------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsSchemaEffectPredicate?.parametersOrEmpty(): List<SdsParameter> {
     return this?.parameterList?.parameters.orEmpty()
 }

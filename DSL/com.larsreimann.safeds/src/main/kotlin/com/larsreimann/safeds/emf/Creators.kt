@@ -1376,6 +1376,7 @@ private fun SdsSchema.addColumn(column: SdsColumn) {
 /**
  * Returns a new object of class [SdsSchemaEffectPredicate].
  */
+@ExperimentalSdsApi
 fun createSdsSchemaEffectPredicate(
     effect: String,
     parameters: List<SdsParameter> = emptyList(),
@@ -1391,6 +1392,7 @@ fun createSdsSchemaEffectPredicate(
 /**
  * Returns a new object of class [SdsSchemaEffectReference].
  */
+@ExperimentalSdsApi
 fun createSdsSchemaEffectReference(
     schemaEffect: SdsSchemaEffect = SdsSchemaEffect.NoSchemaEffect,
 ): SdsSchemaEffectReference {
