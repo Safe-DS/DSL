@@ -16,9 +16,9 @@
 
 1. Update the [constants][constants] if the concrete syntax of your concept has terminals that need to be accessed programmatically (e.g. operators or modifiers). Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
-1. Update the [creators][creators], which simplify the creation of instances of model classes. There should be at least one function for each class.  Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
+1. Update the [creators][creators], which simplify the creation of instances of model classes. There should be at least one function for each class. Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
-1. Update the [access shortcuts][shortcuts], which simplify the traversal of the EMF model. This is not always required and the file should only contain functions that are simple enough to not require tests.  Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
+1. Update the [access shortcuts][shortcuts], which simplify the traversal of the EMF model. This is not always required and the file should only contain functions that are simple enough to not require tests. Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
 1. Update the converters if your concept includes terminals where the value they represent differs from their textual representation.
 
