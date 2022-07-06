@@ -560,8 +560,8 @@ fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
  */
 @ExperimentalSdsApi
 fun createSdsColumn(
-    name: String,
-    type: SdsAbstractType,
+    columnName: SdsString,
+    columnType: SdsAbstractType,
 ): SdsColumn {
     return factory.createSdsColumn().apply {
         this.columnName = createSdsString(name)
@@ -629,7 +629,7 @@ fun createSdsEnumVariant(
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
-    constraint: SdsConstraint? = null
+    constraint: SdsConstraint? = null,
 ): SdsEnumVariant {
     return factory.createSdsEnumVariant().apply {
         this.name = name
@@ -1073,7 +1073,7 @@ fun createSdsPredicate(
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
-    goals: List<SdsAbstractGoal> = emptyList()
+    goals: List<SdsAbstractGoal> = emptyList(),
 ): SdsPredicate {
     return factory.createSdsPredicate().apply {
         this.name = name
@@ -1092,7 +1092,7 @@ fun SdsCompilationUnit.sdsPredicate(
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
-    goals: List<SdsAbstractGoal> = emptyList()
+    goals: List<SdsAbstractGoal> = emptyList(),
 ) {
     this.addMember(
         createSdsPredicate(
@@ -1379,7 +1379,7 @@ private fun SdsSchema.addColumn(column: SdsColumn) {
 fun createSdsSchemaEffectPredicate(
     effect: String,
     parameters: List<SdsParameter> = emptyList(),
-    results: List<SdsResult> = emptyList()
+    results: List<SdsResult> = emptyList(),
 ): SdsSchemaEffectPredicate {
     return factory.createSdsSchemaEffectPredicate().apply {
         this.effect = effect
@@ -1392,7 +1392,7 @@ fun createSdsSchemaEffectPredicate(
  * Returns a new object of class [SdsSchemaEffectReference].
  */
 fun createSdsSchemaEffectReference(
-    schemaEffect: SdsSchemaEffect = SdsSchemaEffect.NoSchemaEffect
+    schemaEffect: SdsSchemaEffect = SdsSchemaEffect.NoSchemaEffect,
 ): SdsSchemaEffectReference {
     return factory.createSdsSchemaEffectReference().apply {
         this.effect = schemaEffect.effect

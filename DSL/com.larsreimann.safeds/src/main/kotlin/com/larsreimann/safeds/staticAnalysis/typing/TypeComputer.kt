@@ -79,7 +79,7 @@ fun SdsAbstractObject.hasPrimitiveType(): Boolean {
         StdlibClasses.Boolean,
         StdlibClasses.Float,
         StdlibClasses.Int,
-        StdlibClasses.String
+        StdlibClasses.String,
     )
 }
 
@@ -117,7 +117,7 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
         this is SdsEnumVariant -> EnumVariantType(this, isNullable = false)
         this is SdsFunction -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
+            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         this is SdsParameter -> {
             // Declared parameter type
@@ -156,7 +156,7 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
         this is SdsResult -> type.inferTypeForType(context)
         this is SdsStep -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
+            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         else -> Any(context)
     }
@@ -177,7 +177,7 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
         this is SdsArgument -> this.value.inferTypeExpression(context)
         this is SdsBlockLambda -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) }
+            blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) },
         )
         this is SdsCall -> when (val callable = callableOrNull()) {
             is SdsClass -> ClassType(callable, isNullable = false)
@@ -219,7 +219,7 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
         }
         this is SdsExpressionLambda -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            listOf(result.inferTypeExpression(context))
+            listOf(result.inferTypeExpression(context)),
         )
         this is SdsIndexedAccess -> {
             when (val receiverType = this.receiver.inferTypeExpression(context)) {
@@ -245,8 +245,8 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
                         context,
                         listOf(
                             leftOperandType.setIsNullableOnCopy(isNullable = false),
-                            this.rightOperand.inferTypeExpression(context)
-                        )
+                            this.rightOperand.inferTypeExpression(context),
+                        ),
                     )
                 } else {
                     leftOperandType
@@ -294,7 +294,7 @@ private fun SdsAbstractType.inferTypeForType(context: EObject): Type {
         this.eIsProxy() -> UnresolvedType
         this is SdsCallableType -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
+            this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         this is SdsMemberType -> {
             this.member.inferTypeForType(context)
@@ -365,7 +365,7 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 private fun Any(context: EObject, isNullable: Boolean = false) = stdlibType(
     context,
     StdlibClasses.Any,
-    isNullable
+    isNullable,
 )
 
 private fun Boolean(context: EObject) = stdlibType(context, StdlibClasses.Boolean)
@@ -374,7 +374,7 @@ private fun Int(context: EObject) = stdlibType(context, StdlibClasses.Int)
 private fun Nothing(context: EObject, isNullable: Boolean = false) = stdlibType(
     context,
     StdlibClasses.Nothing,
-    isNullable
+    isNullable,
 )
 
 private fun String(context: EObject) = stdlibType(context, StdlibClasses.String)

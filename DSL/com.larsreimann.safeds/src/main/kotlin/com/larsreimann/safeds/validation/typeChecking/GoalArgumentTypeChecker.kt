@@ -34,7 +34,7 @@ class GoalArgumentTypeChecker : AbstractSafeDSChecker() {
             error(
                 "An goal argument of type '$argumentTypeString' cannot be assigned to a parameter of type '$parameterTypeString'.",
                 Literals.SDS_GOAL_ARGUMENT__VALUE,
-                ErrorCode.WrongType
+                ErrorCode.WrongType,
             )
         }
     }

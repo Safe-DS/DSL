@@ -17,7 +17,7 @@ fun SdsSchemaEffectReference.schemaEffectPredicate(): SdsSchemaEffectPredicate? 
         SdsSchemaEffect.ReadSchemaEffect ->
             mapOf(
                 "datasetName" to Pair(StdlibClasses.String, false),
-                "datasetPath" to Pair(StdlibClasses.String, false)
+                "datasetPath" to Pair(StdlibClasses.String, false),
             )
         else -> return null
     }
@@ -27,7 +27,7 @@ fun SdsSchemaEffectReference.schemaEffectPredicate(): SdsSchemaEffectPredicate? 
 private fun createSchemaEffectPredicate(
     context: EObject,
     effect: String,
-    parameterMap: Map<String, Pair<QualifiedName, Boolean>>
+    parameterMap: Map<String, Pair<QualifiedName, Boolean>>,
 ): SdsSchemaEffectPredicate {
     val parametersList = parameterMap.mapNotNull { (name, props) ->
         val (typeName, isVariadic) = props
@@ -36,7 +36,7 @@ private fun createSchemaEffectPredicate(
             type != null -> createSdsParameter(
                 name,
                 type = createSdsNamedType(type),
-                isVariadic = isVariadic
+                isVariadic = isVariadic,
             )
             else -> null
         }
@@ -44,6 +44,6 @@ private fun createSchemaEffectPredicate(
 
     return createSdsSchemaEffectPredicate(
         effect,
-        parametersList
+        parametersList,
     )
 }
