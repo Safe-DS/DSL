@@ -149,7 +149,6 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         fromResource: Resource,
         fromPackageWithQualifiedName: QualifiedName?
     ): Boolean {
-
         // Resolution failed in delegate scope
         if (this == null) return false
 
@@ -246,7 +245,6 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
     }
 
     private fun localDeclarations(context: EObject, parentScope: IScope): IScope {
-
         // Placeholders
         val placeholders = when (val containingStatement = context.closestAncestorOrNull<SdsAbstractStatement>()) {
             null -> emptyList()
@@ -265,7 +263,6 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         val localDeclarations = placeholders + parameters
 
         return when (containingCallable) {
-
             // Lambdas can be nested
             is SdsAbstractLambda -> Scopes.scopeFor(
                 localDeclarations,
