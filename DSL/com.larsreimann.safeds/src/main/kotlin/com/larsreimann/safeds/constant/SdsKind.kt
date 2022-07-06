@@ -33,4 +33,5 @@ fun SdsTypeParameter.kind(): SdsKind {
         ?: throw IllegalArgumentException("Unknown kind '$kind'.")
 }
 
+@ExperimentalSdsApi
 fun SdsTypeParameter.hasSchemaKind() = this.kind() == SdsKind.SchemaKind

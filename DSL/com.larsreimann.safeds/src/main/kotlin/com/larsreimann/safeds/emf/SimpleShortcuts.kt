@@ -183,6 +183,7 @@ fun SdsClass?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsClass?.hasSchema(): Boolean {
     return this?.typeParametersOrEmpty()?.any { it.hasSchemaKind() } ?: false
 }
