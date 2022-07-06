@@ -12,7 +12,6 @@ import org.eclipse.xtext.naming.QualifiedName
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.io.readCSV
 import org.jetbrains.kotlinx.dataframe.typeClass
-import java.io.IOException
 
 @OptIn(ExperimentalSdsApi::class)
 fun inferInitialSchema(context: EObject, name: String, path: String): SdsSchema? {
@@ -36,7 +35,7 @@ fun inferInitialSchema(context: EObject, name: String, path: String): SdsSchema?
         }
 
         return createSdsSchema(name, columns = columns)
-    } catch (e: IOException) {
+    } catch (e: Exception) {
         return null
     }
 }
