@@ -14,11 +14,11 @@
     1. Update the [Xtext grammar file][safeds.xtext].
     1. Run the tests again (`./gradlew test`). Tests should now pass.
 
-1. Update the [constants][constants] if the concrete syntax of your concept has terminals that need to be accessed programmatically (e.g. operators or modifiers).
+1. Update the [constants][constants] if the concrete syntax of your concept has terminals that need to be accessed programmatically (e.g. operators or modifiers). Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
-1. Update the [creators][creators], which simplify the creation of instances of model classes. There should be at least one function for each class.
+1. Update the [creators][creators], which simplify the creation of instances of model classes. There should be at least one function for each class.  Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
-1. Update the [access shortcuts][shortcuts], which simplify the traversal of the EMF model. This is not always required and the file should only contain functions that are simple enough to not require tests.
+1. Update the [access shortcuts][shortcuts], which simplify the traversal of the EMF model. This is not always required and the file should only contain functions that are simple enough to not require tests.  Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
 1. Update the converters if your concept includes terminals where the value they represent differs from their textual representation.
 
@@ -36,7 +36,7 @@
 
 1. Update the [resource description strategy][resource-description-strategy] if your concept is a declaration that should be visible from another file.
 
-1. Update the [static analyses][static-analysis].
+1. Update the [static analyses][static-analysis]. Mark new declarations with [`@ExperimentalSdsApi`][experimental-sds-api].
 
 1. Update the validator.
 
@@ -63,6 +63,7 @@
 
 <!-- Links -->
 
+[experimental-sds-api]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/utils/MarkerAnnotations.kt
 [safeds.ecore]: ../../DSL/com.larsreimann.safeds/model/SafeDS.ecore
 [safeds.genmodel]: ../../DSL/com.larsreimann.safeds/model/SafeDS.genmodel
 [grammar-tests]: ../../DSL/com.larsreimann.safeds/src/test/resources/grammar
