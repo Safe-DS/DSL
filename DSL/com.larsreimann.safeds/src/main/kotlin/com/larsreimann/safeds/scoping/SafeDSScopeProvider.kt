@@ -104,7 +104,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
 
         // Declarations in other files
         val result: IScope = FilteringScope(
-            super.delegateGetScope(context, SafeDSPackage.Literals.SDS_GOAL_REFERENCE__DECLARATION)
+            super.delegateGetScope(context, SafeDSPackage.Literals.SDS_GOAL_REFERENCE__DECLARATION),
         ) {
             it.isReferencableExternalDeclaration(resource, packageName)
         }
@@ -123,7 +123,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
 
                 // Declarations in other files
                 var result: IScope = FilteringScope(
-                    super.delegateGetScope(context, SafeDSPackage.Literals.SDS_REFERENCE__DECLARATION)
+                    super.delegateGetScope(context, SafeDSPackage.Literals.SDS_REFERENCE__DECLARATION),
                 ) {
                     it.isReferencableExternalDeclaration(resource, packageName)
                 }
@@ -148,7 +148,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
      */
     private fun IEObjectDescription?.isReferencableExternalDeclaration(
         fromResource: Resource,
-        fromPackageWithQualifiedName: QualifiedName?
+        fromPackageWithQualifiedName: QualifiedName?,
     ): Boolean {
         // Resolution failed in delegate scope
         if (this == null) return false
@@ -231,7 +231,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
 
         return Scopes.scopeFor(
             members,
-            parentScope
+            parentScope,
         )
     }
 
@@ -239,7 +239,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return when (val containingClassOrNull = context.containingClassOrNull()) {
             is SdsClass -> Scopes.scopeFor(
                 context.classMembersOrEmpty(),
-                classMembers(containingClassOrNull, parentScope)
+                classMembers(containingClassOrNull, parentScope),
             )
             else -> Scopes.scopeFor(context.classMembersOrEmpty(), parentScope)
         }
@@ -267,7 +267,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
             // Lambdas can be nested
             is SdsAbstractLambda -> Scopes.scopeFor(
                 localDeclarations,
-                localDeclarations(containingCallable, parentScope)
+                localDeclarations(containingCallable, parentScope),
             )
             else -> Scopes.scopeFor(localDeclarations, parentScope)
         }
