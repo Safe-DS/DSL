@@ -102,17 +102,14 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         val packageName = context.containingCompilationUnitOrNull()?.qualifiedNameOrNull()
 
         // Declarations in other files
-        var result: IScope = FilteringScope(
+        val result: IScope = FilteringScope(
             super.delegateGetScope(context, SafeDSPackage.Literals.SDS_GOAL_REFERENCE__DECLARATION)
         ) {
             it.isReferencableExternalDeclaration(resource, packageName)
         }
 
         // Declarations in this file
-        result = declarationsInSameFile(resource, result)
-
-        // Declarations in this package
-        return declarationsInSamePackageDeclaration(resource, result)
+        return declarationsInSameFile(resource, result)
     }
 
     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {
@@ -132,9 +129,6 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
 
                 // Declarations in this file
                 result = declarationsInSameFile(resource, result)
-
-                // Declarations in this package
-                result = declarationsInSamePackageDeclaration(resource, result)
 
                 // Declarations in containing classes
                 context.containingClassOrNull()?.let {
@@ -230,25 +224,6 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
     }
 
     private fun declarationsInSameFile(resource: Resource, parentScope: IScope): IScope {
-        if (resource.compilationUnitOrNull() != null) {
-            return Scopes.scopeFor(
-                emptyList(),
-                parentScope
-            )
-        }
-
-        val members = resource.compilationUnitOrNull()
-            ?.members
-            ?.filter { it !is SdsAnnotation && it !is SdsWorkflow }
-            ?: emptyList()
-
-        return Scopes.scopeFor(
-            members,
-            parentScope
-        )
-    }
-
-    private fun declarationsInSamePackageDeclaration(resource: Resource, parentScope: IScope): IScope {
         val members = resource.compilationUnitOrNull()
             ?.members
             ?.filter { it !is SdsAnnotation && it !is SdsWorkflow }
