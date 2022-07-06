@@ -63,7 +63,7 @@ class CreatorsTest {
     fun `createSdsAnnotation should store annotation uses in annotationCallList`() {
         val annotation = createSdsAnnotation(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         annotation.annotationCalls.shouldHaveSize(0)
@@ -77,7 +77,7 @@ class CreatorsTest {
     fun `createSdsAnnotation should omit empty parameter lists`() {
         val annotation = createSdsAnnotation(
             "Test",
-            parameters = emptyList()
+            parameters = emptyList(),
         )
 
         annotation.parameterList.shouldBeNull()
@@ -96,7 +96,7 @@ class CreatorsTest {
     fun `createSdsAnnotationUse should omit empty argument lists`() {
         val annotationUse = createSdsAnnotationCall(
             "Test",
-            arguments = emptyList()
+            arguments = emptyList(),
         )
         annotationUse.argumentList.shouldBeNull()
     }
@@ -129,7 +129,7 @@ class CreatorsTest {
         val lambda = createSdsBlockLambda {
             sdsAssignment(
                 listOf(createSdsWildcard()),
-                createSdsInt(1)
+                createSdsInt(1),
             )
         }
 
@@ -143,7 +143,7 @@ class CreatorsTest {
         val workflow = createSdsWorkflow("Test") {
             sdsAssignment(
                 listOf(createSdsWildcard()),
-                createSdsInt(1)
+                createSdsInt(1),
             )
         }
 
@@ -157,7 +157,7 @@ class CreatorsTest {
         val step = createSdsStep("Test") {
             sdsAssignment(
                 listOf(createSdsWildcard()),
-                createSdsInt(1)
+                createSdsInt(1),
             )
         }
 
@@ -170,7 +170,7 @@ class CreatorsTest {
     fun `createSdsAttribute should store annotation uses in annotationCallList`() {
         val attribute = createSdsAttribute(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         attribute.annotationCalls.shouldHaveSize(0)
@@ -220,7 +220,7 @@ class CreatorsTest {
     fun `createSdsCall should omit empty type argument lists`() {
         val call = createSdsCall(
             createSdsNull(),
-            typeArguments = emptyList()
+            typeArguments = emptyList(),
         )
         call.typeArgumentList.shouldBeNull()
     }
@@ -229,7 +229,7 @@ class CreatorsTest {
     fun `createSdsClass should store annotation uses in annotationCallList`() {
         val `class` = createSdsClass(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         `class`.annotationCalls.shouldHaveSize(0)
@@ -243,7 +243,7 @@ class CreatorsTest {
     fun `createSdsClass should omit empty body`() {
         val `class` = createSdsClass(
             "Test",
-            members = emptyList()
+            members = emptyList(),
         )
         `class`.body.shouldBeNull()
     }
@@ -252,7 +252,7 @@ class CreatorsTest {
     fun `createSdsClass should not omit empty parameter lists`() {
         val `class` = createSdsClass(
             "Test",
-            parameters = emptyList()
+            parameters = emptyList(),
         )
         `class`.parameterList.shouldBeInstanceOf<SdsParameterList>()
     }
@@ -261,7 +261,7 @@ class CreatorsTest {
     fun `createSdsClass should omit empty parent type list`() {
         val `class` = createSdsClass(
             "Test",
-            parentTypes = emptyList()
+            parentTypes = emptyList(),
         )
         `class`.parentTypeList.shouldBeNull()
     }
@@ -270,7 +270,7 @@ class CreatorsTest {
     fun `createSdsClass should omit empty type parameter list`() {
         val `class` = createSdsClass(
             "Test",
-            typeParameters = emptyList()
+            typeParameters = emptyList(),
         )
         `class`.typeParameterList.shouldBeNull()
     }
@@ -310,7 +310,7 @@ class CreatorsTest {
     fun `createSdsCompilationUnit should store annotation uses in annotationCalls`() {
         val compilationUnit = createSdsCompilationUnit(
             packageName = "test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         compilationUnit.annotationCalls.shouldHaveSize(1)
@@ -321,7 +321,7 @@ class CreatorsTest {
     fun `createSdsEnum should store annotation uses in annotationCallList`() {
         val `enum` = createSdsEnum(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         `enum`.annotationCalls.shouldHaveSize(0)
@@ -335,7 +335,7 @@ class CreatorsTest {
     fun `createSdsEnum should omit empty body`() {
         val enum = createSdsEnum(
             "Test",
-            variants = emptyList()
+            variants = emptyList(),
         )
         enum.body.shouldBeNull()
     }
@@ -364,7 +364,7 @@ class CreatorsTest {
     fun `createSdsEnumVariant should store annotation uses in annotations`() {
         val variant = createSdsEnumVariant(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         variant.annotationCalls.shouldHaveSize(1)
@@ -375,7 +375,7 @@ class CreatorsTest {
     fun `createSdsEnumVariant should omit empty type parameter list`() {
         val enum = createSdsEnumVariant(
             "Test",
-            typeParameters = emptyList()
+            typeParameters = emptyList(),
         )
         enum.typeParameterList.shouldBeNull()
     }
@@ -384,7 +384,7 @@ class CreatorsTest {
     fun `createSdsEnumVariant should omit empty parameter list`() {
         val enum = createSdsEnumVariant(
             "Test",
-            parameters = emptyList()
+            parameters = emptyList(),
         )
         enum.parameterList.shouldBeNull()
     }
@@ -392,7 +392,7 @@ class CreatorsTest {
     @Test
     fun `createSdsEnumVariant should omit empty constraint list`() {
         val enum = createSdsEnumVariant(
-            "Test"
+            "Test",
         )
         enum.constraint.shouldBeNull()
     }
@@ -476,7 +476,7 @@ class CreatorsTest {
     fun `createSdsFunction should store annotation uses in annotationCallList`() {
         val function = createSdsFunction(
             "test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         function.annotationCalls.shouldHaveSize(0)
@@ -490,7 +490,7 @@ class CreatorsTest {
     fun `createSdsFunction should omit empty result list`() {
         val function = createSdsFunction(
             "test",
-            results = emptyList()
+            results = emptyList(),
         )
         function.resultList.shouldBeNull()
     }
@@ -499,7 +499,7 @@ class CreatorsTest {
     fun `createSdsFunction should omit empty type parameter list`() {
         val function = createSdsFunction(
             "test",
-            typeParameters = emptyList()
+            typeParameters = emptyList(),
         )
         function.typeParameterList.shouldBeNull()
     }
@@ -551,7 +551,7 @@ class CreatorsTest {
     fun `createSdsNamedType should omit empty type argument lists`() {
         val namedType = createSdsNamedType(
             createSdsClass("Int"),
-            typeArguments = emptyList()
+            typeArguments = emptyList(),
         )
         namedType.typeArgumentList.shouldBeNull()
     }
@@ -560,7 +560,7 @@ class CreatorsTest {
     fun `createSdsParameter should store annotation uses in annotations`() {
         val parameter = createSdsParameter(
             "test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         parameter.annotationCalls.shouldHaveSize(1)
@@ -593,8 +593,8 @@ class CreatorsTest {
         shouldThrow<IllegalArgumentException> {
             createSdsProtocolAlternative(
                 listOf(
-                    createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything)
-                )
+                    createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything),
+                ),
             )
         }
 
@@ -603,7 +603,7 @@ class CreatorsTest {
                 listOf(
                     createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything),
                     createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything),
-                )
+                ),
             )
         }
     }
@@ -623,8 +623,8 @@ class CreatorsTest {
         shouldThrow<IllegalArgumentException> {
             createSdsProtocolSequence(
                 listOf(
-                    createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything)
-                )
+                    createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything),
+                ),
             )
         }
 
@@ -633,7 +633,7 @@ class CreatorsTest {
                 listOf(
                     createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything),
                     createSdsProtocolTokenClass(SdsProtocolTokenClassValue.Anything),
-                )
+                ),
             )
         }
     }
@@ -653,7 +653,7 @@ class CreatorsTest {
     fun `createSdsResult should store annotation uses in annotations`() {
         val result = createSdsResult(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         result.annotationCalls.shouldHaveSize(1)
@@ -665,7 +665,7 @@ class CreatorsTest {
         shouldThrow<IllegalArgumentException> {
             createSdsTemplateString(
                 listOf("Test"),
-                listOf(createSdsInt(1))
+                listOf(createSdsInt(1)),
             )
         }
     }
@@ -675,7 +675,7 @@ class CreatorsTest {
         shouldThrow<IllegalArgumentException> {
             createSdsTemplateString(
                 listOf("Test", "Test"),
-                listOf()
+                listOf(),
             )
         }
     }
@@ -685,7 +685,7 @@ class CreatorsTest {
         shouldThrow<IllegalArgumentException> {
             createSdsTemplateString(
                 listOf("Test", "Test", "Test"),
-                listOf(createSdsInt(1))
+                listOf(createSdsInt(1)),
             )
         }
     }
@@ -694,7 +694,7 @@ class CreatorsTest {
     fun `createSdsTemplate should interleave string parts and template expressions`() {
         val templateString = createSdsTemplateString(
             listOf("Start", "Inner", "Inner", "End"),
-            listOf(createSdsInt(1), createSdsInt(1), createSdsInt(1))
+            listOf(createSdsInt(1), createSdsInt(1), createSdsInt(1)),
         )
 
         templateString.expressions.asClue {
@@ -713,7 +713,7 @@ class CreatorsTest {
     fun `createSdsTypeArgument should create an SdsTypeParameter when only a name is passed`() {
         val typeArgument = createSdsTypeArgument(
             createSdsStarProjection(),
-            "Test"
+            "Test",
         )
         val typeParameter = typeArgument.typeParameter
         typeParameter.shouldNotBeNull()
@@ -724,7 +724,7 @@ class CreatorsTest {
     fun `createSdsTypeParameter should store annotation uses in annotations`() {
         val result = createSdsTypeParameter(
             "Test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         result.annotationCalls.shouldHaveSize(1)
@@ -736,7 +736,7 @@ class CreatorsTest {
         val constraint = createSdsTypeParameterConstraintGoal(
             "Test",
             SdsTypeParameterConstraintOperator.SubclassOf,
-            createSdsNamedType(createSdsClass("Test"))
+            createSdsNamedType(createSdsClass("Test")),
         )
         val leftOperand = constraint.leftOperand
         leftOperand.shouldNotBeNull()
@@ -753,9 +753,9 @@ class CreatorsTest {
             createSdsUnionType(
                 listOf(
                     createSdsTypeArgument(
-                        createSdsStarProjection()
-                    )
-                )
+                        createSdsStarProjection(),
+                    ),
+                ),
             )
         }
     }
@@ -772,7 +772,7 @@ class CreatorsTest {
     fun `createSdsStep should store annotation uses in annotationCallList`() {
         val step = createSdsStep(
             "test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         step.annotationCalls.shouldHaveSize(0)
@@ -786,7 +786,7 @@ class CreatorsTest {
     fun `createSdsStep should omit empty result list`() {
         val function = createSdsStep(
             "test",
-            results = emptyList()
+            results = emptyList(),
         )
         function.resultList.shouldBeNull()
     }
@@ -804,7 +804,7 @@ class CreatorsTest {
     fun `createSdsWorkflow should store annotation uses in annotationCallList`() {
         val workflow = createSdsWorkflow(
             "test",
-            listOf(createSdsAnnotationCall("Test"))
+            listOf(createSdsAnnotationCall("Test")),
         )
 
         workflow.annotationCalls.shouldHaveSize(0)

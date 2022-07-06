@@ -34,7 +34,7 @@ class ClassChecker : AbstractSafeDSChecker() {
                     "A class must not directly or indirectly be a subtype of itself.",
                     it,
                     null,
-                    ErrorCode.CLASS_MUST_NOT_BE_SUBTYPE_OF_ITSELF
+                    ErrorCode.CLASS_MUST_NOT_BE_SUBTYPE_OF_ITSELF,
                 )
             }
     }
@@ -45,7 +45,7 @@ class ClassChecker : AbstractSafeDSChecker() {
             info(
                 "Unnecessary class body.",
                 Literals.SDS_CLASS__BODY,
-                InfoCode.UnnecessaryBody
+                InfoCode.UnnecessaryBody,
             )
         }
     }
@@ -62,7 +62,7 @@ class ClassChecker : AbstractSafeDSChecker() {
                     "A class must only inherit classes.",
                     it,
                     null,
-                    ErrorCode.CLASS_MUST_INHERIT_ONLY_CLASSES
+                    ErrorCode.CLASS_MUST_INHERIT_ONLY_CLASSES,
                 )
             }
     }
@@ -76,7 +76,7 @@ class ClassChecker : AbstractSafeDSChecker() {
                     error(
                         "Inherits multiple members called '$name'.",
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.CLASS_MUST_HAVE_UNIQUE_INHERITED_MEMBERS
+                        ErrorCode.CLASS_MUST_HAVE_UNIQUE_INHERITED_MEMBERS,
                     )
                 }
             }
@@ -100,7 +100,7 @@ class ClassChecker : AbstractSafeDSChecker() {
                     "Parent types must be unique.",
                     it,
                     null,
-                    ErrorCode.CLASS_MUST_HAVE_UNIQUE_PARENT_TYPES
+                    ErrorCode.CLASS_MUST_HAVE_UNIQUE_PARENT_TYPES,
                 )
             }
     }
@@ -111,7 +111,7 @@ class ClassChecker : AbstractSafeDSChecker() {
             info(
                 "Unnecessary type parameter list.",
                 Literals.SDS_CLASS__TYPE_PARAMETER_LIST,
-                InfoCode.UnnecessaryTypeParameterList
+                InfoCode.UnnecessaryTypeParameterList,
             )
         }
     }
@@ -126,7 +126,7 @@ class ClassChecker : AbstractSafeDSChecker() {
                     "A class must have only one protocol.",
                     it,
                     null,
-                    ErrorCode.OneProtocolPerClass
+                    ErrorCode.OneProtocolPerClass,
                 )
             }
         }

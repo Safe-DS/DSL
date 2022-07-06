@@ -20,7 +20,7 @@ class TypeParameterChecker : AbstractSafeDSChecker() {
             error(
                 "Can not use variance and kind together",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.VarianceAndKind
+                ErrorCode.VarianceAndKind,
             )
         }
     }

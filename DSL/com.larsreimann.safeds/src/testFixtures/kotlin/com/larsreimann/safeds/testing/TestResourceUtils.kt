@@ -27,7 +27,7 @@ fun ClassLoader.getResourceEmfUri(fileOrFolder: String): URI? {
 
 fun Path.createDynamicTestsFromResourceFolder(
     validator: (resourcePath: Path, filePath: Path, program: String) -> String?,
-    categorizedTestCreator: (resourcePath: Path, filePath: Path, program: String) -> Sequence<CategorizedTest>
+    categorizedTestCreator: (resourcePath: Path, filePath: Path, program: String) -> Sequence<CategorizedTest>,
 ): Stream<out DynamicNode> {
     return Files.walk(this)
         .asSequence()
@@ -44,7 +44,7 @@ private fun createDynamicTestFromResource(
     resourcePath: Path,
     filePath: Path,
     validator: (resourcePath: Path, filePath: Path, program: String) -> String?,
-    categorizedTestCreator: (resourcePath: Path, filePath: Path, program: String) -> Sequence<CategorizedTest>
+    categorizedTestCreator: (resourcePath: Path, filePath: Path, program: String) -> Sequence<CategorizedTest>,
 ) = sequence {
     val program = Files.readString(filePath)
 
@@ -55,8 +55,8 @@ private fun createDynamicTestFromResource(
                 "### BAD TEST FILE ###",
                 DynamicTest.dynamicTest(testDisplayName(resourcePath, filePath), filePath.toUri()) {
                     throw IllegalArgumentException(testFileError)
-                }
-            )
+                },
+            ),
         )
     } else {
         yieldAll(categorizedTestCreator(resourcePath, filePath, program))

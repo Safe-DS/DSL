@@ -42,7 +42,7 @@ class TypeArgumentToTypeParameterTest {
         typeParameter = createSdsTypeParameter(name = "T")
 
         positionalTypeArgument = createSdsTypeArgument(
-            value = createSdsStarProjection()
+            value = createSdsStarProjection(),
         )
         namedTypeArgument = createSdsTypeArgument(
             value = createSdsStarProjection(),
@@ -51,7 +51,7 @@ class TypeArgumentToTypeParameterTest {
 
         function = createSdsFunction(name = "f")
         call = createSdsCall(
-            createSdsReference(function)
+            createSdsReference(function),
         )
 
         `class` = createSdsClass(name = "C")

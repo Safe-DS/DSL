@@ -96,7 +96,6 @@ fun Resource.isTestFile() = this.hasExtension(SdsFileExtension.Test)
  * Returns whether the resource represents a file with the given extension.
  */
 private fun Resource.hasExtension(fileExtension: SdsFileExtension): Boolean {
-
     // The original file path is normally lost for dynamic tests, so it's attached as an EMF adapter
     this.eAdapters().filterIsInstance<OriginalFilePath>().firstOrNull()?.let {
         return it.path.endsWith(".$fileExtension")
