@@ -1,0 +1,91 @@
+package tests.validation.schemaTest.inferInitialSchema
+
+class Dataset<CurrentSchema :: $SchemaType> {
+
+    static fun loadDataset <InitialSchema :: $SchemaType> (datasetName: String, datasetPath: String) -> dataset: Dataset<InitialSchema> {
+        constraint {
+            /*
+            Suggestion:
+            no "val" while assigning to a non intermediate/resultant Schema
+            remember the type parameter constraint uses similar syntax
+                T2 super Number
+
+            maybe special operater "::" like
+                InitialSchema :: $ReadSchema(datasetName, datasetPath)
+            */
+            InitialSchema = $ReadSchema(datasetName, datasetPath)
+        }
+    }
+
+    fun checkColumns <ComputedSchema :: $SchemaType> (vararg columnName: String) -> dataset: Dataset<ComputedSchema> {
+        constraint {
+            ComputedSchema = $CheckColumn(CurrentSchema, ColumnName)
+        }
+    }
+
+    fun joinDatasets <ComputedSchema :: $SchemaType, OtherDatasetSchema :: $SchemaType> (
+            otherDataset: Dataset<OtherDatasetSchema>,
+            joinOnColumn: String
+        ) -> dataset: Dataset<ComputedSchema> {
+        constraint {
+            /* here we access to OtherDatasetSchema and ComputedSchema schemas */
+            ComputedSchema = $JoinSchema(CurrentSchema, OtherDatasetSchema, joinOnColumn)
+        }
+    }
+}
+
+workflow myWorkflow {
+    val data = Dataset.loadDataset(datasetName, datasetPath);
+}
+
+/*
+## Concept
+
+- The main Idea is that "Schema"s are special "Types" declared in the type parameter with special "NAME :: $SchemaType" syntax which for
+  functions which declare it, forgoes the necessity to specify the Scheme Type upon function invocation, unlike usual
+  type parameter declared by functions
+    - the syntax
+      Dataset.loadDataset("datasetNameSTR", "datasetPathSTR");
+      insted of
+      Dataset.loadDataset<ASchemaType>(datasetName, datasetPath)
+
+- The Schema types are infered/computed automatically by the goals in the constraint
+
+- These Schemas types can be thought as more like custom names we are using to refer to the actuall internal Data schemas of the objects which
+  can have a Data schema associated with them
+
+## Rules for Classes that use a Schema Type type parameter like "<CurrentSchema :: $SchemaType>" in above example
+
+- Static functions do NOT have access to the Schema in class's type parameters.
+    - "loadDataset" can't refer to "CurrentSchema".
+
+- Non-static functions have access to the Schema in class's type parameters.
+    - "checkColumns" and "joinDatasets" refer to "CurrentSchema"
+
+- All the other (than the Schema defind in classes's type parameters) Schemas that any function refers to must be declared in type parameters
+  of the function. The parameters/results of functions refer to these Schema types in their type arguments (ofcourse if the parameters/results
+  are instances with Schema)
+    - function "joinDatasets" declares "ComputedSchema" and "OtherDatasetSchema" Schemas in it's type parameters. The parameter "otherDataset"
+      and result "dataset" have these Schemas respectively
+
+- All the Schemas associated with results of a function must be inferred/computed inside the constraints block using goals. This way the returned
+  Object(s)'s Schemas is specified. The Schemas associated with parameters can be accessed by the goals in constraint block.
+    - the function "joinDatasets" computes the "ComputedSchema" schema of the result "dataset" of function and also uses the "OtherDatasetSchema"
+      schema of the parameter "otherDataset"
+
+- Classes with Schema type must have atleaset one static factory function and can not be instantited without a static factory function.
+  This function will infer the created instance's Schema.
+    - function "loadDataset" is such a factory function
+  Note: i don't understand how the class constructor is setup currently - Maybe we can add a constraint block to the constructor too.
+
+- Assumption: for now limit one Schema per class, i don't think we even need more anyway.
+
+
+### A suggestion
+- I think for formating of code, there should be space after and before type parameters
+    - Like
+      fun loadDataset <InitialSchema :: $SchemaType> (datasetName: String, datasetPath: String)
+
+      Insted of
+      fun loadDataset<InitialSchema :: $SchemaType>(datasetName: String, datasetPath: String)
+*/
