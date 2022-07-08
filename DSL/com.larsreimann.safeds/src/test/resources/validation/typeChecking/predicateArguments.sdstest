@@ -1,0 +1,10 @@
+package tests.validation.typeChecking.predicateArguments
+
+predicate predicateArgumentsTypeChecking(){
+    // semantic_error "A goal argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."
+    predicateWithStringParameter(»false«),
+    // semantic_error "A goal argument of type 'Int' cannot be assigned to a parameter of type 'String'."
+    predicateWithStringParameter(»1«)
+}
+
+predicate predicateWithStringParameter(stringParam: String) {}

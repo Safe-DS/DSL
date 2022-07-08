@@ -1,8 +1,8 @@
 package tests.validation.schemaTest.schemaEffects
 
 predicate schemaEffects(){
-    // semantic_error "An goal argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."
+    // semantic_error "A goal argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."
     $ReadSchema(»false«, "datasetPathStr"),
-    // no_semantic_error "An goal argument of type 'String' cannot be assigned to a parameter of type 'String'."
+    // no_semantic_error "A goal argument of type 'String' cannot be assigned to a parameter of type 'String'."
     $ReadSchema("datasetNameStr", »"datasetPathStr"«)
 }

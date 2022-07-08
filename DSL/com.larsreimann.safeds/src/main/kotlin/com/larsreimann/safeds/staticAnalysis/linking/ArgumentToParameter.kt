@@ -7,12 +7,16 @@ import com.larsreimann.safeds.emf.parametersOrEmpty
 import com.larsreimann.safeds.safeDS.SdsAnnotationCall
 import com.larsreimann.safeds.safeDS.SdsArgument
 import com.larsreimann.safeds.safeDS.SdsArgumentList
+import com.larsreimann.safeds.safeDS.SdsAtomicSchemaEffect
 import com.larsreimann.safeds.safeDS.SdsCall
 import com.larsreimann.safeds.safeDS.SdsGoalArgument
 import com.larsreimann.safeds.safeDS.SdsGoalArgumentList
 import com.larsreimann.safeds.safeDS.SdsGoalCall
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.staticAnalysis.parametersOrNull
+import com.larsreimann.safeds.staticAnalysis.schema.ParameterTypesOrEmpty
+import com.larsreimann.safeds.staticAnalysis.typing.Type
+import com.larsreimann.safeds.staticAnalysis.typing.VariadicType
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
@@ -83,5 +87,27 @@ fun SdsGoalArgumentList.parametersOrNull(): List<SdsParameter>? {
     return when (val parent = this.eContainer()) {
         is SdsGoalCall -> parent.parametersOrNull()
         else -> null
+    }
+}
+
+/**
+ * Returns the [Type] of [SdsGoalArgument] if the receiver is a [SdsAtomicSchemaEffect] or `null` if it cannot be resolved.
+ */
+@ExperimentalSdsApi
+fun SdsGoalArgument.parameterTypeOrNull(): Type? {
+    val goalArgumentList = closestAncestorOrNull<SdsGoalArgumentList>() ?: return null
+    val receiver = closestAncestorOrNull<SdsGoalCall>()?.receiver ?: return null
+
+    when (receiver) {
+        is SdsAtomicSchemaEffect -> {
+            val parametersTypes = receiver.ParameterTypesOrEmpty()
+            val lastParameterType = parametersTypes.lastOrNull()
+            val thisIndex = goalArgumentList.arguments.indexOf(this)
+            return when {
+                lastParameterType is VariadicType && thisIndex >= parametersTypes.size - 1 -> lastParameterType
+                else -> parametersTypes.getOrNull(thisIndex)
+            }
+        }
+        else -> return null
     }
 }

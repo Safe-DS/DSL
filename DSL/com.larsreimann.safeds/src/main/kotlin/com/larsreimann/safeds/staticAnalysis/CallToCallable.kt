@@ -15,16 +15,27 @@ import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFunction
+import com.larsreimann.safeds.safeDS.SdsGoalCall
+import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsMemberAccess
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
+import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 
 fun SdsCall.callableOrNull(): SdsAbstractCallable? {
-    return when (val maybeCallable = this.maybeCallable()) {
+    return when (val abstractCallable = callableOrNull(this)) {
+        is SdsAbstractCallable -> abstractCallable
+        else -> null
+    }
+}
+
+private fun callableOrNull (call : EObject): EObject? {
+    return when (val maybeCallable = maybeCallable(call)) {
         is CallableResult.Callable -> maybeCallable.callable
         else -> null
     }
@@ -33,17 +44,23 @@ fun SdsCall.callableOrNull(): SdsAbstractCallable? {
 sealed interface CallableResult {
     object Unresolvable : CallableResult
     object NotCallable : CallableResult
-    class Callable(val callable: SdsAbstractCallable) : CallableResult
+    class Callable(val callable: EObject) : CallableResult
 }
 
-fun SdsCall.maybeCallable(): CallableResult {
+fun maybeCallable(call : EObject): CallableResult {
     val visited = mutableSetOf<EObject>()
-    var current: EObject? = this.receiver
+    var current: EObject? = when (call) {
+        is SdsGoalCall -> call.receiver
+        is SdsCall -> call.receiver
+        else -> throw java.lang.IllegalArgumentException("Expected either SdsGoalCall or SdsCall")
+    }
+
     while (current != null && current !in visited) {
         visited += current
 
         current = when {
             current.eIsProxy() -> return CallableResult.Unresolvable
+            // for SdsCall
             current is SdsAbstractCallable -> return CallableResult.Callable(current)
             current is SdsCall -> {
                 val results = current.resultsOrNull()
@@ -67,6 +84,10 @@ fun SdsCall.maybeCallable(): CallableResult {
                 is SdsCallableType -> CallableResult.Callable(typeOrNull)
                 else -> CallableResult.NotCallable
             }
+            // for SdsGoalCall
+            current is SdsPredicate -> return CallableResult.Callable(current)
+            current is SdsGoalReference -> current.declaration
+
             else -> return CallableResult.NotCallable
         }
     }
@@ -79,6 +100,14 @@ fun SdsCall.maybeCallable(): CallableResult {
  */
 fun SdsCall.parametersOrNull(): List<SdsParameter>? {
     return callableOrNull()?.parametersOrEmpty()
+}
+
+@ExperimentalSdsApi
+fun SdsGoalCall.parametersOrNull(): List<SdsParameter>? {
+    return when (val callable = callableOrNull(this)) {
+        is SdsPredicate -> callable.parametersOrEmpty()
+        else -> null
+    }
 }
 
 /**

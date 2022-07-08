@@ -53,7 +53,6 @@ import com.larsreimann.safeds.safeDS.SdsProtocolComplement
 import com.larsreimann.safeds.safeDS.SdsProtocolReference
 import com.larsreimann.safeds.safeDS.SdsProtocolSubterm
 import com.larsreimann.safeds.safeDS.SdsResult
-import com.larsreimann.safeds.safeDS.SdsSchemaEffectPredicate
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
@@ -347,13 +346,6 @@ fun SdsProtocolComplement?.referencesOrEmpty(): List<SdsProtocolReference> {
 
 fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
-}
-
-// SdsSchemaEffectPredicate ------------------------------------------------------------------------
-
-@ExperimentalSdsApi
-fun SdsSchemaEffectPredicate?.parametersOrEmpty(): List<SdsParameter> {
-    return this?.parameterList?.parameters.orEmpty()
 }
 
 // SdsWorkflow -------------------------------------------------------------------------------------

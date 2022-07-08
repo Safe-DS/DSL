@@ -93,8 +93,7 @@ import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsResultList
 import com.larsreimann.safeds.safeDS.SdsSchema
-import com.larsreimann.safeds.safeDS.SdsSchemaEffectPredicate
-import com.larsreimann.safeds.safeDS.SdsSchemaEffectReference
+import com.larsreimann.safeds.safeDS.SdsAtomicSchemaEffect
 import com.larsreimann.safeds.safeDS.SdsStarProjection
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
@@ -1374,29 +1373,13 @@ private fun SdsSchema.addColumn(column: SdsColumn) {
 }
 
 /**
- * Returns a new object of class [SdsSchemaEffectPredicate].
+ * Returns a new object of class [SdsAtomicSchemaEffect].
  */
 @ExperimentalSdsApi
-fun createSdsSchemaEffectPredicate(
-    effect: String,
-    parameters: List<SdsParameter> = emptyList(),
-    results: List<SdsResult> = emptyList(),
-): SdsSchemaEffectPredicate {
-    return factory.createSdsSchemaEffectPredicate().apply {
-        this.effect = effect
-        this.parameterList = createSdsParameterList(parameters)
-        this.resultList = results.nullIfEmptyElse(::createSdsResultList)
-    }
-}
-
-/**
- * Returns a new object of class [SdsSchemaEffectReference].
- */
-@ExperimentalSdsApi
-fun createSdsSchemaEffectReference(
+fun createSdsAtomicSchemaEffect(
     schemaEffect: SdsSchemaEffect = SdsSchemaEffect.NoSchemaEffect,
-): SdsSchemaEffectReference {
-    return factory.createSdsSchemaEffectReference().apply {
+): SdsAtomicSchemaEffect {
+    return factory.createSdsAtomicSchemaEffect().apply {
         this.effect = schemaEffect.effect
     }
 }

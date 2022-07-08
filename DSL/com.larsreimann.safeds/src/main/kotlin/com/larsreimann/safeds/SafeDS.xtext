@@ -569,7 +569,7 @@ SdsPrimaryGoalExpression returns SdsAbstractGoalExpression
     : SdsGoalReference
     | SdsParenthesizedGoalExpression
     | SdsLiteral
-    | {SdsSchemaEffectReference} effect=SdsSchemaEffect
+    | {SdsAtomicSchemaEffect} effect=SdsSchemaEffect
     ;
 
 SdsSchemaEffect

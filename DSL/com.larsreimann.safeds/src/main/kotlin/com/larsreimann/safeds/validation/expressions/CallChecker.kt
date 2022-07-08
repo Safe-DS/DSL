@@ -98,7 +98,7 @@ class CallChecker : AbstractSafeDSChecker() {
 
     @Check
     fun receiver(sdsCall: SdsCall) {
-        when (val maybeCallable = sdsCall.maybeCallable()) {
+        when (val maybeCallable = maybeCallable(sdsCall)) {
             CallableResult.NotCallable -> {
                 error(
                     "This expression must not be called.",
