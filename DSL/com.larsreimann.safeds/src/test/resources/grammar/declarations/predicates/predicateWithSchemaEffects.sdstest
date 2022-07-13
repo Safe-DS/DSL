@@ -2,5 +2,5 @@
 
 predicate predicateWithSchemaEffectGoals() {
     $ReadSchema("datasetNameStr", "datasetPathStr"),
-    $CheckColumn(schemaInObj, "columnNameStr1", "columnNameStr2")
+    $CheckColumn(ASchema, "columnNameStr1", "columnNameStr2")
 }

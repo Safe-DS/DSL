@@ -1,4 +1,7 @@
-package tests.validation.schemaTest.schemaEffects
+package tests.validation.`schema`.schemaEffects
+
+// semantic_error "Abstract predicates can only be declared for schema effects."
+abstract predicate »abstractPredicate«()
 
 predicate schemaEffects(){
     // semantic_error "A goal argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."

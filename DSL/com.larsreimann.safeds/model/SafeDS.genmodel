@@ -110,19 +110,11 @@
         </genClasses>
         <!-- Predicate  -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsPredicate">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/typeParameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/parameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/resultList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/goalList" />
         </genClasses>
-        <!-- TODO -->
-        <!-- <genClasses ecoreClass="SafeDS.ecore#//SdsGoalParameterList">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalParameterList/parameter" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalParameter">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalParameter/defaultValue" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalParameter/type" />
-            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsGoalParameter/variadic" />
-        </genClasses> -->
         <!-- Goal -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsGoalList">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalList/goals" />
@@ -152,9 +144,6 @@
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsGoalReference">
             <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalReference/declaration" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsAtomicSchemaEffect">
-            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsAtomicSchemaEffect/effect" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsParenthesizedGoalExpression">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParenthesizedGoalExpression/expression" />

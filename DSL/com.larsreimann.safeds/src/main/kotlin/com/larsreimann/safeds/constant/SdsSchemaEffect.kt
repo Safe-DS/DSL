@@ -1,6 +1,6 @@
 package com.larsreimann.safeds.constant
 
-import com.larsreimann.safeds.safeDS.SdsAtomicSchemaEffect
+import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
@@ -17,13 +17,13 @@ enum class SdsSchemaEffect(val effect: String?) {
     }
 }
 
-/**
- * Returns the [SdsSchemaEffect] of this [SdsAtomicSchemaEffect].
- *
- * @throws IllegalArgumentException If the Schema Effect is unknown.
- */
 @ExperimentalSdsApi
-fun SdsAtomicSchemaEffect.effect(): SdsSchemaEffect {
-    return SdsSchemaEffect.values().firstOrNull { it.effect == this.effect }
-        ?: throw IllegalArgumentException("Unknown schema effect '$effect'.")
+private fun strToSchemaEffect(str: String): SdsSchemaEffect {
+    return SdsSchemaEffect.values().firstOrNull { it.effect == str }
+        ?: SdsSchemaEffect.NoSchemaEffect
+}
+
+@ExperimentalSdsApi
+fun SdsAbstractDeclaration.nameToSchemaEffect(): SdsSchemaEffect {
+    return strToSchemaEffect(this.name)
 }

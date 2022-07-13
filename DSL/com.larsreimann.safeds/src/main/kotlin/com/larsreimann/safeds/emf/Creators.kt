@@ -8,7 +8,6 @@ import com.larsreimann.safeds.constant.SdsKind
 import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
 import com.larsreimann.safeds.constant.SdsProtocolQuantifiedTermQuantifier
 import com.larsreimann.safeds.constant.SdsProtocolTokenClassValue
-import com.larsreimann.safeds.constant.SdsSchemaEffect
 import com.larsreimann.safeds.constant.SdsTypeParameterConstraintOperator
 import com.larsreimann.safeds.constant.SdsVariance
 import com.larsreimann.safeds.constant.SdsVisibility
@@ -93,7 +92,6 @@ import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsResultList
 import com.larsreimann.safeds.safeDS.SdsSchema
-import com.larsreimann.safeds.safeDS.SdsAtomicSchemaEffect
 import com.larsreimann.safeds.safeDS.SdsStarProjection
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
@@ -1070,6 +1068,7 @@ fun createSdsPlaceholder(name: String): SdsPlaceholder {
 fun createSdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
     goals: List<SdsAbstractGoal> = emptyList(),
@@ -1077,6 +1076,7 @@ fun createSdsPredicate(
     return factory.createSdsPredicate().apply {
         this.name = name
         this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSdsTypeParameterList)
         this.parameterList = createSdsParameterList(parameters)
         this.resultList = results.nullIfEmptyElse(::createSdsResultList)
         goals.forEach { addGoal(it) }
@@ -1089,6 +1089,7 @@ fun createSdsPredicate(
 fun SdsCompilationUnit.sdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
     goals: List<SdsAbstractGoal> = emptyList(),
@@ -1097,6 +1098,7 @@ fun SdsCompilationUnit.sdsPredicate(
         createSdsPredicate(
             name,
             annotationCalls,
+            typeParameters,
             parameters,
             results,
             goals,
@@ -1370,18 +1372,6 @@ private fun SdsSchema.addColumn(column: SdsColumn) {
         this.columnList = factory.createSdsColumnList()
     }
     this.columnList.columns += column
-}
-
-/**
- * Returns a new object of class [SdsAtomicSchemaEffect].
- */
-@ExperimentalSdsApi
-fun createSdsAtomicSchemaEffect(
-    schemaEffect: SdsSchemaEffect = SdsSchemaEffect.NoSchemaEffect,
-): SdsAtomicSchemaEffect {
-    return factory.createSdsAtomicSchemaEffect().apply {
-        this.effect = schemaEffect.effect
-    }
 }
 
 /**

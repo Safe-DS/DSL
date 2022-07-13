@@ -14,6 +14,7 @@ import com.larsreimann.safeds.validation.declarations.ParameterChecker
 import com.larsreimann.safeds.validation.declarations.ParameterListChecker
 import com.larsreimann.safeds.validation.declarations.PlaceholderChecker
 import com.larsreimann.safeds.validation.declarations.ResultChecker
+import com.larsreimann.safeds.validation.declarations.PredicateChecker
 import com.larsreimann.safeds.validation.declarations.StepChecker
 import com.larsreimann.safeds.validation.declarations.TypeParameterChecker
 import com.larsreimann.safeds.validation.declarations.WorkflowChecker
@@ -64,6 +65,7 @@ import org.eclipse.xtext.validation.ComposedChecks
         ParameterChecker::class,
         ParameterListChecker::class,
         PlaceholderChecker::class,
+        PredicateChecker::class,
         ResultChecker::class,
         WorkflowChecker::class,
         StepChecker::class,

@@ -3,7 +3,6 @@ package com.larsreimann.safeds.validation.typeChecking
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsGoalArgument
 import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
-import com.larsreimann.safeds.staticAnalysis.linking.parameterTypeOrNull
 import com.larsreimann.safeds.staticAnalysis.typing.UnresolvedType
 import com.larsreimann.safeds.staticAnalysis.typing.isSubstitutableFor
 import com.larsreimann.safeds.staticAnalysis.typing.type
@@ -23,13 +22,7 @@ class GoalArgumentTypeChecker : AbstractSafeDSChecker() {
             return // Scoping error already shown
         }
 
-        // get parameterType directly if receiver is a Atomic Schema Effect
-        var parameterType = sdsGoalArgument.parameterTypeOrNull()
-
-        // otherwise get parameterType from predicate
-        if (parameterType == null) {
-            parameterType = (sdsGoalArgument.parameterOrNull() ?: return).type()
-        }
+        val parameterType = (sdsGoalArgument.parameterOrNull() ?: return).type()
 
         if (!argumentType.isSubstitutableFor(parameterType)) {
             var argumentTypeString = argumentType.toSimpleString()

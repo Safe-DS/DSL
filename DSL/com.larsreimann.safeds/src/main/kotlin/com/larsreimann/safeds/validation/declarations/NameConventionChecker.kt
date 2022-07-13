@@ -1,5 +1,7 @@
 package com.larsreimann.safeds.validation.declarations
 
+import com.larsreimann.safeds.constant.SdsSchemaEffect
+import com.larsreimann.safeds.constant.nameToSchemaEffect
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotation
@@ -12,11 +14,13 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
+import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsProtocolSubterm
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
 import com.larsreimann.safeds.validation.codes.WarningCode
@@ -93,6 +97,14 @@ class NameConventionChecker : AbstractSafeDSChecker() {
     @Check
     fun placeholderNamesShouldBeLowerCamelCase(sdsPlaceholder: SdsPlaceholder) {
         sdsPlaceholder.nameShouldBeLowerCamelCase("placeholders")
+    }
+
+    @OptIn(ExperimentalSdsApi::class)
+    @Check
+    fun predicateNamesShouldBeLowerCamelCase(sdsPredicate: SdsPredicate) {
+        if (sdsPredicate.nameToSchemaEffect() != SdsSchemaEffect.NoSchemaEffect)
+            return
+        sdsPredicate.nameShouldBeLowerCamelCase("predicate")
     }
 
     @Check

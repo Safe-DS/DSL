@@ -93,5 +93,7 @@ enum class ErrorCode {
 
     VarianceAndKind,
 
-    ExpertMustBeOptional
+    ExpertMustBeOptional,
+
+    AbstractPredicatesNotAllowed,
 }

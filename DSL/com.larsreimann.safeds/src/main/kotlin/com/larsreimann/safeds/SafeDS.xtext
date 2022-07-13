@@ -51,9 +51,16 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
 
     | {SdsPredicate.annotationCallList=current}
         'predicate' name=ID
+        typeParameterList=SdsTypeParameterList?
         parameterList=SdsParameterList
         resultList=SdsResultList?
         goalList=SdsGoalList
+
+    | {SdsPredicate.annotationCallList=current}
+        'abstract' 'predicate' name=ID
+        typeParameterList=SdsTypeParameterList?
+        parameterList=SdsParameterList
+        resultList=SdsResultList?
 
     | {SdsSchema.annotationCallList=current}
         'schema' name=ID
@@ -550,10 +557,6 @@ SdsGoalExpression returns SdsAbstractGoalExpression
     ;
 
 SdsChainedGoalExpression returns SdsAbstractGoalExpression
-    : SdsGoalCall
-    ;
-
-SdsGoalCall returns SdsAbstractGoalExpression
     : SdsPrimaryGoalExpression ( {SdsGoalCall.receiver=current}'(' (argumentList=SdsGoalArgumentList)? ')' )?
     ;
 
@@ -569,12 +572,6 @@ SdsPrimaryGoalExpression returns SdsAbstractGoalExpression
     : SdsGoalReference
     | SdsParenthesizedGoalExpression
     | SdsLiteral
-    | {SdsAtomicSchemaEffect} effect=SdsSchemaEffect
-    ;
-
-SdsSchemaEffect
-    : '$ReadSchema'
-    | '$CheckColumn'
     ;
 
 SdsGoalReference
@@ -748,6 +745,12 @@ terminal ID
 
 terminal fragment IDENTIFIER
     : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+    | SCHEMA_EFFECT
+    ;
+
+terminal fragment SCHEMA_EFFECT
+    : '$ReadSchema'
+    | '$CheckColumn'
     ;
 
 terminal INT returns ecore::EInt

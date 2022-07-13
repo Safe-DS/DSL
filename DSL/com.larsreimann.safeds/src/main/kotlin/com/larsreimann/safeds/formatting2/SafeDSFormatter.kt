@@ -650,6 +650,9 @@ class SafeDSFormatter : AbstractFormatter2() {
                 // Feature "name"
                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, null, noSpace)
 
+                // EObject "typeParameterList"
+                doc.formatObject(obj.typeParameterList, noSpace, null)
+
                 // EObject "parameterList"
                 doc.formatObject(obj.parameterList, noSpace, null)
 
