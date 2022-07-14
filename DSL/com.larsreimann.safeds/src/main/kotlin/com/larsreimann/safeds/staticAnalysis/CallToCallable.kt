@@ -34,6 +34,13 @@ fun SdsCall.callableOrNull(): SdsAbstractCallable? {
     }
 }
 
+fun SdsGoalCall.callableOrNull(): SdsPredicate? {
+    return when (val predicate = callableOrNull(this)) {
+        is SdsPredicate -> predicate
+        else -> null
+    }
+}
+
 private fun callableOrNull (call : EObject): EObject? {
     return when (val maybeCallable = maybeCallable(call)) {
         is CallableResult.Callable -> maybeCallable.callable
@@ -102,12 +109,12 @@ fun SdsCall.parametersOrNull(): List<SdsParameter>? {
     return callableOrNull()?.parametersOrEmpty()
 }
 
+/**
+ * Returns the list of [SdsParameter]s of the called callable or `null` if it cannot be resolved.
+ */
 @ExperimentalSdsApi
 fun SdsGoalCall.parametersOrNull(): List<SdsParameter>? {
-    return when (val callable = callableOrNull(this)) {
-        is SdsPredicate -> callable.parametersOrEmpty()
-        else -> null
-    }
+    return callableOrNull()?.parametersOrEmpty()
 }
 
 /**

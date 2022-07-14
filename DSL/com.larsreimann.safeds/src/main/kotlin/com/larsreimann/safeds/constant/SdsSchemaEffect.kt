@@ -1,6 +1,7 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
+import com.larsreimann.safeds.staticAnalysis.typing.ParameterisedType
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
@@ -26,4 +27,9 @@ private fun strToSchemaEffect(str: String): SdsSchemaEffect {
 @ExperimentalSdsApi
 fun SdsAbstractDeclaration.nameToSchemaEffect(): SdsSchemaEffect {
     return strToSchemaEffect(this.name)
+}
+
+@ExperimentalSdsApi
+fun ParameterisedType.kindToSchemaEffect(): SdsSchemaEffect {
+    return strToSchemaEffect(this.kind)
 }

@@ -150,6 +150,9 @@
     <eClassifiers xsi:type="ecore:EClass" name="SdsParenthesizedGoalExpression" eSuperTypes="#//SdsAbstractGoalExpression">
         <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" upperBound="-1" eType="#//SdsAbstractGoalExpression" containment="true" />
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SdsParameterisedType" eSuperTypes="#//SdsAbstractGoalExpression">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsNamedType" containment="true" />
+    </eClassifiers>
     <!-- Function -->
     <eClassifiers xsi:type="ecore:EClass" name="SdsFunction" eSuperTypes="#//SdsAbstractCallable #//SdsAbstractClassMember #//SdsAbstractCompilationUnitMember #//SdsAbstractProtocolToken">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="static" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" />

@@ -182,11 +182,6 @@ fun SdsClass?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-@ExperimentalSdsApi
-fun SdsClass?.hasSchema(): Boolean {
-    return this?.typeParametersOrEmpty()?.any { it.hasSchemaKind() } ?: false
-}
-
 fun SdsClass?.parentTypesOrEmpty(): List<SdsAbstractType> {
     return this?.parentTypeList?.parentTypes.orEmpty()
 }
@@ -255,12 +250,8 @@ fun SdsFunction?.typeParametersOrEmpty(): List<SdsTypeParameter> {
     return this?.typeParameterList?.typeParameters.orEmpty()
 }
 
-<<<<<<< HEAD
 @ExperimentalSdsApi
-fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
-=======
 fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractGoal> {
->>>>>>> 97192a5... feat: Add atomic schema effects (#81)
     return this?.body?.statements
         ?.filterIsInstance<SdsConstraint>()
         ?.flatMap { it.constraintList?.goals.orEmpty() }
@@ -507,10 +498,25 @@ fun SdsFunction.isMethod() = containingClassOrNull() != null
 fun SdsImport.isQualified() = !importedNamespace.endsWith(".*")
 fun SdsImport.isWildcard() = importedNamespace.endsWith(".*")
 
+// SdsNamedType ------------------------------------------------------------------------------------
+
+@OptIn(ExperimentalSdsApi::class)
+fun SdsNamedType.isSchemaType() : Boolean{
+    val declaration = this.declaration
+    return declaration is SdsTypeParameter && declaration.hasSchemaKind()
+}
+
 // SdsParameter ------------------------------------------------------------------------------------
 
 fun SdsParameter.isRequired() = defaultValue == null && !isVariadic
 fun SdsParameter.isOptional() = defaultValue != null
+
+// SdsPredicate ------------------------------------------------------------------------------------
+
+@ExperimentalSdsApi
+fun SdsPredicate?.isAbstract(): Boolean {
+    return this?.goalList == null
+}
 
 // SdsTypeArgument ---------------------------------------------------------------------------------
 

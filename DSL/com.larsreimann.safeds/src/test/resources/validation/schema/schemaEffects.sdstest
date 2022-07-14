@@ -1,11 +1,8 @@
-package tests.validation.`schema`.schemaEffects
+package tests.validation.schemaTest.schemaEffects
 
 // semantic_error "Abstract predicates can only be declared for schema effects."
 abstract predicate »abstractPredicate«()
 
-predicate schemaEffects(){
-    // semantic_error "A goal argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."
-    $ReadSchema(»false«, "datasetPathStr"),
-    // no_semantic_error "A goal argument of type 'String' cannot be assigned to a parameter of type 'String'."
-    $ReadSchema("datasetNameStr", »"datasetPathStr"«)
-}
+// no_semantic_error "Abstract predicates can only be declared for schema effects."
+// semantic_error "Abstract predicates can only be declared in standard library."
+abstract predicate »»$CheckColumn««()

@@ -71,6 +71,7 @@ import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParameterList
+import com.larsreimann.safeds.safeDS.SdsParameterisedType
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedGoalExpression
@@ -557,12 +558,12 @@ fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
  */
 @ExperimentalSdsApi
 fun createSdsColumn(
-    columnName: SdsString,
+    columnName: String,
     columnType: SdsAbstractType,
 ): SdsColumn {
     return factory.createSdsColumn().apply {
-        this.columnName = createSdsString(name)
-        this.columnType = type
+        this.columnName = createSdsString(columnName)
+        this.columnType = columnType
     }
 }
 
@@ -1059,6 +1060,15 @@ fun createSdsParentTypeList(parentTypes: List<SdsAbstractType>): SdsParentTypeLi
 fun createSdsPlaceholder(name: String): SdsPlaceholder {
     return factory.createSdsPlaceholder().apply {
         this.name = name
+    }
+}
+
+/**
+ * Returns a new object of class [SdsParameterisedType].
+ */
+fun createSdsParameterisedType(type: SdsNamedType? = null): SdsParameterisedType {
+    return factory.createSdsParameterisedType().apply {
+        this.type = type
     }
 }
 

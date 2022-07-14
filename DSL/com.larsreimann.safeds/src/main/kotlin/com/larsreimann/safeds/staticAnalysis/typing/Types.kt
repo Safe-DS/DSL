@@ -145,6 +145,19 @@ data class VariadicType(val elementType: Type) : Type() {
     }
 }
 
+data class ParameterisedType(val kind: String) : Type() {
+    override val isNullable = false
+    override fun setIsNullableOnCopy(isNullable: Boolean) = this
+
+    override fun toString(): String {
+        return "::$kind"
+    }
+
+    override fun toSimpleString(): String {
+        return "::${kind}"
+    }
+}
+
 object UnresolvedType : Type() {
     override val isNullable = false
     override fun setIsNullableOnCopy(isNullable: Boolean) = this

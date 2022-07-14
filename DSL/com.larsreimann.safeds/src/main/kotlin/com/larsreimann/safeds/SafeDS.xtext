@@ -50,21 +50,21 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
           body=SdsFunctionBody?
 
     | {SdsPredicate.annotationCallList=current}
-        'predicate' name=ID
-        typeParameterList=SdsTypeParameterList?
-        parameterList=SdsParameterList
-        resultList=SdsResultList?
-        goalList=SdsGoalList
+          'predicate' name=ID
+          typeParameterList=SdsTypeParameterList?
+          parameterList=SdsParameterList
+          resultList=SdsResultList?
+          goalList=SdsGoalList
 
     | {SdsPredicate.annotationCallList=current}
-        'abstract' 'predicate' name=ID
-        typeParameterList=SdsTypeParameterList?
-        parameterList=SdsParameterList
-        resultList=SdsResultList?
+          'abstract' 'predicate' name=ID
+          typeParameterList=SdsTypeParameterList?
+          parameterList=SdsParameterList
+          resultList=SdsResultList?
 
     | {SdsSchema.annotationCallList=current}
-        'schema' name=ID
-        columnList=SdsColumnList
+          'schema' name=ID
+          columnList=SdsColumnList
 
     | {SdsStep.annotationCallList=current}
           visibility=('internal'|'private')?
@@ -282,9 +282,13 @@ SdsLambdaParameterList
 
 SdsParameter
     : annotationCalls+=SdsAnnotationCall*
-      variadic?='vararg'?
+    ( variadic?='vararg'?
       name=ID (':' type=SdsType)?
       ('=' defaultValue=SdsExpression)?
+
+      // For schema type parameters
+    | ':' type=SdsNamedType
+    )
     ;
 
 
@@ -297,7 +301,11 @@ SdsResultList
 
 SdsResult
     : annotationCalls+=SdsAnnotationCall*
-      name=ID (':' type=SdsType)?
+    ( name=ID (':' type=SdsType)?
+
+      // For schema type parameters
+    | ':' type=SdsNamedType
+    )
     ;
 
 // Function -------------------------------------------------------------------------------------------------------------
@@ -571,6 +579,7 @@ SdsGoalArgument
 SdsPrimaryGoalExpression returns SdsAbstractGoalExpression
     : SdsGoalReference
     | SdsParenthesizedGoalExpression
+    | SdsParameterisedType
     | SdsLiteral
     ;
 
@@ -582,6 +591,9 @@ SdsParenthesizedGoalExpression
     : '(' expressions+=SdsGoalExpression  (',' expressions+=SdsGoalExpression)* ')'
     ;
 
+SdsParameterisedType
+    : ':' type=SdsNamedType
+    ;
 
 /**********************************************************************************************************************
  * Schemas

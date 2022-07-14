@@ -1,9 +1,11 @@
 package com.larsreimann.safeds.staticAnalysis.typing
 
+import com.larsreimann.safeds.constant.kindToSchemaEffect
 import com.larsreimann.safeds.emf.variantsOrEmpty
 import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.staticAnalysis.classHierarchy.isSubtypeOf
 import com.larsreimann.safeds.stdlibAccess.StdlibClasses
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 fun Type.isSubstitutableFor(other: Type, resultIfUnresolved: Boolean = false): Boolean {
     if (other == UnresolvedType) {
@@ -15,6 +17,7 @@ fun Type.isSubstitutableFor(other: Type, resultIfUnresolved: Boolean = false): B
         is ClassType -> this.isSubstitutableFor(other)
         is EnumType -> this.isSubstitutableFor(other)
         is EnumVariantType -> this.isSubstitutableFor(other)
+        is ParameterisedType -> this.isSubstitutableFor(other)
         is UnionType -> this.isSubstitutableFor(other)
         is VariadicType -> this.isSubstitutableFor(other)
         is RecordType -> false
@@ -100,6 +103,14 @@ private fun EnumVariantType.isSubstitutableFor(other: Type): Boolean {
             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnumVariant == unwrappedOther.sdsEnumVariant
         }
         is UnionType -> unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
+        else -> false
+    }
+}
+
+@OptIn(ExperimentalSdsApi::class)
+private fun ParameterisedType.isSubstitutableFor(other: Type): Boolean {
+    return when (other) {
+        is ParameterisedType -> (!this.isNullable || other.isNullable) && this.kindToSchemaEffect() == other.kindToSchemaEffect()
         else -> false
     }
 }

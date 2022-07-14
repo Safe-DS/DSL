@@ -4,10 +4,10 @@ package safeds.lang
 abstract predicate $ReadSchema <InitialSchema :: $SchemaType> (
     datasetName: String,
     datasetPath: String
-) -> initialSchema: InitialSchema
+) -> :InitialSchema
 
 @Description("Checks if the columnName(s) exists in the data schema.")
 abstract predicate $CheckColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
-    currentSchema: CurrentSchema,
+    :CurrentSchema,
     vararg columnName: String
-) -> initialSchema: SchemaOut
+) -> :SchemaOut

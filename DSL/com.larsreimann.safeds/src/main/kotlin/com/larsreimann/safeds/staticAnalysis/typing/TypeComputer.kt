@@ -42,6 +42,7 @@ import com.larsreimann.safeds.safeDS.SdsMemberType
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
+import com.larsreimann.safeds.safeDS.SdsParameterisedType
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
@@ -52,6 +53,7 @@ import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.safeDS.SdsTemplateString
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
+import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsYield
@@ -158,6 +160,8 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
+        // Todo: resolve TypeParameter for "non kind" TypeParameter too
+        this is SdsTypeParameter && this.kind != null -> ParameterisedType(kind)
         else -> Any(context)
     }
 }
@@ -285,6 +289,7 @@ private fun SdsAbstractGoalExpression.inferTypeExpression(context: EObject): Typ
 
         this is SdsGoalArgument -> this.value.inferTypeExpression(context)
         this is SdsGoalReference -> this.declaration.inferType(context)
+        this is SdsParameterisedType -> this.type.inferTypeForType(context)
         else -> Any(context)
     }
 }
@@ -336,6 +341,7 @@ private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
                 EnumType(containingEnum, candidate.isNullable)
             }
             is RecordType -> Any(context, candidate.isNullable)
+            is ParameterisedType -> Any(context, candidate.isNullable) // correct ??
             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
             UnresolvedType -> Any(context, candidate.isNullable)
             is VariadicType -> Any(context, candidate.isNullable)

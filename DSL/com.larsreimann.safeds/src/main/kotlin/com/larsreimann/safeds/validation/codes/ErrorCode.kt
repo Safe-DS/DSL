@@ -3,7 +3,11 @@ package com.larsreimann.safeds.validation.codes
 enum class ErrorCode {
     AttributeMustHaveType,
     ParameterMustHaveType,
+    OnlyPredicatesCanHaveParameterOfSchemaType,
     ResultMustHaveType,
+    OnlyPredicatesCanHaveResultOfSchemaType,
+
+    SchemaTypeMustOmitName,
 
     CLASS_MUST_HAVE_UNIQUE_INHERITED_MEMBERS,
     CLASS_MUST_HAVE_UNIQUE_PARENT_TYPES,
@@ -95,5 +99,6 @@ enum class ErrorCode {
 
     ExpertMustBeOptional,
 
-    AbstractPredicatesNotAllowed,
+    AbstractPredicatesOnlyAllowedForSchemaEffects,
+    AbstractPredicatesOnlyAllowedInStdlib,
 }
