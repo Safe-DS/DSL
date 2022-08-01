@@ -104,12 +104,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
     testImplementation("org.eclipse.xtext:org.eclipse.xtext.testing:$xtextVersion")
     testImplementation("org.eclipse.xtext:org.eclipse.xtext.xbase.testing:$xtextVersion")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:5.3.2")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.4.1")
 
     testFixturesImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testFixturesImplementation("org.eclipse.xtext:org.eclipse.xtext.testing:$xtextVersion")
     testFixturesImplementation("org.eclipse.xtext:org.eclipse.xtext.xbase.testing:$xtextVersion")
-    testFixturesImplementation("io.kotest:kotest-assertions-core-jvm:5.3.1")
+    testFixturesImplementation("io.kotest:kotest-assertions-core-jvm:5.4.1")
 }
 
 // Source sets ---------------------------------------------------------------------------------------------------------
