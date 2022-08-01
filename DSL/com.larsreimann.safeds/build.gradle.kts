@@ -97,7 +97,7 @@ dependencies {
     api(platform("org.eclipse.xtext:xtext-dev-bom:$xtextVersion"))
     implementation("org.eclipse.xtext:org.eclipse.xtext:$xtextVersion")
 
-    implementation("org.jetbrains.kotlinx:dataframe:0.8.0")
+    implementation("org.jetbrains.kotlinx:dataframe:0.8.1")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
