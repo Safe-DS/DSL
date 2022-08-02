@@ -41,6 +41,7 @@ htmlcov/
 
 # MegaLinter
 report/
+megalinter-reports/
 
 # Other
 .DS_Store/
