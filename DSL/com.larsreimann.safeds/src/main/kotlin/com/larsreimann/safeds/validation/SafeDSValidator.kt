@@ -13,8 +13,8 @@ import com.larsreimann.safeds.validation.declarations.NameConventionChecker
 import com.larsreimann.safeds.validation.declarations.ParameterChecker
 import com.larsreimann.safeds.validation.declarations.ParameterListChecker
 import com.larsreimann.safeds.validation.declarations.PlaceholderChecker
-import com.larsreimann.safeds.validation.declarations.ResultChecker
 import com.larsreimann.safeds.validation.declarations.PredicateChecker
+import com.larsreimann.safeds.validation.declarations.ResultChecker
 import com.larsreimann.safeds.validation.declarations.StepChecker
 import com.larsreimann.safeds.validation.declarations.TypeParameterChecker
 import com.larsreimann.safeds.validation.declarations.WorkflowChecker

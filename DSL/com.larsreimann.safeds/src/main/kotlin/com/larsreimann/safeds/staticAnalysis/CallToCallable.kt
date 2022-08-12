@@ -41,7 +41,7 @@ fun SdsGoalCall.callableOrNull(): SdsPredicate? {
     }
 }
 
-private fun callableOrNull (call : EObject): EObject? {
+private fun callableOrNull(call: EObject): EObject? {
     return when (val maybeCallable = maybeCallable(call)) {
         is CallableResult.Callable -> maybeCallable.callable
         else -> null
@@ -54,7 +54,7 @@ sealed interface CallableResult {
     class Callable(val callable: EObject) : CallableResult
 }
 
-fun maybeCallable(call : EObject): CallableResult {
+fun maybeCallable(call: EObject): CallableResult {
     val visited = mutableSetOf<EObject>()
     var current: EObject? = when (call) {
         is SdsGoalCall -> call.receiver

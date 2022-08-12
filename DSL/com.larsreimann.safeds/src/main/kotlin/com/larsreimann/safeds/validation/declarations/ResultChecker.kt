@@ -20,7 +20,7 @@ class ResultChecker : AbstractSafeDSChecker() {
             error(
                 "A result must have a type.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.ResultMustHaveType
+                ErrorCode.ResultMustHaveType,
             )
         }
     }
@@ -38,7 +38,7 @@ class ResultChecker : AbstractSafeDSChecker() {
             error(
                 "Only predicates can have result of schema type.",
                 Literals.SDS_RESULT__TYPE,
-                ErrorCode.OnlyPredicatesCanHaveResultOfSchemaType
+                ErrorCode.OnlyPredicatesCanHaveResultOfSchemaType,
             )
         }
     }
@@ -57,7 +57,7 @@ class ResultChecker : AbstractSafeDSChecker() {
             error(
                 "A result of schema type must omit name.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.SchemaTypeMustOmitName
+                ErrorCode.SchemaTypeMustOmitName,
             )
         }
     }

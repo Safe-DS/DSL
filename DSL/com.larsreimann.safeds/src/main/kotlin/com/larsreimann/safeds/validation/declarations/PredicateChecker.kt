@@ -22,7 +22,7 @@ class PredicateChecker : AbstractSafeDSChecker() {
             error(
                 "Abstract predicates can only be declared for schema effects.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.AbstractPredicatesOnlyAllowedForSchemaEffects
+                ErrorCode.AbstractPredicatesOnlyAllowedForSchemaEffects,
             )
         }
     }
@@ -36,7 +36,7 @@ class PredicateChecker : AbstractSafeDSChecker() {
             error(
                 "Abstract predicates can only be declared in standard library.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.AbstractPredicatesOnlyAllowedInStdlib
+                ErrorCode.AbstractPredicatesOnlyAllowedInStdlib,
             )
         }
     }

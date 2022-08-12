@@ -38,7 +38,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             warning(
                 "All segments of the qualified name of a package should be lowerCamelCase.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                WarningCode.SegmentsShouldBeLowerCamelCase
+                WarningCode.SegmentsShouldBeLowerCamelCase,
             )
         }
     }
@@ -49,7 +49,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             error(
                 "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.BlockLambdaPrefix
+                ErrorCode.BlockLambdaPrefix,
             )
         }
     }
@@ -102,8 +102,9 @@ class NameConventionChecker : AbstractSafeDSChecker() {
     @OptIn(ExperimentalSdsApi::class)
     @Check
     fun predicateNamesShouldBeLowerCamelCase(sdsPredicate: SdsPredicate) {
-        if (sdsPredicate.nameToSchemaEffect() != SdsSchemaEffect.NoSchemaEffect)
+        if (sdsPredicate.nameToSchemaEffect() != SdsSchemaEffect.NoSchemaEffect) {
             return
+        }
         sdsPredicate.nameShouldBeLowerCamelCase("predicate")
     }
 
@@ -137,7 +138,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             warning(
                 "Names of $declarationType should be UpperCamelCase.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                WarningCode.NameShouldBeUpperCamelCase
+                WarningCode.NameShouldBeUpperCamelCase,
             )
         }
     }
@@ -147,7 +148,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             warning(
                 "Names of $declarationType should be lowerCamelCase.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                WarningCode.NameShouldBeLowerCamelCase
+                WarningCode.NameShouldBeLowerCamelCase,
             )
         }
     }

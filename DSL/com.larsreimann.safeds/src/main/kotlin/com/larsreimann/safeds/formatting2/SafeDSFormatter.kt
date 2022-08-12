@@ -142,7 +142,6 @@ class SafeDSFormatter : AbstractFormatter2() {
             }
 
             is SdsCompilationUnit -> {
-
                 // Feature "annotations"
                 obj.annotationCallsOrEmpty().forEach {
                     doc.format(it)
@@ -201,7 +200,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsImport -> {
-
                 // Keyword "import"
                 doc.formatKeyword(obj, "import", noSpace, oneSpace)
 
@@ -215,7 +213,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.alias, oneSpace, noSpace)
             }
             is SdsImportAlias -> {
-
                 // Keyword "as"
                 doc.formatKeyword(obj, "as", null, oneSpace)
 
@@ -223,7 +220,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_IMPORT_ALIAS__NAME, null, noSpace)
             }
             is SdsAnnotation -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -244,7 +240,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.constraint, oneSpace, null)
             }
             is SdsAnnotationCall -> {
-
                 // Keyword "@"
                 doc.formatKeyword(obj, "@", null, noSpace)
 
@@ -255,7 +250,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.argumentList, noSpace, null)
             }
             is SdsAttribute -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -281,7 +275,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.type, oneSpace, null)
             }
             is SdsClass -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -308,7 +301,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.body, oneSpace, null)
             }
             is SdsParentTypeList -> {
-
                 // Keyword "sub"
                 doc.formatKeyword(obj, "sub", null, oneSpace)
 
@@ -321,7 +313,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatCommas(obj)
             }
             is SdsClassBody -> {
-
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 if (obj.members.isEmpty()) {
@@ -347,7 +338,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.interior(openingBrace, closingBrace, indent)
             }
             is SdsEnum -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -398,7 +388,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.interior(openingBrace, closingBrace, indent)
             }
             is SdsEnumVariant -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -419,7 +408,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.constraint, oneSpace, null)
             }
             is SdsFunction -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -451,7 +439,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.body, oneSpace, null)
             }
             is SdsFunctionBody -> {
-
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 if (obj.statements.isEmpty()) {
@@ -477,7 +464,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.interior(openingBrace, closingBrace, indent)
             }
             is SdsWorkflow -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -495,7 +481,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.body)
             }
             is SdsStep -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -524,7 +509,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.body, oneSpace, null)
             }
             is SdsArgumentList -> {
-
                 // Keyword "("
                 doc.formatKeyword(obj, "(", null, noSpace)
 
@@ -540,7 +524,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsArgument -> {
-
                 // Feature "parameter"
                 doc.formatFeature(obj, SDS_ARGUMENT__PARAMETER)
 
@@ -551,7 +534,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.value)
             }
             is SdsParameterList -> {
-
                 // Keyword "("
                 doc.formatKeyword(obj, "(", null, noSpace)
 
@@ -567,7 +549,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsParameter -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj, inlineAnnotations = true)
 
@@ -595,7 +576,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.defaultValue)
             }
             is SdsResultList -> {
-
                 // Keyword "->"
                 doc.formatKeyword(obj, "->", oneSpace, oneSpace)
 
@@ -614,7 +594,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsResult -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj, inlineAnnotations = true)
 
@@ -636,7 +615,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsPredicate -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -663,7 +641,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.goalList, oneSpace, null)
             }
             is SdsGoalList -> {
-
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 if (obj.goals.isEmpty()) {
@@ -690,7 +667,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.interior(openingBrace, closingBrace, indent)
             }
             is SdsAssignmentGoal -> {
-
                 // EObject "placeholder"
                 doc.formatObject(obj.placeholder, null, oneSpace)
 
@@ -701,7 +677,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.expression)
             }
             is SdsGoalPlaceholder -> {
-
                 // Keyword "val"
                 doc.formatKeyword(obj, "val", null, oneSpace)
 
@@ -709,12 +684,10 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
             }
             is SdsExpressionGoal -> {
-
                 // EObject "expression"
                 doc.formatObject(obj.expression)
             }
             is SdsGoalCall -> {
-
                 // EObject "receiver"
                 doc.formatObject(obj.receiver, null, noSpace)
 
@@ -722,7 +695,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.argumentList, noSpace, noSpace)
             }
             is SdsGoalArgumentList -> {
-
                 // Keyword "("
                 doc.formatKeyword(obj, "(", null, noSpace)
 
@@ -738,7 +710,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsGoalArgument -> {
-
                 // Feature "parameter"
                 doc.formatFeature(obj, SDS_ARGUMENT__PARAMETER)
 
@@ -749,7 +720,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.value)
             }
             is SdsParenthesizedGoalExpression -> {
-
                 // Keyword "("
                 val openingParentheses = obj.regionForKeyword("(")
                 if (obj.eContainer() !is SdsAssignmentGoal) {
@@ -777,7 +747,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsProtocol -> {
-
                 // Keyword "protocol"
                 doc.formatKeyword(obj, "protocol", null, oneSpace)
 
@@ -785,7 +754,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.body)
             }
             is SdsProtocolBody -> {
-
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 if (obj.subtermList == null && obj.term == null) {
@@ -821,7 +789,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 }
             }
             is SdsProtocolSubterm -> {
-
                 // Keyword "subterm"
                 doc.formatKeyword(obj, "subterm", null, oneSpace)
 
@@ -838,7 +805,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ";", noSpace, null)
             }
             is SdsProtocolAlternative -> {
-
                 // Keywords '|'
                 val pipes = textRegionExtensions.allRegionsFor(obj).keywords("|")
                 pipes.forEach {
@@ -852,7 +818,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 }
             }
             is SdsProtocolComplement -> {
-
                 // Keyword "["
                 doc.formatKeyword(obj, "[", null, noSpace)
 
@@ -866,7 +831,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, "]", noSpace, null)
             }
             is SdsProtocolReferenceList -> {
-
                 // EObject "terms"
                 obj.references.forEach {
                     if (it == obj.references.last()) {
@@ -877,7 +841,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 }
             }
             is SdsProtocolParenthesizedTerm -> {
-
                 // Keyword "("
                 doc.formatKeyword(obj, "(", null, noSpace)
 
@@ -888,7 +851,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsProtocolQuantifiedTerm -> {
-
                 // EObject "term"
                 doc.formatObject(obj.term)
 
@@ -896,7 +858,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_PROTOCOL_QUANTIFIED_TERM__QUANTIFIER, noSpace, null)
             }
             is SdsProtocolSequence -> {
-
                 // EObject "terms"
                 obj.terms.forEach {
                     if (it == obj.terms.last()) {
@@ -912,7 +873,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsSchema -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
@@ -930,7 +890,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.columnList, oneSpace, null)
             }
             is SdsColumnList -> {
-
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 if (obj.columns.isEmpty()) {
@@ -957,7 +916,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.interior(openingBrace, closingBrace, indent)
             }
             is SdsColumn -> {
-
                 // EObject "columnName"
                 doc.formatObject(obj.columnName, null, oneSpace)
 
@@ -973,7 +931,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsBlock -> {
-
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 if (obj.statements.isEmpty()) {
@@ -994,7 +951,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.interior(openingBrace, closingBrace, indent)
             }
             is SdsAssignment -> {
-
                 // EObject "assigneeList"
                 doc.formatObject(obj.assigneeList, null, oneSpace)
 
@@ -1008,7 +964,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ";", noSpace, null)
             }
             is SdsAssigneeList -> {
-
                 // Feature "assignees"
                 obj.assignees.forEach {
                     doc.formatObject(it)
@@ -1018,7 +973,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatCommas(obj)
             }
             is SdsBlockLambdaResult -> {
-
                 // Keyword "yield"
                 doc.formatKeyword(obj, "yield", null, oneSpace)
 
@@ -1026,7 +980,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
             }
             is SdsPlaceholder -> {
-
                 // Keyword "val"
                 doc.formatKeyword(obj, "val", null, oneSpace)
 
@@ -1034,7 +987,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
             }
             is SdsYield -> {
-
                 // Keyword "yield"
                 doc.formatKeyword(obj, "yield", null, oneSpace)
 
@@ -1042,7 +994,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_YIELD__RESULT)
             }
             is SdsExpressionStatement -> {
-
                 // EObject "expression"
                 doc.formatObject(obj.expression)
 
@@ -1055,7 +1006,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsBlockLambda -> {
-
                 // EObject "parameterList"
                 doc.formatObject(obj.parameterList, null, oneSpace)
 
@@ -1063,7 +1013,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.body, oneSpace, null)
             }
             is SdsCall -> {
-
                 // EObject "receiver"
                 doc.formatObject(obj.receiver, null, noSpace)
 
@@ -1074,7 +1023,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.argumentList)
             }
             is SdsExpressionLambda -> {
-
                 // EObject "parameterList"
                 doc.formatObject(obj.parameterList, null, oneSpace)
 
@@ -1085,7 +1033,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.result, oneSpace, null)
             }
             is SdsIndexedAccess -> {
-
                 // EObject "receiver"
                 doc.formatObject(obj.receiver, null, noSpace)
 
@@ -1099,7 +1046,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, "]", noSpace, null)
             }
             is SdsInfixOperation -> {
-
                 // EObject "leftOperand"
                 doc.formatObject(obj.leftOperand, null, oneSpace)
 
@@ -1110,7 +1056,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.rightOperand, oneSpace, null)
             }
             is SdsMemberAccess -> {
-
                 // EObject "receiver"
                 doc.formatObject(obj.receiver, null, noSpace)
 
@@ -1124,7 +1069,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.member, noSpace, null)
             }
             is SdsParenthesizedExpression -> {
-
                 // Keyword "("
                 doc.formatKeyword(obj, "(", null, noSpace)
 
@@ -1135,20 +1079,18 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsPrefixOperation -> {
-
                 // Feature "operator"
                 doc.formatFeature(
                     obj,
                     SDS_PREFIX_OPERATION__OPERATOR,
                     prepend = null,
-                    append = if (obj.operator == "not") oneSpace else noSpace
+                    append = if (obj.operator == "not") oneSpace else noSpace,
                 )
 
                 // EObject "operand"
                 doc.formatObject(obj.operand)
             }
             is SdsTemplateString -> {
-
                 // Feature expressions
                 obj.expressions.forEach {
                     if (it !is SdsAbstractTemplateStringPart) {
@@ -1162,7 +1104,6 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsCallableType -> {
-
                 // Keyword "callable"
                 doc.formatKeyword(obj, "callable", null, oneSpace)
 
@@ -1173,7 +1114,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.resultList, oneSpace, null)
             }
             is SdsMemberType -> {
-
                 // EObject "receiver"
                 doc.formatObject(obj.receiver, null, noSpace)
 
@@ -1184,7 +1124,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.member, noSpace, null)
             }
             is SdsNamedType -> {
-
                 // Feature "declaration"
                 doc.formatFeature(obj, SDS_NAMED_TYPE__DECLARATION)
 
@@ -1195,7 +1134,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_NAMED_TYPE__NULLABLE, noSpace, null)
             }
             is SdsParenthesizedType -> {
-
                 // Keyword "("
                 doc.formatKeyword(obj, "(", null, noSpace)
 
@@ -1206,7 +1144,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ")", noSpace, null)
             }
             is SdsUnionType -> {
-
                 // Keyword "union"
                 doc.formatKeyword(obj, "union", null, noSpace)
 
@@ -1214,7 +1151,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.typeArgumentList, noSpace, null)
             }
             is SdsTypeArgumentList -> {
-
                 // Keyword "<"
                 doc.formatKeyword(obj, "<", null, noSpace)
 
@@ -1230,7 +1166,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ">", noSpace, null)
             }
             is SdsTypeArgument -> {
-
                 // Feature "typeParameter"
                 doc.formatFeature(obj, SDS_TYPE_ARGUMENT__TYPE_PARAMETER)
 
@@ -1241,7 +1176,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.value)
             }
             is SdsTypeProjection -> {
-
                 // Feature "variance"
                 doc.formatFeature(obj, SDS_TYPE_PROJECTION__VARIANCE, null, oneSpace)
 
@@ -1249,7 +1183,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.type)
             }
             is SdsTypeParameterList -> {
-
                 // Keyword "<"
                 doc.formatKeyword(obj, "<", null, noSpace)
 
@@ -1265,7 +1198,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatKeyword(obj, ">", noSpace, null)
             }
             is SdsTypeParameter -> {
-
                 // Features "annotations"
                 doc.formatAnnotations(obj, inlineAnnotations = true)
 
@@ -1284,7 +1216,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatFeature(obj, SDS_TYPE_PARAMETER__KIND)
             }
             is SdsConstraint -> {
-
                 // Keyword "constraint"
                 doc.formatKeyword(obj, "constraint", null, oneSpace)
 
@@ -1292,7 +1223,6 @@ class SafeDSFormatter : AbstractFormatter2() {
                 doc.formatObject(obj.constraintList)
             }
             is SdsTypeParameterConstraintGoal -> {
-
                 // Feature "leftOperand"
                 doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT_GOAL__LEFT_OPERAND, null, oneSpace)
 
@@ -1339,7 +1269,7 @@ class SafeDSFormatter : AbstractFormatter2() {
     private fun IFormattableDocument.formatObject(
         obj: EObject?,
         prepend: KFunction1<Format, Unit>? = null,
-        append: KFunction1<Format, Unit>? = null
+        append: KFunction1<Format, Unit>? = null,
     ) {
         if (obj != null) {
             if (prepend != null) {
@@ -1356,7 +1286,7 @@ class SafeDSFormatter : AbstractFormatter2() {
         obj: EObject?,
         feature: EStructuralFeature,
         prepend: KFunction1<Format, Unit>? = null,
-        append: KFunction1<Format, Unit>? = null
+        append: KFunction1<Format, Unit>? = null,
     ) {
         if (obj == null) {
             return
@@ -1377,7 +1307,7 @@ class SafeDSFormatter : AbstractFormatter2() {
         obj: EObject?,
         keyword: String,
         prepend: KFunction1<Format, Unit>? = null,
-        append: KFunction1<Format, Unit>? = null
+        append: KFunction1<Format, Unit>? = null,
     ) {
         if (obj == null) {
             return
@@ -1396,9 +1326,8 @@ class SafeDSFormatter : AbstractFormatter2() {
 
     private fun IFormattableDocument.formatAnnotations(
         obj: SdsAbstractDeclaration,
-        inlineAnnotations: Boolean = false
+        inlineAnnotations: Boolean = false,
     ) {
-
         // Feature "annotations"
         obj.annotationCallsOrEmpty().forEach {
             format(it)

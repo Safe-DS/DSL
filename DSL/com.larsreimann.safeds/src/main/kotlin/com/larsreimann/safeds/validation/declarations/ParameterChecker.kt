@@ -29,7 +29,7 @@ class ParameterChecker : AbstractSafeDSChecker() {
             error(
                 "A parameter must have a type.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.ParameterMustHaveType
+                ErrorCode.ParameterMustHaveType,
             )
         }
     }
@@ -41,7 +41,7 @@ class ParameterChecker : AbstractSafeDSChecker() {
             error(
                 "Default values of parameters must be constant.",
                 Literals.SDS_PARAMETER__DEFAULT_VALUE,
-                ErrorCode.MustBeConstant
+                ErrorCode.MustBeConstant,
             )
         }
     }
@@ -52,7 +52,7 @@ class ParameterChecker : AbstractSafeDSChecker() {
             error(
                 "Variadic parameters must not have default values.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.VariadicParametersMustNotHaveDefaultValue
+                ErrorCode.VariadicParametersMustNotHaveDefaultValue,
             )
         }
     }
@@ -65,7 +65,7 @@ class ParameterChecker : AbstractSafeDSChecker() {
                     "An expert parameter must be optional.",
                     it,
                     null,
-                    ErrorCode.MustBeConstant
+                    ErrorCode.MustBeConstant,
                 )
             }
         }
@@ -84,7 +84,7 @@ class ParameterChecker : AbstractSafeDSChecker() {
             error(
                 "Only predicates can have parameter of schema type.",
                 Literals.SDS_PARAMETER__TYPE,
-                ErrorCode.OnlyPredicatesCanHaveParameterOfSchemaType
+                ErrorCode.OnlyPredicatesCanHaveParameterOfSchemaType,
             )
         }
     }
@@ -103,7 +103,7 @@ class ParameterChecker : AbstractSafeDSChecker() {
             error(
                 "A parameter of schema type must omit name.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.SchemaTypeMustOmitName
+                ErrorCode.SchemaTypeMustOmitName,
             )
         }
     }
