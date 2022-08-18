@@ -500,7 +500,7 @@ fun SdsImport.isWildcard() = importedNamespace.endsWith(".*")
 
 // SdsNamedType ------------------------------------------------------------------------------------
 
-@OptIn(ExperimentalSdsApi::class)
+@ExperimentalSdsApi
 fun SdsNamedType.isSchemaType(): Boolean {
     val declaration = this.declaration
     return declaration is SdsTypeParameter && declaration.hasSchemaKind()

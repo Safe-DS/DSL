@@ -293,6 +293,7 @@ fun SdsStep.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsA
 /**
  * Returns a new object of class [SdsAssignmentGoal].
  */
+@ExperimentalSdsApi
 fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression): SdsAssignmentGoal {
     return factory.createSdsAssignmentGoal().apply {
         this.placeholder = factory.createSdsGoalPlaceholder().apply {
@@ -305,6 +306,7 @@ fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoal
 /**
  * Adds a new object of class [SdsAssignmentGoal] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsPredicate.sdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression) {
     this.addGoal(createSdsAssignmentGoal(placeholderName, expression))
 }
@@ -654,6 +656,7 @@ fun SdsEnum.sdsEnumVariant(
 /**
  * Returns a new object of class [SdsExpressionGoal].
  */
+@ExperimentalSdsApi
 fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressionGoal {
     return factory.createSdsExpressionGoal().apply {
         this.expression = expression
@@ -663,6 +666,7 @@ fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressio
 /**
  * Adds a new object of class [SdsExpressionGoal] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsPredicate.sdsExpressionGoal(expression: SdsAbstractGoalExpression) {
     this.addGoal(createSdsExpressionGoal(expression))
 }
@@ -812,6 +816,7 @@ fun SdsCompilationUnit.sdsFunction(
 /**
  * Returns a new object of class [SdsGoalArgument].
  */
+@ExperimentalSdsApi
 fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameter: SdsParameter? = null): SdsGoalArgument {
     return factory.createSdsGoalArgument().apply {
         this.value = value
@@ -822,6 +827,7 @@ fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameter: SdsParame
 /**
  * Returns a new object of class [SdsGoalArgument] that points to a parameter with the given name.
  */
+@ExperimentalSdsApi
 fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameterName: String): SdsGoalArgument {
     return createSdsGoalArgument(
         value,
@@ -1066,6 +1072,7 @@ fun createSdsPlaceholder(name: String): SdsPlaceholder {
 /**
  * Returns a new object of class [SdsParameterizedType].
  */
+@ExperimentalSdsApi
 fun createSdsParameterizedType(type: SdsNamedType? = null): SdsParameterizedType {
     return factory.createSdsParameterizedType().apply {
         this.type = type
@@ -1075,6 +1082,7 @@ fun createSdsParameterizedType(type: SdsNamedType? = null): SdsParameterizedType
 /**
  * Returns a new object of class [SdsPredicate].
  */
+@ExperimentalSdsApi
 fun createSdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
@@ -1096,6 +1104,7 @@ fun createSdsPredicate(
 /**
  * Adds a new object of class [SdsPredicate] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsCompilationUnit.sdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
@@ -1119,6 +1128,7 @@ fun SdsCompilationUnit.sdsPredicate(
 /**
  * Adds a new goal to the receiver.
  */
+@ExperimentalSdsApi
 private fun SdsPredicate.addGoal(goal: SdsAbstractGoal) {
     if (this.goalList == null) {
         this.goalList = factory.createSdsGoalList()
