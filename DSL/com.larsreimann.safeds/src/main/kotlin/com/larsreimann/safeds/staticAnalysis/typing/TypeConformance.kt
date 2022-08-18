@@ -17,7 +17,7 @@ fun Type.isSubstitutableFor(other: Type, resultIfUnresolved: Boolean = false): B
         is ClassType -> this.isSubstitutableFor(other)
         is EnumType -> this.isSubstitutableFor(other)
         is EnumVariantType -> this.isSubstitutableFor(other)
-        is ParameterisedType -> this.isSubstitutableFor(other)
+        is ParameterizedType -> this.isSubstitutableFor(other)
         is UnionType -> this.isSubstitutableFor(other)
         is VariadicType -> this.isSubstitutableFor(other)
         is RecordType -> false
@@ -108,9 +108,9 @@ private fun EnumVariantType.isSubstitutableFor(other: Type): Boolean {
 }
 
 @OptIn(ExperimentalSdsApi::class)
-private fun ParameterisedType.isSubstitutableFor(other: Type): Boolean {
+private fun ParameterizedType.isSubstitutableFor(other: Type): Boolean {
     return when (other) {
-        is ParameterisedType -> (!this.isNullable || other.isNullable) && this.kindToSchemaEffect() == other.kindToSchemaEffect()
+        is ParameterizedType -> (!this.isNullable || other.isNullable) && this.kindToSchemaEffect() == other.kindToSchemaEffect()
         else -> false
     }
 }

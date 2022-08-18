@@ -145,7 +145,7 @@ data class VariadicType(val elementType: Type) : Type() {
     }
 }
 
-data class ParameterisedType(val kind: String) : Type() {
+data class ParameterizedType(val kind: String) : Type() {
     override val isNullable = false
     override fun setIsNullableOnCopy(isNullable: Boolean) = this
 

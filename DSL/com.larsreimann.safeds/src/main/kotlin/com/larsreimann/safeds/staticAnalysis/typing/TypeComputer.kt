@@ -161,7 +161,7 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
             resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         // Todo: resolve TypeParameter for "non kind" TypeParameter too
-        this is SdsTypeParameter && this.kind != null -> ParameterisedType(kind)
+        this is SdsTypeParameter && this.kind != null -> ParameterizedType(kind)
         else -> Any(context)
     }
 }
@@ -341,7 +341,7 @@ private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
                 EnumType(containingEnum, candidate.isNullable)
             }
             is RecordType -> Any(context, candidate.isNullable)
-            is ParameterisedType -> Any(context, candidate.isNullable) // correct ??
+            is ParameterizedType -> Any(context, candidate.isNullable) // correct ??
             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
             UnresolvedType -> Any(context, candidate.isNullable)
             is VariadicType -> Any(context, candidate.isNullable)
