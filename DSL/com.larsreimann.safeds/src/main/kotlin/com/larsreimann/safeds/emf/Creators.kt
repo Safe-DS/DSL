@@ -71,7 +71,7 @@ import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParameterList
-import com.larsreimann.safeds.safeDS.SdsParameterisedType
+import com.larsreimann.safeds.safeDS.SdsParameterizedType
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedGoalExpression
@@ -1064,10 +1064,10 @@ fun createSdsPlaceholder(name: String): SdsPlaceholder {
 }
 
 /**
- * Returns a new object of class [SdsParameterisedType].
+ * Returns a new object of class [SdsParameterizedType].
  */
-fun createSdsParameterisedType(type: SdsNamedType? = null): SdsParameterisedType {
-    return factory.createSdsParameterisedType().apply {
+fun createSdsParameterizedType(type: SdsNamedType? = null): SdsParameterizedType {
+    return factory.createSdsParameterizedType().apply {
         this.type = type
     }
 }

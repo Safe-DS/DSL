@@ -42,7 +42,7 @@ import com.larsreimann.safeds.safeDS.SdsMemberType
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
-import com.larsreimann.safeds.safeDS.SdsParameterisedType
+import com.larsreimann.safeds.safeDS.SdsParameterizedType
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
@@ -289,7 +289,7 @@ private fun SdsAbstractGoalExpression.inferTypeExpression(context: EObject): Typ
 
         this is SdsGoalArgument -> this.value.inferTypeExpression(context)
         this is SdsGoalReference -> this.declaration.inferType(context)
-        this is SdsParameterisedType -> this.type.inferTypeForType(context)
+        this is SdsParameterizedType -> this.type.inferTypeForType(context)
         else -> Any(context)
     }
 }

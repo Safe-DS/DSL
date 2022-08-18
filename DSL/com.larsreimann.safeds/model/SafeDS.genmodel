@@ -148,8 +148,8 @@
         <genClasses ecoreClass="SafeDS.ecore#//SdsParenthesizedGoalExpression">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParenthesizedGoalExpression/expression" />
         </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsParameterisedType">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParameterisedType/type" />
+        <genClasses ecoreClass="SafeDS.ecore#//SdsParameterizedType">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParameterizedType/type" />
         </genClasses>
         <!-- Function -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsFunction">

@@ -150,7 +150,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="SdsParenthesizedGoalExpression" eSuperTypes="#//SdsAbstractGoalExpression">
         <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" upperBound="-1" eType="#//SdsAbstractGoalExpression" containment="true" />
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsParameterisedType" eSuperTypes="#//SdsAbstractGoalExpression">
+    <eClassifiers xsi:type="ecore:EClass" name="SdsParameterizedType" eSuperTypes="#//SdsAbstractGoalExpression">
         <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsNamedType" containment="true" />
     </eClassifiers>
     <!-- Function -->
