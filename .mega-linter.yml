@@ -4,3 +4,8 @@ EXTENDS: https://raw.githubusercontent.com/lars-reimann/.github/main/.mega-linte
 
 # Config
 FILTER_REGEX_EXCLUDE: (\.github/workflows/|DSL/com\.larsreimann\.safeds/src/test/resources/)
+
+# Commands
+PRE_COMMANDS:
+  - command: npm install @lars-reimann/eslint-config @lars-reimann/prettier-config
+    cwd: workspace
