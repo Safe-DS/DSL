@@ -14,6 +14,7 @@ import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
+import com.larsreimann.safeds.safeDS.SdsAbstractGoalExpression
 import com.larsreimann.safeds.safeDS.SdsAbstractLambda
 import com.larsreimann.safeds.safeDS.SdsAbstractObject
 import com.larsreimann.safeds.safeDS.SdsAbstractType
@@ -31,6 +32,8 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFloat
 import com.larsreimann.safeds.safeDS.SdsFunction
+import com.larsreimann.safeds.safeDS.SdsGoalArgument
+import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsIndexedAccess
 import com.larsreimann.safeds.safeDS.SdsInfixOperation
 import com.larsreimann.safeds.safeDS.SdsInt
@@ -39,6 +42,7 @@ import com.larsreimann.safeds.safeDS.SdsMemberType
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
+import com.larsreimann.safeds.safeDS.SdsParameterizedType
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
@@ -49,6 +53,7 @@ import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.safeDS.SdsTemplateString
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
+import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsYield
@@ -76,7 +81,7 @@ fun SdsAbstractObject.hasPrimitiveType(): Boolean {
         StdlibClasses.Boolean,
         StdlibClasses.Float,
         StdlibClasses.Int,
-        StdlibClasses.String
+        StdlibClasses.String,
     )
 }
 
@@ -86,6 +91,7 @@ private fun EObject.inferType(context: EObject): Type {
         this is SdsAbstractAssignee -> this.inferTypeForAssignee(context)
         this is SdsAbstractDeclaration -> this.inferTypeForDeclaration(context)
         this is SdsAbstractExpression -> this.inferTypeExpression(context)
+        this is SdsAbstractGoalExpression -> this.inferTypeExpression(context)
         this is SdsAbstractType -> this.inferTypeForType(context)
         this is SdsTypeArgument -> this.value.inferType(context)
         this is SdsTypeProjection -> this.type.inferTypeForType(context)
@@ -113,10 +119,9 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
         this is SdsEnumVariant -> EnumVariantType(this, isNullable = false)
         this is SdsFunction -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
+            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         this is SdsParameter -> {
-
             // Declared parameter type
             if (this.type != null) {
                 val declaredParameterType = this.type.inferTypeForType(context)
@@ -153,15 +158,16 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
         this is SdsResult -> type.inferTypeForType(context)
         this is SdsStep -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
+            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
+        // Todo: resolve TypeParameter for "non kind" TypeParameter too
+        this is SdsTypeParameter && this.kind != null -> ParameterizedType(kind)
         else -> Any(context)
     }
 }
 
 private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
     return when {
-
         // Terminal cases
         this.eIsProxy() -> UnresolvedType
         this is SdsBoolean -> Boolean(context)
@@ -175,7 +181,7 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
         this is SdsArgument -> this.value.inferTypeExpression(context)
         this is SdsBlockLambda -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) }
+            blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) },
         )
         this is SdsCall -> when (val callable = callableOrNull()) {
             is SdsClass -> ClassType(callable, isNullable = false)
@@ -217,7 +223,7 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
         }
         this is SdsExpressionLambda -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            listOf(result.inferTypeExpression(context))
+            listOf(result.inferTypeExpression(context)),
         )
         this is SdsIndexedAccess -> {
             when (val receiverType = this.receiver.inferTypeExpression(context)) {
@@ -243,8 +249,8 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
                         context,
                         listOf(
                             leftOperandType.setIsNullableOnCopy(isNullable = false),
-                            this.rightOperand.inferTypeExpression(context)
-                        )
+                            this.rightOperand.inferTypeExpression(context),
+                        ),
                     )
                 } else {
                     leftOperandType
@@ -270,12 +276,30 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
     }
 }
 
+private fun SdsAbstractGoalExpression.inferTypeExpression(context: EObject): Type {
+    return when {
+        // Terminal cases
+        this.eIsProxy() -> UnresolvedType
+        this is SdsBoolean -> Boolean(context)
+        this is SdsFloat -> Float(context)
+        this is SdsInt -> Int(context)
+        this is SdsNull -> Nothing(context, isNullable = true)
+        this is SdsString -> String(context)
+        this is SdsTemplateString -> String(context)
+
+        this is SdsGoalArgument -> this.value.inferTypeExpression(context)
+        this is SdsGoalReference -> this.declaration.inferType(context)
+        this is SdsParameterizedType -> this.type.inferTypeForType(context)
+        else -> Any(context)
+    }
+}
+
 private fun SdsAbstractType.inferTypeForType(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
         this is SdsCallableType -> CallableType(
             this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) }
+            this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         this is SdsMemberType -> {
             this.member.inferTypeForType(context)
@@ -317,6 +341,7 @@ private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
                 EnumType(containingEnum, candidate.isNullable)
             }
             is RecordType -> Any(context, candidate.isNullable)
+            is ParameterizedType -> Any(context, candidate.isNullable) // correct ??
             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
             UnresolvedType -> Any(context, candidate.isNullable)
             is VariadicType -> Any(context, candidate.isNullable)
@@ -346,7 +371,7 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 private fun Any(context: EObject, isNullable: Boolean = false) = stdlibType(
     context,
     StdlibClasses.Any,
-    isNullable
+    isNullable,
 )
 
 private fun Boolean(context: EObject) = stdlibType(context, StdlibClasses.Boolean)
@@ -355,7 +380,7 @@ private fun Int(context: EObject) = stdlibType(context, StdlibClasses.Int)
 private fun Nothing(context: EObject, isNullable: Boolean = false) = stdlibType(
     context,
     StdlibClasses.Nothing,
-    isNullable
+    isNullable,
 )
 
 private fun String(context: EObject) = stdlibType(context, StdlibClasses.String)

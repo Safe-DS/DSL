@@ -7,6 +7,7 @@
 
 package com.larsreimann.safeds.emf
 
+import com.larsreimann.safeds.constant.hasSchemaKind
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractClassMember
@@ -39,6 +40,8 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsFunctionBody
+import com.larsreimann.safeds.safeDS.SdsGoalArgument
+import com.larsreimann.safeds.safeDS.SdsGoalCall
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
@@ -248,11 +251,27 @@ fun SdsFunction?.typeParametersOrEmpty(): List<SdsTypeParameter> {
 }
 
 @ExperimentalSdsApi
-fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractConstraintGoal> {
+fun SdsFunction?.constraintsOrEmpty(): List<SdsAbstractGoal> {
     return this?.body?.statements
-        ?.filterIsInstance<SdsAbstractConstraintGoal>()
+        ?.filterIsInstance<SdsConstraint>()
+        ?.flatMap { it.constraintList?.goals.orEmpty() }
         .orEmpty()
 }
+
+// SdsGoalCall -------------------------------------------------------------------------------------
+
+@ExperimentalSdsApi
+fun SdsGoalCall?.argumentsOrEmpty(): List<SdsGoalArgument> {
+    return this?.argumentList?.arguments.orEmpty()
+}
+
+// SdsGoalArgument ---------------------------------------------------------------------------------
+
+@ExperimentalSdsApi
+fun SdsGoalArgument.isNamed() = parameter != null
+
+@ExperimentalSdsApi
+fun SdsGoalArgument.isPositional() = parameter == null
 
 // SdsImport ---------------------------------------------------------------------------------------
 
@@ -276,30 +295,40 @@ fun SdsNamedType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SdsPredicate -------------------------------------------------------------------------------------
+// SdsPredicate ------------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsPredicate?.goalsOrEmpty(): List<SdsAbstractGoal> {
     return this?.goalList?.goals.orEmpty()
 }
 
+@ExperimentalSdsApi
+fun SdsPredicate?.parametersOrEmpty(): List<SdsParameter> {
+    return this?.parameterList?.parameters.orEmpty()
+}
+
 // SdsProtocol -------------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsProtocol?.subtermsOrEmpty(): List<SdsProtocolSubterm> {
     return this?.body.subtermsOrEmpty()
 }
 
+@ExperimentalSdsApi
 fun SdsProtocol.termOrNull(): SdsAbstractProtocolTerm? {
     return this.body?.term
 }
 
 // SdsProtocolBody ---------------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsProtocolBody?.subtermsOrEmpty(): List<SdsProtocolSubterm> {
     return this?.subtermList?.subterms.orEmpty()
 }
 
 // SdsProtocolComplement ---------------------------------------------------------------------------
 
+@ExperimentalSdsApi
 fun SdsProtocolComplement?.referencesOrEmpty(): List<SdsProtocolReference> {
     return this?.referenceList?.references.orEmpty()
 }
@@ -460,7 +489,7 @@ fun SdsEnum.isConstant(): Boolean {
     return variantsOrEmpty().all { it.parametersOrEmpty().isEmpty() }
 }
 
-// SdsFunction -----------------------------------------------------------------------------------
+// SdsFunction -------------------------------------------------------------------------------------
 
 fun SdsFunction.isMethod() = containingClassOrNull() != null
 
@@ -469,10 +498,25 @@ fun SdsFunction.isMethod() = containingClassOrNull() != null
 fun SdsImport.isQualified() = !importedNamespace.endsWith(".*")
 fun SdsImport.isWildcard() = importedNamespace.endsWith(".*")
 
+// SdsNamedType ------------------------------------------------------------------------------------
+
+@ExperimentalSdsApi
+fun SdsNamedType.isSchemaType(): Boolean {
+    val declaration = this.declaration
+    return declaration is SdsTypeParameter && declaration.hasSchemaKind()
+}
+
 // SdsParameter ------------------------------------------------------------------------------------
 
 fun SdsParameter.isRequired() = defaultValue == null && !isVariadic
 fun SdsParameter.isOptional() = defaultValue != null
+
+// SdsPredicate ------------------------------------------------------------------------------------
+
+@ExperimentalSdsApi
+fun SdsPredicate?.isAbstract(): Boolean {
+    return this?.goalList == null
+}
 
 // SdsTypeArgument ---------------------------------------------------------------------------------
 

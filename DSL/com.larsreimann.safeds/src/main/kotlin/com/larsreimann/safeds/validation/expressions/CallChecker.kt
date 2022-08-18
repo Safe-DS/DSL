@@ -41,7 +41,7 @@ class CallChecker : AbstractSafeDSChecker() {
             error(
                 "Missing type argument list.",
                 Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
-                ErrorCode.MISSING_TYPE_ARGUMENT_LIST
+                ErrorCode.MISSING_TYPE_ARGUMENT_LIST,
             )
         }
     }
@@ -63,14 +63,14 @@ class CallChecker : AbstractSafeDSChecker() {
                 "A call that produces no results is not allowed in this context.",
                 source,
                 feature,
-                ErrorCode.CONTEXT_OF_CALL_WITHOUT_RESULTS
+                ErrorCode.CONTEXT_OF_CALL_WITHOUT_RESULTS,
             )
         } else if (results.size > 1 && !sdsCall.hasValidContextForCallWithMultipleResults()) {
             error(
                 "A call that produces multiple results is not allowed in this context.",
                 source,
                 feature,
-                ErrorCode.CONTEXT_OF_CALL_WITH_MANY_RESULTS
+                ErrorCode.CONTEXT_OF_CALL_WITH_MANY_RESULTS,
             )
         }
     }
@@ -91,19 +91,19 @@ class CallChecker : AbstractSafeDSChecker() {
             error(
                 "Recursive calls are not allowed.",
                 Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
-                ErrorCode.NO_RECURSION
+                ErrorCode.NO_RECURSION,
             )
         }
     }
 
     @Check
     fun receiver(sdsCall: SdsCall) {
-        when (val maybeCallable = sdsCall.maybeCallable()) {
+        when (val maybeCallable = maybeCallable(sdsCall)) {
             CallableResult.NotCallable -> {
                 error(
                     "This expression must not be called.",
                     Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
-                    ErrorCode.RECEIVER_MUST_BE_CALLABLE
+                    ErrorCode.RECEIVER_MUST_BE_CALLABLE,
                 )
             }
             is CallableResult.Callable -> {
@@ -112,7 +112,7 @@ class CallChecker : AbstractSafeDSChecker() {
                     error(
                         "Cannot create an instance of a class that has no constructor.",
                         Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
-                        ErrorCode.CALLED_CLASS_MUST_HAVE_CONSTRUCTOR
+                        ErrorCode.CALLED_CLASS_MUST_HAVE_CONSTRUCTOR,
                     )
                 }
             }
@@ -122,7 +122,6 @@ class CallChecker : AbstractSafeDSChecker() {
 
     @Check
     fun unnecessaryArgumentList(sdsCall: SdsCall) {
-
         // Call has no argument list anyway
         if (sdsCall.argumentList == null) {
             return
@@ -146,7 +145,7 @@ class CallChecker : AbstractSafeDSChecker() {
             info(
                 "Unnecessary argument list.",
                 Literals.SDS_ABSTRACT_CALL__ARGUMENT_LIST,
-                InfoCode.UnnecessaryArgumentList
+                InfoCode.UnnecessaryArgumentList,
             )
         }
     }

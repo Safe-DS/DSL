@@ -13,6 +13,7 @@ import com.larsreimann.safeds.validation.declarations.NameConventionChecker
 import com.larsreimann.safeds.validation.declarations.ParameterChecker
 import com.larsreimann.safeds.validation.declarations.ParameterListChecker
 import com.larsreimann.safeds.validation.declarations.PlaceholderChecker
+import com.larsreimann.safeds.validation.declarations.PredicateChecker
 import com.larsreimann.safeds.validation.declarations.ResultChecker
 import com.larsreimann.safeds.validation.declarations.StepChecker
 import com.larsreimann.safeds.validation.declarations.TypeParameterChecker
@@ -33,6 +34,7 @@ import com.larsreimann.safeds.validation.statements.AssignmentChecker
 import com.larsreimann.safeds.validation.statements.ExpressionsStatementChecker
 import com.larsreimann.safeds.validation.typeChecking.ArgumentTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.DefaultValueTypeChecker
+import com.larsreimann.safeds.validation.typeChecking.GoalArgumentTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.IndexedAccessTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.InfixOperationTypeChecker
 import com.larsreimann.safeds.validation.typeChecking.PrefixOperationTypeChecker
@@ -63,6 +65,7 @@ import org.eclipse.xtext.validation.ComposedChecks
         ParameterChecker::class,
         ParameterListChecker::class,
         PlaceholderChecker::class,
+        PredicateChecker::class,
         ResultChecker::class,
         WorkflowChecker::class,
         StepChecker::class,
@@ -86,6 +89,7 @@ import org.eclipse.xtext.validation.ComposedChecks
         // Type Checking
         ArgumentTypeChecker::class,
         DefaultValueTypeChecker::class,
+        GoalArgumentTypeChecker::class,
         IndexedAccessTypeChecker::class,
         InfixOperationTypeChecker::class,
         PrefixOperationTypeChecker::class,
@@ -102,6 +106,6 @@ import org.eclipse.xtext.validation.ComposedChecks
         DeprecationChecker::class,
         ProtocolChecker::class,
         TypeArgumentListChecker::class,
-    ]
+    ],
 )
 class SafeDSValidator : AbstractSafeDSValidator()

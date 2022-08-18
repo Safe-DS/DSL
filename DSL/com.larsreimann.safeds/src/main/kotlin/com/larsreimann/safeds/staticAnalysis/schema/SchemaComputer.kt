@@ -29,8 +29,8 @@ fun inferInitialSchema(context: EObject, name: String, path: String): SdsSchema?
             val stdlibClass = context.getStdlibClassOrNull(colQualifiedName) ?: return null
 
             createSdsColumn(
-                name = it.name(),
-                type = createSdsNamedType(stdlibClass, isNullable = true),
+                columnName = it.name(),
+                columnType = createSdsNamedType(stdlibClass, isNullable = true),
             )
         }
 

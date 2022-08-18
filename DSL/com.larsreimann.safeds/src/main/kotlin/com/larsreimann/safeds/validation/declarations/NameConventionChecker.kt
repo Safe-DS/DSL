@@ -1,5 +1,7 @@
 package com.larsreimann.safeds.validation.declarations
 
+import com.larsreimann.safeds.constant.SdsSchemaEffect
+import com.larsreimann.safeds.constant.nameToSchemaEffect
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAnnotation
@@ -12,11 +14,13 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
+import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsProtocolSubterm
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
 import com.larsreimann.safeds.validation.codes.WarningCode
@@ -34,7 +38,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             warning(
                 "All segments of the qualified name of a package should be lowerCamelCase.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                WarningCode.SegmentsShouldBeLowerCamelCase
+                WarningCode.SegmentsShouldBeLowerCamelCase,
             )
         }
     }
@@ -45,7 +49,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             error(
                 "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                ErrorCode.BlockLambdaPrefix
+                ErrorCode.BlockLambdaPrefix,
             )
         }
     }
@@ -95,6 +99,15 @@ class NameConventionChecker : AbstractSafeDSChecker() {
         sdsPlaceholder.nameShouldBeLowerCamelCase("placeholders")
     }
 
+    @OptIn(ExperimentalSdsApi::class)
+    @Check
+    fun predicateNamesShouldBeLowerCamelCase(sdsPredicate: SdsPredicate) {
+        if (sdsPredicate.nameToSchemaEffect() != SdsSchemaEffect.NoSchemaEffect) {
+            return
+        }
+        sdsPredicate.nameShouldBeLowerCamelCase("predicate")
+    }
+
     @Check
     fun protocolSubtermNamesShouldBeLowerCamelCase(sdsProtocolSubterm: SdsProtocolSubterm) {
         sdsProtocolSubterm.nameShouldBeLowerCamelCase("protocol subterms")
@@ -125,7 +138,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             warning(
                 "Names of $declarationType should be UpperCamelCase.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                WarningCode.NameShouldBeUpperCamelCase
+                WarningCode.NameShouldBeUpperCamelCase,
             )
         }
     }
@@ -135,7 +148,7 @@ class NameConventionChecker : AbstractSafeDSChecker() {
             warning(
                 "Names of $declarationType should be lowerCamelCase.",
                 Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                WarningCode.NameShouldBeLowerCamelCase
+                WarningCode.NameShouldBeLowerCamelCase,
             )
         }
     }

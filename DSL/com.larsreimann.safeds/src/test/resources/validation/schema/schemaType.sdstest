@@ -1,0 +1,14 @@
+package tests.validation.schemaTest.schemaType
+
+// semantic_error "Only predicates can have parameter of schema type."
+class AClass <ASchema :: $SchemaType> (aSchema: »ASchema«)
+
+// semantic_error "Only predicates can have parameter of schema type."
+// semantic_error "Only predicates can have result of schema type."
+fun aFun <ASchema1:: $SchemaType, ASchema2:: $SchemaType> (aSchema: »ASchema1«) -> aReturn: »ASchema2«
+
+// semantic_error "A parameter of schema type must omit name."
+// no_semantic_error "Only predicates can have parameter of schema type."
+// semantic_error "A result of schema type must omit name."
+// no_semantic_error "Only predicates can have result of schema type."
+predicate aPredicate1 <ASchema1 :: $SchemaType, ASchema2 :: $SchemaType> (»aSchema«: »ASchema1«) -> »aReturn«: »ASchema2« {}

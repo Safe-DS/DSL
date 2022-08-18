@@ -89,7 +89,7 @@ sealed class NamedType(sdsDeclaration: SdsAbstractDeclaration) : Type() {
 
 data class ClassType(
     val sdsClass: SdsClass,
-    override val isNullable: Boolean
+    override val isNullable: Boolean,
 ) : NamedType(sdsClass) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
 
@@ -98,7 +98,7 @@ data class ClassType(
 
 data class EnumType(
     val sdsEnum: SdsEnum,
-    override val isNullable: Boolean
+    override val isNullable: Boolean,
 ) : NamedType(sdsEnum) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
 
@@ -107,7 +107,7 @@ data class EnumType(
 
 data class EnumVariantType(
     val sdsEnumVariant: SdsEnumVariant,
-    override val isNullable: Boolean
+    override val isNullable: Boolean,
 ) : NamedType(sdsEnumVariant) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
 
@@ -142,6 +142,19 @@ data class VariadicType(val elementType: Type) : Type() {
 
     override fun toSimpleString(): String {
         return "vararg<${elementType.toSimpleString()}>"
+    }
+}
+
+data class ParameterizedType(val kind: String) : Type() {
+    override val isNullable = false
+    override fun setIsNullableOnCopy(isNullable: Boolean) = this
+
+    override fun toString(): String {
+        return "::$kind"
+    }
+
+    override fun toSimpleString(): String {
+        return "::$kind"
     }
 }
 

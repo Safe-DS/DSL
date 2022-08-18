@@ -71,6 +71,7 @@ import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParameterList
+import com.larsreimann.safeds.safeDS.SdsParameterizedType
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedGoalExpression
@@ -292,6 +293,7 @@ fun SdsStep.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsA
 /**
  * Returns a new object of class [SdsAssignmentGoal].
  */
+@ExperimentalSdsApi
 fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression): SdsAssignmentGoal {
     return factory.createSdsAssignmentGoal().apply {
         this.placeholder = factory.createSdsGoalPlaceholder().apply {
@@ -304,6 +306,7 @@ fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoal
 /**
  * Adds a new object of class [SdsAssignmentGoal] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsPredicate.sdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression) {
     this.addGoal(createSdsAssignmentGoal(placeholderName, expression))
 }
@@ -557,12 +560,12 @@ fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
  */
 @ExperimentalSdsApi
 fun createSdsColumn(
-    name: String,
-    type: SdsAbstractType,
+    columnName: String,
+    columnType: SdsAbstractType,
 ): SdsColumn {
     return factory.createSdsColumn().apply {
-        this.columnName = createSdsString(name)
-        this.columnType = type
+        this.columnName = createSdsString(columnName)
+        this.columnType = columnType
     }
 }
 
@@ -653,6 +656,7 @@ fun SdsEnum.sdsEnumVariant(
 /**
  * Returns a new object of class [SdsExpressionGoal].
  */
+@ExperimentalSdsApi
 fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressionGoal {
     return factory.createSdsExpressionGoal().apply {
         this.expression = expression
@@ -662,6 +666,7 @@ fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressio
 /**
  * Adds a new object of class [SdsExpressionGoal] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsPredicate.sdsExpressionGoal(expression: SdsAbstractGoalExpression) {
     this.addGoal(createSdsExpressionGoal(expression))
 }
@@ -811,6 +816,7 @@ fun SdsCompilationUnit.sdsFunction(
 /**
  * Returns a new object of class [SdsGoalArgument].
  */
+@ExperimentalSdsApi
 fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameter: SdsParameter? = null): SdsGoalArgument {
     return factory.createSdsGoalArgument().apply {
         this.value = value
@@ -821,6 +827,7 @@ fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameter: SdsParame
 /**
  * Returns a new object of class [SdsGoalArgument] that points to a parameter with the given name.
  */
+@ExperimentalSdsApi
 fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameterName: String): SdsGoalArgument {
     return createSdsGoalArgument(
         value,
@@ -1063,11 +1070,23 @@ fun createSdsPlaceholder(name: String): SdsPlaceholder {
 }
 
 /**
+ * Returns a new object of class [SdsParameterizedType].
+ */
+@ExperimentalSdsApi
+fun createSdsParameterizedType(type: SdsNamedType? = null): SdsParameterizedType {
+    return factory.createSdsParameterizedType().apply {
+        this.type = type
+    }
+}
+
+/**
  * Returns a new object of class [SdsPredicate].
  */
+@ExperimentalSdsApi
 fun createSdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
     goals: List<SdsAbstractGoal> = emptyList(),
@@ -1075,6 +1094,7 @@ fun createSdsPredicate(
     return factory.createSdsPredicate().apply {
         this.name = name
         this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.typeParameterList = typeParameters.nullIfEmptyElse(::createSdsTypeParameterList)
         this.parameterList = createSdsParameterList(parameters)
         this.resultList = results.nullIfEmptyElse(::createSdsResultList)
         goals.forEach { addGoal(it) }
@@ -1084,9 +1104,11 @@ fun createSdsPredicate(
 /**
  * Adds a new object of class [SdsPredicate] to the receiver.
  */
+@ExperimentalSdsApi
 fun SdsCompilationUnit.sdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
     goals: List<SdsAbstractGoal> = emptyList(),
@@ -1095,6 +1117,7 @@ fun SdsCompilationUnit.sdsPredicate(
         createSdsPredicate(
             name,
             annotationCalls,
+            typeParameters,
             parameters,
             results,
             goals,
@@ -1105,6 +1128,7 @@ fun SdsCompilationUnit.sdsPredicate(
 /**
  * Adds a new goal to the receiver.
  */
+@ExperimentalSdsApi
 private fun SdsPredicate.addGoal(goal: SdsAbstractGoal) {
     if (this.goalList == null) {
         this.goalList = factory.createSdsGoalList()

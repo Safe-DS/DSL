@@ -1,0 +1,13 @@
+package safeds.lang
+
+@Description("Reads the initial data schema of a dataset.")
+abstract predicate $ReadSchema <InitialSchema :: $SchemaType> (
+    datasetName: String,
+    datasetPath: String
+) -> :InitialSchema
+
+@Description("Checks if the columnName(s) exists in the data schema.")
+abstract predicate $CheckColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    :CurrentSchema,
+    vararg columnName: String
+) -> :SchemaOut

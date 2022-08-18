@@ -31,7 +31,7 @@
             "patterns": [
                 {
                     "name": "keyword.control.safeds",
-                    "match": "\\b(_|and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|private|protocol|static|step|sub|subterm|super|true|union|val|vararg|where|workflow|yield)\\b"
+                    "match": "\\b(_|abstract|and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|predicate|private|protocol|static|step|sub|subterm|super|true|union|val|vararg|where|workflow|yield)\\b"
                 }
             ]
         },

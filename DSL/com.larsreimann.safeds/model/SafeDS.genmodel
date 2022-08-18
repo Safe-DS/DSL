@@ -110,19 +110,11 @@
         </genClasses>
         <!-- Predicate  -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsPredicate">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/typeParameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/parameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/resultList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/goalList" />
         </genClasses>
-        <!-- TODO -->
-        <!-- <genClasses ecoreClass="SafeDS.ecore#//SdsGoalParameterList">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalParameterList/parameter" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalParameter">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalParameter/defaultValue" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalParameter/type" />
-            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsGoalParameter/variadic" />
-        </genClasses> -->
         <!-- Goal -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsGoalList">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalList/goals" />
@@ -156,6 +148,9 @@
         <genClasses ecoreClass="SafeDS.ecore#//SdsParenthesizedGoalExpression">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParenthesizedGoalExpression/expression" />
         </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsParameterizedType">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParameterizedType/type" />
+        </genClasses>
         <!-- Function -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsFunction">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsFunction/static" />
@@ -182,14 +177,14 @@
         </genClasses>
         <!-- Schema -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsSchema">
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchema/columnList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchema/columnList" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsColumnList">
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumnList/columns" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumnList/columns" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsColumn">
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnName" />
-             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnType" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnName" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnType" />
         </genClasses>
         <!-- Step -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsStep">

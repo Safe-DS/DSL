@@ -50,14 +50,21 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
           body=SdsFunctionBody?
 
     | {SdsPredicate.annotationCallList=current}
-        'predicate' name=ID
-        parameterList=SdsParameterList
-        resultList=SdsResultList?
-        goalList=SdsGoalList
+          'predicate' name=ID
+          typeParameterList=SdsTypeParameterList?
+          parameterList=SdsParameterList
+          resultList=SdsResultList?
+          goalList=SdsGoalList
+
+    | {SdsPredicate.annotationCallList=current}
+          'abstract' 'predicate' name=ID
+          typeParameterList=SdsTypeParameterList?
+          parameterList=SdsParameterList
+          resultList=SdsResultList?
 
     | {SdsSchema.annotationCallList=current}
-        'schema' name=ID
-        columnList=SdsColumnList
+          'schema' name=ID
+          columnList=SdsColumnList
 
     | {SdsStep.annotationCallList=current}
           visibility=('internal'|'private')?
@@ -275,9 +282,13 @@ SdsLambdaParameterList
 
 SdsParameter
     : annotationCalls+=SdsAnnotationCall*
-      variadic?='vararg'?
+    ( variadic?='vararg'?
       name=ID (':' type=SdsType)?
       ('=' defaultValue=SdsExpression)?
+
+      // For schema type parameters
+    | ':' type=SdsNamedType
+    )
     ;
 
 
@@ -290,7 +301,11 @@ SdsResultList
 
 SdsResult
     : annotationCalls+=SdsAnnotationCall*
-      name=ID (':' type=SdsType)?
+    ( name=ID (':' type=SdsType)?
+
+      // For schema type parameters
+    | ':' type=SdsNamedType
+    )
     ;
 
 // Function -------------------------------------------------------------------------------------------------------------
@@ -550,10 +565,6 @@ SdsGoalExpression returns SdsAbstractGoalExpression
     ;
 
 SdsChainedGoalExpression returns SdsAbstractGoalExpression
-    : SdsGoalCall
-    ;
-
-SdsGoalCall returns SdsAbstractGoalExpression
     : SdsPrimaryGoalExpression ( {SdsGoalCall.receiver=current}'(' (argumentList=SdsGoalArgumentList)? ')' )?
     ;
 
@@ -568,6 +579,7 @@ SdsGoalArgument
 SdsPrimaryGoalExpression returns SdsAbstractGoalExpression
     : SdsGoalReference
     | SdsParenthesizedGoalExpression
+    | SdsParameterizedType
     | SdsLiteral
     ;
 
@@ -579,6 +591,9 @@ SdsParenthesizedGoalExpression
     : '(' expressions+=SdsGoalExpression  (',' expressions+=SdsGoalExpression)* ')'
     ;
 
+SdsParameterizedType
+    : ':' type=SdsNamedType
+    ;
 
 /**********************************************************************************************************************
  * Schemas
@@ -742,6 +757,12 @@ terminal ID
 
 terminal fragment IDENTIFIER
     : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+    | SCHEMA_EFFECT
+    ;
+
+terminal fragment SCHEMA_EFFECT
+    : '$ReadSchema'
+    | '$CheckColumn'
     ;
 
 terminal INT returns ecore::EInt
