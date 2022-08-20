@@ -1,6 +1,7 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
+import com.larsreimann.safeds.staticAnalysis.typing.ParameterisedType
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
@@ -24,13 +25,24 @@ enum class SdsKind(val kind: String?) {
 
 /**
  * Returns the [SdsKind] of this [SdsTypeParameter].
- *
- * @throws IllegalArgumentException If the kind is unknown.
  */
 @ExperimentalSdsApi
 fun SdsTypeParameter.kind(): SdsKind {
-    return SdsKind.values().firstOrNull { it.kind == this.kind }
-        ?: throw IllegalArgumentException("Unknown kind '$kind'.")
+    return stringToKind(this.kind)
+}
+
+/**
+ * Returns the [SdsKind] of this [ParameterisedType].
+ */
+@ExperimentalSdsApi
+fun ParameterisedType.kind(): SdsKind {
+    return stringToKind(this.kind)
+}
+
+@OptIn(ExperimentalSdsApi::class)
+private fun stringToKind(string: String?): SdsKind {
+    return SdsKind.values().firstOrNull { it.kind == string }
+        ?: SdsKind.NoKind
 }
 
 @ExperimentalSdsApi

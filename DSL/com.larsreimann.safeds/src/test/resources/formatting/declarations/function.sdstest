@@ -14,7 +14,7 @@ fun     myFunction1
    (
       @AnnotationUse       a  :
         Int ,  b  :   Int )     { constraint     {
-          T2   super    Number   ,   T3    sub    Number
+          T2   super    Number   ,   T3    sub    Number   
         }
         }
 class MyClass {

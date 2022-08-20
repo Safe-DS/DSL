@@ -1,6 +1,6 @@
 package com.larsreimann.safeds.staticAnalysis.typing
 
-import com.larsreimann.safeds.constant.kindToSchemaEffect
+import com.larsreimann.safeds.constant.kind
 import com.larsreimann.safeds.emf.variantsOrEmpty
 import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.staticAnalysis.classHierarchy.isSubtypeOf
@@ -17,7 +17,7 @@ fun Type.isSubstitutableFor(other: Type, resultIfUnresolved: Boolean = false): B
         is ClassType -> this.isSubstitutableFor(other)
         is EnumType -> this.isSubstitutableFor(other)
         is EnumVariantType -> this.isSubstitutableFor(other)
-        is ParameterizedType -> this.isSubstitutableFor(other)
+        is ParameterisedType -> this.isSubstitutableFor(other)
         is UnionType -> this.isSubstitutableFor(other)
         is VariadicType -> this.isSubstitutableFor(other)
         is RecordType -> false
@@ -108,9 +108,9 @@ private fun EnumVariantType.isSubstitutableFor(other: Type): Boolean {
 }
 
 @OptIn(ExperimentalSdsApi::class)
-private fun ParameterizedType.isSubstitutableFor(other: Type): Boolean {
+private fun ParameterisedType.isSubstitutableFor(other: Type): Boolean {
     return when (other) {
-        is ParameterizedType -> (!this.isNullable || other.isNullable) && this.kindToSchemaEffect() == other.kindToSchemaEffect()
+        is ParameterisedType -> (!this.isNullable || other.isNullable) && this.kind() == other.kind()
         else -> false
     }
 }

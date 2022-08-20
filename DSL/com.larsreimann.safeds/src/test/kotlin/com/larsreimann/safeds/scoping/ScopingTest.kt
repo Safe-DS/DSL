@@ -15,7 +15,6 @@ import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsEnum
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
-import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsMemberType
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
@@ -28,7 +27,7 @@ import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraintGoal
+import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.ResourceName
@@ -1100,7 +1099,7 @@ class ScopingTest {
             val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
             val predicateInSameFile = findUniqueDeclarationOrFail<SdsPredicate>("predicateInSameFile")
 
-            val references = predicate.descendants<SdsGoalReference>().toList()
+            val references = predicate.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
 
             val declaration = references[0].declaration
@@ -1112,7 +1111,7 @@ class ScopingTest {
         fun `should resolve goal in same package`() = withResource(GOAL_REFERENCE) {
             val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
 
-            val references = predicate.descendants<SdsGoalReference>().toList()
+            val references = predicate.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
 
             val declaration = references[1].declaration
@@ -1124,7 +1123,7 @@ class ScopingTest {
         fun `should resolve goal in another package if imported`() = withResource(GOAL_REFERENCE) {
             val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
 
-            val references = predicate.descendants<SdsGoalReference>().toList()
+            val references = predicate.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
 
             val declaration = references[2].declaration
@@ -1136,7 +1135,7 @@ class ScopingTest {
         fun `should not resolve goal in another package if not imported`() = withResource(GOAL_REFERENCE) {
             val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
 
-            val references = predicate.descendants<SdsGoalReference>().toList()
+            val references = predicate.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
             references[3].declaration.shouldNotBeResolved()
         }
@@ -2316,7 +2315,7 @@ class ScopingTest {
         @Test
         fun `should resolve type parameter in same class`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testClass = findUniqueDeclarationOrFail<SdsClass>("TestClass")
-            val typeParameterConstraintsGoal = testClass.descendants<SdsTypeParameterConstraintGoal>().toList()
+            val typeParameterConstraintsGoal = testClass.descendants<SdsTypeParameterConstraint>().toList()
             typeParameterConstraintsGoal.shouldHaveSize(1)
 
             val typeParameterInSameDeclaration =
@@ -2330,7 +2329,7 @@ class ScopingTest {
         @Test
         fun `should resolve type parameter in same enum variant`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testEnumVariant = findUniqueDeclarationOrFail<SdsEnumVariant>("TestEnumVariant")
-            val typeParameterConstraintsGoal = testEnumVariant.descendants<SdsTypeParameterConstraintGoal>().toList()
+            val typeParameterConstraintsGoal = testEnumVariant.descendants<SdsTypeParameterConstraint>().toList()
             typeParameterConstraintsGoal.shouldHaveSize(1)
 
             val typeParameterInSameDeclaration =
@@ -2344,7 +2343,7 @@ class ScopingTest {
         @Test
         fun `should resolve type parameter in same function`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
             typeParameterConstraintsGoal.shouldHaveSize(7)
 
             val typeParameterInSameDeclaration =
@@ -2357,10 +2356,10 @@ class ScopingTest {
 
         @Test
         fun `should not resolve type parameter in another declaration in same file`() = withResource(
-            TYPE_PARAMETER_CONSTRAINT
+            TYPE_PARAMETER_CONSTRAINT,
         ) {
             val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
             typeParameterConstraintsGoal.shouldHaveSize(7)
             typeParameterConstraintsGoal[1].leftOperand.shouldNotBeResolved()
         }
@@ -2369,7 +2368,7 @@ class ScopingTest {
         fun `should not resolve type parameter in another declaration in same package`() =
             withResource(TYPE_PARAMETER_CONSTRAINT) {
                 val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-                val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+                val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
                 typeParameterConstraintsGoal.shouldHaveSize(7)
                 typeParameterConstraintsGoal[2].leftOperand.shouldNotBeResolved()
             }
@@ -2378,7 +2377,7 @@ class ScopingTest {
         fun `should not resolve type parameter in another declaration that is imported and in another package`() =
             withResource(TYPE_PARAMETER_CONSTRAINT) {
                 val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-                val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+                val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
                 typeParameterConstraintsGoal.shouldHaveSize(7)
                 typeParameterConstraintsGoal[3].leftOperand.shouldNotBeResolved()
             }
@@ -2387,7 +2386,7 @@ class ScopingTest {
         fun `should not resolve type parameter in another declaration that is not imported and in another package`() =
             withResource(TYPE_PARAMETER_CONSTRAINT) {
                 val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-                val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+                val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
                 typeParameterConstraintsGoal.shouldHaveSize(7)
                 typeParameterConstraintsGoal[4].leftOperand.shouldNotBeResolved()
             }
@@ -2395,7 +2394,7 @@ class ScopingTest {
         @Test
         fun `should not resolve unknown declaration`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
             typeParameterConstraintsGoal.shouldHaveSize(7)
             typeParameterConstraintsGoal[5].leftOperand.shouldNotBeResolved()
         }
@@ -2403,7 +2402,7 @@ class ScopingTest {
         @Test
         fun `should not something that is not a type parameter`() = withResource(TYPE_PARAMETER_CONSTRAINT) {
             val testFunction = findUniqueDeclarationOrFail<SdsFunction>("testFunction")
-            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraintGoal>().toList()
+            val typeParameterConstraintsGoal = testFunction.descendants<SdsTypeParameterConstraint>().toList()
             typeParameterConstraintsGoal.shouldHaveSize(7)
             typeParameterConstraintsGoal[6].leftOperand.shouldNotBeResolved()
         }
@@ -2471,16 +2470,15 @@ class ScopingTest {
 
     private fun withResource(
         resourceName: ResourceName,
-        lambda: SdsCompilationUnit.() -> Unit
+        lambda: SdsCompilationUnit.() -> Unit,
     ) {
-
         val compilationUnit =
             parseHelper.parseResource(
                 "scoping/$resourceName/main.${SdsFileExtension.Test}",
                 listOf(
                     "scoping/$resourceName/externalsInOtherPackage.${SdsFileExtension.Test}",
                     "scoping/$resourceName/externalsInSamePackage.${SdsFileExtension.Test}",
-                )
+                ),
             ) ?: throw IllegalArgumentException("File is not a compilation unit.")
 
         compilationUnit.apply(lambda)

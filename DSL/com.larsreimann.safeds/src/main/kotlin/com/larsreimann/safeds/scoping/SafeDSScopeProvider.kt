@@ -32,7 +32,6 @@ import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsConstraint
 import com.larsreimann.safeds.safeDS.SdsEnum
-import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsMemberAccess
 import com.larsreimann.safeds.safeDS.SdsMemberType
 import com.larsreimann.safeds.safeDS.SdsNamedType
@@ -41,10 +40,11 @@ import com.larsreimann.safeds.safeDS.SdsProtocol
 import com.larsreimann.safeds.safeDS.SdsProtocolReference
 import com.larsreimann.safeds.safeDS.SdsProtocolSubterm
 import com.larsreimann.safeds.safeDS.SdsReference
+import com.larsreimann.safeds.safeDS.SdsSchemaType
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
-import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraintGoal
+import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
 import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.classHierarchy.superClassMembers
@@ -77,12 +77,12 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
     override fun getScope(context: EObject, reference: EReference): IScope {
         return when (context) {
             is SdsArgument -> scopeForArgumentParameter(context)
-            is SdsGoalReference -> scopeForGoalReferenceDeclaration(context)
             is SdsNamedType -> scopeForNamedTypeDeclaration(context)
             is SdsProtocolReference -> scopeForProtocolReferenceToken(context)
             is SdsReference -> scopeForReferenceDeclaration(context)
+            is SdsSchemaType -> scopeForSchemaTypeDeclaration(context)
             is SdsTypeArgument -> scopeForTypeArgumentTypeParameter(context)
-            is SdsTypeParameterConstraintGoal -> scopeForTypeParameterConstraintLeftOperand(context)
+            is SdsTypeParameterConstraint -> scopeForTypeParameterConstraintLeftOperand(context)
             is SdsAnnotationCall, is SdsYield -> {
                 super.getScope(context, reference)
             }
@@ -96,21 +96,6 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
             ?.parametersOrNull()
             ?: emptyList()
         return Scopes.scopeFor(parameters)
-    }
-
-    private fun scopeForGoalReferenceDeclaration(context: SdsGoalReference): IScope {
-        val resource = context.eResource()
-        val packageName = context.containingCompilationUnitOrNull()?.qualifiedNameOrNull()
-
-        // Declarations in other files
-        val result: IScope = FilteringScope(
-            super.delegateGetScope(context, SafeDSPackage.Literals.SDS_GOAL_REFERENCE__DECLARATION),
-        ) {
-            it.isReferencableExternalDeclaration(resource, packageName)
-        }
-
-        // Declarations in this file
-        return declarationsInSameFile(resource, result)
     }
 
     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {
@@ -335,6 +320,10 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return this.subtermsOrEmpty().takeWhile { it !== containingSubtermOrNull }
     }
 
+    private fun scopeForSchemaTypeDeclaration(context: SdsSchemaType): IScope {
+        return super.getScope(context, SafeDSPackage.Literals.SDS_SCHEMA_TYPE__DECLARATION)
+    }
+
     private fun scopeForTypeArgumentTypeParameter(sdsTypeArgument: SdsTypeArgument): IScope {
         val typeParameters = sdsTypeArgument
             .closestAncestorOrNull<SdsTypeArgumentList>()
@@ -344,8 +333,8 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
         return Scopes.scopeFor(typeParameters)
     }
 
-    private fun scopeForTypeParameterConstraintLeftOperand(sdsTypeParameterConstraintGoal: SdsTypeParameterConstraintGoal): IScope {
-        val typeParameters = sdsTypeParameterConstraintGoal
+    private fun scopeForTypeParameterConstraintLeftOperand(sdsTypeParameterConstraint: SdsTypeParameterConstraint): IScope {
+        val typeParameters = sdsTypeParameterConstraint
             .closestAncestorOrNull<SdsConstraint>()
             ?.typeParametersOrNull()
             ?: emptyList()

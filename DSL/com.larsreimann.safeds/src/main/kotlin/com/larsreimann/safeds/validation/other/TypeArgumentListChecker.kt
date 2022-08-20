@@ -1,10 +1,12 @@
 package com.larsreimann.safeds.validation.other
 
+import com.larsreimann.safeds.constant.hasSchemaKind
 import com.larsreimann.safeds.emf.isNamed
 import com.larsreimann.safeds.emf.isPositional
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
 import com.larsreimann.safeds.staticAnalysis.linking.typeParameterOrNull
 import com.larsreimann.safeds.staticAnalysis.linking.typeParametersOrNull
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.duplicatesBy
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
@@ -13,9 +15,11 @@ import org.eclipse.xtext.validation.Check
 
 class TypeArgumentListChecker : AbstractSafeDSChecker() {
 
+    @OptIn(ExperimentalSdsApi::class)
     @Check
     fun missingRequiredTypeParameter(sdsTypeArgumentList: SdsTypeArgumentList) {
-        val requiredTypeParameters = sdsTypeArgumentList.typeParametersOrNull() ?: return
+        val requiredTypeParameters = sdsTypeArgumentList.typeParametersOrNull()
+            ?.filter { !it.hasSchemaKind() } ?: return
         val givenTypeParameters = sdsTypeArgumentList.typeArguments.mapNotNull { it.typeParameterOrNull() }
         val missingRequiredTypeParameters = requiredTypeParameters - givenTypeParameters.toSet()
 
@@ -23,7 +27,7 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
             error(
                 "The type parameter '${it.name}' is required and must be set here.",
                 null,
-                ErrorCode.MISSING_REQUIRED_TYPE_PARAMETER
+                ErrorCode.MISSING_REQUIRED_TYPE_PARAMETER,
             )
         }
     }
@@ -43,7 +47,7 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
                     "After the first named type argument all type arguments must be named.",
                     it,
                     null,
-                    ErrorCode.NO_POSITIONAL_TYPE_ARGUMENTS_AFTER_FIRST_NAMED_TYPE_ARGUMENT
+                    ErrorCode.NO_POSITIONAL_TYPE_ARGUMENTS_AFTER_FIRST_NAMED_TYPE_ARGUMENT,
                 )
             }
     }
@@ -70,7 +74,7 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
             error(
                 message,
                 null,
-                ErrorCode.TooManyTypeArguments
+                ErrorCode.TooManyTypeArguments,
             )
         }
     }
@@ -84,7 +88,7 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
                     "The type parameter '${it.typeParameterOrNull()?.name}' is already set.",
                     it,
                     null,
-                    ErrorCode.UniqueTypeParameters
+                    ErrorCode.UniqueTypeParameters,
                 )
             }
     }
@@ -96,7 +100,7 @@ class TypeArgumentListChecker : AbstractSafeDSChecker() {
             info(
                 "Unnecessary type argument list.",
                 null,
-                InfoCode.UnnecessaryTypeArgumentList
+                InfoCode.UnnecessaryTypeArgumentList,
             )
         }
     }

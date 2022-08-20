@@ -28,7 +28,7 @@ class InitialSchemaInferenceTest {
     private val expectedSchema = """
         |package test
         |
-        |schema TestSchema {
+        |schema dummyData {
         |    "Column0" : Int?,
         |    "Column1" : Int?,
         |    "Column2" : Int?,
@@ -50,9 +50,10 @@ class InitialSchemaInferenceTest {
         val context = parseHelper.parseProgramText("package test")
         context.shouldNotBeNull()
 
-        val csvPath = javaClass.classLoader.getResourcePath("schema/dummyData.csv").toString()
-        val schema = inferInitialSchema(context, "TestSchema", csvPath)
+        val csvPath = javaClass.classLoader.getResourcePath("schema/dummyData.csv")
+        csvPath.shouldNotBeNull()
 
+        val schema = inferInitialSchema(context, csvPath)
         schema.shouldNotBeNull()
 
         val compilationUnit = createSdsCompilationUnit(packageName = "test", members = listOf(schema))

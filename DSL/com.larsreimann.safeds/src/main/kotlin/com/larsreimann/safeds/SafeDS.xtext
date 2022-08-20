@@ -52,15 +52,15 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
     | {SdsPredicate.annotationCallList=current}
           'predicate' name=ID
           typeParameterList=SdsTypeParameterList?
-          parameterList=SdsParameterList
-          resultList=SdsResultList?
-          goalList=SdsGoalList
+          parameterList=SdsPredicateParameterList
+          resultList=SdsPredicateResultList?
+          body=SdsPredicateBlock
 
     | {SdsPredicate.annotationCallList=current}
           'abstract' 'predicate' name=ID
           typeParameterList=SdsTypeParameterList?
-          parameterList=SdsParameterList
-          resultList=SdsResultList?
+          parameterList=SdsPredicateParameterList
+          resultList=SdsPredicateResultList?
 
     | {SdsSchema.annotationCallList=current}
           'schema' name=ID
@@ -161,7 +161,7 @@ SdsAnnotatedClassMember returns SdsAbstractAnnotatedObject
     ;
 
 SdsConstraint
-    : 'constraint' constraintList=SdsGoalList
+    : 'constraint' body=SdsConstraintBlock
     ;
 
 SdsProtocol
@@ -282,12 +282,23 @@ SdsLambdaParameterList
 
 SdsParameter
     : annotationCalls+=SdsAnnotationCall*
+      variadic?='vararg'?
+      name=ID (':' type=SdsType)?
+      ('=' defaultValue=SdsExpression)?
+    ;
+
+SdsPredicateParameterList returns SdsParameterList
+    : {SdsParameterList} '(' (parameters+=SdsPredicateParameter (',' parameters+=SdsPredicateParameter)* ','?)? ')'
+    ;
+
+SdsPredicateParameter returns SdsParameter
+    : annotationCalls+=SdsAnnotationCall*
     ( variadic?='vararg'?
       name=ID (':' type=SdsType)?
       ('=' defaultValue=SdsExpression)?
 
       // For schema type parameters
-    | ':' type=SdsNamedType
+    | type=SdsSchemaType
     )
     ;
 
@@ -301,11 +312,16 @@ SdsResultList
 
 SdsResult
     : annotationCalls+=SdsAnnotationCall*
-    ( name=ID (':' type=SdsType)?
+      name=ID (':' type=SdsType)?
+    ;
 
-      // For schema type parameters
-    | ':' type=SdsNamedType
-    )
+SdsPredicateResultList returns SdsResultList
+    : {SdsResultList} '->' results+=SdsPredicateResult
+    ;
+
+SdsPredicateResult returns SdsResult
+    : annotationCalls+=SdsAnnotationCall*
+      type=SdsSchemaType
     ;
 
 // Function -------------------------------------------------------------------------------------------------------------
@@ -349,6 +365,48 @@ SdsAssignee returns SdsAbstractAssignee
 
 SdsExpressionStatement
     : expression=SdsExpression ';'
+    ;
+
+// Constraints ---------------------------------------------------------------------------------------------------------
+
+SdsConstraintBlock returns SdsBlock
+    : {SdsBlock} '{' ( statements+=SdsConstraintStatement (',' statements+=SdsConstraintStatement)* )? '}'
+    ;
+
+SdsConstraintStatement returns SdsAbstractStatement
+    : SdsPredicateAssignment
+    | SdsPredicateExpressionStatement
+    | SdsTypeParameterConstraint
+    ;
+
+// Predicates ----------------------------------------------------------------------------------------------------------
+
+SdsPredicateBlock returns SdsBlock
+    : {SdsBlock} '{' ( statements+=SdsPredicateStatement (',' statements+=SdsPredicateStatement)* )? '}'
+    ;
+
+SdsPredicateStatement returns SdsAbstractStatement
+    : SdsPredicateAssignment
+    | SdsPredicateExpressionStatement
+    ;
+
+SdsPredicateAssignment returns SdsAssignment
+    : assigneeList=SdsPredicateAssigneeList '=' expression=SdsExpression
+    ;
+
+SdsPredicateAssigneeList returns SdsAssigneeList
+    : assignees+=SdsPredicateAssignee (',' assignees+=SdsPredicateAssignee)* ','?
+    ;
+
+SdsPredicateAssignee returns SdsAbstractAssignee
+    : {SdsPlaceholder}       'val' name=ID
+    | {SdsWildcard}          '_'
+    | {SdsSchemaPlaceholder} 'val' '::' name=ID
+    | {SdsSchemaYield}       'yield' type=SdsSchemaType
+    ;
+
+SdsPredicateExpressionStatement returns SdsExpressionStatement
+    : expression=SdsExpression
     ;
 
 /**********************************************************************************************************************
@@ -473,6 +531,7 @@ SdsPrimaryExpression returns SdsAbstractExpression
     | SdsParenthesizedExpression
     | SdsReference
     | SdsTemplateString
+    | {SdsSchemaReference} type=SdsSchemaType
     ;
 
 SdsLiteral returns SdsAbstractLiteral
@@ -531,68 +590,6 @@ SdsTemplateStringInner
 
 SdsTemplateStringEnd
     : value=TEMPLATE_STRING_END
-    ;
-
-
-/**********************************************************************************************************************
- * Predicates / Goals
- **********************************************************************************************************************/
-
-SdsGoalList
-    : {SdsGoalList} '{' ( goals+=SdsGoal (',' goals+=SdsGoal)* )? '}'
-    ;
-
-SdsGoal returns SdsAbstractGoal
-    : SdsExpressionGoal
-    | SdsAssignmentGoal
-    | SdsAbstractConstraintGoal
-    ;
-
-SdsAssignmentGoal
-    : placeholder=SdsGoalPlaceholder "=" expression=SdsGoalExpression
-    ;
-
-SdsGoalPlaceholder
-    : 'val' name=ID
-    ;
-
-SdsExpressionGoal
-    : expression=SdsGoalExpression
-    ;
-
-SdsGoalExpression returns SdsAbstractGoalExpression
-    : SdsChainedGoalExpression
-    ;
-
-SdsChainedGoalExpression returns SdsAbstractGoalExpression
-    : SdsPrimaryGoalExpression ( {SdsGoalCall.receiver=current}'(' (argumentList=SdsGoalArgumentList)? ')' )?
-    ;
-
-SdsGoalArgumentList
-    : {SdsGoalArgumentList} arguments+=SdsGoalArgument (',' arguments+=SdsGoalArgument)*
-    ;
-
-SdsGoalArgument
-    : (parameter=[SdsParameter] "=")? value=SdsGoalExpression
-    ;
-
-SdsPrimaryGoalExpression returns SdsAbstractGoalExpression
-    : SdsGoalReference
-    | SdsParenthesizedGoalExpression
-    | SdsParameterizedType
-    | SdsLiteral
-    ;
-
-SdsGoalReference
-    : declaration=[SdsAbstractDeclaration]
-    ;
-
-SdsParenthesizedGoalExpression
-    : '(' expressions+=SdsGoalExpression  (',' expressions+=SdsGoalExpression)* ')'
-    ;
-
-SdsParameterizedType
-    : ':' type=SdsNamedType
     ;
 
 /**********************************************************************************************************************
@@ -657,6 +654,11 @@ SdsNamedType
       (nullable?='?')?
     ;
 
+// Schema Types ---------------------------------------------------------------------------------------------------------
+
+SdsSchemaType
+    : '::' declaration=[SdsAbstractNamedTypeDeclaration]
+    ;
 
 // Union Types ---------------------------------------------------------------------------------------------------------
 
@@ -705,11 +707,7 @@ SdsTypeParameterKind
     | '$NamedType'
     ;
 
-SdsAbstractConstraintGoal
-    : SdsTypeParameterConstraintGoal
-    ;
-
-SdsTypeParameterConstraintGoal
+SdsTypeParameterConstraint
     : leftOperand=[SdsTypeParameter] operator=SdsTypeParameterConstraintOperator rightOperand=SdsType
     ;
 
@@ -761,8 +759,13 @@ terminal fragment IDENTIFIER
     ;
 
 terminal fragment SCHEMA_EFFECT
-    : '$ReadSchema'
-    | '$CheckColumn'
+    : '$readSchema'
+    | '$checkColumn'
+    | '$removeColumn'
+    | '$keepColumn'
+    | '$renameColumn'
+    | '$addColumn'
+    | '$changeColumnType'
     ;
 
 terminal INT returns ecore::EInt

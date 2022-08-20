@@ -20,7 +20,7 @@ enum myEnum {
        )         constraint
        {    T2
   super  Number   ,    T3   sub
-     Number
+     Number   
        }
 }
 

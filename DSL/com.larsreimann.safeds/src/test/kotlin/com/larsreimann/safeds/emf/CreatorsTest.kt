@@ -504,17 +504,6 @@ class CreatorsTest {
         function.typeParameterList.shouldBeNull()
     }
 
-//    constraints are now a "member" statement, doesn't make sense
-//
-//    @Test
-//    fun `createSdsFunction should omit empty constraint list`() {
-//        val function = createSdsFunction(
-//            "test",
-//            constraints = emptyList()
-//        )
-//        function.constraintList.shouldBeNull()
-//    }
-
     @Test
     fun `sdsFunction should add the created function to the receiving class`() {
         val `class` = createSdsClass("Test") {
@@ -732,8 +721,8 @@ class CreatorsTest {
     }
 
     @Test
-    fun `createTypeParameterConstraintGoal should create an SdsTypeParameter when only a name is passed`() {
-        val constraint = createSdsTypeParameterConstraintGoal(
+    fun `createTypeParameterConstraint should create an SdsTypeParameter when only a name is passed`() {
+        val constraint = createSdsTypeParameterConstraint(
             "Test",
             SdsTypeParameterConstraintOperator.SubclassOf,
             createSdsNamedType(createSdsClass("Test")),

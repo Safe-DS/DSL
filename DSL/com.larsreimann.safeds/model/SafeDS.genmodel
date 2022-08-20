@@ -42,7 +42,7 @@
         </genClasses>
         <!-- Constraint -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsConstraint">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsConstraint/constraintList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsConstraint/body" />
         </genClasses>
         <!-- Protocol -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsProtocol">
@@ -111,45 +111,11 @@
         <!-- Predicate  -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsPredicate">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/typeParameterList" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/parameterList" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/resultList" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/goalList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPredicate/body" />
         </genClasses>
-        <!-- Goal -->
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalList">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalList/goals" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsAbstractGoal"/>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsAssignmentGoal">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsAssignmentGoal/placeholder" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsAssignmentGoal/expression" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalPlaceholder"/>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsExpressionGoal">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsExpressionGoal/expression" />
-        </genClasses>
-        <!-- Goal call -->
-        <genClasses ecoreClass="SafeDS.ecore#//SdsAbstractChainedGoalExpression">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsAbstractChainedGoalExpression/receiver" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalCall">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalCall/argumentList" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalArgumentList">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalArgumentList/arguments" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalArgument">
-            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalArgument/parameter" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalArgument/value" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsGoalReference">
-            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsGoalReference/declaration" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsParenthesizedGoalExpression">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParenthesizedGoalExpression/expression" />
-        </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsParameterizedType">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParameterizedType/type" />
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchemaReference">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchemaReference/type" />
         </genClasses>
         <!-- Function -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsFunction">
@@ -209,9 +175,13 @@
         </genClasses>
         <genClasses image="false" ecoreClass="SafeDS.ecore#//SdsAbstractAssignee" />
         <genClasses ecoreClass="SafeDS.ecore#//SdsPlaceholder" />
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchemaPlaceholder" />
         <genClasses ecoreClass="SafeDS.ecore#//SdsWildcard" />
         <genClasses ecoreClass="SafeDS.ecore#//SdsYield">
             <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsYield/result" />
+        </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchemaYield">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchemaYield/type" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsBlockLambdaResult" />
         <genClasses ecoreClass="SafeDS.ecore#//SdsExpressionStatement">
@@ -299,6 +269,9 @@
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsNamedType/nullable" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsNamedType/typeArgumentList" />
         </genClasses>
+        <genClasses ecoreClass="SafeDS.ecore#//SdsSchemaType">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsSchemaType/declaration" />
+        </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsParenthesizedType">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsParenthesizedType/type" />
         </genClasses>
@@ -328,11 +301,10 @@
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsTypeProjection/type" />
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsTypeProjection/variance" />
         </genClasses>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsAbstractConstraintGoal"/>
-        <genClasses ecoreClass="SafeDS.ecore#//SdsTypeParameterConstraintGoal">
-            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsTypeParameterConstraintGoal/leftOperand" />
-            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsTypeParameterConstraintGoal/operator" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsTypeParameterConstraintGoal/rightOperand" />
+        <genClasses ecoreClass="SafeDS.ecore#//SdsTypeParameterConstraint">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsTypeParameterConstraint/leftOperand" />
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsTypeParameterConstraint/operator" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsTypeParameterConstraint/rightOperand" />
         </genClasses>
     </genPackages>
 </genmodel:GenModel>

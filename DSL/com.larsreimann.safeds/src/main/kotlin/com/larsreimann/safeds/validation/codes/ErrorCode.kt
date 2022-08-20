@@ -7,8 +7,6 @@ enum class ErrorCode {
     ResultMustHaveType,
     OnlyPredicatesCanHaveResultOfSchemaType,
 
-    SchemaTypeMustOmitName,
-
     CLASS_MUST_HAVE_UNIQUE_INHERITED_MEMBERS,
     CLASS_MUST_HAVE_UNIQUE_PARENT_TYPES,
     CLASS_MUST_INHERIT_ONLY_CLASSES,
@@ -101,4 +99,9 @@ enum class ErrorCode {
 
     AbstractPredicatesOnlyAllowedForSchemaEffects,
     AbstractPredicatesOnlyAllowedInStdlib,
+
+    // schema checking errors
+    DatasetCouldNotBeRead,
+    DatasetDoesNotHaveAColumn,
+    DatasetAlreadyHasAColumn,
 }

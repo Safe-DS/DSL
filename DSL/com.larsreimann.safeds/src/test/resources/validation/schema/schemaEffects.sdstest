@@ -5,4 +5,4 @@ abstract predicate »abstractPredicate«()
 
 // no_semantic_error "Abstract predicates can only be declared for schema effects."
 // semantic_error "Abstract predicates can only be declared in standard library."
-abstract predicate »»$CheckColumn««()
+abstract predicate »»$checkColumn««()

@@ -13,6 +13,7 @@ import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionStatement
 import com.larsreimann.safeds.safeDS.SdsFunction
+import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsWildcard
 import com.larsreimann.safeds.stdlibAccess.hasNoSideEffects
@@ -67,6 +68,8 @@ fun SdsAbstractCallable?.callableHasNoSideEffects(resultIfUnknown: Boolean = fal
         is SdsClass -> true
         is SdsEnumVariant -> true
         is SdsFunction -> hasNoSideEffects()
+        // TODO: Correct?
+        is SdsPredicate -> false
 
         else -> throw IllegalArgumentException("Cannot handle callable of type '${this::class.simpleName}'.")
     }

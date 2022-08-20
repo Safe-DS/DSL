@@ -1,10 +1,10 @@
 package com.larsreimann.safeds.constant
 
-import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraintGoal
+import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
- * The possible operators for an [SdsTypeParameterConstraintGoal].
+ * The possible operators for an [SdsTypeParameterConstraint].
  */
 @ExperimentalSdsApi
 enum class SdsTypeParameterConstraintOperator(val operator: String) {
@@ -27,12 +27,12 @@ enum class SdsTypeParameterConstraintOperator(val operator: String) {
 }
 
 /**
- * Returns the [SdsTypeParameterConstraintOperator] of this [SdsTypeParameterConstraintGoal].
+ * Returns the [SdsTypeParameterConstraintOperator] of this [SdsTypeParameterConstraint].
  *
  * @throws IllegalArgumentException If the operator is unknown.
  */
 @ExperimentalSdsApi
-fun SdsTypeParameterConstraintGoal.operator(): SdsTypeParameterConstraintOperator {
+fun SdsTypeParameterConstraint.operator(): SdsTypeParameterConstraintOperator {
     return SdsTypeParameterConstraintOperator.values().firstOrNull { it.operator == this.operator }
         ?: throw IllegalArgumentException("Unknown type parameter constraint operator '$operator'.")
 }
