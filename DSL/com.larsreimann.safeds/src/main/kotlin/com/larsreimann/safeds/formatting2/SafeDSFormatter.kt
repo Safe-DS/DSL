@@ -823,22 +823,22 @@ class SafeDSFormatter : AbstractFormatter2() {
 
             is SdsBlock -> {
                 val internalPadding: KFunction1<Format, Unit>
-                if (obj.statements.isEmpty())
+                if (obj.statements.isEmpty()) {
                     internalPadding = noSpace
-                else
+                } else {
                     internalPadding = newLine
+                }
 
                 val statementsSuffix: KFunction1<Format, Unit>
-                if (obj.eContainer() is SdsConstraint || obj.eContainer() is SdsPredicate)
+                if (obj.eContainer() is SdsConstraint || obj.eContainer() is SdsPredicate) {
                     statementsSuffix = noSpace
-                else
+                } else {
                     statementsSuffix = newLine
-
+                }
 
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
                 doc.append(openingBrace, internalPadding)
-
 
                 // Feature "statements"
                 obj.statements.forEach {
@@ -846,8 +846,9 @@ class SafeDSFormatter : AbstractFormatter2() {
                 }
 
                 // Keywords "," (for SdsConstraint or SdsPredicate)
-                if (statementsSuffix == noSpace)
+                if (statementsSuffix == noSpace) {
                     doc.formatKeyword(obj, ",", noSpace, newLine)
+                }
 
                 // Keyword "}"
                 val closingBrace = obj.regionForKeyword("}")
