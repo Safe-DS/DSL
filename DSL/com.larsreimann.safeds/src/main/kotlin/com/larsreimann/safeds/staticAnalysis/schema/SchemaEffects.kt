@@ -312,7 +312,7 @@ sealed interface ArgResult {
 
     class SchemaResultValue(
         val schemaResult: SchemaResult,
-        param: SdsParameter
+        param: SdsParameter,
     ) : ResultWithParam(param)
 
     class DataTypeValue(
@@ -330,13 +330,11 @@ private fun getArgumentValueResult(
     parmArgPairs: List<ParmArgPairs>,
     valueResultStack: ArrayDeque<List<ArgResult>>,
 ): ArgResult {
-
     val thisParam = argument.parameterOrNull() ?: return ArgResult.UnResolved
 
     // getting the parameter or typeparameter that the argument refers to
     val referedParam = predicateArgToParamOrNull(argument)
     val referedTypeParam = referedTypeParamOrNull(argument)
-
 
     // Try to resolve to already resolved arguments (incase of nested call)
     val resolvedValues = valueResultStack.lastOrNull()
@@ -345,7 +343,7 @@ private fun getArgumentValueResult(
         for (argResult in resolvedValues) {
             if (argResult is ArgResult.ResultWithParam) {
                 val typeParamFound = referedTypeParam != null &&
-                        referedTypeParamOrNull(argResult.param) == referedTypeParam
+                    referedTypeParamOrNull(argResult.param) == referedTypeParam
 
                 if (argResult.param == referedParam || typeParamFound) {
                     argResult.param = thisParam
@@ -355,18 +353,19 @@ private fun getArgumentValueResult(
         }
     }
 
-
     val schemaResult = when (val owner = predicateArgToSchemaOwner(argument)) {
         is SchemaOwner.Assignee -> localContext.get(owner.assignee)
         is SchemaOwner.CurrentCaller -> workflowContext.get(SchemaOwner.CurrentCaller)
         else -> null
     }
 
-    if (schemaResult != null)
+    if (schemaResult != null) {
         return ArgResult.SchemaResultValue(schemaResult, thisParam)
+    }
 
-    if (referedParam == null)
+    if (referedParam == null) {
         return ArgResult.UnResolved
+    }
 
     val isVariadic = referedParam.isVariadic
 

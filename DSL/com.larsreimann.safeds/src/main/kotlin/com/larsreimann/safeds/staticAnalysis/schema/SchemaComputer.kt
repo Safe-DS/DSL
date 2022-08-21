@@ -114,14 +114,14 @@ private fun inferSchema(
             val param = it.parameterOrNull() ?: return@mapNotNull null
             ParmArgPairs.Parm_Arg_Pair(Pair(param, it))
         } +
-                functionCall.typeArgumentsOrEmpty().mapNotNull {
-                    val typeParam = it.typeParameterOrNull() ?: return@mapNotNull null
+            functionCall.typeArgumentsOrEmpty().mapNotNull {
+                val typeParam = it.typeParameterOrNull() ?: return@mapNotNull null
 
-                    if (typeParam.hasSchemaKind()) {
-                        return@mapNotNull null
-                    }
-                    ParmArgPairs.TypeParm_TypeArg_Pair(Pair(typeParam, it))
+                if (typeParam.hasSchemaKind()) {
+                    return@mapNotNull null
                 }
+                ParmArgPairs.TypeParm_TypeArg_Pair(Pair(typeParam, it))
+            }
 
     // Inside constraint block
     val predicateAssignments = function.constraintStatementsOrEmpty()
@@ -151,7 +151,6 @@ internal fun inferSchema(
     predicate: SdsPredicate,
     valueResultStack: ArrayDeque<List<ArgResult>>,
 ): SchemaResult {
-
     val predicateAssignments = predicate.assignmentsOrEmpty()
 
     val resolvedPredicateVars = resolvePredicateVars(
@@ -164,8 +163,9 @@ internal fun inferSchema(
     val schemaResult = resolvedPredicateVars
         .mapNotNull {
             val schemaYield = it.key as? SdsSchemaYield
-            if (schemaYield == null)
+            if (schemaYield == null) {
                 return@mapNotNull null
+            }
             it.value
         }.firstOrNull() ?: return SchemaResult.UnComputable
 
@@ -178,7 +178,6 @@ private fun resolvePredicateVars(
     parmArgPairs: List<ParmArgPairs>,
     valueResultStack: ArrayDeque<List<ArgResult>> = ArrayDeque(),
 ): MutableMap<SdsAbstractAssignee, SchemaResult>? {
-
     val resolvedPredicateVars: MutableMap<SdsAbstractAssignee, SchemaResult> = mutableMapOf()
 
     for (predicateAssignment in predicateAssignments) {
