@@ -1,0 +1,67 @@
+package tests.validation.schemaTest.predicateTest
+
+class Dataset <CurrentSchema :: $SchemaType> {
+
+    static fun loadDataset <InitialSchema :: $SchemaType>(@Constant datasetPath: String) -> dataset: Dataset<InitialSchema> {
+        constraint {
+            yield ::InitialSchema = $readSchema(datasetPath)
+        }
+    }
+
+    fun checkColumn <SchemaOut :: $SchemaType>(@Constant vararg columnName: String) ->(dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = $checkColumn(::CurrentSchema, columnName)
+        }
+    }
+
+    fun funWithPred <NewColumnDataType, SchemaOut :: $SchemaType>(
+        @Constant columnName1: String,
+        @Constant columnName2: String,
+        @Constant columnName3: String,
+        @Constant columnName4: String,
+        @Constant columnName5: String,
+    ) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = predOuter <NewColumnDataType>(::CurrentSchema, columnName1, columnName2, columnName3, columnName4, columnName5)
+        }
+    }
+}
+
+predicate predOuter <NewColDataType, SchemaOut::$SchemaType, SchemaIn::$SchemaType>(
+    ::SchemaIn,
+    columnName1: String,
+    columnName2: String,
+    columnName3: String,
+    columnName4: String,
+    columnName5: String,
+) -> ::SchemaOut {
+    val ::S1 = $removeColumn(::SchemaIn, columnName1),
+    val ::S2 = $renameColumn(::S1, columnName2, columnName3),
+    yield ::SchemaOut = predInner <NewColDataType>(::S2, columnName4, columnName5)
+}
+
+predicate predInner <NewDataType, SchemaOut::$SchemaType, SchemaIn::$SchemaType>(
+    ::SchemaIn,
+    colName1: String,
+    colName2: String,
+) -> ::SchemaOut {
+    val ::S1 = $removeColumn(::SchemaIn, colName1),
+    yield ::SchemaOut = $addColumn <NewDataType>(::S1, colName2)
+}
+
+workflow myWorkflow {
+    // no_semantic_error "Dataset could not be read."
+    val dataset = Dataset.loadDataset(»"./src/test/resources/schema/dummyData.csv"«);
+    val dataResult = dataset.funWithPred <String?>("Column1", "Column2", "foo", "Column4", "bar");
+
+    // semantic_error "Dataset does not have column named 'Column1'."
+    dataResult.checkColumn(»"Column1"«);
+    // semantic_error "Dataset does not have column named 'Column2'."
+    dataResult.checkColumn(»"Column2"«);
+    // no_semantic_error "Dataset does not have column named 'foo'."
+    dataResult.checkColumn(»"foo"«);
+    // semantic_error "Dataset does not have column named 'Column4'."
+    dataResult.checkColumn(»"Column4"«);
+    // no_semantic_error "Dataset does not have column named 'bar'."
+    dataResult.checkColumn(»"bar"«);
+}

@@ -264,9 +264,18 @@ fun SdsPredicate?.parametersOrEmpty(): List<SdsParameter> {
     return this?.parameterList?.parameters.orEmpty()
 }
 
+fun SdsPredicate?.typeParametersOrEmpty(): List<SdsTypeParameter> {
+    return this?.typeParameterList?.typeParameters.orEmpty()
+}
+
 @ExperimentalSdsApi
 fun SdsPredicate?.resultsOrEmpty(): List<SdsResult> {
     return this?.resultList?.results.orEmpty()
+}
+
+@ExperimentalSdsApi
+fun SdsPredicate?.assignmentsOrEmpty(): List<SdsAssignment> {
+    return this?.body?.statements?.filterIsInstance<SdsAssignment>().orEmpty()
 }
 
 // SdsProtocol -------------------------------------------------------------------------------------

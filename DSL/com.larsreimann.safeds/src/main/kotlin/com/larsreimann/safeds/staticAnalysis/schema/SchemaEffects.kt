@@ -9,6 +9,7 @@ import com.larsreimann.safeds.emf.typeArgumentsOrEmpty
 import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractLiteral
+import com.larsreimann.safeds.safeDS.SdsAbstractObject
 import com.larsreimann.safeds.safeDS.SdsArgument
 import com.larsreimann.safeds.safeDS.SdsCall
 import com.larsreimann.safeds.safeDS.SdsClass
@@ -25,6 +26,8 @@ import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.staticAnalysis.assignedOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
+import com.larsreimann.safeds.staticAnalysis.linking.typeParameterOrNull
 import com.larsreimann.safeds.staticAnalysis.typing.ClassType
 import com.larsreimann.safeds.staticAnalysis.typing.type
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
@@ -40,18 +43,28 @@ internal fun inferSchema(
     workflowContext: Map<SchemaOwner, SchemaResult>,
     localContext: Map<SdsAbstractAssignee, SchemaResult>,
     parmArgPairs: List<ParmArgPairs>,
+    valueResultStack: ArrayDeque<List<ArgResult>>,
 ): SchemaResult {
-    val argumentValueResults =
-        predicateCall.argumentsOrEmpty().map {
-            getArgumentValueResult(it, workflowContext, localContext, parmArgPairs)
-        } +
-            predicateCall.typeArgumentsOrEmpty().map {
-                getTypeArgumentValueResult(it, parmArgPairs)
-            }
+    val argumentResults = predicateCall.argumentsOrEmpty().map {
+        getArgumentValueResult(
+            it,
+            workflowContext,
+            localContext,
+            parmArgPairs,
+            valueResultStack,
+        )
+    }
+    val typeArgumentResults = predicateCall.typeArgumentsOrEmpty().map {
+        getTypeArgumentValueResult(
+            it,
+            parmArgPairs,
+            valueResultStack,
+        )
+    }
+    val argumentValueResults = argumentResults + typeArgumentResults
 
     try {
         return when (predicate.nameToSchemaEffect()) {
-            SdsSchemaEffect.NoSchemaEffect -> SchemaResult.UnComputable
             SdsSchemaEffect.ReadSchemaEffect -> readSchemaEffect(predicateCall, argumentValueResults)
             SdsSchemaEffect.CheckColumnEffect -> checkColumn(argumentValueResults)
             SdsSchemaEffect.RemoveColumnEffect -> removeColumn(argumentValueResults)
@@ -59,6 +72,10 @@ internal fun inferSchema(
             SdsSchemaEffect.RenameColumnEffect -> renameColumn(argumentValueResults)
             SdsSchemaEffect.AddColumnEffect -> addColumn(argumentValueResults)
             SdsSchemaEffect.ChangeColumnTypeEffect -> changeColumnType(argumentValueResults)
+            SdsSchemaEffect.NoSchemaEffect -> {
+                valueResultStack.addLast(argumentValueResults)
+                inferSchema(predicate, valueResultStack)
+            }
         }
     } catch (e: ClassCastException) {
         return SchemaResult.UnComputable
@@ -270,22 +287,38 @@ private fun changeColumnType(
 }
 
 sealed interface ParmArgPairs {
-    class Parm_Arg_Pair(val parm_Arg: Pair<SdsParameter, SdsArgument>) : ParmArgPairs
-    class TypeParm_TypeArg_Pair(val Typeparm_TypeArg: Pair<SdsTypeParameter, SdsTypeArgument>) : ParmArgPairs
+    class Parm_Arg_Pair(val parm_arg: Pair<SdsParameter, SdsArgument>) : ParmArgPairs
+    class TypeParm_TypeArg_Pair(val typeParm_typeArg: Pair<SdsTypeParameter, SdsTypeArgument>) : ParmArgPairs
 }
 
 sealed interface ArgResult {
     object UnResolved : ArgResult
 
-    abstract class AbstractVariadicResult : ArgResult
-    abstract class AbstractSimpleResult : ArgResult
+    abstract class ResultWithParam(var param: SdsParameter) : ArgResult
+    abstract class ResultWithTypeParam(var typeParam: SdsTypeParameter) : ArgResult
 
-    class StringValue(val stringArg: Pair<String, SdsArgument>) : AbstractSimpleResult()
-    class StringListValue(val stringListArg: List<Pair<String, SdsArgument>>) : AbstractVariadicResult()
+    abstract class VariadicResult(param: SdsParameter) : ResultWithParam(param)
+    abstract class SimpleResult(param: SdsParameter) : ResultWithParam(param)
 
-    class SchemaResultValue(val schemaResult: SchemaResult) : ArgResult
+    class StringValue(
+        val stringArg: Pair<String, SdsArgument>,
+        param: SdsParameter,
+    ) : SimpleResult(param)
 
-    class DataTypeValue(val qualifiedNameArg: Pair<QualifiedName, SdsTypeArgument>) : ArgResult
+    class StringListValue(
+        val stringListArg: List<Pair<String, SdsArgument>>,
+        param: SdsParameter,
+    ) : VariadicResult(param)
+
+    class SchemaResultValue(
+        val schemaResult: SchemaResult,
+        param: SdsParameter
+    ) : ResultWithParam(param)
+
+    class DataTypeValue(
+        val qualifiedNameArg: Pair<QualifiedName, SdsTypeArgument>,
+        typeParm: SdsTypeParameter,
+    ) : ResultWithTypeParam(typeParm)
 }
 
 // Helper functions --------------------------------------------------------------------------------
@@ -295,28 +328,55 @@ private fun getArgumentValueResult(
     workflowContext: Map<SchemaOwner, SchemaResult>,
     localContext: Map<SdsAbstractAssignee, SchemaResult>,
     parmArgPairs: List<ParmArgPairs>,
+    valueResultStack: ArrayDeque<List<ArgResult>>,
 ): ArgResult {
+
+    val thisParam = argument.parameterOrNull() ?: return ArgResult.UnResolved
+
+    // getting the parameter or typeparameter that the argument refers to
+    val referedParam = predicateArgToParamOrNull(argument)
+    val referedTypeParam = referedTypeParamOrNull(argument)
+
+
+    // Try to resolve to already resolved arguments (incase of nested call)
+    val resolvedValues = valueResultStack.lastOrNull()
+
+    if (resolvedValues != null) {
+        for (argResult in resolvedValues) {
+            if (argResult is ArgResult.ResultWithParam) {
+                val typeParamFound = referedTypeParam != null &&
+                        referedTypeParamOrNull(argResult.param) == referedTypeParam
+
+                if (argResult.param == referedParam || typeParamFound) {
+                    argResult.param = thisParam
+                    return argResult
+                }
+            }
+        }
+    }
+
+
     val schemaResult = when (val owner = predicateArgToSchemaOwner(argument)) {
         is SchemaOwner.Assignee -> localContext.get(owner.assignee)
         is SchemaOwner.CurrentCaller -> workflowContext.get(SchemaOwner.CurrentCaller)
         else -> null
     }
 
-    if (schemaResult != null) {
-        return ArgResult.SchemaResultValue(schemaResult)
-    }
+    if (schemaResult != null)
+        return ArgResult.SchemaResultValue(schemaResult, thisParam)
 
-    // Try to resolve String(s)
-    val referedParam = predicateArgToParamOrNull(argument)
-        ?: return ArgResult.UnResolved
+    if (referedParam == null)
+        return ArgResult.UnResolved
+
     val isVariadic = referedParam.isVariadic
 
+    // Try to resolve String(s)
     val strings = parmArgPairs.mapNotNull {
         val argPair = it as? ParmArgPairs.Parm_Arg_Pair
             ?: return@mapNotNull null
 
-        val pram = argPair.parm_Arg.first
-        val arg = argPair.parm_Arg.second
+        val pram = argPair.parm_arg.first
+        val arg = argPair.parm_arg.second
 
         if (pram != referedParam) {
             return@mapNotNull null
@@ -334,10 +394,10 @@ private fun getArgumentValueResult(
 
     if (!strings.isEmpty()) {
         if (isVariadic) {
-            return ArgResult.StringListValue(strings)
+            return ArgResult.StringListValue(strings, thisParam)
         }
         if (!isVariadic && strings.count() == 1) {
-            return ArgResult.StringValue(strings.first())
+            return ArgResult.StringValue(strings.first(), thisParam)
         }
     }
 
@@ -347,17 +407,34 @@ private fun getArgumentValueResult(
 private fun getTypeArgumentValueResult(
     typeArgument: SdsTypeArgument,
     parmArgPairs: List<ParmArgPairs>,
+    valueResultStack: ArrayDeque<List<ArgResult>>,
 ): ArgResult {
-    // Try to resolve Datatype
-    val referedTypeParam = predicateTypeArgToTypeParamOrNull(typeArgument)
+    val thisTypeParam = typeArgument.typeParameterOrNull()
         ?: return ArgResult.UnResolved
 
+    val referedTypeParam = predicateTypeArgToTypeParamOrNull(typeArgument)
+
+    // Try to resolve to already resolved arguments (incase of nested call)
+    val resolvedValues = valueResultStack.lastOrNull()
+
+    if (resolvedValues != null) {
+        for (argResult in resolvedValues) {
+            if (argResult is ArgResult.ResultWithTypeParam &&
+                referedTypeParam == argResult.typeParam
+            ) {
+                argResult.typeParam = thisTypeParam
+                return argResult
+            }
+        }
+    }
+
+    // Try to resolve Datatype
     val datatype = parmArgPairs.mapNotNull {
         val argPair = it as? ParmArgPairs.TypeParm_TypeArg_Pair
             ?: return@mapNotNull null
 
-        val tPram = argPair.Typeparm_TypeArg.first
-        val tArg = argPair.Typeparm_TypeArg.second
+        val tPram = argPair.typeParm_typeArg.first
+        val tArg = argPair.typeParm_typeArg.second
 
         if (tPram != referedTypeParam) {
             return@mapNotNull null
@@ -370,7 +447,7 @@ private fun getTypeArgumentValueResult(
     }
 
     if (datatype.count() == 1) {
-        return ArgResult.DataTypeValue(datatype.first())
+        return ArgResult.DataTypeValue(datatype.first(), thisTypeParam)
     }
 
     return ArgResult.UnResolved // Could not resolve
@@ -464,12 +541,34 @@ private fun predicateArgToSchemaOwner(sdsArgument: SdsArgument): SchemaOwner? {
     return null
 }
 
+/*
+ * Only used for Predicate's arguments
+ */
+@OptIn(ExperimentalSdsApi::class)
+private fun referedTypeParamOrNull(sdsObject: SdsAbstractObject): SdsTypeParameter? {
+    var current: EObject? = sdsObject
+    while (current != null) {
+        current = when {
+            current.eIsProxy() -> return null
+            current is SdsArgument -> current.value
+            current is SdsSchemaReference -> current.type
+
+            current is SdsParameter -> current.type
+
+            current is SdsSchemaType -> current.declaration
+            current is SdsTypeParameter && current.hasSchemaKind() -> return current
+            else -> return null
+        }
+    }
+    return null
+}
+
 private fun <ReturnType> variadicArgValue(
     lastArgumentValueResult: ArgResult?,
 ): List<ReturnType>? {
     return when (lastArgumentValueResult) {
-        is ArgResult.AbstractVariadicResult -> argValue<List<ReturnType>>(lastArgumentValueResult)
-        is ArgResult.AbstractSimpleResult -> listOfNotNull(argValue<ReturnType>(lastArgumentValueResult))
+        is ArgResult.VariadicResult -> argValue<List<ReturnType>>(lastArgumentValueResult)
+        is ArgResult.SimpleResult -> listOfNotNull(argValue<ReturnType>(lastArgumentValueResult))
         else -> null
     }
 }
