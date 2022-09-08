@@ -22,7 +22,7 @@ import org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
 plugins {
     base
     idea
-    id("org.jetbrains.kotlinx.kover") version "0.5.1"
+    id("org.jetbrains.kotlinx.kover") version "0.6.0"
 
     kotlin("jvm") version "1.7.10" apply false
     id("com.github.node-gradle.node") version "3.4.0" apply false
