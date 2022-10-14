@@ -7,6 +7,7 @@ plugins {
     java
     kotlin("jvm")
     application
+    id("org.jetbrains.kotlinx.kover")
 }
 
 java {
@@ -17,6 +18,23 @@ java {
 
 application {
     mainClass.set("com.larsreimann.safeds.ide.ServerLauncher2")
+}
+
+kover {
+    filters {
+        classes {
+            excludes += "com.larsreimann.safeds.ide.contentassist.antlr.*"
+        }
+    }
+
+    verify {
+        rule {
+            name = "Minimal line coverage rate in percents"
+            bound {
+                minValue = 33
+            }
+        }
+    }
 }
 
 // Dependencies --------------------------------------------------------------------------------------------------------
@@ -45,10 +63,6 @@ sourceSets {
 
 // Tasks ---------------------------------------------------------------------------------------------------------------
 
-val koverExcludes = listOf(
-    "com.larsreimann.safeds.ide.contentassist.antlr.*"
-)
-
 tasks {
     processResources {
         val generateXtextLanguage = rootProject.tasks.named("generateXtextLanguage")
@@ -57,27 +71,5 @@ tasks {
 
     test {
         useJUnitPlatform()
-
-        extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
-            excludes = koverExcludes
-        }
-    }
-
-    koverHtmlReport {
-        excludes = koverExcludes
-    }
-
-    koverXmlReport {
-        excludes = koverExcludes
-    }
-
-    koverVerify {
-        excludes = koverExcludes
-        rule {
-            name = "Minimal line coverage rate in percents"
-            bound {
-                minValue = 33
-            }
-        }
     }
 }
