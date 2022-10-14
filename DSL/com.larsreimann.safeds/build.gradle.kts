@@ -13,6 +13,7 @@ plugins {
     `maven-publish`
     signing
     id("org.jetbrains.dokka")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 val javadocJar by tasks.creating(Jar::class) {
@@ -91,6 +92,30 @@ idea {
     }
 }
 
+kover {
+    filters {
+        classes {
+            excludes += listOf(
+                "com.larsreimann.safeds.parser.antlr.*",
+                "com.larsreimann.safeds.serializer.AbstractSafeDSSemanticSequencer",
+                "com.larsreimann.safeds.serializer.AbstractSafeDSSyntacticSequencer",
+                "com.larsreimann.safeds.services.*",
+                "com.larsreimann.safeds.safeDS.*",
+                "com.larsreimann.safeds.testing.*",
+            )
+        }
+    }
+
+    verify {
+        rule {
+            name = "Minimal line coverage rate in percents"
+            bound {
+                minValue = 80
+            }
+        }
+    }
+}
+
 // Dependencies --------------------------------------------------------------------------------------------------------
 
 dependencies {
@@ -135,15 +160,6 @@ sourceSets {
 
 // Tasks ---------------------------------------------------------------------------------------------------------------
 
-val koverExcludes = listOf(
-    "com.larsreimann.safeds.parser.antlr.*",
-    "com.larsreimann.safeds.serializer.AbstractSafeDSSemanticSequencer",
-    "com.larsreimann.safeds.serializer.AbstractSafeDSSyntacticSequencer",
-    "com.larsreimann.safeds.services.*",
-    "com.larsreimann.safeds.safeDS.*",
-    "com.larsreimann.safeds.testing.*",
-)
-
 tasks {
     build {
         dependsOn(project.tasks.named("generateStdlibDocumentation"))
@@ -178,28 +194,6 @@ tasks {
 
         minHeapSize = "512m"
         maxHeapSize = "1024m"
-
-        extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
-            excludes = koverExcludes
-        }
-    }
-
-    koverHtmlReport {
-        excludes = koverExcludes
-    }
-
-    koverXmlReport {
-        excludes = koverExcludes
-    }
-
-    koverVerify {
-        excludes = koverExcludes
-        rule {
-            name = "Minimal line coverage rate in percents"
-            bound {
-                minValue = 80
-            }
-        }
     }
 }
 
