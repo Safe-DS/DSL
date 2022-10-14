@@ -22,7 +22,7 @@ import org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
 plugins {
     base
     idea
-    id("org.jetbrains.kotlinx.kover") version "0.5.1"
+    id("org.jetbrains.kotlinx.kover") version "0.6.1"
 
     kotlin("jvm") version "1.7.20" apply false
     id("com.github.node-gradle.node") version "3.4.0" apply false
@@ -39,24 +39,39 @@ idea {
     }
 }
 
-kover {
-    coverageEngine.set(kotlinx.kover.api.CoverageEngine.INTELLIJ)
-    intellijEngineVersion.set("1.0.669")
-    this.disabledProjects = setOf(
-        "Safe-DS.DSL",
-        "com.larsreimann.safeds.vscode"
-    )
-}
+koverMerged {
+    enable()
 
-val koverExcludes = listOf(
-    "com.larsreimann.safeds.parser.antlr.*",
-    "com.larsreimann.safeds.serializer.AbstractSafeDSSemanticSequencer",
-    "com.larsreimann.safeds.serializer.AbstractSafeDSSyntacticSequencer",
-    "com.larsreimann.safeds.services.*",
-    "com.larsreimann.safeds.safeDS.*",
-    "com.larsreimann.safeds.testing.*",
-    "com.larsreimann.safeds.ide.contentassist.antlr.*"
-)
+    filters {
+        projects {
+            excludes += listOf(
+                "Safe-DS.DSL",
+                "com.larsreimann.safeds.vscode",
+            )
+        }
+
+        classes {
+            excludes += listOf(
+                "com.larsreimann.safeds.parser.antlr.*",
+                "com.larsreimann.safeds.serializer.AbstractSafeDSSemanticSequencer",
+                "com.larsreimann.safeds.serializer.AbstractSafeDSSyntacticSequencer",
+                "com.larsreimann.safeds.services.*",
+                "com.larsreimann.safeds.safeDS.*",
+                "com.larsreimann.safeds.testing.*",
+                "com.larsreimann.safeds.ide.contentassist.antlr.*",
+            )
+        }
+    }
+
+    verify {
+        rule {
+            name = "Minimal line coverage rate in percents"
+            bound {
+                minValue = 80
+            }
+        }
+    }
+}
 
 // Variables -----------------------------------------------------------------------------------------------------------
 
@@ -87,19 +102,19 @@ tasks.register("generateXtextLanguage") {
     inputs.files(
         "$rootPath/com.larsreimann.safeds/model/SafeDS.ecore",
         "$rootPath/com.larsreimann.safeds/model/SafeDS.genmodel",
-        "$rootPath/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/SafeDS.xtext"
+        "$rootPath/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/SafeDS.xtext",
     )
     outputs.dirs(
         "$rootPath/com.larsreimann.safeds/META-INF",
         "$rootPath/com.larsreimann.safeds/emf-gen",
         "$rootPath/com.larsreimann.safeds/src-gen",
         "$rootPath/com.larsreimann.safeds.ide/src-gen",
-        "$rootPath/com.larsreimann.safeds.tests"
+        "$rootPath/com.larsreimann.safeds.tests",
     )
     outputs.files(
         "$rootPath/com.larsreimann.safeds/build.properties",
         "$rootPath/com.larsreimann.safeds/plugin.properties",
-        "$rootPath/com.larsreimann.safeds/plugin.xml"
+        "$rootPath/com.larsreimann.safeds/plugin.xml",
     )
 
     doFirst {
@@ -110,12 +125,12 @@ tasks.register("generateXtextLanguage") {
 
                 projectMapping(
                     projectName = "com.larsreimann.safeds",
-                    path = "$rootPath/com.larsreimann.safeds"
+                    path = "$rootPath/com.larsreimann.safeds",
                 )
 
                 projectMapping(
                     projectName = "com.larsreimann.safeds.ide",
-                    path = "$rootPath/com.larsreimann.safeds.ide"
+                    path = "$rootPath/com.larsreimann.safeds.ide",
                 )
             }
 
@@ -123,7 +138,7 @@ tasks.register("generateXtextLanguage") {
 
             ecoreGenerator(
                 genModel = "platform:/resource/com.larsreimann.safeds/model/SafeDS.genmodel",
-                srcPaths = listOf("platform:/resource/com.larsreimann.safeds/src/main/kotlin")
+                srcPaths = listOf("platform:/resource/com.larsreimann.safeds/src/main/kotlin"),
             )
 
             xtextGenerator {
@@ -164,32 +179,32 @@ tasks.register("generateXtextLanguage") {
                     setFormatter(
                         Formatter2Fragment2().apply {
                             isGenerateStub = true
-                        }
+                        },
                     )
 
                     setGenerator(
                         GeneratorFragment2().apply {
                             isGenerateXtendMain = false
-                        }
+                        },
                     )
 
                     setSerializer(
                         SerializerFragment2().apply {
                             isGenerateStub = true
-                        }
+                        },
                     )
 
                     setValidator(
                         ValidatorFragment2().apply {
                             isGenerateDeprecationValidation = true
-                        }
+                        },
                     )
 
                     setJunitSupport(
                         JUnitFragment().apply {
                             setJunitVersion("5")
                             isGenerateStub = false
-                        }
+                        },
                     )
                 }
             }
@@ -200,33 +215,13 @@ tasks.register("generateXtextLanguage") {
         delete(
             fileTree("$rootPath/com.larsreimann.safeds/src") {
                 include("**/*.xtend")
-            }
+            },
         )
         delete(
             fileTree("$rootPath/com.larsreimann.safeds.ide/src") {
                 include("**/*.xtend")
-            }
+            },
         )
         delete(file("$rootPath/com.larsreimann.safeds.tests"))
-    }
-}
-
-tasks {
-    koverMergedHtmlReport {
-        excludes = koverExcludes
-    }
-
-    koverMergedXmlReport {
-        excludes = koverExcludes
-    }
-
-    koverMergedVerify {
-        excludes = koverExcludes
-        rule {
-            name = "Minimal line coverage rate in percents"
-            bound {
-                minValue = 80
-            }
-        }
     }
 }

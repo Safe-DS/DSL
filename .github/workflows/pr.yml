@@ -36,7 +36,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Test with Gradle
-        run: ./gradlew check
+        run: ./gradlew build koverMergedHtmlReport
 
       - name: Upload test report
         if: ${{ failure() }}
@@ -54,7 +54,7 @@ jobs:
         with:
           name: DSL test coverage
           # upload-artifact does not use working-directory
-          path: DSL/build/reports/kover/html/
+          path: DSL/build/reports/kover/merged/html/
 
   # Build and test Runtime > Runner component
   build-runtime-runner:
