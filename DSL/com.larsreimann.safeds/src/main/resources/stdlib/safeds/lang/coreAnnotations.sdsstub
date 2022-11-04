@@ -77,6 +77,21 @@ annotation Deprecated(
     removalVersion: String? = null,
 )
 
+@Description("The declaration might change without a major version bump.")
+@Target(
+    AnnotationTarget.Annotation,
+    AnnotationTarget.Attribute,
+    AnnotationTarget.Class,
+    AnnotationTarget.Enum,
+    AnnotationTarget.EnumVariant,
+    AnnotationTarget.Function,
+    AnnotationTarget.Parameter,
+    AnnotationTarget.Result,
+    AnnotationTarget.Step,
+    AnnotationTarget.TypeParameter,
+)
+annotation Experimental
+
 @Description("The function has no side effects and returns the same results for the same arguments.")
 @Target(AnnotationTarget.Function)
 annotation Pure

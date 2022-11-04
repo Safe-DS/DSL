@@ -28,6 +28,7 @@ import com.larsreimann.safeds.validation.expressions.TemplateStringChecker
 import com.larsreimann.safeds.validation.other.AnnotationCallChecker
 import com.larsreimann.safeds.validation.other.ArgumentListChecker
 import com.larsreimann.safeds.validation.other.DeprecationChecker
+import com.larsreimann.safeds.validation.other.ExperimentalChecker
 import com.larsreimann.safeds.validation.other.ProtocolChecker
 import com.larsreimann.safeds.validation.other.TypeArgumentListChecker
 import com.larsreimann.safeds.validation.schema.SchemaChecker
@@ -106,6 +107,7 @@ import org.eclipse.xtext.validation.ComposedChecks
         AnnotationCallChecker::class,
         ArgumentListChecker::class,
         DeprecationChecker::class,
+        ExperimentalChecker::class,
         ProtocolChecker::class,
         TypeArgumentListChecker::class,
     ],

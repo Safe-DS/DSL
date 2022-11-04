@@ -8,6 +8,12 @@ enum class WarningCode {
     CorrespondingTypeParameterIsDeprecated,
     ReferencedDeclarationIsDeprecated,
 
+    // Experimental
+    AssignedDeclarationIsExperimental,
+    CorrespondingParameterIsExperimental,
+    CorrespondingTypeParameterIsExperimental,
+    ReferencedDeclarationIsExperimental,
+
     // Name conventions
     NameShouldBeLowerCamelCase,
     NameShouldBeUpperCamelCase,

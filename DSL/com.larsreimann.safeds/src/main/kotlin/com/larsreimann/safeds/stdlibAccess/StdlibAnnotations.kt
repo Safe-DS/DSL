@@ -33,6 +33,13 @@ object StdlibAnnotations {
     val Constant: QualifiedName = StdlibPackages.lang.append("Constant")
 
     /**
+     * The purpose of a declaration.
+     *
+     * @see descriptionOrNull
+     */
+    val Description: QualifiedName = StdlibPackages.lang.append("Description")
+
+    /**
      * The declaration should no longer be used.
      *
      * @see isDeprecated
@@ -40,11 +47,11 @@ object StdlibAnnotations {
     val Deprecated: QualifiedName = StdlibPackages.lang.append("Deprecated")
 
     /**
-     * The purpose of a declaration.
+     * The declaration might change without a major version bump.
      *
-     * @see descriptionOrNull
+     * @see isExperimental
      */
-    val Description: QualifiedName = StdlibPackages.lang.append("Description")
+    val Experimental: QualifiedName = StdlibPackages.lang.append("Experimental")
 
     /**
      * This parameter should only be used by expert users.
@@ -139,6 +146,13 @@ fun SdsParameter.isConstant(): Boolean {
  */
 fun SdsAbstractDeclaration.isDeprecated(): Boolean {
     return hasAnnotationCallTo(StdlibAnnotations.Deprecated)
+}
+
+/**
+ * Checks if the declaration is annotated with the `safeds.lang.Experimental` annotation.
+ */
+fun SdsAbstractDeclaration.isExperimental(): Boolean {
+    return hasAnnotationCallTo(StdlibAnnotations.Experimental)
 }
 
 /**
