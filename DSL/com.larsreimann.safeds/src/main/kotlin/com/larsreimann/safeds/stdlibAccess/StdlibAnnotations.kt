@@ -33,6 +33,13 @@ object StdlibAnnotations {
     val Constant: QualifiedName = StdlibPackages.lang.append("Constant")
 
     /**
+     * The purpose of a declaration.
+     *
+     * @see descriptionOrNull
+     */
+    val Description: QualifiedName = StdlibPackages.lang.append("Description")
+
+    /**
      * The declaration should no longer be used.
      *
      * @see isDeprecated
@@ -40,11 +47,11 @@ object StdlibAnnotations {
     val Deprecated: QualifiedName = StdlibPackages.lang.append("Deprecated")
 
     /**
-     * The purpose of a declaration.
+     * The declaration might change without a major version bump.
      *
-     * @see descriptionOrNull
+     * @see isExperimental
      */
-    val Description: QualifiedName = StdlibPackages.lang.append("Description")
+    val Experimental: QualifiedName = StdlibPackages.lang.append("Experimental")
 
     /**
      * This parameter should only be used by expert users.
@@ -142,6 +149,13 @@ fun SdsAbstractDeclaration.isDeprecated(): Boolean {
 }
 
 /**
+ * Checks if the declaration is annotated with the `safeds.lang.Experimental` annotation.
+ */
+fun SdsAbstractDeclaration.isExperimental(): Boolean {
+    return hasAnnotationCallTo(StdlibAnnotations.Experimental)
+}
+
+/**
  * Checks if the parameter is annotated with the `safeds.lang.Expert` annotation.
  */
 fun SdsParameter.isExpert(): Boolean {
@@ -177,7 +191,7 @@ fun SdsFunction.hasNoSideEffects(): Boolean {
 fun SdsCompilationUnit.pythonModuleOrNull(): String? {
     val value = annotationCallArgumentValueOrNull(
         StdlibAnnotations.PythonModule,
-        "qualifiedName"
+        "qualifiedName",
     )
     return (value as? SdsConstantString)?.value
 }
@@ -234,7 +248,7 @@ private fun SdsAbstractDeclaration.hasAnnotationCallTo(qualifiedName: QualifiedN
  */
 private fun SdsAbstractDeclaration.annotationCallArgumentValueOrNull(
     qualifiedName: QualifiedName,
-    parameterName: String
+    parameterName: String,
 ): SdsConstantExpression? {
     return uniqueAnnotationCallOrNull(qualifiedName)
         .argumentsOrEmpty()
