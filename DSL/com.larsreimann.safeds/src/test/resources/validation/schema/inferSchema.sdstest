@@ -116,18 +116,10 @@ workflow myWorkflow {
     // semantic_error "Dataset does not have column named 'Column4'."
     data3.checkColumn(»"Column4"«);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> main
     /* Change Column Type *************************************************************************/
 
     val data4 = dataset.changeColumnType<String?>("Column0");
 
-<<<<<<< HEAD
-
-=======
->>>>>>> main
     /* Keep Column ********************************************************************************/
 
     // semantic_error "Dataset does not have column named 'New'."
