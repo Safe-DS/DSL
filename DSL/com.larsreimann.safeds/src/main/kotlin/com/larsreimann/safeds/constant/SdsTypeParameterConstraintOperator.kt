@@ -7,6 +7,7 @@ import com.larsreimann.safeds.utils.ExperimentalSdsApi
  * The possible operators for an [SdsTypeParameterConstraint].
  */
 @ExperimentalSdsApi
+@Suppress("ktlint:trailing-comma-on-declaration-site")
 enum class SdsTypeParameterConstraintOperator(val operator: String) {
 
     /**
