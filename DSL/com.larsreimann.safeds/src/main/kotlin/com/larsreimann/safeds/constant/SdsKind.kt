@@ -8,6 +8,7 @@ import com.larsreimann.safeds.utils.ExperimentalSdsApi
  * The possible kinds for an [SdsTypeParameter].
  */
 @ExperimentalSdsApi
+@Suppress("ktlint:trailing-comma-on-declaration-site")
 enum class SdsKind(val kind: String?) {
     NoKind(null),
     SchemaKind("\$SchemaType"),

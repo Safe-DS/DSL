@@ -7,6 +7,7 @@ import com.larsreimann.safeds.utils.ExperimentalSdsApi
  * The possible [SdsSchemaEffect].
  */
 @ExperimentalSdsApi
+@Suppress("ktlint:trailing-comma-on-declaration-site")
 enum class SdsSchemaEffect(val effect: String?) {
     NoSchemaEffect(null),
     ReadSchemaEffect("\$readSchema"),
