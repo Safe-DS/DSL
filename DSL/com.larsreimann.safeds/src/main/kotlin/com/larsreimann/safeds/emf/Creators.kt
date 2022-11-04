@@ -634,22 +634,6 @@ fun SdsEnum.sdsEnumVariant(
     this.addVariant(createSdsEnumVariant(name, annotationCalls, typeParameters, parameters, constraint))
 }
 
-// /**
-// * Returns a new object of class [SdsExpressionGoal].
-// */
-// fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressionGoal {
-//    return factory.createSdsExpressionGoal().apply {
-//        this.expression = expression
-//    }
-// }
-
-// /**
-// * Adds a new object of class [SdsExpressionGoal] to the receiver.
-// */
-// fun SdsPredicate.sdsExpressionGoal(expression: SdsAbstractGoalExpression) {
-//    this.addGoal(createSdsExpressionGoal(expression))
-// }
-
 /**
  * Returns a new object of class [SdsExpressionLambda].
  */
