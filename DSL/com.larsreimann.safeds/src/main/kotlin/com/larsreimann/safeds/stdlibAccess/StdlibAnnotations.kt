@@ -191,7 +191,7 @@ fun SdsFunction.hasNoSideEffects(): Boolean {
 fun SdsCompilationUnit.pythonModuleOrNull(): String? {
     val value = annotationCallArgumentValueOrNull(
         StdlibAnnotations.PythonModule,
-        "qualifiedName"
+        "qualifiedName",
     )
     return (value as? SdsConstantString)?.value
 }
@@ -248,7 +248,7 @@ private fun SdsAbstractDeclaration.hasAnnotationCallTo(qualifiedName: QualifiedN
  */
 private fun SdsAbstractDeclaration.annotationCallArgumentValueOrNull(
     qualifiedName: QualifiedName,
-    parameterName: String
+    parameterName: String,
 ): SdsConstantExpression? {
     return uniqueAnnotationCallOrNull(qualifiedName)
         .argumentsOrEmpty()

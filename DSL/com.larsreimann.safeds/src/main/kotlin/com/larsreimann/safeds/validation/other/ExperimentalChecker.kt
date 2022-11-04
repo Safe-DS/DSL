@@ -27,7 +27,7 @@ class ExperimentalChecker : AbstractSafeDSChecker() {
             warning(
                 "The used annotation is experimental.",
                 Literals.SDS_ANNOTATION_CALL__ANNOTATION,
-                WarningCode.ReferencedDeclarationIsExperimental
+                WarningCode.ReferencedDeclarationIsExperimental,
             )
         }
     }
@@ -43,7 +43,7 @@ class ExperimentalChecker : AbstractSafeDSChecker() {
             warning(
                 "The assigned declaration is experimental.",
                 null,
-                WarningCode.AssignedDeclarationIsExperimental
+                WarningCode.AssignedDeclarationIsExperimental,
             )
         }
     }
@@ -55,7 +55,7 @@ class ExperimentalChecker : AbstractSafeDSChecker() {
             warning(
                 "The corresponding parameter is experimental.",
                 null,
-                WarningCode.CorrespondingParameterIsExperimental
+                WarningCode.CorrespondingParameterIsExperimental,
             )
         }
     }
@@ -67,7 +67,7 @@ class ExperimentalChecker : AbstractSafeDSChecker() {
             warning(
                 "The referenced declaration is experimental.",
                 Literals.SDS_NAMED_TYPE__DECLARATION,
-                WarningCode.ReferencedDeclarationIsExperimental
+                WarningCode.ReferencedDeclarationIsExperimental,
             )
         }
     }
@@ -79,7 +79,7 @@ class ExperimentalChecker : AbstractSafeDSChecker() {
             warning(
                 "The referenced declaration is experimental.",
                 Literals.SDS_REFERENCE__DECLARATION,
-                WarningCode.ReferencedDeclarationIsExperimental
+                WarningCode.ReferencedDeclarationIsExperimental,
             )
         }
     }
@@ -91,7 +91,7 @@ class ExperimentalChecker : AbstractSafeDSChecker() {
             warning(
                 "The corresponding type parameter is experimental.",
                 null,
-                WarningCode.CorrespondingTypeParameterIsExperimental
+                WarningCode.CorrespondingTypeParameterIsExperimental,
             )
         }
     }
