@@ -13,7 +13,5 @@ indent_size = 2
 
 [*.{kt,kts}]
 ktlint_disabled_rules = filename
-trailing_comma_on_declaration_site = true
 ij_kotlin_allow_trailing_comma = true
-trailing_comma_on_call_site = true
 ij_kotlin_allow_trailing_comma_on_call_site = true

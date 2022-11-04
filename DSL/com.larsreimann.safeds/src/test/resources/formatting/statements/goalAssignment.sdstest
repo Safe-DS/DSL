@@ -1,21 +1,12 @@
-predicate myPredicate() -> dataset: Dataset {
+predicate myPredicate() -> ::Schema {
     val
 
     intermediate1    =       goal1(arg1    ,      arg2),
-    val         intermediate2     =
-
-                (
-        goal2(arg3    ,      arg4)    ,
-
-                             goal3(arg5    ,      arg6)
-        )
+        goal2(arg3    ,      arg4)
 }
 // -----------------------------------------------------------------------------
 
-predicate myPredicate() -> dataset: Dataset {
+predicate myPredicate() -> ::Schema {
     val intermediate1 = goal1(arg1, arg2),
-    val intermediate2 = (
-        goal2(arg3, arg4),
-        goal3(arg5, arg6)
-    )
+    goal2(arg3, arg4)
 }

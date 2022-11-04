@@ -1,13 +1,43 @@
 package safeds.lang
 
 @Description("Reads the initial data schema of a dataset.")
-abstract predicate $ReadSchema <InitialSchema :: $SchemaType> (
-    datasetName: String,
-    datasetPath: String
-) -> :InitialSchema
+abstract predicate $readSchema <InitialSchema :: $SchemaType> (
+    datasetPath: String,
+) -> ::InitialSchema
 
-@Description("Checks if the columnName(s) exists in the data schema.")
-abstract predicate $CheckColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
-    :CurrentSchema,
-    vararg columnName: String
-) -> :SchemaOut
+@Description("Checks if the columns with the names 'columnName' exist in the data schema.")
+abstract predicate $checkColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    ::CurrentSchema,
+    vararg columnName: String,
+) -> ::SchemaOut
+
+@Description("Remove all the columns with the names 'columnName' from the data schema.")
+abstract predicate $removeColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    ::CurrentSchema,
+    vararg columnName: String,
+) -> ::SchemaOut
+
+@Description("Remove all the columns other than the ones with names 'columnName' from the data schema.")
+abstract predicate $keepColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    ::CurrentSchema,
+    vararg columnName: String,
+) -> ::SchemaOut
+
+@Description("Rename the column with name 'currentColumnName' to 'newColumnName' in the data schema if the column exists.")
+abstract predicate $renameColumn <CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    ::CurrentSchema,
+    currentColumnName: String,
+    newColumnName: String,
+) -> ::SchemaOut
+
+@Description("Add a column with name 'newColumnName' and datatype 'NewColumnDataType' in the data schema unless there is already one with the same name.")
+abstract predicate $addColumn <NewColumnDataType, CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    ::CurrentSchema,
+    newColumnName: String,
+) -> ::SchemaOut
+
+@Description("Change the datatype to 'NewColumnDataType' of a column with name 'ColumnName' in the data schema.")
+abstract predicate $changeColumnType <NewColumnDataType, CurrentSchema :: $SchemaType, SchemaOut :: $SchemaType> (
+    ::CurrentSchema,
+    columnName: String,
+) -> ::SchemaOut

@@ -1,17 +1,22 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
-import com.larsreimann.safeds.staticAnalysis.typing.ParameterizedType
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 
 /**
  * The possible [SdsSchemaEffect].
  */
 @ExperimentalSdsApi
+@Suppress("ktlint:trailing-comma-on-declaration-site")
 enum class SdsSchemaEffect(val effect: String?) {
     NoSchemaEffect(null),
-    ReadSchemaEffect("\$ReadSchema"),
-    CheckColumnEffect("\$CheckColumn");
+    ReadSchemaEffect("\$readSchema"),
+    CheckColumnEffect("\$checkColumn"),
+    RemoveColumnEffect("\$removeColumn"),
+    KeepColumnEffect("\$keepColumn"),
+    RenameColumnEffect("\$renameColumn"),
+    AddColumnEffect("\$addColumn"),
+    ChangeColumnTypeEffect("\$changeColumnType");
 
     override fun toString(): String {
         return effect ?: "NoSchemaEffect"
@@ -19,17 +24,7 @@ enum class SdsSchemaEffect(val effect: String?) {
 }
 
 @ExperimentalSdsApi
-private fun strToSchemaEffect(str: String): SdsSchemaEffect {
-    return SdsSchemaEffect.values().firstOrNull { it.effect == str }
-        ?: SdsSchemaEffect.NoSchemaEffect
-}
-
-@ExperimentalSdsApi
 fun SdsAbstractDeclaration.nameToSchemaEffect(): SdsSchemaEffect {
-    return strToSchemaEffect(this.name)
-}
-
-@ExperimentalSdsApi
-fun ParameterizedType.kindToSchemaEffect(): SdsSchemaEffect {
-    return strToSchemaEffect(this.kind)
+    return SdsSchemaEffect.values().firstOrNull { it.effect == this.name }
+        ?: SdsSchemaEffect.NoSchemaEffect
 }

@@ -2,19 +2,20 @@
 
 package com.larsreimann.safeds.staticAnalysis.typing
 
+import com.larsreimann.safeds.constant.SdsKind
 import com.larsreimann.safeds.emf.blockLambdaResultsOrEmpty
 import com.larsreimann.safeds.emf.closestAncestorOrNull
 import com.larsreimann.safeds.emf.containingEnumOrNull
 import com.larsreimann.safeds.emf.parametersOrEmpty
 import com.larsreimann.safeds.emf.resultsOrEmpty
 import com.larsreimann.safeds.emf.typeArgumentsOrEmpty
+import com.larsreimann.safeds.emf.typeParametersOrEmpty
 import com.larsreimann.safeds.emf.yieldsOrEmpty
 import com.larsreimann.safeds.naming.qualifiedNameOrNull
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractCallable
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
-import com.larsreimann.safeds.safeDS.SdsAbstractGoalExpression
 import com.larsreimann.safeds.safeDS.SdsAbstractLambda
 import com.larsreimann.safeds.safeDS.SdsAbstractObject
 import com.larsreimann.safeds.safeDS.SdsAbstractType
@@ -32,8 +33,6 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsFloat
 import com.larsreimann.safeds.safeDS.SdsFunction
-import com.larsreimann.safeds.safeDS.SdsGoalArgument
-import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsIndexedAccess
 import com.larsreimann.safeds.safeDS.SdsInfixOperation
 import com.larsreimann.safeds.safeDS.SdsInt
@@ -42,13 +41,15 @@ import com.larsreimann.safeds.safeDS.SdsMemberType
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
-import com.larsreimann.safeds.safeDS.SdsParameterizedType
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPrefixOperation
 import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
+import com.larsreimann.safeds.safeDS.SdsSchemaPlaceholder
+import com.larsreimann.safeds.safeDS.SdsSchemaReference
+import com.larsreimann.safeds.safeDS.SdsSchemaType
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.safeDS.SdsTemplateString
@@ -63,6 +64,7 @@ import com.larsreimann.safeds.staticAnalysis.classHierarchy.superClasses
 import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
 import com.larsreimann.safeds.stdlibAccess.StdlibClasses
 import com.larsreimann.safeds.stdlibAccess.getStdlibClassOrNull
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 
@@ -88,10 +90,12 @@ fun SdsAbstractObject.hasPrimitiveType(): Boolean {
 private fun EObject.inferType(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
+        // Check First
+        this is SdsSchemaPlaceholder -> this.inferTypeForDeclaration(context)
+
         this is SdsAbstractAssignee -> this.inferTypeForAssignee(context)
         this is SdsAbstractDeclaration -> this.inferTypeForDeclaration(context)
         this is SdsAbstractExpression -> this.inferTypeExpression(context)
-        this is SdsAbstractGoalExpression -> this.inferTypeExpression(context)
         this is SdsAbstractType -> this.inferTypeForType(context)
         this is SdsTypeArgument -> this.value.inferType(context)
         this is SdsTypeProjection -> this.type.inferTypeForType(context)
@@ -110,11 +114,18 @@ private fun SdsAbstractAssignee.inferTypeForAssignee(context: EObject): Type {
     }
 }
 
+@OptIn(ExperimentalSdsApi::class)
 private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Type {
     return when {
         this.eIsProxy() -> UnresolvedType
         this is SdsAttribute -> type.inferTypeForType(context)
-        this is SdsClass -> ClassType(this, isNullable = false)
+        this is SdsClass -> {
+            val typeParametersTypes = this.typeParametersOrEmpty()
+                .map { it.inferTypeForDeclaration(context) }
+                .filterIsInstance<ParameterisedType>()
+
+            ClassType(this, typeParametersTypes, isNullable = false)
+        }
         this is SdsEnum -> EnumType(this, isNullable = false)
         this is SdsEnumVariant -> EnumVariantType(this, isNullable = false)
         this is SdsFunction -> CallableType(
@@ -156,12 +167,14 @@ private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Ty
             return Any(context)
         }
         this is SdsResult -> type.inferTypeForType(context)
+        // For now all Schema placeholders are of type 'ParameterisedType(::$SchemaType)'
+        this is SdsSchemaPlaceholder -> ParameterisedType(this, SdsKind.SchemaKind.toString())
         this is SdsStep -> CallableType(
             parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
             resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         )
         // Todo: resolve TypeParameter for "non kind" TypeParameter too
-        this is SdsTypeParameter && this.kind != null -> ParameterizedType(kind)
+        this is SdsTypeParameter && this.kind != null -> ParameterisedType(this, kind)
         else -> Any(context)
     }
 }
@@ -184,7 +197,13 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
             blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) },
         )
         this is SdsCall -> when (val callable = callableOrNull()) {
-            is SdsClass -> ClassType(callable, isNullable = false)
+            is SdsClass -> {
+                val typeParametersTypes = callable.typeParametersOrEmpty()
+                    .map { it.inferTypeForDeclaration(context) }
+                    .filterIsInstance<ParameterisedType>()
+
+                ClassType(callable, typeParametersTypes, isNullable = false)
+            }
             is SdsCallableType -> {
                 val results = callable.resultsOrEmpty()
                 when (results.size) {
@@ -272,24 +291,7 @@ private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
             else -> Nothing(context)
         }
         this is SdsReference -> this.declaration.inferType(context)
-        else -> Any(context)
-    }
-}
-
-private fun SdsAbstractGoalExpression.inferTypeExpression(context: EObject): Type {
-    return when {
-        // Terminal cases
-        this.eIsProxy() -> UnresolvedType
-        this is SdsBoolean -> Boolean(context)
-        this is SdsFloat -> Float(context)
-        this is SdsInt -> Int(context)
-        this is SdsNull -> Nothing(context, isNullable = true)
-        this is SdsString -> String(context)
-        this is SdsTemplateString -> String(context)
-
-        this is SdsGoalArgument -> this.value.inferTypeExpression(context)
-        this is SdsGoalReference -> this.declaration.inferType(context)
-        this is SdsParameterizedType -> this.type.inferTypeForType(context)
+        this is SdsSchemaReference -> this.type.inferTypeForType(context)
         else -> Any(context)
     }
 }
@@ -309,6 +311,9 @@ private fun SdsAbstractType.inferTypeForType(context: EObject): Type {
         }
         this is SdsParenthesizedType -> {
             this.type.inferTypeForType(context)
+        }
+        this is SdsSchemaType -> {
+            this.declaration.inferTypeForDeclaration(context)
         }
         this is SdsUnionType -> {
             UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
@@ -332,7 +337,12 @@ private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
             is ClassType -> {
                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
                     ?: return Any(context, candidate.isNullable)
-                ClassType(superClass, candidate.isNullable)
+
+                val typeParametersTypes = superClass.typeParametersOrEmpty()
+                    .map { it.inferTypeForDeclaration(context) }
+                    .filterIsInstance<ParameterisedType>()
+
+                ClassType(superClass, typeParametersTypes, candidate.isNullable)
             }
             is EnumType -> Any(context, candidate.isNullable)
             is EnumVariantType -> {
@@ -341,7 +351,8 @@ private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
                 EnumType(containingEnum, candidate.isNullable)
             }
             is RecordType -> Any(context, candidate.isNullable)
-            is ParameterizedType -> Any(context, candidate.isNullable) // correct ??
+            // TODO: Correct ?
+            is ParameterisedType -> Any(context, candidate.isNullable)
             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
             UnresolvedType -> Any(context, candidate.isNullable)
             is VariadicType -> Any(context, candidate.isNullable)
@@ -388,6 +399,6 @@ private fun String(context: EObject) = stdlibType(context, StdlibClasses.String)
 internal fun stdlibType(context: EObject, qualifiedName: QualifiedName, isNullable: Boolean = false): Type {
     return when (val sdsClass = context.getStdlibClassOrNull(qualifiedName)) {
         null -> UnresolvedType
-        else -> ClassType(sdsClass, isNullable)
+        else -> ClassType(sdsClass, emptyList(), isNullable)
     }
 }

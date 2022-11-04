@@ -3,20 +3,20 @@ package tests.validation.typeChecking.schemaEffectArguments
 predicate schemaEffects <ASchema :: $SchemaType> (){
 
     /* $ReadSchema ---------------------------------------------------------------------------------------------------*/
-    // semantic_error "A goal argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."
-    $ReadSchema(»false«, "datasetPathStr"),
+    // semantic_error "An argument of type 'Boolean' cannot be assigned to a parameter of type 'String'."
+    $readSchema(»false«),
 
-    // no_semantic_error "A goal argument of type 'String' cannot be assigned to a parameter of type 'String'."
-    // no_semantic_error "A goal argument of type 'safeds.lang.String' cannot be assigned to a parameter of type 'safeds.lang.String'."
-    $ReadSchema(»"datasetNameStr"«, »"datasetPathStr"«),
+    // no_semantic_error "An argument of type 'String' cannot be assigned to a parameter of type 'String'."
+    $readSchema(»"datasetNameStr"«),
 
     /* $CheckColumn --------------------------------------------------------------------------------------------------*/
-    // semantic_error "A goal argument of type 'Boolean' cannot be assigned to a parameter of type '::$SchemaType'."
-    // semantic_error "A goal argument of type 'Int' cannot be assigned to a parameter of type 'vararg<String>'."
-    $CheckColumn(»false«, »0«, "columnNameStr2"),
+    // semantic_error "An argument of type 'Boolean' cannot be assigned to a parameter of type '::$SchemaType'."
+    // semantic_error "An argument of type 'Int' cannot be assigned to a parameter of type 'vararg<String>'."
+    // no_semantic_error "An argument of type 'safeds.lang.String' cannot be assigned to a parameter of type 'safeds.lang.String'."
+    $checkColumn(»false«, »0«, »"columnNameStr2"«),
 
-    // no_semantic_error "A goal argument of type '::$SchemaType' cannot be assigned to a parameter of type '::$SchemaType'."
-    // no_semantic_error "A goal argument of type 'String' cannot be assigned to a parameter of type 'vararg<String>'."
-    // no_semantic_error "A goal argument of type 'String' cannot be assigned to a parameter of type 'String'."
-    $CheckColumn(»:ASchema«, »"columnNameStr1"«, »"columnNameStr2"«)
+    // no_semantic_error "An argument of type '::$SchemaType' cannot be assigned to a parameter of type '::$SchemaType'."
+    // no_semantic_error "An argument of type 'String' cannot be assigned to a parameter of type 'vararg<String>'."
+    // no_semantic_error "An argument of type 'String' cannot be assigned to a parameter of type 'String'."
+    $checkColumn(»::ASchema«, »"columnNameStr1"«, »"columnNameStr2"«)
 }

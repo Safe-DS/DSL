@@ -89,6 +89,7 @@ sealed class NamedType(sdsDeclaration: SdsAbstractDeclaration) : Type() {
 
 data class ClassType(
     val sdsClass: SdsClass,
+    val typeParametersTypes: List<ParameterisedType> = emptyList(),
     override val isNullable: Boolean,
 ) : NamedType(sdsClass) {
     override fun setIsNullableOnCopy(isNullable: Boolean) = this.copy(isNullable = isNullable)
@@ -145,7 +146,10 @@ data class VariadicType(val elementType: Type) : Type() {
     }
 }
 
-data class ParameterizedType(val kind: String) : Type() {
+data class ParameterisedType(
+    val sdsAbstractNamedTypeDeclaration: SdsAbstractDeclaration,
+    val kind: String,
+) : Type() {
     override val isNullable = false
     override fun setIsNullableOnCopy(isNullable: Boolean) = this
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" name="safeDS" nsURI="https://larsreimann.com/safeds/SafeDS" nsPrefix="safeDS">
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractObject" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractObject" abstract="true" />
     <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractAnnotatedObject" abstract="true" eSuperTypes="#//SdsAbstractObject">
         <eStructuralFeatures xsi:type="ecore:EReference" name="annotationCalls" upperBound="-1" eType="#//SdsAnnotationCall" containment="true" />
     </eClassifiers>
@@ -43,7 +43,7 @@
     </eClassifiers>
     <!-- Constraint -->
     <eClassifiers xsi:type="ecore:EClass" name="SdsConstraint" eSuperTypes="#//SdsAbstractObject">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="constraintList" eType="#//SdsGoalList" containment="true" />
+        <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//SdsBlock" containment="true" />
     </eClassifiers>
     <!-- Protocol -->
     <eClassifiers xsi:type="ecore:EClass" name="SdsProtocol" eSuperTypes="#//SdsAbstractObject">
@@ -110,48 +110,13 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="constraint" eType="#//SdsConstraint" containment="true" />
     </eClassifiers>
     <!-- Predicate -->
-    <eClassifiers xsi:type="ecore:EClass" name="SdsPredicate" eSuperTypes="#//SdsAbstractCompilationUnitMember">
+    <eClassifiers xsi:type="ecore:EClass" name="SdsPredicate" eSuperTypes="#//SdsAbstractCompilationUnitMember #//SdsAbstractCallable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="typeParameterList" eType="#//SdsTypeParameterList" containment="true" />
-        <eStructuralFeatures xsi:type="ecore:EReference" name="parameterList" eType="#//SdsParameterList" containment="true" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="resultList" eType="#//SdsResultList" containment="true" />
-        <eStructuralFeatures xsi:type="ecore:EReference" name="goalList" eType="#//SdsGoalList" containment="true" />
+        <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//SdsBlock" containment="true" />
     </eClassifiers>
-    <!-- Goal -->
-    <eClassifiers xsi:type="ecore:EClass" name="SdsGoalList" eSuperTypes="#//SdsAbstractObject">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="goals" upperBound="-1" eType="#//SdsAbstractGoal" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractGoal" abstract="true" eSuperTypes="#//SdsAbstractObject" />
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAssignmentGoal" eSuperTypes="#//SdsAbstractGoal">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="placeholder" eType="#//SdsGoalPlaceholder" containment="true" />
-        <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//SdsAbstractGoalExpression" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsGoalPlaceholder" eSuperTypes="#//SdsAbstractLocalVariable" />
-    <eClassifiers xsi:type="ecore:EClass" name="SdsExpressionGoal" eSuperTypes="#//SdsAbstractGoal">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//SdsAbstractGoalExpression" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractGoalExpression" abstract="true" eSuperTypes="#//SdsAbstractObject" />
-    <!-- Goal call -->
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractChainedGoalExpression" abstract="true" eSuperTypes="#//SdsAbstractGoalExpression">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="receiver" eType="#//SdsAbstractGoalExpression" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsGoalCall" eSuperTypes="#//SdsAbstractChainedGoalExpression">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="argumentList" eType="#//SdsGoalArgumentList" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsGoalArgumentList" eSuperTypes="#//SdsAbstractObject">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1" eType="#//SdsGoalArgument" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsGoalArgument" eSuperTypes="#//SdsAbstractGoalExpression" >
-        <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" eType="#//SdsParameter" />
-        <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//SdsAbstractGoalExpression" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsGoalReference" eSuperTypes="#//SdsAbstractGoalExpression">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="declaration" eType="#//SdsAbstractDeclaration" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsParenthesizedGoalExpression" eSuperTypes="#//SdsAbstractGoalExpression">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" upperBound="-1" eType="#//SdsAbstractGoalExpression" containment="true" />
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsParameterizedType" eSuperTypes="#//SdsAbstractGoalExpression">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsNamedType" containment="true" />
+    <eClassifiers xsi:type="ecore:EClass" name="SdsSchemaReference" eSuperTypes="#//SdsAbstractExpression">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsSchemaType" containment="true" />
     </eClassifiers>
     <!-- Function -->
     <eClassifiers xsi:type="ecore:EClass" name="SdsFunction" eSuperTypes="#//SdsAbstractCallable #//SdsAbstractClassMember #//SdsAbstractCompilationUnitMember #//SdsAbstractProtocolToken">
@@ -212,16 +177,20 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractAssignee" abstract="true" eSuperTypes="#//SdsAbstractObject" />
     <eClassifiers xsi:type="ecore:EClass" name="SdsPlaceholder" eSuperTypes="#//SdsAbstractAssignee #//SdsAbstractLocalVariable" />
+    <eClassifiers xsi:type="ecore:EClass" name="SdsSchemaPlaceholder" eSuperTypes="#//SdsAbstractAssignee #//SdsAbstractNamedTypeDeclaration" />
     <eClassifiers xsi:type="ecore:EClass" name="SdsWildcard" eSuperTypes="#//SdsAbstractAssignee" />
     <eClassifiers xsi:type="ecore:EClass" name="SdsYield" eSuperTypes="#//SdsAbstractAssignee">
         <eStructuralFeatures xsi:type="ecore:EReference" name="result" eType="#//SdsResult" />
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SdsSchemaYield" eSuperTypes="#//SdsAbstractAssignee">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsSchemaType" containment="true" />
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SdsBlockLambdaResult" eSuperTypes="#//SdsAbstractAssignee #//SdsAbstractResult" />
     <eClassifiers xsi:type="ecore:EClass" name="SdsExpressionStatement" eSuperTypes="#//SdsAbstractStatement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//SdsAbstractExpression" containment="true" />
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractExpression" abstract="true" eSuperTypes="#//SdsAbstractObject" />
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractLiteral" abstract="true" eSuperTypes="#//SdsAbstractExpression #//SdsAbstractGoalExpression" />
+    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractLiteral" abstract="true" eSuperTypes="#//SdsAbstractExpression" />
     <eClassifiers xsi:type="ecore:EClass" name="SdsBoolean" eSuperTypes="#//SdsAbstractLiteral">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="true" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" />
     </eClassifiers>
@@ -300,6 +269,9 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="nullable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="typeArgumentList" eType="#//SdsTypeArgumentList" containment="true" />
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SdsSchemaType" eSuperTypes="#//SdsAbstractType">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="declaration" eType="#//SdsAbstractNamedTypeDeclaration" />
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SdsParenthesizedType" eSuperTypes="#//SdsAbstractType">
         <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsAbstractType" containment="true" />
     </eClassifiers>
@@ -329,8 +301,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//SdsAbstractType" containment="true" />
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="variance" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" />
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SdsAbstractConstraintGoal" abstract="true" eSuperTypes="#//SdsAbstractGoal" />
-    <eClassifiers xsi:type="ecore:EClass" name="SdsTypeParameterConstraintGoal" eSuperTypes="#//SdsAbstractConstraintGoal">
+    <eClassifiers xsi:type="ecore:EClass" name="SdsTypeParameterConstraint" eSuperTypes="#//SdsAbstractStatement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="#//SdsTypeParameter" />
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="rightOperand" eType="#//SdsAbstractType" containment="true" />

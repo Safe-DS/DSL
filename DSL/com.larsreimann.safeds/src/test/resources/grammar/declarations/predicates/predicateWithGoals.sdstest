@@ -2,23 +2,15 @@
 
 predicate myPredicateWithGoals(){
     goal1(),
-    (
-        goal31(),
-        goal32(dataset, columnName)
-    ),
+    goal31(),
+    goal32(dataset, columnName),
     val intermediate1 = goal2()
 }
 
 predicate myPredicateWithGoalsComplex(){
-    val intermediate2 = (
-        goal41(dataset, columnName),
-        goal42(dataset, columnName)
-    ),
-    (
-        goal51(intermediate2),
-        (
-            goal52(dataset, columnName),
-            goal53(intermediate2, columnName)
-        )
-    )
+    val intermediate2 = goal41(dataset, columnName),
+    goal42(dataset, columnName),
+    goal51(intermediate2),
+    goal52(dataset, columnName),
+    goal53(intermediate2, columnName)
 }

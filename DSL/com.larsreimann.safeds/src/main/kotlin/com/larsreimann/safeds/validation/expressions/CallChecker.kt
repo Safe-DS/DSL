@@ -1,5 +1,6 @@
 package com.larsreimann.safeds.validation.expressions
 
+import com.larsreimann.safeds.constant.hasSchemaKind
 import com.larsreimann.safeds.emf.argumentsOrEmpty
 import com.larsreimann.safeds.emf.parametersOrEmpty
 import com.larsreimann.safeds.emf.typeArgumentsOrEmpty
@@ -17,6 +18,7 @@ import com.larsreimann.safeds.staticAnalysis.callableOrNull
 import com.larsreimann.safeds.staticAnalysis.isRecursive
 import com.larsreimann.safeds.staticAnalysis.maybeCallable
 import com.larsreimann.safeds.staticAnalysis.resultsOrNull
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
 import com.larsreimann.safeds.validation.codes.InfoCode
@@ -24,6 +26,7 @@ import org.eclipse.xtext.validation.Check
 
 class CallChecker : AbstractSafeDSChecker() {
 
+    @OptIn(ExperimentalSdsApi::class)
     @Check
     fun missingTypeArgumentList(sdsCall: SdsCall) {
         if (sdsCall.typeArgumentList != null) {
@@ -37,7 +40,7 @@ class CallChecker : AbstractSafeDSChecker() {
             else -> return
         }
 
-        if (typeParameters.isNotEmpty()) {
+        if (typeParameters.isNotEmpty() && typeParameters.filter { !it.hasSchemaKind() }.count() > 0) {
             error(
                 "Missing type argument list.",
                 Literals.SDS_ABSTRACT_CHAINED_EXPRESSION__RECEIVER,
@@ -98,7 +101,7 @@ class CallChecker : AbstractSafeDSChecker() {
 
     @Check
     fun receiver(sdsCall: SdsCall) {
-        when (val maybeCallable = maybeCallable(sdsCall)) {
+        when (val maybeCallable = sdsCall.maybeCallable()) {
             CallableResult.NotCallable -> {
                 error(
                     "This expression must not be called.",

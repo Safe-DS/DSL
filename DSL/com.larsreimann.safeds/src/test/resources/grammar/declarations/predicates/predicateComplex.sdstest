@@ -1,5 +1,5 @@
 // no_syntax_error
 
-predicate myComplexPredicate(dataset: Dataset, columnName: String) -> dataset: Dataset {
+predicate myComplexPredicate(dataset: Dataset, columnName: String) -> :: Schema {
 
 }

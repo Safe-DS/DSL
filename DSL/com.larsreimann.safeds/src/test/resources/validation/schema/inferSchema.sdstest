@@ -1,0 +1,132 @@
+package tests.validation.schemaTest.inferInitialSchema
+
+class Dataset<CurrentSchema :: $SchemaType> {
+
+    static fun loadAndCheckDataset <InitialSchema :: $SchemaType> (
+        @Constant datasetPath: String,
+        @Constant columnName: String,
+        ) -> dataset: Dataset<InitialSchema> {
+        constraint {
+            val ::IntermediateSchema = $readSchema(datasetPath),
+            yield ::InitialSchema = $checkColumn(::IntermediateSchema, columnName)
+        }
+    }
+
+    fun checkColumn <SchemaOut :: $SchemaType> (@Constant vararg columnName: String) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = $checkColumn(::CurrentSchema, columnName)
+        }
+    }
+
+    fun removeColumn <SchemaOut :: $SchemaType> (@Constant vararg columnName: String) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            val ::IntermediateSchema = $checkColumn(::CurrentSchema, columnName),
+            yield ::SchemaOut = $removeColumn(::IntermediateSchema, columnName)
+        }
+    }
+
+    fun removeColumnSilent <SchemaOut :: $SchemaType> (@Constant vararg columnName: String) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = $removeColumn(::CurrentSchema, columnName)
+        }
+    }
+
+    fun keepColumn <SchemaOut :: $SchemaType> (@Constant vararg columnName: String) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = $keepColumn(::CurrentSchema, columnName)
+        }
+    }
+
+    fun renameColumn <SchemaOut :: $SchemaType> (
+        @Constant columnName1: String,
+        @Constant columnName2: String,
+        ) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            val ::IntermediateSchema = $checkColumn(::CurrentSchema, columnName1),
+            yield ::SchemaOut = $renameColumn(::IntermediateSchema, columnName1, columnName2)
+        }
+    }
+
+    fun addColumn <NewColumnDataType, SchemaOut :: $SchemaType> (@Constant columnName: String) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = $addColumn<NewColumnDataType>(::CurrentSchema, columnName)
+        }
+    }
+
+    fun changeColumnType <NewColumnDataType, SchemaOut :: $SchemaType> (@Constant columnName: String) -> (dataset: Dataset<SchemaOut>) {
+        constraint {
+            yield ::SchemaOut = $changeColumnType<NewColumnDataType>(::CurrentSchema, columnName)
+        }
+    }
+}
+
+workflow myWorkflow {
+    val path = "./src/test/resources/schema/dummyData.csv";
+
+    /* Read Dataset *******************************************************************************/
+
+    // no_semantic_error "Dataset could not be read."
+    // no_semantic_error "Dataset does not have column named 'Column11'."
+    val dataset = Dataset.loadAndCheckDataset(»path«, »"Column11"«);
+
+
+    /* Remove Column ******************************************************************************/
+
+    // no_semantic_error "Dataset does not have column named 'Column1'."
+    // no_semantic_error "Dataset does not have column named 'Column2'."
+    val data1 = dataset.checkColumn(»"Column1"«, »"Column2"«).removeColumn("Column1", "Column2");
+
+    // semantic_error "Dataset does not have column named 'Column1'."
+    data1.checkColumn(»"Column1"«);
+    // semantic_error "Dataset does not have column named 'Column2'."
+    data1.checkColumn(»"Column2"«);
+
+    // semantic_error "Dataset does not have column named 'foo'."
+    dataset.removeColumn(»"foo"«);
+
+    // no_semantic_error "Dataset does not have column named 'bar'."
+    dataset.removeColumnSilent(»"bar"«);
+
+
+    /* Rename Column ******************************************************************************/
+
+    // semantic_error "Dataset already has column named 'Column4'."
+    dataset.renameColumn("Column3", »"Column4"«);
+
+    // no_semantic_error "Dataset already has column named 'NewColumn'."
+    val data2 = dataset.renameColumn("Column3", »"NewColumn"«);
+
+    // no_semantic_error "Dataset does not have column named 'NewColumn'."
+    // semantic_error "Dataset does not have column named 'Column3'."
+    data2.checkColumn(»"NewColumn"«, »"Column3"«);
+
+
+    /* Keep Column ********************************************************************************/
+
+    dataset.checkColumn("Column1", "Column2", "Column3", "Column4");
+
+    val data3 = dataset.keepColumn("Column1", "Column2");
+
+    // no_semantic_error "Dataset does not have column named 'NewColumn'."
+    // no_semantic_error "Dataset does not have column named 'NewColumn'."
+    data3.checkColumn(»"Column1"«, »"Column2"«);
+
+    // semantic_error "Dataset does not have column named 'Column3'."
+    data3.checkColumn(»"Column3"«);
+    // semantic_error "Dataset does not have column named 'Column4'."
+    data3.checkColumn(»"Column4"«);
+
+    /* Change Column Type *************************************************************************/
+
+    val data4 = dataset.changeColumnType<String?>("Column0");
+
+    /* Keep Column ********************************************************************************/
+
+    // semantic_error "Dataset does not have column named 'New'."
+    data4.checkColumn(»"New"«);
+
+    val data5 = data4.addColumn<Int?>("New");
+
+    // no_semantic_error "Dataset does not have column named 'New'."
+    data5.checkColumn(»"New"«);
+}

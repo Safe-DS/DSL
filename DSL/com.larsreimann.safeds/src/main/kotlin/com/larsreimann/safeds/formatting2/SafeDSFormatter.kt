@@ -14,8 +14,8 @@ import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_PREFIX_OPERATION
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_PROTOCOL_QUANTIFIED_TERM__QUANTIFIER
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_STEP__VISIBILITY
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_ARGUMENT__TYPE_PARAMETER
-import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PARAMETER_CONSTRAINT_GOAL__LEFT_OPERAND
-import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PARAMETER_CONSTRAINT_GOAL__OPERATOR
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PARAMETER_CONSTRAINT__LEFT_OPERAND
+import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PARAMETER_CONSTRAINT__OPERATOR
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PARAMETER__KIND
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PARAMETER__VARIANCE
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals.SDS_TYPE_PROJECTION__VARIANCE
@@ -28,7 +28,6 @@ import com.larsreimann.safeds.safeDS.SdsArgument
 import com.larsreimann.safeds.safeDS.SdsArgumentList
 import com.larsreimann.safeds.safeDS.SdsAssigneeList
 import com.larsreimann.safeds.safeDS.SdsAssignment
-import com.larsreimann.safeds.safeDS.SdsAssignmentGoal
 import com.larsreimann.safeds.safeDS.SdsAttribute
 import com.larsreimann.safeds.safeDS.SdsBlock
 import com.larsreimann.safeds.safeDS.SdsBlockLambda
@@ -44,16 +43,10 @@ import com.larsreimann.safeds.safeDS.SdsConstraint
 import com.larsreimann.safeds.safeDS.SdsEnum
 import com.larsreimann.safeds.safeDS.SdsEnumBody
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
-import com.larsreimann.safeds.safeDS.SdsExpressionGoal
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsExpressionStatement
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsFunctionBody
-import com.larsreimann.safeds.safeDS.SdsGoalArgument
-import com.larsreimann.safeds.safeDS.SdsGoalArgumentList
-import com.larsreimann.safeds.safeDS.SdsGoalCall
-import com.larsreimann.safeds.safeDS.SdsGoalList
-import com.larsreimann.safeds.safeDS.SdsGoalPlaceholder
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsImportAlias
 import com.larsreimann.safeds.safeDS.SdsIndexedAccess
@@ -65,7 +58,6 @@ import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParameterList
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
-import com.larsreimann.safeds.safeDS.SdsParenthesizedGoalExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPredicate
@@ -88,7 +80,7 @@ import com.larsreimann.safeds.safeDS.SdsTemplateString
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraintGoal
+import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
 import com.larsreimann.safeds.safeDS.SdsTypeParameterList
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
@@ -637,109 +629,8 @@ class SafeDSFormatter : AbstractFormatter2() {
                 // EObject "resultList"
                 doc.formatObject(obj.resultList, oneSpace, null)
 
-                // EObject "goalList"
-                doc.formatObject(obj.goalList, oneSpace, null)
-            }
-            is SdsGoalList -> {
-                // Keyword "{"
-                val openingBrace = obj.regionForKeyword("{")
-                if (obj.goals.isEmpty()) {
-                    doc.append(openingBrace, noSpace)
-                } else {
-                    doc.append(openingBrace, newLine)
-                }
-
-                // Feature "goals"
-                obj.goals.forEach {
-                    doc.formatObject(it, null, noSpace)
-                }
-
-                // Keywords ","
-                doc.formatKeyword(obj, ",", noSpace, newLine)
-
-                // Keyword "}"
-                val closingBrace = obj.regionForKeyword("}")
-                if (obj.goals.isEmpty()) {
-                    doc.prepend(closingBrace, noSpace)
-                } else {
-                    doc.prepend(closingBrace, newLine)
-                }
-                doc.interior(openingBrace, closingBrace, indent)
-            }
-            is SdsAssignmentGoal -> {
-                // EObject "placeholder"
-                doc.formatObject(obj.placeholder, null, oneSpace)
-
-                // Keyword "="
-                doc.formatKeyword(obj, "=", oneSpace, oneSpace)
-
-                // EObject "expression"
-                doc.formatObject(obj.expression)
-            }
-            is SdsGoalPlaceholder -> {
-                // Keyword "val"
-                doc.formatKeyword(obj, "val", null, oneSpace)
-
-                // Feature "name"
-                doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
-            }
-            is SdsExpressionGoal -> {
-                // EObject "expression"
-                doc.formatObject(obj.expression)
-            }
-            is SdsGoalCall -> {
-                // EObject "receiver"
-                doc.formatObject(obj.receiver, null, noSpace)
-
-                // EObject "argumentList"
-                doc.formatObject(obj.argumentList, noSpace, noSpace)
-            }
-            is SdsGoalArgumentList -> {
-                // Keyword "("
-                doc.formatKeyword(obj, "(", null, noSpace)
-
-                // Feature "arguments"
-                obj.arguments.forEach {
-                    doc.formatObject(it)
-                }
-
-                // Keywords ","
-                doc.formatCommas(obj)
-
-                // Keyword ")"
-                doc.formatKeyword(obj, ")", noSpace, null)
-            }
-            is SdsGoalArgument -> {
-                // Feature "parameter"
-                doc.formatFeature(obj, SDS_ARGUMENT__PARAMETER)
-
-                // Keyword "="
-                doc.formatKeyword(obj, "=", oneSpace, oneSpace)
-
-                // EObject "value"
-                doc.formatObject(obj.value)
-            }
-            is SdsParenthesizedGoalExpression -> {
-                // Keyword "("
-                val openingParentheses = obj.regionForKeyword("(")
-                if (obj.eContainer() !is SdsAssignmentGoal) {
-                    doc.prepend(openingParentheses, newLine)
-                }
-                doc.append(openingParentheses, newLine)
-
-                // Feature "expressions"
-                obj.expressions.forEach {
-                    doc.formatObject(it)
-                }
-
-                // Keywords ","
-                doc.formatKeyword(obj, ",", noSpace, newLine)
-
-                // Keyword ")"
-                val closingParentheses = obj.regionForKeyword(")")
-                doc.prepend(closingParentheses, newLine)
-                doc.append(closingParentheses, noSpace)
-                doc.interior(openingParentheses, closingParentheses, indent)
+                // EObject "body"
+                doc.formatObject(obj.body, oneSpace, null)
             }
 
             /**********************************************************************************************************
@@ -931,22 +822,37 @@ class SafeDSFormatter : AbstractFormatter2() {
              **********************************************************************************************************/
 
             is SdsBlock -> {
+                val internalPadding: KFunction1<Format, Unit>
+                if (obj.statements.isEmpty()) {
+                    internalPadding = noSpace
+                } else {
+                    internalPadding = newLine
+                }
+
+                val statementsSuffix: KFunction1<Format, Unit>
+                if (obj.eContainer() is SdsConstraint || obj.eContainer() is SdsPredicate) {
+                    statementsSuffix = noSpace
+                } else {
+                    statementsSuffix = newLine
+                }
+
                 // Keyword "{"
                 val openingBrace = obj.regionForKeyword("{")
-                if (obj.statements.isEmpty()) {
-                    doc.append(openingBrace, noSpace)
-                } else {
-                    doc.append(openingBrace, newLine)
-                }
+                doc.append(openingBrace, internalPadding)
 
                 // Feature "statements"
                 obj.statements.forEach {
-                    doc.formatObject(it, null, newLine)
+                    doc.formatObject(it, null, statementsSuffix)
+                }
+
+                // Keywords "," (for SdsConstraint or SdsPredicate)
+                if (statementsSuffix == noSpace) {
+                    doc.formatKeyword(obj, ",", noSpace, newLine)
                 }
 
                 // Keyword "}"
                 val closingBrace = obj.regionForKeyword("}")
-                doc.prepend(closingBrace, noSpace)
+                doc.prepend(closingBrace, internalPadding)
 
                 doc.interior(openingBrace, closingBrace, indent)
             }
@@ -1219,15 +1125,15 @@ class SafeDSFormatter : AbstractFormatter2() {
                 // Keyword "constraint"
                 doc.formatKeyword(obj, "constraint", null, oneSpace)
 
-                // EObject "constraintList"
-                doc.formatObject(obj.constraintList)
+                // EObject "body"
+                doc.formatObject(obj.body)
             }
-            is SdsTypeParameterConstraintGoal -> {
+            is SdsTypeParameterConstraint -> {
                 // Feature "leftOperand"
-                doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT_GOAL__LEFT_OPERAND, null, oneSpace)
+                doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT__LEFT_OPERAND, null, oneSpace)
 
                 // Feature "operator"
-                doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT_GOAL__OPERATOR, oneSpace, oneSpace)
+                doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT__OPERATOR, oneSpace, oneSpace)
 
                 // EObject "rightOperand"
                 doc.formatObject(obj.rightOperand, oneSpace, null)

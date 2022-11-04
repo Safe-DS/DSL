@@ -2,7 +2,7 @@ class C sub ( Int  ) {
     constraint
      { T
      sub (
-         Int  )}
+         Int  )  }
     attr a: (  Int   )
 }
 

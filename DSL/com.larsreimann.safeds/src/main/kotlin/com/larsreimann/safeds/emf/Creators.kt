@@ -15,11 +15,8 @@ import com.larsreimann.safeds.safeDS.SafeDSFactory
 import com.larsreimann.safeds.safeDS.SdsAbstractAssignee
 import com.larsreimann.safeds.safeDS.SdsAbstractClassMember
 import com.larsreimann.safeds.safeDS.SdsAbstractCompilationUnitMember
-import com.larsreimann.safeds.safeDS.SdsAbstractConstraintGoal
 import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
 import com.larsreimann.safeds.safeDS.SdsAbstractExpression
-import com.larsreimann.safeds.safeDS.SdsAbstractGoal
-import com.larsreimann.safeds.safeDS.SdsAbstractGoalExpression
 import com.larsreimann.safeds.safeDS.SdsAbstractLambda
 import com.larsreimann.safeds.safeDS.SdsAbstractNamedTypeDeclaration
 import com.larsreimann.safeds.safeDS.SdsAbstractObject
@@ -35,7 +32,6 @@ import com.larsreimann.safeds.safeDS.SdsArgument
 import com.larsreimann.safeds.safeDS.SdsArgumentList
 import com.larsreimann.safeds.safeDS.SdsAssigneeList
 import com.larsreimann.safeds.safeDS.SdsAssignment
-import com.larsreimann.safeds.safeDS.SdsAssignmentGoal
 import com.larsreimann.safeds.safeDS.SdsAttribute
 import com.larsreimann.safeds.safeDS.SdsBlock
 import com.larsreimann.safeds.safeDS.SdsBlockLambda
@@ -49,16 +45,10 @@ import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsConstraint
 import com.larsreimann.safeds.safeDS.SdsEnum
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
-import com.larsreimann.safeds.safeDS.SdsExpressionGoal
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsExpressionStatement
 import com.larsreimann.safeds.safeDS.SdsFloat
 import com.larsreimann.safeds.safeDS.SdsFunction
-import com.larsreimann.safeds.safeDS.SdsGoalArgument
-import com.larsreimann.safeds.safeDS.SdsGoalArgumentList
-import com.larsreimann.safeds.safeDS.SdsGoalCall
-import com.larsreimann.safeds.safeDS.SdsGoalList
-import com.larsreimann.safeds.safeDS.SdsGoalReference
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsImportAlias
 import com.larsreimann.safeds.safeDS.SdsIndexedAccess
@@ -71,10 +61,8 @@ import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsNull
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParameterList
-import com.larsreimann.safeds.safeDS.SdsParameterizedType
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
-import com.larsreimann.safeds.safeDS.SdsParenthesizedGoalExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPredicate
@@ -93,6 +81,8 @@ import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsResultList
 import com.larsreimann.safeds.safeDS.SdsSchema
+import com.larsreimann.safeds.safeDS.SdsSchemaReference
+import com.larsreimann.safeds.safeDS.SdsSchemaType
 import com.larsreimann.safeds.safeDS.SdsStarProjection
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsString
@@ -100,7 +90,7 @@ import com.larsreimann.safeds.safeDS.SdsTemplateString
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraintGoal
+import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
 import com.larsreimann.safeds.safeDS.SdsTypeParameterList
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
@@ -288,27 +278,6 @@ fun SdsWorkflow.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: 
  */
 fun SdsStep.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
     this.addStatement(createSdsAssignment(assignees, expression))
-}
-
-/**
- * Returns a new object of class [SdsAssignmentGoal].
- */
-@ExperimentalSdsApi
-fun createSdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression): SdsAssignmentGoal {
-    return factory.createSdsAssignmentGoal().apply {
-        this.placeholder = factory.createSdsGoalPlaceholder().apply {
-            this.name = placeholderName
-        }
-        this.expression = expression
-    }
-}
-
-/**
- * Adds a new object of class [SdsAssignmentGoal] to the receiver.
- */
-@ExperimentalSdsApi
-fun SdsPredicate.sdsAssignmentGoal(placeholderName: String, expression: SdsAbstractGoalExpression) {
-    this.addGoal(createSdsAssignmentGoal(placeholderName, expression))
 }
 
 /**
@@ -549,10 +518,22 @@ private fun SdsCompilationUnit.addMember(member: SdsAbstractCompilationUnitMembe
  * Returns a new object of class [SdsConstraint].
  */
 @ExperimentalSdsApi
-fun createSdsConstraint(goals: List<SdsAbstractConstraintGoal>): SdsConstraint {
+fun createSdsConstraint(statements: List<SdsAbstractStatement> = emptyList()): SdsConstraint {
     return factory.createSdsConstraint().apply {
-        this.constraintList = createSdsGoalList(goals)
+        this.body = factory.createSdsBlock()
+        statements.forEach { addStatement(it) }
     }
+}
+
+/**
+ * Adds a new statement to the receiver.
+ */
+private fun SdsConstraint.addStatement(statement: SdsAbstractStatement) {
+    if (this.body == null) {
+        this.body = factory.createSdsBlock()
+    }
+
+    this.body.statements += statement
 }
 
 /**
@@ -651,24 +632,6 @@ fun SdsEnum.sdsEnumVariant(
     constraint: SdsConstraint? = null,
 ) {
     this.addVariant(createSdsEnumVariant(name, annotationCalls, typeParameters, parameters, constraint))
-}
-
-/**
- * Returns a new object of class [SdsExpressionGoal].
- */
-@ExperimentalSdsApi
-fun createSdsExpressionGoal(expression: SdsAbstractGoalExpression): SdsExpressionGoal {
-    return factory.createSdsExpressionGoal().apply {
-        this.expression = expression
-    }
-}
-
-/**
- * Adds a new object of class [SdsExpressionGoal] to the receiver.
- */
-@ExperimentalSdsApi
-fun SdsPredicate.sdsExpressionGoal(expression: SdsAbstractGoalExpression) {
-    this.addGoal(createSdsExpressionGoal(expression))
 }
 
 /**
@@ -814,74 +777,12 @@ fun SdsCompilationUnit.sdsFunction(
 }
 
 /**
- * Returns a new object of class [SdsGoalArgument].
- */
-@ExperimentalSdsApi
-fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameter: SdsParameter? = null): SdsGoalArgument {
-    return factory.createSdsGoalArgument().apply {
-        this.value = value
-        this.parameter = parameter
-    }
-}
-
-/**
- * Returns a new object of class [SdsGoalArgument] that points to a parameter with the given name.
- */
-@ExperimentalSdsApi
-fun createSdsGoalArgument(value: SdsAbstractGoalExpression, parameterName: String): SdsGoalArgument {
-    return createSdsGoalArgument(
-        value,
-        createSdsParameter(parameterName),
-    )
-}
-
-/**
- * Returns a new object of class [SdsGoalArgumentList].
- */
-fun createSdsGoalArgumentList(arguments: List<SdsGoalArgument>): SdsGoalArgumentList {
-    return factory.createSdsGoalArgumentList().apply {
-        this.arguments += arguments
-    }
-}
-
-/**
- * Returns a new object of class [SdsGoalCall].
- */
-fun createSdsGoalCall(
-    receiver: SdsAbstractGoalExpression,
-    arguments: List<SdsGoalArgument>,
-): SdsGoalCall {
-    return factory.createSdsGoalCall().apply {
-        this.receiver = receiver
-        this.argumentList = createSdsGoalArgumentList(arguments)
-    }
-}
-
-/**
- * Returns a new object of class [SdsGoalList].
- */
-fun createSdsGoalList(goals: List<SdsAbstractGoal>): SdsGoalList {
-    return factory.createSdsGoalList().apply {
-        this.goals += goals
-    }
-}
-
-/**
  * Returns a new object of class [SdsImport].
  */
 fun createSdsImport(importedNamespace: String, alias: String? = null): SdsImport {
     return factory.createSdsImport().apply {
         this.importedNamespace = importedNamespace
         this.alias = createSdsImportAlias(alias)
-    }
-}
-
-/**
- * Returns a new object of class [SdsGoalReference].
- */
-fun createSdsGoalReference(declaration: SdsAbstractDeclaration): SdsGoalReference {
-    return factory.createSdsGoalReference().apply {
-        this.declaration = declaration
     }
 }
 
@@ -1034,15 +935,6 @@ fun createSdsParenthesizedExpression(expression: SdsAbstractExpression): SdsPare
 }
 
 /**
- * Returns a new object of class [SdsParenthesizedGoalExpression].
- */
-fun createSdsParenthesizedGoalExpression(expressions: List<SdsAbstractGoalExpression>): SdsParenthesizedGoalExpression {
-    return factory.createSdsParenthesizedGoalExpression().apply {
-        this.expressions += expressions
-    }
-}
-
-/**
  * Returns a new object of class [SdsParenthesizedType].
  */
 fun createSdsParenthesizedType(type: SdsAbstractType): SdsParenthesizedType {
@@ -1070,11 +962,10 @@ fun createSdsPlaceholder(name: String): SdsPlaceholder {
 }
 
 /**
- * Returns a new object of class [SdsParameterizedType].
+ * Returns a new object of class [SdsSchemaReference].
  */
-@ExperimentalSdsApi
-fun createSdsParameterizedType(type: SdsNamedType? = null): SdsParameterizedType {
-    return factory.createSdsParameterizedType().apply {
+fun createSdsSchemaReference(type: SdsSchemaType): SdsSchemaReference {
+    return factory.createSdsSchemaReference().apply {
         this.type = type
     }
 }
@@ -1082,14 +973,13 @@ fun createSdsParameterizedType(type: SdsNamedType? = null): SdsParameterizedType
 /**
  * Returns a new object of class [SdsPredicate].
  */
-@ExperimentalSdsApi
 fun createSdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
-    goals: List<SdsAbstractGoal> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
 ): SdsPredicate {
     return factory.createSdsPredicate().apply {
         this.name = name
@@ -1097,21 +987,21 @@ fun createSdsPredicate(
         this.typeParameterList = typeParameters.nullIfEmptyElse(::createSdsTypeParameterList)
         this.parameterList = createSdsParameterList(parameters)
         this.resultList = results.nullIfEmptyElse(::createSdsResultList)
-        goals.forEach { addGoal(it) }
+        this.body = factory.createSdsBlock()
+        statements.forEach { addStatement(it) }
     }
 }
 
 /**
  * Adds a new object of class [SdsPredicate] to the receiver.
  */
-@ExperimentalSdsApi
 fun SdsCompilationUnit.sdsPredicate(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     typeParameters: List<SdsTypeParameter> = emptyList(),
     parameters: List<SdsParameter> = emptyList(),
     results: List<SdsResult> = emptyList(),
-    goals: List<SdsAbstractGoal> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
 ) {
     this.addMember(
         createSdsPredicate(
@@ -1120,21 +1010,20 @@ fun SdsCompilationUnit.sdsPredicate(
             typeParameters,
             parameters,
             results,
-            goals,
+            statements,
         ),
     )
 }
 
 /**
- * Adds a new goal to the receiver.
+ * Adds a new statements to the receiver.
  */
-@ExperimentalSdsApi
-private fun SdsPredicate.addGoal(goal: SdsAbstractGoal) {
-    if (this.goalList == null) {
-        this.goalList = factory.createSdsGoalList()
+private fun SdsPredicate.addStatement(statement: SdsAbstractStatement) {
+    if (this.body == null) {
+        this.body = factory.createSdsBlock()
     }
 
-    this.goalList.goals += goal
+    this.body.statements += statement
 }
 
 /**
@@ -1580,15 +1469,15 @@ fun createSdsTypeParameterList(typeParameters: List<SdsTypeParameter>): SdsTypeP
 }
 
 /**
- * Returns a new object of class [SdsTypeParameterConstraintGoal].
+ * Returns a new object of class [SdsTypeParameterConstraint].
  */
 @ExperimentalSdsApi
-fun createSdsTypeParameterConstraintGoal(
+fun createSdsTypeParameterConstraint(
     leftOperand: SdsTypeParameter,
     operator: SdsTypeParameterConstraintOperator,
     rightOperand: SdsAbstractType,
-): SdsTypeParameterConstraintGoal {
-    return factory.createSdsTypeParameterConstraintGoal().apply {
+): SdsTypeParameterConstraint {
+    return factory.createSdsTypeParameterConstraint().apply {
         this.leftOperand = leftOperand
         this.operator = operator.operator
         this.rightOperand = rightOperand
@@ -1596,15 +1485,15 @@ fun createSdsTypeParameterConstraintGoal(
 }
 
 /**
- * Returns a new object of class [SdsTypeParameterConstraintGoal] that points to a type parameter with the given name.
+ * Returns a new object of class [SdsTypeParameterConstraint] that points to a type parameter with the given name.
  */
 @ExperimentalSdsApi
-fun createSdsTypeParameterConstraintGoal(
+fun createSdsTypeParameterConstraint(
     leftOperandName: String,
     operator: SdsTypeParameterConstraintOperator,
     rightOperand: SdsAbstractType,
-): SdsTypeParameterConstraintGoal {
-    return createSdsTypeParameterConstraintGoal(
+): SdsTypeParameterConstraint {
+    return createSdsTypeParameterConstraint(
         createSdsTypeParameter(leftOperandName),
         operator,
         rightOperand,
