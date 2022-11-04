@@ -5,7 +5,7 @@ class Dataset<CurrentSchema :: $SchemaType> {
     static fun loadAndCheckDataset <InitialSchema :: $SchemaType> (
         @Constant datasetPath: String,
         @Constant columnName: String,
-        ) -> dataset: Dataset<InitialSchema> {
+    ) -> dataset: Dataset<InitialSchema> {
         constraint {
             val ::IntermediateSchema = $readSchema(datasetPath),
             yield ::InitialSchema = $checkColumn(::IntermediateSchema, columnName)
@@ -40,7 +40,7 @@ class Dataset<CurrentSchema :: $SchemaType> {
     fun renameColumn <SchemaOut :: $SchemaType> (
         @Constant columnName1: String,
         @Constant columnName2: String,
-        ) -> (dataset: Dataset<SchemaOut>) {
+    ) -> (dataset: Dataset<SchemaOut>) {
         constraint {
             val ::IntermediateSchema = $checkColumn(::CurrentSchema, columnName1),
             yield ::SchemaOut = $renameColumn(::IntermediateSchema, columnName1, columnName2)

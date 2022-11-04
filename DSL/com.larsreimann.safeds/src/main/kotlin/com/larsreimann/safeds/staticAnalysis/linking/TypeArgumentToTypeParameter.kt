@@ -9,6 +9,7 @@ import com.larsreimann.safeds.safeDS.SdsClass
 import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsNamedType
+import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
@@ -46,6 +47,7 @@ fun SdsTypeArgumentList.typeParametersOrNull(): List<SdsTypeParameter>? {
                 is SdsClass -> callable.typeParametersOrEmpty()
                 is SdsEnumVariant -> callable.typeParametersOrEmpty()
                 is SdsFunction -> callable.typeParametersOrEmpty()
+                is SdsPredicate -> callable.typeParametersOrEmpty()
                 else -> null
             }
         }

@@ -3,6 +3,7 @@ package com.larsreimann.safeds.staticAnalysis.schema
 import com.larsreimann.safeds.constant.hasSchemaKind
 import com.larsreimann.safeds.emf.argumentsOrEmpty
 import com.larsreimann.safeds.emf.assigneesOrEmpty
+import com.larsreimann.safeds.emf.assignmentsOrEmpty
 import com.larsreimann.safeds.emf.constraintStatementsOrEmpty
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.typeArgumentsOrEmpty
@@ -126,24 +127,11 @@ private fun inferSchema(
     val predicateAssignments = function.constraintStatementsOrEmpty()
         .filterIsInstance<SdsAssignment>()
 
-    val resolvedPredicateVars: MutableMap<SdsAbstractAssignee, SchemaResult> = mutableMapOf()
-
-    for (predicateAssignment in predicateAssignments) {
-        // Only one result returned from a predicate
-        val assignee = predicateAssignment.assigneesOrEmpty().firstOrNull()
-            ?: return SchemaResult.UnComputable
-
-        val mainPredicateCall = predicateAssignment.expression as? SdsCall
-            ?: return SchemaResult.UnComputable
-
-        val schemaResult = schemaForPredicateCall(
-            mainPredicateCall,
-            workflowContext,
-            resolvedPredicateVars,
-            parmArgPairs,
-        )
-        resolvedPredicateVars.put(assignee, schemaResult)
-    }
+    val resolvedPredicateVars = resolvePredicateVars(
+        predicateAssignments,
+        workflowContext,
+        parmArgPairs,
+    ) ?: return SchemaResult.UnComputable
 
     val yieldedTypeParameterToSchema = resolvedPredicateVars
         .mapNotNull {
@@ -158,19 +146,67 @@ private fun inferSchema(
     return SchemaResult.FunctionResult(yieldedTypeParameterToSchema)
 }
 
-private fun schemaForPredicateCall(
-    predicateCall: SdsCall,
-    workflowContext: Map<SchemaOwner, SchemaResult>,
-    localContext: Map<SdsAbstractAssignee, SchemaResult>,
-    parmArgPairs: List<ParmArgPairs>,
+@OptIn(ExperimentalSdsApi::class)
+internal fun inferSchema(
+    predicate: SdsPredicate,
+    valueResultStack: ArrayDeque<List<ArgResult>>,
 ): SchemaResult {
-    val predicate = predicateCall.callableOrNull() as? SdsPredicate ?: return SchemaResult.UnComputable
-    val maybeResult = inferSchema(predicate, predicateCall, workflowContext, localContext, parmArgPairs)
+    val predicateAssignments = predicate.assignmentsOrEmpty()
 
-    return when (maybeResult) {
-        is SchemaResult.PredicateResult -> maybeResult.schemaResult
-        else -> SchemaResult.UnComputable
+    val resolvedPredicateVars = resolvePredicateVars(
+        predicateAssignments,
+        emptyMap(),
+        emptyList(),
+        valueResultStack,
+    ) ?: return SchemaResult.UnComputable
+
+    val schemaResult = resolvedPredicateVars
+        .mapNotNull {
+            val schemaYield = it.key as? SdsSchemaYield
+            if (schemaYield == null) {
+                return@mapNotNull null
+            }
+            it.value
+        }.firstOrNull() ?: return SchemaResult.UnComputable
+
+    return SchemaResult.PredicateResult(schemaResult)
+}
+
+private fun resolvePredicateVars(
+    predicateAssignments: List<SdsAssignment>,
+    workflowContext: Map<SchemaOwner, SchemaResult>,
+    parmArgPairs: List<ParmArgPairs>,
+    valueResultStack: ArrayDeque<List<ArgResult>> = ArrayDeque(),
+): MutableMap<SdsAbstractAssignee, SchemaResult>? {
+    val resolvedPredicateVars: MutableMap<SdsAbstractAssignee, SchemaResult> = mutableMapOf()
+
+    for (predicateAssignment in predicateAssignments) {
+        // Only one result returned from a predicate
+        val assignee = predicateAssignment.assigneesOrEmpty().firstOrNull()
+            ?: return null
+
+        val predicateCall = predicateAssignment.expression as? SdsCall
+            ?: return null
+
+        val predicate = predicateCall.callableOrNull() as? SdsPredicate ?: return null
+        val maybeResult = inferSchema(
+            predicate,
+            predicateCall,
+            workflowContext,
+            resolvedPredicateVars,
+            parmArgPairs,
+            valueResultStack,
+        )
+
+        val schemaResult = when (maybeResult) {
+            is SchemaResult.PredicateResult -> maybeResult.schemaResult
+            else -> SchemaResult.UnComputable
+        }
+
+        resolvedPredicateVars.put(assignee, schemaResult)
     }
+
+    return resolvedPredicateVars
 }
 
 sealed interface SchemaOwner {
