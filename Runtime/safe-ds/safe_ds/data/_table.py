@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pandas as pd
 from safe_ds.exceptions import ColumnNameError
 from safe_ds.exceptions import ColumnNameDuplicateError
@@ -8,20 +9,20 @@ class Table:
         self.data = data
 
     @staticmethod
-    def from_json(path):
+    def from_json(path: str) -> Table:
         try:
             return Table(pd.read_json(path))
         except FileNotFoundError:
             raise FileNotFoundError(f"File \"{path}\" does not exist")
 
     @staticmethod
-    def from_csv(path):
+    def from_csv(path: str) -> Table:
         try:
             return Table(pd.read_csv(path))
         except FileNotFoundError:
             raise FileNotFoundError(f"File \"{path}\" does not exist")
 
-    def rename_column(self, old_name: str, new_name: str) -> pd.DataFrame:
+    def rename_column(self, old_name: str, new_name: str) -> Table:
         columns: [str] = self.data.columns
 
         if old_name not in columns:
@@ -29,4 +30,4 @@ class Table:
         if new_name in columns:
             raise ColumnNameDuplicateError(new_name)
 
-        return self.data.rename(columns={old_name: new_name})
+        return Table(self.data.rename(columns={old_name: new_name}))

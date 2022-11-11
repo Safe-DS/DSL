@@ -1,2 +1,2 @@
-from _data_exceptions import ColumnNameError
-from _data_exceptions import ColumnNameDuplicateError
+from ._data_exceptions import ColumnNameError
+from ._data_exceptions import ColumnNameDuplicateError
