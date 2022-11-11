@@ -1,13 +1,8 @@
 [flake8]
-extend-ignore =
-    # whitespace before ':' (black handles that)
-    E203,
-    # line too long (black handles that)
-    E501,
-    # blank line at end of file (black handles that)
-    W391,
-    # Line break occurred before a binary operator (seems to conflict with the linter)
-    W503
+extend-ignore = 
+     # pycodestyle (handled by black)
+     E,
+     W
 per-file-ignores =
     # imported but unused
     __init__.py: F401
