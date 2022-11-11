@@ -1,7 +1,7 @@
 import pandas as pd
-from ..exceptions import *
 
-from _column import Column
+from ._column import Column
+from ..exceptions import *
 
 
 class Table:
@@ -32,7 +32,12 @@ class Table:
         return self.data.rename(columns={oldName: newName})
 
     def get_column_by_name(self, column_name: str):
+        """
+        Returns a new instance of Column with the data of the described column of the Table.
+        :param column_name: the name of the column
+        :return: a new instance of Column
+        """
         if column_name in self.data.columns:
             return Column(self.data[column_name].copy(deep=True))
         else:
-    # Throw exception
+            raise ColumnNameError(column_name)
