@@ -4,6 +4,8 @@ extend-ignore =
     E203,
     # line too long (black handles that)
     E501,
+    # blank line at end of file (black handles that)
+    W391,
     # Line break occurred before a binary operator (seems to conflict with the linter)
     W503
 per-file-ignores =
