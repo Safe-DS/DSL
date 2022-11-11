@@ -1,4 +1,5 @@
 import pandas as pd
+from ..exceptions import *
 
 
 class Table:
@@ -19,7 +20,11 @@ class Table:
         except FileNotFoundError:
             raise FileNotFoundError(f"File \"{path}\" does not exist")
 
-    def rename_column(self, oldName: str, newName: str):
+    def rename_column(self, oldName: str, newName: str) -> pd.DataFrame:
         cols = self.data.columns
         if oldName not in cols:
-            raise
+            raise ColumnNameError(oldName)
+        if newName in cols:
+            raise ColumnNameDuplicateError(newName)
+
+        return self.data.rename(columns={oldName: newName})
