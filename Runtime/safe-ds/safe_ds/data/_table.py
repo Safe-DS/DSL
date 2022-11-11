@@ -1,7 +1,7 @@
 import pandas as pd
 
 from ._column import Column
-from ..exceptions import *
+from ..exceptions import ColumnNameError, ColumnNameDuplicateError
 
 
 class Table:
@@ -39,5 +39,4 @@ class Table:
         """
         if column_name in self.data.columns:
             return Column(self.data[column_name].copy(deep=True))
-        else:
-            raise ColumnNameError(column_name)
+        raise ColumnNameError(column_name)
