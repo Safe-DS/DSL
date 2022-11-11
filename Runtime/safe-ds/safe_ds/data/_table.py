@@ -32,7 +32,7 @@ class Table:
         try:
             return Table(pd.read_json(path))
         except FileNotFoundError as exc:
-            raise FileNotFoundError(f"File \"{path}\" does not exist") from exc
+            raise FileNotFoundError(f'File "{path}" does not exist') from exc
 
     @staticmethod
     def from_csv(path: str) -> Table:
@@ -58,4 +58,4 @@ class Table:
         try:
             return Table(pd.read_csv(path))
         except FileNotFoundError as exc:
-            raise FileNotFoundError(f"File \"{path}\" does not exist") from exc
+            raise FileNotFoundError(f'File "{path}" does not exist') from exc
