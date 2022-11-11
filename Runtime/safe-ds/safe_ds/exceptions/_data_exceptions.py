@@ -1,24 +1,20 @@
 class ColumnNameError(Exception):
-    """Exception raised for trying to access an invalid column name
+    """Exception raised for trying to access an invalid column name.
 
     Attributes:
-        columnName -- Name of the column that was tried to be accessed
-        message -- explanation of the error
+        column_name -- Name of the column that was tried to be accessed
     """
 
-    def __init__(self, columnName):
-        self.columnName = columnName
-        super().__init__('Column name "{}" was not found.'.format(self.columnName))
+    def __init__(self, column_name):
+        super().__init__("Could not find column '{}'.".format(column_name))
 
 
 class ColumnNameDuplicateError(Exception):
-    """Exception raised for trying to modify a table, resulting in a duplicate column name
+    """Exception raised for trying to modify a table, resulting in a duplicate column name.
 
         Attributes:
-            columnName -- Name of the column that resulted in a duplicate
-            message -- explanation of the error
+            column_name -- Name of the column that resulted in a duplicate
         """
 
-    def __init__(self, columnName):
-        self.columnName = columnName
-        super().__init__('Column name "{}" already exists.'.format(self.columnName))
+    def __init__(self, column_name):
+        super().__init__("Column '{}' already exists.".format(column_name))
