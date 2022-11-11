@@ -13,7 +13,6 @@ class Table:
     def from_json(path: str) -> Table:
         """
         Reads data from a JSON file into a Table
-        May raise other unspecified Errors.
 
         Parameters
         ----------
@@ -28,17 +27,20 @@ class Table:
         ------
         FileNotFoundError
             If the specified file does not exist
+        ValueError
+            If the file could not be read
         """
         try:
             return Table(pd.read_json(path))
         except FileNotFoundError as exc:
             raise FileNotFoundError(f'File "{path}" does not exist') from exc
+        except Exception as exc:
+            raise ValueError(f'Could not read file from "{path}"') from exc
 
     @staticmethod
     def from_csv(path: str) -> Table:
         """
         Reads data from a CSV file into a Table.
-        May raise other unspecified Errors.
 
         Parameters
         ----------
@@ -54,8 +56,12 @@ class Table:
         ------
         FileNotFoundError
             If the specified file does not exist
+        ValueError
+            If the file could not be read
         """
         try:
             return Table(pd.read_csv(path))
         except FileNotFoundError as exc:
             raise FileNotFoundError(f'File "{path}" does not exist') from exc
+        except Exception as exc:
+            raise ValueError(f'Could not read file from "{path}"') from exc
