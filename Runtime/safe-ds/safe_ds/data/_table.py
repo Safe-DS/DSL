@@ -11,10 +11,21 @@ class Table:
     def from_json(path):
         """
         Reads data from a JSON file into a Table
-        Raises a FileNotFoundError if the specified file does not exist.
         May raise other unspecified Errors.
-        :param path: Path to the file as String
-        :return: The Table read from the file
+
+        Parameters
+        ----------
+        path : String
+            Path to the file as String
+
+        Returns
+        -------
+            The Table read from the file
+
+        Raises
+        ------
+        FileNotFoundError
+            If the specified file does not exist
         """
         try:
             return Table(pd.read_json(path))
@@ -25,10 +36,22 @@ class Table:
     def from_csv(path):
         """
         Reads data from a CSV file into a Table.
-        Raises a FileNotFoundError if the specified file does not exist.
         May raise other unspecified Errors.
-        :param path: Path to the file as String
-        :return: The Table read from the file
+
+        Parameters
+        ----------
+        path : String
+            Path to the file as String
+
+        Returns
+        -------
+        String
+            The Table read from the file
+
+        Raises
+        ------
+        FileNotFoundError
+            If the specified file does not exist
         """
         try:
             return Table(pd.read_csv(path))
