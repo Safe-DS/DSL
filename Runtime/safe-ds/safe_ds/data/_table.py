@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pandas as pd
 
 
@@ -8,14 +10,14 @@ class Table:
         self.data = data
 
     @staticmethod
-    def from_json(path):
+    def from_json(path: str) -> Table:
         """
         Reads data from a JSON file into a Table
         May raise other unspecified Errors.
 
         Parameters
         ----------
-        path : String
+        path : str
             Path to the file as String
 
         Returns
@@ -33,14 +35,14 @@ class Table:
             raise FileNotFoundError(f"File \"{path}\" does not exist") from exc
 
     @staticmethod
-    def from_csv(path):
+    def from_csv(path: str) -> Table:
         """
         Reads data from a CSV file into a Table.
         May raise other unspecified Errors.
 
         Parameters
         ----------
-        path : String
+        path : str
             Path to the file as String
 
         Returns
