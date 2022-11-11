@@ -1,4 +1,5 @@
 import pandas as pd
+from safe_ds.data._row import Row
 
 
 class Table:
@@ -7,13 +8,21 @@ class Table:
     def __init__(self, data: pd.DataFrame):
         self.data = data
 
-    def get_row_by_index(self, index):
+    def get_row_by_index(self, index: int) -> Row:
         """
-        raise ValueError  if the index doesn't exist
-        :param index:
-        :return: the row for the given Index
+        returns the row of the Table for a given Index
+        Parameters
+        ----------
+        index : int
+
+        Return
+        -------
+        a Row of the Table
+        Raises
+        --------
+        KeyError
+            if the index doesn't exist
         """
         if len(self.data.index)-1 < index | index < 0:
-            raise ValueError
-        return self.data.iloc[[index]]
-
+            raise KeyError
+        return Row(self.data.iloc[[index]])
