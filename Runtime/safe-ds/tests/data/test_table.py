@@ -25,17 +25,17 @@ def test_read_json_invalid():
 
 
 def test_rename_invalid_old_name():
-    table: Table = Table.from_csv("tests/data/test_table_read_csv.csv")
+    table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv")
     with pytest.raises(ColumnNameError):
         table.rename_column("C", "D")
 
 
 def test_rename_invalid_new_name():
-    table: Table = Table.from_csv("tests/data/test_table_read_csv.csv")
+    table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv")
     with pytest.raises(ColumnNameDuplicateError):
         table.rename_column("A", "B")
 
 
 def test_rename_valid():
-    table: Table = Table.from_csv("tests/data/test_table_read_csv.csv").rename_column("A", "D")
+    table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv").rename_column("A", "D")
     assert table._data.columns[0] == "D" and table.data.columns[1] == "B"
