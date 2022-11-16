@@ -5,23 +5,23 @@ from safe_ds.data import Table
 
 
 def test_read_csv_valid():
-    table = Table.from_csv("tests/data/test_table_read_csv.csv")
-    assert table.data["A"][0] == 1 and table.data["B"][0] == 2
+    table = Table.from_csv("tests/resources/test_table_read_csv.csv")
+    assert table._data["A"][0] == 1 and table._data["B"][0] == 2
 
 
 def test_read_csv_invalid():
     with pytest.raises(FileNotFoundError):
-        Table.from_csv("tests/data/test_table_read_csv_invalid.csv")
+        Table.from_csv("tests/resources/test_table_read_csv_invalid.csv")
 
 
 def test_read_json_valid():
-    table = Table.from_csv("tests/data/test_table_read_json.json")
-    assert table.data["A"][0] == 1 and table.data["B"][0] == 2
+    table = Table.from_json("tests/resources/test_table_read_json.json")
+    assert table._data["A"][0] == 1 and table._data["B"][0] == 2
 
 
 def test_read_json_invalid():
     with pytest.raises(FileNotFoundError):
-        Table.from_csv("tests/data/test_table_read_json_invalid.json")
+        Table.from_json("tests/resources/test_table_read_json_invalid.json")
 
 
 def test_rename_invalid_old_name():
@@ -38,4 +38,4 @@ def test_rename_invalid_new_name():
 
 def test_rename_valid():
     table: Table = Table.from_csv("tests/data/test_table_read_csv.csv").rename_column("A", "D")
-    assert table.data.columns[0] == "D" and table.data.columns[1] == "B"
+    assert table._data.columns[0] == "D" and table.data.columns[1] == "B"
