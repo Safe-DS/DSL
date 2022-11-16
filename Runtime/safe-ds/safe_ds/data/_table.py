@@ -35,7 +35,9 @@ class Table:
         except FileNotFoundError as exception:
             raise FileNotFoundError(f'File "{path}" does not exist') from exception
         except Exception as exception:
-            raise ValueError(f'Could not read file from "{path}" as JSON') from exception
+            raise ValueError(
+                f'Could not read file from "{path}" as JSON'
+            ) from exception
 
     @staticmethod
     def from_csv(path: str) -> Table:
