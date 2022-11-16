@@ -21,6 +21,7 @@ class Table:
 
         Returns
         -------
+        table : Table
             The Table read from the file
 
         Raises
@@ -49,7 +50,7 @@ class Table:
 
         Returns
         -------
-        String
+        table : Table
             The Table read from the file
 
         Raises
