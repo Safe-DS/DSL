@@ -31,12 +31,13 @@ class Table:
         ValueError
             If the file could not be read
         """
+
         try:
             return Table(pd.read_json(path))
         except FileNotFoundError as exception:
             raise FileNotFoundError(f'File "{path}" does not exist') from exception
         except Exception as exception:
-            raise ValueError(f'Could not read file from "{path}"') from exception
+            raise ValueError(f'Could not read file from "{path}" as JSON') from exception
 
     @staticmethod
     def from_csv(path: str) -> Table:
@@ -60,9 +61,10 @@ class Table:
         ValueError
             If the file could not be read
         """
+
         try:
             return Table(pd.read_csv(path))
         except FileNotFoundError as exception:
             raise FileNotFoundError(f'File "{path}" does not exist') from exception
         except Exception as exception:
-            raise ValueError(f'Could not read file from "{path}"') from exception
+            raise ValueError(f'Could not read file from "{path}" as CSV') from exception
