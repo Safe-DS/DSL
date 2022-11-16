@@ -38,4 +38,4 @@ def test_rename_invalid_new_name():
 
 def test_rename_valid():
     table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv").rename_column("A", "D")
-    assert table._data.columns[0] == "D" and table.data.columns[1] == "B"
+    assert table._data.columns[0] == "D" and table._data.columns[1] == "B"

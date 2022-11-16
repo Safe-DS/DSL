@@ -72,11 +72,11 @@ class Table:
             raise ValueError(f'Could not read file from "{path}" as CSV') from exception
 
     def rename_column(self, old_name: str, new_name: str) -> Table:
-        columns: [str] = self.data.columns
+        columns: [str] = self._data.columns
 
         if old_name not in columns:
             raise ColumnNameError(old_name)
         if new_name in columns:
             raise ColumnNameDuplicateError(new_name)
 
-        return Table(self.data.rename(columns={old_name: new_name}))
+        return Table(self._data.rename(columns={old_name: new_name}))
