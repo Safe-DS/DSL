@@ -1,12 +1,32 @@
 from __future__ import annotations
 
 import pandas as pd
+from safe_ds.data import Row
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
+
+    def get_row_by_index(self, index: int) -> Row:
+        """
+        returns the row of the Table for a given Index
+        Parameters
+        ----------
+        index : int
+
+        Returns
+        -------
+        a Row of the Table
+        Raises
+        ------
+        KeyError
+            if the index doesn't exist
+        """
+        if len(self._data.index) - 1 < index or index < 0:
+            raise KeyError
+        return Row(self._data.iloc[[index]].squeeze())
 
     @staticmethod
     def from_json(path: str) -> Table:
@@ -124,7 +144,7 @@ class Table:
                 invalid_columns.append(name)
         if len(invalid_columns) != 0:
             raise ColumnNameError(invalid_columns)
-        transformed_data = self._data.drop(labels=column_names, axis='columns')
+        transformed_data = self._data.drop(labels=column_names, axis="columns")
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
@@ -150,5 +170,5 @@ class Table:
                 invalid_columns.append(name)
         if len(invalid_columns) != 0:
             raise ColumnNameError(invalid_columns)
-        transformed_data = self._data[[column_names]]
+        transformed_data = self._data[column_names]
         return Table(transformed_data)
