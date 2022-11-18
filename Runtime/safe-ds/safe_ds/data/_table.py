@@ -5,7 +5,11 @@ from pathlib import Path
 
 import pandas as pd
 from safe_ds.data import Column, Row
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError, IndexOutOfBoundsError
+from safe_ds.exceptions import (
+    ColumnNameDuplicateError,
+    ColumnNameError,
+    IndexOutOfBoundsError,
+)
 
 
 class Table:

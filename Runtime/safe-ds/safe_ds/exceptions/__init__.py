@@ -1,1 +1,5 @@
-from ._data_exceptions import ColumnNameDuplicateError, ColumnNameError, IndexOutOfBoundsError
+from ._data_exceptions import (
+    ColumnNameDuplicateError,
+    ColumnNameError,
+    IndexOutOfBoundsError,
+)
