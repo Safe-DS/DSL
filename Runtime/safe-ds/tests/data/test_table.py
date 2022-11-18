@@ -24,23 +24,29 @@ def test_read_json_invalid():
         Table.from_json("tests/resources/test_table_read_json_invalid.json")
 
 
-def test_rename_invalid_old_name():
+@pytest.mark.parametrize(
+    "name_from, name_to, column_one, column_two",
+    [
+        ("A", "D", "D", "B"),
+        ("A", "A", "A", "B")
+    ]
+)
+def test_rename_valid(name_from, name_to, column_one, column_two):
     table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv")
-    with pytest.raises(ColumnNameError):
-        table.rename_column("C", "D")
+    renamed_table = table.rename_column(name_from, name_to)
+    assert renamed_table._data.columns[0] == column_one
+    assert renamed_table._data.columns[1] == column_two
 
 
-def test_rename_invalid_new_name():
+@pytest.mark.parametrize(
+    "name_from, name_to, error",
+    [
+        ("C", "D", ColumnNameError),
+        ("A", "B", ColumnNameDuplicateError),
+        ("D", "D", ColumnNameError)
+    ]
+)
+def test_rename_invalid(name_from, name_to, error):
     table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv")
-    with pytest.raises(ColumnNameDuplicateError):
-        table.rename_column("A", "B")
-
-
-def test_rename_valid():
-    table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv").rename_column("A", "D")
-    assert table._data.columns[0] == "D" and table._data.columns[1] == "B"
-
-
-def test_rename_valid_unchanged():
-    table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv").rename_column("A", "A")
-    assert table._data.columns[0] == "A" and table._data.columns[1] == "B"
+    with pytest.raises(error):
+        table.rename_column(name_from, name_to)
