@@ -4,36 +4,20 @@ from dataclasses import dataclass
 
 import numpy
 
-from safe_ds.data import Table
-
 
 @dataclass
 class TableSchema:
     """Stores column names and corresponding data types for a table
 
+    Parameters
+    ----------
+    column_names: list[str]
+        Column names as an array
+    data_types: list[numpy.dtype]
+        Dataypes as an array using the numpy dtpye class
+
     """
-    schema: OrderedDict
-
-    @staticmethod
-    def from_table(table: Table) -> TableSchema:
-        """Extracts the table schema from a given table object
-
-        Parameters
-        ----------
-        table: Table
-            Table to be analyzed
-
-        Returns
-        -------
-        schema: TableSchema
-            Schema extracted from the table
-
-        """
-        column_names: list[str] = table.column_names
-        data_types: list[numpy.dtype] = table.data_types
-
-        schema = OrderedDict()
-        for i in range(len(column_names)):
-            schema[column_names[i]] = data_types[i]
-
-        return TableSchema(schema)
+    def __init__(self, column_names: list[str], data_types: list[numpy.dtype]):
+        self.schema = OrderedDict()
+        for column_name, data_type in zip(column_names, data_types):
+            self.schema[column_name] = data_type
