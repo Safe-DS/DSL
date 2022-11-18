@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
-from safe_ds.exceptions import ColumnNameError
-from safe_ds.exceptions import ColumnNameDuplicateError
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
 class Table:
