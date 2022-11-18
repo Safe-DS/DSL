@@ -5,8 +5,9 @@ import os.path
 from pathlib import Path
 
 import pandas as pd
-from safe_ds.data import TableSchema
-from safe_ds.data import Column, Row
+from ._tableSchema import TableSchema
+from ._column import Column
+from ._row import Row
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
