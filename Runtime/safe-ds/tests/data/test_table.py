@@ -1,5 +1,5 @@
 import pytest
-from safe_ds.data import Table
+from safe_ds.data import Table, TableSchema
 
 
 def test_read_csv_valid():

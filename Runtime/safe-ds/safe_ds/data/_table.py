@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import numpy
 import pandas as pd
 
 
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
+        self.column_names: list[str] = data.columns
+        self.data_types: list[numpy.dtype] = data.dtypes.to_list()
 
     @staticmethod
     def from_json(path: str) -> Table:
