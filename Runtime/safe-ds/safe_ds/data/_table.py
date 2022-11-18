@@ -4,11 +4,32 @@ import os.path
 from pathlib import Path
 
 import pandas as pd
+from safe_ds.data import Row
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
+
+    def get_row_by_index(self, index: int) -> Row:
+        """
+        returns the row of the Table for a given Index
+        Parameters
+        ----------
+        index : int
+
+        Returns
+        -------
+        a Row of the Table
+        Raises
+        ------
+        KeyError
+            if the index doesn't exist
+        """
+        if len(self._data.index) - 1 < index or index < 0:
+            raise KeyError
+        return Row(self._data.iloc[[index]].squeeze())
 
     @staticmethod
     def from_json(path: str) -> Table:
@@ -95,3 +116,36 @@ class Table:
         """
         Path(os.path.dirname(path_to_file)).mkdir(parents=True, exist_ok=True)
         self._data.to_csv(path_to_file, index=False)
+
+    def rename_column(self, old_name: str, new_name: str) -> Table:
+        """Rename a single column by providing the previous name and the future name of it.
+
+        Parameters
+        ----------
+        old_name : str
+            Old name of the target column
+        new_name : str
+            New name of the target column
+
+        Returns
+        -------
+        table : Table
+            The Table with the renamed column
+
+        Raises
+        ------
+        ColumnNameError
+            If the specified old target column name doesn't exist
+        ColumnNameDuplicateError
+            If the specified new target column name already exists
+        """
+        columns: list[str] = self._data.columns
+
+        if old_name not in columns:
+            raise ColumnNameError(old_name)
+        if old_name == new_name:
+            return self
+        if new_name in columns:
+            raise ColumnNameDuplicateError(new_name)
+
+        return Table(self._data.rename(columns={old_name: new_name}))
