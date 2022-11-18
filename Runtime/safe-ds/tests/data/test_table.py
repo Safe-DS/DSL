@@ -1,6 +1,5 @@
 import pytest
 from safe_ds.data import Table
-from safe_ds.data import Row
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
