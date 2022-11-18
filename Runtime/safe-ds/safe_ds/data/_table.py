@@ -93,7 +93,7 @@ class Table:
         columns: list[str] = self._data.columns
 
         if old_name not in columns:
-            raise ColumnNameError(old_name)
+            raise ColumnNameError([old_name])
         if old_name == new_name:
             return self
         if new_name in columns:
