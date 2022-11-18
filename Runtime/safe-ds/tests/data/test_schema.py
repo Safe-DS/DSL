@@ -1,7 +1,8 @@
 from collections import OrderedDict
-
 import numpy
-from safe_ds.data import TableSchema, Table
+
+from safe_ds.data import TableSchema
+from safe_ds.data import Table
 
 
 def test_from_table():

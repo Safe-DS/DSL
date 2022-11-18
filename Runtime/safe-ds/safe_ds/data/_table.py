@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import numpy
 import pandas as pd
-from safe_ds.data import TableSchema, Column, Row
+from safe_ds.data import TableSchema
+from safe_ds.data import Column, Row
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
