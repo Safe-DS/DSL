@@ -1,9 +1,9 @@
-import pytest
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 import pandas as pd
+import pytest
 
 from safe_ds.data import Column
 from safe_ds.data import Table
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
 def test_read_csv_valid():
