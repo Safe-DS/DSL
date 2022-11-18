@@ -225,3 +225,6 @@ class Table:
             raise ColumnNameError(invalid_columns)
         transformed_data = self._data[column_names]
         return Table(transformed_data)
+
+    def to_pandas_df(self):
+        return self._data.copy(deep=True)
