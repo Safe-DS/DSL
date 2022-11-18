@@ -16,7 +16,7 @@ class Table:
         ----------
         index : int
 
-        Return
+        Returns
         -------
         a Row of the Table
         Raises
