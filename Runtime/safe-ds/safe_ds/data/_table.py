@@ -150,5 +150,5 @@ class Table:
                 invalid_columns.append(name)
         if len(invalid_columns) != 0:
             raise ColumnNameError(invalid_columns)
-        transformed_data = self._data[[column_names]]
+        transformed_data = self._data[column_names]
         return Table(transformed_data)

@@ -8,7 +8,7 @@ class ColumnNameError(Exception):
     """
 
     def __init__(self, column_name):
-        if type(column_name) == list:
+        if isinstance(column_name, list):
             super().__init__(f"Could not find columns '{', '.join(column_name)}'")
         else:
             super().__init__(f"Could not find column '{column_name}'.")
