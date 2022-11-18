@@ -4,6 +4,7 @@ import os.path
 from pathlib import Path
 
 import pandas as pd
+
 from safe_ds.data import Row
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 

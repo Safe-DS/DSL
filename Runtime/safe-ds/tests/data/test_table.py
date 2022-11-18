@@ -2,6 +2,7 @@ from tempfile import NamedTemporaryFile
 
 import pandas as pd
 import pytest
+
 from safe_ds.data import Table
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
