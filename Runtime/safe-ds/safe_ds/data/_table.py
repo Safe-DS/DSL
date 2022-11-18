@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import numpy
 import pandas as pd
+
+from safe_ds.data import TableSchema
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
@@ -10,6 +12,7 @@ class Table:
         self._data: pd.DataFrame = data
         self.column_names: list[str] = data.columns
         self.data_types: list[numpy.dtype] = data.dtypes.to_list()
+        self.schema: TableSchema = TableSchema(column_names=self.column_names, data_types=self.data_types)
 
     @staticmethod
     def from_json(path: str) -> Table:
