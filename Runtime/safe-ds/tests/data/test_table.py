@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 import pytest
-
 from safe_ds.data import Table
 
 
@@ -27,7 +26,7 @@ def test_read_json_invalid():
 
 
 def test_write_and_read_json_valid():
-    table = Table(pd.DataFrame(data={'col1': ["col1_1"], 'col2': ["col2_1"]}))
+    table = Table(pd.DataFrame(data={"col1": ["col1_1"], "col2": ["col2_1"]}))
     if os.path.isfile("tests/resources/test_table_write_and_read_valid.json"):
         os.remove("tests/resources/test_table_write_and_read_valid.json")
     table.to_json("tests/resources/test_table_write_and_read_valid.json")
@@ -36,7 +35,7 @@ def test_write_and_read_json_valid():
 
 
 def test_write_and_read_csv_valid():
-    table = Table(pd.DataFrame(data={'col1': ["col1_1"], 'col2': ["col2_1"]}))
+    table = Table(pd.DataFrame(data={"col1": ["col1_1"], "col2": ["col2_1"]}))
     if os.path.isfile("tests/resources/test_table_write_and_read_valid.csv"):
         os.remove("tests/resources/test_table_write_and_read_valid.csv")
     table.to_csv("tests/resources/test_table_write_and_read_valid.csv")
