@@ -122,8 +122,7 @@ class Table:
         return Table(self._data.rename(columns={old_name: new_name}))
 
     def get_column_by_name(self, column_name: str):
-        """
-        Returns a new instance of Column with the data of the described column of the Table.
+        """Returns a new instance of Column with the data of the described column of the Table.
 
         Parameters
         ----------
@@ -145,16 +144,17 @@ class Table:
         raise ColumnNameError([column_name])
 
     def drop_columns(self, column_names: list[str]) -> Table:
-        """
-        returns a Table without the given columns
+        """Returns a Table without the given columns
 
         Parameters
         ----------
-        column_names
+        column_names : list[str]
+            A List containing all columns to be dropped
 
         Returns
         -------
-        a Table without the given columns
+        table : Table
+            A Table without the given columns
 
         Raises
         ------
@@ -171,16 +171,17 @@ class Table:
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
-        """
-        returns a Table with exactly the given columns
+        """Returns a Table with exactly the given columns
 
         Parameters
         ----------
-        column_names
+        column_names : list[str]
+            A List containing only the columns to be kept
 
         Returns
         -------
-        a Table containing only the given columns
+        table : Table
+            A Table containing only the given columns
 
         Raises
         ------
