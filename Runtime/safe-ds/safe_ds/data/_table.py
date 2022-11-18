@@ -24,7 +24,7 @@ class Table:
         KeyError
             if the index doesn't exist
         """
-        if len(self._data.index) - 1 < index | index < 0:
+        if len(self._data.index) - 1 < index or index < 0:
             raise KeyError
         return Row(self._data.iloc[[index]])
 
