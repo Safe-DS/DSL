@@ -1,9 +1,10 @@
 class ColumnNameError(Exception):
-    """
-    Exception raised for trying to access an invalid column name.
+    """Exception raised for trying to access an invalid column name.
 
-    Attributes:
-        column_name -- Name of the column that was tried to be accessed
+    Parameters
+    ----------
+    column_name: str
+        Name of the column that was tried to be accessed
     """
 
     def __init__(self, column_name):
@@ -11,11 +12,12 @@ class ColumnNameError(Exception):
 
 
 class ColumnNameDuplicateError(Exception):
-    """
-    Exception raised for trying to modify a table, resulting in a duplicate column name.
+    """Exception raised for trying to modify a table, resulting in a duplicate column name.
 
-    Attributes:
-        column_name -- Name of the column that resulted in a duplicate
+    Parameters
+    ----------
+    column_name: str
+        Name of the column that resulted in a duplicate
     """
 
     def __init__(self, column_name):

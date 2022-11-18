@@ -10,8 +10,7 @@ class Table:
 
     @staticmethod
     def from_json(path: str) -> Table:
-        """
-        Reads data from a JSON file into a Table
+        """Reads data from a JSON file into a Table
 
         Parameters
         ----------
@@ -42,8 +41,7 @@ class Table:
 
     @staticmethod
     def from_csv(path: str) -> Table:
-        """
-        Reads data from a CSV file into a Table.
+        """Reads data from a CSV file into a Table.
 
         Parameters
         ----------
@@ -71,15 +69,14 @@ class Table:
             raise ValueError(f'Could not read file from "{path}" as CSV') from exception
 
     def rename_column(self, old_name: str, new_name: str) -> Table:
-        """
-        Rename a single column by providing the previous name and the future name of it.
+        """Rename a single column by providing the previous name and the future name of it.
 
         Parameters
         ----------
         old_name : str
             Old name of the target column
         new_name : str
-            New Name of the target column
+            New name of the target column
 
         Returns
         -------
