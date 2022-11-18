@@ -26,7 +26,7 @@ class Table:
         """
         if len(self._data.index) - 1 < index or index < 0:
             raise KeyError
-        return Row(self._data.iloc[[index]])
+        return Row(self._data.iloc[[index]].squeeze())
 
     @staticmethod
     def from_json(path: str) -> Table:
