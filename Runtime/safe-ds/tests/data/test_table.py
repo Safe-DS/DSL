@@ -1,6 +1,7 @@
 import pytest
-from safe_ds.data import Table
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+import pandas as pd
+from safe_ds.data import Table, Column
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError, IndexOutOfBoundsError
 
 
 def test_read_csv_valid():
@@ -46,3 +47,17 @@ def test_rename_invalid(name_from, name_to, error):
     table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv")
     with pytest.raises(error):
         table.rename_column(name_from, name_to)
+
+
+def test_value_by_position_valid():
+    column = Column(pd.Series([0, '1']))
+    assert column.get_value_by_position(0) == 0
+    assert column.get_value_by_position(1) == '1'
+
+def test_value_by_position_invalid():
+    column = Column(pd.Series([0, '1']))
+    with pytest.raises(IndexOutOfBoundsError):
+        column.get_value_by_position(-1)
+
+    with pytest.raises(IndexOutOfBoundsError):
+        column.get_value_by_position(2)
