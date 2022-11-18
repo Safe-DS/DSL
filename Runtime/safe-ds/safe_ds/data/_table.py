@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-import numpy
 import os.path
 from pathlib import Path
 
+import numpy
 import pandas as pd
-from ._tableSchema import TableSchema
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+
 from ._column import Column
 from ._row import Row
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+from ._tableSchema import TableSchema
 
 
 class Table:
@@ -16,7 +17,9 @@ class Table:
         self._data: pd.DataFrame = data
         self.column_names: list[str] = data.columns
         self.data_types: list[numpy.dtype] = data.dtypes.to_list()
-        self.schema: TableSchema = TableSchema(column_names=self.column_names, data_types=self.data_types)
+        self.schema: TableSchema = TableSchema(
+            column_names=self.column_names, data_types=self.data_types
+        )
 
     def get_row_by_index(self, index: int) -> Row:
         """
