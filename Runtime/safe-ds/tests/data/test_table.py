@@ -26,7 +26,7 @@ def test_read_json_invalid():
 def test_get_row_by_index():
     table = Table.from_csv("tests/resources/test_table_read_csv.csv")
     val = table.get_row_by_index(0)
-    assert val._data['A'].iloc[0] == 1 and val._data['B'].iloc[0] == 2
+    assert val._data["A"].iloc[0] == 1 and val._data["B"].iloc[0] == 2
     with pytest.raises(KeyError):
         table.get_row_by_index(-1)
     with pytest.raises(KeyError):
