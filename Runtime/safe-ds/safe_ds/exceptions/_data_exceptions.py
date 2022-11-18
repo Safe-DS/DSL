@@ -3,12 +3,15 @@ class ColumnNameError(Exception):
 
     Parameters
     ----------
-    column_name: str
+    column_name: str, list[str]
         Name of the column that was tried to be accessed
     """
 
     def __init__(self, column_name):
-        super().__init__(f"Could not find column '{column_name}'.")
+        if type(column_name) == list:
+            super().__init__(f"Could not find columns '{', '.join(column_name)}'")
+        else:
+            super().__init__(f"Could not find column '{column_name}'.")
 
 
 class ColumnNameDuplicateError(Exception):

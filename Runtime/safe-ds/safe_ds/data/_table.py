@@ -100,3 +100,55 @@ class Table:
             raise ColumnNameDuplicateError(new_name)
 
         return Table(self._data.rename(columns={old_name: new_name}))
+
+    def drop_columns(self, column_names: list[str]) -> Table:
+        """
+        returns a Table without the given columns
+
+        Parameters
+        ----------
+        column_names
+
+        Returns
+        -------
+        a Table without the given columns
+
+        Raises
+        ------
+        ColumnNameError
+            If any of the given columns does not exist
+        """
+        invalid_columns = []
+        for name in column_names:
+            if name not in self._data.columns:
+                invalid_columns.append(name)
+        if len(invalid_columns) != 0:
+            raise ColumnNameError(invalid_columns)
+        transformed_data = self._data.drop(labels=column_names, axis='columns')
+        return Table(transformed_data)
+
+    def keep_columns(self, column_names: list[str]) -> Table:
+        """
+        returns a Table with exactly the given columns
+
+        Parameters
+        ----------
+        column_names
+
+        Returns
+        -------
+        a Table containing only the given columns
+
+        Raises
+        ------
+        ColumnNameError
+            If any of the given columns does not exist
+        """
+        invalid_columns = []
+        for name in column_names:
+            if name not in self._data.columns:
+                invalid_columns.append(name)
+        if len(invalid_columns) != 0:
+            raise ColumnNameError(invalid_columns)
+        transformed_data = self._data[[column_names]]
+        return Table(transformed_data)
