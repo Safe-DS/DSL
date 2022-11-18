@@ -144,7 +144,7 @@ class Table:
                 invalid_columns.append(name)
         if len(invalid_columns) != 0:
             raise ColumnNameError(invalid_columns)
-        transformed_data = self._data.drop(labels=column_names, axis='columns')
+        transformed_data = self._data.drop(labels=column_names, axis="columns")
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
