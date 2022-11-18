@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 
+from ..exceptions import ColumnNameDuplicateError, ColumnNameError
 from ._column import Column
-from ..exceptions import ColumnNameError, ColumnNameDuplicateError
 
 
 class Table:
