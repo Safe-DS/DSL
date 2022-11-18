@@ -20,7 +20,7 @@ class Table:
         -------
         a Row of the Table
         Raises
-        --------
+        ------
         KeyError
             if the index doesn't exist
         """
