@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import numpy
+import os.path
+from pathlib import Path
+
 import pandas as pd
 from safe_ds.data import TableSchema
 from safe_ds.data import Column, Row
@@ -35,7 +38,8 @@ class Table:
 
     @staticmethod
     def from_json(path: str) -> Table:
-        """Reads data from a JSON file into a Table
+        """
+        Reads data from a JSON file into a Table
 
         Parameters
         ----------
@@ -66,7 +70,8 @@ class Table:
 
     @staticmethod
     def from_csv(path: str) -> Table:
-        """Reads data from a CSV file into a Table.
+        """
+        Reads data from a CSV file into a Table.
 
         Parameters
         ----------
@@ -92,6 +97,30 @@ class Table:
             raise FileNotFoundError(f'File "{path}" does not exist') from exception
         except Exception as exception:
             raise ValueError(f'Could not read file from "{path}" as CSV') from exception
+
+    def to_json(self, path_to_file: str):
+        """
+        Write the data from the table into a json file.
+        If the file and/or the directories do not exist they will be created. If the file does already exist it will be overwritten.
+
+        Parameters
+        ----------
+        path_to_file : The path as String to the output file.
+        """
+        Path(os.path.dirname(path_to_file)).mkdir(parents=True, exist_ok=True)
+        self._data.to_json(path_to_file)
+
+    def to_csv(self, path_to_file: str):
+        """
+        Write the data from the table into a csv file.
+        If the file and/or the directories do not exist they will be created. If the file does already exist it will be overwritten.
+
+        Parameters
+        ----------
+        path_to_file : The path as String to the output file.
+        """
+        Path(os.path.dirname(path_to_file)).mkdir(parents=True, exist_ok=True)
+        self._data.to_csv(path_to_file, index=False)
 
     def rename_column(self, old_name: str, new_name: str) -> Table:
         """Rename a single column by providing the previous name and the future name of it.
