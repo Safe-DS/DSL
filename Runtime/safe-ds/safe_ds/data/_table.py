@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 from safe_ds.data import Column, Row
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError, IndexOutOfBoundsError
 
 
 class Table:
@@ -24,11 +24,11 @@ class Table:
         a Row of the Table
         Raises
         ------
-        KeyError
+        IndexOutOfBoundsError
             if the index doesn't exist
         """
         if len(self._data.index) - 1 < index or index < 0:
-            raise KeyError
+            raise IndexOutOfBoundsError(index)
         return Row(self._data.iloc[[index]].squeeze())
 
     @staticmethod
