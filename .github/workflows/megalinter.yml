@@ -34,7 +34,11 @@ jobs:
       # MegaLinter
       - name: MegaLinter
         id: ml
-        uses: oxsecurity/megalinter@v6.13.0
+        run: npx -- mega-linter-runner@v6.15.0 \
+                 --container-name megalinter-full \
+                 --remove-container \
+                 --fix \
+                 --env LOG_LEVEL=warning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
