@@ -88,7 +88,7 @@ class Table:
 
         try:
             return Table(pd.read_csv(path))
-        except FileNotFoundError as exception:
+        except FileNotFoundError                as exception:
             raise FileNotFoundError(f'File "{path}" does not exist') from exception
         except Exception as exception:
             raise ValueError(f'Could not read file from "{path}" as CSV') from exception
