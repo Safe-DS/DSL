@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os.path
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 from safe_ds.exceptions import (
@@ -235,3 +236,29 @@ class Table:
             raise ColumnNameError(invalid_columns)
         transformed_data = self._data[column_names]
         return Table(transformed_data)
+
+    def filter_rows(self, query: Callable) -> Table:
+        """Returns a Table with rows filtered by applied lambda function
+
+        Parameters
+        ----------
+        query : lambda function
+            A lambda function that is applied to all rows
+
+        Returns
+        -------
+        table : Table
+            A Table containing only the rows filtered by the query lambda function
+
+        Raises
+        ------
+        TypeError
+           If the entered query is not a lambda function
+        """
+
+        try:
+            mask = self._data.apply(query, axis=1)
+            return Table(self._data[mask].reset_index(drop=True))
+        except Exception as exception:
+            raise TypeError("Entered query is not a lambda function.") from exception
+
