@@ -5,10 +5,12 @@ from pathlib import Path
 from typing import Callable
 
 import pandas as pd
+from pandas import DataFrame, Series
+
 from safe_ds.exceptions import (
     ColumnNameDuplicateError,
     ColumnNameError,
-    IndexOutOfBoundsError,
+    IndexOutOfBoundsError, SchemaMismatchError,
 )
 
 from ._column import Column
@@ -16,6 +18,7 @@ from ._row import Row
 from ._table_schema import TableSchema
 
 
+# noinspection PyProtectedMember
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
@@ -40,7 +43,7 @@ class Table:
         """
         if len(self._data.index) - 1 < index or index < 0:
             raise IndexOutOfBoundsError(index)
-        return Row(self._data.iloc[[index]].squeeze())
+        return Row(self._data.iloc[[index]].squeeze(), self.schema)
 
     @staticmethod
     def from_json(path: str) -> Table:
@@ -103,6 +106,38 @@ class Table:
             raise FileNotFoundError(f'File "{path}" does not exist') from exception
         except Exception as exception:
             raise ValueError(f'Could not read file from "{path}" as CSV') from exception
+
+    @staticmethod
+    def from_rows(rows: list[Row]) -> Table:
+        """
+        Returns a table combined from a list of given rows.
+
+        Parameters
+        ----------
+        rows : list[Row]
+            Rows to be combined. Should have a matching schema.
+
+        Returns
+        -------
+        table : Table
+            The generated table.
+
+        Raises
+        ------
+        SchemaMismatchError
+            If one of the schemas of the rows does not match.
+        """
+        schema_compare: TableSchema = rows[0].schema
+        row_array: list[Series] = []
+
+        for row in rows:
+            if schema_compare != row.schema:
+                raise SchemaMismatchError()
+            row_array.append(row._data)
+
+        dataframe: DataFrame = pd.DataFrame(row_array)
+        table: Table = Table(dataframe)
+        return table
 
     def to_json(self, path_to_file: str):
         """
@@ -262,3 +297,19 @@ class Table:
         except Exception as exception:
             raise TypeError("Entered query is not a lambda function.") from exception
 
+    def to_rows(self) -> list[Row]:
+        """
+        Returns a list of Rows from the current table.
+
+        Returns
+        -------
+        rows : list[Row]
+            List of Row objects
+        """
+        rows: list[Row] = []
+
+        for (_, series_row) in self._data.iterrows():
+            row: Row = Row(series_row, self.schema)
+            rows.append(row)
+
+        return rows
