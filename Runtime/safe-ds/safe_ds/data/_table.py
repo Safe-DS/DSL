@@ -4,13 +4,19 @@ import os.path
 from pathlib import Path
 
 import pandas as pd
-from safe_ds.data import Column, Row
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+
+from ._column import Column
+from ._row import Row
+from ._tableSchema import TableSchema
 
 
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
+        self.schema: TableSchema = TableSchema(
+            column_names=self._data.columns, data_types=self._data.dtypes.to_list()
+        )
 
     def get_row_by_index(self, index: int) -> Row:
         """
@@ -142,7 +148,7 @@ class Table:
         columns: list[str] = self._data.columns
 
         if old_name not in columns:
-            raise ColumnNameError(old_name)
+            raise ColumnNameError([old_name])
         if old_name == new_name:
             return self
         if new_name in columns:
@@ -151,8 +157,7 @@ class Table:
         return Table(self._data.rename(columns={old_name: new_name}))
 
     def get_column_by_name(self, column_name: str):
-        """
-        Returns a new instance of Column with the data of the described column of the Table.
+        """Returns a new instance of Column with the data of the described column of the Table.
 
         Parameters
         ----------
@@ -171,4 +176,58 @@ class Table:
         """
         if column_name in self._data.columns:
             return Column(self._data[column_name].copy(deep=True))
-        raise ColumnNameError(column_name)
+        raise ColumnNameError([column_name])
+
+    def drop_columns(self, column_names: list[str]) -> Table:
+        """Returns a Table without the given columns
+
+        Parameters
+        ----------
+        column_names : list[str]
+            A List containing all columns to be dropped
+
+        Returns
+        -------
+        table : Table
+            A Table without the given columns
+
+        Raises
+        ------
+        ColumnNameError
+            If any of the given columns does not exist
+        """
+        invalid_columns = []
+        for name in column_names:
+            if name not in self._data.columns:
+                invalid_columns.append(name)
+        if len(invalid_columns) != 0:
+            raise ColumnNameError(invalid_columns)
+        transformed_data = self._data.drop(labels=column_names, axis="columns")
+        return Table(transformed_data)
+
+    def keep_columns(self, column_names: list[str]) -> Table:
+        """Returns a Table with exactly the given columns
+
+        Parameters
+        ----------
+        column_names : list[str]
+            A List containing only the columns to be kept
+
+        Returns
+        -------
+        table : Table
+            A Table containing only the given columns
+
+        Raises
+        ------
+        ColumnNameError
+            If any of the given columns does not exist
+        """
+        invalid_columns = []
+        for name in column_names:
+            if name not in self._data.columns:
+                invalid_columns.append(name)
+        if len(invalid_columns) != 0:
+            raise ColumnNameError(invalid_columns)
+        transformed_data = self._data[column_names]
+        return Table(transformed_data)
