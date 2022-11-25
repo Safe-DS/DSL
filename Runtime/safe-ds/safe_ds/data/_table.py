@@ -12,14 +12,15 @@ from safe_ds.exceptions import (
 
 from ._column import Column
 from ._row import Row
-from ._tableSchema import TableSchema
+from ._table_schema import TableSchema
+from ._column_type import ColumnType
 
 
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
         self.schema: TableSchema = TableSchema(
-            column_names=self._data.columns, data_types=self._data.dtypes.to_list()
+            column_names=self._data.columns, data_types=list(map(ColumnType.from_numpy_dtype,self._data.dtypes.to_list()))
         )
 
     def get_row_by_index(self, index: int) -> Row:
