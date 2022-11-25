@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
-
 from safe_ds.data import Table, TableSchema
 
 
@@ -40,4 +39,4 @@ def test_get_type_of_column():
 
     table_column_type = table.schema.get_type_of_column("A")
 
-    assert table_column_type is np.dtype('int64')
+    assert table_column_type is np.dtype("int64")

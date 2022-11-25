@@ -19,6 +19,7 @@ class TableSchema:
         Dataypes as an array using the numpy dtpye class
 
     """
+
     _schema: OrderedDict
 
     def __init__(self, column_names: list[str], data_types: list[np.dtype]):
