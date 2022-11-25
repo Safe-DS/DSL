@@ -6,18 +6,14 @@ from safe_ds.data import Table, TableSchema
 
 def test_from_table_valid():
     table = Table.from_json("tests/resources/test_table_read_json.json")
-    df_for_expected: pd.DataFrame = DataFrame([[1, 2]], columns=["A", "B"])
-    expected_types = df_for_expected.dtypes.to_list()
-    schema_expected = TableSchema(df_for_expected.columns, expected_types)
+    schema_expected = TableSchema(["A", "B"], [np.dtype('int64'), np.dtype('int64')])
 
     assert table.schema == schema_expected
 
 
 def test_from_table_invalid():
     table = Table.from_json("tests/resources/test_table_read_json.json")
-    df_for_expected: pd.DataFrame = DataFrame([[1, "2"]], columns=["A", "B"])
-    expected_types = df_for_expected.dtypes.to_list()
-    schema_not_expected = TableSchema(df_for_expected.columns, expected_types)
+    schema_not_expected = TableSchema(["A", "C"], [np.dtype('f8'), np.dtype('int64')])
 
     assert table.schema != schema_not_expected
 
