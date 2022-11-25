@@ -17,7 +17,7 @@ def test_logistic_regression_predict():
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = LogisticRegression()
     log_regression.fit(supervised_dataset)
-    log_regression.predict(supervised_dataset.feature_vector)
+    log_regression.predict(supervised_dataset.feature_vectors)
     assert True  # This asserts that the predict method succeeds
 
 
@@ -34,7 +34,7 @@ def test_logistic_regression_predict_not_fitted():
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = LogisticRegression()
     with pytest.raises(PredictionError):
-        log_regression.predict(supervised_dataset.feature_vector)
+        log_regression.predict(supervised_dataset.feature_vectors)
 
 
 def test_logistic_regression_predict_invalid():
@@ -47,7 +47,7 @@ def test_logistic_regression_predict_invalid():
     log_regression = LogisticRegression()
     log_regression.fit(supervised_dataset)
     with pytest.raises(PredictionError):
-        log_regression.predict(invalid_supervised_dataset.feature_vector)
+        log_regression.predict(invalid_supervised_dataset.feature_vectors)
 
 
 def test_logistic_regression_predict_invalid_target_predictions():
@@ -58,4 +58,4 @@ def test_logistic_regression_predict_invalid_target_predictions():
     log_regression = LogisticRegression()
     log_regression.fit(supervised_dataset)
     with pytest.raises(PredictionError):
-        log_regression.predict(supervised_dataset.feature_vector)
+        log_regression.predict(supervised_dataset.feature_vectors)

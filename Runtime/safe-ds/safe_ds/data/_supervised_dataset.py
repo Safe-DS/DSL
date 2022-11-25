@@ -20,9 +20,9 @@ class SupervisedDataset:
         self._X: Table = table.drop_columns([target_column])
 
     @property
-    def feature_vector(self) -> Table:
+    def feature_vectors(self) -> Table:
         return self._X
 
     @property
-    def target_vector(self) -> Column:
+    def target_values(self) -> Column:
         return self._y

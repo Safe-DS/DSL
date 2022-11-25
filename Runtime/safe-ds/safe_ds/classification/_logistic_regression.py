@@ -30,8 +30,8 @@ class LogisticRegression:
         """
         try:
             self._clf.fit(
-                supervised_dataset.feature_vector._data,
-                supervised_dataset.target_vector._data,
+                supervised_dataset.feature_vectors._data,
+                supervised_dataset.target_values._data,
             )
         except ValueError as exception:
             raise LearningError(str(exception)) from exception
