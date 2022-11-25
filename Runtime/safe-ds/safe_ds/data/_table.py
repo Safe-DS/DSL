@@ -3,7 +3,6 @@ from __future__ import annotations
 import os.path
 from pathlib import Path
 
-import numpy
 import pandas as pd
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
@@ -15,10 +14,8 @@ from ._tableSchema import TableSchema
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
-        self.column_names: list[str] = data.columns
-        self.data_types: list[numpy.dtype] = data.dtypes.to_list()
         self.schema: TableSchema = TableSchema(
-            column_names=self.column_names, data_types=self.data_types
+            column_names=self._data.columns, data_types=self._data.dtypes.to_list()
         )
 
     def get_row_by_index(self, index: int) -> Row:

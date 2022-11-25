@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from dataclasses import dataclass
+from typing import Optional
 
-import numpy
+import numpy as np
 
 
 @dataclass
@@ -18,8 +19,15 @@ class TableSchema:
         Dataypes as an array using the numpy dtpye class
 
     """
+    _schema: OrderedDict
 
-    def __init__(self, column_names: list[str], data_types: list[numpy.dtype]):
-        self.schema = OrderedDict()
+    def __init__(self, column_names: list[str], data_types: list[np.dtype]):
+        self._schema = OrderedDict()
         for column_name, data_type in zip(column_names, data_types):
-            self.schema[column_name] = data_type
+            self._schema[column_name] = data_type
+
+    def has_column(self, column_name: str) -> bool:
+        return column_name in self._schema
+
+    def get_type_of_column(self, column_name: str) -> Optional[np.dtype]:
+        return self._schema[column_name]
