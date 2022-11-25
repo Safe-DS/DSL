@@ -11,4 +11,3 @@ def test_has_column_false():
     table = Table.from_json("tests/resources/test_schema_table.json")
 
     assert not table.schema.has_column("C")
-
