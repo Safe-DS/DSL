@@ -5,6 +5,19 @@ from safe_ds.data import Column
 
 
 def plot_boxplot(column: Column):
+    """
+    Plot a column in a boxplot. This function can only plot real numerical data
+
+    Parameters
+    ----------
+    column : Column
+                The column you want to plot
+
+    Raises
+    -------
+    TypeError
+        if the column contains non-numerical data or complex data
+    """
     # noinspection PyProtectedMember
     for data in column._data:
         if not isinstance(data, int) and not isinstance(data, float) and not isinstance(data, complex):
