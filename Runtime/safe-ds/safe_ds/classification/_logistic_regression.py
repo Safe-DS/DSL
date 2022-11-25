@@ -12,7 +12,7 @@ class LogisticRegression:
     """
 
     def __init__(self):
-        self.clf = sk_LogisticRegression(n_jobs=-1)
+        self._clf = sk_LogisticRegression(n_jobs=-1)
 
     def fit(self, supervised_dataset: SupervisedDataset):
         """
@@ -29,7 +29,7 @@ class LogisticRegression:
             if the supervised dataset contains invalid values or if the training failed
         """
         try:
-            self.clf.fit(
+            self._clf.fit(
                 supervised_dataset.feature_vector._data,
                 supervised_dataset.target_vector._data,
             )
@@ -58,7 +58,7 @@ class LogisticRegression:
             if predicting with the given dataset failed
         """
         try:
-            predicted_target_vector = self.clf.predict(dataset._data)
+            predicted_target_vector = self._clf.predict(dataset._data)
             result_set = dataset._data.copy(deep=True)
             if "target_predictions" in result_set.columns:
                 raise ValueError(
