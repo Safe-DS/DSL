@@ -26,6 +26,7 @@ class ColumnNameDuplicateError(Exception):
 
 class IndexOutOfBoundsError(Exception):
     """Exception raised for trying to access an element by an index that does not exist in the underlying data.
+
     Parameters
     ----------
     index: int
