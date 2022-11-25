@@ -1,8 +1,7 @@
+from safe_ds.data import SupervisedDataset, Table
+from safe_ds.exceptions import LearningError, PredictionError
 from sklearn.exceptions import NotFittedError
 from sklearn.linear_model import LogisticRegression as sk_LogisticRegression
-from safe_ds.data import SupervisedDataset
-from safe_ds.data import Table
-from safe_ds.exceptions import LearningError, PredictionError
 
 
 # noinspection PyProtectedMember
@@ -30,7 +29,10 @@ class LogisticRegression:
             if the supervised dataset contains invalid values or if the training failed
         """
         try:
-            self.clf.fit(supervised_dataset.feature_vector._data, supervised_dataset.target_vector._data)
+            self.clf.fit(
+                supervised_dataset.feature_vector._data,
+                supervised_dataset.target_vector._data,
+            )
         except ValueError as exception:
             raise LearningError(str(exception)) from exception
         except Exception as exception:
@@ -59,7 +61,9 @@ class LogisticRegression:
             predicted_target_vector = self.clf.predict(dataset._data)
             result_set = dataset._data.copy(deep=True)
             if "target_predictions" in result_set.columns:
-                raise ValueError("Dataset already contains 'target_predictions' column. Please rename this column")
+                raise ValueError(
+                    "Dataset already contains 'target_predictions' column. Please rename this column"
+                )
             result_set["target_predictions"] = predicted_target_vector
             return Table(result_set)
         except NotFittedError as exception:

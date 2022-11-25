@@ -1,4 +1,4 @@
-from safe_ds.data import Table, SupervisedDataset
+from safe_ds.data import SupervisedDataset, Table
 
 
 def test_supervised_dataset_target_vector():
@@ -15,4 +15,3 @@ def test_supervised_dataset_feature_vectors():
     assert "A" in supervised_dataset.feature_vector._data
     assert "B" in supervised_dataset.feature_vector._data
     assert "C" in supervised_dataset.feature_vector._data
-

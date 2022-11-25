@@ -28,4 +28,3 @@ class PredictionError(Exception):
             super().__init__("Error occurred while predicting")
         else:
             super().__init__(f"Error occurred while predicting: {reason}")
-
