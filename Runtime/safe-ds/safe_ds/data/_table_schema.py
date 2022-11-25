@@ -4,7 +4,6 @@ from collections import OrderedDict
 from dataclasses import dataclass
 
 import numpy as np
-
 from safe_ds.exceptions import ColumnNameError
 
 
@@ -66,6 +65,21 @@ class TableSchema:
         if not self.has_column(column_name):
             raise ColumnNameError([column_name])
         return self._schema[column_name]
+
+    def _get_column_index_by_name(self, column_name: str):
+        """
+        Returns the index of the column with the given column_name
+
+        Parameters
+        ----------
+        column_name: str
+            The column_name you want the index for
+
+        Returns
+        -------
+        The index of the column
+        """
+        return list(self._schema.keys()).index(column_name)
 
     def __str__(self) -> str:
         """
