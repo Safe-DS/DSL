@@ -134,3 +134,14 @@ def test_write_and_read_csv_valid():
         with open(tmp_table_file.name, "r", encoding="utf-8") as tmp_file:
             table_r = Table.from_csv(tmp_file.name)
     assert table._data.equals(table_r._data)
+
+
+def test_filter_rows_valid():
+    table = Table(pd.DataFrame(data={'col1': [1, 2, 3], 'col2': [1, 1, 4]}))
+    result_table = table.filter_rows(lambda x: x['col1'] <= x['col2'])
+    assert result_table._data['col1'][1] == 3 and result_table._data.size == 4
+
+def test_filter_rows_invalid():
+    table = Table(pd.DataFrame(data={'col1': [1, 2, 3], 'col2': [1, 1, 4]}))
+    with pytest.raises(TypeError):
+        table.filter_rows(table['col1'] > table['col2'])

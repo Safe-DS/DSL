@@ -225,3 +225,26 @@ class Table:
             raise ColumnNameError(invalid_columns)
         transformed_data = self._data[column_names]
         return Table(transformed_data)
+
+    def filter_rows(self, query):
+        """Returns a Table with rows filtered by applied lambda function
+
+        Parameters
+        ----------
+        query : lambda function
+            A lambda function that is applied to all rows
+
+        Returns
+        -------
+        table : Table
+            A Table containing only the rows filtered by the query lambda function
+
+        Raises
+        ------
+        TypeError
+           If the entered query is not a lambda function
+        """
+        if not query.__name__ == "<lambda>":
+            raise TypeError('Entered query is not a lambda function.')
+        mask = self._data.apply(query, axis=1)
+        return Table(self._data[mask].reset_index(drop=True))
