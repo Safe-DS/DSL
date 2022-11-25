@@ -144,4 +144,4 @@ def test_filter_rows_valid():
 def test_filter_rows_invalid():
     table = Table(pd.DataFrame(data={'col1': [1, 2, 3], 'col2': [1, 1, 4]}))
     with pytest.raises(TypeError):
-        table.filter_rows(table['col1'] > table['col2'])
+        table.filter_rows(table._data['col1'] > table._data['col2'])
