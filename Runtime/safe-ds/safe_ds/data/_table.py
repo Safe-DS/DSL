@@ -12,7 +12,7 @@ from safe_ds.exceptions import (
 
 from ._column import Column
 from ._row import Row
-from ._tableSchema import TableSchema
+from ._table_schema import TableSchema
 
 
 class Table:
@@ -39,7 +39,7 @@ class Table:
         """
         if len(self._data.index) - 1 < index or index < 0:
             raise IndexOutOfBoundsError(index)
-        return Row(self._data.iloc[[index]].squeeze())
+        return Row(self._data.iloc[[index]].squeeze(), self.schema)
 
     @staticmethod
     def from_json(path: str) -> Table:
