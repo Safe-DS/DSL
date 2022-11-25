@@ -66,7 +66,7 @@ class TableSchema:
             raise ColumnNameError([column_name])
         return self._schema[column_name]
 
-    def get_column_index_by_name(self, column_name: str):
+    def _get_column_index_by_name(self, column_name: str):
         """
         Returns the index of the column with the given column_name
 

@@ -24,4 +24,4 @@ class Row:
         """
         if not self.schema.has_column(column_name):
             raise ColumnNameError([column_name])
-        return self._data[self.schema.get_column_index_by_name(column_name)]
+        return self._data[self.schema._get_column_index_by_name(column_name)]
