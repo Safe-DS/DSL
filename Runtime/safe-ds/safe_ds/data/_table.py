@@ -261,4 +261,3 @@ class Table:
             return Table(self._data[mask].reset_index(drop=True))
         except Exception as exception:
             raise TypeError("Entered query is not a lambda function.") from exception
-
