@@ -255,6 +255,6 @@ class Table:
            If the entered query is not a lambda function
         """
         if not callable(query) or not query.__name__ == "<lambda>":
-            raise TypeError('Entered query is not a lambda function.')
+            raise TypeError("Entered query is not a lambda function.")
         mask = self._data.apply(query, axis=1)
         return Table(self._data[mask].reset_index(drop=True))
