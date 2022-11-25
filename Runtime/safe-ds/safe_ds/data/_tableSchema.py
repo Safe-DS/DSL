@@ -1,10 +1,9 @@
 from __future__ import annotations
-
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Optional
-
 import numpy as np
+
+from safe_ds.exceptions import ColumnNameError
 
 
 @dataclass
@@ -28,7 +27,40 @@ class TableSchema:
             self._schema[column_name] = data_type
 
     def has_column(self, column_name: str) -> bool:
+        """
+        Returns if the schema contains a given column
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column you want to look for
+
+        Returns
+        -------
+        contains: bool
+            If it contains the column
+        """
         return column_name in self._schema
 
-    def get_type_of_column(self, column_name: str) -> Optional[np.dtype]:
+    def get_type_of_column(self, column_name: str) -> np.dtype:
+        """
+        Returns the type of the given column
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column you want the type of
+
+        Returns
+        -------
+        type: np.dtype
+            The type of the column
+
+        Raises
+        ------
+        ColumnNameError
+            If the specified target column name doesn't exist
+        """
+        if not self.has_column(column_name):
+            raise ColumnNameError([column_name])
         return self._schema[column_name]
