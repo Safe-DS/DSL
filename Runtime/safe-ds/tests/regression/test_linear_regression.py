@@ -1,7 +1,7 @@
 import pytest
-from safe_ds.regression import LinearRegression
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError, PredictionError
+from safe_ds.regression import LinearRegression
 
 
 def test_linear_regression_fit():
@@ -39,9 +39,7 @@ def test_linear_regression_predict_not_fitted():
 
 def test_linear_regression_predict_invalid():
     table = Table.from_csv("tests/resources/test_linear_regression.csv")
-    invalid_table = Table.from_csv(
-        "tests/resources/test_linear_regression_invalid.csv"
-    )
+    invalid_table = Table.from_csv("tests/resources/test_linear_regression_invalid.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     invalid_supervised_dataset = SupervisedDataset(invalid_table, "T")
     log_regression = LinearRegression()
