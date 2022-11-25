@@ -6,11 +6,11 @@ from typing import Callable
 
 import pandas as pd
 from pandas import DataFrame, Series
-
 from safe_ds.exceptions import (
     ColumnNameDuplicateError,
     ColumnNameError,
-    IndexOutOfBoundsError, SchemaMismatchError,
+    IndexOutOfBoundsError,
+    SchemaMismatchError,
 )
 
 from ._column import Column
