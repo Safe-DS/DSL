@@ -1,0 +1,15 @@
+import pandas as pd
+
+from safe_ds.data import Table
+
+
+def test_get_mode_valid():
+    table = Table(pd.DataFrame(data={"col1": [1, 2, 3, 4, 3]}))
+    column = table.get_column_by_name("col1")
+    assert column.get_mode() == 3
+
+
+def test_get_mode_valid_str():
+    table = Table(pd.DataFrame(data={"col1": ["1", "2", "3", "4", "3"]}))
+    column = table.get_column_by_name("col1")
+    assert column.get_mode() == "3"
