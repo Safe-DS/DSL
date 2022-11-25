@@ -1,7 +1,7 @@
 import pandas as pd
 
 from safe_ds.exceptions import ColumnNameError
-from ._tableSchema import TableSchema
+from ._table_schema import TableSchema
 
 
 class Row:
