@@ -1,6 +1,4 @@
 import numpy as np
-import pandas as pd
-from pandas import DataFrame
 from safe_ds.data import Table, TableSchema
 
 
