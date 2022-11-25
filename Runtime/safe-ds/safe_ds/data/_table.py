@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os.path
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 from safe_ds.exceptions import (
@@ -236,7 +237,7 @@ class Table:
         transformed_data = self._data[column_names]
         return Table(transformed_data)
 
-    def filter_rows(self, query):
+    def filter_rows(self, query: Callable) -> Table:
         """Returns a Table with rows filtered by applied lambda function
 
         Parameters
@@ -254,7 +255,10 @@ class Table:
         TypeError
            If the entered query is not a lambda function
         """
-        if not callable(query) or not query.__name__ == "<lambda>":
+
+        try:
+            mask = self._data.apply(query, axis=1)
+            return Table(self._data[mask].reset_index(drop=True))
+        except Exception:
             raise TypeError("Entered query is not a lambda function.")
-        mask = self._data.apply(query, axis=1)
-        return Table(self._data[mask].reset_index(drop=True))
+
