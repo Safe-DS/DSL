@@ -40,7 +40,7 @@ class Table:
         """
         if len(self._data.index) - 1 < index or index < 0:
             raise IndexOutOfBoundsError(index)
-        return Row(self._data.iloc[[index]].squeeze())
+        return Row(self._data.iloc[[index]].squeeze(), self.schema)
 
     @staticmethod
     def from_json(path: str) -> Table:

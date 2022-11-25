@@ -15,6 +15,9 @@ class ColumnType:
         """
         return False
 
+    def __repr__(self):
+        pass
+
     def __eq__(self, other: ColumnType):
         return isinstance(self, type(other))
 
@@ -50,6 +53,9 @@ class IntColumnType(ColumnType):
     def is_numeric(self) -> bool:
         return True
 
+    def __repr__(self):
+        return "int"
+
 
 class BooleanColumnType(ColumnType):
     def __init__(self):
@@ -57,6 +63,9 @@ class BooleanColumnType(ColumnType):
 
     def is_numeric(self) -> bool:
         return False
+
+    def __repr__(self):
+        return "bool"
 
 
 class FloatColumnType(ColumnType):
@@ -66,6 +75,9 @@ class FloatColumnType(ColumnType):
     def is_numeric(self) -> bool:
         return True
 
+    def __repr__(self):
+        return "float"
+
 
 class StringColumnType(ColumnType):
     def __init__(self):
@@ -73,6 +85,9 @@ class StringColumnType(ColumnType):
 
     def is_numeric(self) -> bool:
         return False
+
+    def __repr__(self):
+        return "string"
 
 
 class OptionalColumnType(ColumnType):
@@ -82,3 +97,6 @@ class OptionalColumnType(ColumnType):
 
     def is_numeric(self) -> bool:
         return self._type.is_numeric()
+
+    def __repr__(self):
+        return f"optional({self._type.__repr__()})"
