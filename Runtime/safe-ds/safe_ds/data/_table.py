@@ -4,7 +4,11 @@ import os.path
 from pathlib import Path
 
 import pandas as pd
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError, IndexOutOfBoundsError
+from safe_ds.exceptions import (
+    ColumnNameDuplicateError,
+    ColumnNameError,
+    IndexOutOfBoundsError,
+)
 
 from ._column import Column
 from ._row import Row
