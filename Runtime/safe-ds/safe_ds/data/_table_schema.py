@@ -4,6 +4,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 
 import numpy as np
+
 from safe_ds.exceptions import ColumnNameError
 
 
@@ -65,3 +66,18 @@ class TableSchema:
         if not self.has_column(column_name):
             raise ColumnNameError([column_name])
         return self._schema[column_name]
+
+    def __str__(self) -> str:
+        """
+        Returns a pretty print String for the TableSchema
+
+        Returns
+        -------
+        output_string: str
+            the pretty String
+        """
+        column_count = len(self._schema)
+        output_string = f"TableSchema:\nColumn Count: {column_count}\nColumns:\n"
+        for column_name, data_type in self._schema.items():
+            output_string += f"    {column_name}, {data_type}\n"
+        return output_string
