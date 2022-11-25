@@ -1,16 +1,27 @@
 from safe_ds.data import Table
 from safe_ds.data import Column
 
-#toDo: add documentation
+
 class SupervisedDataset:
-    def __init__(self, table: Table, y: str):
-        self._y: Column = table.get_column_by_name(y)
-        self._X: Table = table.drop_columns([y])
+    """
+    A supervised dataset is split in feature and target vectors from a table for a specific column name.
+    It can be used for training models.
+
+    Parameters
+    ----------
+    table: Table
+        The table used to derive the feature and target vectors
+    target_column: str
+        Name of the target feature column
+    """
+    def __init__(self, table: Table, target_column: str):
+        self._y: Column = table.get_column_by_name(target_column)
+        self._X: Table = table.drop_columns([target_column])
 
     @property
-    def feature_vector(self):
+    def feature_vector(self) -> Table:
         return self._X
 
     @property
-    def targetvector(self):
+    def target_vector(self) -> Column:
         return self._y
