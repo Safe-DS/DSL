@@ -1,6 +1,6 @@
 import pandas as pd
-
 from safe_ds.exceptions import ColumnNameError
+
 from ._table_schema import TableSchema
 
 
