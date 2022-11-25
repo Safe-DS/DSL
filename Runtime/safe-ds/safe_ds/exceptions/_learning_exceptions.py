@@ -9,7 +9,7 @@ class LearningError(Exception):
 
     def __init__(self, reason: str | None):
         if reason is None:
-            super().__init__(f"Error occurred while learning")
+            super().__init__("Error occurred while learning")
         else:
             super().__init__(f"Error occurred while learning: {reason}")
 

@@ -1,5 +1,5 @@
-from safe_ds.data import Table
-from safe_ds.data import Column
+from ._table import Table
+from ._column import Column
 
 
 class SupervisedDataset:
