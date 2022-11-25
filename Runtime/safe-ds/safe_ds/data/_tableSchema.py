@@ -32,3 +32,18 @@ class TableSchema:
 
     def get_type_of_column(self, column_name: str) -> Optional[np.dtype]:
         return self._schema[column_name]
+
+    def get_column_index_by_name(self, column_name: str):
+        """
+        Returns the index of the column with the given column_name
+
+        Parameters
+        ----------
+        column_name: str
+            The column_name you want the index for
+
+        Returns
+        -------
+        The index of the column
+        """
+        return list(self._schema.keys()).index(column_name)
