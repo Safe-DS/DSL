@@ -1,7 +1,6 @@
 import pytest
-
 from safe_ds.data import Table
-from safe_ds.exceptions import ColumnNameError, ColumnNameDuplicateError
+from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
 
 
 @pytest.mark.parametrize(
