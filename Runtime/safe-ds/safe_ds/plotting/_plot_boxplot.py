@@ -27,7 +27,7 @@ def plot_boxplot(column: Column):
             raise TypeError(
                 "The column contains non numerical data. Boxplots can only plot numerical data"
             )
-        if not isinstance(data, int) and not isinstance(data, float):
+        if isinstance(data, complex):
             raise TypeError(
                 "The column contains complex data. Boxplots cannot plot the imaginary part of complex "
                 "data. Please provide a Column with only real numbers"
