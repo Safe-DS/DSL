@@ -40,10 +40,10 @@ class ColumnType:
             return BooleanColumnType()
         if _type.kind == 'f':
             return FloatColumnType()
-        if _type.kind == 'S' or _type == 'U':
+        if _type.kind == 'S' or _type == 'U' or _type.kind == 'O':
             return StringColumnType()
         else:
-            return StringColumnType()
+            raise TypeError("Unexpected column type")
 
 
 class IntColumnType(ColumnType):
