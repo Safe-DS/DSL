@@ -4,14 +4,14 @@ from safe_ds.data import Table, TableSchema
 
 def test_from_table_valid():
     table = Table.from_json("tests/resources/test_table_read_json.json")
-    schema_expected = TableSchema(["A", "B"], [np.dtype('int64'), np.dtype('int64')])
+    schema_expected = TableSchema(["A", "B"], [np.dtype("int64"), np.dtype("int64")])
 
     assert table.schema == schema_expected
 
 
 def test_from_table_invalid():
     table = Table.from_json("tests/resources/test_table_read_json.json")
-    schema_not_expected = TableSchema(["A", "C"], [np.dtype('f8'), np.dtype('int64')])
+    schema_not_expected = TableSchema(["A", "C"], [np.dtype("f8"), np.dtype("int64")])
 
     assert table.schema != schema_not_expected
 
