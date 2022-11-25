@@ -4,13 +4,23 @@ import os.path
 from pathlib import Path
 
 import pandas as pd
-from safe_ds.data import Column, Row
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+from safe_ds.exceptions import (
+    ColumnNameDuplicateError,
+    ColumnNameError,
+    IndexOutOfBoundsError,
+)
+
+from ._column import Column
+from ._row import Row
+from ._tableSchema import TableSchema
 
 
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
+        self.schema: TableSchema = TableSchema(
+            column_names=self._data.columns, data_types=self._data.dtypes.to_list()
+        )
 
     def get_row_by_index(self, index: int) -> Row:
         """
@@ -24,11 +34,11 @@ class Table:
         a Row of the Table
         Raises
         ------
-        KeyError
+        IndexOutOfBoundsError
             if the index doesn't exist
         """
         if len(self._data.index) - 1 < index or index < 0:
-            raise KeyError
+            raise IndexOutOfBoundsError(index)
         return Row(self._data.iloc[[index]].squeeze())
 
     @staticmethod
