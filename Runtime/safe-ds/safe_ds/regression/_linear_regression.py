@@ -1,8 +1,7 @@
-from sklearn.linear_model import LinearRegression as sk_LinearRegression
-
 # noinspection PyProtectedMember
 import safe_ds._util._util_sklearn
 from safe_ds.data import SupervisedDataset, Table
+from sklearn.linear_model import LinearRegression as sk_LinearRegression
 
 
 # noinspection PyProtectedMember
