@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-
 from safe_ds import plotting
 from safe_ds.data import Table
 
