@@ -9,7 +9,11 @@ from enum import Enum
 
 # noinspection PyProtectedMember
 class Imputer:
+    """
+    Imputes the Data for a given Table
 
+    it is also needed to apply a strategy befor imputing
+    """
     class Strategy:
         def __init__(self, _imp: SimpleImputer):
             self._imp = _imp
@@ -17,18 +21,12 @@ class Imputer:
 
         @staticmethod
         def Mean():
-            """
-
-            Returns
-            -------
-
-            """
             return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='mean'))
 
 
         @staticmethod
         def Mode():
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='mode'))
+            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='most'))
 
 
         @staticmethod
