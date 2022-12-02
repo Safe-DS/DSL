@@ -9,7 +9,11 @@ from enum import Enum
 
 # noinspection PyProtectedMember
 class Imputer:
+    """
+    Imputes the Data for a given Table
 
+    it is also needed to apply a strategy befor imputing
+    """
     class Strategy:
         def __init__(self, _imp: SimpleImputer):
             self._imp = _imp
