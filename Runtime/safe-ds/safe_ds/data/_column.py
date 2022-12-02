@@ -1,6 +1,7 @@
 from __future__ import annotations
 from safe_ds.exceptions import IndexOutOfBoundsError, ColumnSizeError
 from ._column_type import ColumnType
+from typing import Any
 
 import pandas as pd
 
@@ -35,7 +36,10 @@ class Column:
         """
         return self._type
 
-    def get_value_by_position(self, index: int):
+    def __getitem__(self, index: int) -> Any:
+        return self.get_value(index)
+
+    def get_value(self, index: int) -> Any:
         """
         Returns column value at specified index, starting at 0.
 
@@ -86,6 +90,16 @@ class Column:
             Number of null values
         """
         return self._data.isna().sum()
+
+    def __eq__(self, other):
+        if not isinstance(other, Column):
+            return NotImplemented
+        if self is other:
+            return True
+        return self._data.equals(other._data) and self.name == other.name
+
+    def __hash__(self):
+        return hash((self._data, self.name))
 
 
 class ColumnStatistics:
