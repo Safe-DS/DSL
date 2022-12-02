@@ -16,6 +16,7 @@ from ._column import Column
 from ._column_type import ColumnType
 from ._row import Row
 from ._table_schema import TableSchema
+from ..exceptions._data_exceptions import ColumnLengthMismatchError
 
 
 # noinspection PyProtectedMember
@@ -139,6 +140,35 @@ class Table:
             row_array.append(row._data)
 
         dataframe: DataFrame = pd.DataFrame(row_array)
+        return Table(dataframe)
+
+    @staticmethod
+    def from_columns(columns: list[Column]) -> Table:
+        """
+        Returns a table combined from a list of given columns.
+
+        Parameters
+        ----------
+        columns : list[Column]
+            Columns to be combined. Should have a matching schema.
+
+        Returns
+        -------
+        table : Table
+            The generated table.
+
+        Raises
+        ------
+        ColumnLengthMismatchError
+            If at least one of the columns has a different length than at least one other column
+        """
+        dataframe: DataFrame = pd.DataFrame()
+
+        for column in columns:
+            if column._data.size != columns[0]._data.size:
+                raise ColumnLengthMismatchError()
+            dataframe[column.name] = column
+
         return Table(dataframe)
 
     def to_json(self, path_to_file: str):
@@ -285,4 +315,17 @@ class Table:
         """
         return [
             Row(series_row, self.schema) for (_, series_row) in self._data.iterrows()
+        ]
+
+    def to_columns(self) -> list[Column]:
+        """
+        Returns a list of Columns from the current table.
+
+        Returns
+        -------
+        columns : list[Columns]
+            List of Columns objects
+        """
+        return [
+            Column(series_columns, self.schema) for (_, series_columns) in self._data.columns
         ]
