@@ -12,11 +12,11 @@ from safe_ds.exceptions import (
     SchemaMismatchError,
 )
 
+from ..exceptions._data_exceptions import ColumnLengthMismatchError
 from ._column import Column
 from ._column_type import ColumnType
 from ._row import Row
 from ._table_schema import TableSchema
-from ..exceptions._data_exceptions import ColumnLengthMismatchError
 
 
 # noinspection PyProtectedMember
@@ -330,6 +330,4 @@ class Table:
         columns : list[Columns]
             List of Columns objects
         """
-        return [
-            self.get_column_by_name(name) for name in self._data.columns
-        ]
+        return [self.get_column_by_name(name) for name in self._data.columns]
