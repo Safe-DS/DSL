@@ -1,1 +1,1 @@
-from ._accuracy import accuracy
+from ._global_methods import accuracy
