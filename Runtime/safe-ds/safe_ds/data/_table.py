@@ -369,7 +369,7 @@ class Table:
         columns : list[Columns]
             List of Columns objects
         """
-        return [self.get_column_by_name(name) for name in self._data.columns]
+        return [self.get_column(name) for name in self._data.columns]
 
     def __eq__(self, other):
         if not isinstance(other, Table):
