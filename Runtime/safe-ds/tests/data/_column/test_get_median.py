@@ -8,10 +8,10 @@ def test_get_median_invalid():
     with pytest.raises(TypeError):
         table = Table(pd.DataFrame(data={"col1": ["col1_1", 2]}))
         column = table.get_column_by_name("col1")
-        column.get_median()
+        column.statistics.get_median()
 
 
 def test_get_median_valid():
     table = Table(pd.DataFrame(data={"col1": [1, 2, 3, 4, 5, 6]}))
     column = table.get_column_by_name("col1")
-    assert column.get_median() == 3.5
+    assert column.statistics.get_median() == 3.5
