@@ -1,1 +1,1 @@
-from ._global import mean_squared_error
+from ._global_methods import mean_squared_error
