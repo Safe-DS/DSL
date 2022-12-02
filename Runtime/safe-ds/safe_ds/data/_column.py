@@ -6,7 +6,7 @@ class Column:
     def __init__(self, data: pd.Series):
         self._data: pd.Series = data
 
-    def get_value_by_position(self, index: int):
+    def get_value(self, index: int):
         """
         Returns column value at specified index, starting at 0.
 
