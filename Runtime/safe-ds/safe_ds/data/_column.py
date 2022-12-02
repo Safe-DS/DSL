@@ -60,7 +60,7 @@ class ColumnStatistics:
     def __init__(self, column: Column):
         self.column = column
 
-    def get_max(self):
+    def max(self) -> float:
         """
         Returns the maximum value of the column.
 
@@ -80,7 +80,7 @@ class ColumnStatistics:
             raise TypeError("The column contains non numerical data.")
         return self.column._data.max()
 
-    def get_min(self):
+    def min(self) -> float:
         """
         Returns the minimum value of the column.
 
@@ -100,7 +100,7 @@ class ColumnStatistics:
             raise TypeError("The column contains non numerical data.")
         return self.column._data.min()
 
-    def get_mean(self):
+    def mean(self) -> float:
         """
         Returns the mean value of the column.
 
@@ -120,7 +120,7 @@ class ColumnStatistics:
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
 
-    def get_mode(self):
+    def mode(self):
         """
         Returns the mode of the column.
 
@@ -131,7 +131,7 @@ class ColumnStatistics:
         """
         return self.column._data.mode()[0]
 
-    def get_median(self):
+    def median(self) -> float:
         """
         Returns the median value of the column.
 
