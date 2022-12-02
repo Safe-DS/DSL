@@ -136,8 +136,7 @@ class Table:
             row_array.append(row._data)
 
         dataframe: DataFrame = pd.DataFrame(row_array)
-        table: Table = Table(dataframe)
-        return table
+        return Table(dataframe)
 
     def to_json(self, path_to_file: str):
         """
@@ -272,31 +271,6 @@ class Table:
         transformed_data = self._data[column_names]
         return Table(transformed_data)
 
-    def filter_rows(self, query: Callable) -> Table:
-        """Returns a Table with rows filtered by applied lambda function
-
-        Parameters
-        ----------
-        query : lambda function
-            A lambda function that is applied to all rows
-
-        Returns
-        -------
-        table : Table
-            A Table containing only the rows filtered by the query lambda function
-
-        Raises
-        ------
-        TypeError
-           If the entered query is not a lambda function
-        """
-
-        try:
-            mask = self._data.apply(query, axis=1)
-            return Table(self._data[mask].reset_index(drop=True))
-        except Exception as exception:
-            raise TypeError("Entered query is not a lambda function.") from exception
-
     def to_rows(self) -> list[Row]:
         """
         Returns a list of Rows from the current table.
@@ -306,10 +280,7 @@ class Table:
         rows : list[Row]
             List of Row objects
         """
-        rows: list[Row] = []
-
-        for (_, series_row) in self._data.iterrows():
-            row: Row = Row(series_row, self.schema)
-            rows.append(row)
-
-        return rows
+        return [
+            Row(series_row, self.schema)
+            for (_, series_row) in self._data.iterrows()
+        ]
