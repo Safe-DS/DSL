@@ -5,7 +5,7 @@ from safe_ds.exceptions import ColumnLengthMismatchError
 
 def mean_squared_error(actual: Column, expected: Column) -> float:
     """
-    Return the mean squared error, calculated from a given known_truth and a column to compare.
+    Return the mean squared error, calculated from a given known truth and a column to compare.
 
     Parameters
     ----------
