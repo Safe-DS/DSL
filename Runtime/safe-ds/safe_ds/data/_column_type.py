@@ -1,11 +1,14 @@
 from __future__ import annotations
+
+from abc import ABC, abstractmethod
+
 import numpy as np
+from dataclasses import dataclass
 
 
-class ColumnType:
-    def __init__(self):
-        pass
+class ColumnType(ABC):
 
+    @abstractmethod
     def is_numeric(self) -> bool:
         """
         tells if the given column type is numeric
@@ -14,12 +17,6 @@ class ColumnType:
         bool
         """
         return False
-
-    def __repr__(self):
-        pass
-
-    def __eq__(self, other):
-        return isinstance(self, type(other))
 
     @staticmethod
     def from_numpy_dtype(_type: np.dtype) -> ColumnType:
@@ -45,6 +42,7 @@ class ColumnType:
         raise TypeError("Unexpected column type")
 
 
+@dataclass
 class IntColumnType(ColumnType):
     def __init__(self):
         super().__init__()
@@ -56,9 +54,8 @@ class IntColumnType(ColumnType):
         return "int"
 
 
+@dataclass
 class BooleanColumnType(ColumnType):
-    def __init__(self):
-        pass
 
     def is_numeric(self) -> bool:
         return False
@@ -67,9 +64,8 @@ class BooleanColumnType(ColumnType):
         return "bool"
 
 
+@dataclass
 class FloatColumnType(ColumnType):
-    def __init__(self):
-        super().__init__()
 
     def is_numeric(self) -> bool:
         return True
@@ -78,9 +74,8 @@ class FloatColumnType(ColumnType):
         return "float"
 
 
+@dataclass
 class StringColumnType(ColumnType):
-    def __init__(self):
-        super().__init__()
 
     def is_numeric(self) -> bool:
         return False
@@ -89,10 +84,9 @@ class StringColumnType(ColumnType):
         return "string"
 
 
+@dataclass
 class OptionalColumnType(ColumnType):
-    def __init__(self, _type: ColumnType):
-        super().__init__()
-        self._type = _type
+    _type: ColumnType
 
     def is_numeric(self) -> bool:
         return self._type.is_numeric()

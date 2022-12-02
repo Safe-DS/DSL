@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Optional
 
 from ._column_type import ColumnType
 
@@ -45,7 +44,7 @@ class TableSchema:
         """
         return column_name in self._schema
 
-    def get_type_of_column(self, column_name: str) -> Optional[ColumnType]:
+    def get_type_of_column(self, column_name: str) -> ColumnType:
         """
         Returns the type of the given column
 
@@ -56,7 +55,7 @@ class TableSchema:
 
         Returns
         -------
-        type: Optional[ColumnType]
+        type: ColumnType
             The type of the column
 
         Raises
