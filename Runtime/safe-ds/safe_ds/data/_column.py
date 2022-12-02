@@ -1,6 +1,5 @@
 import pandas as pd
-from safe_ds.exceptions import IndexOutOfBoundsError
-from safe_ds.exceptions._data_exceptions import ColumnSizeError
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
 
 
 class Column:
