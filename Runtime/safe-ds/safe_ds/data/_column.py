@@ -13,7 +13,7 @@ class Column:
         self._name: str = name
         self._type: ColumnType = column_type
 
-    def name(self):
+    def name(self) -> str:
         """
         Get the name of the Column
 
@@ -24,7 +24,7 @@ class Column:
         """
         return self._name
 
-    def type(self):
+    def type(self) -> ColumnType:
         """
         Get the type of the Column
 
