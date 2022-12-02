@@ -92,10 +92,9 @@ class Column:
     def __eq__(self, other):
         if not isinstance(other, Column):
             return NotImplemented
-        elif self is other:
+        if self is other:
             return True
-        else:
-            return self._data.equals(other._data) and self.name == other.name and self.type == other.type
+        return self._data.equals(other._data) and self.name == other.name and self.type == other.type
 
     def __hash__(self):
         return hash((self._data, self.name, self.type))

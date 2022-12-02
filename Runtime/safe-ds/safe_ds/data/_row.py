@@ -29,10 +29,9 @@ class Row:
     def __eq__(self, other):
         if not isinstance(other, Row):
             return NotImplemented
-        elif self is other:
+        if self is other:
             return True
-        else:
-            return self._data.equals(other._data) and self.schema == other.schema
+        return self._data.equals(other._data) and self.schema == other.schema
 
     def __hash__(self):
         return hash((self._data, self.schema))
