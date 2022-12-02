@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from safe_ds.data import Table, ColumnType, Column
+from safe_ds.data import Column, ColumnType, Table
 
 
 def test_to_columns():
@@ -8,7 +8,7 @@ def test_to_columns():
 
     columns_expected: list[Column] = [
         Column(pd.Series([1, 4]), "A", ColumnType.from_numpy_dtype(np.dtype("int64"))),
-        Column(pd.Series([2, 5]), "B", ColumnType.from_numpy_dtype(np.dtype("int64")))
+        Column(pd.Series([2, 5]), "B", ColumnType.from_numpy_dtype(np.dtype("int64"))),
     ]
 
     columns_list: list[Column] = table.to_columns()

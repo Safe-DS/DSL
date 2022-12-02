@@ -1,4 +1,4 @@
-from safe_ds.data import Table, Column
+from safe_ds.data import Column, Table
 
 
 def test_from_columns():
