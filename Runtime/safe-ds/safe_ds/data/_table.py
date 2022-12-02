@@ -311,9 +311,6 @@ class Table:
            If the entered query is not a lambda function
         """
 
-        rows: list[Row] = []
-        for row in self.to_rows():
-            if query(row):
-                rows.append(row)
+        rows: list[Row] = [row for row in self.to_rows() if query(row)]
         result_table: Table = self.from_rows(rows)
         return Table(result_table._data.reset_index(drop=True))
