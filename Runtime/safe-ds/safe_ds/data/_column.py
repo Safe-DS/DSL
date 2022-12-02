@@ -1,9 +1,8 @@
 from __future__ import annotations
+from safe_ds.exceptions import IndexOutOfBoundsError, ColumnSizeError
+from ._column_type import ColumnType
 
 import pandas as pd
-from safe_ds.exceptions import IndexOutOfBoundsError, ColumnSizeError
-
-from ._column_type import ColumnType
 
 
 class Column:
