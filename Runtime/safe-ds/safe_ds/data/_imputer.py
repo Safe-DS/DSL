@@ -4,7 +4,6 @@ import pandas as pd
 
 from sklearn.impute import SimpleImputer
 import numpy as np
-from enum import Enum
 
 
 # noinspection PyProtectedMember
