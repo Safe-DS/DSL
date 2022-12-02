@@ -13,6 +13,28 @@ class Column:
         self.name: str = name
         self.type: ColumnType = column_type
 
+    def name(self):
+        """
+        Get the name of the Column
+
+        Returns
+        -------
+        name: str
+            The name of the column
+        """
+        return self.name
+
+    def type(self):
+        """
+        Get the type of the Column
+
+        Returns
+        -------
+        type: ColumnType
+            The type of the column
+        """
+        return self.type
+
     def get_value_by_position(self, index: int):
         """
         Returns column value at specified index, starting at 0.
