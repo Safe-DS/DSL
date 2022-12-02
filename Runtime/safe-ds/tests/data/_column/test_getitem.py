@@ -1,3 +1,5 @@
+# pylint: disable=pointless-statement
+
 import pandas as pd
 import pytest
 from safe_ds.data import Column, ColumnType
