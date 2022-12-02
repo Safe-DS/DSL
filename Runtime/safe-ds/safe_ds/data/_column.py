@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import pandas as pd
-
 from safe_ds.exceptions import IndexOutOfBoundsError
+from safe_ds.exceptions._data_exceptions import ColumnSizeError
 from ._column_type import ColumnType
 
 
@@ -13,7 +13,8 @@ class Column:
         self.type: ColumnType = column_type
 
     def get_value_by_position(self, index: int):
-        """Returns column value at specified index, starting at 0.
+        """
+        Returns column value at specified index, starting at 0.
 
         Parameters
         ----------
@@ -34,6 +35,19 @@ class Column:
             raise IndexOutOfBoundsError(index)
 
         return self._data[index]
+
+    def idness(self) -> float:
+        """
+        Calculates the idness of this column (number of unique values / number of rows).
+
+        Returns
+        -------
+        idness: float
+            The idness of the column
+        """
+        if self._data.size == 0:
+            raise ColumnSizeError("> 0", "0")
+        return self._data.nunique() / self._data.size
 
     @property
     def statistics(self) -> ColumnStatistics:
