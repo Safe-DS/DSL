@@ -6,10 +6,11 @@ from pathlib import Path
 import pandas as pd
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
+    ColumnLengthMismatchError,
     ColumnNameDuplicateError,
     ColumnNameError,
     IndexOutOfBoundsError,
-    SchemaMismatchError, ColumnLengthMismatchError,
+    SchemaMismatchError,
 )
 
 from ._column import Column
@@ -165,7 +166,11 @@ class Table:
 
         for column in columns:
             if column._data.size != columns[0]._data.size:
-                raise ColumnLengthMismatchError("\n".join([f"{column.name}: {column._data.size}" for column in columns]))
+                raise ColumnLengthMismatchError(
+                    "\n".join(
+                        [f"{column.name}: {column._data.size}" for column in columns]
+                    )
+                )
             dataframe[column.name] = column._data
 
         return Table(dataframe)
