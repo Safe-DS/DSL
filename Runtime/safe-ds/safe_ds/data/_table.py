@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import os.path
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
+    ColumnLengthMismatchError,
     ColumnNameDuplicateError,
     ColumnNameError,
     IndexOutOfBoundsError,
@@ -29,7 +31,7 @@ class Table:
             ),
         )
 
-    def get_row_by_index(self, index: int) -> Row:
+    def get_row(self, index: int) -> Row:
         """
         returns the row of the Table for a given Index
         Parameters
@@ -141,6 +143,39 @@ class Table:
         dataframe: DataFrame = pd.DataFrame(row_array)
         return Table(dataframe)
 
+    @staticmethod
+    def from_columns(columns: list[Column]) -> Table:
+        """
+        Returns a table combined from a list of given columns.
+
+        Parameters
+        ----------
+        columns : list[Column]
+            Columns to be combined. Each column should be the same size.
+
+        Returns
+        -------
+        table : Table
+            The generated table.
+
+        Raises
+        ------
+        ColumnLengthMismatchError
+            If at least one of the columns has a different length than at least one other column
+        """
+        dataframe: DataFrame = pd.DataFrame()
+
+        for column in columns:
+            if column._data.size != columns[0]._data.size:
+                raise ColumnLengthMismatchError(
+                    "\n".join(
+                        [f"{column.name}: {column._data.size}" for column in columns]
+                    )
+                )
+            dataframe[column.name] = column._data
+
+        return Table(dataframe)
+
     def to_json(self, path_to_file: str):
         """
         Write the data from the table into a json file.
@@ -198,7 +233,7 @@ class Table:
 
         return Table(self._data.rename(columns={old_name: new_name}))
 
-    def get_column_by_name(self, column_name: str):
+    def get_column(self, column_name: str):
         """Returns a new instance of Column with the data of the described column of the Table.
 
         Parameters
@@ -290,3 +325,58 @@ class Table:
         return [
             Row(series_row, self.schema) for (_, series_row) in self._data.iterrows()
         ]
+
+    def filter_rows(self, query: Callable[[Row], bool]) -> Table:
+        """Returns a Table with rows filtered by applied lambda function
+
+        Parameters
+        ----------
+        query : lambda function
+            A lambda function that is applied to all rows
+
+        Returns
+        -------
+        table : Table
+            A Table containing only the rows filtered by the query lambda function
+
+        Raises
+        ------
+        TypeError
+           If the entered query is not a lambda function
+        """
+
+        rows: list[Row] = [row for row in self.to_rows() if query(row)]
+        result_table: Table = self.from_rows(rows)
+        return Table(result_table._data.reset_index(drop=True))
+
+    def count_rows(self) -> int:
+        """
+        Returns the number of rows in the table
+
+        Returns
+        -------
+        count : int
+            Number of rows
+        """
+        return self._data.shape[0]
+
+    def to_columns(self) -> list[Column]:
+        """
+        Returns a list of Columns from the current table.
+
+        Returns
+        -------
+        columns : list[Columns]
+            List of Columns objects
+        """
+        return [self.get_column(name) for name in self._data.columns]
+
+    def __eq__(self, other):
+        if not isinstance(other, Table):
+            return NotImplemented
+        if self is other:
+            return True
+        return self._data.equals(other._data)
+
+    def __hash__(self):
+        return hash((self._data))

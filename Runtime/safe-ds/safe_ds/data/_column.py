@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from typing import Any
+
 import pandas as pd
-from safe_ds.exceptions import IndexOutOfBoundsError
-from safe_ds.exceptions._data_exceptions import ColumnSizeError
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
 
 from ._column_type import ColumnType
 
@@ -10,10 +11,37 @@ from ._column_type import ColumnType
 class Column:
     def __init__(self, data: pd.Series, name: str, column_type: ColumnType):
         self._data: pd.Series = data
-        self.name: str = name
-        self.type: ColumnType = column_type
+        self._name: str = name
+        self._type: ColumnType = column_type
 
-    def get_value_by_position(self, index: int):
+    @property
+    def name(self) -> str:
+        """
+        Get the name of the Column
+
+        Returns
+        -------
+        name: str
+            The name of the column
+        """
+        return self._name
+
+    @property
+    def type(self) -> ColumnType:
+        """
+        Get the type of the Column
+
+        Returns
+        -------
+        type: ColumnType
+            The type of the column
+        """
+        return self._type
+
+    def __getitem__(self, index: int) -> Any:
+        return self.get_value(index)
+
+    def get_value(self, index: int) -> Any:
         """
         Returns column value at specified index, starting at 0.
 
@@ -54,6 +82,27 @@ class Column:
     def statistics(self) -> ColumnStatistics:
         return ColumnStatistics(self)
 
+    def count_null_values(self) -> int:
+        """
+        Returns the number of null values in the column.
+
+        Returns
+        -------
+        count : int
+            Number of null values
+        """
+        return self._data.isna().sum()
+
+    def __eq__(self, other):
+        if not isinstance(other, Column):
+            return NotImplemented
+        if self is other:
+            return True
+        return self._data.equals(other._data) and self.name == other.name
+
+    def __hash__(self):
+        return hash((self._data, self.name))
+
 
 class ColumnStatistics:
     def __init__(self, column: Column):
@@ -73,7 +122,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.max()
 
@@ -91,7 +140,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.min()
 
@@ -109,7 +158,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
 
@@ -138,6 +187,6 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.median()
