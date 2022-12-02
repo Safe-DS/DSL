@@ -1,7 +1,8 @@
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError, PredictionError
 from sklearn.exceptions import NotFittedError
-
+import numpy as np
+from sklearn.impute import SimpleImputer
 
 # noinspection PyProtectedMember
 def fit(model, supervised_dataset: SupervisedDataset):
@@ -68,3 +69,4 @@ def predict(model, dataset: Table) -> Table:
         raise PredictionError(str(exception)) from exception
     except Exception as exception:
         raise PredictionError(None) from exception
+

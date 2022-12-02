@@ -1,4 +1,4 @@
-# noinspection PyProtectedMember
+    # noinspection PyProtectedMember
 import safe_ds._util._util_sklearn
 from safe_ds.data import SupervisedDataset, Table
 from sklearn.linear_model import LogisticRegression as sk_LogisticRegression
