@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import pandas as pd
 from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
 
@@ -12,7 +14,10 @@ class Column:
         self.name: str = name
         self.type: ColumnType = column_type
 
-    def get_value(self, index: int):
+    def __getitem__(self, index: int) -> Any:
+        return self.get_value(index)
+
+    def get_value(self, index: int) -> Any:
         """
         Returns column value at specified index, starting at 0.
 
