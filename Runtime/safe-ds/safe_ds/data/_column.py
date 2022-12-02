@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pandas as pd
-
 from safe_ds.exceptions import IndexOutOfBoundsError
 from safe_ds.exceptions._data_exceptions import ColumnSizeError
+
 from ._column_type import ColumnType
 
 
@@ -56,7 +56,6 @@ class Column:
 
 
 class ColumnStatistics:
-
     def __init__(self, column: Column):
         self.column = column
 
@@ -74,9 +73,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if (
-            not self.column.type.is_numeric()
-        ):
+        if not self.column.type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.max()
 
@@ -94,9 +91,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if (
-            not self.column.type.is_numeric()
-        ):
+        if not self.column.type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.min()
 
@@ -114,9 +109,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if (
-            not self.column.type.is_numeric()
-        ):
+        if not self.column.type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
 
@@ -145,8 +138,6 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if (
-            not self.column.type.is_numeric()
-        ):
+        if not self.column.type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.median()
