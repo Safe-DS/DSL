@@ -24,6 +24,10 @@ def mean_squared_error(actual: Column, expected: Column) -> float:
         raise TypeError(f"Column 'expected' is not numerical but {expected.type}.")
 
     if actual._data.size != expected._data.size:
-        raise ColumnLengthMismatchError("\n".join([f"{column.name}: {column._data.size}" for column in [actual, expected]]))
+        raise ColumnLengthMismatchError(
+            "\n".join(
+                [f"{column.name}: {column._data.size}" for column in [actual, expected]]
+            )
+        )
 
     return mean_squared_error_sklearn(expected, actual)
