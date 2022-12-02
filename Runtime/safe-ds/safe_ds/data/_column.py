@@ -11,8 +11,32 @@ from ._column_type import ColumnType
 class Column:
     def __init__(self, data: pd.Series, name: str, column_type: ColumnType):
         self._data: pd.Series = data
-        self.name: str = name
-        self.type: ColumnType = column_type
+        self._name: str = name
+        self._type: ColumnType = column_type
+
+    @property
+    def name(self) -> str:
+        """
+        Get the name of the Column
+
+        Returns
+        -------
+        name: str
+            The name of the column
+        """
+        return self._name
+
+    @property
+    def type(self) -> ColumnType:
+        """
+        Get the type of the Column
+
+        Returns
+        -------
+        type: ColumnType
+            The type of the column
+        """
+        return self._type
 
     def __getitem__(self, index: int) -> Any:
         return self.get_value(index)
@@ -88,7 +112,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.max()
 
@@ -106,7 +130,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.min()
 
@@ -124,7 +148,7 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
 
@@ -153,6 +177,6 @@ class ColumnStatistics:
         TypeError
             If the data contains non-numerical data.
         """
-        if not self.column.type.is_numeric():
+        if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.median()
