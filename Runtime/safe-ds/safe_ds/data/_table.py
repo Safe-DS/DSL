@@ -280,6 +280,5 @@ class Table:
             List of Row objects
         """
         return [
-            Row(series_row, self.schema)
-            for (_, series_row) in self._data.iterrows()
+            Row(series_row, self.schema) for (_, series_row) in self._data.iterrows()
         ]
