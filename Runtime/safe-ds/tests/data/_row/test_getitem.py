@@ -17,7 +17,4 @@ def test_getitem_invalid():
 def test_getitem_valid():
     table = Table(pd.DataFrame(data={"col1": [1], "col2": [2]}))
     row = table.get_row(0)
-    assert (
-            row["col1"] == 1
-            and row["col2"] == 2
-    )
+    assert row["col1"] == 1 and row["col2"] == 2
