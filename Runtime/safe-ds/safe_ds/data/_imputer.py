@@ -24,7 +24,7 @@ class Imputer:
             self._imp = _imp
 
         @staticmethod
-        def Mean():
+        def Mean() -> Imputer.Strategy:
             """
 
             Returns
@@ -34,7 +34,7 @@ class Imputer:
             return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='mean'))
 
         @staticmethod
-        def Mode():
+        def Mode() -> Imputer.Strategy:
             """
 
             Returns
@@ -44,7 +44,7 @@ class Imputer:
             return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='most_frequent'))
 
         @staticmethod
-        def Median():
+        def Median() -> Imputer.Strategy:
             """
 
             Returns
@@ -54,7 +54,7 @@ class Imputer:
             return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='median'))
 
         @staticmethod
-        def Constant(value):
+        def Constant(value) -> Imputer.Strategy:
             """
             Parameters
             ----------
@@ -70,7 +70,7 @@ class Imputer:
     def __init__(self, strategy: Imputer.Strategy):
         self._imp = strategy._imp
 
-    def fit(self, table: Table):
+    def fit(self, table: Table) -> None:
         """
         Fit the imputer on the given dataset.
 

@@ -10,10 +10,10 @@ class LogisticRegression:
     It can only be trained on a supervised dataset.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._clf = sk_LogisticRegression(n_jobs=-1)
 
-    def fit(self, supervised_dataset: SupervisedDataset):
+    def fit(self, supervised_dataset: SupervisedDataset) -> None:
         """
         Fit this model given a supervised dataset.
 
