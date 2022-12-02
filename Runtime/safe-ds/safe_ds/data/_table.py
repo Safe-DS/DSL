@@ -150,7 +150,7 @@ class Table:
         Parameters
         ----------
         columns : list[Column]
-            Columns to be combined. Should have a matching schema.
+            Columns to be combined. Each column should be the same size.
 
         Returns
         -------
@@ -166,7 +166,7 @@ class Table:
 
         for column in columns:
             if column._data.size != columns[0]._data.size:
-                raise ColumnLengthMismatchError()
+                raise ColumnLengthMismatchError(", ".join([f"{column.name}: {column._data.size}" for column in columns]))
             dataframe[column.name] = column._data
 
         return Table(dataframe)

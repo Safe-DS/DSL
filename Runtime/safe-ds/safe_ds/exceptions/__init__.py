@@ -4,5 +4,6 @@ from ._data_exceptions import (
     ColumnSizeError,
     IndexOutOfBoundsError,
     SchemaMismatchError,
+    ColumnLengthMismatchError
 )
 from ._learning_exceptions import LearningError, PredictionError
