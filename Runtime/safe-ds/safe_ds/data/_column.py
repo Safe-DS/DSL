@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+
 from safe_ds.exceptions import IndexOutOfBoundsError
 from safe_ds.exceptions._data_exceptions import ColumnSizeError
 from ._column_type import ColumnType
@@ -61,12 +62,17 @@ class ColumnStatistics:
 
     def get_max(self):
         """
-        Returns the maximum value of the column. Raises a TypeError if the data contains non numerical data.
+        Returns the maximum value of the column.
 
         Returns
         -------
         max:
             the maximum value
+
+        Raises
+        ------
+        TypeError
+            If the data contains non-numerical data.
         """
         if (
             not self.column.type.is_numeric()
@@ -76,12 +82,17 @@ class ColumnStatistics:
 
     def get_min(self):
         """
-        Returns the minimum value of the column. Raises a TypeError if the data contains non numerical data.
+        Returns the minimum value of the column.
 
         Returns
         -------
         min:
             the minimum value
+
+        Raises
+        ------
+        TypeError
+            If the data contains non-numerical data.
         """
         if (
             not self.column.type.is_numeric()
@@ -91,12 +102,17 @@ class ColumnStatistics:
 
     def get_mean(self):
         """
-        Returns the mean value of the column. Raises a TypeError if the data contains non numerical data.
+        Returns the mean value of the column.
 
         Returns
         -------
         mean:
             the mean value
+
+        Raises
+        ------
+        TypeError
+            If the data contains non-numerical data.
         """
         if (
             not self.column.type.is_numeric()
@@ -117,12 +133,17 @@ class ColumnStatistics:
 
     def get_median(self):
         """
-        Returns the median value of the column. Raises a TypeError if the data contains non numerical data.
+        Returns the median value of the column.
 
         Returns
         -------
         median:
             the median value
+
+        Raises
+        ------
+        TypeError
+            If the data contains non-numerical data.
         """
         if (
             not self.column.type.is_numeric()
