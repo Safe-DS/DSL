@@ -18,7 +18,7 @@ class ColumnType:
     def __repr__(self):
         pass
 
-    def __eq__(self, other: ColumnType):
+    def __eq__(self, other):
         return isinstance(self, type(other))
 
     @staticmethod
@@ -34,16 +34,15 @@ class ColumnType:
         ColumnType
 
         """
-        if _type.kind == 'u' or _type.kind == 'i':
+        if _type.kind in ('u', 'i'):
             return IntColumnType()
         if _type.kind == 'b':
             return BooleanColumnType()
         if _type.kind == 'f':
             return FloatColumnType()
-        if _type.kind == 'S' or _type == 'U' or _type.kind == 'O':
+        if _type.kind in ('S', 'U', 'O'):
             return StringColumnType()
-        else:
-            raise TypeError("Unexpected column type")
+        raise TypeError("Unexpected column type")
 
 
 class IntColumnType(ColumnType):
@@ -59,7 +58,7 @@ class IntColumnType(ColumnType):
 
 class BooleanColumnType(ColumnType):
     def __init__(self):
-        super().__init__()
+        pass
 
     def is_numeric(self) -> bool:
         return False
