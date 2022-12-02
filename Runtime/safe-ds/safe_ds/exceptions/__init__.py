@@ -3,6 +3,6 @@ from ._data_exceptions import (
     ColumnNameError,
     ColumnSizeError,
     IndexOutOfBoundsError,
-    SchemaMismatchError
+    SchemaMismatchError,
 )
 from ._learning_exceptions import LearningError, PredictionError
