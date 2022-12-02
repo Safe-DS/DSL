@@ -9,7 +9,7 @@ class Row:
         self._data: pd.Series = data
         self.schema: TableSchema = schema
 
-    def get_value_by_column_name(self, column_name: str):
+    def get_value(self, column_name: str):
         """
         Returns the value of the column of the row.
 
