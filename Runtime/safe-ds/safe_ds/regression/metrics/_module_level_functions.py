@@ -1,5 +1,6 @@
 from sklearn.metrics import mean_squared_error as mean_squared_error_sklearn
 from safe_ds.data import Column
+from safe_ds.exceptions import ColumnLengthMismatchError
 
 
 def mean_squared_error(actual: Column, expected: Column) -> float:
@@ -30,4 +31,4 @@ def mean_squared_error(actual: Column, expected: Column) -> float:
             )
         )
 
-    return mean_squared_error_sklearn(expected, actual)
+    return mean_squared_error_sklearn(expected._data.tolist(), actual._data.tolist())

@@ -70,7 +70,7 @@ class SchemaMismatchError(Exception):
 
 class ColumnLengthMismatchError(Exception):
     """
-    Exception raised when the lengths of columns aren't equal.
+    Exception raised when the lengths of two or more columns don't match when they should.
     """
 
     def __init__(self, column_info):
