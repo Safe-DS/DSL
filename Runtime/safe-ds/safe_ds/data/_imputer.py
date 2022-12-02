@@ -4,6 +4,7 @@ import pandas as pd
 
 from sklearn.impute import SimpleImputer
 import numpy as np
+from typing import Any
 
 
 # noinspection PyProtectedMember
@@ -54,7 +55,7 @@ class Imputer:
             return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='median'))
 
         @staticmethod
-        def Constant(value) -> Imputer.Strategy:
+        def Constant(value: Any) -> Imputer.Strategy:
             """
             Parameters
             ----------
