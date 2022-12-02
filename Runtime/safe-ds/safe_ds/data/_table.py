@@ -9,10 +9,9 @@ from safe_ds.exceptions import (
     ColumnNameDuplicateError,
     ColumnNameError,
     IndexOutOfBoundsError,
-    SchemaMismatchError,
+    SchemaMismatchError, ColumnLengthMismatchError,
 )
 
-from ..exceptions._data_exceptions import ColumnLengthMismatchError
 from ._column import Column
 from ._column_type import ColumnType
 from ._row import Row
@@ -166,7 +165,7 @@ class Table:
 
         for column in columns:
             if column._data.size != columns[0]._data.size:
-                raise ColumnLengthMismatchError(", ".join([f"{column.name}: {column._data.size}" for column in columns]))
+                raise ColumnLengthMismatchError("\n".join([f"{column.name}: {column._data.size}" for column in columns]))
             dataframe[column.name] = column._data
 
         return Table(dataframe)

@@ -74,4 +74,4 @@ class ColumnLengthMismatchError(Exception):
     """
 
     def __init__(self, column_info):
-        super().__init__(f"The length of at least one column differs: {column_info}")
+        super().__init__(f"The length of at least one column differs: \n{column_info}")
