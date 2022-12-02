@@ -7,6 +7,9 @@ from dataclasses import dataclass
 
 
 class ColumnType(ABC):
+    """
+    Base Type for Columns, stored in TableSchema
+    """
 
     @abstractmethod
     def is_numeric(self) -> bool:
@@ -44,8 +47,6 @@ class ColumnType(ABC):
 
 @dataclass
 class IntColumnType(ColumnType):
-    def __init__(self):
-        super().__init__()
 
     def is_numeric(self) -> bool:
         return True
