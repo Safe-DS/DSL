@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 import numpy as np
-from dataclasses import dataclass
 
 
 class ColumnType(ABC):
@@ -34,20 +34,19 @@ class ColumnType(ABC):
         ColumnType
 
         """
-        if _type.kind in ('u', 'i'):
+        if _type.kind in ("u", "i"):
             return IntColumnType()
-        if _type.kind == 'b':
+        if _type.kind == "b":
             return BooleanColumnType()
-        if _type.kind == 'f':
+        if _type.kind == "f":
             return FloatColumnType()
-        if _type.kind in ('S', 'U', 'O'):
+        if _type.kind in ("S", "U", "O"):
             return StringColumnType()
         raise TypeError("Unexpected column type")
 
 
 @dataclass
 class IntColumnType(ColumnType):
-
     def is_numeric(self) -> bool:
         return True
 
@@ -57,7 +56,6 @@ class IntColumnType(ColumnType):
 
 @dataclass
 class BooleanColumnType(ColumnType):
-
     def is_numeric(self) -> bool:
         return False
 
@@ -67,7 +65,6 @@ class BooleanColumnType(ColumnType):
 
 @dataclass
 class FloatColumnType(ColumnType):
-
     def is_numeric(self) -> bool:
         return True
 
@@ -77,7 +74,6 @@ class FloatColumnType(ColumnType):
 
 @dataclass
 class StringColumnType(ColumnType):
-
     def is_numeric(self) -> bool:
         return False
 

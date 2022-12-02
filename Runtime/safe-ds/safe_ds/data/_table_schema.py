@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections import OrderedDict
 from dataclasses import dataclass
 
-from ._column_type import ColumnType
-
 from safe_ds.exceptions import ColumnNameError
+
+from ._column_type import ColumnType
 
 
 @dataclass
