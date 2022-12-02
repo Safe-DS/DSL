@@ -6,7 +6,7 @@ from safe_ds.data import Column, ColumnType, Table
 
 
 @pytest.mark.parametrize(
-    "values, name, type, index",
+    "values, name, column_type, index",
     [([1, 4], "A", "int64", 0), ([2, 5], "B", "int64", 1)],
 )
 def test_to_columns(values: list[int], name: str, column_type: str, index: int):
