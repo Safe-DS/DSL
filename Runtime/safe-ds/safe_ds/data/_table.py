@@ -167,7 +167,7 @@ class Table:
         for column in columns:
             if column._data.size != columns[0]._data.size:
                 raise ColumnLengthMismatchError()
-            dataframe[column.name] = column
+            dataframe[column.name] = column._data
 
         return Table(dataframe)
 
@@ -331,5 +331,5 @@ class Table:
             List of Columns objects
         """
         return [
-            Column(series_columns, self.schema) for (_, series_columns) in self._data.columns
+            self.get_column_by_name(name) for name in self._data.columns
         ]
