@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-
 from safe_ds.data import Column, ColumnType, Table
 
 
@@ -13,6 +12,10 @@ def test_to_columns(values: list[int], name: str, column_type: str, index: int):
     table = Table.from_csv("tests/resources/test_column_table.csv")
     columns_list: list[Column] = table.to_columns()
 
-    column_expected: Column = Column(pd.Series(values, name=name), name, ColumnType.from_numpy_dtype(np.dtype(column_type)))
+    column_expected: Column = Column(
+        pd.Series(values, name=name),
+        name,
+        ColumnType.from_numpy_dtype(np.dtype(column_type)),
+    )
 
     assert column_expected._data.equals(columns_list[index]._data)
