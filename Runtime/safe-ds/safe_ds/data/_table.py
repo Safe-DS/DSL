@@ -198,7 +198,7 @@ class Table:
 
         return Table(self._data.rename(columns={old_name: new_name}))
 
-    def get_column_by_name(self, column_name: str):
+    def get_column(self, column_name: str):
         """Returns a new instance of Column with the data of the described column of the Table.
 
         Parameters
