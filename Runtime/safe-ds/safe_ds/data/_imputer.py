@@ -28,7 +28,7 @@ class Imputer:
 
         @staticmethod
         def Mode():
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='mode'))
+            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='most_frequent'))
 
 
         @staticmethod
@@ -37,7 +37,7 @@ class Imputer:
 
         @staticmethod
         def Constant(val):
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='mode', fill_value=val))
+            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='constant', fill_value=val))
 
     def __init__(self, strat : Imputer.Strategy):
         self._imp = strat._imp
