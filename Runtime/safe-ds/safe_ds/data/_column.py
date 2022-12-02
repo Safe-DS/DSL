@@ -66,7 +66,6 @@ class Column:
         return self._data.isna().sum()
 
 
-
 class ColumnStatistics:
     def __init__(self, column: Column):
         self.column = column

@@ -2,11 +2,13 @@ import numpy as np
 import pandas as pd
 from safe_ds.data import Table
 
+
 def test_count_null_values_valid():
-    table = Table(pd.DataFrame(data={"col1": [1, 2, 3, 4, 5], "col2": [None, None, 1, np.nan, np.nan]}))
+    table = Table(
+        pd.DataFrame(
+            data={"col1": [1, 2, 3, 4, 5], "col2": [None, None, 1, np.nan, np.nan]}
+        )
+    )
     column1 = table.get_column_by_name("col1")
     column2 = table.get_column_by_name("col2")
-    assert (
-        column1.count_null_values() == 0
-        and column2.count_null_values() == 4
-    )
+    assert column1.count_null_values() == 0 and column2.count_null_values() == 4
