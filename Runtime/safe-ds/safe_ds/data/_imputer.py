@@ -1,5 +1,5 @@
 from __future__ import annotations
-from safe_ds.data import Table
+from ._table import Table
 import pandas as pd
 
 from sklearn.impute import SimpleImputer
