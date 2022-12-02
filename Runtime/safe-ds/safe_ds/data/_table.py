@@ -284,7 +284,7 @@ class Table:
             Row(series_row, self.schema) for (_, series_row) in self._data.iterrows()
         ]
 
-    def filter_rows(self, query: Callable) -> Table:
+    def filter_rows(self, query: Callable[[Row], bool]) -> Table:
         """Returns a Table with rows filtered by applied lambda function
 
         Parameters
@@ -303,8 +303,9 @@ class Table:
            If the entered query is not a lambda function
         """
 
-        try:
-            mask = self._data.apply(query, axis=1)
-            return Table(self._data[mask].reset_index(drop=True))
-        except Exception as exception:
-            raise TypeError("Entered query is not a lambda function.") from exception
+        rows: list[Row] = []
+        for row in self.to_rows():
+            if query(row):
+                rows.append(row)
+        result_table: Table = self.from_rows(rows)
+        return Table(result_table._data.reset_index(drop=True))
