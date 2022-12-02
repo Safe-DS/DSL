@@ -1,6 +1,5 @@
 import pytest
-
-from safe_ds.data import Table, SupervisedDataset
+from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import PredictionError
 from safe_ds.regression import LinearRegression
 

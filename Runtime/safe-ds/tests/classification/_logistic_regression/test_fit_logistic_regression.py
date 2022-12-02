@@ -1,7 +1,6 @@
 import pytest
-
 from safe_ds.classification import LogisticRegression
-from safe_ds.data import Table, SupervisedDataset
+from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError
 
 
