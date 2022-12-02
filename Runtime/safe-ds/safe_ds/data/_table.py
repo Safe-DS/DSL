@@ -359,3 +359,14 @@ class Table:
             List of Columns objects
         """
         return [self.get_column_by_name(name) for name in self._data.columns]
+
+    def __eq__(self, other):
+        if not isinstance(other, Table):
+            return NotImplemented
+        elif self is other:
+            return True
+        else:
+            return self._data.equals(other._data) and self.schema == other.schema
+
+    def __hash__(self):
+        return hash((self._data, self.schema))

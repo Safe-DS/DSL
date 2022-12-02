@@ -15,4 +15,4 @@ def test_to_columns(values: list[int], name: str, type: str, index: int):
 
     column_expected: Column = Column(pd.Series(values, name=name), name, ColumnType.from_numpy_dtype(np.dtype(type)))
 
-    assert column_expected._data.equals(columns_list[index]._data)
+    assert column_expected == columns_list[index]

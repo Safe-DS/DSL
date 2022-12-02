@@ -10,4 +10,4 @@ def test_from_columns():
     ]
     table_restored: Table = Table.from_columns(columns_table)
 
-    assert table_restored._data.equals(table_expected._data)
+    assert table_restored == table_expected
