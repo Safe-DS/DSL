@@ -15,13 +15,6 @@ pytest = "^7.2.0"
 pytest-cov = "^4.0.0"
 safe-ds = { path = "../safe-ds/", develop = true }
 
-[tool.mypy]
-ignore_missing_imports = true
-disallow_untyped-calls = true
-disallow_untyped-defs = true
-disallow_incomplete-defs = true
-disallow_untyped-decorators = true
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
