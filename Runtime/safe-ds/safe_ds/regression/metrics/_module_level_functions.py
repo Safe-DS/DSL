@@ -11,7 +11,7 @@ def mean_squared_error(actual: Column, expected: Column) -> float:
     ----------
     actual: Column
         Estimated values column
-    expected
+    expected: Column
         Ground truth column
 
     Returns
