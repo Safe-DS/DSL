@@ -36,7 +36,7 @@ class IndexOutOfBoundsError(Exception):
         Wrongly used index
     """
 
-    def __init__(self, index: str):
+    def __init__(self, index: int):
         super().__init__(f"There is no element at index '{index}'.")
 
 
