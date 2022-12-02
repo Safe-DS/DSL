@@ -42,7 +42,7 @@ class IndexOutOfBoundsError(Exception):
 
 class ColumnSizeError(Exception):
     """
-    Exception raised for trying to use a column of unsupported size.
+    Exception raised for trying to use a single column of unsupported size.
 
     Parameters
     ----------
