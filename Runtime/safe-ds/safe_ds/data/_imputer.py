@@ -1,10 +1,12 @@
 from __future__ import annotations
-from ._table import Table
-import pandas as pd
 
-from sklearn.impute import SimpleImputer
-import numpy as np
 from typing import Any
+
+import numpy as np
+import pandas as pd
+from sklearn.impute import SimpleImputer
+
+from ._table import Table
 
 
 # noinspection PyProtectedMember
@@ -32,7 +34,9 @@ class Imputer:
             -------
                 An Imputer-Strategy for imputing the missing data with mean values
             """
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='mean'))
+            return Imputer.Strategy(
+                SimpleImputer(missing_values=np.nan, strategy="mean")
+            )
 
         @staticmethod
         def Mode() -> Imputer.Strategy:
@@ -42,7 +46,9 @@ class Imputer:
             -------
                 An Imputer-Strategy for imputing the missing data with mode values
             """
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='most_frequent'))
+            return Imputer.Strategy(
+                SimpleImputer(missing_values=np.nan, strategy="most_frequent")
+            )
 
         @staticmethod
         def Median() -> Imputer.Strategy:
@@ -52,7 +58,9 @@ class Imputer:
             -------
                 An Imputer-Strategy for imputing the missing data with median values
             """
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='median'))
+            return Imputer.Strategy(
+                SimpleImputer(missing_values=np.nan, strategy="median")
+            )
 
         @staticmethod
         def Constant(value: Any) -> Imputer.Strategy:
@@ -66,7 +74,11 @@ class Imputer:
             -------
                 An Imputer-Strategy for imputing the missing data with given constant values
             """
-            return Imputer.Strategy(SimpleImputer(missing_values=np.nan, strategy='constant', fill_value=value))
+            return Imputer.Strategy(
+                SimpleImputer(
+                    missing_values=np.nan, strategy="constant", fill_value=value
+                )
+            )
 
     def __init__(self, strategy: Imputer.Strategy):
         self._imp = strategy._imp

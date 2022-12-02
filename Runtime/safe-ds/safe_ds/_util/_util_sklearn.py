@@ -1,7 +1,8 @@
+from typing import Any
+
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError, PredictionError
 from sklearn.exceptions import NotFittedError
-from typing import Any
 
 
 # noinspection PyProtectedMember

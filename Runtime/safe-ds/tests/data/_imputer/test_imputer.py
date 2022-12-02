@@ -1,6 +1,6 @@
 import numpy as np
-from safe_ds.data import Table
 import pandas as pd
+from safe_ds.data import Table
 from safe_ds.data._imputer import Imputer
 
 
