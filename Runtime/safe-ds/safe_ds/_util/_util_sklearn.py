@@ -1,10 +1,11 @@
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError, PredictionError
 from sklearn.exceptions import NotFittedError
+from typing import Any
 
 
 # noinspection PyProtectedMember
-def fit(model: any, supervised_dataset: SupervisedDataset) -> None:
+def fit(model: Any, supervised_dataset: SupervisedDataset) -> None:
     """
     Fit a model for a given supervised dataset.
 
@@ -32,7 +33,7 @@ def fit(model: any, supervised_dataset: SupervisedDataset) -> None:
 
 
 # noinspection PyProtectedMember
-def predict(model: any, dataset: Table) -> Table:
+def predict(model: Any, dataset: Table) -> Table:
     """
     Predict a target vector using a dataset containing feature vectors. The model has to be trained first
 
