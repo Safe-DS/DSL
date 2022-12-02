@@ -349,6 +349,17 @@ class Table:
         result_table: Table = self.from_rows(rows)
         return Table(result_table._data.reset_index(drop=True))
 
+    def count_rows(self) -> int:
+        """
+        Returns the number of rows in the table
+
+        Returns
+        -------
+        count : int
+            Number of rows
+        """
+        return self._data.shape[0]
+
     def to_columns(self) -> list[Column]:
         """
         Returns a list of Columns from the current table.
