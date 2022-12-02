@@ -1,5 +1,3 @@
-import pytest
-from sklearn.impute import SimpleImputer
 import numpy as np
 from safe_ds.data import Table, Imputer
 import pandas as pd
