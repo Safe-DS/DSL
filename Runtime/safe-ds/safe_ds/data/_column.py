@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 
 from safe_ds.exceptions import IndexOutOfBoundsError
+from ._column_type import ColumnType
 
 
 class Column:
-    def __init__(self, data: pd.Series, name: str, column_type: np.dtype):
+    def __init__(self, data: pd.Series, name: str, column_type: ColumnType):
         self._data: pd.Series = data
         self.name: str = name
-        self.type: np.dtype = column_type
+        self.type: ColumnType = column_type
 
     def get_value_by_position(self, index: int):
         """Returns column value at specified index, starting at 0.
@@ -55,8 +55,7 @@ class ColumnStatistics:
             the maximum value
         """
         if (
-            not isinstance(self.column.type, int)
-            and not isinstance(self.column.type, float)
+            not self.column.type.is_numeric()
         ):
             raise TypeError("The column contains non numerical data.")
         return self.column._data.max()
@@ -71,8 +70,7 @@ class ColumnStatistics:
             the minimum value
         """
         if (
-            not isinstance(self.column.type, int)
-            and not isinstance(self.column.type, float)
+            not self.column.type.is_numeric()
         ):
             raise TypeError("The column contains non numerical data.")
         return self.column._data.min()
@@ -87,8 +85,7 @@ class ColumnStatistics:
             the mean value
         """
         if (
-            not isinstance(self.column.type, int)
-            and not isinstance(self.column.type, float)
+            not self.column.type.is_numeric()
         ):
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
@@ -102,7 +99,7 @@ class ColumnStatistics:
         mode:
             the mode
         """
-        return self.column._data.mode()
+        return self.column._data.mode()[0]
 
     def get_median(self):
         """
@@ -114,8 +111,7 @@ class ColumnStatistics:
             the median value
         """
         if (
-            not isinstance(self.column.type, int)
-            and not isinstance(self.column.type, float)
+            not self.column.type.is_numeric()
         ):
             raise TypeError("The column contains non numerical data.")
         return self.column._data.median()
