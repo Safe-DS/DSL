@@ -29,7 +29,7 @@ class Table:
             ),
         )
 
-    def get_row_by_index(self, index: int) -> Row:
+    def get_row(self, index: int) -> Row:
         """
         returns the row of the Table for a given Index
         Parameters
