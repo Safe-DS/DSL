@@ -1,7 +1,7 @@
 from safe_ds.data import Column
 from safe_ds.exceptions import ColumnLengthMismatchError
-from sklearn.metrics import mean_squared_error as mean_squared_error_sklearn
 from sklearn.metrics import mean_absolute_error as mean_absolute_error_sklearn
+from sklearn.metrics import mean_squared_error as mean_squared_error_sklearn
 
 
 def mean_squared_error(actual: Column, expected: Column) -> float:
@@ -44,7 +44,7 @@ def mean_absolute_error(actual: Column, expected: Column) -> float:
     return mean_absolute_error_sklearn(expected._data.tolist(), actual._data.tolist())
 
 
-def _check_metrics_preconditions(actual: Column, expected: Column) -> None :
+def _check_metrics_preconditions(actual: Column, expected: Column) -> None:
     if not actual.type.is_numeric():
         raise TypeError(f"Column 'actual' is not numerical but {actual.type}.")
     if not expected.type.is_numeric():
