@@ -1,3 +1,4 @@
+import typing
 from typing import Any
 
 import pandas as pd
@@ -31,7 +32,7 @@ class Row:
             raise UnknownColumnNameError([column_name])
         return self._data[self.schema._get_column_index_by_name(column_name)]
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Row):
             return NotImplemented
         if self is other:
