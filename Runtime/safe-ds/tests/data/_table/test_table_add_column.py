@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from safe_ds.data import Column, StringColumnType, Table
+from safe_ds.data import Column, Table
 from safe_ds.exceptions import ColumnNameDuplicateError, ColumnSizeError
 
 
@@ -9,7 +9,7 @@ def test_table_add_column_valid() -> None:
         "tests/resources/test_table_add_column_valid_input.csv"
     )
     expected = Table.from_csv("tests/resources/test_table_add_column_valid_output.csv")
-    column = Column(pd.Series(["a", "b", "c"]), "C", StringColumnType())
+    column = Column(pd.Series(["a", "b", "c"]), "C")
 
     result = input_table.add_column(column)
     assert expected == result
@@ -28,7 +28,7 @@ def test_table_add_column_(
     input_table = Table.from_csv(
         "tests/resources/test_table_add_column_valid_input.csv"
     )
-    column = Column(pd.Series(column_values), column_name, StringColumnType())
+    column = Column(pd.Series(column_values), column_name)
 
     with pytest.raises(error):
         input_table.add_column(column)
