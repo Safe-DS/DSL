@@ -12,7 +12,11 @@ class Column:
     def __init__(self, data: pd.Series, name: str) -> None:
         self._data: pd.Series = data
         self._name: str = name
-        self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
+        self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)  #
+
+    @property
+    def data(self) -> pd.Series:
+        return self._data
 
     @property
     def name(self) -> str:
@@ -103,10 +107,6 @@ class Column:
     def __hash__(self) -> int:
         return hash(self._data)
 
-    @property
-    def data(self) -> pd.Series:
-        return self._data
-
 
 class ColumnStatistics:
     def __init__(self, column: Column):
@@ -196,17 +196,61 @@ class ColumnStatistics:
         return self.column._data.median()
 
     def sum(self) -> float:
+        """
+        Returns the sum of a numerical Column
+
+        Returns
+        -------
+        sum:
+            the sum of all values
+
+        Raises
+        ---
+        NonNumericalColumnError
+            If the data is non numerical
+
+        """
         if (not self.column.type.is_numeric()):
             raise NonNumericColumnError
         return self.column._data.sum()
 
     def variance(self) -> float:
+
+        """
+        Returns the variance of a numerical Column
+
+        Returns
+        -------
+        sum:
+            the variance of all values
+
+        Raises
+        ---
+        NonNumericalColumnError
+            If the data is non numerical
+
+        """
         if (not self.column.type.is_numeric()):
             raise NonNumericColumnError
 
         return self.column._data.var()
 
     def standard_deviation(self) -> float:
+
+        """
+        Returns the standard deviation of a numerical Column
+
+        Returns
+        -------
+        sum:
+            the standard deviation of all values
+
+        Raises
+        ---
+        NonNumericalColumnError
+            If the data is non numerical
+
+        """
         if (not self.column.type.is_numeric()):
             raise NonNumericColumnError
         return self.column._data.std()
