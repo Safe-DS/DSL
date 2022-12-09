@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
-
 import pandas as pd
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
 
+from typing import Any, Callable
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
+from ._row import Row
+from ._table import Table
 from ._column_type import ColumnType
 
 
@@ -92,6 +93,86 @@ class Column:
             Number of null values
         """
         return self._data.isna().sum()
+
+    def filter_rows(self, query: Callable[[Row], bool]) -> Column:
+        """Returns a Column with rows filtered by applied callable
+
+        Parameters
+        ----------
+        query : Callable[[Row], bool])
+            A callable that is applied to all rows
+
+        Returns
+        -------
+        column : Column
+            A Column containing only the rows filtered by the query callable
+        """
+        table: Table = Table.from_columns([self])
+        filtered_table: Table = table.filter_rows(query)
+        return filtered_table.to_columns()[0]
+
+    def all(self, predicate: Callable[[Any], bool]) -> bool:
+        """
+        Checks if all values have a given property
+
+        Parameters
+        ----------
+        predicate: Callable[[Any], bool])
+            Callable that is used to find matches
+
+        Returns
+        -------
+        result: bool
+            True if all match
+
+        """
+        try:
+            match_count: int = self.filter_rows(predicate)._data.size
+        except Exception as error:
+            raise error
+        return match_count == self._data.size
+
+    def any(self, predicate: Callable[[Any], bool]) -> bool:
+        """
+        Checks if any value has a given property
+
+        Parameters
+        ----------
+        predicate: Callable[[Any], bool])
+            Callable that is used to find matches
+
+        Returns
+        -------
+        result: bool
+            True if any match
+
+        """
+        try:
+            match_count: int = self.filter_rows(predicate)._data.size
+        except Exception as error:
+            raise error
+        return match_count > 0
+
+    def none(self, predicate: Callable[[Any], bool]) -> bool:
+        """
+        Checks if no values has a given property
+
+        Parameters
+        ----------
+        predicate: Callable[[Any], bool])
+            Callable that is used to find matches
+
+        Returns
+        -------
+        result: bool
+            True if none match
+
+        """
+        try:
+            match_count: int = self.filter_rows(predicate)._data.size
+        except Exception as error:
+            raise error
+        return match_count == 0
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
