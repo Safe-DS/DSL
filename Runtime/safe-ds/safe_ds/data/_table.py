@@ -215,7 +215,7 @@ class Table:
         ------
         ColumnNameError
             If the specified old target column name doesn't exist
-        ColumnNameDuplicateError
+        DuplicateColumnNameError
             If the specified new target column name already exists
         """
         columns: list[str] = self._data.columns
@@ -407,7 +407,7 @@ class Table:
 
         """
         if column.name in self._data.columns:
-            raise ColumnNameDuplicateError(column.name)
+            raise DuplicateColumnNameError(column.name)
 
         if column._data.size != self.count_rows():
             raise ColumnSizeError(str(self.count_rows()), str(column._data.size))
