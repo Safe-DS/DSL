@@ -12,9 +12,6 @@ def test_to_columns(values: list[int], name: str, column_type: str, index: int):
     table = Table.from_csv("tests/resources/test_column_table.csv")
     columns_list: list[Column] = table.to_columns()
 
-    column_expected: Column = Column(
-        pd.Series(values, name=name),
-        name,
-    )
+    column_expected: Column = Column(pd.Series(values, name=name), name)
 
     assert column_expected == columns_list[index]

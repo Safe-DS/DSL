@@ -10,18 +10,12 @@ from safe_ds.exceptions import ColumnSizeError
     [(["A", "B"], 1), (["A", "A", "A", "B"], 0.5)],
 )
 def test_idness_valid(values: list[str], result: float):
-    column: Column = Column(
-        pd.Series(values),
-        "test_idness_valid",
-    )
+    column: Column = Column(pd.Series(values), "test_idness_valid")
     idness = column.idness()
     assert idness == result
 
 
 def test_idness_invalid():
-    column = Column(
-        pd.Series([], dtype=int),
-        "test_idness_invalid",
-    )
+    column = Column(pd.Series([], dtype=int), "test_idness_invalid")
     with pytest.raises(ColumnSizeError):
         column.idness()

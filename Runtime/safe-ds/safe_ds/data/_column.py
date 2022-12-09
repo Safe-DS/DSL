@@ -3,19 +3,16 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
 
-from ._column_type import ColumnType
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
+from ._column_type import ColumnType, StringColumnType
 
 
 class Column:
-    def __init__(self, data: pd.Series, name: str, column_type: ColumnType = None):
+    def __init__(self, data: pd.Series, name: str):
         self._data: pd.Series = data
         self._name: str = name
-        if column_type is None:
-            self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
-        else:
-            self._type = column_type
+        self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
 
     @property
     def name(self) -> str:
