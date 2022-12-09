@@ -1,8 +1,11 @@
 import pandas as pd
 import pytest
-
-from safe_ds.data import Table, Column
-from safe_ds.exceptions import ColumnSizeError, DuplicateColumnNameError, UnknownColumnNameError
+from safe_ds.data import Column, Table
+from safe_ds.exceptions import (
+    ColumnSizeError,
+    DuplicateColumnNameError,
+    UnknownColumnNameError,
+)
 
 
 @pytest.mark.parametrize(
@@ -13,7 +16,9 @@ from safe_ds.exceptions import ColumnSizeError, DuplicateColumnNameError, Unknow
     ],
 )
 def test_rename_valid(column_name: str, path: str) -> None:
-    input_table: Table = Table.from_csv("tests/resources/test_table_replace_column_input.csv")
+    input_table: Table = Table.from_csv(
+        "tests/resources/test_table_replace_column_input.csv"
+    )
     expected: Table = Table.from_csv(path)
 
     column = Column(pd.Series(["d", "e", "f"]), column_name)
@@ -31,8 +36,15 @@ def test_rename_valid(column_name: str, path: str) -> None:
         ("C", ["d", "e"], "D", ColumnSizeError),
     ],
 )
-def test_rename_invalid(old_column_name: str, column_values: list[str],  column_name: str, error: type[Exception]) -> None:
-    input_table: Table = Table.from_csv("tests/resources/test_table_replace_column_input.csv")
+def test_rename_invalid(
+    old_column_name: str,
+    column_values: list[str],
+    column_name: str,
+    error: type[Exception],
+) -> None:
+    input_table: Table = Table.from_csv(
+        "tests/resources/test_table_replace_column_input.csv"
+    )
     column = Column(pd.Series(column_values), column_name)
 
     with pytest.raises(error):
