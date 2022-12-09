@@ -101,7 +101,7 @@ class Column:
         return self._data.equals(other._data) and self.name == other.name
 
     def __hash__(self) -> int:
-        return hash(self._data, self.name)
+        return hash(self._data)
 
 
 class ColumnStatistics:
