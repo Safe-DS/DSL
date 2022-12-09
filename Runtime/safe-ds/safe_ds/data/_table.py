@@ -255,8 +255,8 @@ class Table:
         """
         if column_name in self._data.columns:
             return Column(self._data[column_name].copy(deep=True), column_name)
-            
-        raise ColumnNameError([column_name])
+
+        raise UnknownColumnNameError([column_name])
 
     def drop_columns(self, column_names: list[str]) -> Table:
         """Returns a Table without the given columns
