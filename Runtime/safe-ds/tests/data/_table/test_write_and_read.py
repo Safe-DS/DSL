@@ -16,7 +16,7 @@ def test_write_and_read_json_valid() -> None:
     assert table._data.equals(table_r._data)
 
 
-def test_write_and_read_csv_valid():
+def test_write_and_read_csv_valid() -> None:
     table = Table(pd.DataFrame(data={"col1": ["col1_1"], "col2": ["col2_1"]}))
     with NamedTemporaryFile() as tmp_table_file:
         tmp_table_file.close()

@@ -16,7 +16,7 @@ def test_table_equals_valid() -> None:
     assert table.schema == schema_expected
 
 
-def test_table_equals_invalid():
+def test_table_equals_invalid() -> None:
     table = Table.from_json("tests/resources/test_schema_table.json")
     schema_not_expected = TableSchema(
         ["A", "C"],

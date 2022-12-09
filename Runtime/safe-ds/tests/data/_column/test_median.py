@@ -4,7 +4,7 @@ import pytest
 from safe_ds.data import Table
 
 
-def test_median_invalid():
+def test_median_invalid() -> None:
     with pytest.raises(TypeError):
         table = Table(pd.DataFrame(data={"col1": ["col1_1", 2]}))
         column = table.get_column("col1")

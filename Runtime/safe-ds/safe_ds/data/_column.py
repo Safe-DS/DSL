@@ -9,7 +9,7 @@ from ._column_type import ColumnType
 
 
 class Column:
-    def __init__(self, data: pd.Series, name: str):
+    def __init__(self, data: pd.Series, name: str) -> object:
         self._data: pd.Series = data
         self._name: str = name
         self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
@@ -94,14 +94,12 @@ class Column:
         return self._data.isna().sum()
 
     def __eq__(self, other: Column) -> bool:
-        if not isinstance(other, Column):
-            return NotImplemented
         if self is other:
             return True
         return self._data.equals(other._data) and self.name == other.name
 
-    def __hash__(self) -> hash():
-        return hash((self._data, self.name))
+    def __hash__(self) -> hash:
+        return hash[(self._data, self.name)]
 
 
 class ColumnStatistics:

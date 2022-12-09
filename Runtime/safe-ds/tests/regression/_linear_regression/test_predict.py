@@ -22,7 +22,7 @@ def test_linear_regression_predict_not_fitted() -> None:
         log_regression.predict(supervised_dataset.feature_vectors)
 
 
-def test_linear_regression_predict_invalid():
+def test_linear_regression_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_linear_regression.csv")
     invalid_table = Table.from_csv("tests/resources/test_linear_regression_invalid.csv")
     supervised_dataset = SupervisedDataset(table, "T")
@@ -33,7 +33,7 @@ def test_linear_regression_predict_invalid():
         log_regression.predict(invalid_supervised_dataset.feature_vectors)
 
 
-def test_linear_regression_predict_invalid_target_predictions():
+def test_linear_regression_predict_invalid_target_predictions() -> None:
     table = Table.from_csv(
         "tests/resources/test_linear_regression_invalid_target_predictions.csv"
     )
