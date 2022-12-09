@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os.path
+import typing
 from pathlib import Path
 from typing import Callable
 
@@ -383,7 +384,7 @@ class Table:
         """
         return Table(self._data.drop_duplicates(ignore_index=True))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
         if self is other:
