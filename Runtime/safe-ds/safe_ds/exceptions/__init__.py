@@ -5,5 +5,6 @@ from ._data_exceptions import (
     IndexOutOfBoundsError,
     SchemaMismatchError,
     UnknownColumnNameError,
+    NonNumericColumnError,
 )
 from ._learning_exceptions import LearningError, PredictionError

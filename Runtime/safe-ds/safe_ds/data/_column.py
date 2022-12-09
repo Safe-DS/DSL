@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
 
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError, NonNumericColumnError
 from ._column_type import ColumnType
 
 
@@ -103,6 +103,10 @@ class Column:
     def __hash__(self) -> int:
         return hash(self._data)
 
+    @property
+    def data(self):
+        return self._data
+
 
 class ColumnStatistics:
     def __init__(self, column: Column):
@@ -190,3 +194,19 @@ class ColumnStatistics:
         if not self.column._type.is_numeric():
             raise TypeError("The column contains non numerical data.")
         return self.column._data.median()
+
+    def sum(self) -> float:
+        if (not self.column.type.is_numeric()):
+            raise NonNumericColumnError
+        return self.column._data.sum()
+
+    def variance(self) -> float:
+        if (not self.column.type.is_numeric()):
+            raise NonNumericColumnError
+
+        return self.column._data.var()
+
+    def standard_deviation(self) -> float:
+        if (not self.column.type.is_numeric()):
+            raise NonNumericColumnError
+        return self.column._data.std()
