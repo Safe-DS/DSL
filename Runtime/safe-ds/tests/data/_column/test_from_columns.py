@@ -1,8 +1,9 @@
 import pandas as pd
-from safe_ds.data import Column, IntColumnType, Table
+
+from safe_ds.data import Column, Table
 
 
-def test_from_columns():
+def test_from_columns() -> None:
     table_expected = Table.from_csv("tests/resources/test_column_table.csv")
     columns_table: list[Column] = [
         Column(pd.Series([1, 4]), "A"),

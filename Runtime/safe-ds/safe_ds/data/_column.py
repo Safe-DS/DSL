@@ -5,7 +5,7 @@ from typing import Any
 import pandas as pd
 
 from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
-from ._column_type import ColumnType, StringColumnType
+from ._column_type import ColumnType
 
 
 class Column:
@@ -93,7 +93,7 @@ class Column:
         """
         return self._data.isna().sum()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Column):
             return NotImplemented
         if self is other:
@@ -162,7 +162,7 @@ class ColumnStatistics:
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
 
-    def mode(self):
+    def mode(self) -> any:
         """
         Returns the mode of the column.
 

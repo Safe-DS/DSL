@@ -1,4 +1,5 @@
 import pandas as pd
+
 from safe_ds.data import Table
 
 
