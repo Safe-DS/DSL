@@ -15,7 +15,6 @@ def test_to_columns(values: list[int], name: str, column_type: str, index: int):
     column_expected: Column = Column(
         pd.Series(values, name=name),
         name,
-        ColumnType.from_numpy_dtype(np.dtype(column_type)),
     )
 
     assert column_expected == columns_list[index]

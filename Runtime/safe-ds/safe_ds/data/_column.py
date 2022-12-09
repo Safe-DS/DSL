@@ -9,10 +9,13 @@ from ._column_type import ColumnType
 
 
 class Column:
-    def __init__(self, data: pd.Series, name: str, column_type: ColumnType):
+    def __init__(self, data: pd.Series, name: str, column_type: ColumnType = None):
         self._data: pd.Series = data
         self._name: str = name
-        self._type: ColumnType = column_type
+        if column_type is None:
+            self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
+        else:
+            self._type = column_type
 
     @property
     def name(self) -> str:
