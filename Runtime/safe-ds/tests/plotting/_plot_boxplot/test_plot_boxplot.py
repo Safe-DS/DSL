@@ -19,13 +19,13 @@ def test_plot_boxplot_non_numeric() -> None:
         plotting.plot_boxplot(table.get_column("A"))
 
 
-def test_plot_boxplot_float(monkeypatch: _pytest.monkeypatch):
+def test_plot_boxplot_float(monkeypatch: _pytest.monkeypatch) -> None:
     monkeypatch.setattr(plt, "show", lambda: None)
     table = Table(pd.DataFrame(data={"A": [1, 2, 3.5]}))
     plotting.plot_boxplot(table.get_column("A"))
 
 
-def test_plot_boxplot_int(monkeypatch: _pytest.monkeypatch):
+def test_plot_boxplot_int(monkeypatch: _pytest.monkeypatch) -> None:
     monkeypatch.setattr(plt, "show", lambda: None)
     table = Table(pd.DataFrame(data={"A": [1, 2, 3]}))
     plotting.plot_boxplot(table.get_column("A"))
