@@ -371,6 +371,18 @@ class Table:
         """
         return [self.get_column(name) for name in self._data.columns]
 
+    def drop_duplicate_rows(self) -> Table:
+        """
+        Returns a copy of the Table with every duplicate row removed.
+
+        Returns
+        -------
+        result: Table
+            The table with the duplicate rows removed
+
+        """
+        return Table(self._data.drop_duplicates(ignore_index=True))
+
     def __eq__(self, other):
         if not isinstance(other, Table):
             return NotImplemented
