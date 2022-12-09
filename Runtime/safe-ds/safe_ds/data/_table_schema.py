@@ -4,7 +4,6 @@ from collections import OrderedDict
 from dataclasses import dataclass
 
 import pandas as pd
-
 from safe_ds.exceptions import ColumnNameError
 
 from ._column_type import ColumnType
@@ -102,7 +101,9 @@ class TableSchema:
         """
         return TableSchema(
             column_names=dataframe.columns,
-            data_types=list(map(ColumnType.from_numpy_dtype, dataframe.dtypes.to_list()))
+            data_types=list(
+                map(ColumnType.from_numpy_dtype, dataframe.dtypes.to_list())
+            ),
         )
 
     def __str__(self) -> str:

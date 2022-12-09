@@ -11,8 +11,9 @@ from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnNameDuplicateError,
     ColumnNameError,
+    ColumnSizeError,
     IndexOutOfBoundsError,
-    SchemaMismatchError, ColumnSizeError,
+    SchemaMismatchError,
 )
 
 from ._column import Column
