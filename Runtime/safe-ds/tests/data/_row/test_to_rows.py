@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
+
 from safe_ds.data import ColumnType, Row, Table, TableSchema
 
 
-def test_to_rows():
+def test_to_rows() -> None:
     table = Table.from_json("tests/resources/test_row_table.json")
     expected_schema: TableSchema = TableSchema(
         ["A", "B"],

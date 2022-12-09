@@ -1,8 +1,9 @@
 import numpy as np
+
 from safe_ds.data import ColumnType, Table, TableSchema
 
 
-def test_table_equals_valid():
+def test_table_equals_valid() -> None:
     table = Table.from_json("tests/resources/test_schema_table.json")
     schema_expected = TableSchema(
         ["A", "B"],

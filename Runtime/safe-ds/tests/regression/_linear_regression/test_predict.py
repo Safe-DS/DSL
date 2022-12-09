@@ -1,10 +1,11 @@
 import pytest
+
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import PredictionError
 from safe_ds.regression import LinearRegression
 
 
-def test_linear_regression_predict():
+def test_linear_regression_predict() -> None:
     table = Table.from_csv("tests/resources/test_linear_regression.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = LinearRegression()
@@ -13,7 +14,7 @@ def test_linear_regression_predict():
     assert True  # This asserts that the predict method succeeds
 
 
-def test_linear_regression_predict_not_fitted():
+def test_linear_regression_predict_not_fitted() -> None:
     table = Table.from_csv("tests/resources/test_linear_regression.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = LinearRegression()

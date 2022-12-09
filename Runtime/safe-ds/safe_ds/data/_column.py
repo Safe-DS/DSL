@@ -93,14 +93,14 @@ class Column:
         """
         return self._data.isna().sum()
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Column) -> bool:
         if not isinstance(other, Column):
             return NotImplemented
         if self is other:
             return True
         return self._data.equals(other._data) and self.name == other.name
 
-    def __hash__(self):
+    def __hash__(self) -> hash():
         return hash((self._data, self.name))
 
 
@@ -162,7 +162,7 @@ class ColumnStatistics:
             raise TypeError("The column contains non numerical data.")
         return self.column._data.mean()
 
-    def mode(self) -> any:
+    def mode(self) -> Any:
         """
         Returns the mode of the column.
 
