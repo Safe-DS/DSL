@@ -1,7 +1,7 @@
 from ._data_exceptions import (
     ColumnLengthMismatchError,
-    ColumnNameDuplicateError,
-    ColumnNameError,
+    DuplicateColumnNameError,
+    UnknownColumnNameError,
     ColumnSizeError,
     IndexOutOfBoundsError,
     SchemaMismatchError,

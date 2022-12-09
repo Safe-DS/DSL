@@ -1,7 +1,7 @@
 from typing import Any
 
 import pandas as pd
-from safe_ds.exceptions import ColumnNameError
+from safe_ds.exceptions import UnknownColumnNameError
 
 from ._table_schema import TableSchema
 
@@ -28,7 +28,7 @@ class Row:
         The value of the column
         """
         if not self.schema.has_column(column_name):
-            raise ColumnNameError([column_name])
+            raise UnknownColumnNameError([column_name])
         return self._data[self.schema._get_column_index_by_name(column_name)]
 
     def __eq__(self, other):

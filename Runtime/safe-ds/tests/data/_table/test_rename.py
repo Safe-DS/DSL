@@ -1,6 +1,6 @@
 import pytest
 from safe_ds.data import Table
-from safe_ds.exceptions import ColumnNameDuplicateError, ColumnNameError
+from safe_ds.exceptions import DuplicateColumnNameError, UnknownColumnNameError
 
 
 @pytest.mark.parametrize(
@@ -17,9 +17,9 @@ def test_rename_valid(name_from, name_to, column_one, column_two):
 @pytest.mark.parametrize(
     "name_from, name_to, error",
     [
-        ("C", "D", ColumnNameError),
-        ("A", "B", ColumnNameDuplicateError),
-        ("D", "D", ColumnNameError),
+        ("C", "D", UnknownColumnNameError),
+        ("A", "B", DuplicateColumnNameError),
+        ("D", "D", UnknownColumnNameError),
     ],
 )
 def test_rename_invalid(name_from, name_to, error):

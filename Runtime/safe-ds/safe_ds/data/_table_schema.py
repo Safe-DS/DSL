@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from dataclasses import dataclass
 
-from safe_ds.exceptions import ColumnNameError
+from safe_ds.exceptions import UnknownColumnNameError
 
 from ._column_type import ColumnType
 
@@ -64,7 +64,7 @@ class TableSchema:
             If the specified target column name doesn't exist
         """
         if not self.has_column(column_name):
-            raise ColumnNameError([column_name])
+            raise UnknownColumnNameError([column_name])
         return self._schema[column_name]
 
     def _get_column_index_by_name(self, column_name: str):

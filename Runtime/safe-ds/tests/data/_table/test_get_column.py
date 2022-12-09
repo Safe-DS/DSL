@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from safe_ds.data import Column, Table
-from safe_ds.exceptions import ColumnNameError
+from safe_ds.exceptions import UnknownColumnNameError
 
 
 def test_get_column_valid():
@@ -14,6 +14,6 @@ def test_get_column_valid():
 
 
 def test_get_column_invalid():
-    with pytest.raises(ColumnNameError):
+    with pytest.raises(UnknownColumnNameError):
         table = Table(pd.DataFrame(data={"col1": ["col1_1"], "col2": ["col2_1"]}))
         table.get_column("col3")
