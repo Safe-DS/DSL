@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import pytest
 from safe_ds.data import Column, ColumnType
-from safe_ds.exceptions import ColumnLengthMismatchError
 from safe_ds.regression.metrics import mean_squared_error
 
 
