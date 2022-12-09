@@ -377,6 +377,33 @@ class Table:
         return Table(self._data.drop_duplicates(ignore_index=True))
 
     def replace_column(self, old_column_name: str, new_column: Column) -> Table:
+        """
+        Returns a copy of the Table with the specified old column replaced by a new column. Keeps the order of columns.
+
+        Parameters
+        ----------
+        old_column_name: str
+            Name of the old column, to be replaced
+
+        new_column: Column
+            New column, to replace the old column
+
+        Returns
+        -------
+        result: Table
+            Table where the old column is replaced by the new column
+
+        Raises
+        ------
+        UnknownColumnNameError
+            If the old column does not exist
+
+        DuplicateColumnNameError
+            If the new column already exists and the existing column is not affected by the replacement
+
+        ColumnSizeError
+            If the size of the column does not match the amount of rows
+        """
         columns = self._data.columns
 
         if old_column_name not in columns:
@@ -404,6 +431,14 @@ class Table:
         -------
         result: Table
             The table with the column attached
+
+        Raises
+        ------
+        DuplicateColumnNameError
+            If the new column already exists
+
+        ColumnSizeError
+            If the size of the column does not match the amount of rows
 
         """
         if column.name in self._data.columns:
