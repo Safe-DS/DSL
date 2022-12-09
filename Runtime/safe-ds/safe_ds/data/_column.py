@@ -3,8 +3,12 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
+from safe_ds.exceptions import (
+    ColumnSizeError,
+    IndexOutOfBoundsError,
+    NonNumericColumnError,
+)
 
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError, NonNumericColumnError
 from ._column_type import ColumnType
 
 
@@ -210,7 +214,7 @@ class ColumnStatistics:
             If the data is non numerical
 
         """
-        if (not self.column.type.is_numeric()):
+        if not self.column.type.is_numeric():
             raise NonNumericColumnError
         return self.column._data.sum()
 
@@ -230,7 +234,7 @@ class ColumnStatistics:
             If the data is non numerical
 
         """
-        if (not self.column.type.is_numeric()):
+        if not self.column.type.is_numeric():
             raise NonNumericColumnError
 
         return self.column._data.var()
@@ -251,6 +255,6 @@ class ColumnStatistics:
             If the data is non numerical
 
         """
-        if (not self.column.type.is_numeric()):
+        if not self.column.type.is_numeric():
             raise NonNumericColumnError
         return self.column._data.std()
