@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from safe_ds.data import Column
 from safe_ds.regression.metrics import mean_absolute_error
 
@@ -18,10 +17,6 @@ from safe_ds.regression.metrics import mean_absolute_error
 def test_mean_absolute_error_valid(
     actual: list[float], expected: list[float], result: float
 ) -> None:
-    actual_column: Column = Column(
-        pd.Series(actual), "actual"
-    )
-    expected_column: Column = Column(
-        pd.Series(expected), "expected"
-    )
+    actual_column: Column = Column(pd.Series(actual), "actual")
+    expected_column: Column = Column(pd.Series(expected), "expected")
     assert mean_absolute_error(actual_column, expected_column) == result

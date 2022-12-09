@@ -1,5 +1,4 @@
 import pytest
-
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError
 from safe_ds.regression import LinearRegression

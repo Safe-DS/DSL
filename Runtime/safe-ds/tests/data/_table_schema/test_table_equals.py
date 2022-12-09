@@ -1,5 +1,4 @@
 import numpy as np
-
 from safe_ds.data import ColumnType, Table, TableSchema
 
 

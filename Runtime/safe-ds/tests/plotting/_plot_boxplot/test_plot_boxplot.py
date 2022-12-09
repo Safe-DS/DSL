@@ -2,7 +2,6 @@ import _pytest
 import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
-
 from safe_ds import plotting
 from safe_ds.data import Table
 

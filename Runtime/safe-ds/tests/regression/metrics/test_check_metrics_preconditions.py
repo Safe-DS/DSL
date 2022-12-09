@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from safe_ds.data import Column
 from safe_ds.exceptions import ColumnLengthMismatchError
 from safe_ds.regression.metrics import _check_metrics_preconditions

@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-
 from safe_ds.data import ColumnType, Row, Table, TableSchema
 
 
