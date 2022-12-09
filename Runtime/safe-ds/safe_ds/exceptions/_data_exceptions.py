@@ -19,7 +19,7 @@ class NonNumericColumnError(Exception):
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Tried to do a numerical operation on one or multiple non numerical Columns")
 
 

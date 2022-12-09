@@ -104,7 +104,7 @@ class Column:
         return hash(self._data)
 
     @property
-    def data(self):
+    def data(self) -> pd.Series:
         return self._data
 
 
