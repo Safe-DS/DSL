@@ -31,12 +31,12 @@ class Row:
             raise UnknownColumnNameError([column_name])
         return self._data[self.schema._get_column_index_by_name(column_name)]
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Row):
             return NotImplemented
         if self is other:
             return True
         return self._data.equals(other._data)
 
-    def __hash__(self):
-        return hash((self._data))
+    def __hash__(self) -> int:
+        return hash(self._data)
