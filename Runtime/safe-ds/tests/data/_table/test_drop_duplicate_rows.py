@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from safe_ds.data import Table
 
 
@@ -8,7 +7,7 @@ from safe_ds.data import Table
     "path",
     [
         "tests/resources/test_table_duplicate_rows_duplicates.csv",
-        "tests/resources/test_table_duplicate_rows_no_duplicates.csv"
+        "tests/resources/test_table_duplicate_rows_no_duplicates.csv",
     ],
 )
 def test_drop_duplicate_rows(path: str) -> None:
