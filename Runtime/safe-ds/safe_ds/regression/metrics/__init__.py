@@ -1,1 +1,3 @@
 from ._module_level_functions import mean_squared_error
+from ._module_level_functions import mean_absolute_error
+from ._module_level_functions import _check_metrics_preconditions
