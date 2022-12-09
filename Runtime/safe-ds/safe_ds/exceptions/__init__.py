@@ -3,8 +3,8 @@ from ._data_exceptions import (
     ColumnSizeError,
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
+    NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
-    NonNumericColumnError,
 )
 from ._learning_exceptions import LearningError, PredictionError

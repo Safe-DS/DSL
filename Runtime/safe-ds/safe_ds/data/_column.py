@@ -3,8 +3,12 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
+from safe_ds.exceptions import (
+    ColumnSizeError,
+    IndexOutOfBoundsError,
+    NonNumericColumnError,
+)
 
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError, NonNumericColumnError
 from ._column_type import ColumnType
 
 
@@ -196,17 +200,17 @@ class ColumnStatistics:
         return self.column._data.median()
 
     def sum(self) -> float:
-        if (not self.column.type.is_numeric()):
+        if not self.column.type.is_numeric():
             raise NonNumericColumnError
         return self.column._data.sum()
 
     def variance(self) -> float:
-        if (not self.column.type.is_numeric()):
+        if not self.column.type.is_numeric():
             raise NonNumericColumnError
 
         return self.column._data.var()
 
     def standard_deviation(self) -> float:
-        if (not self.column.type.is_numeric()):
+        if not self.column.type.is_numeric():
             raise NonNumericColumnError
         return self.column._data.std()
