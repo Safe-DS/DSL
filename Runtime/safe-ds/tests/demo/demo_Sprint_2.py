@@ -88,9 +88,7 @@ def linear_regression_safeds() -> None:
 
 
 if __name__ == '__main__':
-    """
-            Please comment out, if you want to test and see any of the given demo-functions.
-    """
+    # Please comment out, if you want to test and see any of the given demo-functions.
     # data_frame()
     # table()
     # boxplot_python()
@@ -99,3 +97,4 @@ if __name__ == '__main__':
     # histogramm_safeds()
     # linear_regression_python()
     # linear_regression_safeds()
+    pass
