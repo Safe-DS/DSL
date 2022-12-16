@@ -526,7 +526,8 @@ class Table:
             If the old column does not exist
 
         """
-        column: Column = self.get_column(name)
-        items: list = [transformer(item) for item in self.to_rows()]
-        result: Column = Column(pd.Series(items), column.name)
-        return self.replace_column(name, result)
+        if self.has_column(name):
+            items: list = [transformer(item) for item in self.to_rows()]
+            result: Column = Column(pd.Series(items), name)
+            return self.replace_column(name, result)
+        raise UnknownColumnNameError([name])
