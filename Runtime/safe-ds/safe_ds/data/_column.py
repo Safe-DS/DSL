@@ -97,6 +97,9 @@ class Column:
         """
         return self._data.isna().sum()
 
+    def stability(self) -> float:
+        return self._data.value_counts()[self.statistics.mode()] / self._data.count()
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
             return NotImplemented
