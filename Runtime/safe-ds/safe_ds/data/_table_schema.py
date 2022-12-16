@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import pandas as pd
-
 from safe_ds.exceptions import UnknownColumnNameError
+
 from ._column_type import ColumnType
 
 
