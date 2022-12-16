@@ -331,11 +331,6 @@ class Table:
         -------
         table : Table
             A Table containing only the rows filtered by the query lambda function
-
-        Raises
-        ------
-        TypeError
-           If the entered query is not a lambda function
         """
 
         rows: list[Row] = [row for row in self.to_rows() if query(row)]
@@ -352,6 +347,17 @@ class Table:
             Number of rows
         """
         return self._data.shape[0]
+
+    def count_columns(self) -> int:
+        """
+        Returns the number of columns in the table
+
+        Returns
+        -------
+        count : int
+            Number of columns
+        """
+        return self._data.shape[1]
 
     def to_columns(self) -> list[Column]:
         """
