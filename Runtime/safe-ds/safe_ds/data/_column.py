@@ -92,7 +92,7 @@ class Column:
         """
         return self._data.isna().sum()
 
-    def filter_values(self, query: Callable[[Any], bool]) -> Column:
+    def _filter_values(self, query: Callable[[Any], bool]) -> Column:
         """Returns a Column with rows filtered by applied callable
 
         Parameters
@@ -124,7 +124,7 @@ class Column:
 
         """
         try:
-            match_count: int = self.filter_values(predicate)._data.size
+            match_count: int = self._filter_values(predicate)._data.size
         except Exception as error:
             raise error
         return match_count == self._data.size
@@ -145,7 +145,7 @@ class Column:
 
         """
         try:
-            match_count: int = self.filter_values(predicate)._data.size
+            match_count: int = self._filter_values(predicate)._data.size
         except Exception as error:
             raise error
         return match_count > 0
@@ -166,7 +166,7 @@ class Column:
 
         """
         try:
-            match_count: int = self.filter_values(predicate)._data.size
+            match_count: int = self._filter_values(predicate)._data.size
         except Exception as error:
             raise error
         return match_count == 0
