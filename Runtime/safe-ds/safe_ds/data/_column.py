@@ -128,13 +128,10 @@ class Column:
             True if all match
 
         """
-        try:
-            for value in self._data:
-                if not predicate(value):
-                    return False
-            return True
-        except Exception as error:
-            raise error
+        for value in self._data:
+            if not predicate(value):
+                return False
+        return True
 
     def any(self, predicate: Callable[[Any], bool]) -> bool:
         """
@@ -151,13 +148,10 @@ class Column:
             True if any match
 
         """
-        try:
-            for value in self._data:
-                if predicate(value):
-                    return True
-            return False
-        except Exception as error:
-            raise error
+        for value in self._data:
+            if predicate(value):
+                return True
+        return False
 
     def none(self, predicate: Callable[[Any], bool]) -> bool:
         """
@@ -174,13 +168,10 @@ class Column:
             True if none match
 
         """
-        try:
-            for value in self._data:
-                if predicate(value):
-                    return False
-            return True
-        except Exception as error:
-            raise error
+        for value in self._data:
+            if predicate(value):
+                return False
+        return True
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
