@@ -9,7 +9,7 @@ from ._table_schema import TableSchema
 
 class Row:
     def __init__(self, data: pd.Series, schema: TableSchema):
-        self._data: pd.Series = data.reset_index(drop=True)
+        self._data: pd.Series = data
         self.schema: TableSchema = schema
 
     def __getitem__(self, column_name: str) -> Any:
@@ -38,7 +38,8 @@ class Row:
         if self is other:
             return True
         return (
-            self._data.equals(other._data) and self.schema == other.schema
+            self._data.reset_index(drop=True, inplace=False)
+            .equals(other._data.reset_index(drop=True, inplace=False)) and self.schema == other.schema
         )
 
     def __hash__(self) -> int:
