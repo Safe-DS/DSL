@@ -7,6 +7,7 @@ from typing import Callable
 
 import pandas as pd
 from pandas import DataFrame, Series
+
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
@@ -15,7 +16,6 @@ from safe_ds.exceptions import (
     SchemaMismatchError,
     UnknownColumnNameError,
 )
-
 from ._column import Column
 from ._row import Row
 from ._table_schema import TableSchema
@@ -450,6 +450,27 @@ class Table:
         result = self._data.copy()
         result[column.name] = column._data
         return Table(result)
+
+    def add_row(self, row: Row) -> Table:
+        """
+        Add a row to an existing table
+
+        Parameters
+        ----------
+        row: Row
+            the row you want to add
+
+        Returns
+        -------
+        table: Table
+            a new table with the added row at the end
+
+        """
+        if self.schema != row.schema:
+            raise SchemaMismatchError()
+        df = row._data.to_frame().T
+        df.columns = list(self.schema._schema.keys())
+        return Table(pd.concat([self._data, df], ignore_index=True))
 
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
