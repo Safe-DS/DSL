@@ -338,4 +338,3 @@ class ColumnStatistics:
         if not self.column.type.is_numeric():
             raise NonNumericColumnError
         return self.column._data.std()
-

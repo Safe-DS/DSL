@@ -9,7 +9,7 @@ from safe_ds.data import Column
         ([1, 2, 3], False),
         ([1, 2, 3, None], True),
         ([None, None, None], True),
-        ([], False)
+        ([], False),
     ],
 )
 def test_has_missing_values(values: list, expected: bool) -> None:

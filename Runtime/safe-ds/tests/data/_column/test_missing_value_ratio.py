@@ -6,11 +6,7 @@ from safe_ds.exceptions import ColumnSizeError
 
 @pytest.mark.parametrize(
     "values, expected",
-    [
-        ([1, 2, 3], 0),
-        ([1, 2, 3, None], 1 / 4),
-        ([None, None, None], 1)
-    ],
+    [([1, 2, 3], 0), ([1, 2, 3, None], 1 / 4), ([None, None, None], 1)],
 )
 def test_missing_value_ratio(values: list, expected: float) -> None:
     column = Column(pd.Series(values), "A")
