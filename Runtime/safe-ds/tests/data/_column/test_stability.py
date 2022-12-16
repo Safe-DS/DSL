@@ -2,7 +2,6 @@ import typing
 
 import pandas as pd
 import pytest
-
 from safe_ds.data import Column
 
 
