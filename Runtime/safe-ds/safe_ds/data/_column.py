@@ -187,7 +187,10 @@ class Column:
         : bool
             True if missing values exist, False else
         """
-        return self.any(lambda value: value is None or (isinstance(value, Number) and np.isnan(value)))
+        return self.any(
+            lambda value: value is None
+            or (isinstance(value, Number) and np.isnan(value))
+        )
 
     def stability(self) -> float:
         """
