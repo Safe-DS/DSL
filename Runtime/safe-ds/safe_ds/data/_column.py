@@ -158,6 +158,15 @@ class Column:
         return True
 
     def stability(self) -> float:
+        """
+        Calculates the stability of this column.
+        The value is calculated as the ratio between the number of mode values and the number of non-null-values.
+
+        Returns
+        -------
+        stability: float
+            Stability of this column
+        """
         return self._data.value_counts()[self.statistics.mode()] / self._data.count()
 
     def __eq__(self, other: object) -> bool:
