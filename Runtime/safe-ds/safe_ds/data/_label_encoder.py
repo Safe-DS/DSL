@@ -34,7 +34,7 @@ class LabelEncoder:
         """
         try:
 
-            self.le.fit(table.keep_columns(column)._data)
+            self.le.fit(table.keep_columns([column])._data)
         except exceptions.NotFittedError:
             raise LearningError("")
 
@@ -59,7 +59,7 @@ class LabelEncoder:
             p_df = table._data
             p_df[column] = self.le.transform(p_df[column])
             return Table(p_df)
-        except exceptions.NotFittedError:
+        except exceptions.NotFittedError as er:
             raise NotFittedError
 
     def fit_transform(self, table: Table, columns: [str]) -> Table:
@@ -88,7 +88,7 @@ class LabelEncoder:
                 # transform the column using the trained Label Encoder
                 p_df[col] = self.le.transform(p_df[col])
             return Table(pandas.DataFrame(p_df))
-        except exceptions.NotFittedError:
+        except exceptions.NotFittedError as er:
             raise NotFittedError
 
     def inverse_transform(self, table: Table, column: str) -> Table:
