@@ -496,7 +496,7 @@ class Table:
 
     def list_columns_with_missing_values(self) -> list[Column]:
         """
-        Returns a list of all the columns that have at least one missing value. Empty list if there are none.
+        Returns a list of all the columns, that have at least one missing value or an empty list, if there are none.
 
         Returns
         -------
