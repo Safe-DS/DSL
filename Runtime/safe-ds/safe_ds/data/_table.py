@@ -461,7 +461,9 @@ class Table:
     def __hash__(self) -> int:
         return hash(self._data)
 
-    def transform_column(self, name: str, transformer: Callable[[Row], typing.Any]) -> Table:
+    def transform_column(
+        self, name: str, transformer: Callable[[Row], typing.Any]
+    ) -> Table:
         """
         Transform provided column by calling provided transformer
 
@@ -476,7 +478,7 @@ class Table:
             If the old column does not exist
 
         """
-        column : Column = self.get_column(name)
+        column: Column = self.get_column(name)
         items: list = [transformer(item) for item in self.to_rows()]
         result: Column = Column(pd.Series(items), column.name)
         return self.replace_column(name, result)
