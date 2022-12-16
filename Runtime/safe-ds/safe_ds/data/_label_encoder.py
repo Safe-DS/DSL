@@ -76,7 +76,6 @@ class LabelEncoder:
 
         Raises
         -------
-            LearningError if model could not be fitted.
             NotFittedError if the encoder wasn't fitted before transforming.
 
         """
@@ -113,5 +112,5 @@ class LabelEncoder:
             p_df = table._data
             p_df[column] = self.le.inverse_transform(p_df[column])
             return Table(p_df)
-        except exceptions.NotFittedError:
+        except exceptions.NotFittedError as er:
             raise NotFittedError
