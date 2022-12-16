@@ -97,22 +97,6 @@ class Column:
         """
         return self._data.isna().sum()
 
-    def _filter_values(self, query: Callable[[Any], bool]) -> Column:
-        """Returns a Column with rows filtered by applied callable
-
-        Parameters
-        ----------
-        query : Callable[[Row], bool])
-            A callable that is applied to all rows
-
-        Returns
-        -------
-        column : Column
-            A Column containing only the rows filtered by the query callable
-        """
-        items: list = [item for item in self._data if query(item)]
-        return Column(pd.Series(items, dtype=self._data.dtype), self.name)
-
     def all(self, predicate: Callable[[Any], bool]) -> bool:
         """
         Checks if all values have a given property
