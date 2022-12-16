@@ -171,11 +171,11 @@ jobs:
 
       # Requires installation of pytest and pytest-cov
       - name: Test with pytest
-        run: poetry run pytest --doctest-modules --cov=safe_ds --cov-report=html
+        run: poetry run pytest --doctest-modules --cov=safe_ds --cov-report=xml
 
-      - name: Upload test coverage
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          name: stdlib test coverage
-          path: Runtime/safe-ds/htmlcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: Runtime/safe-ds
+          files: coverage.xml
