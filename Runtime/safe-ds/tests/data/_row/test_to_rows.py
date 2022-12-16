@@ -22,5 +22,4 @@ def test_to_rows() -> None:
     rows_is: list[Row] = table.to_rows()
 
     for row_is, row_expected in zip(rows_is, rows_expected):
-        print(row_is._data, row_expected._data)
         assert row_is == row_expected
