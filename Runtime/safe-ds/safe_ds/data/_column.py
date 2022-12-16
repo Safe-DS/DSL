@@ -5,6 +5,7 @@ from typing import Any
 import pandas as pd
 
 from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
+
 from ._column_type import ColumnType
 
 
