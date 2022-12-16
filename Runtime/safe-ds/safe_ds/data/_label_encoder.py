@@ -8,7 +8,7 @@ from safe_ds.exceptions import NotFittedError, LearningError
 
 
 class LabelEncoder:
-    def __init__(self):
+    def __init__(self) -> None:
         self.is_fitted = 0
         self.le = preprocessing.LabelEncoder()
 
@@ -20,8 +20,9 @@ class LabelEncoder:
         table : Table
             The table containing the data to fit the label encoder with.
 
-        columns : [str]
-            The list of columns which should be lable encoded
+        column : str
+            The list of columns which should be label encoded
+
         Returns
         -------
         None
@@ -33,9 +34,9 @@ class LabelEncoder:
         """
         try:
 
-            self.le.fit(table._data[column])
+            self.le.fit(table.keep_columns(column)._data)
         except exceptions.NotFittedError:
-            raise LearningError
+            raise LearningError("")
 
     def transform(self, table: Table, column: str) -> Table:
         """Transform the given Table to a normalized encoded table.
@@ -52,7 +53,6 @@ class LabelEncoder:
 
         Raises
         ------
-            LearningError if the Model couldn't be fitted correctly or
             a NotFittedError if the Model wasn't fitted before transforming
         """
         try:
