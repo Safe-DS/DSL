@@ -37,9 +37,7 @@ class Row:
             return NotImplemented
         if self is other:
             return True
-        return (
-            self._data.equals(other._data) and self.schema == other.schema
-        )
+        return self._data.equals(other._data) and self.schema == other.schema
 
     def __hash__(self) -> int:
         return hash(self._data)
