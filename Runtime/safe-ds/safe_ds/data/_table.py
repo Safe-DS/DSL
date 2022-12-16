@@ -478,6 +478,21 @@ class Table:
         df.columns = list(self.schema._schema.keys())
         return Table(pd.concat([self._data, df], ignore_index=True))
 
+    def list_columns_with_missing_values(self) -> list[Column]:
+        """
+        Returns a list of all the columns that have at least one missing value. Empty list if there are none.
+
+        :return:
+        columns_with_missing_values: list[Column]
+            The list of columns with missing values
+        """
+        columns = self.to_columns()
+        columns_with_missing_values = []
+        for column in columns:
+            if column.has_missing_values():
+                columns_with_missing_values.append(column)
+        return columns_with_missing_values
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
