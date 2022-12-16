@@ -503,7 +503,7 @@ class Table:
         cols: list[Column]
             the list with only non-numerical Columns
         """
-        cols = list()
+        cols = []
         for column_name, data_type in self.schema._schema.items():
             if not data_type.is_numeric():
                 cols.append(self.get_column(column_name))
