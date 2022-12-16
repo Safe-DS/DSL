@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import pandas as pd
-
 from typing import Any, Callable
+
+import pandas as pd
 from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
+
 from ._column_type import ColumnType
 
 
