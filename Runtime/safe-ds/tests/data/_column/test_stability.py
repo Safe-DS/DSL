@@ -21,6 +21,8 @@ def test_table_stability(values: list[typing.Any], expected: float) -> None:
 
 
 def test_table_error() -> None:
-    column = Column(pd.Series([], dtype=np.dtype("float64")), "A")  # Fix warning against unknown type
+    column = Column(
+        pd.Series([], dtype=np.dtype("float64")), "A"
+    )  # Fix warning against unknown type
     with pytest.raises(ColumnSizeError):
         column.stability()
