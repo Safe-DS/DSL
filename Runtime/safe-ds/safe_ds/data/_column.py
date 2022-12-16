@@ -77,6 +77,11 @@ class Column:
         -------
         idness: float
             The idness of the column
+
+        Raises
+        ------
+        ColumnSizeError
+            If this column is empty
         """
         if self._data.size == 0:
             raise ColumnSizeError("> 0", "0")
@@ -166,7 +171,14 @@ class Column:
         -------
         stability: float
             Stability of this column
+
+        Raises
+        ------
+        ColumnSizeError
+            If this column is empty
         """
+        if self._data.size == 0:
+            raise ColumnSizeError("> 0", "0")
         return self._data.value_counts()[self.statistics.mode()] / self._data.count()
 
     def __eq__(self, other: object) -> bool:
