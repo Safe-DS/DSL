@@ -1,10 +1,19 @@
 from __future__ import annotations
 
+import warnings
+
 import pandas
 from sklearn import preprocessing, exceptions
 
-from safe_ds.data import Table
 from safe_ds.exceptions import NotFittedError, LearningError
+from ._table import Table
+
+
+def warn(*args, **kwargs):
+    pass
+
+
+warnings.warn = warn
 
 
 class LabelEncoder:
