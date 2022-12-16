@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os.path
+import typing
 from pathlib import Path
 from typing import Callable
 
@@ -8,14 +9,14 @@ import pandas as pd
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
-    ColumnNameDuplicateError,
-    ColumnNameError,
+    ColumnSizeError,
+    DuplicateColumnNameError,
     IndexOutOfBoundsError,
     SchemaMismatchError,
+    UnknownColumnNameError,
 )
 
 from ._column import Column
-from ._column_type import ColumnType
 from ._row import Row
 from ._table_schema import TableSchema
 
@@ -24,12 +25,7 @@ from ._table_schema import TableSchema
 class Table:
     def __init__(self, data: pd.DataFrame):
         self._data: pd.DataFrame = data
-        self.schema: TableSchema = TableSchema(
-            column_names=self._data.columns,
-            data_types=list(
-                map(ColumnType.from_numpy_dtype, self._data.dtypes.to_list())
-            ),
-        )
+        self.schema: TableSchema = TableSchema._from_dataframe(self._data)
 
     def get_row(self, index: int) -> Row:
         """
@@ -176,7 +172,7 @@ class Table:
 
         return Table(dataframe)
 
-    def to_json(self, path_to_file: str):
+    def to_json(self, path_to_file: str) -> None:
         """
         Write the data from the table into a json file.
         If the file and/or the directories do not exist they will be created. If the file does already exist it will be overwritten.
@@ -188,7 +184,7 @@ class Table:
         Path(os.path.dirname(path_to_file)).mkdir(parents=True, exist_ok=True)
         self._data.to_json(path_to_file)
 
-    def to_csv(self, path_to_file: str):
+    def to_csv(self, path_to_file: str) -> None:
         """
         Write the data from the table into a csv file.
         If the file and/or the directories do not exist they will be created. If the file does already exist it will be overwritten.
@@ -219,21 +215,21 @@ class Table:
         ------
         ColumnNameError
             If the specified old target column name doesn't exist
-        ColumnNameDuplicateError
+        DuplicateColumnNameError
             If the specified new target column name already exists
         """
         columns: list[str] = self._data.columns
 
         if old_name not in columns:
-            raise ColumnNameError([old_name])
+            raise UnknownColumnNameError([old_name])
         if old_name == new_name:
             return self
         if new_name in columns:
-            raise ColumnNameDuplicateError(new_name)
+            raise DuplicateColumnNameError(new_name)
 
         return Table(self._data.rename(columns={old_name: new_name}))
 
-    def get_column(self, column_name: str):
+    def get_column(self, column_name: str) -> Column:
         """Returns a new instance of Column with the data of the described column of the Table.
 
         Parameters
@@ -252,12 +248,9 @@ class Table:
             If the specified target column name doesn't exist
         """
         if column_name in self._data.columns:
-            return Column(
-                self._data[column_name].copy(deep=True),
-                column_name,
-                ColumnType.from_numpy_dtype(self._data[column_name].dtype),
-            )
-        raise ColumnNameError([column_name])
+            return Column(self._data[column_name].copy(deep=True), column_name)
+
+        raise UnknownColumnNameError([column_name])
 
     def drop_columns(self, column_names: list[str]) -> Table:
         """Returns a Table without the given columns
@@ -282,7 +275,7 @@ class Table:
             if name not in self._data.columns:
                 invalid_columns.append(name)
         if len(invalid_columns) != 0:
-            raise ColumnNameError(invalid_columns)
+            raise UnknownColumnNameError(invalid_columns)
         transformed_data = self._data.drop(labels=column_names, axis="columns")
         return Table(transformed_data)
 
@@ -309,7 +302,7 @@ class Table:
             if name not in self._data.columns:
                 invalid_columns.append(name)
         if len(invalid_columns) != 0:
-            raise ColumnNameError(invalid_columns)
+            raise UnknownColumnNameError(invalid_columns)
         transformed_data = self._data[column_names]
         return Table(transformed_data)
 
@@ -371,12 +364,99 @@ class Table:
         """
         return [self.get_column(name) for name in self._data.columns]
 
-    def __eq__(self, other):
+    def drop_duplicate_rows(self) -> Table:
+        """
+        Returns a copy of the Table with every duplicate row removed.
+
+        Returns
+        -------
+        result: Table
+            The table with the duplicate rows removed
+
+        """
+        return Table(self._data.drop_duplicates(ignore_index=True))
+
+    def replace_column(self, old_column_name: str, new_column: Column) -> Table:
+        """
+        Returns a copy of the Table with the specified old column replaced by a new column. Keeps the order of columns.
+
+        Parameters
+        ----------
+        old_column_name: str
+            Name of the old column, to be replaced
+
+        new_column: Column
+            New column, to replace the old column
+
+        Returns
+        -------
+        result: Table
+            Table where the old column is replaced by the new column
+
+        Raises
+        ------
+        UnknownColumnNameError
+            If the old column does not exist
+
+        DuplicateColumnNameError
+            If the new column already exists and the existing column is not affected by the replacement
+
+        ColumnSizeError
+            If the size of the column does not match the amount of rows
+        """
+        columns = self._data.columns
+
+        if old_column_name not in columns:
+            raise UnknownColumnNameError([old_column_name])
+
+        if new_column.name in columns and new_column.name != old_column_name:
+            raise DuplicateColumnNameError(new_column.name)
+
+        if self.count_rows() != new_column._data.size:
+            raise ColumnSizeError(str(self.count_rows()), str(new_column._data.size))
+
+        if old_column_name != new_column.name:
+            result = self.rename_column(old_column_name, new_column.name)._data
+        else:
+            result = self._data.copy()
+
+        result[new_column.name] = new_column._data
+        return Table(result)
+
+    def add_column(self, column: Column) -> Table:
+        """
+        Returns the original table with the provided column attached at the end.
+
+        Returns
+        -------
+        result: Table
+            The table with the column attached
+
+        Raises
+        ------
+        DuplicateColumnNameError
+            If the new column already exists
+
+        ColumnSizeError
+            If the size of the column does not match the amount of rows
+
+        """
+        if column.name in self._data.columns:
+            raise DuplicateColumnNameError(column.name)
+
+        if column._data.size != self.count_rows():
+            raise ColumnSizeError(str(self.count_rows()), str(column._data.size))
+
+        result = self._data.copy()
+        result[column.name] = column._data
+        return Table(result)
+
+    def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
         if self is other:
             return True
         return self._data.equals(other._data)
 
-    def __hash__(self):
-        return hash((self._data))
+    def __hash__(self) -> int:
+        return hash(self._data)
