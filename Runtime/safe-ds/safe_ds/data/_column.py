@@ -129,10 +129,12 @@ class Column:
 
         """
         try:
-            match_count: int = self._filter_values(predicate)._data.size
+            for value in self._data:
+                if not predicate(value):
+                    return False
+            return True
         except Exception as error:
             raise error
-        return match_count == self._data.size
 
     def any(self, predicate: Callable[[Any], bool]) -> bool:
         """
@@ -150,10 +152,12 @@ class Column:
 
         """
         try:
-            match_count: int = self._filter_values(predicate)._data.size
+            for value in self._data:
+                if predicate(value):
+                    return True
+            return False
         except Exception as error:
             raise error
-        return match_count > 0
 
     def none(self, predicate: Callable[[Any], bool]) -> bool:
         """
@@ -171,10 +175,12 @@ class Column:
 
         """
         try:
-            match_count: int = self._filter_values(predicate)._data.size
+            for value in self._data:
+                if predicate(value):
+                    return False
+            return True
         except Exception as error:
             raise error
-        return match_count == 0
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
