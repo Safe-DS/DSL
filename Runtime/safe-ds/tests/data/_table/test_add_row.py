@@ -5,7 +5,7 @@ from safe_ds.data import Table, Row, TableSchema, StringColumnType, IntColumnTyp
 from safe_ds.exceptions import SchemaMismatchError
 
 
-def test_add_row_valid():
+def test_add_row_valid() -> None:
     table1 = Table(pd.DataFrame(data={"col1": [1, 2, 1], "col2": [1, 2, 4]}))
     row = Row(pd.Series(data=[5, 6]), table1.schema)
     table1 = table1.add_row(row)
@@ -14,7 +14,7 @@ def test_add_row_valid():
     assert table1.schema == row.schema
 
 
-def test_add_row_invalid():
+def test_add_row_invalid() -> None:
     with raises(SchemaMismatchError):
         table1 = Table(pd.DataFrame(data={"col1": [1, 2, 1], "col2": [1, 2, 4]}))
         row = Row(pd.Series(data=[5, "Hallo"]), TableSchema(["col1", "col2"], [IntColumnType(), StringColumnType()]))
