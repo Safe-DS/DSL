@@ -86,7 +86,7 @@ class Column:
     def statistics(self) -> ColumnStatistics:
         return ColumnStatistics(self)
 
-    def count_null_values(self) -> int:
+    def _count_missing_values(self) -> int:
         """
         Returns the number of null values in the column.
 
@@ -156,6 +156,30 @@ class Column:
             if predicate(value):
                 return False
         return True
+
+    def missing_value_ratio(self) -> float:
+        """
+        Returns the ratio of null values to the total number of elements in the column
+
+        Returns
+        -------
+        ratio: float
+            the ratio of null values to the total number of elements in the column
+        """
+        if self._data.size == 0:
+            raise ColumnSizeError("> 0", "0")
+        return self._count_missing_values() / self._data.size
+
+    def has_missing_values(self) -> bool:
+        """
+        Returns True if the column has missing values
+
+        Returns
+        -------
+        : bool
+            True if missing values exist, False else
+        """
+        return self._count_missing_values() > 0
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
@@ -314,3 +338,4 @@ class ColumnStatistics:
         if not self.column.type.is_numeric():
             raise NonNumericColumnError
         return self.column._data.std()
+
