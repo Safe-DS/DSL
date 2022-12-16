@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
+import numpy as np
 import pandas as pd
 from safe_ds.exceptions import (
     ColumnSizeError,
@@ -184,7 +185,7 @@ class Column:
         : bool
             True if missing values exist, False else
         """
-        return self._count_missing_values() > 0
+        return self.any(lambda value: value is None or np.isnan(value))
 
     def stability(self) -> float:
         """
