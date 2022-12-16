@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import Any
 
-import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
 
 from ._table import Table
+
+
+class ImputerStrategy(ABC):
+    @abstractmethod
+    def _augment_imputer(self, imputer: SimpleImputer) -> None:
+        pass
 
 
 # noinspection PyProtectedMember
@@ -18,70 +24,55 @@ class Imputer:
 
     Parameters
     ----------
-    strategy: Imputer.Strategy
+    strategy: ImputerStrategy
         The strategy to impute missing values
     """
 
     class Strategy:
-        def __init__(self, _imp: SimpleImputer):
-            self._imp = _imp
-
-        @staticmethod
-        def Mean() -> Imputer.Strategy:
+        class Constant(ImputerStrategy):
             """
+            An Imputer-Strategy for imputing the missing data with given constant values
 
-            Returns
-            -------
-                An Imputer-Strategy for imputing the missing data with mean values
-            """
-            return Imputer.Strategy(
-                SimpleImputer(missing_values=np.nan, strategy="mean")
-            )
-
-        @staticmethod
-        def Mode() -> Imputer.Strategy:
-            """
-
-            Returns
-            -------
-                An Imputer-Strategy for imputing the missing data with mode values
-            """
-            return Imputer.Strategy(
-                SimpleImputer(missing_values=np.nan, strategy="most_frequent")
-            )
-
-        @staticmethod
-        def Median() -> Imputer.Strategy:
-            """
-
-            Returns
-            -------
-                An Imputer-Strategy for imputing the missing data with median values
-            """
-            return Imputer.Strategy(
-                SimpleImputer(missing_values=np.nan, strategy="median")
-            )
-
-        @staticmethod
-        def Constant(value: Any) -> Imputer.Strategy:
-            """
             Parameters
             ----------
             value
                 The given values to impute missing values
-
-            Returns
-            -------
-                An Imputer-Strategy for imputing the missing data with given constant values
             """
-            return Imputer.Strategy(
-                SimpleImputer(
-                    missing_values=np.nan, strategy="constant", fill_value=value
-                )
-            )
 
-    def __init__(self, strategy: Imputer.Strategy):
-        self._imp = strategy._imp
+            def __init__(self, value: Any):
+                self.value = value
+
+            def _augment_imputer(self, imputer: SimpleImputer) -> None:
+                imputer.strategy = "constant"
+                imputer.fill_value = self.value
+
+        class Mean(ImputerStrategy):
+            """
+            An Imputer-Strategy for imputing the missing data with mean values
+            """
+
+            def _augment_imputer(self, imputer: SimpleImputer) -> None:
+                imputer.strategy = "mean"
+
+        class Median(ImputerStrategy):
+            """
+            An Imputer-Strategy for imputing the missing data with median values
+            """
+
+            def _augment_imputer(self, imputer: SimpleImputer) -> None:
+                imputer.strategy = "median"
+
+        class Mode(ImputerStrategy):
+            """
+            An Imputer-Strategy for imputing the missing data with mode values
+            """
+
+            def _augment_imputer(self, imputer: SimpleImputer) -> None:
+                imputer.strategy = "most_frequent"
+
+    def __init__(self, strategy: ImputerStrategy):
+        self._imp = SimpleImputer()
+        strategy._augment_imputer(self._imp)
 
     def fit(self, table: Table) -> None:
         """
