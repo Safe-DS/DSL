@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from safe_ds.data import ColumnType, Row, Table, TableSchema, StringColumnType
+from safe_ds.data import ColumnType, Row, StringColumnType, Table, TableSchema
 
 
 def test_to_rows() -> None:
@@ -16,7 +16,7 @@ def test_to_rows() -> None:
     rows_expected: list[Row] = [
         Row(pd.Series([1, 4, "d"], index=["A", "B", "D"], name=0), expected_schema),
         Row(pd.Series([2, 5, "e"], index=["A", "B", "D"], name=0), expected_schema),
-        Row(pd.Series([3, 6, "f"], index=["A", "B", "D"], name=0), expected_schema)
+        Row(pd.Series([3, 6, "f"], index=["A", "B", "D"], name=0), expected_schema),
     ]
 
     rows_is: list[Row] = table.to_rows()
