@@ -6,7 +6,7 @@ from safe_ds.data import Table
 
 class OneHotEncoder:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.encoder = OHE_sklearn()
 
     def fit(self, table: Table, columns: list[str]) -> None:
