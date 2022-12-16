@@ -4,8 +4,6 @@ import pandas as pd
 
 from typing import Any, Callable
 from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
-from ._row import Row
-from ._table import Table
 from ._column_type import ColumnType
 
 
@@ -94,7 +92,7 @@ class Column:
         """
         return self._data.isna().sum()
 
-    def filter_rows(self, query: Callable[[Row], bool]) -> Column:
+    def filter_values(self, query: Callable[[Any], bool]) -> Column:
         """Returns a Column with rows filtered by applied callable
 
         Parameters
@@ -107,9 +105,8 @@ class Column:
         column : Column
             A Column containing only the rows filtered by the query callable
         """
-        table: Table = Table.from_columns([self])
-        filtered_table: Table = table.filter_rows(query)
-        return filtered_table.to_columns()[0]
+        items: list = [item for item in self._data if query(item)]
+        return Column(pd.Series(items, dtype=self._data.dtype), self.name)
 
     def all(self, predicate: Callable[[Any], bool]) -> bool:
         """
@@ -127,7 +124,7 @@ class Column:
 
         """
         try:
-            match_count: int = self.filter_rows(predicate)._data.size
+            match_count: int = self.filter_values(predicate)._data.size
         except Exception as error:
             raise error
         return match_count == self._data.size
@@ -148,7 +145,7 @@ class Column:
 
         """
         try:
-            match_count: int = self.filter_rows(predicate)._data.size
+            match_count: int = self.filter_values(predicate)._data.size
         except Exception as error:
             raise error
         return match_count > 0
@@ -169,7 +166,7 @@ class Column:
 
         """
         try:
-            match_count: int = self.filter_rows(predicate)._data.size
+            match_count: int = self.filter_values(predicate)._data.size
         except Exception as error:
             raise error
         return match_count == 0
