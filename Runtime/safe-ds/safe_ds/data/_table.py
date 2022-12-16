@@ -478,6 +478,23 @@ class Table:
         df.columns = list(self.schema._schema.keys())
         return Table(pd.concat([self._data, df], ignore_index=True))
 
+        return columns_with_missing_values
+    def has_column(self, column_name: str) -> bool:
+        """
+        Returns if the table contains a given column
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column
+
+        Returns
+        -------
+        contains: bool
+            If it contains the column
+        """
+        return self.schema.has_column(column_name)
+
     def list_columns_with_missing_values(self) -> list[Column]:
         """
         Returns a list of all the columns that have at least one missing value. Empty list if there are none.
@@ -525,7 +542,8 @@ class Table:
             If the old column does not exist
 
         """
-        column: Column = self.get_column(name)
-        items: list = [transformer(item) for item in self.to_rows()]
-        result: Column = Column(pd.Series(items), column.name)
-        return self.replace_column(name, result)
+        if self.has_column(name):
+            items: list = [transformer(item) for item in self.to_rows()]
+            result: Column = Column(pd.Series(items), name)
+            return self.replace_column(name, result)
+        raise UnknownColumnNameError([name])
