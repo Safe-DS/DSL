@@ -498,7 +498,8 @@ class Table:
         """
         Returns a list of all the columns that have at least one missing value. Empty list if there are none.
 
-        :return:
+        Returns
+        -------
         columns_with_missing_values: list[Column]
             The list of columns with missing values
         """
