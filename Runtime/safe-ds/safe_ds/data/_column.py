@@ -4,8 +4,7 @@ from typing import Any
 
 import pandas as pd
 
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
-
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError, NonNumericColumnError
 from ._column_type import ColumnType
 
 
