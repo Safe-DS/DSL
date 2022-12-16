@@ -509,7 +509,7 @@ class Table:
             if column.has_missing_values():
                 columns_with_missing_values.append(column)
         return columns_with_missing_values
-        
+
     def list_columns_with_non_numerical_values(self) -> list[Column]:
         """
         Get a list of Columns only containing non-numerical values
