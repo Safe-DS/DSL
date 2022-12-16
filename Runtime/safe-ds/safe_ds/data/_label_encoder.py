@@ -64,11 +64,11 @@ class LabelEncoder:
         ------
             a NotFittedError if the Model wasn't fitted before transforming
         """
+        p_df = table._data
         try:
-            p_df = table._data
             p_df[column] = self.le.transform(p_df[column])
             return Table(p_df)
-        except exceptions.NotFittedError as er:
+        except Exception as a:
             raise NotFittedError
 
     def fit_transform(self, table: Table, columns: [str]) -> Table:
