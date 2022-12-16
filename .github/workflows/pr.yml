@@ -58,7 +58,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Test with Gradle
-        run: ./gradlew build koverMergedHtmlReport
+        run: ./gradlew build koverMergedXmlReport
 
       - name: Upload test report
         if: ${{ failure() }}
@@ -70,13 +70,13 @@ jobs:
             DSL/com.larsreimann.safeds/build/reports/tests/test/
             DSL/com.larsreimann.safeds.ide/build/reports/tests/test/
 
-      - name: Upload test coverage
+      - name: Upload coverage to Codecov
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
+        uses: codecov/codecov-action@v3
         with:
-          name: DSL test coverage
-          # upload-artifact does not use working-directory
-          path: DSL/build/reports/kover/merged/html/
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: DSL/build/reports/kover/merged/xml
+          files: report.xml
 
   # Build and test Runtime > Runner component
   build-runtime-runner:

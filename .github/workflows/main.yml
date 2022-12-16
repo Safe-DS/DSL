@@ -30,15 +30,14 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Test with Gradle
-        run: ./gradlew check
+        run: ./gradlew check koverMergedXmlReport
 
-      - name: Upload test report
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          name: Test report
-          # upload-artifact does not use working-directory
-          path: DSL/com.larsreimann.safeds/build/reports/tests/test/
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: DSL/build/reports/kover/merged/xml
+          files: report.xml
 
   # Build and test Runtime > Runner component
   build-runtime-runner:
