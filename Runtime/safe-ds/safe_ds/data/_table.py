@@ -478,6 +478,21 @@ class Table:
         df.columns = list(self.schema._schema.keys())
         return Table(pd.concat([self._data, df], ignore_index=True))
 
+    def list_columns_with_non_numerical_values(self) -> list[Column]:
+        """
+        Get a list of Columns only containing non-numerical values
+
+        Returns
+        -------
+        cols: list[Column]
+            the list with only non-numerical Columns
+        """
+        cols = list()
+        for column_name, data_type in self.schema._schema.items():
+            if not data_type.is_numeric():
+                cols.append(self.get_column(column_name))
+        return cols
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
