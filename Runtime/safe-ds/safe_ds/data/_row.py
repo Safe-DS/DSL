@@ -2,8 +2,8 @@ import typing
 from typing import Any
 
 import pandas as pd
-
 from safe_ds.exceptions import UnknownColumnNameError
+
 from ._table_schema import TableSchema
 
 
@@ -37,8 +37,12 @@ class Row:
             return NotImplemented
         if self is other:
             return True
-        return self._data.reset_index(drop=True, inplace=False).equals(
-            other._data.reset_index(drop=True, inplace=False)) and self.schema == other.schema
+        return (
+            self._data.reset_index(drop=True, inplace=False).equals(
+                other._data.reset_index(drop=True, inplace=False)
+            )
+            and self.schema == other.schema
+        )
 
     def __hash__(self) -> int:
         return hash(self._data)

@@ -7,7 +7,6 @@ from typing import Callable
 
 import pandas as pd
 from pandas import DataFrame, Series
-
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
@@ -16,6 +15,7 @@ from safe_ds.exceptions import (
     SchemaMismatchError,
     UnknownColumnNameError,
 )
+
 from ._column import Column
 from ._row import Row
 from ._table_schema import TableSchema
