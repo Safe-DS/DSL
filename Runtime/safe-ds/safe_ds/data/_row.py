@@ -37,10 +37,14 @@ class Row:
             return NotImplemented
         if self is other:
             return True
+<<<<<<< HEAD
         return (
             self._data.reset_index(drop=True, inplace=False)
             .equals(other._data.reset_index(drop=True, inplace=False)) and self.schema == other.schema
         )
+=======
+        return self._data.equals(other._data) and self.schema == other.schema
+>>>>>>> 215-add-row-to-table
 
     def __hash__(self) -> int:
         return hash(self._data)
