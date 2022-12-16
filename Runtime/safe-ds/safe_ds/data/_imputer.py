@@ -18,9 +18,7 @@ class ImputerStrategy(ABC):
 # noinspection PyProtectedMember
 class Imputer:
     """
-    Imputes the Data for a given Table
-
-    it is also needed to apply a strategy before imputing
+    Imputes the data for a given Table.
 
     Parameters
     ----------
