@@ -16,7 +16,7 @@ class Column:
     def __init__(self, data: pd.Series, name: str) -> None:
         self._data: pd.Series = data
         self._name: str = name
-        self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)  #
+        self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
 
     @property
     def name(self) -> str:
