@@ -4,7 +4,7 @@ from typing import Any
 
 import pandas as pd
 
-from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError
+from safe_ds.exceptions import ColumnSizeError, IndexOutOfBoundsError, NonNumericColumnError
 from ._column_type import ColumnType
 
 
@@ -13,10 +13,6 @@ class Column:
         self._data: pd.Series = data
         self._name: str = name
         self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)  #
-
-    @property
-    def data(self) -> pd.Series:
-        return self._data
 
     @property
     def name(self) -> str:
