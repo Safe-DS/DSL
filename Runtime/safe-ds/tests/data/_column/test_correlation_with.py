@@ -18,6 +18,7 @@ def test_correlation_with_NonNumericColumnError() -> None:
     with pytest.raises(NonNumericColumnError):
         column1.correlation_with(column2)
 
+
 def test_correlation_with_ColumnsLengthMismachtError() -> None:
     column1 = Column(pd.Series([1, 2, 3, 4]), "A")
     column2 = Column(pd.Series([2]), "B")
