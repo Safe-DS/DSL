@@ -478,7 +478,6 @@ class Table:
         df.columns = list(self.schema._schema.keys())
         return Table(pd.concat([self._data, df], ignore_index=True))
 
-        return columns_with_missing_values
     def has_column(self, column_name: str) -> bool:
         """
         Returns if the table contains a given column
