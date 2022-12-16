@@ -13,6 +13,6 @@ from safe_ds.data import Column
         (["b", "a", "abc", "abc", "abc"], 3 / 5),
     ],
 )
-def test_table_add_column_valid(values: list[typing.Any], expected: float) -> None:
+def test_table_stability(values: list[typing.Any], expected: float) -> None:
     column = Column(pd.Series(values), "A")
     assert column.stability() == expected
