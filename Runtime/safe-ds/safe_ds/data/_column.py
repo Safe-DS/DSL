@@ -6,7 +6,7 @@ import pandas as pd
 from safe_ds.exceptions import (
     ColumnSizeError,
     IndexOutOfBoundsError,
-    NonNumericColumnError,
+    NonNumericColumnError, ColumnLengthMismatchError,
 )
 
 from ._column_type import ColumnType
@@ -181,6 +181,28 @@ class Column:
             raise ColumnSizeError("> 0", "0")
         return self._data.value_counts()[self.statistics.mode()] / self._data.count()
 
+    def correlation_with(self, other_column: Column) -> float:
+        """
+        Calculates Pearson correlation between this and another column, if both are numerical
+
+        Returns
+        -------
+        correlation: float
+            Correlation between the two columns
+
+        Raises
+        ------
+        TypeError
+            If one of the columns is not numerical
+        """
+        if not self._type.is_numeric() or not other_column._type.is_numeric():
+            raise NonNumericColumnError(f"Columns must be numerical. {self.name} is {self._type}, "
+                            f"{other_column.name} is {other_column._type}.")
+        if self._data.size != other_column._data.size:
+            raise ColumnLengthMismatchError(f"{self.name} is of size {self._data.size}, "
+                                            f"{other_column.name} is of size {other_column._data.size}.")
+        return self._data.corr(other_column._data)
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
             return NotImplemented
@@ -295,7 +317,7 @@ class ColumnStatistics:
 
         """
         if not self.column.type.is_numeric():
-            raise NonNumericColumnError
+            raise NonNumericColumnError(f"{self.column.name} is of type {self.column._type}.")
         return self.column._data.sum()
 
     def variance(self) -> float:
@@ -315,7 +337,7 @@ class ColumnStatistics:
 
         """
         if not self.column.type.is_numeric():
-            raise NonNumericColumnError
+            raise NonNumericColumnError(f"{self.column.name} is of type {self.column._type}.")
 
         return self.column._data.var()
 
@@ -336,5 +358,5 @@ class ColumnStatistics:
 
         """
         if not self.column.type.is_numeric():
-            raise NonNumericColumnError
+            raise NonNumericColumnError(f"{self.column.name} is of type {self.column._type}.")
         return self.column._data.std()
