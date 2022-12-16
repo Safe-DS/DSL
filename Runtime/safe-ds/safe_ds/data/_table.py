@@ -478,6 +478,22 @@ class Table:
         df.columns = list(self.schema._schema.keys())
         return Table(pd.concat([self._data, df], ignore_index=True))
 
+    def has_column(self, column_name: str) -> bool:
+        """
+        Returns if the table contains a given column
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column
+
+        Returns
+        -------
+        contains: bool
+            If it contains the column
+        """
+        return self.schema.has_column(column_name)
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
