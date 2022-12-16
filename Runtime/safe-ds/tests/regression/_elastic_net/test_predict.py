@@ -23,7 +23,9 @@ def test_elastic_net_regression_predict_not_fitted() -> None:
 
 def test_elastic_net_regression_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_elastic_net_regression.csv")
-    invalid_table = Table.from_csv("tests/resources/test_elastic_net_regression_invalid.csv")
+    invalid_table = Table.from_csv(
+        "tests/resources/test_elastic_net_regression_invalid.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     invalid_supervised_dataset = SupervisedDataset(invalid_table, "T")
     en_regression = LinearRegression()
