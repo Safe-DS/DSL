@@ -98,10 +98,7 @@ class TableSchema:
         names = dataframe.columns
         types = (ColumnType.from_numpy_dtype(dtype) for dtype in dataframe.dtypes)
 
-        return TableSchema({
-            name: type_
-            for name, type_ in zip(names, types)
-        })
+        return TableSchema(dict(zip(names, types)))
 
     def __str__(self) -> str:
         """
