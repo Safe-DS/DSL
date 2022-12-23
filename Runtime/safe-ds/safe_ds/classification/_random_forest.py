@@ -10,7 +10,7 @@ class RandomForest:
     """
 
     def __init__(self) -> None:
-        self._classifier = RandomForestClassifier(n_jobs=-1)
+        self._classification = RandomForestClassifier(n_jobs=-1)
 
     def fit(self, supervised_dataset: SupervisedDataset) -> None:
         """
@@ -26,7 +26,7 @@ class RandomForest:
         LearningError
             if the supervised dataset contains invalid values or if the training failed
         """
-        safe_ds._util._util_sklearn.fit(self._classifier, supervised_dataset)
+        safe_ds._util._util_sklearn.fit(self._classification, supervised_dataset)
 
     def predict(self, dataset: Table) -> Table:
         """
@@ -47,4 +47,4 @@ class RandomForest:
         PredictionError
             if predicting with the given dataset failed
         """
-        return safe_ds._util._util_sklearn.predict(self._classifier, dataset)
+        return safe_ds._util._util_sklearn.predict(self._classification, dataset)
