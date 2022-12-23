@@ -244,7 +244,7 @@ class Table:
 
         Raises
         ------
-        ColumnNameError
+        UnknownColumnNameError
             If the specified target column name doesn't exist
         """
         if column_name in self._data.columns:
@@ -331,11 +331,6 @@ class Table:
         -------
         table : Table
             A Table containing only the rows filtered by the query lambda function
-
-        Raises
-        ------
-        TypeError
-           If the entered query is not a lambda function
         """
 
         rows: list[Row] = [row for row in self.to_rows() if query(row)]
@@ -352,6 +347,17 @@ class Table:
             Number of rows
         """
         return self._data.shape[0]
+
+    def count_columns(self) -> int:
+        """
+        Returns the number of columns in the table
+
+        Returns
+        -------
+        count : int
+            Number of columns
+        """
+        return self._data.shape[1]
 
     def to_columns(self) -> list[Column]:
         """
@@ -451,12 +457,108 @@ class Table:
         result[column.name] = column._data
         return Table(result)
 
+    def add_row(self, row: Row) -> Table:
+        """
+        Add a row to an existing table
+
+        Parameters
+        ----------
+        row: Row
+            the row you want to add
+
+        Returns
+        -------
+        table: Table
+            a new table with the added row at the end
+
+        """
+        if self.schema != row.schema:
+            raise SchemaMismatchError()
+        df = row._data.to_frame().T
+        df.columns = list(self.schema._schema.keys())
+        return Table(pd.concat([self._data, df], ignore_index=True))
+
+    def has_column(self, column_name: str) -> bool:
+        """
+        Returns if the table contains a given column
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column
+
+        Returns
+        -------
+        contains: bool
+            If it contains the column
+        """
+        return self.schema.has_column(column_name)
+
+    def list_columns_with_missing_values(self) -> list[Column]:
+        """
+        Returns a list of all the columns, that have at least one missing value or an empty list, if there are none.
+
+        Returns
+        -------
+        columns_with_missing_values: list[Column]
+            The list of columns with missing values
+        """
+        columns = self.to_columns()
+        columns_with_missing_values = []
+        for column in columns:
+            if column.has_missing_values():
+                columns_with_missing_values.append(column)
+        return columns_with_missing_values
+
+    def list_columns_with_non_numerical_values(self) -> list[Column]:
+        """
+        Get a list of Columns only containing non-numerical values
+
+        Returns
+        -------
+        cols: list[Column]
+            the list with only non-numerical Columns
+        """
+        cols = []
+        for column_name, data_type in self.schema._schema.items():
+            if not data_type.is_numeric():
+                cols.append(self.get_column(column_name))
+        return cols
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
         if self is other:
             return True
-        return self._data.equals(other._data)
+        return (
+            self._data.reset_index(drop=True, inplace=False).equals(
+                other._data.reset_index(drop=True, inplace=False)
+            )
+            and self.schema == other.schema
+        )
 
     def __hash__(self) -> int:
         return hash(self._data)
+
+    def transform_column(
+        self, name: str, transformer: Callable[[Row], typing.Any]
+    ) -> Table:
+        """
+        Transform provided column by calling provided transformer
+
+        Returns
+        -------
+        result: Table
+            The table with the transformed column
+
+        Raises
+        ------
+        UnknownColumnNameError
+            If the old column does not exist
+
+        """
+        if self.has_column(name):
+            items: list = [transformer(item) for item in self.to_rows()]
+            result: Column = Column(pd.Series(items), name)
+            return self.replace_column(name, result)
+        raise UnknownColumnNameError([name])

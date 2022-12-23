@@ -1,3 +1,4 @@
+# activating Mega Linter
 class LearningError(Exception):
     """Exception raised when an error occurred while training a model.
 
