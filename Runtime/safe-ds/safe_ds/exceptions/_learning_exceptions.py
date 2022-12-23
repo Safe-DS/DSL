@@ -35,5 +35,5 @@ class NotFittedError(Exception):
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Model is not fitted, please fit it before using it")

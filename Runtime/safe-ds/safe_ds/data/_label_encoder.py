@@ -9,7 +9,7 @@ from safe_ds.exceptions import NotFittedError, LearningError
 from ._table import Table
 
 
-def warn(*args, **kwargs):
+def warn(*_, **__) -> None:
     pass
 
 
@@ -68,10 +68,10 @@ class LabelEncoder:
         try:
             p_df[column] = self.le.transform(p_df[column])
             return Table(p_df)
-        except Exception as a:
+        except Exception:
             raise NotFittedError
 
-    def fit_transform(self, table: Table, columns: [str]) -> Table:
+    def fit_transform(self, table: Table, columns: list[str]) -> Table:
         """Lable encodes a given Table with the given Lable encoder
 
         Parameters
@@ -97,7 +97,7 @@ class LabelEncoder:
                 # transform the column using the trained Label Encoder
                 p_df[col] = self.le.transform(p_df[col])
             return Table(pandas.DataFrame(p_df))
-        except exceptions.NotFittedError as er:
+        except exceptions.NotFittedError:
             raise NotFittedError
 
     def inverse_transform(self, table: Table, column: str) -> Table:
@@ -121,5 +121,5 @@ class LabelEncoder:
             p_df = table._data
             p_df[column] = self.le.inverse_transform(p_df[column])
             return Table(p_df)
-        except exceptions.NotFittedError as er:
+        except exceptions.NotFittedError:
             raise NotFittedError
