@@ -4,7 +4,9 @@ from safe_ds.data import LabelEncoder, Table
 
 
 def test_fit_transform_valid() -> None:
-    test_table = Table(pd.DataFrame({'cities': ["paris", "paris", "tokyo", "amsterdam"]}))
+    test_table = Table(
+        pd.DataFrame({'cities': ["paris", "paris", "tokyo", "amsterdam"]})
+    )
     le = LabelEncoder()
     assert test_table.schema.has_column("cities")
     test_table = le.fit_transform(test_table, ['cities'])

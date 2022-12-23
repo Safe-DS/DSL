@@ -6,7 +6,9 @@ from safe_ds.exceptions import NotFittedError
 
 
 def test_transform_valid() -> None:
-    test_table = Table(pd.DataFrame({"cities": ["paris", "paris", "tokyo", "amsterdam"]}))
+    test_table = Table(
+        pd.DataFrame({"cities": ["paris", "paris", "tokyo", "amsterdam"]})
+    )
     le = LabelEncoder()
     le.fit(test_table, "cities")
     test_table = le.transform(test_table, "cities")
@@ -17,7 +19,9 @@ def test_transform_valid() -> None:
 
 
 def test_transform_invalid() -> None:
-    test_table = Table(pd.DataFrame({"cities": ["paris", "paris", "tokyo", "amsterdam"]}))
+    test_table = Table(
+        pd.DataFrame({"cities": ["paris", "paris", "tokyo", "amsterdam"]})
+    )
     le = LabelEncoder()
     # le.fit(test_table) removed to force NotFittedError
     with pytest.raises(NotFittedError):
