@@ -1,1 +1,2 @@
+from ._gradient_boosting_classification import GradientBoosting
 from ._logistic_regression import LogisticRegression
