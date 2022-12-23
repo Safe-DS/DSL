@@ -2,14 +2,14 @@ import typing
 from typing import Any
 
 import pandas as pd
-from safe_ds.exceptions import UnknownColumnNameError
 
+from safe_ds.exceptions import UnknownColumnNameError
 from ._table_schema import TableSchema
 
 
 class Row:
-    def __init__(self, data: pd.Series, schema: TableSchema):
-        self._data: pd.Series = data
+    def __init__(self, data: typing.Iterable, schema: TableSchema):
+        self._data: pd.Series = data if isinstance(data, pd.Series) else pd.Series(data)
         self.schema: TableSchema = schema
 
     def __getitem__(self, column_name: str) -> Any:

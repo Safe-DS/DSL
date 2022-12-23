@@ -1,23 +1,24 @@
 from __future__ import annotations
 
+import typing
 from numbers import Number
 from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
+
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
     IndexOutOfBoundsError,
     NonNumericColumnError,
 )
-
 from ._column_type import ColumnType
 
 
 class Column:
-    def __init__(self, data: pd.Series, name: str) -> None:
-        self._data: pd.Series = data
+    def __init__(self, data: typing.Iterable, name: str) -> None:
+        self._data: pd.Series = data if isinstance(data, pd.Series) else pd.Series(data)
         self._name: str = name
         self._type: ColumnType = ColumnType.from_numpy_dtype(self._data.dtype)
 
@@ -189,7 +190,7 @@ class Column:
         """
         return self.any(
             lambda value: value is None
-            or (isinstance(value, Number) and np.isnan(value))
+                          or (isinstance(value, Number) and np.isnan(value))
         )
 
     def stability(self) -> float:
