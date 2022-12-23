@@ -12,7 +12,7 @@ class KNearestNeighbors:
     Parameters
     ----------
     n_neighbors: int
-        The number of Neighbors to be interpolated with. Has to be less than or equal than the sample size.
+        The number of neighbors to be interpolated with. Has to be less than or equal than the sample size.
     """
 
     def __init__(self, n_neighbors: int) -> None:
