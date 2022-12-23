@@ -27,7 +27,8 @@ class LabelEncoder:
         self.le = preprocessing.LabelEncoder()
 
     def fit(self, table: Table, column: str) -> None:
-        """Fit the label encoder with the values in the given table.
+        """
+        Fit the label encoder with the values in the given table.
 
         Parameters
         ----------
@@ -53,7 +54,8 @@ class LabelEncoder:
             raise LearningError("") from exc
 
     def transform(self, table: Table, column: str) -> Table:
-        """Transform the given Table to a normalized encoded table.
+        """
+        Transform the given Table to a normalized encoded table.
 
         Parameters
          ----------
@@ -77,7 +79,8 @@ class LabelEncoder:
             raise NotFittedError from exc
 
     def fit_transform(self, table: Table, columns: list[str]) -> Table:
-        """Lable encodes a given Table with the given Lable encoder
+        """
+        Lable encodes a given Table with the given Lable encoder
 
         Parameters
         ----------
@@ -106,7 +109,8 @@ class LabelEncoder:
             raise NotFittedError from exc
 
     def inverse_transform(self, table: Table, column: str) -> Table:
-        """Inverse transform Table back to original encodings.
+        """
+        Inverse transform Table back to original encodings.
 
         Parameters
         ----------
