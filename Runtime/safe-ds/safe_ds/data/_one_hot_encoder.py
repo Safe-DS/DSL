@@ -7,7 +7,7 @@ from sklearn.preprocessing import OneHotEncoder as OHE_sklearn
 
 class OneHotEncoder:
     """
-    This OneHotEncoder encodes Columns in numerical Columns for each value [0,1]
+    This OneHotEncoder encodes columns in numerical columns that represent the existance for each value [0,1]
     """
 
     def __init__(self) -> None:
