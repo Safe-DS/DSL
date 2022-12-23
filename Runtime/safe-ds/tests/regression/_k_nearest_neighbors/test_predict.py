@@ -23,7 +23,9 @@ def test_k_nearest_neighbors_predict_not_fitted() -> None:
 
 def test_k_nearest_neighbors_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_k_nearest_neighbors.csv")
-    invalid_table = Table.from_csv("tests/resources/test_k_nearest_neighbors_invalid.csv")
+    invalid_table = Table.from_csv(
+        "tests/resources/test_k_nearest_neighbors_invalid.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     invalid_supervised_dataset = SupervisedDataset(invalid_table, "T")
     k_nearest_neighbors = KNearestNeighborsRegressor(2)
@@ -33,7 +35,9 @@ def test_k_nearest_neighbors_predict_invalid() -> None:
 
 
 def test_k_nearest_neighbors_predict_invalid_target_predictions() -> None:
-    table = Table.from_csv("tests/resources/test_k_nearest_neighbors_invalid_target_predictions.csv")
+    table = Table.from_csv(
+        "tests/resources/test_k_nearest_neighbors_invalid_target_predictions.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     k_nearest_neighbors = KNearestNeighborsRegressor(2)
     k_nearest_neighbors.fit(supervised_dataset)
