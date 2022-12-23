@@ -33,9 +33,7 @@ def test_random_forest_predict_invalid() -> None:
 
 
 def test_random_forest_predict_invalid_target_predictions() -> None:
-    table = Table.from_csv(
-        "tests/resources/test_random_forest_invalid_target_predictions.csv"
-    )
+    table = Table.from_csv("tests/resources/test_random_forest_invalid_target_predictions.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     random_forest = RandomForestRegressor()
     random_forest.fit(supervised_dataset)
