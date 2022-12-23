@@ -4,9 +4,9 @@ import warnings
 from typing import Any
 
 import pandas
-from sklearn import preprocessing, exceptions
+from safe_ds.exceptions import LearningError, NotFittedError
+from sklearn import exceptions, preprocessing
 
-from safe_ds.exceptions import NotFittedError, LearningError
 from ._table import Table
 
 
@@ -51,19 +51,19 @@ class LabelEncoder:
     def transform(self, table: Table, column: str) -> Table:
         """Transform the given Table to a normalized encoded table.
 
-       Parameters
-        ----------
-        table:
-                table with target values
-        column:
-                name of column as string
-        Returns
-        -------
-            Table with normalized encodings.
+        Parameters
+         ----------
+         table:
+                 table with target values
+         column:
+                 name of column as string
+         Returns
+         -------
+             Table with normalized encodings.
 
-        Raises
-        ------
-            a NotFittedError if the Model wasn't fitted before transforming
+         Raises
+         ------
+             a NotFittedError if the Model wasn't fitted before transforming
         """
         p_df = table._data
         try:

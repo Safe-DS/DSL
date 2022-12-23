@@ -1,12 +1,13 @@
 import pandas as pd
 import pytest
-
 from safe_ds.data import LabelEncoder, Table
 from safe_ds.exceptions import NotFittedError
 
 
 def test_inverse_transform_valid() -> None:
-    test_table = Table(pd.DataFrame({"citys": ["paris", "paris", "tokyo", "amsterdam"]}))
+    test_table = Table(
+        pd.DataFrame({"citys": ["paris", "paris", "tokyo", "amsterdam"]})
+    )
     le = LabelEncoder()
     test_table = le.fit_transform(test_table, ["citys"])
     test_table = le.inverse_transform(test_table, "citys")
@@ -17,7 +18,9 @@ def test_inverse_transform_valid() -> None:
 
 
 def test_inverse_transform_invalid() -> None:
-    test_table = Table(pd.DataFrame({"citys": ["paris", "paris", "tokyo", "amsterdam"]}))
+    test_table = Table(
+        pd.DataFrame({"citys": ["paris", "paris", "tokyo", "amsterdam"]})
+    )
     le = LabelEncoder()
     # le.fit(test_table) removed to force NotFittedError
     with pytest.raises(NotFittedError):

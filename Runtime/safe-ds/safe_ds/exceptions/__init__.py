@@ -7,8 +7,4 @@ from ._data_exceptions import (
     SchemaMismatchError,
     UnknownColumnNameError,
 )
-from ._learning_exceptions import (
-    LearningError,
-    PredictionError,
-    NotFittedError,
-)
+from ._learning_exceptions import LearningError, NotFittedError, PredictionError
