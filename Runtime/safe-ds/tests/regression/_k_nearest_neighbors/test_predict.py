@@ -41,7 +41,7 @@ def test_k_nearest_neighbors_predict_invalid_target_predictions() -> None:
         k_nearest_neighbors.predict(supervised_dataset.feature_vectors)
 
 
-def test_k_nearest_neighbors_predict_invalid_n_neighbors():
+def test_k_nearest_neighbors_predict_invalid_n_neighbors() -> None:
     table = Table.from_csv(
         "tests/resources/test_k_nearest_neighbors_invalid_target_predictions.csv"
     )
