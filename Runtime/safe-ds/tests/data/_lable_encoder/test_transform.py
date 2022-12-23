@@ -21,4 +21,4 @@ def test_transform_invalid() -> None:
     le = LabelEncoder()
     # le.fit(test_table) removed to force NotFittedError
     with pytest.raises(NotFittedError):
-        le.transform(test_table, ["citys"])
+        le.transform(test_table, "citys")
