@@ -7,8 +7,8 @@ from safe_ds.regression import GradientBoosting
 def test_gradient_boosting_regression_fit() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_regression.csv")
     supervised_dataset = SupervisedDataset(table, "T")
-    log_regression = GradientBoosting()
-    log_regression.fit(supervised_dataset)
+    gradient_boosting = GradientBoosting()
+    gradient_boosting.fit(supervised_dataset)
     assert True  # This asserts that the fit method succeeds
 
 
