@@ -1,5 +1,4 @@
 import pytest
-
 from safe_ds.classification import GradientBoosting
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError
