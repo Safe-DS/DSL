@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+from typing import Any
 
 import pandas
 from sklearn import preprocessing, exceptions
@@ -9,7 +10,7 @@ from safe_ds.exceptions import NotFittedError, LearningError
 from ._table import Table
 
 
-def warn(*_: any, **__: any) -> None:
+def warn(*_: Any, **__: Any) -> None:
     pass
 
 
