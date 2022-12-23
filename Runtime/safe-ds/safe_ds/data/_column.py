@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import Any
+from numbers import Number
+from typing import Any, Callable
 
+import numpy as np
 import pandas as pd
 from safe_ds.exceptions import (
+    ColumnLengthMismatchError,
     ColumnSizeError,
     IndexOutOfBoundsError,
     NonNumericColumnError,
@@ -77,6 +80,11 @@ class Column:
         -------
         idness: float
             The idness of the column
+
+        Raises
+        ------
+        ColumnSizeError
+            If this column is empty
         """
         if self._data.size == 0:
             raise ColumnSizeError("> 0", "0")
@@ -86,7 +94,7 @@ class Column:
     def statistics(self) -> ColumnStatistics:
         return ColumnStatistics(self)
 
-    def count_null_values(self) -> int:
+    def _count_missing_values(self) -> int:
         """
         Returns the number of null values in the column.
 
@@ -96,6 +104,138 @@ class Column:
             Number of null values
         """
         return self._data.isna().sum()
+
+    def all(self, predicate: Callable[[Any], bool]) -> bool:
+        """
+        Checks if all values have a given property
+
+        Parameters
+        ----------
+        predicate: Callable[[Any], bool])
+            Callable that is used to find matches
+
+        Returns
+        -------
+        result: bool
+            True if all match
+
+        """
+        for value in self._data:
+            if not predicate(value):
+                return False
+        return True
+
+    def any(self, predicate: Callable[[Any], bool]) -> bool:
+        """
+        Checks if any value has a given property
+
+        Parameters
+        ----------
+        predicate: Callable[[Any], bool])
+            Callable that is used to find matches
+
+        Returns
+        -------
+        result: bool
+            True if any match
+
+        """
+        for value in self._data:
+            if predicate(value):
+                return True
+        return False
+
+    def none(self, predicate: Callable[[Any], bool]) -> bool:
+        """
+        Checks if no values has a given property
+
+        Parameters
+        ----------
+        predicate: Callable[[Any], bool])
+            Callable that is used to find matches
+
+        Returns
+        -------
+        result: bool
+            True if none match
+
+        """
+        for value in self._data:
+            if predicate(value):
+                return False
+        return True
+
+    def missing_value_ratio(self) -> float:
+        """
+        Returns the ratio of null values to the total number of elements in the column
+
+        Returns
+        -------
+        ratio: float
+            the ratio of null values to the total number of elements in the column
+        """
+        if self._data.size == 0:
+            raise ColumnSizeError("> 0", "0")
+        return self._count_missing_values() / self._data.size
+
+    def has_missing_values(self) -> bool:
+        """
+        Returns True if the column has missing values
+
+        Returns
+        -------
+        : bool
+            True if missing values exist, False else
+        """
+        return self.any(
+            lambda value: value is None
+            or (isinstance(value, Number) and np.isnan(value))
+        )
+
+    def stability(self) -> float:
+        """
+        Calculates the stability of this column.
+        The value is calculated as the ratio between the number of mode values and the number of non-null-values.
+
+        Returns
+        -------
+        stability: float
+            Stability of this column
+
+        Raises
+        ------
+        ColumnSizeError
+            If this column is empty
+        """
+        if self._data.size == 0:
+            raise ColumnSizeError("> 0", "0")
+        return self._data.value_counts()[self.statistics.mode()] / self._data.count()
+
+    def correlation_with(self, other_column: Column) -> float:
+        """
+        Calculates Pearson correlation between this and another column, if both are numerical
+
+        Returns
+        -------
+        correlation: float
+            Correlation between the two columns
+
+        Raises
+        ------
+        TypeError
+            If one of the columns is not numerical
+        """
+        if not self._type.is_numeric() or not other_column._type.is_numeric():
+            raise NonNumericColumnError(
+                f"Columns must be numerical. {self.name} is {self._type}, "
+                f"{other_column.name} is {other_column._type}."
+            )
+        if self._data.size != other_column._data.size:
+            raise ColumnLengthMismatchError(
+                f"{self.name} is of size {self._data.size}, "
+                f"{other_column.name} is of size {other_column._data.size}."
+            )
+        return self._data.corr(other_column._data)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
@@ -211,7 +351,9 @@ class ColumnStatistics:
 
         """
         if not self.column.type.is_numeric():
-            raise NonNumericColumnError
+            raise NonNumericColumnError(
+                f"{self.column.name} is of type {self.column._type}."
+            )
         return self.column._data.sum()
 
     def variance(self) -> float:
@@ -231,7 +373,9 @@ class ColumnStatistics:
 
         """
         if not self.column.type.is_numeric():
-            raise NonNumericColumnError
+            raise NonNumericColumnError(
+                f"{self.column.name} is of type {self.column._type}."
+            )
 
         return self.column._data.var()
 
@@ -252,5 +396,7 @@ class ColumnStatistics:
 
         """
         if not self.column.type.is_numeric():
-            raise NonNumericColumnError
+            raise NonNumericColumnError(
+                f"{self.column.name} is of type {self.column._type}."
+            )
         return self.column._data.std()

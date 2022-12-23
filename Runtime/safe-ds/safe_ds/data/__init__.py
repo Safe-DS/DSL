@@ -7,6 +7,8 @@ from ._column_type import (
     OptionalColumnType,
     StringColumnType,
 )
+from ._imputer import Imputer
+from ._label_encoder import LabelEncoder
 from ._row import Row
 from ._supervised_dataset import SupervisedDataset
 from ._table import Table
