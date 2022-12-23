@@ -21,7 +21,7 @@ def test_fit_transform() -> None:
     assert table_old == table
 
 
-def test_fit_tramsform_invalid() -> None:
+def test_fit_transform_invalid() -> None:
     table = Table(
         pd.DataFrame(
             data={
