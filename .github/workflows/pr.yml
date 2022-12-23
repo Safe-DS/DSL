@@ -58,7 +58,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Test with Gradle
-        run: ./gradlew build koverMergedHtmlReport
+        run: ./gradlew build koverMergedXmlReport
 
       - name: Upload test report
         if: ${{ failure() }}
@@ -70,13 +70,13 @@ jobs:
             DSL/com.larsreimann.safeds/build/reports/tests/test/
             DSL/com.larsreimann.safeds.ide/build/reports/tests/test/
 
-      - name: Upload test coverage
+      - name: Upload coverage to Codecov
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
+        uses: codecov/codecov-action@v3
         with:
-          name: DSL test coverage
-          # upload-artifact does not use working-directory
-          path: DSL/build/reports/kover/merged/html/
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: DSL/build/reports/kover/merged/xml
+          files: report.xml
 
   # Build and test Runtime > Runner component
   build-runtime-runner:
@@ -120,14 +120,15 @@ jobs:
 
       # Requires installation of pytest and pytest-cov
       - name: Test with pytest
-        run: poetry run pytest --doctest-modules --cov=safe_ds_runner --cov-report=html
+        run: poetry run pytest --doctest-modules --cov=safe_ds_runner --cov-report=xml
 
-      - name: Upload test coverage
+      - name: Upload coverage to Codecov
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
+        uses: codecov/codecov-action@v3
         with:
-          name: runner test coverage
-          path: Runtime/safe-ds-runner/htmlcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: Runtime/safe-ds-runner
+          files: coverage.xml
 
   # Build and test Runtime > Stdlib component
   build-runtime-stdlib:
@@ -171,11 +172,12 @@ jobs:
 
       # Requires installation of pytest and pytest-cov
       - name: Test with pytest
-        run: poetry run pytest --doctest-modules --cov=safe_ds --cov-report=html
+        run: poetry run pytest --doctest-modules --cov=safe_ds --cov-report=xml
 
-      - name: Upload test coverage
+      - name: Upload coverage to Codecov
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
+        uses: codecov/codecov-action@v3
         with:
-          name: stdlib test coverage
-          path: Runtime/safe-ds/htmlcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: Runtime/safe-ds
+          files: coverage.xml
