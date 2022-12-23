@@ -17,6 +17,6 @@ def test_gradient_boosting_classification_fit_invalid() -> None:
         "tests/resources/test_gradient_boosting_classification_invalid.csv"
     )
     supervised_dataset = SupervisedDataset(table, "T")
-    gradient_boosting = GradientBoosting()
+    gradient_boosting_classification = GradientBoosting()
     with pytest.raises(LearningError):
         gradient_boosting.fit(supervised_dataset)
