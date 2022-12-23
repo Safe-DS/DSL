@@ -6,6 +6,9 @@ from sklearn.preprocessing import OneHotEncoder as OHE_sklearn
 
 
 class OneHotEncoder:
+    """
+    This OneHotEncoder encodes Columns in numerical Columns for each value [0,1]
+    """
     def __init__(self) -> None:
         self.encoder = OHE_sklearn()
 
