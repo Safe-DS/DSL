@@ -1,7 +1,7 @@
 # noinspection PyProtectedMember
 import safe_ds._util._util_sklearn
 from safe_ds.data import SupervisedDataset, Table
-from sklearn.tree import DecisionTreeRegressor as sk_DecisionTree
+from sklearn.tree import DecisionTreeRegressor as sk_DecisionTreeRegressor
 
 
 # noinspection PyProtectedMember
@@ -12,7 +12,7 @@ class DecisionTree:
     """
 
     def __init__(self) -> None:
-        self._regression = sk_DecisionTree()
+        self._regression = sk_DecisionTreeRegressor()
 
     def fit(self, supervised_dataset: SupervisedDataset) -> None:
         """

@@ -1,7 +1,7 @@
 # noinspection PyProtectedMember
 import safe_ds._util._util_sklearn
 from safe_ds.data import SupervisedDataset, Table
-from sklearn.tree import DecisionTreeClassifier as sk_DecisionTree
+from sklearn.tree import DecisionTreeClassifier as sk_DecisionTreeClassifier
 
 
 # noinspection PyProtectedMember
@@ -12,7 +12,7 @@ class DecisionTree:
     """
 
     def __init__(self) -> None:
-        self._clf = sk_DecisionTree()
+        self._classification = sk_DecisionTreeClassifier()
 
     def fit(self, supervised_dataset: SupervisedDataset) -> None:
         """
@@ -28,7 +28,7 @@ class DecisionTree:
         LearningError
             if the supervised dataset contains invalid values or if the training failed
         """
-        safe_ds._util._util_sklearn.fit(self._clf, supervised_dataset)
+        safe_ds._util._util_sklearn.fit(self._classification, supervised_dataset)
 
     def predict(self, dataset: Table) -> Table:
         """
@@ -49,4 +49,4 @@ class DecisionTree:
         PredictionError
             if predicting with the given dataset failed
         """
-        return safe_ds._util._util_sklearn.predict(self._clf, dataset)
+        return safe_ds._util._util_sklearn.predict(self._classification, dataset)
