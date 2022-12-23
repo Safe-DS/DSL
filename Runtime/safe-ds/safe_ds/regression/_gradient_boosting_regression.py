@@ -6,7 +6,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 
 class GradientBoosting:
     """
-    This class implements GradientBoosting regression. It is used as a regression model.
+    This class implements gradient boosting regression. It is used as a regression model.
     It can only be trained on a supervised dataset.
     """
 

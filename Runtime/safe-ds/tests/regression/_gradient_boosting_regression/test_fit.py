@@ -17,6 +17,6 @@ def test_gradient_boosting_regression_fit_invalid() -> None:
         "tests/resources/test_gradient_boosting_regression_invalid.csv"
     )
     supervised_dataset = SupervisedDataset(table, "T")
-    log_regression = GradientBoosting()
+    gradient_boosting = GradientBoosting()
     with pytest.raises(LearningError):
         log_regression.fit(supervised_dataset)

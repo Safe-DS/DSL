@@ -4,7 +4,7 @@ from safe_ds.exceptions import PredictionError
 from safe_ds.regression import GradientBoosting
 
 
-def test_lasso_regression_predict() -> None:
+def test_gradient_boosting_predict() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_regression.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     gradient_boosting_regression = GradientBoosting()
@@ -13,7 +13,7 @@ def test_lasso_regression_predict() -> None:
     assert True  # This asserts that the predict method succeeds
 
 
-def test_lasso_regression_predict_not_fitted() -> None:
+def test_gradient_boosting_predict_not_fitted() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_regression.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     gradient_boosting_regression = GradientBoosting()
@@ -21,7 +21,7 @@ def test_lasso_regression_predict_not_fitted() -> None:
         gradient_boosting_regression.predict(supervised_dataset.feature_vectors)
 
 
-def test_lasso_regression_predict_invalid() -> None:
+def test_gradient_boosting_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_regression.csv")
     invalid_table = Table.from_csv(
         "tests/resources/test_gradient_boosting_regression_invalid.csv"
@@ -34,7 +34,7 @@ def test_lasso_regression_predict_invalid() -> None:
         gradient_boosting_regression.predict(invalid_supervised_dataset.feature_vectors)
 
 
-def test_lasso_regression_predict_invalid_target_predictions() -> None:
+def test_gradient_boosting_predict_invalid_target_predictions() -> None:
     table = Table.from_csv(
         "tests/resources/test_gradient_boosting_invalid_target_predictions.csv"
     )

@@ -7,7 +7,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 # noinspection PyProtectedMember
 class GradientBoosting:
     """
-    This class implements regularized logistic regression. It is used as a classifier model.
+    This class implements gradient boosting classification. It is used as a classifier model.
     It can only be trained on a supervised dataset.
     """
 
