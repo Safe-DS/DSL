@@ -23,9 +23,7 @@ def test_decision_tree_predict_not_fitted() -> None:
 
 def test_decision_tree_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_decision_tree.csv")
-    invalid_table = Table.from_csv(
-        "tests/resources/test_decision_tree_invalid.csv"
-    )
+    invalid_table = Table.from_csv("tests/resources/test_decision_tree_invalid.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     invalid_supervised_dataset = SupervisedDataset(invalid_table, "T")
     decision_tree = DecisionTree()
