@@ -18,6 +18,10 @@ warnings.warn = warn
 
 
 class LabelEncoder:
+    """
+    This LabelEncoder encodes one or more given columns into labels.
+    """
+
     def __init__(self) -> None:
         self.is_fitted = 0
         self.le = preprocessing.LabelEncoder()
