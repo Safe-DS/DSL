@@ -33,7 +33,9 @@ def test_linear_regression_predict_invalid() -> None:
 
 
 def test_linear_regression_predict_invalid_target_predictions() -> None:
-    table = Table.from_csv("tests/resources/test_linear_regression_invalid_target_predictions.csv")
+    table = Table.from_csv(
+        "tests/resources/test_linear_regression_invalid_target_predictions.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = LinearRegression()
     log_regression.fit(supervised_dataset)

@@ -23,7 +23,9 @@ def test_logistic_regression_predict_not_fitted() -> None:
 
 def test_logistic_regression_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_logistic_regression.csv")
-    invalid_table = Table.from_csv("tests/resources/test_logistic_regression_invalid.csv")
+    invalid_table = Table.from_csv(
+        "tests/resources/test_logistic_regression_invalid.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     invalid_supervised_dataset = SupervisedDataset(invalid_table, "T")
     log_regression = LogisticRegression()
@@ -33,7 +35,9 @@ def test_logistic_regression_predict_invalid() -> None:
 
 
 def test_logistic_regression_predict_invalid_target_predictions() -> None:
-    table = Table.from_csv("tests/resources/test_logistic_regression_invalid_target_predictions.csv")
+    table = Table.from_csv(
+        "tests/resources/test_logistic_regression_invalid_target_predictions.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = LogisticRegression()
     log_regression.fit(supervised_dataset)
