@@ -4,7 +4,7 @@ from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError
 
 
-def test_ada_boost_fit():
+def test_ada_boost_fit() -> None:
     table = Table.from_csv("tests/resources/test_ada_boost.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     ada_boost = AdaBoost()
@@ -12,7 +12,7 @@ def test_ada_boost_fit():
     assert True  # This asserts that the fit method succeeds
 
 
-def test_ada_boost_fit_invalid():
+def test_ada_boost_fit_invalid() -> None:
     table = Table.from_csv("tests/resources/test_ada_boost_invalid.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     ada_boost = AdaBoost()
