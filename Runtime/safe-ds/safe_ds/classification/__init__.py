@@ -1,2 +1,4 @@
 from ._gradient_boosting_classification import GradientBoosting
+from ._ada_boost import AdaBoost
 from ._logistic_regression import LogisticRegression
+from ._random_forest import RandomForest
