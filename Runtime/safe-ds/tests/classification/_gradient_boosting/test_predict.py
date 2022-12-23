@@ -5,7 +5,7 @@ from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import PredictionError
 
 
-def test_gradient_boosting_predict():
+def test_gradient_boosting_predict() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_classification.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     gradient_boosting = GradientBoosting()
@@ -14,7 +14,7 @@ def test_gradient_boosting_predict():
     assert True  # This asserts that the predict method succeeds
 
 
-def test_gradient_boosting_predict_not_fitted():
+def test_gradient_boosting_predict_not_fitted() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_classification.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     gradient_boosting = GradientBoosting()
@@ -22,7 +22,7 @@ def test_gradient_boosting_predict_not_fitted():
         gradient_boosting.predict(supervised_dataset.feature_vectors)
 
 
-def test_gradient_boosting_predict_invalid():
+def test_gradient_boosting_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_classification.csv")
     invalid_table = Table.from_csv(
         "tests/resources/test_gradient_boosting_classification_invalid.csv"
@@ -35,7 +35,7 @@ def test_gradient_boosting_predict_invalid():
         gradient_boosting.predict(invalid_supervised_dataset.feature_vectors)
 
 
-def test_gradient_boosting_predict_invalid_target_predictions():
+def test_gradient_boosting_predict_invalid_target_predictions() -> None:
     table = Table.from_csv(
         "tests/resources/test_gradient_boosting_invalid_target_predictions.csv"
     )
