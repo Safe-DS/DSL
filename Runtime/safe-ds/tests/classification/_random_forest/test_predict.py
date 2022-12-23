@@ -4,7 +4,7 @@ from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import PredictionError
 
 
-def test_random_forest_predict():
+def test_random_forest_predict() -> None:
     table = Table.from_csv("tests/resources/test_random_forest.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = RandomForestClassifier()
@@ -13,7 +13,7 @@ def test_random_forest_predict():
     assert True  # This asserts that the predict method succeeds
 
 
-def test_random_forest_predict_not_fitted():
+def test_random_forest_predict_not_fitted() -> None:
     table = Table.from_csv("tests/resources/test_random_forest.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = RandomForestClassifier()
@@ -21,7 +21,7 @@ def test_random_forest_predict_not_fitted():
         log_regression.predict(supervised_dataset.feature_vectors)
 
 
-def test_random_forest_predict_invalid():
+def test_random_forest_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_random_forest.csv")
     invalid_table = Table.from_csv(
         "tests/resources/test_random_forest_invalid.csv"
@@ -34,7 +34,7 @@ def test_random_forest_predict_invalid():
         log_regression.predict(invalid_supervised_dataset.feature_vectors)
 
 
-def test_random_forest_predict_invalid_target_predictions():
+def test_random_forest_predict_invalid_target_predictions() -> None:
     table = Table.from_csv(
         "tests/resources/test_random_forest_invalid_target_predictions.csv"
     )

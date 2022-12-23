@@ -4,7 +4,7 @@ from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError
 
 
-def test_logistic_regression_fit():
+def test_logistic_regression_fit() -> None:
     table = Table.from_csv("tests/resources/test_random_forest.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = RandomForestClassifier()
@@ -12,7 +12,7 @@ def test_logistic_regression_fit():
     assert True  # This asserts that the fit method succeeds
 
 
-def test_logistic_regression_fit_invalid():
+def test_logistic_regression_fit_invalid() -> None:
     table = Table.from_csv("tests/resources/test_random_forest_invalid.csv")
     supervised_dataset = SupervisedDataset(table, "T")
     log_regression = RandomForestClassifier()
