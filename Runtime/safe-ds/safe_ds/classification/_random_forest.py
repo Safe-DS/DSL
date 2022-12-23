@@ -4,6 +4,7 @@ from safe_ds.data import SupervisedDataset, Table
 from sklearn.ensemble import RandomForestClassifier
 
 
+# noinspection PyProtectedMember
 class RandomForest:
     """
     This class implements the Random Forest classification. It can only be trained on a supervised dataset.

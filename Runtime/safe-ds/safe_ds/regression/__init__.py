@@ -3,3 +3,4 @@ from ._lasso_regression import LassoRegression
 from ._linear_regression import LinearRegression
 from ._random_forest import RandomForest
 from ._ridge_regression import RidgeRegression
+from ._decision_tree import DecisionTree

@@ -1,18 +1,18 @@
 # noinspection PyProtectedMember
 import safe_ds._util._util_sklearn
 from safe_ds.data import SupervisedDataset, Table
-from sklearn.linear_model import LogisticRegression as sk_LogisticRegression
+from sklearn.tree import DecisionTreeClassifier as sk_DecisionTree
 
 
 # noinspection PyProtectedMember
-class LogisticRegression:
+class DecisionTree:
     """
-    This class implements regularized logistic regression. It is used as a classifier model.
+    This class implements Decision Tree regression. It is used as a classifier model.
     It can only be trained on a supervised dataset.
     """
 
     def __init__(self) -> None:
-        self._clf = sk_LogisticRegression(n_jobs=-1)
+        self._clf = sk_DecisionTree()
 
     def fit(self, supervised_dataset: SupervisedDataset) -> None:
         """
