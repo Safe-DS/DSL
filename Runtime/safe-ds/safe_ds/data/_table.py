@@ -7,7 +7,6 @@ from typing import Callable
 
 import pandas as pd
 from pandas import DataFrame, Series
-
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
@@ -16,6 +15,7 @@ from safe_ds.exceptions import (
     SchemaMismatchError,
     UnknownColumnNameError,
 )
+
 from ._column import Column
 from ._row import Row
 from ._table_schema import TableSchema
@@ -24,7 +24,9 @@ from ._table_schema import TableSchema
 # noinspection PyProtectedMember
 class Table:
     def __init__(self, data: typing.Iterable):
-        self._data: pd.Dataframe = data if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
+        self._data: pd.Dataframe = (
+            data if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
+        )
         self.schema: TableSchema = TableSchema._from_dataframe(self._data)
 
     def get_row(self, index: int) -> Row:

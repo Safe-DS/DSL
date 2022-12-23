@@ -6,13 +6,13 @@ from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
-
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
     IndexOutOfBoundsError,
     NonNumericColumnError,
 )
+
 from ._column_type import ColumnType
 
 
@@ -190,7 +190,7 @@ class Column:
         """
         return self.any(
             lambda value: value is None
-                          or (isinstance(value, Number) and np.isnan(value))
+            or (isinstance(value, Number) and np.isnan(value))
         )
 
     def stability(self) -> float:

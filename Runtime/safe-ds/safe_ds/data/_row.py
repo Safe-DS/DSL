@@ -2,8 +2,8 @@ import typing
 from typing import Any
 
 import pandas as pd
-
 from safe_ds.exceptions import UnknownColumnNameError
+
 from ._table_schema import TableSchema
 
 
