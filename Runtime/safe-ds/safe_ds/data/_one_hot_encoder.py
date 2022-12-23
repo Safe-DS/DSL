@@ -1,13 +1,11 @@
 import pandas as pd
+from safe_ds.data import Table
+from safe_ds.exceptions import LearningError, NotFittedError
 from sklearn import exceptions
 from sklearn.preprocessing import OneHotEncoder as OHE_sklearn
 
-from safe_ds.data import Table
-from safe_ds.exceptions import LearningError, NotFittedError
-
 
 class OneHotEncoder:
-
     def __init__(self) -> None:
         self.encoder = OHE_sklearn()
 
@@ -43,9 +41,14 @@ class OneHotEncoder:
         """
         try:
             df_new = pd.DataFrame(
-                self.encoder.transform(table.keep_columns(self.encoder.feature_names_in_)._data.copy()).toarray())
+                self.encoder.transform(
+                    table.keep_columns(self.encoder.feature_names_in_)._data.copy()
+                ).toarray()
+            )
             df_new.columns = self.encoder.get_feature_names_out()
-            data_new = pd.concat([table._data.copy(), df_new], axis=1).drop(self.encoder.feature_names_in_, axis=1)
+            data_new = pd.concat([table._data.copy(), df_new], axis=1).drop(
+                self.encoder.feature_names_in_, axis=1
+            )
             return Table(data_new)
         except Exception as exc:
             raise NotFittedError from exc
@@ -84,11 +87,15 @@ class OneHotEncoder:
             the resettet table
         """
         try:
-            data = self.encoder.inverse_transform(table.keep_columns(self.encoder.get_feature_names_out())._data)
+            data = self.encoder.inverse_transform(
+                table.keep_columns(self.encoder.get_feature_names_out())._data
+            )
             df = pd.DataFrame(data)
             df.columns = self.encoder.feature_names_in_
             new_table = Table(df)
-            for col in table.drop_columns(self.encoder.get_feature_names_out()).to_columns():
+            for col in table.drop_columns(
+                self.encoder.get_feature_names_out()
+            ).to_columns():
                 new_table = new_table.add_column(col)
             return new_table
         except exceptions.NotFittedError as exc:
