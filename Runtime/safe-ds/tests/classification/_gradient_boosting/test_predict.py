@@ -7,7 +7,7 @@ from safe_ds.exceptions import PredictionError
 def test_gradient_boosting_predict() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_classification.csv")
     supervised_dataset = SupervisedDataset(table, "T")
-    gradient_boosting = GradientBoosting()
+    gradient_boosting_classification = GradientBoosting()
     gradient_boosting.fit(supervised_dataset)
     gradient_boosting.predict(supervised_dataset.feature_vectors)
     assert True  # This asserts that the predict method succeeds
