@@ -1,8 +1,7 @@
 # noinspection PyProtectedMember
-from sklearn.ensemble import GradientBoostingRegressor
-
 import safe_ds._util._util_sklearn
 from safe_ds.data import SupervisedDataset, Table
+from sklearn.ensemble import GradientBoostingRegressor
 
 
 class GradientBoosting:

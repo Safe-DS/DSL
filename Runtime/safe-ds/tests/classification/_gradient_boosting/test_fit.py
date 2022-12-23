@@ -1,5 +1,4 @@
 import pytest
-
 from safe_ds.classification import GradientBoosting
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import LearningError
@@ -14,7 +13,9 @@ def test_gradient_boosting_classification_fit() -> None:
 
 
 def test_gradient_boosting_classification_fit_invalid() -> None:
-    table = Table.from_csv("tests/resources/test_gradient_boosting_classification_invalid.csv")
+    table = Table.from_csv(
+        "tests/resources/test_gradient_boosting_classification_invalid.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     gradient_boosting = GradientBoosting()
     with pytest.raises(LearningError):

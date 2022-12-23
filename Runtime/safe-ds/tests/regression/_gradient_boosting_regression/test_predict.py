@@ -1,5 +1,4 @@
 import pytest
-
 from safe_ds.data import SupervisedDataset, Table
 from safe_ds.exceptions import PredictionError
 from safe_ds.regression import GradientBoosting
@@ -24,7 +23,9 @@ def test_lasso_regression_predict_not_fitted() -> None:
 
 def test_lasso_regression_predict_invalid() -> None:
     table = Table.from_csv("tests/resources/test_gradient_boosting_regression.csv")
-    invalid_table = Table.from_csv("tests/resources/test_gradient_boosting_regression_invalid.csv")
+    invalid_table = Table.from_csv(
+        "tests/resources/test_gradient_boosting_regression_invalid.csv"
+    )
     supervised_dataset = SupervisedDataset(table, "T")
     invalid_supervised_dataset = SupervisedDataset(invalid_table, "T")
     gradient_boosting_regression = GradientBoosting()
