@@ -4,7 +4,7 @@ val xtextVersion by extra("2.26.0.M2")
 // Plugins -------------------------------------------------------------------------------------------------------------
 
 plugins {
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "1.8.0"
     idea
 }
 
