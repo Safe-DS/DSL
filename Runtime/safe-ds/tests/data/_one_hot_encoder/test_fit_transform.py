@@ -1,6 +1,5 @@
 import pandas as pd
-from safe_ds.data import Table
-from safe_ds.data import OneHotEncoder
+from safe_ds.data import OneHotEncoder, Table
 
 
 def test_fit_transform() -> None:
