@@ -8,7 +8,7 @@ from safe_ds.exceptions import DuplicateColumnNameError, UnknownColumnNameError
     [("A", "D", "D", "B"), ("A", "A", "A", "B")],
 )
 def test_rename_valid(
-    name_from: str, name_to: str, column_one: Column, column_two: Column
+    name_from: str, name_to: str, column_one: str, column_two: str
 ) -> None:
     table: Table = Table.from_csv("tests/resources/test_table_read_csv.csv")
     renamed_table = table.rename_column(name_from, name_to)
