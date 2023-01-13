@@ -1,5 +1,5 @@
 import pandas as pd
-from safe_ds.data import Table
+from ._table import Table
 from safe_ds.exceptions import LearningError, NotFittedError
 from sklearn import exceptions
 from sklearn.preprocessing import OneHotEncoder as OHE_sklearn
