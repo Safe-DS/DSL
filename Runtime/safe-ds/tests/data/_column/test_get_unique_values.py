@@ -1,6 +1,6 @@
-import pandas as pd
+import typing
 import pytest
-from safe_ds.data import Column, Table
+from safe_ds.data import Column
 
 
 @pytest.mark.parametrize(
@@ -11,8 +11,8 @@ from safe_ds.data import Column, Table
         ([], [])
     ],
 )
-def test_get_unique_values(values: list[any], unique_values: list[any]) -> None:
+def test_get_unique_values(values: list[typing.Any], unique_values: list[typing.Any]) -> None:
     column: Column = Column(values, "")
-    extracted_unique_values: list[any] = column.get_unique_value()
+    extracted_unique_values: list[typing.Any] = column.get_unique_value()
 
     assert extracted_unique_values == unique_values
