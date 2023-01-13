@@ -569,6 +569,22 @@ class Table:
     def __hash__(self) -> int:
         return hash(self._data)
 
+    def __str__(self) -> str:
+        """
+        Returns a pretty print String for the Table
+
+        Returns
+        -------
+        output_string: str
+            the pretty String
+        """
+        return self._data.__str__()
+
+    def __repr__(self) -> str:
+        self._data._repr_html_()
+        self._data.__repr__()
+        return self.__str__()
+
     def transform_column(
         self, name: str, transformer: Callable[[Row], typing.Any]
     ) -> Table:
