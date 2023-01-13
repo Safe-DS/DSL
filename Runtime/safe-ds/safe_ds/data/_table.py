@@ -289,7 +289,9 @@ class Table:
         if len(invalid_columns) != 0:
             raise UnknownColumnNameError(invalid_columns)
         transformed_data = self._data.drop(labels=column_indices, axis="columns")
-        transformed_data.columns = list(name for name in self.schema._get_column_names() if name not in column_names)
+        transformed_data.columns = list(
+            name for name in self.schema._get_columns() if name not in column_names
+        )
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
@@ -320,7 +322,9 @@ class Table:
         if len(invalid_columns) != 0:
             raise UnknownColumnNameError(invalid_columns)
         transformed_data = self._data[column_indices]
-        transformed_data.columns = list(name for name in self.schema._get_column_names() if name in column_names)
+        transformed_data.columns = list(
+            name for name in self.schema._get_columns() if name in column_names
+        )
         return Table(transformed_data)
 
     def to_rows(self) -> list[Row]:
@@ -432,7 +436,10 @@ class Table:
         if old_column_name not in self.schema._get_column_names():
             raise UnknownColumnNameError([old_column_name])
 
-        if new_column.name in self.schema._get_column_names() and new_column.name != old_column_name:
+        if (
+            new_column.name in self.schema._get_column_names()
+            and new_column.name != old_column_name
+        ):
             raise DuplicateColumnNameError(new_column.name)
 
         if self.count_rows() != new_column._data.size:
