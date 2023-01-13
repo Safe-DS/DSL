@@ -7,8 +7,8 @@ def test_table_column_keep() -> None:
     table = Table.from_csv("tests/resources/test_table_read_csv.csv")
     transformed_table = table.keep_columns(["A"])
     assert (
-        "A" in transformed_table._data.columns
-        and "B" not in transformed_table._data.columns
+        transformed_table.schema.has_column("A")
+        and not transformed_table.schema.has_column("B")
     )
 
 
