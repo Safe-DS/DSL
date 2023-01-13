@@ -3,7 +3,7 @@ from __future__ import annotations
 import os.path
 import typing
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Union
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -490,6 +490,27 @@ class Table:
         result[column.name] = column._data
         return Table(result)
 
+    def add_columns(self, columns: Union[list[Column], Table]) -> Table:
+        """
+        Add multiple columns to a table
+
+        Parameters
+        ----------
+        columns: list[Column] or Table
+            the columns you want to add
+
+        Returns
+        -------
+        new_table: Table
+            A new table which combines the original table and the given columns
+        """
+        if isinstance(columns, Table):
+            columns = columns.to_columns()
+        new_table = self
+        for column in columns:
+            new_table = new_table.add_column(column)
+        return new_table
+
     def add_row(self, row: Row) -> Table:
         """
         Add a row to an existing table
@@ -511,6 +532,27 @@ class Table:
         new_df = pd.concat([self._data, df], ignore_index=True)
         new_df.columns = self.schema.get_column_names()
         return Table(new_df)
+
+    def add_rows(self, rows: Union[list[Row], Table]) -> Table:
+        """
+        Add multiple rows to a table
+
+        Parameters
+        ----------
+        rows: list[Row] or Table
+            the rows you want to add
+
+        Returns
+        -------
+        new_table: Table
+            A new table which combines the original table and the given rows
+        """
+        if isinstance(rows, Table):
+            rows = rows.to_rows()
+        new_table = self
+        for row in rows:
+            new_table = new_table.add_row(row)
+        return new_table
 
     def has_column(self, column_name: str) -> bool:
         """
