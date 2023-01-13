@@ -1,5 +1,5 @@
 import pytest
-from safe_ds.data import Column, Table
+from safe_ds.data import Table
 from safe_ds.exceptions import DuplicateColumnNameError, UnknownColumnNameError
 
 
