@@ -249,7 +249,7 @@ class Column:
             )
         return self._data.corr(other_column._data)
 
-    def get_unique_value(self) -> list[typing.Any]:
+    def get_unique_values(self) -> list[typing.Any]:
         """
         Returns a list of all unique values in the column.
 
