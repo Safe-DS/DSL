@@ -4,7 +4,7 @@ from safe_ds.data import Table
 from safe_ds.exceptions import NonNumericColumnError
 
 
-def plot_correlation_heatmap(table: Table):
+def plot_correlation_heatmap(table: Table) -> None:
     """
     Plot a correlation heatmap of an entire table. This function can only plot real numerical data
 

@@ -4,7 +4,7 @@ from safe_ds.data import Column
 from safe_ds.exceptions import NonNumericColumnError
 
 
-def plot_boxplot(column: Column):
+def plot_boxplot(column: Column) -> None:
     """
     Plot a column in a boxplot. This function can only plot real numerical data
 
