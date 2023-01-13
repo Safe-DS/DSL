@@ -238,6 +238,17 @@ class Column:
             )
         return self._data.corr(other_column._data)
 
+    def get_unique_value(self) -> list[any]:
+        """
+        Returns a list of all unique values in the column.
+
+        Returns
+        -------
+        unique_values: list[any]
+            List of unique values of this column
+        """
+        return list(self._data.unique())
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Column):
             return NotImplemented
