@@ -97,7 +97,7 @@ class Column:
 
     def count(self) -> int:
         """
-        Returns the count of values in the column
+        Returns the number of elements in the column
 
         Returns
         -------
