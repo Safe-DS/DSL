@@ -56,7 +56,7 @@ def predict(model: Any, dataset: Table) -> Table:
         if predicting with the given dataset failed
     """
     dataset_df = dataset._data
-    dataset_df.columns = dataset.schema._get_column_names()
+    dataset_df.columns = dataset.schema.get_column_names()
     try:
         predicted_target_vector = model.predict(dataset_df)
         result_set = dataset_df.copy(deep=True)

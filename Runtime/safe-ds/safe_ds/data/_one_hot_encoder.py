@@ -27,7 +27,7 @@ class OneHotEncoder:
         try:
             table_k_columns = table.keep_columns(column_names=columns)
             df = table_k_columns._data
-            df.columns = table_k_columns.schema._get_column_names()
+            df.columns = table_k_columns.schema.get_column_names()
             self.encoder.fit(df)
         except exceptions.NotFittedError as exc:
             raise LearningError("") from exc
@@ -49,11 +49,11 @@ class OneHotEncoder:
         try:
             table_k_columns = table.keep_columns(self.encoder.feature_names_in_)
             df_k_columns = table_k_columns._data
-            df_k_columns.columns = table_k_columns.schema._get_columns()
+            df_k_columns.columns = table_k_columns.schema.get_column_names()
             df_new = pd.DataFrame(self.encoder.transform(df_k_columns).toarray())
             df_new.columns = self.encoder.get_feature_names_out()
             df_concat = table._data.copy()
-            df_concat.columns = table.schema._get_column_names()
+            df_concat.columns = table.schema.get_column_names()
             data_new = pd.concat([df_concat, df_new], axis=1).drop(
                 self.encoder.feature_names_in_, axis=1
             )

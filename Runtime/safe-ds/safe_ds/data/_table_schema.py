@@ -100,7 +100,7 @@ class TableSchema:
 
         return TableSchema(dict(zip(names, types)))
 
-    def _get_column_names(self) -> list[str]:
+    def get_column_names(self) -> list[str]:
         """
         Returns a list of all column names saved in this schema
 
