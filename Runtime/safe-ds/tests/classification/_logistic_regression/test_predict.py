@@ -32,4 +32,3 @@ def test_logistic_regression_predict_invalid() -> None:
     log_regression.fit(supervised_dataset)
     with pytest.raises(PredictionError):
         log_regression.predict(invalid_supervised_dataset.feature_vectors)
-

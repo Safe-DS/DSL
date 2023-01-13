@@ -35,7 +35,9 @@ class KNearestNeighbors:
         LearningError
             if the supervised dataset contains invalid values or if the training failed
         """
-        self.target_name = safe_ds._util._util_sklearn.fit(self._regression, supervised_dataset)
+        self.target_name = safe_ds._util._util_sklearn.fit(
+            self._regression, supervised_dataset
+        )
 
     def predict(self, dataset: Table, target_name: Optional[str] = None) -> Table:
         """
@@ -58,4 +60,8 @@ class KNearestNeighbors:
         PredictionError
             if predicting with the given dataset failed
         """
-        return safe_ds._util._util_sklearn.predict(self._regression, dataset, target_name if target_name is not None else self.target_name)
+        return safe_ds._util._util_sklearn.predict(
+            self._regression,
+            dataset,
+            target_name if target_name is not None else self.target_name,
+        )
