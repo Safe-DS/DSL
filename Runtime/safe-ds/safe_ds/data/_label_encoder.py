@@ -72,7 +72,7 @@ class LabelEncoder:
              a NotFittedError if the Model wasn't fitted before transforming
         """
         p_df = table._data
-        p_df.columns = table.schema._get_columns()
+        p_df.columns = table.schema._get_column_names()
         try:
             p_df[column] = self.le.transform(p_df[column])
             return Table(p_df)
@@ -98,7 +98,7 @@ class LabelEncoder:
 
         """
         p_df = table._data
-        p_df.columns = table.schema._get_columns()
+        p_df.columns = table.schema._get_column_names()
         try:
             for col in columns:
                 # Fit the LabelEncoder on the Column
@@ -130,7 +130,7 @@ class LabelEncoder:
 
         try:
             p_df = table._data
-            p_df.columns = table.schema._get_columns()
+            p_df.columns = table.schema._get_column_names()
             p_df[column] = self.le.inverse_transform(p_df[column])
             return Table(p_df)
         except exceptions.NotFittedError as exc:
