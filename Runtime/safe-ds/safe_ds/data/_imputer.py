@@ -88,7 +88,9 @@ class Imputer:
             column_names = table.schema.get_column_names()
 
         self.column_names = column_names
-        indices = [table.schema._get_column_index_by_name(name) for name in self.column_names]
+        indices = [
+            table.schema._get_column_index_by_name(name) for name in self.column_names
+        ]
         self._imp.fit(table._data[indices])
 
     def transform(self, table: Table) -> Table:
@@ -106,13 +108,19 @@ class Imputer:
             a dataset that is equal to the given dataset, with missing values imputed to the given strategy
         """
         data = table._data.copy()
-        indices = [table.schema._get_column_index_by_name(name) for name in self.column_names]
-        data[indices] = pd.DataFrame(self._imp.transform(data[indices]), columns=indices)
+        indices = [
+            table.schema._get_column_index_by_name(name) for name in self.column_names
+        ]
+        data[indices] = pd.DataFrame(
+            self._imp.transform(data[indices]), columns=indices
+        )
         table_imputed = Table(data)
         table_imputed.schema = table.schema
         return table_imputed
 
-    def fit_transform(self, table: Table, column_names: Optional[list[str]] = None) -> Table:
+    def fit_transform(
+        self, table: Table, column_names: Optional[list[str]] = None
+    ) -> Table:
         """
         Fit the imputer on the given dataset and impute the missing values
 

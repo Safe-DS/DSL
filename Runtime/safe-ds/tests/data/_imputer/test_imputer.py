@@ -38,16 +38,22 @@ def test_imputer_constant() -> None:
 
     assert new_table.get_column("col1")._data[0] == 0
 
+
 def test_imputer_specific_column() -> None:
-    table = Table(pd.DataFrame(data={"col1": [np.nan, 2, 3, 4, 5], "col2": [np.nan, 2, 3, 4, 5]}))
+    table = Table(
+        pd.DataFrame(data={"col1": [np.nan, 2, 3, 4, 5], "col2": [np.nan, 2, 3, 4, 5]})
+    )
     imp = Imputer(Imputer.Strategy.Constant(0))
     new_table = imp.fit_transform(table, ["col1"])
 
     assert new_table.get_column("col1")._data[0] == 0
     assert np.isnan(new_table.get_column("col2")._data[0])
 
+
 def test_imputer_all_columns() -> None:
-    table = Table(pd.DataFrame(data={"col1": [np.nan, 2, 3, 4, 5], "col2": [np.nan, 2, 3, 4, 5]}))
+    table = Table(
+        pd.DataFrame(data={"col1": [np.nan, 2, 3, 4, 5], "col2": [np.nan, 2, 3, 4, 5]})
+    )
     imp = Imputer(Imputer.Strategy.Constant(0))
     new_table = imp.fit_transform(table)
 
