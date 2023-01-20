@@ -559,7 +559,9 @@ class Table:
         for row in rows:
             if self.schema != row.schema:
                 raise SchemaMismatchError()
-        result = pd.concat([result, *[row._data.to_frame().T for row in rows]]).infer_objects()
+        result = pd.concat(
+            [result, *[row._data.to_frame().T for row in rows]]
+        ).infer_objects()
         result.columns = self.schema.get_column_names()
         return Table(result)
 
