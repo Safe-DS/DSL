@@ -3,7 +3,7 @@ from __future__ import annotations
 import os.path
 import typing
 from pathlib import Path
-from typing import Callable, Union, Optional
+from typing import Callable, Optional, Union
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -12,8 +12,9 @@ from safe_ds.exceptions import (
     ColumnSizeError,
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
+    MissingSchemaError,
     SchemaMismatchError,
-    UnknownColumnNameError, MissingSchemaError,
+    UnknownColumnNameError,
 )
 
 from ._column import Column

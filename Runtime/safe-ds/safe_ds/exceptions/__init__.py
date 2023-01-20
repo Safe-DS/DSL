@@ -3,9 +3,9 @@ from ._data_exceptions import (
     ColumnSizeError,
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
+    MissingSchemaError,
     NonNumericColumnError,
     SchemaMismatchError,
-    MissingSchemaError,
     UnknownColumnNameError,
 )
 from ._learning_exceptions import LearningError, NotFittedError, PredictionError
