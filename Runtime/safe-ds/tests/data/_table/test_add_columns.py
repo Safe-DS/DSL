@@ -1,6 +1,5 @@
 import pandas as pd
-
-from safe_ds.data import Table, Column, IntColumnType, StringColumnType
+from safe_ds.data import Column, IntColumnType, StringColumnType, Table
 
 
 def test_add_columns_valid() -> None:

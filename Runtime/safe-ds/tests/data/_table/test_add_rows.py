@@ -1,6 +1,5 @@
 import pandas as pd
-
-from safe_ds.data import Table, Row
+from safe_ds.data import Row, Table
 
 
 def test_add_rows_valid() -> None:

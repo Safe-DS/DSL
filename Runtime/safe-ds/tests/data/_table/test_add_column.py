@@ -1,9 +1,8 @@
 import pandas as pd
 import pytest
 from _pytest.python_api import raises
-
-from safe_ds.data import IntColumnType, StringColumnType, Table, Column, ColumnType
-from safe_ds.exceptions import DuplicateColumnNameError, ColumnSizeError
+from safe_ds.data import Column, ColumnType, IntColumnType, StringColumnType, Table
+from safe_ds.exceptions import ColumnSizeError, DuplicateColumnNameError
 
 
 @pytest.mark.parametrize(
