@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import functools
 import os.path
 import typing
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional, Union
 
 import pandas as pd
 from IPython.core.display_functions import display, DisplayHandle
@@ -13,6 +14,7 @@ from safe_ds.exceptions import (
     ColumnSizeError,
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
+    MissingSchemaError,
     SchemaMismatchError,
     UnknownColumnNameError, NonNumericColumnError,
 )
@@ -24,11 +26,29 @@ from ._table_schema import TableSchema
 
 # noinspection PyProtectedMember
 class Table:
-    def __init__(self, data: typing.Iterable):
+    def __init__(self, data: typing.Iterable, schema: Optional[TableSchema] = None):
+        """
+        Create a new Table
+
+        Parameters
+        ----------
+        data: typing.Iterable
+            the data you want to save in the table
+        schema: TableSchema
+            the schema for the table
+            None by default, if None the schema will be provided by the data that is given
+            If a schema is set, there is no check if this schema is compatible with the data!
+        """
         self._data: pd.Dataframe = (
             data if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
         )
-        self.schema: TableSchema = TableSchema._from_dataframe(self._data)
+        if schema is None:
+            if self.count_columns() == 0:
+                raise MissingSchemaError()
+            self.schema: TableSchema = TableSchema._from_dataframe(self._data)
+        else:
+            self.schema = schema
+
         self._data = self._data.reset_index(drop=True)
         self._data.columns = list(range(self.count_columns()))
 
@@ -207,7 +227,8 @@ class Table:
         data_to_csv.to_csv(path_to_file, index=False)
 
     def rename_column(self, old_name: str, new_name: str) -> Table:
-        """Rename a single column by providing the previous name and the future name of it.
+        """
+        Rename a single column by providing the previous name and the future name of it.
 
         Parameters
         ----------
@@ -240,7 +261,8 @@ class Table:
         return Table(new_df.rename(columns={old_name: new_name}))
 
     def get_column(self, column_name: str) -> Column:
-        """Returns a new instance of Column with the data of the described column of the Table.
+        """
+        Returns a new instance of column with the data of the described column of the table.
 
         Parameters
         ----------
@@ -268,7 +290,8 @@ class Table:
         raise UnknownColumnNameError([column_name])
 
     def drop_columns(self, column_names: list[str]) -> Table:
-        """Returns a Table without the given columns
+        """
+        Returns a table without the given columns
 
         Parameters
         ----------
@@ -301,7 +324,8 @@ class Table:
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
-        """Returns a Table with exactly the given columns
+        """
+        Returns a table with exactly the given columns
 
         Parameters
         ----------
@@ -347,7 +371,8 @@ class Table:
         ]
 
     def filter_rows(self, query: Callable[[Row], bool]) -> Table:
-        """Returns a Table with rows filtered by applied lambda function
+        """
+        Returns a table with rows filtered by applied lambda function
 
         Parameters
         ----------
@@ -491,6 +516,34 @@ class Table:
         result[column.name] = column._data
         return Table(result)
 
+    def add_columns(self, columns: Union[list[Column], Table]) -> Table:
+        """
+        Add multiple columns to a table
+
+        Parameters
+        ----------
+        columns: list[Column] or Table
+            the columns you want to add
+
+        Returns
+        -------
+        result: Table
+            A new table which combines the original table and the given columns
+        """
+        if isinstance(columns, Table):
+            columns = columns.to_columns()
+        result = self._data.copy()
+        result.columns = self.schema.get_column_names()
+        for column in columns:
+            if column.name in result.columns:
+                raise DuplicateColumnNameError(column.name)
+
+            if column._data.size != self.count_rows():
+                raise ColumnSizeError(str(self.count_rows()), str(column._data.size))
+
+            result[column.name] = column._data
+        return Table(result)
+
     def add_row(self, row: Row) -> Table:
         """
         Add a row to an existing table
@@ -508,10 +561,35 @@ class Table:
         """
         if self.schema != row.schema:
             raise SchemaMismatchError()
-        df = row._data.to_frame().T
-        new_df = pd.concat([self._data, df], ignore_index=True)
+        new_df = pd.concat([self._data, row._data.to_frame().T]).infer_objects()
         new_df.columns = self.schema.get_column_names()
         return Table(new_df)
+
+    def add_rows(self, rows: Union[list[Row], Table]) -> Table:
+        """
+        Add multiple rows to a table
+
+        Parameters
+        ----------
+        rows: list[Row] or Table
+            the rows you want to add
+
+        Returns
+        -------
+        result: Table
+            A new table which combines the original table and the given rows
+        """
+        if isinstance(rows, Table):
+            rows = rows.to_rows()
+        result = self._data
+        for row in rows:
+            if self.schema != row.schema:
+                raise SchemaMismatchError()
+        result = pd.concat(
+            [result, *[row._data.to_frame().T for row in rows]]
+        ).infer_objects()
+        result.columns = self.schema.get_column_names()
+        return Table(result)
 
     def has_column(self, column_name: str) -> bool:
         """
@@ -563,13 +641,52 @@ class Table:
     def get_column_names(self) -> list[str]:
         """
         Get a list of the ordered column names
-
+        
         Returns
         -------
         result: list[str]
             Order Column names
         """
         return list(self.schema._schema.keys())
+        
+    def sort_columns(
+        self,
+        query: Callable[[Column, Column], int] = lambda col1, col2: (
+            col1.name > col2.name
+        )
+        - (col1.name < col2.name),
+    ) -> Table:
+        """
+        Sort a table with the given lambda function.
+        If no function is given the columns will be sorted alphabetically.
+        This function uses the default python sort algorithm.
+        The query should return:
+            0, if both columns are equal
+            < 0, if the first column should be ordered after the second column
+            > 0, if the first column should be ordered before the second column
+
+        Parameters
+        ----------
+        query: a lambda function
+            a lambda function that is used to sort the columns
+
+        Returns
+        -------
+        new_table: Table
+            a new table with the sorted columns
+        """
+        columns = self.to_columns()
+        columns.sort(key=functools.cmp_to_key(query))
+        return Table.from_columns(columns)
+
+    def __eq__(self, other: typing.Any) -> bool:
+        if not isinstance(other, Table):
+            return NotImplemented
+        if self is other:
+            return True
+        table1 = self.sort_columns()
+        table2 = other.sort_columns()
+        return table1._data.equals(table2._data) and table1.schema == table2.schema
 
     def transform_column(
         self, name: str, transformer: Callable[[Row], typing.Any]
@@ -671,3 +788,87 @@ class Table:
 
         with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
             return display(tmp)
+            
+    def slice(
+        self,
+        start: typing.Optional[int] = None,
+        end: typing.Optional[int] = None,
+        step: int = 1,
+    ) -> Table:
+        """
+        slices the Table into a new Table
+
+        Parameters
+        ----------
+        start : int
+            first index of the range to be copied into a new table, None by default
+        end : int
+            last index of the range to be copied into a new table, None by default
+        step : int
+            the step size to be iterated through the table, 1 by default
+
+        Returns
+        -------
+        result : Table
+            the sliced Table
+
+        Raises
+        -------
+        ValueError
+            raises a ValueError if the index is out of bounds
+        """
+
+        if start is None:
+            start = 0
+
+        if end is None:
+            end = self.count_rows()
+
+        if (
+            start < 0
+            or end < 0
+            or start >= self.count_rows()
+            or end > self.count_rows()
+            or end < start
+        ):
+            raise ValueError("the given index is out of bounds")
+
+        new_df = self._data.iloc[start:end:step]
+        new_df.columns = self.schema.get_column_names()
+        return Table(new_df)
+
+    def split(self, percentage_in_first: float) -> typing.Tuple[Table, Table]:
+        """
+        splits the Table into two new Tables
+
+        Parameters
+        -------
+        percentage_in_first : float
+            the size of the first returned table in percentage to the given Table
+
+        Returns
+        -------
+        result: (Table, Table)
+            tuple of the splitted Tables
+
+
+        """
+        if percentage_in_first <= 0 or percentage_in_first >= 1:
+            raise ValueError("the given percentage is not in range")
+        return (
+            self.slice(0, round(percentage_in_first * self.count_rows())),
+            self.slice(round(percentage_in_first * self.count_rows())),
+        )
+
+    def shuffle(self) -> Table:
+        """
+        shuffles the table randomly
+        Returns
+        -------
+        result : Table
+            the shuffled Table
+
+        """
+        new_df = self._data.sample(frac=1.0)
+        new_df.columns = self.schema.get_column_names()
+        return Table(new_df)
