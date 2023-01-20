@@ -3,7 +3,7 @@ from __future__ import annotations
 import os.path
 import typing
 from pathlib import Path
-from typing import Callable, Union
+from typing import Callable, Union, Optional
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -23,7 +23,7 @@ from ._table_schema import TableSchema
 
 # noinspection PyProtectedMember
 class Table:
-    def __init__(self, data: typing.Iterable, schema: TableSchema = None):
+    def __init__(self, data: typing.Iterable, schema: Optional[TableSchema] = None):
         """
         Create a new Table
 

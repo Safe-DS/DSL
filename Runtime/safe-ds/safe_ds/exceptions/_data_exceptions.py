@@ -86,7 +86,7 @@ class MissingSchemaError(Exception):
     Exception raised when a required Schema is missing.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Failed because a required schema is missing.")
 
 
