@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Callable
 
 import pandas as pd
+from IPython.core.display_functions import display, DisplayHandle
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
@@ -559,6 +560,9 @@ class Table:
                 cols.append(self.get_column(column_name))
         return cols
 
+    def get_column_names(self) -> list[str]:
+        return list(self.schema._schema.keys())
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
@@ -580,10 +584,12 @@ class Table:
         """
         return self._data.__str__()
 
-    def __repr__(self) -> str:
-        self._data._repr_html_()
-        self._data.__repr__()
-        return self.__str__()
+    def __repr__(self) -> DisplayHandle:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+
+        with pd.option_context('display.max_rows', tmp.shape[0]):
+            return display(tmp)
 
     def transform_column(
         self, name: str, transformer: Callable[[Row], typing.Any]
