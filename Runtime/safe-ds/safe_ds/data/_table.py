@@ -591,7 +591,7 @@ class Table:
             return self.replace_column(name, result)
         raise UnknownColumnNameError([name])
 
-    def slice(self, start: int = None, end: int = None, step: int = 1) -> Table:
+    def slice(self, start: typing.Optional[int] = None, end: typing.Optional[int] = None, step: int = 1) -> Table:
         """
         slices the Table into a new Table
 
@@ -601,7 +601,6 @@ class Table:
             first index of the range to be copied into a new table, None by default
         end : int
             last index of the range to be copied into a new table, None by default
-
         step : int
             the step size to be iterated through the table, 1 by default
 
@@ -614,23 +613,22 @@ class Table:
         -------
         ValueError
             raises a ValueError if the index is out of bounds
-
         """
 
-        if start == None:
+        if start is None:
             start = 0
 
-        if end == None:
+        if end is None:
             end = self.count_rows()
 
-        if (start < 0 or end < 0 or start >= self.count_rows() or end > self.count_rows() or end < start):
+        if start < 0 or end < 0 or start >= self.count_rows() or end > self.count_rows() or end < start:
             raise ValueError("the given index is out of bounds")
 
         new_df = self._data.iloc[start:end:step]
         new_df.columns = self.schema.get_column_names()
         return Table(new_df)
 
-    def split(self, percentage_in_first: float) -> (Table, Table):
+    def split(self, percentage_in_first: float) -> typing.Tuple[Table, Table]:
         """
         splits the Table into two new Tables
 
@@ -646,7 +644,7 @@ class Table:
 
 
         """
-        if (percentage_in_first <= 0 or percentage_in_first >= 1):
+        if percentage_in_first <= 0 or percentage_in_first >= 1:
             raise ValueError("the given percentage is not in range")
         return (self.slice(0, round(percentage_in_first * self.count_rows())),
                 self.slice(round(percentage_in_first * self.count_rows())))
