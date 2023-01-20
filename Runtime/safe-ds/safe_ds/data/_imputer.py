@@ -71,7 +71,7 @@ class Imputer:
     def __init__(self, strategy: ImputerStrategy):
         self._imp = SimpleImputer()
         strategy._augment_imputer(self._imp)
-        self.column_names = []
+        self.column_names: List[str] = []
 
     def fit(self, table: Table, column_names: Optional[list[str]] = None) -> None:
         """
