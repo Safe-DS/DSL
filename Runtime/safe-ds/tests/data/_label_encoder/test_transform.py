@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+
 from safe_ds.data import LabelEncoder, Table
 from safe_ds.exceptions import NotFittedError
 

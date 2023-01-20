@@ -4,9 +4,9 @@ import warnings
 from typing import Any
 
 import pandas
-from safe_ds.exceptions import LearningError, NotFittedError
 from sklearn import exceptions, preprocessing
 
+from safe_ds.exceptions import LearningError, NotFittedError
 from ._table import Table
 
 
@@ -16,6 +16,8 @@ def warn(*_: Any, **__: Any) -> None:
 
 warnings.warn = warn
 
+
+# noinspection PyProtectedMember
 
 class LabelEncoder:
     """
