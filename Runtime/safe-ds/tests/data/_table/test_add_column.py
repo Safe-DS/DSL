@@ -9,8 +9,8 @@ from safe_ds.exceptions import DuplicateColumnNameError, ColumnSizeError
 @pytest.mark.parametrize(
     "column, col_type",
     [
-        (Column(["a", "b", "c"], "col3"), StringColumnType),
-        (Column([0, -1, -2], "col3"), IntColumnType),
+        (Column(["a", "b", "c"], "col3"), StringColumnType()),
+        (Column([0, -1, -2], "col3"), IntColumnType()),
     ],
 )
 def test_add_column_valid(column: Column, col_type: ColumnType) -> None:
@@ -20,7 +20,7 @@ def test_add_column_valid(column: Column, col_type: ColumnType) -> None:
     assert table1.get_column("col3") == column
     assert isinstance(table1.schema.get_type_of_column("col1"), IntColumnType)
     assert isinstance(table1.schema.get_type_of_column("col2"), IntColumnType)
-    assert type(table1.schema.get_type_of_column("col3")) == col_type
+    assert isinstance(table1.schema.get_type_of_column("col3"), type(col_type))
 
 
 def test_add_column_invalid_duplicate_column_name_error() -> None:
