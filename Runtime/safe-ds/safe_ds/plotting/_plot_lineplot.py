@@ -15,7 +15,7 @@ def plot_lineplot(table: Table, x: str, y: str) -> None:
     x: str
         The column name of the column that is to be plotted on the x-Axis.
     y str
-        The column name of the column that is to be plotted on the y-Axis.
+        The column name of the column to be plotted on the y-Axis.
     """
     # noinspection PyProtectedMember
     if not table.has_column(x):
