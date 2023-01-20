@@ -6,8 +6,7 @@ from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
-from IPython.core.display_functions import display, DisplayHandle
-
+from IPython.core.display_functions import DisplayHandle, display
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
@@ -257,7 +256,9 @@ class Column:
         tmp = self._data.to_frame()
         tmp.columns = [self.name]
 
-        with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
+        with pd.option_context(
+            "display.max_rows", tmp.shape[0], "display.max_columns", tmp.shape[1]
+        ):
             return display(tmp)
 
 
@@ -439,7 +440,10 @@ class ColumnStatistics:
         """
         if self.column._data.size == 0:
             raise ColumnSizeError("> 0", "0")
-        return self.column._data.value_counts()[self.column.statistics.mode()] / self.column._data.count()
+        return (
+            self.column._data.value_counts()[self.column.statistics.mode()]
+            / self.column._data.count()
+        )
 
     def idness(self) -> float:
         """

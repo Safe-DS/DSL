@@ -3,7 +3,6 @@ from typing import Any
 
 import pandas as pd
 from IPython.core.display_functions import DisplayHandle, display
-
 from safe_ds.exceptions import UnknownColumnNameError
 
 from ._table_schema import TableSchema
@@ -94,5 +93,7 @@ class Row:
         tmp = self._data.to_frame().T
         tmp.columns = self.get_column_names()
 
-        with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
+        with pd.option_context(
+            "display.max_rows", tmp.shape[0], "display.max_columns", tmp.shape[1]
+        ):
             return display(tmp)

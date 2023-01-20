@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Callable, Optional, Union
 
 import pandas as pd
-from IPython.core.display_functions import display, DisplayHandle
+from IPython.core.display_functions import DisplayHandle, display
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
@@ -15,8 +15,9 @@ from safe_ds.exceptions import (
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
     MissingSchemaError,
+    NonNumericColumnError,
     SchemaMismatchError,
-    UnknownColumnNameError, NonNumericColumnError,
+    UnknownColumnNameError,
 )
 
 from ._column import Column
@@ -728,7 +729,7 @@ class Table:
                 "standard deviation": column.statistics.standard_deviation,
                 "idness": column.statistics.idness,
                 "stability": column.statistics.stability,
-                "row count": column.count
+                "row count": column.count,
             }
             values = []
 
@@ -779,7 +780,9 @@ class Table:
         tmp = self._data.copy(deep=True)
         tmp.columns = self.get_column_names()
 
-        with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
+        with pd.option_context(
+            "display.max_rows", tmp.shape[0], "display.max_columns", tmp.shape[1]
+        ):
             return display(tmp)
 
     def slice(
