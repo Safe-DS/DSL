@@ -10,5 +10,5 @@ def test_get_column_names() -> None:
 
 
 def test_get_column_names_empty() -> None:
-    table = Table(pd.DataFrame())
+    table = Table(pd.DataFrame(), TableSchema({}))
     assert table.get_column_names() == []
