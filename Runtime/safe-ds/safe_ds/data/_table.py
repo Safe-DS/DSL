@@ -242,7 +242,7 @@ class Table:
 
     def get_column(self, column_name: str) -> Column:
         """
-        Returns a new instance of Column with the data of the described column of the Table.
+        Returns a new instance of column with the data of the described column of the Table.
 
         Parameters
         ----------
@@ -626,12 +626,13 @@ class Table:
         - (col1.name < col2.name),
     ) -> Table:
         """
-        Sort a Table with the given lambda function.
+        Sort a table with the given lambda function.
         If no function is given the columns will be sorted alphabetically.
-        This function uses bubble sort.
+        This function uses the default python sort algorithm.
         The query should return:
-            TRUE if both columns should be switched
-            FALSE if the columns should not be switched
+            0, if both columns are equal
+            < 0, if the first column should be ordered after the second column
+            > 0, if the first column should be ordered before the second column
 
         Parameters
         ----------
