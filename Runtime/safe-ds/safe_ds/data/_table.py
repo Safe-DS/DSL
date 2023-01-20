@@ -558,12 +558,39 @@ class Table:
                 cols.append(self.get_column(column_name))
         return cols
 
+    def sort_columns(self, query: Callable[[Column, Column], bool] = lambda col1, col2: col1.name > col2.name) -> Table:
+        """
+        Sort a Table with the given lambda function
+        This function uses bubble sort.
+        The query should return:
+            TRUE if both columns should be switched
+            FALSE if the columns should not be switched
+
+        Parameters
+        ----------
+        query: a lambda function
+            a lambda function that is used to sort the columns
+
+        Returns
+        -------
+        new_table: Table
+            a new table with the sorted columns
+        """
+        columns = self.to_columns()
+        for iteration in range(len(columns) - 1):
+            for element in range(0, len(columns) - iteration - 1):
+                if query(columns[element], columns[element + 1]):
+                    c = columns[element]
+                    columns[element] = columns[element + 1]
+                    columns[element + 1] = c
+        return Table.from_columns(columns)
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
         if self is other:
             return True
-        return self._data.equals(other._data) and self.schema == other.schema
+        return self.sort_columns()._data.equals(other.sort_columns()._data) and self.sort_columns().schema == other.sort_columns().schema
 
     def __hash__(self) -> int:
         return hash(self._data)
