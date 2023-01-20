@@ -206,7 +206,8 @@ class Table:
         data_to_csv.to_csv(path_to_file, index=False)
 
     def rename_column(self, old_name: str, new_name: str) -> Table:
-        """Rename a single column by providing the previous name and the future name of it.
+        """
+        Rename a single column by providing the previous name and the future name of it.
 
         Parameters
         ----------
@@ -239,7 +240,8 @@ class Table:
         return Table(new_df.rename(columns={old_name: new_name}))
 
     def get_column(self, column_name: str) -> Column:
-        """Returns a new instance of Column with the data of the described column of the Table.
+        """
+        Returns a new instance of Column with the data of the described column of the Table.
 
         Parameters
         ----------
@@ -267,7 +269,8 @@ class Table:
         raise UnknownColumnNameError([column_name])
 
     def drop_columns(self, column_names: list[str]) -> Table:
-        """Returns a Table without the given columns
+        """
+        Returns a Table without the given columns
 
         Parameters
         ----------
@@ -300,7 +303,8 @@ class Table:
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
-        """Returns a Table with exactly the given columns
+        """
+        Returns a Table with exactly the given columns
 
         Parameters
         ----------
@@ -346,7 +350,8 @@ class Table:
         ]
 
     def filter_rows(self, query: Callable[[Row], bool]) -> Table:
-        """Returns a Table with rows filtered by applied lambda function
+        """
+        Returns a Table with rows filtered by applied lambda function
 
         Parameters
         ----------
@@ -560,7 +565,8 @@ class Table:
 
     def sort_columns(self, query: Callable[[Column, Column], bool] = lambda col1, col2: col1.name > col2.name) -> Table:
         """
-        Sort a Table with the given lambda function
+        Sort a Table with the given lambda function.
+        If no function is given the columns will be sorted alphabetically.
         This function uses bubble sort.
         The query should return:
             TRUE if both columns should be switched
