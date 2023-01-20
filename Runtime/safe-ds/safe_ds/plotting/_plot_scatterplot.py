@@ -23,7 +23,11 @@ def plot_scatterplot(table: Table, x: str, y: str) -> None:
     if not table.has_column(y):
         raise UnknownColumnNameError([y])
 
-    ax = sns.scatterplot(data=table._data, x=table.schema._get_column_index_by_name(x), y=table.schema._get_column_index_by_name(y))
+    ax = sns.scatterplot(
+        data=table._data,
+        x=table.schema._get_column_index_by_name(x),
+        y=table.schema._get_column_index_by_name(y),
+    )
     ax.set(xlabel=x, ylabel=y)
     ax.set_xticks(ax.get_xticks())
     ax.set_xticklabels(
