@@ -617,7 +617,11 @@ class Table:
                 cols.append(self.get_column(column_name))
         return cols
 
-    def sort_columns(self, query: Callable[[Column, Column], bool] = lambda col1, col2: col1.name > col2.name) -> Table:
+    def sort_columns(
+        self,
+        query: Callable[[Column, Column], bool] = lambda col1, col2: col1.name
+        > col2.name,
+    ) -> Table:
         """
         Sort a Table with the given lambda function.
         If no function is given the columns will be sorted alphabetically.
@@ -650,7 +654,10 @@ class Table:
             return NotImplemented
         if self is other:
             return True
-        return self.sort_columns()._data.equals(other.sort_columns()._data) and self.sort_columns().schema == other.sort_columns().schema
+        return (
+            self.sort_columns()._data.equals(other.sort_columns()._data)
+            and self.sort_columns().schema == other.sort_columns().schema
+        )
 
     def __hash__(self) -> int:
         return hash(self._data)
