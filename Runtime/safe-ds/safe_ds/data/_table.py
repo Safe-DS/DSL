@@ -550,17 +550,18 @@ class Table:
 
         Returns
         -------
-        new_table: Table
+        result: Table
             A new table which combines the original table and the given rows
         """
         if isinstance(rows, Table):
             rows = rows.to_rows()
-        new_table = self
+        result = self._data
         for row in rows:
             if self.schema != row.schema:
                 raise SchemaMismatchError()
-            new_table = new_table.add_row(row)
-        return new_table
+            result = result.append(row._data, ignore_index=True)
+        result.columns = self.schema.get_column_names()
+        return Table(result)
 
     def has_column(self, column_name: str) -> bool:
         """
