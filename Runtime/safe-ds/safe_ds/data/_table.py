@@ -5,6 +5,7 @@ import os.path
 import typing
 from pathlib import Path
 from typing import Callable, Optional, Union
+from scipy import stats
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -666,6 +667,31 @@ class Table:
         columns = self.to_columns()
         columns.sort(key=functools.cmp_to_key(query))
         return Table.from_columns(columns)
+
+    def remove_outliers(self) -> Table:
+        """
+        Removes all rows from the table that contain at least one outlier defined as having a value that is more than 3
+        standard deviations removed from the column average.
+
+        Returns
+        -------
+        new_table: Table
+            a new table where the outliers have been removed
+        """
+        result = self._data.copy(deep=True)
+        table_without_nonnumericals = Table.from_columns(self.list_columns_with_non_numerical_values())
+
+        #result = result[
+        #    (
+        #        pd.DataFrame(
+        #            stats.zscore(result)
+        #        ).apply(abs) < 3).all(axis=1)
+        #]
+
+        print(  pd.DataFrame(stats.zscore(result)).apply(abs)   )
+
+
+        return Table(result)
 
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
