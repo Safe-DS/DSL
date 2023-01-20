@@ -1,7 +1,7 @@
 import numpy as np
 
 import pandas as pd
-from safe_ds.data import Row, Table, TableSchema, ColumnType
+from safe_ds.data import Row, TableSchema, ColumnType
 
 
 def test_get_column_names() -> None:
@@ -16,4 +16,4 @@ def test_get_column_names() -> None:
 
 def test_get_column_names_empty() -> None:
     row = Row(pd.Series(data=[]), TableSchema({}))
-    assert row.get_column_names() == []
+    assert not row.get_column_names()

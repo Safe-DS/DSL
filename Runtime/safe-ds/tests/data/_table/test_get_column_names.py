@@ -1,7 +1,5 @@
 import pandas as pd
-from _pytest.python_api import raises
-from safe_ds.data import IntColumnType, Row, StringColumnType, Table, TableSchema
-from safe_ds.exceptions import SchemaMismatchError
+from safe_ds.data import Table, TableSchema
 
 
 def test_get_column_names() -> None:
@@ -11,4 +9,4 @@ def test_get_column_names() -> None:
 
 def test_get_column_names_empty() -> None:
     table = Table(pd.DataFrame(), TableSchema({}))
-    assert table.get_column_names() == []
+    assert not table.get_column_names()

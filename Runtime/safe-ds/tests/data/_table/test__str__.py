@@ -1,8 +1,5 @@
 import pandas as pd
-from IPython.core.display_functions import display
-from _pytest.python_api import raises
-from safe_ds.data import IntColumnType, Row, StringColumnType, Table, TableSchema
-from safe_ds.exceptions import SchemaMismatchError
+from safe_ds.data import Row, Table
 
 
 def test_add_row_valid() -> None:

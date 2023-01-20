@@ -19,7 +19,7 @@ from safe_ds.exceptions import (
     UnknownColumnNameError, NonNumericColumnError,
 )
 
-from ._column import Column, ColumnStatistics
+from ._column import Column
 from ._row import Row
 from ._table_schema import TableSchema
 
@@ -641,14 +641,14 @@ class Table:
     def get_column_names(self) -> list[str]:
         """
         Get a list of the ordered column names
-        
+
         Returns
         -------
         result: list[str]
             Order Column names
         """
         return list(self.schema._schema.keys())
-        
+
     def sort_columns(
         self,
         query: Callable[[Column, Column], int] = lambda col1, col2: (
@@ -678,15 +678,6 @@ class Table:
         columns = self.to_columns()
         columns.sort(key=functools.cmp_to_key(query))
         return Table.from_columns(columns)
-
-    def __eq__(self, other: typing.Any) -> bool:
-        if not isinstance(other, Table):
-            return NotImplemented
-        if self is other:
-            return True
-        table1 = self.sort_columns()
-        table2 = other.sort_columns()
-        return table1._data.equals(table2._data) and table1.schema == table2.schema
 
     def transform_column(
         self, name: str, transformer: Callable[[Row], typing.Any]
@@ -759,7 +750,9 @@ class Table:
             return NotImplemented
         if self is other:
             return True
-        return self._data.equals(other._data) and self.schema == other.schema
+        table1 = self.sort_columns()
+        table2 = other.sort_columns()
+        return table1._data.equals(table2._data) and table1.schema == table2.schema
 
     def __hash__(self) -> int:
         return hash(self._data)
@@ -788,7 +781,7 @@ class Table:
 
         with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
             return display(tmp)
-            
+
     def slice(
         self,
         start: typing.Optional[int] = None,

@@ -1,7 +1,5 @@
 import pandas as pd
-from _pytest.python_api import raises
-from safe_ds.data import IntColumnType, Row, StringColumnType, Table, TableSchema
-from safe_ds.exceptions import SchemaMismatchError
+from safe_ds.data import Table
 
 
 def test_summary() -> None:
