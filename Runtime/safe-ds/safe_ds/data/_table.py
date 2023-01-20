@@ -271,7 +271,7 @@ class Table:
 
     def drop_columns(self, column_names: list[str]) -> Table:
         """
-        Returns a Table without the given columns
+        Returns a table without the given columns
 
         Parameters
         ----------
@@ -305,7 +305,7 @@ class Table:
 
     def keep_columns(self, column_names: list[str]) -> Table:
         """
-        Returns a Table with exactly the given columns
+        Returns a table with exactly the given columns
 
         Parameters
         ----------
@@ -352,7 +352,7 @@ class Table:
 
     def filter_rows(self, query: Callable[[Row], bool]) -> Table:
         """
-        Returns a Table with rows filtered by applied lambda function
+        Returns a table with rows filtered by applied lambda function
 
         Parameters
         ----------
