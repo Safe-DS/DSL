@@ -535,7 +535,7 @@ class Table:
         """
         if self.schema != row.schema:
             raise SchemaMismatchError()
-        new_df = self._data.append(row._data, ignore_index=True)
+        new_df = pd.concat([self._data, row._data.to_frame().T]).infer_objects()
         new_df.columns = self.schema.get_column_names()
         return Table(new_df)
 
@@ -559,7 +559,7 @@ class Table:
         for row in rows:
             if self.schema != row.schema:
                 raise SchemaMismatchError()
-            result = result.append(row._data, ignore_index=True)
+        result = pd.concat([result, *[row._data.to_frame().T for row in rows]]).infer_objects()
         result.columns = self.schema.get_column_names()
         return Table(result)
 
