@@ -4,9 +4,9 @@ from safe_ds.data import Column, Table
 from safe_ds.exceptions import UnknownColumnNameError
 
 
-def plot_scatterplot(table: Table, x: str, y: str) -> None:
+def plot_lineplot(table: Table, x: str, y: str) -> None:
     """
-    Plot two columns against each other in a scatterplot.
+    Plot two columns against each other in a lineplot.
 
     Parameters
     ----------
@@ -23,7 +23,7 @@ def plot_scatterplot(table: Table, x: str, y: str) -> None:
     if not table.has_column(y):
         raise UnknownColumnNameError([y])
 
-    ax = sns.scatterplot(data=table._data, x=table.schema._get_column_index_by_name(x), y=table.schema._get_column_index_by_name(y))
+    ax = sns.lineplot(data=table._data, x=table.schema._get_column_index_by_name(x), y=table.schema._get_column_index_by_name(y))
     ax.set(xlabel=x, ylabel=y)
     ax.set_xticks(ax.get_xticks())
     ax.set_xticklabels(
