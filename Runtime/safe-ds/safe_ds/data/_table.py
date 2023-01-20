@@ -242,7 +242,7 @@ class Table:
 
     def get_column(self, column_name: str) -> Column:
         """
-        Returns a new instance of column with the data of the described column of the Table.
+        Returns a new instance of column with the data of the described column of the table.
 
         Parameters
         ----------
