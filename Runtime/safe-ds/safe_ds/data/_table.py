@@ -646,7 +646,7 @@ class Table:
         Parameters
         -------
         percentage_in_first : float
-            the size of the first returned table in percantge to the given Table
+            the size of the first returned table in percentage to the given Table
 
         Returns
         -------
