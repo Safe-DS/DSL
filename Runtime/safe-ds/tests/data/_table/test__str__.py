@@ -10,9 +10,4 @@ def test_add_row_valid() -> None:
     row = Row(pd.Series(data=[5, 6]), table1.schema)
 
     table1 = table1.add_row(row)
-
-    pd.set_option('display.max_rows', table1._data.shape[0])
-    display(table1)
-
-    assert 1 == 0
     assert table1.schema == row.schema

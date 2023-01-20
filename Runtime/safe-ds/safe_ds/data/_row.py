@@ -2,6 +2,8 @@ import typing
 from typing import Any
 
 import pandas as pd
+from IPython.core.display_functions import DisplayHandle, display
+
 from safe_ds.exceptions import UnknownColumnNameError
 
 from ._table_schema import TableSchema
@@ -49,6 +51,17 @@ class Row:
         """
         return self.schema.has_column(column_name)
 
+    def get_column_names(self) -> list[str]:
+        """
+        Get a list of the ordered column names
+
+        Returns
+        -------
+        result: list[str]
+            Order Column names
+        """
+        return list(self.schema._schema.keys())
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Row):
             return NotImplemented
@@ -58,3 +71,28 @@ class Row:
 
     def __hash__(self) -> int:
         return hash(self._data)
+
+    def __str__(self) -> str:
+        tmp = self._data.to_frame().T
+        tmp.columns = self.get_column_names()
+        return tmp.__str__()
+
+    def __repr__(self) -> str:
+        tmp = self._data.to_frame().T
+        tmp.columns = self.get_column_names()
+        return tmp.__repr__()
+
+    def _ipython_display_(self) -> DisplayHandle:
+        """
+        Returns a pretty display object for the Row to be used in Jupyter Notebooks
+
+        Returns
+        -------
+        output: DisplayHandle
+            Output object
+        """
+        tmp = self._data.to_frame().T
+        tmp.columns = self.get_column_names()
+
+        with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
+            return display(tmp)

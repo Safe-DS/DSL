@@ -14,10 +14,10 @@ from safe_ds.exceptions import (
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
     SchemaMismatchError,
-    UnknownColumnNameError,
+    UnknownColumnNameError, NonNumericColumnError,
 )
 
-from ._column import Column
+from ._column import Column, ColumnStatistics
 from ._row import Row
 from ._table_schema import TableSchema
 
@@ -561,35 +561,15 @@ class Table:
         return cols
 
     def get_column_names(self) -> list[str]:
-        return list(self.schema._schema.keys())
-
-    def __eq__(self, other: typing.Any) -> bool:
-        if not isinstance(other, Table):
-            return NotImplemented
-        if self is other:
-            return True
-        return self._data.equals(other._data) and self.schema == other.schema
-
-    def __hash__(self) -> int:
-        return hash(self._data)
-
-    def __str__(self) -> str:
         """
-        Returns a pretty print String for the Table
+        Get a list of the ordered column names
 
         Returns
         -------
-        output_string: str
-            the pretty String
+        result: list[str]
+            Order Column names
         """
-        return self._data.__str__()
-
-    def __repr__(self) -> DisplayHandle:
-        tmp = self._data.copy(deep=True)
-        tmp.columns = self.get_column_names()
-
-        with pd.option_context('display.max_rows', tmp.shape[0]):
-            return display(tmp)
+        return list(self.schema._schema.keys())
 
     def transform_column(
         self, name: str, transformer: Callable[[Row], typing.Any]
@@ -613,3 +593,81 @@ class Table:
             result: Column = Column(pd.Series(items), name)
             return self.replace_column(name, result)
         raise UnknownColumnNameError([name])
+
+    def summary(self) -> Table:
+        """
+        Returns a Table with a number of statistical key values for a table
+
+        Returns
+        -------
+        result: Table
+            Table with statistics
+        """
+
+        columns = self.to_columns()
+        result = pd.DataFrame()
+        statistics = {}
+
+        for column in columns:
+            statistics = {
+                "max": column.statistics.max,
+                "min": column.statistics.min,
+                "mean": column.statistics.mean,
+                "mode": column.statistics.mode,
+                "median": column.statistics.median,
+                "sum": column.statistics.sum,
+                "variance": column.statistics.variance,
+                "standard deviation": column.statistics.standard_deviation,
+                "idness": column.statistics.idness,
+                "stability": column.statistics.stability,
+                "row count": column.count
+            }
+            values = []
+
+            for function in statistics.values():
+                try:
+                    values.append(function())
+                except NonNumericColumnError:
+                    values.append("-")
+
+            result = pd.concat([result, pd.DataFrame(values)], axis=1)
+
+        result = pd.concat([pd.DataFrame(list(statistics.keys())), result], axis=1)
+        result.columns = [""] + self.get_column_names()
+
+        return Table(result)
+
+    def __eq__(self, other: typing.Any) -> bool:
+        if not isinstance(other, Table):
+            return NotImplemented
+        if self is other:
+            return True
+        return self._data.equals(other._data) and self.schema == other.schema
+
+    def __hash__(self) -> int:
+        return hash(self._data)
+
+    def __repr__(self) -> str:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+        return tmp.__repr__()
+
+    def __str__(self) -> str:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+        return tmp.__str__()
+
+    def _ipython_display_(self) -> DisplayHandle:
+        """
+        Returns a pretty display object for the Table to be used in Jupyter Notebooks
+
+        Returns
+        -------
+        output: DisplayHandle
+            Output object
+        """
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+
+        with pd.option_context('display.max_rows', tmp.shape[0], 'display.max_columns', tmp.shape[1]):
+            return display(tmp)
