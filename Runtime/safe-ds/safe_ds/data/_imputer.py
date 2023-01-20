@@ -71,7 +71,7 @@ class Imputer:
     def __init__(self, strategy: ImputerStrategy):
         self._imp = SimpleImputer()
         strategy._augment_imputer(self._imp)
-        self.column_names = None
+        self.column_names = []
 
     def fit(self, table: Table, column_names: Optional[list[str]] = None) -> None:
         """
@@ -86,6 +86,7 @@ class Imputer:
         """
         if column_names is None:
             column_names = table.schema.get_column_names()
+
         self.column_names = column_names
         indices = [table.schema._get_column_index_by_name(name) for name in self.column_names]
         self._imp.fit(table._data[indices])
