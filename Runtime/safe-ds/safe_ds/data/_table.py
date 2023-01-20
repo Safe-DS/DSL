@@ -620,7 +620,10 @@ class Table:
 
     def sort_columns(
         self,
-        query: Callable[[Column, Column], int] = lambda col1, col2: (col1.name > col2.name) - (col1.name < col2.name),
+        query: Callable[[Column, Column], int] = lambda col1, col2: (
+            col1.name > col2.name
+        )
+        - (col1.name < col2.name),
     ) -> Table:
         """
         Sort a Table with the given lambda function.
@@ -651,10 +654,7 @@ class Table:
             return True
         table1 = self.sort_columns()
         table2 = other.sort_columns()
-        return (
-            table1._data.equals(table2._data)
-            and table1.schema == table2.schema
-        )
+        return table1._data.equals(table2._data) and table1.schema == table2.schema
 
     def __hash__(self) -> int:
         return hash(self._data)

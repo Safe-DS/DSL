@@ -7,7 +7,16 @@ from safe_ds.data import Column, Table
 
 @pytest.mark.parametrize(
     "query, col1, col2, col3, col4",
-    [(None, 0, 1, 2, 3), (lambda col1, col2: (col1.name < col2.name) - (col1.name > col2.name), 3, 2, 1, 0)],
+    [
+        (None, 0, 1, 2, 3),
+        (
+            lambda col1, col2: (col1.name < col2.name) - (col1.name > col2.name),
+            3,
+            2,
+            1,
+            0,
+        ),
+    ],
 )
 def test_sort_columns_valid(
     query: Callable[[Column, Column], int], col1: int, col2: int, col3: int, col4: int
