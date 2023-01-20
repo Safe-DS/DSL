@@ -501,15 +501,22 @@ class Table:
 
         Returns
         -------
-        new_table: Table
+        result: Table
             A new table which combines the original table and the given columns
         """
         if isinstance(columns, Table):
             columns = columns.to_columns()
-        new_table = self
+        result = self._data.copy()
+        result.columns = self.schema.get_column_names()
         for column in columns:
-            new_table = new_table.add_column(column)
-        return new_table
+            if column.name in result.columns:
+                raise DuplicateColumnNameError(column.name)
+
+            if column._data.size != self.count_rows():
+                raise ColumnSizeError(str(self.count_rows()), str(column._data.size))
+
+            result[column.name] = column._data
+        return Table(result)
 
     def add_row(self, row: Row) -> Table:
         """
@@ -551,6 +558,8 @@ class Table:
             rows = rows.to_rows()
         new_table = self
         for row in rows:
+            if self.schema != row.schema:
+                raise SchemaMismatchError()
             new_table = new_table.add_row(row)
         return new_table
 
