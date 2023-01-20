@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from safe_ds.data import Column, Table
+from safe_ds.data import Table
 from safe_ds.exceptions import UnknownColumnNameError
 
 
