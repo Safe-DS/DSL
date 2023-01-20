@@ -591,7 +591,12 @@ class Table:
             return self.replace_column(name, result)
         raise UnknownColumnNameError([name])
 
-    def slice(self, start: typing.Optional[int] = None, end: typing.Optional[int] = None, step: int = 1) -> Table:
+    def slice(
+        self,
+        start: typing.Optional[int] = None,
+        end: typing.Optional[int] = None,
+        step: int = 1,
+    ) -> Table:
         """
         slices the Table into a new Table
 
@@ -621,7 +626,13 @@ class Table:
         if end is None:
             end = self.count_rows()
 
-        if start < 0 or end < 0 or start >= self.count_rows() or end > self.count_rows() or end < start:
+        if (
+            start < 0
+            or end < 0
+            or start >= self.count_rows()
+            or end > self.count_rows()
+            or end < start
+        ):
             raise ValueError("the given index is out of bounds")
 
         new_df = self._data.iloc[start:end:step]
@@ -646,8 +657,10 @@ class Table:
         """
         if percentage_in_first <= 0 or percentage_in_first >= 1:
             raise ValueError("the given percentage is not in range")
-        return (self.slice(0, round(percentage_in_first * self.count_rows())),
-                self.slice(round(percentage_in_first * self.count_rows())))
+        return (
+            self.slice(0, round(percentage_in_first * self.count_rows())),
+            self.slice(round(percentage_in_first * self.count_rows())),
+        )
 
     def shuffle(self) -> Table:
         """
