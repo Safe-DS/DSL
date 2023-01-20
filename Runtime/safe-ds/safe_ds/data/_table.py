@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import os.path
 import typing
 from pathlib import Path
@@ -619,8 +620,7 @@ class Table:
 
     def sort_columns(
         self,
-        query: Callable[[Column, Column], bool] = lambda col1, col2: col1.name
-        > col2.name,
+        query: Callable[[Column, Column], int] = lambda col1, col2: (col1.name > col2.name) - (col1.name < col2.name),
     ) -> Table:
         """
         Sort a Table with the given lambda function.
@@ -641,12 +641,7 @@ class Table:
             a new table with the sorted columns
         """
         columns = self.to_columns()
-        for iteration in range(len(columns) - 1):
-            for element in range(0, len(columns) - iteration - 1):
-                if query(columns[element], columns[element + 1]):
-                    c = columns[element]
-                    columns[element] = columns[element + 1]
-                    columns[element + 1] = c
+        columns.sort(key=functools.cmp_to_key(query))
         return Table.from_columns(columns)
 
     def __eq__(self, other: typing.Any) -> bool:
@@ -654,9 +649,11 @@ class Table:
             return NotImplemented
         if self is other:
             return True
+        table1 = self.sort_columns()
+        table2 = other.sort_columns()
         return (
-            self.sort_columns()._data.equals(other.sort_columns()._data)
-            and self.sort_columns().schema == other.sort_columns().schema
+            table1._data.equals(table2._data)
+            and table1.schema == table2.schema
         )
 
     def __hash__(self) -> int:
