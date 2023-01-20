@@ -83,7 +83,7 @@ class SchemaMismatchError(Exception):
 
 class MissingSchemaError(Exception):
     """
-    Exception raised when a required Schema is missing.
+    Exception raised when a required schema is missing.
     """
 
     def __init__(self) -> None:

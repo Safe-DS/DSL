@@ -33,9 +33,9 @@ class Table:
         data: typing.Iterable
             the data you want to save in the table
         schema: TableSchema
-            the Schema for the table
-            None be default, if None the Schema will be provided by the data that is given
-            If a Schema is set there is no check if this schema is compatible with the data!
+            the schema for the table
+            None by default, if None the schema will be provided by the data that is given
+            If a schema is set, there is no check if this schema is compatible with the data!
         """
         self._data: pd.Dataframe = (
             data if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
