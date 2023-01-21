@@ -125,7 +125,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:dataframe:0.9.1")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.1")
     testImplementation("org.eclipse.xtext:org.eclipse.xtext.testing:$xtextVersion")
     testImplementation("org.eclipse.xtext:org.eclipse.xtext.xbase.testing:$xtextVersion")
