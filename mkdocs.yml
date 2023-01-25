@@ -1,4 +1,6 @@
 site_name: Safe-DS
+repo_url: https://github.com/lars-reimann/Safe-DS
+repo_name: Safe-DS
 
 theme:
   name: material
