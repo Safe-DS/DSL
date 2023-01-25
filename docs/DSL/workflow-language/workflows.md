@@ -13,9 +13,10 @@ workflow predictSpeed {}
 ```
 
 This declaration of a workflow has the following syntactic elements:
-* The keyword `workflow`.
-* The name of the workflow, here `predictSpeed`, which can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of workflows.
-* The body of the workflow, which contains the [statements][statements] that should be run when the workflow is executed. The body is delimited by curly braces. In this example, the body is empty, so running this workflow does nothing.
+
+- The keyword `workflow`.
+- The name of the workflow, here `predictSpeed`, which can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of workflows.
+- The body of the workflow, which contains the [statements][statements] that should be run when the workflow is executed. The body is delimited by curly braces. In this example, the body is empty, so running this workflow does nothing.
 
 ### Statements
 
