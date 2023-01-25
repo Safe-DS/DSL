@@ -99,39 +99,8 @@ private fun createPackageDocumentation(
 
     appendLine("# Package `$packageName`")
 
-    // Table of contents
     if (annotations.isNotEmpty() || classes.isNotEmpty() || enums.isNotEmpty() || globalFunctions.isNotEmpty()) {
-        appendLine("\n## Table of Contents\n")
-
-        if (classes.isNotEmpty()) {
-            appendLine("* Classes")
-            classes.forEach {
-                appendLine("  * [`${it.name}`](#class-${it.name})")
-            }
-        }
-
-        if (globalFunctions.isNotEmpty()) {
-            appendLine("* Global functions")
-            globalFunctions.forEach {
-                appendLine("  * [`${it.name}`](#global-function-${it.name})")
-            }
-        }
-
-        if (enums.isNotEmpty()) {
-            appendLine("* Enums")
-            enums.forEach {
-                appendLine("  * [`${it.name}`](#enum-${it.name})")
-            }
-        }
-
-        if (enums.isNotEmpty()) {
-            appendLine("* Annotations")
-            annotations.forEach {
-                appendLine("  * [`${it.name}`](#annotation-${it.name})")
-            }
-        }
-
-        appendLine("\n$horizontalRule\n")
+        appendLine()
     }
 
     // Classes
