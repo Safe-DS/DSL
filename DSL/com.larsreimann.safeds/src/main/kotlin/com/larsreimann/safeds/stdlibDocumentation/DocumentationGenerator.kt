@@ -177,7 +177,7 @@ private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildStri
     }
 
     // Targets
-    appendLine("\n**Valid targets:**")
+    appendLine("\n**Valid targets:**\n")
     val validTargets = annotation
         .validTargets()
         .sortedBy { it.name }
@@ -233,7 +233,7 @@ private fun createClassDocumentation(`class`: SdsClass, nestingLevel: Int): Stri
 
     // Attributes
     if (attributes.isNotEmpty()) {
-        appendLine("**Attributes:**")
+        appendLine("**Attributes:**\n")
         attributes.forEach {
             append(createAttributeDocumentation(it))
         }
@@ -262,7 +262,7 @@ private fun createConstructorDocumentation(`class`: SdsClass) = buildString {
     } else if (`class`.parametersOrEmpty().isEmpty()) {
         appendLine("**Constructor parameters:** _None expected._")
     } else {
-        appendLine("**Constructor parameters:**")
+        appendLine("**Constructor parameters:**\n")
         `class`.parametersOrEmpty().forEach {
             appendLine(createParameterDocumentation(it))
         }
@@ -329,7 +329,7 @@ private fun createParametersDocumentation(parameters: List<SdsParameter>) = buil
     if (parameters.isEmpty()) {
         appendLine("**Parameters:** _None expected._")
     } else {
-        appendLine("**Parameters:**")
+        appendLine("**Parameters:**\n")
         parameters.forEach {
             appendLine(createParameterDocumentation(it))
         }
@@ -365,7 +365,7 @@ private fun createResultsDocumentation(result: List<SdsResult>) = buildString {
     if (result.isEmpty()) {
         appendLine("**Results:** _None returned._")
     } else {
-        appendLine("**Results:**")
+        appendLine("**Results:**\n")
         result.forEach {
             appendLine(createResultDocumentation(it))
         }
