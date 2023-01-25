@@ -13,10 +13,12 @@ class Stack<T>(vararg initialElements: T) {
 ```
 
 The [class][classes] is called `Stack` and has a single [type parameter][type-parameters], which is supposed to the denote the [type][types] of the elements of the stack. With its [constructor], we can specify the initial elements of the stack. Moreover, two [methods][methods] are defined on the stack:
+
 * `push` is supposed to add a new element to the top of the stack.
 * `pop` is supposed to remove and return the topmost element of the stack.
 
 We will now try to answer the following two questions:
+
 1. If `A` is a subclass of `B`, can we assign `Stack<A>` to `Stack<B>`?
 2. If `B` is a subclass of `A`, can we assign `Stack<A>` to `Stack<B>`?
 
@@ -69,7 +71,7 @@ The following table sums up the syntax of [declaration-site variance][declaratio
 | Desired Variance | Declaration Site | Use Site   |
 |------------------|------------------|------------|
 | Invariant        | `class Stack<T>` | `Stack<T>` |
-|Covariant|`class Stack<out T>`|`Stack<out T>`
+|Covariant|`class Stack<out T>`|`Stack<out T>`|
 |Contravariant|`class Stack<in T>`|`Stack<in T>`|
 
 [types]: types.md

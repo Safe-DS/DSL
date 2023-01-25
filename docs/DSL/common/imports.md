@@ -13,6 +13,7 @@ import safeds.model.regression.DecisionTree
 ```
 
 The syntax consists of the following parts:
+
 * The keyword `import`
 * The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
 
@@ -31,6 +32,7 @@ import safeds.model.regression.DecisionTree as StdlibDecisionTree
 ```
 
 Let us take apart the syntax:
+
 * The keyword `import`.
 * The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
 * The keyword `as`.
@@ -53,6 +55,7 @@ import safeds.model.regression.*
 ```
 
 Here is the breakdown of the syntax:
+
 * The keyword `import`.
 * The name of the [package][packages] to import (here `safeds.model.regression`).
 * A dot.

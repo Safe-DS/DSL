@@ -68,6 +68,7 @@ When we use this [class][classes] as a named type, we need to specify the value 
 In the case of positional type arguments, they are mapped to [type parameters][type-parameters] by position, i.e. the first type argument is assigned to the first [type parameter][type-parameters], the second type argument is assigned to the second [type parameter][type-parameters] and so forth.
 
 If a positional type argument is used, we just write down its value. The value is either
+
 * a [type projection](#type-projection), or
 * a [star projection](#star-projection).
 
@@ -78,6 +79,7 @@ SomeSpecialList<Int>
 ```
 
 Let us break down the syntax:
+
 * The usual named type (here `SomeSpecialList`).
 * Opening angle bracket.
 * A positional type argument (here `Int`).
@@ -90,6 +92,7 @@ SomeSpecialList<T = Int>
 ```
 
 These are the syntactic elements:
+
 * The usual named type (here `SomeSpecialList`).
 * Opening angle bracket.
 * A named type argument (here `T = Int`). This in turn consists of
@@ -164,6 +167,7 @@ SomeSpecialList<*>
 It consists only of the `*`, which we use as the value of the type argument.
 
 The star projection is usually equivalent to the type projections
+
 * `out Any?` (`Any?` is the supertype of everything), or
 * `in Nothing` (`Nothing` is the subtype of everything).
 
@@ -190,6 +194,7 @@ SomeOuterClass.SomeInnerClass
 ```
 
 This has the following syntactic elements:
+
 * Name of the outer [class][classes] (here `SomeOuterClass`).
 * A dot.
 * Name of the inner [class][classes] (here `SomeInnerClass`).
@@ -248,6 +253,7 @@ SomeEnum.SomeEnumVariant
 ```
 
 Let us take apart the syntax:
+
 * The name of the [enum][enums] (here `SomeEnum`).
 * A dot.
 * The name of the [enum variant][variants] (here `SomeEnumVariant`).
@@ -276,6 +282,7 @@ union<String, Int>
 ```
 
 Here is a breakdown of the syntax:
+
 * The keyword `union`.
 * An opening angle bracket.
 * A list of types, which are separated by commas. A trailing comma is allowed.
@@ -300,6 +307,7 @@ Additionally, a callable types specifies the names and types of parameters and r
 ```
 
 Let us break down the syntax:
+
 * A pair of parentheses, which is the list of expected [parameters][parameters].
 * An arrow `->`.
 * A pair of parentheses, which is the list of expected [results][results].
@@ -311,6 +319,7 @@ We can now add some expected [parameters][parameters]:
 ```
 
 These are the syntactic elements:
+
 * [Parameters][parameters] are written in the first pair of parentheses.
 * For each [parameter][parameters], specify:
   * Its name.
@@ -325,6 +334,7 @@ Finally, we can add some expected [results][results]:
 ```
 
 The syntax is reminiscent of the notation for [parameters][parameters]:
+
 * [Results][results] are written in the second pair of parentheses.
 * For each [result][results], specify:
   * Its name.
@@ -391,11 +401,13 @@ Callable[<list of parameter types>, <result type>]
 ```
 
 To get the `<list of parameter types>`, simply
+
 1. convert the types of the parameters to their Python syntax,
 2. separate them all by commas,
 3. surround them by square brackets.
 
 Getting the `<result type`> depends on the number of results. If there is only a single result, simply write down its type. If there are multiple types, do this instead:
+
 1. convert the types of the results to their Python syntax,
 2. separate them all by commas,
 3. add the prefix `Tuple[`,

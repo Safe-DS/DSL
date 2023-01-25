@@ -13,6 +13,7 @@ annotation OnlyForExperts
 ```
 
 This declaration of an annotation has the following syntactic elements:
+
 * The keyword `annotation`.
 * The name of the annotation, here `OnlyForExperts`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `UpperCamelCase` for the names of annotations.
 
@@ -62,6 +63,7 @@ class VerySpecificMLModel
 ```
 
 Here is a breakdown of the syntax:
+
 * An `@`.
 * The name of the called annotation (here `OnlyForExperts`).
 

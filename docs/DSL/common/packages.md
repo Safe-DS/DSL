@@ -7,6 +7,7 @@ package de.unibonn.speedPrediction
 ```
 
 It has these syntactic elements:
+
 * The keyword `package`.
 * The name of the package, which consists of multiple _segments_ separated by dots. Each segment can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for all segments. We also recommend to use the [reverse domain name notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) for the package name.
 
@@ -97,6 +98,7 @@ Generally, this method is preferable to our initial solution in the Section ["Fi
 ### `@PythonModule` Annotation
 
 Choosing the Safe-DS package according to the rules described above is essential for code generation to work properly. However, we might sometimes get warnings related to the Safe-DS naming convention, which wants the segments of the Safe-DS package to be `lowerCamelCase`. We now have several options:
+
 * If the declaration is not part of the Safe-DS standard library, we can ignore the warning.
 * We can update the Python code.
 * We can use the `@PythonModule` annotation.
@@ -134,6 +136,7 @@ class DecisionTree()
 ```
 
 Here is a breakdown of this:
+
 * We [call][annotation-calls] the `@PythonModule` [annotation][annotations] before we declare the Safe-DS package. The [Python module][python-modules] that exports the Python declarations that correspond to the Safe-DS declarations in this stub file is passed as a [string literal][string-literals] (here `safeds.model.regression._decision_tree`). This is used only for code generation and does not affect users of Safe-DS.
 * We specify the Safe-DS package as usual. This must be used when we [import][imports] the declaration in another Safe-DS file:
     ```txt

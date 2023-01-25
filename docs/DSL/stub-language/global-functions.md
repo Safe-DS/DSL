@@ -5,6 +5,7 @@ In order to use a method of a [class][classes] we first must get hold of an inst
 ## Defining a Global Function
 
 The syntax to define a global function is as follows:
+
 * The keyword `fun`
 * The name of the function ("loadDataset" in the following example)
 * The list of _parameters_ (inputs) enclosed in parentheses and separated by commas (`(name: String)` in the following snippet). For each parameter we list the name of the parameter followed by a colon and its type.

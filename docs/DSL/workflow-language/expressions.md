@@ -13,6 +13,7 @@ Int literals denote integers. They use the expected syntax. For example, the int
 ### Float Literals
 
 Float literals denote floating point numbers. There are two ways to specify them:
+
 * **Decimal form**: One half can be written as `0.5`. Note that neither the integer part nor the decimal part can be omitted, so `.5` and `0.` are syntax errors.
 * **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Safe-DS as `1.0e-3` or `1.0E-3`. You can read this as `1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `1e-3` or `1E-3`.
 
@@ -60,10 +61,12 @@ Operations are special functions that can be applied to one or two expressions. 
 ### Operations on Numbers
 
 Numbers can be negated using the unary `-` operator:
+
 * The integer negative three is `-3`.
 * The float negative three is `-3.0`.
 
 The usual arithmetic operations are also supported for integers, floats and combinations of the two. Note that when either operand is a float, the whole expression is evaluated to a float.
+
 * Addition: `0 + 5` (result is an integer)
 * Subtraction: `6 - 2.9` (result is a float)
 * Multiplication: `1.1 * 3` (result is a float)
@@ -81,23 +84,23 @@ Finally, two numbers can be compared, which results in a boolean. The integer `3
 To work with logic, Safe-DS has the two boolean literals `false` and `true` as well as operations to work with them:
 * (Logical) **negation** (example `not a`): Output is `true` if and only if the operand is false:
 
-`not a` | false | true
---------|-------|------
-&nbsp;  | true  | false
+| `not a` | false | true  |
+|---------|-------|-------|
+| &nbsp;  | true  | false |
 
 * **Conjunction** (example `a and b`): Output is `true` if and only if both operands are `true`. Note that the second operand is always evaluated, even if the first operand is `false` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
-`a and b` | false | true
-----------|-------|------
-**false** | false | false
-**true**  | false | true
+| `a and b` | false | true  |
+|-----------|-------|-------|
+| **false** | false | false |
+| **true**  | false | true  |
 
 * **Disjunction** (example `a or b`): Output is `true` if and only if at least one operand is `true`. Note that the second operand is always evaluated, even if the first operand is `true` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
-`a or b`  | false | true
-----------|-------|-----
-**false** | false | true
-**true**  | true  | true
+| `a or b`  | false | true |
+|-----------|-------|------|
+| **false** | false | true |
+| **true**  | true  | true |
 
 ### Equality Checks
 
@@ -163,6 +166,7 @@ createDecisionTree()
 This calls the [step][steps] `createDecisionTree`, using the default `maxDepth` of `10`.
 
 The syntax consists of these elements:
+
 * The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [step][steps] `createDecisionTree`)
 * The list of arguments, which is delimited by parentheses. In this case the list is empty, so no arguments are passed.
 
@@ -183,6 +187,7 @@ createDecisionTree(maxDepth = 5)
 ```
 
 These are the syntactic elements:
+
 * The name of the parameter for which we want to specify a value.
 * An equals sign.
 * The value to assign to the parameter.
@@ -208,6 +213,7 @@ We have already seen the syntax for a single argument. If we want to pass multip
 ### Restrictions For Arguments
 
 There are some restriction regarding the choice of positional vs. named arguments and passing arguments in general:
+
 * For all [parameters][parameters] of the callee there must be at most one argument.
 * For all [required parameters][required-parameters] there must be exactly one argument.
 * After a named argument all arguments must be named.
@@ -216,20 +222,21 @@ There are some restriction regarding the choice of positional vs. named argument
 
 Depending on the callee, a call can do different things. The following table lists all legal callees and what happens if they are called:
 
-| Callee                              | Meaning                                                                                                                        |
-|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| [Class][classes]                    | Create a new instance of the class. The class must have a constructor to be callable. The call evaluates to this new instance. |
-| [Enum Variant][enum-variants]       | Creates a new instance of the enum variant. Enum variants are always callable. The call evaluates to this new instance.        |
-| [Global Function][global-functions] | Invokes the function and runs the associated Python code. The call evaluates to the result record of the function.             |
-| [Method][methods]                   | Invokes the method and runs the associated Python code. The call evaluates to the result record of the method.                 |
-|[Step][steps]|Invokes the step and runs the Safe-DS code in its body. The call evaluates to the result record of the step.||
-|[Block Lambda](#block-lambdas)|Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.||
-|[Expression Lambda](#expression-lambdas)|Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.||
-|Declaration with [Callable Type][callable-types]|Call whatever the value of the declaration is.
+| Callee                                           | Meaning                                                                                                                        |
+|--------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| [Class][classes]                                 | Create a new instance of the class. The class must have a constructor to be callable. The call evaluates to this new instance. |
+| [Enum Variant][enum-variants]                    | Creates a new instance of the enum variant. Enum variants are always callable. The call evaluates to this new instance.        |
+| [Global Function][global-functions]              | Invokes the function and runs the associated Python code. The call evaluates to the result record of the function.             |
+| [Method][methods]                                | Invokes the method and runs the associated Python code. The call evaluates to the result record of the method.                 |
+| [Step][steps]                                    | Invokes the step and runs the Safe-DS code in its body. The call evaluates to the result record of the step.                   ||
+| [Block Lambda](#block-lambdas)                   | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               ||
+| [Expression Lambda](#expression-lambdas)         | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               ||
+| Declaration with [Callable Type][callable-types] | Call whatever the value of the declaration is.                                                                                 |
 
 #### Result Record
 
 The term _result record_ warrants further explanation: A result record maps [results][results] of a
+
 * [global function][global-functions],
 * [method][methods],
 * [step][steps], or
@@ -242,6 +249,7 @@ If the result record only has a single entry, its value can be accessed directly
 ## Member Accesses
 
 A member access is used to refer to members of a complex data structure such as
+
 * a [class][classes],
 * an [enum][enums], or
 * the [result record](#result-record) of a [call](#calls).
@@ -278,6 +286,7 @@ DecisionTree.verboseTraining
 ```
 
 These are the syntactic elements of this member access:
+
 * The receiver, which is the name of the class (here `DecisionTree`)
 * A dot.
 * The name of the static member of the class (here `verboseTraining`)
@@ -293,6 +302,7 @@ DecisionTree().maxDepth
 ```
 
 We now take apart the syntax again:
+
 * The receiver, here a [call](#calls) of the constructor of the class `DecisionTree`. This creates an instance of this class.
 * A dot.
 * The name of the instance member (here `maxDepth`).
@@ -329,6 +339,7 @@ SvmKernel.Linear
 ```
 
 These are the elements of the syntax:
+
 * The receiver, which is the name of the [enum][enums] (here `SvmKernel`).
 * A dot.
 * The name of the [variant][enum-variants] (here `Linear`).
@@ -352,6 +363,7 @@ divideWithRemainder(12, 5).remainder
 ```
 
 Here are the syntactic elements:
+
 * The receiver, which is a [call](#calls).
 * A dot.
 * The name of the result (here `remainder`).
@@ -395,6 +407,7 @@ step printFirst(vararg values: Int) {
 ```
 
 These are the elements of the syntax:
+
 * The name of the variadic parameter (here `values`).
 * An opening square bracket.
 * The index, which is an expression that evaluates to an integer. The first element has index 0.
@@ -425,6 +438,7 @@ step myStep(vararg regressions: LinearRegression) {
 This step is called `myStep` and has a [variadic parameter][variadic-parameters] `regressions` of type `LinearRegression`. This means we can pass an arbitrary number of instances of `LinearRegression` to the step when we [call](#calls) it.
 
 In the body of the step we then
+
 1. access the first instance that was pass using an [indexed access](#indexed-accesses),
 2. access the instance method `drawAsGraph` of this instance using a [member access](#member-accesses),
 3. [call](#calls) this method.
@@ -492,6 +506,7 @@ intListOf(1, 4, 11).filter(
 ```
 
 These are the syntactic elements:
+
 * A list of [parameters][parameters], which is enclosed in parentheses. Individual parameters are separated by commas.
 * An arrow `->`.
 * The expression that should be returned.

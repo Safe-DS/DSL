@@ -1,10 +1,12 @@
 # Statements
 
 Statements are used in the [workflow language][workflow-language] to run a specific action. Safe-DS supports only two type of statements, namely
+
 * [expression statements](#expression-statements), which are used to evaluate an expression exactly once and discard any results, and
 * [assignments](#assignments), which also evaluate an expression exactly once, but can then [assign selected results to placeholders](#declaring-placeholders) or [assign them to own results](#yielding-results).
 
 Other types of statements such as
+
 * if-statements to conditionally execute code or
 * while-statements to repeatedly execute code
 
@@ -19,6 +21,7 @@ print("Hello, world!");
 ```
 
 As we can see here, an expression statement has the following syntactic elements:
+
 * The [expression][expressions] to evaluate.
 * A semicolon at the end.
 
@@ -72,6 +75,7 @@ step trulyRandomInt() -> result: Int {
 ```
 
 The assignment here has the following syntactic elements:
+
 * The keyword `yield`, which indicates that we want to assign to a result.
 * The name of the result, here `greeting`. This must be identical to one of the names of a declared result in the header of the step.
 * An `=` sign.
@@ -89,6 +93,7 @@ Similar syntax is used to yield results of [block lambdas][block-lambdas]. The d
 ```
 
 The assignment here has the following syntactic elements:
+
 * The keyword `yield`, which indicates that we want to declare a result.
 * The name of the result, here `result`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of results.
 * An `=` sign.
@@ -124,7 +129,6 @@ Let us sum up the complete syntax of an assignment:
 * An `=` sign.
 * The expression to evaluate (right-hand side).
 * A semicolon at the end.
-
 
 **There must be at most as many assignees on the left-hand side as the right-hand side has results.** For everything but calls this means only a single assignee can be specified. For calls it depends on the number of declared [results][results] of the callee.
 

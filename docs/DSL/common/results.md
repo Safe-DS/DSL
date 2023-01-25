@@ -7,6 +7,7 @@ result: Int
 ```
 
 Here is a breakdown of the syntax:
+
 * The name of the result (here `result`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
 * A colon.
 * The [type][types] of the parameter (here `Int`).
@@ -22,6 +23,7 @@ step doSomething() -> (result1: Int, result2: Boolean) {
 ```
 
 The interesting part is the list of results, which uses the following syntactic elements:
+
 * An arrow `->`.
 * An opening parenthesis.
 * A list of results, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
