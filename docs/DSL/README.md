@@ -7,4 +7,4 @@ The Safe-DS DSL is split into two main parts:
 
 [workflow-language]: workflow-language/README.md
 [stub-language]: stub-language/README.md
-[stdlib]: ../../DSL/com.larsreimann.safeds/src/main/resources/stdlib
+[stdlib]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/resources/stdlib

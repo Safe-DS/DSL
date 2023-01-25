@@ -40,10 +40,10 @@
 1. Merge the pull request into main.
 1. Create a release on GitHub.
 
-[main-build-gradle]: ../../DSL/build.gradle.kts
+[main-build-gradle]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/build.gradle.kts
 
-[vscode-package-json]: ../../DSL/com.larsreimann.safeds.vscode/package.json
+[vscode-package-json]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/DSL/com.larsreimann.safeds.vscode/package.json
 
-[stdlib-pyproject-toml]: ../../Runtime/safe-ds/pyproject.toml
+[stdlib-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/Runtime/safe-ds/pyproject.toml
 
-[runner-pyproject-toml]: ../../Runtime/safe-ds-runner/pyproject.toml
+[runner-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/Runtime/safe-ds-runner/pyproject.toml
