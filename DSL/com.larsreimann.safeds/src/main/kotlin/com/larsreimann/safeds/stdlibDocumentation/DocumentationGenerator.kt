@@ -72,7 +72,7 @@ private fun createReadme(outputDirectory: Path, packagesToDeclarations: Map<Stri
             |
             |$autogenWarning
             |
-        """.trimMargin()
+        """.trimMargin(),
     )
 }
 
@@ -90,7 +90,7 @@ private fun createPackageFile(outputDirectory: Path, packageName: String, global
 
 private fun createPackageDocumentation(
     packageName: String,
-    globalDeclarations: List<EObject>
+    globalDeclarations: List<EObject>,
 ) = buildString {
     val classes = globalDeclarations.filterIsInstance<SdsClass>().sortedBy { it.name }
     val globalFunctions = globalDeclarations.filterIsInstance<SdsFunction>().sortedBy { it.name }
@@ -133,7 +133,6 @@ private fun createPackageDocumentation(
 }
 
 private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildString {
-
     // Heading
     appendLine("## <a name=\"annotation-${annotation.name}\"></a>Annotation `${annotation.name}`")
 
@@ -157,7 +156,6 @@ private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildStri
 }
 
 private fun createAttributeDocumentation(attribute: SdsAttribute) = buildString {
-
     // Remember description before annotation calls are removed
     val description = attribute.descriptionOrAltText()
 
@@ -258,7 +256,6 @@ private fun createEnumDocumentation(enum: SdsEnum, nestingLevel: Int) = buildStr
 }
 
 private fun createEnumVariantDocumentation(enumVariant: SdsEnumVariant, nestingLevel: Int) = buildString {
-
     // Heading
     appendLine("${heading(nestingLevel)} Enum Variant `${enumVariant.name}`")
 
@@ -274,7 +271,6 @@ private fun SdsAbstractDeclaration.descriptionOrAltText(): String {
 }
 
 private fun createFunctionDocumentation(function: SdsFunction, nestingLevel: Int, isGlobalFunction: Boolean) = buildString {
-
     // Heading
     if (isGlobalFunction) {
         appendLine("## <a name=\"global-function-${function.name}\"></a>Global Function `${function.name}`")
@@ -306,7 +302,6 @@ private fun createParametersDocumentation(parameters: List<SdsParameter>) = buil
 }
 
 private fun createParameterDocumentation(parameter: SdsParameter) = buildString {
-
     // Remember description before annotation calls are removed
     val description = parameter.descriptionOrAltText()
 
@@ -342,7 +337,6 @@ private fun createResultsDocumentation(result: List<SdsResult>) = buildString {
 }
 
 private fun createResultDocumentation(result: SdsResult) = buildString {
-
     // Remember description before annotation calls are removed
     val description = result.descriptionOrAltText()
 

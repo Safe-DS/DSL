@@ -6,9 +6,9 @@ An enumeration is a datatype that can take a fixed, finite set of values. The [R
 
 The syntax to declare an enumeration is as follows:
 
-* The keyword `enum`.
-* The name of the enumeration.
-* A list of the _instances_, i. e. the valid values of the enumeration enclosed in curly braces and separated by commas.
+- The keyword `enum`.
+- The name of the enumeration.
+- A list of the _instances_, i. e. the valid values of the enumeration enclosed in curly braces and separated by commas.
 
 Coming back to the ridge solver example from the introduction, we would implement this in Safe-DS as follows, so that only the seven specified values are valid instances of the datatype.
 

@@ -14,14 +14,15 @@ step loadMovieRatingsSample() {}
 
 This declaration of a step has the following syntactic elements:
 
-* The keyword `step`.
-* The name of the step, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of steps.
-* The list of parameters (i.e. inputs) of the step. This is delimited by parentheses. In the example above, the step has no parameters.
-* The _body_ of the step, which contains the [statements][statements] that should be run when the step is [called](#calling-a-step). The body is delimited by curly braces. In this example, the body is empty, so running this step does nothing.
+- The keyword `step`.
+- The name of the step, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of steps.
+- The list of parameters (i.e. inputs) of the step. This is delimited by parentheses. In the example above, the step has no parameters.
+- The _body_ of the step, which contains the [statements][statements] that should be run when the step is [called](#calling-a-step). The body is delimited by curly braces. In this example, the body is empty, so running this step does nothing.
 
 ### Parameters
 
 To make a step configurable, add [parameters][parameters] (inputs). We will first show how to [declare parameters](#parameter-declaration) and afterwards how to [refer to them](#references-to-parameters) in the body of the step.
+
 #### Parameter Declaration
 
 Parameters must be declared in the header of the step so [callers](#calling-a-step) know they are expected to pass them as an argument, and so we can [use them](#references-to-parameters) in the body of the step.
@@ -79,7 +80,6 @@ More information about the declaration of results can be found in the [linked do
 #### Assigning to Results
 
 Currently, the program will not compile since we never assigned a value to these results. This can be done with an [assignment][assignments] and the `yield` keyword:
-
 
 ```txt
 step loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {

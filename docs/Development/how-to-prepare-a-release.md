@@ -12,7 +12,7 @@
     ```json5
     {
         // ...
-        "version": "1.0.0",
+        version: '1.0.0',
         // ...
     }
     ```
@@ -41,9 +41,6 @@
 1. Create a release on GitHub.
 
 [main-build-gradle]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/build.gradle.kts
-
 [vscode-package-json]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds.vscode/package.json
-
 [stdlib-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/Runtime/safe-ds/pyproject.toml
-
 [runner-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/Runtime/safe-ds-runner/pyproject.toml
