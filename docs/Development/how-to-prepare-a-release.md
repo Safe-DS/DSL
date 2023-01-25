@@ -42,8 +42,8 @@
 
 [main-build-gradle]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/build.gradle.kts
 
-[vscode-package-json]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/DSL/com.larsreimann.safeds.vscode/package.json
+[vscode-package-json]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds.vscode/package.json
 
-[stdlib-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/Runtime/safe-ds/pyproject.toml
+[stdlib-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/Runtime/safe-ds/pyproject.toml
 
-[runner-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/Runtime/safe-ds-runner/pyproject.toml
+[runner-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/Runtime/safe-ds-runner/pyproject.toml
