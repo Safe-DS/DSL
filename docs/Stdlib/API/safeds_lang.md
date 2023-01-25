@@ -1,32 +1,5 @@
 # Package `safeds.lang`
 
-## Table of Contents
-
-* Classes
-  * [`Any`](#class-Any)
-  * [`Boolean`](#class-Boolean)
-  * [`Float`](#class-Float)
-  * [`Int`](#class-Int)
-  * [`Nothing`](#class-Nothing)
-  * [`Number`](#class-Number)
-  * [`String`](#class-String)
-* Enums
-  * [`AnnotationTarget`](#enum-AnnotationTarget)
-* Annotations
-  * [`Constant`](#annotation-Constant)
-  * [`Deprecated`](#annotation-Deprecated)
-  * [`Description`](#annotation-Description)
-  * [`Expert`](#annotation-Expert)
-  * [`NoSideEffects`](#annotation-NoSideEffects)
-  * [`Pure`](#annotation-Pure)
-  * [`PythonModule`](#annotation-PythonModule)
-  * [`PythonName`](#annotation-PythonName)
-  * [`Repeatable`](#annotation-Repeatable)
-  * [`Since`](#annotation-Since)
-  * [`Target`](#annotation-Target)
-
-----------
-
 ## <a name="class-Any"></a>Class `Any`
 The common superclass of all classes.
 
@@ -160,18 +133,21 @@ The annotation can be called on workflows.
 Values assigned to this parameter must be constant.
 
 **Valid targets:**
+
 * Parameter
 
 ## <a name="annotation-Deprecated"></a>Annotation `Deprecated`
 The declaration should no longer be used.
 
 **Parameters:**
+
 * `alternative: String? = null` - What to use instead.
 * `reason: String? = null` - Why the declaration was deprecated.
 * `sinceVersion: String? = null` - When the declaration was deprecated.
 * `removalVersion: String? = null` - When the declaration will be removed.
 
 **Valid targets:**
+
 * Annotation
 * Attribute
 * Class
@@ -187,9 +163,11 @@ The declaration should no longer be used.
 The purpose of a declaration.
 
 **Parameters:**
+
 * `description: String` - The purpose of a declaration.
 
 **Valid targets:**
+
 * Annotation
 * Attribute
 * Class
@@ -203,40 +181,63 @@ The purpose of a declaration.
 * TypeParameter
 * Workflow
 
+## <a name="annotation-Experimental"></a>Annotation `Experimental`
+The declaration might change without a major version bump.
+
+**Valid targets:**
+
+* Annotation
+* Attribute
+* Class
+* Enum
+* EnumVariant
+* Function
+* Parameter
+* Result
+* Step
+* TypeParameter
+
 ## <a name="annotation-Expert"></a>Annotation `Expert`
 This parameter should only be used by expert users.
 
 **Valid targets:**
+
 * Parameter
 
 ## <a name="annotation-NoSideEffects"></a>Annotation `NoSideEffects`
 The function has no side effects.
 
 **Valid targets:**
+
 * Function
 
 ## <a name="annotation-Pure"></a>Annotation `Pure`
 The function has no side effects and returns the same results for the same arguments.
 
 **Valid targets:**
+
 * Function
 
 ## <a name="annotation-PythonModule"></a>Annotation `PythonModule`
 The qualified name of the corresponding Python module (default is the qualified name of the package).
 
 **Parameters:**
+
 * `qualifiedName: String` - The qualified name of the corresponding Python module.
 
 **Valid targets:**
+
 * CompilationUnit
 
 ## <a name="annotation-PythonName"></a>Annotation `PythonName`
 The name of the corresponding API element in Python (default is the name of the declaration in the stubs).
 
 **Parameters:**
+
 * `name: String` - The name of the corresponding API element in Python.
 
 **Valid targets:**
+
 * Attribute
 * Class
 * Enum
@@ -250,15 +251,18 @@ The name of the corresponding API element in Python (default is the name of the 
 The annotation can be called multiple times for the same declaration.
 
 **Valid targets:**
+
 * Annotation
 
 ## <a name="annotation-Since"></a>Annotation `Since`
 The version in which a declaration was added.
 
 **Parameters:**
+
 * `version: String` - The version in which a declaration was added.
 
 **Valid targets:**
+
 * Annotation
 * Attribute
 * Class
@@ -276,9 +280,11 @@ The version in which a declaration was added.
 The annotation can target these declaration types. If the @Target annotation is not used any declaration type can be targeted.
 
 **Parameters:**
+
 * `vararg targets: AnnotationTarget` - The valid targets.
 
 **Valid targets:**
+
 * Annotation
 
 ----------
