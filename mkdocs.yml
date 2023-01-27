@@ -8,6 +8,7 @@ nav:
       - Language: DSL/README.md
       - Standard Library: Stdlib/API/README.md
   - Python Library:
+      - Code Reference: reference/
       - Classification:
           - Metrics:
               - Stdlib/python/classification/metrics/accuracy.md
@@ -102,6 +103,12 @@ plugins:
           options:
             docstring_style: numpy
             show_if_no_docstring: true
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
   - autorefs
   - search
 
