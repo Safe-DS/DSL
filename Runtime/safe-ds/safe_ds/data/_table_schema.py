@@ -74,6 +74,7 @@ class TableSchema:
 
         Returns
         -------
+       index : int
             The index of the column.
         """
 
