@@ -98,6 +98,9 @@ plugins:
         python:
           paths:
             - Runtime/safe-ds
+          options:
+            docstring_style: numpy
+            show_if_no_docstring: true
   - autorefs
   - search
 
