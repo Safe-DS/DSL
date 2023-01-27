@@ -18,13 +18,13 @@ def test_fit_transform_valid() -> None:
                      ))
     oe = OrdinalEncoder(["kalt", "warm", "heiss"])
     test_table = oe.fit_transform(test_table, ["temperatur", "temperatur_2"])
-    assert test_table.schema.get_column_names() == saved_table.schema.get_column_names()
+    assert test_table.schema.get_column_names() == check_table.schema.get_column_names()
     assert isinstance(test_table.schema.get_type_of_column("temperatur"), IntColumnType)
     assert isinstance(test_table.schema.get_type_of_column("temperatur_2"), IntColumnType)
     assert test_table == check_table
 
 
-def test_fit_transform_inavlid() -> None:
+def test_fit_transform_invalid() -> None:
     oe = OrdinalEncoder(["test", "test"])
     test_table = Table(
         pd.DataFrame({"temperatur": ["warm", "kalt", "kalt", "warm", "heiss"],
@@ -32,4 +32,4 @@ def test_fit_transform_inavlid() -> None:
                       "temperatur_2": ["kalt", "kalt", "warm", "warm", "kalt"]}
                      ))
     with pytest.raises(NotFittedError):
-        oe.transform(test_table, ["test"])
+        oe.transform(test_table, "test")

@@ -6,12 +6,12 @@ from sklearn import preprocessing
 # noinspection PyProtectedMember
 class OrdinalEncoder:
     """
-    This LabelEncoder encodes one or more given columns into labels.
+    This OrdinalEncoder encodes one or more given columns into ordinal numbers. The encoding order must be provided.
 
     Parameters
     --------
         order : list[str]
-            The order in which the ordinal encoder encodes
+            The order in which the ordinal encoder encodes the values
     """
 
     def __init__(self, order: list[str]) -> None:
@@ -30,8 +30,6 @@ class OrdinalEncoder:
 
         column : str
             The list of columns which should be label encoded
-
-
 
         Returns
         -------
@@ -79,8 +77,8 @@ class OrdinalEncoder:
 
     def fit_transform(self, table: Table, columns: list[str]) -> Table:
         """
-        oridnal encodes a given Table with the given oridinal encoder
-        it will take the order from the OrdinalEncoder Objekt and does not overrite the order for multiple encodings at once
+        oridnal-encodes a given table with the given ordinal encoder
+        The order is provided in the constructor, a new order will not be inferred from other columns.
 
         Parameters
         ----------
@@ -103,5 +101,31 @@ class OrdinalEncoder:
                 # transform the column using the trained Ordinal Encoder
                 table = self.transform(table, col)
             return table
+        except exceptions.NotFittedError as exc:
+            raise exceptions.NotFittedError from exc
+
+    def inverse_transform(self, table: Table, column: str) -> Table:
+        """
+        Inverse the transformed table back to original encodings.
+
+        Parameters
+        ----------
+            table:  The table to be inverse transformed.
+            column: The list of columns which should be ordinal-encoded
+
+        Returns
+        -------
+            table: inverse transformed table.
+
+        Raises
+        -------
+            NotFittedError if the encoder wasn't fitted before transforming.
+        """
+
+        p_df = table._data.copy()
+        p_df.columns = table.schema.get_column_names()
+        try:
+            p_df[[column]] = self.oe.inverse_transform(p_df[[column]])
+            return Table(p_df)
         except exceptions.NotFittedError as exc:
             raise exceptions.NotFittedError from exc
