@@ -17,7 +17,7 @@ class ColumnType(ABC):
         Return whether the given column type is numeric.
         Returns
         -------
-        : bool
+        is_numeric : bool
             True if the column is numeric.
         """
         return False
