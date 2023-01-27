@@ -1,4 +1,4 @@
-## Machine Learning Tutorial
+# Machine Learning Tutorial
 
 Here is a short introduction to train and predict with a machine learning model in safe-ds.
 
