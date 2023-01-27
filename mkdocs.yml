@@ -13,7 +13,7 @@ nav:
       - Stdlib/python/row.md
   - Developer Guide: Development/README.md
 
-# Configuration of Material for MkDocs -----------------------------------------
+# Configuration of MkDocs & Material for MkDocs --------------------------------
 
 theme:
   name: material
@@ -46,6 +46,9 @@ plugins:
             - Runtime/safe-ds
   - autorefs
   - search
+
+watch:
+  - Runtime/safe-ds
 
 markdown_extensions:
 
