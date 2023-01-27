@@ -70,7 +70,7 @@ class LabelEncoder:
 
          Returns
          -------
-         : Table
+         result : Table
              Table with normalized encodings.
 
          Raises
