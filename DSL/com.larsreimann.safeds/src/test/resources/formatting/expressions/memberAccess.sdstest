@@ -1,11 +1,11 @@
-workflow myWorkflow {
+pipeline myPipeline {
     a     .          member;
     a   ?   .    member;
 }
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     a.member;
     a?.member;
 }

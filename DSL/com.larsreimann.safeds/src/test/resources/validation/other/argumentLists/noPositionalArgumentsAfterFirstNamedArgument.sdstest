@@ -23,7 +23,7 @@ annotation MyAnnotation(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: In
 
 fun f(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
 
-workflow myWorkflow {
+pipeline myPipeline {
     // no_semantic_error "After the first named argument all arguments must be named."
     // no_semantic_error "After the first named argument all arguments must be named."
     // semantic_error "After the first named argument all arguments must be named."

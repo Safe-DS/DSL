@@ -2,7 +2,7 @@ package com.larsreimann.safeds.validation.schema
 
 import com.larsreimann.safeds.emf.statementsOrEmpty
 import com.larsreimann.safeds.safeDS.SafeDSPackage.Literals
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.staticAnalysis.schema.SchemaOwner
 import com.larsreimann.safeds.staticAnalysis.schema.SchemaResult
 import com.larsreimann.safeds.staticAnalysis.schema.inferSchema
@@ -13,10 +13,10 @@ import org.eclipse.xtext.validation.CheckType
 class SchemaChecker : AbstractSafeDSChecker() {
 
     @Check(CheckType.NORMAL)
-    fun value(sdsWorkflow: SdsWorkflow) {
+    fun value(sdsPipeline: SdsPipeline) {
         val resolvedVars = mutableMapOf<SchemaOwner, SchemaResult>()
 
-        for (statement in sdsWorkflow.statementsOrEmpty()) {
+        for (statement in sdsPipeline.statementsOrEmpty()) {
             val resolved = inferSchema(statement, resolvedVars)
 
             resolved.forEach {

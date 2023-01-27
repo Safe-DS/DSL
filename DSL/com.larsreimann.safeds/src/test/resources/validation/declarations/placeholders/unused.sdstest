@@ -14,7 +14,7 @@ step myFunction() {
     val »last« = 1;
 }
 
-workflow myWorkflow1 {
+pipeline myPipeline1 {
     call(unused);
 
     // semantic_warning "This placeholder is unused."
@@ -28,7 +28,7 @@ workflow myWorkflow1 {
     val »last« = 1;
 }
 
-workflow myWorkflow2 {
+pipeline myPipeline2 {
     () {
         call(unused);
 

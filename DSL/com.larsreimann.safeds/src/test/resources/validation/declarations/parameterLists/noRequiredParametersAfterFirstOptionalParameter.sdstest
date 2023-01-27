@@ -33,7 +33,7 @@ fun myFunction1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg �
 fun myFunction2(»a«: Int)
 
 
-workflow myWorkflow {
+pipeline myPipeline {
 
     // no_semantic_error "After the first optional parameter all parameters must be optional."
     (»a«) {};

@@ -3,7 +3,7 @@ package tests.typeComputer.operations.elvis
 fun intOrNull() -> a: Int?
 fun stringOrNull() -> s: String?
 
-workflow elvisWithNonNullableLeftOperand {
+pipeline elvisWithNonNullableLeftOperand {
     1 ?: intOrNull();
     1 ?: 1;
     1 ?: 1.0;
@@ -11,7 +11,7 @@ workflow elvisWithNonNullableLeftOperand {
     1 ?: null;
 }
 
-workflow elvisWithNullableLeftOperand {
+pipeline elvisWithNullableLeftOperand {
     val intOrNullElseIntOrNull = intOrNull() ?: intOrNull();
     val intOrNullElseNull = intOrNull() ?: null;
     val intOrNullElseInt = intOrNull() ?: 1;

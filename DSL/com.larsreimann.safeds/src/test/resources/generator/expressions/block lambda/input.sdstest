@@ -6,10 +6,10 @@ fun f3(param: () -> ())
 
 fun g() -> a: Int
 
-workflow test {
+pipeline test {
     f1((a: Int, b: Int = 2) {
         yield d = g();
-    });    
+    });
     f2((a: Int, vararg c: Int) {
         yield d = g();
     });

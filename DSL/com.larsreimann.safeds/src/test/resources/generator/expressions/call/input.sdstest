@@ -22,11 +22,11 @@ fun h2(
     @PythonName("param_3") vararg param3: Int
 ) -> result: Boolean
 
-workflow test {
+pipeline test {
     f((g1(1, 2)));
-    f((g1(param2 = 1, param1 = 2)));    
+    f((g1(param2 = 1, param1 = 2)));
     f((g2(2, 3, 4)));
     f((h1(1, 2)));
-    f((h1(param2 = 1, param1 = 2)));    
+    f((h1(param2 = 1, param1 = 2)));
     f((h2(2, 3, 4)));
 }

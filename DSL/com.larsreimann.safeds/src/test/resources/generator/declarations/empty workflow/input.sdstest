@@ -1,3 +1,0 @@
-package tests.generator.emptyWorkflow
-
-workflow test {}

@@ -143,14 +143,14 @@ sourceSets {
     main {
         java.srcDirs("emf-gen", "src-gen")
         java.exclude(
-            "**/*.sdsflow",
+            "**/*.sdspipe",
             "**/*.sdsstub",
             "**/*.tokens",
             "**/*.xtextbin",
         )
         resources.srcDirs("src-gen")
         resources.include(
-            "**/*.sdsflow",
+            "**/*.sdspipe",
             "**/*.sdsstub",
             "**/*.tokens",
             "**/*.xtextbin",

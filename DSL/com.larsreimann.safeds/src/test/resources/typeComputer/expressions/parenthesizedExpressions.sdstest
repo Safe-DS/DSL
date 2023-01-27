@@ -1,6 +1,6 @@
 package tests.typeComputer.expressions.parenthesizedExpressions
 
-workflow myWorkflow {
+pipeline myPipeline {
     (1);
     ("");
 }

@@ -9,7 +9,7 @@ fun pureFunction() -> result: Int
 
 // Test data -------------------------------------------------------------------
 
-workflow workflowWithImpureAndPureLambdas {
+pipeline pipelineWithImpureAndPureLambdas {
     val impureBlockLambda = () {
         impureFunction();
     };

@@ -7,7 +7,7 @@ import tests.generator.withPythonModule.function2InCompilationUnitWithPythonModu
 
 fun f(param: Any?)
 
-workflow test {
+pipeline test {
     f(step1InSamePackage());
     f(step1InSamePackage());
     f(step2InSamePackage());

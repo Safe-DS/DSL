@@ -29,8 +29,8 @@ class GeneratorUtilsTest {
         fun `should keep only last segment`() {
             val resource = createSdsDummyResource(
                 "dir/file",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "test")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull().shouldStartWith("file")
@@ -40,8 +40,8 @@ class GeneratorUtilsTest {
         fun `should remove all characters that are not legal in Safe-DS identifiers except spaces`() {
             val resource = createSdsDummyResource(
                 "MyöáúName1",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "MyName1")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "MyName1"),
             )
 
             resource.baseFileNameOrNull() shouldBe "MyName1"
@@ -51,8 +51,8 @@ class GeneratorUtilsTest {
         fun `should replace spaces with underscores`() {
             val resource = createSdsDummyResource(
                 "file with spaces",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "test")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "file_with_spaces"
@@ -62,8 +62,8 @@ class GeneratorUtilsTest {
         fun `should replace twice URL encoded spaces with underscores`() {
             val resource = createSdsDummyResource(
                 "_skip_%2520context%2520same%2520package",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "test")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "_skip__context_same_package"
@@ -73,8 +73,8 @@ class GeneratorUtilsTest {
         fun `should replace dots with underscores`() {
             val resource = createSdsDummyResource(
                 "file.with.dots",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "test")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "file_with_dots"
@@ -84,19 +84,30 @@ class GeneratorUtilsTest {
         fun `should replace dashes with underscores`() {
             val resource = createSdsDummyResource(
                 "file-with-dashes",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "test")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "file_with_dashes"
         }
 
         @Test
-        fun `should remove 'sdsflow' extension`() {
+        fun `should remove 'sdspipe' extension`() {
             val resource = createSdsDummyResource(
                 "file",
-                SdsFileExtension.Flow,
-                createSdsCompilationUnit(packageName = "test")
+                SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test"),
+            )
+
+            resource.baseFileNameOrNull() shouldBe "file"
+        }
+
+        @Test
+        fun `should remove 'sdsschema' extension`() {
+            val resource = createSdsDummyResource(
+                "file",
+                SdsFileExtension.Schema,
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "file"
@@ -107,7 +118,7 @@ class GeneratorUtilsTest {
             val resource = createSdsDummyResource(
                 "file",
                 SdsFileExtension.Stub,
-                createSdsCompilationUnit(packageName = "test")
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "file"
@@ -118,7 +129,7 @@ class GeneratorUtilsTest {
             val resource = createSdsDummyResource(
                 "file",
                 SdsFileExtension.Test,
-                createSdsCompilationUnit(packageName = "test")
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseFileNameOrNull() shouldBe "file"
@@ -148,7 +159,7 @@ class GeneratorUtilsTest {
             val resource = createSdsDummyResource(
                 "file",
                 SdsFileExtension.Test,
-                createSdsCompilationUnit(packageName = "test")
+                createSdsCompilationUnit(packageName = "test"),
             )
 
             resource.baseGeneratedFilePathOrNull() shouldBe "test/gen_file"
@@ -167,7 +178,7 @@ class GeneratorUtilsTest {
             val resource = createSdsDummyResource(
                 "file",
                 SdsFileExtension.Test,
-                SafeDSFactory.eINSTANCE.createSdsCompilationUnit()
+                SafeDSFactory.eINSTANCE.createSdsCompilationUnit(),
             )
 
             resource.baseGeneratedFilePathOrNull().shouldBeNull()
