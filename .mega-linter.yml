@@ -9,3 +9,7 @@ FILTER_REGEX_EXCLUDE: (\.github/workflows/|DSL/com\.larsreimann\.safeds/src/test
 PRE_COMMANDS:
   - command: npm install @lars-reimann/eslint-config @lars-reimann/prettier-config
     cwd: workspace
+
+# Linters
+DISABLE_LINTERS:
+  - MARKDOWN_MARKDOWNLINT
