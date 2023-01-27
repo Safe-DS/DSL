@@ -65,17 +65,17 @@ class TableSchema:
 
     def _get_column_index_by_name(self, column_name: str) -> int:
         """
-        Return the index of the column with specified column name.
+         Return the index of the column with specified column name.
 
-        Parameters
-        ----------
-        column_name : str
-            The name of the column.
+         Parameters
+         ----------
+         column_name : str
+             The name of the column.
 
-        Returns
-        -------
-       index : int
-            The index of the column.
+         Returns
+         -------
+        index : int
+             The index of the column.
         """
 
         return list(self._schema.keys()).index(column_name)
