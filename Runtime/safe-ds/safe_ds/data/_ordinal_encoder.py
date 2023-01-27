@@ -61,7 +61,7 @@ class OrdinalEncoder:
             The name of the column.
         Returns
         -------
-        table: Table
+        table : Table
             The table with ordinal encodings.
 
         Raises
@@ -92,7 +92,7 @@ class OrdinalEncoder:
 
         Returns
         -------
-        table: Table
+        table : Table
             A new Table object which is ordinal-encoded.
 
         Raises
@@ -126,7 +126,7 @@ class OrdinalEncoder:
 
         Returns
         -------
-        table: Table
+        table : Table
             The inverse-transformed table.
 
         Raises
