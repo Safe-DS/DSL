@@ -2,7 +2,7 @@ package validation.expressions.elvis.unnecessaryElvisOperator
 
 fun f() -> result: Any?
 
-workflow test {
+pipeline test {
 
     // semantic_info "The left operand is never null so the elvis operator is unnecessary (keep left operand)."
     »1 ?: 2«;

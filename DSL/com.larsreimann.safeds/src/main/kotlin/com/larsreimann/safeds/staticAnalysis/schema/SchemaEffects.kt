@@ -40,7 +40,7 @@ import java.nio.file.Path
 internal fun inferSchema(
     predicate: SdsPredicate,
     predicateCall: SdsCall,
-    workflowContext: Map<SchemaOwner, SchemaResult>,
+    pipelineContext: Map<SchemaOwner, SchemaResult>,
     localContext: Map<SdsAbstractAssignee, SchemaResult>,
     parmArgPairs: List<ParmArgPairs>,
     valueResultStack: ArrayDeque<List<ArgResult>>,
@@ -48,7 +48,7 @@ internal fun inferSchema(
     val argumentResults = predicateCall.argumentsOrEmpty().map {
         getArgumentValueResult(
             it,
-            workflowContext,
+            pipelineContext,
             localContext,
             parmArgPairs,
             valueResultStack,
@@ -325,7 +325,7 @@ sealed interface ArgResult {
 
 private fun getArgumentValueResult(
     argument: SdsArgument,
-    workflowContext: Map<SchemaOwner, SchemaResult>,
+    pipelineContext: Map<SchemaOwner, SchemaResult>,
     localContext: Map<SdsAbstractAssignee, SchemaResult>,
     parmArgPairs: List<ParmArgPairs>,
     valueResultStack: ArrayDeque<List<ArgResult>>,
@@ -355,7 +355,7 @@ private fun getArgumentValueResult(
 
     val schemaResult = when (val owner = predicateArgToSchemaOwner(argument)) {
         is SchemaOwner.Assignee -> localContext.get(owner.assignee)
-        is SchemaOwner.CurrentCaller -> workflowContext.get(SchemaOwner.CurrentCaller)
+        is SchemaOwner.CurrentCaller -> pipelineContext.get(SchemaOwner.CurrentCaller)
         else -> null
     }
 

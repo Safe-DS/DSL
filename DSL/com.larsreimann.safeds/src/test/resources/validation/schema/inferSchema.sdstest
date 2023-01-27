@@ -60,7 +60,7 @@ class Dataset<CurrentSchema :: $SchemaType> {
     }
 }
 
-workflow myWorkflow {
+pipeline myPipeline {
     val path = "./src/test/resources/schema/dummyData.csv";
 
     /* Read Dataset *******************************************************************************/

@@ -1,7 +1,0 @@
-// no_syntax_error
-
-workflow mySimpleWorkflow {}
-
-@AnnotationUse workflow myComplexWorkflow {
-    val a = 1;
-}

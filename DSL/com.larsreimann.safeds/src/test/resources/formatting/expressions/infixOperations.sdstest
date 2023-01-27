@@ -1,9 +1,9 @@
-workflow myWorkflow {
+pipeline myPipeline {
     true         and    false;
 }
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     true and false;
 }

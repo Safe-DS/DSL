@@ -40,6 +40,7 @@ import com.larsreimann.safeds.safeDS.SdsFunctionBody
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsProtocol
@@ -53,7 +54,6 @@ import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.uniqueOrNull
@@ -310,19 +310,19 @@ fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SdsWorkflow -------------------------------------------------------------------------------------
+// SdsPipeline -------------------------------------------------------------------------------------
 
-fun SdsWorkflow?.placeholdersOrEmpty(): List<SdsPlaceholder> {
+fun SdsPipeline?.placeholdersOrEmpty(): List<SdsPlaceholder> {
     return this.statementsOrEmpty()
         .filterIsInstance<SdsAssignment>()
         .flatMap { it.placeholdersOrEmpty() }
 }
 
-fun SdsWorkflow?.statementsOrEmpty(): List<SdsAbstractStatement> {
+fun SdsPipeline?.statementsOrEmpty(): List<SdsAbstractStatement> {
     return this?.body?.statements.orEmpty()
 }
 
-// SdsWorkflowStep ---------------------------------------------------------------------------------
+// SdsStep -----------------------------------------------------------------------------------------
 
 fun SdsStep?.localVariablesOrEmpty(): List<SdsAbstractLocalVariable> {
     return this.parametersOrEmpty() + this.placeholdersOrEmpty()
@@ -361,8 +361,8 @@ fun EObject.containingEnumOrNull() = this.closestAncestorOrNull<SdsEnum>()
 fun EObject.containingExpressionLambdaOrNull() = this.closestAncestorOrNull<SdsExpressionLambda>()
 fun EObject.containingFunctionOrNull() = this.closestAncestorOrNull<SdsFunction>()
 fun EObject.containingProtocolOrNull() = this.closestAncestorOrNull<SdsProtocol>()
+fun EObject.containingPipelineOrNull() = this.closestAncestorOrNull<SdsPipeline>()
 fun EObject.containingStepOrNull() = this.closestAncestorOrNull<SdsStep>()
-fun EObject.containingWorkflowOrNull() = this.closestAncestorOrNull<SdsWorkflow>()
 
 fun SdsAnnotationCall.targetOrNull(): SdsAbstractDeclaration? {
     return when (val declaration = this.containingDeclarationOrNull() ?: return null) {

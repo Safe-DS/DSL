@@ -1,0 +1,7 @@
+// no_syntax_error
+
+pipeline mySimplePipeline {}
+
+@AnnotationUse pipeline myComplexPipeline {
+    val a = 1;
+}

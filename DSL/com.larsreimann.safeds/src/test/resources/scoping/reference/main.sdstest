@@ -7,7 +7,7 @@ import tests.languageTests.scoping.reference2.globalFunctionInOtherPackage1
 import tests.languageTests.scoping.reference2.internalStepInOtherPackage
 import tests.languageTests.scoping.reference2.privateStepInOtherPackage
 import tests.languageTests.scoping.reference2.stepInOtherPackage1
-import tests.languageTests.scoping.reference2.workflowInOtherPackage1
+import tests.languageTests.scoping.reference2.pipelineInOtherPackage1
 
 annotation AnnotationInSameFile
 
@@ -52,7 +52,7 @@ step stepWithTwoResults() -> (result1: Int, result2: Int) {}
 step internalStepInSameFile() {}
 step privateStepInSameFile() {}
 
-workflow workflowInSameFile {}
+pipeline pipelineInSameFile {}
 
 class SuperClassForOverriding() {
     attr instanceAttributeForOverriding: Int
@@ -171,11 +171,11 @@ step directReferencesToSteps() {
     privateStepInOtherPackage;
 }
 
-step directReferencesToWorkflows() {
-    workflowInSameFile;
-    workflowInSamePackage;
-    workflowInOtherPackage1;
-    workflowInOtherPackage2;
+step directReferencesToPipelines() {
+    pipelineInSameFile;
+    pipelineInSamePackage;
+    pipelineInOtherPackage1;
+    pipelineInOtherPackage2;
 }
 
 step forwardReferences() {

@@ -2,7 +2,7 @@ package tests.generator.constant
 
 fun f(param: Any?)
 
-workflow test {
+pipeline test {
     f(1 < 2);
     f(1.0 - 1.0);
     f(1 + 1);

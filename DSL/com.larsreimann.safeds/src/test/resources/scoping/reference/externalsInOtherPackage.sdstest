@@ -17,5 +17,5 @@ step stepInOtherPackage2() {}
 internal step internalStepInOtherPackage() {}
 private step privateStepInOtherPackage() {}
 
-workflow workflowInOtherPackage1 {}
-workflow workflowInOtherPackage2 {}
+pipeline pipelineInOtherPackage1 {}
+pipeline pipelineInOtherPackage2 {}

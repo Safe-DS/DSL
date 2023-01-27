@@ -1,11 +1,11 @@
-workflow myWorkflow         {
+pipeline myPipeline         {
 val a = 1;  val b = 2;
          val c = 54;
         }
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     val a = 1;
     val b = 2;
     val c = 54;

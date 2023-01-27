@@ -12,7 +12,7 @@ fun functionInSameFile<TYPE_PARAMETER_IN_FUNCTION_IN_SAME_FILE>()
 
 step NOT_A_TYPE_PARAMETER1() {}
 
-workflow workflowForTypeArgument {
+pipeline pipelineForTypeArgument {
     ClassInSameFile<TYPE_PARAMETER_IN_CLASS_IN_SAME_FILE = *>();
     EnumInSameFile.EnumVariantInSameFile<TYPE_PARAMETER_IN_ENUM_VARIANT_IN_SAME_FILE = *>();
     functionInSameFile<TYPE_PARAMETER_IN_FUNCTION_IN_SAME_FILE = *>();

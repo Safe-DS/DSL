@@ -1,13 +1,13 @@
-workflow myWorkflow {
+pipeline myPipeline {
     "template {{
-        
+
         a
-        
+
     }}";
 }
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     "template {{ a }}";
 }

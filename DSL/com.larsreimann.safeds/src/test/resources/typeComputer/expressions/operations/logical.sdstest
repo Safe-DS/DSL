@@ -1,6 +1,6 @@
 package tests.typeComputer.operations.logical
 
-workflow myWorkflow {
+pipeline myPipeline {
     val conjunction = (true and true);
     val disjunction = (true or true);
     val negation = (not true);

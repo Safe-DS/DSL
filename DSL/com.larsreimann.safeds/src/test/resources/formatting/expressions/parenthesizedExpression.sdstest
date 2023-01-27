@@ -1,4 +1,4 @@
-workflow w {
+pipeline myPipeline {
     (  1
     );
     ( true   ) or false;
@@ -10,7 +10,7 @@ workflow w {
 
 // -----------------------------------------------------------------------------
 
-workflow w {
+pipeline myPipeline {
     (1);
     (true) or false;
     not (true);

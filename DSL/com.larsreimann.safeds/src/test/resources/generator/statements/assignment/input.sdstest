@@ -5,7 +5,7 @@ fun f2(param: () -> r: Int?)
 
 fun g() -> (a: Int, b: Int, c: Int)
 
-workflow testFlow {
+pipeline testPipeline {
     _, _ ,_ = g();
     val a, _, _ = g();
     val x = g();

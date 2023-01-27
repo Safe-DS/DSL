@@ -31,7 +31,7 @@ import org.eclipse.xtext.EcoreUtil2
  * visible from here.
  *
  * @return
- * A map of URIs to EObjects (SdsClass, SdsFunction, or SdsWorkflowStep).
+ * A map of URIs to EObjects ([SdsClass], [SdsFunction], or [SdsStep]).
  */
 fun listCallablesWithOnlyPrimitiveParameters(context: EObject): Map<URI, SdsAbstractCallable> {
     return context.allCallables()
@@ -71,11 +71,11 @@ fun listCallablesWithOnlyPrimitiveParameters(context: EObject): Map<URI, SdsAbst
  * must have one matching input port for each.
  *
  * @return
- * A map of URIs to EObjects (SdsClass, SdsFunction, or SdsWorkflowStep).
+ * A map of URIs to EObjects ([SdsClass], [SdsFunction], or [SdsStep]).
  */
 fun listCallablesWithMatchingParameters(
     context: EObject,
-    declarations: List<SdsAbstractDeclaration>
+    declarations: List<SdsAbstractDeclaration>,
 ): Map<URI, SdsAbstractCallable> {
     val requiredTypes = declarations.map { it.type() }
 

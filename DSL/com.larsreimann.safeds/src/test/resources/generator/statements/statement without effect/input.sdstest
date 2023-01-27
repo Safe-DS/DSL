@@ -2,7 +2,7 @@ package tests.generator.statementWithoutEffect
 
 fun f(param: () -> ())
 
-workflow testFlow {
+pipeline testPipeline {
     1;
     _ = 1;
 

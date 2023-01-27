@@ -10,11 +10,11 @@ class ClassWithStaticMembers {
     class InnerClassWithConstructor() {
         static attr myAttribute: Int
     }
-    
+
     class InnerClassWithoutConstructor
 }
 
-workflow test {
+pipeline test {
     // no_semantic_error "Must not statically reference class."
     »ClassWithConstructor«;
     // semantic_error "Must not statically reference class."

@@ -42,7 +42,7 @@ step g(f1: (a: Int, b: Int = 0) -> (), f2: (a: Int) -> (), f3: (vararg a: Int) -
     f3»(1, 2)«;
 }
 
-workflow myWorkflow {
+pipeline myPipeline {
     // semantic_error "Expected between 1 and 2 arguments but got 3."
     MyClass1»(1, 2, 3)«;
     // semantic_error "Expected exactly 1 argument but got 3."

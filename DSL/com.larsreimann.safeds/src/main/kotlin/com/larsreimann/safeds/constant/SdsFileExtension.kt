@@ -1,7 +1,6 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.emf.OriginalFilePath
-import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 
@@ -12,12 +11,12 @@ import org.eclipse.emf.ecore.resource.Resource
 enum class SdsFileExtension(val extension: String) {
 
     /**
-     * Marks the file as a workflow file, which can be executed by our runtime component.
+     * Marks the file as a pipeline file, which can be executed by our runtime component.
      *
-     * @see isInFlowFile
-     * @see isFlowFile
+     * @see isInPipelineFile
+     * @see isPipelineFile
      */
-    Flow("sdsflow"),
+    Pipeline("sdspipe"),
 
     /**
      * Marks the file as a schema file.
@@ -25,7 +24,6 @@ enum class SdsFileExtension(val extension: String) {
      * @see isInSchemaFile
      * @see isSchemaFile
      */
-    @ExperimentalSdsApi
     Schema("sdsschema"),
 
     /**
@@ -43,7 +41,9 @@ enum class SdsFileExtension(val extension: String) {
      * @see isInTestFile
      * @see isTestFile
      */
-    Test("sdstest");
+    Test("sdstest"),
+
+    ;
 
     override fun toString(): String {
         return extension
@@ -51,35 +51,33 @@ enum class SdsFileExtension(val extension: String) {
 }
 
 /**
- * Returns whether the object is contained in flow file.
+ * Returns whether the object is contained in a pipeline file.
  */
-fun EObject.isInFlowFile() = this.eResource().isFlowFile()
+fun EObject.isInPipelineFile() = this.eResource().isPipelineFile()
 
 /**
- * Returns whether the object is contained in schema file.
+ * Returns whether the object is contained in a schema file.
  */
-@ExperimentalSdsApi
 fun EObject.isInSchemaFile() = this.eResource().isSchemaFile()
 
 /**
- * Returns whether the object is contained in stub file.
+ * Returns whether the object is contained in a stub file.
  */
 fun EObject.isInStubFile() = this.eResource().isStubFile()
 
 /**
- * Returns whether the object is contained in test file.
+ * Returns whether the object is contained in a test file.
  */
 fun EObject.isInTestFile() = this.eResource().isTestFile()
 
 /**
- * Returns whether the resource represents a flow file.
+ * Returns whether the resource represents a pipeline file.
  */
-fun Resource.isFlowFile() = this.hasExtension(SdsFileExtension.Flow)
+fun Resource.isPipelineFile() = this.hasExtension(SdsFileExtension.Pipeline)
 
 /**
  * Returns whether the resource represents a schema file.
  */
-@ExperimentalSdsApi
 fun Resource.isSchemaFile() = this.hasExtension(SdsFileExtension.Schema)
 
 /**

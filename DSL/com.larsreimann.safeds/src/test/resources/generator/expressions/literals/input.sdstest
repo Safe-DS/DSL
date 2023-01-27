@@ -2,7 +2,7 @@ package tests.generator.literals
 
 fun f(param: Any?)
 
-workflow test {
+pipeline test {
     f(true);
     f(false);
     f(1.0);

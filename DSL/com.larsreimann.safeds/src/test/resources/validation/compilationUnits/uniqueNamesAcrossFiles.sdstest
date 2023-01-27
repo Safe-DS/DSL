@@ -16,4 +16,4 @@ fun »Any«()
 step »Any«() {}
 
 // semantic_error "A declaration with qualified name 'safeds.lang.Any' exists already."
-workflow »Any« {}
+pipeline »Any« {}

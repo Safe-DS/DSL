@@ -1,6 +1,6 @@
 // no_syntax_error
 
-workflow myWorkflow {
+pipeline myPipeline {
     () {};
 
     (a, vararg b = 1) {

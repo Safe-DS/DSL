@@ -31,8 +31,8 @@ class SafeDSDocumentSymbolKindProvider : DocumentSymbolMapper.DocumentSymbolKind
             Literals.SDS_ENUM -> SymbolKind.Enum
             Literals.SDS_ENUM_VARIANT -> SymbolKind.EnumMember
             Literals.SDS_FUNCTION -> SymbolKind.Function
+            Literals.SDS_PIPELINE -> SymbolKind.Function
             Literals.SDS_STEP -> SymbolKind.Function
-            Literals.SDS_WORKFLOW -> SymbolKind.Function
             else -> null
         }
     }

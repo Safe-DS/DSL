@@ -2,7 +2,7 @@ package tests.typeComputer.assignees.placeholders
 
 fun f(p: Any)
 
-workflow myWorkflow {
+pipeline myPipeline {
     val a = 1;
     val b = "";
 }

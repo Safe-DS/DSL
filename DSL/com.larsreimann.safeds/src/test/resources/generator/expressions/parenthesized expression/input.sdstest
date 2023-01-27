@@ -4,6 +4,6 @@ fun f(param: Any?)
 
 fun g() -> result: Boolean
 
-workflow test {
+pipeline test {
     f((g()));
 }

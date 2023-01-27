@@ -1,9 +1,9 @@
-workflow myWorkflow {
+pipeline myPipeline {
     a     [          1   ];
 }
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     a[1];
 }

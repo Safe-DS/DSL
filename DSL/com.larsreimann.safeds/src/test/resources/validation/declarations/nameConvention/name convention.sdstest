@@ -23,7 +23,7 @@ class »Class_Snake_Case« {
     // no_semantic_warning "Names of attributes should be lowerCamelCase."
     attr »attributeLowercase1«: Int
     // semantic_warning "Names of attributes should be lowerCamelCase."
-    attr »_attributeUnderscore«: Int    
+    attr »_attributeUnderscore«: Int
     // semantic_warning "Names of attributes should be lowerCamelCase."
     attr »attribute_snake_case«: Int
 
@@ -33,7 +33,7 @@ class »Class_Snake_Case« {
         // no_semantic_warning "Names of protocol subterms should be lowerCamelCase."
         subterm »subtermLowercase1« = .;
         // semantic_warning "Names of protocol subterms should be lowerCamelCase."
-        subterm »_subtermUnderscore« = .;    
+        subterm »_subtermUnderscore« = .;
         // semantic_warning "Names of protocol subterms should be lowerCamelCase."
         subterm »subterm_snake_case« = .;
     }
@@ -60,7 +60,7 @@ enum »Enum_Snake_Case« {
         // semantic_warning "Names of type parameters should be UpperCamelCase."
         »typeParameterLowercase1«,
         // semantic_warning "Names of type parameters should be UpperCamelCase."
-        »_typeParameterUnderscore«,    
+        »_typeParameterUnderscore«,
         // semantic_warning "Names of type parameters should be UpperCamelCase."
         »typeParameter_snake_case«
     >
@@ -102,21 +102,21 @@ step »_stepUnderscore«() {}
 // semantic_warning "Names of steps should be lowerCamelCase."
 step »step_snake_case«() {}
 
-// semantic_warning "Names of workflows should be lowerCamelCase."
-workflow »WorkflowUppercase« {}
-// no_semantic_warning "Names of workflows should be lowerCamelCase."
-workflow »workflowLowercase1« {}
-// semantic_warning "Names of workflows should be lowerCamelCase."
-workflow »_workflowUnderscore« {}
-// semantic_warning "Names of workflows should be lowerCamelCase."
-workflow »workflow_snake_case« {
+// semantic_warning "Names of pipelines should be lowerCamelCase."
+pipeline »PipelineUppercase« {}
+// no_semantic_warning "Names of pipelines should be lowerCamelCase."
+pipeline »pipelineLowercase1« {}
+// semantic_warning "Names of pipelines should be lowerCamelCase."
+pipeline »_pipelineUnderscore« {}
+// semantic_warning "Names of pipelines should be lowerCamelCase."
+pipeline »pipeline_snake_case« {
     () {
         // semantic_warning "Names of lambda results should be lowerCamelCase."
         yield »LambdaResultUppercase« = 1;
         // no_semantic_warning "Names of lambda results should be lowerCamelCase."
         yield »lambdaResultLowercase1« = 1;
         // semantic_warning "Names of lambda results should be lowerCamelCase."
-        yield »_lambdaResultUnderscore« = 1;    
+        yield »_lambdaResultUnderscore« = 1;
         // semantic_warning "Names of lambda results should be lowerCamelCase."
         yield »lambdaResult_snake_case« = 1;
     };
@@ -126,7 +126,7 @@ workflow »workflow_snake_case« {
     // no_semantic_warning "Names of placeholders should be lowerCamelCase."
     val »placeholderLowercase1« = 1;
     // semantic_warning "Names of placeholders should be lowerCamelCase."
-    val »_placeholderUnderscore« = 1;    
+    val »_placeholderUnderscore« = 1;
     // semantic_warning "Names of placeholders should be lowerCamelCase."
     val »placeholder_snake_case« = 1;
 }
