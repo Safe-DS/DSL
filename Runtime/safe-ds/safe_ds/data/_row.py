@@ -5,6 +5,7 @@ import pandas as pd
 from IPython.core.display_functions import DisplayHandle, display
 from safe_ds.exceptions import UnknownColumnNameError
 
+from ._column_type import ColumnType
 from ._table_schema import TableSchema
 
 
@@ -36,7 +37,8 @@ class Row:
 
     def has_column(self, column_name: str) -> bool:
         """
-        Returns if the row contains a given column
+        Alias for self.schema.hasColumn(column_name: str) -> bool.
+        Returns if the row contains a given column.
 
         Parameters
         ----------
@@ -52,14 +54,37 @@ class Row:
 
     def get_column_names(self) -> list[str]:
         """
-        Get a list of the ordered column names
+        Alias for self.schema.get_column_names() -> list[str].
+        Returns a list of all column names saved in this schema
 
         Returns
         -------
-        result: list[str]
-            Order Column names
+        column_names: list[str]
+            the column names
         """
-        return list(self.schema._schema.keys())
+        return self.schema.get_column_names()
+
+    def get_type_of_column(self, column_name: str) -> ColumnType:
+        """
+        Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
+        Returns the type of the given column.
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column you want the type of
+
+        Returns
+        -------
+        type: ColumnType
+            The type of the column
+
+        Raises
+        ------
+        ColumnNameError
+            If the specified target column name doesn't exist
+        """
+        return self.schema.get_type_of_column(column_name)
 
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Row):
