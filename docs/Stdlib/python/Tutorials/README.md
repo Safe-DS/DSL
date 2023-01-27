@@ -2,6 +2,6 @@
 
 ## Tutorials
 
-* [data processing](./data_processing.md)
+-   [data processing](./data_processing.md)
 
-----------
+---
