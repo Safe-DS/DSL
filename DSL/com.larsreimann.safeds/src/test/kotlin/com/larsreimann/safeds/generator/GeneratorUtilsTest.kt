@@ -7,6 +7,7 @@ import com.larsreimann.safeds.emf.createSdsCompilationUnit
 import com.larsreimann.safeds.emf.createSdsDummyResource
 import com.larsreimann.safeds.safeDS.SafeDSFactory
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
+import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
@@ -92,10 +93,22 @@ class GeneratorUtilsTest {
         }
 
         @Test
-        fun `should remove 'sdsflow' extension`() {
+        fun `should remove 'sdspipe' extension`() {
             val resource = createSdsDummyResource(
                 "file",
                 SdsFileExtension.Pipeline,
+                createSdsCompilationUnit(packageName = "test")
+            )
+
+            resource.baseFileNameOrNull() shouldBe "file"
+        }
+
+        @Test
+        @OptIn(ExperimentalSdsApi::class)
+        fun `should remove 'sdsschema' extension`() {
+            val resource = createSdsDummyResource(
+                "file",
+                SdsFileExtension.Schema,
                 createSdsCompilationUnit(packageName = "test")
             )
 

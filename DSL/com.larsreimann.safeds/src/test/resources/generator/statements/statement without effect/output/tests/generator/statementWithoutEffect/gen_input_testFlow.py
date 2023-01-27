@@ -1,4 +1,4 @@
-from gen_input import testFlow
+from gen_input import testPipeline
 
 if __name__ == '__main__':
-    testFlow()
+    testPipeline()

@@ -5,7 +5,7 @@ def testStep():
 
 # Pipelines --------------------------------------------------------------------
 
-def testFlow():
+def testPipeline():
     g()
     def __block_lambda_0():
         g()

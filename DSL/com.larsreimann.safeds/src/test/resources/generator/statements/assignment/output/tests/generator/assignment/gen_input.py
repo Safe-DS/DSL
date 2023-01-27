@@ -14,7 +14,7 @@ def testStep():
 
 # Pipelines --------------------------------------------------------------------
 
-def testFlow():
+def testPipeline():
     g()
     a, _, _ = g()
     runtimeBridge.save_placeholder('a', a)
