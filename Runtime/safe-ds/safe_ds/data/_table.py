@@ -20,8 +20,8 @@ from safe_ds.exceptions import (
     UnknownColumnNameError,
 )
 
-from ._column_type import ColumnType
 from ._column import Column
+from ._column_type import ColumnType
 from ._row import Row
 from ._table_schema import TableSchema
 
