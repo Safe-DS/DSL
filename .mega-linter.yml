@@ -5,6 +5,16 @@ EXTENDS: https://raw.githubusercontent.com/lars-reimann/.github/main/.mega-linte
 # Config
 FILTER_REGEX_EXCLUDE: (\.github/workflows/|DSL/com\.larsreimann\.safeds/src/test/resources/)
 
+# Workaround to also run prettier on other supported file types. We deactivate it for Markdown compared to the extended
+# configuration since it breaks admonitions of Material for MkDocs.
+JSON_PRETTIER_FILE_EXTENSIONS:
+  - .json
+  - .css
+  - .scss
+  - .htm
+  - .html
+#  - .md
+
 # Commands
 PRE_COMMANDS:
   - command: npm install @lars-reimann/eslint-config @lars-reimann/prettier-config
