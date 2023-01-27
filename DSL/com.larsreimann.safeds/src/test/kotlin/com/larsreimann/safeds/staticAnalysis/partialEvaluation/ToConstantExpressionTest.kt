@@ -35,7 +35,7 @@ import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsExpressionStatement
 import com.larsreimann.safeds.safeDS.SdsStep
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
@@ -1130,7 +1130,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should evaluate calls of block lambdas`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("callToBlockLambda")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("callToBlockLambda")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1138,7 +1138,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should evaluate calls of expression lambdas`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("callToExpressionLambda")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("callToExpressionLambda")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1146,7 +1146,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should evaluate calls of steps`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("callToStep")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("callToStep")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1154,7 +1154,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should evaluate calls of steps with variadic parameter`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("callToStepWithVariadicParameter")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("callToStepWithVariadicParameter")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1163,7 +1163,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should evaluate calls of steps with indexed variadic parameter`() {
             val workflow = compilationUnit
-                .findUniqueDeclarationOrFail<SdsWorkflow>("callToStepWithIndexedVariadicParameter")
+                .findUniqueDeclarationOrFail<SdsPipeline>("callToStepWithIndexedVariadicParameter")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1171,7 +1171,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should substitute parameters that were bound at call of a lambda`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>(
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
                 "parameterAssignedDuringCall"
             )
             val testData = workflow.expectedExpression()
@@ -1181,7 +1181,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should substitute parameters that were bound at creation of a lambda`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>(
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
                 "parameterAssignedDuringCreationOfLambda"
             )
             val testData = workflow.expectedExpression()
@@ -1191,7 +1191,7 @@ class ToConstantExpressionTest {
 
         @Test
         fun `should evaluate calls with lambda as parameter`() {
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("lambdaAsParameter")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("lambdaAsParameter")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1269,7 +1269,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/memberAccesses.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("successfulResultAccess")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("successfulResultAccess")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1281,7 +1281,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/memberAccesses.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("failedResultAccess")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("failedResultAccess")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1419,7 +1419,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("successfulRecordAssignment")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("successfulRecordAssignment")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1431,7 +1431,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("failedRecordAssignment")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("failedRecordAssignment")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1443,7 +1443,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>(
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
                 "recordAssignmentWithDifferentYieldOrder"
             )
             val testData = workflow.expectedExpression()
@@ -1457,7 +1457,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("recordAssignmentWithMissingYield")
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("recordAssignmentWithMissingYield")
             val testData = workflow.expectedExpression()
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(1)
@@ -1469,7 +1469,7 @@ class ToConstantExpressionTest {
                 parseHelper.parseResource("partialEvaluation/references.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>(
+            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
                 "recordAssignmentWithAdditionalYield"
             )
             val testData = workflow.expectedExpression()
@@ -1499,7 +1499,7 @@ private fun Double.toSdsNumber(): SdsAbstractExpression {
  * Helper method for tests loaded from a resource that returns the expression of the first expression statement in the
  * workflow.
  */
-private fun SdsWorkflow.expectedExpression() = statementsOrEmpty()
+private fun SdsPipeline.expectedExpression() = statementsOrEmpty()
     .filterIsInstance<SdsExpressionStatement>()
     .firstOrNull()
     .shouldNotBeNull()

@@ -56,7 +56,7 @@ import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
 import com.larsreimann.safeds.safeDS.SdsTemplateStringInner
 import com.larsreimann.safeds.safeDS.SdsTemplateStringStart
 import com.larsreimann.safeds.safeDS.SdsWildcard
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
@@ -114,7 +114,7 @@ class SafeDSGenerator : AbstractGenerator() {
      */
     private fun generateWorkflowFiles(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {
         resource.allContents.asSequence()
-            .filterIsInstance<SdsWorkflow>()
+            .filterIsInstance<SdsPipeline>()
             .forEach {
                 if (context.cancelIndicator.isCanceled) {
                     return
@@ -158,7 +158,7 @@ class SafeDSGenerator : AbstractGenerator() {
 
         // Compile workflows
         val workflowString = compilationUnit
-            .descendants<SdsWorkflow>()
+            .descendants<SdsPipeline>()
             .sortedBy { it.name }
             .joinToString("\n") {
                 compileWorkflow(it, imports)
@@ -253,7 +253,7 @@ class SafeDSGenerator : AbstractGenerator() {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun compileWorkflow(workflow: SdsWorkflow, imports: MutableSet<ImportData>) = buildString {
+    private fun compileWorkflow(workflow: SdsPipeline, imports: MutableSet<ImportData>) = buildString {
         val blockLambdaIdManager = IdManager<SdsBlockLambda>()
 
         appendLine("def ${workflow.correspondingPythonName()}():")

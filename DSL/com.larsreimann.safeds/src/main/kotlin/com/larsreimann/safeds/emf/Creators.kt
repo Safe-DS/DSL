@@ -95,7 +95,7 @@ import com.larsreimann.safeds.safeDS.SdsTypeParameterList
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsWildcard
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.nullIfEmptyElse
@@ -269,7 +269,7 @@ fun SdsBlockLambda.sdsAssignment(assignees: List<SdsAbstractAssignee>, expressio
 /**
  * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SdsWorkflow.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+fun SdsPipeline.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
     this.addStatement(createSdsAssignment(assignees, expression))
 }
 
@@ -666,7 +666,7 @@ fun SdsBlockLambda.sdsExpressionStatement(expression: SdsAbstractExpression) {
 /**
  * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SdsWorkflow.sdsExpressionStatement(expression: SdsAbstractExpression) {
+fun SdsPipeline.sdsExpressionStatement(expression: SdsAbstractExpression) {
     this.addStatement(createSdsExpressionStatement(expression))
 }
 
@@ -1534,14 +1534,14 @@ fun createSdsWildcard(): SdsWildcard {
 }
 
 /**
- * Returns a new object of class [SdsWorkflow].
+ * Returns a new object of class [SdsPipeline].
  */
 fun createSdsWorkflow(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     statements: List<SdsAbstractStatement> = emptyList(),
-    init: SdsWorkflow.() -> Unit = {},
-): SdsWorkflow {
+    init: SdsPipeline.() -> Unit = {},
+): SdsPipeline {
     return factory.createSdsWorkflow().apply {
         this.name = name
         this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
@@ -1552,13 +1552,13 @@ fun createSdsWorkflow(
 }
 
 /**
- * Adds a new object of class [SdsWorkflow] to the receiver.
+ * Adds a new object of class [SdsPipeline] to the receiver.
  */
 fun SdsCompilationUnit.sdsWorkflow(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     statements: List<SdsAbstractStatement> = emptyList(),
-    init: SdsWorkflow.() -> Unit = {},
+    init: SdsPipeline.() -> Unit = {},
 ) {
     this.addMember(createSdsWorkflow(name, annotationCalls, statements, init))
 }
@@ -1566,7 +1566,7 @@ fun SdsCompilationUnit.sdsWorkflow(
 /**
  * Adds a new statement to the receiver.
  */
-private fun SdsWorkflow.addStatement(statement: SdsAbstractStatement) {
+private fun SdsPipeline.addStatement(statement: SdsAbstractStatement) {
     if (this.body == null) {
         this.body = factory.createSdsBlock()
     }

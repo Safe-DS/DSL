@@ -14,7 +14,7 @@ import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsSchema
 import com.larsreimann.safeds.safeDS.SdsStep
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.scoping.externalGlobalDeclarations
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.duplicatesBy
@@ -30,7 +30,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
     fun members(sdsCompilationUnit: SdsCompilationUnit) {
         if (sdsCompilationUnit.isInStubFile()) {
             sdsCompilationUnit.compilationUnitMembersOrEmpty()
-                .filter { it is SdsWorkflow || it is SdsStep || it is SdsSchema }
+                .filter { it is SdsPipeline || it is SdsStep || it is SdsSchema }
                 .forEach {
                     error(
                         "A stub file must not declare workflows, schemas or steps.",
@@ -41,7 +41,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                 }
         } else if (sdsCompilationUnit.isInFlowFile()) {
             sdsCompilationUnit.compilationUnitMembersOrEmpty()
-                .filter { it !is SdsWorkflow && it !is SdsStep }
+                .filter { it !is SdsPipeline && it !is SdsStep }
                 .forEach {
                     error(
                         "A workflow file must only declare workflows and steps.",

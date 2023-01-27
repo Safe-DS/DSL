@@ -20,7 +20,7 @@ import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
 import com.larsreimann.safeds.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
 import com.larsreimann.safeds.stdlibAccess.StdlibAnnotations
@@ -128,7 +128,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             actualTarget is SdsTypeParameter && AnnotationTarget.TypeParameter !in legalTargets -> {
                 "a type parameter"
             }
-            actualTarget is SdsWorkflow && AnnotationTarget.Workflow !in legalTargets -> {
+            actualTarget is SdsPipeline && AnnotationTarget.Workflow !in legalTargets -> {
                 "a workflow"
             }
             actualTarget is SdsStep && AnnotationTarget.Step !in legalTargets -> {

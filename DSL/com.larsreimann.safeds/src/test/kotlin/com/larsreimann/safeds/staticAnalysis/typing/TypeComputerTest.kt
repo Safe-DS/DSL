@@ -35,7 +35,7 @@ import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.assignedOrNull
 import com.larsreimann.safeds.stdlibAccess.StdlibClasses
@@ -797,7 +797,7 @@ class TypeComputerTest {
         @Test
         fun `elvis operator with non-nullable left operand should have type of left operand`() {
             withCompilationUnitFromFile("expressions/operations/elvis") {
-                findUniqueDeclarationOrFail<SdsWorkflow>("elvisWithNonNullableLeftOperand")
+                findUniqueDeclarationOrFail<SdsPipeline>("elvisWithNonNullableLeftOperand")
                     .descendants<SdsInfixOperation>()
                     .filter { it.operator() == SdsInfixOperationOperator.Elvis }
                     .forEach { it shouldHaveType it.leftOperand }

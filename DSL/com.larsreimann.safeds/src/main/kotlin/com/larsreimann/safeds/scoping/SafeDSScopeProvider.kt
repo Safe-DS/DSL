@@ -45,7 +45,7 @@ import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeArgumentList
 import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.classHierarchy.superClassMembers
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
@@ -211,7 +211,7 @@ class SafeDSScopeProvider : AbstractSafeDSScopeProvider() {
     private fun declarationsInSameFile(resource: Resource, parentScope: IScope): IScope {
         val members = resource.compilationUnitOrNull()
             ?.members
-            ?.filter { it !is SdsAnnotation && it !is SdsWorkflow }
+            ?.filter { it !is SdsAnnotation && it !is SdsPipeline }
             ?: emptyList()
 
         return Scopes.scopeFor(

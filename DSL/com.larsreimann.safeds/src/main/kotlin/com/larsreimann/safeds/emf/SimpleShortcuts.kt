@@ -53,7 +53,7 @@ import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import com.larsreimann.safeds.safeDS.SdsWorkflow
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.uniqueOrNull
@@ -312,13 +312,13 @@ fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
 
 // SdsWorkflow -------------------------------------------------------------------------------------
 
-fun SdsWorkflow?.placeholdersOrEmpty(): List<SdsPlaceholder> {
+fun SdsPipeline?.placeholdersOrEmpty(): List<SdsPlaceholder> {
     return this.statementsOrEmpty()
         .filterIsInstance<SdsAssignment>()
         .flatMap { it.placeholdersOrEmpty() }
 }
 
-fun SdsWorkflow?.statementsOrEmpty(): List<SdsAbstractStatement> {
+fun SdsPipeline?.statementsOrEmpty(): List<SdsAbstractStatement> {
     return this?.body?.statements.orEmpty()
 }
 
@@ -362,7 +362,7 @@ fun EObject.containingExpressionLambdaOrNull() = this.closestAncestorOrNull<SdsE
 fun EObject.containingFunctionOrNull() = this.closestAncestorOrNull<SdsFunction>()
 fun EObject.containingProtocolOrNull() = this.closestAncestorOrNull<SdsProtocol>()
 fun EObject.containingStepOrNull() = this.closestAncestorOrNull<SdsStep>()
-fun EObject.containingWorkflowOrNull() = this.closestAncestorOrNull<SdsWorkflow>()
+fun EObject.containingWorkflowOrNull() = this.closestAncestorOrNull<SdsPipeline>()
 
 fun SdsAnnotationCall.targetOrNull(): SdsAbstractDeclaration? {
     return when (val declaration = this.containingDeclarationOrNull() ?: return null) {
