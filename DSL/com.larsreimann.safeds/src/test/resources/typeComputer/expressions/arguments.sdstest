@@ -2,7 +2,7 @@ package tests.typeComputer.expressions.parenthesizedExpressions
 
 fun f(x: Any?)
 
-workflow myWorkflow {
+pipeline myPipeline {
     f(1);
     f(x = "");
 }

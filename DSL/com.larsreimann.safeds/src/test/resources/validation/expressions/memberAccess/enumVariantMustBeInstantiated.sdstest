@@ -8,7 +8,7 @@ enum MyEnum {
     E<T>
 }
 
-workflow test {
+pipeline test {
 
     // no_semantic_error "An enum variant with parameters or type parameters must be instantiated."
     MyEnum.»A«;

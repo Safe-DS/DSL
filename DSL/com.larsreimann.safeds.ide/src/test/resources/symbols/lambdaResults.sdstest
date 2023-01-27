@@ -1,5 +1,5 @@
-// Function "myWorkflow"
-workflow »myWorkflow« {
+// Function "myPipeline"
+pipeline »myPipeline« {
     lambda {
         yield a = 1;
     };

@@ -2,7 +2,7 @@ package tests.validation.arguments.variadicParameterAssignedByName
 
 fun f(a: Int, b: Int = 0, vararg c: Int)
 
-workflow test {
+pipeline test {
     // no_semantic_error "A variadic parameter must not be assigned by name."
     // no_semantic_error "A variadic parameter must not be assigned by name."
     // semantic_error "A variadic parameter must not be assigned by name."

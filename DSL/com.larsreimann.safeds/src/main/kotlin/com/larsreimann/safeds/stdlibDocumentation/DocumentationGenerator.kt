@@ -72,7 +72,7 @@ private fun createReadme(outputDirectory: Path, packagesToDeclarations: Map<Stri
             |
             |$autogenWarning
             |
-        """.trimMargin()
+        """.trimMargin(),
     )
 }
 
@@ -90,7 +90,7 @@ private fun createPackageFile(outputDirectory: Path, packageName: String, global
 
 private fun createPackageDocumentation(
     packageName: String,
-    globalDeclarations: List<EObject>
+    globalDeclarations: List<EObject>,
 ) = buildString {
     val classes = globalDeclarations.filterIsInstance<SdsClass>().sortedBy { it.name }
     val globalFunctions = globalDeclarations.filterIsInstance<SdsFunction>().sortedBy { it.name }
@@ -99,39 +99,8 @@ private fun createPackageDocumentation(
 
     appendLine("# Package `$packageName`")
 
-    // Table of contents
     if (annotations.isNotEmpty() || classes.isNotEmpty() || enums.isNotEmpty() || globalFunctions.isNotEmpty()) {
-        appendLine("\n## Table of Contents\n")
-
-        if (classes.isNotEmpty()) {
-            appendLine("* Classes")
-            classes.forEach {
-                appendLine("  * [`${it.name}`](#class-${it.name})")
-            }
-        }
-
-        if (globalFunctions.isNotEmpty()) {
-            appendLine("* Global functions")
-            globalFunctions.forEach {
-                appendLine("  * [`${it.name}`](#global-function-${it.name})")
-            }
-        }
-
-        if (enums.isNotEmpty()) {
-            appendLine("* Enums")
-            enums.forEach {
-                appendLine("  * [`${it.name}`](#enum-${it.name})")
-            }
-        }
-
-        if (enums.isNotEmpty()) {
-            appendLine("* Annotations")
-            annotations.forEach {
-                appendLine("  * [`${it.name}`](#annotation-${it.name})")
-            }
-        }
-
-        appendLine("\n$horizontalRule\n")
+        appendLine()
     }
 
     // Classes
@@ -164,7 +133,6 @@ private fun createPackageDocumentation(
 }
 
 private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildString {
-
     // Heading
     appendLine("## <a name=\"annotation-${annotation.name}\"></a>Annotation `${annotation.name}`")
 
@@ -177,7 +145,7 @@ private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildStri
     }
 
     // Targets
-    appendLine("\n**Valid targets:**")
+    appendLine("\n**Valid targets:**\n")
     val validTargets = annotation
         .validTargets()
         .sortedBy { it.name }
@@ -188,7 +156,6 @@ private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildStri
 }
 
 private fun createAttributeDocumentation(attribute: SdsAttribute) = buildString {
-
     // Remember description before annotation calls are removed
     val description = attribute.descriptionOrAltText()
 
@@ -233,7 +200,7 @@ private fun createClassDocumentation(`class`: SdsClass, nestingLevel: Int): Stri
 
     // Attributes
     if (attributes.isNotEmpty()) {
-        appendLine("**Attributes:**")
+        appendLine("**Attributes:**\n")
         attributes.forEach {
             append(createAttributeDocumentation(it))
         }
@@ -262,7 +229,7 @@ private fun createConstructorDocumentation(`class`: SdsClass) = buildString {
     } else if (`class`.parametersOrEmpty().isEmpty()) {
         appendLine("**Constructor parameters:** _None expected._")
     } else {
-        appendLine("**Constructor parameters:**")
+        appendLine("**Constructor parameters:**\n")
         `class`.parametersOrEmpty().forEach {
             appendLine(createParameterDocumentation(it))
         }
@@ -289,7 +256,6 @@ private fun createEnumDocumentation(enum: SdsEnum, nestingLevel: Int) = buildStr
 }
 
 private fun createEnumVariantDocumentation(enumVariant: SdsEnumVariant, nestingLevel: Int) = buildString {
-
     // Heading
     appendLine("${heading(nestingLevel)} Enum Variant `${enumVariant.name}`")
 
@@ -305,7 +271,6 @@ private fun SdsAbstractDeclaration.descriptionOrAltText(): String {
 }
 
 private fun createFunctionDocumentation(function: SdsFunction, nestingLevel: Int, isGlobalFunction: Boolean) = buildString {
-
     // Heading
     if (isGlobalFunction) {
         appendLine("## <a name=\"global-function-${function.name}\"></a>Global Function `${function.name}`")
@@ -329,7 +294,7 @@ private fun createParametersDocumentation(parameters: List<SdsParameter>) = buil
     if (parameters.isEmpty()) {
         appendLine("**Parameters:** _None expected._")
     } else {
-        appendLine("**Parameters:**")
+        appendLine("**Parameters:**\n")
         parameters.forEach {
             appendLine(createParameterDocumentation(it))
         }
@@ -337,7 +302,6 @@ private fun createParametersDocumentation(parameters: List<SdsParameter>) = buil
 }
 
 private fun createParameterDocumentation(parameter: SdsParameter) = buildString {
-
     // Remember description before annotation calls are removed
     val description = parameter.descriptionOrAltText()
 
@@ -365,7 +329,7 @@ private fun createResultsDocumentation(result: List<SdsResult>) = buildString {
     if (result.isEmpty()) {
         appendLine("**Results:** _None returned._")
     } else {
-        appendLine("**Results:**")
+        appendLine("**Results:**\n")
         result.forEach {
             appendLine(createResultDocumentation(it))
         }
@@ -373,7 +337,6 @@ private fun createResultsDocumentation(result: List<SdsResult>) = buildString {
 }
 
 private fun createResultDocumentation(result: SdsResult) = buildString {
-
     // Remember description before annotation calls are removed
     val description = result.descriptionOrAltText()
 

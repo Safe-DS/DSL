@@ -4,7 +4,7 @@ from special_location import function1InCompilationUnitWithPythonModule, functio
 from tests.generator.differentPackage import function1InDifferentPackage, function2InDifferentPackage as g
 from tests.generator.imports.gen__skip__context_same_package import step1InSamePackage, step2InSamePackage
 
-# Workflows --------------------------------------------------------------------
+# Pipelines --------------------------------------------------------------------
 
 def test():
     f(step1InSamePackage())

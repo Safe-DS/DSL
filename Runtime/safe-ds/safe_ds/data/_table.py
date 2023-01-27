@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import functools
 import os.path
 import typing
 from pathlib import Path
 from typing import Callable, Optional, Union
 
+import numpy as np
 import pandas as pd
+from IPython.core.display_functions import DisplayHandle, display
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
@@ -13,11 +16,14 @@ from safe_ds.exceptions import (
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
     MissingSchemaError,
+    NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
 )
+from scipy import stats
 
 from ._column import Column
+from ._column_type import ColumnType
 from ._row import Row
 from ._table_schema import TableSchema
 
@@ -46,6 +52,8 @@ class Table:
             self.schema: TableSchema = TableSchema._from_dataframe(self._data)
         else:
             self.schema = schema
+            if self._data.empty:
+                self._data = pd.DataFrame(columns=self.schema.get_column_names())
 
         self._data = self._data.reset_index(drop=True)
         self._data.columns = list(range(self.count_columns()))
@@ -225,7 +233,8 @@ class Table:
         data_to_csv.to_csv(path_to_file, index=False)
 
     def rename_column(self, old_name: str, new_name: str) -> Table:
-        """Rename a single column by providing the previous name and the future name of it.
+        """
+        Rename a single column by providing the previous name and the future name of it.
 
         Parameters
         ----------
@@ -258,7 +267,8 @@ class Table:
         return Table(new_df.rename(columns={old_name: new_name}))
 
     def get_column(self, column_name: str) -> Column:
-        """Returns a new instance of Column with the data of the described column of the Table.
+        """
+        Returns a new instance of column with the data of the described column of the table.
 
         Parameters
         ----------
@@ -276,17 +286,20 @@ class Table:
             If the specified target column name doesn't exist
         """
         if self.schema.has_column(column_name):
-            return Column(
+            output_column = Column(
                 self._data.iloc[
                     :, [self.schema._get_column_index_by_name(column_name)]
                 ].squeeze(),
                 column_name,
             )
+            output_column._type = self.schema.get_type_of_column(column_name)
+            return output_column
 
         raise UnknownColumnNameError([column_name])
 
     def drop_columns(self, column_names: list[str]) -> Table:
-        """Returns a Table without the given columns
+        """
+        Returns a table without the given columns
 
         Parameters
         ----------
@@ -319,7 +332,8 @@ class Table:
         return Table(transformed_data)
 
     def keep_columns(self, column_names: list[str]) -> Table:
-        """Returns a Table with exactly the given columns
+        """
+        Returns a table with exactly the given columns
 
         Parameters
         ----------
@@ -365,7 +379,8 @@ class Table:
         ]
 
     def filter_rows(self, query: Callable[[Row], bool]) -> Table:
-        """Returns a Table with rows filtered by applied lambda function
+        """
+        Returns a table with rows filtered by applied lambda function
 
         Parameters
         ----------
@@ -586,7 +601,8 @@ class Table:
 
     def has_column(self, column_name: str) -> bool:
         """
-        Returns if the table contains a given column
+        Alias for self.schema.hasColumn(column_name: str) -> bool.
+        Returns if the table contains a given column.
 
         Parameters
         ----------
@@ -631,12 +647,117 @@ class Table:
                 cols.append(self.get_column(column_name))
         return cols
 
+    def list_columns_with_numerical_values(self) -> list[Column]:
+        """
+        Get a list of columns only containing numerical values
+
+        Returns
+        -------
+        cols: list[Column]
+            the list with only numerical columns
+        """
+        cols = []
+        for column_name, data_type in self.schema._schema.items():
+            if data_type.is_numeric():
+                cols.append(self.get_column(column_name))
+        return cols
+
+    def get_column_names(self) -> list[str]:
+        """
+        Alias for self.schema.get_column_names() -> list[str].
+        Returns a list of all column names saved in this schema
+
+        Returns
+        -------
+        column_names: list[str]
+            the column names
+        """
+        return self.schema.get_column_names()
+
+    def get_type_of_column(self, column_name: str) -> ColumnType:
+        """
+        Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
+        Returns the type of the given column.
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column you want the type of
+
+        Returns
+        -------
+        type: ColumnType
+            The type of the column
+
+        Raises
+        ------
+        ColumnNameError
+            If the specified target column name doesn't exist
+        """
+        return self.schema.get_type_of_column(column_name)
+
+    def sort_columns(
+        self,
+        query: Callable[[Column, Column], int] = lambda col1, col2: (
+            col1.name > col2.name
+        )
+        - (col1.name < col2.name),
+    ) -> Table:
+        """
+        Sort a table with the given lambda function.
+        If no function is given the columns will be sorted alphabetically.
+        This function uses the default python sort algorithm.
+        The query should return:
+            0, if both columns are equal
+            < 0, if the first column should be ordered after the second column
+            > 0, if the first column should be ordered before the second column
+
+        Parameters
+        ----------
+        query: a lambda function
+            a lambda function that is used to sort the columns
+
+        Returns
+        -------
+        new_table: Table
+            a new table with the sorted columns
+        """
+        columns = self.to_columns()
+        columns.sort(key=functools.cmp_to_key(query))
+        return Table.from_columns(columns)
+
+    def remove_outliers(self) -> Table:
+        """
+        Removes all rows from the table that contain at least one outlier defined as having a value that has a distance of
+        more than 3 standard deviations from the column average.
+
+        Returns
+        -------
+        new_table: Table
+            a new table where the outliers have been removed
+        """
+        result = self._data.copy(deep=True)
+
+        table_without_nonnumericals = Table.from_columns(
+            self.list_columns_with_numerical_values()
+        )
+
+        result = result[
+            (np.absolute(stats.zscore(table_without_nonnumericals._data)) < 3).all(
+                axis=1
+            )
+        ]
+
+        return Table(result, self.schema)
+
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
             return NotImplemented
         if self is other:
             return True
-        return self._data.equals(other._data) and self.schema == other.schema
+        table1 = self.sort_columns()
+        table2 = other.sort_columns()
+        return table1._data.equals(table2._data) and table1.schema == table2.schema
 
     def __hash__(self) -> int:
         return hash(self._data)
@@ -663,3 +784,157 @@ class Table:
             result: Column = Column(pd.Series(items), name)
             return self.replace_column(name, result)
         raise UnknownColumnNameError([name])
+
+    def summary(self) -> Table:
+        """
+        Returns a Table with a number of statistical key values for a table
+
+        Returns
+        -------
+        result: Table
+            Table with statistics
+        """
+
+        columns = self.to_columns()
+        result = pd.DataFrame()
+        statistics = {}
+
+        for column in columns:
+            statistics = {
+                "max": column.statistics.max,
+                "min": column.statistics.min,
+                "mean": column.statistics.mean,
+                "mode": column.statistics.mode,
+                "median": column.statistics.median,
+                "sum": column.statistics.sum,
+                "variance": column.statistics.variance,
+                "standard deviation": column.statistics.standard_deviation,
+                "idness": column.statistics.idness,
+                "stability": column.statistics.stability,
+                "row count": column.count,
+            }
+            values = []
+
+            for function in statistics.values():
+                try:
+                    values.append(function())
+                except NonNumericColumnError:
+                    values.append("-")
+
+            result = pd.concat([result, pd.DataFrame(values)], axis=1)
+
+        result = pd.concat([pd.DataFrame(list(statistics.keys())), result], axis=1)
+        result.columns = [""] + self.get_column_names()
+
+        return Table(result)
+
+    def __repr__(self) -> str:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+        return tmp.__repr__()
+
+    def __str__(self) -> str:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+        return tmp.__str__()
+
+    def _ipython_display_(self) -> DisplayHandle:
+        """
+        Returns a pretty display object for the Table to be used in Jupyter Notebooks
+
+        Returns
+        -------
+        output: DisplayHandle
+            Output object
+        """
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+
+        with pd.option_context(
+            "display.max_rows", tmp.shape[0], "display.max_columns", tmp.shape[1]
+        ):
+            return display(tmp)
+
+    def slice(
+        self,
+        start: typing.Optional[int] = None,
+        end: typing.Optional[int] = None,
+        step: int = 1,
+    ) -> Table:
+        """
+        slices the Table into a new Table
+
+        Parameters
+        ----------
+        start : int
+            first index of the range to be copied into a new table, None by default
+        end : int
+            last index of the range to be copied into a new table, None by default
+        step : int
+            the step size to be iterated through the table, 1 by default
+
+        Returns
+        -------
+        result : Table
+            the sliced Table
+
+        Raises
+        -------
+        ValueError
+            raises a ValueError if the index is out of bounds
+        """
+
+        if start is None:
+            start = 0
+
+        if end is None:
+            end = self.count_rows()
+
+        if (
+            start < 0
+            or end < 0
+            or start >= self.count_rows()
+            or end > self.count_rows()
+            or end < start
+        ):
+            raise ValueError("the given index is out of bounds")
+
+        new_df = self._data.iloc[start:end:step]
+        new_df.columns = self.schema.get_column_names()
+        return Table(new_df)
+
+    def split(self, percentage_in_first: float) -> typing.Tuple[Table, Table]:
+        """
+        splits the Table into two new Tables
+
+        Parameters
+        -------
+        percentage_in_first : float
+            the size of the first returned table in percentage to the given Table
+
+        Returns
+        -------
+        result: (Table, Table)
+            tuple of the splitted Tables
+
+
+        """
+        if percentage_in_first <= 0 or percentage_in_first >= 1:
+            raise ValueError("the given percentage is not in range")
+        return (
+            self.slice(0, round(percentage_in_first * self.count_rows())),
+            self.slice(round(percentage_in_first * self.count_rows())),
+        )
+
+    def shuffle(self) -> Table:
+        """
+        shuffles the table randomly
+        Returns
+        -------
+        result : Table
+            the shuffled Table
+
+        """
+        new_df = self._data.sample(frac=1.0)
+        new_df.columns = self.schema.get_column_names()
+        return Table(new_df)

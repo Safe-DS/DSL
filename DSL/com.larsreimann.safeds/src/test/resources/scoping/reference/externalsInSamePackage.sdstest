@@ -9,4 +9,4 @@ step stepInSamePackage() {}
 internal step internalStepInSamePackage() {}
 private step privateStepInSamePackage() {}
 
-workflow workflowInSamePackage {}
+pipeline pipelineInSamePackage {}

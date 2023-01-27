@@ -30,12 +30,12 @@ import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsReference
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.assignedOrNull
 import com.larsreimann.safeds.stdlibAccess.StdlibClasses
@@ -183,7 +183,7 @@ class TypeComputerTest {
                 descendants<SdsFunction>().forEach { function ->
                     function shouldHaveType CallableType(
                         function.parametersOrEmpty().map { it.type() },
-                        function.resultsOrEmpty().map { it.type() }
+                        function.resultsOrEmpty().map { it.type() },
                     )
                 }
             }
@@ -248,7 +248,7 @@ class TypeComputerTest {
                 descendants<SdsStep>().forEach { step ->
                     step shouldHaveType CallableType(
                         step.parametersOrEmpty().map { it.type() },
-                        step.resultsOrEmpty().map { it.type() }
+                        step.resultsOrEmpty().map { it.type() },
                     )
                 }
             }
@@ -332,7 +332,7 @@ class TypeComputerTest {
                     .descendants<SdsBlockLambda>().forEach { lambda ->
                         lambda shouldHaveType CallableType(
                             lambda.parametersOrEmpty().map { it.type() },
-                            lambda.blockLambdaResultsOrEmpty().map { it.type() }
+                            lambda.blockLambdaResultsOrEmpty().map { it.type() },
                         )
                     }
             }
@@ -345,7 +345,7 @@ class TypeComputerTest {
                     .descendants<SdsBlockLambda>().forEach { lambda ->
                         lambda shouldHaveType CallableType(
                             lambda.parametersOrEmpty().map { it.type() },
-                            lambda.blockLambdaResultsOrEmpty().map { it.type() }
+                            lambda.blockLambdaResultsOrEmpty().map { it.type() },
                         )
                     }
             }
@@ -365,7 +365,7 @@ class TypeComputerTest {
 
                 lambda shouldHaveType CallableType(
                     resultType.parametersOrEmpty().map { it.type() },
-                    lambda.blockLambdaResultsOrEmpty().map { it.type() }
+                    lambda.blockLambdaResultsOrEmpty().map { it.type() },
                 )
             }
         }
@@ -383,7 +383,7 @@ class TypeComputerTest {
 
                 lambda shouldHaveType CallableType(
                     parameterType.parametersOrEmpty().map { it.type() },
-                    lambda.blockLambdaResultsOrEmpty().map { it.type() }
+                    lambda.blockLambdaResultsOrEmpty().map { it.type() },
                 )
             }
         }
@@ -535,7 +535,7 @@ class TypeComputerTest {
                     .descendants<SdsExpressionLambda>().forEach { lambda ->
                         lambda shouldHaveType CallableType(
                             lambda.parametersOrEmpty().map { it.type() },
-                            listOf(lambda.result.type())
+                            listOf(lambda.result.type()),
                         )
                     }
             }
@@ -548,7 +548,7 @@ class TypeComputerTest {
                     .descendants<SdsExpressionLambda>().forEach { lambda ->
                         lambda shouldHaveType CallableType(
                             lambda.parametersOrEmpty().map { it.type() },
-                            listOf(lambda.result.type())
+                            listOf(lambda.result.type()),
                         )
                     }
             }
@@ -568,7 +568,7 @@ class TypeComputerTest {
 
                 lambda shouldHaveType CallableType(
                     resultType.parametersOrEmpty().map { it.type() },
-                    listOf(lambda.result.type())
+                    listOf(lambda.result.type()),
                 )
             }
         }
@@ -586,7 +586,7 @@ class TypeComputerTest {
 
                 lambda shouldHaveType CallableType(
                     parameterType.parametersOrEmpty().map { it.type() },
-                    listOf(lambda.result.type())
+                    listOf(lambda.result.type()),
                 )
             }
         }
@@ -702,7 +702,7 @@ class TypeComputerTest {
                 "subtractionIntInt",
                 "multiplicationIntInt",
                 "divisionIntInt",
-                "negationInt"
+                "negationInt",
             ],
         )
         fun `arithmetic operations with only Int operands should have type Int`(placeholderName: String) {
@@ -723,7 +723,7 @@ class TypeComputerTest {
                 "subtractionInvalid",
                 "multiplicationInvalid",
                 "divisionInvalid",
-                "negationInvalid"
+                "negationInvalid",
             ],
         )
         fun `arithmetic operations with non-Int operands should have type Float`(placeholderName: String) {
@@ -742,7 +742,7 @@ class TypeComputerTest {
                 "lessThanInvalid",
                 "lessThanOrEqualsInvalid",
                 "greaterThanOrEqualsInvalid",
-                "greaterThanInvalid"
+                "greaterThanInvalid",
             ],
         )
         fun `comparison operations should have type Boolean`(placeholderName: String) {
@@ -755,7 +755,7 @@ class TypeComputerTest {
         @ValueSource(
             strings = [
                 "equals",
-                "notEquals"
+                "notEquals",
             ],
         )
         fun `equality operations should have type Boolean`(placeholderName: String) {
@@ -768,7 +768,7 @@ class TypeComputerTest {
         @ValueSource(
             strings = [
                 "strictlyEquals",
-                "notStrictlyEquals"
+                "notStrictlyEquals",
             ],
         )
         fun `strict equality operations should have type Boolean`(placeholderName: String) {
@@ -785,7 +785,7 @@ class TypeComputerTest {
                 "negation",
                 "conjunctionInvalid",
                 "disjunctionInvalid",
-                "negationInvalid"
+                "negationInvalid",
             ],
         )
         fun `logical operations should have type Boolean`(placeholderName: String) {
@@ -797,7 +797,7 @@ class TypeComputerTest {
         @Test
         fun `elvis operator with non-nullable left operand should have type of left operand`() {
             withCompilationUnitFromFile("expressions/operations/elvis") {
-                findUniqueDeclarationOrFail<SdsWorkflow>("elvisWithNonNullableLeftOperand")
+                findUniqueDeclarationOrFail<SdsPipeline>("elvisWithNonNullableLeftOperand")
                     .descendants<SdsInfixOperation>()
                     .filter { it.operator() == SdsInfixOperationOperator.Elvis }
                     .forEach { it shouldHaveType it.leftOperand }
@@ -860,7 +860,7 @@ class TypeComputerTest {
                 descendants<SdsCallableType>().forEach { callableType ->
                     callableType shouldHaveType CallableType(
                         callableType.parametersOrEmpty().map { it.type() },
-                        callableType.resultsOrEmpty().map { it.type() }
+                        callableType.resultsOrEmpty().map { it.type() },
                     )
                 }
             }
@@ -936,7 +936,7 @@ class TypeComputerTest {
             withCompilationUnitFromFile("types/unionTypes") {
                 descendants<SdsUnionType>().forEach { unionType ->
                     unionType shouldHaveType UnionType(
-                        unionType.typeArgumentsOrEmpty().map { it.type() }.toSet()
+                        unionType.typeArgumentsOrEmpty().map { it.type() }.toSet(),
                     )
                 }
             }

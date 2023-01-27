@@ -20,7 +20,7 @@ class MyClass(»a«, »b«: Int) {
 // no_semantic_error "A parameter must have a type."
 fun myFunction(»a«, »b«: Int)
 
-workflow myWorkflow {
+pipeline myPipeline {
     // no_semantic_error "A parameter must have a type."
     (»a«) {};
 }

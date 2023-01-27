@@ -13,7 +13,7 @@ class C() {
 
 fun factory() -> instance: C?
 
-workflow test {
+pipeline test {
     f(g().result);
     f(h().result1);
     f(h().result2);

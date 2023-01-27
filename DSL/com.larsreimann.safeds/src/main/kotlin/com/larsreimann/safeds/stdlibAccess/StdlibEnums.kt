@@ -21,10 +21,12 @@ object StdlibEnums {
         EnumVariant,
         Function,
         Parameter,
+        Pipeline,
         Result,
         Step,
         TypeParameter,
-        Workflow;
+
+        ;
 
         companion object {
             val enum: QualifiedName = QualifiedName.create("safeds", "lang", "AnnotationTarget")

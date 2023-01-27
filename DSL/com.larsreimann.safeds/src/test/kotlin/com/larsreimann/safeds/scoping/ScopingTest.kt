@@ -1420,8 +1420,8 @@ class ScopingTest {
         }
 
         @Test
-        fun `should not resolve workflow in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToWorkflows")
+        fun `should not resolve pipeline in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
 
             val references = step.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
@@ -1429,8 +1429,8 @@ class ScopingTest {
         }
 
         @Test
-        fun `should not resolve workflow in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToWorkflows")
+        fun `should not resolve pipeline in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
 
             val references = step.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
@@ -1438,8 +1438,8 @@ class ScopingTest {
         }
 
         @Test
-        fun `should not resolve workflow in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToWorkflows")
+        fun `should not resolve pipeline in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
 
             val references = step.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)
@@ -1447,8 +1447,8 @@ class ScopingTest {
         }
 
         @Test
-        fun `should not resolve workflow in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToWorkflows")
+        fun `should not resolve pipeline in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
 
             val references = step.descendants<SdsReference>().toList()
             references.shouldHaveSize(4)

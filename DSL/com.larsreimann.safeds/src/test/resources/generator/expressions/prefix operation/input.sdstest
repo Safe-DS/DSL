@@ -6,7 +6,7 @@ fun g() -> result: Boolean
 
 fun h() -> result: Int
 
-workflow test {
+pipeline test {
     f(not g());
     f(-h());
 }

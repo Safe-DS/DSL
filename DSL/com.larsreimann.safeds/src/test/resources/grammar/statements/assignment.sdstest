@@ -1,6 +1,6 @@
 // no_syntax_error
 
-workflow myWorkflow {
+pipeline myPipeline {
     val a = 0;
     val a, _, yield b = call();
 

@@ -23,6 +23,10 @@ updates:
 
   # Runtime
   - package-ecosystem: 'pip'
+    directory: '/docs'
+    schedule:
+      interval: 'monthly'
+  - package-ecosystem: 'pip'
     directory: '/Runtime/safe-ds'
     schedule:
       interval: 'monthly'

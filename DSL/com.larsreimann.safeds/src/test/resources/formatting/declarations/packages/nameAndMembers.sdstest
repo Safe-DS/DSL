@@ -1,8 +1,8 @@
    package   tests   .   formatting
 
 
-    workflow    w1    {       } workflow w2 {}
-workflow w3 {
+    pipeline    p1    {       } pipeline p2 {}
+pipeline p3 {
 
 
 
@@ -12,8 +12,8 @@ workflow w3 {
 
 package tests.formatting
 
-workflow w1 {}
+pipeline p1 {}
 
-workflow w2 {}
+pipeline p2 {}
 
-workflow w3 {}
+pipeline p3 {}

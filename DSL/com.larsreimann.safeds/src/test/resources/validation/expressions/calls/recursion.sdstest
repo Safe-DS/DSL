@@ -1,7 +1,7 @@
 package tests.validation.expressions.calls.recursion
 
 
-workflow w {
+pipeline p {
     // semantic_error "Recursive calls are not allowed."
     »a«();
     // semantic_error "Recursive calls are not allowed."

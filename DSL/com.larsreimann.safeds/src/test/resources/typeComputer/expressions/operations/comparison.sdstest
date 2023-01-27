@@ -1,6 +1,6 @@
 package tests.typeComputer.operations.comparison
 
-workflow myWorkflow {
+pipeline myPipeline {
     val lessThan = (1 < 1);
     val lessThanOrEquals = (1 <= 1);
     val greaterThanOrEquals = (1 >= 1);

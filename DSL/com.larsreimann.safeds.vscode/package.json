@@ -29,7 +29,7 @@
                     "safeds"
                 ],
                 "extensions": [
-                    ".sdsflow",
+                    ".sdspipe",
                     ".sdsschema",
                     ".sdsstub",
                     ".sdstest"
@@ -59,7 +59,7 @@
     "devDependencies": {
         "@types/node": "^16.11.41",
         "@types/vscode": "^1.71.0",
-        "esbuild": "^0.16.12",
+        "esbuild": "^0.17.3",
         "typescript": "^4.9.4",
         "vscode-test": "^1.6.1"
     }

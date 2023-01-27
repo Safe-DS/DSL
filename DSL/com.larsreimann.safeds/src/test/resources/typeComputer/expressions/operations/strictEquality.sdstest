@@ -1,6 +1,6 @@
 package tests.typeComputer.operations.strictEquality
 
-workflow myWorkflow {
+pipeline myPipeline {
     val strictlyEquals = (1 === 1);
     val notStrictlyEquals = (1 !== 1);
 }

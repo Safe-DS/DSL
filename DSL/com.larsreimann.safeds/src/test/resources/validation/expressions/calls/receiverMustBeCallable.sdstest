@@ -16,7 +16,7 @@ enum MyEnum {
 
 fun myFunction()
 
-workflow myWorkflow {}
+pipeline myPipeline {}
 
 step test(a: Int, b: () -> ()) {
     val c = 1;
@@ -44,9 +44,9 @@ step test(a: Int, b: () -> ()) {
     »MyEnum.MyComplexEnumInstance«();
     // no_semantic_error "This expression must not be called."
     »myFunction«();
-    /* References cannot point to workflows in the first place. */
+    /* References cannot point to pipelines in the first place. */
     // no_semantic_error "This expression must not be called."
-    »myWorkflow«();
+    »myPipeline«();
     // semantic_error "This expression must not be called."
     »a«();
     // no_semantic_error "This expression must not be called."

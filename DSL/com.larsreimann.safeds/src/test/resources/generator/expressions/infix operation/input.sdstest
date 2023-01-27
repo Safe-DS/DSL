@@ -8,7 +8,7 @@ fun h() -> result: Int
 
 fun i() -> result: Int?
 
-workflow test {
+pipeline test {
     f(g() or g());
     f(g() and g());
 

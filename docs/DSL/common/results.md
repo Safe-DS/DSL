@@ -7,9 +7,10 @@ result: Int
 ```
 
 Here is a breakdown of the syntax:
-* The name of the result (here `result`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
-* A colon.
-* The [type][types] of the parameter (here `Int`).
+
+-   The name of the result (here `result`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+-   A colon.
+-   The [type][types] of the parameter (here `Int`).
 
 ## Complete Example
 
@@ -22,10 +23,11 @@ step doSomething() -> (result1: Int, result2: Boolean) {
 ```
 
 The interesting part is the list of results, which uses the following syntactic elements:
-* An arrow `->`.
-* An opening parenthesis.
-* A list of results, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
-* A closing parenthesis.
+
+-   An arrow `->`.
+-   An opening parenthesis.
+-   A list of results, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
+-   A closing parenthesis.
 
 ## Shorthand Version: Single Result
 
@@ -61,10 +63,9 @@ Results must be ordered the same way in Python as they are in Safe-DS. Moreover,
 
 Since Python results do not have a name, the names of Safe-DS results can be arbitrary. Naturally, a name should be chosen that captures the purpose of the result.
 
-
 [stub-language]: ../stub-language/README.md
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
 [callable-types]: types.md#callable-type
-[steps]: ../workflow-language/steps.md
-[calls]: ../workflow-language/expressions.md#calls
+[steps]: ../pipeline-language/steps.md
+[calls]: ../pipeline-language/expressions.md#calls

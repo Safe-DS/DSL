@@ -64,6 +64,7 @@ import com.larsreimann.safeds.safeDS.SdsParameterList
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsPrefixOperation
@@ -95,7 +96,6 @@ import com.larsreimann.safeds.safeDS.SdsTypeParameterList
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
 import com.larsreimann.safeds.safeDS.SdsWildcard
-import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.nullIfEmptyElse
@@ -269,7 +269,7 @@ fun SdsBlockLambda.sdsAssignment(assignees: List<SdsAbstractAssignee>, expressio
 /**
  * Adds a new object of class [SdsAssignment] to the receiver.
  */
-fun SdsWorkflow.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
+fun SdsPipeline.sdsAssignment(assignees: List<SdsAbstractAssignee>, expression: SdsAbstractExpression) {
     this.addStatement(createSdsAssignment(assignees, expression))
 }
 
@@ -666,7 +666,7 @@ fun SdsBlockLambda.sdsExpressionStatement(expression: SdsAbstractExpression) {
 /**
  * Adds a new object of class [SdsExpressionStatement] to the receiver.
  */
-fun SdsWorkflow.sdsExpressionStatement(expression: SdsAbstractExpression) {
+fun SdsPipeline.sdsExpressionStatement(expression: SdsAbstractExpression) {
     this.addStatement(createSdsExpressionStatement(expression))
 }
 
@@ -953,20 +953,52 @@ fun createSdsParentTypeList(parentTypes: List<SdsAbstractType>): SdsParentTypeLi
 }
 
 /**
+ * Returns a new object of class [SdsPipeline].
+ */
+fun createSdsPipeline(
+    name: String,
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsPipeline.() -> Unit = {},
+): SdsPipeline {
+    return factory.createSdsPipeline().apply {
+        this.name = name
+        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
+        this.body = factory.createSdsBlock()
+        statements.forEach { addStatement(it) }
+        this.init()
+    }
+}
+
+/**
+ * Adds a new object of class [SdsPipeline] to the receiver.
+ */
+fun SdsCompilationUnit.sdsPipeline(
+    name: String,
+    annotationCalls: List<SdsAnnotationCall> = emptyList(),
+    statements: List<SdsAbstractStatement> = emptyList(),
+    init: SdsPipeline.() -> Unit = {},
+) {
+    this.addMember(createSdsPipeline(name, annotationCalls, statements, init))
+}
+
+/**
+ * Adds a new statement to the receiver.
+ */
+private fun SdsPipeline.addStatement(statement: SdsAbstractStatement) {
+    if (this.body == null) {
+        this.body = factory.createSdsBlock()
+    }
+
+    this.body.statements += statement
+}
+
+/**
  * Returns a new object of class [SdsPlaceholder].
  */
 fun createSdsPlaceholder(name: String): SdsPlaceholder {
     return factory.createSdsPlaceholder().apply {
         this.name = name
-    }
-}
-
-/**
- * Returns a new object of class [SdsSchemaReference].
- */
-fun createSdsSchemaReference(type: SdsSchemaType): SdsSchemaReference {
-    return factory.createSdsSchemaReference().apply {
-        this.type = type
     }
 }
 
@@ -1228,6 +1260,15 @@ fun createSdsResult(
 fun createSdsResultList(results: List<SdsResult>): SdsResultList {
     return factory.createSdsResultList().apply {
         this.results += results
+    }
+}
+
+/**
+ * Returns a new object of class [SdsSchemaReference].
+ */
+fun createSdsSchemaReference(type: SdsSchemaType): SdsSchemaReference {
+    return factory.createSdsSchemaReference().apply {
+        this.type = type
     }
 }
 
@@ -1531,47 +1572,6 @@ fun createSdsUnionType(typeArguments: List<SdsTypeArgument>): SdsUnionType {
  */
 fun createSdsWildcard(): SdsWildcard {
     return factory.createSdsWildcard()
-}
-
-/**
- * Returns a new object of class [SdsWorkflow].
- */
-fun createSdsWorkflow(
-    name: String,
-    annotationCalls: List<SdsAnnotationCall> = emptyList(),
-    statements: List<SdsAbstractStatement> = emptyList(),
-    init: SdsWorkflow.() -> Unit = {},
-): SdsWorkflow {
-    return factory.createSdsWorkflow().apply {
-        this.name = name
-        this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
-        this.body = factory.createSdsBlock()
-        statements.forEach { addStatement(it) }
-        this.init()
-    }
-}
-
-/**
- * Adds a new object of class [SdsWorkflow] to the receiver.
- */
-fun SdsCompilationUnit.sdsWorkflow(
-    name: String,
-    annotationCalls: List<SdsAnnotationCall> = emptyList(),
-    statements: List<SdsAbstractStatement> = emptyList(),
-    init: SdsWorkflow.() -> Unit = {},
-) {
-    this.addMember(createSdsWorkflow(name, annotationCalls, statements, init))
-}
-
-/**
- * Adds a new statement to the receiver.
- */
-private fun SdsWorkflow.addStatement(statement: SdsAbstractStatement) {
-    if (this.body == null) {
-        this.body = factory.createSdsBlock()
-    }
-
-    this.body.statements += statement
 }
 
 /**
