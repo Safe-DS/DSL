@@ -23,6 +23,6 @@ def plot_correlation_heatmap(table: Table) -> None:
         if not column.type.is_numeric():
             raise NonNumericColumnError(column.name)
     # noinspection PyProtectedMember
-    ax = sns.heatmap(data=table._data.corr(), vmin=-1, vmax=1, xticklabels=table.get_column_names(), yticklabels=table.get_column_names())
+    sns.heatmap(data=table._data.corr(), vmin=-1, vmax=1, xticklabels=table.get_column_names(), yticklabels=table.get_column_names())
     plt.tight_layout()
     plt.show()
