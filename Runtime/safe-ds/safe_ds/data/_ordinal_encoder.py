@@ -10,8 +10,8 @@ class OrdinalEncoder:
 
     Parameters
     --------
-        order : list[str]
-            The order in which the ordinal encoder encodes the values
+    order : list[str]
+        The order in which the ordinal encoder encodes the values
     """
 
     def __init__(self, order: list[str]) -> None:
@@ -53,18 +53,19 @@ class OrdinalEncoder:
         Transform the given table to an ordinal-encoded table.
 
         Parameters
-         ----------
-         table:
-                 table with target values
-         column_name:
-                 name of column as string
-         Returns
-         -------
-             Table with ordinal encodings.
+        ----------
+        table:
+                table with target values
+        column_name:
+                name of column as string
+        Returns
+        -------
+        table: Table
+            Table with ordinal encodings.
 
-         Raises
-         ------
-             a NotFittedError if the Model wasn't fitted before transforming
+        Raises
+        ------
+            a NotFittedError if the Model wasn't fitted before transforming
         """
         p_df = table._data.copy()
         p_df.columns = table.schema.get_column_names()
@@ -87,7 +88,8 @@ class OrdinalEncoder:
 
         Returns
         -------
-            table: a new Table object which is ordinal-encoded
+        table: Table
+            a new Table object which is ordinal-encoded
 
         Raises
         -------
@@ -116,7 +118,8 @@ class OrdinalEncoder:
 
         Returns
         -------
-            table: inverse transformed table.
+        table: Table
+            inverse transformed table.
 
         Raises
         -------
