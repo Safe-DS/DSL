@@ -13,14 +13,16 @@ step loadMovieRatingsSample() {}
 ```
 
 This declaration of a step has the following syntactic elements:
-* The keyword `step`.
-* The name of the step, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of steps.
-* The list of parameters (i.e. inputs) of the step. This is delimited by parentheses. In the example above, the step has no parameters.
-* The _body_ of the step, which contains the [statements][statements] that should be run when the step is [called](#calling-a-step). The body is delimited by curly braces. In this example, the body is empty, so running this step does nothing.
+
+- The keyword `step`.
+- The name of the step, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of steps.
+- The list of parameters (i.e. inputs) of the step. This is delimited by parentheses. In the example above, the step has no parameters.
+- The _body_ of the step, which contains the [statements][statements] that should be run when the step is [called](#calling-a-step). The body is delimited by curly braces. In this example, the body is empty, so running this step does nothing.
 
 ### Parameters
 
 To make a step configurable, add [parameters][parameters] (inputs). We will first show how to [declare parameters](#parameter-declaration) and afterwards how to [refer to them](#references-to-parameters) in the body of the step.
+
 #### Parameter Declaration
 
 Parameters must be declared in the header of the step so [callers](#calling-a-step) know they are expected to pass them as an argument, and so we can [use them](#references-to-parameters) in the body of the step.
@@ -79,7 +81,6 @@ More information about the declaration of results can be found in the [linked do
 
 Currently, the program will not compile since we never assigned a value to these results. This can be done with an [assignment][assignments] and the `yield` keyword:
 
-
 ```txt
 step loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
@@ -100,7 +101,7 @@ The order of the [result declarations](#result-declaration) does not need to mat
 
 ## Visibility
 
-By default a step can be [imported][imports] in any other file and reused there. We say they have `public` visibility. However, it is possible to restrict the visibility of a step with modifiers:
+By default, a step can be [imported][imports] in any other file and reused there. We say they have `public` visibility. However, it is possible to restrict the visibility of a step with modifiers:
 
 ```txt
 internal step internalStep() {}
@@ -112,7 +113,7 @@ The step `internalStep` is only visible in files with the same [package][package
 
 ## Calling a Step
 
-Inside of a [workflow][workflows], another step, or a [lambda][lambdas] we can then [call][calls] a step, which means the step is executed when the call is reached: The results of a step can then be used as needed. In the following example, where we call the step `loadMovieRatingsSample` that we defined above, we [assign the results to placeholders][assignments-to-placeholders]:
+Inside a [workflow][workflows], another step, or a [lambda][lambdas] we can then [call][calls] a step, which means the step is executed when the call is reached: The results of a step can then be used as needed. In the following example, where we call the step `loadMovieRatingsSample` that we defined above, we [assign the results to placeholders][assignments-to-placeholders]:
 
 ```txt
 val features, val target = loadMovieRatingsSample(nInstances = 1000);

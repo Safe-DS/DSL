@@ -1,9 +1,10 @@
 # Parameters
 
 _Parameters_ define the expected inputs of some declaration that can be [called][calls]. We refer to such declarations as _callables_. We distinguish between
-* [required parameters](#required-parameters), which must always be passed,
-* [optional parameters](#optional-parameters), which use a default value if no value is passed explicitly, and
-* [variadic parameters](#variadic-parameters), which can accept zero or more values.
+
+- [required parameters](#required-parameters), which must always be passed,
+- [optional parameters](#optional-parameters), which use a default value if no value is passed explicitly, and
+- [variadic parameters](#variadic-parameters), which can accept zero or more values.
 
 ## Required Parameters
 
@@ -14,9 +15,10 @@ requiredParameter: Int
 ```
 
 Here are the pieces of syntax:
-* The name of the parameter (here `requiredParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
-* A colon.
-* The [type][types] of the parameter (here `Int`).
+
+- The name of the parameter (here `requiredParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+- A colon.
+- The [type][types] of the parameter (here `Int`).
 
 ## Optional Parameters
 
@@ -27,11 +29,12 @@ optionalParameter: Int = 1
 ```
 
 These are the syntactic elements:
-* The name of the parameter (here `optionalParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
-* A colon.
-* The [type][types] of the parameter (here `Int`).
-* An equals sign.
-* The default value of the parameter (here `1`). This must be a constant expression, i.e. something that can be evaluated by the compiler. Particularly [calls][calls] usually do not fulfill this requirement.
+
+- The name of the parameter (here `optionalParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+- A colon.
+- The [type][types] of the parameter (here `Int`).
+- An equals sign.
+- The default value of the parameter (here `1`). This must be a constant expression, i.e. something that can be evaluated by the compiler. Particularly [calls][calls] usually do not fulfill this requirement.
 
 ## Variadic Parameters
 
@@ -42,10 +45,11 @@ vararg variadicParameter: Int
 ```
 
 Let us break down the syntax:
-* The keyword `vararg`
-* The name of the parameter (here `variadicParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
-* A colon.
-* The [type][types] of the parameter (here `Int`).
+
+- The keyword `vararg`
+- The name of the parameter (here `variadicParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+- A colon.
+- The [type][types] of the parameter (here `Int`).
 
 ## Complete Example
 
@@ -58,27 +62,29 @@ step doSomething(requiredParameter: Int, optionalParameter: Boolean = false) {
 ```
 
 The interesting part is the list of parameters, which uses the following syntactic elements:
-* An opening parenthesis.
-* A list of parameters, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
-* A closing parenthesis.
+
+- An opening parenthesis.
+- A list of parameters, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
+- A closing parenthesis.
 
 ## Restrictions
 
 Several restrictions apply to the order of parameters and to combinations of the various categories of parameters:
-* After an [optional parameter](#optional-parameters) all parameters must be optional.
-* A single [variadic parameter](#variadic-parameters) can be added at the end of the parameter list.
-* Implied by this: A callable cannot have both [optional parameters](#optional-parameters) and [variadic parameters](#variadic-parameters).
 
+- After an [optional parameter](#optional-parameters) all parameters must be optional.
+- A single [variadic parameter](#variadic-parameters) can be added at the end of the parameter list.
+- Implied by this: A callable cannot have both [optional parameters](#optional-parameters) and [variadic parameters](#variadic-parameters).
 
 ## Corresponding Python Code
 
 **Note:** This section is only relevant if you are interested in the [stub language][stub-language].
 
 Parameters must be ordered the same way in Python as they are in Safe-DS. Moreover, for each parameter the following elements must match:
-* Name
-* Type
-* Kind (required vs. optional vs. variadic)
-* Default value for optional parameters
+
+- Name
+- Type
+- Kind (required vs. optional vs. variadic)
+- Default value for optional parameters
 
 Let's look at these elements in turn.
 
@@ -111,14 +117,16 @@ The Safe-DS type of a parameter should capture the legal values of this paramete
 ### Matching Kind
 
 Parameters kinds must match on the Safe-DS and Python sides as well. Concretely, this means:
-* All required parameters in Safe-DS must be required in Python.
-* All optional parameters in Safe-DS must be optional in Python.
-* All variadic parameters in Safe-DS must be variadic in Python (`*args`).
+
+- All required parameters in Safe-DS must be required in Python.
+- All optional parameters in Safe-DS must be optional in Python.
+- All variadic parameters in Safe-DS must be variadic in Python (`*args`).
 
 Moreover, it must be possible to pass
-* required parameters by position,
-* optional parameters by name,
-* variadic parameters by position.
+
+- required parameters by position,
+- optional parameters by name,
+- variadic parameters by position.
 
 These rules allow us to restrict required parameters to [positional-only][python-positional-only] or optional parameters to [keyword-only][python-keyword-only]. We can also keep both unrestricted.
 
@@ -174,7 +182,7 @@ fun variadic(vararg a: Int)
 Most commonly, default values in Python are literals, since default values are only evaluated once in Python rather than every time the function is called. The following table shows how Safe-DS literals and Python literals correspond:
 
 | Safe-DS Literal                       | Python Literal         |
-|---------------------------------------|------------------------|
+| ------------------------------------- | ---------------------- |
 | `1` ([int][int-literals])             | `1`                    |
 | `1.0` ([float][float-literals])       | `1.0`                  |
 | `"hello"` ([string][string-literals]) | `"hello"` or `'hello'` |
@@ -187,12 +195,10 @@ Most commonly, default values in Python are literals, since default values are o
 [steps]: ../workflow-language/steps.md
 [calls]: ../workflow-language/expressions.md#calls
 [stub-language]: ../stub-language/README.md
-[literals]: ../workflow-language/expressions.md#literals
 [int-literals]: ../workflow-language/expressions.md#int-literals
 [float-literals]: ../workflow-language/expressions.md#float-literals
 [string-literals]: ../workflow-language/expressions.md#string-literals
 [boolean-literals]: ../workflow-language/expressions.md#boolean-literals
 [null-literals]: ../workflow-language/expressions.md#null-literal
-
 [python-keyword-only]: https://peps.python.org/pep-3102/
 [python-positional-only]: https://peps.python.org/pep-0570/

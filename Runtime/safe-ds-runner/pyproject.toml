@@ -11,7 +11,7 @@ license = "MIT"
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.2.0"
+pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
 safe-ds = { path = "../safe-ds/", develop = true }
 
