@@ -1,15 +1,15 @@
-package tests.validation.declarations.compilationUnits.stubFileMustNotDeclareWorkflowSchemasOrSteps
+package tests.validation.declarations.compilationUnits.stubFileMustNotDeclarePipelineSchemasOrSteps
 
-// semantic_error "A stub file must not declare workflows, schemas or steps."
+// semantic_error "A stub file must not declare pipelines, schemas or steps."
+pipeline »myPipeline« {}
+// semantic_error "A stub file must not declare pipelines, schemas or steps."
 step »myStep«() {}
-// semantic_error "A stub file must not declare workflows, schemas or steps."
-workflow »myPipeline« {}
-// semantic_error "A stub file must not declare workflows, schemas or steps."
+// semantic_error "A stub file must not declare pipelines, schemas or steps."
 schema »MySchema« {}
 
-// no_semantic_error "A stub file must not declare workflows, schemas or steps."
+// no_semantic_error "A stub file must not declare pipelines, schemas or steps."
 annotation »MyAnnotation«
-// no_semantic_error "A stub file must not declare workflows, schemas or steps."
+// no_semantic_error "A stub file must not declare pipelines, schemas or steps."
 class »MyClass«
-// no_semantic_error "A stub file must not declare workflows, schemas or steps."
+// no_semantic_error "A stub file must not declare pipelines, schemas or steps."
 enum »MyEnum«

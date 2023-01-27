@@ -1,4 +1,4 @@
-package tests.workflowFileMustOnlyDeclarePipelinesAndSteps
+package tests.pipelineFileMustOnlyDeclarePipelinesAndSteps
 
 // semantic_error "A pipeline file must only declare pipelines and steps."
 annotation »MyAnnotation«
@@ -10,6 +10,6 @@ enum »MyEnum«
 schema »MySchema« {}
 
 // no_semantic_error "A pipeline file must only declare pipelines and steps."
-step »myStep«() {}
+pipeline »myPipeline« {}
 // no_semantic_error "A pipeline file must only declare pipelines and steps."
-workflow »myPipeline« {}
+step »myStep«() {}

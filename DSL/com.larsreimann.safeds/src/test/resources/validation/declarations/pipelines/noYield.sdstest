@@ -1,16 +1,16 @@
-package tests.validation.declarations.workflows.noYield
+package tests.validation.declarations.pipelines.noYield
 
-step f() {
-	// no_semantic_error "Yield must not be used in a workflow."
+step s() {
+	// no_semantic_error "Yield must not be used in a pipeline."
     »yield a« = 1;
 }
 
-workflow w {
-	// semantic_error "Yield must not be used in a workflow."
+pipeline p {
+	// semantic_error "Yield must not be used in a pipeline."
     »yield a« = 1;
 
     () {
-        // no_semantic_error "Yield must not be used in a workflow."
+        // no_semantic_error "Yield must not be used in a pipeline."
         »yield a« = 1;
     };
 }

@@ -1,6 +1,6 @@
 package tests.uniqueNames
 
-workflow w {
+pipeline p {
     (
         // semantic_error "A parameter, result or placeholder with name 'duplicateParameter' exists already in this lambda."
         »duplicateParameter«,

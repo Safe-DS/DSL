@@ -44,7 +44,7 @@ step test(a: Int, b: () -> ()) {
     »MyEnum.MyComplexEnumInstance«();
     // no_semantic_error "This expression must not be called."
     »myFunction«();
-    /* References cannot point to workflows in the first place. */
+    /* References cannot point to pipelines in the first place. */
     // no_semantic_error "This expression must not be called."
     »myPipeline«();
     // semantic_error "This expression must not be called."
