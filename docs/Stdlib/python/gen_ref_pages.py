@@ -1,11 +1,12 @@
 # Inspired by https://mkdocstrings.github.io/recipes/#bind-pages-to-sections-themselves
 
+import sys
 from importlib import import_module
-from inspect import getmembers, isfunction, isclass
+from inspect import getmembers, isclass, isfunction
 from pathlib import Path
 
 import mkdocs_gen_files
-import sys
+
 
 def list_class_and_function_names_in_module(module_name: str) -> list[str]:
     """
@@ -15,11 +16,8 @@ def list_class_and_function_names_in_module(module_name: str) -> list[str]:
     import_module(module_name)
     module = sys.modules[module_name]
 
-    return [
-        name
-        for name, obj in getmembers(module)
-        if isclass(obj) or isfunction(obj)
-    ]
+    return [name for name, obj in getmembers(module) if isclass(obj) or isfunction(obj)]
+
 
 nav = mkdocs_gen_files.Nav()
 
