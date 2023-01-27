@@ -17,13 +17,13 @@ Now we want to have look at what our dataset looks like. For this we use Jupyter
 ```python
 data    # calls display(data)
 ```
-[comment]: <> (TODO: Png of example here)
+![Table](docs/Stdlib/python/Tutorials/Resources/Table.PNG)
 
 Next some statistics.
 ```python
 data.summary()  # returns a table with various statistics for each column
 ```
-[comment]: <> (TODO: Png of summary)
+![Summary](docs/Stdlib/python/Tutorials/Resources/Summary.PNG)
 
 As you can see here, the **idness** of the column *PassangerId* is 1. This means, that every row has a unique value for
 this column. Since this isn't helpful for our usecase we can drop it.
@@ -41,7 +41,7 @@ from safe_ds.plotting import plot_correlation_heatmap
 data_only_numerics = Table.from_columns(data_cleaned.list_columns_with_numerical_values())
 plot_correlation_heatmap(data_only_numerics)
 ```
-[comment]: <> (TODO: Png of heatmap)
+![Heatmap](docs/Stdlib/python/Tutorials/Resources/Heatmap.png)
 
 As you can see, the columns *Fare* and *Pclass* (Passanger Class) seem to heavily correlate. Let's have another look at that.
 We'll use a linechart to better understand their relationship.
@@ -49,7 +49,8 @@ We'll use a linechart to better understand their relationship.
 from safe_ds.plotting import plot_lineplot
 plot_lineplot(data_cleaned, "Pclass", "Fare")
 ```
-[comment]: <> (TODO: Png of lineplot)
+![Lineplot](docs/Stdlib/python/Tutorials/Resources/Lineplot.png)
+
 We can conclude that tickets for first class rooms are much more expensive compared to second and third class. Also the difference between second and third is less pronounced.
 
 Some other plots that might be useful are boxplots, histogams and scatterplots.
@@ -60,4 +61,6 @@ plot_boxplot(data_cleaned.get_column("Age"))
 plot_histogram(data_cleaned.get_column("Fare"))
 plot_scatterplot(data_cleaned, "Age", "Fare")
 ```
-[comment]: <> (TODO: Png of rest)
+![Boxplot](docs/Stdlib/python/Tutorials/Resources/Boxplot.png)
+![Histogram](docs/Stdlib/python/Tutorials/Resources/Histogram.png)
+![Scatterplot](docs/Stdlib/python/Tutorials/Resources/Scatterplot.png)
