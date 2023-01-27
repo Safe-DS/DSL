@@ -7,6 +7,16 @@ from pathlib import Path
 import mkdocs_gen_files
 import sys
 
+def list_class_and_function_names_in_module(module_name: str) -> list[str]:
+    import_module(module_name)
+    module = sys.modules[module_name]
+
+    return [
+        name
+        for name, obj in getmembers(module)
+        if isfunction(obj) or isclass(obj)
+    ]
+
 nav = mkdocs_gen_files.Nav()
 
 for path in sorted(Path("Runtime/safe-ds").rglob("__init__.py")):
@@ -14,9 +24,8 @@ for path in sorted(Path("Runtime/safe-ds").rglob("__init__.py")):
     doc_path = path.relative_to("Runtime/safe-ds").with_suffix(".md")
     full_doc_path = Path("reference", doc_path)
 
-    parts = tuple(module_path.parts)
-
     # Skip demos, tests, etc.
+    parts = tuple(module_path.parts)
     if parts[0] != "safe_ds":
         continue
 
@@ -37,7 +46,7 @@ for path in sorted(Path("Runtime/safe-ds").rglob("__init__.py")):
         doc_path = doc_path.with_name(f"{class_name}.md")
         full_doc_path = full_doc_path.with_name(f"{class_name}.md")
 
-        nav[parts] = doc_path.as_posix()
+        nav[parts + (class_name,)] = doc_path.as_posix()
 
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
             ident = qualified_name + "." + clazz[0]
@@ -46,12 +55,13 @@ for path in sorted(Path("Runtime/safe-ds").rglob("__init__.py")):
         mkdocs_gen_files.set_edit_path(full_doc_path, path)
 
     for func in functions:
+        func_name = func[0]
         print(func)
 
-        doc_path = doc_path.with_name("index.md")
-        full_doc_path = full_doc_path.with_name("index.md")
+        doc_path = doc_path.with_name(f"{func_name}.md")
+        full_doc_path = full_doc_path.with_name(f"{func_name}.md")
 
-        nav[parts] = doc_path.as_posix()
+        nav[parts + (func_name,)] = doc_path.as_posix()
 
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
             ident = qualified_name + "." + func[0]
