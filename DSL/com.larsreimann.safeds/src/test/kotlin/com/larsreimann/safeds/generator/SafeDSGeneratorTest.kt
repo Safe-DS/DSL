@@ -65,7 +65,6 @@ class SafeDSGeneratorTest {
      */
     @Suppress("UNUSED_PARAMETER")
     private fun validateTestFile(resourcePath: Path, filePath: Path, program: String): String? {
-
         // Must be able to parse the test file
         if (parseHelper.parseProgramText(program) == null) {
             return "Could not parse test file."
@@ -94,8 +93,8 @@ class SafeDSGeneratorTest {
                 "valid test file",
                 DynamicTest.dynamicTest(testDisplayName(resourcePath, filePath), filePath.toUri()) {
                     generatorTest(resourcePath, filePath)
-                }
-            )
+                },
+            ),
         )
     }
 
@@ -135,7 +134,7 @@ class SafeDSGeneratorTest {
             .map {
                 OutputFile(
                     root.relativize(it).toUnixString(),
-                    it.readText()
+                    it.readText(),
                 )
             }
             .toList()

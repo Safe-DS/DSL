@@ -45,7 +45,7 @@ class SafeDSTEMPLATE_STRING_INNERValueConverterTest {
         @Test
         fun `should remove delimiters (file)`() {
             val compilationUnit = parseHelper.parseResource(
-                "conversion/templateStringPartValueConverter.sdstest"
+                "conversion/templateStringPartValueConverter.sdstest",
             ) // readProgramTextFromResource(resourceName)?.let { parseHelper.parse(it) }
             compilationUnit.shouldNotBeNull()
 
@@ -67,7 +67,7 @@ class SafeDSTEMPLATE_STRING_INNERValueConverterTest {
         fun `should add delimiters (creator)`() {
             val stringTemplate = createSdsTemplateString(
                 listOf("start", "inner", "end"),
-                listOf(createSdsNull(), createSdsNull())
+                listOf(createSdsNull(), createSdsNull()),
             )
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {

@@ -21,7 +21,7 @@ class PipelineChecker : AbstractSafeDSChecker() {
                     "Yield must not be used in a pipeline.",
                     it,
                     null,
-                    ErrorCode.NoYieldInPipeline
+                    ErrorCode.NoYieldInPipeline,
                 )
             }
     }

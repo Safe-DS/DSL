@@ -1,7 +1,6 @@
 package com.larsreimann.safeds.constant
 
 import com.larsreimann.safeds.emf.OriginalFilePath
-import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 
@@ -42,11 +41,11 @@ enum class SdsFileExtension(val extension: String) {
      * @see isInTestFile
      * @see isTestFile
      */
-    Test("sdstest");
+    Test("sdstest")
 
     override fun toString(): String {
         return extension
-    }
+    },
 }
 
 /**

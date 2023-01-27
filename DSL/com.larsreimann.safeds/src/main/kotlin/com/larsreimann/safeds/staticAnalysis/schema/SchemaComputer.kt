@@ -36,7 +36,6 @@ fun inferSchema(
     statement: SdsAbstractStatement,
     pipelineContext: MutableMap<SchemaOwner, SchemaResult>,
 ): MutableMap<SchemaOwner, SchemaResult> {
-
     val mainFunCall: SdsCall = when (statement) {
         is SdsExpressionStatement -> statement.expression as? SdsCall ?: return mutableMapOf()
         is SdsAssignment -> statement.expression as? SdsCall ?: return mutableMapOf()

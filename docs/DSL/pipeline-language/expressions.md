@@ -14,8 +14,8 @@ Int literals denote integers. They use the expected syntax. For example, the int
 
 Float literals denote floating point numbers. There are two ways to specify them:
 
-- **Decimal form**: One half can be written as `0.5`. Note that neither the integer part nor the decimal part can be omitted, so `.5` and `0.` are syntax errors.
-- **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Safe-DS as `1.0e-3` or `1.0E-3`. You can read this as `1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `1e-3` or `1E-3`.
+-   **Decimal form**: One half can be written as `0.5`. Note that neither the integer part nor the decimal part can be omitted, so `.5` and `0.` are syntax errors.
+-   **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Safe-DS as `1.0e-3` or `1.0E-3`. You can read this as `1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `1e-3` or `1E-3`.
 
 ### String Literals
 
@@ -56,48 +56,48 @@ To denote that a value is unknown or absent, use the literal `null`.
 
 Operations are special functions that can be applied to one or two expressions. Safe-DS has a fixed set of operations that cannot be extended. We distinguish between
 
-- prefix operations (general form `<operator> <operand>`), and
-- infix operations (general form `<left operand> <operator> <right operand>`).
+-   prefix operations (general form `<operator> <operand>`), and
+-   infix operations (general form `<left operand> <operator> <right operand>`).
 
 ### Operations on Numbers
 
 Numbers can be negated using the unary `-` operator:
 
-- The integer negative three is `-3`.
-- The float negative three is `-3.0`.
+-   The integer negative three is `-3`.
+-   The float negative three is `-3.0`.
 
 The usual arithmetic operations are also supported for integers, floats and combinations of the two. Note that when either operand is a float, the whole expression is evaluated to a float.
 
-- Addition: `0 + 5` (result is an integer)
-- Subtraction: `6 - 2.9` (result is a float)
-- Multiplication: `1.1 * 3` (result is a float)
-- Division: `1.0 / 4.2` (result is a float)
+-   Addition: `0 + 5` (result is an integer)
+-   Subtraction: `6 - 2.9` (result is a float)
+-   Multiplication: `1.1 * 3` (result is a float)
+-   Division: `1.0 / 4.2` (result is a float)
 
 Finally, two numbers can be compared, which results in a boolean. The integer `3` for example is less than the integer `5`. Safe-DS offers operators to do such checks for order:
 
-- Less than: `5 < 6`
-- Less than or equal: `1 <= 3`
-- Greater than or equal: `7 >= 7`
-- Greater than: `9 > 2`
+-   Less than: `5 < 6`
+-   Less than or equal: `1 <= 3`
+-   Greater than or equal: `7 >= 7`
+-   Greater than: `9 > 2`
 
 ### Logical Operations
 
 To work with logic, Safe-DS has the two boolean literals `false` and `true` as well as operations to work with them:
 
-- (Logical) **negation** (example `not a`): Output is `true` if and only if the operand is false:
+-   (Logical) **negation** (example `not a`): Output is `true` if and only if the operand is false:
 
 | `not a` | false | true  |
 | ------- | ----- | ----- |
 | &nbsp;  | true  | false |
 
-- **Conjunction** (example `a and b`): Output is `true` if and only if both operands are `true`. Note that the second operand is always evaluated, even if the first operand is `false` and, thus, already determines the result of the expression. The operator is not short-circuited:
+-   **Conjunction** (example `a and b`): Output is `true` if and only if both operands are `true`. Note that the second operand is always evaluated, even if the first operand is `false` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
 | `a and b` | false | true  |
 | --------- | ----- | ----- |
 | **false** | false | false |
 | **true**  | false | true  |
 
-- **Disjunction** (example `a or b`): Output is `true` if and only if at least one operand is `true`. Note that the second operand is always evaluated, even if the first operand is `true` and, thus, already determines the result of the expression. The operator is not short-circuited:
+-   **Disjunction** (example `a or b`): Output is `true` if and only if at least one operand is `true`. Note that the second operand is always evaluated, even if the first operand is `true` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
 | `a or b`  | false | true |
 | --------- | ----- | ---- |
@@ -108,13 +108,13 @@ To work with logic, Safe-DS has the two boolean literals `false` and `true` as w
 
 There are two different types of equality in Safe-DS, _identity_ and _structural equality_. Identity checks if two objects are one and the same, whereas structural equality checks if two objects have the same structure and content. Using a real world example, two phones of the same type would be structurally equal but not identical. Both types of equality checks return a boolean literal `true` if the check was positive and `false` if the check was negative. The syntax for these operations is as follows:
 
-- Identity: `1 === 2`
-- Structural equality: `1 == 2`
+-   Identity: `1 === 2`
+-   Structural equality: `1 == 2`
 
 Safe-DS also has shorthand versions for negated equality checks which should be used instead of an explicit logical negation with the `not` operator:
 
-- Negated identity: `1 !== 2`
-- Negated structural equality: `1 != 2`
+-   Negated identity: `1 !== 2`
+-   Negated structural equality: `1 != 2`
 
 ### Elvis Operator
 
@@ -169,8 +169,8 @@ This calls the [step][steps] `createDecisionTree`, using the default `maxDepth` 
 
 The syntax consists of these elements:
 
-- The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [step][steps] `createDecisionTree`)
-- The list of arguments, which is delimited by parentheses. In this case the list is empty, so no arguments are passed.
+-   The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [step][steps] `createDecisionTree`)
+-   The list of arguments, which is delimited by parentheses. In this case the list is empty, so no arguments are passed.
 
 If we want to override the default value of an optional [parameter][parameters] or if the callee has required [parameters][parameters], we need to pass arguments. We can either use _positional arguments_ or _named arguments_.
 
@@ -190,9 +190,9 @@ createDecisionTree(maxDepth = 5)
 
 These are the syntactic elements:
 
-- The name of the parameter for which we want to specify a value.
-- An equals sign.
-- The value to assign to the parameter.
+-   The name of the parameter for which we want to specify a value.
+-   An equals sign.
+-   The value to assign to the parameter.
 
 ### Passing Multiple Arguments
 
@@ -216,10 +216,10 @@ We have already seen the syntax for a single argument. If we want to pass multip
 
 There are some restriction regarding the choice of positional vs. named arguments and passing arguments in general:
 
-- For all [parameters][parameters] of the callee there must be at most one argument.
-- For all [required parameters][required-parameters] there must be exactly one argument.
-- After a named argument all arguments must be named.
-- [Variadic parameters][variadic-parameters] can only be assigned by position.
+-   For all [parameters][parameters] of the callee there must be at most one argument.
+-   For all [required parameters][required-parameters] there must be exactly one argument.
+-   After a named argument all arguments must be named.
+-   [Variadic parameters][variadic-parameters] can only be assigned by position.
 
 ### Legal Callees
 
@@ -240,10 +240,10 @@ Depending on the callee, a call can do different things. The following table lis
 
 The term _result record_ warrants further explanation: A result record maps [results][results] of a
 
-- [global function][global-functions],
-- [method][methods],
-- [step][steps], or
-- [lambda](#lambdas)
+-   [global function][global-functions],
+-   [method][methods],
+-   [step][steps], or
+-   [lambda](#lambdas)
 
 to their computed values.
 
@@ -253,9 +253,9 @@ If the result record only has a single entry, its value can be accessed directly
 
 A member access is used to refer to members of a complex data structure such as
 
-- a [class][classes],
-- an [enum][enums], or
-- the [result record](#result-record) of a [call](#calls).
+-   a [class][classes],
+-   an [enum][enums], or
+-   the [result record](#result-record) of a [call](#calls).
 
 The general syntax of a member access is this:
 
@@ -291,9 +291,9 @@ DecisionTree.verboseTraining
 
 These are the syntactic elements of this member access:
 
-- The receiver, which is the name of the class (here `DecisionTree`)
-- A dot.
-- The name of the static member of the class (here `verboseTraining`)
+-   The receiver, which is the name of the class (here `DecisionTree`)
+-   A dot.
+-   The name of the static member of the class (here `verboseTraining`)
 
 Note that we cannot access a static member from an instance of the class. We must use the class itself.
 
@@ -307,9 +307,9 @@ DecisionTree().maxDepth
 
 We now take apart the syntax again:
 
-- The receiver, here a [call](#calls) of the constructor of the class `DecisionTree`. This creates an instance of this class.
-- A dot.
-- The name of the instance member (here `maxDepth`).
+-   The receiver, here a [call](#calls) of the constructor of the class `DecisionTree`. This creates an instance of this class.
+-   A dot.
+-   The name of the instance member (here `maxDepth`).
 
 Note that instance members cannot be accessed from the class itself, but only from its instances.
 
@@ -344,9 +344,9 @@ SvmKernel.Linear
 
 These are the elements of the syntax:
 
-- The receiver, which is the name of the [enum][enums] (here `SvmKernel`).
-- A dot.
-- The name of the [variant][enum-variants] (here `Linear`).
+-   The receiver, which is the name of the [enum][enums] (here `SvmKernel`).
+-   A dot.
+-   The name of the [variant][enum-variants] (here `Linear`).
 
 This syntax is identical to the [member access of static class members](#member-access-of-static-class-member).
 
@@ -368,9 +368,9 @@ divideWithRemainder(12, 5).remainder
 
 Here are the syntactic elements:
 
-- The receiver, which is a [call](#calls).
-- A dot.
-- The name of the result (here `remainder`).
+-   The receiver, which is a [call](#calls).
+-   A dot.
+-   The name of the result (here `remainder`).
 
 While it is also possible to access the result by name if the [result record](#result-record) contains only a single entry, there is no need to do so, since this result can be used directly. If you still use a member access and the singular result of the call has the same name as an instance member of the corresponding class, the instance member wins.
 
@@ -412,10 +412,10 @@ step printFirst(vararg values: Int) {
 
 These are the elements of the syntax:
 
-- The name of the variadic parameter (here `values`).
-- An opening square bracket.
-- The index, which is an expression that evaluates to an integer. The first element has index 0.
-- A closing square bracket.
+-   The name of the variadic parameter (here `values`).
+-   An opening square bracket.
+-   The index, which is an expression that evaluates to an integer. The first element has index 0.
+-   A closing square bracket.
 
 Note that accessing a value at an index outside the bounds of the value list currently only raises an error at runtime.
 
@@ -495,8 +495,8 @@ While this appears longer than the solution with [steps][steps], note that it re
 
 Here are the syntactic elements:
 
-- A list of [parameters][parameters], which is enclosed in parentheses. Individual parameters are separated by commas.
-- The _body_, which is a list of [statements][statements] enclosed in curly braces. Note that each [statement][statements] is terminated by a semicolon.
+-   A list of [parameters][parameters], which is enclosed in parentheses. Individual parameters are separated by commas.
+-   The _body_, which is a list of [statements][statements] enclosed in curly braces. Note that each [statement][statements] is terminated by a semicolon.
 
 The results of a block lambda are [declared in its body using assignments][assignments-to-block-lambda-results].
 
@@ -512,9 +512,9 @@ intListOf(1, 4, 11).filter(
 
 These are the syntactic elements:
 
-- A list of [parameters][parameters], which is enclosed in parentheses. Individual parameters are separated by commas.
-- An arrow `->`.
-- The expression that should be returned.
+-   A list of [parameters][parameters], which is enclosed in parentheses. Individual parameters are separated by commas.
+-   An arrow `->`.
+-   The expression that should be returned.
 
 ### Closures
 
@@ -536,29 +536,29 @@ The interesting part here is that we [refer to](#references) to the [parameter][
 
 At the moment, lambdas can only be used if the context determines the type of its parameters. Concretely, this means we can use lambdas in these two places:
 
-- As an argument that is assigned to a [parameter][parameters] with a [type][types] in a [call](#calls).
-- As the value that is [assigned to a result of a step][assignments-to-step-results].
+-   As an argument that is assigned to a [parameter][parameters] with a [type][types] in a [call](#calls).
+-   As the value that is [assigned to a result of a step][assignments-to-step-results].
     In other cases, declare a step instead and use a [reference](#references) to this step where you would write the lambda.
 
 ## Precedence
 
 We all know that `2 + 3 * 7` is `23` and not `35`. The reason is that the `*` operator has a higher precedence than the `+` operator and is, therefore, evaluated first. These precedence rules are necessary for all types of expressions listed above and shown in the following list. The higher up an expression is in the list, the higher its precedence and the earlier it is evaluated. Expressions listed beside each other have the same precedence and are evaluated from left to right:
 
-- **HIGHER PRECEDENCE**
-- `()` (parentheses around an expression)
-- `1` ([integer literals](#int-literals)), `1.0` ([float literals](#float-literals)), `"a"` ([string literals](#string-literals)), `true`/`false` ([boolean literals](#boolean-literals)), `null` ([null literal](#null-literal)), `someName` ([references](#references)), `"age: {{ age }}"` ([template strings](#template-strings))
-- `()` ([calls](#calls)), `.` ([member accesses](#member-accesses)), `?.` ([null-safe member accesses](#null-safe-member-access)), `[]` ([indexed accesses](#indexed-accesses))
-- `-` (unary, [arithmetic negations](#operations-on-numbers))
-- `?:` ([Elvis operators](#elvis-operator))
-- `*`, `/` ([multiplicative operators](#operations-on-numbers))
-- `+`, `-` (binary, [additive operators](#operations-on-numbers))
-- `<`, `<=`, `>=`, `>` ([comparison operators](#operations-on-numbers))
-- `===`, `==`, `!==`, `!=` ([equality operators](#equality-checks))
-- `not` ([logical negations](#logical-operations))
-- `and` ([conjunctions](#logical-operations))
-- `or` ([disjunctions](#logical-operations))
-- `() -> 1` ([expression lambdas](#expression-lambdas)), `() {}` ([block lambdas](#block-lambdas))
-- **LOWER PRECEDENCE**
+-   **HIGHER PRECEDENCE**
+-   `()` (parentheses around an expression)
+-   `1` ([integer literals](#int-literals)), `1.0` ([float literals](#float-literals)), `"a"` ([string literals](#string-literals)), `true`/`false` ([boolean literals](#boolean-literals)), `null` ([null literal](#null-literal)), `someName` ([references](#references)), `"age: {{ age }}"` ([template strings](#template-strings))
+-   `()` ([calls](#calls)), `.` ([member accesses](#member-accesses)), `?.` ([null-safe member accesses](#null-safe-member-access)), `[]` ([indexed accesses](#indexed-accesses))
+-   `-` (unary, [arithmetic negations](#operations-on-numbers))
+-   `?:` ([Elvis operators](#elvis-operator))
+-   `*`, `/` ([multiplicative operators](#operations-on-numbers))
+-   `+`, `-` (binary, [additive operators](#operations-on-numbers))
+-   `<`, `<=`, `>=`, `>` ([comparison operators](#operations-on-numbers))
+-   `===`, `==`, `!==`, `!=` ([equality operators](#equality-checks))
+-   `not` ([logical negations](#logical-operations))
+-   `and` ([conjunctions](#logical-operations))
+-   `or` ([disjunctions](#logical-operations))
+-   `() -> 1` ([expression lambdas](#expression-lambdas)), `() {}` ([block lambdas](#block-lambdas))
+-   **LOWER PRECEDENCE**
 
 If the default precedence of operators is not sufficient, parentheses can be used to force a part of an expression to be evaluated first.
 

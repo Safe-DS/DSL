@@ -6,9 +6,9 @@ import com.larsreimann.safeds.constant.SdsInfixOperationOperator.IdenticalTo
 import com.larsreimann.safeds.constant.SdsInfixOperationOperator.NotIdenticalTo
 import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Or
 import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
-import com.larsreimann.safeds.constant.isPipelineFile
 import com.larsreimann.safeds.constant.isInPipelineFile
 import com.larsreimann.safeds.constant.isInTestFile
+import com.larsreimann.safeds.constant.isPipelineFile
 import com.larsreimann.safeds.constant.isTestFile
 import com.larsreimann.safeds.constant.operator
 import com.larsreimann.safeds.emf.assigneesOrEmpty
@@ -45,6 +45,7 @@ import com.larsreimann.safeds.safeDS.SdsInfixOperation
 import com.larsreimann.safeds.safeDS.SdsMemberAccess
 import com.larsreimann.safeds.safeDS.SdsParameter
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPrefixOperation
 import com.larsreimann.safeds.safeDS.SdsReference
@@ -56,7 +57,6 @@ import com.larsreimann.safeds.safeDS.SdsTemplateStringEnd
 import com.larsreimann.safeds.safeDS.SdsTemplateStringInner
 import com.larsreimann.safeds.safeDS.SdsTemplateStringStart
 import com.larsreimann.safeds.safeDS.SdsWildcard
-import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.staticAnalysis.linking.parameterOrNull
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
@@ -165,7 +165,6 @@ class SafeDSGenerator : AbstractGenerator() {
             }
 
         return buildString {
-
             // Imports
             val importsString = compileImports(imports)
             if (importsString.isNotBlank()) {
@@ -191,7 +190,6 @@ class SafeDSGenerator : AbstractGenerator() {
     }
 
     private fun compileImports(imports: Set<ImportData>) = buildString {
-
         // Qualified imports
         imports
             .filter { it.declarationName == null }
@@ -227,7 +225,7 @@ class SafeDSGenerator : AbstractGenerator() {
         append(
             step.parametersOrEmpty().joinToString {
                 compileParameter(CompileParameterFrame(it, imports, blockLambdaIdManager))
-            }
+            },
         )
         appendLine("):")
 
@@ -240,8 +238,8 @@ class SafeDSGenerator : AbstractGenerator() {
                         it,
                         imports,
                         blockLambdaIdManager,
-                        shouldSavePlaceholders = false
-                    )
+                        shouldSavePlaceholders = false,
+                    ),
                 ).prependIndent(indent)
                 appendLine(statement)
             }
@@ -263,8 +261,8 @@ class SafeDSGenerator : AbstractGenerator() {
             pipeline.statementsOrEmpty().withEffect().forEach {
                 appendLine(
                     compileStatement(
-                        CompileStatementFrame(it, imports, blockLambdaIdManager, shouldSavePlaceholders = true)
-                    ).prependIndent(indent)
+                        CompileStatementFrame(it, imports, blockLambdaIdManager, shouldSavePlaceholders = true),
+                    ).prependIndent(indent),
                 )
             }
         }
@@ -274,7 +272,7 @@ class SafeDSGenerator : AbstractGenerator() {
         val stmt: SdsAbstractStatement,
         val imports: MutableSet<ImportData>,
         val blockLambdaIdManager: IdManager<SdsBlockLambda>,
-        val shouldSavePlaceholders: Boolean
+        val shouldSavePlaceholders: Boolean,
     )
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -289,9 +287,9 @@ class SafeDSGenerator : AbstractGenerator() {
                                 CompileBlockLambdaFrame(
                                     lambda,
                                     imports,
-                                    blockLambdaIdManager
-                                )
-                            )
+                                    blockLambdaIdManager,
+                                ),
+                            ),
                         )
                     }
 
@@ -308,8 +306,8 @@ class SafeDSGenerator : AbstractGenerator() {
                     }
                     stringBuilder.append(
                         compileExpression.callRecursive(
-                            CompileExpressionFrame(stmt.expression, imports, blockLambdaIdManager)
-                        )
+                            CompileExpressionFrame(stmt.expression, imports, blockLambdaIdManager),
+                        ),
                     )
 
                     if (shouldSavePlaceholders) {
@@ -326,16 +324,16 @@ class SafeDSGenerator : AbstractGenerator() {
                                 CompileBlockLambdaFrame(
                                     lambda,
                                     imports,
-                                    blockLambdaIdManager
-                                )
-                            )
+                                    blockLambdaIdManager,
+                                ),
+                            ),
                         )
                     }
 
                     stringBuilder.append(
                         compileExpression.callRecursive(
-                            CompileExpressionFrame(stmt.expression, imports, blockLambdaIdManager)
-                        )
+                            CompileExpressionFrame(stmt.expression, imports, blockLambdaIdManager),
+                        ),
                     )
                 }
                 else -> throw java.lang.IllegalStateException("Missing case to handle statement $stmt.")
@@ -347,7 +345,7 @@ class SafeDSGenerator : AbstractGenerator() {
     private data class CompileBlockLambdaFrame(
         val lambda: SdsBlockLambda,
         val imports: MutableSet<ImportData>,
-        val blockLambdaIdManager: IdManager<SdsBlockLambda>
+        val blockLambdaIdManager: IdManager<SdsBlockLambda>,
     )
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -363,8 +361,8 @@ class SafeDSGenerator : AbstractGenerator() {
                     CompileParameterFrame(
                         parameter,
                         imports,
-                        blockLambdaIdManager
-                    )
+                        blockLambdaIdManager,
+                    ),
                 )
             }
             stringBuilder.append(parameters.joinToString())
@@ -381,17 +379,17 @@ class SafeDSGenerator : AbstractGenerator() {
                                 stmt,
                                 imports,
                                 blockLambdaIdManager,
-                                shouldSavePlaceholders = false
-                            )
-                        ).prependIndent(indent)
+                                shouldSavePlaceholders = false,
+                            ),
+                        ).prependIndent(indent),
                     )
                 }
 
                 if (lambda.blockLambdaResultsOrEmpty().isNotEmpty()) {
                     stringBuilder.appendLine(
                         "${indent}return ${
-                        lambda.blockLambdaResultsOrEmpty().joinToString { it.name }
-                        }"
+                            lambda.blockLambdaResultsOrEmpty().joinToString { it.name }
+                        }",
                     )
                 }
             }
@@ -402,7 +400,7 @@ class SafeDSGenerator : AbstractGenerator() {
     private data class CompileParameterFrame(
         val parameter: SdsParameter,
         val imports: MutableSet<ImportData>,
-        val blockLambdaIdManager: IdManager<SdsBlockLambda>
+        val blockLambdaIdManager: IdManager<SdsBlockLambda>,
     )
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -411,7 +409,7 @@ class SafeDSGenerator : AbstractGenerator() {
             when {
                 parameter.isOptional() -> {
                     val defaultValue = compileExpression.callRecursive(
-                        CompileExpressionFrame(parameter.defaultValue, imports, blockLambdaIdManager)
+                        CompileExpressionFrame(parameter.defaultValue, imports, blockLambdaIdManager),
                     )
                     "${parameter.correspondingPythonName()}=$defaultValue"
                 }
@@ -423,7 +421,7 @@ class SafeDSGenerator : AbstractGenerator() {
     private data class CompileExpressionFrame(
         val expression: SdsAbstractExpression,
         val imports: MutableSet<ImportData>,
-        val blockLambdaIdManager: IdManager<SdsBlockLambda>
+        val blockLambdaIdManager: IdManager<SdsBlockLambda>,
     )
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -478,8 +476,8 @@ class SafeDSGenerator : AbstractGenerator() {
                             CompileParameterFrame(
                                 parameter,
                                 imports,
-                                blockLambdaIdManager
-                            )
+                                blockLambdaIdManager,
+                            ),
                         )
                     }
                     val result = callRecursive(CompileExpressionFrame(expr.result, imports, blockLambdaIdManager))
@@ -601,14 +599,14 @@ class SafeDSGenerator : AbstractGenerator() {
                                     imports += ImportData(
                                         importPath.joinToString("."),
                                         declaration.correspondingPythonName(),
-                                        importAlias
+                                        importAlias,
                                     )
                                 }
                             } else {
                                 imports += ImportData(
                                     importPath.joinToString("."),
                                     declaration.correspondingPythonName(),
-                                    importAlias
+                                    importAlias,
                                 )
                             }
                         }
@@ -701,7 +699,7 @@ private fun String.toSingleLine(): String {
 private data class ImportData(
     val importPath: String,
     val declarationName: String? = null,
-    val alias: String? = null
+    val alias: String? = null,
 ) {
     override fun toString(): String {
         return when {

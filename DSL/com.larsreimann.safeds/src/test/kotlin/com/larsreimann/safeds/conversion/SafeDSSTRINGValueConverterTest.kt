@@ -9,8 +9,8 @@ import com.larsreimann.safeds.emf.createSdsString
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.sdsExpressionStatement
 import com.larsreimann.safeds.emf.sdsPipeline
-import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.safeDS.SdsPipeline
+import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.testing.ParseHelper

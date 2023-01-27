@@ -15,7 +15,7 @@ import org.eclipse.xtext.scoping.IScopeProvider
 
 class SafeDSIdeContentProposalProvider @Inject constructor(
     private val grammarAccess: SafeDSGrammarAccess,
-    private val scopeProvider2: IScopeProvider
+    private val scopeProvider2: IScopeProvider,
 ) : IdeContentProposalProvider() {
 
     private val crossReferencePriority = 500
@@ -25,7 +25,7 @@ class SafeDSIdeContentProposalProvider @Inject constructor(
     override fun _createProposals(
         ruleCall: RuleCall,
         context: ContentAssistContext,
-        acceptor: IIdeContentProposalAcceptor
+        acceptor: IIdeContentProposalAcceptor,
     ) {
         val rule = ruleCall.rule
         val model = context.currentModel
@@ -46,7 +46,7 @@ class SafeDSIdeContentProposalProvider @Inject constructor(
     override fun _createProposals(
         assignment: Assignment,
         context: ContentAssistContext,
-        acceptor: IIdeContentProposalAcceptor
+        acceptor: IIdeContentProposalAcceptor,
     ) {
         println("Auto-completion assignment: $assignment")
 
@@ -56,7 +56,7 @@ class SafeDSIdeContentProposalProvider @Inject constructor(
     override fun _createProposals(
         keyword: Keyword,
         context: ContentAssistContext,
-        acceptor: IIdeContentProposalAcceptor
+        acceptor: IIdeContentProposalAcceptor,
     ) {
         println("Auto-completion keyword: $keyword")
 
@@ -65,7 +65,7 @@ class SafeDSIdeContentProposalProvider @Inject constructor(
 
     private fun completeGlobalSnippets(
         context: ContentAssistContext,
-        acceptor: IIdeContentProposalAcceptor
+        acceptor: IIdeContentProposalAcceptor,
     ) {
         val pipeline = """
             |pipeline ${'$'}{1:name} {
@@ -79,7 +79,7 @@ class SafeDSIdeContentProposalProvider @Inject constructor(
     private fun completeSdsCallArguments(
         model: SdsArgumentList,
         context: ContentAssistContext,
-        acceptor: IIdeContentProposalAcceptor
+        acceptor: IIdeContentProposalAcceptor,
     ) {
         val usedParameters = model.arguments.map { it.parameter }.toSet()
         model.parametersOrNull()

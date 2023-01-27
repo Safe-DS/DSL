@@ -59,6 +59,7 @@ import com.larsreimann.safeds.safeDS.SdsParameterList
 import com.larsreimann.safeds.safeDS.SdsParentTypeList
 import com.larsreimann.safeds.safeDS.SdsParenthesizedExpression
 import com.larsreimann.safeds.safeDS.SdsParenthesizedType
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsPrefixOperation
@@ -84,7 +85,6 @@ import com.larsreimann.safeds.safeDS.SdsTypeParameterConstraint
 import com.larsreimann.safeds.safeDS.SdsTypeParameterList
 import com.larsreimann.safeds.safeDS.SdsTypeProjection
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature

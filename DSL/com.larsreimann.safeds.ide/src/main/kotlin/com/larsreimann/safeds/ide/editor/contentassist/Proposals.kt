@@ -75,7 +75,7 @@ fun listCallablesWithOnlyPrimitiveParameters(context: EObject): Map<URI, SdsAbst
  */
 fun listCallablesWithMatchingParameters(
     context: EObject,
-    declarations: List<SdsAbstractDeclaration>
+    declarations: List<SdsAbstractDeclaration>,
 ): Map<URI, SdsAbstractCallable> {
     val requiredTypes = declarations.map { it.type() }
 

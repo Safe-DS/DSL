@@ -14,10 +14,10 @@ step loadMovieRatingsSample() {}
 
 This declaration of a step has the following syntactic elements:
 
-- The keyword `step`.
-- The name of the step, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of steps.
-- The list of parameters (i.e. inputs) of the step. This is delimited by parentheses. In the example above, the step has no parameters.
-- The _body_ of the step, which contains the [statements][statements] that should be run when the step is [called](#calling-a-step). The body is delimited by curly braces. In this example, the body is empty, so running this step does nothing.
+-   The keyword `step`.
+-   The name of the step, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of steps.
+-   The list of parameters (i.e. inputs) of the step. This is delimited by parentheses. In the example above, the step has no parameters.
+-   The _body_ of the step, which contains the [statements][statements] that should be run when the step is [called](#calling-a-step). The body is delimited by curly braces. In this example, the body is empty, so running this step does nothing.
 
 ### Parameters
 

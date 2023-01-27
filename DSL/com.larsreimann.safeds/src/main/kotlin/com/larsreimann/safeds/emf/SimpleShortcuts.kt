@@ -40,6 +40,7 @@ import com.larsreimann.safeds.safeDS.SdsFunctionBody
 import com.larsreimann.safeds.safeDS.SdsImport
 import com.larsreimann.safeds.safeDS.SdsNamedType
 import com.larsreimann.safeds.safeDS.SdsParameter
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsPlaceholder
 import com.larsreimann.safeds.safeDS.SdsPredicate
 import com.larsreimann.safeds.safeDS.SdsProtocol
@@ -53,7 +54,6 @@ import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeArgument
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
 import com.larsreimann.safeds.safeDS.SdsUnionType
-import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsYield
 import com.larsreimann.safeds.utils.ExperimentalSdsApi
 import com.larsreimann.safeds.utils.uniqueOrNull

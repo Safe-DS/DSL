@@ -34,8 +34,8 @@ import com.larsreimann.safeds.safeDS.SdsBlockLambda
 import com.larsreimann.safeds.safeDS.SdsCompilationUnit
 import com.larsreimann.safeds.safeDS.SdsExpressionLambda
 import com.larsreimann.safeds.safeDS.SdsExpressionStatement
-import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsPipeline
+import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.testing.ParseHelper
 import com.larsreimann.safeds.testing.SafeDSInjectorProvider
 import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
@@ -213,17 +213,17 @@ class ToConstantExpressionTest {
                     false | false | false
                     false | true  | true
                     true  | false | true
-                    true  | true  | true"""
+                    true  | true  | true""",
             )
             fun `should return if left or right operand is true`(
                 leftOperand: Boolean,
                 rightOperand: Boolean,
-                expected: Boolean
+                expected: Boolean,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(leftOperand),
                     operator = SdsInfixOperationOperator.Or,
-                    rightOperand = createSdsBoolean(rightOperand)
+                    rightOperand = createSdsBoolean(rightOperand),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(expected)
@@ -234,7 +234,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.Or,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -245,7 +245,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.Or,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -262,17 +262,17 @@ class ToConstantExpressionTest {
                     false | false | false
                     false | true  | false
                     true  | false | false
-                    true  | true  | true"""
+                    true  | true  | true""",
             )
             fun `should return if left and right operand is true`(
                 leftOperand: Boolean,
                 rightOperand: Boolean,
-                expected: Boolean
+                expected: Boolean,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(leftOperand),
                     operator = SdsInfixOperationOperator.And,
-                    rightOperand = createSdsBoolean(rightOperand)
+                    rightOperand = createSdsBoolean(rightOperand),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(expected)
@@ -283,7 +283,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.And,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -294,7 +294,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.And,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -309,7 +309,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.Equals,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(true)
@@ -320,7 +320,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.Equals,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(false)
@@ -330,10 +330,10 @@ class ToConstantExpressionTest {
             fun `should return null if the left operand is not a constant expression`() {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsCall(
-                        receiver = createSdsNull()
+                        receiver = createSdsNull(),
                     ),
                     operator = SdsInfixOperationOperator.Equals,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -345,8 +345,8 @@ class ToConstantExpressionTest {
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.Equals,
                     rightOperand = createSdsCall(
-                        receiver = createSdsNull()
-                    )
+                        receiver = createSdsNull(),
+                    ),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -361,7 +361,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.NotEquals,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(true)
@@ -372,7 +372,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.NotEquals,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(false)
@@ -382,10 +382,10 @@ class ToConstantExpressionTest {
             fun `should return null if the left operand is not a constant expression`() {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsCall(
-                        receiver = createSdsNull()
+                        receiver = createSdsNull(),
                     ),
                     operator = SdsInfixOperationOperator.NotEquals,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -397,8 +397,8 @@ class ToConstantExpressionTest {
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.NotEquals,
                     rightOperand = createSdsCall(
-                        receiver = createSdsNull()
-                    )
+                        receiver = createSdsNull(),
+                    ),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -413,7 +413,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.IdenticalTo,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(true)
@@ -424,7 +424,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.IdenticalTo,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(false)
@@ -434,10 +434,10 @@ class ToConstantExpressionTest {
             fun `should return null if the left operand is not a constant expression`() {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsCall(
-                        receiver = createSdsNull()
+                        receiver = createSdsNull(),
                     ),
                     operator = SdsInfixOperationOperator.IdenticalTo,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -449,8 +449,8 @@ class ToConstantExpressionTest {
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.IdenticalTo,
                     rightOperand = createSdsCall(
-                        receiver = createSdsNull()
-                    )
+                        receiver = createSdsNull(),
+                    ),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -465,7 +465,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.NotIdenticalTo,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(true)
@@ -476,7 +476,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.NotIdenticalTo,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(false)
@@ -486,10 +486,10 @@ class ToConstantExpressionTest {
             fun `should return null if the left operand is not a constant expression`() {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsCall(
-                        receiver = createSdsNull()
+                        receiver = createSdsNull(),
                     ),
                     operator = SdsInfixOperationOperator.NotIdenticalTo,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -501,8 +501,8 @@ class ToConstantExpressionTest {
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.NotIdenticalTo,
                     rightOperand = createSdsCall(
-                        receiver = createSdsNull()
-                    )
+                        receiver = createSdsNull(),
+                    ),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -523,17 +523,17 @@ class ToConstantExpressionTest {
                     1.5 | 0.5 | false
                     1.5 | 0   | false
                     1   | 0.5 | false
-                    1   | 0   | false"""
+                    1   | 0   | false""",
             )
             fun `should return whether left operand is less than right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Boolean
+                expected: Boolean,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.LessThan,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(expected)
@@ -544,7 +544,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.LessThan,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -555,7 +555,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.LessThan,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -576,17 +576,17 @@ class ToConstantExpressionTest {
                     1.5 | 0.5 | false
                     1.5 | 0   | false
                     1   | 0.5 | false
-                    1   | 0   | false"""
+                    1   | 0   | false""",
             )
             fun `should return whether left operand is less than or equal to right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Boolean
+                expected: Boolean,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.LessThanOrEquals,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(expected)
@@ -597,7 +597,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.LessThanOrEquals,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -608,7 +608,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.LessThanOrEquals,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -629,17 +629,17 @@ class ToConstantExpressionTest {
                     0.5 | 1.5 | false
                     0.5 | 1   | false
                     0   | 1.5 | false
-                    0   | 1   | false"""
+                    0   | 1   | false""",
             )
             fun `should return whether left operand is greater than or equal to right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Boolean
+                expected: Boolean,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.GreaterThanOrEquals,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(expected)
@@ -650,7 +650,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.GreaterThanOrEquals,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -661,7 +661,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.GreaterThanOrEquals,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -682,17 +682,17 @@ class ToConstantExpressionTest {
                     0.5 | 1.5 | false
                     0.5 | 1   | false
                     0   | 1.5 | false
-                    0   | 1   | false"""
+                    0   | 1   | false""",
             )
             fun `should return whether left operand is greater than right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Boolean
+                expected: Boolean,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.GreaterThan,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(expected)
@@ -703,7 +703,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.GreaterThan,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -714,7 +714,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.GreaterThan,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -731,17 +731,17 @@ class ToConstantExpressionTest {
                     1.5 | 0.25 | 1.75
                     1.5 | 1    | 2.5
                     1   | 0.25 | 1.25
-                    1   | 1    | 2"""
+                    1   | 1    | 2""",
             )
             fun `should return sum of left and right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Double
+                expected: Double,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.Plus,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe expected.toSdsNumber().toConstantExpressionOrNull()
@@ -752,7 +752,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.Plus,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -763,7 +763,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.Plus,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -780,17 +780,17 @@ class ToConstantExpressionTest {
                     1.5 | 0.25 | 1.25
                     1.5 | 1    | 0.5
                     1   | 0.25 | 0.75
-                    1   | 1    | 0"""
+                    1   | 1    | 0""",
             )
             fun `should return difference between left and right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Double
+                expected: Double,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.Minus,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe expected.toSdsNumber().toConstantExpressionOrNull()
@@ -801,7 +801,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.Minus,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -812,7 +812,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.Minus,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -829,17 +829,17 @@ class ToConstantExpressionTest {
                     1.5 | 0.5  | 0.75
                     1.5 | 1    | 1.5
                     1   | 0.25 | 0.25
-                    1   | 1    | 1"""
+                    1   | 1    | 1""",
             )
             fun `should return product of left and right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Double
+                expected: Double,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.Times,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe expected.toSdsNumber().toConstantExpressionOrNull()
@@ -850,7 +850,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.Times,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -861,7 +861,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.Times,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -878,17 +878,17 @@ class ToConstantExpressionTest {
                     0.25 | 0.5   | 0.5
                     1.5  | 1     | 1.5
                     1    | 0.625 | 1.6
-                    1    | 1     | 1"""
+                    1    | 1     | 1""",
             )
             fun `should return quotient of left and right operand`(
                 leftOperand: Double,
                 rightOperand: Double,
-                expected: Double
+                expected: Double,
             ) {
                 val testData = createSdsInfixOperation(
                     leftOperand = leftOperand.toSdsNumber(),
                     operator = SdsInfixOperationOperator.By,
-                    rightOperand = rightOperand.toSdsNumber()
+                    rightOperand = rightOperand.toSdsNumber(),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe expected.toSdsNumber().toConstantExpressionOrNull()
@@ -899,7 +899,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.By,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -910,7 +910,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.By,
-                    rightOperand = createSdsNull()
+                    rightOperand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -921,7 +921,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.By,
-                    rightOperand = createSdsInt(0)
+                    rightOperand = createSdsInt(0),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -932,7 +932,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.By,
-                    rightOperand = createSdsFloat(0.0)
+                    rightOperand = createSdsFloat(0.0),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -943,7 +943,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.By,
-                    rightOperand = createSdsFloat(-0.0)
+                    rightOperand = createSdsFloat(-0.0),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -958,7 +958,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsBoolean(true),
                     operator = SdsInfixOperationOperator.Elvis,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(true)
@@ -969,7 +969,7 @@ class ToConstantExpressionTest {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsNull(),
                     operator = SdsInfixOperationOperator.Elvis,
-                    rightOperand = createSdsBoolean(true)
+                    rightOperand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(true)
@@ -979,10 +979,10 @@ class ToConstantExpressionTest {
             fun `should return null if the left operand is not a constant expression`() {
                 val testData = createSdsInfixOperation(
                     leftOperand = createSdsCall(
-                        receiver = createSdsNull()
+                        receiver = createSdsNull(),
                     ),
                     operator = SdsInfixOperationOperator.Elvis,
-                    rightOperand = createSdsInt(1)
+                    rightOperand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -994,8 +994,8 @@ class ToConstantExpressionTest {
                     leftOperand = createSdsInt(1),
                     operator = SdsInfixOperationOperator.Elvis,
                     rightOperand = createSdsCall(
-                        receiver = createSdsNull()
-                    )
+                        receiver = createSdsNull(),
+                    ),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1023,7 +1023,7 @@ class ToConstantExpressionTest {
             fun `should return negated operand if it is a constant boolean`() {
                 val testData = createSdsPrefixOperation(
                     operator = SdsPrefixOperationOperator.Not,
-                    operand = createSdsBoolean(true)
+                    operand = createSdsBoolean(true),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantBoolean(false)
@@ -1033,7 +1033,7 @@ class ToConstantExpressionTest {
             fun `should return null if the operand is not a constant boolean`() {
                 val testData = createSdsPrefixOperation(
                     operator = SdsPrefixOperationOperator.Not,
-                    operand = createSdsNull()
+                    operand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1047,7 +1047,7 @@ class ToConstantExpressionTest {
             fun `should return negated operand if it is a constant float`() {
                 val testData = createSdsPrefixOperation(
                     operator = SdsPrefixOperationOperator.Minus,
-                    operand = createSdsFloat(1.0)
+                    operand = createSdsFloat(1.0),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantFloat(-1.0)
@@ -1057,7 +1057,7 @@ class ToConstantExpressionTest {
             fun `should return negated operand if it is a constant int`() {
                 val testData = createSdsPrefixOperation(
                     operator = SdsPrefixOperationOperator.Minus,
-                    operand = createSdsInt(1)
+                    operand = createSdsInt(1),
                 )
 
                 testData.toConstantExpressionOrNull() shouldBe SdsConstantInt(-1)
@@ -1067,7 +1067,7 @@ class ToConstantExpressionTest {
             fun `should return null if the operand is not a constant number`() {
                 val testData = createSdsPrefixOperation(
                     operator = SdsPrefixOperationOperator.Minus,
-                    operand = createSdsNull()
+                    operand = createSdsNull(),
                 )
 
                 testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1088,7 +1088,7 @@ class ToConstantExpressionTest {
                     " inner3 ",
                     " inner4 ",
                     " inner5 ",
-                    " end"
+                    " end",
                 ),
                 templateExpressions = listOf(
                     createSdsBoolean(true),
@@ -1096,12 +1096,12 @@ class ToConstantExpressionTest {
                     createSdsInt(1),
                     createSdsNull(),
                     createSdsString("string"),
-                    createSdsReference(createSdsEnumVariant("Variant"))
-                )
+                    createSdsReference(createSdsEnumVariant("Variant")),
+                ),
             )
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantString(
-                value = "start true inner1 1.0 inner2 1 inner3 null inner4 string inner5 Variant end"
+                value = "start true inner1 1.0 inner2 1 inner3 null inner4 string inner5 Variant end",
             )
         }
 
@@ -1110,8 +1110,8 @@ class ToConstantExpressionTest {
             val testData = createSdsTemplateString(
                 stringParts = listOf("start ", " end"),
                 templateExpressions = listOf(
-                    createSdsCall(receiver = createSdsNull())
-                )
+                    createSdsCall(receiver = createSdsNull()),
+                ),
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1172,7 +1172,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should substitute parameters that were bound at call of a lambda`() {
             val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
-                "parameterAssignedDuringCall"
+                "parameterAssignedDuringCall",
             )
             val testData = pipeline.expectedExpression()
 
@@ -1182,7 +1182,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should substitute parameters that were bound at creation of a lambda`() {
             val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
-                "parameterAssignedDuringCreationOfLambda"
+                "parameterAssignedDuringCreationOfLambda",
             )
             val testData = pipeline.expectedExpression()
 
@@ -1212,11 +1212,11 @@ class ToConstantExpressionTest {
             val testEnumVariant = createSdsEnumVariant(name = "TestEnumVariant")
             val testEnum = createSdsEnum(
                 name = "TestEnum",
-                variants = listOf(testEnumVariant)
+                variants = listOf(testEnumVariant),
             )
             val testData = createSdsMemberAccess(
                 receiver = createSdsReference(testEnum),
-                member = createSdsReference(testEnumVariant)
+                member = createSdsReference(testEnumVariant),
             )
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantEnumVariant(testEnumVariant)
@@ -1227,16 +1227,16 @@ class ToConstantExpressionTest {
             val testEnumVariant = createSdsEnumVariant(
                 name = "TestEnumVariant",
                 parameters = listOf(
-                    createSdsParameter(name = "testParameter")
-                )
+                    createSdsParameter(name = "testParameter"),
+                ),
             )
             val testEnum = createSdsEnum(
                 name = "TestEnum",
-                variants = listOf(testEnumVariant)
+                variants = listOf(testEnumVariant),
             )
             val testData = createSdsMemberAccess(
                 receiver = createSdsReference(testEnum),
-                member = createSdsReference(testEnumVariant)
+                member = createSdsReference(testEnumVariant),
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1247,7 +1247,7 @@ class ToConstantExpressionTest {
             val testData = createSdsMemberAccess(
                 receiver = createSdsNull(),
                 member = createSdsReference(createSdsAttribute("testAttribute")),
-                isNullSafe = true
+                isNullSafe = true,
             )
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantNull
@@ -1257,7 +1257,7 @@ class ToConstantExpressionTest {
         fun `should return null if receiver is constant null and member access is not null safe`() {
             val testData = createSdsMemberAccess(
                 receiver = createSdsNull(),
-                member = createSdsReference(createSdsAttribute("testAttribute"))
+                member = createSdsReference(createSdsAttribute("testAttribute")),
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1295,10 +1295,10 @@ class ToConstantExpressionTest {
                     createSdsEnumVariant(
                         name = "TestEnumVariant",
                         parameters = listOf(
-                            createSdsParameter(name = "testParameter")
-                        )
-                    )
-                )
+                            createSdsParameter(name = "testParameter"),
+                        ),
+                    ),
+                ),
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1312,7 +1312,7 @@ class ToConstantExpressionTest {
         fun `should return constant enum variant if referenced enum variant has no parameters`() {
             val testEnumVariant = createSdsEnumVariant(name = "TestEnumVariant")
             val testData = createSdsReference(
-                declaration = testEnumVariant
+                declaration = testEnumVariant,
             )
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantEnumVariant(testEnumVariant)
@@ -1323,11 +1323,11 @@ class ToConstantExpressionTest {
             val testEnumVariant = createSdsEnumVariant(
                 name = "TestEnumVariant",
                 parameters = listOf(
-                    createSdsParameter(name = "testParameter")
-                )
+                    createSdsParameter(name = "testParameter"),
+                ),
             )
             val testData = createSdsReference(
-                declaration = testEnumVariant
+                declaration = testEnumVariant,
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1338,10 +1338,10 @@ class ToConstantExpressionTest {
             val testPlaceholder = createSdsPlaceholder("testPlaceholder")
             createSdsAssignment(
                 assignees = listOf(testPlaceholder),
-                createSdsNull()
+                createSdsNull(),
             )
             val testData = createSdsReference(
-                declaration = testPlaceholder
+                declaration = testPlaceholder,
             )
 
             testData.toConstantExpressionOrNull() shouldBe SdsConstantNull
@@ -1350,7 +1350,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should return null if referenced placeholder has no assigned value`() {
             val testData = createSdsReference(
-                declaration = createSdsPlaceholder("testPlaceholder")
+                declaration = createSdsPlaceholder("testPlaceholder"),
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()
@@ -1360,7 +1360,7 @@ class ToConstantExpressionTest {
         fun `simplify should return substituted value if it exists`() {
             val testParameter = createSdsParameter("testParameter")
             val testData = createSdsReference(
-                declaration = testParameter
+                declaration = testParameter,
             )
 
             testData.simplify(mapOf(testParameter to SdsConstantNull)) shouldBe SdsConstantNull
@@ -1370,10 +1370,10 @@ class ToConstantExpressionTest {
         fun `simplify should return default value if referenced parameter is not substituted but optional`() {
             val testParameter = createSdsParameter(
                 name = "testParameter",
-                defaultValue = createSdsNull()
+                defaultValue = createSdsNull(),
             )
             val testData = createSdsReference(
-                declaration = testParameter
+                declaration = testParameter,
             )
 
             testData.simplify(emptyMap()) shouldBe SdsConstantNull
@@ -1383,7 +1383,7 @@ class ToConstantExpressionTest {
         fun `simplify should return null if referenced parameter is required and not substituted`() {
             val testParameter = createSdsParameter("testParameter")
             val testData = createSdsReference(
-                declaration = testParameter
+                declaration = testParameter,
             )
 
             testData.simplify(emptyMap()).shouldBeNull()
@@ -1444,7 +1444,7 @@ class ToConstantExpressionTest {
             compilationUnit.shouldNotBeNull()
 
             val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
-                "recordAssignmentWithDifferentYieldOrder"
+                "recordAssignmentWithDifferentYieldOrder",
             )
             val testData = pipeline.expectedExpression()
 
@@ -1470,7 +1470,7 @@ class ToConstantExpressionTest {
             compilationUnit.shouldNotBeNull()
 
             val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>(
-                "recordAssignmentWithAdditionalYield"
+                "recordAssignmentWithAdditionalYield",
             )
             val testData = pipeline.expectedExpression()
 
@@ -1480,7 +1480,7 @@ class ToConstantExpressionTest {
         @Test
         fun `should return null for other declarations`() {
             val testData = createSdsReference(
-                declaration = createSdsAnnotation("TestAnnotation")
+                declaration = createSdsAnnotation("TestAnnotation"),
             )
 
             testData.toConstantExpressionOrNull().shouldBeNull()

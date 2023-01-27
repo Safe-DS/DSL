@@ -17,10 +17,10 @@ import com.larsreimann.safeds.safeDS.SdsEnumVariant
 import com.larsreimann.safeds.safeDS.SdsFunction
 import com.larsreimann.safeds.safeDS.SdsMemberAccess
 import com.larsreimann.safeds.safeDS.SdsParameter
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsResult
 import com.larsreimann.safeds.safeDS.SdsStep
 import com.larsreimann.safeds.safeDS.SdsTypeParameter
-import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.staticAnalysis.linking.parametersOrNull
 import com.larsreimann.safeds.staticAnalysis.partialEvaluation.toConstantExpressionOrNull
 import com.larsreimann.safeds.stdlibAccess.StdlibAnnotations
@@ -56,7 +56,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
                     "This annotation target is used multiple times.",
                     it,
                     null,
-                    WarningCode.DuplicateTarget
+                    WarningCode.DuplicateTarget,
                 )
             }
     }
@@ -77,14 +77,13 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             error(
                 "Missing argument list.",
                 Literals.SDS_ANNOTATION_CALL__ANNOTATION,
-                ErrorCode.MISSING_ARGUMENT_LIST
+                ErrorCode.MISSING_ARGUMENT_LIST,
             )
         }
     }
 
     @Check
     fun target(sdsAnnotationCall: SdsAnnotationCall) {
-
         // Get target of annotation use
         val actualTarget = sdsAnnotationCall.targetOrNull() ?: return
 
@@ -142,7 +141,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             error(
                 "This annotation cannot be applied to $wrongTarget.",
                 null,
-                ErrorCode.WRONG_TARGET
+                ErrorCode.WRONG_TARGET,
             )
         }
     }
@@ -158,7 +157,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             info(
                 "Unnecessary argument list.",
                 Literals.SDS_ABSTRACT_CALL__ARGUMENT_LIST,
-                InfoCode.UnnecessaryArgumentList
+                InfoCode.UnnecessaryArgumentList,
             )
         }
     }
@@ -171,7 +170,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
                     "Arguments in annotation call must be constant.",
                     it,
                     Literals.SDS_ARGUMENT__VALUE,
-                    ErrorCode.MustBeConstant
+                    ErrorCode.MustBeConstant,
                 )
             }
         }
@@ -188,7 +187,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             info(
                 "Purity implies absence of side effects (remove this annotation call).",
                 null,
-                InfoCode.PureImpliesNoSideEffects
+                InfoCode.PureImpliesNoSideEffects,
             )
         }
     }
@@ -204,7 +203,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             info(
                 "Python module is identical to Safe-DS package (can remove annotation call).",
                 null,
-                InfoCode.IdenticalPythonModule
+                InfoCode.IdenticalPythonModule,
             )
         }
     }
@@ -220,7 +219,7 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             info(
                 "Python name is identical to Safe-DS name (can remove annotation call).",
                 null,
-                InfoCode.IdenticalPythonName
+                InfoCode.IdenticalPythonName,
             )
         }
     }
