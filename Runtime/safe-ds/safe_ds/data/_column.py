@@ -179,7 +179,7 @@ class Column:
 
         Returns
         -------
-        bool : bool
+        missing_values_exist : bool
             True if missing values exist.
         """
         return self.any(
