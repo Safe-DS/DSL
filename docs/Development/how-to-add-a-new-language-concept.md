@@ -63,24 +63,24 @@
 
 <!-- Links -->
 
-[experimental-sds-api]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/utils/MarkerAnnotations.kt
-[safeds.ecore]: ../../DSL/com.larsreimann.safeds/model/SafeDS.ecore
-[safeds.genmodel]: ../../DSL/com.larsreimann.safeds/model/SafeDS.genmodel
-[grammar-tests]: ../../DSL/com.larsreimann.safeds/src/test/resources/grammar
-[safeds.xtext]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/SafeDS.xtext
-[converter-tests]: ../../DSL/com.larsreimann.safeds/src/test/kotlin/com/larsreimann/safeds/conversion
-[converters]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/conversion
-[scoping-tests]: ../../DSL/com.larsreimann.safeds/src/test/kotlin/com/larsreimann/safeds/scoping/ScopingTest.kt
-[local-scope-provider]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/scoping/SafeDSScopeProvider.kt
-[resource-description-strategy]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/scoping/SafeDSResourceDescriptionStrategy.kt
-[static-analysis]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/staticAnalysis
-[validation-tests]: ../../DSL/com.larsreimann.safeds/src/test/resources/validation
-[validators]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/validation
-[constants]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/constant
-[creators]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/emf/Creators.kt
-[shortcuts]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/emf/SimpleShortcuts.kt
-[generator-tests]: ../../DSL/com.larsreimann.safeds/src/test/resources/generator
-[generator]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/generator/SafeDSGenerator.kt
-[formatting-tests]: ../../DSL/com.larsreimann.safeds/src/test/resources/formatting
-[formatting]: ../../DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/formatting2/SafeDSFormatter.kt
-[tutorial]: docs/../../DSL/README.md
+[experimental-sds-api]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/utils/MarkerAnnotations.kt
+[safeds.ecore]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/model/SafeDS.ecore
+[safeds.genmodel]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/model/SafeDS.genmodel
+[grammar-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/resources/grammar
+[safeds.xtext]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/SafeDS.xtext
+[converter-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/kotlin/com/larsreimann/safeds/conversion
+[converters]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/conversion
+[scoping-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/kotlin/com/larsreimann/safeds/scoping/ScopingTest.kt
+[local-scope-provider]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/scoping/SafeDSScopeProvider.kt
+[resource-description-strategy]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/scoping/SafeDSResourceDescriptionStrategy.kt
+[static-analysis]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/staticAnalysis
+[validation-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/resources/validation
+[validators]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/validation
+[constants]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/constant
+[creators]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/emf/Creators.kt
+[shortcuts]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/emf/SimpleShortcuts.kt
+[generator-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/resources/generator
+[generator]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/generator/SafeDSGenerator.kt
+[formatting-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/resources/formatting
+[formatting]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/formatting2/SafeDSFormatter.kt
+[tutorial]: ../DSL/README.md

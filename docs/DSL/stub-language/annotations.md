@@ -13,8 +13,9 @@ annotation OnlyForExperts
 ```
 
 This declaration of an annotation has the following syntactic elements:
-* The keyword `annotation`.
-* The name of the annotation, here `OnlyForExperts`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `UpperCamelCase` for the names of annotations.
+
+- The keyword `annotation`.
+- The name of the annotation, here `OnlyForExperts`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `UpperCamelCase` for the names of annotations.
 
 ### Parameters
 
@@ -39,18 +40,18 @@ As we can see from the `OnlyForExperts` example, we can omit the entire paramete
 
 To attach metainformation to a declaration, the annotation must be called on that declaration. We name the annotated declaration the _target_ of the annotation. Possible targets are
 
-* [Annotations](#declaring-an-annotation) (yes, annotations can be the target of annotation calls)
-* [Attributes][attributes]
-* [Classes][classes]
-* Compilation units (entire files)
-* [Enums][enums]
-* [Enum variants][enum-variants]
-* [Global functions][global-functions] / [methods][methods]
-* [Parameters][parameters]
-* [Results][results]
-* [Steps][steps]
-* [Type parameters][type-parameters]
-* [Workflows][workflows]
+- [Annotations](#declaring-an-annotation) (yes, annotations can be the target of annotation calls)
+- [Attributes][attributes]
+- [Classes][classes]
+- Compilation units (entire files)
+- [Enums][enums]
+- [Enum variants][enum-variants]
+- [Global functions][global-functions] / [methods][methods]
+- [Parameters][parameters]
+- [Results][results]
+- [Steps][steps]
+- [Type parameters][type-parameters]
+- [Workflows][workflows]
 
 The valid targets of an annotation can be restricted with the [`Target`][safeds-lang-target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds-lang-repeatable].
 
@@ -62,8 +63,9 @@ class VerySpecificMLModel
 ```
 
 Here is a breakdown of the syntax:
-* An `@`.
-* The name of the called annotation (here `OnlyForExperts`).
+
+- An `@`.
+- The name of the called annotation (here `OnlyForExperts`).
 
 The code `class VerySpecificMLModel` is **not** part of the annotation call but simply the [class declaration][classes] that is targeted by the annotation call. Since the annotation `OnlyForExperts` does not specify parameters, we also need not pass arguments and can omit the entire argument list.
 
@@ -87,8 +89,8 @@ The same [restrictions to arguments][argument-restrictions] as for [calls][calls
 
 The package `safeds.lang` contains several annotations that are processed by Safe-DS. Refer to the [API documentation][safeds-lang] for more details. Particularly important are the annotations
 
-* [`Target`][safeds-lang-target], which can restrict the possible targets of an annotation, and
-* [`Repeatable`][safeds-lang-repeatable], which allows an annotation to be called multiple times on the same declaration.
+- [`Target`][safeds-lang-target], which can restrict the possible targets of an annotation, and
+- [`Repeatable`][safeds-lang-repeatable], which allows an annotation to be called multiple times on the same declaration.
 
 [parameters]: ../common/parameters.md
 [types]: ../common/types.md
