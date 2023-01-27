@@ -226,14 +226,14 @@ There are some restriction regarding the choice of positional vs. named argument
 Depending on the callee, a call can do different things. The following table lists all legal callees and what happens if they are called:
 
 | Callee                                           | Meaning                                                                                                                        |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | --- |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
 | [Class][classes]                                 | Create a new instance of the class. The class must have a constructor to be callable. The call evaluates to this new instance. |
 | [Enum Variant][enum-variants]                    | Creates a new instance of the enum variant. Enum variants are always callable. The call evaluates to this new instance.        |
 | [Global Function][global-functions]              | Invokes the function and runs the associated Python code. The call evaluates to the result record of the function.             |
 | [Method][methods]                                | Invokes the method and runs the associated Python code. The call evaluates to the result record of the method.                 |
-| [Step][steps]                                    | Invokes the step and runs the Safe-DS code in its body. The call evaluates to the result record of the step.                   |     |
-| [Block Lambda](#block-lambdas)                   | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               |     |
-| [Expression Lambda](#expression-lambdas)         | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               |     |
+| [Step][steps]                                    | Invokes the step and runs the Safe-DS code in its body. The call evaluates to the result record of the step.                   |
+| [Block Lambda](#block-lambdas)                   | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               |
+| [Expression Lambda](#expression-lambdas)         | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               |
 | Declaration with [Callable Type][callable-types] | Call whatever the value of the declaration is.                                                                                 |
 
 #### Result Record
