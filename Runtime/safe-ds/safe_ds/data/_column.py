@@ -333,7 +333,7 @@ class ColumnStatistics:
         Returns
         -------
         mode :
-            The mode.
+            The mode value.
         """
         return self.column._data.mode()[0]
 
