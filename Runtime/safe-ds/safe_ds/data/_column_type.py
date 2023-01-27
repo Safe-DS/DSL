@@ -8,30 +8,37 @@ import numpy as np
 
 class ColumnType(ABC):
     """
-    Base Type for Columns, stored in TableSchema
+    Base type for Column, stored in TableSchema.
     """
 
     @abstractmethod
     def is_numeric(self) -> bool:
         """
-        tells if the given column type is numeric
+        Return whether the given column type is numeric.
         Returns
         -------
-        bool
+        : bool
+            True if the column is numeric.
         """
         return False
 
     @staticmethod
     def from_numpy_dtype(_type: np.dtype) -> ColumnType:
         """
-        return the column type for a given numpy dtype
+        Return the column type for a given numpy dtype.
         Parameters
         ----------
         _type : numpy.dtype
 
         Returns
         -------
-        ColumnType
+        : ColumnType
+            The ColumnType.
+
+        Raises
+        -------
+        TypeError
+            If an unexpected column type is parsed.
 
         """
         if _type.kind in ("u", "i"):
