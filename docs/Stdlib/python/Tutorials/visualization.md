@@ -59,7 +59,10 @@ plot_lineplot(data_cleaned, "Pclass", "Fare")
 
 ![Lineplot](./Resources/Lineplot.png)
 
-We can conclude that tickets for first class rooms are much more expensive compared to second and third class. Also the difference between second and third is less pronounced.
+The line itself represents the central tendency and the hued area around it a confidence interval for that estimate.
+
+We can conclude that tickets for first class rooms are much more expensive compared to second and third class.
+Also the difference between second and third is less pronounced.
 
 Some other plots that might be useful are boxplots, histogams and scatterplots.
 
