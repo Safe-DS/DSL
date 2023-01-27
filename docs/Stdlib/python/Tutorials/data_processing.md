@@ -3,7 +3,7 @@
 1. Load your data in to a table
 
 ```python
-# via a csv file
+# read a csv file
 table_csv = Table.from_csv("path_to_csv_file.csv")
 
 # or a json file
@@ -24,21 +24,21 @@ row = table.get_row(0)
 column = table.get_column("TheColumnName")
 ```
 
-4. Combine a list of rows to a Table
+4. Combine a list of rows to a table
 
 ```python
-# make sure the rows have the same Columns
+# make sure the rows have the same columns
 table = Table.from_rows([row1, row2])
 ```
 
-5. Combine a list of columns to a Table
+5. Combine a list of columns to a table
 
 ```python
 # make sure the columns have the same amount of rows
 table = Table.from_columns([column1, column2])
 ```
 
-6. Drop or keep Columns in a Table
+6. Drop columns from a table or keep only specified columns in a table
 
 ```python
 # drop specified columns
