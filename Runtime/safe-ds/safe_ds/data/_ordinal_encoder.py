@@ -1,4 +1,3 @@
-import pandas as pd
 from safe_ds import exceptions
 from safe_ds.data._table import Table
 from sklearn import preprocessing
@@ -17,7 +16,8 @@ class OrdinalEncoder:
 
     def __init__(self, order: list[str]) -> None:
         self.is_fitted = 0
-        self.oe = preprocessing.OrdinalEncoder(categories=order)
+        self.oe = preprocessing.OrdinalEncoder(categories=[order])
+        self.order = order
 
     def fit(self, table: Table, column: str) -> None:
         """
@@ -42,9 +42,11 @@ class OrdinalEncoder:
         -------
             LearningError if the Model couldn't be fitted correctly
         """
-        try:
 
-            self.oe.fit(table.keep_columns([column])._data)
+        p_df = table._data
+        p_df.columns = table.schema.get_column_names()
+        try:
+            self.oe.fit(p_df[[column]])
         except exceptions.NotFittedError as exc:
             raise exceptions.LearningError("") from exc
 
@@ -66,10 +68,11 @@ class OrdinalEncoder:
          ------
              a NotFittedError if the Model wasn't fitted before transforming
         """
-        p_df = table._data
+        p_df = table._data.copy()
         p_df.columns = table.schema.get_column_names()
         try:
-            p_df[column] = self.oe.transform(p_df[column])
+            p_df[[column]] = self.oe.transform(p_df[[column]])
+            p_df[column] = p_df[column].astype(dtype="int64", copy=False)
             return Table(p_df)
         except Exception as exc:
             raise exceptions.NotFittedError from exc
@@ -93,15 +96,12 @@ class OrdinalEncoder:
             NotFittedError if the encoder wasn't fitted before transforming.
 
         """
-        p_df = table._data
-        p_df.columns = table.schema.get_column_names()
         try:
             for col in columns:
                 # Fit the Ordinal Encoder on the Column
-                self.oe.fit(p_df[col])
-
+                self.fit(table, col)
                 # transform the column using the trained Ordinal Encoder
-                p_df[col] = self.oe.transform(p_df[col])
-            return Table(pd.DataFrame(p_df))
+                table = self.transform(table, col)
+            return table
         except exceptions.NotFittedError as exc:
             raise exceptions.NotFittedError from exc
