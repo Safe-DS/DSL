@@ -650,7 +650,7 @@ class Table:
         Returns
         -------
         cols: list[Column]
-            the list with only numerical Columns
+            the list with only numerical columns
         """
         cols = []
         for column_name, data_type in self.schema._schema.items():
