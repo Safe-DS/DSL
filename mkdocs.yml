@@ -30,4 +30,5 @@ nav:
       - Stdlib/python/table.md
       - Stdlib/python/column.md
       - Stdlib/python/row.md
+      - Stdlib/python/Tutorials/README.md
   - Developer Guide: Development/README.md
