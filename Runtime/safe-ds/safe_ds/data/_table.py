@@ -5,6 +5,8 @@ import os.path
 import typing
 from pathlib import Path
 from typing import Callable, Optional, Union
+
+import numpy as np
 from scipy import stats
 
 import pandas as pd
@@ -638,6 +640,21 @@ class Table:
                 cols.append(self.get_column(column_name))
         return cols
 
+    def list_columns_with_numerical_values(self) -> list[Column]:
+        """
+        Get a list of Columns only containing numerical values
+
+        Returns
+        -------
+        cols: list[Column]
+            the list with only numerical Columns
+        """
+        cols = []
+        for column_name, data_type in self.schema._schema.items():
+            if data_type.is_numeric():
+                cols.append(self.get_column(column_name))
+        return cols
+
     def sort_columns(
         self,
         query: Callable[[Column, Column], int] = lambda col1, col2: (
@@ -679,17 +696,21 @@ class Table:
             a new table where the outliers have been removed
         """
         result = self._data.copy(deep=True)
-        table_without_nonnumericals = Table.from_columns(self.list_columns_with_non_numerical_values())
 
-        #result = result[
-        #    (
-        #        pd.DataFrame(
-        #            stats.zscore(result)
-        #        ).apply(abs) < 3).all(axis=1)
-        #]
+        table_without_nonnumericals = Table.from_columns(self.list_columns_with_numerical_values())
 
-        print(  pd.DataFrame(stats.zscore(result)).apply(abs)   )
 
+        print(table_without_nonnumericals._data)
+        print(np.absolute(
+                    stats.zscore(table_without_nonnumericals._data)
+                ))
+
+        result = result[
+            (
+                np.absolute(
+                    stats.zscore(table_without_nonnumericals._data)
+                ) < 3).all(axis=1)
+        ]
 
         return Table(result)
 

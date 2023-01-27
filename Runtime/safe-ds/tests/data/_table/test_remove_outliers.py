@@ -1,20 +1,43 @@
+import numpy as np
 import pandas as pd
-import pytest
-from safe_ds.data import Table
-from safe_ds.exceptions import UnknownColumnNameError
+from safe_ds.data import Table, TableSchema, ColumnType
 
 
-def test_remove_outliers() -> None:
+def test_remove_outliers_no_outliers() -> None:
     table = Table(
         pd.DataFrame(
             data={
-                #"col1": ["A", "B", "C"],
-                "col3": [1., 2., 3.],
-                "col4": [2, 3, 1],
+                "col1": ["A", "B", "C"],
+                "col2": [1., 2., 3.],
+                "col3": [2, 3, 1],
             }
         )
     )
-#todo test if values are missing
-    print(table.remove_outliers()._data)
+    result = table.remove_outliers()
+    assert result.count_rows() == 3
+    assert result.count_columns() == 3
 
-    assert 1 == 0
+
+def test_remove_outliers_with_outliers() -> None:
+    table = Table(
+        pd.DataFrame(
+            data={
+                "col1": ["A", "B", "C", "outlier", "a", "a", "a", "a", "a", "a", "a", "a"],
+                "col2": [1., 2., 3., 4., 1., 1., 1., 1., 1., 1., 1., 1.],
+                "col3": [2, 3, 1, 1_000_000_000, 1, 1, 1, 1, 1, 1, 1, 1],
+            }
+        )
+    )
+    result = table.remove_outliers()
+    assert result.count_rows() == 11
+    assert result.count_columns() == 3
+
+
+def test_remove_outliers_no_rows() -> None:
+    table = Table([], TableSchema({
+        "col1": ColumnType.from_numpy_dtype(np.dtype(float))
+    }))
+    table._data["col1"] = None
+    result = table.remove_outliers()
+    assert result.count_rows() == 0
+    assert result.count_columns() == 1
