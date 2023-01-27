@@ -12,12 +12,12 @@ import com.larsreimann.safeds.validation.declarations.ImportChecker
 import com.larsreimann.safeds.validation.declarations.NameConventionChecker
 import com.larsreimann.safeds.validation.declarations.ParameterChecker
 import com.larsreimann.safeds.validation.declarations.ParameterListChecker
+import com.larsreimann.safeds.validation.declarations.PipelineChecker
 import com.larsreimann.safeds.validation.declarations.PlaceholderChecker
 import com.larsreimann.safeds.validation.declarations.PredicateChecker
 import com.larsreimann.safeds.validation.declarations.ResultChecker
 import com.larsreimann.safeds.validation.declarations.StepChecker
 import com.larsreimann.safeds.validation.declarations.TypeParameterChecker
-import com.larsreimann.safeds.validation.declarations.WorkflowChecker
 import com.larsreimann.safeds.validation.expressions.ArgumentChecker
 import com.larsreimann.safeds.validation.expressions.CallChecker
 import com.larsreimann.safeds.validation.expressions.InfixOperationChecker
@@ -68,7 +68,7 @@ import org.eclipse.xtext.validation.ComposedChecks
         PlaceholderChecker::class,
         PredicateChecker::class,
         ResultChecker::class,
-        WorkflowChecker::class,
+        PipelineChecker::class,
         StepChecker::class,
         TypeParameterChecker::class,
 

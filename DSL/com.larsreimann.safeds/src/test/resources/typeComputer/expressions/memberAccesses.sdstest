@@ -6,7 +6,7 @@ class C {
     static attr c: Any?
 }
 
-workflow myWorkflow {
+pipeline myPipeline {
     C.a;
     C.b;
     C.c;

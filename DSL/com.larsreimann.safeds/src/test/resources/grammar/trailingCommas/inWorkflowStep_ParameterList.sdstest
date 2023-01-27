@@ -1,4 +1,4 @@
-package tests.trailingComma.inWorkflowStepParameterList
+package tests.trailingComma.inStepParameterList
 
 // no_syntax_error
 step s(a: Int, b: Int, ) {}

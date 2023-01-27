@@ -1,6 +1,6 @@
 // no_syntax_error
 
-workflow myWorkflow {
+pipeline myPipeline {
     false and true;
     true or true;
     not true;

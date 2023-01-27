@@ -1,5 +1,5 @@
 // Package "myPackage"
 package »myPackage«
 
-// Function "myWorkflow" in "myPackage"
-workflow »myWorkflow« {}
+// Function "myPipeline" in "myPackage"
+pipeline »myPipeline« {}

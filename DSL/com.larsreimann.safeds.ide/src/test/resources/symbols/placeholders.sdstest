@@ -1,4 +1,4 @@
-// Function "myWorkflow"
-workflow »myWorkflow« {
+// Function "myPipeline"
+pipeline »myPipeline« {
     val a = 1;
 }

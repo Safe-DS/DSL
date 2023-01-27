@@ -3,7 +3,7 @@ package tests.validation.expressions.calls.missingTypeArgumentList
 fun functionWithoutTypeParameters()
 fun functionWithTypeParameters<T>()
 
-workflow myWorkflow {
+pipeline myPipeline {
     // no_semantic_error "Missing type argument list."
     »functionWithoutTypeParameters«();
     // no_semantic_error "Missing type argument list."

@@ -29,7 +29,7 @@
                     "safeds"
                 ],
                 "extensions": [
-                    ".sdsflow",
+                    ".sdspipe",
                     ".sdsschema",
                     ".sdsstub",
                     ".sdstest"

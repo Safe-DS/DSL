@@ -2,7 +2,7 @@ package tests.typeComputer.assignees.blockLambdaResults
 
 fun f(p: Any)
 
-workflow myWorkflow {
+pipeline myPipeline {
     f(() {
         yield r = 1;
         yield s = "";

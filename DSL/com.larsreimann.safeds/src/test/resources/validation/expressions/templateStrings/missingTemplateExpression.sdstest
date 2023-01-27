@@ -1,6 +1,6 @@
 package validation.expressions.templateStrings.missingTemplateExpression
 
-workflow test {
+pipeline test {
     // semantic_error "There must be a template expression between two template string parts."
     // semantic_error "There must be a template expression between two template string parts."
     "start {{ »}} inner {{« »}} end"«;

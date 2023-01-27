@@ -84,12 +84,12 @@ class ProposalsTest {
             context.shouldNotBeNull()
 
             val placeholder = context.findUniqueDeclarationOrFail<SdsPlaceholder>("test_placeholder_a")
-            val workflowStepA = context.findUniqueDeclarationOrFail<SdsStep>("matching_a")
-            val workflowStepB = context.findUniqueDeclarationOrFail<SdsStep>("matching_b")
+            val stepA = context.findUniqueDeclarationOrFail<SdsStep>("matching_a")
+            val stepB = context.findUniqueDeclarationOrFail<SdsStep>("matching_b")
 
             val descriptions = listCallablesWithMatchingParameters(context, listOf(placeholder))
-            descriptions.shouldContainValue(workflowStepA)
-            descriptions.shouldNotContainValue(workflowStepB)
+            descriptions.shouldContainValue(stepA)
+            descriptions.shouldNotContainValue(stepB)
         }
 
         @Test
@@ -98,12 +98,12 @@ class ProposalsTest {
             context.shouldNotBeNull()
 
             val result = context.findUniqueDeclarationOrFail<SdsResult>("test_result_a")
-            val workflowStepA = context.findUniqueDeclarationOrFail<SdsStep>("matching_a")
-            val workflowStepB = context.findUniqueDeclarationOrFail<SdsStep>("matching_b")
+            val stepA = context.findUniqueDeclarationOrFail<SdsStep>("matching_a")
+            val stepB = context.findUniqueDeclarationOrFail<SdsStep>("matching_b")
 
             val descriptions = listCallablesWithMatchingParameters(context, listOf(result))
-            descriptions.shouldContainValue(workflowStepA)
-            descriptions.shouldNotContainValue(workflowStepB)
+            descriptions.shouldContainValue(stepA)
+            descriptions.shouldNotContainValue(stepB)
         }
 
         @Test
@@ -112,12 +112,12 @@ class ProposalsTest {
             context.shouldNotBeNull()
 
             val result = context.findUniqueDeclarationOrFail<SdsResult>("test_result_c")
-            val matchingWorkflow = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_c")
-            val nonMatchingWorkflow = context.findUniqueDeclarationOrFail<SdsStep>("not_matching_multiple_c")
+            val matchingStep = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_c")
+            val nonMatchingStep = context.findUniqueDeclarationOrFail<SdsStep>("not_matching_multiple_c")
 
             val descriptions = listCallablesWithMatchingParameters(context, listOf(result, result))
-            descriptions.shouldContainValue(matchingWorkflow)
-            descriptions.shouldNotContainValue(nonMatchingWorkflow)
+            descriptions.shouldContainValue(matchingStep)
+            descriptions.shouldNotContainValue(nonMatchingStep)
         }
 
         @Test
@@ -127,13 +127,13 @@ class ProposalsTest {
 
             val result = context.findUniqueDeclarationOrFail<SdsResult>("test_result_c")
             val placeholder = context.findUniqueDeclarationOrFail<SdsPlaceholder>("test_placeholder_d")
-            val matchingWorkflow1 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_c_d")
-            val matchingWorkflow2 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_d_c")
+            val matchingStep1 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_c_d")
+            val matchingStep2 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_d_c")
 
             // Inverse order of placeholder and result compared to (3)
             val descriptions = listCallablesWithMatchingParameters(context, listOf(result, placeholder))
-            descriptions.shouldContainValue(matchingWorkflow1)
-            descriptions.shouldContainValue(matchingWorkflow2)
+            descriptions.shouldContainValue(matchingStep1)
+            descriptions.shouldContainValue(matchingStep2)
         }
 
         @Test
@@ -143,13 +143,13 @@ class ProposalsTest {
 
             val result = context.findUniqueDeclarationOrFail<SdsResult>("test_result_c")
             val placeholder = context.findUniqueDeclarationOrFail<SdsPlaceholder>("test_placeholder_d")
-            val matchingWorkflow1 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_c_d")
-            val matchingWorkflow2 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_d_c")
+            val matchingStep1 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_c_d")
+            val matchingStep2 = context.findUniqueDeclarationOrFail<SdsStep>("matching_multiple_d_c")
 
             // Inverse order of placeholder and result compared to (2)
             val descriptions = listCallablesWithMatchingParameters(context, listOf(placeholder, result))
-            descriptions.shouldContainValue(matchingWorkflow1)
-            descriptions.shouldContainValue(matchingWorkflow2)
+            descriptions.shouldContainValue(matchingStep1)
+            descriptions.shouldContainValue(matchingStep2)
         }
 
         @Test

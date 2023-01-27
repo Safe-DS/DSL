@@ -4,7 +4,7 @@ class A
 
 class B()
 
-workflow test {
+pipeline test {
 
     // semantic_error "Cannot create an instance of a class that has no constructor."
     val a = »A«();

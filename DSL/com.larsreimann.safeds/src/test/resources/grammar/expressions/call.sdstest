@@ -1,6 +1,6 @@
 // no_syntax_error
 
-workflow myWorkflow {
+pipeline myPipeline {
     f();
     f<*, in Number, out Number, T = Number>(1, b = 2);
 }

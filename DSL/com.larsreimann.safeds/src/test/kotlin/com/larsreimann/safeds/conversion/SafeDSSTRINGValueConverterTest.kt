@@ -8,9 +8,9 @@ import com.larsreimann.safeds.emf.createSdsDummyResource
 import com.larsreimann.safeds.emf.createSdsString
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.sdsExpressionStatement
-import com.larsreimann.safeds.emf.sdsWorkflow
+import com.larsreimann.safeds.emf.sdsPipeline
+import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.safeDS.SdsString
-import com.larsreimann.safeds.safeDS.SdsWorkflow
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
 import com.larsreimann.safeds.testing.ParseHelper
@@ -50,9 +50,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("escapedOpeningBrace")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedOpeningBrace")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
             strings[0].value shouldBe "{"
         }
@@ -68,9 +68,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("escapedSingleQuote")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedSingleQuote")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
             strings[0].value shouldBe "'"
         }
@@ -89,9 +89,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("escapedOpeningBrace")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedOpeningBrace")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
 
             val result = strings[0].serializeToFormattedString()
@@ -105,9 +105,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("unescapedOpeningBrace")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("unescapedOpeningBrace")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
 
             val result = strings[0].serializeToFormattedString()
@@ -120,7 +120,7 @@ class SafeDSSTRINGValueConverterTest {
             val string = createSdsString("{")
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                sdsWorkflow("test") {
+                sdsPipeline("test") {
                     sdsExpressionStatement(string)
                 }
             }
@@ -141,9 +141,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsWorkflow>("unescapedSingleQuote")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("unescapedSingleQuote")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
 
             val result = strings[0].serializeToFormattedString()
@@ -156,7 +156,7 @@ class SafeDSSTRINGValueConverterTest {
             val string = createSdsString("'")
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                sdsWorkflow("test") {
+                sdsPipeline("test") {
                     sdsExpressionStatement(string)
                 }
             }

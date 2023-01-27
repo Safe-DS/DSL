@@ -1,6 +1,6 @@
 package tests.typeComputer.expressions.references
 
-workflow myWorkflow {
+pipeline myPipeline {
     val a = 1;
     val b = "";
 

@@ -12,9 +12,9 @@ def testStep():
     f1(x)
     return c
 
-# Workflows --------------------------------------------------------------------
+# Pipelines --------------------------------------------------------------------
 
-def testFlow():
+def testPipeline():
     g()
     a, _, _ = g()
     runtimeBridge.save_placeholder('a', a)

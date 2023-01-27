@@ -1,6 +1,6 @@
 // no_syntax_error
 
-workflow test {
+pipeline test {
     a[1];
     a[b];
 }

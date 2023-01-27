@@ -11,7 +11,7 @@ enum Enum {
 fun functionWithoutTypeParameters()
 fun functionWithTypeParameters<T>()
 
-workflow myWorkflow {
+pipeline myPipeline {
     // semantic_info "Unnecessary type argument list."
     ClassWithoutTypeParameters»<>«();
     // semantic_info "Unnecessary type argument list."

@@ -63,7 +63,7 @@ step g(f: (a: Int, b: Int = 0) -> ()) {
     );
 }
 
-workflow test {
+pipeline test {
     C(
         // semantic_error "The parameter 'a' is already set."
         »1«,

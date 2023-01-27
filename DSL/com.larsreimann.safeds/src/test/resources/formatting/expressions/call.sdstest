@@ -1,4 +1,4 @@
-workflow myWorkflow {
+pipeline myPipeline {
     f   (     )   ;
     f    <  *  ,
       in    Number    ,  out
@@ -10,7 +10,7 @@ workflow myWorkflow {
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     f();
     f<*, in Number, out Number, T = Number>(1, b = 2);
 }

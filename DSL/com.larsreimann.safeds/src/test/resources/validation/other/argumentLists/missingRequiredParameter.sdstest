@@ -31,7 +31,7 @@ step g(f: (a: Int, b: Int = 0) -> ()) {
 
 step stepWithVariadicParameter(vararg values: Int) {}
 
-workflow myWorkflow {
+pipeline myPipeline {
     // semantic_error "The parameter 'a' is required and must be set here."
     C»()«;
     // no_semantic_error "The parameter 'a' is required and must be set here."

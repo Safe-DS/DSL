@@ -41,8 +41,8 @@ annotation AnnotationForResults
 @Target(AnnotationTarget.TypeParameter)
 annotation AnnotationForTypeParameters
 
-@Target(AnnotationTarget.Workflow)
-annotation AnnotationForWorkflows
+@Target(AnnotationTarget.Pipeline)
+annotation AnnotationForPipelines
 
 @Target(AnnotationTarget.Step)
 annotation AnnotationForSteps
@@ -73,7 +73,7 @@ annotation TestAnnotation
 class TestClass<
 
     // semantic_error "This annotation cannot be applied to a type parameter."
-    »@AnnotationForWorkflows«
+    »@AnnotationForPipelines«
     // no_semantic_error "This annotation cannot be applied to a type parameter."
     »@AnnotationForTypeParameters«
     // no_semantic_error "This annotation cannot be applied to a type parameter."
@@ -134,13 +134,13 @@ fun testFunction(
     testResult: Int
 )
 
-// semantic_error "This annotation cannot be applied to a workflow."
+// semantic_error "This annotation cannot be applied to a pipeline."
 »@AnnotationForSteps«
-// no_semantic_error "This annotation cannot be applied to a workflow."
-»@AnnotationForWorkflows«
-// no_semantic_error "This annotation cannot be applied to a workflow."
+// no_semantic_error "This annotation cannot be applied to a pipeline."
+»@AnnotationForPipelines«
+// no_semantic_error "This annotation cannot be applied to a pipeline."
 »@AnnotationForAnything«
-workflow testWorkflow {}
+pipeline testPipeline {}
 
 // semantic_error "This annotation cannot be applied to a step."
 »@AnnotationForAnnotations«

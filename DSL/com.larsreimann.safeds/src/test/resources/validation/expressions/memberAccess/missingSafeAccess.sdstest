@@ -1,6 +1,6 @@
 package validation.expressions.memberAccess.missingSafeAccess
 
-workflow test {
+pipeline test {
 
     // no_semantic_error "The receiver can be null so a safe access must be used."
     »(1).toString«();

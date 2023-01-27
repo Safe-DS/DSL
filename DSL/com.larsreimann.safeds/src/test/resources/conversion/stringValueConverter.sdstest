@@ -1,15 +1,15 @@
-workflow escapedOpeningBrace {
+pipeline escapedOpeningBrace {
     "\{";
 }
 
-workflow unescapedOpeningBrace {
+pipeline unescapedOpeningBrace {
     "{";
 }
 
-workflow escapedSingleQuote {
+pipeline escapedSingleQuote {
     "\'";
 }
 
-workflow unescapedSingleQuote {
+pipeline unescapedSingleQuote {
     "'";
 }

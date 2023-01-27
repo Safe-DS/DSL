@@ -1,5 +1,5 @@
 package tests.typeComputer.expressions.templateStrings
 
-workflow myWorkflow {
+pipeline myPipeline {
     val templateString = "1 + 2 = {{ 1 + 2 }}";
 }

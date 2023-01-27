@@ -11,7 +11,7 @@ fun myFunctionWithNormalParameter(
 )
 
 
-workflow testWorkflow {
+pipeline testPipeline {
     // no_semantic_error "Arguments assigned to constant parameters must be constant."
     myFunctionWithConstantParameter(»1«);
     // no_semantic_error "Arguments assigned to constant parameters must be constant."

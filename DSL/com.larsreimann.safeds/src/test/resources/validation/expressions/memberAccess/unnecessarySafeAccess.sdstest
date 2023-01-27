@@ -1,6 +1,6 @@
 package validation.expressions.memberAccess.unnecessarySafeAccess
 
-workflow test {
+pipeline test {
 
     // semantic_info "The receiver is never null so the safe access is unnecessary."
     »1?.toString«();

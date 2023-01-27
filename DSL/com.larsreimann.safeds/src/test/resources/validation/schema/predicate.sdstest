@@ -49,7 +49,7 @@ predicate predInner <NewDataType, SchemaOut::$SchemaType, SchemaIn::$SchemaType>
     yield ::SchemaOut = $addColumn <NewDataType>(::S1, colName2)
 }
 
-workflow myWorkflow {
+pipeline myPipeline {
     // no_semantic_error "Dataset could not be read."
     val dataset = Dataset.loadDataset(»"./src/test/resources/schema/dummyData.csv"«);
     val dataResult = dataset.funWithPred <String?>("Column1", "Column2", "foo", "Column4", "bar");

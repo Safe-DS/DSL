@@ -154,14 +154,14 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="columnName" eType="#//SdsString" containment="true" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="columnType" eType="#//SdsAbstractType" containment="true" />
     </eClassifiers>
+    <!-- Pipeline -->
+    <eClassifiers xsi:type="ecore:EClass" name="SdsPipeline" eSuperTypes="#//SdsAbstractCompilationUnitMember">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//SdsBlock" containment="true" />
+    </eClassifiers>
     <!-- Step -->
     <eClassifiers xsi:type="ecore:EClass" name="SdsStep" eSuperTypes="#//SdsAbstractCallable #//SdsAbstractCompilationUnitMember">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="visibility" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" />
         <eStructuralFeatures xsi:type="ecore:EReference" name="resultList" eType="#//SdsResultList" containment="true" />
-        <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//SdsBlock" containment="true" />
-    </eClassifiers>
-    <!-- Workflow -->
-    <eClassifiers xsi:type="ecore:EClass" name="SdsWorkflow" eSuperTypes="#//SdsAbstractCompilationUnitMember">
         <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//SdsBlock" containment="true" />
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SdsBlock" eSuperTypes="#//SdsAbstractObject">
