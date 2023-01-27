@@ -9,4 +9,4 @@ You can find the full documentation [here][docs].
 
 [dsl]: docs/DSL/README.md
 [stdlib]: docs/Stdlib/API/README.md
-[docs]: docs/README.md
+[docs]: https://safe-ds.readthedocs.io/en/latest/
