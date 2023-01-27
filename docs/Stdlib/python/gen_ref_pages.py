@@ -8,13 +8,17 @@ import mkdocs_gen_files
 import sys
 
 def list_class_and_function_names_in_module(module_name: str) -> list[str]:
+    """
+    Returns a list with the names of all classes and function names in the given module.
+    """
+
     import_module(module_name)
     module = sys.modules[module_name]
 
     return [
         name
         for name, obj in getmembers(module)
-        if isfunction(obj) or isclass(obj)
+        if isclass(obj) or isfunction(obj)
     ]
 
 nav = mkdocs_gen_files.Nav()
@@ -34,37 +38,15 @@ for path in sorted(Path("Runtime/safe-ds").rglob("__init__.py")):
 
     qualified_name = ".".join(parts)
 
-    import_module(qualified_name)
-    module = sys.modules[qualified_name]
-    classes = getmembers(module, isclass)
-    functions = getmembers(module, isfunction)
+    for name in list_class_and_function_names_in_module(qualified_name):
+        doc_path = doc_path.with_name(f"{name}.md")
+        full_doc_path = full_doc_path.with_name(f"{name}.md")
 
-    for clazz in classes:
-        class_name = clazz[0]
-        print(clazz)
+        nav[parts + (name,)] = doc_path.as_posix()
 
-        doc_path = doc_path.with_name(f"{class_name}.md")
-        full_doc_path = full_doc_path.with_name(f"{class_name}.md")
-
-        nav[parts + (class_name,)] = doc_path.as_posix()
-
+        # Create one file containing the documentation for the current class or function
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
-            ident = qualified_name + "." + clazz[0]
-            fd.write(f"::: {ident}")
-
-        mkdocs_gen_files.set_edit_path(full_doc_path, path)
-
-    for func in functions:
-        func_name = func[0]
-        print(func)
-
-        doc_path = doc_path.with_name(f"{func_name}.md")
-        full_doc_path = full_doc_path.with_name(f"{func_name}.md")
-
-        nav[parts + (func_name,)] = doc_path.as_posix()
-
-        with mkdocs_gen_files.open(full_doc_path, "w") as fd:
-            ident = qualified_name + "." + func[0]
+            ident = qualified_name + "." + name
             fd.write(f"::: {ident}")
 
         mkdocs_gen_files.set_edit_path(full_doc_path, path)
