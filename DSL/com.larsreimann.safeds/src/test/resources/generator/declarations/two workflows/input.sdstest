@@ -1,11 +1,11 @@
-package tests.generator.twoWorkflows
+package tests.generator.twoPipelines
 
 fun f()
 
-workflow test1 {
+pipeline test1 {
     f();
 }
 
-workflow test2 {
+pipeline test2 {
     f();
 }

@@ -1,6 +1,6 @@
 package tests.typeComputer.expressions.literals
 
-workflow myWorkflow {
+pipeline myPipeline {
     val booleanLiteral = true;
     val floatLiteral = 1.0;
     val intLiteral = 1;

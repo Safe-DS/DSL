@@ -1,6 +1,6 @@
 package tests.typeComputer.operations.arithmetic
 
-workflow myWorkflow {
+pipeline myPipeline {
     val additionIntInt = (1 + 1);
     val subtractionIntInt = (1 - 1);
     val multiplicationIntInt = (1 * 1);

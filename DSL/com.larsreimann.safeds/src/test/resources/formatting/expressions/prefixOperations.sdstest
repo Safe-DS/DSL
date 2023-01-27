@@ -1,11 +1,11 @@
-workflow myWorkflow {
+pipeline myPipeline {
            not     true and not       false;
          -    1;
 }
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     not true and not false;
     -1;
 }

@@ -1,13 +1,13 @@
-workflow myWorkflow {
+pipeline myPipeline {
           val
      a     =      0      ;
         val    a   ,    _ ,         yield   b     =    call()        ;
     () {
         val         a
         =   0 ;
-        
-            
-    
+
+
+
     val      a,       _   ,    yield    b      =
          call()    ;
     };
@@ -15,7 +15,7 @@ workflow myWorkflow {
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     val a = 0;
     val a, _, yield b = call();
     () {

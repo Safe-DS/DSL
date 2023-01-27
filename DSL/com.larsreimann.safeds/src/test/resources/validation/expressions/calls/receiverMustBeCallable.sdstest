@@ -16,7 +16,7 @@ enum MyEnum {
 
 fun myFunction()
 
-workflow myWorkflow {}
+pipeline myPipeline {}
 
 step test(a: Int, b: () -> ()) {
     val c = 1;

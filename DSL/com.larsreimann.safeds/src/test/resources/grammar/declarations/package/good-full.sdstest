@@ -8,4 +8,4 @@ import myPackage.MyClass
 import myPackage.MyClass as Class
 import myPackage.*
 
-workflow w1 {}
+pipeline p1 {}

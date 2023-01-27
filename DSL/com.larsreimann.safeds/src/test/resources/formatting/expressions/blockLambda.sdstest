@@ -1,9 +1,9 @@
-workflow myWorkflow {
+pipeline myPipeline {
     ()       {
 
     };
-          (  a  
-         ,   vararg   b 
+          (  a
+         ,   vararg   b
          =    1   )
      {
  val a = 1;    };
@@ -11,7 +11,7 @@ workflow myWorkflow {
 
 // -----------------------------------------------------------------------------
 
-workflow myWorkflow {
+pipeline myPipeline {
     () {};
     (a, vararg b = 1) {
         val a = 1;

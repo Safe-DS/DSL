@@ -2,7 +2,7 @@ package tests.trailingComma.inDoStatementAssigneeList
 
 // no_syntax_error
 
-workflow w {
+pipeline p {
     val a, val b, = f();
 
     () {

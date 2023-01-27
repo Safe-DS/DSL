@@ -1,5 +1,5 @@
 // syntax_error
 
-workflow test {
+pipeline test {
     a[];
 }
