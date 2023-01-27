@@ -645,7 +645,7 @@ class Table:
 
     def list_columns_with_numerical_values(self) -> list[Column]:
         """
-        Get a list of Columns only containing numerical values
+        Get a list of columns only containing numerical values
 
         Returns
         -------
