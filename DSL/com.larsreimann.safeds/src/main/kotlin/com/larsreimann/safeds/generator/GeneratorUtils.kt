@@ -14,9 +14,10 @@ import org.eclipse.emf.ecore.resource.Resource
 fun Resource.baseFileNameOrNull(): String? {
     return uri
         ?.lastSegment()
+        ?.removeSuffix(".${SdsFileExtension.Pipeline}")
+        ?.removeSuffix(".${SdsFileExtension.Schema}")
         ?.removeSuffix(".${SdsFileExtension.Stub}")
         ?.removeSuffix(".${SdsFileExtension.Test}")
-        ?.removeSuffix(".${SdsFileExtension.Pipeline}")
         ?.replace(Regex("%2520"), "_") // Twice URL encoded space
         ?.replace(Regex("[ .-]"), "_")
         ?.replace(Regex("\\W"), "")

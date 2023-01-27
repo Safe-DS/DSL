@@ -104,7 +104,6 @@ class GeneratorUtilsTest {
         }
 
         @Test
-        @OptIn(ExperimentalSdsApi::class)
         fun `should remove 'sdsschema' extension`() {
             val resource = createSdsDummyResource(
                 "file",

@@ -25,7 +25,6 @@ enum class SdsFileExtension(val extension: String) {
      * @see isInSchemaFile
      * @see isSchemaFile
      */
-    @ExperimentalSdsApi
     Schema("sdsschema"),
 
     /**
@@ -58,7 +57,6 @@ fun EObject.isInPipelineFile() = this.eResource().isPipelineFile()
 /**
  * Returns whether the object is contained in a schema file.
  */
-@ExperimentalSdsApi
 fun EObject.isInSchemaFile() = this.eResource().isSchemaFile()
 
 /**
@@ -79,7 +77,6 @@ fun Resource.isPipelineFile() = this.hasExtension(SdsFileExtension.Pipeline)
 /**
  * Returns whether the resource represents a schema file.
  */
-@ExperimentalSdsApi
 fun Resource.isSchemaFile() = this.hasExtension(SdsFileExtension.Schema)
 
 /**
