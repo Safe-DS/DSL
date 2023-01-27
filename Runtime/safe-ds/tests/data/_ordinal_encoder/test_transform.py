@@ -12,4 +12,4 @@ def test_transform_invalid() -> None:
                      ))
     ode = OrdinalEncoder(['kalt', 'warm', 'heiss'])
     with pytest.raises(NotFittedError):
-        ode.transform(test_table, ["temperatur"])
+        ode.transform(test_table, "temperatur")
