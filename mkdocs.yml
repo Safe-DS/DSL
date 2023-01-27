@@ -20,6 +20,8 @@ theme:
         name: Switch to light mode
       primary: orange
       accent: orange
+  features:
+    - navigation.instant
 
 plugins:
   - mkdocstrings:
