@@ -1,4 +1,4 @@
-package tests.uniqueNamesInWorkflowFile
+package tests.uniqueNamesInPipelineFile
 
 // semantic_error "A declaration with name 'MyImport' exists already in this file."
 import »somePackage.MyImport«
