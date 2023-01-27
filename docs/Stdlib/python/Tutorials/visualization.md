@@ -5,7 +5,7 @@ The following code will use a Jupyter Notebook environment.
 First we need some data to visualize. For this we use the common example of the titanic disaster.
 
 !!! note
-You can download that dataset on [kaggle](https://www.kaggle.com/c/titanic).
+    You can download that dataset on [kaggle](https://www.kaggle.com/c/titanic).
 
 ```python
 from safe_ds.data import Table
