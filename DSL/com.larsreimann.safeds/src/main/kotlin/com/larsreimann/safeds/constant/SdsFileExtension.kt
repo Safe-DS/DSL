@@ -41,11 +41,13 @@ enum class SdsFileExtension(val extension: String) {
      * @see isInTestFile
      * @see isTestFile
      */
-    Test("sdstest")
+    Test("sdstest"),
+
+    ;
 
     override fun toString(): String {
         return extension
-    },
+    }
 }
 
 /**
