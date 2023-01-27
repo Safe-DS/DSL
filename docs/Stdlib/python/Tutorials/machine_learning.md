@@ -64,4 +64,5 @@ So for the call above we will get the following output:
 | 2       | 2       | 2       | 5.0    |
 | 4       | 7       | 1       | 12.0   |
 
-Note: your target-vector may differ from our result
+!!! note
+    Your target-vector may differ from our result.
