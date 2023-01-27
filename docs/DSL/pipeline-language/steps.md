@@ -1,6 +1,6 @@
 # Steps
 
-Steps are used to extract a sequence of [statements][statements] from a Machine Learning program to give the sequence a name and make it reusable. In the following discussion we explain how to [declare a step](#declaring-a-step) and how to [call it](#calling-a-step).
+Steps are used to extract a sequence of [statements][statements] from a data science program to give the sequence a name and make it reusable. In the following discussion we explain how to [declare a step](#declaring-a-step) and how to [call it](#calling-a-step).
 
 ## Declaring a Step
 
