@@ -69,7 +69,6 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
     | {SdsPipeline.annotationCallList=current}
           'pipeline' name=ID
           body=SdsBlock
-    )
 
     | {SdsStep.annotationCallList=current}
           visibility=('internal'|'private')?
@@ -77,6 +76,7 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
           parameterList=SdsParameterList
           resultList=SdsResultList?
           body=SdsBlock
+    )
     ;
 
 SdsImport
@@ -338,7 +338,7 @@ SdsFunctionStatement returns SdsAbstractObject
  * Statements
  **********************************************************************************************************************/
 
-// Pipelines and steps -------------------------------------------------------------------------------------------------
+// Pipelines and Steps -------------------------------------------------------------------------------------------------
 
 SdsBlock
     : {SdsBlock} '{' statements+=SdsStatement* '}'

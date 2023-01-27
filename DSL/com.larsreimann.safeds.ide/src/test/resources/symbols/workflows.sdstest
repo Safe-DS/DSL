@@ -1,2 +1,2 @@
-// Function "myWorkflow"
-workflow »myWorkflow« {}
+// Function "myPipeline"
+pipeline »myPipeline« {}
