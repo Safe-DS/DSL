@@ -32,7 +32,7 @@ class ColumnType(ABC):
 
         Returns
         -------
-        : ColumnType
+        column_type : ColumnType
             The ColumnType.
 
         Raises
