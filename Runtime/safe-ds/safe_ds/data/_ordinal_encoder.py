@@ -94,6 +94,7 @@ class OrdinalEncoder:
         Raises
         -------
             NotFittedError if the encoder wasn't fitted before transforming.
+            KeyError if the column doesn`t exist
 
         """
         try:

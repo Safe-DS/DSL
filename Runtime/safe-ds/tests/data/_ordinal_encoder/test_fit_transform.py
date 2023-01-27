@@ -2,7 +2,6 @@ import pandas as pd
 import pytest
 from safe_ds.data import IntColumnType
 from safe_ds.data import OrdinalEncoder, Table
-from safe_ds.exceptions import NotFittedError
 
 
 def test_fit_transform_valid() -> None:
@@ -31,5 +30,5 @@ def test_fit_transform_inavlid() -> None:
                       "gedöns": ["1", "2", "3", "4", "5"],
                       "temperatur_2": ["kalt", "kalt", "warm", "warm", "kalt"]}
                      ))
-    with pytest.raises(NotFittedError):
-        oe.transform(test_table, ["test"])
+    with pytest.raises(KeyError):
+        oe.fit_transform(test_table, [2])
