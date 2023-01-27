@@ -50,6 +50,8 @@ class Table:
             self.schema: TableSchema = TableSchema._from_dataframe(self._data)
         else:
             self.schema = schema
+            if self._data.empty:
+                self._data = pd.DataFrame(columns=self.schema.get_column_names())
 
         self._data = self._data.reset_index(drop=True)
         self._data.columns = list(range(self.count_columns()))
