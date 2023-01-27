@@ -13,6 +13,8 @@ nav:
       - Stdlib/python/row.md
   - Developer Guide: Development/README.md
 
+# Configuration of Material for MkDocs -----------------------------------------
+
 theme:
   name: material
   palette:
