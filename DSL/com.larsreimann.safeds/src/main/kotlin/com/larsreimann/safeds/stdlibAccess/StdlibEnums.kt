@@ -24,7 +24,9 @@ object StdlibEnums {
         Pipeline,
         Result,
         Step,
-        TypeParameter;
+        TypeParameter,
+
+        ;
 
         companion object {
             val enum: QualifiedName = QualifiedName.create("safeds", "lang", "AnnotationTarget")
