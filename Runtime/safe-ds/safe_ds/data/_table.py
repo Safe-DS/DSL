@@ -724,8 +724,8 @@ class Table:
 
     def remove_outliers(self) -> Table:
         """
-        Removes all rows from the table that contain at least one outlier defined as having a value that is more than 3
-        standard deviations removed from the column average.
+        Removes all rows from the table that contain at least one outlier defined as having a value that has a distance of
+        more than 3 standard deviations from the column average.
 
         Returns
         -------
