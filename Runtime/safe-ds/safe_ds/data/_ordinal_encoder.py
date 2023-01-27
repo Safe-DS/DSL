@@ -50,7 +50,7 @@ class OrdinalEncoder:
 
     def transform(self, table: Table, column_name: str) -> Table:
         """
-        Transform the given Table to a ordinal-encoded table.
+        Transform the given table to an ordinal-encoded table.
 
         Parameters
          ----------
@@ -77,7 +77,7 @@ class OrdinalEncoder:
 
     def fit_transform(self, table: Table, columns: list[str]) -> Table:
         """
-        oridnal-encodes a given table with the given ordinal encoder
+        Oridnal-encodes a given table with the given ordinal encoder.
         The order is provided in the constructor, a new order will not be inferred from other columns.
 
         Parameters
