@@ -2,6 +2,17 @@ site_name: Safe-DS
 repo_url: https://github.com/lars-reimann/Safe-DS
 repo_name: Safe-DS
 
+nav:
+  - Home: README.md
+  - DSL:
+      - Language: DSL/README.md
+      - Standard Library: Stdlib/API/README.md
+  - Python Library:
+      - Stdlib/python/table.md
+      - Stdlib/python/column.md
+      - Stdlib/python/row.md
+  - Developer Guide: Development/README.md
+
 theme:
   name: material
   palette:
@@ -80,14 +91,3 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
-
-nav:
-  - Home: README.md
-  - DSL:
-      - Language: DSL/README.md
-      - Standard Library: Stdlib/API/README.md
-  - Python Library:
-      - Stdlib/python/table.md
-      - Stdlib/python/column.md
-      - Stdlib/python/row.md
-  - Developer Guide: Development/README.md
