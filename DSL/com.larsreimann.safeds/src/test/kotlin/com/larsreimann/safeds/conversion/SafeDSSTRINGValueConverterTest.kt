@@ -50,9 +50,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedOpeningBrace")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedOpeningBrace")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
             strings[0].value shouldBe "{"
         }
@@ -68,9 +68,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedSingleQuote")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedSingleQuote")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
             strings[0].value shouldBe "'"
         }
@@ -89,9 +89,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedOpeningBrace")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("escapedOpeningBrace")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
 
             val result = strings[0].serializeToFormattedString()
@@ -105,9 +105,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("unescapedOpeningBrace")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("unescapedOpeningBrace")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
 
             val result = strings[0].serializeToFormattedString()
@@ -141,9 +141,9 @@ class SafeDSSTRINGValueConverterTest {
                 parseHelper.parseResource("conversion/stringValueConverter.sdstest")
             compilationUnit.shouldNotBeNull()
 
-            val workflow = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("unescapedSingleQuote")
+            val pipeline = compilationUnit.findUniqueDeclarationOrFail<SdsPipeline>("unescapedSingleQuote")
 
-            val strings = workflow.descendants<SdsString>().toList()
+            val strings = pipeline.descendants<SdsString>().toList()
             strings.shouldHaveSize(1)
 
             val result = strings[0].serializeToFormattedString()

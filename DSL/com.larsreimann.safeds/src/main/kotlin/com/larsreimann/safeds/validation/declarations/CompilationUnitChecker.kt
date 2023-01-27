@@ -33,10 +33,10 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                 .filter { it is SdsPipeline || it is SdsStep || it is SdsSchema }
                 .forEach {
                     error(
-                        "A stub file must not declare workflows, schemas or steps.",
+                        "A stub file must not declare pipelines, schemas or steps.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.StubFileMustNotDeclareWorkflowsSchemasOrSteps,
+                        ErrorCode.StubFileMustNotDeclarePipelinesSchemasOrSteps,
                     )
                 }
         } else if (sdsCompilationUnit.isInPipelineFile()) {
@@ -44,10 +44,10 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                 .filter { it !is SdsPipeline && it !is SdsStep }
                 .forEach {
                     error(
-                        "A workflow file must only declare workflows and steps.",
+                        "A pipeline file must only declare pipelines and steps.",
                         it,
                         Literals.SDS_ABSTRACT_DECLARATION__NAME,
-                        ErrorCode.WorkflowFileMustOnlyDeclareWorkflowsAndSteps,
+                        ErrorCode.PipelineFileMustOnlyDeclarePipelinesAndSteps,
                     )
                 }
         } else if (sdsCompilationUnit.isInSchemaFile()) {

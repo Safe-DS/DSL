@@ -9,7 +9,7 @@ import com.larsreimann.safeds.validation.AbstractSafeDSChecker
 import com.larsreimann.safeds.validation.codes.ErrorCode
 import org.eclipse.xtext.validation.Check
 
-class WorkflowChecker : AbstractSafeDSChecker() {
+class PipelineChecker : AbstractSafeDSChecker() {
 
     @Check
     fun noYield(sdsPipeline: SdsPipeline) {
@@ -18,10 +18,10 @@ class WorkflowChecker : AbstractSafeDSChecker() {
             .flatMap { it.yieldsOrEmpty() }
             .forEach {
                 error(
-                    "Yield must not be used in a workflow.",
+                    "Yield must not be used in a pipeline.",
                     it,
                     null,
-                    ErrorCode.NO_YIELD_IN_WORKFLOW
+                    ErrorCode.NoYieldInPipeline
                 )
             }
     }
@@ -29,6 +29,6 @@ class WorkflowChecker : AbstractSafeDSChecker() {
     @Check
     fun uniqueNames(sdsPipeline: SdsPipeline) {
         sdsPipeline.placeholdersOrEmpty()
-            .reportDuplicateNames { "A declaration with name '${it.name}' exists already in this workflow." }
+            .reportDuplicateNames { "A declaration with name '${it.name}' exists already in this pipeline." }
     }
 }

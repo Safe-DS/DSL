@@ -253,14 +253,14 @@ class SafeDSGenerator : AbstractGenerator() {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun compilePipeline(workflow: SdsPipeline, imports: MutableSet<ImportData>) = buildString {
+    private fun compilePipeline(pipeline: SdsPipeline, imports: MutableSet<ImportData>) = buildString {
         val blockLambdaIdManager = IdManager<SdsBlockLambda>()
 
-        appendLine("def ${workflow.correspondingPythonName()}():")
-        if (workflow.statementsOrEmpty().withEffect().isEmpty()) {
+        appendLine("def ${pipeline.correspondingPythonName()}():")
+        if (pipeline.statementsOrEmpty().withEffect().isEmpty()) {
             appendLine("${indent}pass")
         } else {
-            workflow.statementsOrEmpty().withEffect().forEach {
+            pipeline.statementsOrEmpty().withEffect().forEach {
                 appendLine(
                     compileStatement(
                         CompileStatementFrame(it, imports, blockLambdaIdManager, shouldSavePlaceholders = true)

@@ -14,8 +14,8 @@ enum class ErrorCode {
     REDECLARATION,
 
     FileMustDeclarePackage,
-    StubFileMustNotDeclareWorkflowsSchemasOrSteps,
-    WorkflowFileMustOnlyDeclareWorkflowsAndSteps,
+    StubFileMustNotDeclarePipelinesSchemasOrSteps,
+    PipelineFileMustOnlyDeclarePipelinesAndSteps,
     SchemaFileMustOnlyDeclareSchemas,
 
     ANNOTATION_IS_SINGLE_USE,
@@ -28,7 +28,7 @@ enum class ErrorCode {
     NoMoreParametersAfterVariadicParameter,
     NoVariadicParameterAfterOptionalParameter,
 
-    NO_YIELD_IN_WORKFLOW,
+    NoYieldInPipeline,
 
     CONTEXT_OF_CALL_WITHOUT_RESULTS,
     CONTEXT_OF_CALL_WITH_MANY_RESULTS,

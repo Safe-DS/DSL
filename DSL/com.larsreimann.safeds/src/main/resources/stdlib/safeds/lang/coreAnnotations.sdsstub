@@ -33,6 +33,9 @@ enum AnnotationTarget {
     @Description("The annotation can be called on parameters.")
     Parameter
 
+    @Description("The annotation can be called on pipelines.")
+    Pipeline
+
     @Description("The annotation can be called on results.")
     Result
 
@@ -41,9 +44,6 @@ enum AnnotationTarget {
 
     @Description("The annotation can be called on type parameters.")
     TypeParameter
-
-    @Description("The annotation can be called on workflows.")
-    Workflow
 }
 
 @Description("The annotation can be called multiple times for the same declaration.")

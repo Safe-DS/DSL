@@ -122,14 +122,14 @@ class AnnotationCallChecker : AbstractSafeDSChecker() {
             actualTarget is SdsParameter && AnnotationTarget.Parameter !in legalTargets -> {
                 "a parameter"
             }
+            actualTarget is SdsPipeline && AnnotationTarget.Pipeline !in legalTargets -> {
+                "a pipeline"
+            }
             actualTarget is SdsResult && AnnotationTarget.Result !in legalTargets -> {
                 "a result"
             }
             actualTarget is SdsTypeParameter && AnnotationTarget.TypeParameter !in legalTargets -> {
                 "a type parameter"
-            }
-            actualTarget is SdsPipeline && AnnotationTarget.Workflow !in legalTargets -> {
-                "a workflow"
             }
             actualTarget is SdsStep && AnnotationTarget.Step !in legalTargets -> {
                 "a step"

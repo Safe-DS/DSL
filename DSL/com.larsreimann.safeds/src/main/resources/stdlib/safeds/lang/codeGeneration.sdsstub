@@ -16,7 +16,7 @@ annotation PythonModule(
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Step,
-    AnnotationTarget.Workflow
+    AnnotationTarget.Pipeline
 )
 annotation PythonName(
     @Description("The name of the corresponding API element in Python.")

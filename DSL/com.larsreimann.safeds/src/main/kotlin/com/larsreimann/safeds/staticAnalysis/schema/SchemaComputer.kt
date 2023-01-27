@@ -34,22 +34,19 @@ import org.eclipse.xtext.naming.QualifiedName
 
 fun inferSchema(
     statement: SdsAbstractStatement,
-    workflowContext: MutableMap<SchemaOwner, SchemaResult>,
+    pipelineContext: MutableMap<SchemaOwner, SchemaResult>,
 ): MutableMap<SchemaOwner, SchemaResult> {
-    val mainFunCall: SdsCall
 
-    if (statement is SdsExpressionStatement) {
-        mainFunCall = statement.expression as? SdsCall ?: return mutableMapOf()
-    } else if (statement is SdsAssignment) {
-        mainFunCall = statement.expression as? SdsCall ?: return mutableMapOf()
-    } else {
-        return mutableMapOf()
+    val mainFunCall: SdsCall = when (statement) {
+        is SdsExpressionStatement -> statement.expression as? SdsCall ?: return mutableMapOf()
+        is SdsAssignment -> statement.expression as? SdsCall ?: return mutableMapOf()
+        else -> return mutableMapOf()
     }
 
     // for the chain of calls
     val (firstCaller, calls) = firstReceiverAndCallChain(mainFunCall)
 
-    val workflowContextMaped = workflowContext.mapKeys {
+    val pipelineContextMapped = pipelineContext.mapKeys {
         val schemaOwner = it.key as? SchemaOwner
         val schemaResult = it.value
 
@@ -78,7 +75,7 @@ fun inferSchema(
 
     for (call in calls.reversed()) {
         val function = call.callableOrNull() as? SdsFunction ?: return mutableMapOf()
-        val maybeResult = inferSchema(function, call, workflowContextMaped)
+        val maybeResult = inferSchema(function, call, pipelineContextMapped)
 
         yieldedSchemasMap = when (maybeResult) {
             is SchemaResult.FunctionResult -> maybeResult.schemaResults
@@ -87,14 +84,14 @@ fun inferSchema(
 
         if (yieldedSchemasMap.count() == 1) {
             val schemaResult = yieldedSchemasMap.toList().first().second
-            workflowContextMaped.put(SchemaOwner.CurrentCaller, schemaResult)
+            pipelineContextMapped.put(SchemaOwner.CurrentCaller, schemaResult)
         }
     }
 
-    // incase of expression statement
+    // in case of expression statement
     if (schemaOwnerToTypeParameter == null) {
         return yieldedSchemasMap.mapKeys { SchemaOwner.TempOwner(it.key) }.toMutableMap()
-    } else { // incase of assignment statement
+    } else { // in case of assignment statement
         val ownerToSchemaMap = schemaOwnerToTypeParameter.mapValues {
             yieldedSchemasMap.getOrDefault(it.value, SchemaResult.NoSchema)
         }
@@ -107,7 +104,7 @@ fun inferSchema(
 private fun inferSchema(
     function: SdsFunction,
     functionCall: SdsCall,
-    workflowContext: Map<SchemaOwner, SchemaResult>,
+    pipelineContext: Map<SchemaOwner, SchemaResult>,
 ): SchemaResult {
     val parmArgPairs: List<ParmArgPairs> =
         functionCall.argumentsOrEmpty().mapNotNull {
@@ -129,7 +126,7 @@ private fun inferSchema(
 
     val resolvedPredicateVars = resolvePredicateVars(
         predicateAssignments,
-        workflowContext,
+        pipelineContext,
         parmArgPairs,
     ) ?: return SchemaResult.UnComputable
 
@@ -174,7 +171,7 @@ internal fun inferSchema(
 
 private fun resolvePredicateVars(
     predicateAssignments: List<SdsAssignment>,
-    workflowContext: Map<SchemaOwner, SchemaResult>,
+    pipelineContext: Map<SchemaOwner, SchemaResult>,
     parmArgPairs: List<ParmArgPairs>,
     valueResultStack: ArrayDeque<List<ArgResult>> = ArrayDeque(),
 ): MutableMap<SdsAbstractAssignee, SchemaResult>? {
@@ -192,7 +189,7 @@ private fun resolvePredicateVars(
         val maybeResult = inferSchema(
             predicate,
             predicateCall,
-            workflowContext,
+            pipelineContext,
             resolvedPredicateVars,
             parmArgPairs,
             valueResultStack,

@@ -129,8 +129,8 @@ class NameConventionChecker : AbstractSafeDSChecker() {
     }
 
     @Check
-    fun workflowNamesShouldBeLowerCamelCase(sdsPipeline: SdsPipeline) {
-        sdsPipeline.nameShouldBeLowerCamelCase("workflows")
+    fun pipelineNamesShouldBeLowerCamelCase(sdsPipeline: SdsPipeline) {
+        sdsPipeline.nameShouldBeLowerCamelCase("pipelines")
     }
 
     private fun SdsAbstractDeclaration.nameShouldBeUpperCamelCase(declarationType: String) {

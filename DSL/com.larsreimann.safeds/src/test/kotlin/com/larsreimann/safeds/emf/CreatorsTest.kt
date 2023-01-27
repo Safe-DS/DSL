@@ -139,15 +139,15 @@ class CreatorsTest {
     }
 
     @Test
-    fun `sdsAssignment should add the created assignment to the receiving workflow`() {
-        val workflow = createSdsPipeline("Test") {
+    fun `sdsAssignment should add the created assignment to the receiving pipeline`() {
+        val pipeline = createSdsPipeline("Test") {
             sdsAssignment(
                 listOf(createSdsWildcard()),
                 createSdsInt(1),
             )
         }
 
-        val body = workflow.body
+        val body = pipeline.body
         body.shouldNotBeNull()
         body.statements.shouldHaveSize(1)
     }
@@ -439,12 +439,12 @@ class CreatorsTest {
     }
 
     @Test
-    fun `sdsExpressionStatement should add the created expression statement to the receiving workflow`() {
-        val workflow = createSdsPipeline("Test") {
+    fun `sdsExpressionStatement should add the created expression statement to the receiving pipeline`() {
+        val pipeline = createSdsPipeline("Test") {
             sdsExpressionStatement(createSdsInt(1))
         }
 
-        val body = workflow.body
+        val body = pipeline.body
         body.shouldNotBeNull()
         body.statements.shouldHaveSize(1)
     }
@@ -790,21 +790,21 @@ class CreatorsTest {
     }
 
     @Test
-    fun `createSdsWorkflow should store annotation uses in annotationCallList`() {
-        val workflow = createSdsPipeline(
+    fun `createSdsPipeline should store annotation uses in annotationCallList`() {
+        val pipeline = createSdsPipeline(
             "test",
             listOf(createSdsAnnotationCall("Test")),
         )
 
-        workflow.annotationCalls.shouldHaveSize(0)
+        pipeline.annotationCalls.shouldHaveSize(0)
 
-        val annotationCallList = workflow.annotationCallList
+        val annotationCallList = pipeline.annotationCallList
         annotationCallList.shouldNotBeNull()
         annotationCallList.annotationCalls.shouldHaveSize(1)
     }
 
     @Test
-    fun `sdsWorkflow should add the created workflow to the receiving compilation unit`() {
+    fun `sdsPipeline should add the created pipeline to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
             sdsPipeline("test")
         }
