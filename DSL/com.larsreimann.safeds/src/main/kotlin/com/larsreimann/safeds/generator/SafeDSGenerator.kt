@@ -6,8 +6,8 @@ import com.larsreimann.safeds.constant.SdsInfixOperationOperator.IdenticalTo
 import com.larsreimann.safeds.constant.SdsInfixOperationOperator.NotIdenticalTo
 import com.larsreimann.safeds.constant.SdsInfixOperationOperator.Or
 import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
-import com.larsreimann.safeds.constant.isFlowFile
-import com.larsreimann.safeds.constant.isInFlowFile
+import com.larsreimann.safeds.constant.isPipelineFile
+import com.larsreimann.safeds.constant.isInPipelineFile
 import com.larsreimann.safeds.constant.isInTestFile
 import com.larsreimann.safeds.constant.isTestFile
 import com.larsreimann.safeds.constant.operator
@@ -92,7 +92,7 @@ class SafeDSGenerator : AbstractGenerator() {
      * Creates Python workflow and declaration files if the [resource] is either a Safe-DS flow or test file.
      */
     override fun doGenerate(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {
-        if (resource.isFlowFile() || resource.isTestFile()) {
+        if (resource.isPipelineFile() || resource.isTestFile()) {
             generateWorkflowFiles(resource, fsa, context)
             generateDeclarationFile(resource, fsa, context)
         }
@@ -593,7 +593,7 @@ class SafeDSGenerator : AbstractGenerator() {
                             .toMutableList()
 
                         if (importPath.isNotEmpty()) {
-                            if (declaration.isInFlowFile() || declaration.isInTestFile()) {
+                            if (declaration.isInPipelineFile() || declaration.isInTestFile()) {
                                 val fileName = declaration.eResource().baseFileNameOrNull()
                                 importPath += "gen_$fileName"
 

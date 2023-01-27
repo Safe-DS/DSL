@@ -152,15 +152,15 @@
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnName" />
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsColumn/columnType" />
         </genClasses>
+        <!-- Pipeline -->
+        <genClasses ecoreClass="SafeDS.ecore#//SdsPipeline">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsPipeline/body" />
+        </genClasses>
         <!-- Step -->
         <genClasses ecoreClass="SafeDS.ecore#//SdsStep">
             <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SafeDS.ecore#//SdsStep/visibility" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsWorkflowStep/resultList" />
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsWorkflowStep/body" />
-        </genClasses>
-        <!-- Workflow -->
-        <genClasses ecoreClass="SafeDS.ecore#//SdsWorkflow">
-            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsWorkflow/body" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsStep/resultList" />
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsStep/body" />
         </genClasses>
         <genClasses ecoreClass="SafeDS.ecore#//SdsBlock">
             <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SafeDS.ecore#//SdsBlock/statements" />

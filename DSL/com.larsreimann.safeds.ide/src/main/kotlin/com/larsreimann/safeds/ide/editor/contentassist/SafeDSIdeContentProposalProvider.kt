@@ -67,13 +67,13 @@ class SafeDSIdeContentProposalProvider @Inject constructor(
         context: ContentAssistContext,
         acceptor: IIdeContentProposalAcceptor
     ) {
-        val workflow = """
-            |workflow ${'$'}{1:name} {
+        val pipeline = """
+            |pipeline ${'$'}{1:name} {
             |    ${'$'}{2:body}
             |}
         """.trimMargin()
 
-        acceptor.accept(proposalCreator.createSnippet(workflow, "workflow", context), snippetPriority)
+        acceptor.accept(proposalCreator.createSnippet(pipeline, "pipeline", context), snippetPriority)
     }
 
     private fun completeSdsCallArguments(

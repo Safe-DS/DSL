@@ -1542,7 +1542,7 @@ fun createSdsWorkflow(
     statements: List<SdsAbstractStatement> = emptyList(),
     init: SdsPipeline.() -> Unit = {},
 ): SdsPipeline {
-    return factory.createSdsWorkflow().apply {
+    return factory.createSdsPipeline().apply {
         this.name = name
         this.annotationCallList = createSdsAnnotationCallList(annotationCalls)
         this.body = factory.createSdsBlock()

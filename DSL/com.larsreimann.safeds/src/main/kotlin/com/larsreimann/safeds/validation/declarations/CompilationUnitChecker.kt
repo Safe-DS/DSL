@@ -1,6 +1,6 @@
 package com.larsreimann.safeds.validation.declarations
 
-import com.larsreimann.safeds.constant.isInFlowFile
+import com.larsreimann.safeds.constant.isInPipelineFile
 import com.larsreimann.safeds.constant.isInSchemaFile
 import com.larsreimann.safeds.constant.isInStubFile
 import com.larsreimann.safeds.constant.isInTestFile
@@ -39,7 +39,7 @@ class CompilationUnitChecker : AbstractSafeDSChecker() {
                         ErrorCode.StubFileMustNotDeclareWorkflowsSchemasOrSteps,
                     )
                 }
-        } else if (sdsCompilationUnit.isInFlowFile()) {
+        } else if (sdsCompilationUnit.isInPipelineFile()) {
             sdsCompilationUnit.compilationUnitMembersOrEmpty()
                 .filter { it !is SdsPipeline && it !is SdsStep }
                 .forEach {

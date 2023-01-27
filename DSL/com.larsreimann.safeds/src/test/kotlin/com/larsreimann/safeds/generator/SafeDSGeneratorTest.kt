@@ -1,7 +1,7 @@
 package com.larsreimann.safeds.generator
 
 import com.google.inject.Inject
-import com.larsreimann.safeds.constant.SdsFileExtension.Flow
+import com.larsreimann.safeds.constant.SdsFileExtension.Pipeline
 import com.larsreimann.safeds.constant.SdsFileExtension.Stub
 import com.larsreimann.safeds.constant.SdsFileExtension.Test
 import com.larsreimann.safeds.emf.OriginalFilePath
@@ -120,7 +120,7 @@ class SafeDSGeneratorTest {
 
         return Files.walk(root)
             .asSequence()
-            .filter { it.extension in setOf(Flow.extension, Stub.extension, Test.extension) }
+            .filter { it.extension in setOf(Pipeline.extension, Stub.extension, Test.extension) }
             .filter { it.name.startsWith("_skip_") }
             .map { resourceName(resourcePath, it) }
             .toList()

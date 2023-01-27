@@ -66,17 +66,17 @@ SdsCompilationUnitMember returns SdsAbstractAnnotatedObject
           'schema' name=ID
           columnList=SdsColumnList
 
+    | {SdsPipeline.annotationCallList=current}
+          'pipeline' name=ID
+          body=SdsBlock
+    )
+
     | {SdsStep.annotationCallList=current}
           visibility=('internal'|'private')?
           'step' name=ID
           parameterList=SdsParameterList
           resultList=SdsResultList?
           body=SdsBlock
-
-    | {SdsWorkflow.annotationCallList=current}
-          'workflow' name=ID
-          body=SdsBlock
-    )
     ;
 
 SdsImport
@@ -338,7 +338,7 @@ SdsFunctionStatement returns SdsAbstractObject
  * Statements
  **********************************************************************************************************************/
 
-// Functions and workflows --------------------------------------------------------------------------------------------
+// Pipelines and steps -------------------------------------------------------------------------------------------------
 
 SdsBlock
     : {SdsBlock} '{' statements+=SdsStatement* '}'

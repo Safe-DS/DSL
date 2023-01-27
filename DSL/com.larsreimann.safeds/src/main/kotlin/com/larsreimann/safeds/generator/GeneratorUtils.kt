@@ -16,7 +16,7 @@ fun Resource.baseFileNameOrNull(): String? {
         ?.lastSegment()
         ?.removeSuffix(".${SdsFileExtension.Stub}")
         ?.removeSuffix(".${SdsFileExtension.Test}")
-        ?.removeSuffix(".${SdsFileExtension.Flow}")
+        ?.removeSuffix(".${SdsFileExtension.Pipeline}")
         ?.replace(Regex("%2520"), "_") // Twice URL encoded space
         ?.replace(Regex("[ .-]"), "_")
         ?.replace(Regex("\\W"), "")
