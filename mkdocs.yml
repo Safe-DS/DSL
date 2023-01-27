@@ -8,7 +8,6 @@ nav:
       - Language: DSL/README.md
       - Standard Library: Stdlib/API/README.md
   - Python Library:
-      - Stdlib/python/Tutorials/visualization.md
       - Stdlib/python/table.md
       - Stdlib/python/column.md
       - Stdlib/python/row.md
