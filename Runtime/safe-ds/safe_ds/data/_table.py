@@ -738,8 +738,6 @@ class Table:
             self.list_columns_with_numerical_values()
         )
 
-        print(table_without_nonnumericals._data)
-        print(np.absolute(stats.zscore(table_without_nonnumericals._data)))
 
         result = result[
             (np.absolute(stats.zscore(table_without_nonnumericals._data)) < 3).all(
