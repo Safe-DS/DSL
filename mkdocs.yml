@@ -38,14 +38,39 @@ markdown_extensions:
   # Admonitions
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
 
   # Code blocks
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  #  - pymdownx.superfences # (already included above)
+
+  # Diagrams
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+  # Footnotes
+  - footnotes
+
+  # Keys
+  - pymdownx.keys
+
+  # Icons & emojis
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+  # Images
+  - attr_list
+  - md_in_html
+
+  # Lists
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 nav:
   - Home: README.md
