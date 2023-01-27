@@ -2,8 +2,8 @@
 
 ## Tutorials
 
--   [data processing](./data_processing.md)
+-   [Data processing](./data_processing.md)
 -   [Data visualization](./visualization.md)
--   [machine learning](./machine_learning.md)
+-   [Machine Learning](./machine_learning.md)
 
 ---
