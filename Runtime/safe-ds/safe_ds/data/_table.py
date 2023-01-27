@@ -827,18 +827,6 @@ class Table:
 
         return Table(result)
 
-    def __eq__(self, other: typing.Any) -> bool:
-        if not isinstance(other, Table):
-            return NotImplemented
-        if self is other:
-            return True
-        table1 = self.sort_columns()
-        table2 = other.sort_columns()
-        return table1._data.equals(table2._data) and table1.schema == table2.schema
-
-    def __hash__(self) -> int:
-        return hash(self._data)
-
     def __repr__(self) -> str:
         tmp = self._data.copy(deep=True)
         tmp.columns = self.get_column_names()
