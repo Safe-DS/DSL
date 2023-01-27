@@ -124,9 +124,9 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format # Footnotes
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
-
+  # Footnotes
   - footnotes
 
   # Keys
@@ -135,9 +135,9 @@ markdown_extensions:
   # Icons & emojis
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg # Images
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
-
+  # Images
   - attr_list
   - md_in_html
 
@@ -150,7 +150,11 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
 
+  # Permalinks
+  - toc:
+      permalink: "#"
+
 extra_javascript:
-  - javascripts/mathjax.js
+  - javascript/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
