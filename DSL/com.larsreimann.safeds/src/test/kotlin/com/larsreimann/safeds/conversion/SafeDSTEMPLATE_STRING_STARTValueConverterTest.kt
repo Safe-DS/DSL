@@ -9,7 +9,7 @@ import com.larsreimann.safeds.emf.createSdsNull
 import com.larsreimann.safeds.emf.createSdsTemplateString
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.sdsExpressionStatement
-import com.larsreimann.safeds.emf.sdsWorkflow
+import com.larsreimann.safeds.emf.sdsPipeline
 import com.larsreimann.safeds.safeDS.SdsTemplateStringStart
 import com.larsreimann.safeds.serializer.SerializationResult
 import com.larsreimann.safeds.serializer.serializeToFormattedString
@@ -71,7 +71,7 @@ class SafeDSTEMPLATE_STRING_STARTValueConverterTest {
             )
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                sdsWorkflow("test") {
+                sdsPipeline("test") {
                     sdsExpressionStatement(stringTemplate)
                 }
             }

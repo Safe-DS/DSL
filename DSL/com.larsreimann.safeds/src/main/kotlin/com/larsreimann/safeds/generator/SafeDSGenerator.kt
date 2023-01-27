@@ -89,30 +89,30 @@ class SafeDSGenerator : AbstractGenerator() {
     private val indent = "    "
 
     /**
-     * Creates Python workflow and declaration files if the [resource] is either a Safe-DS flow or test file.
+     * Creates Python pipeline and declaration files if the [resource] is either a Safe-DS pipeline or test file.
      */
     override fun doGenerate(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {
         if (resource.isPipelineFile() || resource.isTestFile()) {
-            generateWorkflowFiles(resource, fsa, context)
+            generatePipelineFiles(resource, fsa, context)
             generateDeclarationFile(resource, fsa, context)
         }
     }
 
     /**
-     * Creates one Python file for each workflow in the given resource that just contains a main block that calls the
-     * workflow. This way we can run the Python interpreter with the created file to run the workflow.
+     * Creates one Python file for each pipeline in the given resource that just contains a main block that calls the
+     * pipeline. This way we can run the Python interpreter with the created file to run the pipeline.
      *
      * **Example:** Given the following situation
      *  * Safe-DS package: "com.example"
      *  * Safe-DS file:    "test.safeds"
-     *  * Workflow names:    "workflow1", "workflow2"
+     *  * Pipeline names:    "pipeline1", "pipeline2"
      *
-     * we create two files in the folder "com/example" (determined by the Safe-DS package). The file for "workflow1"
-     * is called "test_workflow1.py" and the file for "workflow2" is called "test_workflow2.py". The names are created
-     * by taking the Safe-DS file name, removing the file extension, appending an underscore, and then the workflow
+     * we create two files in the folder "com/example" (determined by the Safe-DS package). The file for "pipeline1"
+     * is called "test_pipeline1.py" and the file for "pipeline2" is called "test_pipeline2.py". The names are created
+     * by taking the Safe-DS file name, removing the file extension, appending an underscore, and then the pipeline
      * name.
      */
-    private fun generateWorkflowFiles(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {
+    private fun generatePipelineFiles(resource: Resource, fsa: IFileSystemAccess2, context: IGeneratorContext) {
         resource.allContents.asSequence()
             .filterIsInstance<SdsPipeline>()
             .forEach {
@@ -153,15 +153,15 @@ class SafeDSGenerator : AbstractGenerator() {
             .descendants<SdsStep>()
             .sortedBy { it.name }
             .joinToString("\n") {
-                compileWorkflowSteps(it, imports)
+                compileSteps(it, imports)
             }
 
-        // Compile workflows
-        val workflowString = compilationUnit
+        // Compile pipelines
+        val pipelineString = compilationUnit
             .descendants<SdsPipeline>()
             .sortedBy { it.name }
             .joinToString("\n") {
-                compileWorkflow(it, imports)
+                compilePipeline(it, imports)
             }
 
         return buildString {
@@ -179,13 +179,13 @@ class SafeDSGenerator : AbstractGenerator() {
                 append(stepString)
             }
 
-            // Workflows
-            if (workflowString.isNotBlank()) {
+            // Pipelines
+            if (pipelineString.isNotBlank()) {
                 if (stepString.isNotBlank()) {
                     appendLine()
                 }
-                appendLine("# Workflows --------------------------------------------------------------------\n")
-                append(workflowString)
+                appendLine("# Pipelines --------------------------------------------------------------------\n")
+                append(pipelineString)
             }
         }
     }
@@ -220,7 +220,7 @@ class SafeDSGenerator : AbstractGenerator() {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun compileWorkflowSteps(step: SdsStep, imports: MutableSet<ImportData>) = buildString {
+    private fun compileSteps(step: SdsStep, imports: MutableSet<ImportData>) = buildString {
         val blockLambdaIdManager = IdManager<SdsBlockLambda>()
 
         append("def ${step.correspondingPythonName()}(")
@@ -253,7 +253,7 @@ class SafeDSGenerator : AbstractGenerator() {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun compileWorkflow(workflow: SdsPipeline, imports: MutableSet<ImportData>) = buildString {
+    private fun compilePipeline(workflow: SdsPipeline, imports: MutableSet<ImportData>) = buildString {
         val blockLambdaIdManager = IdManager<SdsBlockLambda>()
 
         appendLine("def ${workflow.correspondingPythonName()}():")

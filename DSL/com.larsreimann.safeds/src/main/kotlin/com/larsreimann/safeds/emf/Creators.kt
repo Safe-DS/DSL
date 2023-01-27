@@ -1536,7 +1536,7 @@ fun createSdsWildcard(): SdsWildcard {
 /**
  * Returns a new object of class [SdsPipeline].
  */
-fun createSdsWorkflow(
+fun createSdsPipeline(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     statements: List<SdsAbstractStatement> = emptyList(),
@@ -1554,13 +1554,13 @@ fun createSdsWorkflow(
 /**
  * Adds a new object of class [SdsPipeline] to the receiver.
  */
-fun SdsCompilationUnit.sdsWorkflow(
+fun SdsCompilationUnit.sdsPipeline(
     name: String,
     annotationCalls: List<SdsAnnotationCall> = emptyList(),
     statements: List<SdsAbstractStatement> = emptyList(),
     init: SdsPipeline.() -> Unit = {},
 ) {
-    this.addMember(createSdsWorkflow(name, annotationCalls, statements, init))
+    this.addMember(createSdsPipeline(name, annotationCalls, statements, init))
 }
 
 /**

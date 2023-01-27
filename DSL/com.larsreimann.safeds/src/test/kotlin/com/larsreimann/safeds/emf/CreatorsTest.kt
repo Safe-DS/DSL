@@ -140,7 +140,7 @@ class CreatorsTest {
 
     @Test
     fun `sdsAssignment should add the created assignment to the receiving workflow`() {
-        val workflow = createSdsWorkflow("Test") {
+        val workflow = createSdsPipeline("Test") {
             sdsAssignment(
                 listOf(createSdsWildcard()),
                 createSdsInt(1),
@@ -208,7 +208,7 @@ class CreatorsTest {
         val lambda = createSdsBlockLambda()
 
         createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-            sdsWorkflow(name = "test") {
+            sdsPipeline(name = "test") {
                 sdsExpressionStatement(lambda)
             }
         }
@@ -419,7 +419,7 @@ class CreatorsTest {
         val lambda = createSdsExpressionLambda(result = createSdsNull())
 
         createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-            sdsWorkflow(name = "test") {
+            sdsPipeline(name = "test") {
                 sdsExpressionStatement(lambda)
             }
         }
@@ -440,7 +440,7 @@ class CreatorsTest {
 
     @Test
     fun `sdsExpressionStatement should add the created expression statement to the receiving workflow`() {
-        val workflow = createSdsWorkflow("Test") {
+        val workflow = createSdsPipeline("Test") {
             sdsExpressionStatement(createSdsInt(1))
         }
 
@@ -791,7 +791,7 @@ class CreatorsTest {
 
     @Test
     fun `createSdsWorkflow should store annotation uses in annotationCallList`() {
-        val workflow = createSdsWorkflow(
+        val workflow = createSdsPipeline(
             "test",
             listOf(createSdsAnnotationCall("Test")),
         )
@@ -806,7 +806,7 @@ class CreatorsTest {
     @Test
     fun `sdsWorkflow should add the created workflow to the receiving compilation unit`() {
         val compilationUnit = createSdsCompilationUnit(packageName = "test") {
-            sdsWorkflow("test")
+            sdsPipeline("test")
         }
 
         compilationUnit.members.shouldHaveSize(1)

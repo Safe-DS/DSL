@@ -310,7 +310,7 @@ fun SdsUnionType?.typeArgumentsOrEmpty(): List<SdsTypeArgument> {
     return this?.typeArgumentList?.typeArguments.orEmpty()
 }
 
-// SdsWorkflow -------------------------------------------------------------------------------------
+// SdsPipeline -------------------------------------------------------------------------------------
 
 fun SdsPipeline?.placeholdersOrEmpty(): List<SdsPlaceholder> {
     return this.statementsOrEmpty()
@@ -322,7 +322,7 @@ fun SdsPipeline?.statementsOrEmpty(): List<SdsAbstractStatement> {
     return this?.body?.statements.orEmpty()
 }
 
-// SdsWorkflowStep ---------------------------------------------------------------------------------
+// SdsStep -----------------------------------------------------------------------------------------
 
 fun SdsStep?.localVariablesOrEmpty(): List<SdsAbstractLocalVariable> {
     return this.parametersOrEmpty() + this.placeholdersOrEmpty()
@@ -361,8 +361,8 @@ fun EObject.containingEnumOrNull() = this.closestAncestorOrNull<SdsEnum>()
 fun EObject.containingExpressionLambdaOrNull() = this.closestAncestorOrNull<SdsExpressionLambda>()
 fun EObject.containingFunctionOrNull() = this.closestAncestorOrNull<SdsFunction>()
 fun EObject.containingProtocolOrNull() = this.closestAncestorOrNull<SdsProtocol>()
+fun EObject.containingPipelineOrNull() = this.closestAncestorOrNull<SdsPipeline>()
 fun EObject.containingStepOrNull() = this.closestAncestorOrNull<SdsStep>()
-fun EObject.containingWorkflowOrNull() = this.closestAncestorOrNull<SdsPipeline>()
 
 fun SdsAnnotationCall.targetOrNull(): SdsAbstractDeclaration? {
     return when (val declaration = this.containingDeclarationOrNull() ?: return null) {

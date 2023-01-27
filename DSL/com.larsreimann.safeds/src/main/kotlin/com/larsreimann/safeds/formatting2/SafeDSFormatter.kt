@@ -459,11 +459,11 @@ class SafeDSFormatter : AbstractFormatter2() {
                 // Features "annotations"
                 doc.formatAnnotations(obj)
 
-                // Keyword "workflow"
+                // Keyword "pipeline"
                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-                    doc.formatKeyword(obj, "workflow", noSpace, oneSpace)
+                    doc.formatKeyword(obj, "pipeline", noSpace, oneSpace)
                 } else {
-                    doc.formatKeyword(obj, "workflow", oneSpace, oneSpace)
+                    doc.formatKeyword(obj, "pipeline", oneSpace, oneSpace)
                 }
 
                 // Feature "name"

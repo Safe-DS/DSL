@@ -8,7 +8,7 @@ import com.larsreimann.safeds.emf.createSdsDummyResource
 import com.larsreimann.safeds.emf.createSdsString
 import com.larsreimann.safeds.emf.descendants
 import com.larsreimann.safeds.emf.sdsExpressionStatement
-import com.larsreimann.safeds.emf.sdsWorkflow
+import com.larsreimann.safeds.emf.sdsPipeline
 import com.larsreimann.safeds.safeDS.SdsString
 import com.larsreimann.safeds.safeDS.SdsPipeline
 import com.larsreimann.safeds.serializer.SerializationResult
@@ -120,7 +120,7 @@ class SafeDSSTRINGValueConverterTest {
             val string = createSdsString("{")
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                sdsWorkflow("test") {
+                sdsPipeline("test") {
                     sdsExpressionStatement(string)
                 }
             }
@@ -156,7 +156,7 @@ class SafeDSSTRINGValueConverterTest {
             val string = createSdsString("'")
 
             createSdsDummyResource(fileName = "test", SdsFileExtension.Test, packageName = "test") {
-                sdsWorkflow("test") {
+                sdsPipeline("test") {
                     sdsExpressionStatement(string)
                 }
             }
