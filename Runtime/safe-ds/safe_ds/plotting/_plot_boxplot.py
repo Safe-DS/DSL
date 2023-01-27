@@ -33,5 +33,6 @@ def plot_boxplot(column: Column) -> None:
             )
     # noinspection PyProtectedMember
     sns.boxplot(data=column._data)
+    ax.set(xlabel=column.name)
     plt.tight_layout()
     plt.show()
