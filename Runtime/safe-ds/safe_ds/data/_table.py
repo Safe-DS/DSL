@@ -6,7 +6,9 @@ import typing
 from pathlib import Path
 from typing import Callable, Optional, Union
 
+import numpy as np
 import pandas as pd
+from IPython.core.display_functions import DisplayHandle, display
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
     ColumnLengthMismatchError,
@@ -14,11 +16,14 @@ from safe_ds.exceptions import (
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
     MissingSchemaError,
+    NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
 )
+from scipy import stats
 
 from ._column import Column
+from ._column_type import ColumnType
 from ._row import Row
 from ._table_schema import TableSchema
 
@@ -592,7 +597,8 @@ class Table:
 
     def has_column(self, column_name: str) -> bool:
         """
-        Returns if the table contains a given column
+        Alias for self.schema.hasColumn(column_name: str) -> bool.
+        Returns if the table contains a given column.
 
         Parameters
         ----------
@@ -637,6 +643,55 @@ class Table:
                 cols.append(self.get_column(column_name))
         return cols
 
+    def list_columns_with_numerical_values(self) -> list[Column]:
+        """
+        Get a list of columns only containing numerical values
+
+        Returns
+        -------
+        cols: list[Column]
+            the list with only numerical columns
+        """
+        cols = []
+        for column_name, data_type in self.schema._schema.items():
+            if data_type.is_numeric():
+                cols.append(self.get_column(column_name))
+        return cols
+
+    def get_column_names(self) -> list[str]:
+        """
+        Alias for self.schema.get_column_names() -> list[str].
+        Returns a list of all column names saved in this schema
+
+        Returns
+        -------
+        column_names: list[str]
+            the column names
+        """
+        return self.schema.get_column_names()
+
+    def get_type_of_column(self, column_name: str) -> ColumnType:
+        """
+        Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
+        Returns the type of the given column.
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column you want the type of
+
+        Returns
+        -------
+        type: ColumnType
+            The type of the column
+
+        Raises
+        ------
+        ColumnNameError
+            If the specified target column name doesn't exist
+        """
+        return self.schema.get_type_of_column(column_name)
+
     def sort_columns(
         self,
         query: Callable[[Column, Column], int] = lambda col1, col2: (
@@ -666,6 +721,30 @@ class Table:
         columns = self.to_columns()
         columns.sort(key=functools.cmp_to_key(query))
         return Table.from_columns(columns)
+
+    def remove_outliers(self) -> Table:
+        """
+        Removes all rows from the table that contain at least one outlier defined as having a value that has a distance of
+        more than 3 standard deviations from the column average.
+
+        Returns
+        -------
+        new_table: Table
+            a new table where the outliers have been removed
+        """
+        result = self._data.copy(deep=True)
+
+        table_without_nonnumericals = Table.from_columns(
+            self.list_columns_with_numerical_values()
+        )
+
+        result = result[
+            (np.absolute(stats.zscore(table_without_nonnumericals._data)) < 3).all(
+                axis=1
+            )
+        ]
+
+        return Table(result)
 
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, Table):
@@ -701,6 +780,76 @@ class Table:
             result: Column = Column(pd.Series(items), name)
             return self.replace_column(name, result)
         raise UnknownColumnNameError([name])
+
+    def summary(self) -> Table:
+        """
+        Returns a Table with a number of statistical key values for a table
+
+        Returns
+        -------
+        result: Table
+            Table with statistics
+        """
+
+        columns = self.to_columns()
+        result = pd.DataFrame()
+        statistics = {}
+
+        for column in columns:
+            statistics = {
+                "max": column.statistics.max,
+                "min": column.statistics.min,
+                "mean": column.statistics.mean,
+                "mode": column.statistics.mode,
+                "median": column.statistics.median,
+                "sum": column.statistics.sum,
+                "variance": column.statistics.variance,
+                "standard deviation": column.statistics.standard_deviation,
+                "idness": column.statistics.idness,
+                "stability": column.statistics.stability,
+                "row count": column.count,
+            }
+            values = []
+
+            for function in statistics.values():
+                try:
+                    values.append(function())
+                except NonNumericColumnError:
+                    values.append("-")
+
+            result = pd.concat([result, pd.DataFrame(values)], axis=1)
+
+        result = pd.concat([pd.DataFrame(list(statistics.keys())), result], axis=1)
+        result.columns = [""] + self.get_column_names()
+
+        return Table(result)
+
+    def __repr__(self) -> str:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+        return tmp.__repr__()
+
+    def __str__(self) -> str:
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+        return tmp.__str__()
+
+    def _ipython_display_(self) -> DisplayHandle:
+        """
+        Returns a pretty display object for the Table to be used in Jupyter Notebooks
+
+        Returns
+        -------
+        output: DisplayHandle
+            Output object
+        """
+        tmp = self._data.copy(deep=True)
+        tmp.columns = self.get_column_names()
+
+        with pd.option_context(
+            "display.max_rows", tmp.shape[0], "display.max_columns", tmp.shape[1]
+        ):
+            return display(tmp)
 
     def slice(
         self,
