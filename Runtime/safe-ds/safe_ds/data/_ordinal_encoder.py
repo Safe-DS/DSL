@@ -1,8 +1,7 @@
 import pandas as pd
-from sklearn import preprocessing
-
 from safe_ds import exceptions
 from safe_ds.data._table import Table
+from sklearn import preprocessing
 
 
 # noinspection PyProtectedMember
