@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from safe_ds.data import Table, TableSchema, ColumnType
+from safe_ds.data import ColumnType, Table, TableSchema
 
 
 def test_remove_outliers_no_outliers() -> None:
@@ -8,7 +8,7 @@ def test_remove_outliers_no_outliers() -> None:
         pd.DataFrame(
             data={
                 "col1": ["A", "B", "C"],
-                "col2": [1., 2., 3.],
+                "col2": [1.0, 2.0, 3.0],
                 "col3": [2, 3, 1],
             }
         )
@@ -22,8 +22,21 @@ def test_remove_outliers_with_outliers() -> None:
     table = Table(
         pd.DataFrame(
             data={
-                "col1": ["A", "B", "C", "outlier", "a", "a", "a", "a", "a", "a", "a", "a"],
-                "col2": [1., 2., 3., 4., 1., 1., 1., 1., 1., 1., 1., 1.],
+                "col1": [
+                    "A",
+                    "B",
+                    "C",
+                    "outlier",
+                    "a",
+                    "a",
+                    "a",
+                    "a",
+                    "a",
+                    "a",
+                    "a",
+                    "a",
+                ],
+                "col2": [1.0, 2.0, 3.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
                 "col3": [2, 3, 1, 1_000_000_000, 1, 1, 1, 1, 1, 1, 1, 1],
             }
         )
@@ -34,9 +47,9 @@ def test_remove_outliers_with_outliers() -> None:
 
 
 def test_remove_outliers_no_rows() -> None:
-    table = Table([], TableSchema({
-        "col1": ColumnType.from_numpy_dtype(np.dtype(float))
-    }))
+    table = Table(
+        [], TableSchema({"col1": ColumnType.from_numpy_dtype(np.dtype(float))})
+    )
     table._data["col1"] = None
     result = table.remove_outliers()
     assert result.count_rows() == 0

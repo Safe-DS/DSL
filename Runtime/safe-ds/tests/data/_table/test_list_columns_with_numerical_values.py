@@ -21,9 +21,9 @@ def test_list_columns_with_numerical_values_valid() -> None:
 
 
 def test_list_columns_with_numerical_values_invalid() -> None:
-    table = Table([], TableSchema({
-        "col1": ColumnType.from_numpy_dtype(np.dtype(float))
-    }))
+    table = Table(
+        [], TableSchema({"col1": ColumnType.from_numpy_dtype(np.dtype(float))})
+    )
     table._data["col1"] = None
     columns = table.list_columns_with_numerical_values()
     assert columns[0] == table.get_column("col1")

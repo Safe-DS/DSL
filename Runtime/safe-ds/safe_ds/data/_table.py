@@ -7,8 +7,6 @@ from pathlib import Path
 from typing import Callable, Optional, Union
 
 import numpy as np
-from scipy import stats
-
 import pandas as pd
 from pandas import DataFrame, Series
 from safe_ds.exceptions import (
@@ -20,6 +18,7 @@ from safe_ds.exceptions import (
     SchemaMismatchError,
     UnknownColumnNameError,
 )
+from scipy import stats
 
 from ._column import Column
 from ._row import Row
@@ -697,19 +696,17 @@ class Table:
         """
         result = self._data.copy(deep=True)
 
-        table_without_nonnumericals = Table.from_columns(self.list_columns_with_numerical_values())
-
+        table_without_nonnumericals = Table.from_columns(
+            self.list_columns_with_numerical_values()
+        )
 
         print(table_without_nonnumericals._data)
-        print(np.absolute(
-                    stats.zscore(table_without_nonnumericals._data)
-                ))
+        print(np.absolute(stats.zscore(table_without_nonnumericals._data)))
 
         result = result[
-            (
-                np.absolute(
-                    stats.zscore(table_without_nonnumericals._data)
-                ) < 3).all(axis=1)
+            (np.absolute(stats.zscore(table_without_nonnumericals._data)) < 3).all(
+                axis=1
+            )
         ]
 
         return Table(result)
