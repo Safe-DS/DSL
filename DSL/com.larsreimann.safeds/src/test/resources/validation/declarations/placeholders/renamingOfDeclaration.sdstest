@@ -30,7 +30,7 @@ step test(myParameter: Int) {
     // semantic_warning "This placeholder only provides another name for a declaration."
     val »g« = myFunction;
     // no_semantic_warning "This placeholder only provides another name for a declaration."
-    val »h« = myWorkflow;
+    val »h« = myPipeline;
     // semantic_warning "This placeholder only provides another name for a declaration."
     val »i« = myParameter;
     // semantic_warning "This placeholder only provides another name for a declaration."

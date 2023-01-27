@@ -3,7 +3,7 @@ package tests.validation.declarations.compilationUnits.stubFileMustNotDeclareWor
 // semantic_error "A stub file must not declare workflows, schemas or steps."
 step »myStep«() {}
 // semantic_error "A stub file must not declare workflows, schemas or steps."
-workflow »myWorkflow« {}
+workflow »myPipeline« {}
 // semantic_error "A stub file must not declare workflows, schemas or steps."
 schema »MySchema« {}
 

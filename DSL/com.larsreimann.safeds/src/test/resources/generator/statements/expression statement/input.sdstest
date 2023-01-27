@@ -4,7 +4,7 @@ fun f(param: () -> ())
 
 fun g() -> result: Int
 
-workflow testFlow {
+pipeline testPipeline {
     g();
 
     f(() {

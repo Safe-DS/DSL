@@ -1,8 +1,8 @@
-package tests.generator.workflowWithPythonName
+package tests.generator.pipelineWithPythonName
 
 fun f()
 
-@PythonName("test_flow")
-workflow testFlow {
+@PythonName("test_pipeline")
+pipeline testPipeline {
     f();
 }

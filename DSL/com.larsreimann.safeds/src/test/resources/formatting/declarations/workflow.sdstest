@@ -1,8 +1,8 @@
-      workflow      myWorkflow1        {}
+      pipeline      myPipeline1        {}
 
 
 
-      @Annotation1        @Annotation2                    workflow    myWorkflow2    {
+      @Annotation1        @Annotation2                    pipeline    myPipeline2    {
               val a = 1;
        }
 

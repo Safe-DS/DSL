@@ -9,7 +9,7 @@ enum »MyEnum«
 // semantic_error "A schema file must only declare schemas."
 step »myStep«() {}
 // semantic_error "A schema file must only declare schemas."
-workflow »myWorkflow« {}
+workflow »myPipeline« {}
 
 // no_semantic_error "A schema file must only declare schemas."
 schema »myschema« {}

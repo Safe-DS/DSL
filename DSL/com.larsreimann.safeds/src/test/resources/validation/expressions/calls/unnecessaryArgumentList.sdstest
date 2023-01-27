@@ -8,7 +8,7 @@ enum MyEnum {
     E<T>
 }
 
-workflow test {
+pipeline test {
     // semantic_info "Unnecessary argument list."
     MyEnum.A»()«;
     // no_semantic_info "Unnecessary argument list."

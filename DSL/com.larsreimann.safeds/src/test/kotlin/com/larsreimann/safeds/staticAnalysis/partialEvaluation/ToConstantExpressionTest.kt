@@ -1497,7 +1497,7 @@ private fun Double.toSdsNumber(): SdsAbstractExpression {
 
 /**
  * Helper method for tests loaded from a resource that returns the expression of the first expression statement in the
- * workflow.
+ * pipeline.
  */
 private fun SdsPipeline.expectedExpression() = statementsOrEmpty()
     .filterIsInstance<SdsExpressionStatement>()

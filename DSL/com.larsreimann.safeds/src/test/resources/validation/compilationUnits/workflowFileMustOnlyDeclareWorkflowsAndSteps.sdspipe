@@ -12,4 +12,4 @@ schema »MySchema« {}
 // no_semantic_error "A pipeline file must only declare pipelines and steps."
 step »myStep«() {}
 // no_semantic_error "A pipeline file must only declare pipelines and steps."
-workflow »myWorkflow« {}
+workflow »myPipeline« {}

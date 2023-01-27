@@ -4,7 +4,7 @@ fun f(param: Any?)
 
 fun g() -> result: Int
 
-workflow test {
+pipeline test {
     f("start
 {{ g() }}
 inner {{ g() }}
