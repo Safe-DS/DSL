@@ -19,22 +19,22 @@ class OrdinalEncoder:
         self.oe = preprocessing.OrdinalEncoder(categories=[order])
         self.order = order
 
-    def fit(self, table: Table, column: str) -> None:
+    def fit(self, table: Table, column_name: str) -> None:
         """
         Fit the ordinal encoder with the values in the given table.
 
         Parameters
         ----------
         table : Table
-            The table containing the data to fit the label encoder with.
+            The table containing the data to fit the ordinal encoder with.
 
-        column : str
-            The list of columns which should be label encoded
+        column_name : str
+            The column which should be ordinal-encoded
 
         Returns
         -------
         None
-            This function does not return any value. It updates the internal state of the label encoder object.
+            This function does not return any value. It updates the internal state of the ordinal encoder object.
 
         Raises
         -------
@@ -44,19 +44,19 @@ class OrdinalEncoder:
         p_df = table._data
         p_df.columns = table.schema.get_column_names()
         try:
-            self.oe.fit(p_df[[column]])
+            self.oe.fit(p_df[[column_name]])
         except exceptions.NotFittedError as exc:
             raise exceptions.LearningError("") from exc
 
-    def transform(self, table: Table, column: str) -> Table:
+    def transform(self, table: Table, column_name: str) -> Table:
         """
-        Transform the given Table to a ordinal encoded table.
+        Transform the given Table to a ordinal-encoded table.
 
         Parameters
          ----------
          table:
                  table with target values
-         column:
+         column_name:
                  name of column as string
          Returns
          -------
@@ -69,8 +69,8 @@ class OrdinalEncoder:
         p_df = table._data.copy()
         p_df.columns = table.schema.get_column_names()
         try:
-            p_df[[column]] = self.oe.transform(p_df[[column]])
-            p_df[column] = p_df[column].astype(dtype="int64", copy=False)
+            p_df[[column_name]] = self.oe.transform(p_df[[column_name]])
+            p_df[column_name] = p_df[column_name].astype(dtype="int64", copy=False)
             return Table(p_df)
         except Exception as exc:
             raise exceptions.NotFittedError from exc
@@ -87,7 +87,7 @@ class OrdinalEncoder:
 
         Returns
         -------
-            table: a new Table object which is ordinal encoded
+            table: a new Table object which is ordinal-encoded
 
         Raises
         -------
@@ -105,14 +105,14 @@ class OrdinalEncoder:
         except exceptions.NotFittedError as exc:
             raise exceptions.NotFittedError from exc
 
-    def inverse_transform(self, table: Table, column: str) -> Table:
+    def inverse_transform(self, table: Table, column_name: str) -> Table:
         """
         Inverse the transformed table back to original encodings.
 
         Parameters
         ----------
             table:  The table to be inverse transformed.
-            column: The list of columns which should be ordinal-encoded
+            column_name: The column which should be ordinal-encoded
 
         Returns
         -------
@@ -126,7 +126,7 @@ class OrdinalEncoder:
         p_df = table._data.copy()
         p_df.columns = table.schema.get_column_names()
         try:
-            p_df[[column]] = self.oe.inverse_transform(p_df[[column]])
+            p_df[[column_name]] = self.oe.inverse_transform(p_df[[column_name]])
             return Table(p_df)
         except exceptions.NotFittedError as exc:
             raise exceptions.NotFittedError from exc
