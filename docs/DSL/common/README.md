@@ -1,6 +1,6 @@
-# Common Parts of Workflow Language and Stub Language
+# Common Parts of Pipeline Language and Stub Language
 
-Several parts of the Safe-DS DSL are shared between the [workflow lanugage][workflow-language] and the [stub language][stub-language]. Here is the list:
+Several parts of the Safe-DS DSL are shared between the [pipeline lanugage][pipeline-language] and the [stub language][stub-language]. Here is the list:
 
 * [Packages][packages] help avoid conflicts that could arise if two declarations have the same name.
 * [Imports][imports] make declarations in other packages accessible.
@@ -9,9 +9,9 @@ Several parts of the Safe-DS DSL are shared between the [workflow lanugage][work
 * [Types][types] describe the values that a declaration can accept.
 * [Comments][comments] document the code.
 
-[workflow-language]: ../workflow-language/README.md
+[pipeline-language]: ../pipeline-language/README.md
 [stub-language]: ../stub-language/README.md
-[calls]: ../workflow-language/expressions.md#calls
+[calls]: ../pipeline-language/expressions.md#calls
 [packages]: packages.md
 [imports]: imports.md
 [parameters]: parameters.md

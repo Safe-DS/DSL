@@ -192,13 +192,13 @@ Most commonly, default values in Python are literals, since default values are o
 
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
-[steps]: ../workflow-language/steps.md
-[calls]: ../workflow-language/expressions.md#calls
+[steps]: ../pipeline-language/steps.md
+[calls]: ../pipeline-language/expressions.md#calls
 [stub-language]: ../stub-language/README.md
-[int-literals]: ../workflow-language/expressions.md#int-literals
-[float-literals]: ../workflow-language/expressions.md#float-literals
-[string-literals]: ../workflow-language/expressions.md#string-literals
-[boolean-literals]: ../workflow-language/expressions.md#boolean-literals
-[null-literals]: ../workflow-language/expressions.md#null-literal
+[int-literals]: ../pipeline-language/expressions.md#int-literals
+[float-literals]: ../pipeline-language/expressions.md#float-literals
+[string-literals]: ../pipeline-language/expressions.md#string-literals
+[boolean-literals]: ../pipeline-language/expressions.md#boolean-literals
+[null-literals]: ../pipeline-language/expressions.md#null-literal
 [python-keyword-only]: https://peps.python.org/pep-3102/
 [python-positional-only]: https://peps.python.org/pep-0570/

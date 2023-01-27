@@ -1,6 +1,6 @@
 # Expressions
 
-Expressions are the parts of the [workflow language][workflow-language] that evaluate to some value. A multitude of different expression types known from other programming languages are supported by Safe-DS, from basic [literals](#literals) to [lambdas](#lambdas).
+Expressions are the parts of the [pipeline language][pipeline-language] that evaluate to some value. A multitude of different expression types known from other programming languages are supported by Safe-DS, from basic [literals](#literals) to [lambdas](#lambdas).
 
 ## Literals
 
@@ -576,7 +576,7 @@ If the default precedence of operators is not sufficient, parentheses can be use
 [enums]: ../stub-language/enumerations.md
 [enum-variants]: ../stub-language/enumerations.md#enum-variants
 [global-functions]: ../stub-language/global-functions.md
-[workflow-language]: README.md
+[pipeline-language]: README.md
 [statements]: statements.md
 [assignment-multiple-assignees]: statements.md#multiple-assignees
 [assignments-to-step-results]: statements.md#yielding-results-of-steps

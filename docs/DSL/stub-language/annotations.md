@@ -51,7 +51,7 @@ To attach metainformation to a declaration, the annotation must be called on tha
 - [Results][results]
 - [Steps][steps]
 - [Type parameters][type-parameters]
-- [Workflows][workflows]
+- [Pipelines][pipelines]
 
 The valid targets of an annotation can be restricted with the [`Target`][safeds-lang-target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds-lang-repeatable].
 
@@ -101,11 +101,11 @@ The package `safeds.lang` contains several annotations that are processed by Saf
 [global-functions]: global-functions.md
 [methods]: classes.md#defining-methods
 [results]: ../common/parameters.md
-[steps]: ../workflow-language/steps.md
+[steps]: ../pipeline-language/steps.md
 [type-parameters]: type-parameters.md
-[workflows]: ../workflow-language/workflows.md
+[pipelines]: ../pipeline-language/pipelines.md
 [safeds-lang]: ../../Stdlib/API/safeds_lang.md
 [safeds-lang-repeatable]: ../../Stdlib/API/safeds_lang.md#annotation-repeatable
 [safeds-lang-target]: ../../Stdlib/API/safeds_lang.md#annotation-target
-[calls]: ../workflow-language/expressions.md#calls
-[argument-restrictions]: ../workflow-language/expressions.md#restrictions-for-arguments
+[calls]: ../pipeline-language/expressions.md#calls
+[argument-restrictions]: ../pipeline-language/expressions.md#restrictions-for-arguments

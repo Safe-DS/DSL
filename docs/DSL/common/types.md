@@ -429,10 +429,10 @@ Getting the `<result type`> depends on the number of results. If there is only a
 [enum-variant-constructors]: ../stub-language/enumerations.md#constructors
 [methods]: ../stub-language/classes.md#defining-methods
 [global-functions]: ../stub-language/global-functions.md
-[member-accesses]: ../workflow-language/expressions.md#member-access-of-enum-variants
-[null-literal]: ../workflow-language/expressions.md#null-literal
-[calls]: ../workflow-language/expressions.md#calls
-[steps]: ../workflow-language/steps.md
-[lambdas]: ../workflow-language/expressions.md#lambdas
+[member-accesses]: ../pipeline-language/expressions.md#member-access-of-enum-variants
+[null-literal]: ../pipeline-language/expressions.md#null-literal
+[calls]: ../pipeline-language/expressions.md#calls
+[steps]: ../pipeline-language/steps.md
+[lambdas]: ../pipeline-language/expressions.md#lambdas
 [mypy]: http://mypy-lang.org/
 [type-hints]: https://docs.python.org/3/library/typing.html

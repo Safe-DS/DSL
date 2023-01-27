@@ -1,6 +1,6 @@
 # Statements
 
-Statements are used in the [workflow language][workflow-language] to run a specific action. Safe-DS supports only two type of statements, namely
+Statements are used in the [pipeline language][pipeline-language] to run a specific action. Safe-DS supports only two type of statements, namely
 
 - [expression statements](#expression-statements), which are used to evaluate an expression exactly once and discard any results, and
 - [assignments](#assignments), which also evaluate an expression exactly once, but can then [assign selected results to placeholders](#declaring-placeholders) or [assign them to own results](#yielding-results).
@@ -49,7 +49,7 @@ This assignment to a placeholder has the following syntactic elements:
 
 #### References to Placeholder
 
-We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [workflow][workflows], [step][steps], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `one` placeholder (here `1`) to the console:
+We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [step][steps], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `one` placeholder (here `1`) to the console:
 
 ```txt
 step loadMovieRatingsSample(nInstances: Int) {
@@ -137,10 +137,10 @@ Assignment happens by index, so the first result is assigned to the first assign
 
 [results]: ../common/results.md
 [stub-language]: ../stub-language/README.md
-[workflow-language]: README.md
+[pipeline-language]: README.md
 [expressions]: expressions.md
 [block-lambdas]: expressions.md#block-lambdas
 [calls]: expressions.md#calls
 [references]: expressions.md#references
 [steps]: steps.md
-[workflows]: workflows.md
+[pipelines]: pipelines.md

@@ -104,6 +104,12 @@ The annotation can be called on parameters.
 **Parameters:** _None expected._
 
 
+### Enum Variant `Pipeline`
+The annotation can be called on pipelines.
+
+**Parameters:** _None expected._
+
+
 ### Enum Variant `Result`
 The annotation can be called on results.
 
@@ -118,12 +124,6 @@ The annotation can be called on steps.
 
 ### Enum Variant `TypeParameter`
 The annotation can be called on type parameters.
-
-**Parameters:** _None expected._
-
-
-### Enum Variant `Workflow`
-The annotation can be called on workflows.
 
 **Parameters:** _None expected._
 
@@ -176,10 +176,10 @@ The purpose of a declaration.
 * EnumVariant
 * Function
 * Parameter
+* Pipeline
 * Result
 * Step
 * TypeParameter
-* Workflow
 
 ## <a name="annotation-Experimental"></a>Annotation `Experimental`
 The declaration might change without a major version bump.
@@ -244,8 +244,8 @@ The name of the corresponding API element in Python (default is the name of the 
 * EnumVariant
 * Function
 * Parameter
+* Pipeline
 * Step
-* Workflow
 
 ## <a name="annotation-Repeatable"></a>Annotation `Repeatable`
 The annotation can be called multiple times for the same declaration.
@@ -271,10 +271,10 @@ The version in which a declaration was added.
 * EnumVariant
 * Function
 * Parameter
+* Pipeline
 * Result
 * Step
 * TypeParameter
-* Workflow
 
 ## <a name="annotation-Target"></a>Annotation `Target`
 The annotation can target these declaration types. If the @Target annotation is not used any declaration type can be targeted.
