@@ -19,27 +19,27 @@ from safeds_runner.codegen import eager_elvis
         (True, True, True),
     ]
 )
-def test_should_compute_elvis_operation(left_operand: Any, right_operand: Any, expected_result: Any):
+def test_should_compute_elvis_operation(left_operand: Any, right_operand: Any, expected_result: Any) -> None:
     assert eager_elvis(left_operand, right_operand) == expected_result
 
 
-def test_should_evaluate_left_operand_before_right_operand():
+def test_should_evaluate_left_operand_before_right_operand() -> None:
     call_order: list[str] = []
 
     def left() -> Any:
         call_order.append("left")
-        return None
+        return None # noqa: R1711
 
     def right() -> Any:
         call_order.append("right")
-        return None
+        return None # noqa: R1711
 
     eager_elvis(left(), right())
 
     assert call_order == ["left", "right"]
 
 
-def test_should_always_evaluate_both_operands():
+def test_should_always_evaluate_both_operands() -> None:
     call_order: list[str] = []
 
     def left() -> Any:
