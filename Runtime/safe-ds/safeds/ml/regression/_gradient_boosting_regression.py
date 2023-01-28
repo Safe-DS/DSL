@@ -2,7 +2,8 @@ from typing import Optional
 
 # noinspection PyProtectedMember
 import safeds._util._util_sklearn
-from safeds.data import SupervisedDataset, Table
+from safeds.data import SupervisedDataset
+from safeds.data.tabular import Table
 from sklearn.ensemble import GradientBoostingRegressor
 
 

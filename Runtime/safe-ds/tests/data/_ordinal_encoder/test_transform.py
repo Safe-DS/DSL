@@ -1,6 +1,8 @@
 import pandas as pd
 import pytest
-from safeds.data import OrdinalEncoder, Table
+
+from safeds.data.tabular import Table
+from safeds.data import OrdinalEncoder
 from safeds.exceptions import NotFittedError
 
 

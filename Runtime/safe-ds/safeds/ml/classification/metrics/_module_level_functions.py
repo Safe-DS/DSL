@@ -1,4 +1,4 @@
-from safeds.data import Column
+from safeds.data.tabular import Column
 from sklearn.metrics import accuracy_score
 
 
