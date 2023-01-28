@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from safe_ds_runner.codegen import eager_elvis
+from safeds_runner.codegen import eager_elvis
 
 
 @pytest.mark.parametrize(

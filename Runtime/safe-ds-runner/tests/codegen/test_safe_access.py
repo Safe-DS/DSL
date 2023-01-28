@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from safe_ds_runner.codegen import safe_access
+from safeds_runner.codegen import safe_access
 
 
 # Test data --------------------------------------------------------------------

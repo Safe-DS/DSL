@@ -1,6 +1,6 @@
 import pytest
 
-from safe_ds_runner.codegen import eager_or
+from safeds_runner.codegen import eager_or
 
 
 @pytest.mark.parametrize(
