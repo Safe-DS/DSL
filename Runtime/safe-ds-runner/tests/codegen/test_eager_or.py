@@ -1,5 +1,4 @@
 import pytest
-
 from safeds_runner.codegen import eager_or
 
 
@@ -10,9 +9,11 @@ from safeds_runner.codegen import eager_or
         (False, True, True),
         (True, False, True),
         (True, True, True),
-    ]
+    ],
 )
-def test_should_compute_disjunction(left_operand: bool, right_operand: bool, expected_result: bool) -> None:
+def test_should_compute_disjunction(
+    left_operand: bool, right_operand: bool, expected_result: bool
+) -> None:
     assert eager_or(left_operand, right_operand) == expected_result
 
 

@@ -1,5 +1,4 @@
 import pytest
-
 from safeds_runner.codegen import eager_and
 
 
@@ -10,9 +9,11 @@ from safeds_runner.codegen import eager_and
         (False, True, False),
         (True, False, False),
         (True, True, True),
-    ]
+    ],
 )
-def test_should_compute_conjunction(left_operand: bool, right_operand: bool, expected_result: bool) -> None:
+def test_should_compute_conjunction(
+    left_operand: bool, right_operand: bool, expected_result: bool
+) -> None:
     assert eager_and(left_operand, right_operand) == expected_result
 
 

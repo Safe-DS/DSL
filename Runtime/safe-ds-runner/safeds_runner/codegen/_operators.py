@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar, Optional
+from typing import Any, Optional, TypeVar
 
 
 def eager_or(left_operand: bool, right_operand: bool) -> bool:

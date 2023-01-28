@@ -1,11 +1,10 @@
 from typing import Any
 
 import pytest
-
 from safeds_runner.codegen import safe_access
 
-
 # Test data --------------------------------------------------------------------
+
 
 class __C:
     def __init__(self) -> None:
@@ -14,17 +13,16 @@ class __C:
 
 # Actual tests -----------------------------------------------------------------
 
+
 @pytest.mark.parametrize(
     "receiver,member_name,expected_result",
     [
         (None, "a", None),
         (__C(), "a", 1),
-    ]
+    ],
 )
 def test_should_guard_against_member_access_on_none(
-        receiver: Any,
-        member_name: str,
-        expected_result: Any
+    receiver: Any, member_name: str, expected_result: Any
 ) -> None:
     assert safe_access(receiver, member_name) == expected_result
 

@@ -1,7 +1,6 @@
 from typing import Any
 
 import pytest
-
 from safeds_runner.codegen import eager_elvis
 
 
@@ -17,9 +16,11 @@ from safeds_runner.codegen import eager_elvis
         (True, None, True),
         (True, False, True),
         (True, True, True),
-    ]
+    ],
 )
-def test_should_compute_elvis_operation(left_operand: Any, right_operand: Any, expected_result: Any) -> None:
+def test_should_compute_elvis_operation(
+    left_operand: Any, right_operand: Any, expected_result: Any
+) -> None:
     assert eager_elvis(left_operand, right_operand) == expected_result
 
 
