@@ -8,7 +8,7 @@ First we need some data to visualize. For this we use the common example of the 
     You can download that dataset on [kaggle](https://www.kaggle.com/c/titanic).
 
 ```python
-from safe_ds.data import Table
+from safeds.data import Table
 data = Table.from_csv("path/to/your/data.csv")
 ```
 
@@ -41,7 +41,7 @@ So next we can start to plot a our columns against each other in a so called Hea
 But since this type of diagramm only works for numerical values, we are going to use only those.
 
 ```python
-from safe_ds.plotting import plot_correlation_heatmap
+from safeds.plotting import plot_correlation_heatmap
 
 data_only_numerics = Table.from_columns(data_cleaned.list_columns_with_numerical_values())
 plot_correlation_heatmap(data_only_numerics)
@@ -53,7 +53,7 @@ As you can see, the columns _Fare_ and _Pclass_ (Passanger Class) seem to heavil
 We'll use a linechart to better understand their relationship.
 
 ```python
-from safe_ds.plotting import plot_lineplot
+from safeds.plotting import plot_lineplot
 plot_lineplot(data_cleaned, "Pclass", "Fare")
 ```
 
@@ -67,7 +67,7 @@ Also the difference between second and third is less pronounced.
 Some other plots that might be useful are boxplots, histogams and scatterplots.
 
 ```python
-from safe_ds.plotting import plot_boxplot, plot_histogram, plot_scatterplot
+from safeds.plotting import plot_boxplot, plot_histogram, plot_scatterplot
 
 plot_boxplot(data_cleaned.get_column("Age"))
 plot_histogram(data_cleaned.get_column("Fare"))

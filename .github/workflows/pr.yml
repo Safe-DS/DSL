@@ -120,7 +120,7 @@ jobs:
 
       # Requires installation of pytest and pytest-cov
       - name: Test with pytest
-        run: poetry run pytest --doctest-modules --cov=safe_ds_runner --cov-report=xml
+        run: poetry run pytest --doctest-modules --cov=safeds_runner --cov-report=xml
 
       - name: Upload coverage to Codecov
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -172,7 +172,7 @@ jobs:
 
       # Requires installation of pytest and pytest-cov
       - name: Test with pytest
-        run: poetry run pytest --doctest-modules --cov=safe_ds --cov-report=xml
+        run: poetry run pytest --doctest-modules --cov=safeds --cov-report=xml
 
       - name: Upload coverage to Codecov
         if: ${{ github.actor != 'dependabot[bot]' }}

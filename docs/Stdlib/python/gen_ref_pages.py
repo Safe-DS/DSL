@@ -28,7 +28,7 @@ for path in sorted(Path("Runtime/safe-ds").rglob("__init__.py")):
 
     # Skip demos, tests, etc.
     parts = tuple(module_path.parts)
-    if parts[0] != "safe_ds":
+    if parts[0] != "safeds":
         continue
 
     # Remove the final "__init__" part
