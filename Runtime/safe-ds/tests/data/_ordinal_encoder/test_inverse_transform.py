@@ -1,8 +1,7 @@
 import pandas as pd
-
+from safeds.data import OrdinalEncoder
 from safeds.data.tabular import Table
 from safeds.data.tabular.typing import StringColumnType
-from safeds.data import OrdinalEncoder
 
 
 def test_inverse_transform() -> None:

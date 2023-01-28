@@ -1,5 +1,5 @@
-from safeds.data.tabular import Table
 from safeds.data import SupervisedDataset
+from safeds.data.tabular import Table
 
 
 def test_supervised_dataset_target_values() -> None:

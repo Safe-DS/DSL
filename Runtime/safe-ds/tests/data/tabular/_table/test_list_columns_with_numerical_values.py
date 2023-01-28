@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from safeds.data.tabular import  Table
-from safeds.data.tabular.typing import ColumnType,  TableSchema
+from safeds.data.tabular import Table
+from safeds.data.tabular.typing import ColumnType, TableSchema
 
 
 def test_list_columns_with_numerical_values_valid() -> None:

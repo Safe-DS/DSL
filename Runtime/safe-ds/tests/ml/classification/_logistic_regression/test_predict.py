@@ -1,8 +1,8 @@
 import pytest
-from safeds.ml.classification import LogisticRegression
 from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.exceptions import PredictionError
+from safeds.ml.classification import LogisticRegression
 
 
 def test_logistic_regression_predict() -> None:

@@ -1,5 +1,4 @@
 from IPython.core.display_functions import DisplayHandle
-
 from safeds.data.tabular import Column, Table
 
 

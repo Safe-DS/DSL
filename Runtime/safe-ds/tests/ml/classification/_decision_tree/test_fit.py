@@ -1,8 +1,8 @@
 import pytest
-from safeds.ml.classification import DecisionTree
 from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.exceptions import LearningError
+from safeds.ml.classification import DecisionTree
 
 
 def test_decision_tree_fit() -> None:

@@ -1,8 +1,8 @@
 import pytest
-from safeds.ml.classification import RandomForest as RandomForestClassifier
 from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.exceptions import PredictionError
+from safeds.ml.classification import RandomForest as RandomForestClassifier
 
 
 def test_random_forest_predict() -> None:

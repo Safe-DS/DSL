@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-
-from safeds.data import SupervisedDataset
 from safeds import plotting
+from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.ml.regression import LinearRegression
 from sklearn.linear_model import LinearRegression as PythonLRS

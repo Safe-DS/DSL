@@ -1,5 +1,4 @@
 import pandas as pd
-
 from safeds.data.tabular import Row, Table
 from safeds.data.tabular.typing import IntColumnType, StringColumnType, TableSchema
 

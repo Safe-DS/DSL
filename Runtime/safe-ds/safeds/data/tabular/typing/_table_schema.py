@@ -3,9 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import pandas as pd
-from safeds.exceptions import UnknownColumnNameError
-
 from safeds.data.tabular.typing._column_type import ColumnType
+from safeds.exceptions import UnknownColumnNameError
 
 
 @dataclass

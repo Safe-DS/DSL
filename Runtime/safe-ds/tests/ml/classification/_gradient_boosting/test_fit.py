@@ -1,8 +1,8 @@
 import pytest
-from safeds.ml.classification import GradientBoosting
 from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.exceptions import LearningError
+from safeds.ml.classification import GradientBoosting
 
 
 def test_gradient_boosting_classification_fit() -> None:

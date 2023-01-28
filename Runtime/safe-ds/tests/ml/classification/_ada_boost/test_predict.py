@@ -1,5 +1,4 @@
 import pytest
-
 from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.exceptions import PredictionError

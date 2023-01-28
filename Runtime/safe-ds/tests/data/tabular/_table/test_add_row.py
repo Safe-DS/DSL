@@ -1,7 +1,7 @@
 import pandas as pd
 from _pytest.python_api import raises
-from safeds.data.tabular import  Row, Table
-from safeds.data.tabular.typing import IntColumnType,  StringColumnType,  TableSchema
+from safeds.data.tabular import Row, Table
+from safeds.data.tabular.typing import IntColumnType, StringColumnType, TableSchema
 from safeds.exceptions import SchemaMismatchError
 
 

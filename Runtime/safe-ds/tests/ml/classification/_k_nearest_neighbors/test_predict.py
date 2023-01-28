@@ -1,8 +1,8 @@
 import pytest
-from safeds.ml.classification import KNearestNeighbors as KNearestNeighborsClassifier
 from safeds.data import SupervisedDataset
 from safeds.data.tabular import Table
 from safeds.exceptions import PredictionError
+from safeds.ml.classification import KNearestNeighbors as KNearestNeighborsClassifier
 
 
 def test_k_nearest_neighbors_predict() -> None:
