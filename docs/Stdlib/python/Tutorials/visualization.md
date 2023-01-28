@@ -8,7 +8,7 @@ First we need some data to visualize. For this we use the common example of the 
     You can download that dataset on [kaggle](https://www.kaggle.com/c/titanic).
 
 ```python
-from safeds.data import Table
+from safeds.data.tabular import Table
 data = Table.from_csv("path/to/your/data.csv")
 ```
 

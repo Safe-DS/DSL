@@ -7,7 +7,8 @@ Here is a short introduction to train and predict with a machine learning model 
 First we need to create a [SupervisedDataset][safeds.data.SupervisedDataset] from the training data.
 
 ```python
-from safeds.data import Table, SupervisedDataset
+from safeds.data import SupervisedDataset
+from safeds.data.tabular import Table
 from safeds.ml.regression import LinearRegression
 
 table = Table({"column1": [3, 4, 8, 6, 5],
