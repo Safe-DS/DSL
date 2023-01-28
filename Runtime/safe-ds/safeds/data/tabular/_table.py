@@ -12,7 +12,8 @@ from IPython.core.display_functions import DisplayHandle, display
 from pandas import DataFrame, Series
 from scipy import stats
 
-from safeds.data.tabular import Column, Row
+from safeds.data.tabular._row import Row
+from safeds.data.tabular._column import Column
 from safeds.data.tabular.typing import ColumnType, TableSchema
 from safeds.exceptions import (
     ColumnLengthMismatchError,
