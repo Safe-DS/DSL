@@ -54,6 +54,7 @@ plugins:
       nav_file: SUMMARY.md
   - section-index
   - autorefs
+  - glightbox
   - search
 
 watch:
