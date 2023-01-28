@@ -1,12 +1,12 @@
 # Imports ----------------------------------------------------------------------
 
-import safeds.codegen
+import safeds_runner.codegen
 
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    f(safeds.codegen.eager_or(g(), g()))
-    f(safeds.codegen.eager_and(g(), g()))
+    f(safeds_runner.codegen.eager_or(g(), g()))
+    f(safeds_runner.codegen.eager_and(g(), g()))
     f((h()) == (h()))
     f((h()) != (h()))
     f((h()) is (h()))
@@ -19,4 +19,4 @@ def test():
     f((h()) - (h()))
     f((h()) * (h()))
     f((h()) / (h()))
-    f(safeds.codegen.eager_elvis(i(), i()))
+    f(safeds_runner.codegen.eager_elvis(i(), i()))
