@@ -4,8 +4,9 @@ version = "1.0.0"
 description = "Run Safe-DS code."
 authors = ["Lars Reimann <mail@larsreimann.com>"]
 license = "MIT"
-
-[tool.poetry.scripts]
+packages = [
+    { include = "safeds_runner" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
