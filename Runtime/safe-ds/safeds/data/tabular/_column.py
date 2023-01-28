@@ -14,7 +14,7 @@ from safeds.exceptions import (
     NonNumericColumnError,
 )
 
-from ._column_type import ColumnType
+from safeds.data.tabular.typing import ColumnType
 
 
 class Column:

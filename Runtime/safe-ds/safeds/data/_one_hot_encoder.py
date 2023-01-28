@@ -3,7 +3,7 @@ from safeds.exceptions import LearningError, NotFittedError
 from sklearn import exceptions
 from sklearn.preprocessing import OneHotEncoder as OHE_sklearn
 
-from ._table import Table
+from safeds.data.tabular import Table
 
 
 class OneHotEncoder:

@@ -7,7 +7,7 @@ import pandas
 from safeds.exceptions import LearningError, NotFittedError
 from sklearn import exceptions, preprocessing
 
-from ._table import Table
+from safeds.data.tabular import Table
 
 
 def warn(*_: Any, **__: Any) -> None:

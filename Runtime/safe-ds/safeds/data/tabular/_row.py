@@ -5,8 +5,7 @@ import pandas as pd
 from IPython.core.display_functions import DisplayHandle, display
 from safeds.exceptions import UnknownColumnNameError
 
-from ._column_type import ColumnType
-from ._table_schema import TableSchema
+from safeds.data.tabular.typing import ColumnType, TableSchema
 
 
 class Row:

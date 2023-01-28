@@ -10,6 +10,10 @@ import numpy as np
 import pandas as pd
 from IPython.core.display_functions import DisplayHandle, display
 from pandas import DataFrame, Series
+from scipy import stats
+
+from safeds.data.tabular import Column, Row
+from safeds.data.tabular.typing import ColumnType, TableSchema
 from safeds.exceptions import (
     ColumnLengthMismatchError,
     ColumnSizeError,
@@ -20,12 +24,6 @@ from safeds.exceptions import (
     SchemaMismatchError,
     UnknownColumnNameError,
 )
-from scipy import stats
-
-from ._column import Column
-from ._column_type import ColumnType
-from ._row import Row
-from ._table_schema import TableSchema
 
 
 # noinspection PyProtectedMember

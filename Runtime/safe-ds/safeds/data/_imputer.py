@@ -6,7 +6,7 @@ from typing import Any, Optional
 import pandas as pd
 from sklearn.impute import SimpleImputer
 
-from ._table import Table
+from safeds.data.tabular import Table
 
 
 class ImputerStrategy(ABC):
