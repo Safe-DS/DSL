@@ -41,10 +41,10 @@ So next we can start to plot a our columns against each other in a so called Hea
 But since this type of diagramm only works for numerical values, we are going to use only those.
 
 ```python
-from safeds.plotting import plot_correlation_heatmap
+from safeds.plotting import correlation_heatmap
 
 data_only_numerics = Table.from_columns(data_cleaned.list_columns_with_numerical_values())
-plot_correlation_heatmap(data_only_numerics)
+correlation_heatmap(data_only_numerics)
 ```
 
 ![Heatmap](./Resources/Heatmap.png)
@@ -53,8 +53,8 @@ As you can see, the columns _Fare_ and _Pclass_ (Passanger Class) seem to heavil
 We'll use a linechart to better understand their relationship.
 
 ```python
-from safeds.plotting import plot_lineplot
-plot_lineplot(data_cleaned, "Pclass", "Fare")
+from safeds.plotting import lineplot
+lineplot(data_cleaned, "Pclass", "Fare")
 ```
 
 ![Lineplot](./Resources/Lineplot.png)
@@ -67,11 +67,11 @@ Also the difference between second and third is less pronounced.
 Some other plots that might be useful are boxplots, histogams and scatterplots.
 
 ```python
-from safeds.plotting import plot_boxplot, plot_histogram, plot_scatterplot
+from safeds.plotting import boxplot, histogram, scatterplot
 
-plot_boxplot(data_cleaned.get_column("Age"))
-plot_histogram(data_cleaned.get_column("Fare"))
-plot_scatterplot(data_cleaned, "Age", "Fare")
+boxplot(data_cleaned.get_column("Age"))
+histogram(data_cleaned.get_column("Fare"))
+scatterplot(data_cleaned, "Age", "Fare")
 ```
 
 ![Boxplot](./Resources/Boxplot.png)

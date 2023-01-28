@@ -38,7 +38,7 @@ def boxplot_safeds() -> None:
     This function shows how to set up and plot a boxplot in Safe-DS.
     """
     table_data = Table.from_csv("demo_column_table.csv")
-    plotting.plot_boxplot(table_data.get_column("A"))
+    plotting.boxplot(table_data.get_column("A"))
 
 
 def histogram_python() -> None:
@@ -58,7 +58,7 @@ def histogram_safeds() -> None:
     This function shows how to set up and plot a histogram in Safe-DS.
     """
     table_data = Table.from_csv("demo_column_table.csv")
-    plotting.plot_histogram(table_data.get_column("A"))
+    plotting.histogram(table_data.get_column("A"))
 
 
 def linear_regression_python() -> None:

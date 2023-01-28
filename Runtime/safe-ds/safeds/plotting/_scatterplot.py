@@ -4,11 +4,9 @@ from safeds.data import Table
 from safeds.exceptions import UnknownColumnNameError
 
 
-def plot_lineplot(table: Table, x: str, y: str) -> None:
+def scatterplot(table: Table, x: str, y: str) -> None:
     """
-    Plot two columns against each other in a lineplot. If there are multiple x-values for a y-value,
-    the resulting plot will consist of a line representing the mean and the lower-transparency area around the line
-    representing the 95% confidence interval.
+    Plot two columns against each other in a scatterplot.
 
     Parameters
     ----------
@@ -30,7 +28,7 @@ def plot_lineplot(table: Table, x: str, y: str) -> None:
     if not table.has_column(y):
         raise UnknownColumnNameError([y])
 
-    ax = sns.lineplot(
+    ax = sns.scatterplot(
         data=table._data,
         x=table.schema._get_column_index_by_name(x),
         y=table.schema._get_column_index_by_name(y),

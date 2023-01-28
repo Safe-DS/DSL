@@ -3,7 +3,7 @@ import seaborn as sns
 from safeds.data import Column
 
 
-def plot_histogram(column: Column) -> None:
+def histogram(column: Column) -> None:
     """
     Plot a column in a histogram.
 
