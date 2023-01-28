@@ -26,13 +26,11 @@ def test_should_compute_elvis_operation(left_operand: Any, right_operand: Any, e
 def test_should_evaluate_left_operand_before_right_operand() -> None:
     call_order: list[str] = []
 
-    def left() -> Any:
+    def left() -> None:
         call_order.append("left")
-        return None # noqa: R1711
 
-    def right() -> Any:
+    def right() -> None:
         call_order.append("right")
-        return None # noqa: R1711
 
     eager_elvis(left(), right())
 
