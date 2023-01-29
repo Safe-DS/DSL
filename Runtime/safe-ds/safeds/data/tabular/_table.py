@@ -835,7 +835,7 @@ class Table:
 
             for function in statistics.values():
                 try:
-                    values.append(function())
+                    values.append(str(function()))
                 except NonNumericColumnError:
                     values.append("-")
 
