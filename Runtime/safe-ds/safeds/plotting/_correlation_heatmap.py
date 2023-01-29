@@ -29,7 +29,7 @@ def correlation_heatmap(table: Table) -> None:
         vmax=1,
         xticklabels=table.get_column_names(),
         yticklabels=table.get_column_names(),
-        cmap="vlag"
+        cmap="vlag",
     )
     plt.tight_layout()
     plt.show()
