@@ -33,7 +33,7 @@ As you can see here, the **idness** of the column _PassengerId_ is 1. This means
 this column. Since this isn't helpful for our usecase we can drop it.
 
 ```python
-data_cleaned = data.drop_columns(["PassangerId"])
+data_cleaned = data.drop_columns(["PassengerId"])
 ```
 ## Heatmap
 Now we have a rough idea of what we are looking at. But we still don't really know a lot about our dataset.
