@@ -36,7 +36,6 @@ class LabelEncoder:
         ----------
         table : Table
             The table containing the data used to fit the label encoder.
-
         column : str
             The list of columns supposed to be label-encoded.
 
