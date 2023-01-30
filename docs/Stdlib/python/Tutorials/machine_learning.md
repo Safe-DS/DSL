@@ -27,7 +27,7 @@ sup_dataset = SupervisedDataset(table, target_column="target")
 [SupervisedDatasets][safeds.data.SupervisedDataset] are used in safe-DS to train supervised machine learning models
 (e.g. [RandomForest][safeds.ml.classification.RandomForest] for classification and
 [LinearRegression][safeds.ml.regression.LinearRegression] as a regression model), because they keep track of the target
-vector. A [SupervisedDataset][safeds.data.SupervisedDataset] can be created from a [Table][safeds.data.Table] and
+vector. A [SupervisedDataset][safeds.data.SupervisedDataset] can be created from a [Table][safeds.data.tabular.Table] and
 specifying the target vector in the table.
 
 ## Create and train model
