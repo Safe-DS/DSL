@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from safeds.data import Imputer
+from safeds.data.tabular.transformation import Imputer
 from safeds.data.tabular import Table
 
 

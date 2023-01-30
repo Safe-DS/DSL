@@ -1,5 +1,5 @@
 import pandas as pd
-from safeds.data import LabelEncoder
+from safeds.data.tabular.transformation import LabelEncoder
 from safeds.data.tabular import Table
 
 

@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from safeds.data import OneHotEncoder
+from safeds.data.tabular.transformation import OneHotEncoder
 from safeds.data.tabular import Table
 from safeds.exceptions import NotFittedError
 
