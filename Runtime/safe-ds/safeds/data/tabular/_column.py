@@ -427,7 +427,7 @@ class ColumnStatistics:
         Calculate the stability of this column, which we define as
 
         $$
-        \\frac{number\\;of\\;occurrences\\;of\\;most\\;common\\;non{-}null\\;value}{number\\;of\\;non{-}null\\;values}
+        \\frac{\\text{number of occurrences of most common non-null value}}{\\text{number of non-null values}}
         $$
 
         Returns
@@ -452,7 +452,7 @@ class ColumnStatistics:
         Calculate the idness of this column, which we define as
 
         $$
-        \\frac{number\\;of\\;different\\;values}{number\\;of\\;rows}
+        \\frac{\\text{number of different values}}{\\text{number of rows}}
         $$
 
         Returns
