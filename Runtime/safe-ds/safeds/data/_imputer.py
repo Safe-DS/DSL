@@ -37,11 +37,11 @@ class Imputer:
             """
 
             def __init__(self, value: Any):
-                self.value = value
+                self._value = value
 
             def _augment_imputer(self, imputer: SimpleImputer) -> None:
                 imputer.strategy = "constant"
-                imputer.fill_value = self.value
+                imputer.fill_value = self._value
 
         class Mean(ImputerStrategy):
             """
