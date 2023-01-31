@@ -7,7 +7,6 @@ from typing import Any, Callable
 import numpy as np
 import pandas as pd
 from IPython.core.display_functions import DisplayHandle, display
-
 from safeds.data.tabular.typing import ColumnType
 from safeds.exceptions import (
     ColumnLengthMismatchError,

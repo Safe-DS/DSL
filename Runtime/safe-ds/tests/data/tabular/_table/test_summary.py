@@ -1,5 +1,4 @@
 import pandas as pd
-
 from safeds.data.tabular import Table
 
 
