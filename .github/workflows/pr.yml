@@ -9,31 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Run change detection
-  changes:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      dsl: ${{ steps.filter.outputs.dsl }}
-      runner: ${{ steps.filter.outputs.runner }}
-      stdlib: ${{ steps.filter.outputs.stdlib }}
-    steps:
-      - uses: dorny/paths-filter@v2.11.1
-        id: filter
-        with:
-          filters: |
-            dsl:
-              - 'DSL/**'
-            runner:
-              - 'Runtime/safe-ds-runner/**'
-            stdlib:
-              - 'Runtime/safe-ds/**'
-
   # Build and test DSL component
   build-dsl:
-    needs: changes
-    if: ${{ needs.changes.outputs.dsl == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -80,8 +57,6 @@ jobs:
 
   # Build and test Runtime > Runner component
   build-runtime-runner:
-    needs: changes
-    if: ${{ needs.changes.outputs.runner == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -132,8 +107,6 @@ jobs:
 
   # Build and test Runtime > Stdlib component
   build-runtime-stdlib:
-    needs: changes
-    if: ${{ needs.changes.outputs.stdlib == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
