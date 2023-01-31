@@ -1,6 +1,6 @@
 # How to process your data
 
-1. Load your data in to a table
+1. Load data into a table
 
     ```python
     # read a csv file
@@ -10,14 +10,14 @@
     table_json = Table.from_json("path_to_json_file.json")
     ```
 
-1. Extract a row from your table
+1. Extract a row from a table
 
     ```python
     # provide the index of the row
     row = table.get_row(0)
     ```
 
-1. Extract a column from your table
+1. Extract a column from a table
 
     ```python
     # provide the name of the column
@@ -48,7 +48,7 @@
     table = table.keep_columns(["NameOfColumn1", "NameOfColumn2"])
     ```
 
-1. Sort your columns with a given query
+1. Sort columns with a given query
 
     ```python
     # returns a new table with sorted columns in a reversed alphabetical order
@@ -56,23 +56,23 @@
         lambda column1, column2:
             (column1.name < column2.name) - (column1.name > column2.name))
 
-    # if you do not provide a lambda the columns will be sorted alphabetically
+    # if no lambda is provided, the columns will be sorted alphabetically
     table = table.sort_columns()
     ```
 
 1. Filter rows with a given query
 
     ```python
-    # returns a new table where each row has the value 1 in the column with the name "NameOfColumn1"
+    # returns a new table where each row has the value 1 in the column "NameOfColumn1"
     table = table.filter_rows(lambda row: row.get_value("NameOfColumn1") == 1)
     ```
 
-1. Write the data to a csv or json file
+1. Write data to a CSV or JSON file
 
     ```python
-    # write to a csv file
+    # write to a .csv-file
     table.to_csv("path_to_csv_output_file.csv")
 
-    # write to a json file
+    # write to a .json-file
     table.to_json("path_to_json_output_file.json")
     ```
