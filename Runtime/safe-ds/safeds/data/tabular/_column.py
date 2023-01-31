@@ -7,6 +7,7 @@ from typing import Any, Callable
 import numpy as np
 import pandas as pd
 from IPython.core.display_functions import DisplayHandle, display
+
 from safeds.data.tabular.typing import ColumnType
 from safeds.exceptions import (
     ColumnLengthMismatchError,
@@ -331,10 +332,10 @@ class ColumnStatistics:
 
         Returns
         -------
-        mode :
-            The mode value.
+        List :
+            Returns a list with the most common values.
         """
-        return self._column._data.mode()[0]
+        return self._column._data.mode().tolist()
 
     def median(self) -> float:
         """
@@ -443,7 +444,7 @@ class ColumnStatistics:
         if self._column._data.size == 0:
             raise ColumnSizeError("> 0", "0")
         return (
-            self._column._data.value_counts()[self._column.statistics.mode()]
+            self._column._data.value_counts()[self._column.statistics.mode()[0]]
             / self._column._data.count()
         )
 

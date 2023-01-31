@@ -1,4 +1,5 @@
 import pandas as pd
+
 from safeds.data.tabular import Table
 
 
@@ -8,7 +9,7 @@ def test_summary() -> None:
     truth = Table(
         pd.DataFrame(
             data={
-                "": [
+                "metrics": [
                     "max",
                     "min",
                     "mean",
@@ -25,7 +26,7 @@ def test_summary() -> None:
                     "2",
                     "1",
                     str(4.0 / 3),
-                    "1",
+                    "[1]",
                     "1.0",
                     "4",
                     str(1.0 / 3),
@@ -38,7 +39,7 @@ def test_summary() -> None:
                     "-",
                     "-",
                     "-",
-                    "a",
+                    "['a', 'b', 'c']",
                     "-",
                     "-",
                     "-",
@@ -50,5 +51,4 @@ def test_summary() -> None:
             }
         )
     )
-
     assert truth == table.summary()
