@@ -1,6 +1,6 @@
 # How to process your data
 
-1. Load data in to a table
+1. Load data into a table
 
     ```python
     # read a csv file
