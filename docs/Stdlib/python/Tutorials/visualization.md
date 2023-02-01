@@ -40,7 +40,7 @@ data_cleaned = data.drop_columns(["PassengerId"])
 ## Heatmap
 Now we have a rough idea of what we are dealing with. But there is still a lot we do not know about the dataset.
 A good next step is to start plotting our columns against each other.
-One way to gain a quick understanding of how the different columns relate to each other is a [Heatmap][safeds.plotting._correlation_heatmap].
+One way to gain a quick understanding of how the different columns relate to each other is a [Heatmap][safeds.plotting.correlation_heatmap].
 
 However, this type of diagram works exclusively for numerical data. We are therefore going drop all non-numerical columns.
 safe-DS's [`list_columns_with_numerical_values()`][safeds.data.tabular._table.Table.list_columns_with_numerical_values]-method
