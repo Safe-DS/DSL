@@ -94,3 +94,12 @@ class ColumnLengthMismatchError(Exception):
 
     def __init__(self, column_info: str):
         super().__init__(f"The length of at least one column differs: \n{column_info}")
+
+
+class MissingDataError(Exception):
+    """
+    Exception raised when a function is given not enough data to succeed.
+    """
+
+    def __init__(self, missing_data_info: str):
+        super().__init__(f"The function is missing data: \n{missing_data_info}")

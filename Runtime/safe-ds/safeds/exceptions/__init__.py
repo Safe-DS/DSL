@@ -7,5 +7,6 @@ from ._data_exceptions import (
     NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
+    MissingDataError
 )
 from ._learning_exceptions import LearningError, NotFittedError, PredictionError

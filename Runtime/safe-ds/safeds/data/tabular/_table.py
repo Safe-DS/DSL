@@ -22,6 +22,7 @@ from safeds.exceptions import (
     NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
+    MissingDataError,
 )
 from scipy import stats
 
@@ -163,9 +164,14 @@ class Table:
 
         Raises
         ------
+        MissingDataError
+            If an empty list without a row is given.
         SchemaMismatchError
             If any of the row schemas does not match with the others.
         """
+        if len(rows) == 0:
+            raise MissingDataError("This function requires at least one row.")
+
         schema_compare: TableSchema = rows[0].schema
         row_array: list[Series] = []
 
@@ -195,9 +201,14 @@ class Table:
 
         Raises
         ------
+        MissingDataError
+            If an empty list without a column is given.
         ColumnLengthMismatchError
             If any of the column sizes does not match with the others.
         """
+        if len(columns) == 0:
+            raise MissingDataError("This function requires at least one column.")
+
         dataframe: DataFrame = pd.DataFrame()
 
         for column in columns:
@@ -405,7 +416,10 @@ class Table:
         """
 
         rows: list[Row] = [row for row in self.to_rows() if query(row)]
-        result_table: Table = self.from_rows(rows)
+        if len(rows) == 0:
+            result_table = Table([], self.schema)
+        else:
+            result_table: Table = self.from_rows(rows)
         return result_table
 
     def count_rows(self) -> int:
