@@ -73,7 +73,7 @@ We can infer that tickets for "First Class"-rooms (Pclass = 1.0) are much more e
 Also, the difference between second and third is less pronounced.
 
 ## Other plots
-Some other plots that might be useful to understanding our data and relationships within it are [boxplots][safeds.plotting._boxplot], [histograms][safeds.plotting._histogram] and [scatterplots][safeds.plotting._scatterplot].
+Some other plots that might be useful to understanding our data and relationships within it are [boxplots][safeds.plotting.boxplot], [histograms][safeds.plotting.histogram] and [scatterplots][safeds.plotting.scatterplot].
 
 ```python
 from safeds.plotting import boxplot
