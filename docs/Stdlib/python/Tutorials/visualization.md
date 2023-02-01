@@ -58,7 +58,7 @@ correlation_heatmap(data_only_numerics)
 
 As you can see, the columns _Fare_ and _Pclass_ (Passenger Class) seem to heavily correlate. Let's have another look at that.
 ## Lineplot
-We'll use a [lineplot][safeds.plotting._lineplot] to better understand their relationship, which is one way to visualise the relationship between two variables easily.
+We'll use a [lineplot][safeds.plotting.lineplot] to better understand their relationship, which is one way to visualise the relationship between two variables easily.
 
 ```python
 from safeds.plotting import lineplot
