@@ -18,4 +18,4 @@ def test_from_columns() -> None:
 
 def test_from_columns_invalid() -> None:
     with pytest.raises(MissingDataError):
-        table = Table.from_columns([])
+        Table.from_columns([])

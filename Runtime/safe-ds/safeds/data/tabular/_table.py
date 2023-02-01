@@ -419,7 +419,7 @@ class Table:
         if len(rows) == 0:
             result_table = Table([], self.schema)
         else:
-            result_table: Table = self.from_rows(rows)
+            result_table = self.from_rows(rows)
         return result_table
 
     def count_rows(self) -> int:

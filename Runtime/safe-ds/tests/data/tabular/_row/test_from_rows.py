@@ -14,4 +14,4 @@ def test_from_rows() -> None:
 
 def test_from_rows_invalid() -> None:
     with pytest.raises(MissingDataError):
-        table = Table.from_rows([])
+        Table.from_rows([])
