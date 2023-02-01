@@ -18,11 +18,11 @@ from safeds.exceptions import (
     ColumnSizeError,
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
+    MissingDataError,
     MissingSchemaError,
     NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
-    MissingDataError,
 )
 from scipy import stats
 

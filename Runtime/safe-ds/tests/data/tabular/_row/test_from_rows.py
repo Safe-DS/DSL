@@ -1,5 +1,4 @@
 import pytest
-
 from safeds.data.tabular import Row, Table
 from safeds.exceptions import MissingDataError
 

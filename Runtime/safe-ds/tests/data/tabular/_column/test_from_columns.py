@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from safeds.data.tabular import Column, Table
 from safeds.exceptions import MissingDataError
 

@@ -3,10 +3,10 @@ from ._data_exceptions import (
     ColumnSizeError,
     DuplicateColumnNameError,
     IndexOutOfBoundsError,
+    MissingDataError,
     MissingSchemaError,
     NonNumericColumnError,
     SchemaMismatchError,
     UnknownColumnNameError,
-    MissingDataError
 )
 from ._learning_exceptions import LearningError, NotFittedError, PredictionError
