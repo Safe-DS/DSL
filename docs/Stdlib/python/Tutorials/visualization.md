@@ -58,7 +58,7 @@ correlation_heatmap(data_only_numerics)
 
 As you can see, the columns _Fare_ and _Pclass_ (Passenger Class) seem to heavily correlate. Let's have another look at that.
 ## Lineplot
-We'll use a [lineplot][[safeds.plotting._lineplot] to better understand their relationship, which is one way to visualise the relationship between two variables easily.
+We'll use a [lineplot][safeds.plotting._lineplot] to better understand their relationship, which is one way to visualise the relationship between two variables easily.
 
 ```python
 from safeds.plotting import lineplot
@@ -73,7 +73,7 @@ We can infer that tickets for "First Class"-rooms (Pclass = 1.0) are much more e
 Also, the difference between second and third is less pronounced.
 
 ## Other plots
-Some other plots that might be useful to understanding our data and relationships within it are [boxplots][[safeds.plotting._boxplot]], [histograms][[safeds.plotting._histogram] and [scatterplots][[safeds.plotting._scatterplot]].
+Some other plots that might be useful to understanding our data and relationships within it are [boxplots][safeds.plotting._boxplot], [histograms][safeds.plotting._histogram] and [scatterplots][safeds.plotting._scatterplot].
 
 ```python
 from safeds.plotting import boxplot
