@@ -19,7 +19,7 @@ table_from_csv = Table.from_csv("path/to/your/csv/file.csv")
 table_from_json = Table.from_json("path/to/your/json/file.json")
 ```
 
-This table has the following output:
+This table produces the following output:
 
 | column1 | column2 | column3 |
 | ------- | ------- | ------- |
@@ -33,10 +33,10 @@ This table has the following output:
 
 Columns and Rows can be created with python Iterables or extracted from an existing Table.
 
-If we want to create a Row we have to provide a [TableSchema][safeds.data.tabular.typing.TableSchema]. This TableSchema contains information about the Columns, which data their storing and which order they have.
-The TableSchema takes a dictionary as input with the names of the Columns as keys and their [ColumnTypes][safeds.data.tabular.typing.ColumnType] as values.
+If we want to create a Row we have to provide a [TableSchema][safeds.data.tabular.typing.TableSchema]. This TableSchema contains information about the columns, which data they are storing and which order they have.
+The TableSchema takes a dictionary as input with the names of the columns as keys and their [ColumnTypes][safeds.data.tabular.typing.ColumnType] as values.
 
-A Table has a TableSchema as well which is created when creating a Table.
+A Table contains a TableSchema as well, which is created when creating a Table.
 
 ```python
 from safeds.data.tabular import Column, Row
@@ -135,8 +135,8 @@ In the second example a new Table is created keeping column1 and column2:
 
 ## Imputing missing values
 
-If your data has missing values, it can provide a challenge for some machine learning models.
-For this you can use the [Imputer][safeds.data.tabular.transformation.Imputer] to deal with these values.
+If your data is missing values, it might be challanging for some machine learning models.
+The [Imputer][safeds.data.tabular.transformation.Imputer] can be used to deal with these values.
 An Imputer needs a [Strategy][safeds.data.tabular.transformation.Imputer.Strategy] which can either be to replace the missing value with a [Constant][safeds.data.tabular.transformation.Imputer.Strategy.Constant], or the [Mean][safeds.data.tabular.transformation.Imputer.Strategy.Mean], [Mode][safeds.data.tabular.transformation.Imputer.Strategy.Mode] or [Median][safeds.data.tabular.transformation.Imputer.Strategy.Median] of the Column.
 
 ```python
@@ -150,7 +150,7 @@ imputer = Imputer(Imputer.Strategy.Median())
 table2_imp = imputer.fit_transform(table_with_nan, ["column1"])
 ```
 
-The following Table has its `nan` values replaced with the median of column1:
+The `nan` values in the following table are replaced with the median value of column1:
 
 | column1 | column2 | column3 |
 | ------- | ------- | ------- |
@@ -162,7 +162,7 @@ The following Table has its `nan` values replaced with the median of column1:
 
 ## Dealing with strings as data
 
-For the following three examples we will use a new Table with strings:
+In the following three examples we will use a new Table with strings:
 
 ```python
 table_with_strings = Table({"column1": ["January", "March", "April", "March", "December"],
@@ -217,7 +217,7 @@ table_one_hot_encoded = one_hot_encoder.fit_transform(table_with_strings, ["colu
 
 ### Using an OrdinalEncoder to deal with strings in a column
 
-The third method to deal with strings in your data is the [OrdinalEncoder][safeds.data.tabular.transformation.OrdinalEncoder]. This encoder works like the label encoder but keeps an order of the encoded values. This order has to be provided with the fitting method.
+The third method to deal with strings in your data is the [OrdinalEncoder][safeds.data.tabular.transformation.OrdinalEncoder]. This encoder works like the label encoder but keeps the order of the encoded values. This order has to be provided when creating the encoder.
 
 ```python
 from safeds.data.tabular.transformation import OrdinalEncoder
@@ -243,7 +243,7 @@ To drop or keep certain columns it might be useful to evaluate which columns are
 For this you can use the statistics of a Column.
 The [ColumnStatistics][safeds.data.tabular.ColumnStatistics] class provides multiple functions like [`min`][safeds.data.tabular.ColumnStatistics.min], [`max`][safeds.data.tabular.ColumnStatistics.max], [`mode`][safeds.data.tabular.ColumnStatistics.mode], [`mean`][safeds.data.tabular.ColumnStatistics.mean], [`median`][safeds.data.tabular.ColumnStatistics.median] and others.
 
-If you want a summary over all the columns you can use the [`summary`][safeds.data.tabular.Table.summary] function which provides a table with all the statistics for each column.
+If you want a summary over all the columns you can use the [`summary`][safeds.data.tabular.Table.summary] function which provides a table containing the statistics for each column.
 
 ```python
 table.summary()
@@ -304,7 +304,7 @@ This outputs the following Table:
 
 ## Write a Table into a csv or json file
 
-If you finished your work with the data you might want to store the data in a file.
+If you finished your work with the data you might want to store the result in a file.
 You can write the data into a csv or a json file with the methods [`to_csv`][safeds.data.tabular.Table.to_csv] and [`to_json`][safeds.data.tabular.Table.to_json].
 
 ```python

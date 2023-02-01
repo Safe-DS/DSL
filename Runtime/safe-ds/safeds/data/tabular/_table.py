@@ -165,7 +165,7 @@ class Table:
         Raises
         ------
         MissingDataError
-            If an empty list without a row is given.
+            If an empty list is given.
         SchemaMismatchError
             If any of the row schemas does not match with the others.
         """
@@ -202,7 +202,7 @@ class Table:
         Raises
         ------
         MissingDataError
-            If an empty list without a column is given.
+            If an empty list is given.
         ColumnLengthMismatchError
             If any of the column sizes does not match with the others.
         """

@@ -98,7 +98,7 @@ class ColumnLengthMismatchError(Exception):
 
 class MissingDataError(Exception):
     """
-    Exception raised when a function is given not enough data to succeed.
+    Exception raised if a function is not given enough data to succeed.
     """
 
     def __init__(self, missing_data_info: str):
