@@ -113,7 +113,7 @@ table_without_column_1 = table.drop_columns(["column1"])
 table_with_only_column_1_and_2 = table.keep_columns(["column1", "column2"])
 ```
 
-First the table dropped column1. This leaves a new Table with column2 and column3:
+First column1 is dropped. This leaves a new Table containing column2 and column3:
 
 | column2 | column3 |
 | ------- | ------- |
