@@ -31,7 +31,7 @@ This table produces the following output:
 
 ## Create Rows and Columns
 
-Columns and Rows can be created with python Iterables or extracted from an existing Table.
+Columns and rows can be created with python Iterables or extracted from an existing table.
 
 If we want to create a Row we have to provide a [TableSchema][safeds.data.tabular.typing.TableSchema]. This TableSchema contains information about the columns, which data they are storing and which order they have.
 The TableSchema takes a dictionary as input with the names of the columns as keys and their [ColumnTypes][safeds.data.tabular.typing.ColumnType] as values.
@@ -123,7 +123,7 @@ First the table dropped column1. This leaves a new Table with column2 and column
 | 6       | 1       |
 | 3       | 1       |
 
-In the second example a new Table is created keeping column1 and column2:
+In the second example a new Table is created by keeping only column1 and column2:
 
 | column1 | column2 |
 | ------- | ------- |
