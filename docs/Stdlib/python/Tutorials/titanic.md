@@ -91,7 +91,7 @@ testing_set = testing_set.drop_columns(["Survived"])
 ```
 
 !!! notes
-    If you want to learn more about **Data Processing** click [here](/docs/Stdlib/python/Tutorials/data_processing.md).
+    If you want to learn more about **Data Processing** click [here](./data_processing.md).
 
 ## Choosing a Model
 
