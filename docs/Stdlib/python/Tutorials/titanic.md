@@ -96,7 +96,7 @@ testing_set = testing_set.drop_columns(["Survived"])
 ## Choosing a Model
 
 
-Now that we have prepared our data we can think about what model we want to choose. For now we'll just use the [`RandomForestClassifier`][safeds.ml.classification.RandomForest].
+Now that we have prepared our data we can think about what model we want to choose. For now we'll just use the [`RandomForest`][safeds.ml.classification.RandomForest] classifier.
 
 ```python
 from safe_ds.classification import RandomForest
