@@ -80,13 +80,13 @@ We'll convert the training set into a [`SupervisedDataset`][safeds.data.Supervis
 remove the target feature from our testing set.
 
 !!! note
-    If we want to later compare our predication against a known truth we need to save it for later.
+    If we want to compare our predication later against a known truth we need to save it.
 ```python
 from safe_ds.data import SupervisedDataset
 
 supervised_training_set = SupervisedDataset(training_set, "Survived")
 
-known_truth = testing_set.get_column("PassengerId")
+known_truth = testing_set.get_column("Survived")
 testing_set = testing_set.drop_columns(["Survived"])
 ```
 
@@ -117,7 +117,7 @@ model.fit(supervised_training_set)
 prediction = model.predict(testing_set)
 ```
 !!! note
-    The return value of [`model.predict()`][safeds.ml.classification.RandomForest.predict] is a Table containing the given feature vectors and the predicted target vector. The name of our target feature in the prediction table is derived from the name of the target feature in the [`SupervisedDataset`][safeds.data.SupervisedDataset]. You can also provide a different name.
+    The return value of [`model.predict()`][safeds.ml.classification.RandomForest.predict] is a Table containing the given feature vectors and the predicted target vector. The name of our target vector in the prediction table is derived from the name of the target vector in the [`SupervisedDataset`][safeds.data.SupervisedDataset]. You can also provide a different name.
 
 ```python
 prediction = model.predict(testing_set, target_name="Something_Else")
