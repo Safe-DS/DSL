@@ -1,34 +1,58 @@
 # Example: Titanic
 
-First we download the dataset from [kaggle](https://www.kaggle.com/c/titanic) and import it into our Jupyter Notebook.
+In this tutorial we are going to use a classic machine learning example: The Titanic Disaster.
+
+!!! note
+    The dataset we are using is provided by [kaggle](https://www.kaggle.com/c/titanic) and the outputs are generated in a Jupyter Notebook.
+
+## Import
+
+First we import the dataset.
 ```python
 from safe_ds.data import Table
-data_train = Table.from_csv("path/to/data/train.csv")
-data_test = Table.from_csv("path/to/data/test.csv")
+data = Table.from_csv("path/to/data/train.csv")
 ```
 
-Now we can analyze our dataset.
+## Data Visualization and Analysis
+
+Now we can start to analyze it.
 ```python
-from safe_ds.plotting import plot_correlation_heatmap
-
-display(data_train)  # uses the native Jupyter Notebook display function
-data_train.summary()
-
-for column_name in data_train.get_column_names():
-    if data_train.get_column(column_name).has_missing_values():
-        print(column_name)   # prints 'Age', 'Cabin' and 'Embarked'
+display(data)
 ```
 ![Table](./Resources/Table.png)
+
+```python
+data.summary()
+```
 ![Summary](./Resources/Summary.png)
 
-This first step reveals a few useful bits of information.
-First of all we notice, that the idness of the column *PassengerId* is 1 which means, that every row has a unique value.
-For machine learning this is not useful, so we want to drop it. But since we need the *PassengerId* in the end to submit our result, we will keep it for later and just remove it from our training dataset.
+```python
+from safe_ds.plotting import plot_correlation_heatmap
+plot_correlation_heatmap(data)
+```
+![Summary](./Resources/Heatmap.png)
+
+```python
+for column_name in data.get_column_names():
+    if data.get_column(column_name).has_missing_values():
+        print(column_name)   # prints 'Age', 'Cabin' and 'Embarked'
+```
+
+!!! notes
+    If you want to learn more about Data Visualization click [here](/docs/Stdlib/python/Tutorials/visualization.md).
+
+## Data Preparation
+
+
+After having a look at these results we can notice a few things.
+
+Firstly, the idness of the column *PassengerId* is 1 which means, that every row has a unique value.
+For machine learning this is not useful, so we are going to drop it.
 
 Also not useful are Name and Ticket.
 
-Also there are three columns that contain empty values. In this example application we'll drop Cabin and Embarked and use
-the Imputer to fill the missing values in the Age Column with the mean.
+There are three columns that contain empty values. In this example application we'll drop *Cabin* and *Embarked* and use
+the Imputer to fill the missing values of the feature *Age* with the mean.
 
 
 [comment]: <> (We should use remove_outliers here, but the method is currently broken)
@@ -36,38 +60,76 @@ the Imputer to fill the missing values in the Age Column with the mean.
 ```python
 from safe_ds.data import Imputer
 
-test_passengerId = data_test.get_column("PassengerId")
-
-data_train = data_train.drop_columns(["Name", "Ticket", "Cabin", "Embarked", "PassengerId"])
-data_test = data_test.drop_columns(["Name", "Ticket", "Cabin", "Embarked", "PassengerId"])
+data = data.drop_columns(["PassengerId", "Name", "Ticket", "Cabin", "Embarked"])
 
 mean_imputer = Imputer(Imputer.Strategy.Mean())
-data_train = mean_imputer.fit_transform(data_train, ["Age"])
-data_test = mean_imputer.fit_transform(data_test, ["Age"])
-
-data_train = data_train.drop_duplicate_rows()
+data = mean_imputer.fit_transform(data, ["Age"])
 ```
 
-Now that we have prepared our data we can think about what model to use. For now we'll choose the RandomForestClassifier.
-Also we need to prepare our training data. We can create a `SupervisedDataset` and define our target column as "Survived".
+We also want to make sure, that we don't carry any unnecessary duplicate rows.
+```python
+data = data.drop_duplicate_rows()
+```
+
+In the end we need to prepare our training data. We are going to split the dataset that we have into training (80%) and testing sets (20%).
+```python
+training_set, testing_set = data.split(0.8)
+```
+
+We'll convert the training set into a `SupervisedDataset` by defining what feature we are targeting and we'll also
+remove the target feature from our testing set.
+
+!!! note
+    If we want to later compare our predication against a known truth we need to save it for later.
+```python
+from safe_ds.data import SupervisedDataset
+
+supervised_training_set = SupervisedDataset(training_set, "Survived")
+
+known_truth = testing_set.get_column("PassengerId")
+testing_set = testing_set.drop_columns(["Survived"])
+```
+
+!!! notes
+    If you want to learn more about Data Processing click [here](/docs/Stdlib/python/Tutorials/data_processing.md).
+
+## Choosing a Model
+
+
+Now that we have prepared our data we can think about what model we want to choose. For now we'll just use the RandomForestClassifier.
 
 ```python
 from safe_ds.classification import RandomForest
-from safe_ds.data import SupervisedDataset
 
 model = RandomForest()
-supervised_set = SupervisedDataset(data_train, "Survived")
 ```
 
-Now we train our model and use it to predict the survivalrate for our test data.
+!!! notes
+        If you want to learn more about Machine Learning Models or the `SupervisedDataset` click [here](/docs/Stdlib/python/Tutorials/machine_learning.md).
+
+## Train and Predict
+
+
+Now we train our model and use it to predict the survival rate for our testing set.
 
 ```python
-model.fit(supervised_set)
-prediction = model.predict(data_test)
+model.fit(supervised_training_set)
+prediction = model.predict(testing_set)
+```
+!!! note
+    The return value of model.predict() is a Table containing the given feature vectors and the predicted target vector. The name of our target feature in the prediction table is derived from the name of the target feature in the `SupervisedDataset`. You can also provide a different name.
+
+```python
+prediction = model.predict(testing_set, target_name="Something_Else")
 ```
 
-In the end we can save our result as a .csv file and upload it to kaggle to receive our accuracy rating.
+## Evaluation and Export
+
+
+Now we can evaluate how accurate our model is and save our prediction as a .csv file.
 ```python
-result = Table.from_columns([test_passengerId, prediction])
-result.to_csv("path/to/output/result.csv")
+from safe_ds.classification.metrics import accuracy
+
+prediction_accuracy: float = accuracy(known_truth, prediction.get_column("Survived"))
+prediction.to_csv("path/to/output/prediction.csv")
 ```
