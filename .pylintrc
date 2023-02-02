@@ -37,4 +37,5 @@ disable=
     duplicate-code,
     metrics,
     logging-fstring-interpolation,
-    too-many-nested-blocks
+    too-many-nested-blocks,
+    useless-return

@@ -84,7 +84,7 @@ import org.eclipse.xtext.generator.IGeneratorContext
  */
 class SafeDSGenerator : AbstractGenerator() {
 
-    private val codegenPackage = "safeds.codegen"
+    private val codegenPackage = "safeds_runner.codegen"
     private val runtimeBridgePackage = "runtimeBridge"
     private val indent = "    "
 

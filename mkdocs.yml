@@ -8,10 +8,8 @@ nav:
       - Language: DSL/README.md
       - Standard Library: Stdlib/API/README.md
   - Python Library:
-      - Stdlib/python/table.md
-      - Stdlib/python/column.md
-      - Stdlib/python/row.md
-      - Stdlib/python/Tutorials/README.md
+      - API Reference: reference/
+      - Tutorials: Stdlib/python/Tutorials/README.md
   - Developer Guide: Development/README.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
@@ -36,6 +34,7 @@ theme:
       accent: orange
   features:
     - content.code.copy
+    - navigation.tabs
     - navigation.instant
     - navigation.sections
 
@@ -45,7 +44,17 @@ plugins:
         python:
           paths:
             - Runtime/safe-ds
+          options:
+            docstring_style: numpy
+            show_if_no_docstring: true
+  - gen-files:
+      scripts:
+        - docs/Stdlib/python/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
   - autorefs
+  - glightbox
   - search
 
 watch:
@@ -67,9 +76,9 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format # Footnotes
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
-
+  # Footnotes
   - footnotes
 
   # Keys
@@ -78,9 +87,9 @@ markdown_extensions:
   # Icons & emojis
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg # Images
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
-
+  # Images
   - attr_list
   - md_in_html
 
@@ -93,7 +102,11 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
 
+  # Permalinks
+  - toc:
+      permalink: "#"
+
 extra_javascript:
-  - javascripts/mathjax.js
+  - javascript/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

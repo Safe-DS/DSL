@@ -4,6 +4,6 @@
 
 -   [Data processing](./data_processing.md)
 -   [Data visualization](./visualization.md)
--   [Titanic](./titanic.md)
+-   [Machine Learning](./machine_learning.md)
 
 ---

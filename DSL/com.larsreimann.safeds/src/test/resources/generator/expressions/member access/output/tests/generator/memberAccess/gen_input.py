@@ -1,6 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
-import safeds.codegen
+import safeds_runner.codegen
 
 # Pipelines --------------------------------------------------------------------
 
@@ -10,5 +10,5 @@ def test():
     f(h()[1])
     f(C().a)
     f(C().c)
-    f(safeds.codegen.safe_access(factory(), 'a'))
-    f(safeds.codegen.safe_access(factory(), 'c'))
+    f(safeds_runner.codegen.safe_access(factory(), 'a'))
+    f(safeds_runner.codegen.safe_access(factory(), 'c'))

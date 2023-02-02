@@ -1,6 +1,5 @@
 import pytest
-
-from safe_ds_runner.codegen import eager_and
+from safeds_runner.codegen import eager_and
 
 
 @pytest.mark.parametrize(
@@ -10,13 +9,15 @@ from safe_ds_runner.codegen import eager_and
         (False, True, False),
         (True, False, False),
         (True, True, True),
-    ]
+    ],
 )
-def test_should_compute_conjunction(left_operand: bool, right_operand: bool, expected_result: bool):
+def test_should_compute_conjunction(
+    left_operand: bool, right_operand: bool, expected_result: bool
+) -> None:
     assert eager_and(left_operand, right_operand) == expected_result
 
 
-def test_should_evaluate_left_operand_before_right_operand():
+def test_should_evaluate_left_operand_before_right_operand() -> None:
     call_order: list[str] = []
 
     def left() -> bool:
@@ -32,7 +33,7 @@ def test_should_evaluate_left_operand_before_right_operand():
     assert call_order == ["left", "right"]
 
 
-def test_should_always_evaluate_both_operands():
+def test_should_always_evaluate_both_operands() -> None:
     call_order: list[str] = []
 
     def left() -> bool:
