@@ -76,7 +76,7 @@ In the end we need to prepare our training data. We are going to [split][safeds.
 training_set, testing_set = data.split(0.8)
 ```
 
-We'll convert the training set into a [`SupervisedDataset`][safeds.data.tabular.SupervisedDataset] by defining what feature we are targeting and we'll also
+We'll convert the training set into a [`SupervisedDataset`][safeds.data.SupervisedDataset] by defining what feature we are targeting and we'll also
 remove the target feature from our testing set.
 
 !!! note
@@ -105,7 +105,7 @@ model = RandomForest()
 ```
 
 !!! notes
-        If you want to learn more about **Machine Learning Models** or the [`SupervisedDataset`][safeds.data.tabular.SupervisedDataset] click [here](/docs/Stdlib/python/Tutorials/machine_learning.md).
+        If you want to learn more about **Machine Learning Models** or the [`SupervisedDataset`][safeds.data.SupervisedDataset] click [here](/docs/Stdlib/python/Tutorials/machine_learning.md).
 
 ## Train and Predict
 
@@ -117,7 +117,7 @@ model.fit(supervised_training_set)
 prediction = model.predict(testing_set)
 ```
 !!! note
-    The return value of [`model.predict()`][safeds.ml.classification.RandomForest.predict] is a Table containing the given feature vectors and the predicted target vector. The name of our target feature in the prediction table is derived from the name of the target feature in the [`SupervisedDataset`][safeds.data.tabular.SupervisedDataset]. You can also provide a different name.
+    The return value of [`model.predict()`][safeds.ml.classification.RandomForest.predict] is a Table containing the given feature vectors and the predicted target vector. The name of our target feature in the prediction table is derived from the name of the target feature in the [`SupervisedDataset`][safeds.data.SupervisedDataset]. You can also provide a different name.
 
 ```python
 prediction = model.predict(testing_set, target_name="Something_Else")
