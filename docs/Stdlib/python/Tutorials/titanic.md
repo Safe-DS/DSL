@@ -130,6 +130,6 @@ Now we can evaluate how accurate our model is and save our prediction as a .csv 
 ```python
 from safe_ds.classification.metrics import accuracy
 
-prediction_accuracy: float = accuracy(known_truth, prediction.get_column("Survived"))
+prediction_accuracy = accuracy(known_truth, prediction.get_column("Survived"))
 prediction.to_csv("path/to/output/prediction.csv")
 ```
