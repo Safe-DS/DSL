@@ -39,7 +39,7 @@ for column_name in data.get_column_names():
 ```
 
 !!! notes
-    If you want to learn more about **Data Visualization** click [here](/docs/Stdlib/python/Tutorials/visualization.md).
+    If you want to learn more about **Data Visualization** click [here](docs/Stdlib/python/Tutorials/visualization.md).
 
 ## Data Preparation
 
