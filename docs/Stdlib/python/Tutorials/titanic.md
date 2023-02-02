@@ -105,7 +105,7 @@ model = RandomForest()
 ```
 
 !!! notes
-        If you want to learn more about **Machine Learning Models** or the [`SupervisedDataset`][safeds.data.SupervisedDataset] click [here](/docs/Stdlib/python/Tutorials/machine_learning.md).
+        If you want to learn more about **Machine Learning Models** or the [`SupervisedDataset`][safeds.data.SupervisedDataset] click [here](./machine_learning.md).
 
 ## Train and Predict
 
