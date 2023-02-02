@@ -22,8 +22,8 @@ for column_name in data_train.get_column_names():
 ![Summary](./Resources/Summary.png)
 
 This first step reveals a few useful bits of information.
-First of all we notice, that the idness of the column *PassangerId* is 1 which means, that every row has a unique value.
-For machine learning this is not useful, so we want to drop it. But since we need the *PassangerId* in the end to submit our result, we will keep it for later and just remove it from our training dataset.
+First of all we notice, that the idness of the column *PassengerId* is 1 which means, that every row has a unique value.
+For machine learning this is not useful, so we want to drop it. But since we need the *PassengerId* in the end to submit our result, we will keep it for later and just remove it from our training dataset.
 
 Also not useful are Name and Ticket.
 
