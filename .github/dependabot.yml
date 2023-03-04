@@ -5,9 +5,19 @@
 
 version: 2
 updates:
-  # Root
+  # root
   - package-ecosystem: 'github-actions'
     directory: '/'
+    schedule:
+      interval: 'monthly'
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+
+  # docs
+  - package-ecosystem: 'pip'
+    directory: '/docs'
     schedule:
       interval: 'monthly'
 
@@ -23,14 +33,6 @@ updates:
 
   # Runtime
   - package-ecosystem: 'pip'
-    directory: '/docs'
-    schedule:
-      interval: 'monthly'
-  - package-ecosystem: 'pip'
-    directory: '/Runtime/safe-ds'
-    schedule:
-      interval: 'monthly'
-  - package-ecosystem: 'pip'
-    directory: '/Runtime/safe-ds-runner'
+    directory: '/Runtime'
     schedule:
       interval: 'monthly'

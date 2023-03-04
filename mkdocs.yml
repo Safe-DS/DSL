@@ -1,21 +1,19 @@
-site_name: Safe-DS
-repo_url: https://github.com/lars-reimann/Safe-DS
-repo_name: Safe-DS
+site_name: Safe-DS DSL
+repo_url: https://github.com/Safe-DS/DSL
+repo_name: Safe-DS/DSL
 
 nav:
   - Home: README.md
-  - DSL:
-      - Language: DSL/README.md
-      - Standard Library: Stdlib/API/README.md
-  - Python Library:
-      - API Reference: reference/
-      - Tutorials: Stdlib/python/Tutorials/README.md
+  - Language: DSL/README.md
+  - Standard Library: Stdlib/API/README.md
   - Developer Guide: Development/README.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 
 theme:
   name: material
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -39,26 +37,8 @@ theme:
     - navigation.sections
 
 plugins:
-  - mkdocstrings:
-      handlers:
-        python:
-          paths:
-            - Runtime/safe-ds
-          options:
-            docstring_style: numpy
-            show_if_no_docstring: true
-  - gen-files:
-      scripts:
-        - docs/Stdlib/python/gen_ref_pages.py
-  - literate-nav:
-      nav_file: SUMMARY.md
-  - section-index
-  - autorefs
   - glightbox
   - search
-
-watch:
-  - Runtime/safe-ds
 
 markdown_extensions:
   # Admonitions
