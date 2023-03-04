@@ -33,6 +33,6 @@ updates:
 
   # Runtime
   - package-ecosystem: 'pip'
-    directory: '/Runtime/safe-ds-runner'
+    directory: '/Runtime'
     schedule:
       interval: 'monthly'

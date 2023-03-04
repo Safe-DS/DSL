@@ -21,14 +21,8 @@
     cd DSL/com.larsreimann.safeds.vscode
     npm i
     ```
-1. Bump the version of the standard library in [safe-ds/pyproject.toml][stdlib-pyproject-toml]:
-    ```toml
-    [tool.poetry]
-    # ...
-    version = "1.0.0"
-    # ...
-    ```
-1. Bump the version of the runner in [safe-ds-runner/pyproject.toml][runner-pyproject-toml]:
+
+1. Bump the version of the runner in [pyproject.toml][runner-pyproject-toml]:
     ```toml
     [tool.poetry]
     # ...
@@ -40,7 +34,7 @@
 1. Merge the pull request into main.
 1. Create a release on GitHub.
 
-[main-build-gradle]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/build.gradle.kts
-[vscode-package-json]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds.vscode/package.json
-[stdlib-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/Runtime/safe-ds/pyproject.toml
-[runner-pyproject-toml]: https://github.com/lars-reimann/Safe-DS/blob/main/Runtime/safe-ds-runner/pyproject.toml
+[main-build-gradle]: https://github.com/Safe-DS/DSL/blob/main/DSL/build.gradle.kts
+[vscode-package-json]: https://github.com/Safe-DS/DSL/blob/main/DSL/com.larsreimann.safeds.vscode/package.json
+[stdlib-pyproject-toml]: https://github.com/Safe-DS/DSL/blob/main/Runtime/safe-ds/pyproject.toml
+[runner-pyproject-toml]: https://github.com/Safe-DS/DSL/blob/main/Runtime/pyproject.toml
