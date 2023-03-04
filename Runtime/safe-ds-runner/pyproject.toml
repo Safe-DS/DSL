@@ -10,11 +10,11 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
+safe-ds = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
-safe-ds = { path = "../safe-ds/", develop = true }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
