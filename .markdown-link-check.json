@@ -5,6 +5,9 @@
         },
         {
             "pattern": "^#"
+        },
+        {
+            "pattern": "^https://github.com/Safe-DS/DSL/blob/main"
         }
     ]
 }
