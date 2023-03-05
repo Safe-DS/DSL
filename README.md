@@ -1,4 +1,4 @@
-# Safe-DS
+# Safe-DS DSL
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/larsreimann.safe-ds)](https://marketplace.visualstudio.com/items?itemName=larsreimann.safe-ds)
 [![Main](https://github.com/Safe-DS/DSL/actions/workflows/main.yml/badge.svg)](https://github.com/Safe-DS/DSL/actions/workflows/main.yml)
