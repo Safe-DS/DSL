@@ -36,5 +36,4 @@
 
 [main-build-gradle]: https://github.com/Safe-DS/DSL/blob/main/DSL/build.gradle.kts
 [vscode-package-json]: https://github.com/Safe-DS/DSL/blob/main/DSL/com.larsreimann.safeds.vscode/package.json
-[stdlib-pyproject-toml]: https://github.com/Safe-DS/DSL/blob/main/Runtime/safe-ds/pyproject.toml
-[runner-pyproject-toml]: https://github.com/Safe-DS/DSL/blob/main/Runtime/pyproject.toml
+[runner-pyproject-toml]: https://github.com/Safe-DS/DSL/blob/main/Runner/pyproject.toml

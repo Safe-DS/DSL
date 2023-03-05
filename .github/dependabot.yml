@@ -31,8 +31,8 @@ updates:
     schedule:
       interval: 'monthly'
 
-  # Runtime
+  # Runner
   - package-ecosystem: 'pip'
-    directory: '/Runtime'
+    directory: '/Runner'
     schedule:
       interval: 'monthly'
