@@ -12,8 +12,8 @@ nav:
 
 theme:
   name: material
-  logo: assets/logo.svg
-  favicon: assets/logo.svg
+  logo: https://raw.githubusercontent.com/Safe-DS/.github/main/branding/logo_rounded.svg
+  favicon: https://raw.githubusercontent.com/Safe-DS/.github/main/branding/logo_rounded.svg
   palette:
     # Palette toggle for light mode
     - scheme: default
