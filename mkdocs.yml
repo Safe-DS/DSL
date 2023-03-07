@@ -4,9 +4,9 @@ repo_name: Safe-DS/DSL
 
 nav:
   - Home: README.md
-  - Language: DSL/README.md
-  - Standard Library: Stdlib/API/README.md
-  - Developer Guide: Development/README.md
+  - Language: language/README.md
+  - Standard Library: stdlib/README.md
+  - Developer Guide: development/README.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 

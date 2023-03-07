@@ -104,8 +104,8 @@ The package `safeds.lang` contains several annotations that are processed by Saf
 [steps]: ../pipeline-language/steps.md
 [type-parameters]: type-parameters.md
 [pipelines]: ../pipeline-language/pipelines.md
-[safeds-lang]: ../../Stdlib/API/safeds_lang.md
-[safeds-lang-repeatable]: ../../Stdlib/API/safeds_lang.md#annotation-repeatable
-[safeds-lang-target]: ../../Stdlib/API/safeds_lang.md#annotation-target
+[safeds-lang]: ../../stdlib/safeds_lang.md
+[safeds-lang-repeatable]: ../../stdlib/safeds_lang.md#annotation-repeatable
+[safeds-lang-target]: ../../stdlib/safeds_lang.md#annotation-target
 [calls]: ../pipeline-language/expressions.md#calls
 [argument-restrictions]: ../pipeline-language/expressions.md#restrictions-for-arguments

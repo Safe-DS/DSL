@@ -206,7 +206,7 @@ tasks.register<JavaExec>("generateStdlibDocumentation") {
     description = "Generate documentation for the standard library."
 
     val inputDirectory = project.file("src/main/resources/stdlib")
-    val outputDirectory = rootProject.file("../docs/Stdlib/API").absolutePath
+    val outputDirectory = rootProject.file("../docs/stdlib").absolutePath
 
     inputs.dir(inputDirectory)
     outputs.dirs(outputDirectory)

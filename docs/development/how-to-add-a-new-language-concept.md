@@ -83,4 +83,4 @@
 [generator]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/generator/SafeDSGenerator.kt
 [formatting-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/resources/formatting
 [formatting]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/formatting2/SafeDSFormatter.kt
-[tutorial]: ../DSL/README.md
+[tutorial]: ../language/README.md
