@@ -31,9 +31,7 @@ import kotlin.io.path.writeText
 private val horizontalRule = "-".repeat(10)
 
 private val autogenWarning = """
-    |$horizontalRule
-    |
-    |**This file was created automatically. Do not change it manually!**
+    |<!-- This file was created automatically. Do not change it manually! -->
 """.trimMargin()
 
 /**
@@ -64,13 +62,13 @@ private fun createReadme(outputDirectory: Path, packagesToDeclarations: Map<Stri
 
     outputDirectory.resolve("README.md").writeText(
         """
+            |$autogenWarning
+            |
             |# Safe-DS API Documentation
             |
             |## Packages
             |
             |$packagesDocumentation
-            |
-            |$autogenWarning
             |
         """.trimMargin(),
     )
@@ -96,6 +94,8 @@ private fun createPackageDocumentation(
     val globalFunctions = globalDeclarations.filterIsInstance<SdsFunction>().sortedBy { it.name }
     val enums = globalDeclarations.filterIsInstance<SdsEnum>().sortedBy { it.name }
     val annotations = globalDeclarations.filterIsInstance<SdsAnnotation>().sortedBy { it.name }
+
+    appendLine("$autogenWarning\n")
 
     appendLine("# Package `$packageName`")
 
@@ -128,8 +128,6 @@ private fun createPackageDocumentation(
     annotations.forEach {
         appendLine(createAnnotationDocumentation(it))
     }
-
-    appendLine(autogenWarning)
 }
 
 private fun createAnnotationDocumentation(annotation: SdsAnnotation) = buildString {
