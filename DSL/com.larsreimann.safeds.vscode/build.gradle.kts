@@ -9,7 +9,7 @@ plugins {
 }
 
 node {
-    version.set("16.15.1")
+    version.set("18.15.0")
     download.set(true)
 }
 
@@ -57,7 +57,7 @@ tasks.register<NpxTask>("vsCodeExtension") {
         "language-configuration.json",
         "package.json",
         "README.md",
-        "tsconfig.json"
+        "tsconfig.json",
     )
     outputs.dirs("dist")
 
@@ -106,7 +106,7 @@ tasks.register<NpxTask>("publishVSCE") {
         "language-configuration.json",
         "package.json",
         "README.md",
-        "tsconfig.json"
+        "tsconfig.json",
     )
     outputs.dirs("dist")
 
