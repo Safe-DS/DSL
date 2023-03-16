@@ -57,7 +57,7 @@ tasks.register<NpxTask>("vsCodeExtension") {
         "language-configuration.json",
         "package.json",
         "README.md",
-        "tsconfig.json"
+        "tsconfig.json",
     )
     outputs.dirs("dist")
 
@@ -106,7 +106,7 @@ tasks.register<NpxTask>("publishVSCE") {
         "language-configuration.json",
         "package.json",
         "README.md",
-        "tsconfig.json"
+        "tsconfig.json",
     )
     outputs.dirs("dist")
 
