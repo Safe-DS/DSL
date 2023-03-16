@@ -11,7 +11,7 @@
     },
     "version": "1.0.0",
     "engines": {
-        "vscode": "^1.71.0"
+        "vscode": "^1.76.0"
     },
     "categories": [
         "Programming Languages",
@@ -58,7 +58,7 @@
     },
     "devDependencies": {
         "@types/node": "^18.15.3",
-        "@types/vscode": "^1.71.0",
+        "@types/vscode": "^1.76.0",
         "esbuild": "^0.17.11",
         "typescript": "^4.9.5",
         "vscode-test": "^1.6.1"
