@@ -3,10 +3,39 @@ repo_url: https://github.com/Safe-DS/DSL
 repo_name: Safe-DS/DSL
 
 nav:
-  - Home: README.md
-  - Language: language/README.md
-  - Standard Library: stdlib/README.md
-  - Developer Guide: development/README.md
+  - Home:
+    - README.md
+  - Language:
+    - language/README.md
+    - Pipeline Language:
+      - language/pipeline-language/README.md
+      - Pipelines: language/pipeline-language/pipelines.md
+      - Steps: language/pipeline-language/steps.md
+      - Statements: language/pipeline-language/statements.md
+      - Expressions: language/pipeline-language/expressions.md
+    - Common:
+      - language/common/README.md
+      - Comments: language/common/comments.md
+      - Packages: language/common/packages.md
+      - Imports: language/common/imports.md
+      - Parameters: language/common/parameters.md
+      - Results: language/common/results.md
+      - Types: language/common/types.md
+      - Variance: language/common/variance.md
+    - Stub Language:
+      - language/stub-language/README.md
+      - Classes: language/stub-language/classes.md
+      - Global Functions: language/stub-language/global-functions.md
+      - Enumerations: language/stub-language/enumerations.md
+      - Annotations: language/stub-language/annotations.md
+      - Type Parameters: language/stub-language/type-parameters.md
+  - Standard Library:
+    - stdlib/README.md
+    - safeds.lang: stdlib/safeds_lang.md
+  - Development:
+    - DSL Development Checklist: development/dsl-development-checklist.md
+    - Release Checklist: development/release-checklist.md
+
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 
@@ -33,8 +62,10 @@ theme:
   features:
     - content.code.copy
     - navigation.tabs
+    - navigation.indexes
     - navigation.instant
     - navigation.sections
+    - navigation.top
 
 plugins:
   - glightbox
@@ -84,7 +115,7 @@ markdown_extensions:
 
   # Permalinks
   - toc:
-      permalink: "#"
+      permalink: true
 
 extra_javascript:
   - javascript/mathjax.js
