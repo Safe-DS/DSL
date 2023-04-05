@@ -4,7 +4,7 @@ import path from 'path';
 import { SdsModule } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
 
-export function generatePython(module: SdsModule, filePath: string, destination: string | undefined): string {
+export const generatePython = function (module: SdsModule, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
     const generatedFilePath = `${path.join(data.destination, data.name)}.py`;
 

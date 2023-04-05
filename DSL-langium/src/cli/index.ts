@@ -11,6 +11,7 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
     const services = createSafeDsServices(NodeFileSystem).SafeDs;
     const module = await extractAstNode<SdsModule>(fileName, services);
     const generatedFilePath = generatePython(module, fileName, opts.destination);
+    // eslint-disable-next-line no-console
     console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
 };
 
@@ -18,6 +19,7 @@ export type GenerateOptions = {
     destination?: string;
 }
 
+// eslint-disable-next-line import/no-default-export, func-names
 export default function(): void {
     const program = new Command();
 

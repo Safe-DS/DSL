@@ -46,7 +46,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createSafeDsServices(context: DefaultSharedModuleContext): {
+export const createSafeDsServices = function (context: DefaultSharedModuleContext): {
     shared: LangiumSharedServices,
     SafeDs: SafeDsServices
 } {

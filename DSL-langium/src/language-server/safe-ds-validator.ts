@@ -5,7 +5,7 @@ import type { SafeDsServices } from './safe-ds-module';
 /**
  * Register custom validation checks.
  */
-export function registerValidationChecks(services: SafeDsServices) {
+export const registerValidationChecks = function (services: SafeDsServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.SafeDsValidator;
     const checks: ValidationChecks<SafeDsAstType> = {
