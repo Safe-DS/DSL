@@ -1,0 +1,12 @@
+{
+    "projectName": "SafeDs",
+    "languages": [{
+        "id": "safe-ds",
+        "grammar": "src/language-server/safe-ds.langium",
+        "fileExtensions": [".sdspipe", ".sdsschema", ".sdsstub", ".sdstest"],
+        "textMate": {
+            "out": "syntaxes/safe-ds.tmLanguage.json"
+        }
+    }],
+    "out": "src/language-server/generated"
+}
