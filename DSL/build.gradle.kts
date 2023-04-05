@@ -8,6 +8,7 @@ import com.larsreimann.safeds.xtextConfiguration.projectMapping
 import com.larsreimann.safeds.xtextConfiguration.standaloneSetup
 import com.larsreimann.safeds.xtextConfiguration.standardLanguage
 import com.larsreimann.safeds.xtextConfiguration.workflow
+import com.larsreimann.safeds.xtextConfiguration.xtext2langium
 import com.larsreimann.safeds.xtextConfiguration.xtextGenerator
 import org.eclipse.xtext.xtext.generator.formatting.Formatter2Fragment2
 import org.eclipse.xtext.xtext.generator.generator.GeneratorFragment2
@@ -206,6 +207,8 @@ tasks.register("generateXtextLanguage") {
                             isGenerateStub = false
                         },
                     )
+
+                    xtext2langium("./langium")
                 }
             }
         }.execute()

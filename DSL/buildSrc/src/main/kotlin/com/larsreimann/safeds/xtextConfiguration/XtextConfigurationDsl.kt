@@ -13,6 +13,7 @@ import org.eclipse.xtext.xtext.generator.DefaultGeneratorModule
 import org.eclipse.xtext.xtext.generator.StandardLanguage
 import org.eclipse.xtext.xtext.generator.XtextGenerator
 import org.eclipse.xtext.xtext.generator.model.project.StandardProjectConfig
+import io.typefox.xtext2langium.Xtext2LangiumFragment
 
 fun workflow(init: Workflow.() -> Unit): Workflow {
     return Workflow().apply(init)
@@ -67,6 +68,14 @@ fun DefaultGeneratorModule.code(init: CodeConfig.() -> Unit) {
 
 fun XtextGenerator.standardLanguage(init: StandardLanguage.() -> Unit) {
     addLanguage(StandardLanguage().apply(init))
+}
+
+fun StandardLanguage.xtext2langium(outputPath: String) {
+    this.addFragment(
+        Xtext2LangiumFragment().apply {
+            setOutputPath(outputPath)
+        }
+    )
 }
 
 fun Workflow.execute() {

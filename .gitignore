@@ -11,6 +11,8 @@
 .vscode/
 
 # Compilation/build outputs
+/DSL/**/bin/
+/DSL-langium/**/generated/
 build/
 dist/
 out/
