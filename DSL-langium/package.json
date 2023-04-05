@@ -10,17 +10,29 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "safe-ds",
-            "aliases": ["Safe-DS", "safe-ds"],
-            "extensions": [".sdspipe", ".sdsschema", ".sdsstub", ".sdstest"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "safe-ds",
-            "scopeName": "source.safe-ds",
-            "path": "./syntaxes/safe-ds.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "safe-ds",
+                "aliases": [
+                    "Safe-DS",
+                    "safe-ds"
+                ],
+                "extensions": [
+                    ".sdspipe",
+                    ".sdsschema",
+                    ".sdsstub",
+                    ".sdstest"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "safe-ds",
+                "scopeName": "source.safe-ds",
+                "path": "./syntaxes/safe-ds.tmLanguage.json"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:safe-ds"
@@ -38,13 +50,13 @@
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
         "watch": "tsc -b tsconfig.json --watch",
-        "lint": "eslint src --ext ts",
+        "test": "vitest",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch"
     },
     "dependencies": {
-        "chevrotain": "~10.4.2",
         "chalk": "~4.1.2",
+        "chevrotain": "~10.4.2",
         "commander": "~10.0.0",
         "langium": "~1.1.0",
         "vscode-languageclient": "~8.0.2",
@@ -54,10 +66,8 @@
     "devDependencies": {
         "@types/node": "~16.18.11",
         "@types/vscode": "~1.67.0",
-        "@typescript-eslint/eslint-plugin": "~5.51.0",
-        "@typescript-eslint/parser": "~5.51.0",
-        "eslint": "~8.33.0",
         "langium-cli": "~1.1.0",
-        "typescript": "~4.9.5"
+        "typescript": "~4.9.5",
+        "vitest": "^0.29.8"
     }
 }
