@@ -3,6 +3,11 @@
     "compilerOptions": {
         "noEmit": true
     },
-    "include": ["./.eslintrc.js", "./docs/javascript/**/*", "./DSL/com.larsreimann.safeds.vscode/src/**/*"],
+    "include": [
+        "./.eslintrc.js",
+        "./docs/javascript/**/*",
+        "./DSL/com.larsreimann.safeds.vscode/src/**/*",
+        "./DSL-langium/src/**/*"
+    ],
     "exclude": []
 }
