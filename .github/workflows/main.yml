@@ -43,11 +43,14 @@ jobs:
   build-runner:
     strategy:
       matrix:
-        python-version: ['3.10']
+        python-version:
+          - '3.10'
+          - '3.11'
     uses: lars-reimann/.github/.github/workflows/poetry-codecov-reusable.yml@main
     with:
       working-directory: Runner
       python-version: ${{ matrix.python-version }}
       module-name: safeds_runner
+      coverage: ${{ matrix.python-version == '3.10' }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
