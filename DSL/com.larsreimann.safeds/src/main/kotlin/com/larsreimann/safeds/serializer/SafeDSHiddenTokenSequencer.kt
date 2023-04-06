@@ -9,7 +9,7 @@ import org.eclipse.xtext.serializer.sequencer.HiddenTokenSequencer
 
 @Suppress("unused")
 class SafeDSHiddenTokenSequencer @Inject constructor(
-    private val grammarAccess: SafeDSGrammarAccess
+    private val grammarAccess: SafeDSGrammarAccess,
 ) : HiddenTokenSequencer() {
 
     override fun enterAssignedParserRuleCall(rc: RuleCall, semanticChild: EObject, node: ICompositeNode?): Boolean {
