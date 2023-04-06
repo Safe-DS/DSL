@@ -27,7 +27,7 @@ fun StandaloneSetup.projectMapping(projectName: String, path: String) {
         ProjectMapping().apply {
             this.projectName = projectName
             this.path = path
-        }
+        },
     )
 }
 
@@ -35,7 +35,7 @@ fun Workflow.directoryCleaner(directory: String) {
     addComponent(
         DirectoryCleaner().apply {
             setDirectory(directory)
-        }
+        },
     )
 }
 
@@ -45,7 +45,7 @@ fun Workflow.ecoreGenerator(genModel: String, srcPaths: List<String>, init: Ecor
             setGenModel(genModel)
             srcPaths.forEach { addSrcPath(it) }
             init()
-        }
+        },
     )
 }
 

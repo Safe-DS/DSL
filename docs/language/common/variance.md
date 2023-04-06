@@ -69,7 +69,7 @@ The variance of a [type parameter][type-parameters] can either be declared at it
 The following table sums up the syntax of [declaration-site variance][declaration-site-variance], where the [class][classes] declaration is changed, and [use-site variance][use-site-variance], where the [type arguments][type-arguments] passed by the [named type][named-types] Refer to the linked documents for more details.
 
 | Desired Variance | Declaration Site     | Use Site       |
-| ---------------- | -------------------- | -------------- |
+|------------------|----------------------|----------------|
 | Invariant        | `class Stack<T>`     | `Stack<T>`     |
 | Covariant        | `class Stack<out T>` | `Stack<out T>` |
 | Contravariant    | `class Stack<in T>`  | `Stack<in T>`  |

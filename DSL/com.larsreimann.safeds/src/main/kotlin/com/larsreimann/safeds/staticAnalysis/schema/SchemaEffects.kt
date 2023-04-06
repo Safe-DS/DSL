@@ -530,7 +530,7 @@ private fun predicateArgToSchemaOwner(sdsArgument: SdsArgument): SchemaOwner? {
             // Locally defined schema in function definition
             current is SdsSchemaPlaceholder -> return SchemaOwner.Assignee(current)
 
-            // Refering to the caller's schema
+            // Referring to the caller's schema
             current is SdsTypeParameter && current.hasSchemaKind() -> current.containingClassOrNull()
             current is SdsClass -> return SchemaOwner.CurrentCaller
 

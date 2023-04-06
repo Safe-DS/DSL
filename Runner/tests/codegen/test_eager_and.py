@@ -3,7 +3,7 @@ from safeds_runner.codegen import eager_and
 
 
 @pytest.mark.parametrize(
-    "left_operand,right_operand,expected_result",
+    ("left_operand", "right_operand", "expected_result"),
     [
         (False, False, False),
         (False, True, False),
@@ -12,7 +12,9 @@ from safeds_runner.codegen import eager_and
     ],
 )
 def test_should_compute_conjunction(
-    left_operand: bool, right_operand: bool, expected_result: bool
+    left_operand: bool,
+    right_operand: bool,
+    expected_result: bool,
 ) -> None:
     assert eager_and(left_operand, right_operand) == expected_result
 

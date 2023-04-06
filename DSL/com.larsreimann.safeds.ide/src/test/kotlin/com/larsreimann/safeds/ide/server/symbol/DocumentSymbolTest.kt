@@ -80,8 +80,8 @@ class DocumentSymbolTest : AbstractSafeDSLanguageServerTest() {
                         it.model = program
                         it.expectedSymbols = expectedSymbols.joinToString("")
                     }
-                }
-            )
+                },
+            ),
         )
     }
 
@@ -93,7 +93,7 @@ class DocumentSymbolTest : AbstractSafeDSLanguageServerTest() {
                 SymbolComment(
                     enumValueOf(it.groupValues[1]),
                     it.groupValues[2],
-                    it.groupValues[3]
+                    it.groupValues[3],
                 )
             }
             .toList()
@@ -115,7 +115,7 @@ private data class ExpectedSymbol(
     val kind: SymbolKind,
     val name: String,
     val range: LspRange,
-    val containerName: String?
+    val containerName: String?,
 ) {
     private val indent = "    "
 

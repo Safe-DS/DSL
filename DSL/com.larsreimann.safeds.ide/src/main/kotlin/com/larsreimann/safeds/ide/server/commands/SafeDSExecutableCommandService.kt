@@ -19,9 +19,8 @@ class SafeDSExecutableCommandService : IExecutableCommandService {
     override fun execute(
         params: ExecuteCommandParams,
         access: ILanguageServerAccess,
-        cancelIndicator: CancelIndicator
+        cancelIndicator: CancelIndicator,
     ): Any {
-
         return when (params.command) {
             CommandId.RemoveOnceOtherCommandsAreAdded.toString() -> {}
             else -> {

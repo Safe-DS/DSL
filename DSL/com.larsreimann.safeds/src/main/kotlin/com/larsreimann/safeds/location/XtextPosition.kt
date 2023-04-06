@@ -10,7 +10,7 @@ data class XtextPosition(val line: XtextLine, val column: XtextColumn) : Compara
         fun fromInts(line: Int, column: Int): XtextPosition {
             return XtextPosition(
                 XtextLine(line),
-                XtextColumn(column)
+                XtextColumn(column),
             )
         }
     }
@@ -18,7 +18,7 @@ data class XtextPosition(val line: XtextLine, val column: XtextColumn) : Compara
     fun toLspPosition(): LspPosition {
         return LspPosition(
             line.toLspLine(),
-            column.toLspColumn()
+            column.toLspColumn(),
         )
     }
 

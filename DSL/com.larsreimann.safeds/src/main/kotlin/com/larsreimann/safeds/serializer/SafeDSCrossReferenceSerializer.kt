@@ -15,7 +15,7 @@ class SafeDSCrossReferenceSerializer : CrossReferenceSerializer() {
         crossref: CrossReference,
         target: EObject,
         scope: IScope,
-        errors: ISerializationDiagnostic.Acceptor?
+        errors: ISerializationDiagnostic.Acceptor?,
     ): String {
         return when (target) {
             is SdsAbstractDeclaration -> target.name
@@ -28,7 +28,7 @@ class SafeDSCrossReferenceSerializer : CrossReferenceSerializer() {
         crossref: CrossReference,
         target: EObject,
         node: INode,
-        errors: ISerializationDiagnostic.Acceptor?
+        errors: ISerializationDiagnostic.Acceptor?,
     ): Boolean {
         return target is SdsAbstractDeclaration
     }

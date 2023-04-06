@@ -20,11 +20,10 @@ class Main @Inject constructor(
     private val fileAccess: JavaIoFileSystemAccess,
     private val generator: GeneratorDelegate,
     private val resourceSetProvider: Provider<ResourceSet>,
-    private val validator: IResourceValidator
+    private val validator: IResourceValidator,
 ) {
 
     fun runCodeGenerator(files: List<String>) {
-
         // Load the resources
         val resourceSet = resourceSetProvider.get()
         files.forEach {

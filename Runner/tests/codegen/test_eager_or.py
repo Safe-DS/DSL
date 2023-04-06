@@ -3,7 +3,7 @@ from safeds_runner.codegen import eager_or
 
 
 @pytest.mark.parametrize(
-    "left_operand,right_operand,expected_result",
+    ("left_operand", "right_operand", "expected_result"),
     [
         (False, False, False),
         (False, True, True),
@@ -12,7 +12,9 @@ from safeds_runner.codegen import eager_or
     ],
 )
 def test_should_compute_disjunction(
-    left_operand: bool, right_operand: bool, expected_result: bool
+    left_operand: bool,
+    right_operand: bool,
+    expected_result: bool,
 ) -> None:
     assert eager_or(left_operand, right_operand) == expected_result
 

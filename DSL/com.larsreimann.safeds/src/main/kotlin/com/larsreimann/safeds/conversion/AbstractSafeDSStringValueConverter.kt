@@ -15,7 +15,7 @@ import org.eclipse.xtext.nodemodel.INode
 @Singleton
 abstract class AbstractSafeDSStringValueConverter(
     private val startDelimiter: String,
-    private val endDelimiter: String
+    private val endDelimiter: String,
 ) : STRINGValueConverter() {
 
     /**
@@ -76,7 +76,7 @@ abstract class AbstractSafeDSStringValueConverter(
                     "\"$valueBetweenDelimiters\"",
                     true,
                     1,
-                    StringBuilder(literal.length)
+                    StringBuilder(literal.length),
                 )
             }
         }
@@ -120,7 +120,7 @@ abstract class AbstractSafeDSStringValueConverter(
             string: String,
             useUnicode: Boolean,
             index: Int,
-            result: StringBuilder
+            result: StringBuilder,
         ): Int {
             var c = string[index]
             when (c) {
