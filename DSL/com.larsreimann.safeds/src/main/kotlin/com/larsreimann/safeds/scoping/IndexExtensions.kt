@@ -69,7 +69,7 @@ private fun Resource.visibleContainers(): List<IContainer> {
 
     return containerManager.getVisibleContainers(
         resourceDescriptionOrNull(),
-        resourceSet.resourceDescriptions()
+        resourceSet.resourceDescriptions(),
     )
 }
 
@@ -96,6 +96,6 @@ private fun IEObjectDescription.isGlobalDeclaration(): Boolean {
         Literals.SDS_CLASS,
         Literals.SDS_ENUM,
         Literals.SDS_FUNCTION,
-        Literals.SDS_STEP
+        Literals.SDS_STEP,
     )
 }

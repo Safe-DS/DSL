@@ -53,11 +53,11 @@ internal fun sdsSchemaToSchemaDF(sdsSchema: SdsSchema): Map<String, QualifiedNam
         val classtype = it.columnType.type()
 
         if (classtype !is ClassType) {
-            throw IllegalStateException("ColumnType should be a primative ClassType")
+            throw IllegalStateException("ColumnType should be a primitive ClassType")
         }
 
         val columnType = classtype.sdsClass.qualifiedNameOrNull()
-            ?: throw IllegalStateException("Primative Must Have QualifiedName")
+            ?: throw IllegalStateException("Primitive Must Have QualifiedName")
         columnName to columnType
     }.toMap()
 }

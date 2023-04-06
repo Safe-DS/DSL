@@ -22,7 +22,8 @@ enum class SdsProtocolTokenClassValue(val value: String) {
     /**
      * Matches any function.
      */
-    AnyFunction("\\f");
+    AnyFunction("\\f"),
+    ;
 
     override fun toString(): String {
         return value

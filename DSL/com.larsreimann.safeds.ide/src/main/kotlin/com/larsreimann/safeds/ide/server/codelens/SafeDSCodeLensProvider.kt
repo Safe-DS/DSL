@@ -23,7 +23,7 @@ class SafeDSCodeLensProvider : ICodeLensResolver, ICodeLensService {
         document: Document,
         resource: XtextResource,
         params: CodeLensParams,
-        indicator: CancelIndicator
+        indicator: CancelIndicator,
     ): List<CodeLens> {
         return emptyList()
     }
@@ -32,7 +32,7 @@ class SafeDSCodeLensProvider : ICodeLensResolver, ICodeLensService {
         document: Document,
         resource: XtextResource,
         codeLens: CodeLens,
-        indicator: CancelIndicator
+        indicator: CancelIndicator,
     ): CodeLens {
         return codeLens
     }

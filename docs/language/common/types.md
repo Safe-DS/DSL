@@ -69,8 +69,8 @@ In the case of positional type arguments, they are mapped to [type parameters][t
 
 If a positional type argument is used, we just write down its value. The value is either
 
--   a [type projection](#type-projection), or
--   a [star projection](#star-projection).
+- a [type projection](#type-projection), or
+- a [star projection](#star-projection).
 
 For example, if we expect a list of integers, we could use the following type:
 
@@ -80,10 +80,10 @@ SomeSpecialList<Int>
 
 Let us break down the syntax:
 
--   The usual named type (here `SomeSpecialList`).
--   Opening angle bracket.
--   A positional type argument (here `Int`).
--   A closing angle bracket.
+- The usual named type (here `SomeSpecialList`).
+- Opening angle bracket.
+- A positional type argument (here `Int`).
+- A closing angle bracket.
 
 When a named type argument is used, we explicitly specify the [type parameter][type-parameters] that we want to assign. This allows us to specify them in any order. It can also improve the clarity of the code since the meaning of the type argument becomes more apparent. Here is the type for our list of integers when a named argument is used:
 
@@ -93,13 +93,13 @@ SomeSpecialList<T = Int>
 
 These are the syntactic elements:
 
--   The usual named type (here `SomeSpecialList`).
--   Opening angle bracket.
--   A named type argument (here `T = Int`). This in turn consists of
-    -   The name of the [type parameter][type-parameters] (here `T`)
-    -   An equals sign.
-    -   The value of the type argument, which is still either a [type projection](#type-projection), or a [star projection](#star-projection).
--   A closing angle bracket.
+- The usual named type (here `SomeSpecialList`).
+- Opening angle bracket.
+- A named type argument (here `T = Int`). This in turn consists of
+  - The name of the [type parameter][type-parameters] (here `T`)
+  - An equals sign.
+  - The value of the type argument, which is still either a [type projection](#type-projection), or a [star projection](#star-projection).
+- A closing angle bracket.
 
 Within a list of type arguments both positional and named type arguments can be used. However, after the first named type arguments all type arguments must be named.
 
@@ -119,10 +119,10 @@ SomeSpecialMap<String, V = Int>
 
 We will again go over the syntax:
 
--   The usual named type (here `SomeSpecialMap`).
--   An opening angle bracket.
--   The list of type arguments. Each element is either a positional or a named type argument (see above). Individual elements are separated by commas. A trailing comma is allowed
--   A closing angle bracket.
+- The usual named type (here `SomeSpecialMap`).
+- An opening angle bracket.
+- The list of type arguments. Each element is either a positional or a named type argument (see above). Individual elements are separated by commas. A trailing comma is allowed
+- A closing angle bracket.
 
 We will now look at the values that we can pass within type arguments.
 
@@ -168,8 +168,8 @@ It consists only of the `*`, which we use as the value of the type argument.
 
 The star projection is usually equivalent to the type projections
 
--   `out Any?` (`Any?` is the supertype of everything), or
--   `in Nothing` (`Nothing` is the subtype of everything).
+- `out Any?` (`Any?` is the supertype of everything), or
+- `in Nothing` (`Nothing` is the subtype of everything).
 
 If the [type parameter][type-parameters] has [bounds][type-parameter-bounds], however, the star projection denotes that any type within the [bounds][type-parameter-bounds] is acceptable.
 
@@ -195,9 +195,9 @@ SomeOuterClass.SomeInnerClass
 
 This has the following syntactic elements:
 
--   Name of the outer [class][classes] (here `SomeOuterClass`).
--   A dot.
--   Name of the inner [class][classes] (here `SomeInnerClass`).
+- Name of the outer [class][classes] (here `SomeOuterClass`).
+- A dot.
+- Name of the inner [class][classes] (here `SomeInnerClass`).
 
 Classes can be nested multiple levels deep. In this case, use a member access for each level. Let us use the following declarations to explain this:
 
@@ -254,9 +254,9 @@ SomeEnum.SomeEnumVariant
 
 Let us take apart the syntax:
 
--   The name of the [enum][enums] (here `SomeEnum`).
--   A dot.
--   The name of the [enum variant][variants] (here `SomeEnumVariant`).
+- The name of the [enum][enums] (here `SomeEnum`).
+- A dot.
+- The name of the [enum variant][variants] (here `SomeEnumVariant`).
 
 Identical to [class member types](#class-member-types), all [type parameters][type-parameters] of the [enum variant][variants] must be assigned by [type arguments](#type-arguments). We use these declarations to explain the concept:
 
@@ -283,10 +283,10 @@ union<String, Int>
 
 Here is a breakdown of the syntax:
 
--   The keyword `union`.
--   An opening angle bracket.
--   A list of types, which are separated by commas. A trailing comma is allowed.
--   A closing angle bracket
+- The keyword `union`.
+- An opening angle bracket.
+- A list of types, which are separated by commas. A trailing comma is allowed.
+- A closing angle bracket
 
 Note that it is preferable to write the common superclass if this is equivalent to the union type. For example, `Number` has the two subclasses `Int` and `Float`. Therefore, it is usually better to write `Number` as the type rather than `union<Int, Float>`. Use the union type only when you are not able to handle the later addition of further subclasses of `Number` other than `Int` or `Float`.
 
@@ -294,12 +294,12 @@ Note that it is preferable to write the common superclass if this is equivalent 
 
 A _callable type_ denotes that only values that can be [called][calls] are accepted. This includes:
 
--   [class constructors][class-constructors]
--   [constructors of enum variants][enum-variant-constructors]
--   [methods][methods]
--   [global functions][global-functions]
--   [steps][steps]
--   [lambdas][lambdas]
+- [class constructors][class-constructors]
+- [constructors of enum variants][enum-variant-constructors]
+- [methods][methods]
+- [global functions][global-functions]
+- [steps][steps]
+- [lambdas][lambdas]
 
 Additionally, a callable types specifies the names and types of parameters and results. Here is the most basic callable type that expects neither parameters nor results:
 
@@ -309,9 +309,9 @@ Additionally, a callable types specifies the names and types of parameters and r
 
 Let us break down the syntax:
 
--   A pair of parentheses, which is the list of expected [parameters][parameters].
--   An arrow `->`.
--   A pair of parentheses, which is the list of expected [results][results].
+- A pair of parentheses, which is the list of expected [parameters][parameters].
+- An arrow `->`.
+- A pair of parentheses, which is the list of expected [results][results].
 
 We can now add some expected [parameters][parameters]:
 
@@ -321,12 +321,12 @@ We can now add some expected [parameters][parameters]:
 
 These are the syntactic elements:
 
--   [Parameters][parameters] are written in the first pair of parentheses.
--   For each [parameter][parameters], specify:
-    -   Its name.
-    -   A colon.
-    -   Its type.
--   Separate [parameters][parameters] by commas. A trailing comma is permitted.
+- [Parameters][parameters] are written in the first pair of parentheses.
+- For each [parameter][parameters], specify:
+  - Its name.
+  - A colon.
+  - Its type.
+- Separate [parameters][parameters] by commas. A trailing comma is permitted.
 
 Finally, we can add some expected [results][results]:
 
@@ -336,12 +336,12 @@ Finally, we can add some expected [results][results]:
 
 The syntax is reminiscent of the notation for [parameters][parameters]:
 
--   [Results][results] are written in the second pair of parentheses.
--   For each [result][results], specify:
-    -   Its name.
-    -   A colon.
-    -   Its type.
--   Separate [result][results] by commas. A trailing comma is permitted.
+- [Results][results] are written in the second pair of parentheses.
+- For each [result][results], specify:
+  - Its name.
+  - A colon.
+  - Its type.
+- Separate [result][results] by commas. A trailing comma is permitted.
 
 If exactly one result is expected, the surrounding parentheses may be also removed:
 
@@ -378,7 +378,7 @@ from typing import Callable, Optional, Tuple, TypeVar, Union
 The following table shows how Safe-DS types can be written as Python [type hints][type-hints]:
 
 | Safe-DS Type                           | Python Type Hint                                                   |
-| -------------------------------------- | ------------------------------------------------------------------ |
+|----------------------------------------|--------------------------------------------------------------------|
 | `Boolean`                              | `bool`                                                             |
 | `Float`                                | `float`                                                            |
 | `Int`                                  | `int`                                                              |

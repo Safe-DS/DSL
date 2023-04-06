@@ -12,8 +12,8 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-lan
 let client: LanguageClient;
 
 export const activate = (context: ExtensionContext) => {
-    let launcher = os.platform() === 'win32' ? 'com.larsreimann.safeds.ide.bat' : 'com.larsreimann.safeds.ide';
-    let script = context.asAbsolutePath(path.join('ls', 'bin', launcher));
+    const launcher = os.platform() === 'win32' ? 'com.larsreimann.safeds.ide.bat' : 'com.larsreimann.safeds.ide';
+    const script = context.asAbsolutePath(path.join('ls', 'bin', launcher));
 
     const serverOptions: ServerOptions = {
         run: {
@@ -27,7 +27,7 @@ export const activate = (context: ExtensionContext) => {
     };
 
     // Options to control the language client
-    let clientOptions: LanguageClientOptions = {
+    const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
         documentSelector: [{ scheme: 'file', language: 'safe-ds' }],
         synchronize: {

@@ -10,5 +10,4 @@ Safely develop Data Science programs with a statically checked [DSL][dsl].
 You can find the full documentation [here][docs].
 
 [dsl]: language/README.md
-[stdlib]: stdlib/README.md
 [docs]: https://safe-ds-dsl.readthedocs.io/en/latest/

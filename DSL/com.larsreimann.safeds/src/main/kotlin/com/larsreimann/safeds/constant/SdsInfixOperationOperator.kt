@@ -68,7 +68,8 @@ enum class SdsInfixOperationOperator(val operator: String) {
     /**
      * Returns the left operand unless it is null, in which case the right operand is returned.
      */
-    Elvis("?:");
+    Elvis("?:"),
+    ;
 
     override fun toString(): String {
         return operator

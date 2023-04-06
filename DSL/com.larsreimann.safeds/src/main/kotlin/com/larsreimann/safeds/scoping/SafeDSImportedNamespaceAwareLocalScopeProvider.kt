@@ -15,7 +15,7 @@ class SafeDSImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLoc
      */
     override fun getImplicitImports(ignoreCase: Boolean): List<ImportNormalizer> {
         return listOf(
-            ImportNormalizer(QualifiedName.create("safeds", "lang"), true, ignoreCase)
+            ImportNormalizer(QualifiedName.create("safeds", "lang"), true, ignoreCase),
         )
     }
 
@@ -26,9 +26,8 @@ class SafeDSImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLoc
      */
     override fun internalGetImportedNamespaceResolvers(
         context: EObject,
-        ignoreCase: Boolean
+        ignoreCase: Boolean,
     ): List<ImportNormalizer> {
-
         if (context !is SdsCompilationUnit) {
             return emptyList()
         }
@@ -43,7 +42,7 @@ class SafeDSImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLoc
             resolvers += ImportNormalizer(
                 it,
                 true,
-                ignoreCase
+                ignoreCase,
             )
         }
 
@@ -53,9 +52,8 @@ class SafeDSImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLoc
     private fun createImportedNamespaceResolver(
         namespace: String,
         alias: String?,
-        ignoreCase: Boolean
+        ignoreCase: Boolean,
     ): ImportNormalizer? {
-
         if (namespace.isEmpty()) {
             return null
         } else if (alias == null) {
@@ -84,7 +82,7 @@ class SafeDSImportedNamespaceAwareLocalScopeProvider : ImportedNamespaceAwareLoc
 data class ImportWithAliasNormalizer(
     val importedNamespace: QualifiedName,
     val alias: QualifiedName,
-    val ignoreCase: Boolean
+    val ignoreCase: Boolean,
 ) : ImportNormalizer(importedNamespace, false, ignoreCase) {
 
     init {

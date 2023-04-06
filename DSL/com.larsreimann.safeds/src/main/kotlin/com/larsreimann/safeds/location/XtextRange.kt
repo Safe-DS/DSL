@@ -15,7 +15,7 @@ data class XtextRange(val start: XtextPosition, val end: XtextPosition, val leng
             return XtextRange(
                 XtextPosition.fromInts(startLine, startColumn),
                 XtextPosition.fromInts(endLine, endColumn),
-                ProgramRangeLength(length)
+                ProgramRangeLength(length),
             )
         }
     }
@@ -24,7 +24,7 @@ data class XtextRange(val start: XtextPosition, val end: XtextPosition, val leng
         return LspRange(
             start.toLspPosition(),
             end.toLspPosition(),
-            length
+            length,
         )
     }
 

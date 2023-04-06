@@ -42,7 +42,8 @@ enum class SdsVariance(val variance: String?) {
      * **Negative example:** A `Transformer<T>` reads and writes values of type `T`. This means we cannot use a
      * `Transformer<Number>` if we want a `Transformer<Int>`, since it might create `Double` values as output.
      */
-    Contravariant("in");
+    Contravariant("in"),
+    ;
 
     override fun toString(): String {
         return name

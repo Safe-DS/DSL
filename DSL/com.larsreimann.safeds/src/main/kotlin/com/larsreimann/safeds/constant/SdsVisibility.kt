@@ -20,7 +20,8 @@ enum class SdsVisibility(val visibility: String?) {
     /**
      * The [SdsStep] is only visible in the same file.
      */
-    Private("private");
+    Private("private"),
+    ;
 
     override fun toString(): String {
         return name
