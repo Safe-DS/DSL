@@ -3,7 +3,7 @@ import {
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module';
-import { SafeDsValidator, registerValidationChecks } from './safe-ds-validator';
+import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.

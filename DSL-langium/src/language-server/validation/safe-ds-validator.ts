@@ -1,6 +1,6 @@
 import { ValidationChecks } from 'langium';
-import { SafeDsAstType } from './generated/ast';
-import type { SafeDsServices } from './safe-ds-module';
+import { SafeDsAstType } from '../generated/ast';
+import type { SafeDsServices } from '../safe-ds-module';
 
 /**
  * Register custom validation checks.
