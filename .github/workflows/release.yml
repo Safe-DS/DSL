@@ -2,7 +2,7 @@ name: Publish artifacts to various targets
 
 on:
   release:
-    types: [ created ]
+    types: [created]
 
 jobs:
   publish-to-maven-central:
@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        java-version: [ 17 ]
+        java-version: [17]
 
     steps:
       - name: Checkout source
@@ -48,7 +48,7 @@ jobs:
         working-directory: ./DSL
     strategy:
       matrix:
-        java-version: [ 17 ]
+        java-version: [17]
 
     steps:
       - name: Checkout repository

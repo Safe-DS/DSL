@@ -4,38 +4,37 @@ repo_name: Safe-DS/DSL
 
 nav:
   - Home:
-    - README.md
+      - README.md
   - Language:
-    - language/README.md
-    - Pipeline Language:
-      - language/pipeline-language/README.md
-      - Pipelines: language/pipeline-language/pipelines.md
-      - Steps: language/pipeline-language/steps.md
-      - Statements: language/pipeline-language/statements.md
-      - Expressions: language/pipeline-language/expressions.md
-    - Common:
-      - language/common/README.md
-      - Comments: language/common/comments.md
-      - Packages: language/common/packages.md
-      - Imports: language/common/imports.md
-      - Parameters: language/common/parameters.md
-      - Results: language/common/results.md
-      - Types: language/common/types.md
-      - Variance: language/common/variance.md
-    - Stub Language:
-      - language/stub-language/README.md
-      - Classes: language/stub-language/classes.md
-      - Global Functions: language/stub-language/global-functions.md
-      - Enumerations: language/stub-language/enumerations.md
-      - Annotations: language/stub-language/annotations.md
-      - Type Parameters: language/stub-language/type-parameters.md
+      - language/README.md
+      - Pipeline Language:
+          - language/pipeline-language/README.md
+          - Pipelines: language/pipeline-language/pipelines.md
+          - Steps: language/pipeline-language/steps.md
+          - Statements: language/pipeline-language/statements.md
+          - Expressions: language/pipeline-language/expressions.md
+      - Common:
+          - language/common/README.md
+          - Comments: language/common/comments.md
+          - Packages: language/common/packages.md
+          - Imports: language/common/imports.md
+          - Parameters: language/common/parameters.md
+          - Results: language/common/results.md
+          - Types: language/common/types.md
+          - Variance: language/common/variance.md
+      - Stub Language:
+          - language/stub-language/README.md
+          - Classes: language/stub-language/classes.md
+          - Global Functions: language/stub-language/global-functions.md
+          - Enumerations: language/stub-language/enumerations.md
+          - Annotations: language/stub-language/annotations.md
+          - Type Parameters: language/stub-language/type-parameters.md
   - Standard Library:
-    - stdlib/README.md
-    - safeds.lang: stdlib/safeds_lang.md
+      - stdlib/README.md
+      - safeds.lang: stdlib/safeds_lang.md
   - Development:
-    - DSL Development Checklist: development/dsl-development-checklist.md
-    - Release Checklist: development/release-checklist.md
-
+      - DSL Development Checklist: development/dsl-development-checklist.md
+      - Release Checklist: development/release-checklist.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 
@@ -87,9 +86,8 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:pymdownx.superfences.fence_code_format # Footnotes
 
-  # Footnotes
   - footnotes
 
   # Keys
@@ -98,9 +96,8 @@ markdown_extensions:
   # Icons & emojis
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_generator: !!python/name:materialx.emoji.to_svg # Images
 
-  # Images
   - attr_list
   - md_in_html
 

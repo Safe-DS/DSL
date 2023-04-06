@@ -1,4 +1,4 @@
-import tests   .    formattting    as    format  import tests.formatting2 as format2
+import tests   .    formatting    as    format  import tests.formatting2 as format2
 import tests.formatting3 as format3
 
 import tests   .    formatting4  import tests.formatting5

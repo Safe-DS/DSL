@@ -8,7 +8,7 @@ import org.eclipse.xtext.ide.server.hover.HoverService
 
 class SafeDSHoverService @Inject constructor(
     private val documentationProvider: IEObjectDocumentationProvider,
-    private val nameLabelProvider: INameLabelProvider
+    private val nameLabelProvider: INameLabelProvider,
 ) : HoverService() {
 
     override fun getContents(obj: EObject): String {

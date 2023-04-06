@@ -5,7 +5,7 @@ from safeds_runner.codegen import eager_elvis
 
 
 @pytest.mark.parametrize(
-    "left_operand,right_operand,expected_result",
+    ("left_operand", "right_operand", "expected_result"),
     [
         (None, None, None),
         (None, False, False),
@@ -19,7 +19,9 @@ from safeds_runner.codegen import eager_elvis
     ],
 )
 def test_should_compute_elvis_operation(
-    left_operand: Any, right_operand: Any, expected_result: Any
+    left_operand: Any,
+    right_operand: Any,
+    expected_result: Any,
 ) -> None:
     assert eager_elvis(left_operand, right_operand) == expected_result
 

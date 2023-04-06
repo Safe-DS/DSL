@@ -10,7 +10,8 @@ import com.larsreimann.safeds.utils.ExperimentalSdsApi
 enum class SdsProtocolQuantifiedTermQuantifier(val quantifier: String) {
     ZeroOrOne("?"),
     ZeroOrMore("*"),
-    OneOrMore("+");
+    OneOrMore("+"),
+    ;
 
     override fun toString(): String {
         return quantifier

@@ -14,8 +14,8 @@ import safeds.model.regression.DecisionTree
 
 The syntax consists of the following parts:
 
--   The keyword `import`
--   The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
+- The keyword `import`
+- The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
 
 Once the declaration is imported, we can refer to it by its _simple name_. This is the last segment of the qualified name, which is the name of the declaration. Here is, for example, a [call][calls] to the constructor of the `DecisionTree` class:
 
@@ -33,10 +33,10 @@ import safeds.model.regression.DecisionTree as StdlibDecisionTree
 
 Let us take apart the syntax:
 
--   The keyword `import`.
--   The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
--   The keyword `as`.
--   The alias to use (here `StdlibDecisionTree`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number.
+- The keyword `import`.
+- The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
+- The keyword `as`.
+- The alias to use (here `StdlibDecisionTree`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number.
 
 Afterwards, the declaration can **only** be accessed using the alias. The simple name cannot be used anymore. The next example shows how to create a new instance of the class now by invoking its constructor:
 
@@ -56,10 +56,10 @@ import safeds.model.regression.*
 
 Here is the breakdown of the syntax:
 
--   The keyword `import`.
--   The name of the [package][packages] to import (here `safeds.model.regression`).
--   A dot.
--   A star.
+- The keyword `import`.
+- The name of the [package][packages] to import (here `safeds.model.regression`).
+- A dot.
+- A star.
 
 Afterwards, we can again access declarations by their simple name, such as the [class][classes] `DecisionTree`:
 

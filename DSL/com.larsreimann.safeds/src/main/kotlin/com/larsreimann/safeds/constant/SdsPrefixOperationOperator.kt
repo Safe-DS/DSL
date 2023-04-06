@@ -15,7 +15,8 @@ enum class SdsPrefixOperationOperator(val operator: String) {
     /**
      * Arithmetic negation.
      */
-    Minus("-");
+    Minus("-"),
+    ;
 
     override fun toString(): String {
         return operator
