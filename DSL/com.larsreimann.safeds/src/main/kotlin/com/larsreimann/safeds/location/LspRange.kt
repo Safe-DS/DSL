@@ -15,7 +15,7 @@ data class LspRange(val start: LspPosition, val end: LspPosition, val length: Pr
             return LspRange(
                 LspPosition.fromInts(startLine, startColumn),
                 LspPosition.fromInts(endLine, endColumn),
-                ProgramRangeLength(length)
+                ProgramRangeLength(length),
             )
         }
     }
@@ -24,7 +24,7 @@ data class LspRange(val start: LspPosition, val end: LspPosition, val length: Pr
         return XtextRange(
             start.toXtextPosition(),
             end.toXtextPosition(),
-            length
+            length,
         )
     }
 

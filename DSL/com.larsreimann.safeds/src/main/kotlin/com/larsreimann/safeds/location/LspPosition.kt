@@ -10,7 +10,7 @@ data class LspPosition(val line: LspLine, val column: LspColumn) : Comparable<Ls
         fun fromInts(line: Int, column: Int): LspPosition {
             return LspPosition(
                 LspLine(line),
-                LspColumn(column)
+                LspColumn(column),
             )
         }
     }
@@ -18,7 +18,7 @@ data class LspPosition(val line: LspLine, val column: LspColumn) : Comparable<Ls
     fun toXtextPosition(): XtextPosition {
         return XtextPosition(
             line.toXtextLine(),
-            column.toXtextColumn()
+            column.toXtextColumn(),
         )
     }
 
