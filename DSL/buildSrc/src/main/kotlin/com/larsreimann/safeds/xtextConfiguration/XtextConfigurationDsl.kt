@@ -2,6 +2,7 @@
 
 package com.larsreimann.safeds.xtextConfiguration
 
+import io.typefox.xtext2langium.Xtext2LangiumFragment
 import org.eclipse.emf.mwe.utils.DirectoryCleaner
 import org.eclipse.emf.mwe.utils.ProjectMapping
 import org.eclipse.emf.mwe.utils.StandaloneSetup
@@ -67,6 +68,14 @@ fun DefaultGeneratorModule.code(init: CodeConfig.() -> Unit) {
 
 fun XtextGenerator.standardLanguage(init: StandardLanguage.() -> Unit) {
     addLanguage(StandardLanguage().apply(init))
+}
+
+fun StandardLanguage.xtext2langium(outputPath: String) {
+    this.addFragment(
+        Xtext2LangiumFragment().apply {
+            setOutputPath(outputPath)
+        },
+    )
 }
 
 fun Workflow.execute() {

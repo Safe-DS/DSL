@@ -1,0 +1,9 @@
+// $TEST$ no_syntax_error
+
+pipeline myPipeline {
+    () {};
+
+    (a, vararg b = 1) {
+        val a = 1;
+    };
+}

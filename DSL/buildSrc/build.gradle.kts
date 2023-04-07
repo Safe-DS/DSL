@@ -28,6 +28,7 @@ dependencies {
     implementation("org.eclipse.xtext:org.eclipse.xtext.common.types:$xtextVersion")
     implementation("org.eclipse.xtext:org.eclipse.xtext.xtext.generator:$xtextVersion")
     implementation("org.eclipse.xtext:xtext-antlr-generator:2.1.1")
+    implementation("io.typefox.xtext2langium:io.typefox.xtext2langium:0.4.0")
 }
 
 // Tasks ---------------------------------------------------------------------------------------------------------------

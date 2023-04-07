@@ -1,0 +1,15 @@
+// $TEST$ no_syntax_error
+
+class C {
+    protocol {
+        [^ f]
+        [.^ f]
+        [\a^ a]
+        [\f^ f]
+
+        [^ f g]
+        [.^ f h]
+        [\a^ a b]
+        [\f^ f h]
+    }
+}

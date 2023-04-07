@@ -1,0 +1,7 @@
+package tests.trailingComma.inFunctionTypeResultList
+
+// $TEST$ no_syntax_error
+
+step s(
+    f: () -> (x: Int, y: Int, )
+) {}

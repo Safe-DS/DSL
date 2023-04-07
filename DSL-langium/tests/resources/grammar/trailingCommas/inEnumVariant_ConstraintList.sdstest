@@ -1,0 +1,7 @@
+package tests.trailingComma.inEnumVariantConstraintList
+
+// $TEST$ no_syntax_error
+
+enum E {
+    A<K, V, >
+}
