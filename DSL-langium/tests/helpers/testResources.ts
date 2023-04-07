@@ -17,7 +17,7 @@ const resourcesPath = path.join(__dirname, '..', 'resources');
  */
 export const resolvePathRelativeToResources = (pathRelativeToResources: string) => {
     return path.join(resourcesPath, pathRelativeToResources);
-}
+};
 
 /**
  * Lists all Safe-DS files in the given directory relative to `tests/resources/`.
@@ -30,5 +30,5 @@ export const listTestResources = (pathRelativeToResources: string) => {
     const pattern = `**/*.{${fileExtensions.join(',')}}`;
     const cwd = resolvePathRelativeToResources(pathRelativeToResources);
 
-    return globSync(pattern, {cwd, nodir: true, withFileTypes: true})
+    return globSync(pattern, { cwd, nodir: true, withFileTypes: true });
 };

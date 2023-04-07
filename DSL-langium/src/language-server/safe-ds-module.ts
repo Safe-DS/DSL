@@ -1,6 +1,12 @@
 import {
-    createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
-    LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
+    createDefaultModule,
+    createDefaultSharedModule,
+    DefaultSharedModuleContext,
+    inject,
+    LangiumServices,
+    LangiumSharedServices,
+    Module,
+    PartialLangiumServices,
 } from 'langium';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module';
 import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator';
@@ -10,15 +16,15 @@ import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-
  */
 export type SafeDsAddedServices = {
     validation: {
-        SafeDsValidator: SafeDsValidator
-    }
-}
+        SafeDsValidator: SafeDsValidator;
+    };
+};
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type SafeDsServices = LangiumServices & SafeDsAddedServices
+export type SafeDsServices = LangiumServices & SafeDsAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
@@ -27,8 +33,8 @@ export type SafeDsServices = LangiumServices & SafeDsAddedServices
  */
 export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeDsAddedServices> = {
     validation: {
-        SafeDsValidator: () => new SafeDsValidator()
-    }
+        SafeDsValidator: () => new SafeDsValidator(),
+    },
 };
 
 /**
@@ -47,19 +53,12 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
  * @returns An object wrapping the shared services and the language-specific services
  */
 export const createSafeDsServices = function (context: DefaultSharedModuleContext): {
-    shared: LangiumSharedServices,
-    SafeDs: SafeDsServices
+    shared: LangiumSharedServices;
+    SafeDs: SafeDsServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        SafeDsGeneratedSharedModule
-    );
-    const SafeDs = inject(
-        createDefaultModule({ shared }),
-        SafeDsGeneratedModule,
-        SafeDsModule
-    );
+    const shared = inject(createDefaultSharedModule(context), SafeDsGeneratedSharedModule);
+    const SafeDs = inject(createDefaultModule({ shared }), SafeDsGeneratedModule, SafeDsModule);
     shared.ServiceRegistry.register(SafeDs);
     registerValidationChecks(SafeDs);
     return { shared, SafeDs };
-}
+};

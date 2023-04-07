@@ -12,7 +12,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         // Person: validator.checkPersonStartsWithCapital
     };
     registry.register(checks, validator);
-}
+};
 
 /**
  * Implementation of custom validations.

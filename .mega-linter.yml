@@ -19,5 +19,3 @@ JSON_PRETTIER_FILE_EXTENSIONS:
 PRE_COMMANDS:
   - command: npm install @lars-reimann/eslint-config @lars-reimann/prettier-config
     cwd: workspace
-  - command: cd DSL-langium & npm run langium:generate
-    cwd: workspace

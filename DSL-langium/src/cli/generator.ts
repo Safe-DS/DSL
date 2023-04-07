@@ -17,4 +17,4 @@ export const generatePython = function (module: SdsModule, filePath: string, des
     }
     fs.writeFileSync(generatedFilePath, toString(fileNode));
     return generatedFilePath;
-}
+};

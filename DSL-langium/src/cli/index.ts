@@ -17,10 +17,10 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
 
 export type GenerateOptions = {
     destination?: string;
-}
+};
 
 // eslint-disable-next-line import/no-default-export, func-names
-export default function(): void {
+export default function (): void {
     const program = new Command();
 
     program

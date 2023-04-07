@@ -1,4 +1,4 @@
-//class IssueFinderTest {
+// class IssueFinderTest {
 //
 //    @com.google.inject.Inject
 //    private lateinit var parseHelper: com.larsreimann.safeds.testing.ParseHelper
@@ -160,4 +160,4 @@
 //        parsingResult.eResource().eAdapters().add(com.larsreimann.safeds.emf.OriginalFilePath(filePath.toString()))
 //        return validationHelper.validate(parsingResult)
 //    }
-//}
+// }

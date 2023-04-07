@@ -10,4 +10,7 @@ module.exports = {
         },
     },
     extends: '@lars-reimann',
+    rules: {
+        "import/extensions": "off"
+    }
 };
