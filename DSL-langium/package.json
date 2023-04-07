@@ -4,7 +4,7 @@
     "description": "Please enter a brief description here",
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.67.0"
+        "vscode": "^1.77.0"
     },
     "categories": [
         "Programming Languages"
@@ -56,23 +56,23 @@
         "langium:watch": "langium generate --watch"
     },
     "dependencies": {
-        "chalk": "~5.2.0",
-        "chevrotain": "~10.5.0",
-        "commander": "~10.0.0",
+        "chalk": "^5.2.0",
+        "chevrotain": "^10.5.0",
+        "commander": "^10.0.0",
         "glob": "^9.3.4",
-        "langium": "~1.1.0",
+        "langium": "^1.1.0",
         "radash": "^10.8.1",
         "true-myth": "^6.2.0",
-        "vscode-languageclient": "~8.1.0",
-        "vscode-languageserver": "~8.1.0",
-        "vscode-uri": "~3.0.7"
+        "vscode-languageclient": "^8.1.0",
+        "vscode-languageserver": "^8.1.0",
+        "vscode-uri": "^3.0.7"
     },
     "devDependencies": {
-        "@types/node": "~18.15.11",
+        "@types/node": "^18.15.11",
         "@types/vscode": "~1.77.0",
         "@vitest/coverage-c8": "^0.29.8",
-        "langium-cli": "~1.1.0",
-        "typescript": "~5.0.4",
+        "langium-cli": "^1.1.0",
+        "typescript": "^5.0.4",
         "vitest": "^0.29.8"
     }
 }
