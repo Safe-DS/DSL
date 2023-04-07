@@ -68,7 +68,7 @@
         "vscode-uri": "~3.0.7"
     },
     "devDependencies": {
-        "@types/node": "~16.18.11",
+        "@types/node": "~18.15.11",
         "@types/vscode": "~1.67.0",
         "@vitest/coverage-c8": "^0.29.8",
         "langium-cli": "~1.1.0",
