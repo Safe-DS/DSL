@@ -63,7 +63,7 @@
         "langium": "~1.1.0",
         "radash": "^10.8.1",
         "true-myth": "^6.2.0",
-        "vscode-languageclient": "~8.0.2",
+        "vscode-languageclient": "~8.1.0",
         "vscode-languageserver": "~8.1.0",
         "vscode-uri": "~3.0.7"
     },
