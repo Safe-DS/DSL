@@ -1,11 +1,11 @@
-import { describe, expect, test } from 'vitest';
-import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges';
-import { CLOSE, OPEN } from './testMarker';
-import { findTestChecks, MoreRangesThanCommentsError, NoCommentsError } from './testChecks';
-import { Range } from 'vscode-languageserver';
+import {describe, expect, it} from 'vitest';
+import {CloseWithoutOpenError, OpenWithoutCloseError} from './testRanges';
+import {CLOSE, OPEN} from './testMarker';
+import {findTestChecks, MoreRangesThanCommentsError, NoCommentsError} from './testChecks';
+import {Range} from 'vscode-languageserver';
 
 describe('findTestChecks', () => {
-    test.each([
+    it.each([
         {
             program: `
 // $TEST$ no_syntax_error
@@ -59,7 +59,7 @@ ${OPEN}${CLOSE}
         }
     });
 
-    test('should report if no test comments are found', () => {
+    it('should report if no test comments are found', () => {
         const result = findTestChecks('');
         expect(result.isErr).toBeTruthy();
 
@@ -68,7 +68,7 @@ ${OPEN}${CLOSE}
         }
     });
 
-    test('should report if more ranges than comments are found', () => {
+    it('should report if more ranges than comments are found', () => {
         const result = findTestChecks(`
             // $TEST$ no_syntax_error
             ${OPEN}\n${CLOSE}${OPEN}\n${CLOSE}
@@ -80,7 +80,7 @@ ${OPEN}${CLOSE}
         }
     });
 
-    test('should report closing test markers without matching opening test marker', () => {
+    it('should report closing test markers without matching opening test marker', () => {
         const result = findTestChecks(`
             // $TEST$ no_syntax_error
             ${OPEN}\n${CLOSE}${CLOSE}
@@ -92,7 +92,7 @@ ${OPEN}${CLOSE}
         }
     });
 
-    test('should report opening test markers without matching closing test marker', () => {
+    it('should report opening test markers without matching closing test marker', () => {
         const result = findTestChecks(`
             // $TEST$ no_syntax_error
             ${OPEN}\n${OPEN}${OPEN}${CLOSE}

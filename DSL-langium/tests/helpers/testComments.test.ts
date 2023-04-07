@@ -1,8 +1,8 @@
-import { describe, test, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { findTestComments } from './testComments';
 
 describe('findTestComments', () => {
-    test.each([
+    it.each([
         {
             program: '',
             expected: [],
