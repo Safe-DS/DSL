@@ -1,8 +1,8 @@
-import {describe, expect, it} from 'vitest';
-import {CloseWithoutOpenError, OpenWithoutCloseError} from './testRanges';
-import {CLOSE, OPEN} from './testMarker';
-import {findTestChecks, MoreRangesThanCommentsError, NoCommentsError} from './testChecks';
-import {Range} from 'vscode-languageserver';
+import { describe, expect, it } from 'vitest';
+import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges';
+import { CLOSE, OPEN } from './testMarker';
+import { findTestChecks, MoreRangesThanCommentsError, NoCommentsError } from './testChecks';
+import { Range } from 'vscode-languageserver';
 
 describe('findTestChecks', () => {
     it.each([

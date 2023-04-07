@@ -73,7 +73,10 @@ describe('findTestRanges', () => {
         if (result.isErr) {
             const error = result.error;
             expect(error).toBeInstanceOf(OpenWithoutCloseError);
-            expect((error as OpenWithoutCloseError).positions).toStrictEqual([Position.create(1, 1), Position.create(2, 1)]);
+            expect((error as OpenWithoutCloseError).positions).toStrictEqual([
+                Position.create(1, 1),
+                Position.create(2, 1),
+            ]);
             expect(error.message).toBe(`Found '${OPEN}' without following '${CLOSE}' at 1:1, 2:1.`);
         }
     });
