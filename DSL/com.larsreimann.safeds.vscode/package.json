@@ -1,23 +1,26 @@
 {
     "name": "safe-ds",
-    "displayName": "Safe-DS",
-    "description": "Statically checked Data Science programs.",
-    "publisher": "larsreimann",
-    "repository": {
-        "url": "https://github.com/lars-reimann/safe-data-science"
-    },
-    "galleryBanner": {
-        "color": "#ffffff"
-    },
-    "version": "1.0.0",
+    "version": "0.1.0",
+    "publisher": "Safe-DS",
     "engines": {
         "vscode": "^1.77.0"
     },
+    "displayName": "Safe-DS",
+    "description": "Statically checked Data Science programs.",
     "categories": [
         "Programming Languages",
         "Machine Learning",
         "Data Science"
     ],
+    "keywords": [
+        "dsl",
+        "static checking"
+    ],
+    "galleryBanner": {
+        "color": "#e3e9e9"
+    },
+    "preview": true,
+    "main": "./dist/extension.js",
     "contributes": {
         "languages": [
             {
@@ -26,7 +29,9 @@
                     "Safe-DS",
                     "safe-ds",
                     "SafeDS",
-                    "safeds"
+                    "safeds",
+                    "SDS",
+                    "sds"
                 ],
                 "extensions": [
                     ".sdspipe",
@@ -48,11 +53,19 @@
     "activationEvents": [
         "onLanguage:safe-ds"
     ],
-    "main": "./dist/extension.js",
-    "scripts": {
-        "vscode:prepublish": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=dist/extension.js",
-        "vscode:package": "vsce package"
-    },
+    "badges": [
+        {
+            "url": "https://github.com/Safe-DS/DSL/actions/workflows/main.yml/badge.svg",
+            "href": "https://github.com/Safe-DS/DSL/actions/workflows/main.yml",
+            "description": "Main"
+        },
+        {
+            "url": "https://codecov.io/gh/Safe-DS/DSL/branch/main/graph/badge.svg?token=ma0ytglhO1",
+            "href": "https://codecov.io/gh/Safe-DS/DSL",
+            "description": "codecov"
+        }
+    ],
+    "qna": "https://github.com/orgs/Safe-DS/discussions",
     "dependencies": {
         "vscode-languageclient": "^8.1.0"
     },
@@ -62,5 +75,19 @@
         "esbuild": "^0.17.14",
         "typescript": "^5.0.3",
         "vscode-test": "^1.6.1"
+    },
+    "scripts": {
+        "vscode:prepublish": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=dist/extension.js",
+        "vscode:package": "vsce package"
+    },
+    "icon": "img/safe-ds_logo_rounded.png",
+    "license": "MIT",
+    "homepage": "https://dsl.safe-ds.com",
+    "bugs": {
+        "url": "https://github.com/Safe-DS/DSL/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Safe-DS/DSL.git"
     }
 }

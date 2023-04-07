@@ -1,0 +1,11 @@
+// $TEST$ no_syntax_error
+
+predicate myPredicateWithgoalArgs(){
+    goal(myRef, "String", 3, null, 4.4, false)
+}
+
+predicate myPredicateWithgoalNesting(){
+    goal(
+        goalInner("Str", 3)
+    )
+}

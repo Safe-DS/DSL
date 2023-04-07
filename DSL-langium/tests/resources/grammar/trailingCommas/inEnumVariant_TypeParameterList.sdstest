@@ -1,0 +1,10 @@
+package tests.trailingComma.inEnumVariantTypeParameterList
+
+// $TEST$ no_syntax_error
+
+enum E {
+    A<T> constraint {
+        T sub Any,
+        T super Int
+    }
+}
