@@ -56,7 +56,7 @@
         "langium:watch": "langium generate --watch"
     },
     "dependencies": {
-        "chalk": "~4.1.2",
+        "chalk": "~5.2.0",
         "chevrotain": "~10.5.0",
         "commander": "~10.0.0",
         "glob": "^9.3.4",
