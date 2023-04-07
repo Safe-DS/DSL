@@ -36,3 +36,9 @@ updates:
     directory: '/Runner'
     schedule:
       interval: 'monthly'
+
+  # DSL-langium
+  - package-ecosystem: 'npm'
+    directory: '/DSL-langium'
+    schedule:
+      interval: 'monthly'
