@@ -1,0 +1,9 @@
+// $TEST$ no_syntax_error
+
+step s1(
+    f: union<>
+) {}
+
+step s2(
+    f: union<Int, Float>
+) {}

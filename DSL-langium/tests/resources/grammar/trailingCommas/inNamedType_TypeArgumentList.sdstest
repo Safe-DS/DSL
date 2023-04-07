@@ -1,0 +1,7 @@
+package tests.trailingComma.inNamedTypeTypeArgumentList
+
+// $TEST$ no_syntax_error
+
+step s(
+    f: Type<Int, Int, >
+) {}

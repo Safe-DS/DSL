@@ -1,0 +1,19 @@
+// $TEST$ no_syntax_error
+
+pipeline myPipeline {
+    "";
+    "myString";
+    "'";
+    "\n";
+    "\u000c";
+    "
+        multi
+        line
+        string
+    ";
+    "{";
+    "{\n";
+    "{ {";
+    "not a template { ??? }";
+    "not a template either \{{ ??? }}";
+}

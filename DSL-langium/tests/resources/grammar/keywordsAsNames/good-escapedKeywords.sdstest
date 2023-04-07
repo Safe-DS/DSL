@@ -1,0 +1,29 @@
+// $TEST$ no_syntax_error
+
+class `_`
+class `and`
+class `annotation`
+class `as`
+class `attr`
+class `class`
+class `constraint`
+class `enum`
+class `false`
+class `fun`
+class `import`
+class `in`
+class `not`
+class `null`
+class `or`
+class `out`
+class `package`
+class `pipeline`
+class `static`
+class `step`
+class `sub`
+class `super`
+class `true`
+class `union`
+class `val`
+class `vararg`
+class `yield`

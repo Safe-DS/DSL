@@ -1,0 +1,19 @@
+// $TEST$ no_syntax_error
+
+class MySimpleClass
+
+@AnnotationUse
+class MyComplexClass
+    <@AnnotationUse T1, in T2, out T3, T4 :: $SchemaType, T5 :: $ExpressionType, T6 :: $IntType, T7 :: $FloatType, T8 :: $BooleanType, T9 :: $StringType, T10 :: $NamedType>
+    (@AnnotationUse a: Int, vararg b: Int = 3)
+    sub SuperClass1, SuperClass2
+{
+    constraint {
+        T2 super Number,
+        T3 sub Number
+    }
+    @AnnotationUse static attr myAttribute: Int
+    @AnnotationUse class MyClass
+    @AnnotationUse enum MyEnum
+    @AnnotationUse static fun MyFunction()
+}

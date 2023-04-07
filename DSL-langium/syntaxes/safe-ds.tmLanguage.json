@@ -43,6 +43,21 @@
           },
           "end": "(?=$)",
           "name": "comment.line.safe-ds"
+        },
+        {
+          "name": "comment.block.safe-ds",
+          "begin": "[»«]",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.safe-ds"
+            }
+          },
+          "end": "[»«]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.safe-ds"
+            }
+          }
         }
       ]
     }

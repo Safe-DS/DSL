@@ -6,7 +6,7 @@ interface SdsModule {
 }
 
 entry SdsModule returns SdsModule:
-    {SdsModule} 
+    {SdsModule}
     ('package' name=QualifiedName)?
     imports+=SdsImport*
 ;
@@ -40,6 +40,7 @@ QualifiedNameWithWildcard returns string:
 terminal ID returns string:IDENTIFIER | '`' IDENTIFIER '`'  ;
 terminal IDENTIFIER returns string: /[_a-zA-Z][_a-zA-Z0-9]*/;
 
-hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal TEST_MARKER: /[»«]/;
+hidden terminal WS: /\s+/;

@@ -1,0 +1,7 @@
+// $TEST$ syntax_error
+
+class C {
+    protocol {
+        [^ \a]
+    }
+}

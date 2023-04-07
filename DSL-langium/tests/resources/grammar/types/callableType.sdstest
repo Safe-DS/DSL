@@ -1,0 +1,13 @@
+// $TEST$ no_syntax_error
+
+step s1(
+    f: () -> ()
+) {}
+
+step s2(
+    f: () -> result: Int
+) {}
+
+step s3(
+    f: (@AnnotationUse a: Int, vararg b: Int = 3) -> (@AnnotationUse a: Int, b: Int)
+) {}
