@@ -14,7 +14,9 @@
 /DSL/**/bin/
 /DSL-langium/**/generated/
 build/
+coverage/
 dist/
+dist-ssr/
 out/
 
 # Gradle

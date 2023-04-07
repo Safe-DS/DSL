@@ -70,3 +70,39 @@ jobs:
       coverage: ${{ matrix.python-version == '3.10' }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # Build and test the DSL port to Langium
+  build-dsl-langium:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./DSL-langium
+
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: DSL-langium/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test with Vitest
+        run: npm run test-with-coverage
+
+      - name: Upload coverage to Codecov
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: DSL-langium/coverage
+          files: clover.xml
