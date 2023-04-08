@@ -83,6 +83,9 @@ jobs:
       - name: Generate Langium files
         run: npm run langium:generate
 
+      - name: Compile TypeScript
+        run: npm run build
+
       - name: Test with Vitest
         run: npm run test-with-coverage
 
