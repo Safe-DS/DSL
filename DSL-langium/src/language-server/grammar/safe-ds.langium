@@ -615,17 +615,19 @@ interface SdsMemberAccess extends SdsAbstractChainedExpression {
 
 SdsChainedExpression returns SdsAbstractExpression:
     SdsPrimaryExpression
-    {SdsCall.receiver=current}
-    typeArgumentList=SdsTypeArgumentList?
-    argumentList=SdsCallArgumentList
+    (
+        {SdsCall.receiver=current}
+        typeArgumentList=SdsTypeArgumentList?
+        argumentList=SdsCallArgumentList
 
-  | {SdsIndexedAccess.receiver=current}
-    '[' index=SdsExpression ']'
+    | {SdsIndexedAccess.receiver=current}
+        '[' index=SdsExpression ']'
 
-  | {SdsMemberAccess.receiver=current}
-    (nullSafe?='?')?
-    '.'
-    member=SdsReference*
+    | {SdsMemberAccess.receiver=current}
+        (nullSafe?='?')?
+        '.'
+        member=SdsReference*
+    )*
 ;
 
 interface SdsArgumentList extends SdsAbstractObject {
@@ -805,7 +807,8 @@ interface SdsCallableType extends SdsAbstractCallable, SdsAbstractType {
 }
 
 SdsCallableType returns SdsCallableType:
-    parameterList=SdsParameterList  resultList=SdsResultList
+    parameterList=SdsParameterList
+    resultList=SdsResultList
 ;
 
 interface SdsNamedType extends SdsAbstractType {
@@ -1157,7 +1160,6 @@ terminal IDENTIFIER returns string: /[_a-zA-Z][_a-zA-Z0-9]*/;
 terminal FLOAT returns number:DECIMAL_DIGIT+ '.' DECIMAL_DIGIT+ FLOAT_EXPONENT?  | DECIMAL_DIGIT+ FLOAT_EXPONENT;
 terminal DECIMAL_DIGIT returns string: /[0-9]/;
 terminal FLOAT_EXPONENT returns string:('e' | 'E' )('+' | '-' )?DECIMAL_DIGIT+;
-terminal SCHEMA_EFFECT returns string:'$readSchema' | '$checkColumn' | '$removeColumn' | '$keepColumn' | '$renameColumn' | '$addColumn' | '$changeColumnType';
 terminal INT returns number:DECIMAL_DIGIT+;
 terminal STRING returns string:STRING_START STRING_TEXT* STRING_END;
 terminal STRING_START returns string:STRING_DELIMITER;
