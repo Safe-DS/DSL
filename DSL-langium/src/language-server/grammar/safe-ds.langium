@@ -312,7 +312,7 @@ SdsAnnotationCallArgument returns SdsArgument:
 // -----------------------------------------------------------------------------
 
 interface SdsAbstractCallable extends SdsAbstractObject {
-	parameterList?: SdsParameterList
+	parameterList: SdsParameterList
 }
 
 interface SdsParameterList extends SdsAbstractObject {
@@ -748,19 +748,22 @@ interface SdsAbstractTemplateStringPart extends SdsAbstractLiteral {
 
 interface SdsTemplateStringStart extends SdsAbstractTemplateStringPart {}
 
-SdsTemplateStringStart returns SdsTemplateStringStart:
+SdsTemplateStringStart returns SdsAbstractExpression:
+    {SdsTemplateStringStart}
     value=TEMPLATE_STRING_START
 ;
 
 interface SdsTemplateStringInner extends SdsAbstractTemplateStringPart {}
 
-SdsTemplateStringInner returns SdsTemplateStringInner:
+SdsTemplateStringInner returns SdsAbstractExpression:
+    {SdsTemplateStringInner}
     value=TEMPLATE_STRING_INNER
 ;
 
 interface SdsTemplateStringEnd extends SdsAbstractTemplateStringPart {}
 
-SdsTemplateStringEnd returns SdsTemplateStringEnd:
+SdsTemplateStringEnd returns SdsAbstractExpression:
+    {SdsTemplateStringEnd}
     value=TEMPLATE_STRING_END
 ;
 
@@ -1160,7 +1163,10 @@ terminal STRING returns string:STRING_START STRING_TEXT* STRING_END;
 terminal STRING_START returns string:STRING_DELIMITER;
 terminal STRING_END returns string:'{'? STRING_DELIMITER;
 terminal STRING_DELIMITER returns string:'"';
-terminal STRING_TEXT returns string:'{'? ESCAPE_SEQUENCE | '{'? !('\\' | STRING_DELIMITER | '{');
+terminal STRING_TEXT returns string
+    : '{'? ESCAPE_SEQUENCE
+    |  /{?[^\\"{]/ // '{'? !('\\'|STRING_DELIMITER|'{')
+;
 terminal ESCAPE_SEQUENCE returns string:'\\' .;
 terminal TEMPLATE_EXPRESSION_START returns string:'{{';
 terminal TEMPLATE_EXPRESSION_END returns string:'}}';
