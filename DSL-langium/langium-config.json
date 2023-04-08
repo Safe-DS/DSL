@@ -4,7 +4,7 @@
         {
             "id": "safe-ds",
             "grammar": "src/language-server/grammar/safe-ds.langium",
-            "fileExtensions": [".sdspipe", ".sdsschema", ".sdsstub", ".sdstest"],
+            "fileExtensions": [".sdspipe", ".sdsstub", ".sdstest"],
             "textMate": {
                 "out": "syntaxes/safe-ds.tmLanguage.json"
             }

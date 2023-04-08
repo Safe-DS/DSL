@@ -36,7 +36,7 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
         debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
     };
 
-    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.{sdspipe,sdsschema,sdsstub,sdstest}');
+    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.{sdspipe,sdsstub,sdstest}');
     context.subscriptions.push(fileSystemWatcher);
 
     // Options to control the language client

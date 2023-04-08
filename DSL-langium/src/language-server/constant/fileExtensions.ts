@@ -9,14 +9,6 @@ import { AstNode, getDocument, LangiumDocument } from 'langium';
 export const PIPELINE_FILE_EXTENSION = 'sdspipe';
 
 /**
- * Marks the file as a schema file.
- *
- * @see isInSchemaFile
- * @see isSchemaFile
- */
-export const SCHEMA_FILE_EXTENSION = 'sdsschema';
-
-/**
  * Marks the file as a stub file, which describes an external API.
  *
  * @see isInStubFile
@@ -38,7 +30,6 @@ export const TEST_FILE_EXTENSION = 'sdstest';
  */
 export type SdSFileExtension =
     | typeof PIPELINE_FILE_EXTENSION
-    | typeof SCHEMA_FILE_EXTENSION
     | typeof STUB_FILE_EXTENSION
     | typeof TEST_FILE_EXTENSION;
 
@@ -46,11 +37,6 @@ export type SdSFileExtension =
  * Returns whether the object is contained in a pipeline file.
  */
 export const isInPipelineFile = (node: AstNode) => isPipelineFile(getDocument(node));
-
-/**
- * Returns whether the object is contained in a schema file.
- */
-export const isInSchemaFile = (node: AstNode) => isSchemaFile(getDocument(node));
 
 /**
  * Returns whether the object is contained in a stub file.
@@ -66,11 +52,6 @@ export const isInTestFile = (node: AstNode) => isTestFile(getDocument(node));
  * Returns whether the resource represents a pipeline file.
  */
 export const isPipelineFile = (document: LangiumDocument) => hasExtension(document, PIPELINE_FILE_EXTENSION);
-
-/**
- * Returns whether the resource represents a schema file.
- */
-export const isSchemaFile = (document: LangiumDocument) => hasExtension(document, SCHEMA_FILE_EXTENSION);
 
 /**
  * Returns whether the resource represents a stub file.

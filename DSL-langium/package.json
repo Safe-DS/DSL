@@ -19,7 +19,6 @@
                 ],
                 "extensions": [
                     ".sdspipe",
-                    ".sdsschema",
                     ".sdsstub",
                     ".sdstest"
                 ],
