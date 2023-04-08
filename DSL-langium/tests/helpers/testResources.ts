@@ -19,7 +19,8 @@ export const resolvePathRelativeToResources = (pathRelativeToResources: string) 
 };
 
 /**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/`.
+ * Lists all Safe-DS files in the given directory relative to `tests/resources/` except those that have a name starting
+ * with 'skip'.
  *
  * @param pathRelativeToResources The root directory relative to `tests/resources/`.
  * @return Paths to the Safe-DS files relative to `pathRelativeToResources`.
