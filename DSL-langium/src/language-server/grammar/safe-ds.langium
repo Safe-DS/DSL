@@ -332,7 +332,7 @@ SdsParameterList returns SdsParameterList:
 
 interface SdsLambdaParameterList extends SdsAbstractExpression, SdsParameterList {}
 
-SdsLambdaParameterList returns SdsLambdaParameterList:
+SdsLambdaParameterList returns SdsParameterList:
     {SdsLambdaParameterList}
     '(' 
     (
