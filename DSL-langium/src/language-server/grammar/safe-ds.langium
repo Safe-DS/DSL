@@ -10,12 +10,12 @@ interface SdsAbstractAnnotatedObject extends SdsAbstractObject {
     annotationCalls?: SdsAnnotationCall[]
 }
 
-interface SdsAbstractDeclaration extends SdsAbstractAnnotatedObject {
+interface SdsAbstractDeclaration extends SdsAbstractAnnotatedObject, SdsAbstractObject {
     annotationCallList?: SdsAnnotationCallList
 	name?: string
 }
 
-interface SdsAbstractLocalVariable extends SdsAbstractDeclaration {}
+interface SdsAbstractLocalVariable extends SdsAbstractDeclaration, SdsAbstractObject {}
 
 
 // -----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ QualifiedName returns string:
 // Declarations
 // -----------------------------------------------------------------------------
 
-interface SdsAbstractModuleMember extends SdsAbstractDeclaration {}
+interface SdsAbstractModuleMember extends SdsAbstractDeclaration, SdsAbstractObject {}
 
 SdsModuleMember returns SdsAbstractAnnotatedObject:
     {SdsAnnotationCallList} 
@@ -137,6 +137,8 @@ SdsClassBody returns SdsClassBody:
     {SdsClassBody} '{' members+=SdsClassMember* '}'
 ;
 
+interface SdsAbstractClassMember extends SdsAbstractDeclaration, SdsAbstractObject {}
+
 SdsClassMember returns SdsAbstractObject:
     SdsAnnotatedClassMember 
   | SdsProtocol
@@ -190,8 +192,6 @@ SdsConstraintBlock returns SdsBlock:
 SdsConstraintStatement returns SdsAbstractStatement:
     SdsTypeParameterConstraint
 ;
-
-interface SdsAbstractClassMember extends SdsAbstractDeclaration {}
 
 interface SdsAttribute extends SdsAbstractClassMember, SdsAbstractProtocolToken {
 	static: boolean
@@ -366,7 +366,7 @@ SdsResultList returns SdsResultList:
   | {SdsResultList} '->' '(' (results+=SdsResult (',' results+=SdsResult)* ','? )? ')'
 ;
 
-interface SdsAbstractResult extends SdsAbstractDeclaration {}
+interface SdsAbstractResult extends SdsAbstractDeclaration, SdsAbstractObject {}
 
 interface SdsResult extends SdsAbstractResult {
 	^type?: SdsAbstractType
@@ -683,7 +683,7 @@ SdsBoolean returns SdsBoolean:
   | {SdsBoolean} 'false'
 ;
 
-interface SdsAbstractNumber extends SdsAbstractLiteral {}
+interface SdsAbstractNumber extends SdsAbstractLiteral, SdsAbstractExpression {}
 
 interface SdsFloat extends SdsAbstractNumber {
 	value: number
@@ -742,7 +742,7 @@ SdsTemplateString returns SdsTemplateString:
     expressions+=SdsTemplateStringEnd
 ;
 
-interface SdsAbstractTemplateStringPart extends SdsAbstractLiteral {
+interface SdsAbstractTemplateStringPart extends SdsAbstractExpression, SdsAbstractLiteral {
 	value: string
 }
 
@@ -774,7 +774,7 @@ SdsTemplateStringEnd returns SdsAbstractExpression:
 
 interface SdsAbstractType extends SdsAbstractObject {}
 
-interface SdsAbstractNamedTypeDeclaration extends SdsAbstractDeclaration {}
+interface SdsAbstractNamedTypeDeclaration extends SdsAbstractDeclaration, SdsAbstractObject {}
 
 interface SdsMemberType extends SdsAbstractType {
 	member: SdsNamedType
@@ -1025,7 +1025,7 @@ SdsProtocolSubtermList returns SdsProtocolSubtermList:
     subterms+=SdsProtocolSubterm+
 ;
 
-interface SdsAbstractProtocolToken extends SdsAbstractDeclaration {}
+interface SdsAbstractProtocolToken extends SdsAbstractDeclaration, SdsAbstractObject {}
 
 interface SdsProtocolSubterm extends SdsAbstractProtocolToken {
 	term?: SdsAbstractProtocolTerm
