@@ -2,7 +2,6 @@ import path from 'path';
 import { globSync } from 'glob';
 import {
     PIPELINE_FILE_EXTENSION,
-    SCHEMA_FILE_EXTENSION,
     STUB_FILE_EXTENSION,
     TEST_FILE_EXTENSION,
 } from '../../src/language-server/constant/fileExtensions';
@@ -25,10 +24,10 @@ export const resolvePathRelativeToResources = (pathRelativeToResources: string) 
  * @param pathRelativeToResources The root directory relative to `tests/resources/`.
  * @return Paths to the Safe-DS files relative to `pathRelativeToResources`.
  */
-export const listTestResources = (pathRelativeToResources: string) => {
-    const fileExtensions = [PIPELINE_FILE_EXTENSION, SCHEMA_FILE_EXTENSION, STUB_FILE_EXTENSION, TEST_FILE_EXTENSION];
+export const listTestResources = (pathRelativeToResources: string): string[] => {
+    const fileExtensions = [PIPELINE_FILE_EXTENSION, STUB_FILE_EXTENSION, TEST_FILE_EXTENSION];
     const pattern = `**/*.{${fileExtensions.join(',')}}`;
     const cwd = resolvePathRelativeToResources(pathRelativeToResources);
 
-    return globSync(pattern, { cwd, nodir: true, withFileTypes: true });
+    return globSync(pattern, { cwd, nodir: true }).filter((file) => !file.startsWith('skip'));
 };
