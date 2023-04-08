@@ -24,15 +24,15 @@ interface SdsAbstractLocalVariable extends SdsAbstractDeclaration {}
 
 interface SdsModule extends SdsAbstractDeclaration {
     imports: SdsImport[];
-// members: SdsAbstractAnnotatedObject[]
+    members: SdsAbstractAnnotatedObject[]
 }
 
 entry SdsModule returns SdsModule:
     {SdsModule}
-    // annotationCalls+=SdsAnnotationCall*
+    annotationCalls+=SdsAnnotationCall*
     ('package' name=QualifiedName)?
     imports+=SdsImport*
-    // members+=SdsModuleMember*
+    members+=SdsModuleMember*
 ;
 
 interface SdsImport extends SdsAbstractObject {
@@ -350,11 +350,11 @@ interface SdsParameter extends SdsAbstractLocalVariable {
 }
 
 SdsParameter returns SdsParameter:
-    // annotationCalls+=SdsAnnotationCall*
+    annotationCalls+=SdsAnnotationCall*
     variadic?='vararg'?
     name=ID
     (':' ^type=SdsType)?
-    // ('=' defaultValue=SdsExpression)?
+    ('=' defaultValue=SdsExpression)?
 ;
 
 interface SdsResultList extends SdsAbstractObject {
@@ -885,7 +885,7 @@ interface SdsTypeParameter extends SdsAbstractNamedTypeDeclaration {
 }
 
 SdsTypeParameter returns SdsTypeParameter:
-    // annotationCalls+=SdsAnnotationCall*
+    annotationCalls+=SdsAnnotationCall*
     variance=SdsTypeParameterVariance?
     name=ID
     ('::' kind=SdsTypeParameterKind)?
