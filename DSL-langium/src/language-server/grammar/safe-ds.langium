@@ -55,11 +55,11 @@ SdsImportAlias returns SdsImportAlias:
 ;
 
 QualifiedNameWithWildcard returns string:
-    QualifiedName ('.' '*' )?
+    ID ('.' ID)* ('.' '*')?
 ;
 
 QualifiedName returns string:
-    ID ('.' ID )*
+    ID ('.' ID)*
 ;
 
 
