@@ -73,70 +73,170 @@ SdsModuleMember returns SdsAbstractAnnotatedObject:
     {SdsAnnotationCallList} 
     annotationCalls+=SdsAnnotationCall*
     (
-      {SdsAnnotation.annotationCallList=current}
-      'annotation' name=ID
-      parameterList=SdsParameterList?
-      constraint=SdsConstraint?
-    | {SdsClass.annotationCallList=current}
-      'class'
-      name=ID
-      typeParameterList=SdsTypeParameterList?
-      parameterList=SdsParameterList?
-      parentTypeList=SdsParentTypeList?
-      body=SdsClassBody?  
-    | {SdsEnum.annotationCallList=current} 
-      'enum'
-      name=ID
-      body=SdsEnumBody?  
-    | {SdsFunction.annotationCallList=current}
-      'fun'
-      name=ID
-      typeParameterList=SdsTypeParameterList?
-      parameterList=SdsParameterList
-      resultList=SdsResultList?
-      body=SdsFunctionBody?  
-    | {SdsSchema.annotationCallList=current}
-      SdsSchemaFragment
-    | {SdsPipeline.annotationCallList=current}
-      'pipeline'
-       name=ID
-       body=SdsBlock   
-    | {SdsStep.annotationCallList=current}
-      SdsStepFragment
+        {SdsAnnotation.annotationCallList=current}
+        'annotation' name=ID
+        parameterList=SdsParameterList?
+        constraint=SdsConstraint?
+
+      | {SdsClass.annotationCallList=current}
+        SdsClassFragment
+
+      | {SdsEnum.annotationCallList=current} 
+        SdsEnumFragment
+
+      | {SdsFunction.annotationCallList=current}
+        'fun'
+        name=ID
+        typeParameterList=SdsTypeParameterList?
+        parameterList=SdsParameterList
+        resultList=SdsResultList?
+        body=SdsFunctionBody?
+
+      | {SdsSchema.annotationCallList=current}
+        SdsSchemaFragment
+
+      | {SdsPipeline.annotationCallList=current}
+        SdsPipelineFragment
+
+      | {SdsStep.annotationCallList=current}
+        SdsStepFragment
     )
 ;
 
-interface SdsClass extends SdsAbstractCallable, SdsAbstractClassMember, SdsAbstractCompilationUnitMember, SdsAbstractNamedTypeDeclaration {
+interface SdsClass extends SdsAbstractCallable, SdsAbstractClassMember, SdsAbstractModuleMember, SdsAbstractNamedTypeDeclaration {
 	typeParameterList?: SdsTypeParameterList
 	parentTypeList?: SdsParentTypeList
 	body?: SdsClassBody
 }
 
+fragment SdsClassFragment:
+    'class'
+    name=ID
+    typeParameterList=SdsTypeParameterList?
+    parameterList=SdsParameterList?
+    parentTypeList=SdsParentTypeList?
+    body=SdsClassBody?
+;
 
 interface SdsParentTypeList extends SdsAbstractObject {
 	parentTypes: SdsAbstractType[]
 }
 
+SdsParentTypeList returns SdsParentTypeList:
+    'sub'
+    parentTypes+=SdsParentType
+    (',' parentTypes+=SdsParentType)*
+    ','?
+;
+
 interface SdsClassBody extends SdsAbstractObject {
 	members: SdsAbstractObject[]
 }
 
+SdsClassBody returns SdsClassBody:
+    {SdsClassBody} '{' members+=SdsClassMember* '}'
+;
+
+SdsClassMember returns SdsAbstractObject:
+    SdsAnnotatedClassMember 
+  | SdsProtocol
+  | SdsConstraint
+;
+
+SdsAnnotatedClassMember returns SdsAbstractAnnotatedObject:
+    {SdsAnnotationCallList}
+    annotationCalls+=SdsAnnotationCall*
+    (
+        {SdsAttribute.annotationCallList=current}
+        SdsAttributeFragment
+
+      | {SdsClass.annotationCallList=current}
+        SdsClassFragment
+
+      | {SdsEnum.annotationCallList=current}
+        SdsEnumFragment
+
+      | {SdsFunction.annotationCallList=current}
+        static?='static'?
+        'fun'
+        name=ID
+        typeParameterList=SdsTypeParameterList?
+        parameterList=SdsParameterList
+        resultList=SdsResultList?
+        body=SdsFunctionBody?
+    )
+;
+
+interface SdsConstraint extends SdsAbstractObject {
+	body: SdsBlock
+}
+
+SdsConstraint returns SdsConstraint:
+    'constraint'
+    body=SdsConstraintBlock
+;
+
+SdsConstraintBlock returns SdsBlock:
+    {SdsBlock} 
+    '{'
+    (
+        statements+=SdsConstraintStatement
+        (',' statements+=SdsConstraintStatement)*
+        ','?
+    )?
+    '}'
+;
+
+SdsConstraintStatement returns SdsAbstractStatement:
+    SdsTypeParameterConstraint
+;
+
 interface SdsAbstractClassMember extends SdsAbstractDeclaration {}
 
-interface SdsEnum extends SdsAbstractNamedTypeDeclaration, SdsAbstractClassMember, SdsAbstractCompilationUnitMember {
+interface SdsAttribute extends SdsAbstractClassMember, SdsAbstractProtocolToken {
+	static: boolean
+	^type?: SdsAbstractType
+}
+
+fragment SdsAttributeFragment:
+    static?='static'?
+    'attr'
+    name=ID 
+    (':' ^type=SdsType)?
+;
+
+interface SdsEnum extends SdsAbstractNamedTypeDeclaration, SdsAbstractClassMember, SdsAbstractModuleMember {
 	body?: SdsEnumBody
 }
+
+fragment SdsEnumFragment:
+    'enum'
+    name=ID
+    body=SdsEnumBody?
+;
 
 interface SdsEnumBody extends SdsAbstractObject {
 	variants: SdsEnumVariant[]
 }
+
+SdsEnumBody returns SdsEnumBody:
+    {SdsEnumBody} '{' variants+=SdsEnumVariant * '}'
+;
 
 interface SdsEnumVariant extends SdsAbstractCallable, SdsAbstractNamedTypeDeclaration {
 	typeParameterList?: SdsTypeParameterList
 	constraint?: SdsConstraint
 }
 
-interface SdsFunction extends SdsAbstractCallable, SdsAbstractClassMember, SdsAbstractCompilationUnitMember, SdsAbstractProtocolToken {
+SdsEnumVariant returns SdsEnumVariant:
+    annotationCalls+=SdsAnnotationCall*
+    name=ID
+    typeParameterList=SdsTypeParameterList?
+    parameterList=SdsParameterList?
+    constraint=SdsConstraint?
+;
+
+interface SdsFunction extends SdsAbstractCallable, SdsAbstractClassMember, SdsAbstractModuleMember, SdsAbstractProtocolToken {
 	static: boolean
 	typeParameterList?: SdsTypeParameterList
 	resultList?: SdsResultList
@@ -146,6 +246,24 @@ interface SdsFunction extends SdsAbstractCallable, SdsAbstractClassMember, SdsAb
 interface SdsFunctionBody extends SdsAbstractObject {
 	statements: SdsAbstractObject[]
 }
+
+SdsFunctionBody returns SdsFunctionBody:
+    {SdsFunctionBody} '{' statements+=SdsFunctionStatement* '}'
+;
+
+SdsFunctionStatement returns SdsAbstractObject:
+    SdsConstraint
+;
+
+interface SdsPipeline extends SdsAbstractModuleMember {
+	body: SdsBlock
+}
+
+fragment SdsPipelineFragment:
+    'pipeline'
+    name=ID
+    body=SdsBlock
+;
 
 interface SdsStep extends SdsAbstractCallable, SdsAbstractModuleMember {
 	visibility?: string
@@ -169,7 +287,25 @@ fragment SdsStepFragment:
 
 interface SdsAnnotationCallList extends SdsAbstractAnnotatedObject {}
 
+interface SdsAnnotation extends SdsAbstractCallable, SdsAbstractModuleMember {
+	constraint?: SdsConstraint
+}
 
+interface SdsAnnotationCall extends SdsAbstractCall {
+	annotation?: @SdsAnnotation
+}
+
+SdsAnnotationCall returns SdsAnnotationCall:
+    '@' annotation=[SdsAnnotation:ID ] argumentList=SdsAnnotationCallArgumentList ?
+;
+
+SdsAnnotationCallArgumentList returns SdsArgumentList:
+    {SdsArgumentList} '(' (arguments+=SdsAnnotationCallArgument  (',' arguments+=SdsAnnotationCallArgument  )* ','? )? ')'
+;
+
+SdsAnnotationCallArgument returns SdsArgument:
+    (parameter=[SdsParameter:ID ] '=' )? value=SdsExpression
+;
 
 // -----------------------------------------------------------------------------
 // Callables, parameters, and results
