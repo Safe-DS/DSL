@@ -12,7 +12,17 @@
     },
     {
       "name": "keyword.control.safe-ds",
-      "match": "\\b(as|import|package)\\b"
+      "match": "\\b(and|annotation|as|attr|class|constraint|enum|false|fun|import|in|internal|not|null|or|out|package|pipeline|private|protocol|schema|static|step|sub|subterm|super|true|union|val|vararg|yield)\\b|\\B(\\$BooleanType|\\$ExpressionType|\\$FloatType|\\$IntType|\\$NamedType|\\$SchemaType|\\$StringType|\\\\a|\\\\f)\\b"
+    },
+    {
+      "name": "string.quoted.double.safe-ds",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
     }
   ],
   "repository": {
@@ -59,6 +69,10 @@
           }
         }
       ]
+    },
+    "string-character-escape": {
+      "name": "constant.character.escape.safe-ds",
+      "match": "\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\\{[0-9A-Fa-f]+\\}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
     }
   }
 }
