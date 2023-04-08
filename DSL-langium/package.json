@@ -44,7 +44,7 @@
     "bin": {
         "safe-ds-cli": "./bin/cli"
     },
-    "main": "./out/extension.js",
+    "main": "./out/src/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
