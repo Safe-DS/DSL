@@ -85,12 +85,7 @@ SdsModuleMember returns SdsAbstractAnnotatedObject:
         SdsEnumFragment
 
       | {SdsFunction.annotationCallList=current}
-        'fun'
-        name=ID
-        typeParameterList=SdsTypeParameterList?
-        parameterList=SdsParameterList
-        resultList=SdsResultList?
-        body=SdsFunctionBody?
+        SdsFunctionFragment
 
       | {SdsSchema.annotationCallList=current}
         SdsSchemaFragment
@@ -160,12 +155,7 @@ SdsAnnotatedClassMember returns SdsAbstractAnnotatedObject:
 
       | {SdsFunction.annotationCallList=current}
         static?='static'?
-        'fun'
-        name=ID
-        typeParameterList=SdsTypeParameterList?
-        parameterList=SdsParameterList
-        resultList=SdsResultList?
-        body=SdsFunctionBody?
+        SdsFunctionFragment
     )
 ;
 
@@ -243,6 +233,15 @@ interface SdsFunction extends SdsAbstractCallable, SdsAbstractClassMember, SdsAb
 	body?: SdsFunctionBody
 }
 
+fragment SdsFunctionFragment:
+    'fun'
+    name=ID
+    typeParameterList=SdsTypeParameterList?
+    parameterList=SdsParameterList
+    resultList=SdsResultList?
+    body=SdsFunctionBody?
+;
+
 interface SdsFunctionBody extends SdsAbstractObject {
 	statements: SdsAbstractObject[]
 }
@@ -296,7 +295,7 @@ interface SdsAnnotationCall extends SdsAbstractCall {
 }
 
 SdsAnnotationCall returns SdsAnnotationCall:
-    '@' annotation=[SdsAnnotation:ID ] argumentList=SdsAnnotationCallArgumentList ?
+    '@' annotation=[SdsAnnotation:ID] argumentList=SdsAnnotationCallArgumentList?
 ;
 
 SdsAnnotationCallArgumentList returns SdsArgumentList:
@@ -304,7 +303,7 @@ SdsAnnotationCallArgumentList returns SdsArgumentList:
 ;
 
 SdsAnnotationCallArgument returns SdsArgument:
-    (parameter=[SdsParameter:ID ] '=' )? value=SdsExpression
+    (parameter=[SdsParameter:ID ] '=')? value=SdsExpression
 ;
 
 // -----------------------------------------------------------------------------
