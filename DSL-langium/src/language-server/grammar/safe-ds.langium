@@ -1,7 +1,25 @@
 grammar SafeDs
 
 // https://github.com/langium/langium/discussions/921#discussioncomment-4943180
-terminal CALL_TYPE_ARGUMENT_LIST_OPEN: /<(?=\s*[_a-zA-Z][\w_]*\s*(?:,\s*[_a-zA-Z][\w_]*\s*)*>)/;
+terminal TYPE_ARGUMENT_LIST_OPEN:
+    // /<(?=\s*[_a-zA-Z][\w_]*\s*(?:,\s*[_a-zA-Z][\w_]*\s*)*>)/
+    '<' (?= ((ID '=')? ID (',' (ID '=' ID)?)* ','?)? '>')
+    // '<' (?= '>')
+    // /[<(?=\s*>)]/
+    /* 
+    <
+    (?=
+        \s*[_a-zA-Z][\w_]*\s*
+        (?:
+            ,\s*[_a-zA-Z][\w_]*\s*
+        )*
+        >
+    )
+    */
+;
+terminal LESS_THAN:
+    '<'
+;
 
 // -----------------------------------------------------------------------------
 // Base interfaces
@@ -551,7 +569,7 @@ SdsComparisonExpression returns SdsAbstractExpression:
 ;
 
 SdsComparisonOperator returns string:
-    '<' | '<=' | '>=' | '>'
+    LESS_THAN | '<=' | '>=' | '>'
 ;
 
 SdsAdditiveExpression returns SdsAbstractExpression:
@@ -843,7 +861,7 @@ SdsUnionType returns SdsUnionType:
 
 SdsUnionTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    '<'
+    TYPE_ARGUMENT_LIST_OPEN
     (
         typeArguments+=SdsUnionTypeArgument
         (',' typeArguments+=SdsUnionTypeArgument)*
@@ -878,7 +896,7 @@ interface SdsTypeParameterList extends SdsAbstractObject {
 
 SdsTypeParameterList returns SdsTypeParameterList:
     {SdsTypeParameterList}
-    '<'
+    LESS_THAN
         (
             typeParameters+=SdsTypeParameter
             (',' typeParameters+=SdsTypeParameter)*
@@ -935,14 +953,14 @@ interface SdsTypeArgumentList extends SdsAbstractObject {
 
 SdsTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    '<'
+    TYPE_ARGUMENT_LIST_OPEN
     (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
     '>'
 ;
 
 SdsCallTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    CALL_TYPE_ARGUMENT_LIST_OPEN
+    TYPE_ARGUMENT_LIST_OPEN
     (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
     '>'
 ;
