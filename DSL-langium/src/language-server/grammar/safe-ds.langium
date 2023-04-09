@@ -1,36 +1,5 @@
 grammar SafeDs
 
-hidden terminal WS: /\s+/;
-// https://github.com/langium/langium/discussions/921#discussioncomment-4943180
-terminal TYPE_ARGUMENT_LIST_OPEN:
-    // /<(?=\s*[_a-zA-Z][\w_]*\s*(?:,\s*[_a-zA-Z][\w_]*\s*)*>)/
-    '<' 
-    (?=
-        /\s*/
-        (
-            (ID /\s*/ '=' /\s*/)? ID
-            (/\s*/ ',' /\s*/ (ID /\s*/ '=' /\s*/)? ID)*
-            /\s*/ ','?
-        )?
-        /\s*/ '>'
-    )
-    // '<' (?= '>')
-    // /[<(?=\s*>)]/
-    /* 
-    <
-    (?=
-        \s*[_a-zA-Z][\w_]*\s*
-        (?:
-            ,\s*[_a-zA-Z][\w_]*\s*
-        )*
-        >
-    )
-    */
-;
-terminal LESS_THAN:
-    '<'
-;
-
 // -----------------------------------------------------------------------------
 // Base interfaces
 // -----------------------------------------------------------------------------
@@ -871,7 +840,7 @@ SdsUnionType returns SdsUnionType:
 
 SdsUnionTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    (LESS_THAN | TYPE_ARGUMENT_LIST_OPEN)
+    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
     (
         typeArguments+=SdsUnionTypeArgument
         (',' typeArguments+=SdsUnionTypeArgument)*
@@ -906,7 +875,7 @@ interface SdsTypeParameterList extends SdsAbstractObject {
 
 SdsTypeParameterList returns SdsTypeParameterList:
     {SdsTypeParameterList}
-    (LESS_THAN | TYPE_ARGUMENT_LIST_OPEN)
+    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
         (
             typeParameters+=SdsTypeParameter
             (',' typeParameters+=SdsTypeParameter)*
@@ -963,14 +932,14 @@ interface SdsTypeArgumentList extends SdsAbstractObject {
 
 SdsTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    (LESS_THAN | TYPE_ARGUMENT_LIST_OPEN)
+    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
     (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
     '>'
 ;
 
 SdsCallTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    TYPE_ARGUMENT_LIST_OPEN
+    CALL_TYPE_ARGUMENT_LIST_START
     (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
     '>'
 ;
@@ -1194,25 +1163,45 @@ SdsProtocolParenthesizedTerm returns SdsProtocolParenthesizedTerm:
 terminal ID returns string: IDENTIFIER | '`' IDENTIFIER '`';
 terminal IDENTIFIER returns string: /[_a-zA-Z][_a-zA-Z0-9]*/;
 
-terminal FLOAT returns number:DECIMAL_DIGIT+ '.' DECIMAL_DIGIT+ FLOAT_EXPONENT?  | DECIMAL_DIGIT+ FLOAT_EXPONENT;
+terminal FLOAT returns number: DECIMAL_DIGIT+ '.' DECIMAL_DIGIT+ FLOAT_EXPONENT?  | DECIMAL_DIGIT+ FLOAT_EXPONENT;
 terminal DECIMAL_DIGIT returns string: /[0-9]/;
-terminal FLOAT_EXPONENT returns string:('e' | 'E' )('+' | '-' )?DECIMAL_DIGIT+;
-terminal INT returns number:DECIMAL_DIGIT+;
-terminal STRING returns string:STRING_START STRING_TEXT* STRING_END;
-terminal STRING_START returns string:STRING_DELIMITER;
-terminal STRING_END returns string:'{'? STRING_DELIMITER;
-terminal STRING_DELIMITER returns string:'"';
+terminal FLOAT_EXPONENT returns string: ('e' | 'E' )('+' | '-' )? DECIMAL_DIGIT+;
+terminal INT returns number: DECIMAL_DIGIT+;
+terminal STRING returns string: STRING_START STRING_TEXT* STRING_END;
+terminal STRING_START returns string: STRING_DELIMITER;
+terminal STRING_END returns string: '{'? STRING_DELIMITER;
+terminal STRING_DELIMITER returns string: '"';
 terminal STRING_TEXT returns string
     : '{'? ESCAPE_SEQUENCE
     |  /{?[^\\"{]/
 ;
-terminal ESCAPE_SEQUENCE returns string:'\\' .;
-terminal TEMPLATE_EXPRESSION_START returns string:'{{';
-terminal TEMPLATE_EXPRESSION_END returns string:'}}';
-terminal TEMPLATE_STRING_START returns string:STRING_START STRING_TEXT* TEMPLATE_EXPRESSION_START;
-terminal TEMPLATE_STRING_INNER returns string:TEMPLATE_EXPRESSION_END STRING_TEXT* TEMPLATE_EXPRESSION_START;
-terminal TEMPLATE_STRING_END returns string:TEMPLATE_EXPRESSION_END STRING_TEXT* STRING_END;
+terminal ESCAPE_SEQUENCE returns string: '\\' .;
+terminal TEMPLATE_EXPRESSION_START returns string: '{{';
+terminal TEMPLATE_EXPRESSION_END returns string: '}}';
+terminal TEMPLATE_STRING_START returns string: STRING_START STRING_TEXT* TEMPLATE_EXPRESSION_START;
+terminal TEMPLATE_STRING_INNER returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* TEMPLATE_EXPRESSION_START;
+terminal TEMPLATE_STRING_END returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* STRING_END;
+
+// Resolves the ambiguity between the less than operator (<) and the start of a type argument list of a call (<).
+// See also: https://github.com/langium/langium/discussions/921#discussioncomment-4943180
+terminal CALL_TYPE_ARGUMENT_LIST_START:
+    '<' 
+    (?=
+        /\s*/
+        (   ID /\s*/ '='                                // Named type argument
+        |   '*'                                         // Star projection as positional type argument
+        |   'in'                                        // Contravariant type projection as positional type argument
+        |   'out'                                       // Covariant type projection as positional type argument
+        |   ID (/\s*/ '.' /\s*/ ID)* /\s*/ (',' | '>')  // Invariant type projection as positional type argument
+        |   '>'                                         // Empty type argument list
+        )
+    )
+;
+terminal LESS_THAN:
+    '<'
+;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 hidden terminal TEST_MARKER: /[»«]/;
+hidden terminal WS: /\s+/;
