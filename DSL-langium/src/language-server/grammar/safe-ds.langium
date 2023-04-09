@@ -1,9 +1,19 @@
 grammar SafeDs
 
+hidden terminal WS: /\s+/;
 // https://github.com/langium/langium/discussions/921#discussioncomment-4943180
 terminal TYPE_ARGUMENT_LIST_OPEN:
     // /<(?=\s*[_a-zA-Z][\w_]*\s*(?:,\s*[_a-zA-Z][\w_]*\s*)*>)/
-    '<' (?= ((ID '=')? ID (',' (ID '=' ID)?)* ','?)? '>')
+    '<' 
+    (?=
+        /\s*/
+        (
+            (ID /\s*/ '=' /\s*/)? ID
+            (/\s*/ ',' /\s*/ (ID /\s*/ '=' /\s*/)? ID)*
+            /\s*/ ','?
+        )?
+        /\s*/ '>'
+    )
     // '<' (?= '>')
     // /[<(?=\s*>)]/
     /* 
@@ -896,7 +906,7 @@ interface SdsTypeParameterList extends SdsAbstractObject {
 
 SdsTypeParameterList returns SdsTypeParameterList:
     {SdsTypeParameterList}
-    LESS_THAN
+    TYPE_ARGUMENT_LIST_OPEN
         (
             typeParameters+=SdsTypeParameter
             (',' typeParameters+=SdsTypeParameter)*
@@ -1206,4 +1216,3 @@ terminal TEMPLATE_STRING_END returns string:TEMPLATE_EXPRESSION_END STRING_TEXT*
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 hidden terminal TEST_MARKER: /[»«]/;
-hidden terminal WS: /\s+/;
