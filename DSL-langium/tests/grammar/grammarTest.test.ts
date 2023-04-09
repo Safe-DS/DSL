@@ -31,25 +31,21 @@ describe('grammar', () => {
 
         if (test.expectedResults === 'syntax_error') {
             if (grammarErrors.length === 0) {
-                throw new AssertionError(
-                    {
-                        message: 'Expected syntax errors but found none:',
-                        actual: grammarErrors,
-                        expected: [],
-                    }
-                )
+                throw new AssertionError({
+                    message: 'Expected syntax errors but found none:',
+                    actual: grammarErrors,
+                    expected: [],
+                });
             }
         }
 
         if (test.expectedResults === 'no_syntax_error') {
             if (grammarErrors.length > 0) {
-                throw new AssertionError(
-                    {
-                        message: 'Expected no syntax errors but found some:',
-                        actual: grammarErrors,
-                        expected: [],
-                    }
-                )
+                throw new AssertionError({
+                    message: 'Expected no syntax errors but found some:',
+                    actual: grammarErrors,
+                    expected: [],
+                });
             }
         }
     });

@@ -8,7 +8,7 @@
         "./docs/javascript/**/*",
         "./DSL/com.larsreimann.safeds.vscode/src/**/*",
         "./DSL-langium/src/**/*",
-        "./DSL-langium/tests/**/*",
+        "./DSL-langium/tests/**/*"
     ],
     "exclude": []
 }

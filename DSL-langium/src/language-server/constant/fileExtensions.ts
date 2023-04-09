@@ -28,10 +28,7 @@ export const TEST_FILE_EXTENSION = 'sdstest';
 /**
  * All file extensions that are supported by the Safe-DS language.
  */
-export type SdSFileExtension =
-    | typeof PIPELINE_FILE_EXTENSION
-    | typeof STUB_FILE_EXTENSION
-    | typeof TEST_FILE_EXTENSION;
+export type SdSFileExtension = typeof PIPELINE_FILE_EXTENSION | typeof STUB_FILE_EXTENSION | typeof TEST_FILE_EXTENSION;
 
 /**
  * Returns whether the object is contained in a pipeline file.
