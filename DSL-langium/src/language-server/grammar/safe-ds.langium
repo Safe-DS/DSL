@@ -1161,23 +1161,23 @@ SdsProtocolParenthesizedTerm returns SdsProtocolParenthesizedTerm:
 // -----------------------------------------------------------------------------
 
 terminal ID returns string: IDENTIFIER | '`' IDENTIFIER '`';
-terminal IDENTIFIER returns string: /[_a-zA-Z][_a-zA-Z0-9]*/;
+terminal fragment IDENTIFIER: /[_a-zA-Z][_a-zA-Z0-9]*/;
 
 terminal FLOAT returns number: DECIMAL_DIGIT+ '.' DECIMAL_DIGIT+ FLOAT_EXPONENT?  | DECIMAL_DIGIT+ FLOAT_EXPONENT;
-terminal DECIMAL_DIGIT returns string: /[0-9]/;
-terminal FLOAT_EXPONENT returns string: ('e' | 'E' )('+' | '-' )? DECIMAL_DIGIT+;
+terminal fragment DECIMAL_DIGIT: /[0-9]/;
+terminal fragment FLOAT_EXPONENT: ('e' | 'E' )('+' | '-' )? DECIMAL_DIGIT+;
 terminal INT returns number: DECIMAL_DIGIT+;
 terminal STRING returns string: STRING_START STRING_TEXT* STRING_END;
-terminal STRING_START returns string: STRING_DELIMITER;
-terminal STRING_END returns string: '{'? STRING_DELIMITER;
-terminal STRING_DELIMITER returns string: '"';
-terminal STRING_TEXT returns string
+terminal fragment STRING_START: STRING_DELIMITER;
+terminal fragment STRING_END: '{'? STRING_DELIMITER;
+terminal fragment STRING_DELIMITER: '"';
+terminal fragment STRING_TEXT
     : '{'? ESCAPE_SEQUENCE
     |  /{?[^\\"{]/
 ;
-terminal ESCAPE_SEQUENCE returns string: '\\' .;
-terminal TEMPLATE_EXPRESSION_START returns string: '{{';
-terminal TEMPLATE_EXPRESSION_END returns string: '}}';
+terminal fragment ESCAPE_SEQUENCE: '\\' .;
+terminal fragment TEMPLATE_EXPRESSION_START: '{{';
+terminal fragment TEMPLATE_EXPRESSION_END: '}}';
 terminal TEMPLATE_STRING_START returns string: STRING_START STRING_TEXT* TEMPLATE_EXPRESSION_START;
 terminal TEMPLATE_STRING_INNER returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* TEMPLATE_EXPRESSION_START;
 terminal TEMPLATE_STRING_END returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* STRING_END;
