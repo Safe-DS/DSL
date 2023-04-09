@@ -871,7 +871,7 @@ SdsUnionType returns SdsUnionType:
 
 SdsUnionTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    TYPE_ARGUMENT_LIST_OPEN
+    (LESS_THAN | TYPE_ARGUMENT_LIST_OPEN)
     (
         typeArguments+=SdsUnionTypeArgument
         (',' typeArguments+=SdsUnionTypeArgument)*
@@ -906,7 +906,7 @@ interface SdsTypeParameterList extends SdsAbstractObject {
 
 SdsTypeParameterList returns SdsTypeParameterList:
     {SdsTypeParameterList}
-    TYPE_ARGUMENT_LIST_OPEN
+    (LESS_THAN | TYPE_ARGUMENT_LIST_OPEN)
         (
             typeParameters+=SdsTypeParameter
             (',' typeParameters+=SdsTypeParameter)*
@@ -963,7 +963,7 @@ interface SdsTypeArgumentList extends SdsAbstractObject {
 
 SdsTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    TYPE_ARGUMENT_LIST_OPEN
+    (LESS_THAN | TYPE_ARGUMENT_LIST_OPEN)
     (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
     '>'
 ;
