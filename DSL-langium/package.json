@@ -49,8 +49,8 @@
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
         "watch": "tsc -b tsconfig.json --watch",
-        "test": "vitest tests",
-        "test-with-coverage": "vitest tests --coverage",
+        "test": "vitest --dir tests",
+        "test-with-coverage": "vitest --coverage --dir tests",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch"
     },
