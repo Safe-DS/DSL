@@ -5,5 +5,5 @@ step s1(
 ) {}
 
 step s2(
-    f: (OuterClass<A, B>?.MiddleClass<C, D>?).InnerClass
+    f: OuterClass<A, B>?.MiddleClass<C, D>?.InnerClass
 ) {}

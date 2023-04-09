@@ -790,15 +790,6 @@ SdsPrimaryType returns SdsAbstractType:
     SdsCallableType 
   | SdsNamedType
   | SdsUnionType
-  | SdsParenthesizedType
-;
-
-interface SdsParenthesizedType extends SdsAbstractType {
-	^type: SdsAbstractType
-}
-
-SdsParenthesizedType returns SdsParenthesizedType:
-    '(' ^type=SdsType ')'
 ;
 
 interface SdsCallableType extends SdsAbstractCallable, SdsAbstractType {
@@ -858,15 +849,7 @@ SdsUnionTypeArgumentValue returns SdsAbstractTypeArgumentValue:
 ;
 
 SdsParentType returns SdsAbstractType:
-    SdsParentPrimaryType ({SdsMemberType.receiver=current} '.' member=SdsNamedType)*
-;
-
-SdsParentPrimaryType returns SdsAbstractType:
-    SdsNamedType | SdsParentParenthesizedType
-;
-
-SdsParentParenthesizedType returns SdsParenthesizedType:
-    '(' ^type=SdsParentType  ')'
+    SdsNamedType ({SdsMemberType.receiver=current} '.' member=SdsNamedType)*
 ;
 
 interface SdsTypeParameterList extends SdsAbstractObject {
