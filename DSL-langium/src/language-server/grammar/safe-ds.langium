@@ -1,5 +1,8 @@
 grammar SafeDs
 
+// https://github.com/langium/langium/discussions/921#discussioncomment-4943180
+terminal CALL_TYPE_ARGUMENT_LIST_OPEN: /<(?=\s*[_a-zA-Z][\w_]*\s*(?:,\s*[_a-zA-Z][\w_]*\s*)*>)/;
+
 // -----------------------------------------------------------------------------
 // Base interfaces
 // -----------------------------------------------------------------------------
@@ -616,7 +619,7 @@ SdsChainedExpression returns SdsAbstractExpression:
     SdsPrimaryExpression
     (
         {SdsCall.receiver=current}
-        typeArgumentList=SdsTypeArgumentList?
+        typeArgumentList=SdsCallTypeArgumentList?
         argumentList=SdsCallArgumentList
 
     | {SdsIndexedAccess.receiver=current}
@@ -937,6 +940,13 @@ SdsTypeArgumentList returns SdsTypeArgumentList:
     '>'
 ;
 
+SdsCallTypeArgumentList returns SdsTypeArgumentList:
+    {SdsTypeArgumentList}
+    CALL_TYPE_ARGUMENT_LIST_OPEN
+    (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
+    '>'
+;
+
 interface SdsTypeArgument extends SdsAbstractObject {
 	typeParameter?: @SdsTypeParameter
 	value: SdsAbstractTypeArgumentValue
@@ -1166,7 +1176,7 @@ terminal STRING_END returns string:'{'? STRING_DELIMITER;
 terminal STRING_DELIMITER returns string:'"';
 terminal STRING_TEXT returns string
     : '{'? ESCAPE_SEQUENCE
-    |  /{?[^\\"{]/ // '{'? !('\\'|STRING_DELIMITER|'{')
+    |  /{?[^\\"{]/
 ;
 terminal ESCAPE_SEQUENCE returns string:'\\' .;
 terminal TEMPLATE_EXPRESSION_START returns string:'{{';
