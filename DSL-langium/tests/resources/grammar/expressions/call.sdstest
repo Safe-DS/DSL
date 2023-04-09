@@ -2,5 +2,7 @@
 
 pipeline myPipeline {
     f();
-    f<*, in Number, out Number, T = Number>(1, b = 2);
+    f<Number<T>>();
+    f<T=Number<S>>();
+    f<*, in Number, out Number, T = Number, Number<T>>(1, b = 2);
 }

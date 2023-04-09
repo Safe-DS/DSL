@@ -1188,12 +1188,15 @@ terminal CALL_TYPE_ARGUMENT_LIST_START:
     '<' 
     (?=
         /\s*/
-        (   ID /\s*/ '='                                // Named type argument
-        |   '*'                                         // Star projection as positional type argument
-        |   'in'                                        // Contravariant type projection as positional type argument
-        |   'out'                                       // Covariant type projection as positional type argument
-        |   ID (/\s*/ '.' /\s*/ ID)* /\s*/ (',' | '>')  // Invariant type projection as positional type argument
-        |   '>'                                         // Empty type argument list
+        (   '*'                                 // Star projection as positional type argument
+        |   'in'                                // Contravariant type projection as positional type argument
+        |   'out'                               // Covariant type projection as positional type argument
+        |   'union'                             // Invariant union type as positional type argument
+        |   '>'                                 // Empty type argument list
+        |    ID /\s*/ 
+            ( '='                               // Named type argument
+            | ('.' /\s*/ ID /\s*/)* (',' | '>') // Invariant type projection as positional type argument
+            )
         )
     )
 ;

@@ -9,4 +9,6 @@ pipeline myPipeline {
     1 !== 2;
     1 >= 2;
     1 > 2;
+
+    1 < a<Int>();
 }
