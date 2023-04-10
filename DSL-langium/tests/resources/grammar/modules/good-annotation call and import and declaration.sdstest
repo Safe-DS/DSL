@@ -1,5 +1,7 @@
 // $TEST$ no_syntax_error
 
-@AnnotationUse
+@Annotation1
 
 import myPackage.MyClass
+
+class C

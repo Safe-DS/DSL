@@ -2,6 +2,6 @@
 
 package test
 
-@AnnotationCall
+@Annotation1
 
-import someDeclaration
+import myPackage.MyClass
