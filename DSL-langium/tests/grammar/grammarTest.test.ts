@@ -32,7 +32,7 @@ describe('grammar', () => {
         if (test.expectedResults === 'syntax_error') {
             if (grammarErrors.length === 0) {
                 throw new AssertionError({
-                    message: 'Expected syntax errors but found none:',
+                    message: 'Expected syntax errors but found none.',
                     actual: grammarErrors,
                     expected: [],
                 });
@@ -42,7 +42,7 @@ describe('grammar', () => {
         if (test.expectedResults === 'no_syntax_error') {
             if (grammarErrors.length > 0) {
                 throw new AssertionError({
-                    message: 'Expected no syntax errors but found some:',
+                    message: 'Expected no syntax errors but found some.',
                     actual: grammarErrors,
                     expected: [],
                 });
