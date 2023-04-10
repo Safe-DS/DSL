@@ -1,74 +1,78 @@
 {
-    "name": "safe-ds",
-    "scopeName": "source.safe-ds",
-    "fileTypes": [".sdspipe", ".sdsstub", ".sdstest"],
-    "patterns": [
+  "name": "safe-ds",
+  "scopeName": "source.safe-ds",
+  "fileTypes": [
+    ".sdspipe",
+    ".sdsstub",
+    ".sdstest"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "name": "keyword.control.safe-ds",
+      "match": "\\b(and|annotation|as|attr|class|constraint|enum|false|fun|import|in|internal|not|null|or|out|package|pipeline|private|protocol|schema|static|step|sub|subterm|super|true|union|val|vararg|yield)\\b|\\B(\\$BooleanType|\\$ExpressionType|\\$FloatType|\\$IntType|\\$NamedType|\\$SchemaType|\\$StringType|\\\\a|\\\\f)\\b"
+    },
+    {
+      "name": "string.quoted.double.safe-ds",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
         {
-            "include": "#comments"
-        },
-        {
-            "name": "keyword.control.safe-ds",
-            "match": "\\b(and|annotation|as|attr|class|constraint|enum|false|fun|import|in|internal|not|null|or|out|package|pipeline|private|protocol|schema|static|step|sub|subterm|super|true|union|val|vararg|yield)\\b|\\B(\\$BooleanType|\\$ExpressionType|\\$FloatType|\\$IntType|\\$NamedType|\\$SchemaType|\\$StringType|\\\\a|\\\\f)\\b"
-        },
-        {
-            "name": "string.quoted.double.safe-ds",
-            "begin": "\"",
-            "end": "\"",
-            "patterns": [
-                {
-                    "include": "#string-character-escape"
-                }
-            ]
+          "include": "#string-character-escape"
         }
-    ],
-    "repository": {
-        "comments": {
-            "patterns": [
-                {
-                    "name": "comment.block.safe-ds",
-                    "begin": "/\\*",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.comment.safe-ds"
-                        }
-                    },
-                    "end": "\\*/",
-                    "endCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.comment.safe-ds"
-                        }
-                    }
-                },
-                {
-                    "begin": "//",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "punctuation.whitespace.comment.leading.safe-ds"
-                        }
-                    },
-                    "end": "(?=$)",
-                    "name": "comment.line.safe-ds"
-                },
-                {
-                    "name": "comment.block.safe-ds",
-                    "begin": "[»«]",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.comment.safe-ds"
-                        }
-                    },
-                    "end": "[»«]",
-                    "endCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.comment.safe-ds"
-                        }
-                    }
-                }
-            ]
-        },
-        "string-character-escape": {
-            "name": "constant.character.escape.safe-ds",
-            "match": "\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\\{[0-9A-Fa-f]+\\}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
-        }
+      ]
     }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.safe-ds",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.safe-ds"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.safe-ds"
+            }
+          }
+        },
+        {
+          "begin": "//",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.safe-ds"
+            }
+          },
+          "end": "(?=$)",
+          "name": "comment.line.safe-ds"
+        },
+        {
+          "name": "comment.block.safe-ds",
+          "begin": "[»«]",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.safe-ds"
+            }
+          },
+          "end": "[»«]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.safe-ds"
+            }
+          }
+        }
+      ]
+    },
+    "string-character-escape": {
+      "name": "constant.character.escape.safe-ds",
+      "match": "\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\\{[0-9A-Fa-f]+\\}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
+    }
+  }
 }
