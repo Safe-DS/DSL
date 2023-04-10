@@ -35,11 +35,11 @@ entry SdsModule returns SdsModule:
         imports+=SdsImport*
         members+=SdsAnnotatedModuleMember*
     
-    |  imports+=SdsImport+
-       members+=SdsAnnotatedModuleMember*
-    
-    |  members+=SdsUnannotatedModuleMember
-       members+=SdsAnnotatedModuleMember*
+    |   imports+=SdsImport+
+        members+=SdsAnnotatedModuleMember*
+     
+    |   members+=SdsUnannotatedModuleMember
+        members+=SdsAnnotatedModuleMember*
     )?
 ;
 
