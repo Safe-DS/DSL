@@ -131,15 +131,20 @@ SdsUnannotatedModuleMember returns SdsAnnotatedObject:
       SdsStepFragment
 ;
 
+interface SdsAnnotation extends SdsCallable, SdsModuleMember {
+	constraintList?: SdsConstraintList
+}
+
 fragment SdsAnnotationFragment:
     'annotation' name=ID
     parameterList=SdsParameterList?
-    constraint=SdsConstraint?
+    constraintList=SdsConstraintList?
 ;
 
 interface SdsClass extends SdsCallable, SdsClassMember, SdsModuleMember, SdsNamedTypeDeclaration {
 	typeParameterList?: SdsTypeParameterList
 	parentTypeList?: SdsParentTypeList
+    constraintList?: SdsConstraintList
 	body?: SdsClassBody
 }
 
@@ -149,6 +154,7 @@ fragment SdsClassFragment:
     typeParameterList=SdsTypeParameterList?
     parameterList=SdsParameterList?
     parentTypeList=SdsParentTypeList?
+    constraintList=SdsConstraintList?
     body=SdsClassBody?
 ;
 
@@ -176,7 +182,6 @@ interface SdsClassMember extends SdsDeclaration, SdsObject {}
 SdsClassMember returns SdsObject:
     SdsAnnotatedClassMember 
   | SdsProtocol
-  | SdsConstraint
 ;
 
 SdsAnnotatedClassMember returns SdsAnnotatedObject:
@@ -196,30 +201,6 @@ SdsAnnotatedClassMember returns SdsAnnotatedObject:
         static?='static'?
         SdsFunctionFragment
     )
-;
-
-interface SdsConstraint extends SdsObject {
-	body: SdsBlock
-}
-
-SdsConstraint returns SdsConstraint:
-    'constraint'
-    body=SdsConstraintBlock
-;
-
-SdsConstraintBlock returns SdsBlock:
-    {SdsBlock} 
-    '{'
-    (
-        statements+=SdsConstraintStatement
-        (',' statements+=SdsConstraintStatement)*
-        ','?
-    )?
-    '}'
-;
-
-SdsConstraintStatement returns SdsStatement:
-    SdsTypeParameterConstraint
 ;
 
 interface SdsAttribute extends SdsClassMember, SdsProtocolToken {
@@ -254,7 +235,7 @@ SdsEnumBody returns SdsEnumBody:
 
 interface SdsEnumVariant extends SdsCallable, SdsNamedTypeDeclaration {
 	typeParameterList?: SdsTypeParameterList
-	constraint?: SdsConstraint
+	constraintList?: SdsConstraintList
 }
 
 SdsEnumVariant returns SdsEnumVariant:
@@ -262,14 +243,14 @@ SdsEnumVariant returns SdsEnumVariant:
     name=ID
     typeParameterList=SdsTypeParameterList?
     parameterList=SdsParameterList?
-    constraint=SdsConstraint?
+    constraintList=SdsConstraintList?
 ;
 
 interface SdsFunction extends SdsCallable, SdsClassMember, SdsModuleMember, SdsProtocolToken {
 	static: boolean
 	typeParameterList?: SdsTypeParameterList
 	resultList?: SdsResultList
-	body?: SdsFunctionBody
+	constraintList?: SdsConstraintList
 }
 
 fragment SdsFunctionFragment:
@@ -278,19 +259,7 @@ fragment SdsFunctionFragment:
     typeParameterList=SdsTypeParameterList?
     parameterList=SdsParameterList
     resultList=SdsResultList?
-    body=SdsFunctionBody?
-;
-
-interface SdsFunctionBody extends SdsObject {
-	statements: SdsObject[]
-}
-
-SdsFunctionBody returns SdsFunctionBody:
-    {SdsFunctionBody} '{' statements+=SdsFunctionStatement* '}'
-;
-
-SdsFunctionStatement returns SdsObject:
-    SdsConstraint
+    constraintList=SdsConstraintList?
 ;
 
 interface SdsPipeline extends SdsModuleMember {
@@ -320,14 +289,10 @@ fragment SdsStepFragment:
 
 
 // -----------------------------------------------------------------------------
-// Annotations
+// Annotation calls
 // -----------------------------------------------------------------------------
 
 interface SdsAnnotationCallList extends SdsAnnotatedObject {}
-
-interface SdsAnnotation extends SdsCallable, SdsModuleMember {
-	constraint?: SdsConstraint
-}
 
 interface SdsAnnotationCall extends SdsAbstractCall {
 	annotation?: @SdsAnnotation
@@ -344,6 +309,49 @@ SdsAnnotationCallArgumentList returns SdsArgumentList:
 SdsAnnotationCallArgument returns SdsArgument:
     (parameter=[SdsParameter:ID ] '=')? value=SdsExpression
 ;
+
+
+// -----------------------------------------------------------------------------
+// Constraints
+// -----------------------------------------------------------------------------
+
+interface SdsConstraintList extends SdsObject {
+	constraints: SdsConstraint[]
+}
+
+SdsConstraintList returns SdsConstraintList:
+    'where'
+    '{'
+    (
+        constraints+=SdsConstraint
+        (',' constraints+=SdsConstraint)*
+        ','?
+    )?
+    '}'
+;
+
+interface SdsConstraint extends SdsObject {}
+
+SdsConstraint returns SdsConstraint:
+    SdsTypeParameterConstraint
+;
+
+interface SdsTypeParameterConstraint extends SdsConstraint {
+	leftOperand: @SdsTypeParameter
+	operator: string
+	rightOperand: SdsType
+}
+
+SdsTypeParameterConstraint returns SdsTypeParameterConstraint:
+    leftOperand=[SdsTypeParameter:ID]
+    operator=SdsTypeParameterConstraintOperator
+    rightOperand=SdsType
+;
+
+SdsTypeParameterConstraintOperator returns string:
+    'sub' | 'super'
+;
+
 
 // -----------------------------------------------------------------------------
 // Callables, parameters, and results
@@ -926,22 +934,6 @@ SdsTypeParameterKind returns string:
   | '$BooleanType'
   | '$StringType'
   | '$NamedType'
-;
-
-interface SdsTypeParameterConstraint extends SdsStatement {
-	leftOperand: @SdsTypeParameter
-	operator: string
-	rightOperand: SdsType
-}
-
-SdsTypeParameterConstraint returns SdsTypeParameterConstraint:
-    leftOperand=[SdsTypeParameter:ID]
-    operator=SdsTypeParameterConstraintOperator
-    rightOperand=SdsType
-;
-
-SdsTypeParameterConstraintOperator returns string:
-    'sub' | 'super'
 ;
 
 interface SdsTypeArgumentList extends SdsObject {
