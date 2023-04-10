@@ -33,13 +33,13 @@ entry SdsModule returns SdsModule:
     (
         ('package' name=QualifiedName)
         imports+=SdsImport*
-        members+=SdsAnnotatedModuleMember*
+        members+=(SdsAnnotatedModuleMember | SdsUnannotatedModuleMember)*
     
     |   imports+=SdsImport+
-        members+=SdsAnnotatedModuleMember*
+        members+=(SdsAnnotatedModuleMember | SdsUnannotatedModuleMember)*
      
     |   members+=SdsUnannotatedModuleMember
-        members+=SdsAnnotatedModuleMember*
+        members+=(SdsAnnotatedModuleMember | SdsUnannotatedModuleMember)*
     )?
 ;
 
@@ -78,8 +78,8 @@ QualifiedName returns string:
 interface SdsAbstractModuleMember extends SdsAbstractDeclaration, SdsAbstractObject {}
 
 SdsAnnotatedModuleMember returns SdsAbstractAnnotatedObject:
-    {SdsAnnotationCallList} 
-    annotationCalls+=SdsAnnotationCall*
+    {SdsAnnotationCallList}
+    annotationCalls+=SdsAnnotationCall+
     (
         {SdsAnnotation.annotationCallList=current}
         SdsAnnotationFragment
