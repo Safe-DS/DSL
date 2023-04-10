@@ -5,6 +5,6 @@ package tests.trailingComma.inEnumVariantTypeParameterList
 enum E {
     A<T> constraint {
         T sub Any,
-        T super Int
+        T super Int,
     }
 }

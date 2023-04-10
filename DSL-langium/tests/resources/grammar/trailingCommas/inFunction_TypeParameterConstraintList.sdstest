@@ -5,6 +5,6 @@ package tests.trailingComma.inFunctionTypeParameterConstraintList
 fun f<T>() {
     constraint {
         T sub Any,
-        T super Int
+        T super Int,
     }
 }

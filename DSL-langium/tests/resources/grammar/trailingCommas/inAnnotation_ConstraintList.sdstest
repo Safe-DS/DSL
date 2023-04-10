@@ -4,5 +4,5 @@ package tests.trailingComma.inAnnotationConstraintList
 
 annotation A constraint {
     T sub Any,
-    T super Int
+    T super Int,
 }

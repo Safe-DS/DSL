@@ -1,5 +1,6 @@
 // $TEST$ no_syntax_error
 
 schema MySchemaWithTrailingComma {
-    "column name" : ColumnType,
+    "column1" : ColumnType,
+    "column2" : ColumnType,
 }

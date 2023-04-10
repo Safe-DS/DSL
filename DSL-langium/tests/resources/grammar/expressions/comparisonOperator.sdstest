@@ -10,5 +10,6 @@ pipeline myPipeline {
     1 >= 2;
     1 > 2;
 
+    // The start of a type argument list of a call could be confused with the less than operator
     1 < a<Int>();
 }

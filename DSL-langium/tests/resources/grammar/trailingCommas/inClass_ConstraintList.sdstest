@@ -5,6 +5,6 @@ package tests.trailingComma.inClassConstraintList
 class C<T> {
     constraint {
         T sub Any,
-        T super Int
+        T super Int,
     }
 }
