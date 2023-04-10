@@ -12,7 +12,7 @@ interface SdsAbstractAnnotatedObject extends SdsAbstractObject {
 
 interface SdsAbstractDeclaration extends SdsAbstractAnnotatedObject, SdsAbstractObject {
     annotationCallList?: SdsAnnotationCallList
-	name?: string
+	name: string
 }
 
 interface SdsAbstractLocalVariable extends SdsAbstractDeclaration, SdsAbstractObject {}
@@ -82,9 +82,7 @@ SdsAnnotatedModuleMember returns SdsAbstractAnnotatedObject:
     annotationCalls+=SdsAnnotationCall*
     (
         {SdsAnnotation.annotationCallList=current}
-        'annotation' name=ID
-        parameterList=SdsParameterList?
-        constraint=SdsConstraint?
+        SdsAnnotationFragment
 
       | {SdsClass.annotationCallList=current}
         SdsClassFragment
@@ -108,9 +106,7 @@ SdsAnnotatedModuleMember returns SdsAbstractAnnotatedObject:
 
 SdsUnannotatedModuleMember returns SdsAbstractAnnotatedObject:
       {SdsAnnotation}
-      'annotation' name=ID
-      parameterList=SdsParameterList?
-      constraint=SdsConstraint?
+      SdsAnnotationFragment
 
     | {SdsClass}
       SdsClassFragment
@@ -129,6 +125,12 @@ SdsUnannotatedModuleMember returns SdsAbstractAnnotatedObject:
 
     | {SdsStep}
       SdsStepFragment
+;
+
+fragment SdsAnnotationFragment:
+    'annotation' name=ID
+    parameterList=SdsParameterList?
+    constraint=SdsConstraint?
 ;
 
 interface SdsClass extends SdsAbstractCallable, SdsAbstractClassMember, SdsAbstractModuleMember, SdsAbstractNamedTypeDeclaration {
