@@ -58,7 +58,7 @@
         "chalk": "^5.2.0",
         "chevrotain": "^10.5.0",
         "commander": "^10.0.0",
-        "glob": "^9.3.4",
+        "glob": "^10.0.0",
         "langium": "^1.1.0",
         "radash": "^10.8.1",
         "true-myth": "^6.2.0",
@@ -69,9 +69,9 @@
     "devDependencies": {
         "@types/node": "^18.15.11",
         "@types/vscode": "~1.77.0",
-        "@vitest/coverage-c8": "^0.29.8",
+        "@vitest/coverage-c8": "^0.30.0",
         "langium-cli": "^1.1.0",
         "typescript": "^5.0.4",
-        "vitest": "^0.29.8"
+        "vitest": "^0.30.0"
     }
 }
