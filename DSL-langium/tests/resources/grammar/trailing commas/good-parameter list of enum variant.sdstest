@@ -1,5 +1,3 @@
-package tests.trailingComma.inEnumVariantParameterList
-
 // $TEST$ no_syntax_error
 
 enum E {

@@ -1,5 +1,0 @@
-package tests.trailingComma.inAnnotationUseArgumentList
-
-// $TEST$ no_syntax_error
-
-@A(1, 2, ) class C

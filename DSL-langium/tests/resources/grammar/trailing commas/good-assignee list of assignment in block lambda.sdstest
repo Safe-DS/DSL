@@ -1,10 +1,6 @@
-package tests.trailingComma.inDoStatementAssigneeList
-
 // $TEST$ no_syntax_error
 
 pipeline p {
-    val a, val b, = f();
-
     () {
         val a, val b, = f();
     };

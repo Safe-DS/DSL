@@ -1,5 +1,3 @@
-package tests.trailingComma.inFunctionTypeResultList
-
 // $TEST$ no_syntax_error
 
 step s(

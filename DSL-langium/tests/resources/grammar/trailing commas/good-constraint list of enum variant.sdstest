@@ -1,9 +1,7 @@
-package tests.trailingComma.inEnumVariantTypeParameterList
-
 // $TEST$ no_syntax_error
 
 enum E {
-    A<T> constraint {
+    A<T> where {
         T sub Any,
         T super Int,
     }
