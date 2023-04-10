@@ -30,9 +30,17 @@ interface SdsModule extends SdsAbstractDeclaration {
 entry SdsModule returns SdsModule:
     {SdsModule}
     annotationCalls+=SdsAnnotationCall*
-    ('package' name=QualifiedName)?
-    imports+=SdsImport*
-    members+=SdsModuleMember*
+    (
+        ('package' name=QualifiedName)
+        imports+=SdsImport*
+        members+=SdsAnnotatedModuleMember*
+    
+    |  imports+=SdsImport+
+       members+=SdsAnnotatedModuleMember*
+    
+    |  members+=SdsUnannotatedModuleMember
+       members+=SdsAnnotatedModuleMember*
+    )?
 ;
 
 interface SdsImport extends SdsAbstractObject {
@@ -69,7 +77,7 @@ QualifiedName returns string:
 
 interface SdsAbstractModuleMember extends SdsAbstractDeclaration, SdsAbstractObject {}
 
-SdsModuleMember returns SdsAbstractAnnotatedObject:
+SdsAnnotatedModuleMember returns SdsAbstractAnnotatedObject:
     {SdsAnnotationCallList} 
     annotationCalls+=SdsAnnotationCall*
     (
@@ -96,6 +104,31 @@ SdsModuleMember returns SdsAbstractAnnotatedObject:
       | {SdsStep.annotationCallList=current}
         SdsStepFragment
     )
+;
+
+SdsUnannotatedModuleMember returns SdsAbstractAnnotatedObject:
+      {SdsAnnotation}
+      'annotation' name=ID
+      parameterList=SdsParameterList?
+      constraint=SdsConstraint?
+
+    | {SdsClass}
+      SdsClassFragment
+
+    | {SdsEnum} 
+      SdsEnumFragment
+
+    | {SdsFunction}
+      SdsFunctionFragment
+
+    | {SdsSchema}
+      SdsSchemaFragment
+
+    | {SdsPipeline}
+      SdsPipelineFragment
+
+    | {SdsStep}
+      SdsStepFragment
 ;
 
 interface SdsClass extends SdsAbstractCallable, SdsAbstractClassMember, SdsAbstractModuleMember, SdsAbstractNamedTypeDeclaration {
