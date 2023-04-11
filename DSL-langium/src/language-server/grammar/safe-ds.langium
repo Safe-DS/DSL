@@ -696,16 +696,11 @@ SdsCallArgument returns SdsArgument:
     (parameter=[SdsParameter:ID] '=')? value=SdsExpression
 ;
 
-interface SdsSchemaReference extends SdsExpression {
-	^type?: SdsSchemaType
-}
-
 SdsPrimaryExpression returns SdsExpression:
     SdsLiteral
   | SdsParenthesizedExpression
   | SdsReference
   | SdsTemplateString
-  | {SdsSchemaReference} ^type=SdsSchemaType
 ;
 
 interface SdsLiteral extends SdsExpression {}
@@ -854,14 +849,6 @@ SdsNamedType returns SdsNamedType:
     declaration=[SdsNamedTypeDeclaration:ID]
     typeArgumentList=SdsTypeArgumentList?
     (nullable?='?' )?
-;
-
-interface SdsSchemaType extends SdsType {
-	declaration: @SdsNamedTypeDeclaration
-}
-
-SdsSchemaType returns SdsSchemaType:
-    '::' declaration=[SdsNamedTypeDeclaration:ID]
 ;
 
 interface SdsUnionType extends SdsType {
