@@ -18,6 +18,7 @@ coverage/
 dist/
 dist-ssr/
 out/
+/DSL-langium/syntaxes/safe-ds.tmLanguage.json
 
 # Gradle
 .gradle/
