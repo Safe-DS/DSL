@@ -62,7 +62,7 @@ const createGrammarTests = (): GrammarTest[] => {
             return {
                 absolutePath,
                 expectedResults: 'invalid',
-                testName: `INVALID TEST FILE '${pathRelativeToResources}'`,
+                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new NoCommentsError(),
             };
         }
@@ -72,7 +72,7 @@ const createGrammarTests = (): GrammarTest[] => {
             return {
                 absolutePath,
                 expectedResults: 'invalid',
-                testName: `INVALID TEST FILE '${pathRelativeToResources}'`,
+                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new MultipleCommentsError(comments),
             };
         }
@@ -84,16 +84,16 @@ const createGrammarTests = (): GrammarTest[] => {
             return {
                 absolutePath,
                 expectedResults: 'invalid',
-                testName: `INVALID TEST FILE '${pathRelativeToResources}'`,
+                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new InvalidCommentError(comment),
             };
         }
 
         let testName: string;
         if (comment === 'syntax_error') {
-            testName = `${pathRelativeToResources} should have syntax errors`;
+            testName = `[${pathRelativeToResources}] should have syntax errors`;
         } else {
-            testName = `${pathRelativeToResources} should have no syntax errors`;
+            testName = `[${pathRelativeToResources}] should not have syntax errors`;
         }
 
         return {
