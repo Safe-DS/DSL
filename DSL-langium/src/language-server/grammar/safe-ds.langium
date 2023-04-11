@@ -899,28 +899,16 @@ SdsTypeParameterList returns SdsTypeParameterList:
 
 interface SdsTypeParameter extends SdsNamedTypeDeclaration {
 	variance?: string
-	kind?: string
 }
 
 SdsTypeParameter returns SdsTypeParameter:
     annotationCalls+=SdsAnnotationCall*
     variance=SdsTypeParameterVariance?
     name=ID
-    ('::' kind=SdsTypeParameterKind)?
 ;
 
 SdsTypeParameterVariance returns string:
     'in' | 'out'
-;
-
-SdsTypeParameterKind returns string:
-    '$SchemaType'
-  | '$ExpressionType'
-  | '$IntType'
-  | '$FloatType'
-  | '$BooleanType'
-  | '$StringType'
-  | '$NamedType'
 ;
 
 interface SdsTypeArgumentList extends SdsObject {
