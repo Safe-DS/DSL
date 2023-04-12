@@ -30,5 +30,10 @@ export const listTestResources = (pathRelativeToResources: string): string[] => 
     const pattern = `**/*.{${fileExtensions.join(',')}}`;
     const cwd = resolvePathRelativeToResources(pathRelativeToResources);
 
-    return globSync(pattern, { cwd, nodir: true }).filter((file) => !file.startsWith('skip'));
+    return globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
 };
+
+const isNotSkipped = (pathRelativeToResources: string) => {
+    const segments = pathRelativeToResources.split(path.sep);
+    return !segments.some((segment) => segment.startsWith('skip'));
+}

@@ -1,10 +1,8 @@
 // $TEST$ no_syntax_error
 
 pipeline myPipeline {
-    f();
-
     /*
-     * TODO: Once Langium supports LL(*) parsing, this should work.
+     * Once Langium supports LL(*) parsing, this should work.
      * 
      * For now, we can either parse
      *     - f<List<S>>() or
@@ -19,8 +17,5 @@ pipeline myPipeline {
      * to a syntax error. To work around this, you can use the following syntax:
      *     - f<T = List<S>>()
      */
-    // f<List<T>>();
-
-    f<T = List<S>>();
-    f<*, in Number, out Number, T = Number>(1, b = 2);
+    f<List<T>>();
 }
