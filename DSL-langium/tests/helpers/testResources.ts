@@ -36,4 +36,4 @@ export const listTestResources = (pathRelativeToResources: string): string[] => 
 const isNotSkipped = (pathRelativeToResources: string) => {
     const segments = pathRelativeToResources.split(path.sep);
     return !segments.some((segment) => segment.startsWith('skip'));
-}
+};
