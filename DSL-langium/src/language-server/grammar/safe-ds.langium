@@ -1148,7 +1148,9 @@ SdsProtocolParenthesizedTerm returns SdsProtocolParenthesizedTerm:
 terminal ID returns string: IDENTIFIER | '`' IDENTIFIER '`';
 terminal fragment IDENTIFIER: /[_a-zA-Z][_a-zA-Z0-9]*/;
 
-terminal FLOAT returns number: DECIMAL_DIGIT+ '.' DECIMAL_DIGIT+ FLOAT_EXPONENT? | DECIMAL_DIGIT+ FLOAT_EXPONENT;
+terminal FLOAT returns number
+    : DECIMAL_DIGIT+ '.' DECIMAL_DIGIT+ FLOAT_EXPONENT?
+    | DECIMAL_DIGIT+ FLOAT_EXPONENT;
 terminal fragment DECIMAL_DIGIT: /[0-9]/;
 terminal fragment FLOAT_EXPONENT: ('e' | 'E' )('+' | '-' )? DECIMAL_DIGIT+;
 terminal INT returns number: DECIMAL_DIGIT+;
@@ -1158,7 +1160,7 @@ terminal fragment STRING_END: '{'? STRING_DELIMITER;
 terminal fragment STRING_DELIMITER: '"';
 terminal fragment STRING_TEXT
     : '{'? ESCAPE_SEQUENCE
-    |  /{?[^\\"{]/
+    | /{?[^\\"{]/
 ;
 terminal fragment ESCAPE_SEQUENCE: '\\' .;
 terminal fragment TEMPLATE_EXPRESSION_START: '{{';
