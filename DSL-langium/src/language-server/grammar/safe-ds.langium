@@ -181,12 +181,13 @@ interface SdsClassMember extends SdsDeclaration, SdsObject {}
 
 SdsClassMember returns SdsObject:
     SdsAnnotatedClassMember 
+  | SdsUnannotatedClassMember
   | SdsProtocol
 ;
 
 SdsAnnotatedClassMember returns SdsAnnotatedObject:
     {SdsAnnotationCallList}
-    annotationCalls+=SdsAnnotationCall*
+    annotationCalls+=SdsAnnotationCall+
     (
         {SdsAttribute.annotationCallList=current}
         SdsAttributeFragment
@@ -201,6 +202,21 @@ SdsAnnotatedClassMember returns SdsAnnotatedObject:
         static?='static'?
         SdsFunctionFragment
     )
+;
+
+SdsUnannotatedClassMember returns SdsAnnotatedObject:
+      {SdsAttribute}
+      SdsAttributeFragment
+
+    | {SdsClass}
+      SdsClassFragment
+
+    | {SdsEnum}
+      SdsEnumFragment
+
+    | {SdsFunction}
+      static?='static'?
+      SdsFunctionFragment
 ;
 
 interface SdsAttribute extends SdsClassMember, SdsProtocolToken {
