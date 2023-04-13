@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-pipeline myPipeline {
-    f();
-    f<*, in Number, out Number, T = Number>(1, b = 2);
-}

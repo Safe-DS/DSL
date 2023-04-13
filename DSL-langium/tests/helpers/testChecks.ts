@@ -34,7 +34,7 @@ export const findTestChecks = (program: string): Result<TestCheck[], FindTestChe
  * A test check, i.e. a test comment and its corresponding test range. The range is optional. If it is omitted, the test
  * comment is associated with the whole program.
  */
-interface TestCheck {
+export interface TestCheck {
     comment: string;
     range?: Range;
 }

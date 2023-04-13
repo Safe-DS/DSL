@@ -1,0 +1,5 @@
+// $TEST$ no_syntax_error
+
+private step myComplexStep() {
+    val a = 1;
+}

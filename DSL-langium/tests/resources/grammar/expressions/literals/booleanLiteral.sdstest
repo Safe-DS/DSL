@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-pipeline myPipeline {
-    true;
-    false;
-}

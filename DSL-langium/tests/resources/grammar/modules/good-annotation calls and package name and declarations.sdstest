@@ -1,0 +1,9 @@
+// $TEST$ no_syntax_error
+
+@Annotation1
+@Annotation2
+
+package myPackage
+
+class C
+class D

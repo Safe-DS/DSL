@@ -2,3 +2,6 @@
 build/
 dist/
 out/
+
+# DSL-langium
+/DSL-langium/vitest.config.ts

@@ -1,0 +1,5 @@
+// $TEST$ syntax_error
+
+pipeline myPipeline {
+    () {;
+}

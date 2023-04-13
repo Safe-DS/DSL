@@ -1,0 +1,4 @@
+// $TEST$ syntax_error
+
+@Annotation(
+class MyClass

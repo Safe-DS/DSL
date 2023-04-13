@@ -19,7 +19,6 @@
                 ],
                 "extensions": [
                     ".sdspipe",
-                    ".sdsschema",
                     ".sdsstub",
                     ".sdstest"
                 ],
@@ -45,13 +44,13 @@
     "bin": {
         "safe-ds-cli": "./bin/cli"
     },
-    "main": "./out/extension.js",
+    "main": "./out/src/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
         "watch": "tsc -b tsconfig.json --watch",
-        "test": "vitest tests",
-        "test-with-coverage": "vitest tests --coverage",
+        "test": "vitest --dir tests",
+        "test-with-coverage": "vitest --coverage --dir tests",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch"
     },
@@ -59,7 +58,7 @@
         "chalk": "^5.2.0",
         "chevrotain": "^10.5.0",
         "commander": "^10.0.0",
-        "glob": "^9.3.4",
+        "glob": "^10.0.0",
         "langium": "^1.1.0",
         "radash": "^10.8.1",
         "true-myth": "^6.2.0",
@@ -70,9 +69,9 @@
     "devDependencies": {
         "@types/node": "^18.15.11",
         "@types/vscode": "~1.77.0",
-        "@vitest/coverage-c8": "^0.29.8",
+        "@vitest/coverage-c8": "^0.30.1",
         "langium-cli": "^1.1.0",
         "typescript": "^5.0.4",
-        "vitest": "^0.29.8"
+        "vitest": "^0.30.1"
     }
 }

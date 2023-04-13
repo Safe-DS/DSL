@@ -1,0 +1,6 @@
+// $TEST$ no_syntax_error
+
+annotation A(
+    a: Int,
+    b: Int,
+)

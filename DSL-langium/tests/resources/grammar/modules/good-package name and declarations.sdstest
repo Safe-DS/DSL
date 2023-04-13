@@ -1,0 +1,6 @@
+// $TEST$ no_syntax_error
+
+package myPackage
+
+class C
+class D

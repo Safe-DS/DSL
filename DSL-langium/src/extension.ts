@@ -18,7 +18,7 @@ export const deactivate = function (): Thenable<void> | undefined {
 };
 
 const startLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
-    const serverModule = context.asAbsolutePath(path.join('out', 'language-server', 'main'));
+    const serverModule = context.asAbsolutePath(path.join('out', 'src', 'language-server', 'main'));
     // The debug options for the server
     // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
     // By setting `process.env.DEBUG_BREAK` to a truthy value, the language server will wait until a debugger is attached.
@@ -36,7 +36,7 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
         debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
     };
 
-    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.{sdspipe,sdsschema,sdsstub,sdstest}');
+    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.{sdspipe,sdsstub,sdstest}');
     context.subscriptions.push(fileSystemWatcher);
 
     // Options to control the language client

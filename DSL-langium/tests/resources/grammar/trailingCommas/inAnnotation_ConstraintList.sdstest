@@ -1,8 +1,0 @@
-package tests.trailingComma.inAnnotationConstraintList
-
-// $TEST$ no_syntax_error
-
-annotation A constraint {
-    T sub Any,
-    T super Int
-}

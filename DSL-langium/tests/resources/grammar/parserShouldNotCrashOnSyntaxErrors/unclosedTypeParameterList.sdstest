@@ -1,3 +1,0 @@
-// $TEST$ syntax_error
-
-class C<

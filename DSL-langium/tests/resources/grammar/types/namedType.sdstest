@@ -1,9 +1,0 @@
-// $TEST$ no_syntax_error
-
-step s1(
-    f: Int
-) {}
-
-step s2(
-    f: Int<*, in Number, out Number, T = Number>?
-) {}

@@ -7,9 +7,7 @@
 
 1. Update the grammar (_concrete syntax_).
 
-    1. Create [grammar tests][grammar-tests]:
-        1. Positive tests (with comment `// no_syntax_error`)
-        1. Negative tests (with comment `// syntax_error`)
+    1. Create [grammar tests][grammar-tests].
     1. Run the tests (`./gradlew test`). There should be failures.
     1. Update the [Xtext grammar file][safeds.xtext].
     1. Run the tests again (`./gradlew test`). Tests should now pass.
@@ -66,7 +64,7 @@
 [experimental-sds-api]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/utils/MarkerAnnotations.kt
 [safeds.ecore]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/model/SafeDS.ecore
 [safeds.genmodel]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/model/SafeDS.genmodel
-[grammar-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/resources/grammar
+[grammar-tests]: ./grammar-testing.md
 [safeds.xtext]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/SafeDS.xtext
 [converter-tests]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/test/kotlin/com/larsreimann/safeds/conversion
 [converters]: https://github.com/lars-reimann/Safe-DS/blob/main/DSL/com.larsreimann.safeds/src/main/kotlin/com/larsreimann/safeds/conversion

@@ -1,0 +1,14 @@
+// $TEST$ no_syntax_error
+
+class MyOuterClass {
+    class MyClass(
+        @Annotation a,
+        b = 0,
+        vararg c,
+        vararg d: Int = 1,
+        e: Int,
+        f: Int = 2,
+        vararg g: Int,
+        vararg h: Int = 3
+    )
+}

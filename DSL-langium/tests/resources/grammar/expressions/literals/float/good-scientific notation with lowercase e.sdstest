@@ -1,0 +1,8 @@
+// $TEST$ no_syntax_error
+
+pipeline myPipeline {
+    1e10;
+    1e+10;
+    1e-10;
+    1.2e2;
+}
