@@ -1,6 +1,6 @@
 // $TEST$ no_syntax_error
 
-fun myFunction(
+annotation MyAnnotation(
     @Annotation a,
     b = 0,
     vararg c,
