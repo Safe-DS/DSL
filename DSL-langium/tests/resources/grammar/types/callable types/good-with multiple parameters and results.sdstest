@@ -1,5 +1,0 @@
-// $TEST$ no_syntax_error
-
-step myStep(
-    f: (@AnnotationUse a: Int, vararg b: Int = 3) -> (@AnnotationUse a: Int, b: Int)
-) {}
