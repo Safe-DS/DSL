@@ -10,3 +10,7 @@ Safely develop Data Science programs with a statically checked.
 ## Documentation
 
 You can find the full documentation [here](https://dsl.safe-ds.com).
+
+## Installation
+
+Get the latest extension for [Visual Studio Code](https://code.visualstudio.com/) from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=safe-ds.safe-ds).
