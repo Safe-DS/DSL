@@ -57,7 +57,7 @@
     "dependencies": {
         "chalk": "^5.2.0",
         "chevrotain": "^10.5.0",
-        "commander": "^10.0.0",
+        "commander": "^10.0.1",
         "glob": "^10.2.2",
         "langium": "^1.1.0",
         "radash": "^10.8.1",
