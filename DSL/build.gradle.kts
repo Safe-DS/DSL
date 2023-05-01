@@ -25,7 +25,7 @@ plugins {
     idea
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
 
-    kotlin("jvm") version "1.8.10" apply false
+    kotlin("jvm") version "1.8.21" apply false
     id("com.github.node-gradle.node") version "4.0.0" apply false
     id("org.jetbrains.dokka") version "1.8.10" apply false
 }
