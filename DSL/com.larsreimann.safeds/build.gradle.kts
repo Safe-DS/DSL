@@ -126,7 +126,7 @@ dependencies {
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
     testImplementation("org.eclipse.xtext:org.eclipse.xtext.testing:$xtextVersion")
     testImplementation("org.eclipse.xtext:org.eclipse.xtext.xbase.testing:$xtextVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.6.1")
