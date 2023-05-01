@@ -122,7 +122,7 @@ dependencies {
     api(platform("org.eclipse.xtext:xtext-dev-bom:$xtextVersion"))
     implementation("org.eclipse.xtext:org.eclipse.xtext:$xtextVersion")
 
-    implementation("org.jetbrains.kotlinx:dataframe:0.9.1")
+    implementation("org.jetbrains.kotlinx:dataframe:1548")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
