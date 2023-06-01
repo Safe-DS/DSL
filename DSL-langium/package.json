@@ -70,7 +70,7 @@
         "@types/node": "^18.16.3",
         "@types/vscode": "~1.77.0",
         "@vitest/coverage-c8": "^0.31.4",
-        "langium-cli": "^1.1.0",
+        "langium-cli": "^1.2.0",
         "typescript": "^5.0.4",
         "vitest": "^0.31.4"
     }
