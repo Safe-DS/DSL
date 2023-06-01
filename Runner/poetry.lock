@@ -933,14 +933,14 @@ files = [
 
 [[package]]
 name = "safe-ds"
-version = "0.12.0"
+version = "0.13.0"
 description = "A user-friendly library for Data Science in Python."
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "safe_ds-0.12.0-py3-none-any.whl", hash = "sha256:91ffb81e6db87a426a22233c34d4e07b52839a57ca40403d4b1bb3f5ecc376bf"},
-    {file = "safe_ds-0.12.0.tar.gz", hash = "sha256:f9bf1f64fb3842c530069fd1caec5482fe726aeda0934629a6d438d40509cac1"},
+    {file = "safe_ds-0.13.0-py3-none-any.whl", hash = "sha256:237a6f273c3cb356d517c4aa38c5cb9fc911b8c05fb0565a2c93dbe9b974033e"},
+    {file = "safe_ds-0.13.0.tar.gz", hash = "sha256:c7262157091631b67623a5f7d1a30a0c9d1ec45d5c47d35852182e01adadbc78"},
 ]
 
 [package.dependencies]
@@ -1155,4 +1155,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5314fa804b8f3c024124d5d682bd1ab65a7819e3b26b58fa853ea3feb55ea6d5"
+content-hash = "a3c212cc8c66e605b2b47dcbdc488838df1c0c219d85d8210db0f1cc66b89181"
