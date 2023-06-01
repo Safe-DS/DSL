@@ -71,7 +71,7 @@
     },
     "devDependencies": {
         "@types/node": "^18.16.3",
-        "@types/vscode": "^1.77.0",
+        "@types/vscode": "^1.78.1",
         "esbuild": "^0.17.19",
         "typescript": "^5.0.4",
         "vscode-test": "^1.6.1"
