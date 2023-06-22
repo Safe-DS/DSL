@@ -70,7 +70,7 @@
         "vscode-languageclient": "^8.1.0"
     },
     "devDependencies": {
-        "@types/node": "^18.16.3",
+        "@types/node": "^20.3.1",
         "@types/vscode": "^1.77.0",
         "esbuild": "^0.17.19",
         "typescript": "^5.0.4",
