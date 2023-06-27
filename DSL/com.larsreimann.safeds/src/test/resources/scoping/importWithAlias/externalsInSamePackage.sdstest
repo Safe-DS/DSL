@@ -1,3 +1,0 @@
-package tests.languageTests.scoping.importWithAlias1
-
-class ClassInSamePackage

@@ -1,8 +1,0 @@
-fun functionWithoutPythonName()
-
-@PythonName("function_with_python_name")
-fun functionWithUniquePythonName()
-
-@PythonName("function_with_python_name_1")
-@PythonName("function_with_python_name_2")
-fun functionWithMultiplePythonNames()

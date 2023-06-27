@@ -1,4 +1,0 @@
-package tests.languageTests.scoping.yield2
-
-step stepInOtherPackage1() -> resultInOtherPackage1: Int {}
-step stepInOtherPackage2() -> resultInOtherPackage2: Int {}

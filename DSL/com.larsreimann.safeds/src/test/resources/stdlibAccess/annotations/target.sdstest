@@ -1,8 +1,0 @@
-annotation AnnotationWithoutTarget
-
-@Target(AnnotationTarget.Class)
-annotation AnnotationWithUniqueTarget
-
-@Target(AnnotationTarget.Class)
-@Target(AnnotationTarget.Enum)
-annotation AnnotationWithMultipleTargets

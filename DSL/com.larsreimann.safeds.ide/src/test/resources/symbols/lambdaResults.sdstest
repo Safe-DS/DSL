@@ -1,6 +1,0 @@
-// Function "myPipeline"
-pipeline »myPipeline« {
-    lambda {
-        yield a = 1;
-    };
-}

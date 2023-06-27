@@ -1,8 +1,0 @@
-package tests.validation.declarations.pipelines.uniqueNames
-
-pipeline p {
-	// semantic_error "A declaration with name 'myPlaceholder' exists already in this pipeline."
-    val »myPlaceholder« = 1;
-    // semantic_error "A declaration with name 'myPlaceholder' exists already in this pipeline."
-    val »myPlaceholder« = 1;
-}

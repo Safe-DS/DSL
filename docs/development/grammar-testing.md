@@ -4,7 +4,7 @@ Grammar tests are data driven instead of being specified explicitly. This docume
 
 ## Adding a grammar test
 
-1. Create a new file with extension `.sdstest` in the `DSL-langium/tests/resources/grammar` directory or any
+1. Create a new file with extension `.sdstest` in the `DSL/tests/resources/grammar` directory or any
    subdirectory. Give the file a descriptive name, since the file name becomes part of the test name.
 
     !!! note "Naming convention"

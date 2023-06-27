@@ -1,7 +1,0 @@
-package tests.trailingComma.inEnumVariantConstraintList
-
-// no_syntax_error
-
-enum E {
-    A<K, V, >
-}

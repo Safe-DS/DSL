@@ -33,9 +33,7 @@ nav:
       - stdlib/README.md
       - safeds.lang: stdlib/safeds_lang.md
   - Development:
-      - DSL Development Checklist: development/dsl-development-checklist.md
       - Grammar Testing: development/grammar-testing.md
-      - Release Checklist: development/release-checklist.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 

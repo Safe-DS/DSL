@@ -1,4 +1,0 @@
-package tests.generator.differentPackage
-
-fun function1InDifferentPackage() -> result: Int
-fun function2InDifferentPackage() -> result: Int

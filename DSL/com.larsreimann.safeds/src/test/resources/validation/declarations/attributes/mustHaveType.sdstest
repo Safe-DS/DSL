@@ -1,8 +1,0 @@
-package tests.mustHaveType
-
-class MyClass {
-    // semantic_error "An attribute must have a type."
-    attr »myAttribute1«
-    // no_semantic_error "An attribute must have a type."
-    attr »myAttribute2«: Int
-}

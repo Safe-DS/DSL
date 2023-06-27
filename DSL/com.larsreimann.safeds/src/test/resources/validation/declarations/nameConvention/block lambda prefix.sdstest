@@ -1,7 +1,0 @@
-package tests.validation.declarations.blockLambdaPrefix
-
-// semantic_error "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas."
-class »__block_lambda_0«
-
-// no_semantic_error "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas."
-class »_block_lambda_1«

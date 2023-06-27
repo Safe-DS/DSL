@@ -1,7 +1,0 @@
-package tests.validation.declarations.functions.unnecessaryTypeParameterList
-
-// semantic_info "Unnecessary type parameter list."
-fun myFun1»<>«()
-
-// no_semantic_info "Unnecessary type parameter list."
-fun myFun2»<T>«()

@@ -1,3 +1,0 @@
-package tests.languageTests.scoping.yield1
-
-step stepInSamePackage() -> resultInSamePackage: Int {}

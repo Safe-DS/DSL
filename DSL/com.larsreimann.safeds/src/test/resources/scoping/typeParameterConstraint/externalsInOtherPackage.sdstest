@@ -1,4 +1,0 @@
-package tests.languageTests.scoping.typeParameterConstraint2
-
-fun functionInOtherPackage1<TYPE_PARAMETER_IN_OTHER_PACKAGE1>()
-fun functionInOtherPackage2<TYPE_PARAMETER_IN_OTHER_PACKAGE2>()

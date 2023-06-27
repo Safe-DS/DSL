@@ -1,4 +1,0 @@
-// Function "myPipeline"
-pipeline »myPipeline« {
-    val a = 1;
-}

@@ -1,5 +1,0 @@
-package tests.typeComputer.expressions.templateStrings
-
-pipeline myPipeline {
-    val templateString = "1 + 2 = {{ 1 + 2 }}";
-}

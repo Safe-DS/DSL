@@ -1,7 +1,0 @@
-package tests.typeComputer.declarations.enumVariants
-
-enum E {
-    V
-}
-
-step myStep(v: E.V) {}
