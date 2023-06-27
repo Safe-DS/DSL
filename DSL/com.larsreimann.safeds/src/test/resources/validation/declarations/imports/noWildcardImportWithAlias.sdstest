@@ -1,6 +1,0 @@
-package tests.languageTests.validation.declarations.imports.noWildcardImportWithAlias
-
-// semantic_error "A wildcard import must not have an alias."
-import stuff.* »as Stuff«
-// no_semantic_error "A wildcard import must not have an alias."
-import stuff »as Stuff«

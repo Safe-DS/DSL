@@ -1,4 +1,0 @@
-package tests.languageTests.scoping.argument2
-
-fun functionInOtherPackage1(parameterInOtherPackage1: Int)
-fun functionInOtherPackage2(parameterInOtherPackage2: Int)

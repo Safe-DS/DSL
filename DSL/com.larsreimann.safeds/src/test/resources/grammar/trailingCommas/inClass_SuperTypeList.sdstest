@@ -1,5 +1,0 @@
-package tests.trailingComma.inClassSuperTypeList
-
-// no_syntax_error
-
-class C sub D, E,

@@ -1,6 +1,0 @@
-package tests.validation.declarations.typeparameter.varienceTogether
-
-// semantic_error "Can not use variance and kind together"
-// no_semantic_error "Can not use variance and kind together"
-// no_semantic_error "Can not use variance and kind together"
-class Myclass <in »T1« :: $SchemaType, »T2« :: $ExpressionType, out »T3«>

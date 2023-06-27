@@ -1,5 +1,0 @@
-// semantic_error "A file with declarations must declare its package."
-step »s«() {}
-
-// no_semantic_error "A file with declarations must declare its package."
-step »t«() {}

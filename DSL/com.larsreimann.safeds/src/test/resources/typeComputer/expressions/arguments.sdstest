@@ -1,8 +1,0 @@
-package tests.typeComputer.expressions.parenthesizedExpressions
-
-fun f(x: Any?)
-
-pipeline myPipeline {
-    f(1);
-    f(x = "");
-}

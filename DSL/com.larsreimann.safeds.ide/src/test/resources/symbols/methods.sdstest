@@ -1,5 +1,0 @@
-// Class "MyClass"
-class »MyClass« {
-    // Method "myMethod" in "MyClass"
-    fun »myMethod«()
-}

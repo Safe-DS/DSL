@@ -1,3 +1,0 @@
-@PythonModule("python_module_1")
-@PythonModule("python_module_2")
-package compilationUnitWithMultiplePythonModules

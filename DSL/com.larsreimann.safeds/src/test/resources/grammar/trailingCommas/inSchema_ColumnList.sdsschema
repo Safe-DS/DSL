@@ -1,5 +1,0 @@
-// no_syntax_error
-
-schema MySchemaWithTrailingComma {
-    "column name" : ColumnType,
-}

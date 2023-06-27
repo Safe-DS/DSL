@@ -1,3 +1,0 @@
-package tests.typeComputer.types.callableTypes
-
-fun myFun(f: (p1: Int, p2: String) -> (r1: Int, r2: String))

@@ -1,7 +1,0 @@
-package tests.trailingComma.inFunctionTypeResultList
-
-// no_syntax_error
-
-step s(
-    f: () -> (x: Int, y: Int, )
-) {}

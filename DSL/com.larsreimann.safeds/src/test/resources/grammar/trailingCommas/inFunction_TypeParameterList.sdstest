@@ -1,5 +1,0 @@
-package tests.trailingComma.inFunctionTypeParameterList
-
-// no_syntax_error
-
-fun f<K, V, >()

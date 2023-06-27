@@ -1,3 +1,0 @@
-package tests.typeComputer.types.parenthesizedTypes
-
-fun myFun(a: (Int), b: (String))

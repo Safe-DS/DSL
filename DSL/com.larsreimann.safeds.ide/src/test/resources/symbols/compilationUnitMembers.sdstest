@@ -1,5 +1,0 @@
-// Package "myPackage"
-package »myPackage«
-
-// Function "myPipeline" in "myPackage"
-pipeline »myPipeline« {}
