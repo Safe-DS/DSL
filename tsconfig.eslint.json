@@ -1,14 +1,13 @@
 {
-    "extends": "./DSL/com.larsreimann.safeds.vscode/tsconfig.json",
+    "extends": "./DSL/tsconfig.json",
     "compilerOptions": {
         "noEmit": true
     },
     "include": [
         "./.eslintrc.js",
         "./docs/javascript/**/*",
-        "./DSL/com.larsreimann.safeds.vscode/src/**/*",
-      "./DSL/src/**/*",
-      "./DSL/tests/**/*"
+        "./DSL/src/**/*",
+        "./DSL/tests/**/*"
     ],
     "exclude": []
 }
