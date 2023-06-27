@@ -1,0 +1,13 @@
+pipeline myPipeline {
+    "template {{
+
+        a
+
+    }}";
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    "template {{ a }}";
+}

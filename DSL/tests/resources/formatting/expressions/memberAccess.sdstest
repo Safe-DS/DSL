@@ -1,0 +1,11 @@
+pipeline myPipeline {
+    a     .          member;
+    a   ?   .    member;
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    a.member;
+    a?.member;
+}

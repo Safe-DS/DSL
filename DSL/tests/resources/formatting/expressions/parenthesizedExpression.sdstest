@@ -1,0 +1,19 @@
+pipeline myPipeline {
+    (  1
+    );
+    ( true   ) or false;
+    not (  true );
+    (  f
+    )((  3 ));
+    (  c  ).member;
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    (1);
+    (true) or false;
+    not (true);
+    (f)((3));
+    (c).member;
+}

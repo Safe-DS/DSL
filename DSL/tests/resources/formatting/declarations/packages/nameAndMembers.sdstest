@@ -1,0 +1,19 @@
+   package   tests   .   formatting
+
+
+    pipeline    p1    {       } pipeline p2 {}
+pipeline p3 {
+
+
+
+}
+
+// -----------------------------------------------------------------------------
+
+package tests.formatting
+
+pipeline p1 {}
+
+pipeline p2 {}
+
+pipeline p3 {}
