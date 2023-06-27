@@ -3,11 +3,6 @@
     "compilerOptions": {
         "noEmit": true
     },
-    "include": [
-        "./.eslintrc.js",
-        "./docs/javascript/**/*",
-        "./DSL/src/**/*",
-        "./DSL/tests/**/*"
-    ],
+    "include": ["./.eslintrc.js", "./docs/javascript/**/*", "./DSL/src/**/*", "./DSL/tests/**/*"],
     "exclude": []
 }
