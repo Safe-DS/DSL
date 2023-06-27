@@ -1,236 +1,232 @@
 import {AbstractFormatter, AstNode, Formatting} from 'langium';
 import * as ast from '../generated/ast';
+import {SdsImport, SdsImportAlias, SdsModule} from '../generated/ast';
+import {annotationCallsOrEmpty} from "../helpers/astShortcuts";
+import noSpace = Formatting.noSpace;
+import newLine = Formatting.newLine;
+import newLines = Formatting.newLines;
+import oneSpace = Formatting.oneSpace;
+
 
 export class SafeDSFormatter extends AbstractFormatter {
-
-    /**
-     * We follow the rule here that an object never formats its preceding or following region. This is left to the
-     * parent.
-     */
     protected override format(node: AstNode): void {
         if (ast.isSdsModule(node)) {
-            const formatter = this.getNodeFormatter(node);
-
-            const nodes = formatter.nodes(...node.members);
-            nodes.prepend(Formatting.indent())
-        } else if (ast.isSdsPipeline(node)) {
-            const formatter = this.getNodeFormatter(node);
-            const name = formatter.property("name");
-            name.surround(Formatting.oneSpace());
-        } else if (ast.isSdsBlock(node)) {
-            const formatter = this.getNodeFormatter(node);
-            const openingBrace = formatter.keyword("{")
-            openingBrace.surround(Formatting.spaces(3));
+            this.formatSdsModule(node)
         }
+        if (ast.isSdsImport(node)) {
+            this.formatSdsImport(node)
+        }
+        if (ast.isSdsImportAlias(node)) {
+            this.formatSdsImportAlias(node)
+        }
+    }
+
+    formatSdsModule(node: SdsModule): void {
+        const formatter = this.getNodeFormatter(node);
+        const annotations = annotationCallsOrEmpty(node)
+        const name = node.name
+        const imports = node.imports
+        const members = node.members
+
+        // Annotations
+        annotations.forEach((value, index) => {
+            if (index === 0) {
+                formatter.node(value).prepend(noSpace())
+            } else {
+                formatter.node(value).prepend(newLines(1))
+            }
+        })
+
+        // Package
+        if (annotations.length === 0) {
+            formatter.keyword("package").prepend(noSpace())
+        } else {
+            formatter.keyword("package").prepend(newLines(2))
+        }
+        formatter.keyword("package").append(oneSpace())
+        formatter.keyword(".").surround(noSpace())
+
+        // Imports
+        imports.forEach((value, index) => {
+            if (index === 0) {
+                if (annotations.length === 0 && !name) {
+                    formatter.node(value).prepend(noSpace())
+                } else {
+                    formatter.node(value).prepend(newLines(2))
+                }
+            } else {
+                formatter.node(value).prepend(newLines(1))
+            }
+        })
+
+        // Members
+        members.forEach((value, index) => {
+            if (index === 0) {
+                if (annotations.length === 0 && !name && imports.length === 0) {
+                    formatter.node(value).prepend(noSpace())
+                } else {
+                    formatter.node(value).prepend(Formatting.newLines(2))
+                }
+            } else {
+                formatter.node(value).prepend(newLines(2))
+            }
+        })
+    }
+
+    formatSdsImport(node: SdsImport): void {
+        const formatter = this.getNodeFormatter(node);
+
+        // Keyword "import"
+        formatter.keyword("import").append(oneSpace())
+
+        // Property "importedNamespace"
+        formatter.keyword(".").surround(noSpace())
+    }
+
+    formatSdsImportAlias(node: SdsImportAlias): void {
+        const formatter = this.getNodeFormatter(node);
+
+        // Keyword "as"
+        formatter.keyword("as").surround(Formatting.oneSpace())
     }
 }
 
+
 // class SafeDSFormatter : AbstractFormatter2() {
-//
-//     private val indent = Format::indent
-//     private val noSpace = Format::noSpace
-//     private val oneSpace = Format::oneSpace
-//     private val newLine = Format::newLine
-//
-//     private fun newLines(n: Int): Procedures.Procedure1<in Format> {
-//             return Procedures.Procedure1 { it.setNewLines(n) }
-//     }
-//
-//     override fun format(obj: Any?, doc: IFormattableDocument) {
-//         if (obj == null) {
-//             return
-//         }
-//
-//         when (obj) {
-//             is XtextResource -> {
-//                 useSpacesForIndentation()
-//                 _format(obj, doc)
-//             }
-//
-//             is SdsCompilationUnit -> {
-//                 // Feature "annotations"
-//                 obj.annotationCallsOrEmpty().forEach {
-//                     doc.format(it)
-//
-//                     if (obj.annotationCallsOrEmpty().last() == it) {
-//                         doc.append(it, newLines(2))
-//                     } else {
-//                         doc.append(it, newLine)
-//                     }
-//                 }
-//
-//                 // Keyword "package"
-//                 doc.formatKeyword(obj, "package", noSpace, oneSpace)
-//
-//                 // Feature "name"
-//                 val name = obj.regionForFeature(SDS_ABSTRACT_DECLARATION__NAME)
-//                 if (name != null) {
-//                     doc.addReplacer(WhitespaceCollapser(doc, name))
-//
-//                     if (obj.imports.isNotEmpty() || obj.members.isNotEmpty()) {
-//                         doc.append(name, newLines(2))
-//                     } else {
-//                         doc.append(name, noSpace)
-//                     }
-//                 }
-//
-//                 // Feature "imports"
-//                 obj.imports.forEach {
-//                     doc.format(it)
-//
-//                     if (obj.imports.last() == it && obj.members.isNotEmpty()) {
-//                         doc.append(it, newLines(2))
-//                     } else if (obj.imports.last() != it) {
-//                         doc.append(it, newLine)
-//                     } else {
-//                         doc.append(it, noSpace)
-//                     }
-//                 }
-//
-//                 // Feature "members"
-//                 obj.members.forEach {
-//                     doc.format(it)
-//
-//                     if (obj.members.last() != it) {
-//                         doc.append(it, newLines(2))
-//                     } else {
-//                         doc.append(it, noSpace)
-//                     }
-//                 }
-//
-//                 doc.append(obj, newLine)
-//             }
-//
+
+//     override fun format(node: Any?, doc: IFormattableDocument) {
+//         when (node) {
+
 //             /**********************************************************************************************************
 //              * Declarations
 //              **********************************************************************************************************/
 //
 //             is SdsImport -> {
 //                 // Keyword "import"
-//                 doc.formatKeyword(obj, "import", noSpace, oneSpace)
+//                 doc.formatKeyword(node, "import", noSpace, oneSpace)
 //
-//                 // Feature "importedNamespace"
-//                 val importedNamespace = obj.regionForFeature(SDS_IMPORT__IMPORTED_NAMESPACE)
+//                 // Property "importedNamespace"
+//                 val importedNamespace = node.regionForProperty(SDS_IMPORT__IMPORTED_NAMESPACE)
 //                 if (importedNamespace != null) {
 //                     doc.addReplacer(WhitespaceCollapser(doc, importedNamespace))
 //                 }
 //
 //                 // EObject "aliasDeclaration"
-//                 doc.formatObject(obj.alias, oneSpace, noSpace)
+//                 doc.formatObject(node.alias, oneSpace, noSpace)
 //             }
 //             is SdsImportAlias -> {
 //                 // Keyword "as"
-//                 doc.formatKeyword(obj, "as", null, oneSpace)
+//                 doc.formatKeyword(node, "as", null, oneSpace)
 //
-//                 // Feature "alias"
-//                 doc.formatFeature(obj, SDS_IMPORT_ALIAS__NAME, null, noSpace)
+//                 // Property "alias"
+//                 doc.formatProperty(node, SDS_IMPORT_ALIAS__NAME, null, noSpace)
 //             }
 //             is SdsAnnotation -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "annotation"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatKeyword(obj, "annotation", null, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatKeyword(node, "annotation", null, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "annotation", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "annotation", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, noSpace, null)
+//                 doc.formatObject(node.parameterList, noSpace, null)
 //
 //                 // EObject "constraint"
-//                 doc.formatObject(obj.constraint, oneSpace, null)
+//                 doc.formatObject(node.constraint, oneSpace, null)
 //             }
 //             is SdsAnnotationCall -> {
 //                 // Keyword "@"
-//                 doc.formatKeyword(obj, "@", null, noSpace)
+//                 doc.formatKeyword(node, "@", null, noSpace)
 //
-//                 // Feature "annotation"
-//                 doc.formatFeature(obj, SDS_ANNOTATION_CALL__ANNOTATION, noSpace, null)
+//                 // Property "annotation"
+//                 doc.formatProperty(node, SDS_ANNOTATION_CALL__ANNOTATION, noSpace, null)
 //
 //                 // EObject "argumentList"
-//                 doc.formatObject(obj.argumentList, noSpace, null)
+//                 doc.formatObject(node.argumentList, noSpace, null)
 //             }
 //             is SdsAttribute -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "static"
-//                 if (obj.annotationCallsOrEmpty().isNotEmpty()) {
-//                     doc.formatKeyword(obj, "static", oneSpace, null)
+//                 if (node.annotationCallsOrEmpty().isNotEmpty()) {
+//                     doc.formatKeyword(node, "static", oneSpace, null)
 //                 }
 //
 //                 // Keyword "attr"
-//                 if (obj.annotationCallsOrEmpty().isEmpty() && !obj.isStatic) {
-//                     doc.formatKeyword(obj, "attr", null, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty() && !node.isStatic) {
+//                     doc.formatKeyword(node, "attr", null, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "attr", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "attr", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, noSpace)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, noSpace)
 //
 //                 // Keyword ":"
-//                 doc.formatKeyword(obj, ":", noSpace, oneSpace)
+//                 doc.formatKeyword(node, ":", noSpace, oneSpace)
 //
 //                 // EObject "type"
-//                 doc.formatObject(obj.type, oneSpace, null)
+//                 doc.formatObject(node.type, oneSpace, null)
 //             }
 //             is SdsClass -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "class"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatKeyword(obj, "class", null, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatKeyword(node, "class", null, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "class", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "class", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //
 //                 // EObject "typeParameterList"
-//                 doc.formatObject(obj.typeParameterList, noSpace, null)
+//                 doc.formatObject(node.typeParameterList, noSpace, null)
 //
 //                 // EObject "constructor"
-//                 doc.formatObject(obj.parameterList, noSpace, null)
+//                 doc.formatObject(node.parameterList, noSpace, null)
 //
 //                 // EObject "parentTypeList"
-//                 doc.formatObject(obj.parentTypeList, oneSpace, null)
+//                 doc.formatObject(node.parentTypeList, oneSpace, null)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body, oneSpace, null)
+//                 doc.formatObject(node.body, oneSpace, null)
 //             }
 //             is SdsParentTypeList -> {
 //                 // Keyword "sub"
-//                 doc.formatKeyword(obj, "sub", null, oneSpace)
+//                 doc.formatKeyword(node, "sub", null, oneSpace)
 //
-//                 // Feature "parentTypes"
-//                 obj.parentTypes.forEach {
+//                 // Property "parentTypes"
+//                 node.parentTypes.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //             }
 //             is SdsClassBody -> {
 //                 // Keyword "{"
-//                 val openingBrace = obj.regionForKeyword("{")
-//                 if (obj.members.isEmpty()) {
+//                 val openingBrace = node.regionForKeyword("{")
+//                 if (node.members.isEmpty()) {
 //                     doc.append(openingBrace, noSpace)
 //                 } else {
 //                     doc.append(openingBrace, newLine)
 //                 }
 //
-//                 // Feature "members"
-//                 obj.members.forEach {
+//                 // Property "members"
+//                 node.members.forEach {
 //                     doc.format(it)
-//                     if (obj.members.last() == it) {
+//                     if (node.members.last() == it) {
 //                         doc.append(it, newLine)
 //                     } else {
 //                         doc.append(it, newLines(2))
@@ -238,54 +234,54 @@ export class SafeDSFormatter extends AbstractFormatter {
 //                 }
 //
 //                 // Keyword "}"
-//                 val closingBrace = obj.regionForKeyword("}")
+//                 val closingBrace = node.regionForKeyword("}")
 //                 doc.prepend(closingBrace, noSpace)
 //
 //                 doc.interior(openingBrace, closingBrace, indent)
 //             }
 //             is SdsEnum -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "enum"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatKeyword(obj, "enum", null, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatKeyword(node, "enum", null, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "enum", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "enum", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body, oneSpace, null)
+//                 doc.formatObject(node.body, oneSpace, null)
 //             }
 //             is SdsEnumBody -> {
 //                 // Keyword "{"
-//                 val openingBrace = obj.regionForKeyword("{")
-//                 if (obj.variants.isEmpty()) {
+//                 val openingBrace = node.regionForKeyword("{")
+//                 if (node.variants.isEmpty()) {
 //                     doc.append(openingBrace, noSpace)
 //                 } else {
 //                     doc.append(openingBrace, newLine)
 //                 }
 //
-//                 // Feature "variants"
-//                 obj.variants.forEach {
+//                 // Property "variants"
+//                 node.variants.forEach {
 //                     doc.format(it)
-//                     if (obj.variants.first() != it) {
+//                     if (node.variants.first() != it) {
 //                         doc.prepend(it, newLines(2))
 //                     }
 //                 }
 //
 //                 // Keywords ","
-//                 val commas = textRegionExtensions.allRegionsFor(obj).keywords(",")
+//                 val commas = textRegionExtensions.allRegionsFor(node).keywords(",")
 //                 commas.forEach {
 //                     doc.prepend(it, noSpace)
 //                 }
 //
 //                 // Keyword "}"
-//                 val closingBrace = obj.regionForKeyword("}")
-//                 if (obj.variants.isEmpty()) {
+//                 val closingBrace = node.regionForKeyword("}")
+//                 if (node.variants.isEmpty()) {
 //                     doc.prepend(closingBrace, noSpace)
 //                 } else {
 //                     doc.prepend(closingBrace, newLine)
@@ -294,69 +290,69 @@ export class SafeDSFormatter extends AbstractFormatter {
 //                 doc.interior(openingBrace, closingBrace, indent)
 //             }
 //             is SdsEnumVariant -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
-//                 // Feature "name"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME)
+//                 // Property "name"
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME)
 //                 } else {
-//                     doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                     doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //                 }
 //
 //                 // EObject "typeParameterList"
-//                 doc.formatObject(obj.typeParameterList, noSpace, null)
+//                 doc.formatObject(node.typeParameterList, noSpace, null)
 //
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, noSpace, null)
+//                 doc.formatObject(node.parameterList, noSpace, null)
 //
 //                 // EObject "constraint"
-//                 doc.formatObject(obj.constraint, oneSpace, null)
+//                 doc.formatObject(node.constraint, oneSpace, null)
 //             }
 //             is SdsFunction -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "static"
-//                 if (obj.annotationCallsOrEmpty().isNotEmpty()) {
-//                     doc.formatKeyword(obj, "static", oneSpace, null)
+//                 if (node.annotationCallsOrEmpty().isNotEmpty()) {
+//                     doc.formatKeyword(node, "static", oneSpace, null)
 //                 }
 //
 //                 // Keyword "fun"
-//                 if (obj.annotationCallsOrEmpty().isEmpty() && !obj.isStatic) {
-//                     doc.formatKeyword(obj, "fun", null, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty() && !node.isStatic) {
+//                     doc.formatKeyword(node, "fun", null, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "fun", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "fun", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //
 //                 // EObject "typeParameterList"
-//                 doc.formatObject(obj.typeParameterList, noSpace, null)
+//                 doc.formatObject(node.typeParameterList, noSpace, null)
 //
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, noSpace, null)
+//                 doc.formatObject(node.parameterList, noSpace, null)
 //
 //                 // EObject "resultList"
-//                 doc.formatObject(obj.resultList, oneSpace, null)
+//                 doc.formatObject(node.resultList, oneSpace, null)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body, oneSpace, null)
+//                 doc.formatObject(node.body, oneSpace, null)
 //             }
 //             is SdsFunctionBody -> {
 //                 // Keyword "{"
-//                 val openingBrace = obj.regionForKeyword("{")
-//                 if (obj.statements.isEmpty()) {
+//                 val openingBrace = node.regionForKeyword("{")
+//                 if (node.statements.isEmpty()) {
 //                     doc.append(openingBrace, noSpace)
 //                 } else {
 //                     doc.append(openingBrace, newLine)
 //                 }
 //
-//                 // Feature "statements"
-//                 obj.statements.forEach {
+//                 // Property "statements"
+//                 node.statements.forEach {
 //                     doc.format(it)
-//                     if (obj.statements.last() == it) {
+//                     if (node.statements.last() == it) {
 //                         doc.append(it, newLine)
 //                     } else {
 //                         doc.append(it, newLines(2))
@@ -364,156 +360,156 @@ export class SafeDSFormatter extends AbstractFormatter {
 //                 }
 //
 //                 // Keyword "}"
-//                 val closingBrace = obj.regionForKeyword("}")
+//                 val closingBrace = node.regionForKeyword("}")
 //                 doc.prepend(closingBrace, noSpace)
 //
 //                 doc.interior(openingBrace, closingBrace, indent)
 //             }
 //             is SdsPipeline -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "pipeline"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatKeyword(obj, "pipeline", noSpace, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatKeyword(node, "pipeline", noSpace, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "pipeline", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "pipeline", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, null, oneSpace)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, null, oneSpace)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body)
+//                 doc.formatObject(node.body)
 //             }
 //             is SdsStep -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
-//                 // Feature "visibility"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatFeature(obj, SDS_STEP__VISIBILITY, noSpace, null)
+//                 // Property "visibility"
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatProperty(node, SDS_STEP__VISIBILITY, noSpace, null)
 //                 }
 //
 //                 // Keyword "step"
-//                 if (obj.annotationCallsOrEmpty().isEmpty() && obj.visibility == null) {
-//                     doc.formatKeyword(obj, "step", noSpace, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty() && node.visibility == null) {
+//                     doc.formatKeyword(node, "step", noSpace, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "step", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "step", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, null, noSpace)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, null, noSpace)
 //
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList)
+//                 doc.formatObject(node.parameterList)
 //
 //                 // EObject "resultList"
-//                 doc.formatObject(obj.resultList)
+//                 doc.formatObject(node.resultList)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body, oneSpace, null)
+//                 doc.formatObject(node.body, oneSpace, null)
 //             }
 //             is SdsArgumentList -> {
 //                 // Keyword "("
-//                 doc.formatKeyword(obj, "(", null, noSpace)
+//                 doc.formatKeyword(node, "(", null, noSpace)
 //
-//                 // Feature "arguments"
-//                 obj.arguments.forEach {
+//                 // Property "arguments"
+//                 node.arguments.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //
 //                 // Keyword ")"
-//                 doc.formatKeyword(obj, ")", noSpace, null)
+//                 doc.formatKeyword(node, ")", noSpace, null)
 //             }
 //             is SdsArgument -> {
-//                 // Feature "parameter"
-//                 doc.formatFeature(obj, SDS_ARGUMENT__PARAMETER)
+//                 // Property "parameter"
+//                 doc.formatProperty(node, SDS_ARGUMENT__PARAMETER)
 //
 //                 // Keyword "="
-//                 doc.formatKeyword(obj, "=", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "=", oneSpace, oneSpace)
 //
 //                 // EObject "value"
-//                 doc.formatObject(obj.value)
+//                 doc.formatObject(node.value)
 //             }
 //             is SdsParameterList -> {
 //                 // Keyword "("
-//                 doc.formatKeyword(obj, "(", null, noSpace)
+//                 doc.formatKeyword(node, "(", null, noSpace)
 //
-//                 // Feature "parameters"
-//                 obj.parameters.forEach {
+//                 // Property "parameters"
+//                 node.parameters.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //
 //                 // Keyword ")"
-//                 doc.formatKeyword(obj, ")", noSpace, null)
+//                 doc.formatKeyword(node, ")", noSpace, null)
 //             }
 //             is SdsParameter -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj, inlineAnnotations = true)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node, inlineAnnotations = true)
 //
 //                 // Keyword "vararg"
-//                 if (obj.annotationCallsOrEmpty().isNotEmpty()) {
-//                     doc.formatKeyword(obj, "vararg", oneSpace, null)
+//                 if (node.annotationCallsOrEmpty().isNotEmpty()) {
+//                     doc.formatKeyword(node, "vararg", oneSpace, null)
 //                 }
 //
-//                 // Feature "name"
-//                 val name = obj.regionForFeature(SDS_ABSTRACT_DECLARATION__NAME)
-//                 if (obj.annotationCallsOrEmpty().isNotEmpty() || obj.isVariadic) {
+//                 // Property "name"
+//                 val name = node.regionForProperty(SDS_ABSTRACT_DECLARATION__NAME)
+//                 if (node.annotationCallsOrEmpty().isNotEmpty() || node.isVariadic) {
 //                     doc.prepend(name, oneSpace)
 //                 }
 //
 //                 // Keyword ":"
-//                 doc.formatKeyword(obj, ":", noSpace, oneSpace)
+//                 doc.formatKeyword(node, ":", noSpace, oneSpace)
 //
 //                 // EObject "type"
-//                 doc.formatObject(obj.type)
+//                 doc.formatObject(node.type)
 //
 //                 // Keyword "="
-//                 doc.formatKeyword(obj, "=", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "=", oneSpace, oneSpace)
 //
 //                 // EObject "defaultValue"
-//                 doc.formatObject(obj.defaultValue)
+//                 doc.formatObject(node.defaultValue)
 //             }
 //             is SdsResultList -> {
 //                 // Keyword "->"
-//                 doc.formatKeyword(obj, "->", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "->", oneSpace, oneSpace)
 //
 //                 // Keyword "("
-//                 doc.formatKeyword(obj, "(", null, noSpace)
+//                 doc.formatKeyword(node, "(", null, noSpace)
 //
-//                 // Feature "results"
-//                 obj.results.forEach {
+//                 // Property "results"
+//                 node.results.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //
 //                 // Keyword ")"
-//                 doc.formatKeyword(obj, ")", noSpace, null)
+//                 doc.formatKeyword(node, ")", noSpace, null)
 //             }
 //             is SdsResult -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj, inlineAnnotations = true)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node, inlineAnnotations = true)
 //
-//                 // Feature "name"
-//                 val name = obj.regionForFeature(SDS_ABSTRACT_DECLARATION__NAME)
-//                 if (obj.annotationCallsOrEmpty().isNotEmpty()) {
+//                 // Property "name"
+//                 val name = node.regionForProperty(SDS_ABSTRACT_DECLARATION__NAME)
+//                 if (node.annotationCallsOrEmpty().isNotEmpty()) {
 //                     doc.prepend(name, oneSpace)
 //                 }
 //
 //                 // Keyword ":"
-//                 doc.formatKeyword(obj, ":", noSpace, oneSpace)
+//                 doc.formatKeyword(node, ":", noSpace, oneSpace)
 //
 //                 // EObject "type"
-//                 doc.formatObject(obj.type)
+//                 doc.formatObject(node.type)
 //             }
 //
 //             /**********************************************************************************************************
@@ -521,30 +517,30 @@ export class SafeDSFormatter extends AbstractFormatter {
 //              **********************************************************************************************************/
 //
 //             is SdsPredicate -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "predicate"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatKeyword(obj, "predicate", noSpace, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatKeyword(node, "predicate", noSpace, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "predicate", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "predicate", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, null, noSpace)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, null, noSpace)
 //
 //                 // EObject "typeParameterList"
-//                 doc.formatObject(obj.typeParameterList, noSpace, null)
+//                 doc.formatObject(node.typeParameterList, noSpace, null)
 //
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, noSpace, null)
+//                 doc.formatObject(node.parameterList, noSpace, null)
 //
 //                 // EObject "resultList"
-//                 doc.formatObject(obj.resultList, oneSpace, null)
+//                 doc.formatObject(node.resultList, oneSpace, null)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body, oneSpace, null)
+//                 doc.formatObject(node.body, oneSpace, null)
 //             }
 //
 //             /**********************************************************************************************************
@@ -553,40 +549,40 @@ export class SafeDSFormatter extends AbstractFormatter {
 //
 //             is SdsProtocol -> {
 //                 // Keyword "protocol"
-//                 doc.formatKeyword(obj, "protocol", null, oneSpace)
+//                 doc.formatKeyword(node, "protocol", null, oneSpace)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body)
+//                 doc.formatObject(node.body)
 //             }
 //             is SdsProtocolBody -> {
 //                 // Keyword "{"
-//                 val openingBrace = obj.regionForKeyword("{")
-//                 if (obj.subtermList == null && obj.term == null) {
+//                 val openingBrace = node.regionForKeyword("{")
+//                 if (node.subtermList == null && node.term == null) {
 //                     doc.append(openingBrace, noSpace)
 //                 } else {
 //                     doc.append(openingBrace, newLine)
 //                 }
 //
 //                 // EObject "subtermList"
-//                 if (obj.term == null) {
-//                     doc.formatObject(obj.subtermList, null, newLine)
+//                 if (node.term == null) {
+//                     doc.formatObject(node.subtermList, null, newLine)
 //                 } else {
-//                     doc.format(obj.subtermList)
-//                     doc.append(obj.subtermList, newLines(2))
+//                     doc.format(node.subtermList)
+//                     doc.append(node.subtermList, newLines(2))
 //                 }
 //
 //                 // EObject "term"
-//                 doc.formatObject(obj.term, null, newLine)
+//                 doc.formatObject(node.term, null, newLine)
 //
 //                 // Keyword "}"
-//                 val closingBrace = obj.regionForKeyword("}")
+//                 val closingBrace = node.regionForKeyword("}")
 //                 doc.prepend(closingBrace, noSpace)
 //
 //                 doc.interior(openingBrace, closingBrace, indent)
 //             }
 //             is SdsProtocolSubtermList -> {
-//                 obj.subterms.forEach {
-//                     if (it === obj.subterms.last()) {
+//                 node.subterms.forEach {
+//                     if (it === node.subterms.last()) {
 //                         doc.formatObject(it, null, null)
 //                     } else {
 //                         doc.formatObject(it, null, newLine)
@@ -595,50 +591,50 @@ export class SafeDSFormatter extends AbstractFormatter {
 //             }
 //             is SdsProtocolSubterm -> {
 //                 // Keyword "subterm"
-//                 doc.formatKeyword(obj, "subterm", null, oneSpace)
+//                 doc.formatKeyword(node, "subterm", null, oneSpace)
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, oneSpace)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, oneSpace)
 //
 //                 // Keyword "="
-//                 doc.formatKeyword(obj, "=", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "=", oneSpace, oneSpace)
 //
 //                 // EObject "term"
-//                 doc.formatObject(obj.term, oneSpace, noSpace)
+//                 doc.formatObject(node.term, oneSpace, noSpace)
 //
 //                 // Keyword ";"
-//                 doc.formatKeyword(obj, ";", noSpace, null)
+//                 doc.formatKeyword(node, ";", noSpace, null)
 //             }
 //             is SdsProtocolAlternative -> {
 //                 // Keywords '|'
-//                 val pipes = textRegionExtensions.allRegionsFor(obj).keywords("|")
+//                 val pipes = textRegionExtensions.allRegionsFor(node).keywords("|")
 //                 pipes.forEach {
 //                     doc.prepend(it, oneSpace)
 //                     doc.append(it, oneSpace)
 //                 }
 //
 //                 // EObject "terms"
-//                 obj.terms.forEach {
+//                 node.terms.forEach {
 //                     doc.formatObject(it)
 //                 }
 //             }
 //             is SdsProtocolComplement -> {
 //                 // Keyword "["
-//                 doc.formatKeyword(obj, "[", null, noSpace)
+//                 doc.formatKeyword(node, "[", null, noSpace)
 //
 //                 // Keyword "^"
-//                 doc.formatKeyword(obj, "^", noSpace, null)
+//                 doc.formatKeyword(node, "^", noSpace, null)
 //
 //                 // EObject "referenceList"
-//                 doc.formatObject(obj.referenceList, oneSpace, null)
+//                 doc.formatObject(node.referenceList, oneSpace, null)
 //
 //                 // Keyword "]"
-//                 doc.formatKeyword(obj, "]", noSpace, null)
+//                 doc.formatKeyword(node, "]", noSpace, null)
 //             }
 //             is SdsProtocolReferenceList -> {
 //                 // EObject "terms"
-//                 obj.references.forEach {
-//                     if (it == obj.references.last()) {
+//                 node.references.forEach {
+//                     if (it == node.references.last()) {
 //                         doc.formatObject(it)
 //                     } else {
 //                         doc.formatObject(it, null, oneSpace)
@@ -647,25 +643,25 @@ export class SafeDSFormatter extends AbstractFormatter {
 //             }
 //             is SdsProtocolParenthesizedTerm -> {
 //                 // Keyword "("
-//                 doc.formatKeyword(obj, "(", null, noSpace)
+//                 doc.formatKeyword(node, "(", null, noSpace)
 //
 //                 // EObject "term"
-//                 doc.formatObject(obj.term, noSpace, noSpace)
+//                 doc.formatObject(node.term, noSpace, noSpace)
 //
 //                 // Keyword ")"
-//                 doc.formatKeyword(obj, ")", noSpace, null)
+//                 doc.formatKeyword(node, ")", noSpace, null)
 //             }
 //             is SdsProtocolQuantifiedTerm -> {
 //                 // EObject "term"
-//                 doc.formatObject(obj.term)
+//                 doc.formatObject(node.term)
 //
-//                 // Feature "quantifier"
-//                 doc.formatFeature(obj, SDS_PROTOCOL_QUANTIFIED_TERM__QUANTIFIER, noSpace, null)
+//                 // Property "quantifier"
+//                 doc.formatProperty(node, SDS_PROTOCOL_QUANTIFIED_TERM__QUANTIFIER, noSpace, null)
 //             }
 //             is SdsProtocolSequence -> {
 //                 // EObject "terms"
-//                 obj.terms.forEach {
-//                     if (it == obj.terms.last()) {
+//                 node.terms.forEach {
+//                     if (it == node.terms.last()) {
 //                         doc.formatObject(it)
 //                     } else {
 //                         doc.formatObject(it, null, oneSpace)
@@ -678,42 +674,42 @@ export class SafeDSFormatter extends AbstractFormatter {
 //              **********************************************************************************************************/
 //
 //             is SdsSchema -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node)
 //
 //                 // Keyword "schema"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatKeyword(obj, "schema", noSpace, oneSpace)
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatKeyword(node, "schema", noSpace, oneSpace)
 //                 } else {
-//                     doc.formatKeyword(obj, "schema", oneSpace, oneSpace)
+//                     doc.formatKeyword(node, "schema", oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, null, oneSpace)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, null, oneSpace)
 //
 //                 // EObject "columnList"
-//                 doc.formatObject(obj.columnList, oneSpace, null)
+//                 doc.formatObject(node.columnList, oneSpace, null)
 //             }
 //             is SdsColumnList -> {
 //                 // Keyword "{"
-//                 val openingBrace = obj.regionForKeyword("{")
-//                 if (obj.columns.isEmpty()) {
+//                 val openingBrace = node.regionForKeyword("{")
+//                 if (node.columns.isEmpty()) {
 //                     doc.append(openingBrace, noSpace)
 //                 } else {
 //                     doc.append(openingBrace, newLine)
 //                 }
 //
-//                 // Feature "columns"
-//                 obj.columns.forEach {
+//                 // Property "columns"
+//                 node.columns.forEach {
 //                     doc.formatObject(it, newLine, noSpace)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatKeyword(obj, ",", noSpace, newLine)
+//                 doc.formatKeyword(node, ",", noSpace, newLine)
 //
 //                 // Keyword "}"
-//                 val closingBrace = obj.regionForKeyword("}")
-//                 if (obj.columns.isEmpty()) {
+//                 val closingBrace = node.regionForKeyword("}")
+//                 if (node.columns.isEmpty()) {
 //                     doc.prepend(closingBrace, noSpace)
 //                 } else {
 //                     doc.prepend(closingBrace, newLine)
@@ -722,13 +718,13 @@ export class SafeDSFormatter extends AbstractFormatter {
 //             }
 //             is SdsColumn -> {
 //                 // EObject "columnName"
-//                 doc.formatObject(obj.columnName, null, oneSpace)
+//                 doc.formatObject(node.columnName, null, oneSpace)
 //
 //                 // Keyword ":"
-//                 doc.formatKeyword(obj, ":", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, ":", oneSpace, oneSpace)
 //
 //                 // EObject "columnType"
-//                 doc.formatObject(obj.columnType)
+//                 doc.formatObject(node.columnType)
 //             }
 //
 //             /**********************************************************************************************************
@@ -737,88 +733,88 @@ export class SafeDSFormatter extends AbstractFormatter {
 //
 //             is SdsBlock -> {
 //                 val internalPadding: KFunction1<Format, Unit>
-//                 if (obj.statements.isEmpty()) {
+//                 if (node.statements.isEmpty()) {
 //                     internalPadding = noSpace
 //                 } else {
 //                     internalPadding = newLine
 //                 }
 //
 //                 val statementsSuffix: KFunction1<Format, Unit>
-//                 if (obj.eContainer() is SdsConstraint || obj.eContainer() is SdsPredicate) {
+//                 if (node.eContainer() is SdsConstraint || node.eContainer() is SdsPredicate) {
 //                     statementsSuffix = noSpace
 //                 } else {
 //                     statementsSuffix = newLine
 //                 }
 //
 //                 // Keyword "{"
-//                 val openingBrace = obj.regionForKeyword("{")
+//                 val openingBrace = node.regionForKeyword("{")
 //                 doc.append(openingBrace, internalPadding)
 //
-//                 // Feature "statements"
-//                 obj.statements.forEach {
+//                 // Property "statements"
+//                 node.statements.forEach {
 //                     doc.formatObject(it, null, statementsSuffix)
 //                 }
 //
 //                 // Keywords "," (for SdsConstraint or SdsPredicate)
 //                 if (statementsSuffix == noSpace) {
-//                     doc.formatKeyword(obj, ",", noSpace, newLine)
+//                     doc.formatKeyword(node, ",", noSpace, newLine)
 //                 }
 //
 //                 // Keyword "}"
-//                 val closingBrace = obj.regionForKeyword("}")
+//                 val closingBrace = node.regionForKeyword("}")
 //                 doc.prepend(closingBrace, internalPadding)
 //
 //                 doc.interior(openingBrace, closingBrace, indent)
 //             }
 //             is SdsAssignment -> {
 //                 // EObject "assigneeList"
-//                 doc.formatObject(obj.assigneeList, null, oneSpace)
+//                 doc.formatObject(node.assigneeList, null, oneSpace)
 //
 //                 // Keyword "="
-//                 doc.formatKeyword(obj, "=", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "=", oneSpace, oneSpace)
 //
 //                 // EObject "expression"
-//                 doc.formatObject(obj.expression)
+//                 doc.formatObject(node.expression)
 //
 //                 // Keyword ";"
-//                 doc.formatKeyword(obj, ";", noSpace, null)
+//                 doc.formatKeyword(node, ";", noSpace, null)
 //             }
 //             is SdsAssigneeList -> {
-//                 // Feature "assignees"
-//                 obj.assignees.forEach {
+//                 // Property "assignees"
+//                 node.assignees.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //             }
 //             is SdsBlockLambdaResult -> {
 //                 // Keyword "yield"
-//                 doc.formatKeyword(obj, "yield", null, oneSpace)
+//                 doc.formatKeyword(node, "yield", null, oneSpace)
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //             }
 //             is SdsPlaceholder -> {
 //                 // Keyword "val"
-//                 doc.formatKeyword(obj, "val", null, oneSpace)
+//                 doc.formatKeyword(node, "val", null, oneSpace)
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME, oneSpace, null)
 //             }
 //             is SdsYield -> {
 //                 // Keyword "yield"
-//                 doc.formatKeyword(obj, "yield", null, oneSpace)
+//                 doc.formatKeyword(node, "yield", null, oneSpace)
 //
-//                 // Feature "result"
-//                 doc.formatFeature(obj, SDS_YIELD__RESULT)
+//                 // Property "result"
+//                 doc.formatProperty(node, SDS_YIELD__RESULT)
 //             }
 //             is SdsExpressionStatement -> {
 //                 // EObject "expression"
-//                 doc.formatObject(obj.expression)
+//                 doc.formatObject(node.expression)
 //
 //                 // Keyword ";"
-//                 doc.formatKeyword(obj, ";", noSpace, null)
+//                 doc.formatKeyword(node, ";", noSpace, null)
 //             }
 //
 //             /**********************************************************************************************************
@@ -827,92 +823,92 @@ export class SafeDSFormatter extends AbstractFormatter {
 //
 //             is SdsBlockLambda -> {
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, null, oneSpace)
+//                 doc.formatObject(node.parameterList, null, oneSpace)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body, oneSpace, null)
+//                 doc.formatObject(node.body, oneSpace, null)
 //             }
 //             is SdsCall -> {
 //                 // EObject "receiver"
-//                 doc.formatObject(obj.receiver, null, noSpace)
+//                 doc.formatObject(node.receiver, null, noSpace)
 //
 //                 // EObject "typeArgumentList"
-//                 doc.formatObject(obj.typeArgumentList, null, noSpace)
+//                 doc.formatObject(node.typeArgumentList, null, noSpace)
 //
 //                 // EObject "argumentList"
-//                 doc.formatObject(obj.argumentList)
+//                 doc.formatObject(node.argumentList)
 //             }
 //             is SdsExpressionLambda -> {
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, null, oneSpace)
+//                 doc.formatObject(node.parameterList, null, oneSpace)
 //
 //                 // Keyword "->"
-//                 doc.formatKeyword(obj, "->", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "->", oneSpace, oneSpace)
 //
 //                 // EObject "result"
-//                 doc.formatObject(obj.result, oneSpace, null)
+//                 doc.formatObject(node.result, oneSpace, null)
 //             }
 //             is SdsIndexedAccess -> {
 //                 // EObject "receiver"
-//                 doc.formatObject(obj.receiver, null, noSpace)
+//                 doc.formatObject(node.receiver, null, noSpace)
 //
 //                 // Keyword "["
-//                 doc.formatKeyword(obj, "[", noSpace, noSpace)
+//                 doc.formatKeyword(node, "[", noSpace, noSpace)
 //
 //                 // EObject "index"
-//                 doc.formatObject(obj.index, noSpace, noSpace)
+//                 doc.formatObject(node.index, noSpace, noSpace)
 //
 //                 // Keyword "]"
-//                 doc.formatKeyword(obj, "]", noSpace, null)
+//                 doc.formatKeyword(node, "]", noSpace, null)
 //             }
 //             is SdsInfixOperation -> {
 //                 // EObject "leftOperand"
-//                 doc.formatObject(obj.leftOperand, null, oneSpace)
+//                 doc.formatObject(node.leftOperand, null, oneSpace)
 //
-//                 // Feature "operator"
-//                 doc.formatFeature(obj, SDS_INFIX_OPERATION__OPERATOR, oneSpace, oneSpace)
+//                 // Property "operator"
+//                 doc.formatProperty(node, SDS_INFIX_OPERATION__OPERATOR, oneSpace, oneSpace)
 //
 //                 // EObject "rightOperand"
-//                 doc.formatObject(obj.rightOperand, oneSpace, null)
+//                 doc.formatObject(node.rightOperand, oneSpace, null)
 //             }
 //             is SdsMemberAccess -> {
 //                 // EObject "receiver"
-//                 doc.formatObject(obj.receiver, null, noSpace)
+//                 doc.formatObject(node.receiver, null, noSpace)
 //
-//                 // Feature "nullable"
-//                 doc.formatFeature(obj, SDS_MEMBER_ACCESS__NULL_SAFE, noSpace, noSpace)
+//                 // Property "nullable"
+//                 doc.formatProperty(node, SDS_MEMBER_ACCESS__NULL_SAFE, noSpace, noSpace)
 //
 //                 // Keyword "."
-//                 doc.formatKeyword(obj, ".", noSpace, noSpace)
+//                 doc.formatKeyword(node, ".", noSpace, noSpace)
 //
 //                 // EObject "member"
-//                 doc.formatObject(obj.member, noSpace, null)
+//                 doc.formatObject(node.member, noSpace, null)
 //             }
 //             is SdsParenthesizedExpression -> {
 //                 // Keyword "("
-//                 doc.formatKeyword(obj, "(", null, noSpace)
+//                 doc.formatKeyword(node, "(", null, noSpace)
 //
 //                 // EObject "expression"
-//                 doc.formatObject(obj.expression, noSpace, noSpace)
+//                 doc.formatObject(node.expression, noSpace, noSpace)
 //
 //                 // Keyword ")"
-//                 doc.formatKeyword(obj, ")", noSpace, null)
+//                 doc.formatKeyword(node, ")", noSpace, null)
 //             }
 //             is SdsPrefixOperation -> {
-//                 // Feature "operator"
-//                 doc.formatFeature(
-//                     obj,
+//                 // Property "operator"
+//                 doc.formatProperty(
+//                     node,
 //                     SDS_PREFIX_OPERATION__OPERATOR,
 //                     prepend = null,
-//                     append = if (obj.operator == "not") oneSpace else noSpace,
+//                     append = if (node.operator == "not") oneSpace else noSpace,
 //             )
 //
 //                 // EObject "operand"
-//                 doc.formatObject(obj.operand)
+//                 doc.formatObject(node.operand)
 //             }
 //             is SdsTemplateString -> {
-//                 // Feature expressions
-//                 obj.expressions.forEach {
+//                 // Property expressions
+//                 node.expressions.forEach {
 //                     if (it !is SdsAbstractTemplateStringPart) {
 //                         doc.formatObject(it, oneSpace, oneSpace)
 //                     }
@@ -925,132 +921,132 @@ export class SafeDSFormatter extends AbstractFormatter {
 //
 //             is SdsCallableType -> {
 //                 // Keyword "callable"
-//                 doc.formatKeyword(obj, "callable", null, oneSpace)
+//                 doc.formatKeyword(node, "callable", null, oneSpace)
 //
 //                 // EObject "parameterList"
-//                 doc.formatObject(obj.parameterList, oneSpace, oneSpace)
+//                 doc.formatObject(node.parameterList, oneSpace, oneSpace)
 //
 //                 // EObject "resultList"
-//                 doc.formatObject(obj.resultList, oneSpace, null)
+//                 doc.formatObject(node.resultList, oneSpace, null)
 //             }
 //             is SdsMemberType -> {
 //                 // EObject "receiver"
-//                 doc.formatObject(obj.receiver, null, noSpace)
+//                 doc.formatObject(node.receiver, null, noSpace)
 //
 //                 // Keyword "."
-//                 doc.formatKeyword(obj, ".", noSpace, noSpace)
+//                 doc.formatKeyword(node, ".", noSpace, noSpace)
 //
 //                 // EObject "member"
-//                 doc.formatObject(obj.member, noSpace, null)
+//                 doc.formatObject(node.member, noSpace, null)
 //             }
 //             is SdsNamedType -> {
-//                 // Feature "declaration"
-//                 doc.formatFeature(obj, SDS_NAMED_TYPE__DECLARATION)
+//                 // Property "declaration"
+//                 doc.formatProperty(node, SDS_NAMED_TYPE__DECLARATION)
 //
 //                 // EObject "typeArgumentList"
-//                 doc.formatObject(obj.typeArgumentList, noSpace, noSpace)
+//                 doc.formatObject(node.typeArgumentList, noSpace, noSpace)
 //
-//                 // Feature "nullable"
-//                 doc.formatFeature(obj, SDS_NAMED_TYPE__NULLABLE, noSpace, null)
+//                 // Property "nullable"
+//                 doc.formatProperty(node, SDS_NAMED_TYPE__NULLABLE, noSpace, null)
 //             }
 //             is SdsParenthesizedType -> {
 //                 // Keyword "("
-//                 doc.formatKeyword(obj, "(", null, noSpace)
+//                 doc.formatKeyword(node, "(", null, noSpace)
 //
 //                 // EObject "type"
-//                 doc.formatObject(obj.type, noSpace, noSpace)
+//                 doc.formatObject(node.type, noSpace, noSpace)
 //
 //                 // Keyword ")"
-//                 doc.formatKeyword(obj, ")", noSpace, null)
+//                 doc.formatKeyword(node, ")", noSpace, null)
 //             }
 //             is SdsUnionType -> {
 //                 // Keyword "union"
-//                 doc.formatKeyword(obj, "union", null, noSpace)
+//                 doc.formatKeyword(node, "union", null, noSpace)
 //
 //                 // EObject "typeArgumentList"
-//                 doc.formatObject(obj.typeArgumentList, noSpace, null)
+//                 doc.formatObject(node.typeArgumentList, noSpace, null)
 //             }
 //             is SdsTypeArgumentList -> {
 //                 // Keyword "<"
-//                 doc.formatKeyword(obj, "<", null, noSpace)
+//                 doc.formatKeyword(node, "<", null, noSpace)
 //
-//                 // Feature "typeArguments"
-//                 obj.typeArguments.forEach {
+//                 // Property "typeArguments"
+//                 node.typeArguments.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //
 //                 // Keyword ">"
-//                 doc.formatKeyword(obj, ">", noSpace, null)
+//                 doc.formatKeyword(node, ">", noSpace, null)
 //             }
 //             is SdsTypeArgument -> {
-//                 // Feature "typeParameter"
-//                 doc.formatFeature(obj, SDS_TYPE_ARGUMENT__TYPE_PARAMETER)
+//                 // Property "typeParameter"
+//                 doc.formatProperty(node, SDS_TYPE_ARGUMENT__TYPE_PARAMETER)
 //
 //                 // Keyword "="
-//                 doc.formatKeyword(obj, "=", oneSpace, oneSpace)
+//                 doc.formatKeyword(node, "=", oneSpace, oneSpace)
 //
 //                 // EObject "value"
-//                 doc.formatObject(obj.value)
+//                 doc.formatObject(node.value)
 //             }
 //             is SdsTypeProjection -> {
-//                 // Feature "variance"
-//                 doc.formatFeature(obj, SDS_TYPE_PROJECTION__VARIANCE, null, oneSpace)
+//                 // Property "variance"
+//                 doc.formatProperty(node, SDS_TYPE_PROJECTION__VARIANCE, null, oneSpace)
 //
 //                 // EObject "type"
-//                 doc.formatObject(obj.type)
+//                 doc.formatObject(node.type)
 //             }
 //             is SdsTypeParameterList -> {
 //                 // Keyword "<"
-//                 doc.formatKeyword(obj, "<", null, noSpace)
+//                 doc.formatKeyword(node, "<", null, noSpace)
 //
-//                 // Feature "typeParameters"
-//                 obj.typeParameters.forEach {
+//                 // Property "typeParameters"
+//                 node.typeParameters.forEach {
 //                     doc.formatObject(it)
 //                 }
 //
 //                 // Keywords ","
-//                 doc.formatCommas(obj)
+//                 doc.formatCommas(node)
 //
 //                 // Keyword ">"
-//                 doc.formatKeyword(obj, ">", noSpace, null)
+//                 doc.formatKeyword(node, ">", noSpace, null)
 //             }
 //             is SdsTypeParameter -> {
-//                 // Features "annotations"
-//                 doc.formatAnnotations(obj, inlineAnnotations = true)
+//                 // Propertys "annotations"
+//                 doc.formatAnnotations(node, inlineAnnotations = true)
 //
-//                 // Feature "variance"
-//                 if (obj.annotationCallsOrEmpty().isEmpty()) {
-//                     doc.formatFeature(obj, SDS_TYPE_PARAMETER__VARIANCE, null, oneSpace)
+//                 // Property "variance"
+//                 if (node.annotationCallsOrEmpty().isEmpty()) {
+//                     doc.formatProperty(node, SDS_TYPE_PARAMETER__VARIANCE, null, oneSpace)
 //                 } else {
-//                     doc.formatFeature(obj, SDS_TYPE_PARAMETER__VARIANCE, oneSpace, oneSpace)
+//                     doc.formatProperty(node, SDS_TYPE_PARAMETER__VARIANCE, oneSpace, oneSpace)
 //                 }
 //
-//                 // Feature "name"
-//                 doc.formatFeature(obj, SDS_ABSTRACT_DECLARATION__NAME)
+//                 // Property "name"
+//                 doc.formatProperty(node, SDS_ABSTRACT_DECLARATION__NAME)
 //
-//                 // Feature "kind"
-//                 doc.formatKeyword(obj, "::", oneSpace, oneSpace)
-//                 doc.formatFeature(obj, SDS_TYPE_PARAMETER__KIND)
+//                 // Property "kind"
+//                 doc.formatKeyword(node, "::", oneSpace, oneSpace)
+//                 doc.formatProperty(node, SDS_TYPE_PARAMETER__KIND)
 //             }
 //             is SdsConstraint -> {
 //                 // Keyword "constraint"
-//                 doc.formatKeyword(obj, "constraint", null, oneSpace)
+//                 doc.formatKeyword(node, "constraint", null, oneSpace)
 //
 //                 // EObject "body"
-//                 doc.formatObject(obj.body)
+//                 doc.formatObject(node.body)
 //             }
 //             is SdsTypeParameterConstraint -> {
-//                 // Feature "leftOperand"
-//                 doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT__LEFT_OPERAND, null, oneSpace)
+//                 // Property "leftOperand"
+//                 doc.formatProperty(node, SDS_TYPE_PARAMETER_CONSTRAINT__LEFT_OPERAND, null, oneSpace)
 //
-//                 // Feature "operator"
-//                 doc.formatFeature(obj, SDS_TYPE_PARAMETER_CONSTRAINT__OPERATOR, oneSpace, oneSpace)
+//                 // Property "operator"
+//                 doc.formatProperty(node, SDS_TYPE_PARAMETER_CONSTRAINT__OPERATOR, oneSpace, oneSpace)
 //
 //                 // EObject "rightOperand"
-//                 doc.formatObject(obj.rightOperand, oneSpace, null)
+//                 doc.formatObject(node.rightOperand, oneSpace, null)
 //             }
 //         }
 //     }
@@ -1078,7 +1074,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 //         request.preferences = MapBasedPreferenceValues(preferences, newPreferences)
 //     }
 //
-// private fun EObject.regionForFeature(feature: EStructuralFeature): ISemanticRegion? {
+// private fun EObject.regionForProperty(feature: EStructuralProperty): ISemanticRegion? {
 //             return textRegionExtensions.regionFor(this).feature(feature)
 //         }
 //
@@ -1087,32 +1083,32 @@ export class SafeDSFormatter extends AbstractFormatter {
 //         }
 //
 //         private fun IFormattableDocument.formatObject(
-//         obj: EObject?,
+//         node: EObject?,
 //         prepend: KFunction1<Format, Unit>? = null,
 //         append: KFunction1<Format, Unit>? = null,
 // ) {
-//         if (obj != null) {
+//         if (node != null) {
 //             if (prepend != null) {
-//                 this.prepend(obj, prepend)
+//                 this.prepend(node, prepend)
 //             }
-//             this.format(obj)
+//             this.format(node)
 //             if (append != null) {
-//                 this.append(obj, append)
+//                 this.append(node, append)
 //             }
 //         }
 //     }
 //
-// private fun IFormattableDocument.formatFeature(
-//         obj: EObject?,
-//         feature: EStructuralFeature,
+// private fun IFormattableDocument.formatProperty(
+//         node: EObject?,
+//         feature: EStructuralProperty,
 //         prepend: KFunction1<Format, Unit>? = null,
 //         append: KFunction1<Format, Unit>? = null,
 // ) {
-//         if (obj == null) {
+//         if (node == null) {
 //             return
 //         }
 //
-//         val featureRegion = obj.regionForFeature(feature)
+//         val featureRegion = node.regionForProperty(feature)
 //         if (featureRegion != null) {
 //             if (prepend != null) {
 //                 this.prepend(featureRegion, prepend)
@@ -1124,16 +1120,16 @@ export class SafeDSFormatter extends AbstractFormatter {
 //     }
 //
 // private fun IFormattableDocument.formatKeyword(
-//         obj: EObject?,
+//         node: EObject?,
 //         keyword: String,
 //         prepend: KFunction1<Format, Unit>? = null,
 //         append: KFunction1<Format, Unit>? = null,
 // ) {
-//         if (obj == null) {
+//         if (node == null) {
 //             return
 //         }
 //
-//         val keywordRegion = obj.regionForKeyword(keyword)
+//         val keywordRegion = node.regionForKeyword(keyword)
 //         if (keywordRegion != null) {
 //             if (prepend != null) {
 //                 this.prepend(keywordRegion, prepend)
@@ -1145,11 +1141,11 @@ export class SafeDSFormatter extends AbstractFormatter {
 //     }
 //
 // private fun IFormattableDocument.formatAnnotations(
-//         obj: SdsAbstractDeclaration,
+//         node: SdsAbstractDeclaration,
 //         inlineAnnotations: Boolean = false,
 // ) {
-//         // Feature "annotations"
-//         obj.annotationCallsOrEmpty().forEach {
+//         // Property "annotations"
+//         node.annotationCallsOrEmpty().forEach {
 //             format(it)
 //
 //             if (inlineAnnotations) {
@@ -1160,8 +1156,8 @@ export class SafeDSFormatter extends AbstractFormatter {
 //         }
 //     }
 //
-// private fun IFormattableDocument.formatCommas(obj: EObject) {
-//         val commas = textRegionExtensions.allRegionsFor(obj).keywords(",")
+// private fun IFormattableDocument.formatCommas(node: EObject) {
+//         val commas = textRegionExtensions.allRegionsFor(node).keywords(",")
 //         commas.forEach {
 //             prepend(it, noSpace)
 //             append(it, oneSpace)

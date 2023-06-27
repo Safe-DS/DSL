@@ -1,7 +1,7 @@
 import {createSafeDsServices} from "../../src/language-server/safe-ds-module";
 import {expectFormatting} from "langium/test";
 import {describe, it} from "vitest";
-import {EmptyFileSystem} from "langium";
+import {EmptyFileSystem, normalizeEOL} from "langium";
 import {listTestResources, resolvePathRelativeToResources} from "../helpers/testResources";
 import path from "path";
 import fs from "fs";
@@ -39,10 +39,14 @@ const createFormatterTest = (): FormatterTest[] => {
 
         return {
             testName: `${pathRelativeToResources} should be formatted correctly`,
-            originalCode: parts[0].trimEnd(),
-            expectedFormattedCode: parts[1].trimStart(),
+            originalCode: normalizeLineBreaks(parts[0]).trimEnd(),
+            expectedFormattedCode: normalizeLineBreaks(parts[1]).trim(),
         }
     });
+}
+
+const normalizeLineBreaks = (code: string): string => {
+    return code.replace(/\r\n?/ug, '\n');
 }
 
 interface FormatterTest {
