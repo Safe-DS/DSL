@@ -7,8 +7,8 @@
         "./.eslintrc.js",
         "./docs/javascript/**/*",
         "./DSL/com.larsreimann.safeds.vscode/src/**/*",
-        "./DSL-langium/src/**/*",
-        "./DSL-langium/tests/**/*"
+      "./DSL/src/**/*",
+      "./DSL/tests/**/*"
     ],
     "exclude": []
 }

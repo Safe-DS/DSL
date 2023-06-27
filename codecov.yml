@@ -15,7 +15,3 @@ component_management:
       name: runner
       paths:
         - Runner/**
-    - component_id: module_dsl_langium
-      name: dsl-langium
-      paths:
-        - DSL-langium/**

@@ -12,13 +12,13 @@
 
 # Compilation/build outputs
 /DSL/**/bin/
-/DSL-langium/**/generated/
+/DSL/**/generated/
 build/
 coverage/
 dist/
 dist-ssr/
 out/
-/DSL-langium/syntaxes/safe-ds.tmLanguage.json
+/DSL/syntaxes/safe-ds.tmLanguage.json
 
 # Gradle
 .gradle/
