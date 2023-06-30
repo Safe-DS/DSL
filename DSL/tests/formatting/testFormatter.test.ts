@@ -1,7 +1,7 @@
 import {createSafeDsServices} from "../../src/language-server/safe-ds-module";
 import {expectFormatting} from "langium/test";
 import {describe, it} from "vitest";
-import {EmptyFileSystem, normalizeEOL} from "langium";
+import {EmptyFileSystem} from "langium";
 import {listTestResources, resolvePathRelativeToResources} from "../helpers/testResources";
 import path from "path";
 import fs from "fs";
@@ -9,7 +9,7 @@ import fs from "fs";
 const services = createSafeDsServices({...EmptyFileSystem}).SafeDs;
 const separator = "// -----------------------------------------------------------------------------";
 
-describe('grammar', () => {
+describe('formatter', () => {
     it.each(createFormatterTest())('$testName', async (test) => {
         if (test.error) {
             throw test.error;

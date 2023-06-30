@@ -19,6 +19,45 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsImportAlias(node)) {
             this.formatSdsImportAlias(node)
         }
+        if (ast.isSdsAnnotation(node)) {
+            this.formatSdsAnnotation(node)
+        }
+        if (ast.isSdsAnnotationCall(node)) {
+            this.formatSdsAnnotationCall(node)
+        }
+        if (ast.isSdsAttribute(node)) {
+            this.formatSdsAttribute(node)
+        }
+        if (ast.isSdsClass(node)) {
+            this.formatSdsClass(node)
+        }
+        if (ast.isSdsEnum(node)) {
+            this.formatSdsEnum(node)
+        }
+        if (ast.isSdsEnumBody(node)) {
+            this.formatSdsEnumBody(node)
+        }
+        if (ast.isSdsEnumVariant(node)) {
+            this.formatSdsEnumVariant(node)
+        }
+        if (ast.isSdsParameter(node)) {
+            this.formatSdsParameter(node)
+        }
+        if (ast.isSdsParameterList(node)) {
+            this.formatSdsParameterList(node)
+        }
+        if (ast.isSdsArgument(node)) {
+            this.formatSdsArgument(node)
+        }
+        if (ast.isSdsArgumentList(node)) {
+            this.formatSdsArgumentList(node)
+        }
+        if (ast.isSdsPipeline(node)) {
+            this.formatSdsPipeline(node)
+        }
+        if (ast.isSdsStep(node)) {
+            this.formatSdsStep(node)
+        }
     }
 
     formatSdsModule(node: SdsModule): void {
@@ -79,7 +118,7 @@ export class SafeDSFormatter extends AbstractFormatter {
         // Keyword "import"
         formatter.keyword("import").append(oneSpace())
 
-        // Property "importedNamespace"
+        // Imported namespace
         formatter.keyword(".").surround(noSpace())
     }
 
@@ -89,38 +128,89 @@ export class SafeDSFormatter extends AbstractFormatter {
         // Keyword "as"
         formatter.keyword("as").surround(Formatting.oneSpace())
     }
+
+    formatSdsAnnotation(node: ast.SdsAnnotation): void {
+        const formatter = this.getNodeFormatter(node);
+
+        // Keyword "annotation"
+        const keyword = formatter.keyword("annotation")
+        formatter.keyword("annotation").prepend(noSpace())
+
+        // Name
+        formatter.property("name").prepend(oneSpace())
+    }
+
+    formatSdsAnnotationCall(node: ast.SdsAnnotationCall): void {
+
+    }
+
+    formatSdsAttribute(node: ast.SdsAttribute): void {
+
+    }
+
+    formatSdsClass(node: ast.SdsClass): void {
+
+    }
+
+    formatSdsParentTypeList(node: ast.SdsParentTypeList): void {
+
+    }
+
+    formatSdsClassBody(node: ast.SdsClassBody): void {
+
+    }
+
+    formatSdsEnum(node: ast.SdsEnum): void {
+
+    }
+
+    formatSdsEnumBody(node: ast.SdsEnumBody): void {
+
+    }
+
+    formatSdsEnumVariant(node: ast.SdsEnumVariant): void {
+
+    }
+
+    formatSdsFunction(node: ast.SdsFunction): void {
+
+    }
+
+    formatSdsPipeline(node: ast.SdsPipeline): void {
+
+    }
+
+    formatSdsStep(node: ast.SdsStep): void {
+
+    }
+
+    formatSdsArgument(node: ast.SdsArgument): void {
+
+    }
+
+    formatSdsArgumentList(node: ast.SdsArgumentList): void {
+
+    }
+
+    formatSdsParameter(node: ast.SdsParameter): void {
+
+    }
+
+    formatSdsParameterList(node: ast.SdsParameterList): void {
+
+    }
+
+    formatSdsResult(node: ast.SdsResult): void {
+
+    }
+
+    formatSdsResultList(node: ast.SdsResultList): void {
+
+    }
+
 }
 
 
-// class SafeDSFormatter : AbstractFormatter2() {
-
-//     override fun format(node: Any?, doc: IFormattableDocument) {
-//         when (node) {
-
-//             /**********************************************************************************************************
-//              * Declarations
-//              **********************************************************************************************************/
-//
-//             is SdsImport -> {
-//                 // Keyword "import"
-//                 doc.formatKeyword(node, "import", noSpace, oneSpace)
-//
-//                 // Property "importedNamespace"
-//                 val importedNamespace = node.regionForProperty(SDS_IMPORT__IMPORTED_NAMESPACE)
-//                 if (importedNamespace != null) {
-//                     doc.addReplacer(WhitespaceCollapser(doc, importedNamespace))
-//                 }
-//
-//                 // EObject "aliasDeclaration"
-//                 doc.formatObject(node.alias, oneSpace, noSpace)
-//             }
-//             is SdsImportAlias -> {
-//                 // Keyword "as"
-//                 doc.formatKeyword(node, "as", null, oneSpace)
-//
-//                 // Property "alias"
-//                 doc.formatProperty(node, SDS_IMPORT_ALIAS__NAME, null, noSpace)
-//             }
 //             is SdsAnnotation -> {
 //                 // Propertys "annotations"
 //                 doc.formatAnnotations(node)
