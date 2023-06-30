@@ -12,7 +12,7 @@
     },
     {
       "name": "keyword.control.safe-ds",
-      "match": "\\b(and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|pipeline|private|protocol|schema|static|step|sub|subterm|super|true|union|val|vararg|where|yield)\\b|\\B(\\\\a|\\\\f)\\b"
+      "match": "\\b(and|annotation|as|attr|class|enum|false|fun|import|in|internal|not|null|or|out|package|pipeline|private|schema|static|step|sub|super|true|union|val|vararg|where|yield)\\b"
     },
     {
       "name": "string.quoted.double.safe-ds",

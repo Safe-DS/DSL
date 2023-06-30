@@ -38,10 +38,10 @@ entry SdsModule returns SdsModule:
         ('package' name=QualifiedName)
         imports+=SdsImport*
         members+=(SdsAnnotatedModuleMember | SdsUnannotatedModuleMember)*
-    
+
     |   imports+=SdsImport+
         members+=(SdsAnnotatedModuleMember | SdsUnannotatedModuleMember)*
-     
+
     |   members+=SdsUnannotatedModuleMember
         members+=(SdsAnnotatedModuleMember | SdsUnannotatedModuleMember)*
     )?
@@ -91,7 +91,7 @@ SdsAnnotatedModuleMember returns SdsAnnotatedObject:
       | {SdsClass.annotationCallList=current}
         SdsClassFragment
 
-      | {SdsEnum.annotationCallList=current} 
+      | {SdsEnum.annotationCallList=current}
         SdsEnumFragment
 
       | {SdsFunction.annotationCallList=current}
@@ -115,7 +115,7 @@ SdsUnannotatedModuleMember returns SdsAnnotatedObject:
     | {SdsClass}
       SdsClassFragment
 
-    | {SdsEnum} 
+    | {SdsEnum}
       SdsEnumFragment
 
     | {SdsFunction}
@@ -180,9 +180,8 @@ SdsClassBody returns SdsClassBody:
 interface SdsClassMember extends SdsDeclaration, SdsObject {}
 
 SdsClassMember returns SdsObject:
-    SdsAnnotatedClassMember 
+    SdsAnnotatedClassMember
   | SdsUnannotatedClassMember
-  | SdsProtocol
 ;
 
 SdsAnnotatedClassMember returns SdsAnnotatedObject:
@@ -219,7 +218,7 @@ SdsUnannotatedClassMember returns SdsAnnotatedObject:
       SdsFunctionFragment
 ;
 
-interface SdsAttribute extends SdsClassMember, SdsProtocolToken {
+interface SdsAttribute extends SdsClassMember {
 	static: boolean
 	^type?: SdsType
 }
@@ -227,7 +226,7 @@ interface SdsAttribute extends SdsClassMember, SdsProtocolToken {
 fragment SdsAttributeFragment:
     static?='static'?
     'attr'
-    name=ID 
+    name=ID
     (':' ^type=SdsType)?
 ;
 
@@ -262,7 +261,7 @@ SdsEnumVariant returns SdsEnumVariant:
     constraintList=SdsConstraintList?
 ;
 
-interface SdsFunction extends SdsCallable, SdsClassMember, SdsModuleMember, SdsProtocolToken {
+interface SdsFunction extends SdsCallable, SdsClassMember, SdsModuleMember {
 	static: boolean
 	typeParameterList?: SdsTypeParameterList
 	resultList?: SdsResultList
@@ -382,8 +381,8 @@ interface SdsParameterList extends SdsObject {
 }
 
 SdsParameterList returns SdsParameterList:
-    {SdsParameterList} 
-    '(' 
+    {SdsParameterList}
+    '('
     (
         parameters+=SdsParameter
         (',' parameters+=SdsParameter)*
@@ -396,12 +395,12 @@ interface SdsLambdaParameterList extends SdsExpression, SdsParameterList {}
 
 SdsLambdaParameterList returns SdsParameterList:
     {SdsLambdaParameterList}
-    '(' 
+    '('
     (
         parameters+=SdsParameter
         (',' parameters+=SdsParameter)*
-        ','? 
-    )? 
+        ','?
+    )?
     ')'
 ;
 
@@ -456,7 +455,7 @@ SdsBlock returns SdsBlock:
 ;
 
 SdsStatement returns SdsStatement:
-    SdsAssignment 
+    SdsAssignment
   | SdsExpressionStatement
 ;
 
@@ -841,7 +840,7 @@ SdsType returns SdsType:
 ;
 
 SdsPrimaryType returns SdsType:
-    SdsCallableType 
+    SdsCallableType
   | SdsNamedType
   | SdsUnionType
 ;
@@ -882,7 +881,7 @@ SdsUnionTypeArgumentList returns SdsTypeArgumentList:
         typeArguments+=SdsUnionTypeArgument
         (',' typeArguments+=SdsUnionTypeArgument)*
         ','?
-    )? 
+    )?
     '>'
 ;
 
@@ -908,7 +907,7 @@ SdsTypeParameterList returns SdsTypeParameterList:
         (
             typeParameters+=SdsTypeParameter
             (',' typeParameters+=SdsTypeParameter)*
-            ','? 
+            ','?
         )?
     '>'
 ;
@@ -1003,161 +1002,6 @@ SdsColumn returns SdsColumn:
 
 
 // -----------------------------------------------------------------------------
-// Behavior protocols
-// -----------------------------------------------------------------------------
-
-interface SdsProtocol extends SdsObject {
-	body: SdsProtocolBody
-}
-
-SdsProtocol returns SdsProtocol:
-    'protocol' body=SdsProtocolBody
-;
-
-interface SdsProtocolBody extends SdsObject {
-	subtermList?: SdsProtocolSubtermList
-	term?: SdsProtocolTerm
-}
-
-SdsProtocolBody returns SdsProtocolBody:
-    {SdsProtocolBody}
-    '{'
-    subtermList=SdsProtocolSubtermList?
-    term=SdsProtocolTerm?
-    '}'
-;
-
-interface SdsProtocolSubtermList extends SdsObject {
-	subterms: SdsProtocolSubterm[]
-}
-
-SdsProtocolSubtermList returns SdsProtocolSubtermList:
-    subterms+=SdsProtocolSubterm+
-;
-
-interface SdsProtocolToken extends SdsDeclaration, SdsObject {}
-
-interface SdsProtocolSubterm extends SdsProtocolToken {
-	term?: SdsProtocolTerm
-}
-
-SdsProtocolSubterm returns SdsProtocolSubterm:
-    'subterm'
-    name=ID 
-    '='
-    term=SdsProtocolTerm
-    ';'
-;
-
-interface SdsProtocolTerm extends SdsObject {}
-
-SdsProtocolTerm returns SdsProtocolTerm:
-    SdsProtocolAlternative
-;
-
-interface SdsProtocolAlternative extends SdsProtocolTerm {
-	terms: SdsProtocolTerm[]
-}
-
-SdsProtocolAlternative returns SdsProtocolTerm:
-    SdsProtocolSequence
-    (
-        {SdsProtocolAlternative.terms+=current}
-        '|'
-        terms+=SdsProtocolSequence
-        ('|' terms+=SdsProtocolSequence)*
-    )?
-;
-
-interface SdsProtocolSequence extends SdsProtocolTerm {
-	terms: SdsProtocolTerm[]
-}
-
-SdsProtocolSequence returns SdsProtocolTerm:
-    SdsProtocolQuantifiedTerm 
-    (
-        {SdsProtocolSequence.terms+=current}
-        terms+=SdsProtocolQuantifiedTerm 
-        (terms+=SdsProtocolQuantifiedTerm)*
-    )?
-;
-
-interface SdsProtocolQuantifiedTerm extends SdsProtocolTerm {
-	term: SdsProtocolTerm
-	quantifier: string
-}
-
-SdsProtocolQuantifiedTerm returns SdsProtocolTerm:
-    SdsProtocolPrimaryElement
-    (
-        {SdsProtocolQuantifiedTerm.term=current}
-        quantifier=SdsProtocolQuantifier
-    )?
-;
-
-SdsProtocolQuantifier returns string:
-    '?' | '*' | '+'
-;
-
-SdsProtocolPrimaryElement returns SdsProtocolTerm:
-    SdsProtocolComplement 
-  | SdsProtocolReference
-  | SdsProtocolTokenClass
-  | SdsProtocolParenthesizedTerm
-;
-
-interface SdsProtocolComplement extends SdsProtocolTerm {
-	universe?: SdsProtocolTokenClass
-	referenceList?: SdsProtocolReferenceList
-}
-
-SdsProtocolComplement returns SdsProtocolComplement:
-    {SdsProtocolComplement}
-    '['
-    universe=SdsProtocolTokenClass?
-    '^'
-    referenceList=SdsProtocolReferenceList?
-    ']'
-;
-
-interface SdsProtocolReferenceList extends SdsProtocolTerm {
-	references: SdsProtocolReference[]
-}
-
-SdsProtocolReferenceList returns SdsProtocolReferenceList:
-    references+=SdsProtocolReference+
-;
-
-interface SdsProtocolReference extends SdsProtocolTerm {
-	token: @SdsProtocolToken
-}
-
-SdsProtocolReference returns SdsProtocolReference:
-    token=[SdsProtocolToken:ID]
-;
-
-interface SdsProtocolTokenClass extends SdsProtocolTerm {
-	value: string
-}
-
-SdsProtocolTokenClass returns SdsProtocolTokenClass:
-    value=SdsProtocolTokenClassValue
-;
-
-SdsProtocolTokenClassValue returns string:
-    '.' | '\\a' | '\\f'
-;
-
-interface SdsProtocolParenthesizedTerm extends SdsProtocolTerm {
-	term: SdsProtocolTerm
-}
-
-SdsProtocolParenthesizedTerm returns SdsProtocolParenthesizedTerm:
-    '(' term=SdsProtocolTerm  ')'
-;
-
-
-// -----------------------------------------------------------------------------
 // Terminals
 // -----------------------------------------------------------------------------
 
@@ -1188,7 +1032,7 @@ terminal TEMPLATE_STRING_END returns string: TEMPLATE_EXPRESSION_END STRING_TEXT
 // Resolves the ambiguity between the less than operator (<) and the start of a type argument list of a call (<).
 // See also: https://github.com/langium/langium/discussions/921#discussioncomment-4943180
 terminal CALL_TYPE_ARGUMENT_LIST_START:
-    '<' 
+    '<'
     (?=
         /\s*/
         (   '*'                                 // Star projection as positional type argument
@@ -1196,7 +1040,7 @@ terminal CALL_TYPE_ARGUMENT_LIST_START:
         |   'out'                               // Covariant type projection as positional type argument
         |   'union'                             // Invariant union type as positional type argument
         |   '>'                                 // Empty type argument list
-        |    ID /\s*/ 
+        |    ID /\s*/
             ( '='                               // Named type argument
             | ('.' /\s*/ ID /\s*/)* (',' | '>') // Invariant type projection as positional type argument
             )
