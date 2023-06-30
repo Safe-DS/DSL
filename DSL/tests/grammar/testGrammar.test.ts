@@ -25,25 +25,25 @@ describe('grammar', () => {
             throw new Error('No diagnostics found');
         }
 
-        const grammarErrors = diagnostics.filter(
+        const syntaxErrors = diagnostics.filter(
             (d) => d.severity === 1 && (d.code === 'lexing-error' || d.code === 'parsing-error'),
         );
 
         if (test.expectedResult === 'syntax_error') {
-            if (grammarErrors.length === 0) {
+            if (syntaxErrors.length === 0) {
                 throw new AssertionError({
                     message: 'Expected syntax errors but found none.',
-                    actual: grammarErrors,
+                    actual: syntaxErrors,
                     expected: [],
                 });
             }
         }
 
         if (test.expectedResult === 'no_syntax_error') {
-            if (grammarErrors.length > 0) {
+            if (syntaxErrors.length > 0) {
                 throw new AssertionError({
                     message: 'Expected no syntax errors but found some.',
-                    actual: grammarErrors,
+                    actual: syntaxErrors,
                     expected: [],
                 });
             }
