@@ -6,9 +6,9 @@
     ,   vararg   b    :  Int
      =  3     )
 
-     constraint {     T2    super
+     where {     T2    super
 Number  ,
-T3   sub    Number  
+T3   sub    Number
 
      }
 // -----------------------------------------------------------------------------
@@ -17,7 +17,7 @@ annotation MyAnnotation1
 
 @Annotation1
 @Annotation2
-annotation MyAnnotation2(@AnnotationUse a: Int, vararg b: Int = 3) constraint {
+annotation MyAnnotation2(@AnnotationUse a: Int, vararg b: Int = 3) where {
     T2 super Number,
     T3 sub Number
 }

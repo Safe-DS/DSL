@@ -17,10 +17,10 @@ enum myEnum {
 
                b:
       Int   =  3
-       )         constraint
+       )         where
        {    T2
   super  Number   ,    T3   sub
-     Number   
+     Number
        }
 }
 
@@ -31,7 +31,7 @@ enum myEnum {
 
     @Annotation1
     @Annotation2
-    MyVariant2<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) constraint {
+    MyVariant2<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) where {
         T2 super Number,
         T3 sub Number
     }

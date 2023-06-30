@@ -13,10 +13,10 @@ fun     myFunction1
    3  )    ->
    (
       @AnnotationUse       a  :
-        Int ,  b  :   Int )     { constraint     {
-          T2   super    Number   ,   T3    sub    Number   
+        Int ,  b  :   Int )     where     {
+          T2   super    Number   ,   T3    sub    Number
         }
-        }
+
 class MyClass {
        fun
     myFunction1 (
@@ -47,11 +47,9 @@ fun myFunction1()
 
 @Annotation1
 @Annotation2
-fun myFunction2<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) -> (@AnnotationUse a: Int, b: Int) {
-    constraint {
-        T2 super Number,
-        T3 sub Number
-    }
+fun myFunction2<@AnnotationUse T1, in T2, out T3>(@AnnotationUse a: Int, vararg b: Int = 3) -> (@AnnotationUse a: Int, b: Int) where {
+    T2 super Number,
+    T3 sub Number
 }
 
 class MyClass {
