@@ -1,15 +1,50 @@
 import {AbstractFormatter, AstNode, Formatting} from 'langium';
 import * as ast from '../generated/ast';
 import {SdsImport, SdsImportAlias, SdsModule} from '../generated/ast';
-import {annotationCallsOrEmpty} from "../helpers/astShortcuts";
+import {annotationCallsOrEmpty, classMembersOrEmpty} from "../helpers/astShortcuts";
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
 import oneSpace = Formatting.oneSpace;
+import indent = Formatting.indent;
+import {LangiumDocument} from "langium/src/workspace/documents";
+import {FormattingOptions, Range, TextEdit} from "vscode-languageserver";
+import {FormattingAction, FormattingCollector} from "langium/src/lsp/formatter";
+import {constants} from "os";
+import priority = module
 
 
 export class SafeDSFormatter extends AbstractFormatter {
+
+    protected override doDocumentFormat(document: LangiumDocument, options: FormattingOptions, range?: Range): TextEdit[] {
+        const map = new Map<string, FormattingAction>();
+        const collector: FormattingCollector = (node, mode, formatting) => {
+            const key = this.nodeModeToKey(node, mode);
+            const existing = map.get(key);
+            const priority = formatting.options.priority ?? 0;
+            const existingPriority = existing?.options.priority ?? 0;
+            if (!existing || existingPriority <= priority) {
+                if (existing) {
+                    console.log(`replace formatting (prio ${existingPriority}) for ${key} with ${JSON.stringify(formatting.moves)} (prio ${priority})`);
+                }
+                else {
+                    console.log(`add formatting for ${key}: ${JSON.stringify(formatting.moves)} (prio ${priority})`);
+                }
+                map.set(key, formatting);
+            }
+        };
+        this.collector = collector;
+
+        this.iterateAstFormatting(document, range);
+        const edits = this.iterateCstFormatting(document, map, options, range);
+
+        // console.log(JSON.stringify(edits))
+
+        return this.avoidOverlappingEdits(document.textDocument, edits);
+    }
+
     protected override format(node: AstNode): void {
+        // console.log(node.$type)
         if (ast.isSdsModule(node)) {
             this.formatSdsModule(node)
         }
@@ -25,11 +60,17 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsAnnotationCall(node)) {
             this.formatSdsAnnotationCall(node)
         }
+        if (ast.isSdsAnnotationCallList(node)) {
+            this.formatSdsAnnotationCallList(node)
+        }
         if (ast.isSdsAttribute(node)) {
             this.formatSdsAttribute(node)
         }
         if (ast.isSdsClass(node)) {
             this.formatSdsClass(node)
+        }
+        if (ast.isSdsClassBody(node)) {
+            this.formatSdsClassBody(node)
         }
         if (ast.isSdsEnum(node)) {
             this.formatSdsEnum(node)
@@ -58,9 +99,21 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsStep(node)) {
             this.formatSdsStep(node)
         }
+        if (ast.isSdsBlock(node)) {
+            this.formatSdsBlock(node)
+        }
+        if (ast.isSdsResult(node)) {
+            this.formatSdsResult(node)
+        }
+        if (ast.isSdsResultList(node)) {
+            this.formatSdsResultList(node)
+        }
+        if (ast.isSdsParenthesizedExpression(node)) {
+            this.formatSdsParenthesizedExpression(node)
+        }
     }
 
-    formatSdsModule(node: SdsModule): void {
+    private formatSdsModule(node: SdsModule): void {
         const formatter = this.getNodeFormatter(node);
         const annotations = annotationCallsOrEmpty(node)
         const name = node.name
@@ -104,7 +157,7 @@ export class SafeDSFormatter extends AbstractFormatter {
                 if (annotations.length === 0 && !name && imports.length === 0) {
                     formatter.node(value).prepend(noSpace())
                 } else {
-                    formatter.node(value).prepend(Formatting.newLines(2))
+                    formatter.node(value).prepend(newLines(2))
                 }
             } else {
                 formatter.node(value).prepend(newLines(2))
@@ -112,7 +165,7 @@ export class SafeDSFormatter extends AbstractFormatter {
         })
     }
 
-    formatSdsImport(node: SdsImport): void {
+    private formatSdsImport(node: SdsImport): void {
         const formatter = this.getNodeFormatter(node);
 
         // Keyword "import"
@@ -122,33 +175,63 @@ export class SafeDSFormatter extends AbstractFormatter {
         formatter.keyword(".").surround(noSpace())
     }
 
-    formatSdsImportAlias(node: SdsImportAlias): void {
+    private formatSdsImportAlias(node: SdsImportAlias): void {
         const formatter = this.getNodeFormatter(node);
 
         // Keyword "as"
         formatter.keyword("as").surround(Formatting.oneSpace())
     }
 
-    formatSdsAnnotation(node: ast.SdsAnnotation): void {
+    private formatSdsAnnotation(node: ast.SdsAnnotation): void {
         const formatter = this.getNodeFormatter(node);
 
-        // Keyword "annotation"
-        const keyword = formatter.keyword("annotation")
-        formatter.keyword("annotation").prepend(noSpace())
+        if (annotationCallsOrEmpty(node).length > 0) {
+            formatter.keyword("annotation").prepend(newLine())
+        }
 
         // Name
         formatter.property("name").prepend(oneSpace())
     }
 
-    formatSdsAnnotationCall(node: ast.SdsAnnotationCall): void {
+    private formatSdsAnnotationCall(node: ast.SdsAnnotationCall): void {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword("@").append(noSpace())
     }
 
-    formatSdsAttribute(node: ast.SdsAttribute): void {
+    private formatSdsAnnotationCallList(node: ast.SdsAnnotationCallList): void {
+        const formatter = this.getNodeFormatter(node);
 
+        // formatter.node(node).prepend(noSpace())
+
+        node.annotationCalls.forEach((value, index) => {
+            if (index === 0) {
+                formatter.node(value).prepend(newLines(2))
+            } else {
+                formatter.node(value).prepend(newLine())
+            }
+        })
     }
 
-    formatSdsClass(node: ast.SdsClass): void {
+    private formatSdsAttribute(node: ast.SdsAttribute): void {
+        const formatter = this.getNodeFormatter(node);
+
+        if (node.static) {
+            formatter.keyword("val").prepend(oneSpace())
+        }
+
+        formatter.property("name").prepend(oneSpace())
+    }
+
+    private formatSdsClass(node: ast.SdsClass): void {
+        const formatter = this.getNodeFormatter(node);
+
+        if (annotationCallsOrEmpty(node).length > 0) {
+            formatter.keyword("class").prepend(newLine())
+        }
+
+        formatter.property("name").prepend(oneSpace())
+
 
     }
 
@@ -156,56 +239,175 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     }
 
-    formatSdsClassBody(node: ast.SdsClassBody): void {
+    private formatSdsClassBody(node: ast.SdsClassBody): void {
+        const formatter = this.getNodeFormatter(node);
 
+        const openingBrace = formatter.keyword("{")
+        const closingBrace = formatter.keyword("}")
+
+        formatter.interior(openingBrace, closingBrace).prepend(indent())
+
+        // Members
+        const members = node.members
+        members.forEach((value, index) => {
+            if (index === 0) {
+                formatter.node(value).append(newLines(2))
+            } else {
+                formatter.node(value).append(newLines(2))
+            }
+        })
+
+        if (members.length === 0) {
+            openingBrace.append(noSpace())
+            closingBrace.prepend(noSpace())
+        } else {
+            openingBrace.append(newLine())
+            closingBrace.prepend(newLine())
+        }
     }
 
-    formatSdsEnum(node: ast.SdsEnum): void {
+    private formatSdsEnum(node: ast.SdsEnum): void {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword("enum").prepend(noSpace())
+
+        formatter.property("name").prepend(oneSpace())
     }
 
-    formatSdsEnumBody(node: ast.SdsEnumBody): void {
+    private formatSdsEnumBody(node: ast.SdsEnumBody): void {
+        const formatter = this.getNodeFormatter(node);
 
+        const openingBrace = formatter.keyword("{")
+        const closingBrace = formatter.keyword("}")
+
+        formatter.interior(openingBrace, closingBrace).prepend(indent())
     }
 
-    formatSdsEnumVariant(node: ast.SdsEnumVariant): void {
-
+    private formatSdsEnumVariant(node: ast.SdsEnumVariant): void {
     }
 
     formatSdsFunction(node: ast.SdsFunction): void {
+        const formatter = this.getNodeFormatter(node);
+
+        // formatter.keyword("fun").prepend(noSpace({priority: -1}))
+
+        formatter.property("name").prepend(oneSpace())
+    }
+
+    private formatSdsPipeline(node: ast.SdsPipeline): void {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.property("annotationCallList").prepend(noSpace())
+
+        if (annotationCallsOrEmpty(node).length > 0) {
+            formatter.keyword("pipeline").prepend(newLine())
+        }
+
+        formatter.property("name").prepend(oneSpace())
+
+        formatter.node(node.body).prepend(oneSpace())
+    }
+
+    private formatSdsBlock(node: ast.SdsBlock): void {
+        const formatter = this.getNodeFormatter(node);
+        const openingBrace = formatter.keyword("{")
+        const closingBrace = formatter.keyword("}")
+
+        formatter.interior(openingBrace, closingBrace).prepend(indent({priority: 100}))
+        // formatter.nodes(...node.statements).prepend(indent())
+
+        if (node.statements.length === 0) {
+            openingBrace.append(noSpace())
+            closingBrace.prepend(noSpace())
+        } else {
+            openingBrace.append(newLine())
+            closingBrace.prepend(newLine())
+        }
+    }
+
+    private formatSdsStep(node: ast.SdsStep): void {
+        const formatter = this.getNodeFormatter(node);
+
+        if (annotationCallsOrEmpty(node).length === 0) {
+            if (node.visibility) {
+                formatter.keyword("private").prepend(noSpace())
+                formatter.keyword("internal").prepend(noSpace())
+                formatter.keyword("step").prepend(oneSpace())
+            } else {
+                formatter.keyword("step").prepend(noSpace())
+            }
+        } else {
+            if (node.visibility) {
+                formatter.keyword("private").prepend(newLine())
+                formatter.keyword("internal").prepend(newLine())
+                formatter.keyword("step").prepend(oneSpace())
+            } else {
+                formatter.keyword("step").prepend(newLine())
+            }
+        }
+
+        formatter.property("name").prepend(oneSpace())
+
+        formatter.property("parameterList").prepend(noSpace())
+
+        formatter.property("body").prepend(oneSpace())
+    }
+
+    private formatSdsArgument(node: ast.SdsArgument): void {
 
     }
 
-    formatSdsPipeline(node: ast.SdsPipeline): void {
+    private formatSdsArgumentList(node: ast.SdsArgumentList): void {
 
     }
 
-    formatSdsStep(node: ast.SdsStep): void {
+    private formatSdsParameter(node: ast.SdsParameter): void {
+        const formatter = this.getNodeFormatter(node);
 
+        if (annotationCallsOrEmpty(node).length === 0) {
+            formatter.property("name").prepend(noSpace())
+        } else {
+            formatter.property("name").prepend(newLine())
+        }
+
+        formatter.keyword(":").prepend(noSpace()).append(oneSpace())
     }
 
-    formatSdsArgument(node: ast.SdsArgument): void {
+    private formatSdsParameterList(node: ast.SdsParameterList): void {
+        const formatter = this.getNodeFormatter(node);
 
+        const openingParenthesis = formatter.keyword("(")
+        const closingParenthesis = formatter.keyword(")")
+
+        if (node.parameters.length >= 3 || node.parameters.some(it => annotationCallsOrEmpty(it).length > 0)) {
+            openingParenthesis.append(newLine())
+            closingParenthesis.prepend(newLine())
+            formatter.interior(openingParenthesis, closingParenthesis).prepend(indent())
+            formatter.keyword(",").prepend(noSpace()).append(newLine())
+        } else {
+            openingParenthesis.append(noSpace())
+            closingParenthesis.prepend(noSpace())
+            formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+        }
     }
 
-    formatSdsArgumentList(node: ast.SdsArgumentList): void {
+    private formatSdsResult(node: ast.SdsResult): void {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword(":").prepend(noSpace()).append(oneSpace())
     }
 
-    formatSdsParameter(node: ast.SdsParameter): void {
+    private formatSdsResultList(node: ast.SdsResultList): void {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword("->").surround(oneSpace())
     }
 
-    formatSdsParameterList(node: ast.SdsParameterList): void {
+    private formatSdsParenthesizedExpression(node: ast.SdsParenthesizedExpression): void {
+        const formatter = this.getNodeFormatter(node);
 
-    }
-
-    formatSdsResult(node: ast.SdsResult): void {
-
-    }
-
-    formatSdsResultList(node: ast.SdsResultList): void {
-
+        formatter.keyword("(").append(noSpace())
+        formatter.keyword(")").prepend(noSpace())
     }
 
 }
