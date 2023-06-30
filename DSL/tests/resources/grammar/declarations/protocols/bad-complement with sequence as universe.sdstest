@@ -1,7 +1,0 @@
-// $TEST$ syntax_error
-
-class C {
-    protocol {
-        [f g^ f]
-    }
-}
