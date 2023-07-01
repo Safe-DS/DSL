@@ -60,7 +60,7 @@
         "commander": "^11.0.0",
         "glob": "^10.3.0",
         "langium": "^1.2.1",
-        "radash": "^10.9.0",
+        "radash": "^11.0.0",
         "true-myth": "^6.2.0",
         "vscode-languageclient": "^8.1.0",
         "vscode-languageserver": "^8.1.0",
