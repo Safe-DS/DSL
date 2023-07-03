@@ -170,8 +170,8 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsConstraintList(node)) {
             this.formatSdsConstraintList(node)
         }
-        if (ast.isSdsConstraint(node)) {
-            this.formatSdsConstraint(node)
+        if (ast.isSdsTypeParameterConstraint(node)) {
+            this.formatSdsTypeParameterConstraint(node)
         }
         if (ast.isSdsCallableType(node)) {
             this.formatSdsCallableType(node)
@@ -277,8 +277,11 @@ export class SafeDSFormatter extends AbstractFormatter {
             formatter.keyword("annotation").prepend(newLine())
         }
 
-        // Name
         formatter.property("name").prepend(oneSpace())
+
+        formatter.property("parameterList").prepend(noSpace())
+
+        formatter.property("constraintList").prepend(oneSpace())
     }
 
     private formatSdsAnnotationCall(node: ast.SdsAnnotationCall): void {
@@ -631,11 +634,29 @@ export class SafeDSFormatter extends AbstractFormatter {
     }
 
     private formatSdsConstraintList(node: ast.SdsConstraintList) {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword("where").append(oneSpace())
+
+        const openingBrace = formatter.keyword("{")
+        const closingBrace = formatter.keyword("}")
+
+        const constraints = node.constraints ?? []
+
+        if (constraints.length === 0) {
+            openingBrace.append(noSpace())
+            closingBrace.prepend(noSpace())
+        } else {
+            formatter.nodes(...constraints).prepend(indent())
+            formatter.keyword(",").prepend(noSpace())
+            closingBrace.prepend(newLine())
+        }
     }
 
-    private formatSdsConstraint(node: ast.SdsConstraint) {
+    private formatSdsTypeParameterConstraint(node: ast.SdsTypeParameterConstraint) {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.property("operator").surround(oneSpace())
     }
 
     private formatSdsCallableType(node: ast.SdsCallableType) {
