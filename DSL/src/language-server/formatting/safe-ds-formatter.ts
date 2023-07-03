@@ -392,27 +392,47 @@ export class SafeDSFormatter extends AbstractFormatter {
     private formatSdsEnumBody(node: ast.SdsEnumBody): void {
         const formatter = this.getNodeFormatter(node);
 
-        const openingBrace = formatter.keyword("{")
-        const closingBrace = formatter.keyword("}")
-
-        if (node.variants.length === 0) {
-            openingBrace.append(noSpace())
-            closingBrace.prepend(noSpace())
+        const variants = node.variants ?? []
+        if (variants.length === 0) {
+            formatter.keyword("{").append(noSpace())
+            formatter.keyword("}").prepend(noSpace())
         } else {
-            openingBrace.append(newLine())
-            closingBrace.prepend(newLine())
-
-            formatter.node(node.variants[0]).prepend(indent())
-            formatter.nodes(...node.variants.slice(1)).prepend(newLinesWithIndent(2))
+            variants.forEach((value, index) => {
+                if (index === 0) {
+                    formatter.node(value).prepend(indent())
+                } else {
+                    formatter.node(value).prepend(newLinesWithIndent(2))
+                }
+            })
+            formatter.keyword("}").prepend(newLine())
         }
+
+        // if (node.variants.length === 0) {
+        //     openingBrace.append(noSpace())
+        //     closingBrace.prepend(noSpace())
+        // } else {
+        //     openingBrace.append(newLine())
+        //     closingBrace.prepend(newLine())
+        //
+        //     formatter.node(node.variants[0]).prepend(indent())
+        //     formatter.nodes(...node.variants.slice(1)).prepend(newLinesWithIndent(2))
+        // }
     }
 
     private formatSdsEnumVariant(node: ast.SdsEnumVariant): void {
         const formatter = this.getNodeFormatter(node);
 
+        const annotationCalls = annotationCallsOrEmpty(node)
+
+        formatter.nodes(...annotationCalls.slice(1)).prepend(newLine())
+
         if (annotationCallsOrEmpty(node).length > 0) {
             formatter.property("name").prepend(newLine())
         }
+
+        formatter.property("typeParameterList").prepend(noSpace())
+        formatter.property("parameterList").prepend(noSpace())
+        formatter.property("constraintList").prepend(oneSpace())
     }
 
     formatSdsFunction(node: ast.SdsFunction): void {
@@ -626,7 +646,7 @@ export class SafeDSFormatter extends AbstractFormatter {
     private formatSdsExpressionLambda(node: ast.SdsExpressionLambda) {
         const formatter = this.getNodeFormatter(node);
 
-
+        formatter.keyword("->").surround(oneSpace())
     }
 
     private formatSdsInfixOperation(node: ast.SdsInfixOperation) {
