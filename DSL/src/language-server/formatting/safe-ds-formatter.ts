@@ -203,6 +203,12 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsTypeArgument(node)) {
             this.formatSdsTypeArgument(node)
         }
+        if (ast.isSdsTypeParameter(node)) {
+            this.formatSdsTypeParameter(node)
+        }
+        if (ast.isSdsTypeParameterList(node)) {
+            this.formatSdsTypeParameterList(node)
+        }
     }
 
     private formatSdsModule(node: SdsModule): void {
@@ -342,6 +348,8 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         formatter.property("name").prepend(oneSpace())
 
+        formatter.property("typeParameterList").prepend(noSpace())
+        formatter.property("parameterList").prepend(noSpace())
         formatter.property("parentTypeList").prepend(oneSpace())
         formatter.property("constraintList").prepend(oneSpace())
 
@@ -795,6 +803,41 @@ export class SafeDSFormatter extends AbstractFormatter {
                 formatter.node(value).surround(oneSpace())
             }
         })
+    }
+
+    private formatSdsTypeParameterList(node: ast.SdsTypeParameterList): void {
+        const formatter = this.getNodeFormatter(node);
+
+        const closingBracket = formatter.keyword(">")
+
+        formatter.keywords(",").prepend(noSpace()).append(oneSpace())
+
+        const typeParameters = node.typeParameters ?? []
+
+        if (typeParameters.length >= 3 || typeParameters.some(it => annotationCallsOrEmpty(it).length > 0 || ast.isSdsCallableType(it.type))) {
+            // openingParenthesis.append(newLine())
+            closingBracket.prepend(newLine())
+            formatter.nodes(...typeParameters).prepend(indent())
+            formatter.keywords(",").prepend(noSpace()).append(newLine())
+        } else {
+            closingBracket.append(noSpace())
+            closingBracket.prepend(noSpace())
+            formatter.keywords(",").prepend(noSpace()).append(oneSpace())
+        }
+    }
+
+    private formatSdsTypeParameter(node: ast.SdsTypeParameter) {
+        const formatter = this.getNodeFormatter(node);
+
+        if (annotationCallsOrEmpty(node).length > 0) {
+            if (node.variance) {
+                formatter.property("variance").prepend(newLine())
+            } else {
+                formatter.property("name").prepend(newLine())
+            }
+        }
+
+        formatter.property("variance").append(oneSpace())
     }
 }
 
