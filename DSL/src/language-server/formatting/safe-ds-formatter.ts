@@ -287,7 +287,6 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.property('name').prepend(oneSpace());
-
         formatter.property('typeParameterList').prepend(noSpace());
         formatter.property('parameterList').prepend(noSpace());
         formatter.property('parentTypeList').prepend(oneSpace());
@@ -334,7 +333,6 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.property('name').prepend(oneSpace());
-
         formatter.property('body').prepend(oneSpace());
     }
 
@@ -385,7 +383,6 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.keyword('static').append(oneSpace());
-
         formatter.property('name').prepend(oneSpace());
         formatter.property('typeParameterList').prepend(noSpace());
         formatter.property('parameterList').prepend(noSpace());
@@ -403,7 +400,6 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.property('name').prepend(oneSpace());
-
         formatter.node(node.body).prepend(oneSpace());
     }
 
@@ -425,9 +421,7 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.property('name').prepend(oneSpace());
-
         formatter.property('parameterList').prepend(noSpace());
-
         formatter.property('body').prepend(oneSpace());
     }
 
@@ -522,7 +516,6 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
-
         formatter.keyword('=').surround(oneSpace());
     }
 
@@ -727,7 +720,6 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword('?').prepend(noSpace());
-
         formatter.property('typeArgumentList').prepend(noSpace());
     }
 
@@ -746,10 +738,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         const typeParameters = node.typeParameters ?? [];
 
-        if (
-            typeParameters.length >= 3 ||
-            typeParameters.some((it) => annotationCallsOrEmpty(it).length > 0)
-        ) {
+        if (typeParameters.length >= 3 || typeParameters.some((it) => annotationCallsOrEmpty(it).length > 0)) {
             closingBracket.prepend(newLine());
             formatter.nodes(...typeParameters).prepend(indent());
             formatter.keywords(',').prepend(noSpace()).append(newLine());
@@ -806,9 +795,31 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsSchema(node: ast.SdsSchema) {
         const formatter = this.getNodeFormatter(node);
+
+        if (annotationCallsOrEmpty(node).length > 0) {
+            formatter.property('name').prepend(newLine());
+        }
+
+        formatter.property('columnList').prepend(oneSpace());
     }
 
-    private formatSdsColumnList(node: ast.SdsColumnList) {}
+    private formatSdsColumnList(node: ast.SdsColumnList) {
+        const formatter = this.getNodeFormatter(node);
 
-    private formatSdsColumn(node: ast.SdsColumn) {}
+        formatter.keyword('{').append(noSpace());
+        formatter.keyword('}').prepend(noSpace());
+
+        const columns = node.columns ?? [];
+        if (columns.length > 0) {
+            formatter.node(columns[0]).prepend(noSpace());
+        }
+
+        formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+    }
+
+    private formatSdsColumn(node: ast.SdsColumn) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword(':').prepend(noSpace()).append(oneSpace());
+    }
 }
