@@ -524,6 +524,22 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword("->").surround(oneSpace())
+
+        const openingParenthesis = formatter.keyword("(")
+        const closingParenthesis = formatter.keyword(")")
+
+        const results = node.results ?? []
+
+        if (results.length >= 3 || results.some(it => annotationCallsOrEmpty(it).length > 0)) {
+            openingParenthesis.append(newLine())
+            closingParenthesis.prepend(newLine())
+            formatter.interior(openingParenthesis, closingParenthesis).prepend(indent())
+            formatter.keyword(",").prepend(noSpace()).append(newLine())
+        } else {
+            openingParenthesis.append(noSpace())
+            closingParenthesis.prepend(noSpace())
+            formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+        }
     }
 
     private formatSdsParenthesizedExpression(node: ast.SdsParenthesizedExpression): void {
