@@ -1,0 +1,16 @@
+class C {
+
+enum   myEnum3 {
+         MyVariant1            MyVariant2
+    
+    }}
+
+// -----------------------------------------------------------------------------
+
+class C {
+    enum myEnum3 {
+        MyVariant1
+
+        MyVariant2
+    }
+}
