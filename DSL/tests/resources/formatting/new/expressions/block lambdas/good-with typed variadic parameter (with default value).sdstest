@@ -1,0 +1,5 @@
+// $TEST$ no_syntax_error
+
+pipeline myPipeline {
+    (vararg a: Int = 1) {};
+}

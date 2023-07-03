@@ -1,0 +1,10 @@
+// $TEST$ no_syntax_error
+
+package myPackage
+
+import myPackage.MyClass
+import myPackage.MyClass as Class
+import myPackage.*
+
+class C
+class D

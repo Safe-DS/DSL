@@ -1,0 +1,7 @@
+// $TEST$ no_syntax_error
+
+@Annotation1
+
+package myPackage
+
+class C
