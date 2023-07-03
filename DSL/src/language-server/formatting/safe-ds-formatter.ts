@@ -357,7 +357,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         formatter.keyword("sub").append(oneSpace())
 
-        formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+        formatter.keywords(",").prepend(noSpace()).append(oneSpace())
     }
 
     private formatSdsClassBody(node: ast.SdsClassBody): void {
@@ -530,11 +530,11 @@ export class SafeDSFormatter extends AbstractFormatter {
             openingParenthesis.append(newLine())
             closingParenthesis.prepend(newLine())
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent())
-            formatter.keyword(",").prepend(noSpace()).append(newLine())
+            formatter.keywords(",").prepend(noSpace()).append(newLine())
         } else {
             openingParenthesis.append(noSpace())
             closingParenthesis.prepend(noSpace())
-            formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+            formatter.keywords(",").prepend(noSpace()).append(oneSpace())
         }
     }
 
@@ -566,11 +566,11 @@ export class SafeDSFormatter extends AbstractFormatter {
             // openingParenthesis.append(newLine())
             closingParenthesis.prepend(newLine())
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent())
-            formatter.keyword(",").prepend(noSpace()).append(newLine())
+            formatter.keywords(",").prepend(noSpace()).append(newLine())
         } else {
             openingParenthesis.append(noSpace())
             closingParenthesis.prepend(noSpace())
-            formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+            formatter.keywords(",").prepend(noSpace()).append(oneSpace())
         }
     }
 
@@ -598,11 +598,11 @@ export class SafeDSFormatter extends AbstractFormatter {
             openingParenthesis.append(newLine())
             closingParenthesis.prepend(newLine())
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent())
-            formatter.keyword(",").prepend(noSpace()).append(newLine())
+            formatter.keywords(",").prepend(noSpace()).append(newLine())
         } else {
             openingParenthesis.append(noSpace())
             closingParenthesis.prepend(noSpace())
-            formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+            formatter.keywords(",").prepend(noSpace()).append(oneSpace())
         }
     }
 
@@ -624,13 +624,13 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         formatter.keyword("<").append(noSpace())
         formatter.keyword(">").prepend(noSpace())
-        formatter.keyword(",").prepend(noSpace()).append(oneSpace())
 
-        if (node.typeArguments.length > 0) {
-            formatter.node(node.typeArguments[0]).prepend(noSpace())
+        const typeArguments = node.typeArguments ?? []
+        if (typeArguments.length > 0) {
+            formatter.node(typeArguments[0]).prepend(noSpace())
         }
 
-        formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+        formatter.keywords(",").prepend(noSpace()).append(oneSpace())
     }
 
     private formatSdsBlockLambda(node: ast.SdsBlockLambda): void {
@@ -693,11 +693,11 @@ export class SafeDSFormatter extends AbstractFormatter {
     private formatSdsAssigneeList(node: ast.SdsAssigneeList) {
         const formatter = this.getNodeFormatter(node);
 
-        const assignees = node.assignees ?? []
-        formatter.nodes(...assignees.slice(1)).prepend(oneSpace())
-        formatter.nodes(...assignees.slice(0, -1)).append(noSpace())
+        // const assignees = node.assignees ?? []
+        // formatter.nodes(...assignees.slice(1)).prepend(oneSpace())
+        // formatter.nodes(...assignees.slice(0, -1)).append(noSpace())
 
-        formatter.keyword(",").prepend(noSpace()).append(oneSpace())
+        formatter.keywords(",").prepend(noSpace()).append(oneSpace())
     }
 
     private formatSdsExpressionStatement(node: ast.SdsExpressionStatement) {
@@ -739,7 +739,7 @@ export class SafeDSFormatter extends AbstractFormatter {
             closingBrace.prepend(noSpace())
         } else {
             formatter.nodes(...constraints).prepend(indent())
-            formatter.keyword(",").prepend(noSpace())
+            formatter.keywords(",").prepend(noSpace())
             closingBrace.prepend(newLine())
         }
     }
