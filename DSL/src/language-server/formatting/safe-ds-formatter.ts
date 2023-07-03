@@ -200,6 +200,9 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsTemplateString(node)) {
             this.formatSdsTemplateString(node)
         }
+        if (ast.isSdsTypeArgument(node)) {
+            this.formatSdsTypeArgument(node)
+        }
     }
 
     private formatSdsModule(node: SdsModule): void {
@@ -641,6 +644,9 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsBlockLambdaResult(node: ast.SdsBlockLambdaResult) {
         const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword("yield").append(oneSpace())
+
     }
 
     private formatSdsExpressionLambda(node: ast.SdsExpressionLambda) {
@@ -689,6 +695,9 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         const assignees = node.assignees ?? []
         formatter.nodes(...assignees.slice(1)).prepend(oneSpace())
+        formatter.nodes(...assignees.slice(0, -1)).append(noSpace())
+
+        formatter.keyword(",").prepend(noSpace()).append(oneSpace())
     }
 
     private formatSdsExpressionStatement(node: ast.SdsExpressionStatement) {
@@ -770,6 +779,12 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.property("variance").append(oneSpace())
+    }
+
+    private formatSdsTypeArgument(node: ast.SdsTypeArgument) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword("=").surround(oneSpace())
     }
 
     private formatSdsTemplateString(node: ast.SdsTemplateString) {
