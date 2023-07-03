@@ -1,9 +1,7 @@
-// $TEST$ no_syntax_error
-
 pipeline myPipeline {
     /*
      * Once Langium supports LL(*) parsing, this should work.
-     * 
+     *
      * For now, we can either parse
      *     - f<List<S>>() or
      *     - a < f<S>()

@@ -1,3 +1,1 @@
-// $TEST$ no_syntax_error
-
 class C<K, V, >

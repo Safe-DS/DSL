@@ -1,5 +1,3 @@
-// $TEST$ no_syntax_error
-
 enum MyEnum {
     MyEnumVariant<T>
 }

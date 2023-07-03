@@ -1,5 +1,3 @@
-// $TEST$ no_syntax_error
-
 class MyClass {
     enum MyEnum {
         MyEnumVariant<out T>

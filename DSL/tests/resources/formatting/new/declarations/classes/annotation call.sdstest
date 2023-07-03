@@ -1,4 +1,2 @@
-// $TEST$ no_syntax_error
-
 @Annotation
 class MyClass

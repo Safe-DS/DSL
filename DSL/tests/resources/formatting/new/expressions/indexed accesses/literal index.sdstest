@@ -1,5 +1,3 @@
-// $TEST$ no_syntax_error
-
 pipeline test {
     a[1];
 }

@@ -1,5 +1,3 @@
-// $TEST$ no_syntax_error
-
 annotation A where {
     T sub Any,
     T super Int,
