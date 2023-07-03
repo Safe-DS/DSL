@@ -62,6 +62,9 @@ export class SafeDSFormatter extends AbstractFormatter {
         if (ast.isSdsModule(node)) {
             this.formatSdsModule(node)
         }
+        if (ast.isSdsFunction(node)) {
+            this.formatSdsFunction(node)
+        }
         if (ast.isSdsImport(node)) {
             this.formatSdsImport(node)
         }
@@ -97,6 +100,9 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
         if (ast.isSdsParameter(node)) {
             this.formatSdsParameter(node)
+        }
+        if (ast.isSdsParentTypeList(node)) {
+            this.formatSdsParentTypeList(node)
         }
         if (ast.isSdsParameterList(node)) {
             this.formatSdsParameterList(node)
@@ -324,10 +330,23 @@ export class SafeDSFormatter extends AbstractFormatter {
         }
 
         formatter.property("name").prepend(oneSpace())
+
+        formatter.property("parentTypeList").prepend(oneSpace())
+        formatter.property("constraintList").prepend(oneSpace())
+
+        if (node.constraintList) {
+            formatter.property("body").prepend(newLine())
+        } else {
+            formatter.property("body").prepend(oneSpace())
+        }
     }
 
     formatSdsParentTypeList(node: ast.SdsParentTypeList): void {
+        const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword("sub").append(oneSpace())
+
+        formatter.keyword(",").prepend(noSpace()).append(oneSpace())
     }
 
     private formatSdsClassBody(node: ast.SdsClassBody): void {
@@ -388,6 +407,11 @@ export class SafeDSFormatter extends AbstractFormatter {
     }
 
     private formatSdsEnumVariant(node: ast.SdsEnumVariant): void {
+        const formatter = this.getNodeFormatter(node);
+
+        if (annotationCallsOrEmpty(node).length > 0) {
+            formatter.property("name").prepend(newLine())
+        }
     }
 
     formatSdsFunction(node: ast.SdsFunction): void {
@@ -502,8 +526,8 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         const parameters = node.parameters ?? []
 
-        if (parameters.length >= 3 || parameters.some(it => annotationCallsOrEmpty(it).length > 0)) {
-            openingParenthesis.append(newLine())
+        if (parameters.length >= 3 || parameters.some(it => annotationCallsOrEmpty(it).length > 0 || ast.isSdsCallableType(it.type))) {
+            // openingParenthesis.append(newLine())
             closingParenthesis.prepend(newLine())
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent())
             formatter.keyword(",").prepend(noSpace()).append(newLine())
@@ -516,6 +540,10 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsResult(node: ast.SdsResult): void {
         const formatter = this.getNodeFormatter(node);
+
+        if (annotationCallsOrEmpty(node).length > 0) {
+            formatter.property("name").prepend(newLine())
+        }
 
         formatter.keyword(":").prepend(noSpace()).append(oneSpace())
     }
@@ -579,10 +607,12 @@ export class SafeDSFormatter extends AbstractFormatter {
     }
 
     private formatSdsBlockLambdaResult(node: ast.SdsBlockLambdaResult) {
-
+        const formatter = this.getNodeFormatter(node);
     }
 
     private formatSdsExpressionLambda(node: ast.SdsExpressionLambda) {
+        const formatter = this.getNodeFormatter(node);
+
 
     }
 
@@ -642,11 +672,11 @@ export class SafeDSFormatter extends AbstractFormatter {
     }
 
     private formatSdsCall(node: ast.SdsCall) {
-
+        const formatter = this.getNodeFormatter(node);
     }
 
     private formatSdsSchema(node: ast.SdsSchema) {
-
+        const formatter = this.getNodeFormatter(node);
     }
 
     private formatSdsConstraintList(node: ast.SdsConstraintList) {
@@ -676,7 +706,7 @@ export class SafeDSFormatter extends AbstractFormatter {
     }
 
     private formatSdsCallableType(node: ast.SdsCallableType) {
-
+        const formatter = this.getNodeFormatter(node);
     }
 
     private formatSdsPlaceholder(node: ast.SdsPlaceholder) {
