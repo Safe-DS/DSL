@@ -315,11 +315,19 @@ export class SafeDSFormatter extends AbstractFormatter {
     private formatSdsAttribute(node: ast.SdsAttribute): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (node.static) {
-            formatter.keyword("val").prepend(oneSpace())
+        if (annotationCallsOrEmpty(node).length > 0) {
+            if (node.static) {
+                formatter.keyword("static").prepend(newLine())
+            } else {
+                formatter.keyword("attr").prepend(newLine())
+            }
         }
 
+        formatter.keyword("static").append(oneSpace())
+
         formatter.property("name").prepend(oneSpace())
+
+        formatter.keyword(":").prepend(noSpace()).append(oneSpace())
     }
 
     private formatSdsClass(node: ast.SdsClass): void {
@@ -352,27 +360,20 @@ export class SafeDSFormatter extends AbstractFormatter {
     private formatSdsClassBody(node: ast.SdsClassBody): void {
         const formatter = this.getNodeFormatter(node);
 
-        const openingBrace = formatter.keyword("{")
-        const closingBrace = formatter.keyword("}")
-
-        formatter.interior(openingBrace, closingBrace).prepend(indent())
-
         // Members
-        const members = node.members
-        members.forEach((value, index) => {
-            if (index === 0) {
-                formatter.node(value).append(newLines(2))
-            } else {
-                formatter.node(value).append(newLines(2))
-            }
-        })
-
+        const members = node.members ?? []
         if (members.length === 0) {
-            openingBrace.append(noSpace())
-            closingBrace.prepend(noSpace())
+            formatter.keyword("{").append(noSpace())
+            formatter.keyword("}").prepend(noSpace())
         } else {
-            openingBrace.append(newLine())
-            closingBrace.prepend(newLine())
+            members.forEach((value, index) => {
+                if (index === 0) {
+                    formatter.node(value).prepend(indent())
+                } else {
+                    formatter.node(value).prepend(newLinesWithIndent(2))
+                }
+            })
+            formatter.keyword("}").prepend(newLine())
         }
     }
 
@@ -417,9 +418,21 @@ export class SafeDSFormatter extends AbstractFormatter {
     formatSdsFunction(node: ast.SdsFunction): void {
         const formatter = this.getNodeFormatter(node);
 
-        // formatter.keyword("fun").prepend(noSpace({priority: -1}))
+        if (annotationCallsOrEmpty(node).length > 0) {
+            if (node.static) {
+                formatter.keyword("static").prepend(newLine())
+            } else {
+                formatter.keyword("fun").prepend(newLine())
+            }
+        }
+
+        formatter.keyword("static").append(oneSpace())
 
         formatter.property("name").prepend(oneSpace())
+        formatter.property("typeParameterList").prepend(noSpace())
+        formatter.property("parameterList").prepend(noSpace())
+        formatter.property("resultList").prepend(oneSpace())
+        formatter.property("constraintList").prepend(oneSpace())
     }
 
     private formatSdsPipeline(node: ast.SdsPipeline): void {
@@ -673,6 +686,9 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsCall(node: ast.SdsCall) {
         const formatter = this.getNodeFormatter(node);
+
+        formatter.property("typeArgumentList").prepend(noSpace())
+        formatter.property("argumentList").prepend(noSpace())
     }
 
     private formatSdsSchema(node: ast.SdsSchema) {
@@ -707,6 +723,8 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsCallableType(node: ast.SdsCallableType) {
         const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword("->").surround(oneSpace())
     }
 
     private formatSdsPlaceholder(node: ast.SdsPlaceholder) {
