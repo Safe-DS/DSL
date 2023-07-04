@@ -1,0 +1,20 @@
+segment mySegment(
+    f: ( )  ->  (
+         @Annotation  a ,
+         b ,
+         c :  Int ,
+         d :  Int
+     )
+) {}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(
+    f: () -> (
+        @Annotation
+        a,
+        b,
+        c: Int,
+        d: Int
+    )
+) {}

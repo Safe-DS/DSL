@@ -1,0 +1,11 @@
+pipeline myPipeline {
+     val  a  =  0 ;
+   val  a ,  _ ,  yield  b  =  call() ;
+ }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    val a = 0;
+    val a, _, yield b = call();
+}

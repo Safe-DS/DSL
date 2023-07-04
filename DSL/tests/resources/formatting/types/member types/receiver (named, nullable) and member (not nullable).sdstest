@@ -1,0 +1,9 @@
+segment mySegment(
+    x: OuterClass ? . InnerClass
+) {}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(
+    x: OuterClass?.InnerClass
+) {}

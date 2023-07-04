@@ -1,0 +1,9 @@
+class MyClass {
+    fun  myFunction < in  T > ( )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction<in T>()
+}

@@ -1,5 +1,5 @@
 // $TEST$ no_syntax_error
 
-step myStep(
+segment mySegment(
     f: () -> (result)
 ) {}

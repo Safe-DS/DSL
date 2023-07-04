@@ -1,0 +1,9 @@
+pipeline myPipeline {
+    true  or  true;
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    true or true;
+}

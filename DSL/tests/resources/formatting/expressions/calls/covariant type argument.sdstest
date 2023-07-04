@@ -1,0 +1,9 @@
+pipeline myPipeline {
+    f < out  Int > ( );
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    f<out Int>();
+}

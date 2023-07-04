@@ -14,10 +14,10 @@ Here is a breakdown of the syntax:
 
 ## Complete Example
 
-Let us now look at a full example of a [step][steps] called `doSomething` with two results:
+Let us now look at a full example of a [segment][segments] called `doSomething` with two results:
 
 ```txt
-step doSomething() -> (result1: Int, result2: Boolean) {
+segment doSomething() -> (result1: Int, result2: Boolean) {
     // ...
 }
 ```
@@ -34,11 +34,11 @@ The interesting part is the list of results, which uses the following syntactic 
 In case that the callable produces only a single result, we can omit the parentheses. The following two declarations are, hence, equivalent:
 
 ```txt
-step doSomething1() -> (result: Int) {}
+segment doSomething1() -> (result: Int) {}
 ```
 
 ```txt
-step doSomething2() -> result: Int {}
+segment doSomething2() -> result: Int {}
 ```
 
 ## Shorthand Version: No Results
@@ -46,11 +46,11 @@ step doSomething2() -> result: Int {}
 In case that the callable produces no results, we can usually omit the entire results list. The following two declarations are, hence equivalent:
 
 ```txt
-step doSomething1() -> () {}
+segment doSomething1() -> () {}
 ```
 
 ```txt
-step doSomething2() {}
+segment doSomething2() {}
 ```
 
 The notable exception are [callable types][callable-types], where the result list must always be specified even when it is empty.
@@ -67,5 +67,5 @@ Since Python results do not have a name, the names of Safe-DS results can be arb
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
 [callable-types]: types.md#callable-type
-[steps]: ../pipeline-language/steps.md
+[segments]: ../pipeline-language/segments.md
 [calls]: ../pipeline-language/expressions.md#calls

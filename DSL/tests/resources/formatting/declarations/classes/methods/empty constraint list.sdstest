@@ -1,0 +1,9 @@
+class MyClass {
+    fun  myFunction ( )  where  { }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction() where {}
+}

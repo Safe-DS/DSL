@@ -1,0 +1,12 @@
+class MyOuterClass {
+    class  MyClass < @Annotation  out  T >
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    class MyClass<
+        @Annotation
+        out T
+    >
+}

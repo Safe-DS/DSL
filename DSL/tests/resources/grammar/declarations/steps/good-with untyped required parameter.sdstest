@@ -1,3 +1,0 @@
-// $TEST$ no_syntax_error
-
-step myStep(a) {}

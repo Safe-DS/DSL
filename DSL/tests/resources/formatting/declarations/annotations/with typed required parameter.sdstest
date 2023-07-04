@@ -1,0 +1,5 @@
+annotation  MyAnnotation ( a :  Int )
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation(a: Int)

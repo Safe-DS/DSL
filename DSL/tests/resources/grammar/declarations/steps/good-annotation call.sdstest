@@ -1,4 +1,0 @@
-// $TEST$ no_syntax_error
-
-@Annotation
-step myStep() {}

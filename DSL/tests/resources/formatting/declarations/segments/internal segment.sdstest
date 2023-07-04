@@ -1,0 +1,5 @@
+internal  segment  mySegment ( )  { }
+
+// -----------------------------------------------------------------------------
+
+internal segment mySegment() {}

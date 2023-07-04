@@ -1,0 +1,5 @@
+segment  mySegment ( vararg  a :  Int )  { }
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(vararg a: Int) {}

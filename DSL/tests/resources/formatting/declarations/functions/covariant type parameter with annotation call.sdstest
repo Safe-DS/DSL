@@ -1,0 +1,8 @@
+fun  myFunction < @Annotation  out  T > ( )
+
+// -----------------------------------------------------------------------------
+
+fun myFunction<
+    @Annotation
+    out T
+>()

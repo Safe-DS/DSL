@@ -1,5 +1,5 @@
 // $TEST$ no_syntax_error
 
 schema MySchema {
-    "column1" : Int
+    "column1": Int
 }

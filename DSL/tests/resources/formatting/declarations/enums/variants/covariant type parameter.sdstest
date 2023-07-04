@@ -1,0 +1,9 @@
+enum MyEnum {
+    MyEnumVariant < out  T >
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant<out T>
+}

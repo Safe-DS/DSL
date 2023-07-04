@@ -1,5 +1,0 @@
-// $TEST$ syntax_error
-
-step myStep() {
-    = 0;
-}

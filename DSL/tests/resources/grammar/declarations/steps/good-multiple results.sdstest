@@ -1,8 +1,0 @@
-// $TEST$ no_syntax_error
-
-step myStep() -> (
-    @Annotation a,
-    b,
-    c: Int,
-    d: Int
-) {}

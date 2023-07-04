@@ -1,0 +1,15 @@
+enum E {
+    A<T> where {
+        T sub Any ,
+         T super Int ,
+     }
+}
+
+// -----------------------------------------------------------------------------
+
+enum E {
+    A<T> where {
+        T sub Any,
+        T super Int,
+    }
+}

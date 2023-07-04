@@ -1,0 +1,9 @@
+class MyClass {
+    fun  myFunction ( a  =  1 )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction(a = 1)
+}

@@ -1,0 +1,26 @@
+package  myPackage
+
+
+import  myPackage . MyClass
+
+import  myPackage . MyClass  as  Class
+
+import  myPackage . *
+
+
+class C
+
+
+class D
+
+// -----------------------------------------------------------------------------
+
+package myPackage
+
+import myPackage.MyClass
+import myPackage.MyClass as Class
+import myPackage.*
+
+class C
+
+class D

@@ -1,0 +1,8 @@
+// $TEST$ no_syntax_error
+
+segment mySegment() -> (
+    @Annotation a,
+    b,
+    c: Int,
+    d: Int
+) {}

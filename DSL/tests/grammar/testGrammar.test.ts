@@ -25,25 +25,25 @@ describe('grammar', () => {
             throw new Error('No diagnostics found');
         }
 
-        const grammarErrors = diagnostics.filter(
+        const syntaxErrors = diagnostics.filter(
             (d) => d.severity === 1 && (d.code === 'lexing-error' || d.code === 'parsing-error'),
         );
 
-        if (test.expectedResults === 'syntax_error') {
-            if (grammarErrors.length === 0) {
+        if (test.expectedResult === 'syntax_error') {
+            if (syntaxErrors.length === 0) {
                 throw new AssertionError({
                     message: 'Expected syntax errors but found none.',
-                    actual: grammarErrors,
+                    actual: syntaxErrors,
                     expected: [],
                 });
             }
         }
 
-        if (test.expectedResults === 'no_syntax_error') {
-            if (grammarErrors.length > 0) {
+        if (test.expectedResult === 'no_syntax_error') {
+            if (syntaxErrors.length > 0) {
                 throw new AssertionError({
                     message: 'Expected no syntax errors but found some.',
-                    actual: grammarErrors,
+                    actual: syntaxErrors,
                     expected: [],
                 });
             }
@@ -61,7 +61,7 @@ const createGrammarTests = (): GrammarTest[] => {
         if (comments.length === 0) {
             return {
                 absolutePath,
-                expectedResults: 'invalid',
+                expectedResult: 'invalid',
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new NoCommentsError(),
             };
@@ -71,7 +71,7 @@ const createGrammarTests = (): GrammarTest[] => {
         if (comments.length > 1) {
             return {
                 absolutePath,
-                expectedResults: 'invalid',
+                expectedResult: 'invalid',
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new MultipleCommentsError(comments),
             };
@@ -83,7 +83,7 @@ const createGrammarTests = (): GrammarTest[] => {
         if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
             return {
                 absolutePath,
-                expectedResults: 'invalid',
+                expectedResult: 'invalid',
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new InvalidCommentError(comment),
             };
@@ -98,7 +98,7 @@ const createGrammarTests = (): GrammarTest[] => {
 
         return {
             absolutePath,
-            expectedResults: comment,
+            expectedResult: comment,
             testName,
         };
     });
@@ -106,7 +106,7 @@ const createGrammarTests = (): GrammarTest[] => {
 
 interface GrammarTest {
     absolutePath: string;
-    expectedResults: 'syntax_error' | 'no_syntax_error' | 'invalid';
+    expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
     testName: string;
     error?: Error;
 }

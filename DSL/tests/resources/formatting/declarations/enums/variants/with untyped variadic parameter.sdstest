@@ -1,0 +1,9 @@
+enum MyEnum {
+    MyEnumVariant ( vararg  a )
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant(vararg a)
+}

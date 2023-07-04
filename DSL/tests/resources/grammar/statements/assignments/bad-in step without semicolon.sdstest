@@ -1,5 +1,0 @@
-// $TEST$ syntax_error
-
-step myStep() {
-    val a = 0
-}

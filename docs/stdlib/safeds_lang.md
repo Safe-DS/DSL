@@ -118,8 +118,8 @@ The annotation can be called on results.
 **Parameters:** _None expected._
 
 
-### Enum Variant `Step`
-The annotation can be called on steps.
+### Enum Variant `Segment`
+The annotation can be called on segments.
 
 **Parameters:** _None expected._
 
@@ -158,7 +158,7 @@ The declaration should no longer be used.
 * Function
 * Parameter
 * Result
-* Step
+* Segment
 * TypeParameter
 
 ## <a name="annotation-Description"></a>Annotation `Description`
@@ -180,7 +180,7 @@ The purpose of a declaration.
 * Parameter
 * Pipeline
 * Result
-* Step
+* Segment
 * TypeParameter
 
 ## <a name="annotation-Experimental"></a>Annotation `Experimental`
@@ -196,7 +196,7 @@ The declaration might change without a major version bump.
 * Function
 * Parameter
 * Result
-* Step
+* Segment
 * TypeParameter
 
 ## <a name="annotation-Expert"></a>Annotation `Expert`
@@ -247,7 +247,7 @@ The name of the corresponding API element in Python (default is the name of the 
 * Function
 * Parameter
 * Pipeline
-* Step
+* Segment
 
 ## <a name="annotation-Repeatable"></a>Annotation `Repeatable`
 The annotation can be called multiple times for the same declaration.
@@ -275,7 +275,7 @@ The version in which a declaration was added.
 * Parameter
 * Pipeline
 * Result
-* Step
+* Segment
 * TypeParameter
 
 ## <a name="annotation-Target"></a>Annotation `Target`
@@ -288,4 +288,3 @@ The annotation can target these declaration types. If the @Target annotation is 
 **Valid targets:**
 
 * Annotation
-

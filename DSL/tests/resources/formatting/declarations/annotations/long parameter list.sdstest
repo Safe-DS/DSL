@@ -1,0 +1,10 @@
+annotation A( a: Int ,  b: Int ,  c: Int ,  d: Int )
+
+// -----------------------------------------------------------------------------
+
+annotation A(
+    a: Int,
+    b: Int,
+    c: Int,
+    d: Int
+)

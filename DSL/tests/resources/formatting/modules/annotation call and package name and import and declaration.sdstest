@@ -1,0 +1,21 @@
+
+@Annotation1
+
+
+package  myPackage
+
+
+import  myPackage . MyClass
+
+
+class C
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+
+package myPackage
+
+import myPackage.MyClass
+
+class C

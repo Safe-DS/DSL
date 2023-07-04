@@ -1,0 +1,14 @@
+
+@Annotation1
+
+@Annotation2
+
+
+package  myPackage
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+@Annotation2
+
+package myPackage

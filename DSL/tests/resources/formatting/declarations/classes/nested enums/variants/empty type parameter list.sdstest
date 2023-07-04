@@ -1,0 +1,13 @@
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant < >
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant<>
+    }
+}

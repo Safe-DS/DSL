@@ -1,0 +1,12 @@
+package test
+
+@Annotation
+
+annotation MyAnnotation
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+annotation MyAnnotation

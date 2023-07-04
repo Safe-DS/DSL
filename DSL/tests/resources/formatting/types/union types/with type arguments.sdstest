@@ -1,0 +1,9 @@
+segment mySegment(
+    x: union < Int ,  String >
+) {}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(
+    x: union<Int, String>
+) {}
