@@ -1,6 +1,5 @@
 class MyClass {
-    @Annotation
-    enum MyEnum
+    @Annotation  enum  MyEnum
 }
 
 // -----------------------------------------------------------------------------

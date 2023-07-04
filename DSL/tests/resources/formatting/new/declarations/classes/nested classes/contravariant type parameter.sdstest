@@ -1,5 +1,5 @@
 class MyOuterClass {
-    class MyClass<in T>
+    class  MyClass < in  T >
 }
 
 // -----------------------------------------------------------------------------

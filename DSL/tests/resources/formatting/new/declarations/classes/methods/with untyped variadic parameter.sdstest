@@ -1,5 +1,5 @@
 class MyClass {
-    fun myFunction(vararg a)
+    fun  myFunction ( vararg  a )
 }
 
 // -----------------------------------------------------------------------------

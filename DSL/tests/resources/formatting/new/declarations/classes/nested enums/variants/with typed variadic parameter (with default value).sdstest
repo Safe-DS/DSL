@@ -1,6 +1,6 @@
 class MyClass {
     enum MyEnum {
-        MyEnumVariant(vararg a: Int = 1)
+        MyEnumVariant ( vararg  a :  Int  =  1 )
     }
 }
 

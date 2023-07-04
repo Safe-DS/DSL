@@ -1,6 +1,6 @@
 class MyClass {
     enum MyEnum {
-        MyEnumVariant<@Annotation T, in S, out U>
+        MyEnumVariant < @Annotation  T ,  in  S ,  out  U >
     }
 }
 
@@ -8,6 +8,11 @@ class MyClass {
 
 class MyClass {
     enum MyEnum {
-        MyEnumVariant<@Annotation T, in S, out U>
+        MyEnumVariant<
+            @Annotation
+            T,
+            in S,
+            out U
+        >
     }
 }

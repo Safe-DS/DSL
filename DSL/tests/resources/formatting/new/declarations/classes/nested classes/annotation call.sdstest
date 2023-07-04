@@ -1,6 +1,5 @@
 class MyOuterClass {
-    @Annotation
-    class MyClass
+    @Annotation  class  MyClass
 }
 
 // -----------------------------------------------------------------------------

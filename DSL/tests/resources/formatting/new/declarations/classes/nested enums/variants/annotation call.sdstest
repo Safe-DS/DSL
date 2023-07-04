@@ -1,7 +1,6 @@
 class MyClass {
     enum MyEnum {
-        @Annotation
-        MyEnumVariant
+        @Annotation  MyEnumVariant
     }
 }
 

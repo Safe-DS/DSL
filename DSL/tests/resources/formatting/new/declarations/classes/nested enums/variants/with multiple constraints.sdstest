@@ -1,9 +1,9 @@
 class MyClass {
     enum MyEnum {
-        MyEnumVariant where {
-            T sub Number,
-            S super Number
-        }
+        MyEnumVariant  where  {
+           T  sub  Number ,
+             S  super  Number
+         }
     }
 }
 

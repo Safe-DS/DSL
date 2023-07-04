@@ -1,6 +1,5 @@
 class MyClass {
-    @Annotation
-    fun myFunction()
+    @Annotation fun  myFunction ( )
 }
 
 // -----------------------------------------------------------------------------

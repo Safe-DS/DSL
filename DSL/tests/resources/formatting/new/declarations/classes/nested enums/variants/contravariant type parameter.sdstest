@@ -1,6 +1,6 @@
 class MyClass {
     enum MyEnum {
-        MyEnumVariant<in T>
+        MyEnumVariant < in  T >
     }
 }
 

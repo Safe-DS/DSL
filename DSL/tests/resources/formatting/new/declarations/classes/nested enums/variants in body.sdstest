@@ -1,7 +1,7 @@
 class MyClass {
-    enum MyEnum {
-        MyEnumVariant
-    }
+    enum  MyEnum  {
+         MyEnumVariant
+     }
 }
 
 // -----------------------------------------------------------------------------

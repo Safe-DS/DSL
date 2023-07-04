@@ -1,5 +1,5 @@
 class MyOuterClass {
-    class MyClass where {}
+    class  MyClass  where  { }
 }
 
 // -----------------------------------------------------------------------------

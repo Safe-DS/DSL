@@ -1,9 +1,12 @@
 class MyClass {
-    fun myFunction<@Annotation T>()
+    fun  myFunction < @Annotation  T > ( )
 }
 
 // -----------------------------------------------------------------------------
 
 class MyClass {
-    fun myFunction<@Annotation T>()
+    fun myFunction<
+        @Annotation
+        T
+    >()
 }

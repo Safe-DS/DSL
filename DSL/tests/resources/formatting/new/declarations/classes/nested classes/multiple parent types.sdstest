@@ -1,5 +1,5 @@
 class MyOuterClass {
-    class MyClass sub Int, Number
+    class  MyClass  sub  Int ,  Number
 }
 
 // -----------------------------------------------------------------------------

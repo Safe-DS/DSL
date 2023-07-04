@@ -1,7 +1,6 @@
 package test
 
-@Annotation
-class MyClass
+@Annotation  class  MyClass
 
 // -----------------------------------------------------------------------------
 

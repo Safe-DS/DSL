@@ -1,5 +1,5 @@
 class MyClass {
-    static fun myFunction()
+    static  fun  myFunction ( )
 }
 
 // -----------------------------------------------------------------------------

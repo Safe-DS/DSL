@@ -1,6 +1,6 @@
-class MyClass where {
-    T sub Number
-}
+class  MyClass where  {
+     T  sub  Number
+ }
 
 // -----------------------------------------------------------------------------
 
