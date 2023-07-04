@@ -800,24 +800,25 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length > 0) {
-            formatter.property('name').prepend(newLine());
+            formatter.keyword("schema").prepend(newLine());
         }
 
+        formatter.property("name").prepend(oneSpace());
         formatter.property('columnList').prepend(oneSpace());
     }
 
     private formatSdsColumnList(node: ast.SdsColumnList) {
         const formatter = this.getNodeFormatter(node);
-
-        formatter.keyword('{').append(noSpace());
-        formatter.keyword('}').prepend(noSpace());
-
         const columns = node.columns ?? [];
-        if (columns.length > 0) {
-            formatter.node(columns[0]).prepend(noSpace());
-        }
 
-        formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+        if (columns.length === 0) {
+            formatter.keyword('{').append(noSpace());
+            formatter.keyword('}').prepend(noSpace());
+        } else {
+            formatter.nodes(...columns).prepend(indent());
+            formatter.keywords(',').prepend(noSpace()).append(newLine());
+            formatter.keyword('}').prepend(newLine());
+        }
     }
 
     private formatSdsColumn(node: ast.SdsColumn) {
