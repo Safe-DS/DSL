@@ -5,5 +5,10 @@ export default defineConfig({
         chaiConfig: {
             truncateThreshold: 0,
         },
+        coverage: {
+            provider: 'istanbul',
+            include: ['src'],
+            exclude: ['**/generated'],
+        },
     },
 });
