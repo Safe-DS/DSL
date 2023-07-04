@@ -229,7 +229,12 @@ export class SafeDSFormatter extends AbstractFormatter {
                     }
                 }
             } else {
-                formatter.node(value).prepend(newLines(2));
+                const valueAnnotations = annotationCallsOrEmpty(value);
+                if (valueAnnotations.length > 0) {
+                    formatter.node(valueAnnotations[0]).prepend(newLines(2));
+                } else {
+                    formatter.node(value).prepend(newLines(2));
+                }
             }
         });
     }
@@ -431,14 +436,9 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsAnnotationCallList(node: ast.SdsAnnotationCallList): void {
         const formatter = this.getNodeFormatter(node);
+        const annotationCalls = node.annotationCalls ?? [];
 
-        node.annotationCalls.forEach((value, index) => {
-            if (index === 0) {
-                // formatter.node(value).prepend(newLines(2)); // TODO: needs more robust solution: this fails for annotations on class members; removing it fails for annotations on module members
-            } else {
-                formatter.node(value).prepend(newLine());
-            }
-        });
+        formatter.nodes(...annotationCalls.slice(1)).prepend(newLine());
     }
 
     private formatSdsAnnotationCall(node: ast.SdsAnnotationCall): void {
