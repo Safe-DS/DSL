@@ -6,7 +6,7 @@ import {
     SdsClass,
     SdsObject,
     SdsTypeArgument,
-    SdsTypeArgumentList
+    SdsTypeArgumentList,
 } from '../generated/ast';
 
 export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject): SdsAnnotationCall[] {
@@ -23,4 +23,4 @@ export const classMembersOrEmpty = function (node: SdsClass): SdsObject[] {
 
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
     return node?.typeArguments ?? [];
-}
+};
