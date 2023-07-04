@@ -663,7 +663,8 @@ export class SafeDSFormatter extends AbstractFormatter {
             closingParenthesis.prepend(newLine());
         } else {
             openingParenthesis.append(noSpace());
-            formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+            formatter.nodes(...args.slice(1)).prepend(oneSpace());
+            formatter.keywords(',').prepend(noSpace());
             closingParenthesis.prepend(noSpace());
         }
     }
