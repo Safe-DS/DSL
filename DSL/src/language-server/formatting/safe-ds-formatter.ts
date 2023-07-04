@@ -134,8 +134,12 @@ export class SafeDSFormatter extends AbstractFormatter {
             this.formatSdsMemberAccess(node);
         } else if (ast.isSdsParenthesizedExpression(node)) {
             this.formatSdsParenthesizedExpression(node);
-        } else if (ast.isSdsTemplateString(node)) {
-            this.formatSdsTemplateString(node);
+        } else if (ast.isSdsTemplateStringStart(node)) {
+            this.formatSdsTemplateStringStart(node);
+        } else if (ast.isSdsTemplateStringInner(node)) {
+            this.formatSdsTemplateStringInner(node);
+        } else if (ast.isSdsTemplateStringEnd(node)) {
+            this.formatSdsTemplateStringEnd(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -693,14 +697,22 @@ export class SafeDSFormatter extends AbstractFormatter {
         formatter.keyword(')').prepend(noSpace());
     }
 
-    private formatSdsTemplateString(node: ast.SdsTemplateString) {
+    private formatSdsTemplateStringStart(node: ast.SdsTemplateStringStart) {
         const formatter = this.getNodeFormatter(node);
 
-        node.expressions.forEach((value) => {
-            if (!ast.isSdsTemplateStringPart(value)) {
-                formatter.node(value).surround(oneSpace());
-            }
-        });
+        formatter.node(node).append(oneSpace());
+    }
+
+    private formatSdsTemplateStringInner(node: ast.SdsTemplateStringInner) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.node(node).surround(oneSpace());
+    }
+
+    private formatSdsTemplateStringEnd(node: ast.SdsTemplateStringEnd) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.node(node).prepend(oneSpace());
     }
 
     // -----------------------------------------------------------------------------
