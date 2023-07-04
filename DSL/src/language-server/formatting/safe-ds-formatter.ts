@@ -1,4 +1,4 @@
-import { AbstractFormatter, AstNode, Formatting } from 'langium';
+import {AbstractFormatter, AstNode, CstNode, findCommentNode, Formatting, isAstNode} from 'langium';
 import * as ast from '../generated/ast';
 import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast';
 import { annotationCallsOrEmpty, typeArgumentsOrEmpty } from '../helpers/astShortcuts';
@@ -191,7 +191,11 @@ export class SafeDSFormatter extends AbstractFormatter {
         // Annotations
         annotations.forEach((value, index) => {
             if (index === 0) {
-                formatter.node(value).prepend(noSpace());
+                if (this.hasComment(value)) {
+                    formatter.node(value).prepend(newLine());
+                } else {
+                    formatter.node(value).prepend(noSpace());
+                }
             } else {
                 formatter.node(value).prepend(newLines(1));
             }
@@ -199,7 +203,14 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         // Package
         if (annotations.length === 0) {
-            formatter.keyword('package').prepend(noSpace());
+            const packageKeyword = formatter.keyword('package');
+            const cstNodes = packageKeyword.nodes
+
+            if (cstNodes.length > 0 && this.hasComment(cstNodes[0])) {
+                packageKeyword.prepend(newLine());
+            } else {
+                packageKeyword.prepend(noSpace());
+            }
         } else {
             formatter.keyword('package').prepend(newLines(2));
         }
@@ -210,7 +221,11 @@ export class SafeDSFormatter extends AbstractFormatter {
         imports.forEach((value, index) => {
             if (index === 0) {
                 if (annotations.length === 0 && !name) {
-                    formatter.node(value).prepend(noSpace());
+                    if (this.hasComment(value)) {
+                        formatter.node(value).prepend(newLine());
+                    } else {
+                        formatter.node(value).prepend(noSpace());
+                    }
                 } else {
                     formatter.node(value).prepend(newLines(2));
                 }
@@ -223,7 +238,11 @@ export class SafeDSFormatter extends AbstractFormatter {
         members.forEach((value, index) => {
             if (index === 0) {
                 if (annotations.length === 0 && !name && imports.length === 0) {
-                    formatter.node(value).prepend(noSpace());
+                    if (this.hasComment(value)) {
+                        formatter.node(value).prepend(newLine());
+                    } else {
+                        formatter.node(value).prepend(noSpace());
+                    }
                 } else {
                     const valueAnnotations = annotationCallsOrEmpty(value);
                     if (valueAnnotations.length > 0) {
@@ -870,5 +889,33 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
+    }
+
+    // -----------------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------------
+
+    /**
+     * Returns whether the given node has a comment associated with it.
+     *
+     * @param node The node to check.
+     */
+    private hasComment(node: AstNode | CstNode | undefined): boolean {
+        return Boolean(this.getCommentNode(node));
+    }
+
+    /**
+     * Returns the comment associated with the given node.
+     *
+     * @param node The node to get the comment for.
+     */
+    private getCommentNode(node: AstNode | CstNode | undefined): CstNode | undefined {
+        const commentNames = ["ML_COMMENT", "SL_COMMENT"]
+
+        if (isAstNode(node)) {
+            return findCommentNode(node.$cstNode, commentNames)
+        } else {
+            return findCommentNode(node, commentNames)
+        }
     }
 }
