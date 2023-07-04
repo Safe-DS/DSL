@@ -498,13 +498,14 @@ export class SafeDSFormatter extends AbstractFormatter {
             parameters.length >= 3 ||
             parameters.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
         ) {
+            formatter.nodes(...parameters).prepend(indent());
+            formatter.keywords(',').prepend(noSpace());
             closingParenthesis.prepend(newLine());
-            formatter.interior(openingParenthesis, closingParenthesis).prepend(indent());
-            formatter.keywords(',').prepend(noSpace()).append(newLine());
         } else {
             openingParenthesis.append(noSpace());
+            formatter.nodes(...parameters.slice(1)).prepend(oneSpace());
+            formatter.keywords(',').prepend(noSpace());
             closingParenthesis.prepend(noSpace());
-            formatter.keywords(',').prepend(noSpace()).append(oneSpace());
         }
     }
 
@@ -538,11 +539,12 @@ export class SafeDSFormatter extends AbstractFormatter {
             results.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
         ) {
             formatter.nodes(...results).prepend(indent());
-            formatter.keywords(',').prepend(noSpace()).append(newLine());
+            formatter.keywords(',').prepend(noSpace());
             closingParenthesis.prepend(newLine());
         } else {
             openingParenthesis.append(noSpace());
-            formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+            formatter.nodes(...results.slice(1)).prepend(oneSpace());
+            formatter.keywords(',').prepend(noSpace());
             closingParenthesis.prepend(noSpace());
         }
     }
@@ -761,15 +763,16 @@ export class SafeDSFormatter extends AbstractFormatter {
         const typeParameters = node.typeParameters ?? [];
 
         if (typeParameters.length >= 3 || typeParameters.some((it) => annotationCallsOrEmpty(it).length > 0)) {
-            closingBracket.prepend(newLine());
             formatter.nodes(...typeParameters).prepend(indent());
-            formatter.keywords(',').prepend(noSpace()).append(newLine());
+            formatter.keywords(',').prepend(noSpace());
+            closingBracket.prepend(newLine());
         } else {
-            closingBracket.prepend(noSpace());
             if (typeParameters.length > 0) {
                 formatter.node(typeParameters[0]).prepend(noSpace());
+                formatter.nodes(...typeParameters.slice(1)).prepend(oneSpace());
             }
-            formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+            formatter.keywords(',').prepend(noSpace());
+            closingBracket.prepend(noSpace());
         }
     }
 
@@ -793,9 +796,10 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         if (typeArguments.length > 0) {
             formatter.node(typeArguments[0]).prepend(noSpace());
+            formatter.nodes(...typeArguments.slice(1)).prepend(oneSpace());
         }
 
-        formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+        formatter.keywords(',').prepend(noSpace());
         formatter.keyword('>').prepend(noSpace());
     }
 
