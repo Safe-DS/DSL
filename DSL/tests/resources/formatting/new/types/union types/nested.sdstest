@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     x: union<union<>>
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     x: union<union<>>
 ) {}

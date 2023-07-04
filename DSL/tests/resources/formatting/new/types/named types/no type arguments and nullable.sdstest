@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     x: Int?
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     x: Int?
 ) {}

@@ -1,10 +1,10 @@
-step s1(f:     (  )
+segment s1(f:     (  )
   ->    (   )) {}
 
-step s2(f:    (   )   ->
+segment s2(f:    (   )   ->
 result  :   Int    ) {}
 
-step s3(f: 
+segment s3(f:
     (  @AnnotationUse      a
     :   Int  ,   vararg   b  :
      Int  = 3 )    -> (
@@ -13,15 +13,15 @@ step s3(f:
 
 // -----------------------------------------------------------------------------
 
-step s1(
+segment s1(
     f: () -> ()
 ) {}
 
-step s2(
+segment s2(
     f: () -> result: Int
 ) {}
 
-step s3(
+segment s3(
     f: (
         @AnnotationUse
         a: Int,

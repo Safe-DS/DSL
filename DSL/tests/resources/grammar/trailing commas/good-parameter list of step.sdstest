@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-step s(
-    a: Int,
-    b: Int, 
-) {}

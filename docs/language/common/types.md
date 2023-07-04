@@ -298,7 +298,7 @@ A _callable type_ denotes that only values that can be [called][calls] are accep
 - [constructors of enum variants][enum-variant-constructors]
 - [methods][methods]
 - [global functions][global-functions]
-- [steps][steps]
+- [segments][segments]
 - [lambdas][lambdas]
 
 Additionally, a callable types specifies the names and types of parameters and results. Here is the most basic callable type that expects neither parameters nor results:
@@ -423,7 +423,7 @@ Getting the `<result type`> depends on the number of results. If there is only a
 [member-accesses]: ../pipeline-language/expressions.md#member-access-of-enum-variants
 [null-literal]: ../pipeline-language/expressions.md#null-literal
 [calls]: ../pipeline-language/expressions.md#calls
-[steps]: ../pipeline-language/steps.md
+[segments]: ../pipeline-language/segments.md
 [lambdas]: ../pipeline-language/expressions.md#lambdas
 [mypy]: http://mypy-lang.org/
 [type-hints]: https://docs.python.org/3/library/typing.html

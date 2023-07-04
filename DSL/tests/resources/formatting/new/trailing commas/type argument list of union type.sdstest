@@ -1,9 +1,9 @@
-step s(
+segment s(
     f: union<Int, String, >
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step s(
+segment s(
     f: union<Int, String, >
 ) {}

@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     f: () -> result: Int
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     f: () -> result: Int
 ) {}

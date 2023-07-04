@@ -1,0 +1,10 @@
+package test
+
+@Annotation  segment  mySegment ( ) { }
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+segment mySegment() {}

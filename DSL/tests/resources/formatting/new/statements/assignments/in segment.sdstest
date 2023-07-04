@@ -1,0 +1,11 @@
+segment mySegment() {
+    val a = 0;
+    val a, _, yield b = call();
+}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment() {
+    val a = 0;
+    val a, _, yield b = call();
+}

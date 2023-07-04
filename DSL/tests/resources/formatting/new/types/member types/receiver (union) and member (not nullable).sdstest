@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     x: union<>.InnerClass
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     x: union<>.InnerClass
 ) {}

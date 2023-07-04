@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     x: union<Int, String>
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     x: union<Int, String>
 ) {}

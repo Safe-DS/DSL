@@ -57,8 +57,8 @@ export class SafeDSFormatter extends AbstractFormatter {
             this.formatSdsFunction(node);
         } else if (ast.isSdsPipeline(node)) {
             this.formatSdsPipeline(node);
-        } else if (ast.isSdsStep(node)) {
-            this.formatSdsStep(node);
+        } else if (ast.isSdsSegment(node)) {
+            this.formatSdsSegment(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -403,20 +403,20 @@ export class SafeDSFormatter extends AbstractFormatter {
         formatter.node(node.body).prepend(oneSpace());
     }
 
-    private formatSdsStep(node: ast.SdsStep): void {
+    private formatSdsSegment(node: ast.SdsSegment): void {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length === 0) {
             if (node.visibility) {
-                formatter.keyword('step').prepend(oneSpace());
+                formatter.keyword('segment').prepend(oneSpace());
             }
         } else {
             if (node.visibility) {
                 formatter.keyword('private').prepend(newLine());
                 formatter.keyword('internal').prepend(newLine());
-                formatter.keyword('step').prepend(oneSpace());
+                formatter.keyword('segment').prepend(oneSpace());
             } else {
-                formatter.keyword('step').prepend(newLine());
+                formatter.keyword('segment').prepend(newLine());
             }
         }
 

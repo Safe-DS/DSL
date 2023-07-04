@@ -149,27 +149,27 @@ In order to refer to global declarations in other [packages][packages], we first
 
 ## Calls
 
-Calls are used to trigger the execution of a specific action, which can, for example, be the creation of an instance of a [class][classes] or executing the code in a [step][steps]. Let's look at an example:
+Calls are used to trigger the execution of a specific action, which can, for example, be the creation of an instance of a [class][classes] or executing the code in a [segment][segments]. Let's look at an example:
 
-First, we show the code of the [step][steps] that we want to call.
+First, we show the code of the [segment][segments] that we want to call.
 
 ```txt
-step createDecisionTree(maxDepth: Int = 10) {
+segment createDecisionTree(maxDepth: Int = 10) {
     // ... do something ...
 }
 ```
 
-This [step][steps] has a single [parameter][parameters] `maxDepth`, which must have [type][types] `Int`, and has the default value `10`. Since it has a default value, we are not required to specify a value when we call this [step][steps]. The most basic legal call of the [step][steps] is, thus, this:
+This [segment][segments] has a single [parameter][parameters] `maxDepth`, which must have [type][types] `Int`, and has the default value `10`. Since it has a default value, we are not required to specify a value when we call this [segment][segments]. The most basic legal call of the [segment][segments] is, thus, this:
 
 ```txt
 createDecisionTree()
 ```
 
-This calls the [step][steps] `createDecisionTree`, using the default `maxDepth` of `10`.
+This calls the [segment][segments] `createDecisionTree`, using the default `maxDepth` of `10`.
 
 The syntax consists of these elements:
 
-- The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [step][steps] `createDecisionTree`)
+- The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [segment][segments] `createDecisionTree`)
 - The list of arguments, which is delimited by parentheses. In this case the list is empty, so no arguments are passed.
 
 If we want to override the default value of an optional [parameter][parameters] or if the callee has required [parameters][parameters], we need to pass arguments. We can either use _positional arguments_ or _named arguments_.
@@ -196,10 +196,10 @@ These are the syntactic elements:
 
 ### Passing Multiple Arguments
 
-We now add another parameter to the `createDecisionTree` [step][steps]:
+We now add another parameter to the `createDecisionTree` [segment][segments]:
 
 ```txt
-step createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
+segment createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
     // ... do something ...
 }
 ```
@@ -231,7 +231,7 @@ Depending on the callee, a call can do different things. The following table lis
 | [Enum Variant][enum-variants]                    | Creates a new instance of the enum variant. Enum variants are always callable. The call evaluates to this new instance.        |
 | [Global Function][global-functions]              | Invokes the function and runs the associated Python code. The call evaluates to the result record of the function.             |
 | [Method][methods]                                | Invokes the method and runs the associated Python code. The call evaluates to the result record of the method.                 |
-| [Step][steps]                                    | Invokes the step and runs the Safe-DS code in its body. The call evaluates to the result record of the step.                   |
+| [Segment][segments]                                    | Invokes the segment and runs the Safe-DS code in its body. The call evaluates to the result record of the segment.                   |
 | [Block Lambda](#block-lambdas)                   | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               |
 | [Expression Lambda](#expression-lambdas)         | Invokes the lambda and runs the Safe-DS code in its body. The call evaluates to the result record of the lambda.               |
 | Declaration with [Callable Type][callable-types] | Call whatever the value of the declaration is.                                                                                 |
@@ -242,7 +242,7 @@ The term _result record_ warrants further explanation: A result record maps [res
 
 - [global function][global-functions],
 - [method][methods],
-- [step][steps], or
+- [segment][segments], or
 - [lambda](#lambdas)
 
 to their computed values.
@@ -402,10 +402,10 @@ createValueWrapper()
 
 ## Indexed Accesses
 
-An indexed access is currently only used to access one value assigned to a [variadic parameter][variadic-parameters]. In the following example, we use an index access to retrieve the first value that is assigned to the [variadic parameter][variadic-parameters] `values` of the step `printFirst`:
+An indexed access is currently only used to access one value assigned to a [variadic parameter][variadic-parameters]. In the following example, we use an index access to retrieve the first value that is assigned to the [variadic parameter][variadic-parameters] `values` of the segment `printFirst`:
 
 ```txt
-step printFirst(vararg values: Int) {
+segment printFirst(vararg values: Int) {
     print(values[0]);
 }
 ```
@@ -431,17 +431,17 @@ class LinearRegression() {
 
 This is a [class][classes] `LinearRegression`, which has a constructor and an instance [method][methods] called `drawAsGraph`.
 
-We can then use those declarations in a [step][steps]:
+We can then use those declarations in a [segment][segments]:
 
 ```txt
-step myStep(vararg regressions: LinearRegression) {
+segment mySegment(vararg regressions: LinearRegression) {
     regressions[0].drawAsGraph();
 }
 ```
 
-This step is called `myStep` and has a [variadic parameter][variadic-parameters] `regressions` of type `LinearRegression`. This means we can pass an arbitrary number of instances of `LinearRegression` to the step when we [call](#calls) it.
+This segment is called `mySegment` and has a [variadic parameter][variadic-parameters] `regressions` of type `LinearRegression`. This means we can pass an arbitrary number of instances of `LinearRegression` to the segment when we [call](#calls) it.
 
-In the body of the step we then
+In the body of the segment we then
 
 1. access the first instance that was pass using an [indexed access](#indexed-accesses),
 2. access the instance method `drawAsGraph` of this instance using a [member access](#member-accesses),
@@ -449,7 +449,7 @@ In the body of the step we then
 
 ## Lambdas
 
-If you want to write reusable blocks of code, use a [step][steps]. However, sometimes you need to create a highly application-specific callable that can be passed as argument to some function or returned as the result of a [step][steps]. We will explain this concept by filtering a list. Here are the relevant declarations:
+If you want to write reusable blocks of code, use a [segment][segments]. However, sometimes you need to create a highly application-specific callable that can be passed as argument to some function or returned as the result of a [segment][segments]. We will explain this concept by filtering a list. Here are the relevant declarations:
 
 ```txt
 class IntList {
@@ -463,27 +463,27 @@ First, we declare a [class][classes] `IntList`, which has a single [method][meth
 
 Second, we declare a [global function][global-functions] `intListOf` that is supposed to wrap `elements` into an `IntList`.
 
-Say, we now want to keep only the elements in the list that are less than `10`. We can do this by declaring a [step][steps]:
+Say, we now want to keep only the elements in the list that are less than `10`. We can do this by declaring a [segment][segments]:
 
 ```txt
-step keepLessThan10(a: Int) -> shouldKeep: Boolean {
+segment keepLessThan10(a: Int) -> shouldKeep: Boolean {
     yield shouldKeep = a < 10;
 }
 ```
 
-Here is how to solve the task of keeping only elements below `10` with this [step][steps]:
+Here is how to solve the task of keeping only elements below `10` with this [segment][segments]:
 
 ```txt
 intListOf(1, 4, 11).filter(keepLessThan10)
 ```
 
-The [call](#calls) to `intListOf` is just there to create an `IntList` that we can use for filtering. The interesting part is the argument we pass to the `filter` [method][methods], which is simply a reference to the [step][steps] we declared above.
+The [call](#calls) to `intListOf` is just there to create an `IntList` that we can use for filtering. The interesting part is the argument we pass to the `filter` [method][methods], which is simply a reference to the [segment][segments] we declared above.
 
-The problem here is that this solution is very cumbersome and verbose. We need to come up with a name for a [step][steps] that we will likely use only once. Moreover, the step must declare the [types][types] of its [parameters][parameters] and its [results][results] in its header. Finally, the declaration of the step has to happen in a separate location then its use. We can solve those issues with lambdas.
+The problem here is that this solution is very cumbersome and verbose. We need to come up with a name for a [segment][segments] that we will likely use only once. Moreover, the segment must declare the [types][types] of its [parameters][parameters] and its [results][results] in its header. Finally, the declaration of the segment has to happen in a separate location then its use. We can solve those issues with lambdas.
 
 ### Block Lambdas
 
-We will first rewrite the above solution using a _block lambda_, which is essentially a [step][steps] without a name and more concise syntax that can be declared where it is needed:
+We will first rewrite the above solution using a _block lambda_, which is essentially a [segment][segments] without a name and more concise syntax that can be declared where it is needed:
 
 ```txt
 intListOf(1, 4, 11).filter(
@@ -491,7 +491,7 @@ intListOf(1, 4, 11).filter(
 )
 ```
 
-While this appears longer than the solution with [steps][steps], note that it replaces both the declaration of the [step][steps] as well as the [reference](#references) to it.
+While this appears longer than the solution with [segments][segments], note that it replaces both the declaration of the [segment][segments] as well as the [reference](#references) to it.
 
 Here are the syntactic elements:
 
@@ -523,12 +523,12 @@ These are the syntactic elements:
 Both [block lambdas](#block-lambdas) and [expression lambdas](#expression-lambdas) are closures, which means they remember the values of [placeholders][placeholders] and [parameters][parameters] that can be accessed within their body at the time of their creation. Here is an example:
 
 ```txt
-step lazyValue(value: Int) -> result: () -> storedValue: Int {
+segment lazyValue(value: Int) -> result: () -> storedValue: Int {
     yield result = () -> value
 }
 ```
 
-This deserves further explanation: We declare a [step][steps] `lazyValue`. It takes a single [required parameter][required-parameters] `value` with type `Int`. It produces a single [result][results] called `result`, which has a [callable type][callable-types] that takes no [parameters] and produces a single [result][results] called `storedValue` with type `Int`. In the [body][step-body] of the [step][steps] we then [assign][assignments-to-step-results] an [expression lambda](#expression-lambdas) to the [result][results] `result`.
+This deserves further explanation: We declare a [segment][segments] `lazyValue`. It takes a single [required parameter][required-parameters] `value` with type `Int`. It produces a single [result][results] called `result`, which has a [callable type][callable-types] that takes no [parameters] and produces a single [result][results] called `storedValue` with type `Int`. In the [body][segment-body] of the [segment][segments] we then [assign][assignments-to-segment-results] an [expression lambda](#expression-lambdas) to the [result][results] `result`.
 
 The interesting part here is that we [refer to](#references) to the [parameter][parameters] `value` within the expression of the lambda. Since lambdas are closures, this means the current `value` is stored when the lambda is created. When we later call this lambda, exactly this value is returned.
 
@@ -537,8 +537,8 @@ The interesting part here is that we [refer to](#references) to the [parameter][
 At the moment, lambdas can only be used if the context determines the type of its parameters. Concretely, this means we can use lambdas in these two places:
 
 - As an argument that is assigned to a [parameter][parameters] with a [type][types] in a [call](#calls).
-- As the value that is [assigned to a result of a step][assignments-to-step-results].
-    In other cases, declare a step instead and use a [reference](#references) to this step where you would write the lambda.
+- As the value that is [assigned to a result of a segment][assignments-to-segment-results].
+    In other cases, declare a segment instead and use a [reference](#references) to this segment where you would write the lambda.
 
 ## Precedence
 
@@ -579,8 +579,8 @@ If the default precedence of operators is not sufficient, parentheses can be use
 [pipeline-language]: README.md
 [statements]: statements.md
 [assignment-multiple-assignees]: statements.md#multiple-assignees
-[assignments-to-step-results]: statements.md#yielding-results-of-steps
+[assignments-to-segment-results]: statements.md#yielding-results-of-segments
 [assignments-to-block-lambda-results]: statements.md#declare-results-of-block-lambdas
 [placeholders]: statements.md#declaring-placeholders
-[steps]: steps.md
-[step-body]: steps.md#statements
+[segments]: segments.md
+[segment-body]: segments.md#statements

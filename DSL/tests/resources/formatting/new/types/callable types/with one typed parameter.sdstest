@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     f: (param: Int) -> ()
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     f: (param: Int) -> ()
 ) {}

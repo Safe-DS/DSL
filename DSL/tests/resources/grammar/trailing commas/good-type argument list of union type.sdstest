@@ -1,5 +1,5 @@
 // $TEST$ no_syntax_error
 
-step s(
+segment s(
     f: union<Int, String, >
 ) {}

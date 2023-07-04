@@ -1,0 +1,5 @@
+private  segment  mySegment ( )  { }
+
+// -----------------------------------------------------------------------------
+
+private segment mySegment() {}

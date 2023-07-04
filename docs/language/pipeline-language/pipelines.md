@@ -1,6 +1,6 @@
 # Pipelines
 
-Pipelines are data science programs designed to solve a specific task. They act as the entry point to start execution. Pipelines are not meant to be reusable, instead extract reusable code into a [step][steps].
+Pipelines are data science programs designed to solve a specific task. They act as the entry point to start execution. Pipelines are not meant to be reusable, instead extract reusable code into a [segment][segments].
 
 ## Syntax
 
@@ -33,5 +33,5 @@ pipeline predictSpeed {
 
 More information about statements can be found in the [linked document][statements]. Note particularly, that all statements must end with a semicolon.
 
-[steps]: steps.md
+[segments]: segments.md
 [statements]: statements.md

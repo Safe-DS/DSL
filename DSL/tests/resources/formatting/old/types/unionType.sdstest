@@ -1,11 +1,11 @@
-step s1(f: union  <   >) {}
+segment s1(f: union  <   >) {}
 
-step s2(f: union <
+segment s2(f: union <
   Int  ,
    Float    >) {}
 
 // -----------------------------------------------------------------------------
 
-step s1(f: union<>) {}
+segment s1(f: union<>) {}
 
-step s2(f: union<Int, Float>) {}
+segment s2(f: union<Int, Float>) {}

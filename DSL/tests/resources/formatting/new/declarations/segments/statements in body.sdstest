@@ -1,0 +1,9 @@
+private  segment  mySegment ( )  {
+     val a = 1;
+ }
+
+// -----------------------------------------------------------------------------
+
+private segment mySegment() {
+    val a = 1;
+}

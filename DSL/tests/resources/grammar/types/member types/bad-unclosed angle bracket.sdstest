@@ -1,5 +1,5 @@
 // $TEST$ syntax_error
 
-step myStep(
+segment mySegment(
     x: OuterClass.InnerClass<
 ) {}

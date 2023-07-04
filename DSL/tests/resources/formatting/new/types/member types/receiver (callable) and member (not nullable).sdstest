@@ -1,9 +1,9 @@
-step myStep(
+segment mySegment(
     x: () -> ().InnerClass
 ) {}
 
 // -----------------------------------------------------------------------------
 
-step myStep(
+segment mySegment(
     x: () -> ().InnerClass
 ) {}

@@ -103,8 +103,8 @@ SdsAnnotatedModuleMember returns SdsAnnotatedObject:
       | {SdsPipeline.annotationCallList=current}
         SdsPipelineFragment
 
-      | {SdsStep.annotationCallList=current}
-        SdsStepFragment
+      | {SdsSegment.annotationCallList=current}
+        SdsSegmentFragment
     )
 ;
 
@@ -127,8 +127,8 @@ SdsUnannotatedModuleMember returns SdsAnnotatedObject:
     | {SdsPipeline}
       SdsPipelineFragment
 
-    | {SdsStep}
-      SdsStepFragment
+    | {SdsSegment}
+      SdsSegmentFragment
 ;
 
 interface SdsAnnotation extends SdsCallable, SdsModuleMember {
@@ -287,15 +287,15 @@ fragment SdsPipelineFragment:
     body=SdsBlock
 ;
 
-interface SdsStep extends SdsCallable, SdsModuleMember {
+interface SdsSegment extends SdsCallable, SdsModuleMember {
 	visibility?: string
 	resultList?: SdsResultList
 	body: SdsBlock
 }
 
-fragment SdsStepFragment:
+fragment SdsSegmentFragment:
     visibility=('internal' | 'private')?
-    'step'
+    'segment'
     name=ID
     parameterList=SdsParameterList
     resultList=SdsResultList?
