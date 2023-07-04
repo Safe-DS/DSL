@@ -1,9 +1,9 @@
 pipeline p {
-    (first, second, ) -> 1;
+    (first ,  second ,  ) -> 1;
 }
 
 // -----------------------------------------------------------------------------
 
 pipeline p {
-    (first, second, ) -> 1;
+    (first, second,) -> 1;
 }

@@ -1,9 +1,5 @@
-segment s(
-    f: Type<Int, Int, >
-) {}
+segment s(f: Type<Int ,  Int ,  >) {}
 
 // -----------------------------------------------------------------------------
 
-segment s(
-    f: Type<Int, Int, >
-) {}
+segment s(f: Type<Int, Int,>) {}

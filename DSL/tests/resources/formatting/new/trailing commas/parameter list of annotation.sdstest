@@ -1,11 +1,5 @@
-annotation A(
-    a: Int,
-    b: Int,
-)
+annotation A(a: Int ,  b: Int , )
 
 // -----------------------------------------------------------------------------
 
-annotation A(
-    a: Int,
-    b: Int,
-)
+annotation A(a: Int, b: Int,)

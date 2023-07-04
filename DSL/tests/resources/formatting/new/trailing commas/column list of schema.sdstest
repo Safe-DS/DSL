@@ -1,7 +1,7 @@
 schema MySchemaWithTrailingComma {
-    "column1" : Int,
-    "column2" : String,
-}
+    "column1" : Int ,
+     "column2" : String ,
+ }
 
 // -----------------------------------------------------------------------------
 

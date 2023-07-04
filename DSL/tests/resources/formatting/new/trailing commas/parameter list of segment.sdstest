@@ -1,11 +1,5 @@
-segment s(
-    a: Int,
-    b: Int,
-) {}
+segment s(a: Int ,  b: Int ,  ) {}
 
 // -----------------------------------------------------------------------------
 
-segment s(
-    a: Int,
-    b: Int,
-) {}
+segment s(a: Int, b: Int,) {}

@@ -1,9 +1,5 @@
-segment s(
-    f: union<Int, String, >
-) {}
+segment s(f: union<Int ,  String ,  >) {}
 
 // -----------------------------------------------------------------------------
 
-segment s(
-    f: union<Int, String, >
-) {}
+segment s(f: union<Int, String,>) {}
