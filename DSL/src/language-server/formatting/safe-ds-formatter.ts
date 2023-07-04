@@ -658,7 +658,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         const args = node.arguments ?? [];
 
-        if (args.length >= 3) {
+        if (args.length >= 3 || args.some((it) => this.isComplexExpression(it.value))) {
             openingParenthesis.append(newLine());
             closingParenthesis.prepend(newLine());
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent());
@@ -713,6 +713,16 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.node(node).prepend(oneSpace());
+    }
+
+    /**
+     * Returns whether the expression is considered complex and requires special formatting like placing the associated
+     * argument on its own line.
+     *
+     * @param node The expression to check.
+     */
+    private isComplexExpression(node: ast.SdsExpression | undefined): boolean {
+        return ast.isSdsChainedExpression(node)
     }
 
     // -----------------------------------------------------------------------------
@@ -802,6 +812,28 @@ export class SafeDSFormatter extends AbstractFormatter {
         formatter.property('variance').append(oneSpace());
     }
 
+    /**
+     * Returns whether the type is considered complex and requires special formatting like placing the associated
+     * parameter on its own line.
+     *
+     * @param node The type to check.
+     */
+    private isComplexType(node: ast.SdsType | undefined): boolean {
+        if (!node) {
+            return false;
+        }
+
+        if (ast.isSdsCallableType(node) || ast.isSdsMemberType(node)) {
+            return true;
+        } else if (ast.isSdsUnionType(node)) {
+            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+        } else if (ast.isSdsNamedType(node)) {
+            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+        } else {
+            return false;
+        }
+    }
+
     // -----------------------------------------------------------------------------
     // Schemas
     // -----------------------------------------------------------------------------
@@ -835,27 +867,5 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
-    }
-
-    /**
-     * Returns whether the type is considered complex and requires special formatting like placing the associated
-     * parameter on its own line.
-     *
-     * @param node The type to check.
-     */
-    private isComplexType(node: ast.SdsType | undefined): boolean {
-        if (!node) {
-            return false;
-        }
-
-        if (ast.isSdsCallableType(node) || ast.isSdsMemberType(node)) {
-            return true;
-        } else if (ast.isSdsUnionType(node)) {
-            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
-        } else if (ast.isSdsNamedType(node)) {
-            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
-        } else {
-            return false;
-        }
     }
 }
