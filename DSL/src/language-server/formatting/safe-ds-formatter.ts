@@ -434,7 +434,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         node.annotationCalls.forEach((value, index) => {
             if (index === 0) {
-                formatter.node(value).prepend(newLines(2)); // TODO: needs more robust solution: this fails for annotations on class members; removing it fails for annotations on module members
+                // formatter.node(value).prepend(newLines(2)); // TODO: needs more robust solution: this fails for annotations on class members; removing it fails for annotations on module members
             } else {
                 formatter.node(value).prepend(newLine());
             }

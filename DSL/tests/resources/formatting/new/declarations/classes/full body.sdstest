@@ -1,0 +1,65 @@
+class  MyClass  {
+
+     @Annotation
+
+   static attr a: Int
+
+
+     attr b: String
+
+
+     @Annotation
+
+   class InnerClass {
+
+         @Annotation
+
+       fun h()
+
+
+         @Annotation
+
+       attr c: Int
+
+     }
+
+
+   @Annotation
+
+     enum E {}
+
+
+   @Annotation
+
+     static fun f()
+
+
+   fun g()
+
+ }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    @Annotation
+    static attr a: Int
+
+    attr b: String
+
+    @Annotation
+    class InnerClass {
+        @Annotation
+        fun h()
+
+        @Annotation
+        attr c: Int
+    }
+
+    @Annotation
+    enum E {}
+
+    @Annotation
+    static fun f()
+
+    fun g()
+}
