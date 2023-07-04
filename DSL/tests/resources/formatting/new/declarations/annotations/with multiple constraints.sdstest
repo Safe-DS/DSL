@@ -2,3 +2,10 @@ annotation MyAnnotation where {
     T sub Number,
     S super Number
 }
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation where {
+    T sub Number,
+    S super Number
+}

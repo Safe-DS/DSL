@@ -2,3 +2,10 @@ class MyClass {
     @Annotation
     fun myFunction()
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    @Annotation
+    fun myFunction()
+}

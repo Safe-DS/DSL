@@ -4,3 +4,12 @@ class MyClass {
         MyEnumVariant
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        @Annotation
+        MyEnumVariant
+    }
+}

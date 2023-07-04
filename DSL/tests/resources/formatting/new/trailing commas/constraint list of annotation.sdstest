@@ -2,3 +2,10 @@ annotation A where {
     T sub Any,
     T super Int,
 }
+
+// -----------------------------------------------------------------------------
+
+annotation A where {
+    T sub Any,
+    T super Int,
+}

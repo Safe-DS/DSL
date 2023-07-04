@@ -1,3 +1,9 @@
 pipeline myPipeline {
     a?.member;
 }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    a?.member;
+}

@@ -5,3 +5,13 @@ pipeline myPipeline {
         string
     ";
 }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    "
+        multi
+        line
+        string
+    ";
+}

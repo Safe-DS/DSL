@@ -3,3 +3,11 @@ class MyClass {
         T sub Number
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction() where {
+        T sub Number
+    }
+}

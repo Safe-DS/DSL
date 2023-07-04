@@ -2,3 +2,10 @@ class MyClass {
     @Annotation
     enum MyEnum
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    @Annotation
+    enum MyEnum
+}

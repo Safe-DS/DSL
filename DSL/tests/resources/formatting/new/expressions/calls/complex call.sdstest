@@ -1,3 +1,9 @@
 pipeline myPipeline {
     f<*, in Number, out Number, T = Number>(1, b = 2);
 }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    f<*, in Number, out Number, T = Number>(1, b = 2);
+}

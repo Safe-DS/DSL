@@ -1,1 +1,5 @@
 annotation MyAnnotation(a = 1)
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation(a = 1)

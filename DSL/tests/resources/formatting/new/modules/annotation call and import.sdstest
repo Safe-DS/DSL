@@ -1,3 +1,9 @@
 @Annotation1
 
 import myPackage.MyClass
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+
+import myPackage.MyClass

@@ -3,3 +3,11 @@ class MyClass {
         MyEnumVariant<out T>
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant<out T>
+    }
+}

@@ -2,3 +2,10 @@ class MyClass where {
     T sub Number,
     S super Number
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass where {
+    T sub Number,
+    S super Number
+}

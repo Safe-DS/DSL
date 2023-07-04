@@ -4,3 +4,12 @@ class MyOuterClass {
         S super Number
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    class MyClass where {
+        T sub Number,
+        S super Number
+    }
+}

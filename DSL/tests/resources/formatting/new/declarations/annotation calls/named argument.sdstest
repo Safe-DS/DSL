@@ -1,2 +1,7 @@
 @Annotation(b = 2)
 class MyClass
+
+// -----------------------------------------------------------------------------
+
+@Annotation(b = 2)
+class MyClass

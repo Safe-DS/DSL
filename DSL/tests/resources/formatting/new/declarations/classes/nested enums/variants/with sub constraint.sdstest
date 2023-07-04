@@ -5,3 +5,13 @@ class MyClass {
         }
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant where {
+            T sub Number
+        }
+    }
+}

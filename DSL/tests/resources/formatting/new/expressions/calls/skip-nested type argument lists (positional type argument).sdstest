@@ -17,3 +17,25 @@ pipeline myPipeline {
      */
     f<List<T>>();
 }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    /*
+     * Once Langium supports LL(*) parsing, this should work.
+     *
+     * For now, we can either parse
+     *     - f<List<S>>() or
+     *     - a < f<S>()
+     * but not both.
+     *
+     * The problem is that the parser can't decide with finite lookahead whether
+     * the first < is the start of a type argument list or the operator of a
+     * comparison expression.
+     *
+     * We decided to only support the second case for now. The first case leads
+     * to a syntax error. To work around this, you can use the following syntax:
+     *     - f<T = List<S>>()
+     */
+    f<List<T>>();
+}

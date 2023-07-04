@@ -1,3 +1,9 @@
 package myPackage
 
 import myPackage.MyClass
+
+// -----------------------------------------------------------------------------
+
+package myPackage
+
+import myPackage.MyClass

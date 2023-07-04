@@ -1,3 +1,9 @@
 class MyClass {
     fun myFunction<>()
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction<>()
+}

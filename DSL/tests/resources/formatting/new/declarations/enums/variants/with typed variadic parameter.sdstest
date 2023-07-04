@@ -1,3 +1,9 @@
 enum MyEnum {
     MyEnumVariant(vararg a: Int)
 }
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant(vararg a: Int)
+}

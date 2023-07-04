@@ -1,3 +1,9 @@
 step myStep(
     x: union<Int, String>
 ) {}
+
+// -----------------------------------------------------------------------------
+
+step myStep(
+    x: union<Int, String>
+) {}

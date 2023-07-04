@@ -1,3 +1,9 @@
 step myStep(
     x: OuterClass?.InnerClass
 ) {}
+
+// -----------------------------------------------------------------------------
+
+step myStep(
+    x: OuterClass?.InnerClass
+) {}

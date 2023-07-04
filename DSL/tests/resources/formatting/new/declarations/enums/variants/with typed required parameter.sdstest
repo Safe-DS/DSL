@@ -1,3 +1,9 @@
 enum MyEnum {
     MyEnumVariant(a: Int)
 }
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant(a: Int)
+}

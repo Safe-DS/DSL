@@ -2,3 +2,10 @@ class C<T> where {
     T sub Any,
     T super Int,
 }
+
+// -----------------------------------------------------------------------------
+
+class C<T> where {
+    T sub Any,
+    T super Int,
+}

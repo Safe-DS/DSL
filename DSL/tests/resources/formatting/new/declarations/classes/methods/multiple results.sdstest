@@ -6,3 +6,14 @@ class MyClass {
         d: Int
     )
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction() -> (
+        @Annotation a,
+        b,
+        c: Int,
+        d: Int
+    )
+}

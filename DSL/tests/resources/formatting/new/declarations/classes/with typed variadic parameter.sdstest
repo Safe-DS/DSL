@@ -1,1 +1,5 @@
 class MyClass(vararg a: Int)
+
+// -----------------------------------------------------------------------------
+
+class MyClass(vararg a: Int)

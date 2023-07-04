@@ -1,3 +1,9 @@
 class MyClass {
     fun myFunction<@Annotation T, in S, out U>()
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction<@Annotation T, in S, out U>()
+}

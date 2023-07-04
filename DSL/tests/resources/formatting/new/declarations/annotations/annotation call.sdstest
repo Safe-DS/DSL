@@ -1,2 +1,7 @@
 @Annotation
 annotation MyAnnotation
+
+// -----------------------------------------------------------------------------
+
+@Annotation
+annotation MyAnnotation

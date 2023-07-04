@@ -1,3 +1,9 @@
 step myStep(
     x: Int<*, in Number, out Number, T = Number>
 ) {}
+
+// -----------------------------------------------------------------------------
+
+step myStep(
+    x: Int<*, in Number, out Number, T = Number>
+) {}

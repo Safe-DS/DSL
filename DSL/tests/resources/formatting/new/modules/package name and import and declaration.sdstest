@@ -3,3 +3,11 @@ package myPackage
 import myPackage.MyClass
 
 class C
+
+// -----------------------------------------------------------------------------
+
+package myPackage
+
+import myPackage.MyClass
+
+class C

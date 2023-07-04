@@ -6,3 +6,14 @@ package myPackage
 import myPackage.MyClass
 import myPackage.MyClass as Class
 import myPackage.*
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+@Annotation2
+
+package myPackage
+
+import myPackage.MyClass
+import myPackage.MyClass as Class
+import myPackage.*

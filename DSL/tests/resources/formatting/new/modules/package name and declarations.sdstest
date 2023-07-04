@@ -2,3 +2,10 @@ package myPackage
 
 class C
 class D
+
+// -----------------------------------------------------------------------------
+
+package myPackage
+
+class C
+class D

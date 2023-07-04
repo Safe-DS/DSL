@@ -2,3 +2,10 @@ enum MyEnum {
     @Annotation
     MyEnumVariant
 }
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    @Annotation
+    MyEnumVariant
+}

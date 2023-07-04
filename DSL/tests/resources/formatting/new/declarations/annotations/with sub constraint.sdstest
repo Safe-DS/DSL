@@ -1,3 +1,9 @@
 annotation MyAnnotation() where {
     T sub Number
 }
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation() where {
+    T sub Number
+}

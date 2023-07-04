@@ -1,2 +1,7 @@
 @Annotation
 class MyClass
+
+// -----------------------------------------------------------------------------
+
+@Annotation
+class MyClass

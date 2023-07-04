@@ -3,3 +3,11 @@ class MyClass {
         MyEnumVariant<@Annotation T>
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant<@Annotation T>
+    }
+}

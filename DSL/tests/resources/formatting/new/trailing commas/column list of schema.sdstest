@@ -2,3 +2,10 @@ schema MySchemaWithTrailingComma {
     "column1" : Int,
     "column2" : String,
 }
+
+// -----------------------------------------------------------------------------
+
+schema MySchemaWithTrailingComma {
+    "column1" : Int,
+    "column2" : String,
+}

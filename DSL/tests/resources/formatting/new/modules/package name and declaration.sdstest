@@ -1,3 +1,9 @@
 package myPackage
 
 class C
+
+// -----------------------------------------------------------------------------
+
+package myPackage
+
+class C

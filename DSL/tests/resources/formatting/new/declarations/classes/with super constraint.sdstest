@@ -1,3 +1,9 @@
 class MyClass where {
     T super Number
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass where {
+    T super Number
+}

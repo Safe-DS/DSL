@@ -4,3 +4,12 @@ enum MyEnum {
         S super Number
     }
 }
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant where {
+        T sub Number,
+        S super Number
+    }
+}

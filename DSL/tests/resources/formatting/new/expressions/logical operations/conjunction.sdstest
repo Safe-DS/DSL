@@ -1,3 +1,9 @@
 pipeline myPipeline {
     false and true;
 }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    false and true;
+}

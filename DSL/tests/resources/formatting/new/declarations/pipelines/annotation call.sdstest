@@ -1,2 +1,7 @@
 @Annotation
 pipeline myPipeline {}
+
+// -----------------------------------------------------------------------------
+
+@Annotation
+pipeline myPipeline {}

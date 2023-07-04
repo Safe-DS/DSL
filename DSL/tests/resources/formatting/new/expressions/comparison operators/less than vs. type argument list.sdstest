@@ -2,3 +2,10 @@ pipeline myPipeline {
     // The start of a type argument list of a call could be confused with the less than operator
     1 < a<Int>();
 }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    // The start of a type argument list of a call could be confused with the less than operator
+    1 < a<Int>();
+}

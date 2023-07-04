@@ -1,1 +1,5 @@
 class MyClass<@Annotation T>
+
+// -----------------------------------------------------------------------------
+
+class MyClass<@Annotation T>

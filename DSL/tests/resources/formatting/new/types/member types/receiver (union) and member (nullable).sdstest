@@ -1,3 +1,9 @@
 step myStep(
     x: union<>.InnerClass?
 ) {}
+
+// -----------------------------------------------------------------------------
+
+step myStep(
+    x: union<>.InnerClass?
+) {}

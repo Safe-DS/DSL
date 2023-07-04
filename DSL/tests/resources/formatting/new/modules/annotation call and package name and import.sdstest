@@ -3,3 +3,11 @@
 package myPackage
 
 import myPackage.MyClass
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+
+package myPackage
+
+import myPackage.MyClass

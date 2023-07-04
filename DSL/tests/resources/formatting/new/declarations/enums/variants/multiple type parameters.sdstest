@@ -1,3 +1,9 @@
 enum MyEnum {
     MyEnumVariant<@Annotation T, in S, out U>
 }
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant<@Annotation T, in S, out U>
+}

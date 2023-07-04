@@ -1,3 +1,9 @@
 class MyClass {
     fun myFunction(a: Int = 1)
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction(a: Int = 1)
+}

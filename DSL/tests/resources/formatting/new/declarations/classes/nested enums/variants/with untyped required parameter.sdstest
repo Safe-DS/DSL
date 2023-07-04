@@ -3,3 +3,11 @@ class MyClass {
         MyEnumVariant(a)
     }
 }
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant(a)
+    }
+}

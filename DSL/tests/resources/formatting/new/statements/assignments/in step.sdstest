@@ -2,3 +2,10 @@ step myStep() {
     val a = 0;
     val a, _, yield b = call();
 }
+
+// -----------------------------------------------------------------------------
+
+step myStep() {
+    val a = 0;
+    val a, _, yield b = call();
+}

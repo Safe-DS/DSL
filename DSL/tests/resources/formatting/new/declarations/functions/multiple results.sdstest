@@ -4,3 +4,12 @@ fun myFunction() -> (
     c: Int,
     d: Int
 )
+
+// -----------------------------------------------------------------------------
+
+fun myFunction() -> (
+    @Annotation a,
+    b,
+    c: Int,
+    d: Int
+)
