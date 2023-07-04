@@ -1,7 +1,9 @@
-schema MySchema {
-    "column1": Int,
-    "column2": String
-}
+schema  MySchema  {
+
+   "column1" :  Int ,
+
+     "column2" :  String
+ }
 
 // -----------------------------------------------------------------------------
 
