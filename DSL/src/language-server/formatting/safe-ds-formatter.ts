@@ -571,7 +571,7 @@ export class SafeDSFormatter extends AbstractFormatter {
             openingBrace.append(noSpace());
             closingBrace.prepend(noSpace());
         } else {
-            formatter.nodes(...node.statements).prepend(indent());
+            formatter.nodes(...node.statements).prepend(indent({allowMore: true}));
             closingBrace.prepend(newLine());
         }
     }

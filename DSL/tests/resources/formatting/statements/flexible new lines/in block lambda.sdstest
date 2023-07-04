@@ -1,6 +1,10 @@
 pipeline myPipeline {
     () {
-         call() ;
+
+         val  a  =  0 ;
+
+       val  a ,  _ ,  yield  b  =  call() ;
+
      };
 }
 
@@ -8,6 +12,9 @@ pipeline myPipeline {
 
 pipeline myPipeline {
     () {
-        call();
+
+        val a = 0;
+
+        val a, _, yield b = call();
     };
 }

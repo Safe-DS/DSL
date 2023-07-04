@@ -1,5 +1,4 @@
 segment mySegment() {
-
      call() ;
 }
 
