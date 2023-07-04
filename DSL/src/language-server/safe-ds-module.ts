@@ -10,7 +10,7 @@ import {
 } from 'langium';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module';
 import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator';
-import {SafeDSFormatter} from "./formatting/safe-ds-formatter";
+import { SafeDSFormatter } from './formatting/safe-ds-formatter';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -34,11 +34,11 @@ export type SafeDsServices = LangiumServices & SafeDsAddedServices;
  */
 export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeDsAddedServices> = {
     lsp: {
-        Formatter: () => new SafeDSFormatter()
+        Formatter: () => new SafeDSFormatter(),
     },
     validation: {
         SafeDsValidator: () => new SafeDsValidator(),
-    }
+    },
 };
 
 /**

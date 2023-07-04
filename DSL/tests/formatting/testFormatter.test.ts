@@ -1,14 +1,14 @@
-import {createSafeDsServices} from "../../src/language-server/safe-ds-module";
-import {expectFormatting, validationHelper} from "langium/test";
-import {describe, it} from "vitest";
-import {EmptyFileSystem} from "langium";
-import {listTestResources, resolvePathRelativeToResources} from "../helpers/testResources";
-import path from "path";
-import fs from "fs";
-import {Diagnostic} from "vscode-languageserver-types";
+import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
+import { expectFormatting, validationHelper } from 'langium/test';
+import { describe, it } from 'vitest';
+import { EmptyFileSystem } from 'langium';
+import { listTestResources, resolvePathRelativeToResources } from '../helpers/testResources';
+import path from 'path';
+import fs from 'fs';
+import { Diagnostic } from 'vscode-languageserver-types';
 
-const services = createSafeDsServices({...EmptyFileSystem}).SafeDs;
-const separator = "// -----------------------------------------------------------------------------";
+const services = createSafeDsServices({ ...EmptyFileSystem }).SafeDs;
+const separator = '// -----------------------------------------------------------------------------';
 
 describe('formatter', async () => {
     it.each(await createFormatterTest())('$testName', async (test) => {
@@ -18,7 +18,7 @@ describe('formatter', async () => {
 
         await expectFormatting(services)({
             before: test.originalCode,
-            after: test.expectedFormattedCode
+            after: test.expectedFormattedCode,
         });
     });
 });
@@ -33,15 +33,15 @@ const createFormatterTest = async (): Promise<FormatterTest[]> => {
         if (parts.length !== 2) {
             return {
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                originalCode: "",
-                expectedFormattedCode: "",
-                error: new SeparatorError(parts.length - 1)
-            }
+                originalCode: '',
+                expectedFormattedCode: '',
+                error: new SeparatorError(parts.length - 1),
+            };
         }
 
         // Original code must not contain syntax errors
-        const originalCode = normalizeLineBreaks(parts[0]).trimEnd()
-        const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim()
+        const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
+        const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim();
 
         const validationResult = await validationHelper(services)(parts[0]);
         const syntaxErrors = validationResult.diagnostics.filter(
@@ -53,23 +53,23 @@ const createFormatterTest = async (): Promise<FormatterTest[]> => {
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 originalCode,
                 expectedFormattedCode,
-                error: new SyntaxErrorsInOriginalCodeError(syntaxErrors)
-            }
+                error: new SyntaxErrorsInOriginalCodeError(syntaxErrors),
+            };
         }
 
         return {
             testName: `${pathRelativeToResources} should be formatted correctly`,
             originalCode,
             expectedFormattedCode,
-        }
+        };
     });
 
     return Promise.all(testCases);
-}
+};
 
 const normalizeLineBreaks = (code: string): string => {
-    return code.replace(/\r\n?/ug, '\n');
-}
+    return code.replace(/\r\n?/gu, '\n');
+};
 
 interface FormatterTest {
     testName: string;
@@ -88,6 +88,6 @@ class SyntaxErrorsInOriginalCodeError extends Error {
     constructor(readonly syntaxErrors: Diagnostic[]) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
 
-        super(`Original code has syntax errors:\n${syntaxErrorsAsString}`)
+        super(`Original code has syntax errors:\n${syntaxErrorsAsString}`);
     }
 }
