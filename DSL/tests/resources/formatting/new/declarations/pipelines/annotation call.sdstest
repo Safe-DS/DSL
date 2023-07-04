@@ -1,7 +1,6 @@
 package test
 
-@Annotation
-pipeline myPipeline {}
+@Annotation  pipeline  myPipeline  { }
 
 // -----------------------------------------------------------------------------
 

@@ -1,8 +1,6 @@
 package test
 
-@Annotation
-
-enum  MyEnum
+@Annotation  enum  MyEnum
 
 // -----------------------------------------------------------------------------
 

@@ -1,8 +1,6 @@
 package test
 
-@Annotation
-
-fun  myFunction ( )
+@Annotation  fun  myFunction ( )
 
 // -----------------------------------------------------------------------------
 

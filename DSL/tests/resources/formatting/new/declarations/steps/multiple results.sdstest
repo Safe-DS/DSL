@@ -1,14 +1,19 @@
-step myStep() -> (
-    @Annotation a,
-    b,
-    c: Int,
-    d: Int
-) {}
+step  myStep ( )  ->  (
+
+     @Annotation  a ,
+
+   b ,
+
+     c :  Int ,
+
+   d :  Int
+ )  { }
 
 // -----------------------------------------------------------------------------
 
 step myStep() -> (
-    @Annotation a,
+    @Annotation
+    a,
     b,
     c: Int,
     d: Int

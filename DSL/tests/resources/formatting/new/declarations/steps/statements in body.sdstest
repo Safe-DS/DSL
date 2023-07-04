@@ -1,9 +1,9 @@
-private step myComplexStep() {
-    val a = 1;
-}
+private  step  myStep ( )  {
+     val a = 1;
+ }
 
 // -----------------------------------------------------------------------------
 
-private step myComplexStep() {
+private step myStep() {
     val a = 1;
 }
