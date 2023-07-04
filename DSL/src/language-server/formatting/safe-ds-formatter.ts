@@ -659,7 +659,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         if (args.length >= 3 || args.some((it) => this.isComplexExpression(it.value))) {
             formatter.nodes(...args).prepend(indent());
-            formatter.keywords(',').prepend(noSpace()).append(newLine());
+            formatter.keywords(',').prepend(noSpace());
             closingParenthesis.prepend(newLine());
         } else {
             openingParenthesis.append(noSpace());
