@@ -780,16 +780,14 @@ export class SafeDSFormatter extends AbstractFormatter {
 
     private formatSdsTypeArgumentList(node: ast.SdsTypeArgumentList): void {
         const formatter = this.getNodeFormatter(node);
-
-        formatter.keyword('<').append(noSpace()); // TODO: can't target '<' directly
-        formatter.keyword('>').prepend(noSpace());
-
         const typeArguments = node.typeArguments ?? [];
+
         if (typeArguments.length > 0) {
             formatter.node(typeArguments[0]).prepend(noSpace());
         }
 
         formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+        formatter.keyword('>').prepend(noSpace());
     }
 
     private formatSdsTypeArgument(node: ast.SdsTypeArgument) {
