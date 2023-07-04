@@ -1,11 +1,9 @@
 pipeline myPipeline {
     1.2;
-
     1e10;
     1e+10;
     1e-10;
     1.2e2;
-
     1E10;
     1E+10;
     1E-10;
@@ -16,12 +14,10 @@ pipeline myPipeline {
 
 pipeline myPipeline {
     1.2;
-
     1e10;
     1e+10;
     1e-10;
     1.2e2;
-
     1E10;
     1E+10;
     1E-10;
