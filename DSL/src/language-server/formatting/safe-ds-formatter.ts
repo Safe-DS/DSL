@@ -421,8 +421,7 @@ export class SafeDSFormatter extends AbstractFormatter {
             }
         } else {
             if (node.visibility) {
-                formatter.keyword('private').prepend(newLine());
-                formatter.keyword('internal').prepend(newLine());
+                formatter.property("visibility").prepend(newLine());
                 formatter.keyword('segment').prepend(oneSpace());
             } else {
                 formatter.keyword('segment').prepend(newLine());
@@ -431,6 +430,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         formatter.property('name').prepend(oneSpace());
         formatter.property('parameterList').prepend(noSpace());
+        formatter.property("resultList").prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
     }
 
