@@ -1,7 +1,11 @@
+package test
+
 @Annotation
 step myStep() {}
 
 // -----------------------------------------------------------------------------
+
+package test
 
 @Annotation
 step myStep() {}

@@ -1,7 +1,11 @@
+package test
+
 @Annotation
 fun myFunction()
 
 // -----------------------------------------------------------------------------
+
+package test
 
 @Annotation
 fun myFunction()

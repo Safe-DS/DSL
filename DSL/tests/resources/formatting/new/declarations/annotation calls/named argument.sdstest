@@ -1,7 +1,5 @@
-@Annotation(b = 2)
-class MyClass
+@ Annotation ( b  =  2 )
 
 // -----------------------------------------------------------------------------
 
 @Annotation(b = 2)
-class MyClass

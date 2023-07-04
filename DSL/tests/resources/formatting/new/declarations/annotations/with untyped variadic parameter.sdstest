@@ -1,4 +1,4 @@
-annotation MyAnnotation(vararg a)
+annotation  MyAnnotation ( vararg  a )
 
 // -----------------------------------------------------------------------------
 

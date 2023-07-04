@@ -1,4 +1,4 @@
-annotation MyAnnotation()
+annotation  MyAnnotation ( )
 
 // -----------------------------------------------------------------------------
 
