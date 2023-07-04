@@ -658,7 +658,7 @@ export class SafeDSFormatter extends AbstractFormatter {
         const args = node.arguments ?? [];
 
         if (args.length >= 3 || args.some((it) => this.isComplexExpression(it.value))) {
-            formatter.nodes(...args).prepend(indent())
+            formatter.nodes(...args).prepend(indent());
             formatter.keywords(',').prepend(noSpace()).append(newLine());
             closingParenthesis.prepend(newLine());
         } else {
@@ -720,7 +720,7 @@ export class SafeDSFormatter extends AbstractFormatter {
      * @param node The expression to check.
      */
     private isComplexExpression(node: ast.SdsExpression | undefined): boolean {
-        return ast.isSdsChainedExpression(node)
+        return ast.isSdsChainedExpression(node);
     }
 
     // -----------------------------------------------------------------------------
