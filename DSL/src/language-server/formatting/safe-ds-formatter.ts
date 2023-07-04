@@ -537,14 +537,13 @@ export class SafeDSFormatter extends AbstractFormatter {
             results.length >= 3 ||
             results.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
         ) {
-            openingParenthesis.append(newLine());
-            closingParenthesis.prepend(newLine());
-            formatter.interior(openingParenthesis, closingParenthesis).prepend(indent());
+            formatter.nodes(...results).prepend(indent());
             formatter.keywords(',').prepend(noSpace()).append(newLine());
+            closingParenthesis.prepend(newLine());
         } else {
             openingParenthesis.append(noSpace());
-            closingParenthesis.prepend(noSpace());
             formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+            closingParenthesis.prepend(noSpace());
         }
     }
 
