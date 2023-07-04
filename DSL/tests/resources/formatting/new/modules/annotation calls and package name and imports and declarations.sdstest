@@ -1,13 +1,22 @@
+
 @Annotation1
+
 @Annotation2
 
-package myPackage
 
-import myPackage.MyClass
-import myPackage.MyClass as Class
-import myPackage.*
+package  myPackage
+
+
+import  myPackage . MyClass
+
+import  myPackage . MyClass  as  Class
+
+import  myPackage . *
+
 
 class C
+
+
 class D
 
 // -----------------------------------------------------------------------------
@@ -22,4 +31,5 @@ import myPackage.MyClass as Class
 import myPackage.*
 
 class C
+
 class D

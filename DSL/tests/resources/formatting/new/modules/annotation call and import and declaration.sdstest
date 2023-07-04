@@ -1,6 +1,9 @@
+
 @Annotation1
 
-import myPackage.MyClass
+
+import  myPackage . MyClass
+
 
 class C
 

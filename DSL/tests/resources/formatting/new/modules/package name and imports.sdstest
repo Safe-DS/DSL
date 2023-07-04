@@ -1,8 +1,12 @@
-package myPackage
 
-import myPackage.MyClass
-import myPackage.MyClass as Class
-import myPackage.*
+package  myPackage
+
+
+import  myPackage . MyClass
+
+import  myPackage . MyClass  as  Class
+
+import  myPackage . *
 
 // -----------------------------------------------------------------------------
 

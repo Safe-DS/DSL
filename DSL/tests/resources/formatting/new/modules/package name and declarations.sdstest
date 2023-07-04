@@ -1,6 +1,10 @@
-package myPackage
+
+package  myPackage
+
 
 class C
+
+
 class D
 
 // -----------------------------------------------------------------------------
@@ -8,4 +12,5 @@ class D
 package myPackage
 
 class C
+
 class D

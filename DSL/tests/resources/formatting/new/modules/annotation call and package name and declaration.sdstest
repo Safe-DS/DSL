@@ -1,6 +1,9 @@
+
 @Annotation1
 
-package myPackage
+
+package  myPackage
+
 
 class C
 

@@ -1,4 +1,6 @@
-package myPackage
+
+package  myPackage
+
 
 class C
 

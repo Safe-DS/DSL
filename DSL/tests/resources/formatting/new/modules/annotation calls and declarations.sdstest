@@ -1,7 +1,12 @@
+
 @Annotation1
+
 @Annotation2
 
+
 class C
+
+
 class D
 
 // -----------------------------------------------------------------------------
@@ -10,4 +15,5 @@ class D
 @Annotation2
 
 class C
+
 class D
