@@ -34,6 +34,7 @@ nav:
       - safeds.lang: stdlib/safeds_lang.md
   - Development:
       - Grammar Testing: development/grammar-testing.md
+      - Formatting Testing: development/formatting-testing.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 
