@@ -51,6 +51,7 @@
         "watch": "tsc -b tsconfig.json --watch",
         "test": "vitest --dir tests",
         "test-with-coverage": "vitest --coverage --dir tests",
+        "test-ui": "vitest --ui --coverage --dir tests",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch"
     },
@@ -70,9 +71,10 @@
     "devDependencies": {
         "@types/node": "^18.16.18",
         "@types/vscode": "^1.79.1",
-        "@vitest/coverage-v8": "^0.32.2",
+        "@vitest/coverage-v8": "^0.32.4",
+        "@vitest/ui": "^0.32.4",
         "langium-cli": "^1.2.1",
         "typescript": "^5.1.6",
-        "vitest": "^0.32.2"
+        "vitest": "^0.32.4"
     }
 }

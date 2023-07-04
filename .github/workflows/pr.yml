@@ -49,7 +49,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: DSL/coverage
-          files: clover.xml
+          files: coverage-final.json
 
   # Build and test Runner component
   build-runner:

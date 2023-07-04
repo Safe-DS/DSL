@@ -5,5 +5,10 @@ export default defineConfig({
         chaiConfig: {
             truncateThreshold: 0,
         },
+        coverage: {
+            provider: 'v8',
+            include: ['src'],
+            exclude: ['**/generated'],
+        },
     },
 });
