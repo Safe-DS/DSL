@@ -1,4 +1,4 @@
-fun myFunction(vararg a: Int = 1)
+fun  myFunction ( vararg  a :  Int  =  1 )
 
 // -----------------------------------------------------------------------------
 
