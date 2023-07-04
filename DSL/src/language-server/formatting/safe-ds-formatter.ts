@@ -812,10 +812,10 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length > 0) {
-            formatter.keyword("schema").prepend(newLine());
+            formatter.keyword('schema').prepend(newLine());
         }
 
-        formatter.property("name").prepend(oneSpace());
+        formatter.property('name').prepend(oneSpace());
         formatter.property('columnList').prepend(oneSpace());
     }
 
