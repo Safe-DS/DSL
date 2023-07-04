@@ -6,7 +6,7 @@ export default defineConfig({
             truncateThreshold: 0,
         },
         coverage: {
-            provider: 'istanbul',
+            provider: 'v8',
             include: ['src'],
             exclude: ['**/generated'],
         },
