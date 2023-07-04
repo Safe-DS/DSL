@@ -1,9 +1,5 @@
-segment mySegment(
-    x: Int
-) {}
+segment mySegment(x: Int) {}
 
 // -----------------------------------------------------------------------------
 
-segment mySegment(
-    x: Int
-) {}
+segment mySegment(x: Int) {}

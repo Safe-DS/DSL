@@ -9,4 +9,6 @@ segment s2(f: Int   <  *
 
 segment s1(f: Int) {}
 
-segment s2(f: Int<*, in Number, out Number, T = Number>?) {}
+segment s2(
+    f: Int<*, in Number, out Number, T = Number>?
+) {}

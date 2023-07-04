@@ -1,17 +1,18 @@
 segment mySegment(
-    f: () -> (
-        @Annotation a,
-        b,
-        c: Int,
-        d: Int
-    )
+    f: ( )  ->  (
+         @Annotation  a ,
+         b ,
+         c :  Int ,
+         d :  Int
+     )
 ) {}
 
 // -----------------------------------------------------------------------------
 
 segment mySegment(
     f: () -> (
-        @Annotation a,
+        @Annotation
+        a,
         b,
         c: Int,
         d: Int

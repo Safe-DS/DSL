@@ -1,7 +1,7 @@
 import { AbstractFormatter, AstNode, Formatting } from 'langium';
 import * as ast from '../generated/ast';
 import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast';
-import { annotationCallsOrEmpty } from '../helpers/astShortcuts';
+import { annotationCallsOrEmpty, typeArgumentsOrEmpty } from '../helpers/astShortcuts';
 import { FormattingAction, FormattingActionOptions } from 'langium/src/lsp/formatter';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
@@ -492,7 +492,7 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         if (
             parameters.length >= 3 ||
-            parameters.some((it) => annotationCallsOrEmpty(it).length > 0 || ast.isSdsCallableType(it.type))
+            parameters.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
         ) {
             closingParenthesis.prepend(newLine());
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent());
@@ -529,7 +529,10 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         const results = node.results ?? [];
 
-        if (results.length >= 3 || results.some((it) => annotationCallsOrEmpty(it).length > 0)) {
+        if (
+            results.length >= 3 ||
+            results.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
+        ) {
             openingParenthesis.append(newLine());
             closingParenthesis.prepend(newLine());
             formatter.interior(openingParenthesis, closingParenthesis).prepend(indent());
@@ -821,5 +824,27 @@ export class SafeDSFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
+    }
+
+    /**
+     * Returns whether the type is considered complex and requires special formatting like placing the associated
+     * parameter on its own line.
+     *
+     * @param node The type to check.
+     */
+    private isComplexType(node: ast.SdsType | undefined): boolean {
+        if (!node) {
+            return false;
+        }
+
+        if (ast.isSdsCallableType(node) || ast.isSdsMemberType(node)) {
+            return true;
+        } else if (ast.isSdsUnionType(node)) {
+            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+        } else if (ast.isSdsNamedType(node)) {
+            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+        } else {
+            return false;
+        }
     }
 }

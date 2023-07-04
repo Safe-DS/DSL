@@ -1,5 +1,5 @@
 segment mySegment(
-    x: Int<*, in Number, out Number, T = Number>?
+    x: Int < * ,  in  Number ,  out  Number ,  T  =  Number > ?
 ) {}
 
 // -----------------------------------------------------------------------------

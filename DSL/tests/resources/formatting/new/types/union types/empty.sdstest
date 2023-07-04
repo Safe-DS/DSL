@@ -1,9 +1,5 @@
-segment mySegment(
-    x: union<>
-) {}
+segment mySegment(x: union < >) {}
 
 // -----------------------------------------------------------------------------
 
-segment mySegment(
-    x: union<>
-) {}
+segment mySegment(x: union<>) {}

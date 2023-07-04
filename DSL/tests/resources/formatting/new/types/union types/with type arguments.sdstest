@@ -1,5 +1,5 @@
 segment mySegment(
-    x: union<Int, String>
+    x: union < Int ,  String >
 ) {}
 
 // -----------------------------------------------------------------------------

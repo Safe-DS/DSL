@@ -1,5 +1,5 @@
 segment mySegment(
-    x: union<>.MiddleClass<C, D>?.InnerClass
+    x: union < > . MiddleClass < C ,  D > ? . InnerClass
 ) {}
 
 // -----------------------------------------------------------------------------
