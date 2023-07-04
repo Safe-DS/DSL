@@ -659,14 +659,13 @@ export class SafeDSFormatter extends AbstractFormatter {
         const args = node.arguments ?? [];
 
         if (args.length >= 3 || args.some((it) => this.isComplexExpression(it.value))) {
-            openingParenthesis.append(newLine());
-            closingParenthesis.prepend(newLine());
-            formatter.interior(openingParenthesis, closingParenthesis).prepend(indent());
+            formatter.nodes(...args).prepend(indent())
             formatter.keywords(',').prepend(noSpace()).append(newLine());
+            closingParenthesis.prepend(newLine());
         } else {
             openingParenthesis.append(noSpace());
-            closingParenthesis.prepend(noSpace());
             formatter.keywords(',').prepend(noSpace()).append(oneSpace());
+            closingParenthesis.prepend(noSpace());
         }
     }
 
