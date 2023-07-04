@@ -1,4 +1,4 @@
-import {AbstractFormatter, AstNode, CstNode, findCommentNode, Formatting, isAstNode} from 'langium';
+import { AbstractFormatter, AstNode, CstNode, findCommentNode, Formatting, isAstNode } from 'langium';
 import * as ast from '../generated/ast';
 import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast';
 import { annotationCallsOrEmpty, typeArgumentsOrEmpty } from '../helpers/astShortcuts';
@@ -204,7 +204,7 @@ export class SafeDSFormatter extends AbstractFormatter {
         // Package
         if (annotations.length === 0) {
             const packageKeyword = formatter.keyword('package');
-            const cstNodes = packageKeyword.nodes
+            const cstNodes = packageKeyword.nodes;
 
             if (cstNodes.length > 0 && this.hasComment(cstNodes[0])) {
                 packageKeyword.prepend(newLine());
@@ -910,12 +910,12 @@ export class SafeDSFormatter extends AbstractFormatter {
      * @param node The node to get the comment for.
      */
     private getCommentNode(node: AstNode | CstNode | undefined): CstNode | undefined {
-        const commentNames = ["ML_COMMENT", "SL_COMMENT"]
+        const commentNames = ['ML_COMMENT', 'SL_COMMENT'];
 
         if (isAstNode(node)) {
-            return findCommentNode(node.$cstNode, commentNames)
+            return findCommentNode(node.$cstNode, commentNames);
         } else {
-            return findCommentNode(node, commentNames)
+            return findCommentNode(node, commentNames);
         }
     }
 }
