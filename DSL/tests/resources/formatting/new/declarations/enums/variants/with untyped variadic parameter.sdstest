@@ -1,5 +1,5 @@
 enum MyEnum {
-    MyEnumVariant(vararg a)
+    MyEnumVariant ( vararg  a )
 }
 
 // -----------------------------------------------------------------------------

@@ -1,9 +1,12 @@
 enum MyEnum {
-    MyEnumVariant<@Annotation T>
+    MyEnumVariant < @Annotation  T >
 }
 
 // -----------------------------------------------------------------------------
 
 enum MyEnum {
-    MyEnumVariant<@Annotation T>
+    MyEnumVariant<
+        @Annotation
+        T
+    >
 }
