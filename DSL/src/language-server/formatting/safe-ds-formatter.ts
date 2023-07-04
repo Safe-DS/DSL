@@ -734,8 +734,6 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         const closingBracket = formatter.keyword('>');
 
-        formatter.keywords(',').prepend(noSpace()).append(oneSpace());
-
         const typeParameters = node.typeParameters ?? [];
 
         if (typeParameters.length >= 3 || typeParameters.some((it) => annotationCallsOrEmpty(it).length > 0)) {
@@ -743,8 +741,10 @@ export class SafeDSFormatter extends AbstractFormatter {
             formatter.nodes(...typeParameters).prepend(indent());
             formatter.keywords(',').prepend(noSpace()).append(newLine());
         } else {
-            closingBracket.append(noSpace());
             closingBracket.prepend(noSpace());
+            if (typeParameters.length > 0) {
+                formatter.node(typeParameters[0]).prepend(noSpace());
+            }
             formatter.keywords(',').prepend(noSpace()).append(oneSpace());
         }
     }
@@ -766,7 +766,7 @@ export class SafeDSFormatter extends AbstractFormatter {
     private formatSdsTypeArgumentList(node: ast.SdsTypeArgumentList): void {
         const formatter = this.getNodeFormatter(node);
 
-        formatter.keyword('<').append(noSpace());
+        formatter.keyword('<').append(noSpace()); // TODO: can't target '<' directly
         formatter.keyword('>').prepend(noSpace());
 
         const typeArguments = node.typeArguments ?? [];
