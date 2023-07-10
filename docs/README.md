@@ -14,3 +14,13 @@ Get the latest extension for [Visual Studio Code](https://code.visualstudio.com/
 ## Documentation
 
 You can find the full documentation [here](https://dsl.safeds.com).
+
+## Contributing
+
+We welcome contributions from everyone. As a starting point, check the following resources:
+
+* [Contributing page](https://github.com/Safe-DS/DSL/contribute)
+
+If you need further help, please [use our discussion forum][forum].
+
+[forum]: https://github.com/orgs/Safe-DS/discussions
