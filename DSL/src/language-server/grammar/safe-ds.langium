@@ -841,6 +841,7 @@ SdsType returns SdsType:
 
 SdsPrimaryType returns SdsType:
     SdsCallableType
+  | SdsLiteralType
   | SdsNamedType
   | SdsUnionType
 ;
@@ -852,6 +853,29 @@ interface SdsCallableType extends SdsCallable, SdsType {
 SdsCallableType returns SdsCallableType:
     parameterList=SdsParameterList
     resultList=SdsResultList
+;
+
+interface SdsLiteralType extends SdsType {
+	literalList: SdsLiteralList
+}
+
+SdsLiteralType returns SdsLiteralType:
+    'literal' literalList=SdsLiteralList
+;
+
+interface SdsLiteralList extends SdsObject {
+    literals: SdsLiteral[]
+}
+
+SdsLiteralList returns SdsLiteralList:
+    {SdsLiteralList}
+    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
+    (
+        literals+=SdsLiteral
+        (',' literals+=SdsLiteral)*
+        ','?
+    )?
+    '>'
 ;
 
 interface SdsNamedType extends SdsType {
@@ -1038,6 +1062,7 @@ terminal CALL_TYPE_ARGUMENT_LIST_START:
         (   '*'                                 // Star projection as positional type argument
         |   'in'                                // Contravariant type projection as positional type argument
         |   'out'                               // Covariant type projection as positional type argument
+        |   'literal'                           // Invariant literal type as positional type argument
         |   'union'                             // Invariant union type as positional type argument
         |   '>'                                 // Empty type argument list
         |    ID /\s*/

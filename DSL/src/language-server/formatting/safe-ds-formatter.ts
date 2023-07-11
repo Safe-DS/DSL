@@ -1,7 +1,7 @@
 import { AbstractFormatter, AstNode, CstNode, findCommentNode, Formatting, isAstNode } from 'langium';
 import * as ast from '../generated/ast';
 import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast';
-import { annotationCallsOrEmpty, typeArgumentsOrEmpty } from '../helpers/astShortcuts';
+import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/astShortcuts';
 import { FormattingAction, FormattingActionOptions } from 'langium/src/lsp/formatter';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
@@ -149,6 +149,10 @@ export class SafeDSFormatter extends AbstractFormatter {
             this.formatSdsMemberType(node);
         } else if (ast.isSdsCallableType(node)) {
             this.formatSdsCallableType(node);
+        } else if (ast.isSdsLiteralType(node)) {
+            this.formatSdsLiteralType(node);
+        } else if (ast.isSdsLiteralList(node)) {
+            this.formatSdsLiteralList(node);
         } else if (ast.isSdsNamedType(node)) {
             this.formatSdsNamedType(node);
         } else if (ast.isSdsUnionType(node)) {
@@ -761,6 +765,25 @@ export class SafeDSFormatter extends AbstractFormatter {
         formatter.keyword('->').surround(oneSpace());
     }
 
+    private formatSdsLiteralType(node: ast.SdsLiteralType): void {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword('literal').append(noSpace());
+    }
+
+    private formatSdsLiteralList(node: ast.SdsLiteralList): void {
+        const formatter = this.getNodeFormatter(node);
+        const literals = node.literals ?? [];
+
+        if (literals.length > 0) {
+            formatter.node(literals[0]).prepend(noSpace());
+            formatter.nodes(...literals.slice(1)).prepend(oneSpace());
+        }
+
+        formatter.keywords(',').prepend(noSpace());
+        formatter.keyword('>').prepend(noSpace());
+    }
+
     private formatSdsNamedType(node: ast.SdsNamedType) {
         const formatter = this.getNodeFormatter(node);
 
@@ -847,9 +870,11 @@ export class SafeDSFormatter extends AbstractFormatter {
 
         if (ast.isSdsCallableType(node) || ast.isSdsMemberType(node)) {
             return true;
-        } else if (ast.isSdsUnionType(node)) {
-            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+        } else if (ast.isSdsLiteralType(node)) {
+            return literalsOrEmpty(node).length > 0;
         } else if (ast.isSdsNamedType(node)) {
+            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+        } else if (ast.isSdsUnionType(node)) {
             return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
         } else {
             return false;
