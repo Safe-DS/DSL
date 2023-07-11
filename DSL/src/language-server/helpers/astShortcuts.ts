@@ -3,8 +3,8 @@ import {
     isSdsDeclaration,
     SdsAnnotatedObject,
     SdsAnnotationCall,
-    SdsClass,
-    SdsObject,
+    SdsLiteral,
+    SdsLiteralType,
     SdsTypeArgument,
     SdsTypeArgumentList,
 } from '../generated/ast';
@@ -17,8 +17,8 @@ export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject): SdsAn
     }
 };
 
-export const classMembersOrEmpty = function (node: SdsClass): SdsObject[] {
-    return node.body?.members ?? [];
+export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsLiteral[] {
+    return node?.literalList?.literals ?? [];
 };
 
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {

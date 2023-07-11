@@ -5,5 +5,5 @@ segment mySegment(
 // -----------------------------------------------------------------------------
 
 segment mySegment(
-    x: union<>.InnerClass
+    x: literal<>.InnerClass
 ) {}
