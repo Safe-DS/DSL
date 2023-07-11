@@ -1,0 +1,5 @@
+segment mySegment(x: literal < >) {}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(x: literal<>) {}
