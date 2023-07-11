@@ -1,6 +1,8 @@
 site_name: Safe-DS DSL
 repo_url: https://github.com/Safe-DS/DSL
 repo_name: Safe-DS/DSL
+edit_uri: edit/main/docs/
+site_url: !ENV READTHEDOCS_CANONICAL_URL
 
 nav:
   - Home:

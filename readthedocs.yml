@@ -4,10 +4,16 @@ build:
   os: ubuntu-22.04
   tools:
     python: '3.10'
+  commands:
+    - python -mvirtualenv $READTHEDOCS_VIRTUALENV_PATH
+    - python -m pip install --exists-action=w --no-cache-dir -r docs/requirements.txt
+    - cat mkdocs.yml
+    - mkdocs build --clean --site-dir $READTHEDOCS_OUTPUT/html --config-file mkdocs.yml
 
 mkdocs:
   configuration: mkdocs.yml
-
-python:
-  install:
-    - requirements: docs/requirements.txt
+# Once https://github.com/readthedocs/readthedocs.org/issues/8529 is fixed, replace the commands above with the
+# following to use the default RTD build steps again:
+#python:
+#  install:
+#    - requirements: docs/requirements.txt
