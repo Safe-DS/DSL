@@ -13,6 +13,7 @@ coverage/
 dist/
 dist-ssr/
 out/
+DSL/syntaxes/safe-ds.tmLanguage.json
 
 # Node
 .npm/
