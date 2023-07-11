@@ -1,0 +1,80 @@
+{
+    "name": "safe-ds",
+    "displayName": "safe-ds",
+    "description": "Statically checked Data Science programs.",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.79.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "safe-ds",
+                "aliases": [
+                    "Safe-DS",
+                    "safe-ds"
+                ],
+                "extensions": [
+                    ".sdspipe",
+                    ".sdsstub",
+                    ".sdstest"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "safe-ds",
+                "scopeName": "source.safe-ds",
+                "path": "./syntaxes/safe-ds.tmLanguage.json"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:safe-ds"
+    ],
+    "files": [
+        "bin",
+        "out",
+        "src"
+    ],
+    "bin": {
+        "safe-ds-cli": "./bin/cli"
+    },
+    "main": "./out/src/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run build && npm run lint",
+        "build": "tsc -b tsconfig.json",
+        "watch": "tsc -b tsconfig.json --watch",
+        "test": "vitest --dir tests",
+        "test-with-coverage": "vitest --coverage --dir tests",
+        "test-ui": "vitest --ui --coverage --dir tests",
+        "langium:generate": "langium generate",
+        "langium:watch": "langium generate --watch"
+    },
+    "dependencies": {
+        "chalk": "^5.3.0",
+        "chevrotain": "^10.5.0",
+        "commander": "^11.0.0",
+        "glob": "^10.3.1",
+        "langium": "^1.2.1",
+        "radash": "^11.0.0",
+        "true-myth": "^6.2.0",
+        "vscode-languageclient": "^8.1.0",
+        "vscode-languageserver": "^8.1.0",
+        "vscode-languageserver-types": "^3.17.3",
+        "vscode-uri": "^3.0.7"
+    },
+    "devDependencies": {
+        "@types/node": "^18.16.18",
+        "@types/vscode": "^1.79.1",
+        "@vitest/coverage-v8": "^0.32.4",
+        "@vitest/ui": "^0.32.4",
+        "langium-cli": "^1.2.1",
+        "typescript": "^5.1.6",
+        "vitest": "^0.32.4"
+    }
+}

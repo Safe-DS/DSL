@@ -1,9 +1,0 @@
-package tests.generator.parenthesizedExpression
-
-fun f(param: Any?)
-
-fun g() -> result: Boolean
-
-pipeline test {
-    f((g()));
-}

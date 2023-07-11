@@ -1,0 +1,102 @@
+
+@Annotation1
+
+@Annotation2
+
+
+package  myPackage
+
+
+import  myPackage . MyClass
+
+import  myPackage . MyClass  as  Class
+
+import  myPackage . *
+
+
+@Annotation1
+
+@Annotation2
+
+annotation A
+
+
+@Annotation1
+
+@Annotation2
+
+class C
+
+
+@Annotation1
+
+@Annotation2
+
+enum E {}
+
+
+@Annotation1
+
+@Annotation2
+
+fun f()
+
+
+@Annotation1
+
+@Annotation2
+
+pipeline p {}
+
+
+@Annotation1
+
+@Annotation2
+
+segment s() {}
+
+
+@Annotation1
+
+@Annotation2
+
+schema S {}
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+@Annotation2
+
+package myPackage
+
+import myPackage.MyClass
+import myPackage.MyClass as Class
+import myPackage.*
+
+@Annotation1
+@Annotation2
+annotation A
+
+@Annotation1
+@Annotation2
+class C
+
+@Annotation1
+@Annotation2
+enum E {}
+
+@Annotation1
+@Annotation2
+fun f()
+
+@Annotation1
+@Annotation2
+pipeline p {}
+
+@Annotation1
+@Annotation2
+segment s() {}
+
+@Annotation1
+@Annotation2
+schema S {}

@@ -1,3 +1,0 @@
-package tests.languageTests.scoping.goalReference1
-
-predicate predicateInSamePackage()

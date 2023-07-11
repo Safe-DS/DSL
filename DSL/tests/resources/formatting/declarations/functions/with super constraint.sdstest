@@ -1,0 +1,9 @@
+fun  myFunction ( )  where  {
+   T super Number
+ }
+
+// -----------------------------------------------------------------------------
+
+fun myFunction() where {
+    T super Number
+}

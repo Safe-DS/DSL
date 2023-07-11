@@ -1,5 +1,0 @@
-// Class "MyClass"
-class »MyClass« {
-    // Field "myAttribute" in "MyClass"
-    attr »myAttribute«: Int
-}

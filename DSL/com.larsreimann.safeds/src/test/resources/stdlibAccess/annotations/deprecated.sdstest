@@ -1,4 +1,0 @@
-fun nonDeprecatedFunction()
-
-@Deprecated
-fun deprecatedFunction()

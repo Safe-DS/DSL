@@ -1,0 +1,5 @@
+// $TEST$ no_syntax_error
+
+segment mySegment(
+    x: union<>.InnerClass?
+) {}

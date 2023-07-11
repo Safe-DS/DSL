@@ -1,0 +1,17 @@
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant  where  {
+             T  super  Number
+         }
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant where {
+            T super Number
+        }
+    }
+}

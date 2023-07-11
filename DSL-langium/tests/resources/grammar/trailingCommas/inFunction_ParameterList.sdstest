@@ -1,8 +1,0 @@
-package tests.trailingComma.inFunctionParameterList
-
-// $TEST$ no_syntax_error
-
-fun f(
-    a: Int,
-    b: Int,
-)

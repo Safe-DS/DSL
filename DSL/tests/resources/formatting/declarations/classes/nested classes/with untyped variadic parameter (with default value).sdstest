@@ -1,0 +1,9 @@
+class MyOuterClass {
+    class  MyClass ( vararg  a  =  1 )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    class MyClass(vararg a = 1)
+}

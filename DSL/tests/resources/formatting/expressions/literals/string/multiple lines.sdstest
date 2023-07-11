@@ -1,0 +1,17 @@
+pipeline myPipeline {
+    "
+        multi
+        line
+        string
+    ";
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    "
+        multi
+        line
+        string
+    ";
+}

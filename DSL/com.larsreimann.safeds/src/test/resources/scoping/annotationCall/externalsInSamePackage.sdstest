@@ -1,3 +1,0 @@
-package tests.languageTests.scoping.annotationCall1
-
-annotation AnnotationInSamePackage

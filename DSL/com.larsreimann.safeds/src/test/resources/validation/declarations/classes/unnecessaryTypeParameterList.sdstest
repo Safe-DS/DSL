@@ -1,7 +1,0 @@
-package tests.validation.declarations.classes.unnecessaryTypeParameterList
-
-// semantic_info "Unnecessary type parameter list."
-class MyClass1»<>«
-
-// no_semantic_info "Unnecessary type parameter list."
-class MyClass2»<T>«

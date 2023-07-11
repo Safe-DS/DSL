@@ -1,0 +1,34 @@
+// $TEST$ no_syntax_error
+
+class `_`
+class `and`
+class `annotation`
+class `as`
+class `attr`
+class `class`
+class `enum`
+class `false`
+class `fun`
+class `import`
+class `in`
+class `internal`
+class `not`
+class `null`
+class `or`
+class `out`
+class `package`
+class `pipeline`
+class `private`
+class `protocol`
+class `schema`
+class `static`
+class `segment`
+class `sub`
+class `subterm`
+class `super`
+class `true`
+class `union`
+class `val`
+class `vararg`
+class `where`
+class `yield`

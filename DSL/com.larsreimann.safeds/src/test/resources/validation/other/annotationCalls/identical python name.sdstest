@@ -1,9 +1,0 @@
-package tests.validation.other.annotationCalls.identicalPythonName
-
-// semantic_info "Python name is identical to Safe-DS name (can remove annotation call)."
-»@PythonName("TestClass1")«
-class TestClass1
-
-// no_semantic_info "Python name is identical to Safe-DS name (can remove annotation call)."
-»@PythonName("Test_Class_2")«
-class TestClass2

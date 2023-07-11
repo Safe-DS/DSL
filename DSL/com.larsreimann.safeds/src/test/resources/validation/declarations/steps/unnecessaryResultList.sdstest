@@ -1,6 +1,0 @@
-package tests.validation.declarations.steps.unnecessaryResultList
-
-// semantic_info "Unnecessary result list."
-step myStep1() »-> ()« {}
-// no_semantic_info "Unnecessary result list."
-step myStep2() »-> (r: Int)« {}

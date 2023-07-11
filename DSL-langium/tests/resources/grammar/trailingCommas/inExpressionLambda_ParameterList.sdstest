@@ -1,7 +1,0 @@
-package tests.trailingComma.inExpressionLambdaParameterList
-
-// $TEST$ no_syntax_error
-
-pipeline p {
-    (first, second, ) -> 1;
-}

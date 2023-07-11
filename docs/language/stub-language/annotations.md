@@ -1,6 +1,6 @@
 # Annotations
 
-Annotations attach additional metainformation to declarations. Annotations must first be [declared](#declaring-an-annotation), so Safe-DS knows the annotation exists and which inputs are expected. Afterwards, annotations can be [called](#calling-an-annotation), which is the step that truly attaches metainformation to declarations.
+Annotations attach additional metainformation to declarations. Annotations must first be [declared](#declaring-an-annotation), so Safe-DS knows the annotation exists and which inputs are expected. Afterwards, annotations can be [called](#calling-an-annotation), which is the segment that truly attaches metainformation to declarations.
 
 ## Declaring an Annotation
 
@@ -49,7 +49,7 @@ To attach metainformation to a declaration, the annotation must be called on tha
 - [Global functions][global-functions] / [methods][methods]
 - [Parameters][parameters]
 - [Results][results]
-- [Steps][steps]
+- [Segments][segments]
 - [Type parameters][type-parameters]
 - [Pipelines][pipelines]
 
@@ -101,7 +101,7 @@ The package `safeds.lang` contains several annotations that are processed by Saf
 [global-functions]: global-functions.md
 [methods]: classes.md#defining-methods
 [results]: ../common/parameters.md
-[steps]: ../pipeline-language/steps.md
+[segments]: ../pipeline-language/segments.md
 [type-parameters]: type-parameters.md
 [pipelines]: ../pipeline-language/pipelines.md
 [safeds-lang]: ../../stdlib/safeds_lang.md

@@ -1,0 +1,17 @@
+class MyClass {
+    fun  myFunction ( )  where  {
+
+       T  sub  Number ,
+
+         S  super  Number
+     }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction() where {
+        T sub Number,
+        S super Number
+    }
+}

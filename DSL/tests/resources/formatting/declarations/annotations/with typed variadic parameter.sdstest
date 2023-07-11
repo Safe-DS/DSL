@@ -1,0 +1,5 @@
+annotation  MyAnnotation ( vararg  a :  Int )
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation(vararg a: Int)

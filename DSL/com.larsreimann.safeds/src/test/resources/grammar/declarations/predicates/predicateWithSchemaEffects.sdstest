@@ -1,6 +1,0 @@
-// no_syntax_error
-
-predicate predicateWithSchemaEffectGoals <ASchema :: $SchemaType> () {
-    $readSchema("datasetPathStr"),
-    $checkColumn(::ASchema, "columnNameStr1", "columnNameStr2")
-}

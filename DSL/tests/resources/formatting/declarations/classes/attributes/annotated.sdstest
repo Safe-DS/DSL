@@ -1,0 +1,10 @@
+class MyClass {
+    @Annotation  attr  a
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    @Annotation
+    attr a
+}

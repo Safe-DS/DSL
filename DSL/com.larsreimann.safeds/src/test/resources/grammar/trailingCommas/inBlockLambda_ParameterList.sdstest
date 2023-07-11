@@ -1,7 +1,0 @@
-package tests.trailingComma.inBlockLambdaParameterList
-
-// no_syntax_error
-
-pipeline p {
-    (first, second, ) {};
-}

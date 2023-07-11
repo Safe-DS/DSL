@@ -1,9 +1,0 @@
-package validation.expressions.memberAccess.unnecessarySafeAccess
-
-pipeline test {
-
-    // semantic_info "The receiver is never null so the safe access is unnecessary."
-    »1?.toString«();
-    // no_semantic_info "The receiver is never null so the safe access is unnecessary."
-    »null?.toString«();
-}

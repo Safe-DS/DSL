@@ -1,0 +1,13 @@
+class MyOuterClass {
+    class  MyClass  where  {
+        T  sub  Number
+     }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    class MyClass where {
+        T sub Number
+    }
+}

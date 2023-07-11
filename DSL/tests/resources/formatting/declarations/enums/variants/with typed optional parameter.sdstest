@@ -1,0 +1,9 @@
+enum MyEnum {
+    MyEnumVariant ( a :  Int  =  1 )
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant(a: Int = 1)
+}

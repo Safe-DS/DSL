@@ -1,0 +1,13 @@
+enum MyEnum {
+    MyEnumVariant  where  {
+        T  sub  Number
+     }
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant where {
+        T sub Number
+    }
+}

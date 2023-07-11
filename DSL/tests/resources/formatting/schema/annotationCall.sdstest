@@ -1,0 +1,10 @@
+package test
+
+@Annotation  schema  MySchema  { }
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+schema MySchema {}

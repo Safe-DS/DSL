@@ -1,0 +1,6 @@
+// $TEST$ no_syntax_error
+
+class MyOuterClass {
+    @Annotation
+    class MyClass
+}

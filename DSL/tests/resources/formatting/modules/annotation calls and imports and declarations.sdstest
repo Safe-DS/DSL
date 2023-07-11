@@ -1,0 +1,30 @@
+
+@Annotation1
+
+@Annotation2
+
+
+import  myPackage . MyClass
+
+import  myPackage . MyClass  as  Class
+
+import  myPackage . *
+
+
+class C
+
+
+class D
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+@Annotation2
+
+import myPackage.MyClass
+import myPackage.MyClass as Class
+import myPackage.*
+
+class C
+
+class D

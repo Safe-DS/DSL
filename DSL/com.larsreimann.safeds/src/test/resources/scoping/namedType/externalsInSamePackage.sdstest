@@ -1,4 +1,0 @@
-package tests.languageTests.scoping.namedType1
-
-class ClassInSamePackage<TYPE_PARAMETER_IN_SAME_PACKAGE>
-enum EnumInSamePackage

@@ -1,6 +1,0 @@
-// no_syntax_error
-
-pipeline myPipeline {
-    a.member;
-    a?.member;
-}

@@ -1,5 +1,0 @@
-package tests.trailingComma.inClassParameterList
-
-// no_syntax_error
-
-class C(a: Int, b: Int, )

@@ -1,3 +1,0 @@
-package tests.languageTests.scoping.typeArgument1
-
-fun functionInSamePackage<TYPE_PARAMETER_IN_SAME_PACKAGE>()

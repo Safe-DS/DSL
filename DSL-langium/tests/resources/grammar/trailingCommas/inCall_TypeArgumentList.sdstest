@@ -1,7 +1,0 @@
-package tests.trailingComma.inCallTypeArgumentList
-
-// $TEST$ no_syntax_error
-
-pipeline p {
-    f<Int, Int, >();
-}

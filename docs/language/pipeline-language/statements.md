@@ -49,10 +49,10 @@ This assignment to a placeholder has the following syntactic elements:
 
 #### References to Placeholder
 
-We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [step][steps], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `one` placeholder (here `1`) to the console:
+We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [segment][segments], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `one` placeholder (here `1`) to the console:
 
 ```txt
-step loadMovieRatingsSample(nInstances: Int) {
+segment loadMovieRatingsSample(nInstances: Int) {
     val one = 1;
     print(one);
 }
@@ -62,14 +62,14 @@ More information about references can be found in the [linked document][referenc
 
 ### Yielding Results
 
-In addition to the [declaration of placeholders](#declaring-placeholders), assignments are used to assign a value to a [result of a step](#yielding-results-of-steps) or declare [results of a block lambda](#declare-results-of-block-lambdas).
+In addition to the [declaration of placeholders](#declaring-placeholders), assignments are used to assign a value to a [result of a segment](#yielding-results-of-segments) or declare [results of a block lambda](#declare-results-of-block-lambdas).
 
-#### Yielding Results of Steps
+#### Yielding Results of Segments
 
-The following snippet shows how we can assign a value to a declared [result][results] of a [step][steps]:
+The following snippet shows how we can assign a value to a declared [result][results] of a [segment][segments]:
 
 ```txt
-step trulyRandomInt() -> result: Int {
+segment trulyRandomInt() -> result: Int {
     yield result = 1;
 }
 ```
@@ -77,14 +77,14 @@ step trulyRandomInt() -> result: Int {
 The assignment here has the following syntactic elements:
 
 - The keyword `yield`, which indicates that we want to assign to a result.
-- The name of the result, here `greeting`. This must be identical to one of the names of a declared result in the header of the step.
+- The name of the result, here `greeting`. This must be identical to one of the names of a declared result in the header of the segment.
 - An `=` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
 #### Declare Results of Block Lambdas
 
-Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to steps is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `greeting`, which gets the value `"Hello, world!"`:
+Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to segments is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `greeting`, which gets the value `"Hello, world!"`:
 
 ```txt
 () -> {
@@ -115,7 +115,7 @@ So far, the left-hand side of the assignment always had a single assignee. Howev
 For example, the `split` method in the next example splits a large dataset into two datasets according to a given ratio. We then ignore the first dataset using a [wildcard](#ignoring-results) and [assign the second result to a placeholder](#declaring-placeholders) called `trainingDataset`. Afterwards, we train a `DecisionTree` using the `trainingDataset` and yield the trained model as a result:
 
 ```txt
-step createModel(fullDataset: Dataset) -> trainedModel: Model {
+segment createModel(fullDataset: Dataset) -> trainedModel: Model {
     _, val trainingDataset = fullDataset.split(0.2);
     yield trainedModel = DecisionTree().fit(trainingDataset);
 }
@@ -142,5 +142,5 @@ Assignment happens by index, so the first result is assigned to the first assign
 [block-lambdas]: expressions.md#block-lambdas
 [calls]: expressions.md#calls
 [references]: expressions.md#references
-[steps]: steps.md
+[segments]: segments.md
 [pipelines]: pipelines.md

@@ -298,7 +298,7 @@ A _callable type_ denotes that only values that can be [called][calls] are accep
 - [constructors of enum variants][enum-variant-constructors]
 - [methods][methods]
 - [global functions][global-functions]
-- [steps][steps]
+- [segments][segments]
 - [lambdas][lambdas]
 
 Additionally, a callable types specifies the names and types of parameters and results. Here is the most basic callable type that expects neither parameters nor results:
@@ -349,14 +349,6 @@ If exactly one result is expected, the surrounding parentheses may be also remov
 (a: Int, b: Int) -> r: Int
 ```
 
-### Parenthesized Types
-
-To improve clarity, parts of a type or the entire type can be enclosed in parentheses. The parentheses have no special meaning and are just meant as a visual guide. Here is an example:
-
-```txt
-(Int)
-```
-
 ## Corresponding Python Code
 
 **Note:** This section is only relevant if you are interested in the [stub language][stub-language].
@@ -393,7 +385,6 @@ The following table shows how Safe-DS types can be written as Python [type hints
 | `union<String, Int>`                   | `Union[str, int]`                                                  |
 | `(a: Int, b: Int) -> r: Int`           | `Callable[[int, int], int]`                                        |
 | `(a: Int, b: Int) -> (r: Int, s: Int)` | `Callable[[int, int], Tuple[int, int]]`                            |
-| `(SomeClass)`                          | No exact equivalent. Convert the type without parentheses instead. |
 
 Most of these are rather self-explanatory. We will, however, cover the translation of [callable types](#callable-types) in a little more detail: In Python, the type hint for a callable type has the following general syntax:
 
@@ -432,7 +423,7 @@ Getting the `<result type`> depends on the number of results. If there is only a
 [member-accesses]: ../pipeline-language/expressions.md#member-access-of-enum-variants
 [null-literal]: ../pipeline-language/expressions.md#null-literal
 [calls]: ../pipeline-language/expressions.md#calls
-[steps]: ../pipeline-language/steps.md
+[segments]: ../pipeline-language/segments.md
 [lambdas]: ../pipeline-language/expressions.md#lambdas
 [mypy]: http://mypy-lang.org/
 [type-hints]: https://docs.python.org/3/library/typing.html

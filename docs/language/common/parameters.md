@@ -53,10 +53,10 @@ Let us break down the syntax:
 
 ## Complete Example
 
-Let us now look at a full example of a [step][steps] called `doSomething` with one [required parameter](#required-parameters) and one [optional parameter](#optional-parameters):
+Let us now look at a full example of a [segment][segments] called `doSomething` with one [required parameter](#required-parameters) and one [optional parameter](#optional-parameters):
 
 ```txt
-step doSomething(requiredParameter: Int, optionalParameter: Boolean = false) {
+segment doSomething(requiredParameter: Int, optionalParameter: Boolean = false) {
     // ...
 }
 ```
@@ -192,7 +192,7 @@ Most commonly, default values in Python are literals, since default values are o
 
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
-[steps]: ../pipeline-language/steps.md
+[segments]: ../pipeline-language/segments.md
 [calls]: ../pipeline-language/expressions.md#calls
 [stub-language]: ../stub-language/README.md
 [int-literals]: ../pipeline-language/expressions.md#int-literals

@@ -1,0 +1,19 @@
+
+@Annotation1
+
+@Annotation2
+
+
+class C
+
+
+class D
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+@Annotation2
+
+class C
+
+class D

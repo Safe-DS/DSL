@@ -1,0 +1,12 @@
+class MyClass {
+    fun  myFunction < @Annotation  in  T > ( )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction<
+        @Annotation
+        in T
+    >()
+}

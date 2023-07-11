@@ -22,12 +22,8 @@ updates:
       interval: 'monthly'
 
   # DSL
-  - package-ecosystem: 'gradle'
-    directory: '/DSL'
-    schedule:
-      interval: 'monthly'
   - package-ecosystem: 'npm'
-    directory: '/DSL/com.larsreimann.safeds.vscode'
+    directory: '/DSL'
     schedule:
       interval: 'monthly'
 

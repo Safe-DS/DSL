@@ -1,0 +1,11 @@
+
+import  myPackage . MyClass
+
+
+class C
+
+// -----------------------------------------------------------------------------
+
+import myPackage.MyClass
+
+class C

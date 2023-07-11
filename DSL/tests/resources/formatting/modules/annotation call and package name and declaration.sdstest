@@ -1,0 +1,16 @@
+
+@Annotation1
+
+
+package  myPackage
+
+
+class C
+
+// -----------------------------------------------------------------------------
+
+@Annotation1
+
+package myPackage
+
+class C

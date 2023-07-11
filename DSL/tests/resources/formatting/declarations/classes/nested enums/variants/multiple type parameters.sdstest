@@ -1,0 +1,18 @@
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant < @Annotation  T ,  in  S ,  out  U >
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant<
+            @Annotation
+            T,
+            in S,
+            out U
+        >
+    }
+}

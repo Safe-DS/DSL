@@ -1,0 +1,9 @@
+enum  MyEnum  {
+   MyEnumVariant
+ }
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant
+}

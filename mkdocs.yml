@@ -12,7 +12,7 @@ nav:
       - Pipeline Language:
           - language/pipeline-language/README.md
           - Pipelines: language/pipeline-language/pipelines.md
-          - Steps: language/pipeline-language/steps.md
+          - Segments: language/pipeline-language/segments.md
           - Statements: language/pipeline-language/statements.md
           - Expressions: language/pipeline-language/expressions.md
       - Common:
@@ -35,8 +35,8 @@ nav:
       - stdlib/README.md
       - safeds.lang: stdlib/safeds_lang.md
   - Development:
-      - DSL Development Checklist: development/dsl-development-checklist.md
-      - Release Checklist: development/release-checklist.md
+      - Grammar Testing: development/grammar-testing.md
+      - Formatting Testing: development/formatting-testing.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 

@@ -1,0 +1,3 @@
+// $TEST$ no_syntax_error
+
+@A(1, 2, )

@@ -1,7 +1,0 @@
-// no_syntax_error
-
-pipeline myPipeline {
-    () -> 1;
-
-    (a, vararg b = 1) -> 1;
-}

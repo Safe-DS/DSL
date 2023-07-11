@@ -1,0 +1,5 @@
+// $TEST$ syntax_error
+
+segment mySegment(
+    x: OuterClass<
+) {}
