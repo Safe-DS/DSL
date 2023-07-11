@@ -12,7 +12,6 @@ build:
 
 mkdocs:
   configuration: mkdocs.yml
-
 # Once https://github.com/readthedocs/readthedocs.org/issues/8529 is fixed, replace the commands above with the
 # following to use the default RTD build steps again:
 #python:
