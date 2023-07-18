@@ -1,0 +1,77 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+message: >-
+  Please cite this software using the metadata from
+  'preferred-citation'.
+type: software
+title: Safe-DS DSL
+repository-code: https://github.com/Safe-DS/DSL
+license: MIT
+preferred-citation:
+  type: conference-paper
+  year: 2023
+  conference:
+    name: >-
+      2023 IEEE/ACM 45th International Conference on
+      Software Engineering: New Ideas and Emerging Results
+  collection-title: >-
+    2023 IEEE/ACM 45th International Conference on
+    Software Engineering: New Ideas and Emerging Results
+  title: >-
+    Safe-DS: A Domain Specific Language to Make Data Science Safe
+  authors:
+    - given-names: Lars
+      family-names: Reimann
+      email: "reimann@cs.uni-bonn.de"
+      affiliation: >-
+        Institute for Computer Science III, University
+        of Bonn, Germany
+      orcid: "https://orcid.org/0000-0002-5129-3902"
+    - affiliation: >-
+        Institute for Computer Science III, University
+        of Bonn, Germany
+      given-names: Günter
+      family-names: Kniesel-Wünsche
+  abstract: >-
+    Due to the long runtime of Data Science (DS) pipelines,
+    even small programming mistakes can be very costly, if
+    they are not detected statically. However, even basic
+    static type checking of DS pipelines is difficult because
+    most are written in Python. Static typing is available in
+    Python only via external linters. These require static type
+    annotations for parameters or results of functions, which
+    many DS libraries do not provide. In this paper, we show how
+    the wealth of Python DS libraries can be used in a
+    statically safe way via Safe-DS, a domain specific language
+    (DSL) for DS. Safe-DS catches conventional type errors plus
+    errors related to range restrictions, data manipulation, and
+    call order of functions, going well beyond the abilities of
+    current Python linters. Python libraries are integrated into
+    Safe-DS via a stub language for specifying the interface of
+    its declarations, and an API-Editor that is able to extract
+    type information from the code and documentation of Python
+    libraries, and automatically generate suitable stubs.
+    Moreover, Safe-DS complements textual DS pipelines with a
+    graphical representation that eases safe development by
+    preventing syntax errors. The seamless synchronization of
+    textual and graphic view lets developers always choose the
+    one best suited for their skills and current task. We think
+    that Safe-DS can make DS development easier, faster, and
+    more reliable, significantly reducing development costs.
+  keywords:
+    - "data science"
+    - "machine learning"
+    - "static safety"
+    - "refinement types"
+    - "schema types"
+    - "domain specific language"
+  doi: "10.1109/ICSE-NIER58687.2023.00019"
+  identifiers:
+    - type: doi
+      value: "10.1109/ICSE-NIER58687.2023.00019"
+      description: "IEEE Xplore"
+    - type: doi
+      value: "10.48550/arXiv.2302.14548"
+      description: "arXiv (preprint)"
