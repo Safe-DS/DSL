@@ -62,7 +62,7 @@
         "glob": "^10.3.3",
         "langium": "^1.2.1",
         "radash": "^11.0.0",
-        "true-myth": "^6.2.0",
+        "true-myth": "^7.0.1",
         "vscode-languageclient": "^8.1.0",
         "vscode-languageserver": "^8.1.0",
         "vscode-languageserver-types": "^3.17.3",
