@@ -1,5 +1,5 @@
 // $TEST$ target class_C
-class »C«
+»class C«
 
 pipeline test {
     // $TEST$ references class_C

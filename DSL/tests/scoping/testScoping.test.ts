@@ -45,20 +45,22 @@ describe('scoping', () => {
                 });
             }
 
-            const actualTargetRange = actualReference.$nodeDescription?.nameSegment?.range;
+            const actualTarget = actualReference.$nodeDescription;
+            const actualTargetRange = actualTarget?.nameSegment?.range;
 
             if (expectedReference.targetId) {
-                const expectedTargetRange = test.expectedTargets.get(expectedReference.targetId)!.range;
+                const expectedTarget = test.expectedTargets.get(expectedReference.targetId)!;
+                const expectedTargetRange = expectedTarget.range;
 
                 if (!actualTargetRange) {
                     throw new AssertionError({ message: 'Expected a target but found none' });
                 } else if (!isRangeEqual(actualTargetRange, expectedTargetRange)) {
                     throw new AssertionError({
-                        message: `Expected a reference in file [${expectedReference.file}] at ${rangeToString(
+                        message: `Expected a reference in      file [${expectedReference.file}] at ${rangeToString(
                             expectedReference.range,
-                        )} to target a node in file [${expectedReference.file}] at ${rangeToString(
+                        )}\n    to target a node in      file [${expectedTarget.file}] at ${rangeToString(
                             expectedTargetRange,
-                        )} but found none.`,
+                        )}\n    but it targets a node in file [${actualTarget?.documentUri?.fsPath}] at ${rangeToString(actualTargetRange)}.`,
                     });
                 } else if (actualTargetRange && !expectedReference.targetId) {
                     throw new AssertionError({ message: 'Expected no target but found one' });
