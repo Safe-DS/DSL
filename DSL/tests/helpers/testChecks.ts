@@ -13,15 +13,13 @@ export const findTestChecks = (
     program: string,
     options: FindTestChecksOptions = {},
 ): Result<TestCheck[], FindTestChecksError> => {
-    const {strictLengthCheck = false} = options;
+    const {
+        failIfNoComments = false,
+        failIfFewerRangesThanComments = false
+    } = options;
 
     const comments = findTestComments(program);
     const ranges = findTestRanges(program);
-
-    // Must contain at least one comment
-    if (comments.length === 0) {
-        return Result.err(new NoCommentsError());
-    }
 
     // Opening and closing test markers must match
     if (ranges.isErr) {
@@ -33,8 +31,13 @@ export const findTestChecks = (
         return Result.err(new MoreRangesThanCommentsError(comments, ranges.value));
     }
 
-    // Must not contain fewer ranges than comments, if strict length check is enabled
-    if (strictLengthCheck && ranges.value.length < comments.length) {
+    // Must contain at least one comment, if corresponding check is enabled
+    if (failIfNoComments && comments.length === 0) {
+        return Result.err(new NoCommentsError());
+    }
+
+    // Must not contain fewer ranges than comments, if corresponding check is enabled
+    if (failIfFewerRangesThanComments && ranges.value.length < comments.length) {
         return Result.err(new FewerRangesThanCommentsError(comments, ranges.value));
     }
 
@@ -46,10 +49,15 @@ export const findTestChecks = (
  */
 export interface FindTestChecksOptions {
     /**
+     * If this option is set to `true`, an error is returned if there are no comments.
+     */
+    failIfNoComments?: boolean;
+
+    /**
      * It is never permissible to have *more* ranges than comments. If this option is set to `true`, the number of
      * ranges must be *equal to* the number of comments.
      */
-    strictLengthCheck?: boolean;
+    failIfFewerRangesThanComments?: boolean;
 }
 
 /**

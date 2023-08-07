@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges';
 import { CLOSE, OPEN } from './testMarker';
-import {FewerRangesThanCommentsError, findTestChecks, MoreRangesThanCommentsError, NoCommentsError} from './testChecks';
+import {
+    FewerRangesThanCommentsError,
+    findTestChecks,
+    MoreRangesThanCommentsError,
+    NoCommentsError,
+} from './testChecks';
 import { Range } from 'vscode-languageserver';
 
 describe('findTestChecks', () => {
     it.each([
+        {
+            program: '',
+            expected: [],
+            id: 'no comments, no ranges',
+        },
         {
             program: `
 // $TEST$ no_syntax_error
@@ -59,38 +69,6 @@ ${OPEN}${CLOSE}
         }
     });
 
-    it('should report if no test comments are found', () => {
-        const result = findTestChecks('');
-        expect(result.isErr).toBeTruthy();
-
-        if (result.isErr) {
-            expect(result.error).toBeInstanceOf(NoCommentsError);
-        }
-    });
-
-    it('should report if more ranges than comments are found', () => {
-        const result = findTestChecks(`
-            // $TEST$ no_syntax_error
-            ${OPEN}\n${CLOSE}${OPEN}\n${CLOSE}
-        `);
-        expect(result.isErr).toBeTruthy();
-
-        if (result.isErr) {
-            expect(result.error).toBeInstanceOf(MoreRangesThanCommentsError);
-        }
-    });
-
-    it('should report if fewer ranges than comments are found if strictLengthCheck is enabled', () => {
-        const result = findTestChecks(`
-            // $TEST$ no_syntax_error
-        `, { strictLengthCheck: true });
-        expect(result.isErr).toBeTruthy();
-
-        if (result.isErr) {
-            expect(result.error).toBeInstanceOf(FewerRangesThanCommentsError);
-        }
-    });
-
     it('should report closing test markers without matching opening test marker', () => {
         const result = findTestChecks(`
             // $TEST$ no_syntax_error
@@ -112,6 +90,41 @@ ${OPEN}${CLOSE}
 
         if (result.isErr) {
             expect(result.error).toBeInstanceOf(OpenWithoutCloseError);
+        }
+    });
+
+    it('should report if more ranges than comments are found', () => {
+        const result = findTestChecks(`
+            // $TEST$ no_syntax_error
+            ${OPEN}\n${CLOSE}${OPEN}\n${CLOSE}
+        `);
+        expect(result.isErr).toBeTruthy();
+
+        if (result.isErr) {
+            expect(result.error).toBeInstanceOf(MoreRangesThanCommentsError);
+        }
+    });
+
+    it('should report if no test comments are found if corresponding check is enabled', () => {
+        const result = findTestChecks('', { failIfNoComments: true });
+        expect(result.isErr).toBeTruthy();
+
+        if (result.isErr) {
+            expect(result.error).toBeInstanceOf(NoCommentsError);
+        }
+    });
+
+    it('should report if fewer ranges than comments are found if corresponding check is enabled', () => {
+        const result = findTestChecks(
+            `
+            // $TEST$ no_syntax_error
+        `,
+            { failIfFewerRangesThanComments: true },
+        );
+        expect(result.isErr).toBeTruthy();
+
+        if (result.isErr) {
+            expect(result.error).toBeInstanceOf(FewerRangesThanCommentsError);
         }
     });
 });
