@@ -1,13 +1,13 @@
 import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
 import { expectFormatting, validationHelper } from 'langium/test';
 import { describe, it } from 'vitest';
-import { EmptyFileSystem } from 'langium';
 import { listTestResources, resolvePathRelativeToResources } from '../helpers/testResources';
 import path from 'path';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
+import { EmptyFileSystem } from 'langium';
 
-const services = createSafeDsServices({ ...EmptyFileSystem }).SafeDs;
+const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const separator = '// -----------------------------------------------------------------------------';
 
 describe('formatter', async () => {

@@ -5,9 +5,9 @@ import fs from 'fs';
 import { findTestComments } from '../helpers/testComments';
 import path from 'path';
 import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
-import { NodeFileSystem } from 'langium/node';
 import { URI } from 'vscode-uri';
 import { AssertionError } from 'assert';
+import { NodeFileSystem } from 'langium/node';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
