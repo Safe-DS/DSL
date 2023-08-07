@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges';
 import { CLOSE, OPEN } from './testMarker';
-import { findTestChecks, MoreRangesThanCommentsError, NoCommentsError } from './testChecks';
+import {FewerRangesThanCommentsError, findTestChecks, MoreRangesThanCommentsError, NoCommentsError} from './testChecks';
 import { Range } from 'vscode-languageserver';
 
 describe('findTestChecks', () => {
@@ -77,6 +77,17 @@ ${OPEN}${CLOSE}
 
         if (result.isErr) {
             expect(result.error).toBeInstanceOf(MoreRangesThanCommentsError);
+        }
+    });
+
+    it('should report if fewer ranges than comments are found if strictLengthCheck is enabled', () => {
+        const result = findTestChecks(`
+            // $TEST$ no_syntax_error
+        `, { strictLengthCheck: true });
+        expect(result.isErr).toBeTruthy();
+
+        if (result.isErr) {
+            expect(result.error).toBeInstanceOf(FewerRangesThanCommentsError);
         }
     });
 
