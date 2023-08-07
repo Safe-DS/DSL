@@ -36,7 +36,7 @@ ${OPEN}${CLOSE}
             expected: [
                 {
                     comment: 'no_syntax_error',
-                    range: Range.create(3, 2, 3, 2),
+                    range: Range.create(2, 1, 2, 1),
                 },
             ],
             id: 'one comment, one range',
@@ -51,11 +51,11 @@ ${OPEN}${CLOSE}
             expected: [
                 {
                     comment: 'no_syntax_error',
-                    range: Range.create(3, 2, 3, 2),
+                    range: Range.create(2, 1, 2, 1),
                 },
                 {
                     comment: 'syntax_error',
-                    range: Range.create(5, 2, 5, 2),
+                    range: Range.create(4, 1, 4, 1),
                 },
             ],
             id: 'two comments, two ranges',
