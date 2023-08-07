@@ -60,9 +60,9 @@ const createGrammarTests = (): GrammarTest[] => {
         // Must contain at least one comment
         if (comments.length === 0) {
             return {
+                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 absolutePath,
                 expectedResult: 'invalid',
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new NoCommentsError(),
             };
         }
@@ -70,9 +70,9 @@ const createGrammarTests = (): GrammarTest[] => {
         // Must contain no more than one comment
         if (comments.length > 1) {
             return {
+                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 absolutePath,
                 expectedResult: 'invalid',
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new MultipleCommentsError(comments),
             };
         }
@@ -82,9 +82,9 @@ const createGrammarTests = (): GrammarTest[] => {
         // Must contain a valid comment
         if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
             return {
+                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 absolutePath,
                 expectedResult: 'invalid',
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
                 error: new InvalidCommentError(comment),
             };
         }
@@ -97,17 +97,17 @@ const createGrammarTests = (): GrammarTest[] => {
         }
 
         return {
+            testName,
             absolutePath,
             expectedResult: comment,
-            testName,
         };
     });
 };
 
 interface GrammarTest {
+    testName: string;
     absolutePath: string;
     expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
-    testName: string;
     error?: Error;
 }
 
