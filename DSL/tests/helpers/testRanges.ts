@@ -1,6 +1,7 @@
 import { Result } from 'true-myth';
 import { Range, Position } from 'vscode-languageserver';
 import { CLOSE, OPEN } from './testMarker';
+import {positionToString} from "./stringification";
 
 /**
  * Finds test ranges, i.e. parts of the program delimited by opening and closing test markers. They are sorted by the
@@ -95,7 +96,7 @@ export class OpenWithoutCloseError extends Error {
     constructor(readonly positions: Position[]) {
         super(
             `Found '${OPEN}' without following '${CLOSE}' at ${positions
-                .map((position) => `${position.line}:${position.character}`)
+                .map(positionToString)
                 .join(', ')}.`,
         );
     }
