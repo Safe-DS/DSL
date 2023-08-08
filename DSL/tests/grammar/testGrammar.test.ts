@@ -3,7 +3,7 @@ import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { createGrammarTests } from './creator';
-import {clearDocuments, validationHelper} from 'langium/test';
+import { clearDocuments, validationHelper } from 'langium/test';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 

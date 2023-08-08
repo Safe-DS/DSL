@@ -12,11 +12,11 @@ export const positionToString = (position: Position): string => {
  */
 export const rangeToString = (range: Range): string => {
     return `${positionToString(range.start)}->${positionToString(range.end)}`;
-}
+};
 
 /**
  * Converts a location to a string.
  */
 export const locationToString = (location: Location) => {
     return `[${location.uri}] at ${rangeToString(location.range)}`;
-}
+};
