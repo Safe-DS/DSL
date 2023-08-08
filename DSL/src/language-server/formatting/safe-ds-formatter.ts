@@ -905,7 +905,7 @@ export class SafeDSFormatter extends AbstractFormatter {
             formatter.keyword('}').prepend(noSpace());
         } else {
             formatter.nodes(...columns).prepend(indent());
-            formatter.keywords(',').prepend(noSpace()).append(newLine());
+            formatter.keywords(',').prepend(noSpace());
             formatter.keyword('}').prepend(newLine());
         }
     }
