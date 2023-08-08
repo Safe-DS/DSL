@@ -1,34 +1,34 @@
-import {Range} from 'vscode-languageserver';
-import {findTestComments} from './testComments';
-import {findTestRanges, FindTestRangesError} from './testRanges';
-import {Result} from 'true-myth';
+import { Location, Range } from 'vscode-languageserver';
+import { findTestComments } from './testComments';
+import { findTestRanges, FindTestRangesError } from './testRanges';
+import { Result } from 'true-myth';
 
 /**
  * Finds all test checks, i.e. test comments and their corresponding test ranges.
  *
  * @param program The program with test comments and test markers.
+ * @param uri The URI of the program.
  * @param options Options for the function.
  */
 export const findTestChecks = (
     program: string,
+    uri: string,
     options: FindTestChecksOptions = {},
 ): Result<TestCheck[], FindTestChecksError> => {
-    const {
-        failIfNoComments = false,
-        failIfFewerRangesThanComments = false
-    } = options;
+    const { failIfNoComments = false, failIfFewerRangesThanComments = false } = options;
 
     const comments = findTestComments(program);
-    const ranges = findTestRanges(program);
+    const rangesResult = findTestRanges(program);
 
     // Opening and closing test markers must match
-    if (ranges.isErr) {
-        return Result.err(ranges.error);
+    if (rangesResult.isErr) {
+        return Result.err(rangesResult.error);
     }
+    const ranges = rangesResult.value;
 
     // Must never contain more ranges than comments
-    if (ranges.value.length > comments.length) {
-        return Result.err(new MoreRangesThanCommentsError(comments, ranges.value));
+    if (ranges.length > comments.length) {
+        return Result.err(new MoreRangesThanCommentsError(comments, ranges));
     }
 
     // Must contain at least one comment, if corresponding check is enabled
@@ -37,11 +37,11 @@ export const findTestChecks = (
     }
 
     // Must not contain fewer ranges than comments, if corresponding check is enabled
-    if (failIfFewerRangesThanComments && ranges.value.length < comments.length) {
-        return Result.err(new FewerRangesThanCommentsError(comments, ranges.value));
+    if (failIfFewerRangesThanComments && ranges.length < comments.length) {
+        return Result.err(new FewerRangesThanCommentsError(comments, ranges));
     }
 
-    return Result.ok(comments.map((comment, index) => ({comment, range: ranges.value[index]})));
+    return Result.ok(comments.map((comment, index) => ({ comment, location: { uri, range: ranges[index] } })));
 };
 
 /**
@@ -66,26 +66,17 @@ export interface FindTestChecksOptions {
  */
 export interface TestCheck {
     comment: string;
-    range?: Range;
+    location?: Location;
 }
 
 /**
  * Something went wrong while finding test checks.
  */
 export type FindTestChecksError =
-    | NoCommentsError
+    | FindTestRangesError
     | MoreRangesThanCommentsError
-    | FewerRangesThanCommentsError
-    | FindTestRangesError;
-
-/**
- * Did not find any test comments.
- */
-export class NoCommentsError extends Error {
-    constructor() {
-        super('No test comments found.');
-    }
-}
+    | NoCommentsError
+    | FewerRangesThanCommentsError;
 
 /**
  * Found more test ranges than test comments.
@@ -93,6 +84,15 @@ export class NoCommentsError extends Error {
 export class MoreRangesThanCommentsError extends Error {
     constructor(readonly comments: string[], readonly ranges: Range[]) {
         super(`Found more test ranges (${ranges.length}) than test comments (${comments.length}).`);
+    }
+}
+
+/**
+ * Did not find any test comments.
+ */
+export class NoCommentsError extends Error {
+    constructor() {
+        super('No test comments found.');
     }
 }
 
