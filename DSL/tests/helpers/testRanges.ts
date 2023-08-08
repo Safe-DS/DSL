@@ -1,6 +1,7 @@
 import { Result } from 'true-myth';
 import { Range, Position } from 'vscode-languageserver';
 import { CLOSE, OPEN } from './testMarker';
+import {positionToString} from "./stringification";
 
 /**
  * Finds test ranges, i.e. parts of the program delimited by opening and closing test markers. They are sorted by the
@@ -14,8 +15,8 @@ import { CLOSE, OPEN } from './testMarker';
  * @see OPEN
  */
 export const findTestRanges = (program: string): Result<Range[], FindTestRangesError> => {
-    let currentLine = 1;
-    let currentColumn = 1;
+    let currentLine = 0;
+    let currentColumn = 0;
     let previousChar: string | null = null;
 
     const testRangeStarts: Position[] = [];
@@ -42,12 +43,12 @@ export const findTestRanges = (program: string): Result<Range[], FindTestRangesE
                 break;
             case '\r':
                 currentLine++;
-                currentColumn = 1;
+                currentColumn = 0;
                 break;
             case '\n':
                 if (previousChar !== '\r') {
                     currentLine++;
-                    currentColumn = 1;
+                    currentColumn = 0;
                 }
                 break;
             default:
@@ -95,7 +96,7 @@ export class OpenWithoutCloseError extends Error {
     constructor(readonly positions: Position[]) {
         super(
             `Found '${OPEN}' without following '${CLOSE}' at ${positions
-                .map((position) => `${position.line}:${position.character}`)
+                .map(positionToString)
                 .join(', ')}.`,
         );
     }

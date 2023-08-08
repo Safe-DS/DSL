@@ -10,7 +10,7 @@ describe('findTestRanges', () => {
 
         if (result.isOk) {
             const ranges = result.value;
-            expect(ranges).toStrictEqual([Range.create(1, 6, 1, 10), Range.create(2, 2, 2, 6)]);
+            expect(ranges).toStrictEqual([Range.create(0, 5, 0, 9), Range.create(1, 1, 1, 5)]);
         }
     });
 
@@ -20,7 +20,7 @@ describe('findTestRanges', () => {
 
         if (result.isOk) {
             const ranges = result.value;
-            expect(ranges).toStrictEqual([Range.create(1, 2, 3, 1), Range.create(2, 6, 2, 6)]);
+            expect(ranges).toStrictEqual([Range.create(0, 1, 2, 0), Range.create(1, 5, 1, 5)]);
         }
     });
 
@@ -30,7 +30,7 @@ describe('findTestRanges', () => {
 
         if (result.isOk) {
             const ranges = result.value;
-            expect(ranges).toStrictEqual([Range.create(2, 2, 3, 1)]);
+            expect(ranges).toStrictEqual([Range.create(1, 1, 2, 0)]);
         }
     });
 
@@ -40,7 +40,7 @@ describe('findTestRanges', () => {
 
         if (result.isOk) {
             const ranges = result.value;
-            expect(ranges).toStrictEqual([Range.create(2, 2, 3, 1)]);
+            expect(ranges).toStrictEqual([Range.create(1, 1, 2, 0)]);
         }
     });
 
@@ -50,7 +50,7 @@ describe('findTestRanges', () => {
 
         if (result.isOk) {
             const ranges = result.value;
-            expect(ranges).toStrictEqual([Range.create(2, 2, 3, 1)]);
+            expect(ranges).toStrictEqual([Range.create(1, 1, 2, 0)]);
         }
     });
 
@@ -61,8 +61,8 @@ describe('findTestRanges', () => {
         if (result.isErr) {
             const error = result.error;
             expect(error).toBeInstanceOf(CloseWithoutOpenError);
-            expect((error as CloseWithoutOpenError).position).toStrictEqual(Position.create(2, 2));
-            expect(error.message).toBe(`Found '${CLOSE}' without previous '${OPEN}' at 2:2.`);
+            expect((error as CloseWithoutOpenError).position).toStrictEqual(Position.create(1, 1));
+            expect(error.message).toBe(`Found '${CLOSE}' without previous '${OPEN}' at 1:1.`);
         }
     });
 
@@ -74,10 +74,10 @@ describe('findTestRanges', () => {
             const error = result.error;
             expect(error).toBeInstanceOf(OpenWithoutCloseError);
             expect((error as OpenWithoutCloseError).positions).toStrictEqual([
-                Position.create(1, 1),
-                Position.create(2, 1),
+                Position.create(0, 0),
+                Position.create(1, 0),
             ]);
-            expect(error.message).toBe(`Found '${OPEN}' without following '${CLOSE}' at 1:1, 2:1.`);
+            expect(error.message).toBe(`Found '${OPEN}' without following '${CLOSE}' at 0:0, 1:0.`);
         }
     });
 });
