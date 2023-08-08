@@ -18,7 +18,7 @@ export const createScopingTests = (): ScopingTest[] => {
 
 const createScopingTest = (dirnameRelativeToResources: string, pathsRelativeToResources: string[]): ScopingTest => {
     const absolutePaths: string[] = [];
-    const references: Reference[] = [];
+    const references: ExpectedReference[] = [];
     const targets: Map<string, Target> = new Map();
 
     for (const pathRelativeToResources of pathsRelativeToResources) {
@@ -112,13 +112,13 @@ const createErroneousTestReporter = (testName: string, error: Error): ScopingTes
 
 interface ScopingTest {
     testName: string;
-    absolutePaths: string[];
-    expectedReferences: Reference[];
+    uris: string[];
+    expectedReferences: ExpectedReference[];
     expectedTargets: Map<string, Target>;
     error?: Error;
 }
 
-interface Reference {
+interface ExpectedReference {
     targetId?: string;
     location: Location;
 }

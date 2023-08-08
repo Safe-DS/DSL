@@ -9,7 +9,7 @@ import {EmptyFileSystem} from "langium";
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const separator = '// -----------------------------------------------------------------------------';
 
-export const createFormatterTest = async (): Promise<FormatterTest[]> => {
+export const createFormatterTests = async (): Promise<FormatterTest[]> => {
     const testCases = listTestResources('formatting').map(async (pathRelativeToResources): Promise<FormatterTest> => {
         const absolutePath = resolvePathRelativeToResources(path.join('formatting', pathRelativeToResources));
         const program = fs.readFileSync(absolutePath).toString();

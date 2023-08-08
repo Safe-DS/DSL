@@ -9,6 +9,7 @@ const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
 describe('grammar', () => {
     it.each(createGrammarTests())('$testName', async (test) => {
+        // Test is invalid
         if (test.error) {
             throw test.error;
         }
