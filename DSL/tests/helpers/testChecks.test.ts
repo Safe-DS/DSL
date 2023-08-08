@@ -1,13 +1,13 @@
-import {describe, expect, it} from 'vitest';
-import {CloseWithoutOpenError, OpenWithoutCloseError} from './testRanges';
-import {CLOSE, OPEN} from './testMarker';
+import { describe, expect, it } from 'vitest';
+import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges';
+import { CLOSE, OPEN } from './testMarker';
 import {
     FewerRangesThanCommentsError,
     findTestChecks,
     MoreRangesThanCommentsError,
     NoCommentsError,
 } from './testChecks';
-import {Range} from 'vscode-languageserver';
+import { Range } from 'vscode-languageserver';
 
 const uri = 'file:///test.sdstest';
 
@@ -27,7 +27,7 @@ describe('findTestChecks', () => {
                     comment: 'no_syntax_error',
                     location: {
                         uri,
-                        range: undefined
+                        range: undefined,
                     },
                 },
             ],
@@ -61,7 +61,7 @@ ${OPEN}${CLOSE}
                     comment: 'no_syntax_error',
                     location: {
                         uri,
-                        range: Range.create(2, 1, 2, 1)
+                        range: Range.create(2, 1, 2, 1),
                     },
                 },
                 {
@@ -74,7 +74,7 @@ ${OPEN}${CLOSE}
             ],
             id: 'two comments, two ranges',
         },
-    ])('should associated comments and ranges ($id)', ({program, expected}) => {
+    ])('should associated comments and ranges ($id)', ({ program, expected }) => {
         const result = findTestChecks(program, uri);
         expect(result.isOk).toBeTruthy();
 
@@ -129,7 +129,7 @@ ${OPEN}${CLOSE}
     });
 
     it('should report if no test comments are found if corresponding check is enabled', () => {
-        const result = findTestChecks('', uri, {failIfNoComments: true});
+        const result = findTestChecks('', uri, { failIfNoComments: true });
         expect(result.isErr).toBeTruthy();
 
         if (result.isErr) {
@@ -143,7 +143,7 @@ ${OPEN}${CLOSE}
             // $TEST$ no_syntax_error
         `,
             uri,
-            {failIfFewerRangesThanComments: true},
+            { failIfFewerRangesThanComments: true },
         );
         expect(result.isErr).toBeTruthy();
 
@@ -151,5 +151,4 @@ ${OPEN}${CLOSE}
             expect(result.error).toBeInstanceOf(FewerRangesThanCommentsError);
         }
     });
-})
-    ;
+});

@@ -82,7 +82,10 @@ export type FindTestChecksError =
  * Found more test ranges than test comments.
  */
 export class MoreRangesThanCommentsError extends Error {
-    constructor(readonly comments: string[], readonly ranges: Range[]) {
+    constructor(
+        readonly comments: string[],
+        readonly ranges: Range[],
+    ) {
         super(`Found more test ranges (${ranges.length}) than test comments (${comments.length}).`);
     }
 }
@@ -100,7 +103,10 @@ export class NoCommentsError extends Error {
  * Found fewer test ranges than test comments.
  */
 export class FewerRangesThanCommentsError extends Error {
-    constructor(readonly comments: string[], readonly ranges: Range[]) {
+    constructor(
+        readonly comments: string[],
+        readonly ranges: Range[],
+    ) {
         super(`Found fewer test ranges (${ranges.length}) than test comments (${comments.length}).`);
     }
 }
