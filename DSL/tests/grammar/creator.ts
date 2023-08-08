@@ -1,8 +1,8 @@
-import {listTestResources, resolvePathRelativeToResources} from "../helpers/testResources";
-import path from "path";
-import fs from "fs";
-import {findTestComments} from "../helpers/testComments";
-import {NoCommentsError} from "../helpers/testChecks";
+import { listTestResources, resolvePathRelativeToResources } from '../helpers/testResources';
+import path from 'path';
+import fs from 'fs';
+import { findTestComments } from '../helpers/testComments';
+import { NoCommentsError } from '../helpers/testChecks';
 
 export const createGrammarTests = (): GrammarTest[] => {
     return listTestResources('grammar').map((pathRelativeToResources): GrammarTest => {
@@ -14,7 +14,7 @@ export const createGrammarTests = (): GrammarTest[] => {
         if (comments.length === 0) {
             return {
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                absolutePath,
+                program,
                 expectedResult: 'invalid',
                 error: new NoCommentsError(),
             };
@@ -24,7 +24,7 @@ export const createGrammarTests = (): GrammarTest[] => {
         if (comments.length > 1) {
             return {
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                absolutePath,
+                program,
                 expectedResult: 'invalid',
                 error: new MultipleCommentsError(comments),
             };
@@ -36,7 +36,7 @@ export const createGrammarTests = (): GrammarTest[] => {
         if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
             return {
                 testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                absolutePath,
+                program,
                 expectedResult: 'invalid',
                 error: new InvalidCommentError(comment),
             };
@@ -51,25 +51,34 @@ export const createGrammarTests = (): GrammarTest[] => {
 
         return {
             testName,
-            absolutePath,
+            program,
             expectedResult: comment,
         };
     });
 };
 
+/**
+ * A description of a grammar test.
+ */
 interface GrammarTest {
     testName: string;
-    absolutePath: string;
+    program: string;
     expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
     error?: Error;
 }
 
+/**
+ * Found multiple test comments.
+ */
 class MultipleCommentsError extends Error {
     constructor(readonly comments: string[]) {
         super(`Found multiple test comments (grammar tests expect only one): ${comments}`);
     }
 }
 
+/**
+ * Found one test comment but it was invalid.
+ */
 class InvalidCommentError extends Error {
     constructor(readonly comment: string) {
         super(`Invalid test comment (valid values are 'syntax_error' and 'no_syntax_error'): ${comment}`);

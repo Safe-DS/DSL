@@ -1,5 +1,5 @@
 import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
-import { expectFormatting } from 'langium/test';
+import {clearDocuments, expectFormatting} from 'langium/test';
 import { describe, it } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { createFormatterTest } from './creator';
@@ -16,5 +16,8 @@ describe('formatter', async () => {
             before: test.originalCode,
             after: test.expectedFormattedCode,
         });
+
+        // Clear loaded documents to avoid colliding URIs (https://github.com/langium/langium/issues/1146)
+        await clearDocuments(services);
     });
 });
