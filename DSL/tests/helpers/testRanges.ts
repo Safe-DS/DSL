@@ -85,7 +85,7 @@ export type FindTestRangesError = CloseWithoutOpenError | OpenWithoutCloseError;
  */
 export class CloseWithoutOpenError extends Error {
     constructor(readonly position: Position) {
-        super(`Found '${CLOSE}' without previous '${OPEN}' at ${position.line}:${position.character}.`);
+        super(`Found '${CLOSE}' without previous '${OPEN}' at ${positionToString(position)}.`);
     }
 }
 
