@@ -1,216 +1,124 @@
-import { listTestResources, resolvePathRelativeToResources } from '../helpers/testResources';
 import { describe, it } from 'vitest';
-import { findTestChecks } from '../helpers/testChecks';
-import path from 'path';
 import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
-import { group } from 'radash';
-import { Range } from 'vscode-languageserver';
-import fs from 'fs';
 import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
-import { rangeToString } from '../helpers/stringification';
+import {isLocationEqual, locationToString} from '../helpers/location';
+import { createScopingTests, ExpectedReference } from './creator';
+import { LangiumDocument, Reference } from 'langium';
+import { Location } from 'vscode-languageserver';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
 describe('scoping', () => {
     it.each(createScopingTests())('$testName', async (test) => {
+        // Test is invalid
         if (test.error) {
             throw test.error;
         }
 
         // Load all documents
-        const documents = test.absolutePaths.map((absolutePath) =>
-            services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(absolutePath)),
+        const documents = test.uris.map((uri) =>
+            services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(uri)),
         );
         await services.shared.workspace.DocumentBuilder.build(documents);
 
-        // Ensure the references match
+        // Ensure all expected references match
         for (const expectedReference of test.expectedReferences) {
             const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
-                URI.file(expectedReference.file),
+                URI.parse(expectedReference.location.uri),
             );
 
-            const actualReference = document.references.find((reference) => {
-                const referenceRange = reference.$refNode?.range;
-                return referenceRange && isRangeEqual(referenceRange, expectedReference.range);
-            });
+            const expectedTargetLocation = expectedReference.targetLocation;
+            const actualTargetLocation = findActualTargetLocation(document, expectedReference);
 
-            if (!actualReference) {
-                throw new AssertionError({
-                    message: `Expected a reference in file [${expectedReference.file}] at ${rangeToString(
-                        expectedReference.range,
-                    )} but found none.`,
-                });
+            // Expected reference to be resolved
+            if (expectedTargetLocation) {
+                if (!actualTargetLocation) {
+                    throw new AssertionError({
+                        message: `Expected a resolved reference but it was unresolved.\n    Reference Location: ${locationToString(
+                            expectedReference.location,
+                        )}\n    Expected Target Location: ${locationToString(expectedTargetLocation)}`,
+                    });
+                } else if (!isLocationEqual(expectedTargetLocation, actualTargetLocation)) {
+                    throw new AssertionError({
+                        message: `Expected a resolved reference but it points to the wrong declaration.\n    Reference Location: ${locationToString(
+                            expectedReference.location,
+                        )}\n    Expected Target Location: ${locationToString(
+                            expectedTargetLocation,
+                        )}\n    Actual Target Location: ${locationToString(actualTargetLocation)}`,
+                        expected: expectedTargetLocation,
+                        actual: actualTargetLocation,
+                    });
+                }
             }
 
-            const actualTarget = actualReference.$nodeDescription;
-            const actualTargetRange = actualTarget?.nameSegment?.range;
-
-            if (expectedReference.targetId) {
-                const expectedTarget = test.expectedTargets.get(expectedReference.targetId)!;
-                const expectedTargetRange = expectedTarget.range;
-
-                if (!actualTargetRange) {
-                    throw new AssertionError({ message: 'Expected a target but found none' });
-                } else if (!isRangeEqual(actualTargetRange, expectedTargetRange)) {
+            // Expected reference to be unresolved
+            else {
+                if (actualTargetLocation) {
                     throw new AssertionError({
-                        message: `Expected a reference in      file [${expectedReference.file}] at ${rangeToString(
-                            expectedReference.range,
-                        )}\n    to target a node in      file [${expectedTarget.file}] at ${rangeToString(
-                            expectedTargetRange,
-                        )}\n    but it targets a node in file [${actualTarget?.documentUri?.fsPath}] at ${rangeToString(actualTargetRange)}.`,
+                        message: `Expected an unresolved reference but it was resolved.\n    Reference Location: ${locationToString(
+                            expectedReference.location,
+                        )}\n    Actual Target Location: ${locationToString(actualTargetLocation)}`,
                     });
-                } else if (actualTargetRange && !expectedReference.targetId) {
-                    throw new AssertionError({ message: 'Expected no target but found one' });
                 }
             }
         }
     });
 });
 
-const createScopingTests = (): ScopingTest[] => {
-    const pathsRelativeToResources = listTestResources('scoping');
-    const pathsRelativeToResourcesGroupedByDirname = group(pathsRelativeToResources, (pathRelativeToResources) =>
-        path.dirname(pathRelativeToResources),
-    ) as Record<string, string[]>;
+/**
+ * Find the actual target location of the actual reference that matches the expected reference. If the actual reference
+ * cannot be resolved, undefined is returned.
+ *
+ * @param document The document to search in.
+ * @param expectedReference The expected reference.
+ * @returns The actual target location or undefined if the actual reference is not resolved.
+ * @throws AssertionError If no matching actual reference was found.
+ */
+const findActualTargetLocation = (
+    document: LangiumDocument,
+    expectedReference: ExpectedReference,
+): Location | undefined => {
+    const actualReference = findActualReference(document, expectedReference);
 
-    return Object.entries(pathsRelativeToResourcesGroupedByDirname).map(([dirname, paths]) =>
-        createScopingTest(dirname, paths),
-    );
-};
+    const actualTarget = actualReference.$nodeDescription;
+    const actualTargetUri = actualTarget?.documentUri?.toString();
+    const actualTargetRange = actualTarget?.nameSegment?.range;
 
-const createScopingTest = (dirnameRelativeToResources: string, pathsRelativeToResources: string[]): ScopingTest => {
-    const absolutePaths: string[] = [];
-    const references: Reference[] = [];
-    const targets: Map<string, Target> = new Map();
-
-    for (const pathRelativeToResources of pathsRelativeToResources) {
-        const absolutePath = resolvePathRelativeToResources(path.join('scoping', pathRelativeToResources));
-        absolutePaths.push(absolutePath);
-
-        const program = fs.readFileSync(absolutePath).toString();
-        const checksResult = findTestChecks(program, { failIfFewerRangesThanComments: true });
-
-        // Something went wrong when finding test checks
-        if (checksResult.isErr) {
-            return createErroneousTestReporter(`INVALID TEST FILE [${pathRelativeToResources}]`, checksResult.error);
-        }
-
-        const checks = checksResult.value;
-        for (const check of checks) {
-            // Check that reference is unresolved
-            if (check.comment === 'unresolved') {
-                references.push({
-                    range: check.range!,
-                    file: absolutePath,
-                });
-                continue;
-            }
-
-            // Check that reference is resolved and points to the target id
-            const referenceMatch = /references (?<targetId>.*)/gu.exec(check.comment);
-            if (referenceMatch) {
-                references.push({
-                    targetId: referenceMatch.groups!.targetId!,
-                    range: check.range!,
-                    file: absolutePath,
-                });
-                continue;
-            }
-
-            // Register a target with the given id
-            const targetMatch = /target (?<id>.*)/gu.exec(check.comment);
-            if (targetMatch) {
-                const id = targetMatch.groups!.id!;
-
-                if (targets.has(id)) {
-                    return createErroneousTestReporter(
-                        `INVALID TEST SUITE [${dirnameRelativeToResources}]`,
-                        new DuplicateTargetIdError(id),
-                    );
-                } else {
-                    targets.set(id, {
-                        id,
-                        range: check.range!,
-                        file: absolutePath,
-                    });
-                }
-                continue;
-            }
-
-            return createErroneousTestReporter(
-                `INVALID TEST FILE [${pathRelativeToResources}]`,
-                new InvalidCommentError(check.comment),
-            );
-        }
-    }
-
-    // Check that all references point to a valid target
-    for (const reference of references) {
-        if (reference.targetId && !targets.has(reference.targetId)) {
-            return createErroneousTestReporter(
-                `INVALID TEST SUITE [${dirnameRelativeToResources}]`,
-                new MissingTargetError(reference.targetId),
-            );
-        }
+    if (!actualTargetUri || !actualTargetRange) {
+        return undefined;
     }
 
     return {
-        testName: `[${dirnameRelativeToResources}] should be scoped correctly`,
-        absolutePaths,
-        expectedReferences: references,
-        expectedTargets: targets,
+        uri: actualTargetUri,
+        range: actualTargetRange,
     };
 };
 
-const createErroneousTestReporter = (testName: string, error: Error): ScopingTest => {
-    return {
-        testName,
-        absolutePaths: [],
-        expectedReferences: [],
-        expectedTargets: new Map(),
-        error,
-    };
+/**
+ * Find the reference in the given document that matches the expected reference.
+ *
+ * @param document The document to search in.
+ * @param expectedReference The expected reference.
+ * @returns The actual reference.
+ * @throws AssertionError If no reference was found.
+ */
+const findActualReference = (document: LangiumDocument, expectedReference: ExpectedReference): Reference => {
+    // Find actual reference
+    const actualReference = document.references.find((reference) => {
+        const actualReferenceRange = reference.$refNode?.range;
+        return actualReferenceRange && isRangeEqual(actualReferenceRange, expectedReference.location.range);
+    });
+
+    // Could not find a reference at the expected location
+    if (!actualReference) {
+        throw new AssertionError({
+            message: `Expected a reference but found none.\n    Reference Location: ${locationToString(
+                expectedReference.location,
+            )}`,
+        });
+    }
+    return actualReference;
 };
-
-interface ScopingTest {
-    testName: string;
-    absolutePaths: string[];
-    expectedReferences: Reference[];
-    expectedTargets: Map<string, Target>;
-    error?: Error;
-}
-
-interface Reference {
-    targetId?: string;
-    range: Range;
-    file: string;
-}
-
-interface Target {
-    id: string;
-    range: Range;
-    file: string;
-}
-
-class InvalidCommentError extends Error {
-    constructor(readonly comment: string) {
-        super(
-            `Invalid test comment (valid values are 'references <targetId>', 'unresolved', and 'target <id>'): ${comment}`,
-        );
-    }
-}
-
-class DuplicateTargetIdError extends Error {
-    constructor(readonly id: string) {
-        super(`Target ID ${id} is used more than once`);
-    }
-}
-
-class MissingTargetError extends Error {
-    constructor(readonly targetId: string) {
-        super(`No target with ID ${targetId} exists`);
-    }
-}

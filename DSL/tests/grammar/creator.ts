@@ -7,39 +7,24 @@ import { NoCommentsError } from '../helpers/testChecks';
 export const createGrammarTests = (): GrammarTest[] => {
     return listTestResources('grammar').map((pathRelativeToResources): GrammarTest => {
         const absolutePath = resolvePathRelativeToResources(path.join('grammar', pathRelativeToResources));
-        const program = fs.readFileSync(absolutePath).toString();
-        const comments = findTestComments(program);
+        const code = fs.readFileSync(absolutePath).toString();
+        const comments = findTestComments(code);
 
         // Must contain at least one comment
         if (comments.length === 0) {
-            return {
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                program,
-                expectedResult: 'invalid',
-                error: new NoCommentsError(),
-            };
+            return invalidTest(pathRelativeToResources, new NoCommentsError());
         }
 
         // Must contain no more than one comment
         if (comments.length > 1) {
-            return {
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                program,
-                expectedResult: 'invalid',
-                error: new MultipleCommentsError(comments),
-            };
+            return invalidTest(pathRelativeToResources, new MultipleCommentsError(comments));
         }
 
         const comment = comments[0];
 
         // Must contain a valid comment
         if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
-            return {
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                program,
-                expectedResult: 'invalid',
-                error: new InvalidCommentError(comment),
-            };
+            return invalidTest(pathRelativeToResources, new InvalidCommentError(comment));
         }
 
         let testName: string;
@@ -51,19 +36,49 @@ export const createGrammarTests = (): GrammarTest[] => {
 
         return {
             testName,
-            program,
+            code,
             expectedResult: comment,
         };
     });
 };
 
 /**
+ * Report a test that has errors.
+ *
+ * @param pathRelativeToResources The path to the test file relative to the resources directory.
+ * @param error The error that occurred.
+ */
+const invalidTest = (pathRelativeToResources: string, error: Error): GrammarTest => {
+    return {
+        testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
+        code: '',
+        expectedResult: 'invalid',
+        error,
+    };
+};
+
+/**
  * A description of a grammar test.
  */
 interface GrammarTest {
+    /**
+     * The name of the test.
+     */
     testName: string;
-    program: string;
+
+    /**
+     * The code to parse.
+     */
+    code: string;
+
+    /**
+     * The expected result after parsing the program.
+     */
     expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
+
+    /**
+     * An error that occurred while creating the test. If this is undefined, the test is valid.
+     */
     error?: Error;
 }
 

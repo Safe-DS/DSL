@@ -1,7 +1,7 @@
 import { Result } from 'true-myth';
 import { Range, Position } from 'vscode-languageserver';
 import { CLOSE, OPEN } from './testMarker';
-import { positionToString } from './stringification';
+import { positionToString } from './location';
 
 /**
  * Finds test ranges, i.e. parts of the program delimited by opening and closing test markers. They are sorted by the

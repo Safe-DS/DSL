@@ -15,7 +15,7 @@ describe('grammar', () => {
         }
 
         // Get the actual syntax errors
-        const { diagnostics } = await validationHelper(services)(test.program);
+        const { diagnostics } = await validationHelper(services)(test.code);
         const syntaxErrors = diagnostics.filter(
             (d) => d.severity === 1 && (d.code === 'lexing-error' || d.code === 'parsing-error'),
         );
