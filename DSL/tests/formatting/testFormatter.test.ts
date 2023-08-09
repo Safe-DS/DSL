@@ -8,7 +8,6 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const formatterTests = createFormatterTests();
 
 describe('formatter', async () => {
-
     // Test that the original code is formatted correctly
     it.each(await formatterTests)('$testName', async (test) => {
         // Test is invalid

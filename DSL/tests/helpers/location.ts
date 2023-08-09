@@ -1,5 +1,5 @@
 import { Location, Position, Range } from 'vscode-languageserver';
-import {isRangeEqual} from "langium/test";
+import { isRangeEqual } from 'langium/test';
 
 /**
  * Converts a position to a string.
