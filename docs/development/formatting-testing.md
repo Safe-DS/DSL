@@ -1,6 +1,7 @@
 # Formatting Testing
 
-Formatting tests are data driven instead of being specified explicitly. This document explains how to add a new formatting test.
+Formatting tests are data-driven instead of being specified explicitly. This document explains how to add a new
+formatting test.
 
 ## Adding a formatting test
 

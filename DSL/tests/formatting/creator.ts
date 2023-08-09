@@ -17,12 +17,7 @@ export const createFormatterTests = async (): Promise<FormatterTest[]> => {
 
         // Must contain exactly one separator
         if (parts.length !== 2) {
-            return {
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                originalCode: '',
-                expectedFormattedCode: '',
-                error: new SeparatorError(parts.length - 1),
-            };
+            return invalidTest(pathRelativeToResources, new SeparatorError(parts.length - 1));
         }
 
         // Original code must not contain syntax errors
@@ -35,12 +30,7 @@ export const createFormatterTests = async (): Promise<FormatterTest[]> => {
         );
 
         if (syntaxErrors.length > 0) {
-            return {
-                testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
-                originalCode,
-                expectedFormattedCode,
-                error: new SyntaxErrorsInOriginalCodeError(syntaxErrors),
-            };
+            return invalidTest(pathRelativeToResources, new SyntaxErrorsInOriginalCodeError(syntaxErrors));
         }
 
         return {
@@ -53,23 +43,68 @@ export const createFormatterTests = async (): Promise<FormatterTest[]> => {
     return Promise.all(testCases);
 };
 
+/**
+ * Report a test that has errors.
+ *
+ * @param pathRelativeToResources The path to the test file relative to the resources directory.
+ * @param error The error that occurred.
+ */
+const invalidTest = (pathRelativeToResources: string, error: Error): FormatterTest => {
+    return {
+        testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
+        originalCode: '',
+        expectedFormattedCode: '',
+        error,
+    };
+};
+
+/**
+ * Normalizes line breaks to `\n`.
+ *
+ * @param code The code to normalize.
+ * @return The normalized code.
+ */
 const normalizeLineBreaks = (code: string): string => {
     return code.replace(/\r\n?/gu, '\n');
 };
 
+/**
+ * A description of a formatter test.
+ */
 interface FormatterTest {
+    /**
+     * The name of the test.
+     */
     testName: string;
+
+    /**
+     * The original code before formatting.
+     */
     originalCode: string;
+
+    /**
+     * The expected formatted code.
+     */
     expectedFormattedCode: string;
+
+    /**
+     * An error that occurred while creating the test. If this is undefined, the test is valid.
+     */
     error?: Error;
 }
 
+/**
+ * The file contained no or more than one separator.
+ */
 class SeparatorError extends Error {
     constructor(readonly number_of_separators: number) {
         super(`Expected exactly one separator but found ${number_of_separators}.`);
     }
 }
 
+/**
+ * The original code contained syntax errors.
+ */
 class SyntaxErrorsInOriginalCodeError extends Error {
     constructor(readonly syntaxErrors: Diagnostic[]) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);

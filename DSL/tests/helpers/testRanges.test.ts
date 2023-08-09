@@ -62,7 +62,7 @@ describe('findTestRanges', () => {
             const error = result.error;
             expect(error).toBeInstanceOf(CloseWithoutOpenError);
             expect((error as CloseWithoutOpenError).position).toStrictEqual(Position.create(1, 1));
-            expect(error.message).toBe(`Found '${CLOSE}' without previous '${OPEN}' at 1:1.`);
+            expect(error.message).toBe(`Found '${CLOSE}' without previous '${OPEN}' at 2:2.`);
         }
     });
 
@@ -77,7 +77,7 @@ describe('findTestRanges', () => {
                 Position.create(0, 0),
                 Position.create(1, 0),
             ]);
-            expect(error.message).toBe(`Found '${OPEN}' without following '${CLOSE}' at 0:0, 1:0.`);
+            expect(error.message).toBe(`Found '${OPEN}' without following '${CLOSE}' at 1:1, 2:1.`);
         }
     });
 });

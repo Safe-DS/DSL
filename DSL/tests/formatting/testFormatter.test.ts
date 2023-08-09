@@ -8,6 +8,7 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const formatterTests = createFormatterTests();
 
 describe('formatter', async () => {
+    // Test that the original code is formatted correctly
     it.each(await formatterTests)('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
@@ -24,6 +25,7 @@ describe('formatter', async () => {
         await clearDocuments(services);
     });
 
+    // Test that the expected formatted code stays the same when formatted again
     it.each(await formatterTests)('$testName (idempotence)', async (test) => {
         // Test is invalid
         if (test.error) {
