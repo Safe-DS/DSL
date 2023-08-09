@@ -1,11 +1,12 @@
 # Grammar Testing
 
-Grammar tests are data driven instead of being specified explicitly. This document explains how to add a new grammar test.
+Grammar tests are data-driven instead of being specified explicitly. This document explains how to add a new grammar
+test.
 
 ## Adding a grammar test
 
-1. Create a new file with extension `.sdstest` in the `DSL/tests/resources/grammar` directory or any
-   subdirectory. Give the file a descriptive name, since the file name becomes part of the test name.
+1. Create a new file with extension `.sdstest` in the `DSL/tests/resources/grammar` directory or any subdirectory. Give
+   the file a descriptive name, since the file name becomes part of the test name.
 
     !!! note "Naming convention"
 
