@@ -4,4 +4,4 @@ dist/
 out/
 
 # DSL
-/DSL/vitest.config.ts
+/vitest.config.ts

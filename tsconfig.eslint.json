@@ -1,8 +1,8 @@
 {
-    "extends": "./DSL/tsconfig.json",
+    "extends": "./tsconfig.json",
     "compilerOptions": {
         "noEmit": true
     },
-    "include": ["./.eslintrc.js", "./docs/javascript/**/*", "./DSL/src/**/*", "./DSL/tests/**/*"],
+    "include": ["./.eslintrc.js", "./docs/javascript/**/*", "./src/**/*", "./tests/**/*"],
     "exclude": []
 }
