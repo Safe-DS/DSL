@@ -5,7 +5,7 @@ test.
 
 ## Adding a scoping test
 
-1. Create a new **folder** (not just a file!) in the `DSL/tests/resources/scoping` directory or any
+1. Create a new **folder** (not just a file!) in the `tests/resources/scoping` directory or any
    subdirectory. Give the folder a descriptive name, since the folder name becomes part of the test name.
 
     !!! tip "Skipping a test"
