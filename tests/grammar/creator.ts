@@ -4,34 +4,36 @@ import fs from 'fs';
 import { findTestComments } from '../helpers/testComments';
 import { NoCommentsError } from '../helpers/testChecks';
 
+const root = 'grammar'
+
 export const createGrammarTests = (): GrammarTest[] => {
-    return listTestResources('grammar').map((pathRelativeToResources): GrammarTest => {
-        const absolutePath = resolvePathRelativeToResources(path.join('grammar', pathRelativeToResources));
+    return listTestResources(root).map((relativeResourcePath): GrammarTest => {
+        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
         const code = fs.readFileSync(absolutePath).toString();
         const comments = findTestComments(code);
 
         // Must contain at least one comment
         if (comments.length === 0) {
-            return invalidTest(pathRelativeToResources, new NoCommentsError());
+            return invalidTest(relativeResourcePath, new NoCommentsError());
         }
 
         // Must contain no more than one comment
         if (comments.length > 1) {
-            return invalidTest(pathRelativeToResources, new MultipleCommentsError(comments));
+            return invalidTest(relativeResourcePath, new MultipleCommentsError(comments));
         }
 
         const comment = comments[0];
 
         // Must contain a valid comment
         if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
-            return invalidTest(pathRelativeToResources, new InvalidCommentError(comment));
+            return invalidTest(relativeResourcePath, new InvalidCommentError(comment));
         }
 
         let testName: string;
         if (comment === 'syntax_error') {
-            testName = `[${pathRelativeToResources}] should have syntax errors`;
+            testName = `[${relativeResourcePath}] should have syntax errors`;
         } else {
-            testName = `[${pathRelativeToResources}] should not have syntax errors`;
+            testName = `[${relativeResourcePath}] should not have syntax errors`;
         }
 
         return {

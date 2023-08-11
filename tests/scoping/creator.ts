@@ -10,9 +10,10 @@ import { EmptyFileSystem } from 'langium';
 import { SyntaxErrorsInCodeError } from '../helpers/testFileErrors';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const root = 'scoping';
 
 export const createScopingTests = (): Promise<ScopingTest[]> => {
-    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory('scoping');
+    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
 
     return Promise.all(
         Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) => createScopingTest(dirname, paths)),
@@ -20,15 +21,15 @@ export const createScopingTests = (): Promise<ScopingTest[]> => {
 };
 
 const createScopingTest = async (
-    dirnameRelativeToResources: string,
-    pathsRelativeToResources: string[],
+    relativeParentDirectoryPath: string,
+    relativeResourcePaths: string[],
 ): Promise<ScopingTest> => {
     const uris: string[] = [];
     const references: ExpectedReferenceWithTargetId[] = [];
     const targets: Map<string, Target> = new Map();
 
-    for (const pathRelativeToResources of pathsRelativeToResources) {
-        const absolutePath = resolvePathRelativeToResources(path.join('scoping', pathRelativeToResources));
+    for (const relativeResourcePath of relativeResourcePaths) {
+        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
         const uri = URI.file(absolutePath).toString();
         uris.push(uri);
 
@@ -38,7 +39,7 @@ const createScopingTest = async (
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
             return invalidTest(
-                `INVALID TEST FILE [${pathRelativeToResources}]`,
+                `INVALID TEST FILE [${relativeResourcePath}]`,
                 new SyntaxErrorsInCodeError(syntaxErrors),
             );
         }
@@ -47,7 +48,7 @@ const createScopingTest = async (
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest(`INVALID TEST FILE [${pathRelativeToResources}]`, checksResult.error);
+            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, checksResult.error);
         }
 
         for (const check of checksResult.value) {
@@ -76,7 +77,7 @@ const createScopingTest = async (
 
                 if (targets.has(id)) {
                     return invalidTest(
-                        `INVALID TEST SUITE [${dirnameRelativeToResources}]`,
+                        `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
                         new DuplicateTargetIdError(id),
                     );
                 } else {
@@ -89,7 +90,7 @@ const createScopingTest = async (
             }
 
             return invalidTest(
-                `INVALID TEST FILE [${pathRelativeToResources}]`,
+                `INVALID TEST FILE [${relativeResourcePath}]`,
                 new InvalidCommentError(check.comment),
             );
         }
@@ -100,7 +101,7 @@ const createScopingTest = async (
         if (reference.targetId) {
             if (!targets.has(reference.targetId)) {
                 return invalidTest(
-                    `INVALID TEST SUITE [${dirnameRelativeToResources}]`,
+                    `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
                     new MissingTargetError(reference.targetId),
                 );
             }
@@ -110,7 +111,7 @@ const createScopingTest = async (
     }
 
     return {
-        testName: `[${dirnameRelativeToResources}] should be scoped correctly`,
+        testName: `[${relativeParentDirectoryPath}] should be scoped correctly`,
         uris,
         expectedReferences: references,
     };

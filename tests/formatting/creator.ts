@@ -7,17 +7,18 @@ import {EmptyFileSystem} from 'langium';
 import {getSyntaxErrors} from "../helpers/diagnostics";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const root = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 
 export const createFormatterTests = async (): Promise<FormatterTest[]> => {
-    const testCases = listTestResources('formatting').map(async (pathRelativeToResources): Promise<FormatterTest> => {
-        const absolutePath = resolvePathRelativeToResources(path.join('formatting', pathRelativeToResources));
+    const testCases = listTestResources(root).map(async (relativeResourcePath): Promise<FormatterTest> => {
+        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
         const program = fs.readFileSync(absolutePath).toString();
         const parts = program.split(separator);
 
         // Must contain exactly one separator
         if (parts.length !== 2) {
-            return invalidTest(pathRelativeToResources, new SeparatorError(parts.length - 1));
+            return invalidTest(relativeResourcePath, new SeparatorError(parts.length - 1));
         }
 
         const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
@@ -26,17 +27,17 @@ export const createFormatterTests = async (): Promise<FormatterTest[]> => {
         // Original code must not contain syntax errors
         const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
         if (syntaxErrorsInOriginalCode.length > 0) {
-            return invalidTest(pathRelativeToResources, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
+            return invalidTest(relativeResourcePath, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
         }
 
         // Expected formatted code must not contain syntax errors
         const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
         if (syntaxErrorsInExpectedFormattedCode.length > 0) {
-            return invalidTest(pathRelativeToResources, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
+            return invalidTest(relativeResourcePath, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
         }
 
         return {
-            testName: `${pathRelativeToResources} should be formatted correctly`,
+            testName: `${relativeResourcePath} should be formatted correctly`,
             originalCode,
             expectedFormattedCode,
         };
