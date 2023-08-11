@@ -11,8 +11,8 @@ import { Location } from 'vscode-languageserver';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
-describe('scoping', () => {
-    it.each(createScopingTests())('$testName', async (test) => {
+describe('scoping', async () => {
+    it.each(await createScopingTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
             throw test.error;
