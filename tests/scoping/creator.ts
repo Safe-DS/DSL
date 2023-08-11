@@ -1,31 +1,28 @@
-import {listTestResources, resolvePathRelativeToResources} from '../helpers/testResources';
-import {group} from 'radash';
+import { listTestsResourcesGroupedByParentDirectory, resolvePathRelativeToResources } from '../helpers/testResources';
 import path from 'path';
 import fs from 'fs';
-import {findTestChecks} from '../helpers/testChecks';
-import {Location} from 'vscode-languageserver';
-import {URI} from 'vscode-uri';
-import {getSyntaxErrors} from "../helpers/diagnostics";
-import {createSafeDsServices} from "../../src/language-server/safe-ds-module";
-import {EmptyFileSystem} from "langium";
-import {SyntaxErrorsInCodeError} from "../helpers/testFileErrors";
+import { findTestChecks } from '../helpers/testChecks';
+import { Location } from 'vscode-languageserver';
+import { URI } from 'vscode-uri';
+import { getSyntaxErrors } from '../helpers/diagnostics';
+import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
+import { EmptyFileSystem } from 'langium';
+import { SyntaxErrorsInCodeError } from '../helpers/testFileErrors';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 
 export const createScopingTests = (): Promise<ScopingTest[]> => {
-    const pathsRelativeToResources = listTestResources('scoping');
-    const pathsRelativeToResourcesGroupedByDirname = group(pathsRelativeToResources, (pathRelativeToResources) =>
-        path.dirname(pathRelativeToResources),
-    ) as Record<string, string[]>;
+    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory('scoping');
 
     return Promise.all(
-        Object.entries(pathsRelativeToResourcesGroupedByDirname).map(([dirname, paths]) =>
-            createScopingTest(dirname, paths),
-        )
+        Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) => createScopingTest(dirname, paths)),
     );
 };
 
-const createScopingTest = async (dirnameRelativeToResources: string, pathsRelativeToResources: string[]): Promise<ScopingTest> => {
+const createScopingTest = async (
+    dirnameRelativeToResources: string,
+    pathsRelativeToResources: string[],
+): Promise<ScopingTest> => {
     const uris: string[] = [];
     const references: ExpectedReferenceWithTargetId[] = [];
     const targets: Map<string, Target> = new Map();
@@ -40,10 +37,13 @@ const createScopingTest = async (dirnameRelativeToResources: string, pathsRelati
         // File must not contain any syntax errors
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
-            return invalidTest(`INVALID TEST FILE [${pathRelativeToResources}]`, new SyntaxErrorsInCodeError(syntaxErrors));
+            return invalidTest(
+                `INVALID TEST FILE [${pathRelativeToResources}]`,
+                new SyntaxErrorsInCodeError(syntaxErrors),
+            );
         }
 
-        const checksResult = findTestChecks(code, uri, {failIfFewerRangesThanComments: true});
+        const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
