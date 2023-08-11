@@ -1,10 +1,10 @@
-import { listTestResources, resolvePathRelativeToResources } from '../helpers/testResources';
+import {listTestResources, resolvePathRelativeToResources} from '../helpers/testResources';
 import path from 'path';
 import fs from 'fs';
-import { validationHelper } from 'langium/test';
-import { Diagnostic } from 'vscode-languageserver-types';
-import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
-import { EmptyFileSystem } from 'langium';
+import {Diagnostic} from 'vscode-languageserver-types';
+import {createSafeDsServices} from '../../src/language-server/safe-ds-module';
+import {EmptyFileSystem} from 'langium';
+import {getSyntaxErrors} from "../helpers/diagnostics";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const separator = '// -----------------------------------------------------------------------------';
@@ -20,17 +20,19 @@ export const createFormatterTests = async (): Promise<FormatterTest[]> => {
             return invalidTest(pathRelativeToResources, new SeparatorError(parts.length - 1));
         }
 
-        // Original code must not contain syntax errors
         const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
         const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim();
 
-        const validationResult = await validationHelper(services)(parts[0]);
-        const syntaxErrors = validationResult.diagnostics.filter(
-            (d) => d.severity === 1 && (d.code === 'lexing-error' || d.code === 'parsing-error'),
-        );
+        // Original code must not contain syntax errors
+        const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
+        if (syntaxErrorsInOriginalCode.length > 0) {
+            return invalidTest(pathRelativeToResources, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
+        }
 
-        if (syntaxErrors.length > 0) {
-            return invalidTest(pathRelativeToResources, new SyntaxErrorsInOriginalCodeError(syntaxErrors));
+        // Expected formatted code must not contain syntax errors
+        const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
+        if (syntaxErrorsInExpectedFormattedCode.length > 0) {
+            return invalidTest(pathRelativeToResources, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
         }
 
         return {
@@ -94,7 +96,7 @@ interface FormatterTest {
 }
 
 /**
- * The file contained no or more than one separator.
+ * The file contains no or more than one separator.
  */
 class SeparatorError extends Error {
     constructor(readonly number_of_separators: number) {
@@ -103,12 +105,23 @@ class SeparatorError extends Error {
 }
 
 /**
- * The original code contained syntax errors.
+ * The original code contains syntax errors.
  */
 class SyntaxErrorsInOriginalCodeError extends Error {
     constructor(readonly syntaxErrors: Diagnostic[]) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
 
         super(`Original code has syntax errors:\n${syntaxErrorsAsString}`);
+    }
+}
+
+/**
+ * The expected formatted code contains syntax errors.
+ */
+class SyntaxErrorsInExpectedFormattedCodeError extends Error {
+    constructor(readonly syntaxErrors: Diagnostic[]) {
+        const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
+
+        super(`Expected formatted code has syntax errors:\n${syntaxErrorsAsString}`);
     }
 }
