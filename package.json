@@ -60,7 +60,7 @@
         "chevrotain": "^11.0.3",
         "commander": "^11.0.0",
         "glob": "^10.3.4",
-        "langium": "^1.2.1",
+        "langium": "^2.0.1",
         "radash": "^11.0.0",
         "true-myth": "^7.0.1",
         "vscode-languageclient": "^8.1.0",
