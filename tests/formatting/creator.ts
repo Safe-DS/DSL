@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { validationHelper } from 'langium/test';
 import { Diagnostic } from 'vscode-languageserver-types';
-import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
+import { createSafeDsServices } from '../../src/language/safe-ds-module';
 import { EmptyFileSystem } from 'langium';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;

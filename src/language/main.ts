@@ -1,7 +1,7 @@
 import { startLanguageServer } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import { createConnection, ProposedFeatures } from 'vscode-languageserver/node';
-import { createSafeDsServices } from './safe-ds-module';
+import { createConnection, ProposedFeatures } from 'vscode-languageserver/node.js';
+import { createSafeDsServices } from './safe-ds-module.js';
 
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);

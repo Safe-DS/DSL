@@ -7,7 +7,7 @@ import {
     SdsLiteralType,
     SdsTypeArgument,
     SdsTypeArgumentList,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
 export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject): SdsAnnotationCall[] {
     if (isSdsDeclaration(node)) {
