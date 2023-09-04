@@ -4,13 +4,11 @@ grammar SafeDs
 // Base interfaces
 // -----------------------------------------------------------------------------
 
-interface SdsObject {}
-
-interface SdsAnnotatedObject extends SdsObject {
+interface SdsAnnotatedObject {
     annotationCalls?: SdsAnnotationCall[]
 }
 
-interface SdsAbstractCall extends SdsObject {
+interface SdsAbstractCall {
 	argumentList: SdsArgumentList
 }
 
@@ -47,7 +45,7 @@ entry SdsModule returns SdsModule:
     )?
 ;
 
-interface SdsImport extends SdsObject {
+interface SdsImport {
     importedNamespace: string;
     alias?: SdsImportAlias;
 }
@@ -58,7 +56,7 @@ SdsImport returns SdsImport:
     alias=SdsImportAlias?
 ;
 
-interface SdsImportAlias extends SdsObject {
+interface SdsImportAlias {
     name: string;
 }
 
@@ -158,7 +156,7 @@ fragment SdsClassFragment:
     body=SdsClassBody?
 ;
 
-interface SdsParentTypeList extends SdsObject {
+interface SdsParentTypeList {
 	parentTypes: SdsType[]
 }
 
@@ -169,8 +167,8 @@ SdsParentTypeList returns SdsParentTypeList:
     ','?
 ;
 
-interface SdsClassBody extends SdsObject {
-	members: SdsObject[]
+interface SdsClassBody {
+	members: SdsAnnotatedObject[]
 }
 
 SdsClassBody returns SdsClassBody:
@@ -179,7 +177,7 @@ SdsClassBody returns SdsClassBody:
 
 interface SdsClassMember extends SdsDeclaration {}
 
-SdsClassMember returns SdsObject:
+SdsClassMember returns SdsAnnotatedObject:
     SdsAnnotatedClassMember
   | SdsUnannotatedClassMember
 ;
@@ -240,7 +238,7 @@ fragment SdsEnumFragment:
     body=SdsEnumBody?
 ;
 
-interface SdsEnumBody extends SdsObject {
+interface SdsEnumBody {
 	variants: SdsEnumVariant[]
 }
 
@@ -330,7 +328,7 @@ SdsAnnotationCallArgument returns SdsArgument:
 // Constraints
 // -----------------------------------------------------------------------------
 
-interface SdsConstraintList extends SdsObject {
+interface SdsConstraintList {
 	constraints: SdsConstraint[]
 }
 
@@ -345,7 +343,7 @@ SdsConstraintList returns SdsConstraintList:
     '}'
 ;
 
-interface SdsConstraint extends SdsObject {}
+interface SdsConstraint {}
 
 SdsConstraint returns SdsConstraint:
     SdsTypeParameterConstraint
@@ -372,11 +370,11 @@ SdsTypeParameterConstraintOperator returns string:
 // Callables, parameters, and results
 // -----------------------------------------------------------------------------
 
-interface SdsCallable extends SdsObject {
+interface SdsCallable {
 	parameterList: SdsParameterList
 }
 
-interface SdsParameterList extends SdsObject {
+interface SdsParameterList {
 	parameters: SdsParameter[]
 }
 
@@ -418,7 +416,7 @@ SdsParameter returns SdsParameter:
     ('=' defaultValue=SdsExpression)?
 ;
 
-interface SdsResultList extends SdsObject {
+interface SdsResultList {
 	results: SdsResult[]
 }
 
@@ -444,9 +442,9 @@ SdsResult returns SdsResult:
 // Statements
 // -----------------------------------------------------------------------------
 
-interface SdsStatement extends SdsObject {}
+interface SdsStatement {}
 
-interface SdsBlock extends SdsObject {
+interface SdsBlock {
 	statements: SdsStatement[]
 }
 
@@ -468,7 +466,7 @@ SdsAssignment returns SdsAssignment:
     assigneeList=SdsAssigneeList '=' expression=SdsExpression ';'
 ;
 
-interface SdsAssigneeList extends SdsObject {
+interface SdsAssigneeList {
 	assignees: SdsAssignee[]
 }
 
@@ -476,7 +474,7 @@ SdsAssigneeList returns SdsAssigneeList:
     assignees+=SdsAssignee  (',' assignees+=SdsAssignee  )* ','?
 ;
 
-interface SdsAssignee extends SdsObject {}
+interface SdsAssignee {}
 
 interface SdsPlaceholder extends SdsAssignee, SdsLocalVariable {}
 
@@ -505,7 +503,7 @@ SdsExpressionStatement returns SdsExpressionStatement:
 // Expressions
 // -----------------------------------------------------------------------------
 
-interface SdsExpression extends SdsObject {}
+interface SdsExpression {}
 
 SdsExpression returns SdsExpression:
     SdsLambda | SdsOrExpression
@@ -687,7 +685,7 @@ SdsChainedExpression returns SdsExpression:
     )*
 ;
 
-interface SdsArgumentList extends SdsObject {
+interface SdsArgumentList {
 	arguments: SdsArgument[]
 }
 
@@ -826,7 +824,7 @@ SdsTemplateStringEnd returns SdsExpression:
 // Types
 // -----------------------------------------------------------------------------
 
-interface SdsType extends SdsObject {}
+interface SdsType {}
 
 interface SdsNamedTypeDeclaration extends SdsDeclaration {}
 
@@ -863,7 +861,7 @@ SdsLiteralType returns SdsLiteralType:
     'literal' literalList=SdsLiteralList
 ;
 
-interface SdsLiteralList extends SdsObject {
+interface SdsLiteralList {
     literals: SdsLiteral[]
 }
 
@@ -921,7 +919,7 @@ SdsParentType returns SdsType:
     SdsNamedType ({SdsMemberType.receiver=current} '.' member=SdsNamedType)*
 ;
 
-interface SdsTypeParameterList extends SdsObject {
+interface SdsTypeParameterList {
 	typeParameters: SdsTypeParameter[]
 }
 
@@ -950,7 +948,7 @@ SdsTypeParameterVariance returns string:
     'in' | 'out'
 ;
 
-interface SdsTypeArgumentList extends SdsObject {
+interface SdsTypeArgumentList {
 	typeArguments: SdsTypeArgument[]
 }
 
@@ -968,7 +966,7 @@ SdsCallTypeArgumentList returns SdsTypeArgumentList:
     '>'
 ;
 
-interface SdsTypeArgument extends SdsObject {
+interface SdsTypeArgument {
 	typeParameter?: @SdsTypeParameter
 	value: SdsTypeArgumentValue
 }
@@ -978,7 +976,7 @@ SdsTypeArgument returns SdsTypeArgument:
     value=SdsTypeArgumentValue
 ;
 
-interface SdsTypeArgumentValue extends SdsObject {}
+interface SdsTypeArgumentValue {}
 
 interface SdsStarProjection extends SdsTypeArgumentValue {}
 
@@ -1007,7 +1005,7 @@ fragment SdsSchemaFragment:
     columnList=SdsColumnList
 ;
 
-interface SdsColumnList extends SdsObject {
+interface SdsColumnList {
 	columns: SdsColumn[]
 }
 
@@ -1015,7 +1013,7 @@ SdsColumnList returns SdsColumnList:
     {SdsColumnList} '{' (columns+=SdsColumn  (',' columns+=SdsColumn  )* ','? )? '}'
 ;
 
-interface SdsColumn extends SdsObject {
+interface SdsColumn {
 	columnName: SdsString
 	columnType: SdsType
 }
