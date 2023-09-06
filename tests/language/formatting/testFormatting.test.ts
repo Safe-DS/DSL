@@ -2,10 +2,10 @@ import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { clearDocuments, expectFormatting } from 'langium/test';
 import { describe, it } from 'vitest';
 import { EmptyFileSystem } from 'langium';
-import { createFormatterTests } from './creator.js';
+import { createFormattingTests } from './creator.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const formatterTests = createFormatterTests();
+const formatterTests = createFormattingTests();
 
 describe('formatter', async () => {
     // Test that the original code is formatted correctly

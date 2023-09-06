@@ -1,49 +1,53 @@
-import {listTestResources, resolvePathRelativeToResources} from '../../helpers/testResources.js';
+import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
-import {Diagnostic} from 'vscode-languageserver-types';
-import {createSafeDsServices} from '../../../src/language/safe-ds-module.js';
-import {EmptyFileSystem} from 'langium';
-import {getSyntaxErrors} from "../../helpers/diagnostics.js";
+import { Diagnostic } from 'vscode-languageserver-types';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { EmptyFileSystem } from 'langium';
+import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 
-export const createFormatterTests = async (): Promise<FormatterTest[]> => {
-    const testCases = listTestResources(root).map(async (relativeResourcePath): Promise<FormatterTest> => {
-        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
-        const program = fs.readFileSync(absolutePath).toString();
-        const parts = program.split(separator);
-
-        // Must contain exactly one separator
-        if (parts.length !== 2) {
-            return invalidTest(relativeResourcePath, new SeparatorError(parts.length - 1));
-        }
-
-        const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
-        const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim();
-
-        // Original code must not contain syntax errors
-        const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
-        if (syntaxErrorsInOriginalCode.length > 0) {
-            return invalidTest(relativeResourcePath, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
-        }
-
-        // Expected formatted code must not contain syntax errors
-        const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
-        if (syntaxErrorsInExpectedFormattedCode.length > 0) {
-            return invalidTest(relativeResourcePath, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
-        }
-
-        return {
-            testName: `${relativeResourcePath} should be formatted correctly`,
-            originalCode,
-            expectedFormattedCode,
-        };
-    });
-
+export const createFormattingTests = async (): Promise<FormattingTest[]> => {
+    const testCases = listTestResources(root).map(createFormattingTest);
     return Promise.all(testCases);
+};
+
+const createFormattingTest = async (relativeResourcePath: string): Promise<FormattingTest> => {
+    const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
+    const program = fs.readFileSync(absolutePath).toString();
+    const parts = program.split(separator);
+
+    // Must contain exactly one separator
+    if (parts.length !== 2) {
+        return invalidTest(relativeResourcePath, new SeparatorError(parts.length - 1));
+    }
+
+    const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
+    const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim();
+
+    // Original code must not contain syntax errors
+    const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
+    if (syntaxErrorsInOriginalCode.length > 0) {
+        return invalidTest(relativeResourcePath, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
+    }
+
+    // Expected formatted code must not contain syntax errors
+    const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
+    if (syntaxErrorsInExpectedFormattedCode.length > 0) {
+        return invalidTest(
+            relativeResourcePath,
+            new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode),
+        );
+    }
+
+    return {
+        testName: `${relativeResourcePath} should be formatted correctly`,
+        originalCode,
+        expectedFormattedCode,
+    };
 };
 
 /**
@@ -52,7 +56,7 @@ export const createFormatterTests = async (): Promise<FormatterTest[]> => {
  * @param pathRelativeToResources The path to the test file relative to the resources directory.
  * @param error The error that occurred.
  */
-const invalidTest = (pathRelativeToResources: string, error: Error): FormatterTest => {
+const invalidTest = (pathRelativeToResources: string, error: Error): FormattingTest => {
     return {
         testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
         originalCode: '',
@@ -74,7 +78,7 @@ const normalizeLineBreaks = (code: string): string => {
 /**
  * A description of a formatter test.
  */
-interface FormatterTest {
+interface FormattingTest {
     /**
      * The name of the test.
      */

@@ -37,6 +37,7 @@ describe('listTestResourcesGroupedByParentDirectory', () => {
 
 /**
  * Normalizes the given paths by replacing backslashes with slashes and sorting them.
+ *
  * @param paths The paths to normalize.
  * @return The normalized paths.
  */

@@ -12,21 +12,21 @@ import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const root = 'scoping';
+const root = 'validation';
 
-export const createScopingTests = (): Promise<ScopingTest[]> => {
+export const createValidationTests = (): Promise<ValidationTest[]> => {
     const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
     const testCases = Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) =>
-        createScopingTest(dirname, paths),
+        createValidationTest(dirname, paths),
     );
 
     return Promise.all(testCases);
 };
 
-const createScopingTest = async (
+const createValidationTest = async (
     relativeParentDirectoryPath: string,
     relativeResourcePaths: string[],
-): Promise<ScopingTest> => {
+): Promise<ValidationTest> => {
     const uris: string[] = [];
     const references: ExpectedReferenceWithTargetId[] = [];
     const targets: Map<string, Target> = new Map();
@@ -123,7 +123,7 @@ const createScopingTest = async (
  * @param testName The name of the test.
  * @param error The error that occurred.
  */
-const invalidTest = (testName: string, error: Error): ScopingTest => {
+const invalidTest = (testName: string, error: Error): ValidationTest => {
     return {
         testName,
         uris: [],
@@ -135,7 +135,7 @@ const invalidTest = (testName: string, error: Error): ScopingTest => {
 /**
  * A description of a scoping test.
  */
-interface ScopingTest {
+interface ValidationTest {
     /**
      * The name of the test.
      */
