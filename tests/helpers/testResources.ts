@@ -1,10 +1,6 @@
 import path from 'path';
 import { globSync } from 'glob';
-import {
-    PIPELINE_FILE_EXTENSION,
-    STUB_FILE_EXTENSION,
-    TEST_FILE_EXTENSION,
-} from '../../src/language/constant/fileExtensions.js';
+import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/constant/fileExtensions.js';
 import { group } from 'radash';
 
 const resourcesPath = path.join(__dirname, '..', 'resources');
@@ -20,23 +16,21 @@ export const resolvePathRelativeToResources = (pathRelativeToResources: string) 
 };
 
 /**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/` except those that have a name starting
- * with 'skip'.
+ * Lists all Safe-DS files in the given directory relative to `tests/resources/` that are not skipped.
  *
  * @param pathRelativeToResources The root directory relative to `tests/resources/`.
  * @return Paths to the Safe-DS files relative to `pathRelativeToResources`.
  */
 export const listTestResources = (pathRelativeToResources: string): string[] => {
-    const fileExtensions = [PIPELINE_FILE_EXTENSION, STUB_FILE_EXTENSION, TEST_FILE_EXTENSION];
-    const pattern = `**/*.{${fileExtensions.join(',')}}`;
+    const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
     const cwd = resolvePathRelativeToResources(pathRelativeToResources);
 
     return globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
 };
 
 /**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/` except those that have a name starting
- * with 'skip'. The result is grouped by the parent directory.
+ * Lists all Safe-DS files in the given directory relative to `tests/resources/` that are not skipped. The result is
+ * grouped by the parent directory.
  *
  * @param pathRelativeToResources The root directory relative to `tests/resources/`.
  * @return Paths to the Safe-DS files relative to `pathRelativeToResources` grouped by the parent directory.
