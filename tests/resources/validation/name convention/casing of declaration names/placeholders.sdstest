@@ -1,0 +1,12 @@
+package tests.validation.declarations.nameCasing
+
+pipeline myPipeline2 {
+    // $TEST$ warning "Names of placeholders should be lowerCamelCase."
+    val »PlaceholderUppercase« = 1;
+    // $TEST$ no_warning "Names of placeholders should be lowerCamelCase."
+    val »placeholderLowercase1« = 1;
+    // $TEST$ warning "Names of placeholders should be lowerCamelCase."
+    val »_placeholderUnderscore« = 1;
+    // $TEST$ warning "Names of placeholders should be lowerCamelCase."
+    val »placeholder_snake_case« = 1;
+}

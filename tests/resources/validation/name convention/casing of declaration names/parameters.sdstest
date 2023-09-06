@@ -1,0 +1,12 @@
+package tests.validation.declarations.nameCasing
+
+fun myFunction1(
+    // $TEST$ warning "Names of parameters should be lowerCamelCase."
+    »ParameterUppercase«: Int,
+    // $TEST$ no_warning "Names of parameters should be lowerCamelCase."
+    »parameterLowercase1«: Int,
+    // $TEST$ warning "Names of parameters should be lowerCamelCase."
+    »_parameterUnderscore«: Int,
+    // $TEST$ warning "Names of parameters should be lowerCamelCase."
+    »parameter_snake_case«: Int
+)

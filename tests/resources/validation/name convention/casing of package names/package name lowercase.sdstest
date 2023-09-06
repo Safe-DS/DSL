@@ -1,0 +1,2 @@
+// $TEST$ no_warning "All segments of the qualified name of a package should be lowerCamelCase."
+package »tests.validation.declarations.lowercase1«
