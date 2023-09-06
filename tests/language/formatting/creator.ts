@@ -1,8 +1,8 @@
-import {listTestResources, resolvePathRelativeToResources} from '../helpers/testResources';
+import {listTestResources, resolvePathRelativeToResources} from '../../helpers/testResources';
 import path from 'path';
 import fs from 'fs';
 import {Diagnostic} from 'vscode-languageserver-types';
-import {createSafeDsServices} from '../../src/language-server/safe-ds-module';
+import {createSafeDsServices} from '../../../src/language/safe-ds-module';
 import {EmptyFileSystem} from 'langium';
 import {getSyntaxErrors} from "../helpers/diagnostics";
 

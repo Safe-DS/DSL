@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { SdsModule } from '../language-server/generated/ast';
-import { SafeDsLanguageMetaData } from '../language-server/generated/module';
-import { createSafeDsServices } from '../language-server/safe-ds-module';
-import { extractAstNode } from './cli-util';
-import { generatePython } from './generator';
+import { SdsModule } from '../language/generated/ast.js';
+import { SafeDsLanguageMetaData } from '../language/generated/module.js';
+import { createSafeDsServices } from '../language/safe-ds-module.js';
+import { extractAstNode } from './cli-util.js';
+import { generatePython } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
 
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {

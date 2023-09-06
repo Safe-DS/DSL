@@ -3,12 +3,12 @@
     "languages": [
         {
             "id": "safe-ds",
-            "grammar": "src/language-server/grammar/safe-ds.langium",
+            "grammar": "src/language/grammar/safe-ds.langium",
             "fileExtensions": [".sdspipe", ".sdsstub", ".sdstest"],
             "textMate": {
                 "out": "syntaxes/safe-ds.tmLanguage.json"
             }
         }
     ],
-    "out": "src/language-server/generated"
+    "out": "src/language/generated"
 }

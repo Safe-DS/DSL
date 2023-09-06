@@ -1,17 +1,25 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "module": "commonjs",
-        "lib": ["ESNext", "dom"],
-        "sourceMap": true,
-        "outDir": "out",
-        "strict": true,
-        "strictPropertyInitialization": false,
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+      "target": "ES2017",
+      "module": "Node16",
+      "lib": ["ESNext", "DOM", "WebWorker"],
+      "sourceMap": true,
+      "outDir": "out",
+      "strict": true,
+      "noUnusedLocals": true,
+      "noImplicitReturns": true,
+      "noImplicitOverride": true,
+      "moduleResolution": "Node16",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
     },
-    "include": ["src/**/*.ts", "tests/**/*.ts"],
-    "exclude": ["out", "node_modules"]
-}
+    "include": [
+       "src/**/*.ts"
+    ],
+    "exclude": [
+       "out",
+       "node_modules"
+    ]
+  }
+  

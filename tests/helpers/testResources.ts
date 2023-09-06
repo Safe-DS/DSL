@@ -4,7 +4,7 @@ import {
     PIPELINE_FILE_EXTENSION,
     STUB_FILE_EXTENSION,
     TEST_FILE_EXTENSION,
-} from '../../src/language-server/constant/fileExtensions';
+} from '../../src/language/constant/fileExtensions.js';
 import { group } from 'radash';
 
 const resourcesPath = path.join(__dirname, '..', 'resources');

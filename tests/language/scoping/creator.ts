@@ -1,7 +1,7 @@
-import { listTestsResourcesGroupedByParentDirectory, resolvePathRelativeToResources } from '../helpers/testResources';
+import { listTestsResourcesGroupedByParentDirectory, resolvePathRelativeToResources } from '../../helpers/testResources';
 import path from 'path';
 import fs from 'fs';
-import { findTestChecks } from '../helpers/testChecks';
+import { findTestChecks } from '../../helpers/testChecks';
 import { Location } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 import { getSyntaxErrors } from '../helpers/diagnostics';

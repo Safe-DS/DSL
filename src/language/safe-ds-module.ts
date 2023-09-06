@@ -8,9 +8,9 @@ import {
     Module,
     PartialLangiumServices,
 } from 'langium';
-import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module';
-import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator';
-import { SafeDSFormatter } from './formatting/safe-ds-formatter';
+import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
+import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator.js';
+import { SafeDSFormatter } from './formatting/safe-ds-formatter.js';
 
 /**
  * Declaration of custom services - add your own service classes here.

@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { CompositeGeneratorNode, toString } from 'langium';
 import path from 'path';
-import { SdsModule } from '../language-server/generated/ast';
-import { extractDestinationAndName } from './cli-util';
+import { SdsModule } from '../language/generated/ast.js';
+import { extractDestinationAndName } from './cli-util.js';
 
 export const generatePython = function (module: SdsModule, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);

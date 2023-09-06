@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { CloseWithoutOpenError, findTestRanges, OpenWithoutCloseError } from './testRanges';
+import { CloseWithoutOpenError, findTestRanges, OpenWithoutCloseError } from './testRanges.js';
 import { Position, Range } from 'vscode-languageserver';
-import { CLOSE, OPEN } from './testMarker';
+import { CLOSE, OPEN } from './testMarker.js';
 
 describe('findTestRanges', () => {
     it('should find all ranges enclosed by test markers in order of opening markers', () => {
