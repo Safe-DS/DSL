@@ -5,14 +5,15 @@ import {
 import path from 'path';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
-import { Location } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { DocumentUri, Range } from 'vscode-languageserver-types';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'validation';
+const issueTypes = ['error', 'no_error', 'warning', 'no_warning', 'info', 'no_info'];
 
 export const createValidationTests = (): Promise<ValidationTest[]> => {
     const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
@@ -28,8 +29,7 @@ const createValidationTest = async (
     relativeResourcePaths: string[],
 ): Promise<ValidationTest> => {
     const uris: string[] = [];
-    const references: ExpectedReferenceWithTargetId[] = [];
-    const targets: Map<string, Target> = new Map();
+    const issues: ExpectedIssue[] = [];
 
     for (const relativeResourcePath of relativeResourcePaths) {
         const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
@@ -47,7 +47,7 @@ const createValidationTest = async (
             );
         }
 
-        const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
+        const checksResult = findTestChecks(code, uri);
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
@@ -55,65 +55,42 @@ const createValidationTest = async (
         }
 
         for (const check of checksResult.value) {
-            // Expected unresolved reference
-            if (check.comment === 'unresolved') {
-                references.push({
-                    location: check.location!,
-                });
-                continue;
-            }
+            const match = /\s*(?<type>\S+)\s*(?:(?<messageIsRegex>r)?"(?<message>[^"]*)")?/gu.exec(check.comment);
 
-            // Expected that reference is resolved and points to the target id
-            const referenceMatch = /references (?<targetId>.*)/gu.exec(check.comment);
-            if (referenceMatch) {
-                references.push({
-                    location: check.location!,
-                    targetId: referenceMatch.groups!.targetId!,
-                });
-                continue;
-            }
-
-            // Register a target with the given id
-            const targetMatch = /target (?<id>.*)/gu.exec(check.comment);
-            if (targetMatch) {
-                const id = targetMatch.groups!.id!;
-
-                if (targets.has(id)) {
-                    return invalidTest(
-                        `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
-                        new DuplicateTargetIdError(id),
-                    );
-                } else {
-                    targets.set(id, {
-                        id,
-                        location: check.location!,
-                    });
-                }
-                continue;
-            }
-
-            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new InvalidCommentError(check.comment));
-        }
-    }
-
-    // Check that all references point to a valid target and store the target location
-    for (const reference of references) {
-        if (reference.targetId) {
-            if (!targets.has(reference.targetId)) {
+            // Overall comment is invalid
+            if (!match) {
                 return invalidTest(
-                    `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
-                    new MissingTargetError(reference.targetId),
+                    `INVALID TEST FILE [${relativeResourcePath}]`,
+                    new InvalidCommentError(check.comment),
                 );
             }
 
-            reference.targetLocation = targets.get(reference.targetId)!.location;
+            // Extract groups from the match
+            const type = match.groups!.type;
+            const messageIsRegex = match.groups!.messageIsRegex === 'r';
+            const message = match.groups!.message;
+
+            // Validate the type
+            if (!issueTypes.includes(type)) {
+                return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new InvalidIssueTypeError(type));
+            }
+
+            // Add the issue
+            issues.push({
+                presence: getPresenceFromIssueType(type),
+                severity: getSeverityFromIssueType(type)!,
+                message,
+                messageIsRegex,
+                uri,
+                range: check.location?.range,
+            });
         }
     }
 
     return {
-        testName: `[${relativeParentDirectoryPath}] should be scoped correctly`,
+        testName: `[${relativeParentDirectoryPath}] should be validated correctly`,
         uris,
-        expectedReferences: references,
+        expectedIssues: issues,
     };
 };
 
@@ -127,13 +104,33 @@ const invalidTest = (testName: string, error: Error): ValidationTest => {
     return {
         testName,
         uris: [],
-        expectedReferences: [],
+        expectedIssues: [],
         error,
     };
 };
 
+const getPresenceFromIssueType = (type: string): Presence => {
+    return type.startsWith('no_') ? 'absent' : 'present';
+}
+
+const getSeverityFromIssueType = (type: string): Severity | null => {
+    switch (type) {
+        case 'error':
+        case 'no_error':
+            return 'error';
+        case 'warning':
+        case 'no_warning':
+            return 'warning';
+        case 'info':
+        case 'no_info':
+            return 'info';
+    }
+
+    return null;
+}
+
 /**
- * A description of a scoping test.
+ * A description of a validation test.
  */
 interface ValidationTest {
     /**
@@ -147,10 +144,9 @@ interface ValidationTest {
     uris: string[];
 
     /**
-     * The references we expect to find in the workspace. It is allowed to have additional references, which will not be
-     * checked.
+     * The issues we expect to find in the workspace.
      */
-    expectedReferences: ExpectedReference[];
+    expectedIssues: ExpectedIssue[];
 
     /**
      * An error that occurred while creating the test. If this is undefined, the test is valid.
@@ -159,45 +155,49 @@ interface ValidationTest {
 }
 
 /**
- * A reference that should point to some target or be unresolved.
+ * An issue that is expected to be present in or absent from the workspace.
  */
-export interface ExpectedReference {
+export interface ExpectedIssue {
     /**
-     * The location of the reference.
+     * Whether the issue should be present or absent.
      */
-    location: Location;
+    presence: Presence;
 
     /**
-     * The location of the target that the reference should point to. If undefined, the reference should be unresolved.
+     * The severity of the issue.
      */
-    targetLocation?: Location;
+    severity: Severity;
+
+    /**
+     * The message of the issue.
+     */
+    message?: string;
+
+    /**
+     * Whether the message should be interpreted as a regular expression.
+     */
+    messageIsRegex?: boolean;
+
+    /**
+     * The URI of the file containing the issue.
+     */
+    uri: DocumentUri;
+
+    /**
+     * The range of the issue. If undefined, the issue is expected to be present in the whole file.
+     */
+    range?: Range;
 }
 
 /**
- * A reference that should point to some target or be unresolved. Used during the creation of scoping tests until all
- * targets have been found. At this point the IDs are replaced with the locations of the targets.
+ * Whether the issue should be present or absent.
  */
-interface ExpectedReferenceWithTargetId extends ExpectedReference {
-    /**
-     * The ID of the target that the reference should point to. If undefined, the reference should be unresolved.
-     */
-    targetId?: string;
-}
+export type Presence = 'present' | 'absent';
 
 /**
- * A name that can be referenced.
+ * The severity of the issue.
  */
-interface Target {
-    /**
-     * The ID of the target.
-     */
-    id: string;
-
-    /**
-     * The location of the target.
-     */
-    location: Location;
-}
+export type Severity = 'error' | 'warning' | 'info';
 
 /**
  * A test comment did not match the expected format.
@@ -205,25 +205,16 @@ interface Target {
 class InvalidCommentError extends Error {
     constructor(readonly comment: string) {
         super(
-            `Invalid test comment (valid values are 'references <targetId>', 'unresolved', and 'target <id>'): ${comment}`,
+            `Invalid test comment (refer to the documentation for guidance): ${comment}`,
         );
     }
 }
 
 /**
- * Several targets have the same ID.
+ * A test comment did not specify a valid issue type.
  */
-class DuplicateTargetIdError extends Error {
-    constructor(readonly id: string) {
-        super(`Target ID ${id} is used more than once`);
-    }
-}
-
-/**
- * A reference points to a target that does not exist.
- */
-class MissingTargetError extends Error {
-    constructor(readonly targetId: string) {
-        super(`No target with ID ${targetId} exists`);
+class InvalidIssueTypeError extends Error {
+    constructor(readonly type: string) {
+        super(`Invalid type of issue (valid values are ${issueTypes.join()}): ${type}`);
     }
 }

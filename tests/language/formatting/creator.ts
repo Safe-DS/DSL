@@ -76,7 +76,7 @@ const normalizeLineBreaks = (code: string): string => {
 };
 
 /**
- * A description of a formatter test.
+ * A description of a formatting test.
  */
 interface FormattingTest {
     /**
