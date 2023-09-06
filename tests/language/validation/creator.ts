@@ -13,7 +13,7 @@ import { DocumentUri, Range } from 'vscode-languageserver-types';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'validation';
-const issueTypes = ['error', 'no_error', 'warning', 'no_warning', 'info', 'no_info'];
+const issueTypes = ['error', 'no_error', 'warning', 'no_warning', 'info', 'no_info', 'hint', 'no_hint'];
 
 export const createValidationTests = (): Promise<ValidationTest[]> => {
     const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
@@ -124,6 +124,9 @@ const getSeverityFromIssueType = (type: string): Severity | null => {
         case 'info':
         case 'no_info':
             return 'info';
+        case 'hint':
+        case 'no_hint':
+            return 'hint';
     }
 
     return null;
@@ -197,7 +200,7 @@ export type Presence = 'present' | 'absent';
 /**
  * The severity of the issue.
  */
-export type Severity = 'error' | 'warning' | 'info';
+export type Severity = 'error' | 'warning' | 'info' | 'hint';
 
 /**
  * A test comment did not match the expected format.
