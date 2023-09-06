@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges';
-import { CLOSE, OPEN } from './testMarker';
+import { CloseWithoutOpenError, OpenWithoutCloseError } from './testRanges.js';
+import { CLOSE, OPEN } from './testMarker.js';
 import {
     FewerRangesThanCommentsError,
     findTestChecks,
     MoreRangesThanCommentsError,
     NoCommentsError,
-} from './testChecks';
+} from './testChecks.js';
 import { Range } from 'vscode-languageserver';
 
 const uri = 'file:///test.sdstest';
