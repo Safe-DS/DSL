@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { createGrammarTests } from './creator';
@@ -17,7 +17,7 @@ describe('grammar', () => {
         // Get the actual syntax errors
         const { diagnostics } = await validationHelper(services)(test.code);
         const syntaxErrors = diagnostics.filter(
-            (d) => d.severity === 1 && (d.code === 'lexing-error' || d.code === 'parsing-error'),
+            (d) => d.severity === 1 && (d.data.code === 'lexing-error' || d.data.code === 'parsing-error'),
         );
 
         // Expected syntax errors

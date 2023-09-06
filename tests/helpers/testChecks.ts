@@ -1,6 +1,6 @@
 import { Location, Range } from 'vscode-languageserver';
-import { findTestComments } from './testComments';
-import { findTestRanges, FindTestRangesError } from './testRanges';
+import { findTestComments } from './testComments.js';
+import { findTestRanges, FindTestRangesError } from './testRanges.js';
 import { Result } from 'true-myth';
 
 /**

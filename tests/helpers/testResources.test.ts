@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { listTestResources } from './testResources';
+import { listTestResources } from './testResources.js';
 
 describe('listTestResources', () => {
     it('should yield all Safe-DS files in a directory that are not skipped', () => {

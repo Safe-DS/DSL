@@ -1,4 +1,4 @@
-import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module';
 import { clearDocuments, expectFormatting } from 'langium/test';
 import { describe, it } from 'vitest';
 import { EmptyFileSystem } from 'langium';

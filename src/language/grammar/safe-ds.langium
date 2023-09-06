@@ -14,12 +14,12 @@ interface SdsAbstractCall extends SdsObject {
 	argumentList: SdsArgumentList
 }
 
-interface SdsDeclaration extends SdsAnnotatedObject, SdsObject {
+interface SdsDeclaration extends SdsAnnotatedObject {
     annotationCallList?: SdsAnnotationCallList
 	name: string
 }
 
-interface SdsLocalVariable extends SdsDeclaration, SdsObject {}
+interface SdsLocalVariable extends SdsDeclaration {}
 
 
 // -----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ QualifiedName returns string:
 // Declarations
 // -----------------------------------------------------------------------------
 
-interface SdsModuleMember extends SdsDeclaration, SdsObject {}
+interface SdsModuleMember extends SdsDeclaration {}
 
 SdsAnnotatedModuleMember returns SdsAnnotatedObject:
     {SdsAnnotationCallList}
@@ -170,16 +170,16 @@ SdsParentTypeList returns SdsParentTypeList:
 ;
 
 interface SdsClassBody extends SdsObject {
-	members: SdsObject[]
+	members: SdsAnnotatedObject[]
 }
 
 SdsClassBody returns SdsClassBody:
     {SdsClassBody} '{' members+=SdsClassMember* '}'
 ;
 
-interface SdsClassMember extends SdsDeclaration, SdsObject {}
+interface SdsClassMember extends SdsDeclaration {}
 
-SdsClassMember returns SdsObject:
+SdsClassMember returns SdsAnnotatedObject:
     SdsAnnotatedClassMember
   | SdsUnannotatedClassMember
 ;
@@ -427,7 +427,7 @@ SdsResultList returns SdsResultList:
   | {SdsResultList} '->' '(' (results+=SdsResult (',' results+=SdsResult)* ','? )? ')'
 ;
 
-interface SdsAbstractResult extends SdsDeclaration, SdsObject {}
+interface SdsAbstractResult extends SdsDeclaration {}
 
 interface SdsResult extends SdsAbstractResult {
 	^type?: SdsType
@@ -737,7 +737,7 @@ SdsBoolean returns SdsBoolean:
   | {SdsBoolean} 'false'
 ;
 
-interface SdsNumber extends SdsLiteral, SdsExpression {}
+interface SdsNumber extends SdsLiteral {}
 
 interface SdsFloat extends SdsNumber {
 	value: number
@@ -796,7 +796,7 @@ SdsTemplateString returns SdsTemplateString:
     expressions+=SdsTemplateStringEnd
 ;
 
-interface SdsTemplateStringPart extends SdsExpression, SdsLiteral {
+interface SdsTemplateStringPart extends SdsLiteral {
 	value: string
 }
 
@@ -828,7 +828,7 @@ SdsTemplateStringEnd returns SdsExpression:
 
 interface SdsType extends SdsObject {}
 
-interface SdsNamedTypeDeclaration extends SdsDeclaration, SdsObject {}
+interface SdsNamedTypeDeclaration extends SdsDeclaration {}
 
 interface SdsMemberType extends SdsType {
 	member: SdsNamedType
