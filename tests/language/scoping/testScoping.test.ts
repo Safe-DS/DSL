@@ -1,11 +1,11 @@
 import { describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
-import { isLocationEqual, locationToString } from '../../helpers/location';
-import { createScopingTests, ExpectedReference } from './creator';
+import { isLocationEqual, locationToString } from '../../helpers/location.js';
+import { createScopingTests, ExpectedReference } from './creator.js';
 import { LangiumDocument, Reference } from 'langium';
 import { Location } from 'vscode-languageserver';
 

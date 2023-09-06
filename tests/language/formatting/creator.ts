@@ -1,10 +1,10 @@
-import {listTestResources, resolvePathRelativeToResources} from '../../helpers/testResources';
+import {listTestResources, resolvePathRelativeToResources} from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import {Diagnostic} from 'vscode-languageserver-types';
-import {createSafeDsServices} from '../../../src/language/safe-ds-module';
+import {createSafeDsServices} from '../../../src/language/safe-ds-module.js';
 import {EmptyFileSystem} from 'langium';
-import {getSyntaxErrors} from "../helpers/diagnostics";
+import {getSyntaxErrors} from "../../helpers/diagnostics.js";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'formatting';

@@ -1,8 +1,8 @@
-import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources';
+import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
-import { findTestComments } from '../../helpers/testComments';
-import { NoCommentsError } from '../../helpers/testChecks';
+import { findTestComments } from '../../helpers/testComments.js';
+import { NoCommentsError } from '../../helpers/testChecks.js';
 
 const root = 'grammar'
 

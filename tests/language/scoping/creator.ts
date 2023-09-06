@@ -1,13 +1,12 @@
-import { listTestsResourcesGroupedByParentDirectory, resolvePathRelativeToResources } from '../../helpers/testResources';
+import { listTestsResourcesGroupedByParentDirectory, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
-import { findTestChecks } from '../../helpers/testChecks';
+import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
-import { getSyntaxErrors } from '../helpers/diagnostics';
-import { createSafeDsServices } from '../../src/language-server/safe-ds-module';
+import {getSyntaxErrors, SyntaxErrorsInCodeError} from '../../helpers/diagnostics.js';
 import { EmptyFileSystem } from 'langium';
-import { SyntaxErrorsInCodeError } from '../helpers/testFileErrors';
+import {createSafeDsServices} from "../../../src/language/safe-ds-module.js";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'scoping';

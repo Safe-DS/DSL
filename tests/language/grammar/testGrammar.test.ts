@@ -1,10 +1,10 @@
 import { describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
-import { createGrammarTests } from './creator';
-import { clearDocuments, validationHelper } from 'langium/test';
-import {getSyntaxErrors} from "../helpers/diagnostics";
+import { createGrammarTests } from './creator.js';
+import { clearDocuments } from 'langium/test';
+import {getSyntaxErrors} from "../../helpers/diagnostics.js";
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 

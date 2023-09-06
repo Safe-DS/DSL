@@ -12,6 +12,17 @@ import {Diagnostic} from "vscode-languageserver-types";
 export const getSyntaxErrors = async (services: LangiumServices, code: string): Promise<Diagnostic[]> => {
     const validationResult = await validationHelper(services)(code);
     return validationResult.diagnostics.filter(
-        (d) => d.severity === 1 && (d.code === 'lexing-error' || d.code === 'parsing-error'),
+        (d) => d.severity === 1 && (d.data.code === 'lexing-error' || d.data.code === 'parsing-error'),
     );
+}
+
+/**
+ * The code contains syntax errors.
+ */
+export class SyntaxErrorsInCodeError extends Error {
+    constructor(readonly syntaxErrors: Diagnostic[]) {
+        const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
+
+        super(`Code has syntax errors:\n${syntaxErrorsAsString}`);
+    }
 }
