@@ -1,6 +1,6 @@
-import {validationHelper} from 'langium/test';
-import {LangiumServices} from 'langium';
-import {Diagnostic, DiagnosticSeverity} from 'vscode-languageserver-types';
+import { validationHelper } from 'langium/test';
+import { LangiumServices } from 'langium';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
 
 /**
  * Get syntax errors from a code snippet.

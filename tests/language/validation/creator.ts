@@ -183,7 +183,7 @@ const validSeverities = ['error', 'warning', 'info', 'hint'] as const;
 /**
  * The severity of the issue.
  */
-export type Severity = typeof validSeverities[number];
+export type Severity = (typeof validSeverities)[number];
 
 /**
  * A test comment did not match the expected format.
@@ -199,6 +199,6 @@ class InvalidCommentError extends Error {
  */
 class InvalidSeverityError extends Error {
     constructor(readonly type: string) {
-        super(`Invalid severity (valid values are ${validSeverities.join(", ")}): ${type}`);
+        super(`Invalid severity (valid values are ${validSeverities.join(', ')}): ${type}`);
     }
 }

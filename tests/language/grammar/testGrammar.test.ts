@@ -4,7 +4,7 @@ import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { createGrammarTests } from './creator.js';
 import { clearDocuments } from 'langium/test';
-import {getSyntaxErrors} from "../../helpers/diagnostics.js";
+import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 

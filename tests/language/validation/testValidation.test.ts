@@ -31,7 +31,9 @@ describe('validation', async () => {
             if (expectedIssue.presence === 'present') {
                 if (actualIssues.length === 0) {
                     throw new AssertionError({
-                        message: `Expected to find a matching issue ${issueLocationToString(expectedIssue)} but found none.`,
+                        message: `Expected to find a matching issue ${issueLocationToString(
+                            expectedIssue,
+                        )} but found none.`,
                         actual: [],
                         expected: [expectedIssue],
                     });
@@ -42,7 +44,9 @@ describe('validation', async () => {
             else {
                 if (actualIssues.length > 0) {
                     throw new AssertionError({
-                        message: `Expected to find no matching issue ${issueLocationToString(expectedIssue)} but found some.`,
+                        message: `Expected to find no matching issue ${issueLocationToString(
+                            expectedIssue,
+                        )} but found some.`,
                         actual: actualIssues,
                         expected: [],
                     });
@@ -92,7 +96,7 @@ const getMatchingActualIssues = (expectedIssue: ExpectedIssue): Diagnostic[] => 
         result = result.filter((d) => isRangeEqual(d.range, expectedIssue.range!));
     }
 
-    return result
+    return result;
 };
 
 /**
@@ -102,8 +106,8 @@ const getMatchingActualIssues = (expectedIssue: ExpectedIssue): Diagnostic[] => 
  */
 const issueLocationToString = (expectedIssue: ExpectedIssue): string => {
     if (expectedIssue.range) {
-        return `at ${locationToString({uri: expectedIssue.uri, range: expectedIssue.range})}`;
+        return `at ${locationToString({ uri: expectedIssue.uri, range: expectedIssue.range })}`;
     } else {
         return `in ${expectedIssue.uri}`;
     }
-}
+};
