@@ -1,9 +1,10 @@
 import { describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
-import { createGrammarTests } from './creator';
-import { clearDocuments, validationHelper } from 'langium/test';
+import { createGrammarTests } from './creator.js';
+import { clearDocuments } from 'langium/test';
+import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
@@ -15,17 +16,14 @@ describe('grammar', () => {
         }
 
         // Get the actual syntax errors
-        const { diagnostics } = await validationHelper(services)(test.code);
-        const syntaxErrors = diagnostics.filter(
-            (d) => d.severity === 1 && (d.data.code === 'lexing-error' || d.data.code === 'parsing-error'),
-        );
+        const actualSyntaxErrors = await getSyntaxErrors(services, test.code);
 
         // Expected syntax errors
         if (test.expectedResult === 'syntax_error') {
-            if (syntaxErrors.length === 0) {
+            if (actualSyntaxErrors.length === 0) {
                 throw new AssertionError({
                     message: 'Expected syntax errors but found none.',
-                    actual: syntaxErrors,
+                    actual: actualSyntaxErrors,
                     expected: [],
                 });
             }
@@ -33,10 +31,10 @@ describe('grammar', () => {
 
         // Expected no syntax errors
         else if (test.expectedResult === 'no_syntax_error') {
-            if (syntaxErrors.length > 0) {
+            if (actualSyntaxErrors.length > 0) {
                 throw new AssertionError({
                     message: 'Expected no syntax errors but found some.',
-                    actual: syntaxErrors,
+                    actual: actualSyntaxErrors,
                     expected: [],
                 });
             }

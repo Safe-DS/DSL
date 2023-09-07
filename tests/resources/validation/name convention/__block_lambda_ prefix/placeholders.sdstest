@@ -1,0 +1,9 @@
+package tests.validation.nameConvention.blockLambdaPrefix
+
+pipeline myPipeline1 {
+    // $TEST$ error "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas."
+    val »__block_lambda_0« = 1;
+
+    // $TEST$ no error "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas."
+    val »_block_lambda_1« = 1;
+}

@@ -1,18 +1,18 @@
 import { describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module';
+import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
-import { isLocationEqual, locationToString } from '../../helpers/location';
-import { createScopingTests, ExpectedReference } from './creator';
+import { isLocationEqual, locationToString } from '../../helpers/location.js';
+import { createScopingTests, ExpectedReference } from './creator.js';
 import { LangiumDocument, Reference } from 'langium';
 import { Location } from 'vscode-languageserver';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
-describe('scoping', () => {
-    it.each(createScopingTests())('$testName', async (test) => {
+describe('scoping', async () => {
+    it.each(await createScopingTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
             throw test.error;

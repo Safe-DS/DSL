@@ -1,45 +1,49 @@
-import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources';
+import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
-import { findTestComments } from '../../helpers/testComments';
-import { NoCommentsError } from '../../helpers/testChecks';
+import { findTestComments } from '../../helpers/testComments.js';
+import { NoCommentsError } from '../../helpers/testChecks.js';
+
+const root = 'grammar';
 
 export const createGrammarTests = (): GrammarTest[] => {
-    return listTestResources('grammar').map((pathRelativeToResources): GrammarTest => {
-        const absolutePath = resolvePathRelativeToResources(path.join('grammar', pathRelativeToResources));
-        const code = fs.readFileSync(absolutePath).toString();
-        const comments = findTestComments(code);
+    return listTestResources(root).map(createGrammarTest);
+};
 
-        // Must contain at least one comment
-        if (comments.length === 0) {
-            return invalidTest(pathRelativeToResources, new NoCommentsError());
-        }
+const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
+    const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
+    const code = fs.readFileSync(absolutePath).toString();
+    const comments = findTestComments(code);
 
-        // Must contain no more than one comment
-        if (comments.length > 1) {
-            return invalidTest(pathRelativeToResources, new MultipleCommentsError(comments));
-        }
+    // Must contain at least one comment
+    if (comments.length === 0) {
+        return invalidTest(relativeResourcePath, new NoCommentsError());
+    }
 
-        const comment = comments[0];
+    // Must contain no more than one comment
+    if (comments.length > 1) {
+        return invalidTest(relativeResourcePath, new MultipleCommentsError(comments));
+    }
 
-        // Must contain a valid comment
-        if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
-            return invalidTest(pathRelativeToResources, new InvalidCommentError(comment));
-        }
+    const comment = comments[0];
 
-        let testName: string;
-        if (comment === 'syntax_error') {
-            testName = `[${pathRelativeToResources}] should have syntax errors`;
-        } else {
-            testName = `[${pathRelativeToResources}] should not have syntax errors`;
-        }
+    // Must contain a valid comment
+    if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
+        return invalidTest(relativeResourcePath, new InvalidCommentError(comment));
+    }
 
-        return {
-            testName,
-            code,
-            expectedResult: comment,
-        };
-    });
+    let testName: string;
+    if (comment === 'syntax_error') {
+        testName = `[${relativeResourcePath}] should have syntax errors`;
+    } else {
+        testName = `[${relativeResourcePath}] should not have syntax errors`;
+    }
+
+    return {
+        testName,
+        code,
+        expectedResult: comment,
+    };
 };
 
 /**
