@@ -13,7 +13,6 @@ import { DocumentUri, Range } from 'vscode-languageserver-types';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'validation';
-const issueTypes = ['error', 'no_error', 'warning', 'no_warning', 'info', 'no_info', 'hint', 'no_hint'];
 
 export const createValidationTests = (): Promise<ValidationTest[]> => {
     const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
@@ -55,7 +54,8 @@ const createValidationTest = async (
         }
 
         for (const check of checksResult.value) {
-            const match = /\s*(?<type>\S+)\s*(?:(?<messageIsRegex>r)?"(?<message>[^"]*)")?/gu.exec(check.comment);
+            const regex = /\s*(?<isAbsent>no\s+)?(?<severity>\S+)\s*(?:(?<messageIsRegex>r)?"(?<message>[^"]*)")?/gu;
+            const match = regex.exec(check.comment);
 
             // Overall comment is invalid
             if (!match) {
@@ -66,19 +66,20 @@ const createValidationTest = async (
             }
 
             // Extract groups from the match
-            const type = match.groups!.type;
+            const presence = match.groups!.isAbsent ? 'absent' : 'present';
+            const severity = match.groups!.severity;
             const messageIsRegex = match.groups!.messageIsRegex === 'r';
             const message = match.groups!.message;
 
-            // Validate the type
-            if (!issueTypes.includes(type)) {
-                return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new InvalidIssueTypeError(type));
+            // Validate the severity
+            if (!validSeverities.includes(severity as any)) {
+                return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new InvalidSeverityError(severity));
             }
 
             // Add the issue
             issues.push({
-                presence: getPresenceFromIssueType(type),
-                severity: getSeverityFromIssueType(type)!,
+                presence,
+                severity: severity as Severity,
                 message,
                 messageIsRegex,
                 uri,
@@ -108,29 +109,6 @@ const invalidTest = (testName: string, error: Error): ValidationTest => {
         error,
     };
 };
-
-const getPresenceFromIssueType = (type: string): Presence => {
-    return type.startsWith('no_') ? 'absent' : 'present';
-}
-
-const getSeverityFromIssueType = (type: string): Severity | null => {
-    switch (type) {
-        case 'error':
-        case 'no_error':
-            return 'error';
-        case 'warning':
-        case 'no_warning':
-            return 'warning';
-        case 'info':
-        case 'no_info':
-            return 'info';
-        case 'hint':
-        case 'no_hint':
-            return 'hint';
-    }
-
-    return null;
-}
 
 /**
  * A description of a validation test.
@@ -198,26 +176,29 @@ export interface ExpectedIssue {
 export type Presence = 'present' | 'absent';
 
 /**
+ * The valid severities of an issue.
+ */
+const validSeverities = ['error', 'warning', 'info', 'hint'] as const;
+
+/**
  * The severity of the issue.
  */
-export type Severity = 'error' | 'warning' | 'info' | 'hint';
+export type Severity = typeof validSeverities[number];
 
 /**
  * A test comment did not match the expected format.
  */
 class InvalidCommentError extends Error {
     constructor(readonly comment: string) {
-        super(
-            `Invalid test comment (refer to the documentation for guidance): ${comment}`,
-        );
+        super(`Invalid test comment (refer to the documentation for guidance): ${comment}`);
     }
 }
 
 /**
- * A test comment did not specify a valid issue type.
+ * A test comment did not specify a valid severity.
  */
-class InvalidIssueTypeError extends Error {
+class InvalidSeverityError extends Error {
     constructor(readonly type: string) {
-        super(`Invalid type of issue (valid values are ${issueTypes.join()}): ${type}`);
+        super(`Invalid severity (valid values are ${validSeverities.join(", ")}): ${type}`);
     }
 }

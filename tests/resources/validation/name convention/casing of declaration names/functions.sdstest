@@ -2,7 +2,7 @@ package tests.validation.declarations.nameCasing
 
 // $TEST$ warning "Names of functions should be lowerCamelCase."
 fun »FunctionUppercase«()
-// $TEST$ no_warning "Names of functions should be lowerCamelCase."
+// $TEST$ no warning "Names of functions should be lowerCamelCase."
 fun »functionLowercase1«()
 // $TEST$ warning "Names of functions should be lowerCamelCase."
 fun »_functionUnderscore«()

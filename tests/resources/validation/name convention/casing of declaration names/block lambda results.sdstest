@@ -4,7 +4,7 @@ pipeline myPipeline1 {
     () {
         // $TEST$ warning "Names of block lambda results should be lowerCamelCase."
         yield »LambdaResultUppercase« = 1;
-        // $TEST$ no_warning "Names of block lambda results should be lowerCamelCase."
+        // $TEST$ no warning "Names of block lambda results should be lowerCamelCase."
         yield »lambdaResultLowercase1« = 1;
         // $TEST$ warning "Names of block lambda results should be lowerCamelCase."
         yield »_lambdaResultUnderscore« = 1;
