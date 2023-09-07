@@ -39,6 +39,7 @@ nav:
       - Grammar Testing: development/grammar-testing.md
       - Scoping Testing: development/scoping-testing.md
       - Formatting Testing: development/formatting-testing.md
+      - Validation Testing: development/validation-testing.md
       - Langium Quickstart: development/langium-quickstart.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
