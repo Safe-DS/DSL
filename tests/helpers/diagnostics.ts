@@ -19,6 +19,22 @@ export const getSyntaxErrors = async (services: LangiumServices, code: string): 
 };
 
 /**
+ * Get linking errors from a code snippet.
+ *
+ * @param services The language services.
+ * @param code The code snippet to check.
+ * @returns The errors.
+ */
+export const getLinkingErrors = async (services: LangiumServices, code: string): Promise<Diagnostic[]> => {
+    const validationResult = await validationHelper(services)(code);
+    return validationResult.diagnostics.filter(
+        (d) =>
+            d.severity === DiagnosticSeverity.Error &&
+            (d.data?.code === 'linking-error'),
+    );
+};
+
+/**
  * The code contains syntax errors.
  */
 export class SyntaxErrorsInCodeError extends Error {

@@ -1,9 +1,9 @@
 import { DefaultWorkspaceManager, LangiumDocument, LangiumDocumentFactory, LangiumSharedServices } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
-import {SAFE_DS_FILE_EXTENSIONS} from "../constants/fileExtensions.js";
-import {globSync} from "glob";
-import path from "path";
+import { SAFE_DS_FILE_EXTENSIONS } from '../constants/fileExtensions.js';
+import { globSync } from 'glob';
+import path from 'path';
 
 export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
     private documentFactory: LangiumDocumentFactory;
@@ -19,14 +19,18 @@ export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
     ): Promise<void> {
         await super.loadAdditionalDocuments(folders, collector);
 
-        const uris = listBuiltinsFiles()
-        for (const uri of uris) {
+        for (const uri of listBuiltinsFiles()) {
             collector(this.documentFactory.create(uri));
         }
     }
 }
 
-const builtinsPath = path.join(__dirname, '..', '..', 'resources', 'builtins');
+let builtinsPath: string;
+if (__filename.endsWith('.ts')) { // Before running ESBuild
+    builtinsPath = path.join(__dirname, '..', '..', 'resources', 'builtins');
+} else { // After running ESBuild
+    builtinsPath = path.join(__dirname, '..', 'resources', 'builtins');
+}
 
 /**
  * Lists all Safe-DS files in `src/resources/builtins`.
@@ -38,6 +42,6 @@ export const listBuiltinsFiles = (): URI[] => {
     const relativePaths = globSync(pattern, { cwd: builtinsPath, nodir: true });
     return relativePaths.map((relativePath) => {
         const absolutePath = path.join(builtinsPath, relativePath);
-        return URI.file(absolutePath)
-    })
+        return URI.file(absolutePath);
+    });
 };
