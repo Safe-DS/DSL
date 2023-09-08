@@ -1,6 +1,7 @@
 import {
     createDefaultModule,
     createDefaultSharedModule,
+    DeepPartial,
     DefaultSharedModuleContext,
     inject,
     LangiumServices,
@@ -11,6 +12,7 @@ import {
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator.js';
 import { SafeDSFormatter } from './formatting/safe-ds-formatter.js';
+import { SafeDsWorkspaceManager } from './builtins/workspaceManager.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -41,6 +43,14 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
 };
 
+export type SafeDsSharedServices = LangiumSharedServices;
+
+export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
+    workspace: {
+        WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
+    },
+};
+
 /**
  * Create the full set of services required by Langium.
  *
@@ -60,7 +70,7 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 } {
-    const shared = inject(createDefaultSharedModule(context), SafeDsGeneratedSharedModule);
+    const shared = inject(createDefaultSharedModule(context), SafeDsGeneratedSharedModule, SafeDsSharedModule);
     const SafeDs = inject(createDefaultModule({ shared }), SafeDsGeneratedModule, SafeDsModule);
     shared.ServiceRegistry.register(SafeDs);
     registerValidationChecks(SafeDs);
