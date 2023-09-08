@@ -26,9 +26,11 @@ export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
 }
 
 let builtinsPath: string;
-if (__filename.endsWith('.ts')) { // Before running ESBuild
+if (__filename.endsWith('.ts')) {
+    // Before running ESBuild
     builtinsPath = path.join(__dirname, '..', '..', 'resources', 'builtins');
-} else { // After running ESBuild
+} else {
+    // After running ESBuild
     builtinsPath = path.join(__dirname, '..', 'resources', 'builtins');
 }
 

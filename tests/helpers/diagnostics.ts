@@ -28,9 +28,7 @@ export const getSyntaxErrors = async (services: LangiumServices, code: string): 
 export const getLinkingErrors = async (services: LangiumServices, code: string): Promise<Diagnostic[]> => {
     const validationResult = await validationHelper(services)(code);
     return validationResult.diagnostics.filter(
-        (d) =>
-            d.severity === DiagnosticSeverity.Error &&
-            (d.data?.code === 'linking-error'),
+        (d) => d.severity === DiagnosticSeverity.Error && d.data?.code === 'linking-error',
     );
 };
 
