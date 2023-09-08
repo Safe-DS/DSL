@@ -4,7 +4,8 @@ import { ValidationAcceptor } from 'langium';
 const blockLambdaPrefix = '__block_lambda_';
 
 export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, accept: ValidationAcceptor) => {
-    if (node.name.startsWith(blockLambdaPrefix)) {
+    const name = node.name ?? '';
+    if (name.startsWith(blockLambdaPrefix)) {
         accept(
             'error',
             "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas.",
@@ -55,8 +56,9 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
             }
             return;
         case 'SdsModule':
-            const segments = node.name.split('.');
-            if (!segments.every(isLowerCamelCase)) {
+            const name = node.name ?? '';
+            const segments = name.split('.');
+            if (name !== '' && !segments.every(isLowerCamelCase)) {
                 accept('warning', 'All segments of the qualified name of a package should be lowerCamelCase.', {
                     node,
                     property: 'name',
