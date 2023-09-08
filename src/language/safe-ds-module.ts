@@ -70,16 +70,8 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        SafeDsGeneratedSharedModule,
-        SafeDsSharedModule
-    );
-    const SafeDs = inject(
-        createDefaultModule({ shared }),
-        SafeDsGeneratedModule,
-        SafeDsModule
-    );
+    const shared = inject(createDefaultSharedModule(context), SafeDsGeneratedSharedModule, SafeDsSharedModule);
+    const SafeDs = inject(createDefaultModule({ shared }), SafeDsGeneratedModule, SafeDsModule);
     shared.ServiceRegistry.register(SafeDs);
     registerValidationChecks(SafeDs);
     return { shared, SafeDs };
