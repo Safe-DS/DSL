@@ -29,10 +29,10 @@ let builtinsPath: string;
 if (__filename.endsWith('.ts')) {
     // Before running ESBuild
     builtinsPath = path.join(__dirname, '..', '..', 'resources', 'builtins');
-} else {
+} /* c8 ignore start */ else {
     // After running ESBuild
     builtinsPath = path.join(__dirname, '..', 'resources', 'builtins');
-}
+} /* c8 ignore stop */
 
 /**
  * Lists all Safe-DS files in `src/resources/builtins`.
