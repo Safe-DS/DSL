@@ -1,0 +1,1 @@
+// $TEST$ no warning "All segments of the qualified name of a package should be lowerCamelCase."
