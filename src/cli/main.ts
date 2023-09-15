@@ -1,39 +1,29 @@
-import chalk from 'chalk';
-import { Command } from 'commander';
-import { SdsModule } from '../language/generated/ast.js';
-import { SafeDsLanguageMetaData } from '../language/generated/module.js';
-import { createSafeDsServices } from '../language/safe-ds-module.js';
-import { extractAstNode } from './cli-util.js';
-import { generatePython } from './generator.js';
-import { NodeFileSystem } from 'langium/node';
+import {Command} from 'commander';
+import {SafeDsLanguageMetaData} from '../language/generated/module.js';
+import {generateAction} from './generator.js';
+import * as url from 'node:url';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 
-export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
-    const services = createSafeDsServices(NodeFileSystem).SafeDs;
-    const module = await extractAstNode<SdsModule>(fileName, services);
-    const generatedFilePath = generatePython(module, fileName, opts.destination);
-    // eslint-disable-next-line no-console
-    console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
-};
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
-export type GenerateOptions = {
-    destination?: string;
-};
+const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
+const packageContent = await fs.readFile(packagePath, 'utf-8');
 
-// eslint-disable-next-line import/no-default-export, func-names
-export default function (): void {
-    const program = new Command();
+const fileExtensions = SafeDsLanguageMetaData.fileExtensions.join(', ');
 
-    program
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        .version(require('../../package.json').version);
+const program = new Command();
 
-    const fileExtensions = SafeDsLanguageMetaData.fileExtensions.join(', ');
-    program
-        .command('generate')
-        .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
-        .option('-d, --destination <dir>', 'destination directory of generating')
-        .description('generates JavaScript code that prints "Hello, {name}!" for each greeting in a source file')
-        .action(generateAction);
+program.version(JSON.parse(packageContent).version);
 
-    program.parse(process.argv);
-}
+program
+    .command('generate')
+    .argument('<file>', `possible file extensions: ${fileExtensions}`)
+    .option('-d, --destination <dir>', 'destination directory of generation')
+    .option('-r, --root <dir>', 'source root folder')
+    .option('-q, --quiet', 'whether the program should print something', false)
+    .description('generates Python code')
+    .action(generateAction);
+
+program.parse(process.argv);

@@ -6,7 +6,6 @@
 .vscode/
 
 # Compilation/build outputs
-bin/
 build/
 coverage/
 dist/
