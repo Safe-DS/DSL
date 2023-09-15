@@ -19,7 +19,7 @@ program
     .option('-d, --destination <dir>', 'destination directory of generation')
     .option('-r, --root <dir>', 'source root folder')
     .option('-q, --quiet', 'whether the program should print something', false)
-    .description('generates Python code')
+    .description('generate Python code')
     .action(generateAction);
 
 program.parse(process.argv);
