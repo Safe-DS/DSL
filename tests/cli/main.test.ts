@@ -1,7 +1,7 @@
-import {beforeAll, describe, expect, it} from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { spawnSync, execSync } from 'node:child_process';
-import url from "node:url";
+import url from 'node:url';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));

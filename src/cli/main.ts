@@ -1,6 +1,6 @@
-import {Command} from 'commander';
-import {SafeDsLanguageMetaData} from '../language/generated/module.js';
-import {generateAction} from './generator.js';
+import { Command } from 'commander';
+import { SafeDsLanguageMetaData } from '../language/generated/module.js';
+import { generateAction } from './generator.js';
 import * as path from 'node:path';
 
 const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
