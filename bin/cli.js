@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-import '../out/cli/main.js';
+import '../out/cli/main.cjs';

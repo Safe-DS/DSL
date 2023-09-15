@@ -3,12 +3,6 @@ import { WorkspaceFolder } from 'vscode-languageserver';
 import { SAFE_DS_FILE_EXTENSIONS } from '../constants/fileExtensions.js';
 import { globSync } from 'glob';
 import path from 'path';
-// import url from "node:url";
-
-// // eslint-disable-next-line @typescript-eslint/naming-convention
-// const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-// // eslint-disable-next-line @typescript-eslint/naming-convention
-// const __filename = url.fileURLToPath(import.meta.url);
 
 export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
     private documentFactory: LangiumDocumentFactory;
