@@ -1,5 +1,6 @@
-import { DefaultWorkspaceManager, LangiumDocument, LangiumDocumentFactory, LangiumSharedServices, URI } from 'langium';
+import { DefaultWorkspaceManager, LangiumDocument, LangiumDocumentFactory, LangiumSharedServices } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver';
+import { URI } from 'vscode-uri';
 import { SAFE_DS_FILE_EXTENSIONS } from '../constants/fileExtensions.js';
 import { globSync } from 'glob';
 import path from 'path';
@@ -25,11 +26,13 @@ export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
 }
 
 let builtinsPath: string;
-if (__filename.endsWith('.ts')) { // Before running ESBuild
+if (__filename.endsWith('.ts')) {
+    // Before running ESBuild
     builtinsPath = path.join(__dirname, '..', '..', 'resources', 'builtins');
-} else { // After running ESBuild
+} /* c8 ignore start */ else {
+    // After running ESBuild
     builtinsPath = path.join(__dirname, '..', 'resources', 'builtins');
-}
+} /* c8 ignore stop */
 
 /**
  * Lists all Safe-DS files in `src/resources/builtins`.
