@@ -1,8 +1,7 @@
 import chalk from 'chalk';
 import path from 'path';
 import fs from 'fs';
-import { AstNode, LangiumDocument, LangiumServices } from 'langium';
-import { URI } from 'vscode-uri';
+import { AstNode, LangiumDocument, LangiumServices, URI } from 'langium';
 
 export const extractDocument = async function (fileName: string, services: LangiumServices): Promise<LangiumDocument> {
     const extensions = services.LanguageMetaData.fileExtensions;
