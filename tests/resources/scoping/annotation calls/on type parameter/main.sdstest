@@ -1,0 +1,17 @@
+package test.scoping.annotationCalls.onTypeParameter
+
+// $TEST$ target before 
+annotation »Before«
+
+fun myFunction<
+    // $TEST$ references before
+    @»Before«
+    // $TEST$ references after
+    @»After«
+    // $TEST$ unresolved
+    @»Unresolved«
+    MyTypeParameter
+>()
+
+// $TEST$ target after
+annotation »After«

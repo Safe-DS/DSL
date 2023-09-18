@@ -1,0 +1,9 @@
+// $TEST$ references annotation
+@»MyAnnotation«
+// $TEST$ unresolved
+@»Unresolved«
+
+package test.scoping.annotationCalls.onModule
+
+// $TEST$ target annotation 
+annotation »MyAnnotation«

@@ -1,0 +1,41 @@
+package test.scoping.typeParameterConstraints.inNestedClass
+
+fun myFunction1<BeforeGlobal>()
+
+// $TEST$ target container
+class MyClass1<»Container«, Overridden> {
+    fun myFunction2<BeforeMember>()
+
+    // $TEST$ target own
+    // $TEST$ target overridden
+    class MyClass2<»Own«, »Overridden«> where {
+        // $TEST$ references own
+        »Own« sub Int,
+
+        // $TEST$ references overridden
+        »Overridden« sub Int,
+
+        // $TEST$ references container
+        »Container« sub Int,
+
+        // $TEST$ unresolved
+        »BeforeMember« sub Int,
+
+        // $TEST$ unresolved
+        »AfterMember« sub Int,
+
+        // $TEST$ unresolved
+        »BeforeGlobal« sub Int,
+
+        // $TEST$ unresolved
+        »AfterGlobal« sub Int,
+
+        // $TEST$ unresolved
+        »Unresolved« sub Int
+    }
+
+    fun myFunction3<AfterMember>()
+}
+
+
+fun myFunction4<AfterGlobal>()

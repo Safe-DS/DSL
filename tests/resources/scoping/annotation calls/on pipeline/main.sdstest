@@ -1,0 +1,15 @@
+package test.scoping.annotationCalls.onPipeline
+
+// $TEST$ target before 
+annotation »Before«
+
+// $TEST$ references before
+@»Before«
+// $TEST$ references after
+@»After«
+// $TEST$ unresolved
+@»Unresolved«
+pipeline myPipeline {}
+
+// $TEST$ target after
+annotation »After«

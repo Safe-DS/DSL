@@ -1,0 +1,15 @@
+package test.scoping.annotationCalls.onSegment
+
+// $TEST$ target before 
+annotation »Before«
+
+// $TEST$ references before
+@»Before«
+// $TEST$ references after
+@»After«
+// $TEST$ unresolved
+@»Unresolved«
+segment mySegment() {}
+
+// $TEST$ target after
+annotation »After«

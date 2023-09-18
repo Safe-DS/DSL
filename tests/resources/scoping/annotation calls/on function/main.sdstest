@@ -1,0 +1,15 @@
+package test.scoping.annotationCalls.onFunction
+
+// $TEST$ target before 
+annotation »Before«
+
+// $TEST$ references before
+@»Before«
+// $TEST$ references after
+@»After«
+// $TEST$ unresolved
+@»Unresolved«
+fun myFunction()
+
+// $TEST$ target after
+annotation »After«

@@ -4,7 +4,7 @@ import {
     SdsAnnotatedObject,
     SdsAnnotationCall,
     SdsLiteral,
-    SdsLiteralType,
+    SdsLiteralType, SdsResult, SdsResultList,
     SdsTypeArgument,
     SdsTypeArgumentList,
 } from '../generated/ast.js';
@@ -20,6 +20,10 @@ export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject): SdsAn
 export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsLiteral[] {
     return node?.literalList?.literals ?? [];
 };
+
+export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsResult[] {
+    return node?.results ?? [];
+}
 
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
     return node?.typeArguments ?? [];

@@ -1,0 +1,20 @@
+package test.scoping.typeParameterConstraints.inGlobalClass
+
+fun myFunction1<Before>()
+
+// $TEST$ target own
+class MyClass<»Own«> where {
+    // $TEST$ references own
+    »Own« sub Int,
+
+    // $TEST$ unresolved
+    »Before« sub Int,
+
+    // $TEST$ unresolved
+    »After« sub Int,
+
+    // $TEST$ unresolved
+    »Unresolved« sub Int
+}
+
+fun myFunction2<After>()

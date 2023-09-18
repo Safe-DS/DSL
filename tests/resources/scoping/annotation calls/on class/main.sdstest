@@ -1,0 +1,15 @@
+package test.scoping.annotationCalls.onClass
+
+// $TEST$ target before 
+annotation »Before«
+
+// $TEST$ references before
+@»Before«
+// $TEST$ references after
+@»After«
+// $TEST$ unresolved
+@»Unresolved«
+class MyClass
+
+// $TEST$ target after
+annotation »After«

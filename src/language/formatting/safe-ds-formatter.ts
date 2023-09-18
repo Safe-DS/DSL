@@ -20,7 +20,7 @@ const newLinesWithIndent = function (count: number, options?: FormattingActionOp
     };
 };
 
-export class SafeDSFormatter extends AbstractFormatter {
+export class SafeDsFormatter extends AbstractFormatter {
     protected override format(node: AstNode): void {
         // -----------------------------------------------------------------------------
         // Module

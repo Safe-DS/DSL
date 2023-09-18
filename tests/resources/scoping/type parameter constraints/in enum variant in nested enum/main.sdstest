@@ -1,0 +1,42 @@
+package test.scoping.typeParameterConstraints.inEnumVariantInNestedEnum
+
+fun myFunction1<BeforeEnum>()
+
+// $TEST$ target container
+class MyClass<»Container«, Overridden> {
+    enum MyEnum {
+        MyEnumVariant1<BeforeEnumVariant>
+
+        // $TEST$ target own
+        // $TEST$ target overridden
+        MyEnumVariant2<»Own«, »Overridden«> where {
+            // $TEST$ references own
+            »Own« sub Int,
+
+            // $TEST$ references overridden
+            »Overridden« sub Int,
+
+            // $TEST$ references container
+            »Container« sub Int,
+
+            // $TEST$ unresolved
+            »BeforeEnumVariant« sub Int,
+
+            // $TEST$ unresolved
+            »AfterEnumVariant« sub Int,
+
+            // $TEST$ unresolved
+            »BeforeEnum« sub Int,
+
+            // $TEST$ unresolved
+            »AfterEnum« sub Int,
+
+            // $TEST$ unresolved
+            »Unresolved« sub Int
+        }
+
+        MyEnumVariant3<AfterEnumVariant>
+    }
+}
+
+fun myFunction2<AfterEnum>()
