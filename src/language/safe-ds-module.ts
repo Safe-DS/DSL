@@ -11,8 +11,10 @@ import {
 } from 'langium';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator.js';
-import { SafeDSFormatter } from './formatting/safe-ds-formatter.js';
+import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
 import { SafeDsWorkspaceManager } from './builtins/workspaceManager.js';
+import {SafeDsScopeComputation} from "./scoping/safe-ds-scope-computation.js";
+import {SafeDsScopeProvider} from "./scoping/safe-ds-scope-provider.js";
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -36,7 +38,11 @@ export type SafeDsServices = LangiumServices & SafeDsAddedServices;
  */
 export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeDsAddedServices> = {
     lsp: {
-        Formatter: () => new SafeDSFormatter(),
+        Formatter: () => new SafeDsFormatter(),
+    },
+    references: {
+        ScopeComputation: (services) => new SafeDsScopeComputation(services),
+        ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
     validation: {
         SafeDsValidator: () => new SafeDsValidator(),
