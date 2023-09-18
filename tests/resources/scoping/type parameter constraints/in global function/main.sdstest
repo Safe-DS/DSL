@@ -1,0 +1,20 @@
+package test.scoping.typeParameterConstraints.inGlobalFunction
+
+fun myFunction1<Before>()
+
+// $TEST$ target own
+fun myFunction2<»Own«>() where {
+    // $TEST$ references own
+    »Own« sub Int,
+
+    // $TEST$ unresolved
+    »Before« sub Int,
+
+    // $TEST$ unresolved
+    »After« sub Int,
+
+    // $TEST$ unresolved
+    »Unresolved« sub Int
+}
+
+fun myFunction3<After>()
