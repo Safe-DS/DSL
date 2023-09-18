@@ -1,0 +1,17 @@
+package test.scoping.annotationCalls.onAttribute
+
+// $TEST$ target before 
+annotation »Before«
+
+class MyClass {
+    // $TEST$ references before
+    @»Before«
+    // $TEST$ references after
+    @»After«
+    // $TEST$ unresolved
+    @»Unresolved«
+    attr myAttribute: Int
+}
+
+// $TEST$ target after
+annotation »After«
