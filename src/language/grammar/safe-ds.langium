@@ -373,7 +373,7 @@ SdsTypeParameterConstraintOperator returns string:
 // -----------------------------------------------------------------------------
 
 interface SdsCallable extends SdsObject {
-	parameterList: SdsParameterList
+	parameterList?: SdsParameterList
 }
 
 interface SdsParameterList extends SdsObject {
