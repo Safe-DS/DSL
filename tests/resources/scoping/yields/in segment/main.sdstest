@@ -1,0 +1,22 @@
+package test.scoping.yields.inSegment
+
+segment mySegment1() -> before: Int {}
+
+segment mySegment() -> (
+    // $TEST$ target result
+    »result«: Int
+) {
+    // $TEST$ references result
+    yield »result« = 1;
+
+    // $TEST$ unresolved
+    yield »before« = 1;
+
+    // $TEST$ unresolved
+    yield »after« = 1;
+
+    // $TEST$ unresolved
+    yield »unresolved« = 1;
+}
+
+segment mySegment2() -> after: Int {}
