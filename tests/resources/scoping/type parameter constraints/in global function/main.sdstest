@@ -14,7 +14,12 @@ fun myFunction2<»Own«>() where {
     »After« sub Int,
 
     // $TEST$ unresolved
+    »NotATypeParameter« sub Int,
+
+    // $TEST$ unresolved
     »Unresolved« sub Int
 }
 
 fun myFunction3<After>()
+
+class NotATypeParameter

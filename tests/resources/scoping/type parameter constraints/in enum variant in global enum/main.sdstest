@@ -23,6 +23,9 @@ enum MyEnum {
         »AfterEnum« sub Int,
 
         // $TEST$ unresolved
+        »NotATypeParameter« sub Int,
+
+        // $TEST$ unresolved
         »Unresolved« sub Int
     }
 
@@ -30,3 +33,5 @@ enum MyEnum {
 }
 
 fun myFunction2<AfterEnum>()
+
+class NotATypeParameter
