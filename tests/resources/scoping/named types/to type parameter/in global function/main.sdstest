@@ -1,0 +1,32 @@
+package test.scoping.namedTypes.toTypeParameter.inGlobalFunction
+
+fun myFunction1<Before>()
+
+// $TEST$ target own
+fun myFunction2<»Own«>(
+    // $TEST$ references own
+    a: »Own«,
+
+    // $TEST$ unresolved
+    b: »Before«,
+
+    // $TEST$ unresolved
+    c: »After«,
+
+    // $TEST$ unresolved
+    d: »Unresolved«
+) -> (
+    // $TEST$ references own
+    z: »Own«,
+
+    // $TEST$ unresolved
+    y: »Before«,
+
+    // $TEST$ unresolved
+    x: »After«,
+
+    // $TEST$ unresolved
+    w: »Unresolved«
+)
+
+fun myFunction3<After>()

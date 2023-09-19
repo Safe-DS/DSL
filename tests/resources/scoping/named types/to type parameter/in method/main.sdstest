@@ -1,0 +1,64 @@
+package test.scoping.namedTypes.toTypeParameter.inMethod
+
+fun myFunction1<BeforeGlobal>()
+
+// $TEST$ target container
+class MyClass1<»Container«, Overridden> {
+    fun myFunction2<BeforeMember>()
+
+    // $TEST$ target own
+    // $TEST$ target overridden
+    fun myFunction3<»Own«, »Overridden«>(
+        // $TEST$ references own
+        a: »Own«,
+
+        // $TEST$ references overridden
+        b: »Overridden«,
+
+        // $TEST$ references container
+        c: »Container«,
+
+        // $TEST$ unresolved
+        d: »BeforeMember«,
+
+        // $TEST$ unresolved
+        e: »AfterMember«,
+
+        // $TEST$ unresolved
+        g: »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        h: »AfterGlobal«,
+
+        // $TEST$ unresolved
+        i: »Unresolved«
+    ) -> (
+        // $TEST$ references own
+        z: »Own«,
+
+        // $TEST$ references overridden
+        y: »Overridden«,
+
+        // $TEST$ references container
+        x: »Container«,
+
+        // $TEST$ unresolved
+        w: »BeforeMember«,
+
+        // $TEST$ unresolved
+        v: »AfterMember«,
+
+        // $TEST$ unresolved
+        u: »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        t: »AfterGlobal«,
+
+        // $TEST$ unresolved
+        s: »Unresolved«
+    )
+
+    fun myFunction5<AfterMember>()
+}
+
+fun myFunction5<AfterGlobal>()
