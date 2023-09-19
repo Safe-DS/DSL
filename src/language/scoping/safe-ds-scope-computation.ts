@@ -74,11 +74,13 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
     ): void {
         const containingDeclaration = getContainerOfType(node, isSdsTypeParameterList)?.$container;
         if (!containingDeclaration) {
+            /* c8 ignore next 2 */
             return;
         }
 
         const name = this.nameProvider.getName(node);
         if (!name) {
+            /* c8 ignore next 2 */
             return;
         }
 
