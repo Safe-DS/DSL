@@ -32,6 +32,10 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
 
     private processSdsClass(node: SdsClass, document: LangiumDocument, scopes: PrecomputedScopes): void {
         const name = this.nameProvider.getName(node);
+        if (!name) {
+            return;
+        }
+
         const description = this.descriptions.createDescription(node, name, document);
 
         this.addToScopesIfKeyIsDefined(scopes, node.parameterList, description);
@@ -46,6 +50,10 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
 
     private processSdsEnum(node: SdsEnum, document: LangiumDocument, scopes: PrecomputedScopes): void {
         const name = this.nameProvider.getName(node);
+        if (!name) {
+            return;
+        }
+
         const description = this.descriptions.createDescription(node, name, document);
 
         this.addToScopesIfKeyIsDefined(scopes, node.body, description);
@@ -67,6 +75,10 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         }
 
         const name = this.nameProvider.getName(node);
+        if (!name) {
+            return;
+        }
+
         const description = this.descriptions.createDescription(node, name, document);
 
         if (isSdsClass(containingDeclaration)) {
