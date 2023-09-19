@@ -31,8 +31,32 @@ class MyClass1<»Container«, Overridden> {
         g: »AfterGlobal«,
 
         // $TEST$ unresolved
-        h: »Unresolved«
-    ) {
+        h: »Unresolved«,
+    ) where {
+        // $TEST$ references own
+        Own sub »Own«,
+
+        // $TEST$ references overridden
+        Own sub »Overridden«,
+
+        // $TEST$ references container
+        Own sub »Container«,
+
+        // $TEST$ unresolved
+        Own sub »BeforeMember«,
+
+        // $TEST$ unresolved
+        Own sub »AfterMember«,
+
+        // $TEST$ unresolved
+        Own sub »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        Own sub »AfterGlobal«,
+
+        // $TEST$ unresolved
+        Own sub »Unresolved«,
+    } {
         // $TEST$ references own
         attr z: »Own«
 

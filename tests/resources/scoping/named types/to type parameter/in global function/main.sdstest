@@ -27,6 +27,18 @@ fun myFunction2<»Own«>(
 
     // $TEST$ unresolved
     w: »Unresolved«
-)
+) where {
+    // $TEST$ references own
+    Own sub »Own«,
+
+    // $TEST$ unresolved
+    Own sub »Before«,
+
+    // $TEST$ unresolved
+    Own sub »After«,
+
+    // $TEST$ unresolved
+    Own sub »Unresolved«
+}
 
 fun myFunction3<After>()

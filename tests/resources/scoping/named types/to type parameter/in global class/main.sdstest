@@ -14,8 +14,20 @@ class MyClass<»Own«>(
     c: »After«,
 
     // $TEST$ unresolved
-    d: »Unresolved«
-) {
+    d: »Unresolved«,
+) where {
+    // $TEST$ references own
+    Own sub »Own«,
+
+    // $TEST$ unresolved
+    Own sub »Before«,
+
+    // $TEST$ unresolved
+    Own sub »After«,
+
+    // $TEST$ unresolved
+    Own sub »Unresolved«,
+} {
     // $TEST$ references own
     attr z: »Own«
 

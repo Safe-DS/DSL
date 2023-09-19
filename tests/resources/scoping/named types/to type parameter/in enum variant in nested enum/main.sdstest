@@ -32,8 +32,32 @@ class MyClass<»Container«, Overridden> {
             g: »AfterEnum«,
 
             // $TEST$ unresolved
-            h: »Unresolved«
-        )
+            h: »Unresolved«,
+        ) where {
+            // $TEST$ references own
+            Own sub »Own«,
+
+            // $TEST$ references overridden
+            Own sub »Overridden«,
+
+            // $TEST$ references container
+            Own sub »Container«,
+
+            // $TEST$ unresolved
+            Own sub »BeforeEnumVariant«,
+
+            // $TEST$ unresolved
+            Own sub »AfterEnumVariant«,
+
+            // $TEST$ unresolved
+            Own sub »BeforeEnum«,
+
+            // $TEST$ unresolved
+            Own sub »AfterEnum«,
+
+            // $TEST$ unresolved
+            Own sub »Unresolved«,
+        }
 
         MyEnumVariant3<AfterEnumVariant>
     }
