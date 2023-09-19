@@ -31,11 +31,15 @@ class MyClass1<»Container«, Overridden> {
         »AfterGlobal« sub Int,
 
         // $TEST$ unresolved
+        »NotATypeParameter« sub Int,
+
+        // $TEST$ unresolved
         »Unresolved« sub Int
     }
 
     fun myFunction3<AfterMember>()
 }
 
-
 fun myFunction4<AfterGlobal>()
+
+class NotATypeParameter

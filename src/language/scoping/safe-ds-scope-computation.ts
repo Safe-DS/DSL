@@ -8,19 +8,62 @@ import {
 } from 'langium';
 import {
     isSdsClass,
+    isSdsDeclaration,
+    isSdsEnum,
     isSdsEnumVariant,
     isSdsFunction,
+    isSdsModule,
     isSdsTypeParameter,
     isSdsTypeParameterList,
+    SdsClass,
+    SdsEnum,
     SdsTypeParameter,
 } from '../generated/ast.js';
 
 export class SafeDsScopeComputation extends DefaultScopeComputation {
     override processNode(node: AstNode, document: LangiumDocument, scopes: PrecomputedScopes): void {
-        if (isSdsTypeParameter(node)) {
+        if (isSdsClass(node)) {
+            this.processSdsClass(node, document, scopes);
+        } else if (isSdsEnum(node)) {
+            this.processSdsEnum(node, document, scopes);
+        } else if (isSdsTypeParameter(node)) {
             this.processSdsTypeParameter(node, document, scopes);
         } else {
             super.processNode(node, document, scopes);
+        }
+    }
+
+    private processSdsClass(node: SdsClass, document: LangiumDocument, scopes: PrecomputedScopes): void {
+        const name = this.nameProvider.getName(node);
+        if (!name) {
+            return;
+        }
+
+        const description = this.descriptions.createDescription(node, name, document);
+
+        this.addToScopesIfKeyIsDefined(scopes, node.parameterList, description);
+        this.addToScopesIfKeyIsDefined(scopes, node.constraintList, description);
+        this.addToScopesIfKeyIsDefined(scopes, node.body, description);
+
+        const containingDeclaration = getContainerOfType(node.$container, isSdsDeclaration);
+        if (isSdsModule(containingDeclaration)) {
+            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
+        }
+    }
+
+    private processSdsEnum(node: SdsEnum, document: LangiumDocument, scopes: PrecomputedScopes): void {
+        const name = this.nameProvider.getName(node);
+        if (!name) {
+            return;
+        }
+
+        const description = this.descriptions.createDescription(node, name, document);
+
+        this.addToScopesIfKeyIsDefined(scopes, node.body, description);
+
+        const containingDeclaration = getContainerOfType(node.$container, isSdsDeclaration);
+        if (isSdsModule(containingDeclaration)) {
+            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
         }
     }
 
@@ -31,10 +74,16 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
     ): void {
         const containingDeclaration = getContainerOfType(node, isSdsTypeParameterList)?.$container;
         if (!containingDeclaration) {
+            /* c8 ignore next 2 */
             return;
         }
 
         const name = this.nameProvider.getName(node);
+        if (!name) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         const description = this.descriptions.createDescription(node, name, document);
 
         if (isSdsClass(containingDeclaration)) {

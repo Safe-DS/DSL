@@ -16,7 +16,12 @@ segment mySegment() -> (
     yield »after« = 1;
 
     // $TEST$ unresolved
+    yield »NotAResult« = 1;
+
+    // $TEST$ unresolved
     yield »unresolved« = 1;
 }
 
 segment mySegment2() -> after: Int {}
+
+class NotAResult

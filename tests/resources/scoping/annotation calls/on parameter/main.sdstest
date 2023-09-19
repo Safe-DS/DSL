@@ -9,9 +9,13 @@ fun myFunction(
     // $TEST$ references after
     @»After«
     // $TEST$ unresolved
+    @»NotAnAnnotation«
+    // $TEST$ unresolved
     @»Unresolved«
     myParameter: Int
 )
 
 // $TEST$ target after
 annotation »After«
+
+class NotAnAnnotation

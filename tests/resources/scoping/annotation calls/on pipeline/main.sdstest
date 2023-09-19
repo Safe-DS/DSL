@@ -8,8 +8,12 @@ annotation »Before«
 // $TEST$ references after
 @»After«
 // $TEST$ unresolved
+@»NotAnAnnotation«
+// $TEST$ unresolved
 @»Unresolved«
 pipeline myPipeline {}
 
 // $TEST$ target after
 annotation »After«
+
+class NotAnAnnotation
