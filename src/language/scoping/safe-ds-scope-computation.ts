@@ -7,9 +7,12 @@ import {
     PrecomputedScopes,
 } from 'langium';
 import {
-    isSdsClass, isSdsDeclaration, isSdsEnum,
+    isSdsClass,
+    isSdsDeclaration,
+    isSdsEnum,
     isSdsEnumVariant,
-    isSdsFunction, isSdsModule,
+    isSdsFunction,
+    isSdsModule,
     isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsClass,
@@ -44,7 +47,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
 
         const containingDeclaration = getContainerOfType(node.$container, isSdsDeclaration);
         if (isSdsModule(containingDeclaration)) {
-            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description)
+            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
         }
     }
 
@@ -60,7 +63,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
 
         const containingDeclaration = getContainerOfType(node.$container, isSdsDeclaration);
         if (isSdsModule(containingDeclaration)) {
-            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description)
+            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
         }
     }
 
