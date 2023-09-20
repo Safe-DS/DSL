@@ -1,6 +1,6 @@
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { clearDocuments, expectFormatting } from 'langium/test';
-import { describe, it } from 'vitest';
+import { afterEach, describe, it } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { createFormattingTests } from './creator.js';
 
@@ -8,6 +8,10 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const formatterTests = createFormattingTests();
 
 describe('formatter', async () => {
+    afterEach(async () => {
+        await clearDocuments(services);
+    });
+
     // Test that the original code is formatted correctly
     it.each(await formatterTests)('$testName', async (test) => {
         // Test is invalid
@@ -20,9 +24,6 @@ describe('formatter', async () => {
             before: test.originalCode,
             after: test.expectedFormattedCode,
         });
-
-        // Clear loaded documents to avoid colliding URIs (https://github.com/langium/langium/issues/1146)
-        await clearDocuments(services);
     });
 
     // Test that the expected formatted code stays the same when formatted again
@@ -37,8 +38,5 @@ describe('formatter', async () => {
             before: test.expectedFormattedCode,
             after: test.expectedFormattedCode,
         });
-
-        // Clear loaded documents to avoid colliding URIs (https://github.com/langium/langium/issues/1146)
-        await clearDocuments(services);
     });
 });

@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { afterEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
@@ -9,6 +9,10 @@ import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
 describe('grammar', () => {
+    afterEach(async () => {
+        await clearDocuments(services);
+    });
+
     it.each(createGrammarTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
@@ -39,8 +43,5 @@ describe('grammar', () => {
                 });
             }
         }
-
-        // Clear loaded documents to avoid colliding URIs (https://github.com/langium/langium/issues/1146)
-        await clearDocuments(services);
     });
 });

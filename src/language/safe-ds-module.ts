@@ -10,11 +10,11 @@ import {
     PartialLangiumServices,
 } from 'langium';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
-import { SafeDsValidator, registerValidationChecks } from './validation/safe-ds-validator.js';
+import { registerValidationChecks, SafeDsValidator } from './validation/safe-ds-validator.js';
 import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
-import { SafeDsWorkspaceManager } from './builtins/workspaceManager.js';
-import {SafeDsScopeComputation} from "./scoping/safe-ds-scope-computation.js";
-import {SafeDsScopeProvider} from "./scoping/safe-ds-scope-provider.js";
+import { SafeDsWorkspaceManager } from './builtins/safe-ds-workspace-manager.js';
+import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
+import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
