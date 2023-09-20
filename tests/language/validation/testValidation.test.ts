@@ -31,7 +31,7 @@ describe('validation', async () => {
             if (expectedIssue.presence === 'present') {
                 if (actualIssues.length === 0) {
                     throw new AssertionError({
-                        message: `Expected to find a matching issue ${issueLocationToString(
+                        message: `Expected to find a matching ${expectedIssue.severity} ${issueLocationToString(
                             expectedIssue,
                         )} but found none.`,
                         actual: getMatchingActualIssues({
@@ -48,7 +48,7 @@ describe('validation', async () => {
             else {
                 if (actualIssues.length > 0) {
                     throw new AssertionError({
-                        message: `Expected to find no matching issue ${issueLocationToString(
+                        message: `Expected to find no matching ${expectedIssue.severity} ${issueLocationToString(
                             expectedIssue,
                         )} but found some.`,
                         actual: actualIssues,
