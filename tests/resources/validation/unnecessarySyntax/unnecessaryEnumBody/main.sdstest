@@ -1,0 +1,9 @@
+package tests.validation.unnecessarySyntax.unnecessaryEnumBody
+
+// $TEST$ info "This body can be removed."
+enum MyEnum1 »{}«
+
+// $TEST$ no info "This body can be removed."
+enum MyEnum2 »{
+    Instance
+}«

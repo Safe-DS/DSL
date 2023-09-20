@@ -1,5 +1,6 @@
-import { isSdsWildcard, SdsAssignment } from '../generated/ast.js';
+import {isSdsWildcard, SdsAssignment, SdsClass, SdsEnum} from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
+import {isEmpty} from "radash";
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
@@ -12,7 +13,7 @@ export const CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST = 'style/unnecessary-type
 export const CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST = 'style/unnecessary-type-parameter-list';
 export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
 
-export const assignmentShouldBeNecessary = (node: SdsAssignment, accept: ValidationAcceptor): void => {
+export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (node: SdsAssignment, accept: ValidationAcceptor): void => {
     const assignees = node.assigneeList?.assignees ?? [];
     if (assignees.every(isSdsWildcard)) {
         accept(
@@ -25,3 +26,31 @@ export const assignmentShouldBeNecessary = (node: SdsAssignment, accept: Validat
         );
     }
 };
+
+export const classBodyShouldNotBeEmpty = (node: SdsClass, accept: ValidationAcceptor) => {
+    if (node.body !== null && isEmpty(node.body?.members)) {
+        accept(
+            'info',
+            "This body can be removed.",
+            {
+                node,
+                property: 'body',
+                code: CODE_STYLE_UNNECESSARY_BODY,
+            }
+        )
+    }
+}
+
+export const enumBodyShouldNotBeEmpty = (node: SdsEnum, accept: ValidationAcceptor) => {
+    if (node.body !== null && isEmpty(node.body?.variants)) {
+        accept(
+            'info',
+            "This body can be removed.",
+            {
+                node,
+                property: 'body',
+                code: CODE_STYLE_UNNECESSARY_BODY,
+            }
+        )
+    }
+}
