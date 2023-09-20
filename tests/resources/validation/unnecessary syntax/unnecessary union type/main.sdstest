@@ -1,0 +1,16 @@
+package tests.validation.unnecessarySyntax.unnecessaryUnionType
+
+// $TEST$ no info "This can be replaced by the singular type argument of the union type."
+segment mySegment1(
+    p: »union<>«
+) {}
+
+// $TEST$ info "This can be replaced by the singular type argument of the union type."
+segment mySegment2(
+    p: »union<Int>«
+) {}
+
+// $TEST$ no info "This can be replaced by the singular type argument of the union type."
+segment mySegment3(
+    p: »union<Int, Float>«
+) {}

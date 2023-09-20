@@ -1,0 +1,12 @@
+package tests.validation.names.casing
+
+class MyClass {
+    // $TEST$ warning "Names of attributes should be lowerCamelCase."
+    attr »AttributeUppercase«: Int
+    // $TEST$ no warning "Names of attributes should be lowerCamelCase."
+    attr »attributeLowercase1«: Int
+    // $TEST$ warning "Names of attributes should be lowerCamelCase."
+    attr »_attributeUnderscore«: Int
+    // $TEST$ warning "Names of attributes should be lowerCamelCase."
+    attr »attribute_snake_case«: Int
+}

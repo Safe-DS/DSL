@@ -1,7 +1,0 @@
-package tests.validation.nameConvention.blockLambdaPrefix
-
-// $TEST$ error "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas."
-class »__block_lambda_0«
-
-// $TEST$ no error "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas."
-class »_block_lambda_1«

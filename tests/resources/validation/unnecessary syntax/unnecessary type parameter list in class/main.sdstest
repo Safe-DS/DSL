@@ -1,0 +1,7 @@
+package tests.validation.unnecessarySyntax.unnecessaryTypeParameterListInClass
+
+// $TEST$ info "This type parameter list can be removed."
+class MyClass1»<>«
+
+// $TEST$ no info "This type parameter list can be removed."
+class MyClass2»<T>«

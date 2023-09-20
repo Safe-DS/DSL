@@ -1,0 +1,10 @@
+package tests.validation.names.casing
+
+// $TEST$ no warning "Names of enums should be UpperCamelCase."
+enum »EnumUppercase1«
+// $TEST$ warning "Names of enums should be UpperCamelCase."
+enum »enumLowercase«
+// $TEST$ warning "Names of enums should be UpperCamelCase."
+enum »_enumUnderscore«
+// $TEST$ warning "Names of enums should be UpperCamelCase."
+enum »Enum_Snake_Case«

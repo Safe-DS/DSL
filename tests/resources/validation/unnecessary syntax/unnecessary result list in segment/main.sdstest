@@ -1,0 +1,7 @@
+package tests.validation.unnecessarySyntax.unnecessaryResultListInSegment
+
+// $TEST$ info "This result list can be removed."
+segment mySegment1() »-> ()« {}
+
+// $TEST$ no info "This result list can be removed."
+segment mySegment2() »-> (r: Int)« {}
