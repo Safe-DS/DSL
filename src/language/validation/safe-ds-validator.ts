@@ -15,6 +15,7 @@ import {
     segmentResultListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './unnecessarySyntax.js';
+import {templateStringMustHaveExpressionBetweenTwoStringParts} from "./templateStrings.js";
 
 /**
  * Register custom validation checks.
@@ -31,6 +32,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty],
         SdsFunction: [functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
+        SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument],
     };
     registry.register(checks, validator);
