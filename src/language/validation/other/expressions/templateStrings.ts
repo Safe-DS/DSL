@@ -1,4 +1,4 @@
-import {isSdsTemplateStringPart, SdsTemplateString} from "../generated/ast.js";
+import {isSdsTemplateStringPart, SdsTemplateString} from "../../../generated/ast.js";
 import {ValidationAcceptor} from "langium";
 
 export const CODE_OTHER_MISSING_TEMPLATE_EXPRESSION = 'other/missing-template-expression';
