@@ -18,43 +18,22 @@ export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, acce
     }
 };
 
-export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: ValidationAcceptor) => {
+export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: ValidationAcceptor): void => {
     switch (node.$type) {
         case 'SdsAnnotation':
-            if (!isUpperCamelCase(node.name)) {
-                acceptCasingWarning(node, 'annotations', 'UpperCamelCase', accept);
-            }
-            return;
+            return nameShouldBeUpperCamelCase(node, 'annotations', accept);
         case 'SdsAttribute':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'attributes', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'attributes', accept);
         case 'SdsBlockLambdaResult':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'block lambda results', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'block lambda results', accept);
         case 'SdsClass':
-            if (!isUpperCamelCase(node.name)) {
-                acceptCasingWarning(node, 'classes', 'UpperCamelCase', accept);
-            }
-            return;
+            return nameShouldBeUpperCamelCase(node, 'classes', accept);
         case 'SdsEnum':
-            if (!isUpperCamelCase(node.name)) {
-                acceptCasingWarning(node, 'enums', 'UpperCamelCase', accept);
-            }
-            return;
+            return nameShouldBeUpperCamelCase(node, 'enums', accept);
         case 'SdsEnumVariant':
-            if (!isUpperCamelCase(node.name)) {
-                acceptCasingWarning(node, 'enum variants', 'UpperCamelCase', accept);
-            }
-            return;
+            return nameShouldBeUpperCamelCase(node, 'enum variants', accept);
         case 'SdsFunction':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'functions', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'functions', accept);
         case 'SdsModule':
             const name = node.name ?? '';
             const segments = name.split('.');
@@ -67,46 +46,39 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
             }
             return;
         case 'SdsParameter':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'parameters', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'parameters', accept);
         case 'SdsPipeline':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'pipelines', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'pipelines', accept);
         case 'SdsPlaceholder':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'placeholders', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'placeholders', accept);
         case 'SdsResult':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'results', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'results', accept);
         case 'SdsSchema':
-            if (!isUpperCamelCase(node.name)) {
-                acceptCasingWarning(node, 'schemas', 'UpperCamelCase', accept);
-            }
-            return;
+            return nameShouldBeUpperCamelCase(node, 'schemas', accept);
         case 'SdsSegment':
-            if (!isLowerCamelCase(node.name)) {
-                acceptCasingWarning(node, 'segments', 'lowerCamelCase', accept);
-            }
-            return;
+            return nameShouldBeLowerCamelCase(node, 'segments', accept);
         case 'SdsTypeParameter':
-            if (!isUpperCamelCase(node.name)) {
-                acceptCasingWarning(node, 'type parameters', 'UpperCamelCase', accept);
-            }
-            return;
+            return nameShouldBeUpperCamelCase(node, 'type parameters', accept);
     }
 };
+
+const nameShouldBeLowerCamelCase = (node: SdsDeclaration, nodeName: string, accept: ValidationAcceptor): void => {
+    const name = node.name ?? '';
+    if (!isLowerCamelCase(name)) {
+        acceptCasingWarning(node, nodeName, 'lowerCamelCase', accept);
+    }
+}
 
 const isLowerCamelCase = (name: string): boolean => {
     return /^[a-z][a-zA-Z0-9]*$/gu.test(name);
 };
+
+const nameShouldBeUpperCamelCase = (node: SdsDeclaration, nodeName: string, accept: ValidationAcceptor): void => {
+    const name = node.name ?? '';
+    if (!isUpperCamelCase(name)) {
+        acceptCasingWarning(node, nodeName, 'UpperCamelCase', accept);
+    }
+}
 
 const isUpperCamelCase = (name: string): boolean => {
     return /^[A-Z][a-zA-Z0-9]*$/gu.test(name);
