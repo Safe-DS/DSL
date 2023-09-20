@@ -1,5 +1,5 @@
-import {getContainerOfType, ValidationAcceptor} from 'langium';
-import {isSdsCallable, isSdsLambda, SdsAttribute, SdsParameter, SdsResult} from '../generated/ast.js';
+import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { isSdsCallable, isSdsLambda, SdsAttribute, SdsParameter, SdsResult } from '../generated/ast.js';
 
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 

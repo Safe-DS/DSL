@@ -37,7 +37,7 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
     } else if (isInStubFile(node)) {
         for (const declaration of declarations) {
             if (isSdsPipeline(declaration) || isSdsSegment(declaration)) {
-                accept('error', "A stub file must not declare pipelines or segments.", {
+                accept('error', 'A stub file must not declare pipelines or segments.', {
                     node: declaration,
                     property: 'name',
                     code: CODE_MODULE_FORBIDDEN_IN_STUB_FILE,
