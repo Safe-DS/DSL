@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryClassBody
+package tests.validation.unnecessarySyntax.unnecessaryBodyInClass
 
 // $TEST$ info "This body can be removed."
 class MyClass1 »{}«

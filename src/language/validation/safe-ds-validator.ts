@@ -3,9 +3,10 @@ import { SafeDsAstType } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing } from './names.js';
 import {
+    annotationParameterListShouldNotBeEmpty,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
     classBodyShouldNotBeEmpty,
-    enumBodyShouldNotBeEmpty,
+    enumBodyShouldNotBeEmpty, enumVariantParameterListShouldNotBeEmpty,
 } from './unnecessarySyntax.js';
 
 /**
@@ -16,9 +17,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const validator = services.validation.SafeDsValidator;
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
+        SdsAnnotation: [annotationParameterListShouldNotBeEmpty],
         SdsClass: [classBodyShouldNotBeEmpty],
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
         SdsEnum: [enumBodyShouldNotBeEmpty],
+        SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty],
     };
     registry.register(checks, validator);
 };

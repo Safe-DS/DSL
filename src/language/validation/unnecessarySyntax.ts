@@ -1,4 +1,4 @@
-import {isSdsWildcard, SdsAssignment, SdsClass, SdsEnum} from '../generated/ast.js';
+import {isSdsWildcard, SdsAnnotation, SdsAssignment, SdsClass, SdsEnum, SdsEnumVariant} from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {isEmpty} from "radash";
 
@@ -50,6 +50,34 @@ export const enumBodyShouldNotBeEmpty = (node: SdsEnum, accept: ValidationAccept
                 node,
                 property: 'body',
                 code: CODE_STYLE_UNNECESSARY_BODY,
+            }
+        )
+    }
+}
+
+export const annotationParameterListShouldNotBeEmpty = (node: SdsAnnotation, accept: ValidationAcceptor) => {
+    if (node.parameterList !== null && isEmpty(node.parameterList?.parameters)) {
+        accept(
+            'info',
+            "This parameter list can be removed.",
+            {
+                node,
+                property: 'parameterList',
+                code: CODE_STYLE_UNNECESSARY_PARAMETER_LIST,
+            }
+        )
+    }
+}
+
+export const enumVariantParameterListShouldNotBeEmpty = (node: SdsEnumVariant, accept: ValidationAcceptor) => {
+    if (node.parameterList !== null && isEmpty(node.parameterList?.parameters)) {
+        accept(
+            'info',
+            "This parameter list can be removed.",
+            {
+                node,
+                property: 'parameterList',
+                code: CODE_STYLE_UNNECESSARY_PARAMETER_LIST,
             }
         )
     }
