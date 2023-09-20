@@ -5,11 +5,15 @@ import { nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing } fr
 import {
     annotationParameterListShouldNotBeEmpty,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
-    classBodyShouldNotBeEmpty, classTypeParameterListShouldNotBeEmpty,
+    classBodyShouldNotBeEmpty,
+    classTypeParameterListShouldNotBeEmpty,
     enumBodyShouldNotBeEmpty,
-    enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty,
-    functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty,
-    segmentResultListShouldNotBeEmpty, unionTypeShouldNotHaveASingularTypeArgument,
+    enumVariantParameterListShouldNotBeEmpty,
+    enumVariantTypeParameterListShouldNotBeEmpty,
+    functionResultListShouldNotBeEmpty,
+    functionTypeParameterListShouldNotBeEmpty,
+    segmentResultListShouldNotBeEmpty,
+    unionTypeShouldNotHaveASingularTypeArgument,
 } from './unnecessarySyntax.js';
 
 /**
@@ -27,7 +31,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty],
         SdsFunction: [functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
-        SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument]
+        SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument],
     };
     registry.register(checks, validator);
 };

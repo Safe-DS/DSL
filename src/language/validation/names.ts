@@ -1,7 +1,6 @@
 import { SdsDeclaration } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 
-
 export const CODE_NAMES_BLOCK_LAMBDA_PREFIX = 'names/block-lambda-prefix';
 export const CODE_NAMES_CASING = 'names/casing';
 
@@ -70,7 +69,7 @@ const nameShouldBeLowerCamelCase = (node: SdsDeclaration, nodeName: string, acce
     if (!isLowerCamelCase(name)) {
         acceptCasingWarning(node, nodeName, 'lowerCamelCase', accept);
     }
-}
+};
 
 const isLowerCamelCase = (name: string): boolean => {
     return /^[a-z][a-zA-Z0-9]*$/gu.test(name);
@@ -81,7 +80,7 @@ const nameShouldBeUpperCamelCase = (node: SdsDeclaration, nodeName: string, acce
     if (!isUpperCamelCase(name)) {
         acceptCasingWarning(node, nodeName, 'UpperCamelCase', accept);
     }
-}
+};
 
 const isUpperCamelCase = (name: string): boolean => {
     return /^[A-Z][a-zA-Z0-9]*$/gu.test(name);
