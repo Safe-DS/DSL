@@ -5,10 +5,10 @@ import { nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing } fr
 import {
     annotationParameterListShouldNotBeEmpty,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
-    classBodyShouldNotBeEmpty,
+    classBodyShouldNotBeEmpty, classTypeParameterListShouldNotBeEmpty,
     enumBodyShouldNotBeEmpty,
-    enumVariantParameterListShouldNotBeEmpty,
-    functionResultListShouldNotBeEmpty,
+    enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty,
+    functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty,
     segmentResultListShouldNotBeEmpty,
 } from './unnecessarySyntax.js';
 
@@ -21,11 +21,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationParameterListShouldNotBeEmpty],
-        SdsClass: [classBodyShouldNotBeEmpty],
+        SdsClass: [classBodyShouldNotBeEmpty, classTypeParameterListShouldNotBeEmpty],
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
         SdsEnum: [enumBodyShouldNotBeEmpty],
-        SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty],
-        SdsFunction: [functionResultListShouldNotBeEmpty],
+        SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty],
+        SdsFunction: [functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
     };
     registry.register(checks, validator);

@@ -21,6 +21,10 @@ export const CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST = 'style/unnecessary-type
 export const CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST = 'style/unnecessary-type-parameter-list';
 export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
 
+// -----------------------------------------------------------------------------
+// Unnecessary assignment
+// -----------------------------------------------------------------------------
+
 export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (node: SdsAssignment, accept: ValidationAcceptor): void => {
     const assignees = node.assigneeList?.assignees ?? [];
     if (assignees.every(isSdsWildcard)) {
@@ -35,8 +39,12 @@ export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (node: SdsAssign
     }
 };
 
+// -----------------------------------------------------------------------------
+// Unnecessary bodies
+// -----------------------------------------------------------------------------
+
 export const classBodyShouldNotBeEmpty = (node: SdsClass, accept: ValidationAcceptor) => {
-    if (node.body !== null && isEmpty(node.body?.members)) {
+    if (node.body && isEmpty(node.body.members)) {
         accept(
             'info',
             "This body can be removed.",
@@ -50,7 +58,7 @@ export const classBodyShouldNotBeEmpty = (node: SdsClass, accept: ValidationAcce
 }
 
 export const enumBodyShouldNotBeEmpty = (node: SdsEnum, accept: ValidationAcceptor) => {
-    if (node.body !== null && isEmpty(node.body?.variants)) {
+    if (node.body && isEmpty(node.body.variants)) {
         accept(
             'info',
             "This body can be removed.",
@@ -63,8 +71,12 @@ export const enumBodyShouldNotBeEmpty = (node: SdsEnum, accept: ValidationAccept
     }
 }
 
+// -----------------------------------------------------------------------------
+// Unnecessary parameter lists
+// -----------------------------------------------------------------------------
+
 export const annotationParameterListShouldNotBeEmpty = (node: SdsAnnotation, accept: ValidationAcceptor) => {
-    if (node.parameterList !== null && isEmpty(node.parameterList?.parameters)) {
+    if (node.parameterList && isEmpty(node.parameterList.parameters)) {
         accept(
             'info',
             "This parameter list can be removed.",
@@ -78,7 +90,7 @@ export const annotationParameterListShouldNotBeEmpty = (node: SdsAnnotation, acc
 }
 
 export const enumVariantParameterListShouldNotBeEmpty = (node: SdsEnumVariant, accept: ValidationAcceptor) => {
-    if (node.parameterList !== null && isEmpty(node.parameterList?.parameters)) {
+    if (node.parameterList && isEmpty(node.parameterList.parameters)) {
         accept(
             'info',
             "This parameter list can be removed.",
@@ -91,8 +103,12 @@ export const enumVariantParameterListShouldNotBeEmpty = (node: SdsEnumVariant, a
     }
 }
 
+// -----------------------------------------------------------------------------
+// Unnecessary result lists
+// -----------------------------------------------------------------------------
+
 export const functionResultListShouldNotBeEmpty = (node: SdsFunction, accept: ValidationAcceptor) => {
-    if (node.resultList !== null && isEmpty(node.resultList?.results)) {
+    if (node.resultList && isEmpty(node.resultList.results)) {
         accept(
             'info',
             "This result list can be removed.",
@@ -106,7 +122,7 @@ export const functionResultListShouldNotBeEmpty = (node: SdsFunction, accept: Va
 }
 
 export const segmentResultListShouldNotBeEmpty = (node: SdsSegment, accept: ValidationAcceptor) => {
-    if (node.resultList !== null && isEmpty(node.resultList?.results)) {
+    if (node.resultList && isEmpty(node.resultList.results)) {
         accept(
             'info',
             "This result list can be removed.",
@@ -114,6 +130,52 @@ export const segmentResultListShouldNotBeEmpty = (node: SdsSegment, accept: Vali
                 node,
                 property: 'resultList',
                 code: CODE_STYLE_UNNECESSARY_RESULT_LIST,
+            }
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Unnecessary type parameter lists
+// -----------------------------------------------------------------------------
+
+export const classTypeParameterListShouldNotBeEmpty = (node: SdsClass, accept: ValidationAcceptor) => {
+    if (node.typeParameterList && isEmpty(node.typeParameterList.typeParameters)) {
+        accept(
+            'info',
+            "This type parameter list can be removed.",
+            {
+                node,
+                property: 'typeParameterList',
+                code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
+            }
+        )
+    }
+}
+
+export const enumVariantTypeParameterListShouldNotBeEmpty = (node: SdsEnumVariant, accept: ValidationAcceptor) => {
+    if (node.typeParameterList && isEmpty(node.typeParameterList.typeParameters)) {
+        accept(
+            'info',
+            "This type parameter list can be removed.",
+            {
+                node,
+                property: 'typeParameterList',
+                code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
+            }
+        )
+    }
+}
+
+export const functionTypeParameterListShouldNotBeEmpty = (node: SdsFunction, accept: ValidationAcceptor) => {
+    if (node.typeParameterList && isEmpty(node.typeParameterList.typeParameters)) {
+        accept(
+            'info',
+            "This type parameter list can be removed.",
+            {
+                node,
+                property: 'typeParameterList',
+                code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
             }
         )
     }
