@@ -6,7 +6,10 @@ import {
     annotationParameterListShouldNotBeEmpty,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
     classBodyShouldNotBeEmpty,
-    enumBodyShouldNotBeEmpty, enumVariantParameterListShouldNotBeEmpty,
+    enumBodyShouldNotBeEmpty,
+    enumVariantParameterListShouldNotBeEmpty,
+    functionResultListShouldNotBeEmpty,
+    segmentResultListShouldNotBeEmpty,
 } from './unnecessarySyntax.js';
 
 /**
@@ -22,6 +25,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
         SdsEnum: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty],
+        SdsFunction: [functionResultListShouldNotBeEmpty],
+        SdsSegment: [segmentResultListShouldNotBeEmpty],
     };
     registry.register(checks, validator);
 };

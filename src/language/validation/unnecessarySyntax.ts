@@ -1,4 +1,12 @@
-import {isSdsWildcard, SdsAnnotation, SdsAssignment, SdsClass, SdsEnum, SdsEnumVariant} from '../generated/ast.js';
+import {
+    isSdsWildcard,
+    SdsAnnotation,
+    SdsAssignment,
+    SdsClass,
+    SdsEnum,
+    SdsEnumVariant,
+    SdsFunction, SdsSegment
+} from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {isEmpty} from "radash";
 
@@ -78,6 +86,34 @@ export const enumVariantParameterListShouldNotBeEmpty = (node: SdsEnumVariant, a
                 node,
                 property: 'parameterList',
                 code: CODE_STYLE_UNNECESSARY_PARAMETER_LIST,
+            }
+        )
+    }
+}
+
+export const functionResultListShouldNotBeEmpty = (node: SdsFunction, accept: ValidationAcceptor) => {
+    if (node.resultList !== null && isEmpty(node.resultList?.results)) {
+        accept(
+            'info',
+            "This result list can be removed.",
+            {
+                node,
+                property: 'resultList',
+                code: CODE_STYLE_UNNECESSARY_RESULT_LIST,
+            }
+        )
+    }
+}
+
+export const segmentResultListShouldNotBeEmpty = (node: SdsSegment, accept: ValidationAcceptor) => {
+    if (node.resultList !== null && isEmpty(node.resultList?.results)) {
+        accept(
+            'info',
+            "This result list can be removed.",
+            {
+                node,
+                property: 'resultList',
+                code: CODE_STYLE_UNNECESSARY_RESULT_LIST,
             }
         )
     }
