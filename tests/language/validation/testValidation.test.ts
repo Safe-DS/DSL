@@ -35,9 +35,9 @@ describe('validation', async () => {
                             expectedIssue,
                         )} but found none.`,
                         actual: getMatchingActualIssues({
-                            severity: expectedIssue.severity,
                             presence: expectedIssue.presence,
-                            uri: expectedIssue.uri
+                            severity: expectedIssue.severity,
+                            uri: expectedIssue.uri,
                         }),
                         expected: [expectedIssue],
                     });

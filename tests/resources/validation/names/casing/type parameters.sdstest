@@ -1,0 +1,12 @@
+package tests.validation.names.casing
+
+fun myFunction3<
+    // $TEST$ no warning "Names of type parameters should be UpperCamelCase."
+    »TypeParameterUppercase1«,
+    // $TEST$ warning "Names of type parameters should be UpperCamelCase."
+    »typeParameterLowercase«,
+    // $TEST$ warning "Names of type parameters should be UpperCamelCase."
+    »_typeParameterUnderscore«,
+    // $TEST$ warning "Names of type parameters should be UpperCamelCase."
+    »Type_Parameter_Snake_Case«
+>()

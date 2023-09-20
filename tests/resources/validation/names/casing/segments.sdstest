@@ -1,0 +1,10 @@
+package tests.validation.names.casing
+
+// $TEST$ warning "Names of segments should be lowerCamelCase."
+segment »SegmentUppercase«() {}
+// $TEST$ no warning "Names of segments should be lowerCamelCase."
+segment »segmentLowercase1«() {}
+// $TEST$ warning "Names of segments should be lowerCamelCase."
+segment »_segmentUnderscore«() {}
+// $TEST$ warning "Names of segments should be lowerCamelCase."
+segment »segment_snake_case«() {}
