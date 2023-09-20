@@ -34,7 +34,11 @@ describe('validation', async () => {
                         message: `Expected to find a matching issue ${issueLocationToString(
                             expectedIssue,
                         )} but found none.`,
-                        actual: [],
+                        actual: getMatchingActualIssues({
+                            severity: expectedIssue.severity,
+                            presence: expectedIssue.presence,
+                            uri: expectedIssue.uri
+                        }),
                         expected: [expectedIssue],
                     });
                 }
