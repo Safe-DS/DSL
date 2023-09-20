@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryResultListInFunction
+package tests.validation.style.unnecessaryResultListInFunction
 
 // $TEST$ info "This result list can be removed."
 fun myFun1() »-> ()«

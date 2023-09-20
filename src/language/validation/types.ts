@@ -1,7 +1,7 @@
 import {getContainerOfType, ValidationAcceptor} from 'langium';
 import {isSdsCallable, isSdsLambda, SdsAttribute, SdsParameter, SdsResult} from '../generated/ast.js';
 
-export const MISSING_TYPE_HINT = 'types/missing-type-hint';
+export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 
 // -----------------------------------------------------------------------------
 // Missing type hints
@@ -12,7 +12,7 @@ export const attributeMustHaveTypeHint = (node: SdsAttribute, accept: Validation
         accept('error', 'An attribute must have a type hint.', {
             node,
             property: 'name',
-            code: MISSING_TYPE_HINT,
+            code: CODE_TYPE_MISSING_TYPE_HINT,
         });
     }
 };
@@ -25,7 +25,7 @@ export const parameterMustHaveTypeHint = (node: SdsParameter, accept: Validation
             accept('error', 'A parameter must have a type hint.', {
                 node,
                 property: 'name',
-                code: MISSING_TYPE_HINT,
+                code: CODE_TYPE_MISSING_TYPE_HINT,
             });
         }
     }
@@ -36,7 +36,7 @@ export const resultMustHaveTypeHint = (node: SdsResult, accept: ValidationAccept
         accept('error', 'A result must have a type hint.', {
             node,
             property: 'name',
-            code: MISSING_TYPE_HINT,
+            code: CODE_TYPE_MISSING_TYPE_HINT,
         });
     }
 };

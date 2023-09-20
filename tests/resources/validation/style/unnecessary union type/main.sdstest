@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryUnionType
+package tests.validation.style.unnecessaryUnionType
 
 // $TEST$ no info "This can be replaced by the singular type argument of the union type."
 segment mySegment1(

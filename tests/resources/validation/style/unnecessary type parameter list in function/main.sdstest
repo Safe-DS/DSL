@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryTypeParameterListInFunction
+package tests.validation.style.unnecessaryTypeParameterListInFunction
 
 // $TEST$ info "This type parameter list can be removed."
 fun myFunction1»<>«()

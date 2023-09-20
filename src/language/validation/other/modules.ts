@@ -1,7 +1,7 @@
 import { ValidationAcceptor } from 'langium';
 import { isSdsDeclaration, SdsModule } from '../../generated/ast.js';
 
-export const CODE_OTHER_MISSING_PACKAGE = 'other/missing-package';
+export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
 
 export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: ValidationAcceptor): void => {
     if (!node.name) {
@@ -10,7 +10,7 @@ export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: 
             accept('error', 'A module with declarations must state its package.', {
                 node: declarations[0],
                 property: 'name',
-                code: CODE_OTHER_MISSING_PACKAGE,
+                code: CODE_MODULE_MISSING_PACKAGE,
             });
         }
     }

@@ -14,7 +14,7 @@ import {
     functionTypeParameterListShouldNotBeEmpty,
     segmentResultListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
-} from './unnecessarySyntax.js';
+} from './style.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
 import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';

@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryParameterListInEnumVariant
+package tests.validation.style.unnecessaryParameterListInAnnotation
 
 // $TEST$ info "This parameter list can be removed."
 annotation MyAnnotation1»()«

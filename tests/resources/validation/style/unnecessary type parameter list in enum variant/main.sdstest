@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryTypeParameterListInEnumVariant
+package tests.validation.style.unnecessaryTypeParameterListInEnumVariant
 
 enum MyEnum {
     // $TEST$ info "This type parameter list can be removed."

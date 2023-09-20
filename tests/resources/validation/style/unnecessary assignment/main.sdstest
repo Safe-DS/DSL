@@ -1,4 +1,4 @@
-package tests.validation.unnecessarySyntax.unnecessaryAssignment
+package tests.validation.style.unnecessaryAssignment
 
 fun f() -> (a: Int, b: Int)
 
