@@ -5,7 +5,7 @@ import {
     SdsClass,
     SdsEnum,
     SdsEnumVariant,
-    SdsFunction, SdsSegment
+    SdsFunction, SdsSegment, SdsUnionType
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {isEmpty} from "radash";
@@ -176,6 +176,24 @@ export const functionTypeParameterListShouldNotBeEmpty = (node: SdsFunction, acc
                 node,
                 property: 'typeParameterList',
                 code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
+            }
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Unnecessary type parameter lists
+// -----------------------------------------------------------------------------
+
+export const unionTypeShouldNotHaveASingularTypeArgument = (node: SdsUnionType, accept: ValidationAcceptor) => {
+    const typeArguments = node.typeArgumentList?.typeArguments ?? [];
+    if (typeArguments.length === 1) {
+        accept(
+            'info',
+            "This can be replaced by the singular type argument of the union type.",
+            {
+                node,
+                code: CODE_STYLE_UNNECESSARY_UNION_TYPE,
             }
         )
     }

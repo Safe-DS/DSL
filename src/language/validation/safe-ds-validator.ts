@@ -9,7 +9,7 @@ import {
     enumBodyShouldNotBeEmpty,
     enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty,
-    segmentResultListShouldNotBeEmpty,
+    segmentResultListShouldNotBeEmpty, unionTypeShouldNotHaveASingularTypeArgument,
 } from './unnecessarySyntax.js';
 
 /**
@@ -27,6 +27,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty],
         SdsFunction: [functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
+        SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument]
     };
     registry.register(checks, validator);
 };
