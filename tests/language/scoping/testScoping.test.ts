@@ -1,8 +1,8 @@
-import { describe, it } from 'vitest';
+import { afterEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
-import { isRangeEqual } from 'langium/test';
+import { isRangeEqual, clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { isLocationEqual, locationToString } from '../../helpers/location.js';
 import { createScopingTests, ExpectedReference } from './creator.js';
@@ -12,6 +12,10 @@ import { Location } from 'vscode-languageserver';
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
 describe('scoping', async () => {
+    afterEach(async () => {
+        await clearDocuments(services);
+    });
+
     it.each(await createScopingTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
