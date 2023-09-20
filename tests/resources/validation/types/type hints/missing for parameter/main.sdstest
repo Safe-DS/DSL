@@ -1,0 +1,39 @@
+package tests.validation.types.typeHints.missingForParameter
+
+// $TEST$ error "A parameter must have a type hint."
+// $TEST$ no error "A parameter must have a type hint."
+annotation MyAnnotation(»a«, »b«: Int)
+
+// $TEST$ error "A parameter must have a type hint."
+// $TEST$ no error "A parameter must have a type hint."
+class MyClass(»a«, »b«: Int) {
+    // $TEST$ error "A parameter must have a type hint."
+    // $TEST$ no error "A parameter must have a type hint."
+    class MyClass(»a«, »b«: Int) {}
+
+    // $TEST$ error "A parameter must have a type hint."
+    // $TEST$ no error "A parameter must have a type hint."
+    fun myFunction(»a«, »b«: Int)
+}
+
+// $TEST$ error "A parameter must have a type hint."
+// $TEST$ no error "A parameter must have a type hint."
+fun myFunction(»a«, »b«: Int)
+
+pipeline myPipeline {
+    // $TEST$ no error "A parameter must have a type hint."
+    (»a«) -> a;
+
+    // $TEST$ no error "A parameter must have a type hint."
+    (»a«) {};
+}
+
+// $TEST$ error "A parameter must have a type hint."
+// $TEST$ no error "A parameter must have a type hint."
+segment mySegment1(»a«, »b«: Int) {}
+
+// $TEST$ error "A parameter must have a type hint."
+// $TEST$ no error "A parameter must have a type hint."
+segment mySegment2(
+    f: (»a«, »b«: Int) -> ()
+) {}
