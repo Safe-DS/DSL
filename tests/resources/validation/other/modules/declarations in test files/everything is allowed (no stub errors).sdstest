@@ -1,8 +1,8 @@
-package tests.validation.other.modules.declarationsInStubFiles
+package tests.validation.other.modules.declarationsInTestFiles
 
-// $TEST$ error "A stub file must not declare pipelines or segments."
+// $TEST$ no error "A stub file must not declare pipelines or segments."
 pipeline »myPipeline« {}
-// $TEST$ error "A stub file must not declare pipelines or segments."
+// $TEST$ no error "A stub file must not declare pipelines or segments."
 segment »mySegment«() {}
 
 // $TEST$ no error "A stub file must not declare pipelines or segments."
