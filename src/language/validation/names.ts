@@ -1,8 +1,8 @@
 import { SdsDeclaration } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 
-export const CODE_NAMES_BLOCK_LAMBDA_PREFIX = 'names/block-lambda-prefix';
-export const CODE_NAMES_CASING = 'names/casing';
+export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
+export const CODE_NAME_CASING = 'name/casing';
 
 export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, accept: ValidationAcceptor) => {
     const name = node.name ?? '';
@@ -14,7 +14,7 @@ export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, acce
             {
                 node,
                 property: 'name',
-                code: CODE_NAMES_BLOCK_LAMBDA_PREFIX,
+                code: CODE_NAME_BLOCK_LAMBDA_PREFIX,
             },
         );
     }
@@ -43,7 +43,7 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
                 accept('warning', 'All segments of the qualified name of a package should be lowerCamelCase.', {
                     node,
                     property: 'name',
-                    code: CODE_NAMES_CASING,
+                    code: CODE_NAME_CASING,
                 });
             }
             return;
@@ -95,6 +95,6 @@ const acceptCasingWarning = (
     accept('warning', `Names of ${nodeName} should be ${expectedCasing}.`, {
         node,
         property: 'name',
-        code: CODE_NAMES_CASING,
+        code: CODE_NAME_CASING,
     });
 };

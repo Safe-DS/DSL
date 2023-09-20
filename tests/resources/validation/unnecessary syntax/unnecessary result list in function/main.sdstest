@@ -1,7 +1,0 @@
-package tests.validation.unnecessarySyntax.unnecessaryResultListInFunction
-
-// $TEST$ info "This result list can be removed."
-fun myFun1() »-> ()«
-
-// $TEST$ no info "This result list can be removed."
-fun myFun2() »-> (r: Int)«

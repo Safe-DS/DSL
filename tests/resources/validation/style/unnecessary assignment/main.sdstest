@@ -1,0 +1,31 @@
+package tests.validation.style.unnecessaryAssignment
+
+fun f() -> (a: Int, b: Int)
+
+class MyClass {
+    fun f() -> (a: Int, b: Int)
+}
+
+segment mySegment() -> a: Int {
+    // $TEST$ info "This assignment can be replaced by an expression statement."
+    »_, _ = f();«
+    // $TEST$ info "This assignment can be replaced by an expression statement."
+    »_, _ = MyClass().f();«
+
+    // $TEST$ no info "This assignment can be replaced by an expression statement."
+    »val a = 1;«
+    // $TEST$ no info "This assignment can be replaced by an expression statement."
+    »yield a = 1;«
+
+    () {
+        // $TEST$ info "This assignment can be replaced by an expression statement."
+        »_, _ = f();«
+        // $TEST$ info "This assignment can be replaced by an expression statement."
+        »_, _ = MyClass().f();«
+
+        // $TEST$ no info "This assignment can be replaced by an expression statement."
+        »val a = 1;«
+        // $TEST$ no info "This assignment can be replaced by an expression statement."
+        »yield a = 1;«
+    };
+}

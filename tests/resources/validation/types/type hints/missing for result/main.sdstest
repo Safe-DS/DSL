@@ -1,0 +1,21 @@
+package tests.validation.types.typeHints.missingForResult
+
+class MyClass {
+    // $TEST$ error "A result must have a type hint."
+    // $TEST$ no error "A result must have a type hint."
+    fun myFunction() -> (»a«, »b«: Int)
+}
+
+// $TEST$ error "A result must have a type hint."
+// $TEST$ no error "A result must have a type hint."
+fun myFunction() -> (»a«, »b«: Int)
+
+// $TEST$ error "A result must have a type hint."
+// $TEST$ no error "A result must have a type hint."
+segment mySegment1() -> (»a«, »b«: Int) {}
+
+// $TEST$ error "A result must have a type hint."
+// $TEST$ no error "A result must have a type hint."
+segment mySegment2(
+    f: () -> (»a«, »b«: Int)
+) {}

@@ -1,7 +1,0 @@
-package tests.validation.unnecessarySyntax.unnecessaryTypeParameterListInFunction
-
-// $TEST$ info "This type parameter list can be removed."
-fun myFunction1»<>«()
-
-// $TEST$ no info "This type parameter list can be removed."
-fun myFunction2»<T>«()

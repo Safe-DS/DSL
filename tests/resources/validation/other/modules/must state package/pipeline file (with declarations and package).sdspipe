@@ -1,0 +1,7 @@
+package tests.validation.other.modules.mustStatePackage
+
+// $TEST$ no error "A module with declarations must state its package."
+segment »s«() {}
+
+// $TEST$ no error "A module with declarations must state its package."
+segment »t«() {}

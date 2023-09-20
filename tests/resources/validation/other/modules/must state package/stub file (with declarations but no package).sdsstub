@@ -1,0 +1,5 @@
+// $TEST$ error "A module with declarations must state its package."
+class »C«
+
+// $TEST$ no error "A module with declarations must state its package."
+class »D«

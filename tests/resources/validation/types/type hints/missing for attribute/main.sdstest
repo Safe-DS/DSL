@@ -1,0 +1,9 @@
+package tests.validation.types.typeHints.missingForAttribute
+
+class MyClass {
+    // $TEST$ error "An attribute must have a type hint."
+    attr »myAttribute1«
+
+    // $TEST$ no error "An attribute must have a type hint."
+    attr »myAttribute2«: Int
+}

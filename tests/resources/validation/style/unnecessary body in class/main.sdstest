@@ -1,0 +1,14 @@
+package tests.validation.style.unnecessaryBodyInClass
+
+// $TEST$ info "This body can be removed."
+class MyClass1 »{}«
+
+// $TEST$ no info "This body can be removed."
+class MyClass2 »{
+    fun f()
+}«
+
+// $TEST$ no info "This body can be removed."
+class MyClass3 »{
+    attr a: Int
+}«

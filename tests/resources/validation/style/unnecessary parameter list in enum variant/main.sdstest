@@ -1,0 +1,7 @@
+package tests.validation.style.unnecessaryParameterListInEnumVariant
+
+// $TEST$ info "This parameter list can be removed."
+annotation MyAnnotation1»()«
+
+// $TEST$ no info "This parameter list can be removed."
+annotation MyAnnotation2»(a: Int)«

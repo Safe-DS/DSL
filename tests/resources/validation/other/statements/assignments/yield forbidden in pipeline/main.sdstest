@@ -1,0 +1,16 @@
+package tests.validation.other.statements.assignments.yieldForbiddenInPipeline
+
+segment s() {
+	// $TEST$ no error "Yield must not be used in a pipeline."
+    »yield a« = 1;
+}
+
+pipeline p {
+	// $TEST$ error "Yield must not be used in a pipeline."
+    »yield a« = 1;
+
+    () {
+        // $TEST$ no error "Yield must not be used in a pipeline."
+        »yield a« = 1;
+    };
+}
