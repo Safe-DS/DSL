@@ -15,9 +15,10 @@ import {
     segmentResultListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './unnecessarySyntax.js';
-import {templateStringMustHaveExpressionBetweenTwoStringParts} from "./other/expressions/templateStrings.js";
-import {yieldMustNotBeUsedInPipeline} from "./other/statements/assignments.js";
-import {attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint} from "./types.js";
+import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
+import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
+import { moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 
 /**
  * Register custom validation checks.
@@ -34,12 +35,13 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnum: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty, enumVariantTypeParameterListShouldNotBeEmpty],
         SdsFunction: [functionResultListShouldNotBeEmpty, functionTypeParameterListShouldNotBeEmpty],
+        SdsModule: [moduleWithDeclarationsMustStatePackage],
         SdsParameter: [parameterMustHaveTypeHint],
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument],
-        SdsYield: [yieldMustNotBeUsedInPipeline]
+        SdsYield: [yieldMustNotBeUsedInPipeline],
     };
     registry.register(checks, validator);
 };

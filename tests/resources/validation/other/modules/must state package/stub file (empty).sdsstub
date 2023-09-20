@@ -1,0 +1,1 @@
+// $TEST$ no error "A module with declarations must state its package."
