@@ -7,6 +7,7 @@ import {
     SdsEnumVariant,
     SdsExpressionLambda,
     SdsPipeline,
+    SdsSegment,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {
@@ -194,6 +195,21 @@ export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: Valida
     namesMustBeUnique(
         placeholdersOrEmpty(node.body),
         (name) => `A placeholder with name '${name}' exists already.`,
+        accept,
+    );
+};
+
+export const segmentMustContainUniqueNames = (node: SdsSegment, accept: ValidationAcceptor): void => {
+    const parametersAndPlaceholder = [...parametersOrEmpty(node.parameterList), ...placeholdersOrEmpty(node.body)];
+    namesMustBeUnique(
+        parametersAndPlaceholder,
+        (name) => `A parameter or placeholder with name '${name}' exists already.`,
+        accept,
+    );
+
+    namesMustBeUnique(
+        resultsOrEmpty(node.resultList),
+        (name) => `A result with name '${name}' exists already.`,
         accept,
     );
 };

@@ -9,7 +9,7 @@ import {
     expressionLambdaMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
     nameShouldHaveCorrectCasing,
-    pipelineMustContainUniqueNames,
+    pipelineMustContainUniqueNames, segmentMustContainUniqueNames,
 } from './names.js';
 import {
     annotationParameterListShouldNotBeEmpty,
@@ -65,7 +65,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsResult: [resultMustHaveTypeHint],
-        SdsSegment: [segmentResultListShouldNotBeEmpty],
+        SdsSegment: [segmentMustContainUniqueNames, segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],

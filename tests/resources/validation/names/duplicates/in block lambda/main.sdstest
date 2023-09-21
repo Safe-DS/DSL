@@ -1,4 +1,5 @@
 package tests.validation.names.duplicates.inBlockLambda
+
 pipeline p {
     (
         // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
@@ -38,5 +39,14 @@ pipeline p {
 
         // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
         val »resultAndPlaceholder« = 1;
+
+        () {
+            // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+            val »duplicatePlaceholder« = 1;
+            // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+            val »parameterAndPlaceholder« = 1;
+            // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+            val »placeholderAndResult« = 1;
+        };
     };
 }

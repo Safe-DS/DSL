@@ -1,0 +1,45 @@
+package tests.validation.names.duplicates.inSegment
+
+segment mySegment(
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    »duplicateParameter«: Int,
+    // $TEST$ error "A parameter or placeholder with name 'duplicateParameter' exists already."
+    »duplicateParameter«: Int,
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    »uniqueParameter«: Int,
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    »parameterAndPlaceholder«: Int,
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    »parameterAndResult«: Int,
+) -> (
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »duplicateResult« : Int,
+    // $TEST$ error "A result with name 'duplicateResult' exists already."
+    »duplicateResult« : Int,
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »uniqueResult« : Int,
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »parameterAndResult« : Int,
+    //$TEST$ no error r"A result with name '\w*' exists already\."
+    »placeholderAndResult« : Int,
+) {
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    val »duplicatePlaceholder« = 1;
+    // $TEST$ error "A parameter or placeholder with name 'duplicatePlaceholder' exists already."
+    val »duplicatePlaceholder« = 1;
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    val »uniquePlaceholder« = 1;
+    // $TEST$ error "A parameter or placeholder with name 'parameterAndPlaceholder' exists already."
+    val »parameterAndPlaceholder« = 1;
+    // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+    val »placeholderAndResult« = 1;
+
+    () {
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+        val »duplicatePlaceholder« = 1;
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+        val »parameterAndPlaceholder« = 1;
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
+        val »placeholderAndResult« = 1;
+    };
+}
