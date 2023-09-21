@@ -2,7 +2,7 @@
 import {
     isSdsDeclaration,
     SdsAnnotatedObject,
-    SdsAnnotationCall,
+    SdsAnnotationCall, SdsImport,
     SdsLiteral,
     SdsLiteralType, SdsResult, SdsResultList,
     SdsTypeArgument,
@@ -28,3 +28,8 @@ export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsRes
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
     return node?.typeArguments ?? [];
 };
+
+export const isWildcardImport = function (node: SdsImport): boolean {
+    const importedNamespace = node.importedNamespace ?? '';
+    return importedNamespace.endsWith('*')
+}
