@@ -1,0 +1,9 @@
+package tests.validation.style.unnecessaryConstraintListInClass
+
+// $TEST$ info "This constraint list can be removed."
+class MyClass1 »where {}«
+
+// $TEST$ no info "This constraint list can be removed."
+class MyClass2<T> »where {
+    T sub Int
+}«

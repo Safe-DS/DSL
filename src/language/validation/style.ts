@@ -3,6 +3,7 @@ import {
     SdsAnnotation,
     SdsAssignment,
     SdsClassBody,
+    SdsConstraintList,
     SdsEnumBody,
     SdsEnumVariant,
     SdsFunction,
@@ -16,6 +17,7 @@ import { isEmpty } from 'radash';
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
 export const CODE_STYLE_UNNECESSARY_BODY = 'style/unnecessary-body';
+export const CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST = 'style/unnecessary-constraint-list';
 export const CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR = 'style/unnecessary-elvis-operator';
 export const CODE_STYLE_UNNECESSARY_SAFE_ACCESS = 'style/unnecessary-safe-access';
 export const CODE_STYLE_UNNECESSARY_PARAMETER_LIST = 'style/unnecessary-parameter-list';
@@ -59,6 +61,19 @@ export const enumBodyShouldNotBeEmpty = (node: SdsEnumBody, accept: ValidationAc
         accept('info', 'This body can be removed.', {
             node,
             code: CODE_STYLE_UNNECESSARY_BODY,
+        });
+    }
+};
+
+// -----------------------------------------------------------------------------
+// Unnecessary constraint list
+// -----------------------------------------------------------------------------
+
+export const constraintListShouldNotBeEmpty = (node: SdsConstraintList, accept: ValidationAcceptor) => {
+    if (isEmpty(node.constraints)) {
+        accept('info', 'This constraint list can be removed.', {
+            node,
+            code: CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST,
         });
     }
 };
