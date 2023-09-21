@@ -17,6 +17,7 @@ import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/e
 import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
+import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 
 /**
  * Register custom validation checks.
@@ -38,6 +39,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument],
         SdsYield: [yieldMustNotBeUsedInPipeline],
