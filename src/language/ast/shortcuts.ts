@@ -1,12 +1,17 @@
 import {
-    isSdsAssignment, isSdsBlockLambdaResult,
+    isSdsAssignment,
+    isSdsBlockLambdaResult,
     isSdsDeclaration,
     isSdsPlaceholder,
     SdsAnnotatedObject,
     SdsAnnotationCall,
     SdsAssignee,
     SdsAssignment,
-    SdsBlock, SdsBlockLambda, SdsBlockLambdaResult,
+    SdsBlock,
+    SdsBlockLambda,
+    SdsBlockLambdaResult,
+    SdsClass,
+    SdsClassMember,
     SdsEnum,
     SdsEnumVariant,
     SdsLiteral,
@@ -46,10 +51,14 @@ export const blockLambdaResultsOrEmpty = function (node: SdsBlockLambda | undefi
         .flatMap(assigneesOrEmpty)
         .filter(isSdsBlockLambdaResult)
         .toArray();
-}
+};
 
 export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsLiteral[] {
     return node?.literalList?.literals ?? [];
+};
+
+export const classMembersOrEmpty = function (node: SdsClass | undefined): SdsClassMember[] {
+    return node?.body?.members ?? [];
 };
 
 export const parametersOrEmpty = function (node: SdsParameterList | undefined): SdsParameter[] {

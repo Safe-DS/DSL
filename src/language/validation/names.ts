@@ -2,16 +2,19 @@ import {
     SdsAnnotation,
     SdsBlockLambda,
     SdsCallableType,
+    SdsClass,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
-    SdsExpressionLambda, SdsFunction,
+    SdsExpressionLambda,
+    SdsFunction,
     SdsPipeline,
     SdsSegment,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {
     blockLambdaResultsOrEmpty,
+    classMembersOrEmpty,
     parametersOrEmpty,
     placeholdersOrEmpty,
     resultsOrEmpty,
@@ -166,6 +169,20 @@ export const callableTypeMustContainUniqueNames = (node: SdsCallableType, accept
     );
 };
 
+export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAcceptor): void => {
+    const typeParametersAndParameters = [
+        ...typeParametersOrEmpty(node.typeParameterList),
+        ...parametersOrEmpty(node.parameterList),
+    ];
+    namesMustBeUnique(
+        typeParametersAndParameters,
+        (name) => `A type parameter or parameter with name '${name}' exists already.`,
+        accept,
+    );
+
+    namesMustBeUnique(classMembersOrEmpty(node), (name) => `A member with name '${name}' exists already.`, accept);
+};
+
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
     namesMustBeUnique(variantsOrEmpty(node), (name) => `A variant with name '${name}' exists already.`, accept);
 };
@@ -206,7 +223,7 @@ export const functionMustContainUniqueNames = (node: SdsFunction, accept: Valida
         (name) => `A result with name '${name}' exists already.`,
         accept,
     );
-}
+};
 
 export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: ValidationAcceptor): void => {
     namesMustBeUnique(
