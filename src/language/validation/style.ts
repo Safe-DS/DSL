@@ -3,7 +3,8 @@ import {
     SdsAnnotation,
     SdsAssignment,
     SdsClass,
-    SdsEnum,
+    SdsClassBody,
+    SdsEnumBody,
     SdsEnumVariant,
     SdsFunction,
     SdsSegment,
@@ -44,21 +45,19 @@ export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (
 // Unnecessary bodies
 // -----------------------------------------------------------------------------
 
-export const classBodyShouldNotBeEmpty = (node: SdsClass, accept: ValidationAcceptor) => {
-    if (node.body && isEmpty(node.body.members)) {
+export const classBodyShouldNotBeEmpty = (node: SdsClassBody, accept: ValidationAcceptor) => {
+    if (isEmpty(node.members)) {
         accept('info', 'This body can be removed.', {
             node,
-            property: 'body',
             code: CODE_STYLE_UNNECESSARY_BODY,
         });
     }
 };
 
-export const enumBodyShouldNotBeEmpty = (node: SdsEnum, accept: ValidationAcceptor) => {
-    if (node.body && isEmpty(node.body.variants)) {
+export const enumBodyShouldNotBeEmpty = (node: SdsEnumBody, accept: ValidationAcceptor) => {
+    if (isEmpty(node.variants)) {
         accept('info', 'This body can be removed.', {
             node,
-            property: 'body',
             code: CODE_STYLE_UNNECESSARY_BODY,
         });
     }
