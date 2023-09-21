@@ -256,7 +256,11 @@ const namesMustBeUnique = (
     const knownNames = new Set<string>();
 
     for (const node of nodes) {
-        const name = node.name ?? '';
+        const name = node.name;
+        if (!name) {
+            continue;
+        }
+
         if (knownNames.has(name)) {
             accept('error', createMessage(name), {
                 node,

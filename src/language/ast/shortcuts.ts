@@ -31,12 +31,14 @@ import { stream } from 'langium';
 
 export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] {
     if (!node) {
+        /* c8 ignore next 2 */
         return [];
     }
 
     if (isSdsDeclaration(node)) {
         return node?.annotationCallList?.annotationCalls ?? node?.annotationCalls ?? [];
     } else {
+        /* c8 ignore next 2 */
         return node?.annotationCalls ?? [];
     }
 };
