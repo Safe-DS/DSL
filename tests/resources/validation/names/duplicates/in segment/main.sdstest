@@ -20,7 +20,7 @@ segment mySegment(
     »uniqueResult« : Int,
     // $TEST$ no error r"A result with name '\w*' exists already\."
     »parameterAndResult« : Int,
-    //$TEST$ no error r"A result with name '\w*' exists already\."
+    // $TEST$ no error r"A result with name '\w*' exists already\."
     »placeholderAndResult« : Int,
 ) {
     // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."

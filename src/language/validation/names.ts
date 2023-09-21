@@ -5,7 +5,7 @@ import {
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
-    SdsExpressionLambda,
+    SdsExpressionLambda, SdsFunction,
     SdsPipeline,
     SdsSegment,
 } from '../generated/ast.js';
@@ -189,6 +189,24 @@ export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda
         accept,
     );
 };
+
+export const functionMustContainUniqueNames = (node: SdsFunction, accept: ValidationAcceptor): void => {
+    const typeParametersAndParameters = [
+        ...typeParametersOrEmpty(node.typeParameterList),
+        ...parametersOrEmpty(node.parameterList),
+    ];
+    namesMustBeUnique(
+        typeParametersAndParameters,
+        (name) => `A type parameter or parameter with name '${name}' exists already.`,
+        accept,
+    );
+
+    namesMustBeUnique(
+        resultsOrEmpty(node.resultList),
+        (name) => `A result with name '${name}' exists already.`,
+        accept,
+    );
+}
 
 export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: ValidationAcceptor): void => {
     namesMustBeUnique(
