@@ -1,11 +1,12 @@
-import {ValidationChecks} from 'langium';
-import {SafeDsAstType} from '../generated/ast.js';
-import type {SafeDsServices} from '../safe-ds-module.js';
-import {nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing} from './names.js';
+import { ValidationChecks } from 'langium';
+import { SafeDsAstType } from '../generated/ast.js';
+import type { SafeDsServices } from '../safe-ds-module.js';
+import { nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing } from './names.js';
 import {
     annotationParameterListShouldNotBeEmpty,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
-    classBodyShouldNotBeEmpty, constraintListShouldNotBeEmpty,
+    classBodyShouldNotBeEmpty,
+    constraintListShouldNotBeEmpty,
     enumBodyShouldNotBeEmpty,
     enumVariantParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty,
@@ -13,13 +14,11 @@ import {
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
-import {templateStringMustHaveExpressionBetweenTwoStringParts} from './other/expressions/templateStrings.js';
-import {yieldMustNotBeUsedInPipeline} from './other/statements/assignments.js';
-import {attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint} from './types.js';
-import {moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage} from './other/modules.js';
-import {
-    typeParameterConstraintLeftOperandMustBeOwnTypeParameter
-} from './other/declarations/typeParameterConstraints.js';
+import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
+import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
+import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
+import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 
 /**
  * Register custom validation checks.
@@ -53,5 +52,4 @@ export const registerValidationChecks = function (services: SafeDsServices) {
 /**
  * Implementation of custom validations.
  */
-export class SafeDsValidator {
-}
+export class SafeDsValidator {}
