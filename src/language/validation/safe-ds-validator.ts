@@ -2,11 +2,14 @@ import { ValidationChecks } from 'langium';
 import { SafeDsAstType } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
+    annotationMustContainUniqueNames,
     blockLambdaMustContainUniqueNames,
     enumMustContainUniqueNames,
-    enumVariantMustContainUniqueNames, expressionLambdaMustContainUniqueNames,
+    enumVariantMustContainUniqueNames,
+    expressionLambdaMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
-    nameShouldHaveCorrectCasing, pipelineMustContainUniqueNames
+    nameShouldHaveCorrectCasing,
+    pipelineMustContainUniqueNames,
 } from './names.js';
 import {
     annotationParameterListShouldNotBeEmpty,
@@ -40,7 +43,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const validator = services.validation.SafeDsValidator;
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
-        SdsAnnotation: [annotationParameterListShouldNotBeEmpty],
+        SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],

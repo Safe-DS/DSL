@@ -1,0 +1,10 @@
+package tests.validation.names.duplicates.inAnnotation
+
+annotation A(
+    // $TEST$ no error r"A parameter with name '\w*' exists already\."
+    »duplicateParameter«: Int,
+    // $TEST$ error "A parameter with name 'duplicateParameter' exists already."
+    »duplicateParameter«: Int,
+    // $TEST$ no error r"A parameter with name '\w*' exists already\."
+    »uniqueParameter«: Int
+)

@@ -1,4 +1,5 @@
 import {
+    SdsAnnotation,
     SdsBlockLambda,
     SdsDeclaration,
     SdsEnum,
@@ -125,6 +126,14 @@ const acceptCasingWarning = (
 // -----------------------------------------------------------------------------
 // Uniqueness
 // -----------------------------------------------------------------------------
+
+export const annotationMustContainUniqueNames = (node: SdsAnnotation, accept: ValidationAcceptor): void => {
+    namesMustBeUnique(
+        parametersOrEmpty(node.parameterList),
+        (name) => `A parameter with name '${name}' exists already.`,
+        accept,
+    );
+}
 
 export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: ValidationAcceptor): void => {
     const parametersAndPlaceholders = [...parametersOrEmpty(node.parameterList), ...placeholdersOrEmpty(node.body)];
