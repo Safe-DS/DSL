@@ -19,9 +19,7 @@ import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/e
 import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
-import {
-    typeParameterConstraintLeftOperandMustBeOwnTypeParameter
-} from "./other/declarations/typeParameterConstraints.js";
+import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 
 /**
  * Register custom validation checks.
