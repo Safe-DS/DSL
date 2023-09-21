@@ -19,6 +19,11 @@ import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js'
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
+import {
+    parameterListMustNotHaveOptionalAndVariadicParameters,
+    parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
+    parameterListVariadicParameterMustBeLast,
+} from './other/declarations/parameterLists.js';
 
 /**
  * Register custom validation checks.
@@ -38,6 +43,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsFunction: [functionResultListShouldNotBeEmpty],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameterList: [
+            parameterListMustNotHaveOptionalAndVariadicParameters,
+            parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
+            parameterListVariadicParameterMustBeLast,
+        ],
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
