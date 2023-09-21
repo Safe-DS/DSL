@@ -391,19 +391,6 @@ SdsParameterList returns SdsParameterList:
     ')'
 ;
 
-interface SdsLambdaParameterList extends SdsExpression, SdsParameterList {}
-
-SdsLambdaParameterList returns SdsParameterList:
-    {SdsLambdaParameterList}
-    '('
-    (
-        parameters+=SdsParameter
-        (',' parameters+=SdsParameter)*
-        ','?
-    )?
-    ')'
-;
-
 interface SdsParameter extends SdsLocalVariable {
 	variadic: boolean
 	^type?: SdsType
@@ -522,7 +509,7 @@ interface SdsExpressionLambda extends SdsLambda {
 }
 
 SdsLambda returns SdsExpression:
-    SdsLambdaParameterList
+    SdsParameterList
     (
       {SdsBlockLambda.parameterList=current} body=SdsBlockLambdaBlock
     | {SdsExpressionLambda.parameterList=current} '->' result=SdsExpression
