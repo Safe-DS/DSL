@@ -1,0 +1,10 @@
+package tests.validation.names.duplicates.inPipeline
+
+pipeline p {
+	// $TEST$ no error r"A placeholder with name '\w*' exists already\."
+    val »duplicatePlaceholder« = 1;
+    // $TEST$ error "A placeholder with name 'duplicatePlaceholder' exists already."
+    val »duplicatePlaceholder« = 1;
+    // $TEST$ no error r"A placeholder with name '\w*' exists already\."
+    val »uniquePlaceholder« = 1;
+}

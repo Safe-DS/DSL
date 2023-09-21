@@ -1,4 +1,11 @@
-import { SdsBlockLambda, SdsDeclaration, SdsEnum, SdsEnumVariant, SdsExpressionLambda } from '../generated/ast.js';
+import {
+    SdsBlockLambda,
+    SdsDeclaration,
+    SdsEnum,
+    SdsEnumVariant,
+    SdsExpressionLambda,
+    SdsPipeline
+} from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {
     blockLambdaResultsOrEmpty,
@@ -158,6 +165,14 @@ export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda
         accept,
     );
 };
+
+export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: ValidationAcceptor): void => {
+    namesMustBeUnique(
+        placeholdersOrEmpty(node.body),
+        (name) => `A placeholder with name '${name}' exists already.`,
+        accept,
+    )
+}
 
 const namesMustBeUnique = (
     nodes: Iterable<SdsDeclaration>,

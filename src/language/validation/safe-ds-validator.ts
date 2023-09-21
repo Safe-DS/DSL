@@ -6,7 +6,7 @@ import {
     enumMustContainUniqueNames,
     enumVariantMustContainUniqueNames, expressionLambdaMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
-    nameShouldHaveCorrectCasing
+    nameShouldHaveCorrectCasing, pipelineMustContainUniqueNames
 } from './names.js';
 import {
     annotationParameterListShouldNotBeEmpty,
@@ -59,6 +59,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
             parameterListVariadicParameterMustBeLast,
         ],
+        SdsPipeline: [pipelineMustContainUniqueNames],
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
