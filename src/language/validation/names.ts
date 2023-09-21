@@ -92,6 +92,7 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
         case 'SdsTypeParameter':
             return nameShouldBeUpperCamelCase(node, 'type parameters', accept);
     }
+    /* c8 ignore next */
 };
 
 const nameShouldBeLowerCamelCase = (node: SdsDeclaration, nodeName: string, accept: ValidationAcceptor): void => {
@@ -258,6 +259,7 @@ const namesMustBeUnique = (
     for (const node of nodes) {
         const name = node.name;
         if (!name) {
+            /* c8 ignore next 2 */
             continue;
         }
 

@@ -885,6 +885,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         } else if (ast.isSdsUnionType(node)) {
             return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
         } else {
+            /* c8 ignore next 2 */
             return false;
         }
     }
