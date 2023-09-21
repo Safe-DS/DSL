@@ -2,22 +2,22 @@ package tests.validation.names.duplicates.inEnumVariant
 
 enum MyEnum {
     MyEnumVariant<        
-        // $TEST$ no error r"A type parameter with name '\w*' exists already\."
+        // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
         »DuplicateTypeParameter«,
-        // $TEST$ error "A type parameter with name 'DuplicateTypeParameter' exists already."
+        // $TEST$ error "A type parameter or parameter with name 'DuplicateTypeParameter' exists already."
         »DuplicateTypeParameter«,
-        // $TEST$ no error r"A type parameter with name '\w*' exists already\."
+        // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
         »UniqueTypeParameter«,
-        // $TEST$ no error r"A type parameter with name '\w*' exists already\."
+        // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
         »TypeParameterAndParameter«,
     >(
-        // $TEST$ no error r"A parameter with name '\w*' exists already\."
+        // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
         »duplicateParameter«: Int,
-        // $TEST$ error "A parameter with name 'duplicateParameter' exists already."
+        // $TEST$ error "A type parameter or parameter with name 'duplicateParameter' exists already."
         »duplicateParameter«: Int,
-        // $TEST$ no error r"A parameter with name '\w*' exists already\."
+        // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
         »uniqueParameter«: Int,        
-        // $TEST$ no error r"A parameter with name '\w*' exists already\."
+        // $TEST$ error "A type parameter or parameter with name 'TypeParameterAndParameter' exists already."
         »TypeParameterAndParameter«: Int,
     )
 }

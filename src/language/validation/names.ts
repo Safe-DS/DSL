@@ -171,14 +171,13 @@ export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcce
 };
 
 export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
+    const typeParametersAndParameters = [
+        ...typeParametersOrEmpty(node.typeParameterList),
+        ...parametersOrEmpty(node.parameterList),
+    ];
     namesMustBeUnique(
-        typeParametersOrEmpty(node.typeParameterList),
-        (name) => `A type parameter with name '${name}' exists already.`,
-        accept,
-    );
-    namesMustBeUnique(
-        parametersOrEmpty(node.parameterList),
-        (name) => `A parameter with name '${name}' exists already.`,
+        typeParametersAndParameters,
+        (name) => `A type parameter or parameter with name '${name}' exists already.`,
         accept,
     );
 };
