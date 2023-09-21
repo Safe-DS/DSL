@@ -1,9 +1,7 @@
-// SdsAbstractDeclaration --------------------------------------------------------------------------
 import {
     isSdsDeclaration,
     SdsAnnotatedObject,
     SdsAnnotationCall,
-    SdsImport,
     SdsLiteral,
     SdsLiteralType,
     SdsResult,
@@ -12,7 +10,11 @@ import {
     SdsTypeArgumentList,
 } from '../generated/ast.js';
 
-export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject): SdsAnnotationCall[] {
+export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] {
+    if (!node) {
+        return [];
+    }
+
     if (isSdsDeclaration(node)) {
         return node?.annotationCallList?.annotationCalls ?? node?.annotationCalls ?? [];
     } else {
@@ -30,9 +32,4 @@ export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsRes
 
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
     return node?.typeArguments ?? [];
-};
-
-export const isWildcardImport = function (node: SdsImport): boolean {
-    const importedNamespace = node.importedNamespace ?? '';
-    return importedNamespace.endsWith('*');
 };
