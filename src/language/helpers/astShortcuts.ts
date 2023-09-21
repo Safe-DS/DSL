@@ -1,7 +1,7 @@
 import {
     isSdsDeclaration,
     SdsAnnotatedObject,
-    SdsAnnotationCall,
+    SdsAnnotationCall, SdsEnum, SdsEnumVariant,
     SdsLiteral,
     SdsLiteralType,
     SdsResult,
@@ -33,3 +33,7 @@ export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsRes
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
     return node?.typeArguments ?? [];
 };
+
+export const variantsOrEmpty = function (node: SdsEnum | undefined): SdsEnumVariant[] {
+    return node?.body?.variants ?? [];
+}

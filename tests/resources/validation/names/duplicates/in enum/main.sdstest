@@ -1,0 +1,10 @@
+package tests.validation.names.duplicates.inEnum
+
+enum MyEnum {
+    // $TEST$ no error r"A variant with name '\w*' exists already in this enum."
+    »MyVariant1«
+    // $TEST$ error "A variant with name 'MyVariant1' exists already in this enum."
+    »MyVariant1«
+    // $TEST$ no error r"A variant with name '\w*' exists already in this enum."
+    »MyVariant2«
+}

@@ -1,8 +1,10 @@
-import { SdsDeclaration } from '../generated/ast.js';
+import { SdsDeclaration, SdsEnum } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
+import { variantsOrEmpty } from '../helpers/astShortcuts.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
+export const CODE_NAME_DUPLICATE = 'name/duplicate';
 
 export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, accept: ValidationAcceptor) => {
     const name = node.name ?? '';
@@ -97,4 +99,21 @@ const acceptCasingWarning = (
         property: 'name',
         code: CODE_NAME_CASING,
     });
+};
+
+export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
+    const knownNames = new Set<string>();
+
+    for (const variant of variantsOrEmpty(node)) {
+        const name = variant.name ?? '';
+        if (knownNames.has(name)) {
+            accept('error', `A variant with name '${name}' exists already in this enum.`, {
+                node: variant,
+                property: 'name',
+                code: CODE_NAME_DUPLICATE,
+            });
+        } else {
+            knownNames.add(name);
+        }
+    }
 };
