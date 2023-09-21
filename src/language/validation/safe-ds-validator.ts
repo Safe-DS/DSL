@@ -24,6 +24,7 @@ import {
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
+import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
 
 /**
  * Register custom validation checks.
@@ -41,6 +42,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty],
         SdsFunction: [functionResultListShouldNotBeEmpty],
+        SdsImportAlias: [importAliasMustNotBeUsedForWildcardImports],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsParameter: [parameterMustHaveTypeHint],
         SdsParameterList: [

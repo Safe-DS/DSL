@@ -3,8 +3,11 @@ import {
     isSdsDeclaration,
     SdsAnnotatedObject,
     SdsAnnotationCall,
+    SdsImport,
     SdsLiteral,
-    SdsLiteralType, SdsResult, SdsResultList,
+    SdsLiteralType,
+    SdsResult,
+    SdsResultList,
     SdsTypeArgument,
     SdsTypeArgumentList,
 } from '../generated/ast.js';
@@ -23,8 +26,13 @@ export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsL
 
 export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsResult[] {
     return node?.results ?? [];
-}
+};
 
 export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
     return node?.typeArguments ?? [];
+};
+
+export const isWildcardImport = function (node: SdsImport): boolean {
+    const importedNamespace = node.importedNamespace ?? '';
+    return importedNamespace.endsWith('*');
 };
