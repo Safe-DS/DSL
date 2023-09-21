@@ -1,17 +1,19 @@
 import {
     SdsAnnotation,
     SdsBlockLambda,
+    SdsCallableType,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
     SdsExpressionLambda,
-    SdsPipeline
+    SdsPipeline,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {
     blockLambdaResultsOrEmpty,
     parametersOrEmpty,
     placeholdersOrEmpty,
+    resultsOrEmpty,
     typeParametersOrEmpty,
     variantsOrEmpty,
 } from '../ast/shortcuts.js';
@@ -133,7 +135,7 @@ export const annotationMustContainUniqueNames = (node: SdsAnnotation, accept: Va
         (name) => `A parameter with name '${name}' exists already.`,
         accept,
     );
-}
+};
 
 export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: ValidationAcceptor): void => {
     const parametersAndPlaceholders = [...parametersOrEmpty(node.parameterList), ...placeholdersOrEmpty(node.body)];
@@ -145,6 +147,19 @@ export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: 
 
     namesMustBeUnique(
         blockLambdaResultsOrEmpty(node),
+        (name) => `A result with name '${name}' exists already.`,
+        accept,
+    );
+};
+
+export const callableTypeMustContainUniqueNames = (node: SdsCallableType, accept: ValidationAcceptor): void => {
+    namesMustBeUnique(
+        parametersOrEmpty(node.parameterList),
+        (name) => `A parameter with name '${name}' exists already.`,
+        accept,
+    );
+    namesMustBeUnique(
+        resultsOrEmpty(node.resultList),
         (name) => `A result with name '${name}' exists already.`,
         accept,
     );
@@ -180,8 +195,8 @@ export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: Valida
         placeholdersOrEmpty(node.body),
         (name) => `A placeholder with name '${name}' exists already.`,
         accept,
-    )
-}
+    );
+};
 
 const namesMustBeUnique = (
     nodes: Iterable<SdsDeclaration>,

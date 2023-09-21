@@ -1,26 +1,26 @@
 package tests.validation.names.duplicates.inBlockLambda
 pipeline p {
     (
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         »duplicateParameter«,
         // $TEST$ error "A parameter or placeholder with name 'duplicateParameter' exists already."
         »duplicateParameter«,
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         »uniqueParameter«,
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         »parameterAndPlaceholder«,
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         »parameterAndResult«
     ) {
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         val »duplicatePlaceholder« = 1;
         // $TEST$ error "A parameter or placeholder with name 'duplicatePlaceholder' exists already."
         val »duplicatePlaceholder« = 1;
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         val »uniquePlaceholder« = 1;
         // $TEST$ error "A parameter or placeholder with name 'parameterAndPlaceholder' exists already."
         val »parameterAndPlaceholder« = 1;
-        // $TEST$ no error "A parameter or placeholder with name '\w*' exists already\."
+        // $TEST$ no error r"A parameter or placeholder with name '\w*' exists already\."
         val »placeholderAndResult« = 1;
 
         // $TEST$ no error r"A result with name '\w*' exists already\."

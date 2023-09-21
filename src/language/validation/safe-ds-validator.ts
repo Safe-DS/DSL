@@ -3,7 +3,7 @@ import { SafeDsAstType } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
     annotationMustContainUniqueNames,
-    blockLambdaMustContainUniqueNames,
+    blockLambdaMustContainUniqueNames, callableTypeMustContainUniqueNames,
     enumMustContainUniqueNames,
     enumVariantMustContainUniqueNames,
     expressionLambdaMustContainUniqueNames,
@@ -46,6 +46,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
+        SdsCallableType: [callableTypeMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
