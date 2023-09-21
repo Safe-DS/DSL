@@ -1,0 +1,12 @@
+package tests.validation.names.duplicates.inExpressionLambda
+
+pipeline p {
+    (
+        // $TEST$ no error r"A parameter with name '\w*' exists already\."
+        »duplicateParameter«,
+        // $TEST$ error "A parameter with name 'duplicateParameter' exists already."
+        »duplicateParameter«,
+        // $TEST$ no error r"A parameter with name '\w*' exists already\."
+        »uniqueParameter«,
+    ) -> 1;
+}

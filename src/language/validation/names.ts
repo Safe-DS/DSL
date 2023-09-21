@@ -1,10 +1,20 @@
-import { SdsDeclaration, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
+import { SdsBlockLambda, SdsDeclaration, SdsEnum, SdsEnumVariant, SdsExpressionLambda } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { parametersOrEmpty, typeParametersOrEmpty, variantsOrEmpty } from '../ast/shortcuts.js';
+import {
+    blockLambdaResultsOrEmpty,
+    parametersOrEmpty,
+    placeholdersOrEmpty,
+    typeParametersOrEmpty,
+    variantsOrEmpty,
+} from '../ast/shortcuts.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
 export const CODE_NAME_DUPLICATE = 'name/duplicate';
+
+// -----------------------------------------------------------------------------
+// Block lambda prefix
+// -----------------------------------------------------------------------------
 
 export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, accept: ValidationAcceptor) => {
     const name = node.name ?? '';
@@ -21,6 +31,10 @@ export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, acce
         );
     }
 };
+
+// -----------------------------------------------------------------------------
+// Casing
+// -----------------------------------------------------------------------------
 
 export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: ValidationAcceptor): void => {
     switch (node.$type) {
@@ -101,6 +115,25 @@ const acceptCasingWarning = (
     });
 };
 
+// -----------------------------------------------------------------------------
+// Uniqueness
+// -----------------------------------------------------------------------------
+
+export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: ValidationAcceptor): void => {
+    const parametersAndPlaceholders = [...parametersOrEmpty(node.parameterList), ...placeholdersOrEmpty(node.body)];
+    namesMustBeUnique(
+        parametersAndPlaceholders,
+        (name) => `A parameter or placeholder with name '${name}' exists already.`,
+        accept,
+    );
+
+    namesMustBeUnique(
+        blockLambdaResultsOrEmpty(node),
+        (name) => `A result with name '${name}' exists already.`,
+        accept,
+    );
+};
+
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
     namesMustBeUnique(variantsOrEmpty(node), (name) => `A variant with name '${name}' exists already.`, accept);
 };
@@ -118,8 +151,16 @@ export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: 
     );
 };
 
+export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda, accept: ValidationAcceptor): void => {
+    namesMustBeUnique(
+        parametersOrEmpty(node.parameterList),
+        (name) => `A parameter with name '${name}' exists already.`,
+        accept,
+    );
+};
+
 const namesMustBeUnique = (
-    nodes: SdsDeclaration[],
+    nodes: Iterable<SdsDeclaration>,
     createMessage: (name: string) => string,
     accept: ValidationAcceptor,
 ): void => {

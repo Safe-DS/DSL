@@ -1,4 +1,4 @@
-package tests.validation.declarations.enumVariants.uniqueNames
+package tests.validation.names.duplicates.inEnumVariant
 
 enum MyEnum {
     MyEnumVariant<        

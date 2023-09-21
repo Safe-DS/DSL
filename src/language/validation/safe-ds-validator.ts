@@ -2,8 +2,9 @@ import { ValidationChecks } from 'langium';
 import { SafeDsAstType } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
+    blockLambdaMustContainUniqueNames,
     enumMustContainUniqueNames,
-    enumVariantMustContainUniqueNames,
+    enumVariantMustContainUniqueNames, expressionLambdaMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
     nameShouldHaveCorrectCasing
 } from './names.js';
@@ -41,12 +42,14 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationParameterListShouldNotBeEmpty],
         SdsAttribute: [attributeMustHaveTypeHint],
+        SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
         SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
+        SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionResultListShouldNotBeEmpty],
         SdsImportAlias: [importAliasMustNotBeUsedForWildcardImports],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
