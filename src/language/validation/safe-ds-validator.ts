@@ -3,13 +3,17 @@ import { SafeDsAstType } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
     annotationMustContainUniqueNames,
-    blockLambdaMustContainUniqueNames, callableTypeMustContainUniqueNames, classMustContainUniqueNames,
+    blockLambdaMustContainUniqueNames,
+    callableTypeMustContainUniqueNames,
+    classMustContainUniqueNames,
     enumMustContainUniqueNames,
     enumVariantMustContainUniqueNames,
-    expressionLambdaMustContainUniqueNames, functionMustContainUniqueNames,
+    expressionLambdaMustContainUniqueNames,
+    functionMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
     nameShouldHaveCorrectCasing,
-    pipelineMustContainUniqueNames, segmentMustContainUniqueNames,
+    pipelineMustContainUniqueNames,
+    segmentMustContainUniqueNames,
 } from './names.js';
 import {
     annotationParameterListShouldNotBeEmpty,
