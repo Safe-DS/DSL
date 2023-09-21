@@ -2,12 +2,12 @@ import {
     isSdsWildcard,
     SdsAnnotation,
     SdsAssignment,
-    SdsClass,
     SdsClassBody,
     SdsEnumBody,
     SdsEnumVariant,
     SdsFunction,
     SdsSegment,
+    SdsTypeParameterList,
     SdsUnionType,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
@@ -115,31 +115,10 @@ export const segmentResultListShouldNotBeEmpty = (node: SdsSegment, accept: Vali
 // Unnecessary type parameter lists
 // -----------------------------------------------------------------------------
 
-export const classTypeParameterListShouldNotBeEmpty = (node: SdsClass, accept: ValidationAcceptor) => {
-    if (node.typeParameterList && isEmpty(node.typeParameterList.typeParameters)) {
+export const typeParameterListShouldNotBeEmpty = (node: SdsTypeParameterList, accept: ValidationAcceptor) => {
+    if (isEmpty(node.typeParameters)) {
         accept('info', 'This type parameter list can be removed.', {
             node,
-            property: 'typeParameterList',
-            code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
-        });
-    }
-};
-
-export const enumVariantTypeParameterListShouldNotBeEmpty = (node: SdsEnumVariant, accept: ValidationAcceptor) => {
-    if (node.typeParameterList && isEmpty(node.typeParameterList.typeParameters)) {
-        accept('info', 'This type parameter list can be removed.', {
-            node,
-            property: 'typeParameterList',
-            code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
-        });
-    }
-};
-
-export const functionTypeParameterListShouldNotBeEmpty = (node: SdsFunction, accept: ValidationAcceptor) => {
-    if (node.typeParameterList && isEmpty(node.typeParameterList.typeParameters)) {
-        accept('info', 'This type parameter list can be removed.', {
-            node,
-            property: 'typeParameterList',
             code: CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST,
         });
     }
