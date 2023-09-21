@@ -12,7 +12,7 @@ import {
     SdsType,
     SdsYield,
 } from '../generated/ast.js';
-import { resultsOrEmpty } from '../helpers/astShortcuts.js';
+import { resultsOrEmpty } from '../ast/shortcuts.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {

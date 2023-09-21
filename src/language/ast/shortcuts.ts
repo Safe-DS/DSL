@@ -1,13 +1,19 @@
 import {
     isSdsDeclaration,
     SdsAnnotatedObject,
-    SdsAnnotationCall, SdsEnum, SdsEnumVariant,
+    SdsAnnotationCall,
+    SdsEnum,
+    SdsEnumVariant,
     SdsLiteral,
     SdsLiteralType,
+    SdsParameter,
+    SdsParameterList,
     SdsResult,
     SdsResultList,
     SdsTypeArgument,
     SdsTypeArgumentList,
+    SdsTypeParameter,
+    SdsTypeParameterList,
 } from '../generated/ast.js';
 
 export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] {
@@ -26,6 +32,10 @@ export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsL
     return node?.literalList?.literals ?? [];
 };
 
+export const parametersOrEmpty = function (node: SdsParameterList | undefined): SdsParameter[] {
+    return node?.parameters ?? [];
+};
+
 export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsResult[] {
     return node?.results ?? [];
 };
@@ -34,6 +44,10 @@ export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefi
     return node?.typeArguments ?? [];
 };
 
+export const typeParametersOrEmpty = function (node: SdsTypeParameterList | undefined): SdsTypeParameter[] {
+    return node?.typeParameters ?? [];
+};
+
 export const variantsOrEmpty = function (node: SdsEnum | undefined): SdsEnumVariant[] {
     return node?.body?.variants ?? [];
-}
+};

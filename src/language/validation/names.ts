@@ -1,6 +1,6 @@
-import { SdsDeclaration, SdsEnum } from '../generated/ast.js';
+import { SdsDeclaration, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { variantsOrEmpty } from '../helpers/astShortcuts.js';
+import { parametersOrEmpty, typeParametersOrEmpty, variantsOrEmpty } from '../ast/shortcuts.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -102,13 +102,34 @@ const acceptCasingWarning = (
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
+    namesMustBeUnique(variantsOrEmpty(node), (name) => `A variant with name '${name}' exists already.`, accept);
+};
+
+export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
+    namesMustBeUnique(
+        typeParametersOrEmpty(node.typeParameterList),
+        (name) => `A type parameter with name '${name}' exists already.`,
+        accept,
+    );
+    namesMustBeUnique(
+        parametersOrEmpty(node.parameterList),
+        (name) => `A parameter with name '${name}' exists already.`,
+        accept,
+    );
+};
+
+const namesMustBeUnique = (
+    nodes: SdsDeclaration[],
+    createMessage: (name: string) => string,
+    accept: ValidationAcceptor,
+): void => {
     const knownNames = new Set<string>();
 
-    for (const variant of variantsOrEmpty(node)) {
-        const name = variant.name ?? '';
+    for (const node of nodes) {
+        const name = node.name ?? '';
         if (knownNames.has(name)) {
-            accept('error', `A variant with name '${name}' exists already in this enum.`, {
-                node: variant,
+            accept('error', createMessage(name), {
+                node,
                 property: 'name',
                 code: CODE_NAME_DUPLICATE,
             });
