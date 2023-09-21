@@ -1,7 +1,16 @@
-import { AbstractFormatter, AstNode, CstNode, findCommentNode, Formatting, isAstNode, FormattingAction, FormattingActionOptions } from 'langium';
+import {
+    AbstractFormatter,
+    AstNode,
+    CstNode,
+    findCommentNode,
+    Formatting,
+    isAstNode,
+    FormattingAction,
+    FormattingActionOptions,
+} from 'langium';
 import * as ast from '../generated/ast.js';
 import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast.js';
-import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/astShortcuts.js';
+import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../ast/shortcuts.js';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
@@ -876,6 +885,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         } else if (ast.isSdsUnionType(node)) {
             return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
         } else {
+            /* c8 ignore next 2 */
             return false;
         }
     }

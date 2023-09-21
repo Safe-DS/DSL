@@ -1,0 +1,36 @@
+package tests.validation.names.duplicates.inFunction
+
+fun myFunction<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »DuplicateTypeParameter«,
+    // $TEST$ error "A type parameter or parameter with name 'DuplicateTypeParameter' exists already."
+    »DuplicateTypeParameter«,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »UniqueTypeParameter«,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndParameter«,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndResult«,
+>(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »duplicateParameter«: Int,
+    // $TEST$ error "A type parameter or parameter with name 'duplicateParameter' exists already."
+    »duplicateParameter«: Int,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »uniqueParameter«: Int,
+    // $TEST$ error "A type parameter or parameter with name 'TypeParameterAndParameter' exists already."
+    »TypeParameterAndParameter«: Int,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndResult«: Int,
+) -> (
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »duplicateResult« : Int,
+    // $TEST$ error "A result with name 'duplicateResult' exists already."
+    »duplicateResult« : Int,
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »uniqueResult« : Int,
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »parameterAndResult« : Int,
+    // $TEST$ no error r"A result with name '\w*' exists already\."
+    »TypeParameterAndResult« : Int,
+)

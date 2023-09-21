@@ -1,6 +1,6 @@
 import { ValidationAcceptor } from 'langium';
 import { SdsImportAlias } from '../generated/ast.js';
-import { isWildcardImport } from '../helpers/astShortcuts.js';
+import { isWildcardImport } from '../ast/checks.js';
 
 export const CODE_IMPORT_WILDCARD_IMPORT_WITH_ALIAS = 'import/wildcard-import-with-alias';
 

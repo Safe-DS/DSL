@@ -1,7 +1,20 @@
 import { ValidationChecks } from 'langium';
 import { SafeDsAstType } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
-import { nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing } from './names.js';
+import {
+    annotationMustContainUniqueNames,
+    blockLambdaMustContainUniqueNames,
+    callableTypeMustContainUniqueNames,
+    classMustContainUniqueNames,
+    enumMustContainUniqueNames,
+    enumVariantMustContainUniqueNames,
+    expressionLambdaMustContainUniqueNames,
+    functionMustContainUniqueNames,
+    nameMustNotStartWithBlockLambdaPrefix,
+    nameShouldHaveCorrectCasing,
+    pipelineMustContainUniqueNames,
+    segmentMustContainUniqueNames,
+} from './names.js';
 import {
     annotationParameterListShouldNotBeEmpty,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
@@ -34,14 +47,19 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const validator = services.validation.SafeDsValidator;
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
-        SdsAnnotation: [annotationParameterListShouldNotBeEmpty],
+        SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
         SdsAttribute: [attributeMustHaveTypeHint],
+        SdsBlockLambda: [blockLambdaMustContainUniqueNames],
+        SdsCallableType: [callableTypeMustContainUniqueNames],
+        SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
+        SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
-        SdsEnumVariant: [enumVariantParameterListShouldNotBeEmpty],
-        SdsFunction: [functionResultListShouldNotBeEmpty],
+        SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
+        SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
+        SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsImportAlias: [importAliasMustNotBeUsedForWildcardImports],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsParameter: [parameterMustHaveTypeHint],
@@ -50,8 +68,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
             parameterListVariadicParameterMustBeLast,
         ],
+        SdsPipeline: [pipelineMustContainUniqueNames],
         SdsResult: [resultMustHaveTypeHint],
-        SdsSegment: [segmentResultListShouldNotBeEmpty],
+        SdsSegment: [segmentMustContainUniqueNames, segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],

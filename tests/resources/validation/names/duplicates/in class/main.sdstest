@@ -1,0 +1,126 @@
+package tests.validation.names.duplicates.inClass
+
+class MyClass1<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »DuplicateTypeParameter«,
+    // $TEST$ error "A type parameter or parameter with name 'DuplicateTypeParameter' exists already."
+    »DuplicateTypeParameter«,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »UniqueTypeParameter«,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndParameter«,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndMember«,
+>(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »duplicateParameter«: Int,
+    // $TEST$ error "A type parameter or parameter with name 'duplicateParameter' exists already."
+    »duplicateParameter«: Int,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »uniqueParameter«: Int,
+    // $TEST$ error "A type parameter or parameter with name 'TypeParameterAndParameter' exists already."
+    »TypeParameterAndParameter«: Int,
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    attr »duplicateAttribute«: Int
+    // $TEST$ error "A member with name 'duplicateAttribute' exists already."
+    attr »duplicateAttribute«: Int
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    attr »uniqueAttribute«: Int
+
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    class »DuplicateClass«
+    // $TEST$ error "A member with name 'DuplicateClass' exists already."
+    class »DuplicateClass«
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    class »UniqueClass«
+
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    enum »DuplicateEnum«
+    // $TEST$ error "A member with name 'DuplicateEnum' exists already."
+    enum »DuplicateEnum«
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    enum »UniqueEnum«
+
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    fun »duplicateFun«()
+    // $TEST$ error "A member with name 'duplicateFun' exists already."
+    fun »duplicateFun«()
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    fun »uniqueFun«()
+
+    // $TEST$ no error r"A member with name '\w*' exists already\."
+    attr »duplicateMember«: Int
+    // $TEST$ error "A member with name 'duplicateMember' exists already."
+    class »duplicateMember«
+    // $TEST$ error "A member with name 'duplicateMember' exists already."
+    enum »duplicateMember«
+    // $TEST$ error "A member with name 'duplicateMember' exists already."
+    fun »duplicateMember«()
+}
+
+class MyClass2<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndMember«,
+> {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    attr »TypeParameterAndMember«: Int
+}
+
+class MyClass3<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndMember«,
+> {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    class »TypeParameterAndMember«
+}
+
+class MyClass4<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndMember«,
+> {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    enum »TypeParameterAndMember«
+}
+
+class MyClass5<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndMember«,
+> {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    fun »TypeParameterAndMember«()
+}
+
+class MyClass6(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    attr »parameterAndMember«: Int
+}
+
+class MyClass7(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    class »parameterAndMember«
+}
+
+class MyClass8(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    enum »parameterAndMember«
+}
+
+class MyClass9(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A member with name '\w*' exists already\."
+    fun »parameterAndMember«()
+}

@@ -81,7 +81,7 @@ QualifiedName returns string:
 
 interface SdsModuleMember extends SdsDeclaration {}
 
-SdsAnnotatedModuleMember returns SdsAnnotatedObject:
+SdsAnnotatedModuleMember returns SdsModuleMember:
     {SdsAnnotationCallList}
     annotationCalls+=SdsAnnotationCall+
     (
@@ -108,7 +108,7 @@ SdsAnnotatedModuleMember returns SdsAnnotatedObject:
     )
 ;
 
-SdsUnannotatedModuleMember returns SdsAnnotatedObject:
+SdsUnannotatedModuleMember returns SdsModuleMember:
       {SdsAnnotation}
       SdsAnnotationFragment
 
@@ -170,7 +170,7 @@ SdsParentTypeList returns SdsParentTypeList:
 ;
 
 interface SdsClassBody extends SdsObject {
-	members: SdsAnnotatedObject[]
+	members: SdsClassMember[]
 }
 
 SdsClassBody returns SdsClassBody:
@@ -179,12 +179,12 @@ SdsClassBody returns SdsClassBody:
 
 interface SdsClassMember extends SdsDeclaration {}
 
-SdsClassMember returns SdsAnnotatedObject:
+SdsClassMember returns SdsClassMember:
     SdsAnnotatedClassMember
   | SdsUnannotatedClassMember
 ;
 
-SdsAnnotatedClassMember returns SdsAnnotatedObject:
+SdsAnnotatedClassMember returns SdsClassMember:
     {SdsAnnotationCallList}
     annotationCalls+=SdsAnnotationCall+
     (
@@ -203,7 +203,7 @@ SdsAnnotatedClassMember returns SdsAnnotatedObject:
     )
 ;
 
-SdsUnannotatedClassMember returns SdsAnnotatedObject:
+SdsUnannotatedClassMember returns SdsClassMember:
       {SdsAttribute}
       SdsAttributeFragment
 
