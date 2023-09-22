@@ -38,6 +38,7 @@ import {
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
 import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
+import {unionTypeMustHaveTypeArguments} from "./other/types/unionTypes.js";
 
 /**
  * Register custom validation checks.
@@ -74,7 +75,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
-        SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument],
+        SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],
         SdsYield: [yieldMustNotBeUsedInPipeline],
     };
     registry.register(checks, validator);

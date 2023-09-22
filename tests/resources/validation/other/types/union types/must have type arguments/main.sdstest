@@ -1,0 +1,16 @@
+package tests.numberOfTypeArguments
+
+// $TEST$ error "A union type must have least one type argument."
+segment mySegment1(
+    p: union»<>«
+) {}
+
+// $TEST$ no error "A union type must have least one type argument."
+segment mySegment2(
+    p: union»<Int>«
+) {}
+
+// $TEST$ no error "A union type must have least one type argument."
+segment mySegment3(
+    p: union»<Int, Float>«
+) {}
