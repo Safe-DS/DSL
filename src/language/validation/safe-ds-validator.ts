@@ -41,6 +41,7 @@ import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
+import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 
 /**
  * Register custom validation checks.
@@ -51,6 +52,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
+        SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsCallableType: [callableTypeMustContainUniqueNames, callableTypeMustNotHaveOptionalParameters],
@@ -87,5 +89,4 @@ export const registerValidationChecks = function (services: SafeDsServices) {
 /**
  * Implementation of custom validations.
  */
-export class SafeDsValidator {
-}
+export class SafeDsValidator {}
