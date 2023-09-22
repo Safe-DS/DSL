@@ -9,7 +9,7 @@ annotation MyAnnotation1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2,
 
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-annotation MyAnnotation2(»a«: Int, vararg »b«: Int)
+annotation MyAnnotation2(»a«: Int, vararg »b«: Int = 1)
 
 // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -26,7 +26,7 @@ class MyClass1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »
 
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-class MyClass2(»a«: Int, vararg »b«: Int)
+class MyClass2(»a«: Int, vararg »b«: Int = 1)
 
 // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -44,7 +44,7 @@ enum MyEnum {
 
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-    MyEnumVariant2(»a«: Int, vararg »b«: Int)
+    MyEnumVariant2(»a«: Int, vararg »b«: Int = 1)
 
     // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -62,7 +62,7 @@ fun myFunction1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg �
 
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-fun myFunction2(»a«: Int, vararg »b«: Int)
+fun myFunction2(»a«: Int, vararg »b«: Int = 1)
 
 // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -79,7 +79,7 @@ segment mySegment1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, varar
 
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-segment mySegment2(»a«: Int, vararg »b«: Int) {}
+segment mySegment2(»a«: Int, vararg »b«: Int = 1) {}
 
 // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
 // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -97,7 +97,7 @@ pipeline myPipeline {
 
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-    (»a«: Int, vararg »b«: Int) {};
+    (»a«: Int, vararg »b«: Int = 1) {};
 
     // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -114,7 +114,7 @@ pipeline myPipeline {
 
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-    (»a«: Int, vararg »b«: Int) -> 1;
+    (»a«: Int, vararg »b«: Int = 1) -> 1;
 
     // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
@@ -133,7 +133,7 @@ fun myFunction4(
 
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
-    p2: (»a«: Int, vararg »b«: Int) -> (),
+    p2: (»a«: Int, vararg »b«: Int = 1) -> (),
 
     // $TEST$ error "A callable with optional parameters must not have a variadic parameter."
     // $TEST$ no error "A callable with optional parameters must not have a variadic parameter."
