@@ -38,8 +38,9 @@ import {
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
 import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
-import {unionTypeMustHaveTypeArguments} from "./other/types/unionTypes.js";
-import {callableTypeMustNotHaveOptionalParameters} from "./other/types/callableTypes.js";
+import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
+import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
+import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 
 /**
  * Register custom validation checks.
@@ -74,6 +75,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentMustContainUniqueNames, segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsTypeArgumentList: [typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],
@@ -85,4 +87,5 @@ export const registerValidationChecks = function (services: SafeDsServices) {
 /**
  * Implementation of custom validations.
  */
-export class SafeDsValidator {}
+export class SafeDsValidator {
+}

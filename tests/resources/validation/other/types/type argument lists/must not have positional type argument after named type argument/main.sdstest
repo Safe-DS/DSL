@@ -1,0 +1,33 @@
+package tests.validation.types.typeArgumentLists.mustNotHavePositionalTypeArgumentAfterNamedTypeArgument
+
+// $TEST$ no error "After the first named type argument all type arguments must be named."
+// $TEST$ no error "After the first named type argument all type arguments must be named."
+// $TEST$ error "After the first named type argument all type arguments must be named."
+// $TEST$ no error "After the first named type argument all type arguments must be named."
+segment mySegment1(
+    f: MyClass<»Int«, »A = Int«, »Int«, »B = Int«>
+) {}
+
+// $TEST$ no error "After the first named type argument all type arguments must be named."
+segment mySegment2(
+    f: MyClass<»Int«>
+) {}
+
+// $TEST$ no error "After the first named type argument all type arguments must be named."
+segment mySegment2(
+    f: MyClass<»A = Int«>
+) {}
+
+pipeline myPipeline {
+    // $TEST$ no error "After the first named type argument all type arguments must be named."
+    // $TEST$ no error "After the first named type argument all type arguments must be named."
+    // $TEST$ error "After the first named type argument all type arguments must be named."
+    // $TEST$ no error "After the first named type argument all type arguments must be named."
+    call<»Int«, »A = Int«, »Int«, »B = Int«>();
+
+    // $TEST$ no error "After the first named type argument all type arguments must be named."
+    call<»Int«>();
+
+        // $TEST$ no error "After the first named type argument all type arguments must be named."
+    call<»A = Int«>();
+}
