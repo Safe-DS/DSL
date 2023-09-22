@@ -39,6 +39,7 @@ import {
 } from './other/declarations/parameterLists.js';
 import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
 import {unionTypeMustHaveTypeArguments} from "./other/types/unionTypes.js";
+import {callableTypeMustNotHaveOptionalParameters} from "./other/types/callableTypes.js";
 
 /**
  * Register custom validation checks.
@@ -51,7 +52,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCallableType: [callableTypeMustContainUniqueNames],
+        SdsCallableType: [callableTypeMustContainUniqueNames, callableTypeMustNotHaveOptionalParameters],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
