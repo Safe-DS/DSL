@@ -1,7 +1,7 @@
 import { SdsUnionType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { typeArgumentsOrEmpty } from '../../../ast/shortcuts.js';
-import {isEmpty} from "radash";
+import { isEmpty } from 'radash';
 
 export const CODE_UNION_TYPE_MISSING_TYPE_ARGUMENTS = 'union-type/missing-type-arguments';
 

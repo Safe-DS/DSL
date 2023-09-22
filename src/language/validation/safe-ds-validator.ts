@@ -42,7 +42,7 @@ import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import {parameterMustNotBeVariadicAndOptional} from "./other/declarations/parameters.js";
+import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
 
 /**
  * Register custom validation checks.
