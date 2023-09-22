@@ -1045,16 +1045,16 @@ terminal TEMPLATE_STRING_END returns string: TEMPLATE_EXPRESSION_END STRING_TEXT
 terminal CALL_TYPE_ARGUMENT_LIST_START:
     '<'
     (?=
-        /\s*/
-        (   '*'                                 // Star projection as positional type argument
-        |   'in'                                // Contravariant type projection as positional type argument
-        |   'out'                               // Covariant type projection as positional type argument
-        |   'literal'                           // Invariant literal type as positional type argument
-        |   'union'                             // Invariant union type as positional type argument
-        |   '>'                                 // Empty type argument list
-        |    ID /\s*/
-            ( '='                               // Named type argument
-            | ('.' /\s*/ ID /\s*/)* (',' | '>') // Invariant type projection as positional type argument
+        /[\s»«]*/
+        (   '*'                                         // Star projection as positional type argument
+        |   'in'                                        // Contravariant type projection as positional type argument
+        |   'out'                                       // Covariant type projection as positional type argument
+        |   'literal'                                   // Invariant literal type as positional type argument
+        |   'union'                                     // Invariant union type as positional type argument
+        |   '>'                                         // Empty type argument list
+        |    ID /[\s»«]*/
+            ( '='                                       // Named type argument
+            | ('.' /[\s»«]*/ ID /[\s»«]*/)* (',' | '>') // Invariant type projection as positional type argument
             )
         )
     )
