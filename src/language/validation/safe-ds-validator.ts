@@ -37,11 +37,12 @@ import {
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
-import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
+import { importAliasMustNotBeUsedForWildcardImports } from './other/imports.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
+import {parameterMustNotBeVariadicAndOptional} from "./other/declarations/parameters.js";
 
 /**
  * Register custom validation checks.
@@ -67,7 +68,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsImportAlias: [importAliasMustNotBeUsedForWildcardImports],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
-        SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
         SdsParameterList: [
             parameterListMustNotHaveOptionalAndVariadicParameters,
             parameterListMustNotHaveRequiredParametersAfterOptionalParameters,

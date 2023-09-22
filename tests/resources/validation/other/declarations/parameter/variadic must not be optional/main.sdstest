@@ -1,0 +1,12 @@
+package tests.validation.declarations.parameters.variadicMustNotBeOptional
+
+fun f(
+    // $TEST$ no error "Variadic parameters must not be optional."
+    »a«: Int,
+    // $TEST$ no error "Variadic parameters must not be optional."
+    »b«: Int = 1,
+    // $TEST$ no error "Variadic parameters must not be optional."
+    vararg »c«: Int,
+    // $TEST$ error "Variadic parameters must not be optional."
+    vararg »d«: Int = 2
+)
