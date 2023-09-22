@@ -11,9 +11,9 @@ export const parameterListMustNotHaveOptionalAndVariadicParameters = (
 ) => {
     const hasOptional = node.parameters.find((p) => p.defaultValue);
     if (hasOptional) {
-        const variadicParameters = node.parameters.filter((p) => p.variadic);
+        const variadicRequiredParameters = node.parameters.filter((p) => p.variadic && !p.defaultValue);
 
-        for (const variadic of variadicParameters) {
+        for (const variadic of variadicRequiredParameters) {
             accept('error', 'A callable with optional parameters must not have a variadic parameter.', {
                 node: variadic,
                 property: 'name',

@@ -37,7 +37,12 @@ import {
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
-import { importAliasMustNotBeUsedForWildcardImports } from './imports.js';
+import { importAliasMustNotBeUsedForWildcardImports } from './other/imports.js';
+import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
+import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
+import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
+import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
+import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
 
 /**
  * Register custom validation checks.
@@ -48,9 +53,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
+        SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCallableType: [callableTypeMustContainUniqueNames],
+        SdsCallableType: [callableTypeMustContainUniqueNames, callableTypeMustNotHaveOptionalParameters],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
@@ -62,7 +68,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsImportAlias: [importAliasMustNotBeUsedForWildcardImports],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
-        SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
         SdsParameterList: [
             parameterListMustNotHaveOptionalAndVariadicParameters,
             parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
@@ -72,9 +78,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentMustContainUniqueNames, segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsTypeArgumentList: [typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
-        SdsUnionType: [unionTypeShouldNotHaveASingularTypeArgument],
+        SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],
         SdsYield: [yieldMustNotBeUsedInPipeline],
     };
     registry.register(checks, validator);

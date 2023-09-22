@@ -1,0 +1,63 @@
+package tests.validation.other.argumentLists.mustNotHavePositionalArgumentAfterNamedArgument
+
+annotation MyAnnotation(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
+
+// $TEST$ no error "After the first named argument all arguments must be named."
+// $TEST$ no error "After the first named argument all arguments must be named."
+// $TEST$ error "After the first named argument all arguments must be named."
+// $TEST$ no error "After the first named argument all arguments must be named."
+// $TEST$ error "After the first named argument all arguments must be named."
+@MyAnnotation(»0«, »a = 1«, »2«, »b = 3«, »4«)
+class MyClass1
+
+// $TEST$ no error "After the first named argument all arguments must be named."
+@MyAnnotation(»0«)
+class MyClass2
+
+// $TEST$ no error "After the first named argument all arguments must be named."
+@MyAnnotation(»a = 0«)
+class MyClass3
+
+// $TEST$ no error "After the first named argument all arguments must be named."
+// $TEST$ no error "After the first named argument all arguments must be named."
+// $TEST$ error "After the first named argument all arguments must be named."
+// $TEST$ no error "After the first named argument all arguments must be named."
+@UnresolvedAnnotation(»0«, »a = 1«, »2«, »b = 3«)
+class MyClass4
+
+// $TEST$ no error "After the first named argument all arguments must be named."
+@UnresolvedAnnotation(»0«)
+class MyClass5
+
+// $TEST$ no error "After the first named argument all arguments must be named."
+@UnresolvedAnnotation(»a = 0«)
+class MyClass3
+
+fun f(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
+
+pipeline myPipeline {
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    // $TEST$ error "After the first named argument all arguments must be named."
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    // $TEST$ error "After the first named argument all arguments must be named."
+    f(»0«, »a = 1«, »2«, »b = 3«, »4«);
+
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    f(»0«);
+
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    f(»a = 0«);
+
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    // $TEST$ error "After the first named argument all arguments must be named."
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    unresolvedCallable(»0«, »a = 1«, »2«, »b = 3«);
+
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    unresolvedCallable(»0«);
+
+    // $TEST$ no error "After the first named argument all arguments must be named."
+    unresolvedCallable(»a = 0«);
+}
