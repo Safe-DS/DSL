@@ -76,9 +76,7 @@ describe('scoping', async () => {
  * @returns The actual target location or undefined if the actual reference is not resolved.
  * @throws AssertionError If no matching actual reference was found.
  */
-const findActualTargetLocation = (
-    expectedReference: ExpectedReference,
-): Location | undefined => {
+const findActualTargetLocation = (expectedReference: ExpectedReference): Location | undefined => {
     const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
         URI.parse(expectedReference.location.uri),
     );

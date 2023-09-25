@@ -66,7 +66,9 @@ describe('typing', async () => {
 
             if (actualType.toString() !== serializationAssertion.expectedType) {
                 throw new AssertionError({
-                    message: `A node has the wrong serialized type.\n    Location: ${locationToString(serializationAssertion.location)}`,
+                    message: `A node has the wrong serialized type.\n    Location: ${locationToString(
+                        serializationAssertion.location,
+                    )}`,
                     actual: actualType.toString(),
                     expected: serializationAssertion.expectedType,
                 });
@@ -112,4 +114,4 @@ const getNodeByLocation = (location: Location): AstNode => {
  */
 const getNameRange = (node: AstNode): Range | undefined => {
     return services.references.NameProvider.getNameNode(node)?.range;
-}
+};
