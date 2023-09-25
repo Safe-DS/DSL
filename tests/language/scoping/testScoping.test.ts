@@ -2,7 +2,7 @@ import { afterEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
-import { isRangeEqual, clearDocuments } from 'langium/test';
+import { clearDocuments, isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
 import { isLocationEqual, locationToString } from '../../helpers/location.js';
 import { createScopingTests, ExpectedReference } from './creator.js';
@@ -30,12 +30,8 @@ describe('scoping', async () => {
 
         // Ensure all expected references match
         for (const expectedReference of test.expectedReferences) {
-            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
-                URI.parse(expectedReference.location.uri),
-            );
-
             const expectedTargetLocation = expectedReference.targetLocation;
-            const actualTargetLocation = findActualTargetLocation(document, expectedReference);
+            const actualTargetLocation = findActualTargetLocation(expectedReference);
 
             // Expected reference to be resolved
             if (expectedTargetLocation) {
@@ -76,15 +72,15 @@ describe('scoping', async () => {
  * Find the actual target location of the actual reference that matches the expected reference. If the actual reference
  * cannot be resolved, undefined is returned.
  *
- * @param document The document to search in.
  * @param expectedReference The expected reference.
  * @returns The actual target location or undefined if the actual reference is not resolved.
  * @throws AssertionError If no matching actual reference was found.
  */
-const findActualTargetLocation = (
-    document: LangiumDocument,
-    expectedReference: ExpectedReference,
-): Location | undefined => {
+const findActualTargetLocation = (expectedReference: ExpectedReference): Location | undefined => {
+    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
+        URI.parse(expectedReference.location.uri),
+    );
+
     const actualReference = findActualReference(document, expectedReference);
 
     const actualTarget = actualReference.$nodeDescription;
