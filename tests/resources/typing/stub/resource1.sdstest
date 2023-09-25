@@ -1,4 +1,4 @@
 package test
 
 // $TEST$ equivalence_class test
-»class C«
+class »C«
