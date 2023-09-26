@@ -12,6 +12,7 @@
         "moduleResolution": "Node16",
         "esModuleInterop": true,
         "skipLibCheck": true,
+        "strictNullChecks": true,
         "forceConsistentCasingInFileNames": true
     },
     "include": ["src/**/*.ts"],

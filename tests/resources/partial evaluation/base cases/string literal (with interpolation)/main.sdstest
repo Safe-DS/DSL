@@ -1,0 +1,12 @@
+package tests.partialValidation.baseCases.stringLiteralWithInterpolation
+
+pipeline test {
+    // $TEST$ constant serialization "start 1 inner1 true inner2 test end"
+    »"start {{ 1 }} inner1 {{ true }} inner2 {{ "test" }} end"«;
+
+    // $TEST$ constant serialization "start	1 inner1	true inner2	test end	"
+    »"start\t{{ 1 }} inner1\t{{ true }} inner2\t{{ "test" }} end\t"«;
+
+    // $TEST$ not constant
+    »"start {{ call() }} end"«;
+}

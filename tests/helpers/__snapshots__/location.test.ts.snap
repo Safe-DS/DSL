@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getNodeByLocation > should raise if no document is found 1`] = `"No document found at file:///test.sdstest"`;
