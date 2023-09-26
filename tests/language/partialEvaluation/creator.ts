@@ -12,7 +12,7 @@ import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const root = 'partialEvaluation';
+const root = 'partial evaluation';
 
 export const createPartialEvaluationTests = (): Promise<PartialEvaluationTest[]> => {
     const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);

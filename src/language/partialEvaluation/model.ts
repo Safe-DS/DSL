@@ -1,9 +1,11 @@
 import {
+    isSdsAbstractResult,
     SdsAbstractResult,
     SdsBlockLambdaResult,
     SdsEnumVariant,
     SdsExpression,
     SdsParameter,
+    SdsReference,
     SdsResult,
 } from '../generated/ast.js';
 
@@ -58,18 +60,21 @@ export class SdsIntermediateRecord extends SdsIntermediateExpression {
         super();
     }
 
-    //     fun getSubstitutionByReferenceOrNull(reference: SdsReference): SdsSimplifiedExpression? {
-    //             val result = reference.declaration as? SdsAbstractResult ?: return null
-    //             return resultSubstitutions[result]
-    //         }
-    //
-    //         fun getSubstitutionByIndexOrNull(index: Int?): SdsSimplifiedExpression? {
-    //         if (index == null) {
-    //         return null
-    //     }
-    //     return resultSubstitutions.values.toList().getOrNull(index)
-    // }
-    // }
+    getSubstitutionByReferenceOrNull(reference: SdsReference): SdsSimplifiedExpression | null {
+        const referencedDeclaration = reference.declaration;
+        if (!isSdsAbstractResult(referencedDeclaration)) {
+            return null;
+        }
+
+        return this.resultSubstitutions.get(referencedDeclaration) ?? null;
+    }
+
+    getSubstitutionByIndexOrNull(index: number | null): SdsSimplifiedExpression | null {
+        if (index === null) {
+            return null;
+        }
+        return Array.from(this.resultSubstitutions.values())[index] ?? null;
+    }
 
     /**
      * If the record contains exactly one substitution its value is returned. Otherwise, it returns `this`.
@@ -82,11 +87,12 @@ export class SdsIntermediateRecord extends SdsIntermediateExpression {
         }
     }
 
-    //     override fun toString(): String {
-    //         return resultSubstitutions.entries.joinToString(prefix = "{", postfix = "}") { (result, value) ->
-    //             "${result.name}=$value"
-    //         }
-    //     }
+    override toString(): string {
+        const entryString = Array.from(this.resultSubstitutions, ([result, value]) => `${result.name}=${value}`).join(
+            ', ',
+        );
+        return `{${entryString}}`;
+    }
 }
 
 export class SdsIntermediateVariadicArguments extends SdsIntermediateExpression {
@@ -106,6 +112,13 @@ export abstract class SdsConstantExpression extends SdsSimplifiedExpression {
     abstract equals(other: SdsConstantExpression): boolean;
 
     abstract override toString(): string;
+
+    /**
+     * Returns the string representation of the constant expression if it occurs in a string template.
+     */
+    toInterpolationString(): string {
+        return this.toString();
+    }
 }
 
 export class SdsConstantBoolean extends SdsConstantExpression {
@@ -186,6 +199,10 @@ export class SdsConstantString extends SdsConstantExpression {
     }
 
     toString(): string {
+        return `"${this.value}"`;
+    }
+
+    override toInterpolationString(): string {
         return this.value;
     }
 }

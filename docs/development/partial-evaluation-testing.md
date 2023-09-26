@@ -5,7 +5,7 @@ partial evaluation test.
 
 ## Adding a partial evaluation test
 
-1. Create a new **folder** (not just a file!) in the `tests/resources/partialEvaluation` directory or any subdirectory.
+1. Create a new **folder** (not just a file!) in the `tests/resources/partial evaluation` directory or any subdirectory.
    Give the folder a descriptive name, since the folder name becomes part of the test name.
 
     !!! tip "Skipping a test"

@@ -11,7 +11,7 @@ import { Location } from 'vscode-languageserver';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
-describe('partialEvaluation', async () => {
+describe('partial evaluation', async () => {
     afterEach(async () => {
         await clearDocuments(services);
     });
