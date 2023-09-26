@@ -15,7 +15,7 @@ import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
 import { SafeDsWorkspaceManager } from './builtins/safe-ds-workspace-manager.js';
 import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
 import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
-import {SafeDsValueConverter} from "./grammar/safe-ds-value-converter.js";
+import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 
 /**
  * Declaration of custom services - add your own service classes here.

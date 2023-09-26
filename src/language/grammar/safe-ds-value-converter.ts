@@ -1,4 +1,4 @@
-import {convertString, CstNode, DefaultValueConverter, GrammarAST, ValueType} from 'langium';
+import { convertString, CstNode, DefaultValueConverter, GrammarAST, ValueType } from 'langium';
 
 export class SafeDsValueConverter extends DefaultValueConverter {
     protected override runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {

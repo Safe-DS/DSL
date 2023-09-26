@@ -105,7 +105,7 @@ const createPartialEvaluationTest = async (
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,
-        undefinedAssertions
+        undefinedAssertions,
     };
 };
 
