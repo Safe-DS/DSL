@@ -24,5 +24,5 @@ partial evaluation test.
       successfully to the same constant expression.
     * `// $TEST$ constant serialization <value>`: Assert that the node gets partially evaluated to a constant expression
       that serializes to `<value>`.
-    * `// $TEST$ constant undefined`: Assert that the node cannot be evaluated to a constant expression.
+    * `// $TEST$ not constant`: Assert that the node cannot be evaluated to a constant expression.
 6. Run the tests. The test runner will automatically pick up the new test.

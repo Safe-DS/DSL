@@ -6,7 +6,7 @@ import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { getNodeByLocation, locationToString } from '../../helpers/location.js';
 import { createPartialEvaluationTests } from './creator.js';
-import { toConstantExpression } from '../../../src/language/partialEvaluation/toConstantExpression.js';
+import { toConstantExpressionOrNull } from '../../../src/language/partialEvaluation/toConstantExpressionOrNull.js';
 import { Location } from 'vscode-languageserver';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
@@ -33,14 +33,14 @@ describe('partialEvaluation', async () => {
             if (equivalenceClassAssertion.locations.length > 1) {
                 const firstLocation = equivalenceClassAssertion.locations[0];
                 const firstNode = getNodeByLocation(services, firstLocation);
-                const firstValue = toConstantExpression(firstNode);
+                const firstValue = toConstantExpressionOrNull(firstNode);
                 if (!firstValue) {
                     return reportUndefinedValue(firstLocation);
                 }
 
                 for (const currentLocation of equivalenceClassAssertion.locations.slice(1)) {
                     const currentNode = getNodeByLocation(services, currentLocation);
-                    const currentValue = toConstantExpression(currentNode);
+                    const currentValue = toConstantExpressionOrNull(currentNode);
                     if (!currentValue) {
                         return reportUndefinedValue(currentLocation);
                     }
@@ -61,7 +61,7 @@ describe('partialEvaluation', async () => {
         // Ensure the serialized constant expression matches the expected one
         for (const serializationAssertion of test.serializationAssertions) {
             const node = getNodeByLocation(services, serializationAssertion.location);
-            const actualValue = toConstantExpression(node);
+            const actualValue = toConstantExpressionOrNull(node);
             if (!actualValue) {
                 return reportUndefinedValue(serializationAssertion.location);
             }
@@ -80,7 +80,7 @@ describe('partialEvaluation', async () => {
         // Ensure the node does not evaluate to a constant expression
         for (const undefinedAssertion of test.undefinedAssertions) {
             const node = getNodeByLocation(services, undefinedAssertion.location);
-            const actualValue = toConstantExpression(node);
+            const actualValue = toConstantExpressionOrNull(node);
             if (actualValue) {
                 throw new AssertionError({
                     message: `A node evaluates to a constant expression, but it should not.\n    Location: ${locationToString(

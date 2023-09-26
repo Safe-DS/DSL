@@ -78,7 +78,7 @@ const createPartialEvaluationTest = async (
             }
 
             // Expected that reference is resolved and points to the target id
-            const undefinedMatch = /constant undefined/gu.exec(check.comment);
+            const undefinedMatch = /not constant/gu.exec(check.comment);
             if (undefinedMatch) {
                 undefinedAssertions.push({
                     location: check.location!,
@@ -101,7 +101,7 @@ const createPartialEvaluationTest = async (
     }
 
     return {
-        testName: `[${relativeParentDirectoryPath}] should be typed correctly`,
+        testName: `[${relativeParentDirectoryPath}] should be partially evaluated correctly`,
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,
@@ -202,7 +202,7 @@ interface UndefinedAssertion {
 class InvalidCommentError extends Error {
     constructor(readonly comment: string) {
         super(
-            `Invalid test comment (valid values are 'constant equivalence_class <id>', 'constant serialization <type>', and 'constant undefined'): ${comment}`,
+            `Invalid test comment (valid values are 'constant equivalence_class <id>', 'constant serialization <type>', and 'not constant'): ${comment}`,
         );
     }
 }
