@@ -20,8 +20,9 @@ partial evaluation test.
 5. For each pair of test markers, add a test comment with one of the formats listed below. Test comments and test
    markers are mapped to each other by their position in the file, i.e. the first test comment corresponds to the first
    test marker, the second test comment corresponds to the second test marker, etc.
-    * `// $TEST$ constant equivalence_class <id>`: Assert that all nodes with the same `<id>` get partially evaluated to
-      the same constant expression.
+    * `// $TEST$ constant equivalence_class <id>`: Assert that all nodes with the same `<id>` get partially evaluated
+      successfully to the same constant expression.
     * `// $TEST$ constant serialization <value>`: Assert that the node gets partially evaluated to a constant expression
       that serializes to `<value>`.
+    * `// $TEST$ constant undefined`: Assert that the node cannot be evaluated to a constant expression.
 6. Run the tests. The test runner will automatically pick up the new test.

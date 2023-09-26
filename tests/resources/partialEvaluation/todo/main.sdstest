@@ -1,0 +1,10 @@
+package test
+
+pipeline test {
+    // $TEST$ constant serialization 1
+    »1«;
+    // $TEST$ constant equivalence_class test
+    »"test"«;
+    // $TEST$ constant equivalence_class test
+    »"test"«;
+}
