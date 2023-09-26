@@ -8,106 +8,110 @@ import {
 } from '../generated/ast.js';
 
 /* c8 ignore start */
-type ParameterSubstitutions = Map<SdsParameter, SdsSimplifiedExpression | undefined>;
-type ResultSubstitutions = Map<SdsAbstractResult, SdsSimplifiedExpression | undefined>;
+export type ParameterSubstitutions = Map<SdsParameter, SdsSimplifiedExpression | undefined>;
+export type ResultSubstitutions = Map<SdsAbstractResult, SdsSimplifiedExpression | undefined>;
 
-type SdsSimplifiedExpression = SdsIntermediateExpression | SdsConstantExpression;
+export abstract class SdsSimplifiedExpression {
+    /**
+     * Removes any unnecessary containers from the expression.
+     */
+    unwrap(): SdsSimplifiedExpression {
+        return this;
+    }
+}
 
-type SdsIntermediateExpression = SdsIntermediateCallable | SdsIntermediateRecord;
+export abstract class SdsIntermediateExpression extends SdsSimplifiedExpression {}
 
-type SdsIntermediateCallable = SdsIntermediateBlockLambda | SdsIntermediateExpressionLambda | SdsIntermediateStep;
+export abstract class SdsIntermediateCallable extends SdsIntermediateExpression {}
 
-class SdsIntermediateBlockLambda {
+export class SdsIntermediateBlockLambda extends SdsIntermediateCallable {
     constructor(
         readonly parameters: SdsParameter[],
         readonly results: SdsBlockLambdaResult[],
         readonly substitutionsOnCreation: ParameterSubstitutions,
-    ) {}
+    ) {
+        super();
+    }
 }
 
-class SdsIntermediateExpressionLambda {
+export class SdsIntermediateExpressionLambda extends SdsIntermediateCallable {
     constructor(
         readonly parameters: SdsParameter[],
         readonly result: SdsExpression,
         readonly substitutionsOnCreation: ParameterSubstitutions,
-    ) {}
+    ) {
+        super();
+    }
 }
 
-class SdsIntermediateStep {
+export class SdsIntermediateStep extends SdsIntermediateCallable {
     constructor(
         readonly parameters: SdsParameter[],
         readonly results: SdsResult[],
-    ) {}
+    ) {
+        super();
+    }
 }
 
-class SdsIntermediateRecord {
-    constructor(readonly resultSubstitutions: ResultSubstitutions) {}
+export class SdsIntermediateRecord extends SdsIntermediateExpression {
+    constructor(readonly resultSubstitutions: ResultSubstitutions) {
+        super();
+    }
 
-    // getSubstitutionByReferenceOrUndefined(reference: SdsReference): SdsSimplifiedExpression | undefined {
-    //     if (!isSdsAbstractResult(reference.declaration)) {
-    //         return undefined;
+    //     fun getSubstitutionByReferenceOrNull(reference: SdsReference): SdsSimplifiedExpression? {
+    //             val result = reference.declaration as? SdsAbstractResult ?: return null
+    //             return resultSubstitutions[result]
+    //         }
+    //
+    //         fun getSubstitutionByIndexOrNull(index: Int?): SdsSimplifiedExpression? {
+    //         if (index == null) {
+    //         return null
     //     }
-    //
-    //
-    //
-    //     const result = reference.declaration as SdsAbstractResult;
+    //     return resultSubstitutions.values.toList().getOrNull(index)
     // }
+    // }
+
+    /**
+     * If the record contains exactly one substitution its value is returned. Otherwise, it returns `this`.
+     */
+    override unwrap(): SdsSimplifiedExpression {
+        if (this.resultSubstitutions.size === 1) {
+            return this.resultSubstitutions.values().next().value;
+        } else {
+            return this;
+        }
+    }
+
+    //     override fun toString(): String {
+    //         return resultSubstitutions.entries.joinToString(prefix = "{", postfix = "}") { (result, value) ->
+    //             "${result.name}=$value"
+    //         }
+    //     }
 }
 
-// internal class SdsIntermediateRecord(
-//     resultSubstitutions: List<Pair<SdsAbstractResult, SdsSimplifiedExpression?>>
-// ) : SdsIntermediateExpression {
-// private val resultSubstitutions = resultSubstitutions.toMap()
-//
-//     fun getSubstitutionByReferenceOrNull(reference: SdsReference): SdsSimplifiedExpression? {
-//             val result = reference.declaration as? SdsAbstractResult ?: return null
-//             return resultSubstitutions[result]
-//         }
-//
-//         fun getSubstitutionByIndexOrNull(index: Int?): SdsSimplifiedExpression? {
-//         if (index == null) {
-//         return null
-//     }
-//     return resultSubstitutions.values.toList().getOrNull(index)
-// }
-//
-//     /**
-//      * If the record contains exactly one substitution its value is returned. Otherwise, it returns `this`.
-//      */
-//     fun unwrap(): SdsSimplifiedExpression? {
-//         return when (resultSubstitutions.size) {
-//         1 -> resultSubstitutions.values.first()
-// else -> this
-// }
-// }
-//
-//     override fun toString(): String {
-//         return resultSubstitutions.entries.joinToString(prefix = "{", postfix = "}") { (result, value) ->
-//             "${result.name}=$value"
-//         }
-//     }
-// }
-//
-// data class SdsIntermediateVariadicArguments(
-//     private val arguments: List<SdsSimplifiedExpression?>
-// ) : SdsSimplifiedExpression {
-//     fun getArgumentByIndexOrNull(index: Int?): SdsSimplifiedExpression? {
-//         if (index == null) {
-//         return null
-//     }
-//     return arguments.getOrNull(index)
-// }
-// }
+export class SdsIntermediateVariadicArguments extends SdsIntermediateExpression {
+    constructor(readonly arguments_: (SdsSimplifiedExpression | null)[]) {
+        super();
+    }
 
-export type SdsConstantExpression =
-    | SdsConstantBoolean
-    | SdsConstantEnumVariant
-    | SdsConstantNumber
-    | SdsConstantNull
-    | SdsConstantString;
+    getArgumentByIndexOrNull(index: number | null): SdsSimplifiedExpression | null {
+        if (index === null) {
+            return null;
+        }
+        return this.arguments_[index] ?? null;
+    }
+}
 
-class SdsConstantBoolean {
-    constructor(readonly value: boolean) {}
+export abstract class SdsConstantExpression extends SdsSimplifiedExpression {
+    abstract equals(other: SdsConstantExpression): boolean;
+
+    abstract override toString(): string;
+}
+
+export class SdsConstantBoolean extends SdsConstantExpression {
+    constructor(readonly value: boolean) {
+        super();
+    }
 
     equals(other: SdsConstantExpression): boolean {
         return other instanceof SdsConstantBoolean && this.value === other.value;
@@ -118,8 +122,10 @@ class SdsConstantBoolean {
     }
 }
 
-class SdsConstantEnumVariant {
-    constructor(readonly value: SdsEnumVariant) {}
+export class SdsConstantEnumVariant extends SdsConstantExpression {
+    constructor(readonly value: SdsEnumVariant) {
+        super();
+    }
 
     equals(other: SdsConstantExpression): boolean {
         return other instanceof SdsConstantEnumVariant && this.value === other.value;
@@ -130,10 +136,12 @@ class SdsConstantEnumVariant {
     }
 }
 
-type SdsConstantNumber = SdsConstantFloat | SdsConstantInt;
+export abstract class SdsConstantNumber extends SdsConstantExpression {}
 
-class SdsConstantFloat {
-    constructor(readonly value: number) {}
+export class SdsConstantFloat extends SdsConstantNumber {
+    constructor(readonly value: number) {
+        super();
+    }
 
     equals(other: SdsConstantExpression): boolean {
         return other instanceof SdsConstantFloat && this.value === other.value;
@@ -144,8 +152,10 @@ class SdsConstantFloat {
     }
 }
 
-class SdsConstantInt {
-    constructor(readonly value: bigint) {}
+export class SdsConstantInt extends SdsConstantNumber {
+    constructor(readonly value: bigint) {
+        super();
+    }
 
     equals(other: SdsConstantExpression): boolean {
         return other instanceof SdsConstantInt && this.value === other.value;
@@ -156,7 +166,7 @@ class SdsConstantInt {
     }
 }
 
-class SdsConstantNull {
+export class SdsConstantNull extends SdsConstantExpression {
     equals(other: SdsConstantExpression): boolean {
         return other instanceof SdsConstantNull;
     }
@@ -166,8 +176,10 @@ class SdsConstantNull {
     }
 }
 
-class SdsConstantString {
-    constructor(readonly value: string) {}
+export class SdsConstantString extends SdsConstantExpression {
+    constructor(readonly value: string) {
+        super();
+    }
 
     equals(other: SdsConstantExpression): boolean {
         return other instanceof SdsConstantString && this.value === other.value;
@@ -177,4 +189,5 @@ class SdsConstantString {
         return this.value;
     }
 }
+
 /* c8 ignore stop */
