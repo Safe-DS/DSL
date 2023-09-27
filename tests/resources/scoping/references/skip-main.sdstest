@@ -1077,12 +1077,7 @@ enum EnumForResultMemberAccess {
 // Direct references -----------------------------------------------------------
 
 
-step directReferencesToLambdaResults() {
-    val f = () {
-        yield lambdaResult = 1;
-        lambdaResult;
-    };
-}
+
 
 step directReferencesToParameters(parameterInStep: Int) {
     parameterInStep;
@@ -1118,27 +1113,6 @@ step directReferencesToPlaceholders() {
 
 step directReferencesToTypeParameters() {
     TYPE_PARAMETER_IN_SAME_FILE;
-}
-
-step directReferencesToSteps() {
-    stepInSameFile;
-    stepInSamePackage;
-    stepInOtherPackage1;
-    stepInOtherPackage2;
-
-    internalStepInSameFile;
-    privateStepInSameFile;
-    internalStepInSamePackage;
-    privateStepInSamePackage;
-    internalStepInOtherPackage;
-    privateStepInOtherPackage;
-}
-
-step directReferencesToPipelines() {
-    pipelineInSameFile;
-    pipelineInSamePackage;
-    pipelineInOtherPackage1;
-    pipelineInOtherPackage2;
 }
 
 step forwardReferences() {
