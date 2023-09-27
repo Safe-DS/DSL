@@ -13,45 +13,6 @@ import tests.languageTests.scoping.reference2.pipelineInOtherPackage1
 inner class Reference {
 
         @Test
-        fun `should resolve class in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
-            val classInSameFile = findUniqueDeclarationOrFail<SdsClass>("ClassInSameFile")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[0].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(classInSameFile)
-        }
-
-        @Test
-        fun `should resolve enum in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
-            val enumInSameFile = findUniqueDeclarationOrFail<SdsEnum>("EnumInSameFile")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[0].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(enumInSameFile)
-        }
-
-        @Test
-        fun `should resolve global function in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
-            val globalFunctionInSameFile = findUniqueDeclarationOrFail<SdsFunction>("globalFunctionInSameFile")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[0].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(globalFunctionInSameFile)
-        }
-
-        @Test
         fun `should not resolve lambda result`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToLambdaResults")
 
@@ -1115,33 +1076,6 @@ enum EnumForResultMemberAccess {
 
 // Direct references -----------------------------------------------------------
 
-step directReferencesToAnnotations() {
-    AnnotationInSameFile;
-    AnnotationInSamePackage;
-    AnnotationInOtherPackage1;
-    AnnotationInOtherPackage2;
-}
-
-step directReferencesToClasses() {
-    ClassInSameFile;
-    ClassInSamePackage;
-    ClassInOtherPackage1;
-    ClassInOtherPackage2;
-}
-
-step directReferencesToEnums() {
-    EnumInSameFile;
-    EnumInSamePackage;
-    EnumInOtherPackage1;
-    EnumInOtherPackage2;
-}
-
-step directReferencesToGlobalFunctions() {
-    globalFunctionInSameFile;
-    globalFunctionInSamePackage;
-    globalFunctionInOtherPackage1;
-    globalFunctionInOtherPackage2;
-}
 
 step directReferencesToLambdaResults() {
     val f = () {
