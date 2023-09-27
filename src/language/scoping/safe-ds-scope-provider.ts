@@ -1,12 +1,4 @@
-import {
-    AstNode,
-    DefaultScopeProvider,
-    EMPTY_SCOPE,
-    getContainerOfType,
-    getDocument,
-    ReferenceInfo,
-    Scope,
-} from 'langium';
+import { AstNode, DefaultScopeProvider, EMPTY_SCOPE, getContainerOfType, ReferenceInfo, Scope } from 'langium';
 import {
     isSdsAnnotation,
     isSdsClass,
@@ -18,8 +10,10 @@ import {
     isSdsNamedTypeDeclaration,
     isSdsPipeline,
     isSdsReference,
+    isSdsSchema,
     isSdsSegment,
     isSdsYield,
+    SdsDeclaration,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
@@ -103,10 +97,12 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return outerScope;
         }
 
-        const referencableMembers = moduleMembersOrEmpty(module).filter(
-            (it) => !isSdsAnnotation(it) && !isSdsPipeline(it),
-        );
+        const referencableMembers = moduleMembersOrEmpty(module).filter(this.isReferencableDeclaration);
         return this.createScopeForNodes(referencableMembers, outerScope);
+    }
+
+    private isReferencableDeclaration(node: SdsDeclaration): boolean {
+        return !isSdsAnnotation(node) && !isSdsPipeline(node) && !isSdsSchema(node);
     }
 
     //     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {

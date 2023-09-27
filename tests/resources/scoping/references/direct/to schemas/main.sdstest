@@ -1,0 +1,8 @@
+package tests.scoping.references.direct.toSchemas
+
+schema MySchema {}
+
+segment mySegment() {
+    // $TEST$ unresolved
+    »MySchema«;
+}
