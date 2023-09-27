@@ -1,4 +1,4 @@
-package test.scoping.references.direct.toFunctions
+package test.scoping.references.direct.toGlobalFunctions
 
 // $TEST$ target before
 fun »before«()
