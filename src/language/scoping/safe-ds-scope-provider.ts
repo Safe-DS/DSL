@@ -1,7 +1,9 @@
 import { AstNode, DefaultScopeProvider, EMPTY_SCOPE, getContainerOfType, ReferenceInfo, Scope } from 'langium';
 import {
+    isSdsCallable,
     isSdsClass,
     isSdsEnum,
+    isSdsLambda,
     isSdsMemberAccess,
     isSdsMemberType,
     isSdsModule,
@@ -13,11 +15,12 @@ import {
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
+    SdsPlaceholder,
     SdsReference,
     SdsType,
     SdsYield,
 } from '../generated/ast.js';
-import { moduleMembersOrEmpty, resultsOrEmpty } from '../ast/shortcuts.js';
+import { moduleMembersOrEmpty, parametersOrEmpty, resultsOrEmpty } from '../ast/shortcuts.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {
@@ -82,20 +85,72 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForDirectReferenceTarget(node: SdsReference): Scope {
         // Declarations in this file
-        const result = this.addDeclarationsInSameFile(node, EMPTY_SCOPE);
+        const result = this.addGlobalDeclarationsInSameFile(node, EMPTY_SCOPE);
+
+        // Declarations in containing blocks
+        return this.addLocalDeclarations(node, result);
 
         return result;
     }
 
-    private addDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
+    private addGlobalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
         const module = getContainerOfType(node, isSdsModule);
         if (!module) {
             return outerScope;
         }
 
-        const referencableMembers = moduleMembersOrEmpty(module);
-        return this.createScopeForNodes(referencableMembers, outerScope);
+        return this.createScopeForNodes(moduleMembersOrEmpty(module), outerScope);
     }
+
+    private addLocalDeclarations(node: AstNode, outerScope: Scope): Scope {
+        // Placeholders
+        const placeholders: SdsPlaceholder[] = [];
+
+        // Parameters
+        const containingCallable = getContainerOfType(node.$container, isSdsCallable);
+        const parameters = parametersOrEmpty(containingCallable?.parameterList);
+
+        // Local declarations
+        const localDeclarations = [...placeholders, ...parameters];
+
+        // Lambdas can be nested
+        if (isSdsLambda(containingCallable)) {
+            return this.createScopeForNodes(
+                localDeclarations,
+                this.addLocalDeclarations(containingCallable, outerScope),
+            );
+        } else {
+            return this.createScopeForNodes(localDeclarations, outerScope);
+        }
+    }
+
+    // private fun localDeclarations(context: EObject, parentScope: IScope): IScope {
+    //     // Placeholders
+    //     val placeholders = when (val containingStatement = context.closestAncestorOrNull<SdsAbstractStatement>()) {
+    //         null -> emptyList()
+    //     else ->
+    //         containingStatement
+    //             .closestAncestorOrNull<SdsBlock>()
+    //             ?.placeholdersUpTo(containingStatement)
+    //             .orEmpty()
+    //     }
+    //
+    //     // Parameters
+    //     val containingCallable = context.containingCallableOrNull()
+    //     val parameters = containingCallable.parametersOrEmpty()
+    //
+    //     // Local declarations
+    //     val localDeclarations = placeholders + parameters
+    //
+    //     return when (containingCallable) {
+    //         // Lambdas can be nested
+    //         is SdsAbstractLambda -> Scopes.scopeFor(
+    //             localDeclarations,
+    //             localDeclarations(containingCallable, parentScope),
+    //         )
+    //     else -> Scopes.scopeFor(localDeclarations, parentScope)
+    //     }
+    // }
 
     //     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {
     //                 val resource = context.eResource()
@@ -201,18 +256,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     //         type is EnumVariantType -> Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
     //     else -> resultScope
     //     }
-    // }
-    //
-    // private fun declarationsInSameFile(resource: Resource, parentScope: IScope): IScope {
-    //     val members = resource.compilationUnitOrNull()
-    //         ?.members
-    //         ?.filter { it !is SdsAnnotation && it !is SdsPipeline }
-    //         ?: emptyList()
-    //
-    //     return Scopes.scopeFor(
-    //         members,
-    //         parentScope,
-    //     )
     // }
     //
     // private fun classMembers(context: SdsClass, parentScope: IScope): IScope {

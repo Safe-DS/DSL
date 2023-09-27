@@ -13,88 +13,6 @@ import tests.languageTests.scoping.reference2.pipelineInOtherPackage1
 inner class Reference {
 
         @Test
-        fun `should resolve parameter of step in same step`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
-            val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(6)
-
-            val declaration = references[0].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(parameterInStep)
-        }
-
-        @Test
-        fun `should resolve parameter of step in block lambda in same step`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
-            val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(6)
-
-            val declaration = references[1].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(parameterInStep)
-        }
-
-        @Test
-        fun `should resolve parameter of block lambda in same block lambda`() =
-            withResource(REFERENCE) {
-                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
-                val parameterInLambda = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInBlockLambda")
-
-                val references = step.descendants<SdsReference>().toList()
-                references.shouldHaveSize(6)
-
-                val declaration = references[2].declaration
-                declaration.shouldBeResolved()
-                declaration.shouldBe(parameterInLambda)
-            }
-
-        @Test
-        fun `should resolve parameter of step in block lambda within block lambda in same step`() =
-            withResource(REFERENCE) {
-                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
-                val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
-
-                val references = step.descendants<SdsReference>().toList()
-                references.shouldHaveSize(6)
-
-                val declaration = references[3].declaration
-                declaration.shouldBeResolved()
-                declaration.shouldBe(parameterInStep)
-            }
-
-        @Test
-        fun `should resolve parameter of block lambda in nested block lambda`() =
-            withResource(REFERENCE) {
-                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
-                val parameterInLambda = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInBlockLambda")
-
-                val references = step.descendants<SdsReference>().toList()
-                references.shouldHaveSize(6)
-
-                val declaration = references[4].declaration
-                declaration.shouldBeResolved()
-                declaration.shouldBe(parameterInLambda)
-            }
-
-        @Test
-        fun `should resolve parameter of expression lambda in same expression lambda`() =
-            withResource(REFERENCE) {
-                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
-                val parameterInLambda = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInExpressionLambda")
-
-                val references = step.descendants<SdsReference>().toList()
-                references.shouldHaveSize(6)
-
-                val declaration = references[5].declaration
-                declaration.shouldBeResolved()
-                declaration.shouldBe(parameterInLambda)
-            }
-
-        @Test
         fun `should resolve placeholder of step in same step`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPlaceholders")
             val placeholderInStep = step.findUniqueDeclarationOrFail<SdsPlaceholder>("placeholderInStep")
@@ -970,22 +888,6 @@ enum EnumForResultMemberAccess {
 }
 
 // Direct references -----------------------------------------------------------
-
-step directReferencesToParameters(parameterInStep: Int) {
-    parameterInStep;
-
-    val f = (parameterInBlockLambda) {
-        parameterInStep;
-        parameterInBlockLambda;
-
-        val f = () {
-            parameterInStep;
-            parameterInBlockLambda;
-        };
-    };
-
-    val g = (parameterInExpressionLambda) -> parameterInExpressionLambda;
-}
 
 step directReferencesToPlaceholders() {
     val placeholderInStep = 1;

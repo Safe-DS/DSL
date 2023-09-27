@@ -25,7 +25,7 @@ segment mySegment(myShadowedSegmentParameter: Int) {
 
         // $TEST$ target inner
         // $TEST$ target innerShadowedBlockLambdaParameter
-        (»myInnerBlockLambdaParameter«, »myShadowedParameter«) {
+        (»myInnerBlockLambdaParameter«, »myShadowedBlockLambdaParameter«) {
             () ->
                 // $TEST$ references outer
                 »myOuterBlockLambdaParameter« +
@@ -38,7 +38,7 @@ segment mySegment(myShadowedSegmentParameter: Int) {
 
                 // $TEST$ references inner
                 »myInnerBlockLambdaParameter« +
-                
+
                 // $TEST$ references innerShadowedBlockLambdaParameter
                 »myShadowedBlockLambdaParameter«;
         };
