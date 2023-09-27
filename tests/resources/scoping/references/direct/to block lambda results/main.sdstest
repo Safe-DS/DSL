@@ -1,6 +1,6 @@
 package tests.scoping.references.direct.toBlockLambdaResults
 
-segment mySegment() {
+pipeline myPipeline {
     () {
         yield lambdaResult = 1;
         // $TEST$ unresolved

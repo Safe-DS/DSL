@@ -13,15 +13,6 @@ import tests.languageTests.scoping.reference2.pipelineInOtherPackage1
 inner class Reference {
 
         @Test
-        fun `should not resolve lambda result`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToLambdaResults")
-
-            val reference = step.descendants<SdsReference>().firstOrNull()
-            reference.shouldNotBeNull()
-            reference.declaration.shouldNotBeResolved()
-        }
-
-        @Test
         fun `should resolve parameter of step in same step`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
             val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
@@ -172,93 +163,6 @@ inner class Reference {
             }
 
         @Test
-        fun `should not resolve type parameters`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToTypeParameters")
-
-            val reference = step.descendants<SdsReference>().firstOrNull()
-            reference.shouldNotBeNull()
-            reference.declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should resolve step in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-            val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("stepInSameFile")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-
-            val declaration = references[0].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(stepInSameFile)
-        }
-
-        @Test
-        fun `should resolve internal step in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-            val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("internalStepInSameFile")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-
-            val declaration = references[4].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(stepInSameFile)
-        }
-
-        @Test
-        fun `should resolve private step in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-            val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("privateStepInSameFile")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-
-            val declaration = references[5].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(stepInSameFile)
-        }
-
-        @Test
-        fun `should resolve internal step in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-
-            val declaration = references[6].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("internalStepInSamePackage")
-        }
-
-        @Test
-        fun `should not resolve private step in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-            references[7].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve internal step in another package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-            references[8].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve private step in another package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-            references[9].declaration.shouldNotBeResolved()
-        }
-
-        @Test
         fun `should not resolve placeholder declared later in same step`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("forwardReferences")
 
@@ -379,15 +283,6 @@ inner class Reference {
             references.forEachAsClue {
                 it.declaration.shouldNotBeResolved()
             }
-        }
-
-        @Test
-        fun `should not resolve unknown declaration`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("unresolvedReferences")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(1)
-            references[0].declaration.shouldNotBeResolved()
         }
 
         @Nested
@@ -1109,10 +1004,6 @@ step directReferencesToPlaceholders() {
             placeholderInLambda;
         };
     };
-}
-
-step directReferencesToTypeParameters() {
-    TYPE_PARAMETER_IN_SAME_FILE;
 }
 
 step forwardReferences() {
