@@ -13,42 +13,6 @@ import tests.languageTests.scoping.reference2.pipelineInOtherPackage1
 inner class Reference {
 
         @Test
-        fun `should not resolve annotation in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[0].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve annotation in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[1].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve annotation in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[2].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve annotation in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[3].declaration.shouldNotBeResolved()
-        }
-
-        @Test
         fun `should resolve class in same file`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
             val classInSameFile = findUniqueDeclarationOrFail<SdsClass>("ClassInSameFile")
@@ -59,39 +23,6 @@ inner class Reference {
             val declaration = references[0].declaration
             declaration.shouldBeResolved()
             declaration.shouldBe(classInSameFile)
-        }
-
-        @Test
-        fun `should resolve class in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[1].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("ClassInSamePackage")
-        }
-
-        @Test
-        fun `should resolve class in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[2].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("ClassInOtherPackage1")
-        }
-
-        @Test
-        fun `should not resolve class in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[3].declaration.shouldNotBeResolved()
         }
 
         @Test
@@ -108,39 +39,6 @@ inner class Reference {
         }
 
         @Test
-        fun `should resolve enum in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[1].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("EnumInSamePackage")
-        }
-
-        @Test
-        fun `should resolve enum in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[2].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("EnumInOtherPackage1")
-        }
-
-        @Test
-        fun `should not resolve enum in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[3].declaration.shouldNotBeResolved()
-        }
-
-        @Test
         fun `should resolve global function in same file`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
             val globalFunctionInSameFile = findUniqueDeclarationOrFail<SdsFunction>("globalFunctionInSameFile")
@@ -151,85 +49,6 @@ inner class Reference {
             val declaration = references[0].declaration
             declaration.shouldBeResolved()
             declaration.shouldBe(globalFunctionInSameFile)
-        }
-
-        @Test
-        fun `should resolve global function in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[1].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("globalFunctionInSamePackage")
-        }
-
-        @Test
-        fun `should resolve global function in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[2].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("globalFunctionInOtherPackage1")
-        }
-
-        @Test
-        fun `should not resolve global function in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[3].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should resolve goal in same file`() = withResource(GOAL_REFERENCE) {
-            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
-            val predicateInSameFile = findUniqueDeclarationOrFail<SdsPredicate>("predicateInSameFile")
-
-            val references = predicate.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[0].declaration
-            declaration.shouldBeResolved()
-            declaration.shouldBe(predicateInSameFile)
-        }
-
-        @Test
-        fun `should resolve goal in same package`() = withResource(GOAL_REFERENCE) {
-            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
-
-            val references = predicate.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[1].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("predicateInSamePackage")
-        }
-
-        @Test
-        fun `should resolve goal in another package if imported`() = withResource(GOAL_REFERENCE) {
-            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
-
-            val references = predicate.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-
-            val declaration = references[2].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("predicateInOtherPackage1")
-        }
-
-        @Test
-        fun `should not resolve goal in another package if not imported`() = withResource(GOAL_REFERENCE) {
-            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
-
-            val references = predicate.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[3].declaration.shouldNotBeResolved()
         }
 
         @Test
@@ -414,39 +233,6 @@ inner class Reference {
         }
 
         @Test
-        fun `should resolve step in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-
-            val declaration = references[1].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("stepInSamePackage")
-        }
-
-        @Test
-        fun `should resolve step in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-
-            val declaration = references[2].declaration
-            declaration.shouldBeResolved()
-            declaration.name.shouldBe("stepInOtherPackage1")
-        }
-
-        @Test
-        fun `should not resolve step in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(10)
-            references[3].declaration.shouldNotBeResolved()
-        }
-
-        @Test
         fun `should resolve internal step in same file`() = withResource(REFERENCE) {
             val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
             val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("internalStepInSameFile")
@@ -509,42 +295,6 @@ inner class Reference {
             val references = step.descendants<SdsReference>().toList()
             references.shouldHaveSize(10)
             references[9].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve pipeline in same file`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[0].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve pipeline in same package`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[1].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve pipeline in another package if imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[2].declaration.shouldNotBeResolved()
-        }
-
-        @Test
-        fun `should not resolve pipeline in another package if not imported`() = withResource(REFERENCE) {
-            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
-
-            val references = step.descendants<SdsReference>().toList()
-            references.shouldHaveSize(4)
-            references[3].declaration.shouldNotBeResolved()
         }
 
         @Test

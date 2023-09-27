@@ -1,11 +1,22 @@
-import { DefaultScopeProvider, EMPTY_SCOPE, getContainerOfType, ReferenceInfo, Scope } from 'langium';
 import {
+    AstNode,
+    DefaultScopeProvider,
+    EMPTY_SCOPE,
+    getContainerOfType,
+    getDocument,
+    ReferenceInfo,
+    Scope,
+} from 'langium';
+import {
+    isSdsAnnotation,
     isSdsClass,
     isSdsEnum,
     isSdsMemberAccess,
     isSdsMemberType,
+    isSdsModule,
     isSdsNamedType,
     isSdsNamedTypeDeclaration,
+    isSdsPipeline,
     isSdsReference,
     isSdsSegment,
     isSdsYield,
@@ -16,7 +27,7 @@ import {
     SdsType,
     SdsYield,
 } from '../generated/ast.js';
-import { resultsOrEmpty } from '../ast/shortcuts.js';
+import { moduleMembersOrEmpty, resultsOrEmpty } from '../ast/shortcuts.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {
@@ -79,15 +90,26 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         return EMPTY_SCOPE;
     }
 
-    private getScopeForDirectReferenceDeclaration(_node: SdsReference): Scope {
-        return EMPTY_SCOPE;
+    private getScopeForDirectReferenceDeclaration(node: SdsReference): Scope {
+        // Declarations in this file
+        const result = this.addDeclarationsInSameFile(node, EMPTY_SCOPE);
+
+        return result;
+    }
+
+    private addDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
+        const module = getContainerOfType(node, isSdsModule);
+        if (!module) {
+            return outerScope;
+        }
+
+        const referencableMembers = moduleMembersOrEmpty(module).filter(
+            (it) => !isSdsAnnotation(it) && !isSdsPipeline(it),
+        );
+        return this.createScopeForNodes(referencableMembers, outerScope);
     }
 
     //     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {
-    //         val container = context.eContainer()
-    //         return when {
-    //             container is SdsMemberAccess && container.member == context -> scopeForMemberAccessDeclaration(container)
-    //         else -> {
     //                 val resource = context.eResource()
     //                 val packageName = context.containingCompilationUnitOrNull()?.qualifiedNameOrNull()
     //
