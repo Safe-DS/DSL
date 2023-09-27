@@ -1,0 +1,8 @@
+package tests.scoping.references.direct.toPipelines
+
+pipeline myPipeline {}
+
+segment mySegment() {
+    // $TEST$ unresolved
+    »myPipeline«;
+}

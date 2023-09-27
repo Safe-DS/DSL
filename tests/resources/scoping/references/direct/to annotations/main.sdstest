@@ -1,8 +1,8 @@
 package tests.scoping.references.direct.toAnnotations
 
-annotation AnnotationInSameFile
+annotation MyAnnotation
 
-segment directReferencesToAnnotations() {
+segment mySegment() {
     // $TEST$ unresolved
-    »AnnotationInSameFile«;
+    »MyAnnotation«;
 }
