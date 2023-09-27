@@ -1,0 +1,1663 @@
+package tests.scoping.references
+
+import tests.languageTests.scoping.reference2.AnnotationInOtherPackage1
+import tests.languageTests.scoping.reference2.ClassInOtherPackage1
+import tests.languageTests.scoping.reference2.EnumInOtherPackage1
+import tests.languageTests.scoping.reference2.globalFunctionInOtherPackage1
+import tests.languageTests.scoping.reference2.internalStepInOtherPackage
+import tests.languageTests.scoping.reference2.privateStepInOtherPackage
+import tests.languageTests.scoping.reference2.stepInOtherPackage1
+import tests.languageTests.scoping.reference2.pipelineInOtherPackage1
+
+/*
+inner class Reference {
+
+        @Test
+        fun `should not resolve annotation in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[0].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve annotation in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[1].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve annotation in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[2].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve annotation in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToAnnotations")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve class in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
+            val classInSameFile = findUniqueDeclarationOrFail<SdsClass>("ClassInSameFile")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(classInSameFile)
+        }
+
+        @Test
+        fun `should resolve class in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("ClassInSamePackage")
+        }
+
+        @Test
+        fun `should resolve class in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[2].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("ClassInOtherPackage1")
+        }
+
+        @Test
+        fun `should not resolve class in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToClasses")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve enum in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
+            val enumInSameFile = findUniqueDeclarationOrFail<SdsEnum>("EnumInSameFile")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(enumInSameFile)
+        }
+
+        @Test
+        fun `should resolve enum in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("EnumInSamePackage")
+        }
+
+        @Test
+        fun `should resolve enum in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[2].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("EnumInOtherPackage1")
+        }
+
+        @Test
+        fun `should not resolve enum in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToEnums")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve global function in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
+            val globalFunctionInSameFile = findUniqueDeclarationOrFail<SdsFunction>("globalFunctionInSameFile")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(globalFunctionInSameFile)
+        }
+
+        @Test
+        fun `should resolve global function in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("globalFunctionInSamePackage")
+        }
+
+        @Test
+        fun `should resolve global function in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[2].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("globalFunctionInOtherPackage1")
+        }
+
+        @Test
+        fun `should not resolve global function in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToGlobalFunctions")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve goal in same file`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
+            val predicateInSameFile = findUniqueDeclarationOrFail<SdsPredicate>("predicateInSameFile")
+
+            val references = predicate.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(predicateInSameFile)
+        }
+
+        @Test
+        fun `should resolve goal in same package`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
+
+            val references = predicate.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("predicateInSamePackage")
+        }
+
+        @Test
+        fun `should resolve goal in another package if imported`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
+
+            val references = predicate.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+
+            val declaration = references[2].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("predicateInOtherPackage1")
+        }
+
+        @Test
+        fun `should not resolve goal in another package if not imported`() = withResource(GOAL_REFERENCE) {
+            val predicate = findUniqueDeclarationOrFail<SdsPredicate>("directReferencesToPredicates")
+
+            val references = predicate.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve lambda result`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToLambdaResults")
+
+            val reference = step.descendants<SdsReference>().firstOrNull()
+            reference.shouldNotBeNull()
+            reference.declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve parameter of step in same step`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
+            val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(6)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(parameterInStep)
+        }
+
+        @Test
+        fun `should resolve parameter of step in block lambda in same step`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
+            val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(6)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(parameterInStep)
+        }
+
+        @Test
+        fun `should resolve parameter of block lambda in same block lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
+                val parameterInLambda = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInBlockLambda")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+
+                val declaration = references[2].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(parameterInLambda)
+            }
+
+        @Test
+        fun `should resolve parameter of step in block lambda within block lambda in same step`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
+                val parameterInStep = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInStep")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+
+                val declaration = references[3].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(parameterInStep)
+            }
+
+        @Test
+        fun `should resolve parameter of block lambda in nested block lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
+                val parameterInLambda = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInBlockLambda")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+
+                val declaration = references[4].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(parameterInLambda)
+            }
+
+        @Test
+        fun `should resolve parameter of expression lambda in same expression lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToParameters")
+                val parameterInLambda = step.findUniqueDeclarationOrFail<SdsParameter>("parameterInExpressionLambda")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(parameterInLambda)
+            }
+
+        @Test
+        fun `should resolve placeholder of step in same step`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPlaceholders")
+            val placeholderInStep = step.findUniqueDeclarationOrFail<SdsPlaceholder>("placeholderInStep")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(5)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(placeholderInStep)
+        }
+
+        @Test
+        fun `should resolve placeholder of step in lambda in same step`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPlaceholders")
+            val placeholderInStep = step.findUniqueDeclarationOrFail<SdsPlaceholder>("placeholderInStep")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(5)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(placeholderInStep)
+        }
+
+        @Test
+        fun `should resolve placeholder of lambda in same lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPlaceholders")
+                val placeholderInLambda = step.findUniqueDeclarationOrFail<SdsPlaceholder>("placeholderInLambda")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(5)
+
+                val declaration = references[2].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(placeholderInLambda)
+            }
+
+        @Test
+        fun `should resolve placeholder of step in lambda within lambda in same step`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPlaceholders")
+                val placeholderInStep = step.findUniqueDeclarationOrFail<SdsPlaceholder>("placeholderInStep")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(5)
+
+                val declaration = references[3].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(placeholderInStep)
+            }
+
+        @Test
+        fun `should resolve placeholder of lambda in nested lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPlaceholders")
+                val placeholderInLambda = step.findUniqueDeclarationOrFail<SdsPlaceholder>("placeholderInLambda")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(5)
+
+                val declaration = references[4].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(placeholderInLambda)
+            }
+
+        @Test
+        fun `should not resolve type parameters`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToTypeParameters")
+
+            val reference = step.descendants<SdsReference>().firstOrNull()
+            reference.shouldNotBeNull()
+            reference.declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve step in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+            val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("stepInSameFile")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+
+            val declaration = references[0].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(stepInSameFile)
+        }
+
+        @Test
+        fun `should resolve step in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+
+            val declaration = references[1].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("stepInSamePackage")
+        }
+
+        @Test
+        fun `should resolve step in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+
+            val declaration = references[2].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("stepInOtherPackage1")
+        }
+
+        @Test
+        fun `should not resolve step in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should resolve internal step in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+            val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("internalStepInSameFile")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+
+            val declaration = references[4].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(stepInSameFile)
+        }
+
+        @Test
+        fun `should resolve private step in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+            val stepInSameFile = findUniqueDeclarationOrFail<SdsStep>("privateStepInSameFile")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+
+            val declaration = references[5].declaration
+            declaration.shouldBeResolved()
+            declaration.shouldBe(stepInSameFile)
+        }
+
+        @Test
+        fun `should resolve internal step in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+
+            val declaration = references[6].declaration
+            declaration.shouldBeResolved()
+            declaration.name.shouldBe("internalStepInSamePackage")
+        }
+
+        @Test
+        fun `should not resolve private step in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+            references[7].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve internal step in another package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+            references[8].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve private step in another package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToSteps")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(10)
+            references[9].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve pipeline in same file`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[0].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve pipeline in same package`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[1].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve pipeline in another package if imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[2].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve pipeline in another package if not imported`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("directReferencesToPipelines")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(4)
+            references[3].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve placeholder declared later in same step`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("forwardReferences")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(3)
+            references[0].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve placeholder declared later from nested lambda`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("forwardReferences")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(3)
+            references[1].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve placeholder that lambda is assigned to from body of lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("forwardReferences")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(3)
+                references[2].declaration.shouldNotBeResolved()
+            }
+
+        @Test
+        fun `should resolve declaration shadowed by parameter of step`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("shadowedReferences")
+
+                val parameters = step.parametersOrEmpty()
+                parameters.shouldHaveSize(1)
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(4)
+
+                val declaration = references[0].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(parameters[0])
+            }
+
+        @Test
+        fun `should resolve declaration shadowed by placeholder of step`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("shadowedReferences")
+
+                val placeholders = step.descendants<SdsPlaceholder>().toList()
+                placeholders.shouldHaveSize(3)
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(4)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(placeholders[0])
+            }
+
+        @Test
+        fun `should resolve declaration shadowed by parameter of lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("shadowedReferences")
+
+                val parameters = step.body.descendants<SdsParameter>().toList()
+                parameters.shouldHaveSize(1)
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(4)
+
+                val declaration = references[2].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(parameters[0])
+            }
+
+        @Test
+        fun `should resolve declaration shadowed by placeholder of lambda`() =
+            withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("shadowedReferences")
+
+                val placeholders = step.descendants<SdsPlaceholder>().toList()
+                placeholders.shouldHaveSize(3)
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(4)
+
+                val declaration = references[3].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(placeholders[2])
+            }
+
+        @Test
+        fun `should not resolve function locals`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("referencesToFunctionLocals")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(2)
+            references.forEachAsClue {
+                it.declaration.shouldNotBeResolved()
+            }
+        }
+
+        @Test
+        fun `should not resolve lambda locals`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("referencesToLambdaLocals")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(3)
+            references[0].declaration.shouldNotBeResolved()
+        }
+
+        @Test
+        fun `should not resolve step locals`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("referencesToStepLocals")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(3)
+            references.forEachAsClue {
+                it.declaration.shouldNotBeResolved()
+            }
+        }
+
+        @Test
+        fun `should not resolve unknown declaration`() = withResource(REFERENCE) {
+            val step = findUniqueDeclarationOrFail<SdsStep>("unresolvedReferences")
+
+            val references = step.descendants<SdsReference>().toList()
+            references.shouldHaveSize(1)
+            references[0].declaration.shouldNotBeResolved()
+        }
+
+        @Nested
+        inner class MemberAccess {
+
+            @Test
+            fun `should resolve static class attribute accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToClassMembers")
+                val classStaticAttributeInSameFile =
+                    findUniqueDeclarationOrFail<SdsAttribute>("classStaticAttributeInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(classStaticAttributeInSameFile)
+            }
+
+            @Test
+            fun `should resolve instance class attribute accessed from class instance`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToClassMembers")
+                val classInstanceAttributeInSameFile =
+                    findUniqueDeclarationOrFail<SdsAttribute>("classInstanceAttributeInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[3].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(classInstanceAttributeInSameFile)
+            }
+
+            @Test
+            fun `should resolve nested class accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToClassMembers")
+                val classInClassInSameFile =
+                    findUniqueDeclarationOrFail<SdsClass>("ClassInClassInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(classInClassInSameFile)
+            }
+
+            @Test
+            fun `should resolve nested enum accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToClassMembers")
+                val enumInClassInSameFile =
+                    findUniqueDeclarationOrFail<SdsEnum>("EnumInClassInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[7].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumInClassInSameFile)
+            }
+
+            @Test
+            fun `should resolve static class method accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToClassMembers")
+                val classStaticMethodInSameFile =
+                    findUniqueDeclarationOrFail<SdsFunction>("classStaticMethodInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[9].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(classStaticMethodInSameFile)
+            }
+
+            @Test
+            fun `should resolve instance class method accessed from class instance`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToClassMembers")
+                val classInstanceMethodInSameFile =
+                    findUniqueDeclarationOrFail<SdsFunction>("classInstanceMethodInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[11].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(classInstanceMethodInSameFile)
+            }
+
+            @Test
+            fun `should resolve enum variants`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToEnumVariants")
+                val enumVariantInSameFile =
+                    findUniqueDeclarationOrFail<SdsEnumVariant>("EnumVariantInSameFile")
+
+                val references = step.body.descendants<SdsReference>().toList()
+                references.shouldHaveSize(2)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumVariantInSameFile)
+            }
+
+            @Test
+            fun `should resolve enum variants from step annotation`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToEnumVariants")
+                val enumVariantInSameFile =
+                    findUniqueDeclarationOrFail<SdsEnumVariant>("EnumVariantInSameFile")
+
+                val annotations = step.annotationCallsOrEmpty()
+                annotations.shouldHaveSize(1)
+
+                val references = annotations[0].descendants<SdsReference>().toList()
+                references.shouldHaveSize(2)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumVariantInSameFile)
+            }
+
+            @Test
+            fun `should resolve enum variants from parameter annotation`() = withResource(REFERENCE) {
+                val parameter =
+                    findUniqueDeclarationOrFail<SdsParameter>("referenceToEnumVariantFromParameterAnnotation")
+                val enumVariantInSameFile =
+                    findUniqueDeclarationOrFail<SdsEnumVariant>("EnumVariantInSameFile")
+
+                val annotations = parameter.annotationCallsOrEmpty()
+                annotations.shouldHaveSize(1)
+
+                val references = annotations[0].descendants<SdsReference>().toList()
+                references.shouldHaveSize(2)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumVariantInSameFile)
+            }
+
+            @Test
+            fun `should resolve enum variants of nested enum from class annotation`() = withResource(REFERENCE) {
+                val parameter = findUniqueDeclarationOrFail<SdsClass>("ReferencesToEnumVariantsInnerClass")
+                val enumVariantInSameFile =
+                    findUniqueDeclarationOrFail<SdsEnumVariant>("EnumVariantInSameClass")
+
+                val annotations = parameter.annotationCallsOrEmpty()
+                annotations.shouldHaveSize(2)
+
+                val references = annotations[0].descendants<SdsReference>().toList()
+                references.shouldHaveSize(2)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumVariantInSameFile)
+            }
+
+            @Test
+            fun `should resolve enum variants of global enum from class annotation`() = withResource(REFERENCE) {
+                val parameter = findUniqueDeclarationOrFail<SdsClass>("ReferencesToEnumVariantsInnerClass")
+                val enumVariantInSameClass =
+                    findUniqueDeclarationOrFail<SdsEnumVariant>("EnumVariantInSameFile")
+
+                val annotations = parameter.annotationCallsOrEmpty()
+                annotations.shouldHaveSize(2)
+
+                val references = annotations[1].descendants<SdsReference>().toList()
+                references.shouldHaveSize(2)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumVariantInSameClass)
+            }
+
+            @Test
+            fun `should resolve parameters of enum variants`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToEnumVariantParameters")
+                val enumVariantParameterInSameFile =
+                    findUniqueDeclarationOrFail<SdsParameter>("enumVariantParameterInSameFile")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(3)
+
+                val declaration = references[2].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumVariantParameterInSameFile)
+            }
+
+            @Test
+            fun `should resolve inherited static class attribute accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInheritedClassMembers")
+                val superClassStaticAttribute =
+                    findUniqueDeclarationOrFail<SdsAttribute>("superClassStaticAttribute")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(superClassStaticAttribute)
+            }
+
+            @Test
+            fun `should resolve inherited instance class attribute accessed from class instance`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInheritedClassMembers")
+                    val superClassInstanceAttribute =
+                        findUniqueDeclarationOrFail<SdsAttribute>("superClassInstanceAttribute")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(12)
+
+                    val declaration = references[3].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(superClassInstanceAttribute)
+                }
+
+            @Test
+            fun `should resolve inherited nested class accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInheritedClassMembers")
+                val classInSuperClass =
+                    findUniqueDeclarationOrFail<SdsClass>("ClassInSuperClass")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(classInSuperClass)
+            }
+
+            @Test
+            fun `should resolve inherited nested enum accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInheritedClassMembers")
+                val enumInSuperClass =
+                    findUniqueDeclarationOrFail<SdsEnum>("EnumInSuperClass")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[7].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(enumInSuperClass)
+            }
+
+            @Test
+            fun `should resolve inherited static class method accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInheritedClassMembers")
+                val superClassStaticMethod =
+                    findUniqueDeclarationOrFail<SdsFunction>("superClassStaticMethod")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(12)
+
+                val declaration = references[9].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(superClassStaticMethod)
+            }
+
+            @Test
+            fun `should resolve inherited instance class method accessed from class instance`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInheritedClassMembers")
+                    val superClassInstanceMethod =
+                        findUniqueDeclarationOrFail<SdsFunction>("superClassInstanceMethod")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(12)
+
+                    val declaration = references[11].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(superClassInstanceMethod)
+                }
+
+            @Test
+            fun `should resolve overridden instance attribute`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToOverriddenMembers")
+                val subClassForOverriding = findUniqueDeclarationOrFail<SdsClass>("SubClassForOverriding")
+                val instanceAttributeForOverriding =
+                    subClassForOverriding.findUniqueDeclarationOrFail<SdsAttribute>("instanceAttributeForOverriding")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(instanceAttributeForOverriding)
+            }
+
+            @Test
+            fun `should resolve overridden instance method`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToOverriddenMembers")
+                val subClassForOverriding = findUniqueDeclarationOrFail<SdsClass>("SubClassForOverriding")
+                val instanceMethodForOverriding =
+                    subClassForOverriding.findUniqueDeclarationOrFail<SdsFunction>("instanceMethodForOverriding")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[7].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(instanceMethodForOverriding)
+            }
+
+            @Test
+            fun `should resolve hidden static attribute`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToHiddenMembers")
+                val subClassForHiding = findUniqueDeclarationOrFail<SdsClass>("SubClassForHiding")
+                val staticAttributeForHiding =
+                    subClassForHiding.findUniqueDeclarationOrFail<SdsAttribute>("staticAttributeForHiding")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[1].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(staticAttributeForHiding)
+            }
+
+            @Test
+            fun `should resolve hidden nested class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToHiddenMembers")
+                val subClassForHiding = findUniqueDeclarationOrFail<SdsClass>("SubClassForHiding")
+                val nestedClassForHiding =
+                    subClassForHiding.findUniqueDeclarationOrFail<SdsClass>("NestedClassForHiding")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[3].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(nestedClassForHiding)
+            }
+
+            @Test
+            fun `should resolve hidden nested enum`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToHiddenMembers")
+                val subClassForHiding = findUniqueDeclarationOrFail<SdsClass>("SubClassForHiding")
+                val nestedEnumForHiding =
+                    subClassForHiding.findUniqueDeclarationOrFail<SdsEnum>("NestedEnumForHiding")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(nestedEnumForHiding)
+            }
+
+            @Test
+            fun `should resolve hidden static method`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToHiddenMembers")
+                val subClassForHiding = findUniqueDeclarationOrFail<SdsClass>("SubClassForHiding")
+                val staticMethodForHiding =
+                    subClassForHiding.findUniqueDeclarationOrFail<SdsFunction>("staticMethodForHiding")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[7].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(staticMethodForHiding)
+            }
+
+            @Test
+            fun `should not resolve static class members accessed from instance`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToStaticClassMembersFromInstance")
+                val classInSameFile = findUniqueDeclarationOrFail<SdsClass>("ClassInSameFile")
+
+                val references = step.descendants<SdsReference>()
+                    .filter { it.declaration != classInSameFile }
+                    .toList()
+                references.shouldHaveSize(8)
+                references.forEachAsClue {
+                    it.declaration.shouldNotBeResolved()
+                }
+            }
+
+            @Test
+            fun `should not resolve instance class members accessed from class`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToInstanceClassMembersFromClass")
+                val classInSameFile = findUniqueDeclarationOrFail<SdsClass>("ClassInSameFile")
+
+                val references = step.descendants<SdsReference>()
+                    .filter { it.declaration != classInSameFile }
+                    .toList()
+                references.shouldHaveSize(4)
+                references.forEachAsClue {
+                    it.declaration.shouldNotBeResolved()
+                }
+            }
+
+            @Test
+            fun `should not resolve class members with unqualified access`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("unqualifiedReferencesToClassMembers")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+                references.forEachAsClue {
+                    it.declaration.shouldNotBeResolved()
+                }
+            }
+
+            @Test
+            fun `should not resolve enum variants with unqualified access`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("unqualifiedReferencesToEnumVariants")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(1)
+                references[0].declaration.shouldNotBeResolved()
+            }
+
+            @Test
+            fun `should not resolve parameters of enum variants with unqualified access`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("unqualifiedReferencesToEnumVariantParameters")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(1)
+                references[0].declaration.shouldNotBeResolved()
+            }
+
+            @Test
+            fun `should resolve result of callable type with one result without matching member`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToCallableTypeResults")
+                    val singleResult = step.findUniqueDeclarationOrFail<SdsResult>("singleResult")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(8)
+
+                    val declaration = references[1].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(singleResult)
+                }
+
+            @Test
+            fun `should resolve attribute for callable type with one result with matching class attribute`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToCallableTypeResults")
+                    val classForResultMemberAccess = findUniqueDeclarationOrFail<SdsClass>("ClassForResultMemberAccess")
+                    val result = classForResultMemberAccess.findUniqueDeclarationOrFail<SdsAttribute>("result")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(8)
+
+                    val declaration = references[3].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(result)
+                }
+
+            @Test
+            fun `should resolve result for callable type with one result with matching enum variant`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToCallableTypeResults")
+                    val callableWithOneResultWithIdenticalEnumVariant =
+                        step.findUniqueDeclarationOrFail<SdsParameter>("callableWithOneResultWithIdenticalEnumVariant")
+                    val result =
+                        callableWithOneResultWithIdenticalEnumVariant.findUniqueDeclarationOrFail<SdsResult>("result")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(8)
+
+                    val declaration = references[5].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(result)
+                }
+
+            @Test
+            fun `should resolve result of callable type with multiple results`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToCallableTypeResults")
+                val result1 = step.findUniqueDeclarationOrFail<SdsResult>("result1")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(8)
+
+                val declaration = references[7].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(result1)
+            }
+
+            @Test
+            fun `should resolve result of function with one result without matching member`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToFunctionResults")
+                    val globalFunctionResultInSameFile =
+                        findUniqueDeclarationOrFail<SdsResult>("globalFunctionResultInSameFile")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(6)
+
+                    val declaration = references[1].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(globalFunctionResultInSameFile)
+                }
+
+            @Test
+            fun `should resolve member for function with one result with matching member`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToFunctionResults")
+                    val classForResultMemberAccess = findUniqueDeclarationOrFail<SdsClass>("ClassForResultMemberAccess")
+                    val result = classForResultMemberAccess.findUniqueDeclarationOrFail<SdsAttribute>("result")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(6)
+
+                    val declaration = references[3].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(result)
+                }
+
+            @Test
+            fun `should resolve result of function with multiple results`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToFunctionResults")
+                val globalFunctionWithTwoResults =
+                    findUniqueDeclarationOrFail<SdsFunction>("globalFunctionWithTwoResults")
+                val result1 = globalFunctionWithTwoResults.findUniqueDeclarationOrFail<SdsResult>("result1")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(result1)
+            }
+
+            @Test
+            fun `should resolve result of lambda with one result without matching member`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToLambdaResults")
+                val singleResult = step.findUniqueDeclarationOrFail<SdsBlockLambdaResult>("singleResult")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(7)
+
+                val declaration = references[2].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(singleResult)
+            }
+
+            @Test
+            fun `should resolve member for lambda with one result with matching member`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToLambdaResults")
+                    val classForResultMemberAccess = findUniqueDeclarationOrFail<SdsClass>("ClassForResultMemberAccess")
+                    val result = classForResultMemberAccess.findUniqueDeclarationOrFail<SdsAttribute>("result")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(7)
+
+                    val declaration = references[4].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(result)
+                }
+
+            @Test
+            fun `should resolve result of lambda with multiple results`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToLambdaResults")
+                val result1 = step.findUniqueDeclarationOrFail<SdsBlockLambdaResult>("result1")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(7)
+
+                val declaration = references[6].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(result1)
+            }
+
+            @Test
+            fun `should resolve result of step with one result without matching member`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToStepResults")
+                    val stepResultInSameFile = findUniqueDeclarationOrFail<SdsResult>("stepResultInSameFile")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(6)
+
+                    val declaration = references[1].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(stepResultInSameFile)
+                }
+
+            @Test
+            fun `should resolve member for step with one result with matching member`() =
+                withResource(REFERENCE) {
+                    val step = findUniqueDeclarationOrFail<SdsStep>("referencesToStepResults")
+                    val classForResultMemberAccess = findUniqueDeclarationOrFail<SdsClass>("ClassForResultMemberAccess")
+                    val result = classForResultMemberAccess.findUniqueDeclarationOrFail<SdsAttribute>("result")
+
+                    val references = step.descendants<SdsReference>().toList()
+                    references.shouldHaveSize(6)
+
+                    val declaration = references[3].declaration
+                    declaration.shouldBeResolved()
+                    declaration.shouldBe(result)
+                }
+
+            @Test
+            fun `should resolve result of step with multiple results`() = withResource(REFERENCE) {
+                val step = findUniqueDeclarationOrFail<SdsStep>("referencesToStepResults")
+                val stepInSameFileWithTwoResults =
+                    findUniqueDeclarationOrFail<SdsStep>("stepWithTwoResults")
+                val result1 = stepInSameFileWithTwoResults.findUniqueDeclarationOrFail<SdsResult>("result1")
+
+                val references = step.descendants<SdsReference>().toList()
+                references.shouldHaveSize(6)
+
+                val declaration = references[5].declaration
+                declaration.shouldBeResolved()
+                declaration.shouldBe(result1)
+            }
+        }
+    }
+*/
+
+annotation AnnotationInSameFile
+
+class SuperClass {
+    static attr superClassStaticAttribute: Int
+    attr superClassInstanceAttribute: Int
+
+    class ClassInSuperClass
+
+    enum EnumInSuperClass
+
+    static fun superClassStaticMethod()
+    fun superClassInstanceMethod()
+}
+class ClassInSameFile<TYPE_PARAMETER_IN_SAME_FILE>() sub SuperClass {
+    static attr classStaticAttributeInSameFile: Int
+    attr classInstanceAttributeInSameFile: Int
+
+    class ClassInClassInSameFile
+
+    enum EnumInClassInSameFile
+
+    static fun classStaticMethodInSameFile() -> classStaticMethodResultInSameFile: Int
+    fun classInstanceMethodInSameFile() -> classInstanceMethodResultInSameFile: Int
+}
+
+enum EnumInSameFile {
+    EnumVariantInSameFile(enumVariantParameterInSameFile: Int)
+}
+
+fun globalFunctionInSameFile(globalFunctionParameterInSameFile: Int) -> globalFunctionResultInSameFile: Int
+fun globalFunctionWithOneResultWithIdenticalMember() -> result: ClassForResultMemberAccess
+fun globalFunctionWithTwoResults() -> (result1: Int, result2: Int)
+
+
+step stepInSameFile(stepParameterInSameFile: Int) -> stepResultInSameFile: Int {
+    val placeholderInSameFile = 1;
+}
+step stepWithOneResultWithIdenticalMember() -> result: ClassForResultMemberAccess {}
+step stepWithTwoResults() -> (result1: Int, result2: Int) {}
+
+step internalStepInSameFile() {}
+step privateStepInSameFile() {}
+
+pipeline pipelineInSameFile {}
+
+class SuperClassForOverriding() {
+    attr instanceAttributeForOverriding: Int
+    fun instanceMethodForOverriding()
+}
+class SubClassForOverriding()
+sub SuperClassForOverriding {
+    attr instanceAttributeForOverriding: Int
+    fun instanceMethodForOverriding()
+}
+
+class SuperClassForHiding {
+    static attr staticAttributeForHiding: Int
+    class NestedClassForHiding
+    enum NestedEnumForHiding
+    static fun staticMethodForHiding()
+}
+class SubClassForHiding sub SuperClassForHiding {
+    static attr staticAttributeForHiding: Int
+    class NestedClassForHiding
+    enum NestedEnumForHiding
+    static fun staticMethodForHiding()
+}
+
+class ClassForResultMemberAccess() {
+    attr result: Int
+}
+enum EnumForResultMemberAccess {
+    result
+}
+
+// Direct references -----------------------------------------------------------
+
+step directReferencesToAnnotations() {
+    AnnotationInSameFile;
+    AnnotationInSamePackage;
+    AnnotationInOtherPackage1;
+    AnnotationInOtherPackage2;
+}
+
+step directReferencesToClasses() {
+    ClassInSameFile;
+    ClassInSamePackage;
+    ClassInOtherPackage1;
+    ClassInOtherPackage2;
+}
+
+step directReferencesToEnums() {
+    EnumInSameFile;
+    EnumInSamePackage;
+    EnumInOtherPackage1;
+    EnumInOtherPackage2;
+}
+
+step directReferencesToGlobalFunctions() {
+    globalFunctionInSameFile;
+    globalFunctionInSamePackage;
+    globalFunctionInOtherPackage1;
+    globalFunctionInOtherPackage2;
+}
+
+step directReferencesToLambdaResults() {
+    val f = () {
+        yield lambdaResult = 1;
+        lambdaResult;
+    };
+}
+
+step directReferencesToParameters(parameterInStep: Int) {
+    parameterInStep;
+
+    val f = (parameterInBlockLambda) {
+        parameterInStep;
+        parameterInBlockLambda;
+
+        val f = () {
+            parameterInStep;
+            parameterInBlockLambda;
+        };
+    };
+
+    val g = (parameterInExpressionLambda) -> parameterInExpressionLambda;
+}
+
+step directReferencesToPlaceholders() {
+    val placeholderInStep = 1;
+    placeholderInStep;
+
+    val f = () {
+        val placeholderInLambda = 1;
+        placeholderInStep;
+        placeholderInLambda;
+
+        val f = () {
+            placeholderInStep;
+            placeholderInLambda;
+        };
+    };
+}
+
+step directReferencesToTypeParameters() {
+    TYPE_PARAMETER_IN_SAME_FILE;
+}
+
+step directReferencesToSteps() {
+    stepInSameFile;
+    stepInSamePackage;
+    stepInOtherPackage1;
+    stepInOtherPackage2;
+
+    internalStepInSameFile;
+    privateStepInSameFile;
+    internalStepInSamePackage;
+    privateStepInSamePackage;
+    internalStepInOtherPackage;
+    privateStepInOtherPackage;
+}
+
+step directReferencesToPipelines() {
+    pipelineInSameFile;
+    pipelineInSamePackage;
+    pipelineInOtherPackage1;
+    pipelineInOtherPackage2;
+}
+
+step forwardReferences() {
+    a;
+    val f = () {
+        a;
+        f;
+    };
+
+    val a = 1;
+}
+
+step shadowedReferences(ClassInSameFile: Int) {
+    ClassInSameFile;
+
+    val ClassInSameFile = 1;
+    ClassInSameFile;
+
+    val f = (ClassInSameFile) {
+        ClassInSameFile;
+
+        val ClassInSameFile = 1;
+        ClassInSameFile;
+    };
+}
+
+// Access to own members -------------------------------------------------------
+
+step referencesToClassMembers() {
+    ClassInSameFile.classStaticAttributeInSameFile;
+    ClassInSameFile<*>().classInstanceAttributeInSameFile;
+    ClassInSameFile.ClassInClassInSameFile;
+    ClassInSameFile.EnumInClassInSameFile;
+    ClassInSameFile.classStaticMethodInSameFile;
+    ClassInSameFile<*>().classInstanceMethodInSameFile();
+}
+
+@Target(EnumInSameFile.EnumVariantInSameFile)
+step referencesToEnumVariants(@Target(EnumInSameFile.EnumVariantInSameFile) referenceToEnumVariantFromParameterAnnotation: Int) {
+    EnumInSameFile.EnumVariantInSameFile;
+}
+
+class ReferencesToEnumVariants {
+    @Target(EnumInSameClass.EnumVariantInSameClass)
+    @Target(EnumInSameFile.EnumVariantInSameFile)
+    class ReferencesToEnumVariantsInnerClass
+
+    enum EnumInSameClass {
+        EnumVariantInSameClass
+    }
+}
+
+step referencesToEnumVariantParameters() {
+    EnumInSameFile.EnumVariantInSameFile.enumVariantParameterInSameFile;
+}
+
+
+// Access to inherited members -------------------------------------------------
+
+step referencesToInheritedClassMembers() {
+    ClassInSameFile.superClassStaticAttribute;
+    ClassInSameFile<*>().superClassInstanceAttribute;
+    ClassInSameFile.ClassInSuperClass;
+    ClassInSameFile.EnumInSuperClass;
+    ClassInSameFile.superClassStaticMethod;
+    ClassInSameFile<*>().superClassInstanceMethod();
+}
+
+
+// Overriding ------------------------------------------------------------------
+step referencesToOverriddenMembers() {
+    SuperClassForOverriding().instanceAttributeForOverriding;
+    SuperClassForOverriding().instanceMethodForOverriding();
+
+    SubClassForOverriding().instanceAttributeForOverriding;
+    SubClassForOverriding().instanceMethodForOverriding();
+}
+
+// Hiding ----------------------------------------------------------------------
+step referencesToHiddenMembers() {
+    SubClassForHiding.staticAttributeForHiding;
+    SubClassForHiding.NestedClassForHiding;
+    SubClassForHiding.NestedEnumForHiding;
+    SubClassForHiding.staticMethodForHiding;
+}
+
+// Access to static members from instance --------------------------------------
+
+step referencesToStaticClassMembersFromInstance() {
+    ClassInSameFile<*>().classStaticAttributeInSameFile;
+    ClassInSameFile<*>().ClassInClassInSameFile;
+    ClassInSameFile<*>().EnumInClassInSameFile;
+    ClassInSameFile<*>().classStaticMethodInSameFile;
+
+    ClassInSameFile<*>().superClassStaticAttribute;
+    ClassInSameFile<*>().ClassInSuperClass;
+    ClassInSameFile<*>().EnumInSuperClass;
+    ClassInSameFile<*>().superClassStaticMethod;
+}
+
+
+// Access to instance members from class ---------------------------------------
+
+step referencesToInstanceClassMembersFromClass() {
+    ClassInSameFile.classInstanceAttributeInSameFile;
+    ClassInSameFile.classInstanceMethodInSameFile();
+
+    ClassInSameFile.superClassInstanceAttribute;
+    ClassInSameFile.superClassInstanceMethod();
+}
+
+
+// Access to results of callable -----------------------------------------------
+
+step referencesToCallableTypeResults(
+    callableWithOneResult: () -> (singleResult: Int),
+    callableWithOneResultWithIdenticalClassAttribute: () -> (result: ClassForResultMemberAccess),
+    callableWithOneResultWithIdenticalEnumVariant: () -> (result: EnumForResultMemberAccess),
+    callableWithTwoResults: () -> (result1: Int, result2: Int)
+) {
+    callableWithOneResult().singleResult;
+    callableWithOneResultWithIdenticalClassAttribute().result;
+    callableWithOneResultWithIdenticalEnumVariant().result;
+    callableWithTwoResults().result1;
+}
+
+step referencesToFunctionResults() {
+    globalFunctionInSameFile(1).globalFunctionResultInSameFile;
+    globalFunctionWithOneResultWithIdenticalMember().result;
+    globalFunctionWithTwoResults().result1;
+}
+
+step referencesToLambdaResults() {
+    val lambdaWithOneResult = () {
+        yield singleResult = 1;
+    };
+    val lambdaWithOneResultWithIdenticalMember = () {
+        yield result = ClassForResultMemberAccess();
+    };
+    val lambdaWithTwoResults = () {
+        yield result1 = 1;
+        yield result2 = 1;
+    };
+
+    lambdaWithOneResult().singleResult;
+    lambdaWithOneResultWithIdenticalMember().result;
+    lambdaWithTwoResults().result1;
+}
+
+step referencesToStepResults() {
+    stepInSameFile(1).stepResultInSameFile;
+    stepWithOneResultWithIdenticalMember().result;
+    stepWithTwoResults().result1;
+}
+
+// Access to locals from outside -----------------------------------------------
+
+step referencesToFunctionLocals() {
+    globalFunctionParameterInSameFile;
+    globalFunctionResultInSameFile;
+}
+
+step referencesToLambdaLocals() {
+    val f = (lambdaParameter) {
+        val lambdaPlaceholder = 1;
+        yield lambdaYield = 1;
+    };
+
+    lambdaParameter;
+    lambdaPlaceholder;
+    lambdaYield;
+}
+
+step referencesToStepLocals() {
+    stepParameterInSameFile;
+    stepResultInSameFile;
+    placeholderInSameFile;
+}
+
+// Unqualified access to members -----------------------------------------------
+
+step unqualifiedReferencesToClassMembers() {
+    classStaticAttributeInSameFile;
+    classInstanceAttributeInSameFile;
+
+    ClassInClassInSameFile;
+    EnumInClassInSameFile;
+
+    classStaticMethodInSameFile;
+    classInstanceMethodInSameFile;
+}
+
+step unqualifiedReferencesToEnumVariants() {
+    EnumVariantInSameFile;
+}
+
+step unqualifiedReferencesToEnumVariantParameters() {
+    enumVariantParameterInSameFile;
+}
+
+
+// Other unresolved references -------------------------------------------------
+
+step unresolvedReferences() {
+    unresolvedReference;
+}
