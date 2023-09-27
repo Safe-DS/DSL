@@ -971,9 +971,6 @@ enum EnumForResultMemberAccess {
 
 // Direct references -----------------------------------------------------------
 
-
-
-
 step directReferencesToParameters(parameterInStep: Int) {
     parameterInStep;
 
@@ -1161,52 +1158,15 @@ step referencesToStepResults() {
 
 // Access to locals from outside -----------------------------------------------
 
-step referencesToFunctionLocals() {
-    globalFunctionParameterInSameFile;
-    globalFunctionResultInSameFile;
-}
-
 step referencesToLambdaLocals() {
     val f = (lambdaParameter) {
         val lambdaPlaceholder = 1;
         yield lambdaYield = 1;
     };
 
-    lambdaParameter;
     lambdaPlaceholder;
-    lambdaYield;
 }
 
 step referencesToStepLocals() {
-    stepParameterInSameFile;
-    stepResultInSameFile;
     placeholderInSameFile;
-}
-
-// Unqualified access to members -----------------------------------------------
-
-step unqualifiedReferencesToClassMembers() {
-    classStaticAttributeInSameFile;
-    classInstanceAttributeInSameFile;
-
-    ClassInClassInSameFile;
-    EnumInClassInSameFile;
-
-    classStaticMethodInSameFile;
-    classInstanceMethodInSameFile;
-}
-
-step unqualifiedReferencesToEnumVariants() {
-    EnumVariantInSameFile;
-}
-
-step unqualifiedReferencesToEnumVariantParameters() {
-    enumVariantParameterInSameFile;
-}
-
-
-// Other unresolved references -------------------------------------------------
-
-step unresolvedReferences() {
-    unresolvedReference;
 }

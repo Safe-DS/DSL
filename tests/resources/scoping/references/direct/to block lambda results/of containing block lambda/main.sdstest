@@ -1,4 +1,4 @@
-package tests.scoping.references.direct.toBlockLambdaResults
+package tests.scoping.references.direct.toBlockLambdaResults.ofContainingBlockLambda
 
 pipeline myPipeline {
     () {

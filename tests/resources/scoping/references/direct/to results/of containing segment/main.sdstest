@@ -1,4 +1,4 @@
-package tests.scoping.references.direct.toBlockLambdaResults
+package tests.scoping.references.direct.toResults.ofContainingSegment
 
 segment mySegment() -> myResult: Int {
     // $TEST$ unresolved

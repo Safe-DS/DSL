@@ -1,0 +1,46 @@
+package test.scoping.references.direct.toParameters.ofContainingBlockLambda
+
+segment mySegment(myShadowedSegmentParameter: Int) {
+    val myShadowedPlaceholder = 0;
+
+    // $TEST$ target outer
+    // $TEST$ target shadowedSegmentParameter
+    // $TEST$ target outerShadowedBlockLambdaParameter
+    // $TEST$ target shadowedPlaceholder
+    (»myOuterBlockLambdaParameter«, »myShadowedSegmentParameter«, »myShadowedBlockLambdaParameter«, »myShadowedPlaceholder«) {
+        // $TEST$ references outer
+        »myOuterBlockLambdaParameter«;
+
+        // $TEST$ references shadowedSegmentParameter
+        »myShadowedSegmentParameter«;
+
+        // $TEST$ references shadowedPlaceholder
+        »myShadowedPlaceholder«;
+
+        // $TEST$ unresolved
+        »myInnerBlockLambdaParameter«;
+
+        // $TEST$ references outerShadowedBlockLambdaParameter
+        »myShadowedBlockLambdaParameter«;
+
+        // $TEST$ target inner
+        // $TEST$ target innerShadowedBlockLambdaParameter
+        (»myInnerBlockLambdaParameter«, »myShadowedParameter«) {
+            () ->
+                // $TEST$ references outer
+                »myOuterBlockLambdaParameter« +
+
+                // $TEST$ references shadowedSegmentParameter
+                »myShadowedSegmentParameter« +
+
+                // $TEST$ references shadowedPlaceholder
+                »myShadowedPlaceholder« +
+
+                // $TEST$ references inner
+                »myInnerBlockLambdaParameter« +
+                
+                // $TEST$ references innerShadowedBlockLambdaParameter
+                »myShadowedBlockLambdaParameter«;
+        };
+    };
+}

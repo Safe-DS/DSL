@@ -1,0 +1,15 @@
+package test.scoping.references.direct.toParameters.ofContainingExpressionLambda
+
+// $TEST$ target parameter
+segment mySegment(»myParameter«: Int) {
+    // $TEST$ references parameter
+    »myParameter«;
+
+    () {
+        // $TEST$ references parameter
+        »myParameter«;
+    };
+
+    // $TEST$ references parameter
+    () -> »myParameter«;
+}

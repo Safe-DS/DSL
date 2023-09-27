@@ -1,0 +1,47 @@
+package test.scoping.references.direct.toParameters.ofContainingExpressionLambda
+
+segment mySegment(myShadowedSegmentParameter: Int) {
+    val myShadowedPlaceholder = 0;
+
+    // $TEST$ target outer
+    // $TEST$ target shadowedSegmentParameter
+    // $TEST$ target outerShadowedExpressionLambdaParameter
+    // $TEST$ target shadowedPlaceholder
+    (»myOuterExpressionLambdaParameter«, »myShadowedSegmentParameter«, »myShadowedExpressionLambdaParameter«, »myShadowedPlaceholder«) ->
+        // $TEST$ references outer
+        »myOuterExpressionLambdaParameter« +
+
+        // $TEST$ references shadowedSegmentParameter
+        »myShadowedSegmentParameter« +
+
+        // $TEST$ references shadowedPlaceholder
+        »myShadowedPlaceholder« +
+
+        // $TEST$ unresolved
+        »myInnerExpressionLambdaParameter« +
+
+        // $TEST$ references outerShadowedExpressionLambdaParameter
+        »myShadowedExpressionLambdaParameter« +
+
+        // $TEST$ target inner
+        // $TEST$ target innerShadowedExpressionLambdaParameter
+        ((»myInnerExpressionLambdaParameter«, »myShadowedParameter«) ->
+            () {
+                // $TEST$ references outer
+                »myOuterExpressionLambdaParameter« +
+
+                // $TEST$ references shadowedSegmentParameter
+                »myShadowedSegmentParameter« +
+
+                // $TEST$ references shadowedPlaceholder
+                »myShadowedPlaceholder« +
+
+                // $TEST$ references inner
+                »myInnerExpressionLambdaParameter« +
+
+                // $TEST$ references innerShadowedExpressionLambdaParameter
+                »myShadowedExpressionLambdaParameter«;
+            }
+        )
+    ;
+}
