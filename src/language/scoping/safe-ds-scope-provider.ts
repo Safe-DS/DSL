@@ -1,6 +1,5 @@
 import { AstNode, DefaultScopeProvider, EMPTY_SCOPE, getContainerOfType, ReferenceInfo, Scope } from 'langium';
 import {
-    isSdsAnnotation,
     isSdsClass,
     isSdsEnum,
     isSdsMemberAccess,
@@ -8,12 +7,9 @@ import {
     isSdsModule,
     isSdsNamedType,
     isSdsNamedTypeDeclaration,
-    isSdsPipeline,
     isSdsReference,
-    isSdsSchema,
     isSdsSegment,
     isSdsYield,
-    SdsDeclaration,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
@@ -33,11 +29,11 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             } else {
                 return super.getScope(context);
             }
-        } else if (isSdsReference(node) && context.property === 'declaration') {
+        } else if (isSdsReference(node) && context.property === 'target') {
             if (isSdsMemberAccess(node.$container) && node.$containerProperty === 'member') {
-                return this.getScopeForMemberAccessDeclaration(node.$container);
+                return this.getScopeForMemberAccessMember(node.$container);
             } else {
-                return this.getScopeForDirectReferenceDeclaration(node);
+                return this.getScopeForDirectReferenceTarget(node);
             }
         } else if (isSdsYield(node) && context.property === 'result') {
             return this.getScopeForYieldResult(node);
@@ -80,11 +76,11 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
     }
 
-    private getScopeForMemberAccessDeclaration(_node: SdsMemberAccess): Scope {
+    private getScopeForMemberAccessMember(_node: SdsMemberAccess): Scope {
         return EMPTY_SCOPE;
     }
 
-    private getScopeForDirectReferenceDeclaration(node: SdsReference): Scope {
+    private getScopeForDirectReferenceTarget(node: SdsReference): Scope {
         // Declarations in this file
         const result = this.addDeclarationsInSameFile(node, EMPTY_SCOPE);
 
@@ -97,12 +93,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return outerScope;
         }
 
-        const referencableMembers = moduleMembersOrEmpty(module).filter(this.isReferencableDeclaration);
+        const referencableMembers = moduleMembersOrEmpty(module);
         return this.createScopeForNodes(referencableMembers, outerScope);
-    }
-
-    private isReferencableDeclaration(node: SdsDeclaration): boolean {
-        return !isSdsAnnotation(node) && !isSdsPipeline(node) && !isSdsSchema(node);
     }
 
     //     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {

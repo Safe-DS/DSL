@@ -1,8 +1,15 @@
 package tests.scoping.references.direct.toPipelines
 
-pipeline myPipeline {}
+// $TEST$ target before
+pipeline »before« {}
 
 segment mySegment() {
-    // $TEST$ unresolved
-    »myPipeline«;
+    // $TEST$ references before
+    »before«;
+
+    // $TEST$ references after
+    »after«;
 }
+
+// $TEST$ target after
+pipeline »after« {}

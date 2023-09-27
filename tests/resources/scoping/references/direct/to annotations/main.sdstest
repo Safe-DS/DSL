@@ -1,8 +1,15 @@
 package tests.scoping.references.direct.toAnnotations
 
-annotation MyAnnotation
+// $TEST$ target before
+annotation »Before«
 
 segment mySegment() {
-    // $TEST$ unresolved
-    »MyAnnotation«;
+    // $TEST$ references before
+    »Before«;
+
+    // $TEST$ references after
+    »After«;
 }
+
+// $TEST$ target after
+annotation »After«

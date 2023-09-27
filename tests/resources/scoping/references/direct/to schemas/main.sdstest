@@ -1,8 +1,15 @@
 package tests.scoping.references.direct.toSchemas
 
-schema MySchema {}
+// $TEST$ target before
+schema »Before« {}
 
 segment mySegment() {
-    // $TEST$ unresolved
-    »MySchema«;
+    // $TEST$ references before
+    »Before«;
+
+    // $TEST$ references after
+    »After«;
 }
+
+// $TEST$ target after
+schema »After« {}
