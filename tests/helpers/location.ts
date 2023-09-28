@@ -73,7 +73,7 @@ export const getNodeByLocation = (services: SafeDsServices, location: Location):
         });
     }
 
-    for (const node of streamAllContents(root)) {
+    for (const node of streamAllContents(root, { range: location.range })) {
         // Entire node matches the range
         const actualRange = node.$cstNode?.range;
         if (actualRange && isRangeEqual(actualRange, location.range)) {
