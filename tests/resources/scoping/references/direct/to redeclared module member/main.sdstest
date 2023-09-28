@@ -1,4 +1,4 @@
-package tests.scoping.references.direct.firstMatchingGlobalWins
+package tests.scoping.references.direct.toRedeclaredModuleMember
 
 // $TEST$ target before
 class »Before«
