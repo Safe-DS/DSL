@@ -1,0 +1,10 @@
+package test.scoping.references.direct.toBlockLambdaResults.fromOutside
+
+pipeline myPipeline {
+    () {
+        yield myBlockLambdaResult = 1;
+    };
+
+    // $TEST$ unresolved
+    »myBlockLambdaResult«;
+}

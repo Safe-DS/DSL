@@ -757,11 +757,11 @@ SdsString returns SdsString:
 ;
 
 interface SdsReference extends SdsExpression {
-	declaration?: @SdsDeclaration
+	target?: @SdsDeclaration
 }
 
 SdsReference returns SdsReference:
-    declaration=[SdsDeclaration:ID]
+    target=[SdsDeclaration:ID]
 ;
 
 interface SdsParenthesizedExpression extends SdsExpression {

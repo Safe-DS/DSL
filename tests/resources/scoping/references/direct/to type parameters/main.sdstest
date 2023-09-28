@@ -1,0 +1,8 @@
+package test.scoping.references.direct.toTypeParameters
+
+class MyClass<T>()
+
+pipeline myPipeline {
+    // $TEST$ unresolved
+    »T«;
+}

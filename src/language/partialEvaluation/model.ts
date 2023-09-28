@@ -61,7 +61,7 @@ export class SdsIntermediateRecord extends SdsIntermediateExpression {
     }
 
     getSubstitutionByReferenceOrNull(reference: SdsReference): SdsSimplifiedExpression | null {
-        const referencedDeclaration = reference.declaration;
+        const referencedDeclaration = reference.target;
         if (!isSdsAbstractResult(referencedDeclaration)) {
             return null;
         }

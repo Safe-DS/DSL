@@ -1,0 +1,10 @@
+package test.scoping.references.direct.toEnumVariants
+
+enum MyEnum {
+    MyEnumVariant
+}
+
+pipeline myPipeline {
+    // $TEST$ unresolved
+    »MyEnumVariant«;
+}

@@ -1,4 +1,4 @@
-package tests.partialValidation.baseCases.stringLiteralWithInterpolation
+package tests.partialValidation.simpleRecursiveCases.templateString
 
 pipeline test {
     // $TEST$ constant serialization "start 1 inner1 true inner2 test end"

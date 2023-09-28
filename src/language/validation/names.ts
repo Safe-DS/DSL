@@ -19,7 +19,7 @@ import {
     placeholdersOrEmpty,
     resultsOrEmpty,
     typeParametersOrEmpty,
-    variantsOrEmpty,
+    enumVariantsOrEmpty,
 } from '../ast/shortcuts.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
@@ -185,7 +185,7 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(variantsOrEmpty(node), (name) => `A variant with name '${name}' exists already.`, accept);
+    namesMustBeUnique(enumVariantsOrEmpty(node), (name) => `A variant with name '${name}' exists already.`, accept);
 };
 
 export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
