@@ -124,18 +124,19 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private localDeclarations(node: AstNode, outerScope: Scope): Scope {
-        // Parameters
+        // Own parameters
         const containingCallable = getContainerOfType(node.$container, isSdsCallable);
         const parameters = parametersOrEmpty(containingCallable?.parameterList);
 
-        // Placeholders
-        let placeholders: Iterable<SdsPlaceholder>;
+        // Own placeholders
         const containingExpressionLambda = getContainerOfType(node.$container, isSdsExpressionLambda);
         const containingStatement = getContainerOfType(node.$container, isSdsStatement);
 
+        let placeholders: Iterable<SdsPlaceholder>;
         if (!containingExpressionLambda || isContainedIn(containingStatement, containingExpressionLambda)) {
             placeholders = this.placeholdersUpToStatement(containingStatement);
         } else {
+            // We already jumped out of the expression lambda
             placeholders = [];
         }
 

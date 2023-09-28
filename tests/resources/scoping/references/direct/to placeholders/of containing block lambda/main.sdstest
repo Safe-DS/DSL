@@ -94,6 +94,36 @@ segment mySegment(mySegmentParameter: Int) {
                 »myOuterBlockLambdaPlaceholderAfter«;
         };
 
+        () -> () {
+            // $TEST$ target blockLambdaInExpressionLambda_mySegmentParameter
+            val »mySegmentParameter« = 0;
+
+            // $TEST$ target blockLambdaInExpressionLambda_mySegmentPlaceholder
+            val »mySegmentPlaceholder« = 0;
+
+            // $TEST$ target blockLambdaInExpressionLambda_myOuterBlockLambdaParameter
+            val »myOuterBlockLambdaParameter« = 0;
+
+            // $TEST$ target blockLambdaInExpressionLambda_myOuterBlockLambdaPlaceholderBefore
+            val »myOuterBlockLambdaPlaceholderBefore« = 0;
+
+
+            // $TEST$ references blockLambdaInExpressionLambda_mySegmentParameter
+            »mySegmentParameter«;
+
+            // $TEST$ references blockLambdaInExpressionLambda_mySegmentPlaceholder
+            »mySegmentPlaceholder«;
+
+            // $TEST$ references blockLambdaInExpressionLambda_myOuterBlockLambdaPlaceholderBefore
+            »myOuterBlockLambdaPlaceholderBefore«;
+
+            // $TEST$ references outer_redeclared
+            »redeclared«;
+
+            // $TEST$ unresolved
+            »myOuterBlockLambdaPlaceholderAfter«;
+        };
+
         val myOuterBlockLambdaPlaceholderAfter = 0;
     };
 }
