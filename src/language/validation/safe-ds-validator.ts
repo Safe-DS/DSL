@@ -43,7 +43,7 @@ import { callableTypeMustNotHaveOptionalParameters } from './other/types/callabl
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
-import {referenceTargetMustNotBeAnnotationPipelineOrSchema} from "./other/expressions/references.js";
+import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
 
 /**
  * Register custom validation checks.
