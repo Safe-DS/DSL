@@ -4,10 +4,17 @@ segment mySegment1() -> before: Int {}
 
 segment mySegment() -> (
     // $TEST$ target result
-    »result«: Int
+    »result«: Int,  
+    
+    // $TEST$ target redeclared
+    »redeclared«: Int,
+    redeclared: Int,
 ) {
     // $TEST$ references result
     yield »result« = 1;
+
+    // $TEST$ references redeclared
+    yield »redeclared« = 1;
 
     // $TEST$ unresolved
     yield »before« = 1;
