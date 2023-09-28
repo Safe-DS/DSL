@@ -109,11 +109,13 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
         const module = getContainerOfType(node, isSdsModule);
         if (!module) {
+            /* c8 ignore next 2 */
             return outerScope;
         }
 
         const precomputed = getDocument(module).precomputedScopes?.get(module);
         if (!precomputed) {
+            /* c8 ignore next 2 */
             return outerScope;
         }
 
@@ -166,34 +168,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             }
         }
     }
-
-    // private fun localDeclarations(context: EObject, parentScope: IScope): IScope {
-    //     // Placeholders
-    //     val placeholders = when (val containingStatement = context.closestAncestorOrNull<SdsAbstractStatement>()) {
-    //         null -> emptyList()
-    //     else ->
-    //         containingStatement
-    //             .closestAncestorOrNull<SdsBlock>()
-    //             ?.placeholdersUpTo(containingStatement)
-    //             .orEmpty()
-    //     }
-    //
-    //     // Parameters
-    //     val containingCallable = context.containingCallableOrNull()
-    //     val parameters = containingCallable.parametersOrEmpty()
-    //
-    //     // Local declarations
-    //     val localDeclarations = placeholders + parameters
-    //
-    //     return when (containingCallable) {
-    //         // Lambdas can be nested
-    //         is SdsAbstractLambda -> Scopes.scopeFor(
-    //             localDeclarations,
-    //             localDeclarations(containingCallable, parentScope),
-    //         )
-    //     else -> Scopes.scopeFor(localDeclarations, parentScope)
-    //     }
-    // }
 
     //     private fun scopeForReferenceDeclaration(context: SdsReference): IScope {
     //                 val resource = context.eResource()
@@ -308,34 +282,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     //             classMembers(containingClassOrNull, parentScope),
     //         )
     //     else -> Scopes.scopeFor(context.classMembersOrEmpty(), parentScope)
-    //     }
-    // }
-    //
-    // private fun localDeclarations(context: EObject, parentScope: IScope): IScope {
-    //     // Placeholders
-    //     val placeholders = when (val containingStatement = context.closestAncestorOrNull<SdsAbstractStatement>()) {
-    //         null -> emptyList()
-    //     else ->
-    //         containingStatement
-    //             .closestAncestorOrNull<SdsBlock>()
-    //             ?.placeholdersUpTo(containingStatement)
-    //             .orEmpty()
-    //     }
-    //
-    //     // Parameters
-    //     val containingCallable = context.containingCallableOrNull()
-    //     val parameters = containingCallable.parametersOrEmpty()
-    //
-    //     // Local declarations
-    //     val localDeclarations = placeholders + parameters
-    //
-    //     return when (containingCallable) {
-    //         // Lambdas can be nested
-    //         is SdsAbstractLambda -> Scopes.scopeFor(
-    //             localDeclarations,
-    //             localDeclarations(containingCallable, parentScope),
-    //         )
-    //     else -> Scopes.scopeFor(localDeclarations, parentScope)
     //     }
     // }
 
