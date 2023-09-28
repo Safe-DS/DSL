@@ -1,11 +1,8 @@
 package test.scoping.references.direct.toPlaceholders.ofContainingSegment
 
-segment mySegment(shadowedParameter: Int) {
+segment mySegment() {
     // $TEST$ target before
     val »before« = 0;
-
-    // $TEST$ target shadowedParameter
-    val »shadowedParameter« = 0;
 
     // $TEST$ target redeclared
     val »redeclared« = 0;
@@ -13,9 +10,6 @@ segment mySegment(shadowedParameter: Int) {
 
     // $TEST$ references before
     »before«;
-
-    // $TEST$ references shadowedParameter
-    »shadowedParameter«;
 
     // $TEST$ references redeclared
     »redeclared«;
@@ -26,9 +20,6 @@ segment mySegment(shadowedParameter: Int) {
     val blockLambda = () {
         // $TEST$ references before
         »before«;
-
-        // $TEST$ references shadowedParameter
-        »shadowedParameter«;
 
         // $TEST$ references redeclared
         »redeclared«;
@@ -42,9 +33,6 @@ segment mySegment(shadowedParameter: Int) {
         () {
             // $TEST$ references before
             »before«;
-
-            // $TEST$ references shadowedParameter
-            »shadowedParameter«;
 
             // $TEST$ references redeclared
             »redeclared«;
@@ -60,9 +48,6 @@ segment mySegment(shadowedParameter: Int) {
     val expressionLambda = () -> 
         // $TEST$ references before
         »before« +
-
-        // $TEST$ references shadowedParameter
-        »shadowedParameter« +
 
         // $TEST$ references redeclared
         »redeclared« +

@@ -1,7 +1,7 @@
 import {
     isSdsAssignment,
     isSdsBlockLambdaResult,
-    isSdsDeclaration, isSdsModuleMember,
+    isSdsDeclaration,
     isSdsPlaceholder,
     SdsAnnotatedObject,
     SdsAnnotationCall,
@@ -15,7 +15,7 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsLiteral,
-    SdsLiteralType, SdsModule, SdsModuleMember,
+    SdsLiteralType,
     SdsParameter,
     SdsParameterList,
     SdsPlaceholder,
@@ -66,10 +66,6 @@ export const classMembersOrEmpty = function (node: SdsClass | undefined): SdsCla
 export const enumVariantsOrEmpty = function (node: SdsEnum | undefined): SdsEnumVariant[] {
     return node?.body?.variants ?? [];
 };
-
-export const moduleMembersOrEmpty = function (node: SdsModule | undefined): SdsModuleMember[] {
-    return stream(node?.members ?? []).filter(isSdsModuleMember).toArray();
-}
 
 export const parametersOrEmpty = function (node: SdsParameterList | undefined): SdsParameter[] {
     return node?.parameters ?? [];

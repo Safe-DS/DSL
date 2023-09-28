@@ -4,31 +4,39 @@ import {
     EMPTY_SCOPE,
     getContainerOfType,
     getDocument,
+    hasContainerOfType,
     ReferenceInfo,
     Scope,
 } from 'langium';
 import {
+    isSdsAssignment,
+    isSdsBlock,
     isSdsCallable,
     isSdsClass,
     isSdsEnum,
+    isSdsExpressionLambda,
     isSdsLambda,
     isSdsMemberAccess,
     isSdsMemberType,
     isSdsModule,
     isSdsNamedType,
     isSdsNamedTypeDeclaration,
+    isSdsPlaceholder,
     isSdsReference,
     isSdsSegment,
-    isSdsYield,
+    isSdsStatement,
+    isSdsYield, SdsExpressionLambda,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
     SdsPlaceholder,
     SdsReference,
+    SdsStatement,
     SdsType,
     SdsYield,
 } from '../generated/ast.js';
-import { parametersOrEmpty, resultsOrEmpty } from '../ast/shortcuts.js';
+import { assigneesOrEmpty, parametersOrEmpty, resultsOrEmpty, statementsOrEmpty } from '../ast/shortcuts.js';
+import {isContainedIn} from "../ast/utils.js";
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {
@@ -93,15 +101,15 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForDirectReferenceTarget(node: SdsReference): Scope {
         // Declarations in this file
-        const result = this.addGlobalDeclarationsInSameFile(node, EMPTY_SCOPE);
+        const result = this.globalDeclarationsInSameFile(node, EMPTY_SCOPE);
 
         // Declarations in containing blocks
-        return this.addLocalDeclarations(node, result);
+        return this.localDeclarations(node, result);
 
         return result;
     }
 
-    private addGlobalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
+    private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
         const module = getContainerOfType(node, isSdsModule);
         if (!module) {
             return outerScope;
@@ -115,25 +123,49 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         return this.createScope(precomputed, outerScope);
     }
 
-    private addLocalDeclarations(node: AstNode, outerScope: Scope): Scope {
-        // Placeholders
-        const placeholders: SdsPlaceholder[] = [];
-
+    private localDeclarations(node: AstNode, outerScope: Scope): Scope {
         // Parameters
         const containingCallable = getContainerOfType(node.$container, isSdsCallable);
         const parameters = parametersOrEmpty(containingCallable?.parameterList);
 
+        // Placeholders
+        let placeholders: Iterable<SdsPlaceholder>;
+        const containingExpressionLambda = getContainerOfType(node.$container, isSdsExpressionLambda);
+        const containingStatement = getContainerOfType(node.$container, isSdsStatement);
+
+        if (!containingExpressionLambda || isContainedIn(containingStatement, containingExpressionLambda)) {
+            placeholders = this.placeholdersUpToStatement(containingStatement);
+        } else {
+            placeholders = [];
+        }
+
         // Local declarations
-        const localDeclarations = [...placeholders, ...parameters];
+        const localDeclarations = [...parameters, ...placeholders];
 
         // Lambdas can be nested
         if (isSdsLambda(containingCallable)) {
-            return this.createScopeForNodes(
-                localDeclarations,
-                this.addLocalDeclarations(containingCallable, outerScope),
-            );
+            return this.createScopeForNodes(localDeclarations, this.localDeclarations(containingCallable, outerScope));
         } else {
             return this.createScopeForNodes(localDeclarations, outerScope);
+        }
+    }
+
+    private *placeholdersUpToStatement(
+        statement: SdsStatement | undefined,
+    ): Generator<SdsPlaceholder, void, undefined> {
+        if (!statement) {
+            return;
+        }
+
+        const containingBlock = getContainerOfType(statement, isSdsBlock);
+        for (const current of statementsOrEmpty(containingBlock)) {
+            if (current === statement) {
+                return;
+            }
+
+            if (isSdsAssignment(current)) {
+                yield* assigneesOrEmpty(current).filter(isSdsPlaceholder);
+            }
         }
     }
 
@@ -307,13 +339,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     //         )
     //     else -> Scopes.scopeFor(localDeclarations, parentScope)
     //     }
-    // }
-    //
-    // private fun SdsBlock.placeholdersUpTo(containingStatement: SdsAbstractStatement): List<SdsPlaceholder> {
-    //     return this.statements
-    //         .takeWhile { it !== containingStatement }
-    // .filterIsInstance<SdsAssignment>()
-    //     .flatMap { it.placeholdersOrEmpty() }
     // }
 
     private getScopeForYieldResult(node: SdsYield): Scope {

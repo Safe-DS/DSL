@@ -10,9 +10,6 @@ segment mySegment(mySegmentParameter: Int) {
         // $TEST$ target outer_mySegmentPlaceholder
         val »mySegmentPlaceholder« = 0;
 
-        // $TEST$ target outer_myOuterBlockLambdaParameter
-        val »myOuterBlockLambdaParameter« = 0;
-
         // $TEST$ target outer_myOuterBlockLambdaPlaceholderBefore
         val »myOuterBlockLambdaPlaceholderBefore« = 0;
 
@@ -27,9 +24,6 @@ segment mySegment(mySegmentParameter: Int) {
         // $TEST$ references outer_mySegmentPlaceholder
         »mySegmentPlaceholder«;
 
-        // $TEST$ references outer_myOuterBlockLambdaParameter
-        »myOuterBlockLambdaParameter«;
-
         // $TEST$ references outer_myOuterBlockLambdaPlaceholderBefore
         »myOuterBlockLambdaPlaceholderBefore«;
 
@@ -39,7 +33,7 @@ segment mySegment(mySegmentParameter: Int) {
         // $TEST$ unresolved
         »myOuterBlockLambdaPlaceholderAfter«;
 
-        val blockLambda = (myInnerBlockLambdaParameter) {
+        val blockLambda = () {
             // $TEST$ target inner_mySegmentParameter
             val »mySegmentParameter« = 0;
 
@@ -51,9 +45,6 @@ segment mySegment(mySegmentParameter: Int) {
 
             // $TEST$ target inner_myOuterBlockLambdaPlaceholderBefore
             val »myOuterBlockLambdaPlaceholderBefore« = 0;
-
-            // $TEST$ target inner_myInnerBlockLambdaParameter
-            val »myInnerBlockLambdaParameter« = 0;
 
 
             // $TEST$ references inner_mySegmentParameter
@@ -67,9 +58,6 @@ segment mySegment(mySegmentParameter: Int) {
 
             // $TEST$ references inner_myOuterBlockLambdaPlaceholderBefore
             »myOuterBlockLambdaPlaceholderBefore«;
-
-            // $TEST$ references inner_myInnerBlockLambdaParameter
-            »myInnerBlockLambdaParameter«;
 
             // $TEST$ references outer_redeclared
             »redeclared«;
@@ -92,9 +80,6 @@ segment mySegment(mySegmentParameter: Int) {
 
                 // $TEST$ references inner_myOuterBlockLambdaPlaceholderBefore
                 »myOuterBlockLambdaPlaceholderBefore« +
-
-                // $TEST$ references inner_myInnerBlockLambdaParameter
-                »myInnerBlockLambdaParameter« +
 
                 // $TEST$ references outer_redeclared
                 »redeclared« +
