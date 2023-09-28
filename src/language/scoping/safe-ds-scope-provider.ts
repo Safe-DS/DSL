@@ -1,4 +1,12 @@
-import { AstNode, DefaultScopeProvider, EMPTY_SCOPE, getContainerOfType, ReferenceInfo, Scope } from 'langium';
+import {
+    AstNode,
+    DefaultScopeProvider,
+    EMPTY_SCOPE,
+    getContainerOfType,
+    getDocument,
+    ReferenceInfo,
+    Scope,
+} from 'langium';
 import {
     isSdsCallable,
     isSdsClass,
@@ -20,7 +28,7 @@ import {
     SdsType,
     SdsYield,
 } from '../generated/ast.js';
-import { moduleMembersOrEmpty, parametersOrEmpty, resultsOrEmpty } from '../ast/shortcuts.js';
+import { parametersOrEmpty, resultsOrEmpty } from '../ast/shortcuts.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {
@@ -99,7 +107,12 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return outerScope;
         }
 
-        return this.createScopeForNodes(moduleMembersOrEmpty(module), outerScope);
+        const precomputed = getDocument(module).precomputedScopes?.get(module);
+        if (!precomputed) {
+            return outerScope;
+        }
+
+        return this.createScope(precomputed, outerScope);
     }
 
     private addLocalDeclarations(node: AstNode, outerScope: Scope): Scope {
