@@ -4,7 +4,6 @@ import {
     EMPTY_SCOPE,
     getContainerOfType,
     getDocument,
-    hasContainerOfType,
     ReferenceInfo,
     Scope,
 } from 'langium';
@@ -25,7 +24,7 @@ import {
     isSdsReference,
     isSdsSegment,
     isSdsStatement,
-    isSdsYield, SdsExpressionLambda,
+    isSdsYield,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
@@ -36,7 +35,7 @@ import {
     SdsYield,
 } from '../generated/ast.js';
 import { assigneesOrEmpty, parametersOrEmpty, resultsOrEmpty, statementsOrEmpty } from '../ast/shortcuts.js';
-import {isContainedIn} from "../ast/utils.js";
+import { isContainedIn } from '../ast/utils.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {
@@ -101,12 +100,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForDirectReferenceTarget(node: SdsReference): Scope {
         // Declarations in this file
-        const result = this.globalDeclarationsInSameFile(node, EMPTY_SCOPE);
+        const currentScope = this.globalDeclarationsInSameFile(node, EMPTY_SCOPE);
 
         // Declarations in containing blocks
-        return this.localDeclarations(node, result);
-
-        return result;
+        return this.localDeclarations(node, currentScope);
     }
 
     private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
