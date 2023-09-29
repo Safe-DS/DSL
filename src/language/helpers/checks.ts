@@ -8,6 +8,7 @@ export const isStatic = (node: SdsClassMember): boolean => {
     } else if (isSdsFunction(node)) {
         return node.static;
     } else {
+        /* c8 ignore next 2 */
         return false;
     }
 };
