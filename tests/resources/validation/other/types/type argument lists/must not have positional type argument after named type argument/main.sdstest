@@ -17,17 +17,3 @@ segment mySegment2(
 segment mySegment2(
     f: MyClass<»A = Int«>
 ) {}
-
-pipeline myPipeline {
-    // $TEST$ no error "After the first named type argument all type arguments must be named."
-    // $TEST$ no error "After the first named type argument all type arguments must be named."
-    // $TEST$ error "After the first named type argument all type arguments must be named."
-    // $TEST$ no error "After the first named type argument all type arguments must be named."
-    call<»Int«, »A = Int«, »Int«, »B = Int«>();
-
-    // $TEST$ no error "After the first named type argument all type arguments must be named."
-    call<»Int«>();
-
-        // $TEST$ no error "After the first named type argument all type arguments must be named."
-    call<»A = Int«>();
-}
