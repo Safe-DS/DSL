@@ -1,0 +1,24 @@
+package test.scoping.references.toPlaceholders.fromOutside
+
+pipeline myPipeline1 {
+    val pipelinePlaceholder = 1;
+}
+
+segment mySegment(mySegmentParameter: String) {
+    val segmentPlaceholder = 1;
+}
+
+pipeline myPipeline2 {
+    () {
+        val blockLambdaPlaceholder = 1;
+    };
+
+    // $TEST$ unresolved
+    »pipelinePlaceholder«;
+
+    // $TEST$ unresolved
+    »segmentPlaceholder«;
+
+    // $TEST$ unresolved
+    »blockLambdaPlaceholder«;
+}

@@ -1,0 +1,15 @@
+package tests.scoping.references.toAnnotations
+
+// $TEST$ target before
+annotation »Before«
+
+segment mySegment() {
+    // $TEST$ references before
+    »Before«;
+
+    // $TEST$ references after
+    »After«;
+}
+
+// $TEST$ target after
+annotation »After«

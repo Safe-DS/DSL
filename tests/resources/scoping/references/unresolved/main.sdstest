@@ -1,0 +1,6 @@
+package tests.scoping.references.unresolved
+
+segment mySegment() {
+    // $TEST$ unresolved
+    »unresolved«;
+}

@@ -1,6 +1,6 @@
 import { SdsCallableType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { parametersOrEmpty } from '../../../ast/shortcuts.js';
+import { parametersOrEmpty } from '../../../helpers/shortcuts.js';
 
 export const CODE_CALLABLE_TYPE_NO_OPTIONAL_PARAMETERS = 'callable-type/no-optional-parameters';
 

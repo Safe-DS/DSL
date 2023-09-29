@@ -20,7 +20,7 @@ import {
     resultsOrEmpty,
     typeParametersOrEmpty,
     enumVariantsOrEmpty,
-} from '../ast/shortcuts.js';
+} from '../helpers/shortcuts.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';

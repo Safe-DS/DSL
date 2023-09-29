@@ -1,6 +1,6 @@
 import { ValidationAcceptor } from 'langium';
 import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsModule } from '../../generated/ast.js';
-import { isInPipelineFile, isInStubFile } from '../../constants/fileExtensions.js';
+import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
 
 export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
 
