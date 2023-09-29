@@ -678,7 +678,6 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsCall(node: ast.SdsCall) {
         const formatter = this.getNodeFormatter(node);
 
-        formatter.property('typeArgumentList').prepend(noSpace());
         formatter.property('argumentList').prepend(noSpace());
     }
 

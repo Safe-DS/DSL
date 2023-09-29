@@ -597,7 +597,7 @@ SdsComparisonExpression returns SdsExpression:
 ;
 
 SdsComparisonOperator returns string:
-    LESS_THAN | '<=' | '>=' | '>'
+    '<' | '<=' | '>=' | '>'
 ;
 
 SdsAdditiveExpression returns SdsExpression:
@@ -644,9 +644,7 @@ interface SdsChainedExpression extends SdsExpression {
 	receiver: SdsExpression
 }
 
-interface SdsCall extends SdsAbstractCall, SdsChainedExpression {
-	typeArgumentList?: SdsTypeArgumentList
-}
+interface SdsCall extends SdsAbstractCall, SdsChainedExpression {}
 
 interface SdsIndexedAccess extends SdsChainedExpression {
 	index: SdsExpression
@@ -661,7 +659,6 @@ SdsChainedExpression returns SdsExpression:
     SdsPrimaryExpression
     (
         {SdsCall.receiver=current}
-        typeArgumentList=SdsCallTypeArgumentList?
         argumentList=SdsCallArgumentList
 
     | {SdsIndexedAccess.receiver=current}
@@ -856,7 +853,7 @@ interface SdsLiteralList extends SdsObject {
 
 SdsLiteralList returns SdsLiteralList:
     {SdsLiteralList}
-    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
+    '<'
     (
         literals+=SdsLiteral
         (',' literals+=SdsLiteral)*
@@ -887,7 +884,7 @@ SdsUnionType returns SdsUnionType:
 
 SdsUnionTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
+    '<'
     (
         typeArguments+=SdsUnionTypeArgument
         (',' typeArguments+=SdsUnionTypeArgument)*
@@ -914,7 +911,7 @@ interface SdsTypeParameterList extends SdsObject {
 
 SdsTypeParameterList returns SdsTypeParameterList:
     {SdsTypeParameterList}
-    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
+    '<'
         (
             typeParameters+=SdsTypeParameter
             (',' typeParameters+=SdsTypeParameter)*
@@ -943,14 +940,7 @@ interface SdsTypeArgumentList extends SdsObject {
 
 SdsTypeArgumentList returns SdsTypeArgumentList:
     {SdsTypeArgumentList}
-    (LESS_THAN | CALL_TYPE_ARGUMENT_LIST_START)
-    (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
-    '>'
-;
-
-SdsCallTypeArgumentList returns SdsTypeArgumentList:
-    {SdsTypeArgumentList}
-    CALL_TYPE_ARGUMENT_LIST_START
+    '<'
     (typeArguments+=SdsTypeArgument (',' typeArguments+=SdsTypeArgument)* ','? )?
     '>'
 ;
@@ -1039,29 +1029,6 @@ terminal fragment TEMPLATE_EXPRESSION_END: '}}';
 terminal TEMPLATE_STRING_START returns string: STRING_START STRING_TEXT* TEMPLATE_EXPRESSION_START;
 terminal TEMPLATE_STRING_INNER returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* TEMPLATE_EXPRESSION_START;
 terminal TEMPLATE_STRING_END returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* STRING_END;
-
-// Resolves the ambiguity between the less than operator (<) and the start of a type argument list of a call (<).
-// See also: https://github.com/langium/langium/discussions/921#discussioncomment-4943180
-terminal CALL_TYPE_ARGUMENT_LIST_START:
-    '<'
-    (?=
-        /[\s»«]*/
-        (   '*'                                         // Star projection as positional type argument
-        |   'in'                                        // Contravariant type projection as positional type argument
-        |   'out'                                       // Covariant type projection as positional type argument
-        |   'literal'                                   // Invariant literal type as positional type argument
-        |   'union'                                     // Invariant union type as positional type argument
-        |   '>'                                         // Empty type argument list
-        |    ID /[\s»«]*/
-            ( '='                                       // Named type argument
-            | ('.' /[\s»«]*/ ID /[\s»«]*/)* (',' | '>') // Invariant type projection as positional type argument
-            )
-        )
-    )
-;
-terminal LESS_THAN:
-    '<'
-;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
