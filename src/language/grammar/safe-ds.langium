@@ -754,7 +754,7 @@ SdsString returns SdsString:
 ;
 
 interface SdsReference extends SdsExpression {
-	target?: @SdsDeclaration
+	target: @SdsDeclaration
 }
 
 SdsReference returns SdsReference:
