@@ -59,8 +59,11 @@ export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsL
     return node?.literalList?.literals ?? [];
 };
 
-export const classMembersOrEmpty = function (node: SdsClass | undefined): SdsClassMember[] {
-    return node?.body?.members ?? [];
+export const classMembersOrEmpty = function (
+    node: SdsClass | undefined,
+    filterFunction: (member: SdsClassMember) => boolean = () => true,
+): SdsClassMember[] {
+    return node?.body?.members?.filter(filterFunction) ?? [];
 };
 
 export const enumVariantsOrEmpty = function (node: SdsEnum | undefined): SdsEnumVariant[] {
