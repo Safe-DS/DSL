@@ -1,0 +1,44 @@
+package test.scoping.references.toParameters.fromOutside
+
+annotation MyAnnotation(myAnnotationParameter: String)
+
+class MyClass(myClassParameter: String)
+
+enum MyEnum {
+    MyEnumVariant(myEnumVariantParameter: String)
+}
+
+fun myFunction(myFunctionParameter: String)
+
+segment mySegment1(mySegmentParameter: String) {}
+
+segment mySegment2(
+    p: (myCallableTypeParameter: String) -> ()
+) {
+    (myBlockLambdaParameter) {};
+    (myExpressionLambdaParameter) -> 1;
+
+    // $TEST$ unresolved
+    »myAnnotationParameter«;
+
+    // $TEST$ unresolved
+    »myClassParameter«;
+
+    // $TEST$ unresolved
+    »myEnumVariantParameter«;
+
+    // $TEST$ unresolved
+    »myFunctionParameter«;
+
+    // $TEST$ unresolved
+    »mySegmentParameter«;
+
+    // $TEST$ unresolved
+    »myCallableTypeParameter«;
+
+    // $TEST$ unresolved
+    »myBlockLambdaParameter«;
+
+    // $TEST$ unresolved
+    »myExpressionLambdaParameter«;
+}

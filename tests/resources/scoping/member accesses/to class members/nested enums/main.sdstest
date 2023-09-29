@@ -1,0 +1,83 @@
+package test.scoping.memberAccesses.toClassMembers.nestedEnums
+
+class MyClass {
+    // $TEST$ target myNestedEnum
+    enum »MyNestedEnum«
+
+
+    // $TEST$ target redeclaredAsInstanceAttribute
+    enum »RedeclaredAsInstanceAttribute«
+    attr RedeclaredAsInstanceAttribute: Int
+
+    // $TEST$ target redeclaredAsStaticAttribute
+    enum »RedeclaredAsStaticAttribute«
+    static attr RedeclaredAsStaticAttribute: Int
+
+    // $TEST$ target redeclaredAsNestedClass
+    enum »RedeclaredAsNestedClass«
+    class RedeclaredAsNestedClass
+
+    // $TEST$ target redeclaredAsNestedEnum
+    enum »RedeclaredAsNestedEnum«
+    enum RedeclaredAsNestedEnum
+
+    // $TEST$ target redeclaredAsInstanceMethod
+    enum »RedeclaredAsInstanceMethod«
+    fun RedeclaredAsInstanceMethod()
+
+    // $TEST$ target redeclaredAsStaticMethod
+    enum »RedeclaredAsStaticMethod«
+    static fun RedeclaredAsStaticMethod()
+
+
+    // $TEST$ target declaredPreviouslyAsInstanceAttribute
+    attr DeclaredPreviouslyAsInstanceAttribute: Int
+    enum »DeclaredPreviouslyAsInstanceAttribute«
+
+    // $TEST$ target declaredPreviouslyAsInstanceMethod
+    fun DeclaredPreviouslyAsInstanceMethod()
+    enum »DeclaredPreviouslyAsInstanceMethod«
+}
+
+enum MyNestedEnum
+class AnotherClass
+
+pipeline myPipeline {
+    // $TEST$ references myNestedEnum
+    MyClass.»MyNestedEnum«;
+
+
+    // $TEST$ references redeclaredAsInstanceAttribute
+    MyClass.»RedeclaredAsInstanceAttribute«;
+
+    // $TEST$ references redeclaredAsStaticAttribute
+    MyClass.»RedeclaredAsStaticAttribute«;
+
+    // $TEST$ references redeclaredAsNestedClass
+    MyClass.»RedeclaredAsNestedClass«;
+
+    // $TEST$ references redeclaredAsNestedEnum
+    MyClass.»RedeclaredAsNestedEnum«;
+
+    // $TEST$ references redeclaredAsInstanceMethod
+    MyClass.»RedeclaredAsInstanceMethod«;
+
+    // $TEST$ references redeclaredAsStaticMethod
+    MyClass.»RedeclaredAsStaticMethod«;
+
+    // $TEST$ references declaredPreviouslyAsInstanceAttribute
+    MyClass.»DeclaredPreviouslyAsInstanceAttribute«;
+
+    // $TEST$ references declaredPreviouslyAsInstanceMethod
+    MyClass.»DeclaredPreviouslyAsInstanceMethod«;
+ 
+
+    // $TEST$ unresolved
+    MyClass.»AnotherClass«;
+
+    // $TEST$ unresolved
+    AnotherClass.»MyNestedClass«;
+
+    // $TEST$ unresolved
+    MyClass.»unresolved«;
+}
