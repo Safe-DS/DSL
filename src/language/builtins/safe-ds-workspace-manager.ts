@@ -1,6 +1,6 @@
 import { DefaultWorkspaceManager, LangiumDocument, LangiumDocumentFactory, LangiumSharedServices, URI } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver';
-import { SAFE_DS_FILE_EXTENSIONS } from '../constants/fileExtensions.js';
+import { SAFE_DS_FILE_EXTENSIONS } from '../helpers/fileExtensions.js';
 import { globSync } from 'glob';
 import path from 'path';
 

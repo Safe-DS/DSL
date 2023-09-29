@@ -42,9 +42,9 @@ import {
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
-} from '../ast/shortcuts.js';
-import { isContainedIn } from '../ast/utils.js';
-import { isStatic } from '../ast/checks.js';
+} from '../helpers/shortcuts.js';
+import { isContainedIn } from '../helpers/ast.js';
+import { isStatic } from '../helpers/checks.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {

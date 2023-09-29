@@ -10,7 +10,7 @@ import {
 } from 'langium';
 import * as ast from '../generated/ast.js';
 import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast.js';
-import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../ast/shortcuts.js';
+import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
