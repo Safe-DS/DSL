@@ -1,0 +1,64 @@
+package test.scoping.memberAccesses.toClassMembers.instanceMethods
+
+class MyClass {
+    // $TEST$ target myInstanceMethod
+    fun »myInstanceMethod«()
+
+
+    // $TEST$ target redeclaredAsInstanceAttribute
+    fun »redeclaredAsInstanceAttribute«()
+    attr redeclaredAsInstanceAttribute: Int
+
+    // $TEST$ target redeclaredAsStaticAttribute
+    fun »redeclaredAsStaticAttribute«()
+    static attr redeclaredAsStaticAttribute: Int
+
+    // $TEST$ target redeclaredAsNestedClass
+    fun »redeclaredAsNestedClass«()
+    class redeclaredAsNestedClass
+
+    // $TEST$ target redeclaredAsNestedEnum
+    fun »redeclaredAsNestedEnum«()
+    enum redeclaredAsNestedEnum
+
+    // $TEST$ target redeclaredAsInstanceMethod
+    fun »redeclaredAsInstanceMethod«()
+    fun redeclaredAsInstanceMethod()
+
+    // $TEST$ target redeclaredAsStaticMethod
+    fun »redeclaredAsStaticMethod«()
+    static fun redeclaredAsStaticMethod()
+
+
+    // $TEST$ target declaredPreviouslyAsStaticAttribute
+    static attr declaredPreviouslyAsStaticAttribute: Int
+    fun »declaredPreviouslyAsStaticAttribute«()
+
+    // $TEST$ target declaredPreviouslyAsNestedClass
+    class declaredPreviouslyAsNestedClass
+    fun »declaredPreviouslyAsNestedClass«()
+
+    // $TEST$ target declaredPreviouslyAsNestedEnum
+    class declaredPreviouslyAsNestedEnum
+    fun »declaredPreviouslyAsNestedEnum«()
+
+    // $TEST$ target declaredPreviouslyAsStaticMethod
+    static fun declaredPreviouslyAsStaticMethod()
+    fun »declaredPreviouslyAsStaticMethod«()
+}
+
+class AnotherClass
+
+pipeline myPipeline {
+    // $TEST$ unresolved
+    MyClass.»myInstanceMethod«;
+
+    // $TEST$ unresolved
+    AnotherClass().»myInstanceMethod«;
+
+    // $TEST$ unresolved
+    unresolved.»myInstanceMethod«;
+
+    // $TEST$ unresolved
+    MyClass.»unresolved«;
+}

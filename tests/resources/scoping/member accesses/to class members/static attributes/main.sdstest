@@ -1,6 +1,6 @@
 package test.scoping.memberAccesses.toClassMembers.staticAttributes
 
-class MyClass {
+class MyClass() {
     // $TEST$ target myStaticAttribute
     static attr »myStaticAttribute«: Int
 
@@ -69,10 +69,16 @@ pipeline myPipeline {
 
     // $TEST$ references declaredPreviouslyAsInstanceMethod
     MyClass.»declaredPreviouslyAsInstanceMethod«;
- 
+
+
+     // $TEST$ unresolved
+    MyClass().»myStaticAttribute«;
 
     // $TEST$ unresolved
     AnotherClass.»myStaticAttribute«;
+
+    // $TEST$ unresolved
+    unresolved.»myStaticAttribute«;
 
     // $TEST$ unresolved
     MyClass.»unresolved«;

@@ -18,8 +18,15 @@ pipeline myPipeline {
     // $TEST$ references redeclaredEnumVariant
     MyEnum.»RedeclaredEnumVariant«;
 
+
+    // $TEST$ unresolved
+    AnotherEnum().»MyEnumVariant«;
+
     // $TEST$ unresolved
     AnotherEnum.»MyEnumVariant«;
+
+    // $TEST$ unresolved
+    unresolved.»MyEnumVariant«;
 
     // $TEST$ unresolved
     MyEnum.»unresolved«;

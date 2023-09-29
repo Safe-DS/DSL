@@ -40,6 +40,7 @@ class MyClass {
 }
 
 class AnotherClass
+fun anotherFunction()
 
 pipeline myPipeline {
     // $TEST$ references myStaticMethod
@@ -69,10 +70,19 @@ pipeline myPipeline {
 
     // $TEST$ references declaredPreviouslyAsInstanceMethod
     MyClass.»declaredPreviouslyAsInstanceMethod«;
- 
+
 
     // $TEST$ unresolved
-    AnotherClass.»myStaticAttribute«;
+    MyClass().»myStaticMethod«;
+
+    // $TEST$ unresolved
+    MyClass.»anotherFunction«;
+
+    // $TEST$ unresolved
+    AnotherClass.»myStaticMethod«;
+
+    // $TEST$ unresolved
+    unresolved.»myStaticMethod«;
 
     // $TEST$ unresolved
     MyClass.»unresolved«;

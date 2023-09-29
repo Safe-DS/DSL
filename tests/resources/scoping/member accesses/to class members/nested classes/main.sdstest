@@ -70,13 +70,19 @@ pipeline myPipeline {
 
     // $TEST$ references declaredPreviouslyAsInstanceMethod
     MyClass.»DeclaredPreviouslyAsInstanceMethod«;
- 
+
+
+    // $TEST$ unresolved
+    MyClass().»MyNestedClass«;
 
     // $TEST$ unresolved
     MyClass.»AnotherClass«;
 
     // $TEST$ unresolved
     AnotherClass.»MyNestedClass«;
+
+    // $TEST$ unresolved
+    unresolved.»MyNestedClass«;
 
     // $TEST$ unresolved
     MyClass.»unresolved«;

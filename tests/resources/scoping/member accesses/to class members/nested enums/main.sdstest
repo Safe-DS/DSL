@@ -41,6 +41,7 @@ class MyClass {
 
 enum MyNestedEnum
 class AnotherClass
+enum AnotherEnum
 
 pipeline myPipeline {
     // $TEST$ references myNestedEnum
@@ -70,13 +71,19 @@ pipeline myPipeline {
 
     // $TEST$ references declaredPreviouslyAsInstanceMethod
     MyClass.»DeclaredPreviouslyAsInstanceMethod«;
- 
+
 
     // $TEST$ unresolved
-    MyClass.»AnotherClass«;
+    MyClass().»MyNestedEnum«;
 
     // $TEST$ unresolved
-    AnotherClass.»MyNestedClass«;
+    MyClass.»AnotherEnum«;
+
+    // $TEST$ unresolved
+    AnotherClass.»MyNestedEnum«;
+
+    // $TEST$ unresolved
+    unresolved.»MyNestedEnum«;
 
     // $TEST$ unresolved
     MyClass.»unresolved«;
