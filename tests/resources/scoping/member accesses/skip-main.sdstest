@@ -825,18 +825,3 @@ step referencesToStepResults() {
     stepWithOneResultWithIdenticalMember().result;
     stepWithTwoResults().result1;
 }
-
-// Access to locals from outside -----------------------------------------------
-
-step referencesToLambdaLocals() {
-    val f = (lambdaParameter) {
-        val lambdaPlaceholder = 1;
-        yield lambdaYield = 1;
-    };
-
-    lambdaPlaceholder;
-}
-
-step referencesToStepLocals() {
-    placeholderInSameFile;
-}
