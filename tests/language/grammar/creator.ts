@@ -1,4 +1,4 @@
-import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
+import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
@@ -7,7 +7,7 @@ import { NoCommentsError } from '../../helpers/testChecks.js';
 const root = 'grammar';
 
 export const createGrammarTests = (): GrammarTest[] => {
-    return listTestResources(root).map(createGrammarTest);
+    return listSafeDSResources(root).map(createGrammarTest);
 };
 
 const createGrammarTest = (relativeResourcePath: string): GrammarTest => {

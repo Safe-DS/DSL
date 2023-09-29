@@ -1,0 +1,17 @@
+package tests.generator.blockLambda
+
+fun f1(param: (a: Int, b: Int) -> r: Int)
+fun f2(param: (a: Int, vararg b: Int) -> r: Int)
+fun f3(param: () -> ())
+
+fun g() -> a: Int
+
+pipeline test {
+    f1((a: Int, b: Int = 2) {
+        yield d = g();
+    });
+    f2((a: Int, vararg c: Int) {
+        yield d = g();
+    });
+    f3(() {});
+}

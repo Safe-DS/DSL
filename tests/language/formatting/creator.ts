@@ -1,4 +1,4 @@
-import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
+import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
@@ -11,7 +11,7 @@ const root = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 
 export const createFormattingTests = async (): Promise<FormattingTest[]> => {
-    const testCases = listTestResources(root).map(createFormattingTest);
+    const testCases = listSafeDSResources(root).map(createFormattingTest);
     return Promise.all(testCases);
 };
 

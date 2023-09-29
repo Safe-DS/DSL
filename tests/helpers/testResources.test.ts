@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { listTestResources, listTestsResourcesGroupedByParentDirectory } from './testResources.js';
+import { listSafeDSResources, listTestsResourcesGroupedByParentDirectory } from './testResources.js';
 
 describe('listTestResources', () => {
     it('should yield all Safe-DS files in a directory that are not skipped', () => {
-        const result = listTestResources('helpers/listTestResources');
+        const result = listSafeDSResources('helpers/listTestResources');
         const expected = [
             'pipeline file.sdspipe',
             'stub file.sdsstub',

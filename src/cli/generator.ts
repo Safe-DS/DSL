@@ -19,7 +19,11 @@ export type GenerateOptions = {
     destination?: string;
 };
 
-export const generatePython = function (module: SdsModule, filePath: string, destination: string | undefined): string {
+export const generatePython = function (
+    module: SdsModule,
+    filePath: string,
+    destination: string | undefined,
+): string[] {
     const data = extractDestinationAndName(filePath, destination);
     const generatedFilePath = `${path.join(data.destination, data.name)}.py`;
 
@@ -31,5 +35,5 @@ export const generatePython = function (module: SdsModule, filePath: string, des
         fs.mkdirSync(data.destination, { recursive: true });
     }
     fs.writeFileSync(generatedFilePath, toString(fileNode));
-    return generatedFilePath;
+    return [generatedFilePath];
 };
