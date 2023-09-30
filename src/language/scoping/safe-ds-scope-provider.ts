@@ -460,6 +460,6 @@ class ImportedDeclarations {
      * Returns descriptions of all imported declarations in the order of the imports.
      */
     getDescriptions(): AstNodeDescription[] {
-        return this.descriptionsByImport.values().toArray()
+        return this.descriptionsByImport.values().toArray();
     }
 }
