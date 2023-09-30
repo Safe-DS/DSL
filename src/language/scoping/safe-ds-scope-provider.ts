@@ -13,6 +13,7 @@ import {
     isSdsCallable,
     isSdsClass,
     isSdsEnum,
+    isSdsEnumVariant,
     isSdsLambda,
     isSdsMemberAccess,
     isSdsMemberType,
@@ -23,6 +24,7 @@ import {
     isSdsReference,
     isSdsSegment,
     isSdsStatement,
+    isSdsTypeArgument,
     isSdsYield,
     SdsDeclaration,
     SdsExpression,
@@ -33,6 +35,7 @@ import {
     SdsReference,
     SdsStatement,
     SdsType,
+    SdsTypeArgument,
     SdsYield,
 } from '../generated/ast.js';
 import {
@@ -42,6 +45,7 @@ import {
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
+    typeParametersOrEmpty,
 } from '../helpers/shortcuts.js';
 import { isContainedIn } from '../helpers/ast.js';
 import { isStatic } from '../helpers/checks.js';
@@ -62,6 +66,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             } else {
                 return this.getScopeForDirectReferenceTarget(node);
             }
+        } else if (isSdsTypeArgument(node) && context.property === 'typeParameter') {
+            return this.getScopeForTypeArgumentTypeParameter(node);
         } else if (isSdsYield(node) && context.property === 'result') {
             return this.getScopeForYieldResult(node);
         } else {
@@ -288,6 +294,25 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             if (isSdsAssignment(current)) {
                 yield* assigneesOrEmpty(current).filter(isSdsPlaceholder);
             }
+        }
+    }
+
+    private getScopeForTypeArgumentTypeParameter(node: SdsTypeArgument): Scope {
+        const containingNamedType = getContainerOfType(node, isSdsNamedType);
+        if (!containingNamedType) {
+            /* c8 ignore next 2 */
+            return EMPTY_SCOPE;
+        }
+
+        const namedTypeDeclaration = containingNamedType.declaration.ref;
+        if (isSdsClass(namedTypeDeclaration)) {
+            const typeParameters = typeParametersOrEmpty(namedTypeDeclaration.typeParameterList);
+            return this.createScopeForNodes(typeParameters);
+        } else if (isSdsEnumVariant(namedTypeDeclaration)) {
+            const typeParameters = typeParametersOrEmpty(namedTypeDeclaration.typeParameterList);
+            return this.createScopeForNodes(typeParameters);
+        } else {
+            return EMPTY_SCOPE;
         }
     }
 

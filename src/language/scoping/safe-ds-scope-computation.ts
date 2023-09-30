@@ -17,6 +17,7 @@ import {
     isSdsTypeParameterList,
     SdsClass,
     SdsEnum,
+    SdsEnumVariant,
     SdsTypeParameter,
 } from '../generated/ast.js';
 
@@ -26,6 +27,8 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
             this.processSdsClass(node, document, scopes);
         } else if (isSdsEnum(node)) {
             this.processSdsEnum(node, document, scopes);
+        } else if (isSdsEnumVariant(node)) {
+            this.processSdsEnumVariant(node, document, scopes);
         } else if (isSdsTypeParameter(node)) {
             this.processSdsTypeParameter(node, document, scopes);
         } else {
@@ -66,6 +69,19 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         if (isSdsModule(containingDeclaration)) {
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
         }
+    }
+
+    private processSdsEnumVariant(node: SdsEnumVariant, document: LangiumDocument, scopes: PrecomputedScopes): void {
+        const name = this.nameProvider.getName(node);
+        if (!name) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        const description = this.descriptions.createDescription(node, name, document);
+
+        this.addToScopesIfKeyIsDefined(scopes, node.parameterList, description);
+        this.addToScopesIfKeyIsDefined(scopes, node.constraintList, description);
     }
 
     private processSdsTypeParameter(

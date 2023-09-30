@@ -1,0 +1,13 @@
+package test.scoping.typeArguments.toTypeParameterInEnumVariantInNestedEnum
+
+class MyClass<T> {
+    enum MyEnum {
+        // $TEST$ target t
+        MyEnumVariant<»T«>
+    }
+}
+
+segment mySegment(
+    // $TEST$ references t
+    p: MyClass.MyEnum.MyEnumVariant<»T« = Int>
+) {}

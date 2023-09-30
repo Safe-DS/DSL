@@ -1,0 +1,11 @@
+package test.scoping.typeArguments.toTypeParameterInNestedClass
+
+class MyClass<T> {
+    // $TEST$ target t
+    class MyNestedClass<»T«>
+}
+
+segment mySegment(
+    // $TEST$ references t
+    p: MyClass.MyNestedClass<»T« = Int>
+) {}
