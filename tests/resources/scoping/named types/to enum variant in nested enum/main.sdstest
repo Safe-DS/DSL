@@ -4,6 +4,11 @@ class BeforeClass {
     enum BeforeEnum {
         // $TEST$ target before
         »BeforeVariant«
+
+        Variant1
+
+        // $TEST$ unresolved
+        Variant2(a: »Variant1«)
     }
 }
 

@@ -271,7 +271,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return this.createScopeForNodes(localDeclarations, outerScope);
         }
     }
-
     private *placeholdersUpToStatement(
         statement: SdsStatement | undefined,
     ): Generator<SdsPlaceholder, void, undefined> {
