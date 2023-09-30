@@ -11,7 +11,7 @@ import {
     LangiumServices,
     MultiMap,
     ReferenceInfo,
-    Scope,
+    Scope, stream,
     Stream,
 } from 'langium';
 import {
@@ -327,10 +327,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         const ownPackageName = containingModule?.name;
 
         // Data structures to collect reachable declarations
-        const explicitlyImportedDeclarations = new ImportedDeclarations(
-            this.astNodeDescriptionProvider,
-            importsOrEmpty(containingModule),
-        );
+        const explicitlyImportedDeclarations = new ImportedDeclarations(importsOrEmpty(containingModule));
         const declarationsInSamePackage: AstNodeDescription[] = [];
         const builtinDeclarations: AstNodeDescription[] = [];
 
@@ -364,7 +361,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             }
 
             // Handle explicitly imported declarations
-            explicitlyImportedDeclarations.addIfImported(candidateNode, candidatePackageName);
+            explicitlyImportedDeclarations.addIfImported(candidate, candidateNode, candidatePackageName);
 
             // Handle other declarations in the same package
             if (candidatePackageName === ownPackageName) {
@@ -382,12 +379,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         //     Highest: Explicitly imported declarations
         //     Middle:  Declarations in the same package
         //     Lowest:  Builtin declarations
-        const result =  this.createScope(
+        return this.createScope(
             explicitlyImportedDeclarations.getDescriptions(),
             this.createScope(declarationsInSamePackage, this.createScope(builtinDeclarations, EMPTY_SCOPE)),
         );
-
-        return result;
     }
 
     private loadAstNode(nodeDescription: AstNodeDescription): AstNode | undefined {
@@ -407,38 +402,38 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
  * Collects descriptions of imported declarations in the same order as the imports.
  */
 class ImportedDeclarations {
-    private readonly astNodeDescriptionProvider: AstNodeDescriptionProvider;
     private readonly descriptionsByImport = new MultiMap<SdsImport, AstNodeDescription>();
+    private readonly unordered: AstNodeDescription[]
 
-    constructor(astNodeDescriptionProvider: AstNodeDescriptionProvider, imports: SdsImport[]) {
-        this.astNodeDescriptionProvider = astNodeDescriptionProvider;
-
+    constructor(imports: SdsImport[]) {
         // Remember the imports and their order
         for (const imp of imports) {
             this.descriptionsByImport.addAll(imp, []);
         }
+
+        this.unordered = [];
     }
 
     /**
      * Adds the node if it is imported.
      *
+     * @param description The description of the node to add.
      * @param node The node to add.
      * @param packageName The package name of the containing module.
-     * @returns Whether the corresponding node is imported.
      */
-    addIfImported(node: AstNode, packageName: string): boolean {
+    addIfImported(description: AstNodeDescription, node: AstNode, packageName: string): void {
         if (!isSdsDeclaration(node)) {
-            return false;
+            return;
         }
 
         const firstMatchingImport = this.findFirstMatchingImport(node, packageName);
         if (!firstMatchingImport) {
-            return false;
+            return;
         }
 
-        const description = this.createDescription(node, firstMatchingImport);
-        this.descriptionsByImport.add(firstMatchingImport, description);
-        return true;
+        const updatedDescription = this.updateDescription(description, firstMatchingImport);
+        this.descriptionsByImport.add(firstMatchingImport, updatedDescription);
+        this.unordered.push(updatedDescription)
     }
 
     private findFirstMatchingImport(node: SdsDeclaration, packageName: string): SdsImport | undefined {
@@ -457,15 +452,11 @@ class ImportedDeclarations {
         }
     }
 
-    private createDescription(node: SdsDeclaration, firstMatchingImport: SdsImport): AstNodeDescription {
+    private updateDescription(description: AstNodeDescription, firstMatchingImport: SdsImport): AstNodeDescription {
         if (isWildcardImport(firstMatchingImport) || !firstMatchingImport.alias) {
-            const description = this.astNodeDescriptionProvider.createDescription(node, node.name);
-            description.node = undefined;
             return description;
         } else {
-            const description = this.astNodeDescriptionProvider.createDescription(node, firstMatchingImport.alias.name);
-            description.node = undefined;
-            return description;
+            return { ...description, name: firstMatchingImport.alias.name };
         }
     }
 
@@ -473,6 +464,7 @@ class ImportedDeclarations {
      * Returns descriptions of all imported declarations in the order of the imports.
      */
     getDescriptions(): Stream<AstNodeDescription> {
-        return this.descriptionsByImport.values().flat();
+        // return this.descriptionsByImport.values().flat();
+        return stream(this.unordered);
     }
 }
