@@ -42,6 +42,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         const description = this.descriptions.createDescription(node, name, document);
 
         this.addToScopesIfKeyIsDefined(scopes, node.parameterList, description);
+        this.addToScopesIfKeyIsDefined(scopes, node.parentTypeList, description);
         this.addToScopesIfKeyIsDefined(scopes, node.constraintList, description);
         this.addToScopesIfKeyIsDefined(scopes, node.body, description);
 
