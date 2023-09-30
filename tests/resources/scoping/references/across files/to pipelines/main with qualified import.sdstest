@@ -5,16 +5,16 @@ import tests.scoping.references.acrossFiles.toPipelines.other.pipelineInAnotherP
 import pipelineWithoutPackage
 
 segment mySegment() {
-    // $TEST$ references safeds_myPipeline
+    // $TEST$ unresolved
     »myPipeline«;
 
-    // $TEST$ references same_pipelineInSamePackage
+    // $TEST$ unresolved
     »pipelineInSamePackage«;
 
-    // $TEST$ references safeds_pipelineInSafeDsPackage
+    // $TEST$ unresolved
     »pipelineInSafeDsPackage«;
 
-    // $TEST$ references other_pipelineInAnotherPackage
+    // $TEST$ unresolved
     »pipelineInAnotherPackage«;
 
     // $TEST$ unresolved

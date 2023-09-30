@@ -5,6 +5,6 @@ import tests.scoping.references.acrossFiles.toPipelines.other.myPipeline
 import tests.scoping.references.acrossFiles.toPipelines.myPipeline
 
 segment mySegment() {
-    // $TEST$ references safeds_myPipeline
+    // $TEST$ unresolved
     »myPipeline«;
 }

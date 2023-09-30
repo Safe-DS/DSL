@@ -2,7 +2,7 @@ package tests.scoping.references.acrossFiles.toGlobalClasses
 
 import tests.scoping.references.acrossFiles.toGlobalClasses.MyClass as MyClassInSamePackage
 import safeds.scoping.references.acrossFiles.toGlobalClasses.MyClass as MyClassInSafeDsPackage
-import tests.scoping.references.acrossFiles.toGlobalClasses.other.MyClass as MyClassInOtherPackage
+import tests.scoping.references.acrossFiles.toGlobalClasses.other.MyClass as MyClassInAnotherPackage
 
 pipeline myPipeline {
     // $TEST$ references same_MyClass
@@ -27,6 +27,6 @@ pipeline myPipeline {
     // $TEST$ references safeds_MyClass
     »MyClassInSafeDsPackage«;
 
-    // $TEST$ references same_MyClass
+    // $TEST$ references other_MyClass
     »MyClassInAnotherPackage«;
 }

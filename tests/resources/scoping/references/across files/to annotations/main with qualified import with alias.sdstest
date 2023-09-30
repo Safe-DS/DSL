@@ -2,7 +2,7 @@ package tests.scoping.references.acrossFiles.toAnnotations
 
 import tests.scoping.references.acrossFiles.toAnnotations.MyAnnotation as MyAnnotationInSamePackage
 import safeds.scoping.references.acrossFiles.toAnnotations.MyAnnotation as MyAnnotationInSafeDsPackage
-import tests.scoping.references.acrossFiles.toAnnotations.other.MyAnnotation as MyAnnotationInOtherPackage
+import tests.scoping.references.acrossFiles.toAnnotations.other.MyAnnotation as MyAnnotationInAnotherPackage
 
 pipeline myPipeline {
     // $TEST$ references same_MyAnnotation
@@ -27,6 +27,6 @@ pipeline myPipeline {
     // $TEST$ references safeds_MyAnnotation
     »MyAnnotationInSafeDsPackage«;
 
-    // $TEST$ references same_MyAnnotation
+    // $TEST$ references other_MyAnnotation
     »MyAnnotationInAnotherPackage«;
 }

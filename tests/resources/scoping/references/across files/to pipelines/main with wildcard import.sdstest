@@ -3,13 +3,13 @@ package tests.scoping.references.acrossFiles.toPipelines
 import safeds.scoping.references.acrossFiles.toPipelines.*
 
 segment mySegment() {
-    // $TEST$ references safeds_myPipeline
+    // $TEST$ unresolved
     »myPipeline«;
 
-    // $TEST$ references same_pipelineInSamePackage
+    // $TEST$ unresolved
     »pipelineInSamePackage«;
 
-    // $TEST$ references safeds_pipelineInSafeDsPackage
+    // $TEST$ unresolved
     »pipelineInSafeDsPackage«;
 
     // $TEST$ unresolved

@@ -2,17 +2,17 @@ package tests.scoping.references.acrossFiles.toPipelines
 
 import tests.scoping.references.acrossFiles.toPipelines.myPipeline as myPipelineInSamePackage
 import safeds.scoping.references.acrossFiles.toPipelines.myPipeline as myPipelineInSafeDsPackage
-import tests.scoping.references.acrossFiles.toPipelines.other.myPipeline as myPipelineInOtherPackage
+import tests.scoping.references.acrossFiles.toPipelines.other.myPipeline as myPipelineInAnotherPackage
 
 segment mySegment() {
-    // $TEST$ references same_myPipeline
+    // $TEST$ unresolved
     »myPipeline«;
 
 
-    // $TEST$ references same_pipelineInSamePackage
+    // $TEST$ unresolved
     »pipelineInSamePackage«;
 
-    // $TEST$ references safeds_pipelineInSafeDsPackage
+    // $TEST$ unresolved
     »pipelineInSafeDsPackage«;
 
     // $TEST$ unresolved
@@ -22,12 +22,12 @@ segment mySegment() {
     »pipelineWithoutPackage«;
 
 
-    // $TEST$ references same_myPipeline
+    // $TEST$ unresolved
     »myPipelineInSamePackage«;
 
-    // $TEST$ references safeds_myPipeline
+    // $TEST$ unresolved
     »myPipelineInSafeDsPackage«;
 
-    // $TEST$ references same_myPipeline
+    // $TEST$ unresolved
     »myPipelineInAnotherPackage«;
 }

@@ -10,13 +10,13 @@ segment mySegment() {
     // $TEST$ references own_myOwnPipeline
     »myOwnPipeline«;
 
-    // $TEST$ references same_pipelineInSamePackage
+    // $TEST$ unresolved
     »pipelineInSamePackage«;
 
-    // $TEST$ references safeds_pipelineInSafeDsPackage
+    // $TEST$ unresolved
     »pipelineInSafeDsPackage«;
 
-    // $TEST$ references other_pipelineInAnotherPackage
+    // $TEST$ unresolved
     »pipelineInAnotherPackage«;
 
     // $TEST$ unresolved
