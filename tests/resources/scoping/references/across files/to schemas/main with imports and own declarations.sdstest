@@ -7,7 +7,7 @@ import tests.scoping.references.acrossFiles.toSchemas.other.SchemaInAnotherPacka
 schema »MyOwnSchema« {}
 
 pipeline myPipeline {
-    // $TEST$ references same_MyOwnSchema
+    // $TEST$ references own_MyOwnSchema
     »MyOwnSchema«;
 
     // $TEST$ references same_SchemaInSamePackage

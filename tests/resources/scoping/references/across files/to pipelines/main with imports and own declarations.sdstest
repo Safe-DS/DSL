@@ -4,7 +4,7 @@ import safeds.scoping.references.acrossFiles.toPipelines.myPipeline as myOwnPipe
 import tests.scoping.references.acrossFiles.toPipelines.other.pipelineInAnotherPackage
 
 // $TEST$ target own_myOwnPipeline
-pipeline myOwnPipeline {}
+pipeline »myOwnPipeline« {}
 
 segment mySegment() {
     // $TEST$ references own_myOwnPipeline

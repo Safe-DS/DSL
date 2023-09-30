@@ -5,11 +5,11 @@ import tests.scoping.references.acrossFiles.toSegments.other.publicSegmentInAnot
 import tests.scoping.references.acrossFiles.toSegments.other.internalSegmentInAnotherPackage
 import tests.scoping.references.acrossFiles.toSegments.other.privateSegmentInAnotherPackage
 
-// $TEST$ references same_myOwnSegment
+// $TEST$ target own_myOwnSegment
 segment »myOwnSegment«() {}
 
 pipeline myPipeline {
-    // $TEST$ references same_myOwnSegment
+    // $TEST$ references own_myOwnSegment
     »myOwnSegment«;
 
 
