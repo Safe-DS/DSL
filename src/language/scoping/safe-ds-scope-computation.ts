@@ -13,6 +13,8 @@ import {
     isSdsEnumVariant,
     isSdsFunction,
     isSdsModule,
+    isSdsPipeline,
+    isSdsSegment,
     isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsClass,
@@ -22,7 +24,22 @@ import {
 } from '../generated/ast.js';
 
 export class SafeDsScopeComputation extends DefaultScopeComputation {
-    override processNode(node: AstNode, document: LangiumDocument, scopes: PrecomputedScopes): void {
+    protected override exportNode(node: AstNode, exports: AstNodeDescription[], document: LangiumDocument): void {
+        // Pipelines and private segments cannot be referenced from other documents
+        if (isSdsPipeline(node) || (isSdsSegment(node) && node.visibility === 'private')) {
+            return;
+        }
+
+        // Modules that don't state their package don't export anything
+        const containingModule = getContainerOfType(node, isSdsModule);
+        if (!containingModule || !containingModule.name) {
+            return;
+        }
+
+        super.exportNode(node, exports, document);
+    }
+
+    protected override processNode(node: AstNode, document: LangiumDocument, scopes: PrecomputedScopes): void {
         if (isSdsClass(node)) {
             this.processSdsClass(node, document, scopes);
         } else if (isSdsEnum(node)) {

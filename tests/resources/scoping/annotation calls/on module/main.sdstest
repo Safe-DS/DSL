@@ -5,7 +5,7 @@
 // $TEST$ unresolved
 @»Unresolved«
 
-package test.scoping.annotationCalls.onModule
+package tests.scoping.annotationCalls.onModule
 
 // $TEST$ target annotation 
 annotation »MyAnnotation«

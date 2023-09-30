@@ -1,0 +1,15 @@
+package tests.scoping.references.inSameFile.toGlobalClasses
+
+// $TEST$ target before
+class »Before«()
+
+pipeline myPipeline {
+    // $TEST$ references before
+    »Before«;
+
+    // $TEST$ references after
+    »After«;
+}
+
+// $TEST$ target after
+class »After«()

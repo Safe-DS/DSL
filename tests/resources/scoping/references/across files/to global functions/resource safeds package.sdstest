@@ -1,0 +1,7 @@
+package safeds.scoping.references.acrossFiles.toGlobalFunctions
+
+// $TEST$ target safeds_myFunction
+fun »myFunction«()
+
+// $TEST$ target safeds_functionInSafeDsPackage
+fun »functionInSafeDsPackage«()

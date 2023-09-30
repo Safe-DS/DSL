@@ -1,4 +1,4 @@
-package test.scoping.typeParameterConstraints.inMethod
+package tests.scoping.typeParameterConstraints.inMethod
 
 fun myFunction1<BeforeGlobal>()
 

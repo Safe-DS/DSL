@@ -1,0 +1,22 @@
+package tests.scoping.references.acrossFiles.toGlobalFunctions
+
+import safeds.scoping.references.acrossFiles.toGlobalFunctions.myFunction
+import tests.scoping.references.acrossFiles.toGlobalFunctions.other.functionInAnotherPackage
+import functionWithoutPackage
+
+pipeline myPipeline {
+    // $TEST$ references safeds_myFunction
+    »myFunction«;
+
+    // $TEST$ references same_functionInSamePackage
+    »functionInSamePackage«;
+
+    // $TEST$ references safeds_functionInSafeDsPackage
+    »functionInSafeDsPackage«;
+
+    // $TEST$ references other_functionInAnotherPackage
+    »functionInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »functionWithoutPackage«;
+}

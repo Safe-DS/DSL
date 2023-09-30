@@ -1,0 +1,7 @@
+package safeds.scoping.references.acrossFiles.toPipelines
+
+// $TEST$ target safeds_myPipeline
+pipeline »myPipeline« {}
+
+// $TEST$ target safeds_pipelineInSafeDsPackage
+pipeline »pipelineInSafeDsPackage« {}

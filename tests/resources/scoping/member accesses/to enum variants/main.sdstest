@@ -1,4 +1,4 @@
-package test.scoping.memberAccesses.toEnumVariants
+package tests.scoping.memberAccesses.toEnumVariants
 
 enum MyEnum {
     // $TEST$ target myEnumVariant

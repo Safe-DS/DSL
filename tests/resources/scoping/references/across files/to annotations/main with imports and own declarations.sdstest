@@ -1,0 +1,24 @@
+package tests.scoping.references.acrossFiles.toAnnotations
+
+import safeds.scoping.references.acrossFiles.toAnnotations.MyAnnotation as MyOwnAnnotation
+import tests.scoping.references.acrossFiles.toAnnotations.other.AnnotationInAnotherPackage
+
+// $TEST$ target own_MyOwnAnnotation
+annotation »MyOwnAnnotation«
+
+pipeline myPipeline {
+    // $TEST$ references own_MyOwnAnnotation
+    »MyOwnAnnotation«;
+
+    // $TEST$ references same_AnnotationInSamePackage
+    »AnnotationInSamePackage«;
+
+    // $TEST$ references safeds_AnnotationInSafeDsPackage
+    »AnnotationInSafeDsPackage«;
+
+    // $TEST$ references other_AnnotationInAnotherPackage
+    »AnnotationInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »AnnotationWithoutPackage«;
+}

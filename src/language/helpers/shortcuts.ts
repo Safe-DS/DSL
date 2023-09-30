@@ -2,6 +2,7 @@ import {
     isSdsAssignment,
     isSdsBlockLambdaResult,
     isSdsDeclaration,
+    isSdsModule,
     isSdsPlaceholder,
     SdsAnnotatedObject,
     SdsAnnotationCall,
@@ -14,8 +15,10 @@ import {
     SdsClassMember,
     SdsEnum,
     SdsEnumVariant,
+    SdsImport,
     SdsLiteral,
     SdsLiteralType,
+    SdsModule,
     SdsParameter,
     SdsParameterList,
     SdsPlaceholder,
@@ -27,7 +30,7 @@ import {
     SdsTypeParameter,
     SdsTypeParameterList,
 } from '../generated/ast.js';
-import { stream } from 'langium';
+import { AstNode, getContainerOfType, stream } from 'langium';
 
 export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] {
     if (!node) {
@@ -68,6 +71,14 @@ export const classMembersOrEmpty = function (
 
 export const enumVariantsOrEmpty = function (node: SdsEnum | undefined): SdsEnumVariant[] {
     return node?.body?.variants ?? [];
+};
+
+export const importsOrEmpty = function (node: SdsModule | undefined): SdsImport[] {
+    return node?.imports ?? [];
+};
+
+export const packageNameOrNull = function (node: AstNode | undefined): string | null {
+    return getContainerOfType(node, isSdsModule)?.name ?? null;
 };
 
 export const parametersOrEmpty = function (node: SdsParameterList | undefined): SdsParameter[] {

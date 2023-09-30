@@ -1,4 +1,4 @@
-package test.scoping.typeParameterConstraints.inEnumVariantInNestedEnum
+package tests.scoping.typeParameterConstraints.inEnumVariantInNestedEnum
 
 fun myFunction1<BeforeEnum>()
 

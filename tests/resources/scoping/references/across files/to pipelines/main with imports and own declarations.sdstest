@@ -1,0 +1,24 @@
+package tests.scoping.references.acrossFiles.toPipelines
+
+import safeds.scoping.references.acrossFiles.toPipelines.myPipeline as myOwnPipeline
+import tests.scoping.references.acrossFiles.toPipelines.other.pipelineInAnotherPackage
+
+// $TEST$ target own_myOwnPipeline
+pipeline »myOwnPipeline« {}
+
+segment mySegment() {
+    // $TEST$ references own_myOwnPipeline
+    »myOwnPipeline«;
+
+    // $TEST$ unresolved
+    »pipelineInSamePackage«;
+
+    // $TEST$ unresolved
+    »pipelineInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »pipelineInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »pipelineWithoutPackage«;
+}

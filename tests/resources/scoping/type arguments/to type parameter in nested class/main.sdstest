@@ -1,4 +1,4 @@
-package test.scoping.typeArguments.toTypeParameterInNestedClass
+package tests.scoping.typeArguments.toTypeParameterInNestedClass
 
 class MyClass<T> {
     // $TEST$ target t

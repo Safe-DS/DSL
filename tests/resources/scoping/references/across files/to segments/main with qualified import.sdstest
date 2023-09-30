@@ -1,0 +1,54 @@
+package tests.scoping.references.acrossFiles.toSegments
+
+import safeds.scoping.references.acrossFiles.toSegments.mySegment
+import tests.scoping.references.acrossFiles.toSegments.other.publicSegmentInAnotherPackage
+import tests.scoping.references.acrossFiles.toSegments.other.internalSegmentInAnotherPackage
+import tests.scoping.references.acrossFiles.toSegments.other.privateSegmentInAnotherPackage
+import publicSegmentWithoutPackage
+import internalSegmentWithoutPackage
+import privateSegmentWithoutPackage
+
+pipeline myPipeline {
+    // $TEST$ references safeds_mySegment
+    »mySegment«;
+
+
+    // $TEST$ references same_publicSegmentInSamePackage
+    »publicSegmentInSamePackage«;
+
+    // $TEST$ references same_internalSegmentInSamePackage
+    »internalSegmentInSamePackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentInSamePackage«;
+
+
+    // $TEST$ references safeds_publicSegmentInSafeDsPackage
+    »publicSegmentInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalSegmentInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentInSafeDsPackage«;
+
+
+    // $TEST$ references other_publicSegmentInAnotherPackage
+    »publicSegmentInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »internalSegmentInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicSegmentWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalSegmentWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentWithoutPackage«;
+}

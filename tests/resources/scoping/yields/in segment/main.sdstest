@@ -1,4 +1,4 @@
-package test.scoping.yields.inSegment
+package tests.scoping.yields.inSegment
 
 segment mySegment1() -> before: Int {}
 

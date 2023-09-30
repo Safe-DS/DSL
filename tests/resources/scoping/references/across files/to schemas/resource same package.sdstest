@@ -1,0 +1,7 @@
+package tests.scoping.references.acrossFiles.toSchemas
+
+// $TEST$ target same_MySchema
+schema »MySchema« {}
+
+// $TEST$ target same_SchemaInSamePackage
+schema »SchemaInSamePackage« {}

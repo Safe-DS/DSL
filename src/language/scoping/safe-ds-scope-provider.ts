@@ -1,9 +1,15 @@
 import {
     AstNode,
+    AstNodeDescription,
+    AstNodeDescriptionProvider,
+    AstNodeLocator,
     DefaultScopeProvider,
     EMPTY_SCOPE,
     getContainerOfType,
     getDocument,
+    LangiumDocuments,
+    LangiumServices,
+    MultiMap,
     ReferenceInfo,
     Scope,
 } from 'langium';
@@ -12,6 +18,7 @@ import {
     isSdsBlock,
     isSdsCallable,
     isSdsClass,
+    isSdsDeclaration,
     isSdsEnum,
     isSdsEnumVariant,
     isSdsLambda,
@@ -28,6 +35,7 @@ import {
     isSdsYield,
     SdsDeclaration,
     SdsExpression,
+    SdsImport,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
@@ -42,15 +50,29 @@ import {
     assigneesOrEmpty,
     classMembersOrEmpty,
     enumVariantsOrEmpty,
+    importsOrEmpty,
+    packageNameOrNull,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
     typeParametersOrEmpty,
 } from '../helpers/shortcuts.js';
 import { isContainedIn } from '../helpers/ast.js';
-import { isStatic } from '../helpers/checks.js';
+import { isStatic, isWildcardImport } from '../helpers/checks.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
+    readonly documents: LangiumDocuments;
+    readonly astNodeDescriptionProvider: AstNodeDescriptionProvider;
+    readonly astNodeLocator: AstNodeLocator;
+
+    constructor(services: LangiumServices) {
+        super(services);
+
+        this.documents = services.shared.workspace.LangiumDocuments;
+        this.astNodeDescriptionProvider = services.workspace.AstNodeDescriptionProvider;
+        this.astNodeLocator = services.workspace.AstNodeLocator;
+    }
+
     override getScope(context: ReferenceInfo): Scope {
         const node = context.container;
 
@@ -64,7 +86,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             if (isSdsMemberAccess(node.$container) && node.$containerProperty === 'member') {
                 return this.getScopeForMemberAccessMember(node.$container);
             } else {
-                return this.getScopeForDirectReferenceTarget(node);
+                return this.getScopeForDirectReferenceTarget(node, context);
             }
         } else if (isSdsTypeArgument(node) && context.property === 'typeParameter') {
             return this.getScopeForTypeArgumentTypeParameter(node);
@@ -174,19 +196,12 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
     }
 
-    private getScopeForDirectReferenceTarget(node: SdsReference): Scope {
-        // val resource = context.eResource()
-        // val packageName = context.containingCompilationUnitOrNull()?.qualifiedNameOrNull()
-        //
-        // // Declarations in other files
-        // var result: IScope = FilteringScope(
-        //     super.delegateGetScope(context, SafeDSPackage.Literals.SDS_REFERENCE__DECLARATION),
-        // ) {
-        //     it.isReferencableExternalDeclaration(resource, packageName)
-        // }
+    private getScopeForDirectReferenceTarget(node: SdsReference, context: ReferenceInfo): Scope {
+        // Declarations in other files
+        let currentScope = this.getGlobalScope('SdsDeclaration', context);
 
         // Declarations in this file
-        const currentScope = this.globalDeclarationsInSameFile(node, EMPTY_SCOPE);
+        currentScope = this.globalDeclarationsInSameFile(node, currentScope);
 
         // // Declarations in containing classes
         // context.containingClassOrNull()?.let {
@@ -206,33 +221,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     //         )
     //     else -> Scopes.scopeFor(context.classMembersOrEmpty(), parentScope)
     //     }
-    // }
-
-    //     /**
-    //      * Removes declarations in this [Resource], [SdsAnnotation]s, and internal [SdsStep]s located in other
-    //      * [SdsCompilationUnit]s.
-    //      */
-    //     private fun IEObjectDescription?.isReferencableExternalDeclaration(
-    //         fromResource: Resource,
-    //         fromPackageWithQualifiedName: QualifiedName?,
-    // ): Boolean {
-    //     // Resolution failed in delegate scope
-    //     if (this == null) return false
-    //
-    //     val obj = this.eObjectOrProxy
-    //
-    //     // Local declarations are added later using custom scoping rules
-    //     if (obj.eResource() == fromResource) return false
-    //
-    //     // Annotations cannot be referenced
-    //     if (obj is SdsAnnotation) return false
-    //
-    //     // Internal steps in another package cannot be referenced
-    //     return !(
-    //     obj is SdsStep &&
-    //     obj.visibility() == SdsVisibility.Internal &&
-    //     obj.containingCompilationUnitOrNull()?.qualifiedNameOrNull() != fromPackageWithQualifiedName
-    // )
     // }
 
     private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
@@ -323,5 +311,158 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         return this.createScopeForNodes(resultsOrEmpty(containingSegment.resultList));
+    }
+
+    protected override getGlobalScope(referenceType: string, context: ReferenceInfo): Scope {
+        const node = context.container;
+        const key = `${getDocument(node).uri}~${referenceType}`;
+        return this.globalScopeCache.get(key, () => this.getGlobalScopeForNode(referenceType, node));
+    }
+
+    private getGlobalScopeForNode(referenceType: string, node: AstNode): Scope {
+        // Gather information about the containing module
+        const containingModule = getContainerOfType(node, isSdsModule);
+        const ownUri = getDocument(node).uri.toString();
+        const ownPackageName = containingModule?.name;
+
+        // Data structures to collect reachable declarations
+        const explicitlyImportedDeclarations = new ImportedDeclarations(importsOrEmpty(containingModule));
+        const declarationsInSamePackage: AstNodeDescription[] = [];
+        const builtinDeclarations: AstNodeDescription[] = [];
+
+        // Loop over all declarations in the index
+        const candidates = this.indexManager.allElements(referenceType);
+        for (const candidate of candidates) {
+            // Skip declarations in the same file
+            const candidateUri = candidate.documentUri.toString();
+            if (candidateUri === ownUri) {
+                continue;
+            }
+
+            // Skip declarations that cannot be found and modules
+            const candidateNode = this.loadAstNode(candidate);
+            if (!candidateNode || isSdsModule(candidateNode)) {
+                continue;
+            }
+
+            // Skip declarations in a module without a package name
+            const candidatePackageName = packageNameOrNull(candidateNode);
+            if (candidatePackageName === null) {
+                /* c8 ignore next */
+                continue;
+            }
+
+            // Handle internal segments, which are only reachable in the same package
+            if (isSdsSegment(candidateNode) && candidateNode.visibility === 'internal') {
+                if (candidatePackageName === ownPackageName) {
+                    declarationsInSamePackage.push(candidate);
+                }
+                continue;
+            }
+
+            // Handle explicitly imported declarations
+            explicitlyImportedDeclarations.addIfImported(candidate, candidateNode, candidatePackageName);
+
+            // Handle other declarations in the same package
+            if (candidatePackageName === ownPackageName) {
+                declarationsInSamePackage.push(candidate);
+                continue;
+            }
+
+            // Handle builtin declarations
+            if (this.isBuiltinPackage(candidatePackageName)) {
+                builtinDeclarations.push(candidate);
+            }
+        }
+
+        // Order of precedence:
+        //     Highest: Explicitly imported declarations
+        //     Middle:  Declarations in the same package
+        //     Lowest:  Builtin declarations
+        return this.createScope(
+            explicitlyImportedDeclarations.getDescriptions(),
+            this.createScope(declarationsInSamePackage, this.createScope(builtinDeclarations, EMPTY_SCOPE)),
+        );
+    }
+
+    private loadAstNode(nodeDescription: AstNodeDescription): AstNode | undefined {
+        if (nodeDescription.node) {
+            /* c8 ignore next 2 */
+            return nodeDescription.node;
+        }
+        const document = this.documents.getOrCreateDocument(nodeDescription.documentUri);
+        return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
+    }
+
+    private isBuiltinPackage(packageName: string) {
+        return packageName.startsWith('safeds');
+    }
+}
+
+/**
+ * Collects descriptions of imported declarations in the same order as the imports.
+ */
+class ImportedDeclarations {
+    private readonly descriptionsByImport = new MultiMap<SdsImport, AstNodeDescription>();
+
+    constructor(imports: SdsImport[]) {
+        // Remember the imports and their order
+        for (const imp of imports) {
+            this.descriptionsByImport.addAll(imp, []);
+        }
+    }
+
+    /**
+     * Adds the node if it is imported.
+     *
+     * @param description The description of the node to add.
+     * @param node The node to add.
+     * @param packageName The package name of the containing module.
+     */
+    addIfImported(description: AstNodeDescription, node: AstNode, packageName: string): void {
+        if (!isSdsDeclaration(node)) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        const firstMatchingImport = this.findFirstMatchingImport(node, packageName);
+        if (!firstMatchingImport) {
+            return;
+        }
+
+        const updatedDescription = this.updateDescription(description, firstMatchingImport);
+        this.descriptionsByImport.add(firstMatchingImport, updatedDescription);
+    }
+
+    private findFirstMatchingImport(node: SdsDeclaration, packageName: string): SdsImport | undefined {
+        return this.descriptionsByImport.keys().find((imp) => this.importMatches(imp, node, packageName));
+    }
+
+    private importMatches(imp: SdsImport, node: SdsDeclaration, packageName: string): boolean {
+        if (isWildcardImport(imp)) {
+            const importedPackageName = imp.importedNamespace.replaceAll(/\.?\*$/gu, '');
+            return importedPackageName === packageName;
+        } else {
+            const segments = imp.importedNamespace.split('.');
+            const importedPackageName = segments.slice(0, segments.length - 1).join('.');
+            const importedDeclarationName = segments[segments.length - 1];
+            return importedPackageName === packageName && importedDeclarationName === node.name;
+        }
+    }
+
+    private updateDescription(description: AstNodeDescription, firstMatchingImport: SdsImport): AstNodeDescription {
+        if (isWildcardImport(firstMatchingImport) || !firstMatchingImport.alias) {
+            return description;
+        } else {
+            // Declaration is available under an alias
+            return { ...description, name: firstMatchingImport.alias.name };
+        }
+    }
+
+    /**
+     * Returns descriptions of all imported declarations in the order of the imports.
+     */
+    getDescriptions(): AstNodeDescription[] {
+        return this.descriptionsByImport.values().toArray();
     }
 }

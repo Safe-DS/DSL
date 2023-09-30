@@ -1,4 +1,4 @@
-package test.scoping.typeArguments.toTypeParameterInContainingNamedTypeDeclaration
+package tests.scoping.typeArguments.toTypeParameterInContainingNamedTypeDeclaration
 
 // $TEST$ target outerClass
 class MyClass<»T«>(

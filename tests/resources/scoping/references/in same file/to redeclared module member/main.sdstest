@@ -1,0 +1,19 @@
+package tests.scoping.references.inSameFile.toRedeclaredModuleMember
+
+// $TEST$ target before
+class »Before«
+
+class Before
+
+segment mySegment() {
+    // $TEST$ references before
+    »Before«;
+
+    // $TEST$ references after
+    »after«;
+}
+
+// $TEST$ target after
+fun »after«()
+
+fun after()

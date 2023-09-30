@@ -1,0 +1,7 @@
+package tests.scoping.references.acrossFiles.toGlobalClasses
+
+// $TEST$ target same_MyClass
+class »MyClass«
+
+// $TEST$ target same_ClassInSamePackage
+class »ClassInSamePackage«

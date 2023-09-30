@@ -1,4 +1,4 @@
-package test.scoping.memberAccesses.toClassMembers.nestedEnums
+package tests.scoping.memberAccesses.toClassMembers.nestedEnums
 
 class MyClass {
     // $TEST$ target myNestedEnum

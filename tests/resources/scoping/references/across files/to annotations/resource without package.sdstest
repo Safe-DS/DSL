@@ -1,0 +1,5 @@
+// $TEST$ target without_MyAnnotation
+annotation »MyAnnotation«
+
+// $TEST$ target without_AnnotationWithoutPackage
+annotation »AnnotationWithoutPackage«

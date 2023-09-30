@@ -10,6 +10,7 @@ import { URI } from 'vscode-uri';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { clearDocuments } from 'langium/test';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'scoping';
@@ -46,6 +47,7 @@ const createScopingTest = async (
                 new SyntaxErrorsInCodeError(syntaxErrors),
             );
         }
+        await clearDocuments(services);
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
 

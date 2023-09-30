@@ -1,0 +1,5 @@
+// $TEST$ target without_myPipeline
+pipeline »myPipeline« {}
+
+// $TEST$ target without_pipelineWithoutPackage
+pipeline »pipelineWithoutPackage« {}

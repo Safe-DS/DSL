@@ -1,6 +1,0 @@
-package tests.scoping.references.toResults.ofContainingSegment
-
-segment mySegment() -> myResult: Int {
-    // $TEST$ unresolved
-    »myResult«;
-}

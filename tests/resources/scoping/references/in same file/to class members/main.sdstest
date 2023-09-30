@@ -1,0 +1,33 @@
+package tests.scoping.references.inSameFile.toClassMembers
+
+class MyClass {
+    static attr staticAttribute: Int
+    attr instanceAttribute: Int
+
+    class NestedClass
+
+    enum NestedEnum
+
+    static fun staticMethod()
+    fun instanceMethod()
+}
+
+pipeline myPipeline {
+    // $TEST$ unresolved
+    »staticAttribute«;
+
+    // $TEST$ unresolved
+    »instanceAttribute«;
+
+    // $TEST$ unresolved
+    »NestedClass«;
+
+    // $TEST$ unresolved
+    »NestedEnum«;
+
+    // $TEST$ unresolved
+    »staticMethod«;
+
+    // $TEST$ unresolved
+    »instanceMethod«;
+}

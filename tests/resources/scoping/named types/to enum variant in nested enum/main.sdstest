@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toEnumVariantInNestedEnum
+package tests.scoping.namedTypes.toEnumVariantInNestedEnum
 
 class BeforeClass {
     enum BeforeEnum {

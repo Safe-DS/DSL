@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toContainingNamedTypeDeclaration
+package tests.scoping.namedTypes.toContainingNamedTypeDeclaration
 
 // $TEST$ target outerClass
 class »MyClass«<T>(

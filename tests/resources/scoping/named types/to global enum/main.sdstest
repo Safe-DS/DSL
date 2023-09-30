@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toGlobalEnum
+package tests.scoping.namedTypes.toGlobalEnum
 
 // $TEST$ target before
 enum »BeforeEnum«
