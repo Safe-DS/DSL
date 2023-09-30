@@ -16,7 +16,8 @@ import {
     isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsClass,
-    SdsEnum, SdsEnumVariant,
+    SdsEnum,
+    SdsEnumVariant,
     SdsTypeParameter,
 } from '../generated/ast.js';
 
@@ -28,7 +29,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
             this.processSdsEnum(node, document, scopes);
         } else if (isSdsEnumVariant(node)) {
             this.processSdsEnumVariant(node, document, scopes);
-        }else if (isSdsTypeParameter(node)) {
+        } else if (isSdsTypeParameter(node)) {
             this.processSdsTypeParameter(node, document, scopes);
         } else {
             super.processNode(node, document, scopes);
@@ -73,6 +74,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
     private processSdsEnumVariant(node: SdsEnumVariant, document: LangiumDocument, scopes: PrecomputedScopes): void {
         const name = this.nameProvider.getName(node);
         if (!name) {
+            /* c8 ignore next 2 */
             return;
         }
 
