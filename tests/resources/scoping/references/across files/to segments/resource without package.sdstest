@@ -1,0 +1,11 @@
+// $TEST$ target without_mySegment
+segment »mySegment«() {}
+
+// $TEST$ target without_publicSegmentWithoutPackage
+segment »publicSegmentWithoutPackage«() {}
+
+// $TEST$ target without_internalSegmentWithoutPackage
+internal segment »internalSegmentWithoutPackage«() {}
+
+// $TEST$ target without_privateSegmentWithoutPackage
+private segment »privateSegmentWithoutPackage«() {}

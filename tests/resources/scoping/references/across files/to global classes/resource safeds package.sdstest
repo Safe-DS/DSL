@@ -1,0 +1,7 @@
+package safeds.scoping.references.acrossFiles.toGlobalClasses
+
+// $TEST$ target safeds_MyClass
+class »MyClass«
+
+// $TEST$ target safeds_ClassInSafeDsPackage
+class »ClassInSafeDsPackage«

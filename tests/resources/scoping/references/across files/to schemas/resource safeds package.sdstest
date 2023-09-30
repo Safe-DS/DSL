@@ -1,0 +1,7 @@
+package safeds.scoping.references.acrossFiles.toSchemas
+
+// $TEST$ target safeds_MySchema
+schema »MySchema« {}
+
+// $TEST$ target safeds_SchemaInSafeDsPackage
+schema »SchemaInSafeDsPackage« {}

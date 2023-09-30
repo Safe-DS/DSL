@@ -1,0 +1,13 @@
+package safeds.scoping.references.acrossFiles.toSegments
+
+// $TEST$ target safeds_mySegment
+segment »mySegment«() {}
+
+// $TEST$ target safeds_publicSegmentInSafeDsPackage
+segment »publicSegmentInSafeDsPackage«() {}
+
+// $TEST$ target safeds_internalSegmentInSafeDsPackage
+internal segment »internalSegmentInSafeDsPackage«() {}
+
+// $TEST$ target safeds_privateSegmentInSafeDsPackage
+private segment »privateSegmentInSafeDsPackage«() {}

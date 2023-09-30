@@ -1,0 +1,33 @@
+package tests.scoping.references.acrossFiles.toGlobalEnums
+
+import tests.scoping.references.acrossFiles.toGlobalEnums.MyEnum as MyEnumInSamePackage
+import safeds.scoping.references.acrossFiles.toGlobalEnums.MyEnum as MyEnumInSafeDsPackage
+import tests.scoping.references.acrossFiles.toGlobalEnums.other.MyEnum as MyEnumInOtherPackage
+
+pipeline myPipeline {
+    // $TEST$ references same_MyEnum
+    »MyEnum«;
+
+
+    // $TEST$ references same_EnumInSamePackage
+    »EnumInSamePackage«;
+
+    // $TEST$ references safeds_EnumInSafeDsPackage
+    »EnumInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »EnumInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »EnumWithoutPackage«;
+
+
+    // $TEST$ references same_MyEnum
+    »MyEnumInSamePackage«;
+
+    // $TEST$ references safeds_MyEnum
+    »MyEnumInSafeDsPackage«;
+
+    // $TEST$ references same_MyEnum
+    »MyEnumInAnotherPackage«;
+}

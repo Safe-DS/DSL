@@ -1,0 +1,7 @@
+package tests.scoping.references.acrossFiles.toGlobalFunctions
+
+// $TEST$ target same_myFunction
+fun »myFunction«()
+
+// $TEST$ target same_functionInSamePackage
+fun »functionInSamePackage«()

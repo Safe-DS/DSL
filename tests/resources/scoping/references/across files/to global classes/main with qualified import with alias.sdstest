@@ -1,0 +1,32 @@
+package tests.scoping.references.acrossFiles.toGlobalClasses
+
+import tests.scoping.references.acrossFiles.toGlobalClasses.MyClass as MyClassInSamePackage
+import safeds.scoping.references.acrossFiles.toGlobalClasses.MyClass as MyClassInSafeDsPackage
+import tests.scoping.references.acrossFiles.toGlobalClasses.other.MyClass as MyClassInOtherPackage
+
+pipeline myPipeline {
+    // $TEST$ references same_MyClass
+    »MyClass«;
+
+
+    // $TEST$ references same_ClassInSamePackage
+    »ClassInSamePackage«;
+
+    // $TEST$ references safeds_ClassInSafeDsPackage
+    »ClassInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »ClassInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »ClassWithoutPackage«;
+
+    // $TEST$ references same_MyClass
+    »MyClassInSamePackage«;
+
+    // $TEST$ references safeds_MyClass
+    »MyClassInSafeDsPackage«;
+
+    // $TEST$ references same_MyClass
+    »MyClassInAnotherPackage«;
+}

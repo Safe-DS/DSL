@@ -1,0 +1,18 @@
+package tests.scoping.references.acrossFiles.toSchemas
+
+pipeline myPipeline {
+    // $TEST$ references same_MySchema
+    »MySchema«;
+
+    // $TEST$ references same_SchemaInSamePackage
+    »SchemaInSamePackage«;
+
+    // $TEST$ references safeds_SchemaInSafeDsPackage
+    »SchemaInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »SchemaInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »SchemaWithoutPackage«;
+}

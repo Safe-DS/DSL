@@ -1,0 +1,46 @@
+package tests.scoping.references.acrossFiles.toSegments
+
+pipeline myPipeline {
+    // $TEST$ references same_mySegment
+    »mySegment«;
+
+
+    // $TEST$ references same_publicSegmentInSamePackage
+    »publicSegmentInSamePackage«;
+
+    // $TEST$ references same_internalSegmentInSamePackage
+    »internalSegmentInSamePackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentInSamePackage«;
+
+
+    // $TEST$ references safeds_publicSegmentInSafeDsPackage
+    »publicSegmentInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalSegmentInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »publicSegmentInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »internalSegmentInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicSegmentWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalSegmentWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privateSegmentWithoutPackage«;
+}
