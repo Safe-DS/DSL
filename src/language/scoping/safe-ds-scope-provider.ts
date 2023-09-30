@@ -11,8 +11,7 @@ import {
     LangiumServices,
     MultiMap,
     ReferenceInfo,
-    Scope, stream,
-    Stream,
+    Scope,
 } from 'langium';
 import {
     isSdsAssignment,
@@ -403,15 +402,12 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
  */
 class ImportedDeclarations {
     private readonly descriptionsByImport = new MultiMap<SdsImport, AstNodeDescription>();
-    private readonly unordered: AstNodeDescription[]
 
     constructor(imports: SdsImport[]) {
         // Remember the imports and their order
         for (const imp of imports) {
             this.descriptionsByImport.addAll(imp, []);
         }
-
-        this.unordered = [];
     }
 
     /**
@@ -433,7 +429,6 @@ class ImportedDeclarations {
 
         const updatedDescription = this.updateDescription(description, firstMatchingImport);
         this.descriptionsByImport.add(firstMatchingImport, updatedDescription);
-        this.unordered.push(updatedDescription)
     }
 
     private findFirstMatchingImport(node: SdsDeclaration, packageName: string): SdsImport | undefined {
@@ -456,6 +451,7 @@ class ImportedDeclarations {
         if (isWildcardImport(firstMatchingImport) || !firstMatchingImport.alias) {
             return description;
         } else {
+            // Declaration is available under an alias
             return { ...description, name: firstMatchingImport.alias.name };
         }
     }
@@ -463,8 +459,7 @@ class ImportedDeclarations {
     /**
      * Returns descriptions of all imported declarations in the order of the imports.
      */
-    getDescriptions(): Stream<AstNodeDescription> {
-        // return this.descriptionsByImport.values().flat();
-        return stream(this.unordered);
+    getDescriptions(): AstNodeDescription[] {
+        return this.descriptionsByImport.values().toArray()
     }
 }

@@ -13,7 +13,7 @@ import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import {clearDocuments} from "langium/test";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const root = 'scoping/references/across files';
+const root = 'scoping';
 
 export const createScopingTests = (): Promise<ScopingTest[]> => {
     const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
