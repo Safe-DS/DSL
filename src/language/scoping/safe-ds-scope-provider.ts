@@ -12,7 +12,8 @@ import {
     isSdsBlock,
     isSdsCallable,
     isSdsClass,
-    isSdsEnum, isSdsEnumVariant,
+    isSdsEnum,
+    isSdsEnumVariant,
     isSdsLambda,
     isSdsMemberAccess,
     isSdsMemberType,
@@ -33,7 +34,8 @@ import {
     SdsPlaceholder,
     SdsReference,
     SdsStatement,
-    SdsType, SdsTypeArgument,
+    SdsType,
+    SdsTypeArgument,
     SdsYield,
 } from '../generated/ast.js';
 import {
@@ -42,7 +44,8 @@ import {
     enumVariantsOrEmpty,
     parametersOrEmpty,
     resultsOrEmpty,
-    statementsOrEmpty, typeParametersOrEmpty,
+    statementsOrEmpty,
+    typeParametersOrEmpty,
 } from '../helpers/shortcuts.js';
 import { isContainedIn } from '../helpers/ast.js';
 import { isStatic } from '../helpers/checks.js';
@@ -303,10 +306,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         const namedTypeDeclaration = containingNamedType.declaration.ref;
         if (isSdsClass(namedTypeDeclaration)) {
-            const typeParameters = typeParametersOrEmpty(namedTypeDeclaration.typeParameterList)
+            const typeParameters = typeParametersOrEmpty(namedTypeDeclaration.typeParameterList);
             return this.createScopeForNodes(typeParameters);
         } else if (isSdsEnumVariant(namedTypeDeclaration)) {
-            const typeParameters = typeParametersOrEmpty(namedTypeDeclaration.typeParameterList)
+            const typeParameters = typeParametersOrEmpty(namedTypeDeclaration.typeParameterList);
             return this.createScopeForNodes(typeParameters);
         } else {
             return EMPTY_SCOPE;
