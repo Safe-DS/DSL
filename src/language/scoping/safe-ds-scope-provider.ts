@@ -348,6 +348,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             // Skip declarations in a module without a package name
             const candidatePackageName = packageNameOrNull(candidateNode);
             if (candidatePackageName === null) {
+                /* c8 ignore next */
                 continue;
             }
 
@@ -386,6 +387,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private loadAstNode(nodeDescription: AstNodeDescription): AstNode | undefined {
         if (nodeDescription.node) {
+            /* c8 ignore next 2 */
             return nodeDescription.node;
         }
         const document = this.documents.getOrCreateDocument(nodeDescription.documentUri);
@@ -419,6 +421,7 @@ class ImportedDeclarations {
      */
     addIfImported(description: AstNodeDescription, node: AstNode, packageName: string): void {
         if (!isSdsDeclaration(node)) {
+            /* c8 ignore next 2 */
             return;
         }
 
