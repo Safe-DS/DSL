@@ -1,13 +1,14 @@
 package tests.scoping.references.acrossFiles.toPipelines
 
-import safeds.scoping.references.acrossFiles.toPipelines.myPipeline
+import safeds.scoping.references.acrossFiles.toPipelines.myPipeline as myOwnPipeline
 import tests.scoping.references.acrossFiles.toPipelines.other.pipelineInAnotherPackage
 
-pipeline myPipeline {}
+// $TEST$ target own_myOwnPipeline
+pipeline myOwnPipeline {}
 
 segment mySegment() {
-    // $TEST$ references same_myPipeline
-    »myPipeline«;
+    // $TEST$ references own_myOwnPipeline
+    »myOwnPipeline«;
 
     // $TEST$ references same_pipelineInSamePackage
     »pipelineInSamePackage«;

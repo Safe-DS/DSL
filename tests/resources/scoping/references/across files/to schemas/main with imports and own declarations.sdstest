@@ -1,13 +1,14 @@
 package tests.scoping.references.acrossFiles.toSchemas
 
-import safeds.scoping.references.acrossFiles.toSchemas.MySchema
+import safeds.scoping.references.acrossFiles.toSchemas.MySchema as MyOwnSchema
 import tests.scoping.references.acrossFiles.toSchemas.other.SchemaInAnotherPackage
 
-schema MySchema {}
+// $TEST$ target own_MyOwnSchema
+schema »MyOwnSchema« {}
 
 pipeline myPipeline {
-    // $TEST$ references same_MySchema
-    »MySchema«;
+    // $TEST$ references same_MyOwnSchema
+    »MyOwnSchema«;
 
     // $TEST$ references same_SchemaInSamePackage
     »SchemaInSamePackage«;

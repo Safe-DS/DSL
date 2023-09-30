@@ -1,14 +1,14 @@
 package tests.scoping.references.acrossFiles.toGlobalEnums
 
-import safeds.scoping.references.acrossFiles.toGlobalEnums.MyEnum
+import safeds.scoping.references.acrossFiles.toGlobalEnums.MyEnum as MyOwnEnum
 import tests.scoping.references.acrossFiles.toGlobalEnums.other.EnumInAnotherPackage
 
-// $TEST$ target own_MyEnum
-enum »MyEnum«
+// $TEST$ target own_MyOwnEnum
+enum »MyOwnEnum«
 
 pipeline myPipeline {
-    // $TEST$ references own_MyEnum
-    »MyEnum«;
+    // $TEST$ references own_MyOwnEnum
+    »MyOwnEnum«;
 
     // $TEST$ references same_EnumInSamePackage
     »EnumInSamePackage«;

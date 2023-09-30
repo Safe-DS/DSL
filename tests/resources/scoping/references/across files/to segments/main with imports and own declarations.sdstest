@@ -1,15 +1,16 @@
 package tests.scoping.references.acrossFiles.toSegments
 
-import safeds.scoping.references.acrossFiles.toSegments.mySegment
+import safeds.scoping.references.acrossFiles.toSegments.mySegment as myOwnSegment
 import tests.scoping.references.acrossFiles.toSegments.other.publicSegmentInAnotherPackage
 import tests.scoping.references.acrossFiles.toSegments.other.internalSegmentInAnotherPackage
 import tests.scoping.references.acrossFiles.toSegments.other.privateSegmentInAnotherPackage
 
-segment mySegment() {}
+// $TEST$ references same_myOwnSegment
+segment »myOwnSegment«() {}
 
 pipeline myPipeline {
-    // $TEST$ references same_mySegment
-    »mySegment«;
+    // $TEST$ references same_myOwnSegment
+    »myOwnSegment«;
 
 
     // $TEST$ references same_publicSegmentInSamePackage
