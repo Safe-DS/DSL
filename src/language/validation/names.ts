@@ -21,6 +21,7 @@ import {
     typeParametersOrEmpty,
     enumVariantsOrEmpty,
 } from '../helpers/shortcuts.js';
+import { isStatic } from '../helpers/checks.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -181,7 +182,11 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
         accept,
     );
 
-    namesMustBeUnique(classMembersOrEmpty(node), (name) => `A member with name '${name}' exists already.`, accept);
+    const instanceMembers = classMembersOrEmpty(node, (it) => !isStatic(it));
+    namesMustBeUnique(instanceMembers, (name) => `An instance member with name '${name}' exists already.`, accept);
+
+    const staticMembers = classMembersOrEmpty(node, isStatic);
+    namesMustBeUnique(staticMembers, (name) => `A static member with name '${name}' exists already.`, accept);
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {

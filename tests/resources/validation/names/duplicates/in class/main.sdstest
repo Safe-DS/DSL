@@ -23,104 +23,219 @@ class MyClass1<
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »parameterAndMember«: Int,
 ) {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    attr »duplicateAttribute«: Int
-    // $TEST$ error "A member with name 'duplicateAttribute' exists already."
-    attr »duplicateAttribute«: Int
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    attr »uniqueAttribute«: Int
+	// $TEST$ no error r"An instance member with name '\w*' exists already\."
+    attr »duplicateInstanceAttribute«: Int
+    // $TEST$ error "An instance member with name 'duplicateInstanceAttribute' exists already."
+    attr »duplicateInstanceAttribute«: Int
+	// $TEST$ no error r"An instance member with name '\w*' exists already\."
+    attr »uniqueInstanceAttribute«: Int
 
-    // $TEST$ no error r"A member with name '\w*' exists already\."
+	// $TEST$ no error r"A static member with name '\w*' exists already\."
+    static attr »duplicateStaticAttribute«: Int
+    // $TEST$ error "A static member with name 'duplicateStaticAttribute' exists already."
+    static attr »duplicateStaticAttribute«: Int
+	// $TEST$ no error r"A static member with name '\w*' exists already\."
+    static attr »uniqueStaticAttribute«: Int
+
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
     class »DuplicateClass«
-    // $TEST$ error "A member with name 'DuplicateClass' exists already."
+    // $TEST$ error "A static member with name 'DuplicateClass' exists already."
     class »DuplicateClass«
-    // $TEST$ no error r"A member with name '\w*' exists already\."
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
     class »UniqueClass«
 
-    // $TEST$ no error r"A member with name '\w*' exists already\."
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
     enum »DuplicateEnum«
-    // $TEST$ error "A member with name 'DuplicateEnum' exists already."
+    // $TEST$ error "A static member with name 'DuplicateEnum' exists already."
     enum »DuplicateEnum«
-    // $TEST$ no error r"A member with name '\w*' exists already\."
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
     enum »UniqueEnum«
 
-    // $TEST$ no error r"A member with name '\w*' exists already\."
-    fun »duplicateFun«()
-    // $TEST$ error "A member with name 'duplicateFun' exists already."
-    fun »duplicateFun«()
-    // $TEST$ no error r"A member with name '\w*' exists already\."
-    fun »uniqueFun«()
+    // $TEST$ no error r"An instance member with name '\w*' exists already\."
+    fun »duplicateInstanceMethod«()
+    // $TEST$ error "An instance member with name 'duplicateInstanceMethod' exists already."
+    fun »duplicateInstanceMethod«()
+    // $TEST$ no error r"An instance member with name '\w*' exists already\."
+    fun »uniqueInstanceMethod«()
 
-    // $TEST$ no error r"A member with name '\w*' exists already\."
-    attr »duplicateMember«: Int
-    // $TEST$ error "A member with name 'duplicateMember' exists already."
-    class »duplicateMember«
-    // $TEST$ error "A member with name 'duplicateMember' exists already."
-    enum »duplicateMember«
-    // $TEST$ error "A member with name 'duplicateMember' exists already."
-    fun »duplicateMember«()
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
+    static fun »duplicateStaticMethod«()
+    // $TEST$ error "A static member with name 'duplicateStaticMethod' exists already."
+    static fun »duplicateStaticMethod«()
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
+    static fun »uniqueStaticMethod«()
+
+    // $TEST$ no error r"An instance member with name '\w*' exists already\."
+    attr »duplicateInstanceMember«: Int
+    // $TEST$ error "An instance member with name 'duplicateInstanceMember' exists already."
+    fun »duplicateInstanceMember«()
+
+    // $TEST$ no error r"A static member with name '\w*' exists already\."
+    static attr »duplicateStaticMember«: Int
+    // $TEST$ error "A static member with name 'duplicateStaticMember' exists already."
+    class »duplicateStaticMember«
+    // $TEST$ error "A static member with name 'duplicateStaticMember' exists already."
+    enum »duplicateStaticMember«
+    // $TEST$ error "A static member with name 'duplicateStaticMember' exists already."
+    static fun »duplicateStaticMember«()
 }
 
 class MyClass2<
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »TypeParameterAndMember«,
 > {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
     attr »TypeParameterAndMember«: Int
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »instanceAndStaticMember«: Int
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static attr »instanceAndStaticMember«: Int
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static attr »staticAndInstanceMember«: Int
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »staticAndInstanceMember«: Int
 }
 
 class MyClass3<
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »TypeParameterAndMember«,
 > {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    class »TypeParameterAndMember«
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    static attr »TypeParameterAndMember«: Int
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »instanceAndStaticMember«: Int
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    class »instanceAndStaticMember«
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    class »staticAndInstanceMember«
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »staticAndInstanceMember«: Int
 }
 
 class MyClass4<
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »TypeParameterAndMember«,
 > {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    enum »TypeParameterAndMember«
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    class »TypeParameterAndMember«
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »instanceAndStaticMember«: Int
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    enum »instanceAndStaticMember«
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    enum »staticAndInstanceMember«
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »staticAndInstanceMember«: Int
 }
 
 class MyClass5<
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »TypeParameterAndMember«,
 > {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    enum »TypeParameterAndMember«
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »instanceAndStaticMember«: Int
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static fun »instanceAndStaticMember«()
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static fun »staticAndInstanceMember«()
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »staticAndInstanceMember«: Int
+}
+
+class MyClass6<
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »TypeParameterAndMember«,
+> {
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
     fun »TypeParameterAndMember«()
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »instanceAndStaticMember«()
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static attr »instanceAndStaticMember«: Int
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static attr »staticAndInstanceMember«: Int
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »staticAndInstanceMember«()
 }
 
-class MyClass6(
+class MyClass7<
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
-    »parameterAndMember«: Int,
-) {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    attr »parameterAndMember«: Int
-}
+    »TypeParameterAndMember«,
+> {
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »TypeParameterAndMember«()
 
-class MyClass7(
-    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
-    »parameterAndMember«: Int,
-) {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    class »parameterAndMember«
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »instanceAndStaticMember«()
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    class »instanceAndStaticMember«
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    class »staticAndInstanceMember«
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »staticAndInstanceMember«()
 }
 
 class MyClass8(
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »parameterAndMember«: Int,
 ) {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
-    enum »parameterAndMember«
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    attr »parameterAndMember«: Int
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »instanceAndStaticMember«()
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    enum »instanceAndStaticMember«
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    enum »staticAndInstanceMember«
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »staticAndInstanceMember«()
 }
 
 class MyClass9(
     // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
     »parameterAndMember«: Int,
 ) {
-	// $TEST$ no error r"A member with name '\w*' exists already\."
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    class »parameterAndMember«
+
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »instanceAndStaticMember«()
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static fun »instanceAndStaticMember«()
+
+    // $TEST$ no error "r"A.*member with name '\w*' exists already\."
+    static fun »staticAndInstanceMember«()
+    // $TEST$ no error r"A.*member with name '\w*' exists already\."
+    fun »staticAndInstanceMember«()
+}
+
+class MyClass10(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
+    enum »parameterAndMember«
+}
+
+class MyClass11(
+    // $TEST$ no error r"A type parameter or parameter with name '\w*' exists already\."
+    »parameterAndMember«: Int,
+) {
+	// $TEST$ no error r"A.*member with name '\w*' exists already\."
     fun »parameterAndMember«()
 }
