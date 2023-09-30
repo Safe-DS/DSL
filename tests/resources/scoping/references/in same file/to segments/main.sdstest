@@ -1,0 +1,32 @@
+package tests.scoping.references.inSameFile.toSegments
+
+// $TEST$ target privateBefore
+private segment »privateBefore«() {}
+// $TEST$ target internalBefore
+internal segment »internalBefore«() {}
+// $TEST$ target publicBefore
+segment »publicBefore«() {}
+
+pipeline myPipeline {
+    // $TEST$ references privateBefore
+    »privateBefore«();
+
+    // $TEST$ references internalBefore
+    »internalBefore«();
+
+    // $TEST$ references publicBefore
+    »publicBefore«();
+
+    // $TEST$ references privateAfter
+    »privateAfter«();
+
+    // $TEST$ references internalAfter
+    »internalAfter«();
+}
+
+// $TEST$ target privateAfter
+private segment »privateAfter«() {}
+// $TEST$ target internalAfter
+internal segment »internalAfter«() {}
+// $TEST$ target publicAfter
+segment »publicAfter«() {}

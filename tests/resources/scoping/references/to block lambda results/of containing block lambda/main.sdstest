@@ -1,9 +1,0 @@
-package tests.scoping.references.toBlockLambdaResults.ofContainingBlockLambda
-
-pipeline myPipeline {
-    () {
-        yield lambdaResult = 1;
-        // $TEST$ unresolved
-        »lambdaResult«;
-    };
-}

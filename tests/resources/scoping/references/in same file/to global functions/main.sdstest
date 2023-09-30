@@ -1,0 +1,15 @@
+package tests.scoping.references.inSameFile.toGlobalFunctions
+
+// $TEST$ target before
+fun »before«()
+
+pipeline myPipeline {
+    // $TEST$ references before
+    »before«();
+
+    // $TEST$ references after
+    »after«();
+}
+
+// $TEST$ target after
+fun »after«()

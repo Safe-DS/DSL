@@ -1,0 +1,9 @@
+package tests.scoping.references.inSameFile.toBlockLambdaResults.ofContainingBlockLambda
+
+pipeline myPipeline {
+    () {
+        yield lambdaResult = 1;
+        // $TEST$ unresolved
+        »lambdaResult«;
+    };
+}
