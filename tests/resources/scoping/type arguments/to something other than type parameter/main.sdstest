@@ -1,0 +1,8 @@
+package test.scoping.typeArguments.toSomethingOtherThanTypeParameter
+
+// $TEST$ unresolved
+segment mySegment(p: MyClass<»notAtypeParameter« = Int>) {}
+
+class MyClass<T>
+
+fun notAtypeParameter()

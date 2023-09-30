@@ -1,0 +1,66 @@
+package test.scoping.typeArguments.toTypeParameterInContainingNamedTypeDeclaration
+
+// $TEST$ target outerClass
+class MyClass<»T«>(
+    // $TEST$ references outerClass
+    p: MyClass<»T« = Int>,
+
+// $TEST$ references outerClass
+) sub MyClass<»T« = Int> where {
+
+    // $TEST$ references outerClass
+    T sub MyClass<»T« = Int>,
+} {
+    // $TEST$ references outerClass
+    attr a: MyClass<»T« = Int>
+
+    fun f<T>(
+        // $TEST$ references outerClass
+        p: MyClass<»T« = Int>,
+    ) -> (
+        // $TEST$ references outerClass
+        r: MyClass<»T« = Int>,
+    ) where {
+        // $TEST$ references outerClass
+        T sub MyClass<»T« = Int>,
+    }
+
+    enum MyEnum {
+        // $TEST$ target variant
+        MyEnumVariant<»T«>(
+            // $TEST$ references outerClass
+            p1: MyClass<»T« = Int>,
+
+            // $TEST$ references variant
+            p3: MyEnumVariant<»T« = Int>,
+        ) where {
+            // $TEST$ references outerClass
+            T sub MyClass<»T« = Int>,
+
+            // $TEST$ references variant
+            T sub MyEnumVariant<»T« = Int>,
+        }
+    }
+
+    // $TEST$ target innerClass
+    class MyClass<»T«>(
+        // $TEST$ references innerClass
+        p: MyClass<»T« = Int>,
+
+    // $TEST$ references innerClass
+    ) sub MyClass<»T« = Int> {
+        // $TEST$ references innerClass
+        attr a: MyClass<»T« = Int>
+
+        fun f<T>(
+            // $TEST$ references innerClass
+            p: MyClass<»T« = Int>,
+        ) -> (
+            // $TEST$ references innerClass
+            r: MyClass<»T« = Int>,
+        ) where {
+            // $TEST$ references innerClass
+            T sub MyClass<»T« = Int>,
+        }
+    }
+}
