@@ -4,7 +4,8 @@ package test.scoping.namedTypes.toContainingNamedTypeDeclaration
 class »MyClass«<T>(
     // $TEST$ references outerClass
     p: »MyClass«
-) where {
+// $TEST$ references outerClass
+) sub »MyClass« where {
     // $TEST$ references outerClass
     T sub »MyClass«
 } {
@@ -65,7 +66,10 @@ class »MyClass«<T>(
 
         // $TEST$ unresolved
         p2: »MyEnum«,
-    ) {
+
+    // $TEST$ references innerClass
+    // $TEST$ unresolved
+    ) sub »MyClass«, »MyEnum« {
         // $TEST$ references innerClass
         attr a1: »MyClass«
 
