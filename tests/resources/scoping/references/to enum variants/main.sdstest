@@ -1,4 +1,4 @@
-package test.scoping.references.toEnumVariants
+package tests.scoping.references.toEnumVariants
 
 enum MyEnum {
     MyEnumVariant

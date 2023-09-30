@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toEnumVariantInGlobalEnum
+package tests.scoping.namedTypes.toEnumVariantInGlobalEnum
 
 enum BeforeEnum {
     // $TEST$ target before

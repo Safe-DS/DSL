@@ -1,4 +1,4 @@
-package test.scoping.typeArguments.toUnresolved
+package tests.scoping.typeArguments.toUnresolved
 
 segment mySegment(
     // $TEST$ unresolved

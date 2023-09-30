@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toNestedEnum
+package tests.scoping.namedTypes.toNestedEnum
 
 class BeforeClass {
     // $TEST$ target before

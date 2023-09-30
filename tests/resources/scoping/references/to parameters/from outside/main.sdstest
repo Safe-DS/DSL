@@ -1,4 +1,4 @@
-package test.scoping.references.toParameters.fromOutside
+package tests.scoping.references.toParameters.fromOutside
 
 annotation MyAnnotation(myAnnotationParameter: String)
 

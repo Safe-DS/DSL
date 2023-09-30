@@ -1,4 +1,4 @@
-package test.scoping.references.toSegments
+package tests.scoping.references.toSegments
 
 // $TEST$ target privateBefore
 private segment »privateBefore«() {}

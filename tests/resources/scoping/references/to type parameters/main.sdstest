@@ -1,4 +1,4 @@
-package test.scoping.references.toTypeParameters
+package tests.scoping.references.toTypeParameters
 
 class MyClass<T>()
 

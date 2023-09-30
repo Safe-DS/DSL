@@ -1,4 +1,4 @@
-package test.scoping.annotationCalls.onFunction
+package tests.scoping.annotationCalls.onFunction
 
 // $TEST$ target before 
 annotation »Before«

@@ -1,4 +1,4 @@
-package test.scoping.typeArguments.toSomethingOtherThanTypeParameter
+package tests.scoping.typeArguments.toSomethingOtherThanTypeParameter
 
 // $TEST$ unresolved
 segment mySegment(p: MyClass<»notAtypeParameter« = Int>) {}

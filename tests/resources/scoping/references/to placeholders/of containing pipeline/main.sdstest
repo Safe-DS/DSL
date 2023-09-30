@@ -1,4 +1,4 @@
-package test.scoping.references.toPlaceholders.ofContainingPipeline
+package tests.scoping.references.toPlaceholders.ofContainingPipeline
 
 pipeline myPipeline {
     // $TEST$ target before

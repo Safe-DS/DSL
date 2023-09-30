@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toTypeParameter.inEnumVariantInGlobalEnum
+package tests.scoping.namedTypes.toTypeParameter.inEnumVariantInGlobalEnum
 
 fun myFunction1<BeforeEnum>()
 

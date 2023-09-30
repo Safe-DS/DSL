@@ -1,4 +1,4 @@
-package test.scoping.references.toBlockLambdaResults.fromOutside
+package tests.scoping.references.toBlockLambdaResults.fromOutside
 
 pipeline myPipeline {
     () {

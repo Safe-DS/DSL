@@ -1,4 +1,4 @@
-package test.scoping.references.toPlaceholders.ofContainingBlockLambda
+package tests.scoping.references.toPlaceholders.ofContainingBlockLambda
 
 segment mySegment(mySegmentParameter: Int) {
     val mySegmentPlaceholder = 0;

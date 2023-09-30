@@ -1,4 +1,4 @@
-package test.scoping.typeArguments.toTypeParameterInEnumVariantInGlobalEnum
+package tests.scoping.typeArguments.toTypeParameterInEnumVariantInGlobalEnum
 
 enum MyEnum {
     // $TEST$ target t

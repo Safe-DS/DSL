@@ -1,4 +1,4 @@
-package test.scoping.typeArguments.toTypeParameterInEnumVariantInNestedEnum
+package tests.scoping.typeArguments.toTypeParameterInEnumVariantInNestedEnum
 
 class MyClass<T> {
     enum MyEnum {

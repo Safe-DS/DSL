@@ -1,4 +1,4 @@
-package test.scoping.references.toResults.fromOutside
+package tests.scoping.references.toResults.fromOutside
 
 fun myFunction() -> (myFunctionResult: String)
 

@@ -1,4 +1,4 @@
-package test.scoping.annotationCalls.onEnumVariant
+package tests.scoping.annotationCalls.onEnumVariant
 
 // $TEST$ target before 
 annotation »Before«

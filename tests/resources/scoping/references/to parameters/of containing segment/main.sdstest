@@ -1,4 +1,4 @@
-package test.scoping.references.toParameters.ofContainingExpressionLambda
+package tests.scoping.references.toParameters.ofContainingExpressionLambda
 
 segment mySegment(
     // $TEST$ target parameter

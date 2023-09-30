@@ -1,4 +1,4 @@
-package test.scoping.typeParameterConstraints.inNestedClass
+package tests.scoping.typeParameterConstraints.inNestedClass
 
 fun myFunction1<BeforeGlobal>()
 

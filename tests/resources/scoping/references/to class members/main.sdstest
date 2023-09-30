@@ -1,4 +1,4 @@
-package test.scoping.references.toClassMembers
+package tests.scoping.references.toClassMembers
 
 class MyClass {
     static attr staticAttribute: Int

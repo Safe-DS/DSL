@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toSomethingOtherThanNamedTypeDeclaration
+package tests.scoping.namedTypes.toSomethingOtherThanNamedTypeDeclaration
 
 // $TEST$ unresolved
 segment mySegment(p: »notANamedTypeDeclaration«) {}

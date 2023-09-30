@@ -1,4 +1,4 @@
-package test.scoping.typeParameterConstraints.inAnnotation
+package tests.scoping.typeParameterConstraints.inAnnotation
 
 fun myFunction1<Before>()
 

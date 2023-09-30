@@ -1,4 +1,4 @@
-package test.scoping.namedTypes.toTypeParameter.inMethod
+package tests.scoping.namedTypes.toTypeParameter.inMethod
 
 fun myFunction1<BeforeGlobal>()
 

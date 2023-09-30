@@ -1,4 +1,4 @@
-package test.scoping.references.toPlaceholders.fromOutside
+package tests.scoping.references.toPlaceholders.fromOutside
 
 pipeline myPipeline1 {
     val pipelinePlaceholder = 1;

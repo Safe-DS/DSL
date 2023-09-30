@@ -1,4 +1,4 @@
-package test.scoping.memberAccesses.toClassMembers.nestedClasses
+package tests.scoping.memberAccesses.toClassMembers.nestedClasses
 
 class MyClass {
     // $TEST$ target myNestedClass
