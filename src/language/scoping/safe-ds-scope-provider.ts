@@ -224,33 +224,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     //     }
     // }
 
-    //     /**
-    //      * Removes declarations in this [Resource], [SdsAnnotation]s, and internal [SdsStep]s located in other
-    //      * [SdsCompilationUnit]s.
-    //      */
-    //     private fun IEObjectDescription?.isReferencableExternalDeclaration(
-    //         fromResource: Resource,
-    //         fromPackageWithQualifiedName: QualifiedName?,
-    // ): Boolean {
-    //     // Resolution failed in delegate scope
-    //     if (this == null) return false
-    //
-    //     val obj = this.eObjectOrProxy
-    //
-    //     // Local declarations are added later using custom scoping rules
-    //     if (obj.eResource() == fromResource) return false
-    //
-    //     // Annotations cannot be referenced
-    //     if (obj is SdsAnnotation) return false
-    //
-    //     // Internal steps in another package cannot be referenced
-    //     return !(
-    //     obj is SdsStep &&
-    //     obj.visibility() == SdsVisibility.Internal &&
-    //     obj.containingCompilationUnitOrNull()?.qualifiedNameOrNull() != fromPackageWithQualifiedName
-    // )
-    // }
-
     private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
         const module = getContainerOfType(node, isSdsModule);
         if (!module) {
@@ -350,14 +323,13 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private getGlobalScopeForNode(referenceType: string, node: AstNode): Scope {
         // Gather information about the containing module
         const containingModule = getContainerOfType(node, isSdsModule);
-        const ownUri = getDocument(node).uri;
+        const ownUri = getDocument(node).uri.toString();
         const ownPackageName = containingModule?.name;
-        const ownExplicitImports = importsOrEmpty(containingModule);
 
         // Data structures to collect reachable declarations
         const explicitlyImportedDeclarations = new ImportedDeclarations(
             this.astNodeDescriptionProvider,
-            ownExplicitImports,
+            importsOrEmpty(containingModule),
         );
         const declarationsInSamePackage: AstNodeDescription[] = [];
         const builtinDeclarations: AstNodeDescription[] = [];
@@ -366,7 +338,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         const candidates = this.indexManager.allElements(referenceType);
         for (const candidate of candidates) {
             // Skip declarations in the same file
-            const candidateUri = candidate.documentUri;
+            const candidateUri = candidate.documentUri.toString();
             if (candidateUri === ownUri) {
                 continue;
             }
@@ -410,10 +382,12 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         //     Highest: Explicitly imported declarations
         //     Middle:  Declarations in the same package
         //     Lowest:  Builtin declarations
-        return this.createScope(
+        const result =  this.createScope(
             explicitlyImportedDeclarations.getDescriptions(),
             this.createScope(declarationsInSamePackage, this.createScope(builtinDeclarations, EMPTY_SCOPE)),
         );
+
+        return result;
     }
 
     private loadAstNode(nodeDescription: AstNodeDescription): AstNode | undefined {
@@ -485,9 +459,13 @@ class ImportedDeclarations {
 
     private createDescription(node: SdsDeclaration, firstMatchingImport: SdsImport): AstNodeDescription {
         if (isWildcardImport(firstMatchingImport) || !firstMatchingImport.alias) {
-            return this.astNodeDescriptionProvider.createDescription(node, node.name);
+            const description = this.astNodeDescriptionProvider.createDescription(node, node.name);
+            description.node = undefined;
+            return description;
         } else {
-            return this.astNodeDescriptionProvider.createDescription(node, firstMatchingImport.alias.name);
+            const description = this.astNodeDescriptionProvider.createDescription(node, firstMatchingImport.alias.name);
+            description.node = undefined;
+            return description;
         }
     }
 
