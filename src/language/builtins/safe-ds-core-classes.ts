@@ -15,6 +15,7 @@ export class SafeDsCoreClasses {
 
     private cachedAny: SdsClass | undefined;
 
+    /* c8 ignore start */
     get Any(): SdsClass | undefined {
         if (!this.cachedAny) {
             this.cachedAny = this.getClass('Any');
@@ -23,21 +24,13 @@ export class SafeDsCoreClasses {
     }
 
     private cachedBoolean: SdsClass | undefined;
+    /* c8 ignore stop */
 
     get Boolean(): SdsClass | undefined {
         if (!this.cachedBoolean) {
             this.cachedBoolean = this.getClass('Boolean');
         }
         return this.cachedBoolean;
-    }
-
-    private cachedNumber: SdsClass | undefined;
-
-    get Number(): SdsClass | undefined {
-        if (!this.cachedNumber) {
-            this.cachedNumber = this.getClass('Number');
-        }
-        return this.cachedNumber;
     }
 
     private cachedFloat: SdsClass | undefined;
@@ -78,6 +71,7 @@ export class SafeDsCoreClasses {
 
     private getClass(name: string): SdsClass | undefined {
         if (!this.langiumDocuments.hasDocument(CORE_CLASSES_URI)) {
+            /* c8 ignore next 2 */
             return undefined;
         }
 
