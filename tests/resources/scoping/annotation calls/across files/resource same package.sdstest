@@ -1,0 +1,7 @@
+package tests.scoping.annotationCalls.acrossFiles
+
+// $TEST$ target same_MyAnnotation
+annotation »MyAnnotation«
+
+// $TEST$ target same_AnnotationInSamePackage
+annotation »AnnotationInSamePackage«

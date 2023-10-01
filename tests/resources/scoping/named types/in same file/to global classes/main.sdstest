@@ -1,0 +1,18 @@
+package tests.scoping.namedTypes.inSameFile.toGlobalClasses
+
+// $TEST$ target before
+class »BeforeClass«
+
+segment mySegment(
+    // $TEST$ references before
+    p1: »BeforeClass«,
+
+    // $TEST$ references after
+    p2: »AfterClass«,
+
+    // $TEST$ unresolved
+    p3: »Unresolved«,
+) {}
+
+// $TEST$ target after
+class »AfterClass«

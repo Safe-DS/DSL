@@ -132,12 +132,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getScopeForMemberAccessMember(node: SdsMemberAccess): Scope {
-        let currentScope = EMPTY_SCOPE;
-
         // Static access
         const declaration = this.getUniqueReferencedDeclarationForExpression(node.receiver);
         if (isSdsClass(declaration)) {
-            currentScope = this.createScopeForNodes(classMembersOrEmpty(declaration, isStatic));
+            return this.createScopeForNodes(classMembersOrEmpty(declaration, isStatic));
 
             //     val superTypeMembers = receiverDeclaration.superClassMembers()
             //         .filter { it.isStatic() }
@@ -145,7 +143,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             //
             //     return Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers))
         } else if (isSdsEnum(declaration)) {
-            currentScope = this.createScopeForNodes(enumVariantsOrEmpty(declaration));
+            return this.createScopeForNodes(enumVariantsOrEmpty(declaration));
         }
 
         //     // Call results
@@ -176,7 +174,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         //     else -> resultScope
         //     }
 
-        return currentScope;
+        return EMPTY_SCOPE;
     }
 
     /**

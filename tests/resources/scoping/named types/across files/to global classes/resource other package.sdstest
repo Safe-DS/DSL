@@ -1,0 +1,7 @@
+package tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other
+
+// $TEST$ target other_MyClass
+class »MyClass«
+
+// $TEST$ target other_ClassInAnotherPackage
+class »ClassInAnotherPackage«

@@ -1,0 +1,7 @@
+package tests.scoping.namedTypes.acrossFiles.toGlobalEnums
+
+// $TEST$ target same_MyEnum
+enum »MyEnum«
+
+// $TEST$ target same_EnumInSamePackage
+enum »EnumInSamePackage«

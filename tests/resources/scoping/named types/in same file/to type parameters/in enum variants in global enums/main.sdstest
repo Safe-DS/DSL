@@ -1,0 +1,50 @@
+package tests.scoping.namedTypes.inSameFile.toTypeParameter.inEnumVariantsInGlobalEnums
+
+fun myFunction1<BeforeEnum>()
+
+enum MyEnum {
+    MyEnumVariant1<BeforeEnumVariant>
+
+    // $TEST$ target own
+    MyEnumVariant2<»Own«>(
+        // $TEST$ references own
+        a: »Own«,
+
+        // $TEST$ unresolved
+        b: »BeforeEnumVariant«,
+
+        // $TEST$ unresolved
+        c: »AfterEnumVariant«,
+
+        // $TEST$ unresolved
+        d: »BeforeEnum«,
+
+        // $TEST$ unresolved
+        e: »AfterEnum«,
+
+        // $TEST$ unresolved
+        f: »Unresolved«
+    ) where {
+        // $TEST$ references own
+        Own sub »Own«,
+
+        // $TEST$ unresolved
+        Own sub »BeforeEnumVariant«,
+
+        // $TEST$ unresolved
+        Own sub »AfterEnumVariant«,
+
+        // $TEST$ unresolved
+        Own sub »BeforeEnum«,
+
+        // $TEST$ unresolved
+        Own sub »AfterEnum«,
+
+        // $TEST$ unresolved
+        Own sub »Unresolved«,
+    }
+
+    MyEnumVariant3<AfterEnumVariant>
+}
+
+fun myFunction2<AfterEnum>()

@@ -15,6 +15,16 @@ fun myFunction(
     myParameter: Int
 )
 
+pipeline myPipeline {
+    val alias = Before;
+
+    // $TEST$ unresolved
+    (@»alias« myParameter) {};
+
+    // $TEST$ unresolved
+    (@»alias« myParameter) -> 1;
+}
+
 // $TEST$ target after
 annotation »After«
 

@@ -1,0 +1,7 @@
+package safeds.scoping.annotationCalls.acrossFiles
+
+// $TEST$ target safeds_MyAnnotation
+annotation »MyAnnotation«
+
+// $TEST$ target safeds_AnnotationInSafeDsPackage
+annotation »AnnotationInSafeDsPackage«

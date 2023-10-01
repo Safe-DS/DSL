@@ -1,0 +1,32 @@
+package tests.scoping.namedTypes.inSameFile.toNestedClasses
+
+class BeforeOuterClass {
+    // $TEST$ target before
+    class »BeforeInnerClass«
+}
+
+class BeforeInnerClass
+
+segment mySegment(
+    // $TEST$ references before
+    p1: BeforeOuterClass.»BeforeInnerClass«,
+
+    // $TEST$ references after
+    p2: AfterOuterClass.»AfterInnerClass«,
+
+    // $TEST$ unresolved
+    p3: BeforeOuterClass.»AfterInnerClass«,
+
+    // $TEST$ unresolved
+    p4: AfterOuterClass.»BeforeInnerClass«,
+
+    // $TEST$ unresolved
+    p5: BeforeOuterClass.»Unresolved«,
+) {}
+
+class AfterInnerClass
+
+class AfterOuterClass {
+    // $TEST$ target after
+    class »AfterInnerClass«
+}
