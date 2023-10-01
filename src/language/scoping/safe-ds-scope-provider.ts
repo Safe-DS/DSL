@@ -146,8 +146,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return this.createScopeForNodes(enumVariantsOrEmpty(declaration));
         }
 
-        const type = this.typeComputer.computeType(node.receiver);
-
         //     // Call results
         //     var resultScope = IScope.NULLSCOPE
         //     if (receiver is SdsCall) {
