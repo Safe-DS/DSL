@@ -40,6 +40,7 @@ const createScopingTest = async (
         const code = fs.readFileSync(absolutePath).toString();
 
         // File must not contain any syntax errors
+        await clearDocuments(services);
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
             return invalidTest(
@@ -47,7 +48,6 @@ const createScopingTest = async (
                 new SyntaxErrorsInCodeError(syntaxErrors),
             );
         }
-        await clearDocuments(services);
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
 

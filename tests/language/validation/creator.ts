@@ -10,6 +10,7 @@ import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnost
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { DocumentUri, Range } from 'vscode-languageserver-types';
+import {clearDocuments} from "langium/test";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'validation';
@@ -38,6 +39,7 @@ const createValidationTest = async (
         const code = fs.readFileSync(absolutePath).toString();
 
         // File must not contain any syntax errors
+        await clearDocuments(services);
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
             return invalidTest(
