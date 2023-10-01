@@ -173,8 +173,6 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatSdsTypeArgumentList(node);
         } else if (ast.isSdsTypeArgument(node)) {
             this.formatSdsTypeArgument(node);
-        } else if (ast.isSdsTypeProjection(node)) {
-            this.formatSdsTypeProjection(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -856,12 +854,6 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword('=').surround(oneSpace());
-    }
-
-    private formatSdsTypeProjection(node: ast.SdsTypeProjection) {
-        const formatter = this.getNodeFormatter(node);
-
-        formatter.property('variance').append(oneSpace());
     }
 
     /**

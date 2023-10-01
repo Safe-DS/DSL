@@ -1,9 +1,9 @@
 segment mySegment(
-    x: Int < * ,  in  Number ,  out  Number ,  T  =  Number>
+    x: Int < Number ,  T  =  Number>
 ) {}
 
 // -----------------------------------------------------------------------------
 
 segment mySegment(
-    x: Int<*, in Number, out Number, T = Number>
+    x: Int<Number, T = Number>
 ) {}

@@ -957,16 +957,12 @@ SdsTypeArgument returns SdsTypeArgument:
 
 interface SdsTypeArgumentValue extends SdsObject {}
 
-interface SdsStarProjection extends SdsTypeArgumentValue {}
-
 interface SdsTypeProjection extends SdsTypeArgumentValue {
-	variance?: string
 	^type: SdsType
 }
 
 SdsTypeArgumentValue returns SdsTypeArgumentValue:
-    {SdsStarProjection} '*'
-  | {SdsTypeProjection} variance=SdsTypeParameterVariance? ^type=SdsType
+    {SdsTypeProjection} ^type=SdsType
 ;
 
 
