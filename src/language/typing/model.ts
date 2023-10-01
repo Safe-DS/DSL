@@ -8,7 +8,7 @@
 // import com.larsreimann.safeds.safeDS.SdsEnumVariant
 // import org.eclipse.xtext.naming.QualifiedName
 
-import {SdsClass, SdsDeclaration, SdsEnum, SdsEnumVariant} from '../generated/ast.js';
+import { SdsClass, SdsDeclaration, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
 
 /* c8 ignore start */
 export abstract class Type {

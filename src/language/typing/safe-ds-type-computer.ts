@@ -1,7 +1,7 @@
-import {AstNode, AstNodeLocator, getDocument, WorkspaceCache} from 'langium';
-import {SafeDsServices} from '../safe-ds-module.js';
-import {SafeDsCoreClasses} from '../builtins/safe-ds-core-classes.js';
-import {ClassType, Type, UnresolvedType} from './model.js';
+import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
+import { ClassType, Type, UnresolvedType } from './model.js';
 import {
     isSdsAssignee,
     isSdsBoolean,
