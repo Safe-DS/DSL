@@ -1,0 +1,10 @@
+package tests.scoping.annotationCalls.acrossFiles
+
+import safeds.scoping.annotationCalls.acrossFiles.MyAnnotation
+import tests.scoping.annotationCalls.acrossFiles.other.MyAnnotation
+import tests.scoping.annotationCalls.acrossFiles.MyAnnotation
+
+pipeline myPipeline {
+    // $TEST$ references safeds_MyAnnotation
+    »MyAnnotation«;
+}
