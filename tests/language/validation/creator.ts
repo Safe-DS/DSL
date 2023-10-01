@@ -10,7 +10,7 @@ import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnost
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { DocumentUri, Range } from 'vscode-languageserver-types';
-import {clearDocuments} from "langium/test";
+import { clearDocuments } from 'langium/test';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'validation';
