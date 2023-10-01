@@ -67,10 +67,7 @@ When we use this [class][classes] as a named type, we need to specify the value 
 
 In the case of positional type arguments, they are mapped to [type parameters][type-parameters] by position, i.e. the first type argument is assigned to the first [type parameter][type-parameters], the second type argument is assigned to the second [type parameter][type-parameters] and so forth.
 
-If a positional type argument is used, we just write down its value. The value is either
-
-- a [type projection](#type-projection), or
-- a [star projection](#star-projection).
+If a positional type argument is used, we just write down its value, which is a [type projection](#type-projection).
 
 For example, if we expect a list of integers, we could use the following type:
 
@@ -98,7 +95,7 @@ These are the syntactic elements:
 - A named type argument (here `T = Int`). This in turn consists of
   - The name of the [type parameter][type-parameters] (here `T`)
   - An equals sign.
-  - The value of the type argument, which is still either a [type projection](#type-projection), or a [star projection](#star-projection).
+  - The value of the type argument, which is still a [type projection](#type-projection).
 - A closing angle bracket.
 
 Within a list of type arguments both positional and named type arguments can be used. However, after the first named type arguments all type arguments must be named.
@@ -135,43 +132,6 @@ SomeSpecialList<Int>
 ```
 
 The value of the type argument is just another named type (here `Int`).
-
-###### Use-Site Variance
-
-It is also possible to set the [variance][variance] of a [type parameter][type-parameters] at the use-site, i.e. where we use the containing declaration as a named type. This is only possible, however, if we did not [specify the variance at the declaration-site][declaration-site-variance].
-
-Covariance is denoted by the keyword `out`. If the variance of a [type parameter][type-parameters] is set to `out`, we can only access methods of the class that only use the [type parameter][type-parameters] in the out-position, i.e. as [results][results]. Methods that use the [type parameter][type-parameters] in the in-position, i.e. as [parameters][parameters] are hidden. Here is an example for the syntax:
-
-```txt
-SomeSpecialList<out Int>
-```
-
-The key element here is the keyword `out` that is added to the type argument. This essentially creates a list of integers that can be read from but that cannot be written to.
-
-Contravariance is denoted by the keyword `in`. If the variance of a [type parameter][type-parameters] is set to `in`, we can only access methods of the class that only use the [type parameter][type-parameters] in the in-position, i.e. as [parameters][parameters]. Methods that use the [type parameter][type-parameters] in the out-position, i.e. as [results][results] are hidden. Here is an example of the syntax:
-
-```txt
-SomeSpecialList<in Int>
-```
-
-The key element here is the keyword `in` that is added to the type argument. Here we essentially create a list of integers that can be written to but not read from.
-
-##### Star Projection
-
-If we do not want to specify a value for a [type parameter][type-parameters] and just accept everything, we can use a _star projection_. Here is the syntax:
-
-```txt
-SomeSpecialList<*>
-```
-
-It consists only of the `*`, which we use as the value of the type argument.
-
-The star projection is usually equivalent to the type projections
-
-- `out Any?` (`Any?` is the supertype of everything), or
-- `in Nothing` (`Nothing` is the subtype of everything).
-
-If the [type parameter][type-parameters] has [bounds][type-parameter-bounds], however, the star projection denotes that any type within the [bounds][type-parameter-bounds] is acceptable.
 
 ### Member Types
 

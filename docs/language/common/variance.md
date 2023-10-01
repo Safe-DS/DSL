@@ -2,7 +2,7 @@
 
 **Note:** This is an advanced section. Feel free to skip it initially.
 
-Variance deals with the question which generic types are compatible with each other. We explain this concept using the following [class][classes]:
+Variance deals with the question, which generic types are compatible with each other. We explain this concept using the following [class][classes]:
 
 ```txt
 class Stack<T>(vararg initialElements: T) {
@@ -64,20 +64,17 @@ class Stack<in T> {
 
 ## Specifying Variance
 
-The variance of a [type parameter][type-parameters] can either be declared at its [declaration site][declaration-site-variance] or its [use site][use-site-variance]. If it is specified already at the [declaration site][declaration-site-variance], however, [use-site variance][use-site-variance] is no longer available.
+The variance of a [type parameter][type-parameters] can only be declared at its [declaration site][declaration-site-variance], using the syntax shown in the following table:
 
-The following table sums up the syntax of [declaration-site variance][declaration-site-variance], where the [class][classes] declaration is changed, and [use-site variance][use-site-variance], where the [type arguments][type-arguments] passed by the [named type][named-types] Refer to the linked documents for more details.
-
-| Desired Variance | Declaration Site     | Use Site       |
-|------------------|----------------------|----------------|
-| Invariant        | `class Stack<T>`     | `Stack<T>`     |
-| Covariant        | `class Stack<out T>` | `Stack<out T>` |
-| Contravariant    | `class Stack<in T>`  | `Stack<in T>`  |
+| Desired Variance | Declaration Site     |
+|------------------|----------------------|
+| Invariant        | `class Stack<T>`     |
+| Covariant        | `class Stack<out T>` |
+| Contravariant    | `class Stack<in T>`  |
 
 [types]: types.md
 [named-types]: types.md#named-types
 [type-arguments]: types.md#type-arguments
-[use-site-variance]: types.md#use-site-variance
 [parameters]: parameters.md
 [results]: results.md
 [classes]: ../stub-language/classes.md
