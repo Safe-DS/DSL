@@ -3,6 +3,7 @@ import {
     isSdsBlockLambdaResult,
     isSdsDeclaration,
     isSdsModule,
+    isSdsModuleMember,
     isSdsPlaceholder,
     SdsAnnotatedObject,
     SdsAnnotationCall,
@@ -19,6 +20,7 @@ import {
     SdsLiteral,
     SdsLiteralType,
     SdsModule,
+    SdsModuleMember,
     SdsParameter,
     SdsParameterList,
     SdsPlaceholder,
@@ -75,6 +77,10 @@ export const enumVariantsOrEmpty = function (node: SdsEnum | undefined): SdsEnum
 
 export const importsOrEmpty = function (node: SdsModule | undefined): SdsImport[] {
     return node?.imports ?? [];
+};
+
+export const moduleMembersOrEmpty = function (node: SdsModule | undefined): SdsModuleMember[] {
+    return node?.members?.filter(isSdsModuleMember) ?? [];
 };
 
 export const packageNameOrNull = function (node: AstNode | undefined): string | null {

@@ -1,10 +1,15 @@
 import { AstNode } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
+import {SafeDsCoreClasses} from "../builtins/safe-ds-core-classes.js";
 
 export class SafeDsTypeComputer {
     // TODO cache types in a workspace cache
 
-    constructor(readonly services: SafeDsServices) {}
+    readonly coreClasses: SafeDsCoreClasses;
+
+    constructor(readonly services: SafeDsServices) {
+        this.coreClasses = services.builtins.CoreClasses;
+    }
 
     computeType(node: AstNode): Type {
         return computeType(node);

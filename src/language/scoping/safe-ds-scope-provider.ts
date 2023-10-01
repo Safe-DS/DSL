@@ -1,7 +1,6 @@
 import {
     AstNode,
     AstNodeDescription,
-    AstNodeDescriptionProvider,
     AstNodeLocator,
     DefaultScopeProvider,
     EMPTY_SCOPE,
@@ -59,18 +58,19 @@ import {
 import { isContainedIn } from '../helpers/ast.js';
 import { isStatic, isWildcardImport } from '../helpers/checks.js';
 import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
-    readonly documents: LangiumDocuments;
-    readonly astNodeDescriptionProvider: AstNodeDescriptionProvider;
-    readonly astNodeLocator: AstNodeLocator;
+    private readonly astNodeLocator: AstNodeLocator;
+    private readonly langiumDocuments: LangiumDocuments;
+    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         super(services);
 
-        this.documents = services.shared.workspace.LangiumDocuments;
-        this.astNodeDescriptionProvider = services.workspace.AstNodeDescriptionProvider;
         this.astNodeLocator = services.workspace.AstNodeLocator;
+        this.langiumDocuments = services.shared.workspace.LangiumDocuments;
+        this.typeComputer = services.types.TypeComputer;
     }
 
     override getScope(context: ReferenceInfo): Scope {
@@ -145,6 +145,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         } else if (isSdsEnum(declaration)) {
             return this.createScopeForNodes(enumVariantsOrEmpty(declaration));
         }
+
+        const type = this.typeComputer.computeType(node.receiver);
 
         //     // Call results
         //     var resultScope = IScope.NULLSCOPE
@@ -388,7 +390,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             /* c8 ignore next 2 */
             return nodeDescription.node;
         }
-        const document = this.documents.getOrCreateDocument(nodeDescription.documentUri);
+        const document = this.langiumDocuments.getOrCreateDocument(nodeDescription.documentUri);
         return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
     }
 

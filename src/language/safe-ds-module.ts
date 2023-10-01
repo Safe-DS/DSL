@@ -9,21 +9,25 @@ import {
     Module,
     PartialLangiumServices,
 } from 'langium';
-import {SafeDsGeneratedModule, SafeDsGeneratedSharedModule} from './generated/module.js';
-import {registerValidationChecks} from './validation/safe-ds-validator.js';
-import {SafeDsFormatter} from './formatting/safe-ds-formatter.js';
-import {SafeDsWorkspaceManager} from './builtins/safe-ds-workspace-manager.js';
-import {SafeDsScopeComputation} from './scoping/safe-ds-scope-computation.js';
-import {SafeDsScopeProvider} from './scoping/safe-ds-scope-provider.js';
-import {SafeDsValueConverter} from './grammar/safe-ds-value-converter.js';
-import {SafeDsTypeComputer} from './typing/safe-ds-type-computer.js';
+import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
+import { registerValidationChecks } from './validation/safe-ds-validator.js';
+import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
+import { SafeDsWorkspaceManager } from './builtins/safe-ds-workspace-manager.js';
+import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
+import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
+import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
+import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
+import { SafeDsCoreClasses } from './builtins/safe-ds-core-classes.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type SafeDsAddedServices = {
+    builtins: {
+        CoreClasses: SafeDsCoreClasses;
+    };
     types: {
-        SafeDsTypeComputer: SafeDsTypeComputer;
+        TypeComputer: SafeDsTypeComputer;
     };
 };
 
@@ -39,6 +43,9 @@ export type SafeDsServices = LangiumServices & SafeDsAddedServices;
  * selected services, while the custom services must be fully specified.
  */
 export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeDsAddedServices> = {
+    builtins: {
+        CoreClasses: (services) => new SafeDsCoreClasses(services),
+    },
     lsp: {
         Formatter: () => new SafeDsFormatter(),
     },
@@ -50,7 +57,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
     types: {
-        SafeDsTypeComputer: (services) => new SafeDsTypeComputer(services),
+        TypeComputer: (services) => new SafeDsTypeComputer(services),
     },
 };
 
