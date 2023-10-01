@@ -50,7 +50,6 @@ import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expr
  */
 export const registerValidationChecks = function (services: SafeDsServices) {
     const registry = services.validation.ValidationRegistry;
-    const validator = services.validation.SafeDsValidator;
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
@@ -86,10 +85,5 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],
         SdsYield: [yieldMustNotBeUsedInPipeline],
     };
-    registry.register(checks, validator);
+    registry.register(checks);
 };
-
-/**
- * Implementation of custom validations.
- */
-export class SafeDsValidator {}

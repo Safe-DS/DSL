@@ -8,7 +8,6 @@ import {
     getContainerOfType,
     getDocument,
     LangiumDocuments,
-    LangiumServices,
     MultiMap,
     ReferenceInfo,
     Scope,
@@ -59,13 +58,14 @@ import {
 } from '../helpers/shortcuts.js';
 import { isContainedIn } from '../helpers/ast.js';
 import { isStatic, isWildcardImport } from '../helpers/checks.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     readonly documents: LangiumDocuments;
     readonly astNodeDescriptionProvider: AstNodeDescriptionProvider;
     readonly astNodeLocator: AstNodeLocator;
 
-    constructor(services: LangiumServices) {
+    constructor(services: SafeDsServices) {
         super(services);
 
         this.documents = services.shared.workspace.LangiumDocuments;

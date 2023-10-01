@@ -6,7 +6,7 @@ import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { getNodeByLocation, locationToString } from '../../helpers/location.js';
 import { createTypingTests } from './creator.js';
-import { computeType } from '../../../src/language/typing/typeComputer.js';
+import { computeType } from '../../../src/language/typing/safe-ds-type-computer.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 

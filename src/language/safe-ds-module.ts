@@ -9,20 +9,21 @@ import {
     Module,
     PartialLangiumServices,
 } from 'langium';
-import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
-import { registerValidationChecks, SafeDsValidator } from './validation/safe-ds-validator.js';
-import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
-import { SafeDsWorkspaceManager } from './builtins/safe-ds-workspace-manager.js';
-import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
-import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
-import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
+import {SafeDsGeneratedModule, SafeDsGeneratedSharedModule} from './generated/module.js';
+import {registerValidationChecks} from './validation/safe-ds-validator.js';
+import {SafeDsFormatter} from './formatting/safe-ds-formatter.js';
+import {SafeDsWorkspaceManager} from './builtins/safe-ds-workspace-manager.js';
+import {SafeDsScopeComputation} from './scoping/safe-ds-scope-computation.js';
+import {SafeDsScopeProvider} from './scoping/safe-ds-scope-provider.js';
+import {SafeDsValueConverter} from './grammar/safe-ds-value-converter.js';
+import {SafeDsTypeComputer} from './typing/safe-ds-type-computer.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type SafeDsAddedServices = {
-    validation: {
-        SafeDsValidator: SafeDsValidator;
+    types: {
+        SafeDsTypeComputer: SafeDsTypeComputer;
     };
 };
 
@@ -48,8 +49,8 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeComputation: (services) => new SafeDsScopeComputation(services),
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
-    validation: {
-        SafeDsValidator: () => new SafeDsValidator(),
+    types: {
+        SafeDsTypeComputer: (services) => new SafeDsTypeComputer(services),
     },
 };
 
