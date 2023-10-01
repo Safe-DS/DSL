@@ -76,7 +76,7 @@
         "esbuild-plugin-copy": "^2.1.1",
         "langium-cli": "^2.0.1",
         "typescript": "^5.2.2",
-        "vitest": "^0.34.3"
+        "vitest": "^0.34.6"
     },
     "prettier": "@lars-reimann/prettier-config"
 }
