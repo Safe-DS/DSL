@@ -67,7 +67,7 @@
     "devDependencies": {
         "@lars-reimann/eslint-config": "^5.1.1",
         "@lars-reimann/prettier-config": "^5.0.0",
-        "@types/node": "^18.17.3",
+        "@types/node": "^20.8.0",
         "@types/vscode": "^1.81.0",
         "@vitest/coverage-v8": "^0.34.6",
         "@vitest/ui": "^0.34.3",
