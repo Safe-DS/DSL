@@ -1,0 +1,6 @@
+package tests.scoping.namedTypes.inSameFile.toSomethingOtherThanNamedTypeDeclarations
+
+// $TEST$ unresolved
+segment mySegment(p: »notANamedTypeDeclaration«) {}
+
+fun notANamedTypeDeclaration()

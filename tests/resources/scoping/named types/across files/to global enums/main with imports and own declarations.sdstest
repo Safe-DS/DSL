@@ -1,0 +1,24 @@
+package tests.scoping.namedTypes.acrossFiles.toGlobalEnums
+
+import safeds.scoping.namedTypes.acrossFiles.toGlobalEnums.MyEnum as MyOwnEnum
+import tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other.EnumInAnotherPackage
+
+// $TEST$ target own_MyOwnEnum
+enum »MyOwnEnum«
+
+segment mySegment(
+    // $TEST$ references own_MyOwnEnum
+    p1: »MyOwnEnum«,
+
+    // $TEST$ references same_EnumInSamePackage
+    p2: »EnumInSamePackage«,
+
+    // $TEST$ references safeds_EnumInSafeDsPackage
+    p3: »EnumInSafeDsPackage«,
+
+    // $TEST$ references other_EnumInAnotherPackage
+    p4: »EnumInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p5: »EnumWithoutPackage«,
+) {}

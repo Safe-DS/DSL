@@ -1,0 +1,5 @@
+// $TEST$ target without_MyEnum
+enum »MyEnum«
+
+// $TEST$ target without_EnumWithoutPackage
+enum »EnumWithoutPackage«

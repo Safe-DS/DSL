@@ -1,0 +1,32 @@
+package tests.scoping.namedTypes.acrossFiles.toGlobalClasses
+
+import tests.scoping.namedTypes.acrossFiles.toGlobalClasses.MyClass as MyClassInSamePackage
+import safeds.scoping.namedTypes.acrossFiles.toGlobalClasses.MyClass as MyClassInSafeDsPackage
+import tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other.MyClass as MyClassInAnotherPackage
+
+segment mySegment(
+    // $TEST$ references same_MyClass
+    p1: »MyClass«,
+
+
+    // $TEST$ references same_ClassInSamePackage
+    p2: »ClassInSamePackage«,
+
+    // $TEST$ references safeds_ClassInSafeDsPackage
+    p3: »ClassInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p4: »ClassInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p5: »ClassWithoutPackage«,
+
+    // $TEST$ references same_MyClass
+    p6: »MyClassInSamePackage«,
+
+    // $TEST$ references safeds_MyClass
+    p7: »MyClassInSafeDsPackage«,
+
+    // $TEST$ references other_MyClass
+    p8: »MyClassInAnotherPackage«,
+) {}

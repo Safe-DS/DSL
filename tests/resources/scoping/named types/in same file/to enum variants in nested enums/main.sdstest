@@ -1,0 +1,54 @@
+package tests.scoping.namedTypes.inSameFile.toEnumVariantsInNestedEnums
+
+class BeforeClass {
+    enum BeforeEnum {
+        // $TEST$ target before
+        »BeforeVariant«
+
+        Variant1
+
+        // $TEST$ unresolved
+        Variant2(a: »Variant1«)
+    }
+}
+
+enum BeforeEnum {
+    BeforeVariant
+}
+
+segment mySegment(
+    // $TEST$ references before
+    p1: BeforeClass.BeforeEnum.»BeforeVariant«,
+
+    // $TEST$ references after
+    p2: AfterClass.AfterEnum.»AfterVariant«,
+
+    // $TEST$ unresolved
+    p3: AfterClass.AfterEnum.»BeforeVariant«,
+
+    // $TEST$ unresolved
+    p4: BeforeClass.BeforeEnum.»AfterVariant«,
+
+    // $TEST$ unresolved
+    p5: BeforeClass.BeforeEnum.»Unresolved«,
+
+    // $TEST$ unresolved
+    p6: AfterClass.AfterEnum.»Unresolved«,
+
+    // $TEST$ unresolved
+    p7: BeforeClass.Unresolved.»BeforeVariant«,
+
+    // $TEST$ unresolved
+    p8: AfterClass.Unresolved.»AfterVariant«,
+) {}
+
+enum AfterEnum {
+    AfterVariant
+}
+
+class AfterClass {
+    enum AfterEnum {
+        // $TEST$ target after
+        »AfterVariant«
+    }
+}

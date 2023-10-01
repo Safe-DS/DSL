@@ -1,0 +1,18 @@
+package tests.scoping.namedTypes.inSameFile.toGlobalEnums
+
+// $TEST$ target before
+enum »BeforeEnum«
+
+segment mySegment(
+    // $TEST$ references before
+    p1: »BeforeEnum«,
+
+    // $TEST$ references after
+    p2: »AfterEnum«,
+
+    // $TEST$ unresolved
+    p3: »Unresolved«,
+) {}
+
+// $TEST$ target after
+enum »AfterEnum«
