@@ -6,9 +6,9 @@ import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { getNodeByLocation, locationToString } from '../../helpers/location.js';
 import { createTypingTests } from './creator.js';
-import { computeType } from '../../../src/language/typing/safe-ds-type-computer.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const typeComputer = services.types.TypeComputer;
 
 describe('typing', async () => {
     beforeEach(async () => {
@@ -37,11 +37,11 @@ describe('typing', async () => {
             if (equivalenceClassAssertion.locations.length > 1) {
                 const firstLocation = equivalenceClassAssertion.locations[0];
                 const firstNode = getNodeByLocation(services, firstLocation);
-                const firstType = computeType(firstNode);
+                const firstType = typeComputer.computeType(firstNode);
 
                 for (const currentLocation of equivalenceClassAssertion.locations.slice(1)) {
                     const currentNode = getNodeByLocation(services, currentLocation);
-                    const currentType = computeType(currentNode);
+                    const currentType = typeComputer.computeType(currentNode);
 
                     if (!currentType.equals(firstType)) {
                         throw new AssertionError({
@@ -59,7 +59,7 @@ describe('typing', async () => {
         // Ensure the serialized type of the node matches the expected type
         for (const serializationAssertion of test.serializationAssertions) {
             const node = getNodeByLocation(services, serializationAssertion.location);
-            const actualType = computeType(node);
+            const actualType = typeComputer.computeType(node);
 
             if (actualType.toString() !== serializationAssertion.expectedType) {
                 throw new AssertionError({
