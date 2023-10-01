@@ -1,4 +1,4 @@
-import { afterEach, describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
@@ -12,6 +12,11 @@ import { Location } from 'vscode-languageserver';
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
 describe('scoping', async () => {
+    beforeEach(async () => {
+        // Load the builtin library
+        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
+    });
+
     afterEach(async () => {
         await clearDocuments(services);
     });

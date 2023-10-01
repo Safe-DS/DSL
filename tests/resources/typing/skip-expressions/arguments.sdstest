@@ -1,0 +1,8 @@
+package tests.typingexpressions.parenthesizedExpressions
+
+fun f(x: Any?)
+
+pipeline myPipeline {
+    f(1);
+    f(x = "");
+}

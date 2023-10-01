@@ -1,0 +1,21 @@
+package tests.typingoperations.arithmetic
+
+pipeline myPipeline {
+    val additionIntInt = (1 + 1);
+    val subtractionIntInt = (1 - 1);
+    val multiplicationIntInt = (1 * 1);
+    val divisionIntInt = (1 / 1);
+    val negationInt = (-1);
+
+    val additionIntFloat = (1 + 1.0);
+    val subtractionIntFloat = (1 - 1.0);
+    val multiplicationIntFloat = (1 * 1.0);
+    val divisionIntFloat = (1 / 1.0);
+    val negationFloat = (-1.0);
+
+    val additionInvalid = (true + true);
+    val subtractionInvalid  = (true - true);
+    val multiplicationInvalid  = (true * true);
+    val divisionInvalid  = (true / true);
+    val negationInvalid  = (-true);
+}

@@ -1,0 +1,3 @@
+package tests.typingdeclarations.functions
+
+fun f(a: Int, b: String) -> (r: String, s: Int)

@@ -1,0 +1,19 @@
+package tests.typingexpressions.memberAccesses
+
+class C {
+    static attr a: Int
+    static attr b: String
+    static attr c: Any?
+}
+
+pipeline myPipeline {
+    C.a;
+    C.b;
+    C.c;
+    C.unresolved;
+
+    C?.a;
+    C?.b;
+    C?.c;
+    C?.unresolved;
+}

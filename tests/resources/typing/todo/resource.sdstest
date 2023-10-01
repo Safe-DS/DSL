@@ -1,7 +1,0 @@
-package test
-
-// $TEST$ equivalence_class test
-class »C«
-
-// $TEST$ serialization test
-class »C«

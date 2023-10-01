@@ -1,14 +1,12 @@
 import {
     AstNode,
     AstNodeDescription,
-    AstNodeDescriptionProvider,
     AstNodeLocator,
     DefaultScopeProvider,
     EMPTY_SCOPE,
     getContainerOfType,
     getDocument,
     LangiumDocuments,
-    LangiumServices,
     MultiMap,
     ReferenceInfo,
     Scope,
@@ -59,18 +57,20 @@ import {
 } from '../helpers/shortcuts.js';
 import { isContainedIn } from '../helpers/ast.js';
 import { isStatic, isWildcardImport } from '../helpers/checks.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
-    readonly documents: LangiumDocuments;
-    readonly astNodeDescriptionProvider: AstNodeDescriptionProvider;
-    readonly astNodeLocator: AstNodeLocator;
+    private readonly astNodeLocator: AstNodeLocator;
+    private readonly langiumDocuments: LangiumDocuments;
+    private readonly typeComputer: SafeDsTypeComputer;
 
-    constructor(services: LangiumServices) {
+    constructor(services: SafeDsServices) {
         super(services);
 
-        this.documents = services.shared.workspace.LangiumDocuments;
-        this.astNodeDescriptionProvider = services.workspace.AstNodeDescriptionProvider;
         this.astNodeLocator = services.workspace.AstNodeLocator;
+        this.langiumDocuments = services.shared.workspace.LangiumDocuments;
+        this.typeComputer = services.types.TypeComputer;
     }
 
     override getScope(context: ReferenceInfo): Scope {
@@ -388,7 +388,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             /* c8 ignore next 2 */
             return nodeDescription.node;
         }
-        const document = this.documents.getOrCreateDocument(nodeDescription.documentUri);
+        const document = this.langiumDocuments.getOrCreateDocument(nodeDescription.documentUri);
         return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
     }
 

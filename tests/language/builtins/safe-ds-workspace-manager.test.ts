@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { listBuiltinsFiles } from '../../../src/language/builtins/safe-ds-workspace-manager.js';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { getLinkingErrors } from '../../helpers/diagnostics.js';
 import { NodeFileSystem } from 'langium/node';
@@ -33,11 +32,5 @@ class C {
                 expect(diagnostics).toHaveLength(0);
             },
         );
-    });
-});
-
-describe('listBuiltinsFiles', () => {
-    it('should not return an empty list', () => {
-        expect(listBuiltinsFiles().length).toBeGreaterThan(0);
     });
 });

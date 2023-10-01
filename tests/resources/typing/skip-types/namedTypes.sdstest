@@ -1,0 +1,4 @@
+package tests.typingtypes.namedTypes
+
+fun nonNullableNamedTypes(a: Int, b: String)
+fun nullableNamedTypes(a: Int?, b: String?)
