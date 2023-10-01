@@ -1,0 +1,10 @@
+package tests.typingassignees.blockLambdaResults
+
+fun f(p: Any)
+
+pipeline myPipeline {
+    f(() {
+        yield r = 1;
+        yield s = "";
+    });
+}

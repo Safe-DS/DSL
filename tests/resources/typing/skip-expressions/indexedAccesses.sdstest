@@ -1,0 +1,17 @@
+package tests.typingexpressions.indexedAccesses
+
+step myStep1(vararg params: Int) {
+    params[0];
+}
+
+step myStep2(vararg params: String) {
+    params[0];
+}
+
+step myStep3(params: String) {
+    params[0];
+}
+
+step myStep4() {
+    unresolved[0];
+}

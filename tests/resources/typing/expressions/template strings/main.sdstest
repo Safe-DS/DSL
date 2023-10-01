@@ -1,0 +1,6 @@
+package tests.typing.expressions.templateStrings
+
+pipeline myPipeline {
+    // $TEST$ serialization String
+    val templateString = »"1 + 2 = {{ 1 + 2 }}"«;
+}

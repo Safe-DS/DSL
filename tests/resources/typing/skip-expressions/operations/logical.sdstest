@@ -1,0 +1,10 @@
+package tests.typingoperations.logical
+
+pipeline myPipeline {
+    val conjunction = (true and true);
+    val disjunction = (true or true);
+    val negation = (not true);
+    val conjunctionInvalid = (1 and 1);
+    val disjunctionInvalid = (1.0 or 1.0);
+    val negationInvalid = (not "true");
+}

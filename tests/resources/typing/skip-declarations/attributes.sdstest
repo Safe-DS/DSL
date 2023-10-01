@@ -1,0 +1,5 @@
+package tests.typingdeclarations.attributes
+
+class C {
+    attr a: Int
+}

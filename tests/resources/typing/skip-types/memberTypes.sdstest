@@ -1,0 +1,9 @@
+package tests.typingtypes.memberTypes
+
+enum MyEnum {
+    MyVariant1
+    MyVariant2
+}
+
+fun nonNullableMemberTypes(a: MyEnum.MyVariant1, b: MyEnum.MyVariant2)
+fun nullableMemberTypes(a: MyEnum.MyVariant1?, b: MyEnum.MyVariant2?)

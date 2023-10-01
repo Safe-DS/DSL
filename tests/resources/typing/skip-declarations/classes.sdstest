@@ -1,0 +1,3 @@
+package tests.typingdeclarations.classes
+
+class C
