@@ -1,0 +1,3 @@
+package tests.scoping.importedDeclarations.toSchemas.second
+
+schema RedeclaredSchemaInOtherFile {}

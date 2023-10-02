@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toClasses.first
+
+// $TEST$ target firstPackage_ClassInFirstPackage
+class »ClassInFirstPackage«
+
+// $TEST$ target firstPackage_ClassInBothPackages
+class »ClassInBothPackages«

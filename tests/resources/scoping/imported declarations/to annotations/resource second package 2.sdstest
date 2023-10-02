@@ -1,0 +1,3 @@
+package tests.scoping.importedDeclarations.toAnnotations.second
+
+annotation RedeclaredAnnotationInOtherFile

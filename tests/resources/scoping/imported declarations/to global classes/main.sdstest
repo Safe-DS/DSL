@@ -1,0 +1,26 @@
+package tests.scoping.importedDeclarations.toClasses
+
+// $TEST$ references own_OwnClass
+from tests.scoping.importedDeclarations.toClasses import »OwnClass«
+
+
+// $TEST$ references firstPackage_ClassInFirstPackage
+from tests.scoping.importedDeclarations.toClasses.first import »ClassInFirstPackage«
+
+// $TEST$ references secondPackage1_ClassInSecondPackage
+from tests.scoping.importedDeclarations.toClasses.second import »ClassInSecondPackage«
+
+// $TEST$ references secondPackage1_RedeclaredClassInSameFile
+// $TEST$ references secondPackage1_RedeclaredClassInOtherFile
+from tests.scoping.importedDeclarations.toClasses.second import »RedeclaredClassInSameFile«, »RedeclaredClassInOtherFile«
+
+// $TEST$ references secondPackage1_ClassInBothPackages
+from tests.scoping.importedDeclarations.toClasses.second import »ClassInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toClasses.second import »ClassInFirstPackage«
+
+
+// $TEST$ target own_OwnClass
+class »OwnClass«

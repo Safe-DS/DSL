@@ -1,0 +1,14 @@
+package tests.scoping.importedDeclarations.toEnums.second
+
+// $TEST$ target secondPackage1_EnumInSecondPackage
+enum »EnumInSecondPackage«
+
+// $TEST$ target secondPackage1_RedeclaredEnumInSameFile
+enum »RedeclaredEnumInSameFile«
+enum RedeclaredEnumInSameFile
+
+// $TEST$ target secondPackage1_RedeclaredEnumInOtherFile
+enum »RedeclaredEnumInOtherFile«
+
+// $TEST$ target secondPackage1_EnumInBothPackages
+enum »EnumInBothPackages«

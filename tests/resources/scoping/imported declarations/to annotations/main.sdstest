@@ -1,0 +1,26 @@
+package tests.scoping.importedDeclarations.toAnnotations
+
+// $TEST$ references own_OwnAnnotation
+from tests.scoping.importedDeclarations.toAnnotations import »OwnAnnotation«
+
+
+// $TEST$ references firstPackage_AnnotationInFirstPackage
+from tests.scoping.importedDeclarations.toAnnotations.first import »AnnotationInFirstPackage«
+
+// $TEST$ references secondPackage1_AnnotationInSecondPackage
+from tests.scoping.importedDeclarations.toAnnotations.second import »AnnotationInSecondPackage«
+
+// $TEST$ references secondPackage1_RedeclaredAnnotationInSameFile
+// $TEST$ references secondPackage1_RedeclaredAnnotationInOtherFile
+from tests.scoping.importedDeclarations.toAnnotations.second import »RedeclaredAnnotationInSameFile«, »RedeclaredAnnotationInOtherFile«
+
+// $TEST$ references secondPackage1_AnnotationInBothPackages
+from tests.scoping.importedDeclarations.toAnnotations.second import »AnnotationInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toAnnotations.second import »AnnotationInFirstPackage«
+
+
+// $TEST$ target own_OwnAnnotation
+annotation »OwnAnnotation«

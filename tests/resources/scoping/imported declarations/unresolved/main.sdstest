@@ -1,0 +1,4 @@
+package tests.scoping.importedDeclarations.unresolved
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toAnnotations import »unresolved«

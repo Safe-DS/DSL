@@ -1,0 +1,26 @@
+package tests.scoping.importedDeclarations.toFunctions
+
+// $TEST$ references own_ownFunction
+from tests.scoping.importedDeclarations.toFunctions import »ownFunction«
+
+
+// $TEST$ references firstPackage_functionInFirstPackage
+from tests.scoping.importedDeclarations.toFunctions.first import »functionInFirstPackage«
+
+// $TEST$ references secondPackage1_functionInSecondPackage
+from tests.scoping.importedDeclarations.toFunctions.second import »functionInSecondPackage«
+
+// $TEST$ references secondPackage1_redeclaredFunctionInSameFile
+// $TEST$ references secondPackage1_redeclaredFunctionInOtherFile
+from tests.scoping.importedDeclarations.toFunctions.second import »redeclaredFunctionInSameFile«, »redeclaredFunctionInOtherFile«
+
+// $TEST$ references secondPackage1_functionInBothPackages
+from tests.scoping.importedDeclarations.toFunctions.second import »functionInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toFunctions.second import »functionInFirstPackage«
+
+
+// $TEST$ target own_ownFunction
+fun »ownFunction«()

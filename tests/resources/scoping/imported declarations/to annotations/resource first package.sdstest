@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toAnnotations.first
+
+// $TEST$ target firstPackage_AnnotationInFirstPackage
+annotation »AnnotationInFirstPackage«
+
+// $TEST$ target firstPackage_AnnotationInBothPackages
+annotation »AnnotationInBothPackages«
