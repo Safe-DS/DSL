@@ -70,7 +70,7 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
         case 'SdsModule':
             const name = node.name ?? '';
             const segments = name.split('.');
-            if (name !== '' && !segments.every(isLowerCamelCase)) {
+            if (name !== '' && segments.every((it) => it !== '') && !segments.every(isLowerCamelCase)) {
                 accept('warning', 'All segments of the qualified name of a package should be lowerCamelCase.', {
                     node,
                     property: 'name',
