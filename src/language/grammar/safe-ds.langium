@@ -48,26 +48,50 @@ entry SdsModule returns SdsModule:
 ;
 
 interface SdsImport extends SdsObject {
-    importedNamespace: string;
-    alias?: SdsImportAlias;
+    package: string;
 }
 
 SdsImport returns SdsImport:
-    'import'
-    importedNamespace=QualifiedNameWithWildcard
-    alias=SdsImportAlias?
+    SdsQualifiedImport
+  | SdsWildcardImport
 ;
 
-interface SdsImportAlias extends SdsObject {
-    name: string;
+
+interface SdsQualifiedImport extends SdsImport {
+    importedDeclarationList: SdsImportedDeclarationList;
 }
 
-SdsImportAlias returns SdsImportAlias:
-    'as' name=ID
+SdsQualifiedImport returns SdsQualifiedImport:
+    'from'
+    package=QualifiedName
+    'import'
+    importedDeclarationList=SdsImportedDeclarationList
 ;
 
-QualifiedNameWithWildcard returns string:
-    ID ('.' ID)* ('.' '*')?
+interface SdsImportedDeclarationList extends SdsObject {
+    importedDeclarations: SdsImportedDeclaration[]
+}
+
+SdsImportedDeclarationList returns SdsImportedDeclarationList:
+    importedDeclarations+=SdsImportedDeclaration (',' importedDeclarations+=SdsImportedDeclaration)* ','?
+;
+
+interface SdsImportedDeclaration extends SdsObject {
+    name: string;
+    alias?: string;
+}
+
+SdsImportedDeclaration returns SdsImportedDeclaration:
+    name=ID ('as' alias=ID)?
+;
+
+interface SdsWildcardImport extends SdsImport {}
+
+SdsWildcardImport returns SdsWildcardImport:
+    'from'
+    package=QualifiedName
+    'import'
+    '*'
 ;
 
 QualifiedName returns string:
