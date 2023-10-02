@@ -2,7 +2,7 @@
 package  myPackage
 
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
 
 class C
@@ -11,6 +11,6 @@ class C
 
 package myPackage
 
-import myPackage.MyClass
+from myPackage.mySubpackage import MyClass
 
 class C

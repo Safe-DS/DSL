@@ -1,0 +1,5 @@
+from  myPackage . mySubpackage  import  MyClass ,  MyClass  as  Class ,
+
+// -----------------------------------------------------------------------------
+
+from myPackage.mySubpackage import MyClass, MyClass as Class,

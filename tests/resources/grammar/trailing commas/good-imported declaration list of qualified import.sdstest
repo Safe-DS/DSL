@@ -1,3 +1,4 @@
 // $TEST$ no_syntax_error
 
 from myPackage import MyClass, MyClass as Class,
+ 

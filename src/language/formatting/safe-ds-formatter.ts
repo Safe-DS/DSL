@@ -284,7 +284,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsImportedDeclarationList(node: ast.SdsImportedDeclarationList): void {
         const formatter = this.getNodeFormatter(node);
 
-        // TODO
+        formatter.keywords(',').prepend(noSpace()).append(oneSpace());
     }
 
     private formatSdsImportedDeclaration(node: ast.SdsImportedDeclaration): void {
