@@ -7,14 +7,14 @@ from tests.scoping.importedDeclarations.toClasses import »OwnClass«
 // $TEST$ references firstPackage_ClassInFirstPackage
 from tests.scoping.importedDeclarations.toClasses.first import »ClassInFirstPackage«
 
-// $TEST$ references secondPackage1_ClassInSecondPackage
+// $TEST$ references secondPackage_ClassInSecondPackage
 from tests.scoping.importedDeclarations.toClasses.second import »ClassInSecondPackage«
 
-// $TEST$ references secondPackage1_RedeclaredClassInSameFile
-// $TEST$ references secondPackage1_RedeclaredClassInOtherFile
+// $TEST$ references secondPackage_RedeclaredClassInSameFile
+// $TEST$ references secondPackage_RedeclaredClassInOtherFile
 from tests.scoping.importedDeclarations.toClasses.second import »RedeclaredClassInSameFile«, »RedeclaredClassInOtherFile«
 
-// $TEST$ references secondPackage1_ClassInBothPackages
+// $TEST$ references secondPackage_ClassInBothPackages
 from tests.scoping.importedDeclarations.toClasses.second import »ClassInBothPackages«
 
 

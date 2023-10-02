@@ -1,12 +1,10 @@
 import {
     AstNode,
     AstNodeDescription,
-    AstNodeLocator,
     DefaultScopeProvider,
     EMPTY_SCOPE,
     getContainerOfType,
     getDocument,
-    LangiumDocuments,
     ReferenceInfo,
     Scope,
 } from 'langium';
@@ -17,6 +15,7 @@ import {
     isSdsClass,
     isSdsEnum,
     isSdsEnumVariant,
+    isSdsImportedDeclaration,
     isSdsLambda,
     isSdsMemberAccess,
     isSdsMemberType,
@@ -33,6 +32,7 @@ import {
     isSdsYield,
     SdsDeclaration,
     SdsExpression,
+    SdsImportedDeclaration,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
@@ -62,16 +62,12 @@ import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
-    private readonly astNodeLocator: AstNodeLocator;
-    private readonly langiumDocuments: LangiumDocuments;
     private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         super(services);
 
-        this.astNodeLocator = services.workspace.AstNodeLocator;
-        this.langiumDocuments = services.shared.workspace.LangiumDocuments;
         this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
     }
@@ -79,7 +75,9 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     override getScope(context: ReferenceInfo): Scope {
         const node = context.container;
 
-        if (isSdsNamedType(node) && context.property === 'declaration') {
+        if (isSdsImportedDeclaration(node) && context.property === 'declaration') {
+            return this.getScopeForImportedDeclarationDeclaration(node);
+        } else if (isSdsNamedType(node) && context.property === 'declaration') {
             if (isSdsMemberType(node.$container) && node.$containerProperty === 'member') {
                 return this.getScopeForMemberTypeMember(node.$container);
             } else {
@@ -98,6 +96,20 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         } else {
             return super.getScope(context);
         }
+    }
+
+    private getScopeForImportedDeclarationDeclaration(node: SdsImportedDeclaration): Scope {
+        const containingQualifiedImport = getContainerOfType(node, isSdsQualifiedImport);
+        if (!containingQualifiedImport) {
+            /* c8 ignore next 2 */
+            return EMPTY_SCOPE;
+        }
+
+        const declarationsInPackage = this.packageManager.getDeclarationsInPackage(containingQualifiedImport.package, {
+            nodeType: 'SdsDeclaration',
+            hideInternal: true, // TODO allow imports of internals in same package + add tests
+        });
+        return this.createScope(declarationsInPackage);
     }
 
     private getScopeForMemberTypeMember(node: SdsMemberType): Scope {
@@ -325,7 +337,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         // Builtin declarations
         const builtinDeclarations = this.builtinDeclarations(referenceType);
-        let outerScope = this.createScope(builtinDeclarations, EMPTY_SCOPE);
+        let outerScope = this.createScope(builtinDeclarations);
 
         // Declarations in the same package
         const declarationsInSamePackage = this.declarationsInSamePackage(ownPackageName, referenceType);
@@ -344,8 +356,15 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         for (const imp of imports) {
             if (isSdsQualifiedImport(imp)) {
                 for (const importedDeclaration of importedDeclarationsOrEmpty(imp)) {
-                    if (importedDeclaration.declaration.$nodeDescription) {
-                        result.push(importedDeclaration.declaration.$nodeDescription);
+                    const description = importedDeclaration.declaration.$nodeDescription;
+                    if (!description) {
+                        continue;
+                    }
+
+                    if (importedDeclaration.alias) {
+                        result.push({ ...description, name: importedDeclaration.alias });
+                    } else {
+                        result.push(description);
                     }
                 }
             } else if (isSdsWildcardImport(imp)) {

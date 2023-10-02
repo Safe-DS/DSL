@@ -1,14 +1,14 @@
 package tests.scoping.importedDeclarations.toSchemas.second
 
-// $TEST$ target secondPackage1_SchemaInSecondPackage
+// $TEST$ target secondPackage_SchemaInSecondPackage
 schema »SchemaInSecondPackage« {}
 
-// $TEST$ target secondPackage1_RedeclaredSchemaInSameFile
+// $TEST$ target secondPackage_RedeclaredSchemaInSameFile
 schema »RedeclaredSchemaInSameFile« {}
 schema RedeclaredSchemaInSameFile {}
 
-// $TEST$ target secondPackage1_RedeclaredSchemaInOtherFile
+// $TEST$ target secondPackage_RedeclaredSchemaInOtherFile
 schema »RedeclaredSchemaInOtherFile« {}
 
-// $TEST$ target secondPackage1_SchemaInBothPackages
+// $TEST$ target secondPackage_SchemaInBothPackages
 schema »SchemaInBothPackages« {}

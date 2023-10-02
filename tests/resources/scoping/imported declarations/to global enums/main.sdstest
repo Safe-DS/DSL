@@ -7,14 +7,14 @@ from tests.scoping.importedDeclarations.toEnums import »OwnEnum«
 // $TEST$ references firstPackage_EnumInFirstPackage
 from tests.scoping.importedDeclarations.toEnums.first import »EnumInFirstPackage«
 
-// $TEST$ references secondPackage1_EnumInSecondPackage
+// $TEST$ references secondPackage_EnumInSecondPackage
 from tests.scoping.importedDeclarations.toEnums.second import »EnumInSecondPackage«
 
-// $TEST$ references secondPackage1_RedeclaredEnumInSameFile
-// $TEST$ references secondPackage1_RedeclaredEnumInOtherFile
+// $TEST$ references secondPackage_RedeclaredEnumInSameFile
+// $TEST$ references secondPackage_RedeclaredEnumInOtherFile
 from tests.scoping.importedDeclarations.toEnums.second import »RedeclaredEnumInSameFile«, »RedeclaredEnumInOtherFile«
 
-// $TEST$ references secondPackage1_EnumInBothPackages
+// $TEST$ references secondPackage_EnumInBothPackages
 from tests.scoping.importedDeclarations.toEnums.second import »EnumInBothPackages«
 
 

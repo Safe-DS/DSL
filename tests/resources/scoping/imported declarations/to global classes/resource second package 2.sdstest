@@ -1,3 +1,0 @@
-package tests.scoping.importedDeclarations.toClasses.second
-
-class RedeclaredClassInOtherFile

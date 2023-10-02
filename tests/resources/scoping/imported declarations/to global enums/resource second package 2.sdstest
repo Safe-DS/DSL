@@ -1,3 +1,0 @@
-package tests.scoping.importedDeclarations.toEnums.second
-
-enum RedeclaredEnumInOtherFile

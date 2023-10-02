@@ -1,5 +1,0 @@
-package tests.scoping.importedDeclarations.toNestedDeclaration.second
-
-class Outer {
-    class RedeclaredClassInOtherFile
-}

@@ -1,14 +1,14 @@
 package tests.scoping.importedDeclarations.toFunctions.second
 
-// $TEST$ target secondPackage1_functionInSecondPackage
+// $TEST$ target secondPackage_functionInSecondPackage
 fun »functionInSecondPackage«()
 
-// $TEST$ target secondPackage1_redeclaredFunctionInSameFile
+// $TEST$ target secondPackage_redeclaredFunctionInSameFile
 fun »redeclaredFunctionInSameFile«()
 fun redeclaredFunctionInSameFile()
 
-// $TEST$ target secondPackage1_redeclaredFunctionInOtherFile
+// $TEST$ target secondPackage_redeclaredFunctionInOtherFile
 fun »redeclaredFunctionInOtherFile«()
 
-// $TEST$ target secondPackage1_functionInBothPackages
+// $TEST$ target secondPackage_functionInBothPackages
 fun »functionInBothPackages«()

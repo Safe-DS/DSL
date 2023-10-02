@@ -1,14 +1,14 @@
 package tests.scoping.importedDeclarations.toAnnotations.second
 
-// $TEST$ target secondPackage1_AnnotationInSecondPackage
+// $TEST$ target secondPackage_AnnotationInSecondPackage
 annotation »AnnotationInSecondPackage«
 
-// $TEST$ target secondPackage1_RedeclaredAnnotationInSameFile
+// $TEST$ target secondPackage_RedeclaredAnnotationInSameFile
 annotation »RedeclaredAnnotationInSameFile«
 annotation RedeclaredAnnotationInSameFile
 
-// $TEST$ target secondPackage1_RedeclaredAnnotationInOtherFile
+// $TEST$ target secondPackage_RedeclaredAnnotationInOtherFile
 annotation »RedeclaredAnnotationInOtherFile«
 
-// $TEST$ target secondPackage1_AnnotationInBothPackages
+// $TEST$ target secondPackage_AnnotationInBothPackages
 annotation »AnnotationInBothPackages«

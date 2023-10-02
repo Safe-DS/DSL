@@ -1,14 +1,14 @@
 package tests.scoping.importedDeclarations.toPipelines.second
 
-// $TEST$ target secondPackage1_pipelineInSecondPackage
+// $TEST$ target secondPackage_pipelineInSecondPackage
 pipeline »pipelineInSecondPackage« {}
 
-// $TEST$ target secondPackage1_redeclaredPipelineInSameFile
+// $TEST$ target secondPackage_redeclaredPipelineInSameFile
 pipeline »redeclaredPipelineInSameFile« {}
 pipeline redeclaredPipelineInSameFile {}
 
-// $TEST$ target secondPackage1_redeclaredPipelineInOtherFile
+// $TEST$ target secondPackage_redeclaredPipelineInOtherFile
 pipeline »redeclaredPipelineInOtherFile« {}
 
-// $TEST$ target secondPackage1_pipelineInBothPackages
+// $TEST$ target secondPackage_pipelineInBothPackages
 pipeline »pipelineInBothPackages« {}

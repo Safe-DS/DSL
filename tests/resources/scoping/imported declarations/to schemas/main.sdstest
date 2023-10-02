@@ -6,14 +6,14 @@ from tests.scoping.importedDeclarations.toSchemas import »OwnSchema«
 // $TEST$ references firstPackage_SchemaInFirstPackage
 from tests.scoping.importedDeclarations.toSchemas.first import »SchemaInFirstPackage«
 
-// $TEST$ references secondPackage1_SchemaInSecondPackage
+// $TEST$ references secondPackage_SchemaInSecondPackage
 from tests.scoping.importedDeclarations.toSchemas.second import »SchemaInSecondPackage«
 
-// $TEST$ references secondPackage1_RedeclaredSchemaInSameFile
-// $TEST$ references secondPackage1_RedeclaredSchemaInOtherFile
+// $TEST$ references secondPackage_RedeclaredSchemaInSameFile
+// $TEST$ references secondPackage_RedeclaredSchemaInOtherFile
 from tests.scoping.importedDeclarations.toSchemas.second import »RedeclaredSchemaInSameFile«, »RedeclaredSchemaInOtherFile«
 
-// $TEST$ references secondPackage1_SchemaInBothPackages
+// $TEST$ references secondPackage_SchemaInBothPackages
 from tests.scoping.importedDeclarations.toSchemas.second import »SchemaInBothPackages«
 
 

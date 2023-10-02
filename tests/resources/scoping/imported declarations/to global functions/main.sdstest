@@ -7,14 +7,14 @@ from tests.scoping.importedDeclarations.toFunctions import »ownFunction«
 // $TEST$ references firstPackage_functionInFirstPackage
 from tests.scoping.importedDeclarations.toFunctions.first import »functionInFirstPackage«
 
-// $TEST$ references secondPackage1_functionInSecondPackage
+// $TEST$ references secondPackage_functionInSecondPackage
 from tests.scoping.importedDeclarations.toFunctions.second import »functionInSecondPackage«
 
-// $TEST$ references secondPackage1_redeclaredFunctionInSameFile
-// $TEST$ references secondPackage1_redeclaredFunctionInOtherFile
+// $TEST$ references secondPackage_redeclaredFunctionInSameFile
+// $TEST$ references secondPackage_redeclaredFunctionInOtherFile
 from tests.scoping.importedDeclarations.toFunctions.second import »redeclaredFunctionInSameFile«, »redeclaredFunctionInOtherFile«
 
-// $TEST$ references secondPackage1_functionInBothPackages
+// $TEST$ references secondPackage_functionInBothPackages
 from tests.scoping.importedDeclarations.toFunctions.second import »functionInBothPackages«
 
 

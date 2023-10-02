@@ -1,20 +1,20 @@
 package tests.scoping.importedDeclarations.toSegments.second
 
-// $TEST$ target secondPackage1_publicSegmentInSecondPackage
+// $TEST$ target secondPackage_publicSegmentInSecondPackage
 segment »publicSegmentInSecondPackage«() {}
 
-// $TEST$ target secondPackage1_internalSegmentInSecondPackage
+// $TEST$ target secondPackage_internalSegmentInSecondPackage
 internal segment »internalSegmentInSecondPackage«() {}
 
-// $TEST$ target secondPackage1_privateSegmentInSecondPackage
+// $TEST$ target secondPackage_privateSegmentInSecondPackage
 private segment »privateSegmentInSecondPackage«() {}
 
-// $TEST$ target secondPackage1_redeclaredSegmentInSameFile
+// $TEST$ target secondPackage_redeclaredSegmentInSameFile
 segment »redeclaredSegmentInSameFile«() {}
 segment redeclaredSegmentInSameFile() {}
 
-// $TEST$ target secondPackage1_redeclaredSegmentInOtherFile
+// $TEST$ target secondPackage_redeclaredSegmentInOtherFile
 segment »redeclaredSegmentInOtherFile«() {}
 
-// $TEST$ target secondPackage1_segmentInBothPackages
+// $TEST$ target secondPackage_segmentInBothPackages
 segment »segmentInBothPackages«() {}
