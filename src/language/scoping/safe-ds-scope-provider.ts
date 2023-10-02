@@ -99,6 +99,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getScopeForImportedDeclarationDeclaration(node: SdsImportedDeclaration): Scope {
+        const ownPackageName = packageNameOrNull(node);
+
         const containingQualifiedImport = getContainerOfType(node, isSdsQualifiedImport);
         if (!containingQualifiedImport) {
             /* c8 ignore next 2 */
@@ -107,7 +109,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         const declarationsInPackage = this.packageManager.getDeclarationsInPackage(containingQualifiedImport.package, {
             nodeType: 'SdsDeclaration',
-            hideInternal: true, // TODO allow imports of internals in same package + add tests
+            hideInternal: containingQualifiedImport.package !== ownPackageName,
         });
         return this.createScope(declarationsInPackage);
     }
