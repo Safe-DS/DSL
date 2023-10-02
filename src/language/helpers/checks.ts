@@ -1,4 +1,16 @@
-import { isSdsAttribute, isSdsClass, isSdsEnum, isSdsFunction, SdsClassMember, SdsImport } from '../generated/ast.js';
+import {
+    isSdsAttribute,
+    isSdsClass,
+    isSdsEnum,
+    isSdsFunction,
+    isSdsSegment,
+    SdsClassMember,
+    SdsDeclaration,
+} from '../generated/ast.js';
+
+export const isInternal = (node: SdsDeclaration): boolean => {
+    return isSdsSegment(node) && node.visibility === 'internal';
+};
 
 export const isStatic = (node: SdsClassMember): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
@@ -11,9 +23,4 @@ export const isStatic = (node: SdsClassMember): boolean => {
         /* c8 ignore next 2 */
         return false;
     }
-};
-
-export const isWildcardImport = function (node: SdsImport): boolean {
-    const importedNamespace = node.importedNamespace ?? '';
-    return importedNamespace.endsWith('*');
 };

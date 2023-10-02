@@ -1,8 +1,8 @@
 package tests.scoping.references.acrossFiles.toSegments
 
-import tests.scoping.references.acrossFiles.toSegments.mySegment as mySegmentInSamePackage
-import safeds.scoping.references.acrossFiles.toSegments.mySegment as mySegmentInSafeDsPackage
-import tests.scoping.references.acrossFiles.toSegments.other.mySegment as mySegmentInAnotherPackage
+from tests.scoping.references.acrossFiles.toSegments import mySegment as mySegmentInSamePackage
+from safeds.scoping.references.acrossFiles.toSegments import mySegment as mySegmentInSafeDsPackage
+from tests.scoping.references.acrossFiles.toSegments.other import mySegment as mySegmentInAnotherPackage
 
 pipeline myPipeline {
     // $TEST$ references same_mySegment

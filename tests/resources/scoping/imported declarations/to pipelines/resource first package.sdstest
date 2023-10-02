@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toPipelines.first
+
+// $TEST$ target firstPackage_pipelineInFirstPackage
+pipeline »pipelineInFirstPackage« {}
+
+// $TEST$ target firstPackage_pipelineInBothPackages
+pipeline »pipelineInBothPackages« {}

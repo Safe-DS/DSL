@@ -2,4 +2,4 @@
 
 class C
 
-import myPackage.MyClass
+from myPackage import MyClass

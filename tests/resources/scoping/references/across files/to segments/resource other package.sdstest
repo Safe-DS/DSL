@@ -6,6 +6,9 @@ segment »mySegment«() {}
 // $TEST$ target other_publicSegmentInAnotherPackage
 segment »publicSegmentInAnotherPackage«() {}
 
+// $TEST$ target other_public2SegmentInAnotherPackage
+segment »public2SegmentInAnotherPackage«() {}
+
 // $TEST$ target other_internalSegmentInAnotherPackage
 internal segment »internalSegmentInAnotherPackage«() {}
 

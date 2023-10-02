@@ -1,0 +1,10 @@
+package tests.scoping.importedDeclarations.toSegments
+
+// $TEST$ target same_publicSegmentInSamePackage
+segment »publicSegmentInSamePackage«() {}
+
+// $TEST$ target same_internalSegmentInSamePackage
+internal segment »internalSegmentInSamePackage«() {}
+
+// $TEST$ target same_privateSegmentInSamePackage
+private segment »privateSegmentInSamePackage«() {}

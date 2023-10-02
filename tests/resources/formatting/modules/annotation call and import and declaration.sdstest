@@ -2,7 +2,7 @@
 @Annotation1
 
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
 
 class C
@@ -11,6 +11,6 @@ class C
 
 @Annotation1
 
-import myPackage.MyClass
+from myPackage.mySubpackage import MyClass
 
 class C

@@ -1,6 +1,6 @@
 package tests.scoping.references.acrossFiles.toGlobalEnums
 
-import safeds.scoping.references.acrossFiles.toGlobalEnums.*
+from safeds.scoping.references.acrossFiles.toGlobalEnums import *
 
 pipeline myPipeline {
     // $TEST$ references safeds_MyEnum

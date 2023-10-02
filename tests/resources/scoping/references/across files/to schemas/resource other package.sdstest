@@ -5,3 +5,6 @@ schema »MySchema« {}
 
 // $TEST$ target other_SchemaInAnotherPackage
 schema »SchemaInAnotherPackage« {}
+
+// $TEST$ target other_Schema2InAnotherPackage
+schema »Schema2InAnotherPackage« {}

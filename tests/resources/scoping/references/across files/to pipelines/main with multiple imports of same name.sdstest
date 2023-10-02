@@ -1,8 +1,8 @@
 package tests.scoping.references.acrossFiles.toPipelines
 
-import safeds.scoping.references.acrossFiles.toPipelines.myPipeline
-import tests.scoping.references.acrossFiles.toPipelines.other.myPipeline
-import tests.scoping.references.acrossFiles.toPipelines.myPipeline
+from safeds.scoping.references.acrossFiles.toPipelines import myPipeline
+from tests.scoping.references.acrossFiles.toPipelines.other import myPipeline
+from tests.scoping.references.acrossFiles.toPipelines import myPipeline
 
 segment mySegment() {
     // $TEST$ unresolved

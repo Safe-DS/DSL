@@ -1,0 +1,42 @@
+package tests.scoping.importedDeclarations.toSegments
+
+// $TEST$ references own_ownSegment
+from tests.scoping.importedDeclarations.toSegments import »ownSegment«
+
+
+// $TEST$ references same_publicSegmentInSamePackage
+from tests.scoping.importedDeclarations.toSegments import »publicSegmentInSamePackage«
+
+// $TEST$ references same_internalSegmentInSamePackage
+from tests.scoping.importedDeclarations.toSegments import »internalSegmentInSamePackage«
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toSegments import »privateSegmentInSamePackage«
+
+
+// $TEST$ references firstPackage_segmentInFirstPackage
+from tests.scoping.importedDeclarations.toSegments.first import »segmentInFirstPackage«
+
+// $TEST$ references secondPackage_publicSegmentInSecondPackage
+from tests.scoping.importedDeclarations.toSegments.second import »publicSegmentInSecondPackage«
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toSegments.second import »internalSegmentInSecondPackage«
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toSegments.second import »privateSegmentInSecondPackage«
+
+// $TEST$ references secondPackage_redeclaredSegmentInSameFile
+// $TEST$ references secondPackage_redeclaredSegmentInOtherFile
+from tests.scoping.importedDeclarations.toSegments.second import »redeclaredSegmentInSameFile«, »redeclaredSegmentInOtherFile«
+
+// $TEST$ references secondPackage_segmentInBothPackages
+from tests.scoping.importedDeclarations.toSegments.second import »segmentInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toSegments.second import »segmentInFirstPackage«
+
+
+// $TEST$ target own_ownSegment
+segment »ownSegment«() {}

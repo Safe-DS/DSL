@@ -2,10 +2,10 @@
 @Annotation1
 
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
 // -----------------------------------------------------------------------------
 
 @Annotation1
 
-import myPackage.MyClass
+from myPackage.mySubpackage import MyClass

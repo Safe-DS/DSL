@@ -2,4 +2,4 @@
 
 package myPackage
 
-import myPackage.MyClass
+from myPackage import MyClass

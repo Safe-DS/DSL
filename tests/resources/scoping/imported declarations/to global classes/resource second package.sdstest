@@ -1,0 +1,14 @@
+package tests.scoping.importedDeclarations.toClasses.second
+
+// $TEST$ target secondPackage_ClassInSecondPackage
+class »ClassInSecondPackage«
+
+// $TEST$ target secondPackage_RedeclaredClassInSameFile
+class »RedeclaredClassInSameFile«
+class RedeclaredClassInSameFile
+
+// $TEST$ target secondPackage_RedeclaredClassInOtherFile
+class »RedeclaredClassInOtherFile«
+
+// $TEST$ target secondPackage_ClassInBothPackages
+class »ClassInBothPackages«

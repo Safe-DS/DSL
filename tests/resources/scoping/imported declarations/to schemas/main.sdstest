@@ -1,0 +1,25 @@
+package tests.scoping.importedDeclarations.toSchemas
+
+// $TEST$ references own_OwnSchema
+from tests.scoping.importedDeclarations.toSchemas import »OwnSchema«
+
+// $TEST$ references firstPackage_SchemaInFirstPackage
+from tests.scoping.importedDeclarations.toSchemas.first import »SchemaInFirstPackage«
+
+// $TEST$ references secondPackage_SchemaInSecondPackage
+from tests.scoping.importedDeclarations.toSchemas.second import »SchemaInSecondPackage«
+
+// $TEST$ references secondPackage_RedeclaredSchemaInSameFile
+// $TEST$ references secondPackage_RedeclaredSchemaInOtherFile
+from tests.scoping.importedDeclarations.toSchemas.second import »RedeclaredSchemaInSameFile«, »RedeclaredSchemaInOtherFile«
+
+// $TEST$ references secondPackage_SchemaInBothPackages
+from tests.scoping.importedDeclarations.toSchemas.second import »SchemaInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toSchemas.second import »SchemaInFirstPackage«
+
+
+// $TEST$ target own_OwnSchema
+schema »OwnSchema« {}

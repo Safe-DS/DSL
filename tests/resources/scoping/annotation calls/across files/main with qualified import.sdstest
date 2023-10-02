@@ -1,8 +1,7 @@
 package tests.scoping.annotationCalls.acrossFiles
 
-import safeds.scoping.annotationCalls.acrossFiles.MyAnnotation
-import tests.scoping.annotationCalls.acrossFiles.other.AnnotationInAnotherPackage
-import AnnotationWithoutPackage
+from safeds.scoping.annotationCalls.acrossFiles import MyAnnotation
+from tests.scoping.annotationCalls.acrossFiles.other import AnnotationInAnotherPackage, Annotation2InAnotherPackage
 
 // $TEST$ references safeds_MyAnnotation
 @»MyAnnotation«
@@ -15,6 +14,9 @@ import AnnotationWithoutPackage
 
 // $TEST$ references other_AnnotationInAnotherPackage
 @»AnnotationInAnotherPackage«
+
+// $TEST$ references other_Annotation2InAnotherPackage
+@»Annotation2InAnotherPackage«
 
 // $TEST$ unresolved
 @»AnnotationWithoutPackage«

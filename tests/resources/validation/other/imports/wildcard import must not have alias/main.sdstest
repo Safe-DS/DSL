@@ -1,6 +1,0 @@
-package tests.validation.other.modules.wildcardImportMustNotHaveAlias
-
-// $TEST$ error "A wildcard import must not have an alias."
-import stuff.* »as S«
-// $TEST$ no error "A wildcard import must not have an alias."
-import stuff.Stuff »as S«

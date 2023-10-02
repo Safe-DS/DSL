@@ -1,8 +1,9 @@
 // $TEST$ no_syntax_error
 
-import myPackage.MyClass
-import myPackage.MyClass as Class
-import myPackage.*
+from myPackage import MyClass
+from myPackage import MyClass as Class
+from myPackage import *
+from myPackage import MyClass, MyClass as Class
 
 class C
 class D

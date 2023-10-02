@@ -7,11 +7,13 @@
 package  myPackage
 
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
-import  myPackage . MyClass  as  Class
+from  myPackage . mySubpackage  import  MyClass  as  Class
 
-import  myPackage . *
+from  myPackage . mySubpackage  import  *
+
+from  myPackage . mySubpackage  import  MyClass ,  MyClass  as  Class
 
 // -----------------------------------------------------------------------------
 
@@ -20,6 +22,7 @@ import  myPackage . *
 
 package myPackage
 
-import myPackage.MyClass
-import myPackage.MyClass as Class
-import myPackage.*
+from myPackage.mySubpackage import MyClass
+from myPackage.mySubpackage import MyClass as Class
+from myPackage.mySubpackage import *
+from myPackage.mySubpackage import MyClass, MyClass as Class

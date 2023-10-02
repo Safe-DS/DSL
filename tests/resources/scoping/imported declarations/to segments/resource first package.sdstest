@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toSegments.first
+
+// $TEST$ target firstPackage_segmentInFirstPackage
+segment »segmentInFirstPackage«() {}
+
+// $TEST$ target firstPackage_segmentInBothPackages
+segment »segmentInBothPackages«() {}

@@ -5,3 +5,6 @@ class »MyClass«
 
 // $TEST$ target other_ClassInAnotherPackage
 class »ClassInAnotherPackage«
+
+// $TEST$ target other_Class2InAnotherPackage
+class »Class2InAnotherPackage«

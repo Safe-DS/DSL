@@ -143,7 +143,7 @@ Here is a breakdown of this:
     ```txt
     // Safe-DS
 
-    import safeds.model.regression.DecisionTree
+    from safeds.model.regression import DecisionTree
     ```
 
 It is important to note that the `@PythonModule` annotation only affects the one Safe-DS file that contains it rather than the entire Safe-DS package. This allows different Safe-DS files in the same package to point to different [Python modules][python-modules].

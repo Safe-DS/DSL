@@ -1,11 +1,11 @@
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
 
 class C
 
 // -----------------------------------------------------------------------------
 
-import myPackage.MyClass
+from myPackage.mySubpackage import MyClass
 
 class C

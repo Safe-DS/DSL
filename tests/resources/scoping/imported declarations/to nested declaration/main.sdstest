@@ -1,0 +1,28 @@
+package tests.scoping.importedDeclarations.toNestedDeclaration
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toNestedDeclaration import »OwnClass«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toNestedDeclaration.first import »ClassInFirstPackage«
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toNestedDeclaration.second import »ClassInSecondPackage«
+
+// $TEST$ unresolved
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toNestedDeclaration.second import »RedeclaredClassInSameFile«, »RedeclaredClassInOtherFile«
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toNestedDeclaration.second import »ClassInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toNestedDeclaration.second import »ClassInFirstPackage«
+
+
+class Outer {
+    // $TEST$ target own_OwnClass
+    class »OwnClass«
+}

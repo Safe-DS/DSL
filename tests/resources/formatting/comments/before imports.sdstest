@@ -1,8 +1,8 @@
 // test
 
-import test
+from test import MyClass
 
 // -----------------------------------------------------------------------------
 
 // test
-import test
+from test import MyClass

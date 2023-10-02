@@ -5,6 +5,7 @@
 
 package myPackage
 
-import myPackage.MyClass
-import myPackage.MyClass as Class
-import myPackage.*
+from myPackage import MyClass
+from myPackage import MyClass as Class
+from myPackage import *
+from myPackage import MyClass, MyClass as Class

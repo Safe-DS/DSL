@@ -2,10 +2,10 @@
 package  myPackage
 
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
 // -----------------------------------------------------------------------------
 
 package myPackage
 
-import myPackage.MyClass
+from myPackage.mySubpackage import MyClass

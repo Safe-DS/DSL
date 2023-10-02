@@ -17,6 +17,7 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsImport,
+    SdsImportedDeclaration,
     SdsLiteral,
     SdsLiteralType,
     SdsModule,
@@ -24,6 +25,7 @@ import {
     SdsParameter,
     SdsParameterList,
     SdsPlaceholder,
+    SdsQualifiedImport,
     SdsResult,
     SdsResultList,
     SdsStatement,
@@ -58,6 +60,10 @@ export const blockLambdaResultsOrEmpty = function (node: SdsBlockLambda | undefi
         .flatMap(assigneesOrEmpty)
         .filter(isSdsBlockLambdaResult)
         .toArray();
+};
+
+export const importedDeclarationsOrEmpty = function (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] {
+    return node?.importedDeclarationList?.importedDeclarations ?? [];
 };
 
 export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsLiteral[] {

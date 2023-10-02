@@ -1,6 +1,6 @@
 
-import  myPackage . MyClass
+from  myPackage . mySubpackage  import  MyClass
 
 // -----------------------------------------------------------------------------
 
-import myPackage.MyClass
+from myPackage.mySubpackage import MyClass

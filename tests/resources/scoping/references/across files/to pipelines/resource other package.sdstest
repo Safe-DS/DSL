@@ -5,3 +5,6 @@ pipeline »myPipeline« {}
 
 // $TEST$ target other_pipelineInAnotherPackage
 pipeline »pipelineInAnotherPackage« {}
+
+// $TEST$ target other_pipeline2InAnotherPackage
+pipeline »pipeline2InAnotherPackage« {}

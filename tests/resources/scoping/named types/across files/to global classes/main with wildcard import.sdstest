@@ -1,6 +1,6 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalClasses
 
-import safeds.scoping.namedTypes.acrossFiles.toGlobalClasses.*
+from safeds.scoping.namedTypes.acrossFiles.toGlobalClasses import *
 
 segment mySegment(
     // $TEST$ references safeds_MyClass

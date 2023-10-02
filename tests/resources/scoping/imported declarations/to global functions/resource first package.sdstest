@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toFunctions.first
+
+// $TEST$ target firstPackage_functionInFirstPackage
+fun »functionInFirstPackage«()
+
+// $TEST$ target firstPackage_functionInBothPackages
+fun »functionInBothPackages«()
