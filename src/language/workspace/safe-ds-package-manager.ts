@@ -128,6 +128,7 @@ export class SafeDsPackageManager {
 
             const packageName = packageNameOrNull(node);
             if (!packageName || !this.isValidPackageName(packageName)) {
+                /* c8 ignore next 2 */
                 continue;
             }
 
