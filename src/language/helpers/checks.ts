@@ -1,12 +1,4 @@
-import {
-    isSdsAttribute,
-    isSdsClass,
-    isSdsEnum,
-    isSdsFunction,
-    isSdsWildcardImport,
-    SdsClassMember,
-    SdsImport
-} from '../generated/ast.js';
+import { isSdsAttribute, isSdsClass, isSdsEnum, isSdsFunction, SdsClassMember } from '../generated/ast.js';
 
 export const isStatic = (node: SdsClassMember): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
