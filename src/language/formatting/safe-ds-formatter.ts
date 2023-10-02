@@ -4,12 +4,11 @@ import {
     CstNode,
     findCommentNode,
     Formatting,
-    isAstNode,
     FormattingAction,
     FormattingActionOptions,
+    isAstNode,
 } from 'langium';
 import * as ast from '../generated/ast.js';
-import { SdsImport, SdsImportAlias, SdsModule } from '../generated/ast.js';
 import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
@@ -38,8 +37,10 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatSdsModule(node);
         } else if (ast.isSdsImport(node)) {
             this.formatSdsImport(node);
-        } else if (ast.isSdsImportAlias(node)) {
-            this.formatSdsImportAlias(node);
+        } else if (ast.isSdsImportedDeclarationList(node)) {
+            this.formatSdsImportedDeclarationList(node);
+        } else if (ast.isSdsImportedDeclaration(node)) {
+            this.formatSdsImportedDeclaration(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -191,7 +192,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     // Module
     // -----------------------------------------------------------------------------
 
-    private formatSdsModule(node: SdsModule): void {
+    private formatSdsModule(node: ast.SdsModule): void {
         const formatter = this.getNodeFormatter(node);
         const annotations = annotationCallsOrEmpty(node);
         const name = node.name;
@@ -272,14 +273,21 @@ export class SafeDsFormatter extends AbstractFormatter {
         });
     }
 
-    private formatSdsImport(node: SdsImport): void {
+    private formatSdsImport(node: ast.SdsImport): void {
         const formatter = this.getNodeFormatter(node);
 
-        formatter.keyword('import').append(oneSpace());
+        formatter.keyword('from').append(oneSpace());
         formatter.keyword('.').surround(noSpace());
+        formatter.keyword('import').surround(oneSpace());
     }
 
-    private formatSdsImportAlias(node: SdsImportAlias): void {
+    private formatSdsImportedDeclarationList(node: ast.SdsImportedDeclarationList): void {
+        const formatter = this.getNodeFormatter(node);
+
+        // TODO
+    }
+
+    private formatSdsImportedDeclaration(node: ast.SdsImportedDeclaration): void {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword('as').surround(Formatting.oneSpace());

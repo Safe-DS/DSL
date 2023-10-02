@@ -26,10 +26,12 @@ import {
     isSdsNamedType,
     isSdsNamedTypeDeclaration,
     isSdsPlaceholder,
+    isSdsQualifiedImport,
     isSdsReference,
     isSdsSegment,
     isSdsStatement,
     isSdsTypeArgument,
+    isSdsWildcardImport,
     isSdsYield,
     SdsDeclaration,
     SdsExpression,
@@ -48,6 +50,7 @@ import {
     assigneesOrEmpty,
     classMembersOrEmpty,
     enumVariantsOrEmpty,
+    importedDeclarationsOrEmpty,
     importsOrEmpty,
     packageNameOrNull,
     parametersOrEmpty,
@@ -56,7 +59,7 @@ import {
     typeParametersOrEmpty,
 } from '../helpers/shortcuts.js';
 import { isContainedIn } from '../helpers/ast.js';
-import { isStatic, isWildcardImport } from '../helpers/checks.js';
+import { isStatic } from '../helpers/checks.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
@@ -437,24 +440,35 @@ class ImportedDeclarations {
     }
 
     private importMatches(imp: SdsImport, node: SdsDeclaration, packageName: string): boolean {
-        if (isWildcardImport(imp)) {
-            const importedPackageName = imp.importedNamespace.replaceAll(/\.?\*$/gu, '');
-            return importedPackageName === packageName;
+        if (isSdsQualifiedImport(imp)) {
+            if (imp.package !== packageName) {
+                return false;
+            }
+
+            return importedDeclarationsOrEmpty(imp).some(
+                (importedDeclaration) => importedDeclaration.name === node.name,
+            );
+        } else if (isSdsWildcardImport(imp)) {
+            return imp.package === packageName;
         } else {
-            const segments = imp.importedNamespace.split('.');
-            const importedPackageName = segments.slice(0, segments.length - 1).join('.');
-            const importedDeclarationName = segments[segments.length - 1];
-            return importedPackageName === packageName && importedDeclarationName === node.name;
+            /* c8 ignore next 2 */
+            return false;
         }
     }
 
     private updateDescription(description: AstNodeDescription, firstMatchingImport: SdsImport): AstNodeDescription {
-        if (isWildcardImport(firstMatchingImport) || !firstMatchingImport.alias) {
-            return description;
-        } else {
-            // Declaration is available under an alias
-            return { ...description, name: firstMatchingImport.alias.name };
+        if (isSdsQualifiedImport(firstMatchingImport)) {
+            const firstMatchingImportedDeclaration = importedDeclarationsOrEmpty(firstMatchingImport).find(
+                (importedDeclaration) => importedDeclaration.name === description.name,
+            );
+
+            if (firstMatchingImportedDeclaration && firstMatchingImportedDeclaration.alias) {
+                // Declaration is available under an alias
+                return {...description, name: firstMatchingImportedDeclaration.alias};
+            }
         }
+
+        return description;
     }
 
     /**

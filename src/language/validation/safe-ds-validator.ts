@@ -37,7 +37,6 @@ import {
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
-import { importAliasMustNotBeUsedForWildcardImports } from './other/imports.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
@@ -66,7 +65,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
-        SdsImportAlias: [importAliasMustNotBeUsedForWildcardImports],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
         SdsParameterList: [
