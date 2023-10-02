@@ -1,5 +1,5 @@
 // $TEST$ syntax_error
 
-import someDeclaration
+from myPackage import someDeclaration
 
 package test

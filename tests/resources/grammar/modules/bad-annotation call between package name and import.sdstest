@@ -4,4 +4,4 @@ package test
 
 @Annotation1
 
-import myPackage.MyClass
+from myPackage import MyClass
