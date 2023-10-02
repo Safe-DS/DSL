@@ -1,6 +1,7 @@
 import {
     AstNode,
-    AstNodeDescription, AstReflection,
+    AstNodeDescription,
+    AstReflection,
     DefaultScopeProvider,
     EMPTY_SCOPE,
     getContainerOfType,
