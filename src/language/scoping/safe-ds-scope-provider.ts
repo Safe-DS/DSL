@@ -446,7 +446,7 @@ class ImportedDeclarations {
             }
 
             return importedDeclarationsOrEmpty(imp).some(
-                (importedDeclaration) => importedDeclaration.name === node.name,
+                (importedDeclaration) => importedDeclaration.declaration.$refText === node.name,
             );
         } else if (isSdsWildcardImport(imp)) {
             return imp.package === packageName;
@@ -459,12 +459,12 @@ class ImportedDeclarations {
     private updateDescription(description: AstNodeDescription, firstMatchingImport: SdsImport): AstNodeDescription {
         if (isSdsQualifiedImport(firstMatchingImport)) {
             const firstMatchingImportedDeclaration = importedDeclarationsOrEmpty(firstMatchingImport).find(
-                (importedDeclaration) => importedDeclaration.name === description.name,
+                (importedDeclaration) => importedDeclaration.declaration.$refText === description.name,
             );
 
             if (firstMatchingImportedDeclaration && firstMatchingImportedDeclaration.alias) {
                 // Declaration is available under an alias
-                return {...description, name: firstMatchingImportedDeclaration.alias};
+                return { ...description, name: firstMatchingImportedDeclaration.alias };
             }
         }
 
