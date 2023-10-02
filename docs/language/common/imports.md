@@ -9,18 +9,26 @@ Safe-DS has two kinds of imports, namely a _qualified import_, which imports a s
 A _qualified import_ makes a single declaration available. Here is an example that imports the [class][classes] `DecisionTree` in the [package][packages] `safeds.model.regression`:
 
 ```txt
-import safeds.model.regression.DecisionTree
+from safeds.model.regression import DecisionTree
 ```
 
 The syntax consists of the following parts:
 
-- The keyword `import`
-- The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
+- The keyword `from`.
+- The name of the [package][packages] that contains the declaration (here `safeds.model.regression`).
+- The keyword `import`.
+- The name of the declaration (i.e. `DecisionTree`).
 
-Once the declaration is imported, we can refer to it by its _simple name_. This is the last segment of the qualified name, which is the name of the declaration. Here is, for example, a [call][calls] to the constructor of the `DecisionTree` class:
+Once the declaration is imported, we can refer to it by its name. Here is, for example, a [call][calls] to the constructor of the `DecisionTree` class:
 
 ```txt
 DecisionTree()
+```
+
+Multiple declarations can be imported from the same package in a single import statement by separating them with commas:
+
+```txt
+from safeds.model.regression import DecisionTree, RandomForest
 ```
 
 ### Qualified Imports with Alias
@@ -28,20 +36,28 @@ DecisionTree()
 Sometimes the name of the imported declaration can conflict with other declarations that are imported or that are contained in the importing file. To counter this, declarations can be imported under an alias:
 
 ```txt
-import safeds.model.regression.DecisionTree as StdlibDecisionTree
+from safeds.model.regression import DecisionTree as StdlibDecisionTree
 ```
 
 Let us take apart the syntax:
 
+- The keyword `from`.
+- The name of the [package][packages] that contains the declaration (here `safeds.model.regression`).
 - The keyword `import`.
-- The _qualified name_ of the declaration to import (here `safeds.model.regression.DecisionTree`). The qualified name can be obtained by concatenating the name of the [package][packages] that contains the declaration (i.e. `safeds.model.regression`) with the name of the declaration (i.e. `DecisionTree`). The two parts are separated by a dot.
+- The name of the declaration (i.e. `DecisionTree`).
 - The keyword `as`.
 - The alias to use (here `StdlibDecisionTree`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number.
 
-Afterwards, the declaration can **only** be accessed using the alias. The simple name cannot be used anymore. The next example shows how to create a new instance of the class now by invoking its constructor:
+Afterwards, the declaration can **only** be accessed using the alias. The next example shows how to create a new instance of the class now by invoking its constructor:
 
 ```txt
 StdlibDecisionTree()
+```
+
+Multiple declarations can be imported with or without an alias in a single import statement by separating them with commas:
+
+```txt
+from safeds.model.regression import DecisionTree as StdlibDecisionTree, RandomForest
 ```
 
 ## Wildcard Imports
@@ -51,14 +67,14 @@ We can also import all declarations in a [package][packages] with a single impor
 Nevertheless, let us look at an example, which imports all declarations from the [package][packages] `safeds.model.regression`:
 
 ```txt
-import safeds.model.regression.*
+from safeds.model.regression import *
 ```
 
 Here is the breakdown of the syntax:
 
-- The keyword `import`.
+- The keyword `from`.
 - The name of the [package][packages] to import (here `safeds.model.regression`).
-- A dot.
+- The keyword `import`.
 - A star.
 
 Afterwards, we can again access declarations by their simple name, such as the [class][classes] `DecisionTree`:
