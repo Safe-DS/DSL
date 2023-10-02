@@ -331,7 +331,11 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         // Data structures to collect reachable declarations
         const explicitlyImportedDeclarations = new ImportedDeclarations(importsOrEmpty(containingModule));
-        const declarationsInSamePackage: AstNodeDescription[] = [];
+        let declarationsInSamePackage: AstNodeDescription[] = [];
+        if (ownPackageName) {
+            declarationsInSamePackage = this.packageManager.getDeclarationsInPackage(ownPackageName, referenceType);
+        }
+
         const builtinDeclarations: AstNodeDescription[] = [];
 
         // Loop over all declarations in the index
@@ -368,10 +372,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             explicitlyImportedDeclarations.addIfImported(candidate, candidateNode, candidatePackageName);
 
             // Handle other declarations in the same package
-            if (candidatePackageName === ownPackageName) {
-                declarationsInSamePackage.push(candidate);
-                continue;
-            }
+            // if (candidatePackageName === ownPackageName) {
+            //     declarationsInSamePackage.push(candidate);
+            //     continue;
+            // }
 
             // Handle builtin declarations
             if (this.isBuiltinPackage(candidatePackageName)) {
