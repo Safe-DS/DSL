@@ -1,6 +1,7 @@
 import {
     AstNode,
     AstNodeDescription,
+    AstReflection,
     DefaultScopeProvider,
     EMPTY_SCOPE,
     getContainerOfType,
@@ -62,12 +63,14 @@ import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
+    private readonly astReflection: AstReflection;
     private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         super(services);
 
+        this.astReflection = services.shared.AstReflection;
         this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
     }
@@ -350,6 +353,23 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         return this.createScope(explicitlyImportedDeclarations, outerScope);
     }
 
+    private builtinDeclarations(referenceType: string): AstNodeDescription[] {
+        return this.packageManager.getDeclarationsInPackageOrSubpackage('safeds', {
+            nodeType: referenceType,
+            hideInternal: true,
+        });
+    }
+
+    private declarationsInSamePackage(packageName: string | null, referenceType: string): AstNodeDescription[] {
+        if (!packageName) {
+            return [];
+        }
+
+        return this.packageManager.getDeclarationsInPackage(packageName, {
+            nodeType: referenceType,
+        });
+    }
+
     private explicitlyImportedDeclarations(referenceType: string, node: AstNode): AstNodeDescription[] {
         const containingModule = getContainerOfType(node, isSdsModule);
         const imports = importsOrEmpty(containingModule);
@@ -359,7 +379,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             if (isSdsQualifiedImport(imp)) {
                 for (const importedDeclaration of importedDeclarationsOrEmpty(imp)) {
                     const description = importedDeclaration.declaration.$nodeDescription;
-                    if (!description) {
+                    if (!description || !this.astReflection.isSubtype(description.type, referenceType)) {
                         continue;
                     }
 
@@ -379,22 +399,5 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         return result;
-    }
-
-    private declarationsInSamePackage(packageName: string | null, referenceType: string): AstNodeDescription[] {
-        if (!packageName) {
-            return [];
-        }
-
-        return this.packageManager.getDeclarationsInPackage(packageName, {
-            nodeType: referenceType,
-        });
-    }
-
-    private builtinDeclarations(referenceType: string): AstNodeDescription[] {
-        return this.packageManager.getDeclarationsInPackageOrSubpackage('safeds', {
-            nodeType: referenceType,
-            hideInternal: true,
-        });
     }
 }

@@ -1,7 +1,7 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalClasses
 
 from safeds.scoping.namedTypes.acrossFiles.toGlobalClasses import MyClass
-from tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other import ClassInAnotherPackage, Class2InAnotherPackage
+from tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other import ClassInAnotherPackage, Class2InAnotherPackage, notANamedTypeDeclaration
 
 segment mySegment(
     // $TEST$ references safeds_MyClass
@@ -20,5 +20,8 @@ segment mySegment(
     p5: »Class2InAnotherPackage«,
 
     // $TEST$ unresolved
-    p6: »ClassWithoutPackage«,
+    p6: »notANamedTypeDeclaration«,
+
+    // $TEST$ unresolved
+    p7: »ClassWithoutPackage«,
 ) {}
