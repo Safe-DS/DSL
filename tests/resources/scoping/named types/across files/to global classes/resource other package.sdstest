@@ -8,3 +8,6 @@ class »ClassInAnotherPackage«
 
 // $TEST$ target other_Class2InAnotherPackage
 class »Class2InAnotherPackage«
+
+// $TEST$ target other_notANamedTypeDeclaration
+fun »notANamedTypeDeclaration«()

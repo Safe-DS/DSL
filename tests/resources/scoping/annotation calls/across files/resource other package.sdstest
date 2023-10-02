@@ -8,3 +8,6 @@ annotation »AnnotationInAnotherPackage«
 
 // $TEST$ target other_Annotation2InAnotherPackage
 annotation »Annotation2InAnotherPackage«
+
+// $TEST$ target other_NotAnAnnotation
+class »NotAnAnnotation«
