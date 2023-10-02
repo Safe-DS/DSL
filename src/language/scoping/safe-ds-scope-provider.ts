@@ -343,9 +343,9 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
                 continue;
             }
 
-            // Skip declarations that cannot be found and modules
+            // Skip declarations that cannot be found
             const candidateNode = this.loadAstNode(candidate);
-            if (!candidateNode || isSdsModule(candidateNode)) {
+            if (!candidateNode) {
                 continue;
             }
 
