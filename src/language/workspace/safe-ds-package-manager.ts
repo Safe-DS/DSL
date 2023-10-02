@@ -54,8 +54,8 @@ export class SafeDsPackageManager {
     }
 
     /**
-     * Returns all declarations that are defined directly in the given package. They must match the node type if
-     * specified.
+     * Returns all declarations that are defined directly in the given package. The options can be used to filter the
+     * results.
      */
     getDeclarationsInPackage(packageName: string, options: GetDeclarationsOptions = {}): AstNodeDescription[] {
         const result = this.getPackageContents(packageName)?.ownDeclarations ?? [];
@@ -63,8 +63,8 @@ export class SafeDsPackageManager {
     }
 
     /**
-     * Returns all declarations that are defined in the given package or any of its (transitive) subpackages. They must
-     * match the node type if specified.
+     * Returns all declarations that are defined in the given package or any of its (transitive) subpackages. The
+     * options can be used to filter the results.
      */
     getDeclarationsInPackageOrSubpackage(packageName: string, options: GetDeclarationsOptions = {}): AstNodeDescription[] {
         const packageContents = this.getPackageContents(packageName);
@@ -180,7 +180,14 @@ export class SafeDsPackageManager {
 }
 
 export interface GetDeclarationsOptions {
+    /**
+     * If specified, only declarations of the given node type are returned.
+     */
     readonly nodeType?: string;
+
+    /**
+     * If true, internal declarations are hidden.
+     */
     readonly hideInternal?: boolean;
 }
 
