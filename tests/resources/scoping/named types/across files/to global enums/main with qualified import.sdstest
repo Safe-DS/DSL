@@ -1,8 +1,7 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalEnums
 
-import safeds.scoping.namedTypes.acrossFiles.toGlobalEnums.MyEnum
-import tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other.EnumInAnotherPackage
-import EnumWithoutPackage
+from safeds.scoping.namedTypes.acrossFiles.toGlobalEnums import MyEnum
+from tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other import EnumInAnotherPackage, Enum2InAnotherPackage
 
 segment mySegment(
     // $TEST$ references safeds_MyEnum
@@ -17,6 +16,9 @@ segment mySegment(
     // $TEST$ references other_EnumInAnotherPackage
     p4: »EnumInAnotherPackage«,
 
+    // $TEST$ references other_Enum2InAnotherPackage
+    p5: »Enum2InAnotherPackage«,
+
     // $TEST$ unresolved
-    p5: »EnumWithoutPackage«,
+    p6: »EnumWithoutPackage«,
 ) {}

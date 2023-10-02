@@ -5,3 +5,6 @@ fun »myFunction«()
 
 // $TEST$ target other_functionInAnotherPackage
 fun »functionInAnotherPackage«()
+
+// $TEST$ target other_function2InAnotherPackage
+fun »function2InAnotherPackage«()

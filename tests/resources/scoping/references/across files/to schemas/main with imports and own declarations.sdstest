@@ -1,7 +1,7 @@
 package tests.scoping.references.acrossFiles.toSchemas
 
-import safeds.scoping.references.acrossFiles.toSchemas.MySchema as MyOwnSchema
-import tests.scoping.references.acrossFiles.toSchemas.other.SchemaInAnotherPackage
+from safeds.scoping.references.acrossFiles.toSchemas import MySchema as MyOwnSchema
+from tests.scoping.references.acrossFiles.toSchemas.other import SchemaInAnotherPackage, Schema2InAnotherPackage
 
 // $TEST$ target own_MyOwnSchema
 schema »MyOwnSchema« {}
@@ -18,6 +18,9 @@ pipeline myPipeline {
 
     // $TEST$ references other_SchemaInAnotherPackage
     »SchemaInAnotherPackage«;
+
+    // $TEST$ references other_Schema2InAnotherPackage
+    »Schema2InAnotherPackage«;
 
     // $TEST$ unresolved
     »SchemaWithoutPackage«;

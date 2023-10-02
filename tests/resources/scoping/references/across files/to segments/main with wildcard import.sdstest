@@ -1,6 +1,6 @@
 package tests.scoping.references.acrossFiles.toSegments
 
-import safeds.scoping.references.acrossFiles.toSegments.*
+from safeds.scoping.references.acrossFiles.toSegments import *
 
 pipeline myPipeline {
     // $TEST$ references safeds_mySegment

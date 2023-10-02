@@ -1,8 +1,8 @@
 package tests.scoping.references.acrossFiles.toAnnotations
 
-import safeds.scoping.references.acrossFiles.toAnnotations.MyAnnotation
-import tests.scoping.references.acrossFiles.toAnnotations.other.MyAnnotation
-import tests.scoping.references.acrossFiles.toAnnotations.MyAnnotation
+from safeds.scoping.references.acrossFiles.toAnnotations import MyAnnotation
+from tests.scoping.references.acrossFiles.toAnnotations.other import MyAnnotation
+from tests.scoping.references.acrossFiles.toAnnotations import MyAnnotation
 
 pipeline myPipeline {
     // $TEST$ references safeds_MyAnnotation

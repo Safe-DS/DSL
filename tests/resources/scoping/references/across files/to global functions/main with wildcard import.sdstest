@@ -1,6 +1,6 @@
 package tests.scoping.references.acrossFiles.toGlobalFunctions
 
-import safeds.scoping.references.acrossFiles.toGlobalFunctions.*
+from safeds.scoping.references.acrossFiles.toGlobalFunctions import *
 
 pipeline myPipeline {
     // $TEST$ references safeds_myFunction

@@ -1,7 +1,7 @@
 package tests.scoping.references.acrossFiles.toGlobalFunctions
 
-import safeds.scoping.references.acrossFiles.toGlobalFunctions.myFunction as myOwnFunction
-import tests.scoping.references.acrossFiles.toGlobalFunctions.other.functionInAnotherPackage
+from safeds.scoping.references.acrossFiles.toGlobalFunctions import myFunction as myOwnFunction
+from tests.scoping.references.acrossFiles.toGlobalFunctions.other import functionInAnotherPackage, function2InAnotherPackage
 
 // $TEST$ target own_myOwnFunction
 fun »myOwnFunction«()
@@ -18,6 +18,9 @@ pipeline myPipeline {
 
     // $TEST$ references other_functionInAnotherPackage
     »functionInAnotherPackage«;
+
+    // $TEST$ references other_function2InAnotherPackage
+    »function2InAnotherPackage«;
 
     // $TEST$ unresolved
     »functionWithoutPackage«;

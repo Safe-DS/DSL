@@ -1,8 +1,8 @@
 package tests.scoping.references.acrossFiles.toGlobalClasses
 
-import safeds.scoping.references.acrossFiles.toGlobalClasses.MyClass
-import tests.scoping.references.acrossFiles.toGlobalClasses.other.MyClass
-import tests.scoping.references.acrossFiles.toGlobalClasses.MyClass
+from safeds.scoping.references.acrossFiles.toGlobalClasses import MyClass
+from tests.scoping.references.acrossFiles.toGlobalClasses.other import MyClass
+from tests.scoping.references.acrossFiles.toGlobalClasses import MyClass
 
 pipeline myPipeline {
     // $TEST$ references safeds_MyClass

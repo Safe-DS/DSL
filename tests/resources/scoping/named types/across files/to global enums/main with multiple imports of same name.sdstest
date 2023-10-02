@@ -1,8 +1,8 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalEnums
 
-import safeds.scoping.namedTypes.acrossFiles.toGlobalEnums.MyEnum
-import tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other.MyEnum
-import tests.scoping.namedTypes.acrossFiles.toGlobalEnums.MyEnum
+from safeds.scoping.namedTypes.acrossFiles.toGlobalEnums import MyEnum
+from tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other import MyEnum
+from tests.scoping.namedTypes.acrossFiles.toGlobalEnums import MyEnum
 
 segment mySegment(
     // $TEST$ references safeds_MyEnum

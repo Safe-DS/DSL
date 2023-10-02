@@ -1,8 +1,8 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalClasses
 
-import tests.scoping.namedTypes.acrossFiles.toGlobalClasses.MyClass as MyClassInSamePackage
-import safeds.scoping.namedTypes.acrossFiles.toGlobalClasses.MyClass as MyClassInSafeDsPackage
-import tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other.MyClass as MyClassInAnotherPackage
+from tests.scoping.namedTypes.acrossFiles.toGlobalClasses import MyClass as MyClassInSamePackage
+from safeds.scoping.namedTypes.acrossFiles.toGlobalClasses import MyClass as MyClassInSafeDsPackage
+from tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other import MyClass as MyClassInAnotherPackage
 
 segment mySegment(
     // $TEST$ references same_MyClass

@@ -5,3 +5,6 @@ enum »MyEnum«
 
 // $TEST$ target other_EnumInAnotherPackage
 enum »EnumInAnotherPackage«
+
+// $TEST$ target other_Enum2InAnotherPackage
+enum »Enum2InAnotherPackage«

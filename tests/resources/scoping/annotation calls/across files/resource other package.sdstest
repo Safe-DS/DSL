@@ -5,3 +5,6 @@ annotation »MyAnnotation«
 
 // $TEST$ target other_AnnotationInAnotherPackage
 annotation »AnnotationInAnotherPackage«
+
+// $TEST$ target other_Annotation2InAnotherPackage
+annotation »Annotation2InAnotherPackage«
