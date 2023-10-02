@@ -16,14 +16,16 @@ import {
     SdsClassMember,
     SdsEnum,
     SdsEnumVariant,
-    SdsImport, SdsImportedDeclaration,
+    SdsImport,
+    SdsImportedDeclaration,
     SdsLiteral,
     SdsLiteralType,
     SdsModule,
     SdsModuleMember,
     SdsParameter,
     SdsParameterList,
-    SdsPlaceholder, SdsQualifiedImport,
+    SdsPlaceholder,
+    SdsQualifiedImport,
     SdsResult,
     SdsResultList,
     SdsStatement,
@@ -60,9 +62,9 @@ export const blockLambdaResultsOrEmpty = function (node: SdsBlockLambda | undefi
         .toArray();
 };
 
-export const importedDeclarationsOrEmpty = function(node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] {
+export const importedDeclarationsOrEmpty = function (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] {
     return node?.importedDeclarationList?.importedDeclarations ?? [];
-}
+};
 
 export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsLiteral[] {
     return node?.literalList?.literals ?? [];

@@ -9,8 +9,8 @@ import {
     LangiumDocuments,
 } from 'langium';
 import { packageNameOrNull } from '../helpers/shortcuts.js';
-import {isSdsSegment} from "../generated/ast.js";
-import {isInternal} from "../helpers/checks.js";
+import { isSdsSegment } from '../generated/ast.js';
+import { isInternal } from '../helpers/checks.js';
 
 export class SafeDsPackageManager {
     private readonly astNodeLocator: AstNodeLocator;
@@ -66,7 +66,10 @@ export class SafeDsPackageManager {
      * Returns all declarations that are defined in the given package or any of its (transitive) subpackages. The
      * options can be used to filter the results.
      */
-    getDeclarationsInPackageOrSubpackage(packageName: string, options: GetDeclarationsOptions = {}): AstNodeDescription[] {
+    getDeclarationsInPackageOrSubpackage(
+        packageName: string,
+        options: GetDeclarationsOptions = {},
+    ): AstNodeDescription[] {
         const packageContents = this.getPackageContents(packageName);
         if (!packageContents) {
             return [];
