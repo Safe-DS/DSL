@@ -9,6 +9,8 @@ import {
     LangiumDocuments,
 } from 'langium';
 import { packageNameOrNull } from '../helpers/shortcuts.js';
+import {isSdsSegment} from "../generated/ast.js";
+import {isInternal} from "../helpers/checks.js";
 
 export class SafeDsPackageManager {
     private readonly astNodeLocator: AstNodeLocator;
@@ -55,16 +57,16 @@ export class SafeDsPackageManager {
      * Returns all declarations that are defined directly in the given package. They must match the node type if
      * specified.
      */
-    getDeclarationsInPackage(packageName: string, nodeType?: string): AstNodeDescription[] {
+    getDeclarationsInPackage(packageName: string, options: GetDeclarationsOptions): AstNodeDescription[] {
         const result = this.getPackageContents(packageName)?.ownDeclarations ?? [];
-        return this.filterByNodeType(result, nodeType);
+        return this.filterDescriptions(result, options);
     }
 
     /**
      * Returns all declarations that are defined in the given package or any of its (transitive) subpackages. They must
      * match the node type if specified.
      */
-    getDeclarationsInPackageOrSubpackage(packageName: string, nodeType?: string): AstNodeDescription[] {
+    getDeclarationsInPackageOrSubpackage(packageName: string, options: GetDeclarationsOptions): AstNodeDescription[] {
         const packageContents = this.getPackageContents(packageName);
         if (!packageContents) {
             return [];
@@ -78,7 +80,7 @@ export class SafeDsPackageManager {
             queue.push(...current.subpackages.values());
         }
 
-        return this.filterByNodeType(result, nodeType);
+        return this.filterDescriptions(result, options);
     }
 
     private getPackageContents(packageName: string): PackageContents | undefined {
@@ -96,12 +98,22 @@ export class SafeDsPackageManager {
         return current;
     }
 
-    private filterByNodeType(descriptions: AstNodeDescription[], nodeType?: string): AstNodeDescription[] {
-        if (!nodeType) {
-            return descriptions;
+    private filterDescriptions(
+        descriptions: AstNodeDescription[],
+        options: GetDeclarationsOptions,
+    ): AstNodeDescription[] {
+        const { nodeType, hideInternal } = options;
+        let result = descriptions;
+
+        if (nodeType) {
+            result = descriptions.filter((it) => this.astReflection.isSubtype(it.type, nodeType));
         }
 
-        return descriptions.filter((it) => this.astReflection.isSubtype(it.type, nodeType));
+        if (hideInternal) {
+            result = result.filter((it) => !isSdsSegment(it.node) || !isInternal(it.node));
+        }
+
+        return result;
     }
 
     private buildPackageStructures(): void {
@@ -164,6 +176,11 @@ export class SafeDsPackageManager {
 
         current.ownDeclarations.push(descriptionWithResolvedNode);
     }
+}
+
+export interface GetDeclarationsOptions {
+    readonly nodeType?: string;
+    readonly hideInternal?: boolean;
 }
 
 type PackageNames = Set<string>;

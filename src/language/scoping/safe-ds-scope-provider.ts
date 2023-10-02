@@ -329,14 +329,22 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         const ownUri = getDocument(node).uri.toString();
         const ownPackageName = containingModule?.name;
 
-        // Data structures to collect reachable declarations
+        // Explicitly imported declarations
         const explicitlyImportedDeclarations = new ImportedDeclarations(importsOrEmpty(containingModule));
+
+        // Declarations in the same package
         let declarationsInSamePackage: AstNodeDescription[] = [];
         if (ownPackageName) {
-            declarationsInSamePackage = this.packageManager.getDeclarationsInPackage(ownPackageName, referenceType);
+            declarationsInSamePackage = this.packageManager.getDeclarationsInPackage(ownPackageName, {
+                nodeType: referenceType,
+            });
         }
 
-        const builtinDeclarations: AstNodeDescription[] = [];
+        // Builtin declarations
+        const builtinDeclarations: AstNodeDescription[] = this.packageManager.getDeclarationsInPackageOrSubpackage(
+            'safeds',
+            { nodeType: referenceType, hideInternal: true },
+        );
 
         // Loop over all declarations in the index
         const candidates = this.indexManager.allElements(referenceType);
@@ -370,17 +378,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
             // Handle explicitly imported declarations
             explicitlyImportedDeclarations.addIfImported(candidate, candidateNode, candidatePackageName);
-
-            // Handle other declarations in the same package
-            // if (candidatePackageName === ownPackageName) {
-            //     declarationsInSamePackage.push(candidate);
-            //     continue;
-            // }
-
-            // Handle builtin declarations
-            if (this.isBuiltinPackage(candidatePackageName)) {
-                builtinDeclarations.push(candidate);
-            }
         }
 
         // Order of precedence:
@@ -400,10 +397,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
         const document = this.langiumDocuments.getOrCreateDocument(nodeDescription.documentUri);
         return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
-    }
-
-    private isBuiltinPackage(packageName: string) {
-        return packageName.startsWith('safeds');
     }
 }
 
