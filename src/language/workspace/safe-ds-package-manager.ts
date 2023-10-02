@@ -57,7 +57,7 @@ export class SafeDsPackageManager {
      * Returns all declarations that are defined directly in the given package. They must match the node type if
      * specified.
      */
-    getDeclarationsInPackage(packageName: string, options: GetDeclarationsOptions): AstNodeDescription[] {
+    getDeclarationsInPackage(packageName: string, options: GetDeclarationsOptions = {}): AstNodeDescription[] {
         const result = this.getPackageContents(packageName)?.ownDeclarations ?? [];
         return this.filterDescriptions(result, options);
     }
@@ -66,7 +66,7 @@ export class SafeDsPackageManager {
      * Returns all declarations that are defined in the given package or any of its (transitive) subpackages. They must
      * match the node type if specified.
      */
-    getDeclarationsInPackageOrSubpackage(packageName: string, options: GetDeclarationsOptions): AstNodeDescription[] {
+    getDeclarationsInPackageOrSubpackage(packageName: string, options: GetDeclarationsOptions = {}): AstNodeDescription[] {
         const packageContents = this.getPackageContents(packageName);
         if (!packageContents) {
             return [];
