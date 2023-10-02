@@ -12,12 +12,13 @@ import {
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { registerValidationChecks } from './validation/safe-ds-validator.js';
 import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
-import { SafeDsWorkspaceManager } from './builtins/safe-ds-workspace-manager.js';
+import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
 import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
 import { SafeDsCoreClasses } from './builtins/safe-ds-core-classes.js';
+import {SafeDsPackageManager} from "./workspace/safe-ds-package-manager.js";
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -28,6 +29,9 @@ export type SafeDsAddedServices = {
     };
     types: {
         TypeComputer: SafeDsTypeComputer;
+    };
+    workspace: {
+        PackageManager: SafeDsPackageManager;
     };
 };
 
@@ -58,6 +62,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     types: {
         TypeComputer: (services) => new SafeDsTypeComputer(services),
+    },
+    workspace: {
+        PackageManager: (services) => new SafeDsPackageManager(services),
     },
 };
 

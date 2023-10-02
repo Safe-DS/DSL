@@ -62,10 +62,12 @@ import { isContainedIn } from '../helpers/ast.js';
 import { isStatic } from '../helpers/checks.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly langiumDocuments: LangiumDocuments;
+    private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
@@ -73,6 +75,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.langiumDocuments = services.shared.workspace.LangiumDocuments;
+        this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
     }
 
