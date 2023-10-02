@@ -25,8 +25,8 @@ import {
 
 export class SafeDsScopeComputation extends DefaultScopeComputation {
     protected override exportNode(node: AstNode, exports: AstNodeDescription[], document: LangiumDocument): void {
-        // Pipelines and private segments cannot be referenced from other documents
-        if (isSdsPipeline(node) || (isSdsSegment(node) && node.visibility === 'private')) {
+        // Modules, pipelines, and private segments cannot be referenced from other documents
+        if (isSdsModule(node) || isSdsPipeline(node) || (isSdsSegment(node) && node.visibility === 'private')) {
             return;
         }
 
