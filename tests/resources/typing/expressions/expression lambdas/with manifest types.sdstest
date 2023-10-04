@@ -1,0 +1,9 @@
+package tests.typing.expressions.expressionLambdas
+
+segment mySegment() {
+    // $TEST$ serialization (p: Int) -> (r: Int, s: String)
+    »(p: Int) -> 1«;
+
+    // $TEST$ serialization (p: vararg<String>) -> (r: Int, s: $Unknown)
+    »(vararg p: String) -> 1«;
+}

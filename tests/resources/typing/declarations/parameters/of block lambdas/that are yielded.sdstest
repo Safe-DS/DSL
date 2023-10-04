@@ -2,7 +2,7 @@ package tests.typing.declarations.parameters.ofBlockLambdas
 
 segment mySegment() -> (
     // $TEST$ equivalence_class parameterType2
-    r: (a: »String«) -> (),
+    r: (p: »String«) -> (),
     s: () -> (),
     t: Int,
 ) {

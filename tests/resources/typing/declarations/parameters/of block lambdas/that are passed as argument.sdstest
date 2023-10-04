@@ -1,7 +1,7 @@
 package tests.typing.declarations.parameters.ofBlockLambdas
 
 // $TEST$ equivalence_class parameterType1
-fun higherOrderFunction1(param: (a: »String«) -> ())
+fun higherOrderFunction1(param: (p: »String«) -> ())
 fun higherOrderFunction2(param: () -> ())
 fun normalFunction(param: Int)
 

@@ -1,0 +1,6 @@
+package tests.typing.expressions.expressionLambdas
+
+segment mySegment() {
+    // $TEST$ serialization (p: $Unknown) -> (result: Int)
+    »(p) -> 1«;
+}

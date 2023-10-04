@@ -1,0 +1,16 @@
+package tests.typing.expressions.expressionLambdas
+
+segment mySegment() -> (
+    r: (p: String) -> (),
+    s: () -> (),
+    t: Int,
+) {
+    // $TEST$ serialization (p: String) -> (r: Int, s: String)
+    yield r = »(p) -> 1«;
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: String)
+    yield s = »(p) -> 1«;
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    yield t = »(p) -> 1«;
+}
