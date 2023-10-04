@@ -15,6 +15,7 @@ import {
     isSdsFloat,
     isSdsInfixOperation,
     isSdsInt,
+    isSdsNamedType,
     isSdsNull,
     isSdsParenthesizedExpression,
     isSdsPrefixOperation,
@@ -27,7 +28,9 @@ import {
     SdsAssignee,
     SdsClass,
     SdsDeclaration,
-    SdsExpression, SdsInfixOperation, SdsPrefixOperation,
+    SdsExpression,
+    SdsInfixOperation,
+    SdsPrefixOperation,
     SdsType,
 } from '../generated/ast.js';
 
@@ -64,10 +67,6 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfExpression(node);
         } else if (isSdsType(node)) {
             return this.computeTypeOfType(node);
-        } else if (isSdsTypeArgument(node)) {
-            return NotImplementedType;
-        } else if (isSdsTypeProjection(node)) {
-            return NotImplementedType;
         } else {
             return NotImplementedType;
         }
@@ -296,12 +295,9 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isNullable) {
             const rightOperandType = this.computeType(node.rightOperand);
-            return this.lowestCommonSupertype(
-                leftOperandType.copyWithNullability(false),
-                rightOperandType
-            );
+            return this.lowestCommonSupertype(leftOperandType.copyWithNullability(false), rightOperandType);
         } else {
-            return leftOperandType
+            return leftOperandType;
         }
     }
 
@@ -315,7 +311,11 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private computeTypeOfType(_node: SdsType): Type {
+    private computeTypeOfType(node: SdsType): Type {
+        if (isSdsNamedType(node)) {
+            return this.computeType(node.declaration.ref).copyWithNullability(node.nullable);
+        }
+
         return UnknownType;
 
         // return when {

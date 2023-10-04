@@ -1,0 +1,23 @@
+package tests.typing.types.namedTypes
+
+class MyClass
+
+enum MyEnum
+
+fun nonNullableNamedTypes(
+    // $TEST$ serialization MyClass
+    a: »MyClass«,
+    // $TEST$ serialization MyEnum
+    b: »MyEnum«,
+    // $TEST$ serialization $Unknown
+    c: »unresolved«,
+)
+
+fun nullableNamedTypes(
+    // $TEST$ serialization MyClass?
+    a: »MyClass?«,
+    // $TEST$ serialization MyEnum?
+    b: »MyEnum?«,
+    // $TEST$ serialization $Unknown
+    c: »unresolved?«,
+)
