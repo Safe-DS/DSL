@@ -243,6 +243,37 @@ export class EnumVariantType extends NamedType {
     }
 }
 
+/**
+ * A type that represents an actual class, enum, or enum variant instead of an instance of it.
+ */
+export class StaticType extends Type {
+    override readonly isNullable = false;
+
+    constructor(readonly instanceType: NamedType) {
+        super();
+    }
+
+    override copyWithNullability(_isNullable: boolean): Type {
+        return this;
+    }
+
+    override equals(other: Type): boolean {
+        if (other === this) {
+            return true;
+        }
+
+        if (!(other instanceof StaticType)) {
+            return false;
+        }
+
+        return other.instanceType.equals(this.instanceType);
+    }
+
+    override toString(): string {
+        return `$type<${this.instanceType}>`;
+    }
+}
+
 export class UnionType extends Type {
     override readonly isNullable = false;
 
