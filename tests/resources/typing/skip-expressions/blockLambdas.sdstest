@@ -1,4 +1,4 @@
-package tests.typingexpressions.blockLambdas
+package tests.typing.expressions.blockLambdas
 
 fun f(
     parameter: (a: String, b: Int) -> (r: String, s: Int)

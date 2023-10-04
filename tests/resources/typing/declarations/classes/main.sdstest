@@ -1,0 +1,7 @@
+package tests.typing.declarations.classes
+
+// $TEST$ serialization MyClass1
+class »MyClass1«
+
+// $TEST$ serialization MyClass2
+class »MyClass2«

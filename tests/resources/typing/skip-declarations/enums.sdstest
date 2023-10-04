@@ -1,5 +1,0 @@
-package tests.typingdeclarations.enums
-
-enum E
-
-step myStep(e: E) {}

@@ -1,4 +1,4 @@
-package tests.typingoperations.comparison
+package tests.typing.operations.comparison
 
 pipeline myPipeline {
     val lessThan = (1 < 1);

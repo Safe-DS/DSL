@@ -1,4 +1,4 @@
-package tests.typingoperations.strictEquality
+package tests.typing.operations.strictEquality
 
 pipeline myPipeline {
     val strictlyEquals = (1 === 1);

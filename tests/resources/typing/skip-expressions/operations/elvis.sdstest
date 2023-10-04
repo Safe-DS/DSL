@@ -1,4 +1,4 @@
-package tests.typingoperations.elvis
+package tests.typing.operations.elvis
 
 fun intOrNull() -> a: Int?
 fun stringOrNull() -> s: String?

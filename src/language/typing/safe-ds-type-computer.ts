@@ -1,11 +1,11 @@
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
-import { ClassType, Type, UnresolvedType } from './model.js';
+import {ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnknownType} from './model.js';
 import {
-    isSdsAssignee,
-    isSdsBoolean,
-    isSdsDeclaration,
+    isSdsAssignee, isSdsAttribute,
+    isSdsBoolean, isSdsClass,
+    isSdsDeclaration, isSdsEnum, isSdsEnumVariant,
     isSdsExpression,
     isSdsFloat,
     isSdsInt,
@@ -22,7 +22,6 @@ import {
     SdsType,
 } from '../generated/ast.js';
 
-/* c8 ignore start */
 export class SafeDsTypeComputer {
     readonly astNodeLocator: AstNodeLocator;
     readonly coreClasses: SafeDsCoreClasses;
@@ -38,7 +37,7 @@ export class SafeDsTypeComputer {
 
     computeType(node: AstNode | undefined): Type {
         if (!node) {
-            return UnresolvedType;
+            return UnknownType;
         }
 
         const documentUri = getDocument(node).uri.toString();
@@ -57,22 +56,86 @@ export class SafeDsTypeComputer {
         } else if (isSdsType(node)) {
             return this.computeTypeOfType(node);
         } else if (isSdsTypeArgument(node)) {
-            return UnresolvedType;
-            // return this.computeType(node.value);
+            return NotImplementedType;
         } else if (isSdsTypeProjection(node)) {
-            return UnresolvedType;
-            // return this.computeTypeOfType(node.type);
+            return NotImplementedType;
         } else {
             return this.Any();
         }
     }
 
     private computeTypeOfAssignee(_node: SdsAssignee): Type {
-        return UnresolvedType;
+        return NotImplementedType;
+
+        // return when {
+        //     this.eIsProxy() -> UnresolvedType
+        //     this is SdsBlockLambdaResult || this is SdsPlaceholder || this is SdsYield -> {
+        //         val assigned = assignedOrNull() ?: return Nothing(context)
+        //         assigned.inferType(context)
+        //     }
+        // else -> Any(context)
+        // }
     }
 
-    private computeTypeOfDeclaration(_node: SdsDeclaration): Type {
-        return UnresolvedType;
+    private computeTypeOfDeclaration(node: SdsDeclaration): Type {
+        if (isSdsAttribute(node)) {
+            return this.computeType(node.type);
+        } else if (isSdsClass(node)) {
+            return new ClassType(node, false);
+        } else if (isSdsEnum(node)) {
+            return new EnumType(node, false);
+        } else if (isSdsEnumVariant(node)) {
+            return new EnumVariantType(node, false);
+        }
+
+        return NotImplementedType;
+
+        // return when {
+        //     this is SdsFunction -> CallableType(
+        //         parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
+        //     resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
+        // )
+        //     this is SdsParameter -> {
+        //         // Declared parameter type
+        //         if (this.type != null) {
+        //             val declaredParameterType = this.type.inferTypeForType(context)
+        //             return when {
+        //                 this.isVariadic -> VariadicType(declaredParameterType)
+        //             else -> declaredParameterType
+        //             }
+        //         }
+        //
+        //         // Inferred lambda parameter type
+        //         val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
+        //         val thisIndex = callable.parametersOrEmpty().indexOf(this)
+        //         if (callable is SdsAbstractLambda) {
+        //             val containerType = when (val container = callable.eContainer()) {
+        //                 is SdsArgument -> container.parameterOrNull()?.inferType(context)
+        //                 is SdsAssignment ->
+        //                     container
+        //                         .yieldsOrEmpty()
+        //                         .find { it.assignedOrNull() == callable }
+        //             ?.result
+        //                     ?.inferType(context)
+        //             else -> null
+        //             }
+        //
+        //             return when (containerType) {
+        //                 is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
+        //             else -> Any(context)
+        //             }
+        //         }
+        //
+        //         // We don't know better
+        //         return Any(context)
+        //     }
+        //     this is SdsResult -> type.inferTypeForType(context)
+        //     this is SdsSegment -> CallableType(
+        //         parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
+        //     resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
+        // )
+        // else -> Any(context)
+        // }
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -96,7 +159,7 @@ export class SafeDsTypeComputer {
             return this.computeType(node.expression);
         }
 
-        return UnresolvedType;
+        return NotImplementedType;
 
         //     this is SdsArgument -> this.value.inferTypeExpression(context)
         //     this is SdsBlockLambda -> CallableType(
@@ -201,66 +264,90 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfType(_node: SdsType): Type {
-        return UnresolvedType;
+        return UnknownType;
+
+        // return when {
+        //     this.eIsProxy() -> UnresolvedType
+        //     this is SdsCallableType -> CallableType(
+        //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
+        //     this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
+        // )
+        //     this is SdsMemberType -> {
+        //         this.member.inferTypeForType(context)
+        //     }
+        //     this is SdsNamedType -> {
+        //         this.declaration.inferTypeForDeclaration(context).setIsNullableOnCopy(this.isNullable)
+        //     }
+        //     this is SdsParenthesizedType -> {
+        //         this.type.inferTypeForType(context)
+        //     }
+        //     this is SdsSchemaType -> {
+        //         this.declaration.inferTypeForDeclaration(context)
+        //     }
+        //     this is SdsUnionType -> {
+        //         UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
+        //     }
+        // else -> Any(context)
+        // }
     }
 
-    private cachedAny: Type = UnresolvedType;
+    private cachedAny: Type = UnknownType;
 
     private Any(): Type {
-        if (this.cachedAny === UnresolvedType) {
+        if (this.cachedAny === UnknownType) {
             this.cachedAny = this.createCoreType(this.coreClasses.Any);
         }
         return this.cachedAny;
     }
 
-    private cachedBoolean: Type = UnresolvedType;
+    private cachedBoolean: Type = UnknownType;
 
     private Boolean(): Type {
-        if (this.cachedBoolean === UnresolvedType) {
+        if (this.cachedBoolean === UnknownType) {
             this.cachedBoolean = this.createCoreType(this.coreClasses.Boolean);
         }
         return this.cachedBoolean;
     }
 
-    private cachedFloat: Type = UnresolvedType;
+    private cachedFloat: Type = UnknownType;
 
     private Float(): Type {
-        if (this.cachedFloat === UnresolvedType) {
+        if (this.cachedFloat === UnknownType) {
             this.cachedFloat = this.createCoreType(this.coreClasses.Float);
         }
         return this.cachedFloat;
     }
 
-    private cachedInt: Type = UnresolvedType;
+    private cachedInt: Type = UnknownType;
 
     private Int(): Type {
-        if (this.cachedInt === UnresolvedType) {
+        if (this.cachedInt === UnknownType) {
             this.cachedInt = this.createCoreType(this.coreClasses.Int);
         }
         return this.cachedInt;
     }
 
-    private cachedNothingOrNull: Type = UnresolvedType;
-    private cachedNothing: Type = UnresolvedType;
+    private cachedNothingOrNull: Type = UnknownType;
+    private cachedNothing: Type = UnknownType;
 
     private Nothing(isNullable: boolean): Type {
         if (isNullable) {
-            if (this.cachedNothingOrNull === UnresolvedType) {
+            if (this.cachedNothingOrNull === UnknownType) {
                 this.cachedNothingOrNull = this.createCoreType(this.coreClasses.Nothing, true);
             }
             return this.cachedNothingOrNull;
         } else {
-            if (this.cachedNothing === UnresolvedType) {
+            if (this.cachedNothing === UnknownType) {
                 this.cachedNothing = this.createCoreType(this.coreClasses.Nothing);
             }
             return this.cachedNothing;
         }
     }
 
-    private cachedString: Type = UnresolvedType;
+    private cachedString: Type = UnknownType;
 
     private String(): Type {
-        if (this.cachedString === UnresolvedType) {
+        if (this.cachedString === UnknownType) {
             this.cachedString = this.createCoreType(this.coreClasses.String);
         }
         return this.cachedString;
@@ -270,12 +357,10 @@ export class SafeDsTypeComputer {
         if (coreClass) {
             return new ClassType(coreClass, isNullable);
         } else {
-            return UnresolvedType;
+            return UnknownType;
         }
     }
 }
-
-/* c8 ignore stop */
 
 /*
 fun SdsAbstractObject.hasPrimitiveType(): Boolean {
@@ -291,108 +376,6 @@ fun SdsAbstractObject.hasPrimitiveType(): Boolean {
         StdlibClasses.Int,
         StdlibClasses.String,
     )
-}
-
-private fun SdsAbstractAssignee.inferTypeForAssignee(context: EObject): Type {
-    return when {
-        this.eIsProxy() -> UnresolvedType
-        this is SdsBlockLambdaResult || this is SdsPlaceholder || this is SdsYield -> {
-            val assigned = assignedOrNull() ?: return Nothing(context)
-            assigned.inferType(context)
-        }
-        else -> Any(context)
-    }
-}
-
-@OptIn(ExperimentalSdsApi::class)
-private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Type {
-    return when {
-        this.eIsProxy() -> UnresolvedType
-        this is SdsAttribute -> type.inferTypeForType(context)
-        this is SdsClass -> {
-            val typeParametersTypes = this.typeParametersOrEmpty()
-                .map { it.inferTypeForDeclaration(context) }
-                .filterIsInstance<ParameterisedType>()
-
-            ClassType(this, typeParametersTypes, isNullable = false)
-        }
-        this is SdsEnum -> EnumType(this, isNullable = false)
-        this is SdsEnumVariant -> EnumVariantType(this, isNullable = false)
-        this is SdsFunction -> CallableType(
-            parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        )
-        this is SdsParameter -> {
-            // Declared parameter type
-            if (this.type != null) {
-                val declaredParameterType = this.type.inferTypeForType(context)
-                return when {
-                    this.isVariadic -> VariadicType(declaredParameterType)
-                    else -> declaredParameterType
-                }
-            }
-
-            // Inferred lambda parameter type
-            val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
-            val thisIndex = callable.parametersOrEmpty().indexOf(this)
-            if (callable is SdsAbstractLambda) {
-                val containerType = when (val container = callable.eContainer()) {
-                    is SdsArgument -> container.parameterOrNull()?.inferType(context)
-                    is SdsAssignment ->
-                        container
-                            .yieldsOrEmpty()
-                            .find { it.assignedOrNull() == callable }
-                            ?.result
-                            ?.inferType(context)
-                    else -> null
-                }
-
-                return when (containerType) {
-                    is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
-                    else -> Any(context)
-                }
-            }
-
-            // We don't know better
-            return Any(context)
-        }
-        this is SdsResult -> type.inferTypeForType(context)
-        // For now all Schema placeholders are of type 'ParameterisedType(::$SchemaType)'
-        this is SdsSchemaPlaceholder -> ParameterisedType(this, SdsKind.SchemaKind.toString())
-        this is SdsStep -> CallableType(
-            parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        )
-        // Todo: resolve TypeParameter for "non kind" TypeParameter too
-        this is SdsTypeParameter && this.kind != null -> ParameterisedType(this, kind)
-        else -> Any(context)
-    }
-}
-
-private fun SdsAbstractType.inferTypeForType(context: EObject): Type {
-    return when {
-        this.eIsProxy() -> UnresolvedType
-        this is SdsCallableType -> CallableType(
-            this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        )
-        this is SdsMemberType -> {
-            this.member.inferTypeForType(context)
-        }
-        this is SdsNamedType -> {
-            this.declaration.inferTypeForDeclaration(context).setIsNullableOnCopy(this.isNullable)
-        }
-        this is SdsParenthesizedType -> {
-            this.type.inferTypeForType(context)
-        }
-        this is SdsSchemaType -> {
-            this.declaration.inferTypeForDeclaration(context)
-        }
-        this is SdsUnionType -> {
-            UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
-        }
-        else -> Any(context)
-    }
 }
 
 private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
@@ -497,37 +480,7 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 // }
 // }
 // }
-//
-// // *****************************************************************************************************************
-// // Declarations
-// // ****************************************************************************************************************/
-//
-// @Nested
-// inner class Attributes {
-//
-//     @Test
-//     fun `attributes should have declared type`() {
-//     withCompilationUnitFromFile("declarations/attributes") {
-//     descendants<SdsAttribute>().forEach {
-//     it shouldHaveType it.type
-// }
-// }
-// }
-// }
-//
-// @Nested
-// inner class Classes {
-//
-//     @Test
-//     fun `classes should have non-nullable class type`() {
-//     withCompilationUnitFromFile("declarations/classes") {
-//     descendants<SdsClass>().forEach {
-//     it shouldHaveType ClassType(it, isNullable = false)
-// }
-// }
-// }
-// }
-//
+
 // @Nested
 // inner class Enums {
 //

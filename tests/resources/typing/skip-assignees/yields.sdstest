@@ -1,4 +1,4 @@
-package tests.typingassignees.yields
+package tests.typing.assignees.yields
 
 fun f(p: Any)
 

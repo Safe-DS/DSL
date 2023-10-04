@@ -1,4 +1,4 @@
-package tests.typingdeclarations.parameters
+package tests.typing.declarations.parameters
 
 fun f(parameter: (a: String) -> r: String)
 

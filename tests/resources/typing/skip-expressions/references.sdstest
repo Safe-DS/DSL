@@ -1,4 +1,4 @@
-package tests.typingexpressions.references
+package tests.typing.expressions.references
 
 pipeline myPipeline {
     val a = 1;

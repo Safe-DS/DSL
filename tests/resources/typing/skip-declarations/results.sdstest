@@ -1,4 +1,4 @@
-package tests.typingdeclarations.results
+package tests.typing.declarations.results
 
 step myStep() -> (r: Int, s: String) {
     yield r = 1;

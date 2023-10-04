@@ -1,4 +1,4 @@
-package tests.typingassignees.blockLambdaResults
+package tests.typing.assignees.blockLambdaResults
 
 fun f(p: Any)
 

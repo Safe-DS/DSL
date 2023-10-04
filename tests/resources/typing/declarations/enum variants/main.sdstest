@@ -1,0 +1,9 @@
+package tests.typing.declarations.enumVariants
+
+enum MyEnum {
+    // $TEST$ serialization MyEnumVariant1
+    »MyEnumVariant1«
+
+    // $TEST$ serialization MyEnumVariant2
+    »MyEnumVariant2«
+}

@@ -1,4 +1,4 @@
-package tests.typingexpressions.parenthesizedExpressions
+package tests.typing.expressions.parenthesizedExpressions
 
 fun f(x: Any?)
 

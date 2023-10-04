@@ -1,4 +1,4 @@
-package tests.typingoperations.logical
+package tests.typing.operations.logical
 
 pipeline myPipeline {
     val conjunction = (true and true);

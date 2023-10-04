@@ -1,4 +1,4 @@
-package tests.typingassignees.placeholders
+package tests.typing.assignees.placeholders
 
 fun f(p: Any)
 

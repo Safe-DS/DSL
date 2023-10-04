@@ -1,4 +1,4 @@
-package tests.typingexpressions.memberAccesses
+package tests.typing.expressions.memberAccesses
 
 class C {
     static attr a: Int

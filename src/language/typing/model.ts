@@ -1,6 +1,5 @@
 import { SdsClass, SdsDeclaration, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
 
-/* c8 ignore start */
 export abstract class Type {
     abstract isNullable: boolean;
 
@@ -209,7 +208,7 @@ export class EnumVariantType extends NamedType {
 //     }
 // }
 
-class UnresolvedTypeClass extends Type {
+class UnknownTypeClass extends Type {
     readonly isNullable = false;
 
     copyWithNullability(_isNullable: boolean): Type {
@@ -217,13 +216,30 @@ class UnresolvedTypeClass extends Type {
     }
 
     override equals(other: Type): boolean {
-        return other instanceof UnresolvedTypeClass;
+        return other instanceof UnknownTypeClass;
     }
 
     toString(): string {
-        return '$Unresolved';
+        return '$Unknown';
     }
 }
 
-export const UnresolvedType = new UnresolvedTypeClass();
-/* c8 ignore stop */
+export const UnknownType = new UnknownTypeClass();
+
+class NotImplementedTypeClass extends Type {
+    readonly isNullable = false;
+
+    copyWithNullability(_isNullable: boolean): Type {
+        return this;
+    }
+
+    override equals(other: Type): boolean {
+        return other instanceof NotImplementedTypeClass;
+    }
+
+    toString(): string {
+        return '$NotImplemented';
+    }
+}
+
+export const NotImplementedType = new NotImplementedTypeClass();

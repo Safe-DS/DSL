@@ -1,4 +1,4 @@
-package tests.typingexpressions.expressionLambdas
+package tests.typing.expressions.expressionLambdas
 
 fun f(
     parameter: (a: String, b: Int) -> r: String

@@ -1,4 +1,4 @@
-package tests.typingdeclarations.steps
+package tests.typing.declarations.steps
 
 step s(a: Int, b: String) -> (r: String, s: Int) {
     yield r = "";

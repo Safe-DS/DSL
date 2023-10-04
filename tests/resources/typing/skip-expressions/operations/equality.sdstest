@@ -1,4 +1,4 @@
-package tests.typingoperations.equality
+package tests.typing.operations.equality
 
 pipeline myPipeline {
     val equals = (1 == 1);

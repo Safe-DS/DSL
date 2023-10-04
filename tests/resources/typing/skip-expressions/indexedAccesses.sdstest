@@ -1,4 +1,4 @@
-package tests.typingexpressions.indexedAccesses
+package tests.typing.expressions.indexedAccesses
 
 step myStep1(vararg params: Int) {
     params[0];

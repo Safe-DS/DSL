@@ -1,4 +1,4 @@
-package tests.typingoperations.arithmetic
+package tests.typing.operations.arithmetic
 
 pipeline myPipeline {
     val additionIntInt = (1 + 1);

@@ -1,4 +1,4 @@
-package tests.typingtypes.memberTypes
+package tests.typing.types.memberTypes
 
 enum MyEnum {
     MyVariant1

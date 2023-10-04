@@ -1,4 +1,4 @@
-package tests.typingexpressions.calls
+package tests.typing.expressions.calls
 
 class C()
 enum E {
