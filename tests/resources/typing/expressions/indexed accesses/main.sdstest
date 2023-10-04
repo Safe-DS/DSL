@@ -7,7 +7,7 @@ segment mySegment1(vararg params: »Int«) {
 }
 
 segment mySegment2(params: String) {
-    // $TEST$ serialization Nothing
+    // $TEST$ serialization $Unknown
     »params[0]«;
 }
 

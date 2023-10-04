@@ -1,4 +1,4 @@
-import {AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache} from 'langium';
+import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
 import {
@@ -6,8 +6,8 @@ import {
     ClassType,
     EnumType,
     EnumVariantType,
-    NamedTupleType,
     NamedTupleEntry,
+    NamedTupleType,
     NotImplementedType,
     Type,
     UnionType,
@@ -18,8 +18,10 @@ import {
     isSdsAnnotation,
     isSdsArgument,
     isSdsAssignee,
+    isSdsAssignment,
     isSdsAttribute,
-    isSdsBoolean, isSdsCallable,
+    isSdsBoolean,
+    isSdsCallable,
     isSdsCallableType,
     isSdsClass,
     isSdsDeclaration,
@@ -30,7 +32,8 @@ import {
     isSdsFunction,
     isSdsIndexedAccess,
     isSdsInfixOperation,
-    isSdsInt, isSdsLambda,
+    isSdsInt,
+    isSdsLambda,
     isSdsLiteralType,
     isSdsMemberAccess,
     isSdsMemberType,
@@ -48,6 +51,7 @@ import {
     isSdsType,
     isSdsTypeProjection,
     isSdsUnionType,
+    isSdsYield,
     SdsAssignee,
     SdsCallableType,
     SdsClass,
@@ -60,7 +64,7 @@ import {
     SdsSegment,
     SdsType,
 } from '../generated/ast.js';
-import { parametersOrEmpty, resultsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
+import { assigneesOrEmpty, parametersOrEmpty, resultsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
 
 export class SafeDsTypeComputer {
     readonly astNodeLocator: AstNodeLocator;
@@ -183,40 +187,45 @@ export class SafeDsTypeComputer {
             }
         }
 
-        // Inferred lambda parameter type
+        // Infer type from context
         const containingCallable = getContainerOfType(node, isSdsCallable);
         if (!isSdsLambda(containingCallable)) {
-            const nodeIndex = parametersOrEmpty(containingCallable?.parameterList).indexOf(node);
-
             return UnknownType;
         }
 
+        const containerOfLambda = containingCallable.$container;
 
+        // Lambda passed as argument
+        if (isSdsArgument(containerOfLambda)) {
+            // val containerType = when (val container = callable.eContainer()) {
+            //     is SdsArgument -> container.parameterOrNull()?.inferType(context)
+            // }
+            //
+            // return when (containerType) {
+            //     is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
+            // else -> Any(context)
+            // }
 
-        return NotImplementedType;
+            return NotImplementedType;
+        }
 
-        // val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
-        // val thisIndex = callable.parametersOrEmpty().indexOf(this)
-        // if (callable is SdsAbstractLambda) {
-        //     val containerType = when (val container = callable.eContainer()) {
-        //         is SdsArgument -> container.parameterOrNull()?.inferType(context)
-        //         is SdsAssignment ->
-        //             container
-        //                 .yieldsOrEmpty()
-        //                 .find { it.assignedOrNull() == callable }
-        //     ?.result
-        //             ?.inferType(context)
-        //     else -> null
-        //     }
-        //
-        //     return when (containerType) {
-        //         is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
-        //     else -> Any(context)
-        //     }
-        // }
-        //
-        // // We don't know better
-        // return Any(context)
+        // Yielded lambda
+        else if (isSdsAssignment(containerOfLambda)) {
+            const firstAssignee = assigneesOrEmpty(containerOfLambda)[0];
+            if (!isSdsYield(firstAssignee)) {
+                return UnknownType;
+            }
+
+            const resultType = this.computeType(firstAssignee.result?.ref);
+            if (!(resultType instanceof CallableType)) {
+                return UnknownType;
+            }
+
+            const parameterPosition = parametersOrEmpty(containingCallable.parameterList).indexOf(node);
+            return resultType.getParameterTypeByPosition(parameterPosition) ?? UnknownType;
+        }
+
+        return UnknownType;
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -240,12 +249,10 @@ export class SafeDsTypeComputer {
             return this.computeType(node.value);
         } else if (isSdsIndexedAccess(node)) {
             const receiverType = this.computeType(node.receiver);
-            if (receiverType === UnknownType) {
-                return UnknownType;
-            } else if (receiverType instanceof VariadicType) {
+            if (receiverType instanceof VariadicType) {
                 return receiverType.elementType;
             } else {
-                return this.Nothing();
+                return UnknownType;
             }
         } else if (isSdsInfixOperation(node)) {
             switch (node.operator) {

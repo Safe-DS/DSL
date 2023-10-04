@@ -23,10 +23,14 @@ export class CallableType extends Type {
 
     constructor(
         readonly callable: SdsCallable,
-        readonly parameterType: NamedTupleType,
-        readonly resultType: NamedTupleType,
+        readonly inputType: NamedTupleType,
+        readonly outputType: NamedTupleType,
     ) {
         super();
+    }
+
+    getParameterTypeByPosition(position: number): Type | undefined {
+        return this.inputType.getTypeOfEntryByPosition(position);
     }
 
     override copyWithNullability(_isNullable: boolean): Type {
@@ -44,13 +48,13 @@ export class CallableType extends Type {
 
         return (
             other.callable === this.callable &&
-            other.parameterType.equals(this.parameterType) &&
-            other.resultType.equals(this.resultType)
+            other.inputType.equals(this.inputType) &&
+            other.outputType.equals(this.outputType)
         );
     }
 
     override toString(): string {
-        return `${this.parameterType} -> ${this.resultType}`;
+        return `${this.inputType} -> ${this.outputType}`;
     }
 }
 
@@ -95,6 +99,10 @@ export class NamedTupleType extends Type {
 
     constructor(readonly entries: NamedTupleEntry[]) {
         super();
+    }
+
+    getTypeOfEntryByPosition(position: number): Type | undefined {
+        return this.entries[position]?.type;
     }
 
     override copyWithNullability(_isNullable: boolean): Type {
