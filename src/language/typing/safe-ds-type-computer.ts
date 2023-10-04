@@ -20,7 +20,9 @@ import {
     isSdsAssignee,
     isSdsAssignment,
     isSdsAttribute,
+    isSdsBlockLambda,
     isSdsBoolean,
+    isSdsCall,
     isSdsCallable,
     isSdsCallableType,
     isSdsClass,
@@ -28,6 +30,7 @@ import {
     isSdsEnum,
     isSdsEnumVariant,
     isSdsExpression,
+    isSdsExpressionLambda,
     isSdsFloat,
     isSdsFunction,
     isSdsIndexedAccess,
@@ -64,7 +67,13 @@ import {
     SdsSegment,
     SdsType,
 } from '../generated/ast.js';
-import { assigneesOrEmpty, parametersOrEmpty, resultsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
+import {
+    assigneesOrEmpty,
+    blockLambdaResultsOrEmpty,
+    parametersOrEmpty,
+    resultsOrEmpty,
+    typeArgumentsOrEmpty,
+} from '../helpers/shortcuts.js';
 
 export class SafeDsTypeComputer {
     readonly astNodeLocator: AstNodeLocator;
@@ -247,6 +256,67 @@ export class SafeDsTypeComputer {
         // Recursive cases
         else if (isSdsArgument(node)) {
             return this.computeType(node.value);
+        } else if (isSdsCall(node)) {
+            //     this is SdsCall -> when (val callable = callableOrNull()) {
+            //         is SdsClass -> {
+            //             val typeParametersTypes = callable.typeParametersOrEmpty()
+            //                 .map { it.inferTypeForDeclaration(context) }
+            //         .filterIsInstance<ParameterisedType>()
+            //
+            //             ClassType(callable, typeParametersTypes, isNullable = false)
+            //         }
+            //         is SdsCallableType -> {
+            //             val results = callable.resultsOrEmpty()
+            //             when (results.size) {
+            //                 1 -> results.first().inferTypeForDeclaration(context)
+            //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
+            //             }
+            //         }
+            //         is SdsFunction -> {
+            //             val results = callable.resultsOrEmpty()
+            //             when (results.size) {
+            //                 1 -> results.first().inferTypeForDeclaration(context)
+            //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
+            //             }
+            //         }
+            //         is SdsBlockLambda -> {
+            //             val results = callable.blockLambdaResultsOrEmpty()
+            //             when (results.size) {
+            //                 1 -> results.first().inferTypeForAssignee(context)
+            //             else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
+            //             }
+            //         }
+            //         is SdsEnumVariant -> {
+            //             EnumVariantType(callable, isNullable = false)
+            //         }
+            //         is SdsExpressionLambda -> {
+            //             callable.result.inferTypeExpression(context)
+            //         }
+            //         is SdsStep -> {
+            //             val results = callable.resultsOrEmpty()
+            //             when (results.size) {
+            //                 1 -> results.first().inferTypeForDeclaration(context)
+            //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
+            //             }
+            //         }
+            //     else -> Any(context)
+            //     }
+        } else if (isSdsBlockLambda(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+            );
+            const resultEntries = blockLambdaResultsOrEmpty(node).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+            );
+
+            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+        } else if (isSdsExpressionLambda(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+            );
+            const resultEntries = [new NamedTupleEntry('result', this.computeType(node.result))];
+
+            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsIndexedAccess(node)) {
             const receiverType = this.computeType(node.receiver);
             if (receiverType instanceof VariadicType) {
@@ -302,60 +372,8 @@ export class SafeDsTypeComputer {
             return this.computeType(node.target.ref);
         }
 
-        return NotImplementedType;
-
-        //     this is SdsBlockLambda -> CallableType(
-        //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-        //     blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) },
-        // )
-        //     this is SdsCall -> when (val callable = callableOrNull()) {
-        //         is SdsClass -> {
-        //             val typeParametersTypes = callable.typeParametersOrEmpty()
-        //                 .map { it.inferTypeForDeclaration(context) }
-        //         .filterIsInstance<ParameterisedType>()
-        //
-        //             ClassType(callable, typeParametersTypes, isNullable = false)
-        //         }
-        //         is SdsCallableType -> {
-        //             val results = callable.resultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForDeclaration(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-        //             }
-        //         }
-        //         is SdsFunction -> {
-        //             val results = callable.resultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForDeclaration(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-        //             }
-        //         }
-        //         is SdsBlockLambda -> {
-        //             val results = callable.blockLambdaResultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForAssignee(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
-        //             }
-        //         }
-        //         is SdsEnumVariant -> {
-        //             EnumVariantType(callable, isNullable = false)
-        //         }
-        //         is SdsExpressionLambda -> {
-        //             callable.result.inferTypeExpression(context)
-        //         }
-        //         is SdsStep -> {
-        //             val results = callable.resultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForDeclaration(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-        //             }
-        //         }
-        //     else -> Any(context)
-        //     }
-        //     this is SdsExpressionLambda -> CallableType(
-        //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-        //     listOf(result.inferTypeExpression(context)),
-        // )
+        /* c8 skip next */
+        return UnknownType;
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {

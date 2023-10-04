@@ -8,7 +8,7 @@ segment mySegment() {
     // $TEST$ serialization (p: String) -> (result: Int)
     higherOrderFunction1(»(p) -> 1«);
 
-    // $TEST$ serialization (p: String) -> (r: Int)
+    // $TEST$ serialization (p: String) -> (result: Int)
     higherOrderFunction1(param = »(p) -> 1«);
 
     // $TEST$ serialization (p: $Unknown) -> (result: Int)
