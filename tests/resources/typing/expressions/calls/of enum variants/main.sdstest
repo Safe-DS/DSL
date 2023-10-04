@@ -4,12 +4,7 @@ enum E {
     V
 }
 
-fun f() -> maybeV: E.V?
-
 pipeline myPipeline {
     // $TEST$ serialization V
     »E.V()«;
-
-    // $TEST$ serialization V
-    »f()()«;
 }

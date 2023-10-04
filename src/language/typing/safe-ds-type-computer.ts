@@ -338,6 +338,17 @@ export class SafeDsTypeComputer {
     private computeTypeOfCall(_node: SdsCall): Type {
         return NotImplementedType;
 
+        // TODO: we need to differentiate
+        //  class C()
+        //  val a = C(); // calling the class itself
+        //  val b = a(); // calling an instance of the class
+        // We might need a StaticType or something for the former case.
+        // The type system should also handle stuff like
+        // val alias = C;
+        // val c = alias();
+
+
+
         //     when (val callable = callableOrNull()) {
         //         is SdsClass -> {
         //             val typeParametersTypes = callable.typeParametersOrEmpty()
