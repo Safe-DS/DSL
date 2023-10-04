@@ -1,0 +1,23 @@
+package tests.typing.expressions.parenthesizedExpressions
+
+pipeline myPipeline {
+    // $TEST$ equivalence_class boolean
+    // $TEST$ equivalence_class boolean
+    »(»true«)«;
+
+    // $TEST$ equivalence_class float
+    // $TEST$ equivalence_class float
+    »(»1.0«)«;
+
+    // $TEST$ equivalence_class int
+    // $TEST$ equivalence_class int
+    »(»1«)«;
+
+    // $TEST$ equivalence_class null
+    // $TEST$ equivalence_class null
+    »(»null«)«;
+
+    // $TEST$ equivalence_class string
+    // $TEST$ equivalence_class string
+    »(»""«)«;
+}

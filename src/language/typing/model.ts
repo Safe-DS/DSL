@@ -1,13 +1,3 @@
-// package com.larsreimann.safeds.staticAnalysis.typing
-//
-// import com.larsreimann.safeds.emf.containingEnumOrNull
-// import com.larsreimann.safeds.naming.qualifiedNameOrNull
-// import com.larsreimann.safeds.safeDS.SdsAbstractDeclaration
-// import com.larsreimann.safeds.safeDS.SdsClass
-// import com.larsreimann.safeds.safeDS.SdsEnum
-// import com.larsreimann.safeds.safeDS.SdsEnumVariant
-// import org.eclipse.xtext.naming.QualifiedName
-
 import { SdsClass, SdsDeclaration, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
 
 /* c8 ignore start */

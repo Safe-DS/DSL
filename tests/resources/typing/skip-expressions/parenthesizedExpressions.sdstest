@@ -1,6 +1,0 @@
-package tests.typingexpressions.parenthesizedExpressions
-
-pipeline myPipeline {
-    (1);
-    ("");
-}
