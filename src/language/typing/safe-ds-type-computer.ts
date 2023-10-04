@@ -1,8 +1,9 @@
-import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
-import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
+import {AstNode, AstNodeLocator, getDocument, WorkspaceCache} from 'langium';
+import {SafeDsServices} from '../safe-ds-module.js';
+import {SafeDsCoreClasses} from '../builtins/safe-ds-core-classes.js';
 import {ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnknownType} from './model.js';
 import {
+    isSdsArgument,
     isSdsAssignee, isSdsAttribute,
     isSdsBoolean, isSdsClass,
     isSdsDeclaration, isSdsEnum, isSdsEnumVariant,
@@ -60,7 +61,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsTypeProjection(node)) {
             return NotImplementedType;
         } else {
-            return this.Any();
+            return NotImplementedType;
         }
     }
 
@@ -155,7 +156,9 @@ export class SafeDsTypeComputer {
         }
 
         // Recursive cases
-        if (isSdsParenthesizedExpression(node)) {
+        else if (isSdsArgument(node)) {
+            return this.computeType(node.value);
+        } else if (isSdsParenthesizedExpression(node)) {
             return this.computeType(node.expression);
         }
 
@@ -482,32 +485,6 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 // }
 
 // @Nested
-// inner class Enums {
-//
-//     @Test
-//     fun `enums should have non-nullable enum type`() {
-//     withCompilationUnitFromFile("declarations/enums") {
-//     descendants<SdsEnum>().forEach {
-//     it shouldHaveType EnumType(it, isNullable = false)
-// }
-// }
-// }
-// }
-//
-// @Nested
-// inner class EnumVariants {
-//
-//     @Test
-//     fun `enum variants should have non-nullable enum variant type`() {
-//     withCompilationUnitFromFile("declarations/enumVariants") {
-//     descendants<SdsEnumVariant>().forEach {
-//     it shouldHaveType EnumVariantType(it, isNullable = false)
-// }
-// }
-// }
-// }
-//
-// @Nested
 // inner class Functions {
 //
 //     @Test
@@ -591,57 +568,7 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 // // *****************************************************************************************************************
 // // Expressions
 // // ****************************************************************************************************************/
-//
-// @Nested
-// inner class Literals {
-//
-//     @Test
-//     fun `boolean literals should have type Boolean`() {
-//     withCompilationUnitFromFile("expressions/literals") {
-//     placeholderWithName("booleanLiteral").assignedValueOrFail() shouldHaveType Boolean
-// }
-// }
-//
-// @Test
-// fun `float literals should have type Float`() {
-//     withCompilationUnitFromFile("expressions/literals") {
-//         placeholderWithName("floatLiteral").assignedValueOrFail() shouldHaveType Float
-//     }
-// }
-//
-// @Test
-// fun `int literals should have type Int`() {
-//     withCompilationUnitFromFile("expressions/literals") {
-//         placeholderWithName("intLiteral").assignedValueOrFail() shouldHaveType Int
-//     }
-// }
-//
-// @Test
-// fun `null literals should have type nullable Nothing`() {
-//     withCompilationUnitFromFile("expressions/literals") {
-//         placeholderWithName("nullLiteral").assignedValueOrFail() shouldHaveType NothingOrNull
-//     }
-// }
-//
-// @Test
-// fun `string literals should have type String`() {
-//     withCompilationUnitFromFile("expressions/literals") {
-//         placeholderWithName("stringLiteral").assignedValueOrFail() shouldHaveType String
-//     }
-// }
-// }
-//
-// @Nested
-// inner class TemplateStrings {
-//
-//     @Test
-//     fun `template strings should have type String`() {
-//     withCompilationUnitFromFile("expressions/templateStrings") {
-//     placeholderWithName("templateString").assignedValueOrFail() shouldHaveType String
-// }
-// }
-// }
-//
+
 // @Nested
 // inner class Arguments {
 //
@@ -1248,52 +1175,4 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 // }
 // }
 // }
-// }
-//
-// // *****************************************************************************************************************
-// // Helpers
-// // ****************************************************************************************************************/
-//
-// infix fun SdsAbstractObject.shouldHaveType(expectedType: Type) {
-//     this.type().shouldBe(expectedType)
-// }
-//
-// infix fun SdsAbstractObject.shouldHaveType(expected: SdsAbstractObject) {
-//     this.type().shouldBe(expected.type())
-// }
-//
-// private fun SdsPlaceholder.assignedValueOrFail(): SdsAbstractObject {
-//     return this.assignedOrNull()
-//         ?: throw IllegalArgumentException("No value is assigned to placeholder with name '$name'.")
-// }
-//
-// private fun SdsCompilationUnit.placeholderWithName(name: String): SdsPlaceholder {
-//     val candidates = this.eAllContents().asSequence()
-//         .filterIsInstance<SdsPlaceholder>()
-//         .filter { it.name == name }
-// .toList()
-//
-//     when (candidates.size) {
-//         1 -> return candidates.first()
-//     else -> throw IllegalArgumentException("File contains ${candidates.size} placeholders with name '$name'.")
-//     }
-// }
-//
-// private fun withCompilationUnitFromFile(file: String, lambda: SdsCompilationUnit.() -> Unit) {
-//     val program = Files.readString(Path.of(testRoot, "$file.${SdsFileExtension.Test}"))
-//     val compilationUnit = parseHelper.parseProgramText(program)
-//         ?: throw IllegalArgumentException("File is not a compilation unit.")
-//     compilationUnit.apply(lambda)
-// }
-//
-// private val SdsCompilationUnit.Any get() = stdlibType(this, StdlibClasses.Any)
-// private val SdsCompilationUnit.AnyOrNull get() = stdlibType(this, StdlibClasses.Any, isNullable = true)
-// private val SdsCompilationUnit.Boolean get() = stdlibType(this, StdlibClasses.Boolean)
-// private val SdsCompilationUnit.Number get() = stdlibType(this, StdlibClasses.Number)
-// private val SdsCompilationUnit.Float get() = stdlibType(this, StdlibClasses.Float)
-// private val SdsCompilationUnit.Int get() = stdlibType(this, StdlibClasses.Int)
-// private val SdsCompilationUnit.IntOrNull get() = stdlibType(this, StdlibClasses.Int, isNullable = true)
-// private val SdsCompilationUnit.Nothing get() = stdlibType(this, StdlibClasses.Nothing)
-// private val SdsCompilationUnit.NothingOrNull get() = stdlibType(this, StdlibClasses.Nothing, isNullable = true)
-// private val SdsCompilationUnit.String get() = stdlibType(this, StdlibClasses.String)
 // }

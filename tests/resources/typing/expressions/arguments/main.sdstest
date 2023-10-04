@@ -1,0 +1,40 @@
+package tests.typing.expressions.arguments
+
+fun f(p: Any?)
+
+pipeline myPipeline {
+    // $TEST$ equivalence_class boolean
+    // $TEST$ equivalence_class boolean
+    // $TEST$ equivalence_class boolean
+    »true«;
+    f(»true«);
+    f(»p = true«);
+
+    // $TEST$ equivalence_class float
+    // $TEST$ equivalence_class float
+    // $TEST$ equivalence_class float
+    »1.0«;
+    f(»1.0«);
+    f(»p = 1.0«);
+
+    // $TEST$ equivalence_class int
+    // $TEST$ equivalence_class int
+    // $TEST$ equivalence_class int
+    »1«;
+    f(»1«);
+    f(»p = 1«);
+
+    // $TEST$ equivalence_class null
+    // $TEST$ equivalence_class null
+    // $TEST$ equivalence_class null
+    »null«;
+    f(»null«);
+    f(»p = null«);
+
+    // $TEST$ equivalence_class string
+    // $TEST$ equivalence_class string
+    // $TEST$ equivalence_class string
+    »""«;
+    f(»""«);
+    f(»p = ""«);
+}
