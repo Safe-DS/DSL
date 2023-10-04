@@ -28,13 +28,16 @@ import {
     isSdsFunction,
     isSdsInfixOperation,
     isSdsInt,
-    isSdsLiteralType,
+    isSdsLiteralType, isSdsMemberAccess,
     isSdsMemberType,
     isSdsNamedType,
     isSdsNull,
+    isSdsParameter,
     isSdsParenthesizedExpression,
-    isSdsPrefixOperation, isSdsReference,
-    isSdsResult, isSdsSegment,
+    isSdsPrefixOperation,
+    isSdsReference,
+    isSdsResult,
+    isSdsSegment,
     isSdsString,
     isSdsTemplateString,
     isSdsType,
@@ -47,6 +50,7 @@ import {
     SdsExpression,
     SdsFunction,
     SdsInfixOperation,
+    SdsParameter,
     SdsPrefixOperation,
     SdsSegment,
     SdsType,
@@ -132,60 +136,16 @@ export class SafeDsTypeComputer {
             return new EnumVariantType(node, false);
         } else if (isSdsFunction(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
+        } else if (isSdsParameter(node)) {
+            return this.computeTypeOfParameter(node);
         } else if (isSdsResult(node)) {
             return this.computeType(node.type);
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         }
 
-        return NotImplementedType;
-
-        // return when {
-        //     this is SdsFunction -> CallableType(
-        //         parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-        //     resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        // )
-        //     this is SdsParameter -> {
-        //         // Declared parameter type
-        //         if (this.type != null) {
-        //             val declaredParameterType = this.type.inferTypeForType(context)
-        //             return when {
-        //                 this.isVariadic -> VariadicType(declaredParameterType)
-        //             else -> declaredParameterType
-        //             }
-        //         }
-        //
-        //         // Inferred lambda parameter type
-        //         val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
-        //         val thisIndex = callable.parametersOrEmpty().indexOf(this)
-        //         if (callable is SdsAbstractLambda) {
-        //             val containerType = when (val container = callable.eContainer()) {
-        //                 is SdsArgument -> container.parameterOrNull()?.inferType(context)
-        //                 is SdsAssignment ->
-        //                     container
-        //                         .yieldsOrEmpty()
-        //                         .find { it.assignedOrNull() == callable }
-        //             ?.result
-        //                     ?.inferType(context)
-        //             else -> null
-        //             }
-        //
-        //             return when (containerType) {
-        //                 is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
-        //             else -> Any(context)
-        //             }
-        //         }
-        //
-        //         // We don't know better
-        //         return Any(context)
-        //     }
-        //     this is SdsResult -> type.inferTypeForType(context)
-        //     this is SdsSegment -> CallableType(
-        //         parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-        //     resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        // )
-        // else -> Any(context)
-        // }
+        /* c8 skip next */
+        return UnknownType;
     }
 
     private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
@@ -197,6 +157,43 @@ export class SafeDsTypeComputer {
         );
 
         return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+    }
+
+    private computeTypeOfParameter(_node: SdsParameter): Type {
+        return NotImplementedType;
+
+        // // Declared parameter type
+        // if (this.type != null) {
+        //     val declaredParameterType = this.type.inferTypeForType(context)
+        //     return when {
+        //         this.isVariadic -> VariadicType(declaredParameterType)
+        //     else -> declaredParameterType
+        //     }
+        // }
+        //
+        // // Inferred lambda parameter type
+        // val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
+        // val thisIndex = callable.parametersOrEmpty().indexOf(this)
+        // if (callable is SdsAbstractLambda) {
+        //     val containerType = when (val container = callable.eContainer()) {
+        //         is SdsArgument -> container.parameterOrNull()?.inferType(context)
+        //         is SdsAssignment ->
+        //             container
+        //                 .yieldsOrEmpty()
+        //                 .find { it.assignedOrNull() == callable }
+        //     ?.result
+        //             ?.inferType(context)
+        //     else -> null
+        //     }
+        //
+        //     return when (containerType) {
+        //         is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
+        //     else -> Any(context)
+        //     }
+        // }
+        //
+        // // We don't know better
+        // return Any(context)
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -250,6 +247,9 @@ export class SafeDsTypeComputer {
                 case '?:':
                     return this.computeTypeOfElvisOperation(node);
             }
+        } else if (isSdsMemberAccess(node)) {
+            const memberType = this.computeType(node.member);
+            return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
         } else if (isSdsParenthesizedExpression(node)) {
             return this.computeType(node.expression);
         } else if (isSdsPrefixOperation(node)) {
@@ -324,12 +324,6 @@ export class SafeDsTypeComputer {
         //         else -> Nothing(context)
         //         }
         //     }
-        //     this is SdsMemberAccess -> {
-        //         val memberType = this.member.inferTypeExpression(context)
-        //         memberType.setIsNullableOnCopy(this.isNullSafe || memberType.isNullable)
-        //     }
-        //     this is SdsReference -> this.declaration.inferType(context)
-        // else -> Any(context)
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -371,7 +365,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
-            return this.computeType(node.declaration.ref).copyWithNullability(node.nullable);
+            return this.computeType(node.declaration.ref).copyWithNullability(node.isNullable);
         } else if (isSdsUnionType(node)) {
             const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
             return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
@@ -943,44 +937,5 @@ export class SafeDsTypeComputer {
 //             it shouldHaveType UnresolvedType
 //         }
 //     }
-// }
-// }
-//
-// @Nested
-// inner class MemberAccesses {
-//
-//     @Test
-//     fun `non-null-safe member accesses should have type of referenced member`() {
-//     withCompilationUnitFromFile("expressions/memberAccesses") {
-//     descendants<SdsMemberAccess>()
-// .filter { !it.isNullSafe }
-// .forEach {
-//     it shouldHaveType it.member
-// }
-// }
-// }
-//
-// @Test
-// fun `null-safe member accesses should have type of referenced member but nullable`() {
-//     withCompilationUnitFromFile("expressions/memberAccesses") {
-//         descendants<SdsMemberAccess>()
-//             .filter { it.isNullSafe }
-//     .forEach {
-//             it shouldHaveType it.member.type().setIsNullableOnCopy(isNullable = true)
-//         }
-//     }
-// }
-// }
-
-// @Nested
-// inner class References {
-//
-//     @Test
-//     fun `references should have type of referenced declaration`() {
-//     withCompilationUnitFromFile("expressions/references") {
-//     descendants<SdsReference>().forEach {
-//     it shouldHaveType it.declaration
-// }
-// }
 // }
 // }

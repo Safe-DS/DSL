@@ -16,9 +16,9 @@ export const isStatic = (node: SdsClassMember): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
         return true;
     } else if (isSdsAttribute(node)) {
-        return node.static;
+        return node.isStatic;
     } else if (isSdsFunction(node)) {
-        return node.static;
+        return node.isStatic;
     } else {
         /* c8 ignore next 2 */
         return false;

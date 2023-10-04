@@ -1,21 +1,24 @@
 package tests.typing.types.memberTypes
 
 class MyClass {
-    class MyNestedClass
+    // $TEST$ equivalence_class myNestedClass
+    class »MyNestedClass«
 
-    enum MyNestedEnum
+    // $TEST$ equivalence_class myNestedEnum
+    enum »MyNestedEnum«
 }
 
 enum MyEnum {
-    MyEnumVariant
+    // $TEST$ equivalence_class myEnumVariant
+    »MyEnumVariant«
 }
 
 fun nonNullableMemberTypes(
-    // $TEST$ serialization MyNestedClass
+    // $TEST$ equivalence_class myNestedClass
     a: »MyClass.MyNestedClass«,
-    // $TEST$ serialization MyNestedEnum
+    // $TEST$ equivalence_class myNestedEnum
     b: »MyClass.MyNestedEnum«,
-    // $TEST$ serialization MyEnumVariant
+    // $TEST$ equivalence_class myEnumVariant
     d: »MyEnum.MyEnumVariant«,
     // $TEST$ serialization $Unknown
     e: »MyEnum.unresolved«,

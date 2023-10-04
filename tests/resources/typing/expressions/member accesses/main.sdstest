@@ -1,0 +1,25 @@
+package tests.typing.expressions.memberAccesses
+
+class C {
+    // $TEST$ equivalence_class nonNullableMember
+    static attr »nonNullableMember«: Int
+
+    // $TEST$ equivalence_class nullableMember
+    static attr »nullableMember«: Any?
+}
+
+pipeline myPipeline {
+    // $TEST$ equivalence_class nonNullableMember
+    »C.nonNullableMember«;
+    // $TEST$ equivalence_class nullableMember
+    »C.nullableMember«;
+    // $TEST$ serialization $Unknown
+    »C.unresolved«;
+
+    // $TEST$ serialization Int?
+    »C?.nonNullableMember«;
+    // $TEST$ serialization Any?
+    »C?.nullableMember«;
+    // $TEST$ serialization $Unknown
+    »C?.unresolved«;
+}

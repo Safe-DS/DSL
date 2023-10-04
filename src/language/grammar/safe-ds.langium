@@ -222,7 +222,7 @@ SdsAnnotatedClassMember returns SdsClassMember:
         SdsEnumFragment
 
       | {SdsFunction.annotationCallList=current}
-        static?='static'?
+        isStatic?='static'?
         SdsFunctionFragment
     )
 ;
@@ -238,17 +238,17 @@ SdsUnannotatedClassMember returns SdsClassMember:
       SdsEnumFragment
 
     | {SdsFunction}
-      static?='static'?
+      isStatic?='static'?
       SdsFunctionFragment
 ;
 
 interface SdsAttribute extends SdsClassMember {
-	static: boolean
+	isStatic: boolean
 	^type?: SdsType
 }
 
 fragment SdsAttributeFragment:
-    static?='static'?
+    isStatic?='static'?
     'attr'
     name=ID
     (':' ^type=SdsType)?
@@ -286,7 +286,7 @@ SdsEnumVariant returns SdsEnumVariant:
 ;
 
 interface SdsFunction extends SdsCallable, SdsClassMember, SdsModuleMember {
-	static: boolean
+	isStatic: boolean
 	typeParameterList?: SdsTypeParameterList
 	resultList?: SdsResultList
 	constraintList?: SdsConstraintList
@@ -675,7 +675,7 @@ interface SdsIndexedAccess extends SdsChainedExpression {
 }
 
 interface SdsMemberAccess extends SdsChainedExpression {
-	nullSafe: boolean
+	isNullSafe: boolean
 	member: SdsReference
 }
 
@@ -689,7 +689,7 @@ SdsChainedExpression returns SdsExpression:
         '[' index=SdsExpression ']'
 
     | {SdsMemberAccess.receiver=current}
-        (nullSafe?='?')?
+        (isNullSafe?='?')?
         '.'
         member=SdsReference*
     )*
@@ -889,13 +889,13 @@ SdsLiteralList returns SdsLiteralList:
 interface SdsNamedType extends SdsType {
 	declaration: @SdsNamedTypeDeclaration
 	typeArgumentList?: SdsTypeArgumentList
-	nullable: boolean
+	isNullable: boolean
 }
 
 SdsNamedType returns SdsNamedType:
     declaration=[SdsNamedTypeDeclaration:ID]
     typeArgumentList=SdsTypeArgumentList?
-    (nullable?='?' )?
+    (isNullable?='?' )?
 ;
 
 interface SdsUnionType extends SdsType {
