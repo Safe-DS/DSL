@@ -1,8 +1,0 @@
-package tests.typing.assignees.placeholders
-
-fun f(p: Any)
-
-pipeline myPipeline {
-    val a = 1;
-    val b = "";
-}

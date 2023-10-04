@@ -230,7 +230,7 @@ export class SafeDsTypeComputer {
                 return UnknownType;
             }
 
-            const parameterPosition = parametersOrEmpty(containingCallable.parameterList).indexOf(node);
+            const parameterPosition = node.$containerIndex ?? -1;
             return resultType.getParameterTypeByPosition(parameterPosition) ?? UnknownType;
         }
 

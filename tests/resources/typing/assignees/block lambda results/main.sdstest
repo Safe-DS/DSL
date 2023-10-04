@@ -1,0 +1,23 @@
+package tests.typing.assignees.blockLambdaResults
+
+fun f() -> (r1: Int, r2: Float, r3: String)
+
+segment mySegment() -> (r: Int) {
+    () {
+        // $TEST$ equivalence_class assignedValue
+        // $TEST$ equivalence_class assignedValue
+        yield »r« = »1«;
+    };
+
+    () {
+        // $TEST$ serialization Int
+        // $TEST$ serialization $Unknown
+        yield »r«, yield »s« = 1;
+    };
+
+    () {
+        // $TEST$ serialization Int
+        // $TEST$ serialization String
+        yield »r«, _, yield »s« = f();
+    };
+}
