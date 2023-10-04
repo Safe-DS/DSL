@@ -1,0 +1,33 @@
+package tests.typing.types.memberTypes
+
+class MyClass {
+    class MyNestedClass
+
+    enum MyNestedEnum
+}
+
+enum MyEnum {
+    MyEnumVariant
+}
+
+fun nonNullableMemberTypes(
+    // $TEST$ serialization MyNestedClass
+    a: »MyClass.MyNestedClass«,
+    // $TEST$ serialization MyNestedEnum
+    b: »MyClass.MyNestedEnum«,
+    // $TEST$ serialization MyEnumVariant
+    d: »MyEnum.MyEnumVariant«,
+    // $TEST$ serialization $Unknown
+    e: »MyEnum.unresolved«,
+)
+
+fun nullableMemberTypes(
+    // $TEST$ serialization MyNestedClass?
+    a: »MyClass.MyNestedClass?«,
+    // $TEST$ serialization MyNestedEnum?
+    b: »MyClass.MyNestedEnum?«,
+    // $TEST$ serialization MyEnumVariant?
+    d: »MyEnum.MyEnumVariant?«,
+    // $TEST$ serialization $Unknown
+    e: »MyEnum.unresolved?«,
+)

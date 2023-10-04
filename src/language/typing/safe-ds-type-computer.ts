@@ -15,6 +15,7 @@ import {
     isSdsFloat,
     isSdsInfixOperation,
     isSdsInt,
+    isSdsMemberType,
     isSdsNamedType,
     isSdsNull,
     isSdsParenthesizedExpression,
@@ -312,7 +313,9 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfType(node: SdsType): Type {
-        if (isSdsNamedType(node)) {
+        if (isSdsMemberType(node)) {
+            return this.computeType(node.member);
+        } else if (isSdsNamedType(node)) {
             return this.computeType(node.declaration.ref).copyWithNullability(node.nullable);
         }
 
