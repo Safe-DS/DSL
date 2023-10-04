@@ -1,0 +1,19 @@
+package tests.typing.operations.elvis
+
+fun intOrNull() -> a: Int?
+fun stringOrNull() -> s: String?
+
+pipeline elvisWithNullableLeftOperand {
+    // $TEST$ serialization Int?
+    val intOrNullElseIntOrNull = »intOrNull() ?: intOrNull()«;
+    // $TEST$ serialization Int?
+    val intOrNullElseNull = »intOrNull() ?: null«;
+    // $TEST$ serialization Int
+    val intOrNullElseInt = »intOrNull() ?: 1«;
+    // $TEST$ serialization Number
+    val intOrNullElseFloat = »intOrNull() ?: 1.0«;
+    // $TEST$ serialization Any
+    val intOrNullElseString = »intOrNull() ?: ""«;
+    // $TEST$ serialization Any?
+    val intOrNullElseStringOrNull = »intOrNull() ?: stringOrNull()«;
+}

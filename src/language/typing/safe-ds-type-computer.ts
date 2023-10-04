@@ -1,16 +1,24 @@
-import {AstNode, AstNodeLocator, getDocument, WorkspaceCache} from 'langium';
-import {SafeDsServices} from '../safe-ds-module.js';
-import {SafeDsCoreClasses} from '../builtins/safe-ds-core-classes.js';
-import {ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnknownType} from './model.js';
+import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
+import { ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnknownType } from './model.js';
 import {
     isSdsArgument,
-    isSdsAssignee, isSdsAttribute,
-    isSdsBoolean, isSdsClass,
-    isSdsDeclaration, isSdsEnum, isSdsEnumVariant,
+    isSdsAssignee,
+    isSdsAttribute,
+    isSdsBoolean,
+    isSdsClass,
+    isSdsDeclaration,
+    isSdsEnum,
+    isSdsEnumVariant,
     isSdsExpression,
     isSdsFloat,
+    isSdsInfixOperation,
     isSdsInt,
-    isSdsNull, isSdsParenthesizedExpression, isSdsResult,
+    isSdsNull,
+    isSdsParenthesizedExpression,
+    isSdsPrefixOperation,
+    isSdsResult,
     isSdsString,
     isSdsTemplateString,
     isSdsType,
@@ -19,7 +27,7 @@ import {
     SdsAssignee,
     SdsClass,
     SdsDeclaration,
-    SdsExpression,
+    SdsExpression, SdsInfixOperation, SdsPrefixOperation,
     SdsType,
 } from '../generated/ast.js';
 
@@ -162,6 +170,45 @@ export class SafeDsTypeComputer {
             return this.computeType(node.value);
         } else if (isSdsParenthesizedExpression(node)) {
             return this.computeType(node.expression);
+        } else if (isSdsInfixOperation(node)) {
+            switch (node.operator) {
+                // Boolean operators
+                case 'or':
+                case 'and':
+                    return this.Boolean();
+
+                // Equality operators
+                case '==':
+                case '!=':
+                case '===':
+                case '!==':
+                    return this.Boolean();
+
+                // Comparison operators
+                case '<':
+                case '<=':
+                case '>=':
+                case '>':
+                    return this.Boolean();
+
+                // Arithmetic operators
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    return this.computeTypeOfArithmeticInfixOperation(node);
+
+                // Elvis operator
+                case '?:':
+                    return this.computeTypeOfElvisOperation(node);
+            }
+        } else if (isSdsPrefixOperation(node)) {
+            switch (node.operator) {
+                case 'not':
+                    return this.Boolean();
+                case '-':
+                    return this.computeTypeOfArithmeticPrefixOperation(node);
+            }
         }
 
         return NotImplementedType;
@@ -226,46 +273,46 @@ export class SafeDsTypeComputer {
         //         else -> Nothing(context)
         //         }
         //     }
-        //     this is SdsInfixOperation -> when (operator) {
-        //         "<", "<=", ">=", ">" -> Boolean(context)
-        //         "==", "!=" -> Boolean(context)
-        //         "===", "!==" -> Boolean(context)
-        //         "or", "and" -> Boolean(context)
-        //         "+", "-", "*", "/" -> when {
-        //             this.leftOperand.inferTypeExpression(context) == Int(context) &&
-        //             this.rightOperand.inferTypeExpression(context) == Int(context) -> Int(context)
-        //         else -> Float(context)
-        //         }
-        //         "?:" -> {
-        //             val leftOperandType = this.leftOperand.inferTypeExpression(context)
-        //             if (leftOperandType.isNullable) {
-        //                 lowestCommonSupertype(
-        //                     context,
-        //                     listOf(
-        //                         leftOperandType.setIsNullableOnCopy(isNullable = false),
-        //                         this.rightOperand.inferTypeExpression(context),
-        //                     ),
-        //                 )
-        //             } else {
-        //                 leftOperandType
-        //             }
-        //         }
-        //     else -> Nothing(context)
-        //     }
         //     this is SdsMemberAccess -> {
         //         val memberType = this.member.inferTypeExpression(context)
         //         memberType.setIsNullableOnCopy(this.isNullSafe || memberType.isNullable)
         //     }
-        //     this is SdsPrefixOperation -> when (operator) {
-        //         "not" -> Boolean(context)
-        //         "-" -> when (this.operand.inferTypeExpression(context)) {
-        //             Int(context) -> Int(context)
-        //         else -> Float(context)
-        //         }
-        //     else -> Nothing(context)
-        //     }
         //     this is SdsReference -> this.declaration.inferType(context)
         // else -> Any(context)
+    }
+
+    private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
+        const leftOperandType = this.computeType(node.leftOperand);
+        const rightOperandType = this.computeType(node.rightOperand);
+
+        if (leftOperandType === this.Int() && rightOperandType === this.Int()) {
+            return this.Int();
+        } else {
+            return this.Float();
+        }
+    }
+
+    private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
+        const leftOperandType = this.computeType(node.leftOperand);
+        if (leftOperandType.isNullable) {
+            const rightOperandType = this.computeType(node.rightOperand);
+            return this.lowestCommonSupertype(
+                leftOperandType.copyWithNullability(false),
+                rightOperandType
+            );
+        } else {
+            return leftOperandType
+        }
+    }
+
+    private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
+        const leftOperandType = this.computeType(node.operand);
+
+        if (leftOperandType === this.Int()) {
+            return this.Int();
+        } else {
+            return this.Float();
+        }
     }
 
     private computeTypeOfType(_node: SdsType): Type {
@@ -295,6 +342,70 @@ export class SafeDsTypeComputer {
         // else -> Any(context)
         // }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private lowestCommonSupertype(..._types: Type[]): Type {
+        return NotImplementedType;
+    }
+
+    // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
+    //     if (types.isEmpty()) {
+    //         return Nothing(context)
+    //     }
+    //
+    //     val unwrappedTypes = unwrapUnionTypes(types)
+    //     val isNullable = unwrappedTypes.any { it.isNullable }
+    //     var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
+    //
+    //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
+    //         candidate = when (candidate) {
+    //             is CallableType -> Any(context, candidate.isNullable)
+    //             is ClassType -> {
+    //                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
+    //                     ?: return Any(context, candidate.isNullable)
+    //
+    //                 ClassType(superClass, typeParametersTypes, candidate.isNullable)
+    //             }
+    //             is EnumType -> Any(context, candidate.isNullable)
+    //             is EnumVariantType -> {
+    //                 val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
+    //                     ?: return Any(context, candidate.isNullable)
+    //                 EnumType(containingEnum, candidate.isNullable)
+    //             }
+    //             is RecordType -> Any(context, candidate.isNullable)
+    //             // TODO: Correct ?
+    //             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
+    //             UnresolvedType -> Any(context, candidate.isNullable)
+    //             is VariadicType -> Any(context, candidate.isNullable)
+    //         }
+    //     }
+    //
+    //     return candidate
+    // }
+    //
+    // private fun unwrapUnionTypes(types: List<Type>): List<Type> {
+    //     return types.flatMap {
+    //         when (it) {
+    //             is UnionType -> it.possibleTypes
+    //         else -> listOf(it)
+    //         }
+    //     }
+    // }
+    //
+    // private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
+    //     if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
+    //         return true
+    //     }
+    //
+    //     return otherTypes.all { it.isSubstitutableFor(candidate) }
+    // }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Builtin types
+    // -----------------------------------------------------------------------------------------------------------------
 
     private cachedAny: Type = UnknownType;
 
@@ -367,79 +478,20 @@ export class SafeDsTypeComputer {
     }
 }
 
-/*
-fun SdsAbstractObject.hasPrimitiveType(): Boolean {
-    val type = type()
-    if (type !is ClassType) {
-        return false
-    }
-
-    val qualifiedName = type.sdsClass.qualifiedNameOrNull()
-    return qualifiedName in setOf(
-        StdlibClasses.Boolean,
-        StdlibClasses.Float,
-        StdlibClasses.Int,
-        StdlibClasses.String,
-    )
-}
-
-private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
-    if (types.isEmpty()) {
-        return Nothing(context)
-    }
-
-    val unwrappedTypes = unwrapUnionTypes(types)
-    val isNullable = unwrappedTypes.any { it.isNullable }
-    var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
-
-    while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
-        candidate = when (candidate) {
-            is CallableType -> Any(context, candidate.isNullable)
-            is ClassType -> {
-                val superClass = candidate.sdsClass.superClasses().firstOrNull()
-                    ?: return Any(context, candidate.isNullable)
-
-                val typeParametersTypes = superClass.typeParametersOrEmpty()
-                    .map { it.inferTypeForDeclaration(context) }
-                    .filterIsInstance<ParameterisedType>()
-
-                ClassType(superClass, typeParametersTypes, candidate.isNullable)
-            }
-            is EnumType -> Any(context, candidate.isNullable)
-            is EnumVariantType -> {
-                val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
-                    ?: return Any(context, candidate.isNullable)
-                EnumType(containingEnum, candidate.isNullable)
-            }
-            is RecordType -> Any(context, candidate.isNullable)
-            // TODO: Correct ?
-            is ParameterisedType -> Any(context, candidate.isNullable)
-            is UnionType -> throw AssertionError("Union types should have been unwrapped.")
-            UnresolvedType -> Any(context, candidate.isNullable)
-            is VariadicType -> Any(context, candidate.isNullable)
-        }
-    }
-
-    return candidate
-}
-
-private fun unwrapUnionTypes(types: List<Type>): List<Type> {
-    return types.flatMap {
-        when (it) {
-            is UnionType -> it.possibleTypes
-            else -> listOf(it)
-        }
-    }
-}
-
-private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
-    if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
-        return true
-    }
-
-    return otherTypes.all { it.isSubstitutableFor(candidate) }
-}
- */
+// fun SdsAbstractObject.hasPrimitiveType(): Boolean {
+//     val type = type()
+//     if (type !is ClassType) {
+//         return false
+//     }
+//
+//     val qualifiedName = type.sdsClass.qualifiedNameOrNull()
+//     return qualifiedName in setOf(
+//         StdlibClasses.Boolean,
+//         StdlibClasses.Float,
+//         StdlibClasses.Int,
+//         StdlibClasses.String,
+//     )
+// }
 
 // @Nested
 // inner class BlockLambdaResults {
@@ -537,20 +589,6 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 //     }
 // }
 // }
-//
-// @Nested
-// inner class Results {
-//
-//     @Test
-//     fun `results should have declared type`() {
-//     withCompilationUnitFromFile("declarations/results") {
-//     descendants<SdsResult>().forEach {
-//     it shouldHaveType it.type
-// }
-// }
-// }
-// }
-//
 // @Nested
 // inner class Steps {
 //
@@ -566,24 +604,7 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 // }
 // }
 // }
-//
-// // *****************************************************************************************************************
-// // Expressions
-// // ****************************************************************************************************************/
 
-// @Nested
-// inner class Arguments {
-//
-//     @Test
-//     fun `arguments should have type of value`() {
-//     withCompilationUnitFromFile("expressions/arguments") {
-//     descendants<SdsArgument>().forEach {
-//     it shouldHaveType it.value
-// }
-// }
-// }
-// }
-//
 // @Nested
 // inner class BlockLambdas {
 //
@@ -940,166 +961,7 @@ private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Bo
 // }
 // }
 // }
-//
-// @Nested
-// inner class Operations {
-//
-//     @ParameterizedTest
-//     @ValueSource(
-//         strings = [
-//             "additionIntInt",
-//             "subtractionIntInt",
-//             "multiplicationIntInt",
-//             "divisionIntInt",
-//             "negationInt",
-//         ],
-//     )
-//     fun `arithmetic operations with only Int operands should have type Int`(placeholderName: String) {
-//     withCompilationUnitFromFile("expressions/operations/arithmetic") {
-//     placeholderWithName(placeholderName).assignedValueOrFail() shouldHaveType Int
-// }
-// }
-//
-// @ParameterizedTest
-// @ValueSource(
-//     strings = [
-//         "additionIntFloat",
-//         "subtractionIntFloat",
-//         "multiplicationIntFloat",
-//         "divisionIntFloat",
-//         "negationFloat",
-//         "additionInvalid",
-//         "subtractionInvalid",
-//         "multiplicationInvalid",
-//         "divisionInvalid",
-//         "negationInvalid",
-//     ],
-// )
-// fun `arithmetic operations with non-Int operands should have type Float`(placeholderName: String) {
-//     withCompilationUnitFromFile("expressions/operations/arithmetic") {
-//         placeholderWithName(placeholderName).assignedValueOrFail() shouldHaveType Float
-//     }
-// }
-//
-// @ParameterizedTest
-// @ValueSource(
-//     strings = [
-//         "lessThan",
-//         "lessThanOrEquals",
-//         "greaterThanOrEquals",
-//         "greaterThan",
-//         "lessThanInvalid",
-//         "lessThanOrEqualsInvalid",
-//         "greaterThanOrEqualsInvalid",
-//         "greaterThanInvalid",
-//     ],
-// )
-// fun `comparison operations should have type Boolean`(placeholderName: String) {
-//     withCompilationUnitFromFile("expressions/operations/comparison") {
-//         placeholderWithName(placeholderName).assignedValueOrFail() shouldHaveType Boolean
-//     }
-// }
-//
-// @ParameterizedTest
-// @ValueSource(
-//     strings = [
-//         "equals",
-//         "notEquals",
-//     ],
-// )
-// fun `equality operations should have type Boolean`(placeholderName: String) {
-//     withCompilationUnitFromFile("expressions/operations/equality") {
-//         placeholderWithName(placeholderName).assignedValueOrFail() shouldHaveType Boolean
-//     }
-// }
-//
-// @ParameterizedTest
-// @ValueSource(
-//     strings = [
-//         "strictlyEquals",
-//         "notStrictlyEquals",
-//     ],
-// )
-// fun `strict equality operations should have type Boolean`(placeholderName: String) {
-//     withCompilationUnitFromFile("expressions/operations/strictEquality") {
-//         placeholderWithName(placeholderName).assignedValueOrFail() shouldHaveType Boolean
-//     }
-// }
-//
-// @ParameterizedTest
-// @ValueSource(
-//     strings = [
-//         "conjunction",
-//         "disjunction",
-//         "negation",
-//         "conjunctionInvalid",
-//         "disjunctionInvalid",
-//         "negationInvalid",
-//     ],
-// )
-// fun `logical operations should have type Boolean`(placeholderName: String) {
-//     withCompilationUnitFromFile("expressions/operations/logical") {
-//         placeholderWithName(placeholderName).assignedValueOrFail() shouldHaveType Boolean
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with non-nullable left operand should have type of left operand`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         findUniqueDeclarationOrFail<SdsPipeline>("elvisWithNonNullableLeftOperand")
-//             .descendants<SdsInfixOperation>()
-//             .filter { it.operator() == SdsInfixOperationOperator.Elvis }
-//     .forEach { it shouldHaveType it.leftOperand }
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with nullable left operand should have lowest common supertype of non-nullable left operand and right operand (intOrNullElseIntOrNull)`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         placeholderWithName("intOrNullElseIntOrNull") shouldHaveType IntOrNull
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with nullable left operand should have lowest common supertype of non-nullable left operand and right operand (intOrNullElseNull)`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         placeholderWithName("intOrNullElseNull") shouldHaveType IntOrNull
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with nullable left operand should have lowest common supertype of non-nullable left operand and right operand (intOrNullElseInt)`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         placeholderWithName("intOrNullElseInt") shouldHaveType Int
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with nullable left operand should have lowest common supertype of non-nullable left operand and right operand (intOrNullElseFloat)`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         placeholderWithName("intOrNullElseFloat") shouldHaveType Number
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with nullable left operand should have lowest common supertype of non-nullable left operand and right operand (intOrNullElseString)`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         placeholderWithName("intOrNullElseString") shouldHaveType Any
-//     }
-// }
-//
-// @Test
-// fun `elvis operator with nullable left operand should have lowest common supertype of non-nullable left operand and right operand (intOrNullElseStringOrNull)`() {
-//     withCompilationUnitFromFile("expressions/operations/elvis") {
-//         placeholderWithName("intOrNullElseStringOrNull") shouldHaveType AnyOrNull
-//     }
-// }
-// }
-//
-// // *****************************************************************************************************************
-// // Types
-// // ****************************************************************************************************************/
-//
+
 // @Nested
 // inner class CallableTypes {
 //

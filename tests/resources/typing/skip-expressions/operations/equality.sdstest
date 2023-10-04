@@ -1,6 +1,0 @@
-package tests.typing.operations.equality
-
-pipeline myPipeline {
-    val equals = (1 == 1);
-    val notEquals = (1 != 1);
-}

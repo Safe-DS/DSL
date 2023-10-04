@@ -1,0 +1,21 @@
+package tests.typing.operations.comparison
+
+pipeline myPipeline {
+    // $TEST$ serialization Boolean
+    val lessThan = »1 < 1«;
+    // $TEST$ serialization Boolean
+    val lessThanOrEquals = »1 <= 1«;
+    // $TEST$ serialization Boolean
+    val greaterThanOrEquals = »1 >= 1«;
+    // $TEST$ serialization Boolean
+    val greaterThan = »1 > 1«;
+
+    // $TEST$ serialization Boolean
+    val lessThanInvalid = »true < true«;
+    // $TEST$ serialization Boolean
+    val lessThanOrEqualsInvalid  = »true <= true«;
+    // $TEST$ serialization Boolean
+    val greaterThanOrEqualsInvalid  = »true >= true«;
+    // $TEST$ serialization Boolean
+    val greaterThanInvalid  = »true > true«;
+}

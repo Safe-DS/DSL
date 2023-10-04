@@ -1,0 +1,18 @@
+package tests.typing.operations.elvis
+
+fun intOrNull() -> a: Int?
+
+pipeline elvisWithNonNullableLeftOperand {
+    // $TEST$ equivalence_class leftOperand
+    »1«;
+    // $TEST$ equivalence_class leftOperand
+    »1 ?: intOrNull()«;
+    // $TEST$ equivalence_class leftOperand
+    »1 ?: 1«;
+    // $TEST$ equivalence_class leftOperand
+    »1 ?: 1.0«;
+    // $TEST$ equivalence_class leftOperand
+    »1 ?: ""«;
+    // $TEST$ equivalence_class leftOperand
+    »1 ?: null«;
+}
