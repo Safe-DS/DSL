@@ -6,7 +6,7 @@ import {
     ClassType,
     EnumType,
     EnumVariantType,
-    NamedTuple,
+    NamedTupleType,
     NamedTupleEntry,
     NotImplementedType,
     Type,
@@ -196,7 +196,7 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(node, new NamedTuple(parameterEntries), new NamedTuple(resultEntries));
+        return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {

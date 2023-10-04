@@ -23,8 +23,8 @@ export class CallableType extends Type {
 
     constructor(
         readonly callable: SdsCallable,
-        readonly parameters: NamedTuple,
-        readonly results: NamedTuple,
+        readonly parameterType: NamedTupleType,
+        readonly resultType: NamedTupleType,
     ) {
         super();
     }
@@ -44,13 +44,13 @@ export class CallableType extends Type {
 
         return (
             other.callable === this.callable &&
-            other.parameters.equals(this.parameters) &&
-            other.results.equals(this.results)
+            other.parameterType.equals(this.parameterType) &&
+            other.resultType.equals(this.resultType)
         );
     }
 
     override toString(): string {
-        return `${this.parameters} -> ${this.results}`;
+        return `${this.parameterType} -> ${this.resultType}`;
     }
 }
 
@@ -90,7 +90,7 @@ export class LiteralType extends Type {
     }
 }
 
-export class NamedTuple extends Type {
+export class NamedTupleType extends Type {
     override readonly isNullable = false;
 
     constructor(readonly entries: NamedTupleEntry[]) {
@@ -106,7 +106,7 @@ export class NamedTuple extends Type {
             return true;
         }
 
-        if (!(other instanceof NamedTuple)) {
+        if (!(other instanceof NamedTupleType)) {
             return false;
         }
 
