@@ -33,7 +33,7 @@ import {
     isSdsNamedType,
     isSdsNull,
     isSdsParenthesizedExpression,
-    isSdsPrefixOperation,
+    isSdsPrefixOperation, isSdsReference,
     isSdsResult, isSdsSegment,
     isSdsString,
     isSdsTemplateString,
@@ -218,8 +218,6 @@ export class SafeDsTypeComputer {
         // Recursive cases
         else if (isSdsArgument(node)) {
             return this.computeType(node.value);
-        } else if (isSdsParenthesizedExpression(node)) {
-            return this.computeType(node.expression);
         } else if (isSdsInfixOperation(node)) {
             switch (node.operator) {
                 // Boolean operators
@@ -252,6 +250,8 @@ export class SafeDsTypeComputer {
                 case '?:':
                     return this.computeTypeOfElvisOperation(node);
             }
+        } else if (isSdsParenthesizedExpression(node)) {
+            return this.computeType(node.expression);
         } else if (isSdsPrefixOperation(node)) {
             switch (node.operator) {
                 case 'not':
@@ -259,11 +259,12 @@ export class SafeDsTypeComputer {
                 case '-':
                     return this.computeTypeOfArithmeticPrefixOperation(node);
             }
+        } else if (isSdsReference(node)) {
+            return this.computeType(node.target.ref);
         }
 
         return NotImplementedType;
 
-        //     this is SdsArgument -> this.value.inferTypeExpression(context)
         //     this is SdsBlockLambda -> CallableType(
         //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
         //     blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) },
