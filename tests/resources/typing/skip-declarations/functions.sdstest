@@ -1,3 +1,0 @@
-package tests.typing.declarations.functions
-
-fun f(a: Int, b: String) -> (r: String, s: Int)

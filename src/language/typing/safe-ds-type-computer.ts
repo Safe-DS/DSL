@@ -25,6 +25,7 @@ import {
     isSdsEnumVariant,
     isSdsExpression,
     isSdsFloat,
+    isSdsFunction,
     isSdsInfixOperation,
     isSdsInt,
     isSdsLiteralType,
@@ -40,11 +41,14 @@ import {
     isSdsTypeProjection,
     isSdsUnionType,
     SdsAssignee,
+    SdsCallableType,
     SdsClass,
     SdsDeclaration,
     SdsExpression,
+    SdsFunction,
     SdsInfixOperation,
     SdsPrefixOperation,
+    SdsSegment,
     SdsType,
 } from '../generated/ast.js';
 import { parametersOrEmpty, resultsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
@@ -72,6 +76,21 @@ export class SafeDsTypeComputer {
         const key = `${documentUri}~${nodePath}`;
         return this.typeCache.get(key, () => this.doComputeType(node));
     }
+
+    // fun SdsAbstractObject.hasPrimitiveType(): Boolean {
+    //     val type = type()
+    //     if (type !is ClassType) {
+    //         return false
+    //     }
+    //
+    //     val qualifiedName = type.sdsClass.qualifiedNameOrNull()
+    //     return qualifiedName in setOf(
+    //         StdlibClasses.Boolean,
+    //         StdlibClasses.Float,
+    //         StdlibClasses.Int,
+    //         StdlibClasses.String,
+    //     )
+    // }
 
     private doComputeType(node: AstNode): Type {
         if (isSdsAssignee(node)) {
@@ -111,6 +130,8 @@ export class SafeDsTypeComputer {
             return new EnumType(node, false);
         } else if (isSdsEnumVariant(node)) {
             return new EnumVariantType(node, false);
+        } else if (isSdsFunction(node)) {
+            return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsResult(node)) {
             return this.computeType(node.type);
         }
@@ -163,6 +184,17 @@ export class SafeDsTypeComputer {
         // )
         // else -> Any(context)
         // }
+    }
+
+    private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
+        const parameterEntries = parametersOrEmpty(node.parameterList).map(
+            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+        );
+        const resultEntries = resultsOrEmpty(node.resultList).map(
+            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+        );
+
+        return new CallableType(node, new NamedTuple(parameterEntries), new NamedTuple(resultEntries));
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -330,14 +362,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfType(node: SdsType): Type {
         if (isSdsCallableType(node)) {
-            const parameterEntries = parametersOrEmpty(node.parameterList).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
-            );
-            const resultEntries = resultsOrEmpty(node.resultList).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
-            );
-
-            return new CallableType(node, new NamedTuple(parameterEntries), new NamedTuple(resultEntries));
+            return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsLiteralType(node)) {
             return NotImplementedType;
         } else if (isSdsMemberType(node)) {
@@ -487,21 +512,6 @@ export class SafeDsTypeComputer {
         }
     }
 }
-
-// fun SdsAbstractObject.hasPrimitiveType(): Boolean {
-//     val type = type()
-//     if (type !is ClassType) {
-//         return false
-//     }
-//
-//     val qualifiedName = type.sdsClass.qualifiedNameOrNull()
-//     return qualifiedName in setOf(
-//         StdlibClasses.Boolean,
-//         StdlibClasses.Float,
-//         StdlibClasses.Int,
-//         StdlibClasses.String,
-//     )
-// }
 
 // @Nested
 // inner class BlockLambdaResults {
@@ -967,85 +977,6 @@ export class SafeDsTypeComputer {
 //     withCompilationUnitFromFile("expressions/references") {
 //     descendants<SdsReference>().forEach {
 //     it shouldHaveType it.declaration
-// }
-// }
-// }
-// }
-
-// @Nested
-// inner class CallableTypes {
-//
-//     @Test
-//     fun `callable type should have callable type with respective parameters and results`() {
-//     withCompilationUnitFromFile("types/callableTypes") {
-//     descendants<SdsCallableType>().forEach { callableType ->
-//     callableType shouldHaveType CallableType(
-//         callableType.parametersOrEmpty().map { it.type() },
-// callableType.resultsOrEmpty().map { it.type() },
-// )
-// }
-// }
-// }
-// }
-//
-// @Nested
-// inner class MemberTypes {
-//
-//     @Test
-//     fun `non-nullable member type should have type of referenced member`() {
-//     withCompilationUnitFromFile("types/memberTypes") {
-//     findUniqueDeclarationOrFail<SdsFunction>("nonNullableMemberTypes")
-// .descendants<SdsMemberType>().forEach {
-//     it shouldHaveType it.member
-// }
-// }
-// }
-//
-// @Test
-// fun `nullable member type should have nullable type of referenced member`() {
-//     withCompilationUnitFromFile("types/memberTypes") {
-//         findUniqueDeclarationOrFail<SdsFunction>("nullableMemberTypes")
-//             .descendants<SdsMemberType>().forEach {
-//             it shouldHaveType it.member.type().setIsNullableOnCopy(isNullable = true)
-//         }
-//     }
-// }
-// }
-//
-// @Nested
-// inner class NamedTypes {
-//
-//     @Test
-//     fun `non-nullable named type should have type of referenced declaration`() {
-//     withCompilationUnitFromFile("types/namedTypes") {
-//     findUniqueDeclarationOrFail<SdsFunction>("nonNullableNamedTypes")
-// .descendants<SdsNamedType>().forEach {
-//     it shouldHaveType it.declaration
-// }
-// }
-// }
-//
-// @Test
-// fun `nullable named type should have nullable type of referenced declaration`() {
-//     withCompilationUnitFromFile("types/namedTypes") {
-//         findUniqueDeclarationOrFail<SdsFunction>("nullableNamedTypes")
-//             .descendants<SdsNamedType>().forEach {
-//             it shouldHaveType it.declaration.type().setIsNullableOnCopy(isNullable = true)
-//         }
-//     }
-// }
-// }
-
-// @Nested
-// inner class UnionTypes {
-//
-//     @Test
-//     fun `union type should have union type over its type arguments`() {
-//     withCompilationUnitFromFile("types/unionTypes") {
-//     descendants<SdsUnionType>().forEach { unionType ->
-//     unionType shouldHaveType UnionType(
-//         unionType.typeArgumentsOrEmpty().map { it.type() }.toSet(),
-// )
 // }
 // }
 // }
