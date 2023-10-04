@@ -550,7 +550,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length === 0) {
-            if (node.variadic) {
+            if (node.isVariadic) {
                 formatter.property('name').prepend(oneSpace());
             }
         } else {

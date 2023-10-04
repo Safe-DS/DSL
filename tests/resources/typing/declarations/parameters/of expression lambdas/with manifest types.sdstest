@@ -1,0 +1,10 @@
+package tests.typing.declarations.parameters.ofExpressionLambdas
+
+segment mySegment() {
+    // $TEST$ equivalence_class parameterType
+    // $TEST$ equivalence_class parameterType
+    (»p«: »Int«) -> 1;
+
+    // $TEST$ serialization vararg<String>
+    (vararg »p«: String) -> 1;
+}

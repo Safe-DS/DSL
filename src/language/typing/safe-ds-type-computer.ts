@@ -1,4 +1,4 @@
-import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
+import {AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache} from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
 import {
@@ -11,14 +11,15 @@ import {
     NotImplementedType,
     Type,
     UnionType,
-    UnknownType, VariadicType,
+    UnknownType,
+    VariadicType,
 } from './model.js';
 import {
     isSdsAnnotation,
     isSdsArgument,
     isSdsAssignee,
     isSdsAttribute,
-    isSdsBoolean,
+    isSdsBoolean, isSdsCallable,
     isSdsCallableType,
     isSdsClass,
     isSdsDeclaration,
@@ -26,9 +27,10 @@ import {
     isSdsEnumVariant,
     isSdsExpression,
     isSdsFloat,
-    isSdsFunction, isSdsIndexedAccess,
+    isSdsFunction,
+    isSdsIndexedAccess,
     isSdsInfixOperation,
-    isSdsInt,
+    isSdsInt, isSdsLambda,
     isSdsLiteralType,
     isSdsMemberAccess,
     isSdsMemberType,
@@ -170,19 +172,29 @@ export class SafeDsTypeComputer {
         return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
     }
 
-    private computeTypeOfParameter(_node: SdsParameter): Type {
+    private computeTypeOfParameter(node: SdsParameter): Type {
+        // Manifest type
+        if (node.type) {
+            const manifestParameterType = this.computeType(node.type);
+            if (node.isVariadic) {
+                return new VariadicType(manifestParameterType);
+            } else {
+                return manifestParameterType;
+            }
+        }
+
+        // Inferred lambda parameter type
+        const containingCallable = getContainerOfType(node, isSdsCallable);
+        if (!isSdsLambda(containingCallable)) {
+            const nodeIndex = parametersOrEmpty(containingCallable?.parameterList).indexOf(node);
+
+            return UnknownType;
+        }
+
+
+
         return NotImplementedType;
 
-        // // Declared parameter type
-        // if (this.type != null) {
-        //     val declaredParameterType = this.type.inferTypeForType(context)
-        //     return when {
-        //         this.isVariadic -> VariadicType(declaredParameterType)
-        //     else -> declaredParameterType
-        //     }
-        // }
-        //
-        // // Inferred lambda parameter type
         // val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
         // val thisIndex = callable.parametersOrEmpty().indexOf(this)
         // if (callable is SdsAbstractLambda) {

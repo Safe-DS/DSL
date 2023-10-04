@@ -1,0 +1,11 @@
+package tests.typing.declarations.parameters.ofFunctions
+
+// $TEST$ equivalence_class parameterType
+// $TEST$ equivalence_class parameterType
+fun myFunction1(»p«: »Int«)
+
+// $TEST$ serialization vararg<String>
+fun myFunction2(vararg »p«: String)
+
+// $TEST$ serialization $Unknown
+fun myFunction3(»p«)
