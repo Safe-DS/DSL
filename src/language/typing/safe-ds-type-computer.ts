@@ -10,7 +10,7 @@ import {
     isSdsExpression,
     isSdsFloat,
     isSdsInt,
-    isSdsNull, isSdsParenthesizedExpression,
+    isSdsNull, isSdsParenthesizedExpression, isSdsResult,
     isSdsString,
     isSdsTemplateString,
     isSdsType,
@@ -87,6 +87,8 @@ export class SafeDsTypeComputer {
             return new EnumType(node, false);
         } else if (isSdsEnumVariant(node)) {
             return new EnumVariantType(node, false);
+        } else if (isSdsResult(node)) {
+            return this.computeType(node.type);
         }
 
         return NotImplementedType;
