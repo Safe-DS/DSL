@@ -23,8 +23,8 @@ export class CallableType extends Type {
 
     constructor(
         readonly callable: SdsCallable,
-        readonly parameters: RecordType,
-        readonly results: RecordType,
+        readonly parameters: NamedTuple,
+        readonly results: NamedTuple,
     ) {
         super();
     }
@@ -87,6 +87,62 @@ export class LiteralType extends Type {
 
     override toString(): string {
         throw Error('Not implemented');
+    }
+}
+
+export class NamedTuple extends Type {
+    override readonly isNullable = false;
+
+    constructor(readonly entries: NamedTupleEntry[]) {
+        super();
+    }
+
+    override copyWithNullability(_isNullable: boolean): Type {
+        return this;
+    }
+
+    override equals(other: Type): boolean {
+        if (other === this) {
+            return true;
+        }
+
+        if (!(other instanceof NamedTuple)) {
+            return false;
+        }
+
+        if (other.entries.length !== this.entries.length) {
+            return false;
+        }
+
+        for (let i = 0; i < this.entries.length; i++) {
+            const otherEntry = other.entries[i];
+            const entry = this.entries[i];
+
+            if (!entry.equals(otherEntry)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    override toString(): string {
+        return `(${this.entries.join(', ')})`;
+    }
+}
+
+export class NamedTupleEntry {
+    constructor(
+        readonly name: string,
+        readonly type: Type,
+    ) {}
+
+    toString(): string {
+        return `${this.name}: ${this.type}`;
+    }
+
+    equals(other: NamedTupleEntry): boolean {
+        return this.name === other.name && this.type.equals(other.type);
     }
 }
 
@@ -176,62 +232,6 @@ export class EnumVariantType extends NamedType {
         }
 
         return other.sdsEnumVariant === this.sdsEnumVariant && other.isNullable === this.isNullable;
-    }
-}
-
-export class RecordType extends Type {
-    override readonly isNullable = false;
-
-    constructor(readonly entries: RecordEntry[]) {
-        super();
-    }
-
-    override copyWithNullability(_isNullable: boolean): Type {
-        return this;
-    }
-
-    override equals(other: Type): boolean {
-        if (other === this) {
-            return true;
-        }
-
-        if (!(other instanceof RecordType)) {
-            return false;
-        }
-
-        if (other.entries.length !== this.entries.length) {
-            return false;
-        }
-
-        for (let i = 0; i < this.entries.length; i++) {
-            const otherEntry = other.entries[i];
-            const entry = this.entries[i];
-
-            if (!entry.equals(otherEntry)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    override toString(): string {
-        return `({${this.entries.join(', ')}})`;
-    }
-}
-
-export class RecordEntry {
-    constructor(
-        readonly name: string,
-        readonly type: Type,
-    ) {}
-
-    toString(): string {
-        return `${this.name}: ${this.type}`;
-    }
-
-    equals(other: RecordEntry): boolean {
-        return this.name === other.name && this.type.equals(other.type);
     }
 }
 

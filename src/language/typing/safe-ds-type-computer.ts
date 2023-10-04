@@ -1,12 +1,24 @@
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
-import {ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnionType, UnknownType} from './model.js';
+import {
+    CallableType,
+    ClassType,
+    EnumType,
+    EnumVariantType,
+    NamedTuple,
+    NamedTupleEntry,
+    NotImplementedType,
+    Type,
+    UnionType,
+    UnknownType,
+} from './model.js';
 import {
     isSdsArgument,
     isSdsAssignee,
     isSdsAttribute,
     isSdsBoolean,
+    isSdsCallableType,
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
@@ -15,6 +27,7 @@ import {
     isSdsFloat,
     isSdsInfixOperation,
     isSdsInt,
+    isSdsLiteralType,
     isSdsMemberType,
     isSdsNamedType,
     isSdsNull,
@@ -23,7 +36,8 @@ import {
     isSdsResult,
     isSdsString,
     isSdsTemplateString,
-    isSdsType, isSdsTypeProjection,
+    isSdsType,
+    isSdsTypeProjection,
     isSdsUnionType,
     SdsAssignee,
     SdsClass,
@@ -33,7 +47,7 @@ import {
     SdsPrefixOperation,
     SdsType,
 } from '../generated/ast.js';
-import {typeArgumentsOrEmpty} from "../helpers/shortcuts.js";
+import { parametersOrEmpty, resultsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
 
 export class SafeDsTypeComputer {
     readonly astNodeLocator: AstNodeLocator;
@@ -315,7 +329,18 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfType(node: SdsType): Type {
-        if (isSdsMemberType(node)) {
+        if (isSdsCallableType(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            );
+            const resultEntries = resultsOrEmpty(node.resultList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            );
+
+            return new CallableType(node, new NamedTuple(parameterEntries), new NamedTuple(resultEntries));
+        } else if (isSdsLiteralType(node)) {
+            return NotImplementedType;
+        } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
             return this.computeType(node.declaration.ref).copyWithNullability(node.nullable);
@@ -324,19 +349,8 @@ export class SafeDsTypeComputer {
             return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         }
 
-        return NotImplementedType;
-
-        // return when {
-        //     this.eIsProxy() -> UnresolvedType
-        //     this is SdsCallableType -> CallableType(
-        //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-        //     this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        // )
-        //     this is SdsUnionType -> {
-        //         UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
-        //     }
-        // else -> Any(context)
-        // }
+        /* c8 skip next */
+        return UnknownType;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
