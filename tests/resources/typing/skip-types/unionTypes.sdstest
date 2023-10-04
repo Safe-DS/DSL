@@ -1,3 +1,0 @@
-package tests.typing.types.unionTypes
-
-fun myFun(a: union<Int, String>)

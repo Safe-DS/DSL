@@ -1,7 +1,7 @@
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
-import { ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnknownType } from './model.js';
+import {ClassType, EnumType, EnumVariantType, NotImplementedType, Type, UnionType, UnknownType} from './model.js';
 import {
     isSdsArgument,
     isSdsAssignee,
@@ -23,9 +23,8 @@ import {
     isSdsResult,
     isSdsString,
     isSdsTemplateString,
-    isSdsType,
-    isSdsTypeArgument,
-    isSdsTypeProjection,
+    isSdsType, isSdsTypeProjection,
+    isSdsUnionType,
     SdsAssignee,
     SdsClass,
     SdsDeclaration,
@@ -34,6 +33,7 @@ import {
     SdsPrefixOperation,
     SdsType,
 } from '../generated/ast.js';
+import {typeArgumentsOrEmpty} from "../helpers/shortcuts.js";
 
 export class SafeDsTypeComputer {
     readonly astNodeLocator: AstNodeLocator;
@@ -68,6 +68,8 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfExpression(node);
         } else if (isSdsType(node)) {
             return this.computeTypeOfType(node);
+        } else if (isSdsTypeProjection(node)) {
+            return this.computeTypeOfType(node.type);
         } else {
             return NotImplementedType;
         }
@@ -317,9 +319,12 @@ export class SafeDsTypeComputer {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
             return this.computeType(node.declaration.ref).copyWithNullability(node.nullable);
+        } else if (isSdsUnionType(node)) {
+            const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+            return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         }
 
-        return UnknownType;
+        return NotImplementedType;
 
         // return when {
         //     this.eIsProxy() -> UnresolvedType
@@ -327,18 +332,6 @@ export class SafeDsTypeComputer {
         //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
         //     this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
         // )
-        //     this is SdsMemberType -> {
-        //         this.member.inferTypeForType(context)
-        //     }
-        //     this is SdsNamedType -> {
-        //         this.declaration.inferTypeForDeclaration(context).setIsNullableOnCopy(this.isNullable)
-        //     }
-        //     this is SdsParenthesizedType -> {
-        //         this.type.inferTypeForType(context)
-        //     }
-        //     this is SdsSchemaType -> {
-        //         this.declaration.inferTypeForDeclaration(context)
-        //     }
         //     this is SdsUnionType -> {
         //         UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
         //     }
