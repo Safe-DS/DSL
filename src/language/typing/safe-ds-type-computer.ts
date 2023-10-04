@@ -14,6 +14,7 @@ import {
     UnknownType,
 } from './model.js';
 import {
+    isSdsAnnotation,
     isSdsArgument,
     isSdsAssignee,
     isSdsAttribute,
@@ -28,12 +29,14 @@ import {
     isSdsFunction,
     isSdsInfixOperation,
     isSdsInt,
-    isSdsLiteralType, isSdsMemberAccess,
+    isSdsLiteralType,
+    isSdsMemberAccess,
     isSdsMemberType,
     isSdsNamedType,
     isSdsNull,
     isSdsParameter,
     isSdsParenthesizedExpression,
+    isSdsPipeline,
     isSdsPrefixOperation,
     isSdsReference,
     isSdsResult,
@@ -126,7 +129,13 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfDeclaration(node: SdsDeclaration): Type {
-        if (isSdsAttribute(node)) {
+        if (isSdsAnnotation(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            );
+
+            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType([]));
+        } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
             return new ClassType(node, false);
@@ -138,6 +147,8 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsParameter(node)) {
             return this.computeTypeOfParameter(node);
+        } else if (isSdsPipeline(node)) {
+            return UnknownType;
         } else if (isSdsResult(node)) {
             return this.computeType(node.type);
         } else if (isSdsSegment(node)) {
