@@ -1,0 +1,8 @@
+package tests.typing.expressions.calls.ofAnnotations
+
+annotation MyAnnotation
+
+pipeline myPipeline {
+    // $TEST$ serialization $Unknown
+    »MyAnnotation()«;
+}

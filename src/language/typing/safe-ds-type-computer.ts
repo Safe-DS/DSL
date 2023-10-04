@@ -56,6 +56,7 @@ import {
     isSdsUnionType,
     isSdsYield,
     SdsAssignee,
+    SdsCall,
     SdsCallableType,
     SdsClass,
     SdsDeclaration,
@@ -125,9 +126,10 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfType(node);
         } else if (isSdsTypeProjection(node)) {
             return this.computeTypeOfType(node.type);
-        } else {
-            return NotImplementedType;
         }
+
+        /* c8 skip next */
+        return UnknownType;
     }
 
     private computeTypeOfAssignee(_node: SdsAssignee): Type {
@@ -246,7 +248,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsInt(node)) {
             return this.Int();
         } else if (isSdsNull(node)) {
-            return this.Nothing(true);
+            return this.NothingOrNull();
         } else if (isSdsString(node)) {
             return this.String();
         } else if (isSdsTemplateString(node)) {
@@ -257,50 +259,7 @@ export class SafeDsTypeComputer {
         else if (isSdsArgument(node)) {
             return this.computeType(node.value);
         } else if (isSdsCall(node)) {
-            //     this is SdsCall -> when (val callable = callableOrNull()) {
-            //         is SdsClass -> {
-            //             val typeParametersTypes = callable.typeParametersOrEmpty()
-            //                 .map { it.inferTypeForDeclaration(context) }
-            //         .filterIsInstance<ParameterisedType>()
-            //
-            //             ClassType(callable, typeParametersTypes, isNullable = false)
-            //         }
-            //         is SdsCallableType -> {
-            //             val results = callable.resultsOrEmpty()
-            //             when (results.size) {
-            //                 1 -> results.first().inferTypeForDeclaration(context)
-            //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-            //             }
-            //         }
-            //         is SdsFunction -> {
-            //             val results = callable.resultsOrEmpty()
-            //             when (results.size) {
-            //                 1 -> results.first().inferTypeForDeclaration(context)
-            //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-            //             }
-            //         }
-            //         is SdsBlockLambda -> {
-            //             val results = callable.blockLambdaResultsOrEmpty()
-            //             when (results.size) {
-            //                 1 -> results.first().inferTypeForAssignee(context)
-            //             else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
-            //             }
-            //         }
-            //         is SdsEnumVariant -> {
-            //             EnumVariantType(callable, isNullable = false)
-            //         }
-            //         is SdsExpressionLambda -> {
-            //             callable.result.inferTypeExpression(context)
-            //         }
-            //         is SdsStep -> {
-            //             val results = callable.resultsOrEmpty()
-            //             when (results.size) {
-            //                 1 -> results.first().inferTypeForDeclaration(context)
-            //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-            //             }
-            //         }
-            //     else -> Any(context)
-            //     }
+            return this.computeTypeOfCall(node);
         } else if (isSdsBlockLambda(node)) {
             const parameterEntries = parametersOrEmpty(node.parameterList).map(
                 (it) => new NamedTupleEntry(it.name, this.computeType(it)),
@@ -374,6 +333,55 @@ export class SafeDsTypeComputer {
 
         /* c8 skip next */
         return UnknownType;
+    }
+
+    private computeTypeOfCall(_node: SdsCall): Type {
+        return NotImplementedType;
+
+        //     when (val callable = callableOrNull()) {
+        //         is SdsClass -> {
+        //             val typeParametersTypes = callable.typeParametersOrEmpty()
+        //                 .map { it.inferTypeForDeclaration(context) }
+        //         .filterIsInstance<ParameterisedType>()
+        //
+        //             ClassType(callable, typeParametersTypes, isNullable = false)
+        //         }
+        //         is SdsCallableType -> {
+        //             val results = callable.resultsOrEmpty()
+        //             when (results.size) {
+        //                 1 -> results.first().inferTypeForDeclaration(context)
+        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
+        //             }
+        //         }
+        //         is SdsFunction -> {
+        //             val results = callable.resultsOrEmpty()
+        //             when (results.size) {
+        //                 1 -> results.first().inferTypeForDeclaration(context)
+        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
+        //             }
+        //         }
+        //         is SdsBlockLambda -> {
+        //             val results = callable.blockLambdaResultsOrEmpty()
+        //             when (results.size) {
+        //                 1 -> results.first().inferTypeForAssignee(context)
+        //             else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
+        //             }
+        //         }
+        //         is SdsEnumVariant -> {
+        //             EnumVariantType(callable, isNullable = false)
+        //         }
+        //         is SdsExpressionLambda -> {
+        //             callable.result.inferTypeExpression(context)
+        //         }
+        //         is SdsStep -> {
+        //             val results = callable.resultsOrEmpty()
+        //             when (results.size) {
+        //                 1 -> results.first().inferTypeForDeclaration(context)
+        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
+        //             }
+        //         }
+        //     else -> Any(context)
+        //     }
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -489,15 +497,6 @@ export class SafeDsTypeComputer {
     // Builtin types
     // -----------------------------------------------------------------------------------------------------------------
 
-    private cachedAny: Type = UnknownType;
-
-    private Any(): Type {
-        if (this.cachedAny === UnknownType) {
-            this.cachedAny = this.createCoreType(this.coreClasses.Any);
-        }
-        return this.cachedAny;
-    }
-
     private cachedBoolean: Type = UnknownType;
 
     private Boolean(): Type {
@@ -525,21 +524,22 @@ export class SafeDsTypeComputer {
         return this.cachedInt;
     }
 
-    private cachedNothingOrNull: Type = UnknownType;
     private cachedNothing: Type = UnknownType;
 
-    private Nothing(isNullable: boolean = false): Type {
-        if (isNullable) {
-            if (this.cachedNothingOrNull === UnknownType) {
-                this.cachedNothingOrNull = this.createCoreType(this.coreClasses.Nothing, true);
-            }
-            return this.cachedNothingOrNull;
-        } else {
-            if (this.cachedNothing === UnknownType) {
-                this.cachedNothing = this.createCoreType(this.coreClasses.Nothing);
-            }
-            return this.cachedNothing;
+    private Nothing(): Type {
+        if (this.cachedNothing === UnknownType) {
+            this.cachedNothing = this.createCoreType(this.coreClasses.Nothing);
         }
+        return this.cachedNothing;
+    }
+
+    private cachedNothingOrNull: Type = UnknownType;
+
+    private NothingOrNull(): Type {
+        if (this.cachedNothingOrNull === UnknownType) {
+            this.cachedNothingOrNull = this.createCoreType(this.coreClasses.Nothing, true);
+        }
+        return this.cachedNothingOrNull;
     }
 
     private cachedString: Type = UnknownType;
