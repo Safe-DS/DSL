@@ -11,7 +11,7 @@ import {
     NotImplementedType,
     Type,
     UnionType,
-    UnknownType,
+    UnknownType, VariadicType,
 } from './model.js';
 import {
     isSdsAnnotation,
@@ -26,7 +26,7 @@ import {
     isSdsEnumVariant,
     isSdsExpression,
     isSdsFloat,
-    isSdsFunction,
+    isSdsFunction, isSdsIndexedAccess,
     isSdsInfixOperation,
     isSdsInt,
     isSdsLiteralType,
@@ -226,6 +226,15 @@ export class SafeDsTypeComputer {
         // Recursive cases
         else if (isSdsArgument(node)) {
             return this.computeType(node.value);
+        } else if (isSdsIndexedAccess(node)) {
+            const receiverType = this.computeType(node.receiver);
+            if (receiverType === UnknownType) {
+                return UnknownType;
+            } else if (receiverType instanceof VariadicType) {
+                return receiverType.elementType;
+            } else {
+                return this.Nothing();
+            }
         } else if (isSdsInfixOperation(node)) {
             switch (node.operator) {
                 // Boolean operators
@@ -328,13 +337,6 @@ export class SafeDsTypeComputer {
         //         this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
         //     listOf(result.inferTypeExpression(context)),
         // )
-        //     this is SdsIndexedAccess -> {
-        //         when (val receiverType = this.receiver.inferTypeExpression(context)) {
-        //             is UnresolvedType -> UnresolvedType
-        //             is VariadicType -> receiverType.elementType
-        //         else -> Nothing(context)
-        //         }
-        //     }
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -489,7 +491,7 @@ export class SafeDsTypeComputer {
     private cachedNothingOrNull: Type = UnknownType;
     private cachedNothing: Type = UnknownType;
 
-    private Nothing(isNullable: boolean): Type {
+    private Nothing(isNullable: boolean = false): Type {
         if (isNullable) {
             if (this.cachedNothingOrNull === UnknownType) {
                 this.cachedNothingOrNull = this.createCoreType(this.coreClasses.Nothing, true);
