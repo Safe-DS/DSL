@@ -11,12 +11,12 @@ interface SdsAnnotatedObject extends SdsObject {
 }
 
 interface SdsAbstractCall extends SdsObject {
-	argumentList: SdsArgumentList
+    argumentList: SdsArgumentList
 }
 
 interface SdsDeclaration extends SdsAnnotatedObject {
     annotationCallList?: SdsAnnotationCallList
-	name: string
+    name: string
 }
 
 interface SdsLocalVariable extends SdsDeclaration {}
@@ -156,7 +156,7 @@ SdsUnannotatedModuleMember returns SdsModuleMember:
 ;
 
 interface SdsAnnotation extends SdsCallable, SdsModuleMember {
-	constraintList?: SdsConstraintList
+    constraintList?: SdsConstraintList
 }
 
 fragment SdsAnnotationFragment:
@@ -166,10 +166,10 @@ fragment SdsAnnotationFragment:
 ;
 
 interface SdsClass extends SdsCallable, SdsClassMember, SdsModuleMember, SdsNamedTypeDeclaration {
-	typeParameterList?: SdsTypeParameterList
-	parentTypeList?: SdsParentTypeList
+    typeParameterList?: SdsTypeParameterList
+    parentTypeList?: SdsParentTypeList
     constraintList?: SdsConstraintList
-	body?: SdsClassBody
+    body?: SdsClassBody
 }
 
 fragment SdsClassFragment:
@@ -183,7 +183,7 @@ fragment SdsClassFragment:
 ;
 
 interface SdsParentTypeList extends SdsObject {
-	parentTypes: SdsType[]
+    parentTypes: SdsType[]
 }
 
 SdsParentTypeList returns SdsParentTypeList:
@@ -194,7 +194,7 @@ SdsParentTypeList returns SdsParentTypeList:
 ;
 
 interface SdsClassBody extends SdsObject {
-	members: SdsClassMember[]
+    members: SdsClassMember[]
 }
 
 SdsClassBody returns SdsClassBody:
@@ -243,8 +243,8 @@ SdsUnannotatedClassMember returns SdsClassMember:
 ;
 
 interface SdsAttribute extends SdsClassMember {
-	isStatic: boolean
-	^type?: SdsType
+    isStatic: boolean
+    ^type?: SdsType
 }
 
 fragment SdsAttributeFragment:
@@ -255,7 +255,7 @@ fragment SdsAttributeFragment:
 ;
 
 interface SdsEnum extends SdsNamedTypeDeclaration, SdsClassMember, SdsModuleMember {
-	body?: SdsEnumBody
+    body?: SdsEnumBody
 }
 
 fragment SdsEnumFragment:
@@ -265,7 +265,7 @@ fragment SdsEnumFragment:
 ;
 
 interface SdsEnumBody extends SdsObject {
-	variants: SdsEnumVariant[]
+    variants: SdsEnumVariant[]
 }
 
 SdsEnumBody returns SdsEnumBody:
@@ -273,8 +273,8 @@ SdsEnumBody returns SdsEnumBody:
 ;
 
 interface SdsEnumVariant extends SdsCallable, SdsNamedTypeDeclaration {
-	typeParameterList?: SdsTypeParameterList
-	constraintList?: SdsConstraintList
+    typeParameterList?: SdsTypeParameterList
+    constraintList?: SdsConstraintList
 }
 
 SdsEnumVariant returns SdsEnumVariant:
@@ -286,10 +286,10 @@ SdsEnumVariant returns SdsEnumVariant:
 ;
 
 interface SdsFunction extends SdsCallable, SdsClassMember, SdsModuleMember {
-	isStatic: boolean
-	typeParameterList?: SdsTypeParameterList
-	resultList?: SdsResultList
-	constraintList?: SdsConstraintList
+    isStatic: boolean
+    typeParameterList?: SdsTypeParameterList
+    resultList?: SdsResultList
+    constraintList?: SdsConstraintList
 }
 
 fragment SdsFunctionFragment:
@@ -302,7 +302,7 @@ fragment SdsFunctionFragment:
 ;
 
 interface SdsPipeline extends SdsModuleMember {
-	body: SdsBlock
+    body: SdsBlock
 }
 
 fragment SdsPipelineFragment:
@@ -312,9 +312,9 @@ fragment SdsPipelineFragment:
 ;
 
 interface SdsSegment extends SdsCallable, SdsModuleMember {
-	visibility?: string
-	resultList?: SdsResultList
-	body: SdsBlock
+    visibility?: string
+    resultList?: SdsResultList
+    body: SdsBlock
 }
 
 fragment SdsSegmentFragment:
@@ -334,7 +334,7 @@ fragment SdsSegmentFragment:
 interface SdsAnnotationCallList extends SdsAnnotatedObject {}
 
 interface SdsAnnotationCall extends SdsAbstractCall {
-	annotation?: @SdsAnnotation
+    annotation?: @SdsAnnotation
 }
 
 SdsAnnotationCall returns SdsAnnotationCall:
@@ -355,7 +355,7 @@ SdsAnnotationCallArgument returns SdsArgument:
 // -----------------------------------------------------------------------------
 
 interface SdsConstraintList extends SdsObject {
-	constraints: SdsConstraint[]
+    constraints: SdsConstraint[]
 }
 
 SdsConstraintList returns SdsConstraintList:
@@ -376,9 +376,9 @@ SdsConstraint returns SdsConstraint:
 ;
 
 interface SdsTypeParameterConstraint extends SdsConstraint {
-	leftOperand: @SdsTypeParameter
-	operator: string
-	rightOperand: SdsType
+    leftOperand: @SdsTypeParameter
+    operator: string
+    rightOperand: SdsType
 }
 
 SdsTypeParameterConstraint returns SdsTypeParameterConstraint:
@@ -397,11 +397,11 @@ SdsTypeParameterConstraintOperator returns string:
 // -----------------------------------------------------------------------------
 
 interface SdsCallable extends SdsObject {
-	parameterList?: SdsParameterList
+    parameterList?: SdsParameterList
 }
 
 interface SdsParameterList extends SdsObject {
-	parameters: SdsParameter[]
+    parameters: SdsParameter[]
 }
 
 SdsParameterList returns SdsParameterList:
@@ -416,9 +416,9 @@ SdsParameterList returns SdsParameterList:
 ;
 
 interface SdsParameter extends SdsLocalVariable {
-	isVariadic: boolean
-	^type?: SdsType
-	defaultValue?: SdsExpression
+    isVariadic: boolean
+    ^type?: SdsType
+    defaultValue?: SdsExpression
 }
 
 SdsParameter returns SdsParameter:
@@ -430,7 +430,7 @@ SdsParameter returns SdsParameter:
 ;
 
 interface SdsResultList extends SdsObject {
-	results: SdsResult[]
+    results: SdsResult[]
 }
 
 SdsResultList returns SdsResultList:
@@ -441,7 +441,7 @@ SdsResultList returns SdsResultList:
 interface SdsAbstractResult extends SdsDeclaration {}
 
 interface SdsResult extends SdsAbstractResult {
-	^type?: SdsType
+    ^type?: SdsType
 }
 
 SdsResult returns SdsResult:
@@ -458,7 +458,7 @@ SdsResult returns SdsResult:
 interface SdsStatement extends SdsObject {}
 
 interface SdsBlock extends SdsObject {
-	statements: SdsStatement[]
+    statements: SdsStatement[]
 }
 
 SdsBlock returns SdsBlock:
@@ -471,8 +471,8 @@ SdsStatement returns SdsStatement:
 ;
 
 interface SdsAssignment extends SdsStatement {
-	assigneeList?: SdsAssigneeList
-	expression?: SdsExpression
+    assigneeList?: SdsAssigneeList
+    expression?: SdsExpression
 }
 
 SdsAssignment returns SdsAssignment:
@@ -480,7 +480,7 @@ SdsAssignment returns SdsAssignment:
 ;
 
 interface SdsAssigneeList extends SdsObject {
-	assignees: SdsAssignee[]
+    assignees: SdsAssignee[]
 }
 
 SdsAssigneeList returns SdsAssigneeList:
@@ -504,7 +504,7 @@ SdsAssignee returns SdsAssignee:
 ;
 
 interface SdsExpressionStatement extends SdsStatement {
-	expression: SdsExpression
+    expression: SdsExpression
 }
 
 SdsExpressionStatement returns SdsExpressionStatement:
@@ -525,11 +525,11 @@ SdsExpression returns SdsExpression:
 interface SdsLambda extends SdsCallable, SdsExpression {}
 
 interface SdsBlockLambda extends SdsLambda {
-	body: SdsBlock
+    body: SdsBlock
 }
 
 interface SdsExpressionLambda extends SdsLambda {
-	result: SdsExpression
+    result: SdsExpression
 }
 
 SdsLambda returns SdsExpression:
@@ -565,14 +565,14 @@ SdsBlockLambdaAssignee returns SdsAssignee:
 ;
 
 interface SdsInfixOperation extends SdsExpression {
-	leftOperand: SdsExpression
-	operator: string
-	rightOperand: SdsExpression
+    leftOperand: SdsExpression
+    operator: string
+    rightOperand: SdsExpression
 }
 
 interface SdsPrefixOperation extends SdsExpression {
-	operand: SdsExpression
-	operator: string
+    operand: SdsExpression
+    operator: string
 }
 
 SdsOrExpression returns SdsExpression:
@@ -665,18 +665,18 @@ SdsUnaryOperation returns SdsExpression:
 ;
 
 interface SdsChainedExpression extends SdsExpression {
-	receiver: SdsExpression
+    receiver: SdsExpression
 }
 
 interface SdsCall extends SdsAbstractCall, SdsChainedExpression {}
 
 interface SdsIndexedAccess extends SdsChainedExpression {
-	index: SdsExpression
+    index: SdsExpression
 }
 
 interface SdsMemberAccess extends SdsChainedExpression {
-	isNullSafe: boolean
-	member: SdsReference
+    isNullSafe: boolean
+    member: SdsReference
 }
 
 SdsChainedExpression returns SdsExpression:
@@ -691,12 +691,12 @@ SdsChainedExpression returns SdsExpression:
     | {SdsMemberAccess.receiver=current}
         (isNullSafe?='?')?
         '.'
-        member=SdsReference*
+        member=SdsReference
     )*
 ;
 
 interface SdsArgumentList extends SdsObject {
-	arguments: SdsArgument[]
+    arguments: SdsArgument[]
 }
 
 SdsCallArgumentList returns SdsArgumentList:
@@ -711,8 +711,8 @@ SdsCallArgumentList returns SdsArgumentList:
 ;
 
 interface SdsArgument extends SdsExpression {
-	parameter?: @SdsParameter
-	value: SdsExpression
+    parameter?: @SdsParameter
+    value: SdsExpression
 }
 
 SdsCallArgument returns SdsArgument:
@@ -737,7 +737,7 @@ SdsLiteral returns SdsLiteral:
 ;
 
 interface SdsBoolean extends SdsLiteral {
-	value: boolean
+    value: boolean
 }
 
 SdsBoolean returns SdsBoolean:
@@ -748,7 +748,7 @@ SdsBoolean returns SdsBoolean:
 interface SdsNumber extends SdsLiteral {}
 
 interface SdsFloat extends SdsNumber {
-	value: number
+    value: number
 }
 
 SdsFloat returns SdsFloat:
@@ -756,7 +756,7 @@ SdsFloat returns SdsFloat:
 ;
 
 interface SdsInt extends SdsNumber {
-	value: number
+    value: number
 }
 
 SdsInt returns SdsInt:
@@ -770,7 +770,7 @@ SdsNull returns SdsNull:
 ;
 
 interface SdsString extends SdsLiteral {
-	value: string
+    value: string
 }
 
 SdsString returns SdsString:
@@ -778,7 +778,7 @@ SdsString returns SdsString:
 ;
 
 interface SdsReference extends SdsExpression {
-	target: @SdsDeclaration
+    target: @SdsDeclaration
 }
 
 SdsReference returns SdsReference:
@@ -786,7 +786,7 @@ SdsReference returns SdsReference:
 ;
 
 interface SdsParenthesizedExpression extends SdsExpression {
-	expression: SdsExpression
+    expression: SdsExpression
 }
 
 SdsParenthesizedExpression returns SdsParenthesizedExpression:
@@ -794,7 +794,7 @@ SdsParenthesizedExpression returns SdsParenthesizedExpression:
 ;
 
 interface SdsTemplateString extends SdsExpression {
-	expressions: SdsExpression[]
+    expressions: SdsExpression[]
 }
 
 SdsTemplateString returns SdsTemplateString:
@@ -805,7 +805,7 @@ SdsTemplateString returns SdsTemplateString:
 ;
 
 interface SdsTemplateStringPart extends SdsLiteral {
-	value: string
+    value: string
 }
 
 interface SdsTemplateStringStart extends SdsTemplateStringPart {}
@@ -839,8 +839,8 @@ interface SdsType extends SdsObject {}
 interface SdsNamedTypeDeclaration extends SdsDeclaration {}
 
 interface SdsMemberType extends SdsType {
-	member: SdsNamedType
-	receiver: SdsType
+    member: SdsNamedType
+    receiver: SdsType
 }
 
 SdsType returns SdsType:
@@ -855,7 +855,7 @@ SdsPrimaryType returns SdsType:
 ;
 
 interface SdsCallableType extends SdsCallable, SdsType {
-	resultList: SdsResultList
+    resultList: SdsResultList
 }
 
 SdsCallableType returns SdsCallableType:
@@ -864,7 +864,7 @@ SdsCallableType returns SdsCallableType:
 ;
 
 interface SdsLiteralType extends SdsType {
-	literalList: SdsLiteralList
+    literalList: SdsLiteralList
 }
 
 SdsLiteralType returns SdsLiteralType:
@@ -887,9 +887,9 @@ SdsLiteralList returns SdsLiteralList:
 ;
 
 interface SdsNamedType extends SdsType {
-	declaration: @SdsNamedTypeDeclaration
-	typeArgumentList?: SdsTypeArgumentList
-	isNullable: boolean
+    declaration: @SdsNamedTypeDeclaration
+    typeArgumentList?: SdsTypeArgumentList
+    isNullable: boolean
 }
 
 SdsNamedType returns SdsNamedType:
@@ -899,7 +899,7 @@ SdsNamedType returns SdsNamedType:
 ;
 
 interface SdsUnionType extends SdsType {
-	typeArgumentList: SdsTypeArgumentList
+    typeArgumentList: SdsTypeArgumentList
 }
 
 SdsUnionType returns SdsUnionType:
@@ -930,7 +930,7 @@ SdsParentType returns SdsType:
 ;
 
 interface SdsTypeParameterList extends SdsObject {
-	typeParameters: SdsTypeParameter[]
+    typeParameters: SdsTypeParameter[]
 }
 
 SdsTypeParameterList returns SdsTypeParameterList:
@@ -945,7 +945,7 @@ SdsTypeParameterList returns SdsTypeParameterList:
 ;
 
 interface SdsTypeParameter extends SdsNamedTypeDeclaration {
-	variance?: string
+    variance?: string
 }
 
 SdsTypeParameter returns SdsTypeParameter:
@@ -959,7 +959,7 @@ SdsTypeParameterVariance returns string:
 ;
 
 interface SdsTypeArgumentList extends SdsObject {
-	typeArguments: SdsTypeArgument[]
+    typeArguments: SdsTypeArgument[]
 }
 
 SdsTypeArgumentList returns SdsTypeArgumentList:
@@ -970,8 +970,8 @@ SdsTypeArgumentList returns SdsTypeArgumentList:
 ;
 
 interface SdsTypeArgument extends SdsObject {
-	typeParameter?: @SdsTypeParameter
-	value: SdsTypeArgumentValue
+    typeParameter?: @SdsTypeParameter
+    value: SdsTypeArgumentValue
 }
 
 SdsTypeArgument returns SdsTypeArgument:
@@ -982,7 +982,7 @@ SdsTypeArgument returns SdsTypeArgument:
 interface SdsTypeArgumentValue extends SdsObject {}
 
 interface SdsTypeProjection extends SdsTypeArgumentValue {
-	^type: SdsType
+    ^type: SdsType
 }
 
 SdsTypeArgumentValue returns SdsTypeArgumentValue:
@@ -995,7 +995,7 @@ SdsTypeArgumentValue returns SdsTypeArgumentValue:
 // -----------------------------------------------------------------------------
 
 interface SdsSchema extends SdsModuleMember {
-	columnList: SdsColumnList
+    columnList: SdsColumnList
 }
 
 fragment SdsSchemaFragment:
@@ -1005,7 +1005,7 @@ fragment SdsSchemaFragment:
 ;
 
 interface SdsColumnList extends SdsObject {
-	columns: SdsColumn[]
+    columns: SdsColumn[]
 }
 
 SdsColumnList returns SdsColumnList:
@@ -1013,8 +1013,8 @@ SdsColumnList returns SdsColumnList:
 ;
 
 interface SdsColumn extends SdsObject {
-	columnName: SdsString
-	columnType: SdsType
+    columnName: SdsString
+    columnType: SdsType
 }
 
 SdsColumn returns SdsColumn:
