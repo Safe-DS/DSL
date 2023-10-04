@@ -342,10 +342,14 @@ export class SafeDsTypeComputer {
         //  class C()
         //  val a = C(); // calling the class itself
         //  val b = a(); // calling an instance of the class
-        // We might need a StaticType or something for the former case.
+        // We might need a StaticType (Class<T> in Java) (or a field isInstance in named type) or something for the former case.
         // The type system should also handle stuff like
         // val alias = C;
         // val c = alias();
+        // or
+        // val p = C();
+        // val q = p();
+        // The only way to get a static reference is via a reference or member access. Add tests for that.
 
 
 
