@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { getFirstNodeOfType, getNodeByLocation } from './nodeFinder.js';
+import { getNodeOfType, getNodeByLocation } from './nodeFinder.js';
 import { createSafeDsServices } from '../../src/language/safe-ds-module.js';
 import { EmptyFileSystem } from 'langium';
 import { AssertionError } from 'assert';
 import { clearDocuments, parseHelper } from 'langium/test';
-import { isSdsClass } from '../../src/language/generated/ast.js';
+import {isSdsClass, isSdsDeclaration, isSdsEnum} from '../../src/language/generated/ast.js';
 
 describe('getNodeByLocation', () => {
     const services = createSafeDsServices(EmptyFileSystem).SafeDs;
@@ -56,7 +56,7 @@ describe('getNodeByLocation', () => {
     });
 });
 
-describe('getFirstNodeOfType', () => {
+describe('getNodeOfType', () => {
     const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 
     afterEach(async () => {
@@ -66,13 +66,29 @@ describe('getFirstNodeOfType', () => {
     it('should throw if no node is found', async () => {
         const code = '';
         expect(async () => {
-            await getFirstNodeOfType(services, code, isSdsClass);
+            await getNodeOfType(services, code, isSdsClass);
         }).rejects.toThrowErrorMatchingSnapshot();
     });
 
-    it('should return the first matching node', async () => {
+    it('should throw if not enough nodes are found', async () => {
+        const code = `class C`;
+        expect(async () => {
+            await getNodeOfType(services, code, isSdsClass, 1);
+        }).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it('should return the first matching node if no index is set', async () => {
         const code = 'class C';
-        const node = await getFirstNodeOfType(services, code, isSdsClass);
+        const node = await getNodeOfType(services, code, isSdsClass);
         expect(node).to.satisfy(isSdsClass);
+    });
+
+    it('should return the nth matching node if an index is set', async () => {
+        const code = `
+            class C
+            enum D
+        `;
+        const node = await getNodeOfType(services, code, isSdsDeclaration, 1);
+        expect(node).to.satisfy(isSdsEnum);
     });
 });

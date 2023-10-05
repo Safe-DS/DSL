@@ -1,5 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`getFirstNodeOfType > should throw if no node is found 1`] = `"Expected to find a matching node but found none."`;
-
 exports[`getNodeByLocation > should throw if no document is found 1`] = `"No document found at file:///test.sdstest"`;
+
+exports[`getNodeOfType > should throw if no node is found 1`] = `"Expected to find a matching node but found none."`;
+
+exports[`getNodeOfType > should throw if not enough nodes are found 1`] = `"Expected to find a matching node at index 1 but found only 1."`;

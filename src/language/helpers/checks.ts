@@ -6,7 +6,8 @@ import {
     isSdsSegment,
     SdsArgument,
     SdsClassMember,
-    SdsDeclaration, SdsParameter,
+    SdsDeclaration,
+    SdsTypeArgument,
 } from '../generated/ast.js';
 
 export const isInternal = (node: SdsDeclaration): boolean => {
@@ -15,6 +16,10 @@ export const isInternal = (node: SdsDeclaration): boolean => {
 
 export const isNamedArgument = (node: SdsArgument): boolean => {
     return Boolean(node.parameter);
+};
+
+export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
+    return Boolean(node.typeParameter);
 };
 
 export const isStatic = (node: SdsClassMember): boolean => {

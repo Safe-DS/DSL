@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
-import { getFirstNodeOfType } from '../../../helpers/nodeFinder.js';
+import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { isSdsAbstractCall, SdsArgument } from '../../../../src/language/generated/ast.js';
 import { argumentsOrEmpty } from '../../../../src/language/helpers/shortcuts.js';
 
@@ -29,7 +29,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined]);
             });
@@ -43,7 +43,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(["p2", "p3", "p1"]);
             });
@@ -59,7 +59,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(["p1", "p2", "p3"]);
             });
@@ -73,7 +73,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(["p2", undefined, undefined]);
             });
@@ -87,7 +87,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(["p1", "p2", undefined]);
             });
@@ -101,7 +101,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(["p1", "p2", "p3", "p3", "p3"]);
             });

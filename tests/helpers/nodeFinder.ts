@@ -52,23 +52,30 @@ const getNameRange = (services: SafeDsServices, node: AstNode): Range | undefine
 };
 
 /**
- * Find the first node that matches the given predicate in the code.
+ * Find the nth node that matches the given predicate in the code.
  *
  * @param services The services to use.
  * @param code The code to parse.
  * @param predicate The predicate to match.
+ * @param index The index of the node to find.
  */
-export const getFirstNodeOfType = async <T extends AstNode>(
+export const getNodeOfType = async <T extends AstNode>(
     services: SafeDsServices,
     code: string,
     predicate: (value: unknown) => value is T,
+    index: number = 0,
 ): Promise<T> => {
     const document = await parseHelper(services)(code);
     const module = document.parseResult.value as SdsModule;
-    const node = streamAllContents(module).find(predicate);
-    if (!node) {
+    const candidates = streamAllContents(module).filter(predicate).toArray();
+
+    if (candidates.length === 0) {
         throw new AssertionError({ message: `Expected to find a matching node but found none.` });
+    } else if (candidates.length <= index) {
+        throw new AssertionError({
+            message: `Expected to find a matching node at index ${index} but found only ${candidates.length}.`,
+        });
     }
 
-    return node;
+    return candidates[index];
 };

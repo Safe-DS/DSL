@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
-import { getFirstNodeOfType } from '../../../helpers/nodeFinder.js';
+import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { isSdsAbstractCall } from '../../../../src/language/generated/ast.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
@@ -29,7 +29,7 @@ describe('SafeDsNodeMapper', () => {
                     pipeline myPipeline {}
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)).toBeUndefined();
             });
 
@@ -41,7 +41,7 @@ describe('SafeDsNodeMapper', () => {
                     class MyClass
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsAnnotation');
             });
         });
@@ -58,7 +58,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)).toBeUndefined();
             });
 
@@ -71,7 +71,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)).toBeUndefined();
             });
 
@@ -84,7 +84,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsAnnotation');
             });
 
@@ -98,7 +98,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsAnnotation');
             });
 
@@ -110,7 +110,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsBlockLambda');
             });
 
@@ -121,7 +121,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsCallableType');
             });
 
@@ -133,7 +133,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsCallableType');
             });
 
@@ -146,7 +146,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsClass');
             });
 
@@ -160,7 +160,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsClass');
             });
 
@@ -175,7 +175,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsEnumVariant');
             });
 
@@ -191,7 +191,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsEnumVariant');
             });
 
@@ -203,7 +203,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsExpressionLambda');
             });
 
@@ -216,7 +216,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsFunction');
             });
 
@@ -230,7 +230,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsFunction');
             });
 
@@ -243,7 +243,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsSegment');
             });
 
@@ -257,7 +257,7 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getFirstNodeOfType(services, code, isSdsAbstractCall);
+                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsSegment');
             });
         });
