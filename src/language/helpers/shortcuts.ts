@@ -5,13 +5,16 @@ import {
     isSdsModule,
     isSdsModuleMember,
     isSdsPlaceholder,
+    SdsAbstractCall,
     SdsAnnotatedObject,
     SdsAnnotationCall,
+    SdsArgument,
     SdsAssignee,
     SdsAssignment,
     SdsBlock,
     SdsBlockLambda,
     SdsBlockLambdaResult,
+    SdsCallable,
     SdsClass,
     SdsClassMember,
     SdsEnum,
@@ -23,7 +26,6 @@ import {
     SdsModule,
     SdsModuleMember,
     SdsParameter,
-    SdsParameterList,
     SdsPlaceholder,
     SdsQualifiedImport,
     SdsResult,
@@ -48,6 +50,10 @@ export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undef
         /* c8 ignore next 2 */
         return node?.annotationCalls ?? [];
     }
+};
+
+export const argumentsOrEmpty = function (node: SdsAbstractCall | undefined): SdsArgument[] {
+    return node?.argumentList?.arguments ?? [];
 };
 
 export const assigneesOrEmpty = function (node: SdsAssignment | undefined): SdsAssignee[] {
@@ -89,12 +95,12 @@ export const moduleMembersOrEmpty = function (node: SdsModule | undefined): SdsM
     return node?.members?.filter(isSdsModuleMember) ?? [];
 };
 
-export const packageNameOrNull = function (node: AstNode | undefined): string | null {
-    return getContainerOfType(node, isSdsModule)?.name ?? null;
+export const packageNameOrUndefined = function (node: AstNode | undefined): string | undefined {
+    return getContainerOfType(node, isSdsModule)?.name;
 };
 
-export const parametersOrEmpty = function (node: SdsParameterList | undefined): SdsParameter[] {
-    return node?.parameters ?? [];
+export const parametersOrEmpty = function (node: SdsCallable | undefined): SdsParameter[] {
+    return node?.parameterList?.parameters ?? [];
 };
 
 export const placeholdersOrEmpty = function (node: SdsBlock | undefined): SdsPlaceholder[] {

@@ -11,11 +11,9 @@ import {
 } from 'langium';
 import {
     isSdsAbstractCall,
-    isSdsAnnotationCall,
     isSdsArgument,
     isSdsAssignment,
     isSdsBlock,
-    isSdsCall,
     isSdsCallable,
     isSdsClass,
     isSdsEnum,
@@ -55,7 +53,7 @@ import {
     enumVariantsOrEmpty,
     importedDeclarationsOrEmpty,
     importsOrEmpty,
-    packageNameOrNull,
+    packageNameOrUndefined,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
@@ -66,10 +64,11 @@ import { isStatic } from '../helpers/checks.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
-import { CallableType, StaticType } from '../typing/model.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     private readonly astReflection: AstReflection;
+    private readonly nodeMapper: SafeDsNodeMapper;
     private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
@@ -77,6 +76,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         super(services);
 
         this.astReflection = services.shared.AstReflection;
+        this.nodeMapper = services.helpers.NodeMapper;
         this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
     }
@@ -111,35 +111,17 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
         const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
-        if (isSdsAnnotationCall(containingAbstractCall)) {
-            const annotation = containingAbstractCall.annotation?.ref;
-            if (!annotation) {
-                return EMPTY_SCOPE;
-            }
-
-            const parameters = parametersOrEmpty(annotation.parameterList);
-            return this.createScopeForNodes(parameters);
-        } else if (isSdsCall(containingAbstractCall)) {
-            const receiverType = this.typeComputer.computeType(containingAbstractCall.receiver);
-            if (receiverType instanceof CallableType) {
-                const parameters = parametersOrEmpty(receiverType.sdsCallable.parameterList);
-                return this.createScopeForNodes(parameters);
-            } else if (receiverType instanceof StaticType) {
-                const declaration = receiverType.instanceType.sdsDeclaration;
-                if (isSdsCallable(declaration)) {
-                    const parameters = parametersOrEmpty(declaration.parameterList);
-                    return this.createScopeForNodes(parameters);
-                }
-            }
-
+        const callable = this.nodeMapper.callToCallableOrUndefined(containingAbstractCall);
+        if (!callable) {
             return EMPTY_SCOPE;
-        } /* c8 ignore start */ else {
-            return EMPTY_SCOPE;
-        } /* c8 ignore stop */
+        }
+
+        const parameters = parametersOrEmpty(callable);
+        return this.createScopeForNodes(parameters);
     }
 
     private getScopeForImportedDeclarationDeclaration(node: SdsImportedDeclaration): Scope {
-        const ownPackageName = packageNameOrNull(node);
+        const ownPackageName = packageNameOrUndefined(node);
 
         const containingQualifiedImport = getContainerOfType(node, isSdsQualifiedImport);
         if (!containingQualifiedImport) {
@@ -297,7 +279,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private localDeclarations(node: AstNode, outerScope: Scope): Scope {
         // Parameters
         const containingCallable = getContainerOfType(node.$container, isSdsCallable);
-        const parameters = parametersOrEmpty(containingCallable?.parameterList);
+        const parameters = parametersOrEmpty(containingCallable);
 
         // Placeholders up to the containing statement
         const containingStatement = getContainerOfType(node.$container, isSdsStatement);
@@ -375,7 +357,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getGlobalScopeForNode(referenceType: string, node: AstNode): Scope {
-        const ownPackageName = packageNameOrNull(node);
+        const ownPackageName = packageNameOrUndefined(node);
 
         // Builtin declarations
         const builtinDeclarations = this.builtinDeclarations(referenceType);
@@ -397,7 +379,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         });
     }
 
-    private declarationsInSamePackage(packageName: string | null, referenceType: string): AstNodeDescription[] {
+    private declarationsInSamePackage(packageName: string | undefined, referenceType: string): AstNodeDescription[] {
         if (!packageName) {
             return [];
         }

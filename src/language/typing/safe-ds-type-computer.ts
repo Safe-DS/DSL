@@ -142,11 +142,11 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
-        const nodePosition = node.$containerIndex ?? -1;
+        const assigneePosition = node.$containerIndex ?? -1;
         const expressionType = this.computeType(containingAssignment?.expression);
         if (expressionType instanceof NamedTupleType) {
-            return expressionType.getTypeOfEntryByPosition(nodePosition) ?? UnknownType;
-        } else if (nodePosition === 0) {
+            return expressionType.getTypeOfEntryByPosition(assigneePosition) ?? UnknownType;
+        } else if (assigneePosition === 0) {
             return expressionType;
         }
 
@@ -155,7 +155,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfDeclaration(node: SdsDeclaration): Type {
         if (isSdsAnnotation(node)) {
-            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+            const parameterEntries = parametersOrEmpty(node).map(
                 (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
             );
 
@@ -184,7 +184,7 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
-        const parameterEntries = parametersOrEmpty(node.parameterList).map(
+        const parameterEntries = parametersOrEmpty(node).map(
             (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
         );
         const resultEntries = resultsOrEmpty(node.resultList).map(
@@ -270,7 +270,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsCall(node)) {
             return this.computeTypeOfCall(node);
         } else if (isSdsBlockLambda(node)) {
-            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+            const parameterEntries = parametersOrEmpty(node).map(
                 (it) => new NamedTupleEntry(it.name, this.computeType(it)),
             );
             const resultEntries = blockLambdaResultsOrEmpty(node).map(
@@ -279,7 +279,7 @@ export class SafeDsTypeComputer {
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsExpressionLambda(node)) {
-            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+            const parameterEntries = parametersOrEmpty(node).map(
                 (it) => new NamedTupleEntry(it.name, this.computeType(it)),
             );
             const resultEntries = [new NamedTupleEntry('result', this.computeType(node.result))];
