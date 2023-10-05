@@ -130,16 +130,15 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfType(node);
         } else if (isSdsTypeProjection(node)) {
             return this.computeTypeOfType(node.type);
-        }
-
-        /* c8 skip next */
-        return UnknownType;
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 
     private computeTypeOfAssignee(node: SdsAssignee): Type {
         const containingAssignment = getContainerOfType(node, isSdsAssignment);
         if (!containingAssignment) {
-            /* c8 skip next */
+            /* c8 ignore next 2 */
             return UnknownType;
         }
 
@@ -179,10 +178,9 @@ export class SafeDsTypeComputer {
             return this.computeType(node.type);
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
-        }
-
-        /* c8 skip next */
-        return UnknownType;
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 
     private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
@@ -216,6 +214,7 @@ export class SafeDsTypeComputer {
         const containerOfLambda = containingCallable.$container;
 
         // Lambda passed as argument
+        /* c8 ignore start */
         if (isSdsArgument(containerOfLambda)) {
             // val containerType = when (val container = callable.eContainer()) {
             //     is SdsArgument -> container.parameterOrNull()?.inferType(context)
@@ -228,6 +227,7 @@ export class SafeDsTypeComputer {
 
             return NotImplementedType;
         }
+        /* c8 ignore stop */
 
         // Yielded lambda
         else if (isSdsAssignment(containerOfLambda)) {
@@ -323,6 +323,11 @@ export class SafeDsTypeComputer {
                 // Elvis operator
                 case '?:':
                     return this.computeTypeOfElvisOperation(node);
+
+                // Unknown operator
+                /* c8 ignore next 2 */
+                default:
+                    return UnknownType;
             }
         } else if (isSdsMemberAccess(node)) {
             const memberType = this.computeType(node.member);
@@ -335,13 +340,17 @@ export class SafeDsTypeComputer {
                     return this.Boolean();
                 case '-':
                     return this.computeTypeOfArithmeticPrefixOperation(node);
+
+                // Unknown operator
+                /* c8 ignore next 2 */
+                default:
+                    return UnknownType;
             }
         } else if (isSdsReference(node)) {
             return this.computeTypeOfReference(node);
-        }
-
-        /* c8 skip next */
-        return UnknownType;
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 
     private computeTypeOfCall(node: SdsCall): Type {
@@ -377,6 +386,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isNullable) {
+            /* c8 ignore next 3 */
             const rightOperandType = this.computeType(node.rightOperand);
             return this.lowestCommonSupertype(leftOperandType.copyWithNullability(false), rightOperandType);
         } else {
@@ -409,6 +419,7 @@ export class SafeDsTypeComputer {
         if (isSdsCallableType(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsLiteralType(node)) {
+            /* c8 ignore next */
             return NotImplementedType;
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
@@ -417,19 +428,21 @@ export class SafeDsTypeComputer {
         } else if (isSdsUnionType(node)) {
             const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
             return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
-        }
-
-        /* c8 skip next */
-        return UnknownType;
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------------------------------------------------
 
+    /* c8 ignore start */
     private lowestCommonSupertype(..._types: Type[]): Type {
         return NotImplementedType;
     }
+
+    /* c8 ignore stop */
 
     // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
     //     if (types.isEmpty()) {
@@ -535,8 +548,8 @@ export class SafeDsTypeComputer {
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
         if (coreClass) {
             return new ClassType(coreClass, isNullable);
-        } else {
+        } /* c8 ignore start */ else {
             return UnknownType;
-        }
+        } /* c8 ignore stop */
     }
 }

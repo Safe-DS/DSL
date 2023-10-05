@@ -8,6 +8,7 @@ import {
     SdsLiteral,
 } from '../generated/ast.js';
 
+/* c8 ignore start */
 export abstract class Type {
     abstract isNullable: boolean;
 
@@ -373,3 +374,4 @@ class NotImplementedTypeClass extends Type {
 }
 
 export const NotImplementedType = new NotImplementedTypeClass();
+/* c8 ignore stop */
