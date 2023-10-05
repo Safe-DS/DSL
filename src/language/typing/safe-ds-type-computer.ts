@@ -136,17 +136,22 @@ export class SafeDsTypeComputer {
         return UnknownType;
     }
 
-    private computeTypeOfAssignee(_node: SdsAssignee): Type {
-        return NotImplementedType;
+    private computeTypeOfAssignee(node: SdsAssignee): Type {
+        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        if (!containingAssignment) {
+            /* c8 skip next */
+            return UnknownType;
+        }
 
-        // return when {
-        //     this.eIsProxy() -> UnresolvedType
-        //     this is SdsBlockLambdaResult || this is SdsPlaceholder || this is SdsYield -> {
-        //         val assigned = assignedOrNull() ?: return Nothing(context)
-        //         assigned.inferType(context)
-        //     }
-        // else -> Any(context)
-        // }
+        const nodePosition = node.$containerIndex ?? -1;
+        const expressionType = this.computeType(containingAssignment?.expression);
+        if (expressionType instanceof NamedTupleType) {
+            return expressionType.getTypeOfEntryByPosition(nodePosition) ?? UnknownType;
+        } else if (nodePosition === 0) {
+            return expressionType;
+        }
+
+        return UnknownType;
     }
 
     private computeTypeOfDeclaration(node: SdsDeclaration): Type {

@@ -5,7 +5,7 @@ fun f() -> (r1: Int, r2: Float, r3: String)
 segment mySegment1() -> (r: Int) {
     // $TEST$ equivalence_class assignedValue
     // $TEST$ equivalence_class assignedValue
-    »yield r« = »1«;
+    »yield r«, _ = »1«; // the wildcards prevents the marker from matching the entire assignee list
 }
 
 segment mySegment2() -> (r: Int, s: String) {
