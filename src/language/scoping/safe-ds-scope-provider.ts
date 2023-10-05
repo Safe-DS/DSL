@@ -53,7 +53,7 @@ import {
     enumVariantsOrEmpty,
     importedDeclarationsOrEmpty,
     importsOrEmpty,
-    packageNameOrNull,
+    packageNameOrUndefined,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
@@ -111,17 +111,17 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
         const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
-        const callable = this.nodeMapper.callToCallableOrNull(containingAbstractCall);
+        const callable = this.nodeMapper.callToCallableOrUndefined(containingAbstractCall);
         if (!callable) {
             return EMPTY_SCOPE;
         }
 
-        const parameters = parametersOrEmpty(callable.parameterList);
+        const parameters = parametersOrEmpty(callable);
         return this.createScopeForNodes(parameters);
     }
 
     private getScopeForImportedDeclarationDeclaration(node: SdsImportedDeclaration): Scope {
-        const ownPackageName = packageNameOrNull(node);
+        const ownPackageName = packageNameOrUndefined(node);
 
         const containingQualifiedImport = getContainerOfType(node, isSdsQualifiedImport);
         if (!containingQualifiedImport) {
@@ -279,7 +279,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private localDeclarations(node: AstNode, outerScope: Scope): Scope {
         // Parameters
         const containingCallable = getContainerOfType(node.$container, isSdsCallable);
-        const parameters = parametersOrEmpty(containingCallable?.parameterList);
+        const parameters = parametersOrEmpty(containingCallable);
 
         // Placeholders up to the containing statement
         const containingStatement = getContainerOfType(node.$container, isSdsStatement);
@@ -357,7 +357,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getGlobalScopeForNode(referenceType: string, node: AstNode): Scope {
-        const ownPackageName = packageNameOrNull(node);
+        const ownPackageName = packageNameOrUndefined(node);
 
         // Builtin declarations
         const builtinDeclarations = this.builtinDeclarations(referenceType);
@@ -379,7 +379,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         });
     }
 
-    private declarationsInSamePackage(packageName: string | null, referenceType: string): AstNodeDescription[] {
+    private declarationsInSamePackage(packageName: string | undefined, referenceType: string): AstNodeDescription[] {
         if (!packageName) {
             return [];
         }

@@ -8,7 +8,7 @@ import {
     IndexManager,
     LangiumDocuments,
 } from 'langium';
-import { packageNameOrNull } from '../helpers/shortcuts.js';
+import { packageNameOrUndefined } from '../helpers/shortcuts.js';
 import { isSdsSegment } from '../generated/ast.js';
 import { isInternal } from '../helpers/checks.js';
 
@@ -129,7 +129,7 @@ export class SafeDsPackageManager {
                 continue;
             }
 
-            const packageName = packageNameOrNull(node);
+            const packageName = packageNameOrUndefined(node);
             if (!packageName || !this.isValidPackageName(packageName)) {
                 /* c8 ignore next 2 */
                 continue;

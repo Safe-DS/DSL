@@ -45,7 +45,7 @@ import {
 /**
  * Tries to evaluate this expression. On success an SdsConstantExpression is returned, otherwise `null`.
  */
-export const toConstantExpressionOrNull = (node: AstNode): SdsConstantExpression | null => {
+export const toConstantExpressionOrUndefined = (node: AstNode): SdsConstantExpression | null => {
     return toConstantExpressionOrNullImpl(node, new Map());
 };
 
@@ -155,8 +155,8 @@ const simplifyInfixOperation = (
     _substitutions: ParameterSubstitutions,
 ): SdsConstantExpression | null => {
     //     // By design none of the operators are short-circuited
-    //     val constantLeft = leftOperand.toConstantExpressionOrNull(substitutions) ?: return null
-    //     val constantRight = rightOperand.toConstantExpressionOrNull(substitutions) ?: return null
+    //     val constantLeft = leftOperand.toConstantExpressionOrUndefined(substitutions) ?: return null
+    //     val constantRight = rightOperand.toConstantExpressionOrUndefined(substitutions) ?: return null
     //
     //     return when (operator()) {
     //     Or -> simplifyLogicalOp(constantLeft, Boolean::or, constantRight)
@@ -281,7 +281,7 @@ const simplifyPrefixOperation = (
     _node: SdsPrefixOperation,
     _substitutions: ParameterSubstitutions,
 ): SdsConstantExpression | null => {
-    //     val constantOperand = operand.toConstantExpressionOrNull(substitutions) ?: return null
+    //     val constantOperand = operand.toConstantExpressionOrUndefined(substitutions) ?: return null
     //
     //     return when (operator()) {
     //     Not -> when (constantOperand) {
