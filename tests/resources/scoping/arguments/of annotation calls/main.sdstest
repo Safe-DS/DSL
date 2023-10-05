@@ -1,0 +1,20 @@
+package tests.scoping.arguments.ofAnnotationCalls
+
+annotation MyAnnotation(
+    // $TEST$ target a
+    »a«: Int,
+    // $TEST$ target b
+    »b«: Int = 0,
+    // $TEST$ target c
+    vararg »c«: Int
+)
+
+@MyAnnotation(
+    // $TEST$ references c
+    »c« = 0,
+    // $TEST$ references a
+    »a« = 0,
+    // $TEST$ references b
+    »b« = 0
+)
+pipeline myPipeline {}

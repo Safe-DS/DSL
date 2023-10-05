@@ -1,0 +1,31 @@
+package tests.scoping.arguments.ofCalls.toParameterOfClass
+
+class MyClass(
+    // $TEST$ target a
+    »a«: Int,
+    // $TEST$ target b
+    »b«: Int = 0,
+    // $TEST$ target c
+    vararg »c«: Int
+) {}
+
+pipeline myPipeline {
+    MyClass(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+
+    val alias = MyClass;
+    alias(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+}

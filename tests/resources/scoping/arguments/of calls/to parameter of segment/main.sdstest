@@ -1,0 +1,31 @@
+package tests.scoping.arguments.ofCalls.toParameterOfSegment
+
+segment mySegment(
+    // $TEST$ target a
+    »a«: Int,
+    // $TEST$ target b
+    »b«: Int = 0,
+    // $TEST$ target c
+    vararg »c«: Int
+) {}
+
+pipeline myPipeline {
+    mySegment(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+
+    val alias = mySegment;
+    alias(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+}

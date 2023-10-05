@@ -1,0 +1,8 @@
+package tests.scoping.arguments.ofCalls.toSomethingOtherThanParameter
+
+fun f(a: Int)
+
+pipeline myPipeline {
+    // $TEST$ unresolved
+    f(»f« = 1);
+}

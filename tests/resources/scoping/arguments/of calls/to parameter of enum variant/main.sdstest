@@ -1,0 +1,34 @@
+package tests.scoping.arguments.ofCalls.toParameterOfEnumVariant
+
+enum MyEnum {
+    MyEnumVariant(
+        // $TEST$ target a
+        »a«: Int,
+        // $TEST$ target b
+        »b«: Int = 0,
+        // $TEST$ target c
+        vararg »c«: Int
+    )
+}
+
+
+pipeline myPipeline {
+    MyEnum.MyEnumVariant(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+
+    val alias = MyEnum.MyEnumVariant;
+    alias(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+}

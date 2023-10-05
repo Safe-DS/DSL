@@ -1,0 +1,29 @@
+package tests.scoping.arguments.ofCalls.toParameterOfCallableType
+
+segment mySegment(myCallableType: (
+    // $TEST$ target a
+    »a«: Int,
+    // $TEST$ target b
+    »b«: Int = 0,
+    // $TEST$ target c
+    vararg »c«: Int
+) -> ()) {
+    myCallableType(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+
+    val alias = myCallableType;
+    alias(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+}
