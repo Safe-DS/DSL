@@ -155,7 +155,7 @@ export class NamedTupleEntry {
 }
 
 export abstract class NamedType extends Type {
-    protected constructor(private readonly sdsDeclaration: SdsDeclaration) {
+    protected constructor(readonly sdsDeclaration: SdsDeclaration) {
         super();
     }
 

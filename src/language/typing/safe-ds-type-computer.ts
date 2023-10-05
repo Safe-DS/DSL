@@ -339,66 +339,23 @@ export class SafeDsTypeComputer {
         return UnknownType;
     }
 
-    private computeTypeOfCall(_node: SdsCall): Type {
-        return NotImplementedType;
+    private computeTypeOfCall(node: SdsCall): Type {
+        const receiverType = this.computeType(node.receiver);
 
-        // TODO: we need to differentiate
-        //  class C()
-        //  val a = C(); // calling the class itself
-        //  val b = a(); // calling an instance of the class
-        // We might need a StaticType (Class<T> in Java) (or a field isInstance in named type) or something for the former case.
-        // The type system should also handle stuff like
-        // val alias = C;
-        // val c = alias();
-        // or
-        // val p = C();
-        // val q = p();
-        // The only way to get a static reference is via a reference or member access. Add tests for that.
+        if (receiverType instanceof CallableType) {
+            if (!isSdsAnnotation(receiverType.callable)) {
+                return receiverType.outputType;
+            }
+        } else if (receiverType instanceof StaticType) {
+            const instanceType = receiverType.instanceType;
+            const declaration = instanceType.sdsDeclaration;
 
-        //     when (val callable = callableOrNull()) {
-        //         is SdsClass -> {
-        //             val typeParametersTypes = callable.typeParametersOrEmpty()
-        //                 .map { it.inferTypeForDeclaration(context) }
-        //         .filterIsInstance<ParameterisedType>()
-        //
-        //             ClassType(callable, typeParametersTypes, isNullable = false)
-        //         }
-        //         is SdsCallableType -> {
-        //             val results = callable.resultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForDeclaration(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-        //             }
-        //         }
-        //         is SdsFunction -> {
-        //             val results = callable.resultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForDeclaration(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-        //             }
-        //         }
-        //         is SdsBlockLambda -> {
-        //             val results = callable.blockLambdaResultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForAssignee(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
-        //             }
-        //         }
-        //         is SdsEnumVariant -> {
-        //             EnumVariantType(callable, isNullable = false)
-        //         }
-        //         is SdsExpressionLambda -> {
-        //             callable.result.inferTypeExpression(context)
-        //         }
-        //         is SdsStep -> {
-        //             val results = callable.resultsOrEmpty()
-        //             when (results.size) {
-        //                 1 -> results.first().inferTypeForDeclaration(context)
-        //             else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-        //             }
-        //         }
-        //     else -> Any(context)
-        //     }
+            if (isSdsClass(declaration) || isSdsEnumVariant(declaration)) {
+                return instanceType;
+            }
+        }
+
+        return UnknownType;
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
