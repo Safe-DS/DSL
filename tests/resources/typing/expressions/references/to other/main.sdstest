@@ -1,4 +1,4 @@
-package tests.typing.expressions.references
+package tests.typing.expressions.references.toOther
 
 segment mySegment(
     // $TEST$ equivalence_class p1
@@ -10,7 +10,4 @@ segment mySegment(
     »p1«;
     // $TEST$ equivalence_class p2
     »p2«;
-
-    // $TEST$ serialization $Unknown
-    »unresolved«;
 }

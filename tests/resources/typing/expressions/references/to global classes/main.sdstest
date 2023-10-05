@@ -1,0 +1,8 @@
+package tests.typing.expressions.references.toGlobalClasses
+
+class MyClass
+
+pipeline myPipeline {
+    // $TEST$ serialization $type<MyClass>
+    »MyClass«;
+}

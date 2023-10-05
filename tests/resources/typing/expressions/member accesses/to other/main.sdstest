@@ -1,4 +1,4 @@
-package tests.typing.expressions.memberAccesses
+package tests.typing.expressions.memberAccesses.toOther
 
 class C {
     // $TEST$ equivalence_class nonNullableMember
@@ -13,13 +13,9 @@ pipeline myPipeline {
     »C.nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
     »C.nullableMember«;
-    // $TEST$ serialization $Unknown
-    »C.unresolved«;
 
     // $TEST$ serialization Int?
     »C?.nonNullableMember«;
     // $TEST$ serialization Any?
     »C?.nullableMember«;
-    // $TEST$ serialization $Unknown
-    »C?.unresolved«;
 }

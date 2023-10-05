@@ -1,0 +1,8 @@
+package tests.typing.expressions.references.toGlobalEnums
+
+enum MyEnum
+
+pipeline myPipeline {
+    // $TEST$ serialization $type<MyEnum>
+    »MyEnum«;
+}

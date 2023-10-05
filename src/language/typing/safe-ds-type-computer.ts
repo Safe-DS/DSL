@@ -8,7 +8,9 @@ import {
     EnumVariantType,
     NamedTupleEntry,
     NamedTupleType,
+    NamedType,
     NotImplementedType,
+    StaticType,
     Type,
     UnionType,
     UnknownType,
@@ -41,6 +43,7 @@ import {
     isSdsMemberAccess,
     isSdsMemberType,
     isSdsNamedType,
+    isSdsNamedTypeDeclaration,
     isSdsNull,
     isSdsParameter,
     isSdsParenthesizedExpression,
@@ -65,6 +68,7 @@ import {
     SdsInfixOperation,
     SdsParameter,
     SdsPrefixOperation,
+    SdsReference,
     SdsSegment,
     SdsType,
 } from '../generated/ast.js';
@@ -328,7 +332,7 @@ export class SafeDsTypeComputer {
                     return this.computeTypeOfArithmeticPrefixOperation(node);
             }
         } else if (isSdsReference(node)) {
-            return this.computeType(node.target.ref);
+            return this.computeTypeOfReference(node);
         }
 
         /* c8 skip next */
@@ -350,8 +354,6 @@ export class SafeDsTypeComputer {
         // val p = C();
         // val q = p();
         // The only way to get a static reference is via a reference or member access. Add tests for that.
-
-
 
         //     when (val callable = callableOrNull()) {
         //         is SdsClass -> {
@@ -427,6 +429,17 @@ export class SafeDsTypeComputer {
             return this.Int();
         } else {
             return this.Float();
+        }
+    }
+
+    private computeTypeOfReference(node: SdsReference): Type {
+        const target = node.target.ref;
+        const instanceType = this.computeType(target);
+
+        if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
+            return new StaticType(instanceType.copyWithNullability(false));
+        } else {
+            return instanceType;
         }
     }
 

@@ -33,7 +33,7 @@ export class CallableType extends Type {
         return this.inputType.getTypeOfEntryByPosition(position);
     }
 
-    override copyWithNullability(_isNullable: boolean): Type {
+    override copyWithNullability(_isNullable: boolean): CallableType {
         return this;
     }
 
@@ -67,7 +67,7 @@ export class LiteralType extends Type {
         this.isNullable = values.some(isSdsNull);
     }
 
-    override copyWithNullability(isNullable: boolean): Type {
+    override copyWithNullability(isNullable: boolean): LiteralType {
         if (isNullable && !this.isNullable) {
             throw Error('Not implemented');
         } else if (!isNullable && this.isNullable) {
@@ -105,7 +105,7 @@ export class NamedTupleType extends Type {
         return this.entries[position]?.type;
     }
 
-    override copyWithNullability(_isNullable: boolean): Type {
+    override copyWithNullability(_isNullable: boolean): NamedTupleType {
         return this;
     }
 
@@ -159,6 +159,8 @@ export abstract class NamedType extends Type {
         super();
     }
 
+    abstract override copyWithNullability(isNullable: boolean): NamedType;
+
     override toString(): string {
         if (this.isNullable) {
             return `${this.sdsDeclaration.name}?`;
@@ -176,7 +178,7 @@ export class ClassType extends NamedType {
         super(sdsClass);
     }
 
-    override copyWithNullability(isNullable: boolean): Type {
+    override copyWithNullability(isNullable: boolean): ClassType {
         return new ClassType(this.sdsClass, isNullable);
     }
 
@@ -201,7 +203,7 @@ export class EnumType extends NamedType {
         super(sdsEnum);
     }
 
-    override copyWithNullability(isNullable: boolean): Type {
+    override copyWithNullability(isNullable: boolean): EnumType {
         return new EnumType(this.sdsEnum, isNullable);
     }
 
@@ -226,7 +228,7 @@ export class EnumVariantType extends NamedType {
         super(sdsEnumVariant);
     }
 
-    override copyWithNullability(isNullable: boolean): Type {
+    override copyWithNullability(isNullable: boolean): EnumVariantType {
         return new EnumVariantType(this.sdsEnumVariant, isNullable);
     }
 
@@ -253,7 +255,7 @@ export class StaticType extends Type {
         super();
     }
 
-    override copyWithNullability(_isNullable: boolean): Type {
+    override copyWithNullability(_isNullable: boolean): StaticType {
         return this;
     }
 
@@ -281,7 +283,7 @@ export class UnionType extends Type {
         super();
     }
 
-    override copyWithNullability(_isNullable: boolean): Type {
+    override copyWithNullability(_isNullable: boolean): UnionType {
         return this;
     }
 
@@ -315,7 +317,7 @@ export class VariadicType extends Type {
         super();
     }
 
-    override copyWithNullability(_isNullable: boolean): Type {
+    override copyWithNullability(_isNullable: boolean): VariadicType {
         return this;
     }
 
@@ -339,7 +341,7 @@ export class VariadicType extends Type {
 class UnknownTypeClass extends Type {
     readonly isNullable = false;
 
-    copyWithNullability(_isNullable: boolean): Type {
+    copyWithNullability(_isNullable: boolean): UnknownTypeClass {
         return this;
     }
 
@@ -357,7 +359,7 @@ export const UnknownType = new UnknownTypeClass();
 class NotImplementedTypeClass extends Type {
     override readonly isNullable = false;
 
-    copyWithNullability(_isNullable: boolean): Type {
+    copyWithNullability(_isNullable: boolean): NotImplementedTypeClass {
         return this;
     }
 
