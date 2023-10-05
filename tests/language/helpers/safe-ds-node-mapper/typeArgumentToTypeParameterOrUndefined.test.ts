@@ -3,7 +3,7 @@ import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js
 import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
-import {isSdsNamedType, isSdsUnionType, SdsArgument, SdsTypeArgument} from '../../../../src/language/generated/ast.js';
+import { isSdsNamedType, isSdsUnionType, SdsTypeArgument } from '../../../../src/language/generated/ast.js';
 import { typeArgumentsOrEmpty } from '../../../../src/language/helpers/shortcuts.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;

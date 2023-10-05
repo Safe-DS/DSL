@@ -2,7 +2,7 @@ import { Location, Range } from 'vscode-languageserver';
 import { isRangeEqual, parseHelper } from 'langium/test';
 import { SafeDsServices } from '../../src/language/safe-ds-module.js';
 import { AstNode, streamAllContents, URI } from 'langium';
-import { isSdsModule, SdsModule } from '../../src/language/generated/ast.js';
+import { SdsModule } from '../../src/language/generated/ast.js';
 import { AssertionError } from 'assert';
 import { locationToString } from './location.js';
 
