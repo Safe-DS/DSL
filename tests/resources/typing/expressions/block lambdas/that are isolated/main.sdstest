@@ -1,4 +1,4 @@
-package tests.typing.expressions.blockLambdas
+package tests.typing.expressions.blockLambdas.thatAreIsolated
 
 segment mySegment() {
     // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)

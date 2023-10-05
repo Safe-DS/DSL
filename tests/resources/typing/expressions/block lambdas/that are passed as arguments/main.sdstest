@@ -1,8 +1,9 @@
-package tests.typing.expressions.blockLambdas
+package tests.typing.expressions.blockLambdas.thatArePassedAsArguments
 
 fun higherOrderFunction1(param: (p: String) -> (r: Int, s: String))
 fun higherOrderFunction2(param: () -> ())
 fun normalFunction(param: Int)
+fun parameterlessFunction()
 
 segment mySegment() {
     // $TEST$ serialization (p: String) -> (r: Int, s: String)
@@ -35,6 +36,11 @@ segment mySegment() {
 
     // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
     normalFunction(param = »(p) {
+        yield r, yield s = 1;
+    }«);
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    parameterlessFunction(»(p) {
         yield r, yield s = 1;
     }«);
 }

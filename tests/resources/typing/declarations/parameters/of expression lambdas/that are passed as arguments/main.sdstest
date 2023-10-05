@@ -1,4 +1,4 @@
-package tests.typing.declarations.parameters.ofExpressionLambdas
+package tests.typing.declarations.parameters.ofExpressionLambdas.thatArePassedAsArguments
 
 // $TEST$ equivalence_class parameterType1
 fun higherOrderFunction1(param: (a: »String«) -> r: String)

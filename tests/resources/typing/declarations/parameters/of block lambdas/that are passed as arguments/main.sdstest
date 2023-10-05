@@ -1,4 +1,4 @@
-package tests.typing.declarations.parameters.ofBlockLambdas
+package tests.typing.declarations.parameters.ofBlockLambdas.thatArePassedAsArguments
 
 // $TEST$ equivalence_class parameterType1
 fun higherOrderFunction1(param: (a: »String«) -> ())

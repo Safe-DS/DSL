@@ -1,8 +1,9 @@
-package tests.typing.expressions.expressionLambdas
+package tests.typing.expressions.expressionLambdas.thatArePassedAsArguments
 
 fun higherOrderFunction1(param: (p: String) -> (r: Int))
 fun higherOrderFunction2(param: () -> ())
 fun normalFunction(param: Int)
+fun parameterlessFunction()
 
 segment mySegment() {
     // $TEST$ serialization (p: String) -> (result: Int)
@@ -22,4 +23,7 @@ segment mySegment() {
 
     // $TEST$ serialization (p: $Unknown) -> (result: Int)
     normalFunction(param = »(p) -> 1«);
+
+    // $TEST$ serialization (p: $Unknown) -> (result: Int)
+    parameterlessFunction(»(p) -> 1«);
 }

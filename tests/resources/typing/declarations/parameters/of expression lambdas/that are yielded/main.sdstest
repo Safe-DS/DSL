@@ -1,4 +1,4 @@
-package tests.typing.declarations.parameters.ofExpressionLambdas
+package tests.typing.declarations.parameters.ofExpressionLambdas.thatAreYielded
 
 segment mySegment() -> (
     // $TEST$ equivalence_class parameterType2

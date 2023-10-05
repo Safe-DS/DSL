@@ -1,4 +1,4 @@
-package tests.typing.expressions.blockLambdas
+package tests.typing.expressions.blockLambdas.thatAreYielded
 
 segment mySegment() -> (
     r: (p: String) -> (r: Int, s: String),
