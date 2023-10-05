@@ -1,0 +1,13 @@
+package tests.scoping.arguments.ofAnnotationCalls.unresolved
+
+annotation MyAnnotation(a: Int)
+
+@MyAnnotation(
+    // $TEST$ unresolved
+    »unresolved« = 0,
+)
+@Unresolved(
+    // $TEST$ unresolved
+    »a« = 0
+)
+pipeline myPipeline {}

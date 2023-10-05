@@ -357,14 +357,12 @@ export class SafeDsTypeComputer {
         const receiverType = this.computeType(node.receiver);
 
         if (receiverType instanceof CallableType) {
-            if (!isSdsAnnotation(receiverType.callable)) {
+            if (!isSdsAnnotation(receiverType.sdsCallable)) {
                 return receiverType.outputType;
             }
         } else if (receiverType instanceof StaticType) {
             const instanceType = receiverType.instanceType;
-            const declaration = instanceType.sdsDeclaration;
-
-            if (isSdsClass(declaration) || isSdsEnumVariant(declaration)) {
+            if (isSdsCallable(instanceType.sdsDeclaration)) {
                 return instanceType;
             }
         }

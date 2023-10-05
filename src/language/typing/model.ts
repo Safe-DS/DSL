@@ -23,7 +23,7 @@ export class CallableType extends Type {
     override isNullable: boolean = false;
 
     constructor(
-        readonly callable: SdsCallable,
+        readonly sdsCallable: SdsCallable,
         readonly inputType: NamedTupleType,
         readonly outputType: NamedTupleType,
     ) {
@@ -48,7 +48,7 @@ export class CallableType extends Type {
         }
 
         return (
-            other.callable === this.callable &&
+            other.sdsCallable === this.sdsCallable &&
             other.inputType.equals(this.inputType) &&
             other.outputType.equals(this.outputType)
         );

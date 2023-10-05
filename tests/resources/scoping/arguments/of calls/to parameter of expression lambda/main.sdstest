@@ -1,0 +1,21 @@
+package tests.scoping.arguments.ofCalls.toParameterOfExpressionLambda
+
+pipeline myPipeline {
+    val myExpressionLambda = (
+        // $TEST$ target a
+        »a«: Int,
+        // $TEST$ target b
+        »b«: Int = 0,
+        // $TEST$ target c
+        vararg »c«: Int
+    ) -> 1;
+
+    myExpressionLambda(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+}
