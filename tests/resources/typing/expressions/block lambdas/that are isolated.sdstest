@@ -1,0 +1,13 @@
+package tests.typing.expressions.blockLambdas
+
+segment mySegment() {
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    »(p) {
+        yield r, yield s = 1;
+    }«;
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    val f = »(p) {
+        yield r, yield s = 1;
+    }«;
+}

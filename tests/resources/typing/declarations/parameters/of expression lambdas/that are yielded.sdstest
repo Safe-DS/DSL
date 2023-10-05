@@ -1,0 +1,17 @@
+package tests.typing.declarations.parameters.ofExpressionLambdas
+
+segment mySegment() -> (
+    // $TEST$ equivalence_class parameterType2
+    r: (p: »String«) -> r: String,
+    s: () -> r: String,
+    t: Int,
+) {
+    // $TEST$ equivalence_class parameterType2
+    yield r = (»p«) -> true;
+
+    // $TEST$ serialization $Unknown
+    yield s = (»p«) -> true;
+
+    // $TEST$ serialization $Unknown
+    yield t = (»p«) -> true;
+}

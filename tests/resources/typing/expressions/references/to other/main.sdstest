@@ -1,0 +1,13 @@
+package tests.typing.expressions.references.toOther
+
+segment mySegment(
+    // $TEST$ equivalence_class p1
+    »p1«: Int,
+    // $TEST$ equivalence_class p2
+    »p2«: String
+) {
+    // $TEST$ equivalence_class p1
+    »p1«;
+    // $TEST$ equivalence_class p2
+    »p2«;
+}

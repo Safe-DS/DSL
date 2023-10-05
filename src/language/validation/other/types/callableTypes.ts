@@ -6,7 +6,7 @@ export const CODE_CALLABLE_TYPE_NO_OPTIONAL_PARAMETERS = 'callable-type/no-optio
 
 export const callableTypeMustNotHaveOptionalParameters = (node: SdsCallableType, accept: ValidationAcceptor): void => {
     for (const parameter of parametersOrEmpty(node.parameterList)) {
-        if (parameter.defaultValue && !parameter.variadic) {
+        if (parameter.defaultValue && !parameter.isVariadic) {
             accept('error', 'A callable type must not have optional parameters.', {
                 node: parameter,
                 property: 'defaultValue',

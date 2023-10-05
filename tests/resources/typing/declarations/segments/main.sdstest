@@ -1,0 +1,16 @@
+package tests.typing.declarations.segments
+
+// $TEST$ serialization () -> ()
+segment »mySegment1«() {}
+
+// $TEST$ serialization () -> (r1: Int, r2: String)
+segment »mySegment2«() -> (r1: Int, r2: String) {}
+
+// $TEST$ serialization (p1: Int, p2: String) -> ()
+segment »mySegment3«(p1: Int, p2: String) {}
+
+// $TEST$ serialization (p1: Int, p2: String) -> (r1: Int, r2: String)
+segment »mySegment4«(p1: Int, p2: String) -> (r1: Int, r2: String) {}
+
+// $TEST$ serialization (p1: $Unknown) -> (r1: $Unknown)
+segment »mySegment5«(p1) -> (r1) {}

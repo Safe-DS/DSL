@@ -1,0 +1,7 @@
+package tests.typing.declarations.enums
+
+// $TEST$ serialization MyEnum1
+enum »MyEnum1«
+
+// $TEST$ serialization MyEnum2
+enum »MyEnum2«

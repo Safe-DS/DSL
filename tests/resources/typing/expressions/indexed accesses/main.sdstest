@@ -1,0 +1,17 @@
+package tests.typing.expressions.indexedAccesses
+
+// $TEST$ equivalence_class elementType
+segment mySegment1(vararg params: »Int«) {
+    // $TEST$ equivalence_class elementType
+    »params[0]«;
+}
+
+segment mySegment2(params: String) {
+    // $TEST$ serialization $Unknown
+    »params[0]«;
+}
+
+segment mySegment3() {
+    // $TEST$ serialization $Unknown
+    »unresolved[0]«;
+}

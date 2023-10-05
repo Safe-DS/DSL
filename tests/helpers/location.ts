@@ -47,7 +47,7 @@ export const isLocationEqual = (location1: Location, location2: Location): boole
 };
 
 /**
- * Find the AstNode at the given location. It must fill the range exactly.
+ * Find the AstNode at the given location. It must either fill the entire range or have a name node that does.
  *
  * @param services The services to use.
  * @param location The location of the node to find.
@@ -73,7 +73,7 @@ export const getNodeByLocation = (services: SafeDsServices, location: Location):
         });
     }
 
-    for (const node of streamAllContents(root, { range: location.range })) {
+    for (const node of streamAllContents(root)) {
         // Entire node matches the range
         const actualRange = node.$cstNode?.range;
         if (actualRange && isRangeEqual(actualRange, location.range)) {

@@ -313,7 +313,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length > 0) {
-            if (node.static) {
+            if (node.isStatic) {
                 formatter.keyword('static').prepend(newLine());
             } else {
                 formatter.keyword('attr').prepend(newLine());
@@ -421,7 +421,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length > 0) {
-            if (node.static) {
+            if (node.isStatic) {
                 formatter.keyword('static').prepend(newLine());
             } else {
                 formatter.keyword('fun').prepend(newLine());
@@ -550,7 +550,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         if (annotationCallsOrEmpty(node).length === 0) {
-            if (node.variadic) {
+            if (node.isVariadic) {
                 formatter.property('name').prepend(oneSpace());
             }
         } else {

@@ -1,6 +1,0 @@
-package tests.typingdeclarations.steps
-
-step s(a: Int, b: String) -> (r: String, s: Int) {
-    yield r = "";
-    yield s = 1;
-}

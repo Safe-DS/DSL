@@ -1,28 +1,85 @@
-import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
+import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
-import { ClassType, Type, UnresolvedType } from './model.js';
 import {
+    CallableType,
+    ClassType,
+    EnumType,
+    EnumVariantType,
+    NamedTupleEntry,
+    NamedTupleType,
+    NamedType,
+    NotImplementedType,
+    StaticType,
+    Type,
+    UnionType,
+    UnknownType,
+    VariadicType,
+} from './model.js';
+import {
+    isSdsAnnotation,
+    isSdsArgument,
     isSdsAssignee,
+    isSdsAssignment,
+    isSdsAttribute,
+    isSdsBlockLambda,
     isSdsBoolean,
+    isSdsCall,
+    isSdsCallable,
+    isSdsCallableType,
+    isSdsClass,
     isSdsDeclaration,
+    isSdsEnum,
+    isSdsEnumVariant,
     isSdsExpression,
+    isSdsExpressionLambda,
     isSdsFloat,
+    isSdsFunction,
+    isSdsIndexedAccess,
+    isSdsInfixOperation,
     isSdsInt,
+    isSdsLambda,
+    isSdsLiteralType,
+    isSdsMemberAccess,
+    isSdsMemberType,
+    isSdsNamedType,
+    isSdsNamedTypeDeclaration,
     isSdsNull,
+    isSdsParameter,
+    isSdsParenthesizedExpression,
+    isSdsPipeline,
+    isSdsPrefixOperation,
+    isSdsReference,
+    isSdsResult,
+    isSdsSegment,
     isSdsString,
     isSdsTemplateString,
     isSdsType,
-    isSdsTypeArgument,
     isSdsTypeProjection,
+    isSdsUnionType,
+    isSdsYield,
     SdsAssignee,
+    SdsCall,
+    SdsCallableType,
     SdsClass,
     SdsDeclaration,
     SdsExpression,
+    SdsFunction,
+    SdsInfixOperation,
+    SdsParameter,
+    SdsPrefixOperation,
+    SdsReference,
+    SdsSegment,
     SdsType,
 } from '../generated/ast.js';
+import {
+    assigneesOrEmpty,
+    blockLambdaResultsOrEmpty,
+    parametersOrEmpty,
+    resultsOrEmpty,
+    typeArgumentsOrEmpty,
+} from '../helpers/shortcuts.js';
 
-/* c8 ignore start */
 export class SafeDsTypeComputer {
     readonly astNodeLocator: AstNodeLocator;
     readonly coreClasses: SafeDsCoreClasses;
@@ -38,7 +95,7 @@ export class SafeDsTypeComputer {
 
     computeType(node: AstNode | undefined): Type {
         if (!node) {
-            return UnresolvedType;
+            return UnknownType;
         }
 
         const documentUri = getDocument(node).uri.toString();
@@ -46,6 +103,21 @@ export class SafeDsTypeComputer {
         const key = `${documentUri}~${nodePath}`;
         return this.typeCache.get(key, () => this.doComputeType(node));
     }
+
+    // fun SdsAbstractObject.hasPrimitiveType(): Boolean {
+    //     val type = type()
+    //     if (type !is ClassType) {
+    //         return false
+    //     }
+    //
+    //     val qualifiedName = type.sdsClass.qualifiedNameOrNull()
+    //     return qualifiedName in setOf(
+    //         StdlibClasses.Boolean,
+    //         StdlibClasses.Float,
+    //         StdlibClasses.Int,
+    //         StdlibClasses.String,
+    //     )
+    // }
 
     private doComputeType(node: AstNode): Type {
         if (isSdsAssignee(node)) {
@@ -56,23 +128,124 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfExpression(node);
         } else if (isSdsType(node)) {
             return this.computeTypeOfType(node);
-        } else if (isSdsTypeArgument(node)) {
-            return UnresolvedType;
-            // return this.computeType(node.value);
         } else if (isSdsTypeProjection(node)) {
-            return UnresolvedType;
-            // return this.computeTypeOfType(node.type);
-        } else {
-            return this.Any();
+            return this.computeTypeOfType(node.type);
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
+    }
+
+    private computeTypeOfAssignee(node: SdsAssignee): Type {
+        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        if (!containingAssignment) {
+            /* c8 ignore next 2 */
+            return UnknownType;
         }
+
+        const nodePosition = node.$containerIndex ?? -1;
+        const expressionType = this.computeType(containingAssignment?.expression);
+        if (expressionType instanceof NamedTupleType) {
+            return expressionType.getTypeOfEntryByPosition(nodePosition) ?? UnknownType;
+        } else if (nodePosition === 0) {
+            return expressionType;
+        }
+
+        return UnknownType;
     }
 
-    private computeTypeOfAssignee(_node: SdsAssignee): Type {
-        return UnresolvedType;
+    private computeTypeOfDeclaration(node: SdsDeclaration): Type {
+        if (isSdsAnnotation(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            );
+
+            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType([]));
+        } else if (isSdsAttribute(node)) {
+            return this.computeType(node.type);
+        } else if (isSdsClass(node)) {
+            return new ClassType(node, false);
+        } else if (isSdsEnum(node)) {
+            return new EnumType(node, false);
+        } else if (isSdsEnumVariant(node)) {
+            return new EnumVariantType(node, false);
+        } else if (isSdsFunction(node)) {
+            return this.computeTypeOfCallableWithManifestTypes(node);
+        } else if (isSdsParameter(node)) {
+            return this.computeTypeOfParameter(node);
+        } else if (isSdsPipeline(node)) {
+            return UnknownType;
+        } else if (isSdsResult(node)) {
+            return this.computeType(node.type);
+        } else if (isSdsSegment(node)) {
+            return this.computeTypeOfCallableWithManifestTypes(node);
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 
-    private computeTypeOfDeclaration(_node: SdsDeclaration): Type {
-        return UnresolvedType;
+    private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
+        const parameterEntries = parametersOrEmpty(node.parameterList).map(
+            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+        );
+        const resultEntries = resultsOrEmpty(node.resultList).map(
+            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+        );
+
+        return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+    }
+
+    private computeTypeOfParameter(node: SdsParameter): Type {
+        // Manifest type
+        if (node.type) {
+            const manifestParameterType = this.computeType(node.type);
+            if (node.isVariadic) {
+                return new VariadicType(manifestParameterType);
+            } else {
+                return manifestParameterType;
+            }
+        }
+
+        // Infer type from context
+        const containingCallable = getContainerOfType(node, isSdsCallable);
+        if (!isSdsLambda(containingCallable)) {
+            return UnknownType;
+        }
+
+        const containerOfLambda = containingCallable.$container;
+
+        // Lambda passed as argument
+        /* c8 ignore start */
+        if (isSdsArgument(containerOfLambda)) {
+            // val containerType = when (val container = callable.eContainer()) {
+            //     is SdsArgument -> container.parameterOrNull()?.inferType(context)
+            // }
+            //
+            // return when (containerType) {
+            //     is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
+            // else -> Any(context)
+            // }
+
+            return NotImplementedType;
+        }
+        /* c8 ignore stop */
+
+        // Yielded lambda
+        else if (isSdsAssignment(containerOfLambda)) {
+            const firstAssignee = assigneesOrEmpty(containerOfLambda)[0];
+            if (!isSdsYield(firstAssignee)) {
+                return UnknownType;
+            }
+
+            const resultType = this.computeType(firstAssignee.result?.ref);
+            if (!(resultType instanceof CallableType)) {
+                return UnknownType;
+            }
+
+            const parameterPosition = node.$containerIndex ?? -1;
+            return resultType.getParameterTypeByPosition(parameterPosition) ?? UnknownType;
+        }
+
+        return UnknownType;
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -84,77 +257,289 @@ export class SafeDsTypeComputer {
         } else if (isSdsInt(node)) {
             return this.Int();
         } else if (isSdsNull(node)) {
-            return this.Nothing(true);
+            return this.NothingOrNull();
         } else if (isSdsString(node)) {
             return this.String();
         } else if (isSdsTemplateString(node)) {
             return this.String();
         }
 
-        return UnresolvedType;
+        // Recursive cases
+        else if (isSdsArgument(node)) {
+            return this.computeType(node.value);
+        } else if (isSdsCall(node)) {
+            return this.computeTypeOfCall(node);
+        } else if (isSdsBlockLambda(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+            );
+            const resultEntries = blockLambdaResultsOrEmpty(node).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+            );
+
+            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+        } else if (isSdsExpressionLambda(node)) {
+            const parameterEntries = parametersOrEmpty(node.parameterList).map(
+                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+            );
+            const resultEntries = [new NamedTupleEntry('result', this.computeType(node.result))];
+
+            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+        } else if (isSdsIndexedAccess(node)) {
+            const receiverType = this.computeType(node.receiver);
+            if (receiverType instanceof VariadicType) {
+                return receiverType.elementType;
+            } else {
+                return UnknownType;
+            }
+        } else if (isSdsInfixOperation(node)) {
+            switch (node.operator) {
+                // Boolean operators
+                case 'or':
+                case 'and':
+                    return this.Boolean();
+
+                // Equality operators
+                case '==':
+                case '!=':
+                case '===':
+                case '!==':
+                    return this.Boolean();
+
+                // Comparison operators
+                case '<':
+                case '<=':
+                case '>=':
+                case '>':
+                    return this.Boolean();
+
+                // Arithmetic operators
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    return this.computeTypeOfArithmeticInfixOperation(node);
+
+                // Elvis operator
+                case '?:':
+                    return this.computeTypeOfElvisOperation(node);
+
+                // Unknown operator
+                /* c8 ignore next 2 */
+                default:
+                    return UnknownType;
+            }
+        } else if (isSdsMemberAccess(node)) {
+            const memberType = this.computeType(node.member);
+            return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
+        } else if (isSdsParenthesizedExpression(node)) {
+            return this.computeType(node.expression);
+        } else if (isSdsPrefixOperation(node)) {
+            switch (node.operator) {
+                case 'not':
+                    return this.Boolean();
+                case '-':
+                    return this.computeTypeOfArithmeticPrefixOperation(node);
+
+                // Unknown operator
+                /* c8 ignore next 2 */
+                default:
+                    return UnknownType;
+            }
+        } else if (isSdsReference(node)) {
+            return this.computeTypeOfReference(node);
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 
-    private computeTypeOfType(_node: SdsType): Type {
-        return UnresolvedType;
-    }
+    private computeTypeOfCall(node: SdsCall): Type {
+        const receiverType = this.computeType(node.receiver);
 
-    private cachedAny: Type = UnresolvedType;
+        if (receiverType instanceof CallableType) {
+            if (!isSdsAnnotation(receiverType.callable)) {
+                return receiverType.outputType;
+            }
+        } else if (receiverType instanceof StaticType) {
+            const instanceType = receiverType.instanceType;
+            const declaration = instanceType.sdsDeclaration;
 
-    private Any(): Type {
-        if (this.cachedAny === UnresolvedType) {
-            this.cachedAny = this.createCoreType(this.coreClasses.Any);
+            if (isSdsClass(declaration) || isSdsEnumVariant(declaration)) {
+                return instanceType;
+            }
         }
-        return this.cachedAny;
+
+        return UnknownType;
     }
 
-    private cachedBoolean: Type = UnresolvedType;
+    private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
+        const leftOperandType = this.computeType(node.leftOperand);
+        const rightOperandType = this.computeType(node.rightOperand);
+
+        if (leftOperandType === this.Int() && rightOperandType === this.Int()) {
+            return this.Int();
+        } else {
+            return this.Float();
+        }
+    }
+
+    private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
+        const leftOperandType = this.computeType(node.leftOperand);
+        if (leftOperandType.isNullable) {
+            /* c8 ignore next 3 */
+            const rightOperandType = this.computeType(node.rightOperand);
+            return this.lowestCommonSupertype(leftOperandType.copyWithNullability(false), rightOperandType);
+        } else {
+            return leftOperandType;
+        }
+    }
+
+    private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
+        const leftOperandType = this.computeType(node.operand);
+
+        if (leftOperandType === this.Int()) {
+            return this.Int();
+        } else {
+            return this.Float();
+        }
+    }
+
+    private computeTypeOfReference(node: SdsReference): Type {
+        const target = node.target.ref;
+        const instanceType = this.computeType(target);
+
+        if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
+            return new StaticType(instanceType.copyWithNullability(false));
+        } else {
+            return instanceType;
+        }
+    }
+
+    private computeTypeOfType(node: SdsType): Type {
+        if (isSdsCallableType(node)) {
+            return this.computeTypeOfCallableWithManifestTypes(node);
+        } else if (isSdsLiteralType(node)) {
+            /* c8 ignore next */
+            return NotImplementedType;
+        } else if (isSdsMemberType(node)) {
+            return this.computeType(node.member);
+        } else if (isSdsNamedType(node)) {
+            return this.computeType(node.declaration.ref).copyWithNullability(node.isNullable);
+        } else if (isSdsUnionType(node)) {
+            const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+            return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /* c8 ignore start */
+    private lowestCommonSupertype(..._types: Type[]): Type {
+        return NotImplementedType;
+    }
+
+    /* c8 ignore stop */
+
+    // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
+    //     if (types.isEmpty()) {
+    //         return Nothing(context)
+    //     }
+    //
+    //     val unwrappedTypes = unwrapUnionTypes(types)
+    //     val isNullable = unwrappedTypes.any { it.isNullable }
+    //     var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
+    //
+    //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
+    //         candidate = when (candidate) {
+    //             is CallableType -> Any(context, candidate.isNullable)
+    //             is ClassType -> {
+    //                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
+    //                     ?: return Any(context, candidate.isNullable)
+    //
+    //                 ClassType(superClass, typeParametersTypes, candidate.isNullable)
+    //             }
+    //             is EnumType -> Any(context, candidate.isNullable)
+    //             is EnumVariantType -> {
+    //                 val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
+    //                     ?: return Any(context, candidate.isNullable)
+    //                 EnumType(containingEnum, candidate.isNullable)
+    //             }
+    //             is RecordType -> Any(context, candidate.isNullable)
+    //             // TODO: Correct ?
+    //             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
+    //             UnresolvedType -> Any(context, candidate.isNullable)
+    //             is VariadicType -> Any(context, candidate.isNullable)
+    //         }
+    //     }
+    //
+    //     return candidate
+    // }
+    //
+    // private fun unwrapUnionTypes(types: List<Type>): List<Type> {
+    //     return types.flatMap {
+    //         when (it) {
+    //             is UnionType -> it.possibleTypes
+    //         else -> listOf(it)
+    //         }
+    //     }
+    // }
+    //
+    // private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
+    //     if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
+    //         return true
+    //     }
+    //
+    //     return otherTypes.all { it.isSubstitutableFor(candidate) }
+    // }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Builtin types
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private cachedBoolean: Type = UnknownType;
 
     private Boolean(): Type {
-        if (this.cachedBoolean === UnresolvedType) {
+        if (this.cachedBoolean === UnknownType) {
             this.cachedBoolean = this.createCoreType(this.coreClasses.Boolean);
         }
         return this.cachedBoolean;
     }
 
-    private cachedFloat: Type = UnresolvedType;
+    private cachedFloat: Type = UnknownType;
 
     private Float(): Type {
-        if (this.cachedFloat === UnresolvedType) {
+        if (this.cachedFloat === UnknownType) {
             this.cachedFloat = this.createCoreType(this.coreClasses.Float);
         }
         return this.cachedFloat;
     }
 
-    private cachedInt: Type = UnresolvedType;
+    private cachedInt: Type = UnknownType;
 
     private Int(): Type {
-        if (this.cachedInt === UnresolvedType) {
+        if (this.cachedInt === UnknownType) {
             this.cachedInt = this.createCoreType(this.coreClasses.Int);
         }
         return this.cachedInt;
     }
 
-    private cachedNullableNothing: Type = UnresolvedType;
-    private cachedNothing: Type = UnresolvedType;
+    private cachedNothingOrNull: Type = UnknownType;
 
-    private Nothing(isNullable: boolean): Type {
-        if (isNullable) {
-            if (this.cachedNullableNothing === UnresolvedType) {
-                this.cachedNullableNothing = this.createCoreType(this.coreClasses.Nothing, true);
-            }
-            return this.cachedNullableNothing;
-        } else {
-            if (this.cachedNothing === UnresolvedType) {
-                this.cachedNothing = this.createCoreType(this.coreClasses.Nothing);
-            }
-            return this.cachedNothing;
+    private NothingOrNull(): Type {
+        if (this.cachedNothingOrNull === UnknownType) {
+            this.cachedNothingOrNull = this.createCoreType(this.coreClasses.Nothing, true);
         }
+        return this.cachedNothingOrNull;
     }
 
-    private cachedString: Type = UnresolvedType;
+    private cachedString: Type = UnknownType;
 
     private String(): Type {
-        if (this.cachedString === UnresolvedType) {
+        if (this.cachedString === UnknownType) {
             this.cachedString = this.createCoreType(this.coreClasses.String);
         }
         return this.cachedString;
@@ -163,303 +548,8 @@ export class SafeDsTypeComputer {
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
         if (coreClass) {
             return new ClassType(coreClass, isNullable);
-        } else {
-            return UnresolvedType;
-        }
+        } /* c8 ignore start */ else {
+            return UnknownType;
+        } /* c8 ignore stop */
     }
 }
-
-/* c8 ignore stop */
-
-/*
-fun SdsAbstractObject.hasPrimitiveType(): Boolean {
-    val type = type()
-    if (type !is ClassType) {
-        return false
-    }
-
-    val qualifiedName = type.sdsClass.qualifiedNameOrNull()
-    return qualifiedName in setOf(
-        StdlibClasses.Boolean,
-        StdlibClasses.Float,
-        StdlibClasses.Int,
-        StdlibClasses.String,
-    )
-}
-
-private fun SdsAbstractAssignee.inferTypeForAssignee(context: EObject): Type {
-    return when {
-        this.eIsProxy() -> UnresolvedType
-        this is SdsBlockLambdaResult || this is SdsPlaceholder || this is SdsYield -> {
-            val assigned = assignedOrNull() ?: return Nothing(context)
-            assigned.inferType(context)
-        }
-        else -> Any(context)
-    }
-}
-
-@OptIn(ExperimentalSdsApi::class)
-private fun SdsAbstractDeclaration.inferTypeForDeclaration(context: EObject): Type {
-    return when {
-        this.eIsProxy() -> UnresolvedType
-        this is SdsAttribute -> type.inferTypeForType(context)
-        this is SdsClass -> {
-            val typeParametersTypes = this.typeParametersOrEmpty()
-                .map { it.inferTypeForDeclaration(context) }
-                .filterIsInstance<ParameterisedType>()
-
-            ClassType(this, typeParametersTypes, isNullable = false)
-        }
-        this is SdsEnum -> EnumType(this, isNullable = false)
-        this is SdsEnumVariant -> EnumVariantType(this, isNullable = false)
-        this is SdsFunction -> CallableType(
-            parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        )
-        this is SdsParameter -> {
-            // Declared parameter type
-            if (this.type != null) {
-                val declaredParameterType = this.type.inferTypeForType(context)
-                return when {
-                    this.isVariadic -> VariadicType(declaredParameterType)
-                    else -> declaredParameterType
-                }
-            }
-
-            // Inferred lambda parameter type
-            val callable = this.closestAncestorOrNull<SdsAbstractCallable>()
-            val thisIndex = callable.parametersOrEmpty().indexOf(this)
-            if (callable is SdsAbstractLambda) {
-                val containerType = when (val container = callable.eContainer()) {
-                    is SdsArgument -> container.parameterOrNull()?.inferType(context)
-                    is SdsAssignment ->
-                        container
-                            .yieldsOrEmpty()
-                            .find { it.assignedOrNull() == callable }
-                            ?.result
-                            ?.inferType(context)
-                    else -> null
-                }
-
-                return when (containerType) {
-                    is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
-                    else -> Any(context)
-                }
-            }
-
-            // We don't know better
-            return Any(context)
-        }
-        this is SdsResult -> type.inferTypeForType(context)
-        // For now all Schema placeholders are of type 'ParameterisedType(::$SchemaType)'
-        this is SdsSchemaPlaceholder -> ParameterisedType(this, SdsKind.SchemaKind.toString())
-        this is SdsStep -> CallableType(
-            parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        )
-        // Todo: resolve TypeParameter for "non kind" TypeParameter too
-        this is SdsTypeParameter && this.kind != null -> ParameterisedType(this, kind)
-        else -> Any(context)
-    }
-}
-
-private fun SdsAbstractExpression.inferTypeExpression(context: EObject): Type {
-    return when {
-        // Terminal cases
-        this.eIsProxy() -> UnresolvedType
-        this is SdsBoolean -> Boolean(context)
-        this is SdsFloat -> Float(context)
-        this is SdsInt -> Int(context)
-        this is SdsNull -> Nothing(context, isNullable = true)
-        this is SdsString -> String(context)
-        this is SdsTemplateString -> String(context)
-
-        // Recursive cases
-        this is SdsArgument -> this.value.inferTypeExpression(context)
-        this is SdsBlockLambda -> CallableType(
-            this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            blockLambdaResultsOrEmpty().map { it.inferTypeForAssignee(context) },
-        )
-        this is SdsCall -> when (val callable = callableOrNull()) {
-            is SdsClass -> {
-                val typeParametersTypes = callable.typeParametersOrEmpty()
-                    .map { it.inferTypeForDeclaration(context) }
-                    .filterIsInstance<ParameterisedType>()
-
-                ClassType(callable, typeParametersTypes, isNullable = false)
-            }
-            is SdsCallableType -> {
-                val results = callable.resultsOrEmpty()
-                when (results.size) {
-                    1 -> results.first().inferTypeForDeclaration(context)
-                    else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-                }
-            }
-            is SdsFunction -> {
-                val results = callable.resultsOrEmpty()
-                when (results.size) {
-                    1 -> results.first().inferTypeForDeclaration(context)
-                    else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-                }
-            }
-            is SdsBlockLambda -> {
-                val results = callable.blockLambdaResultsOrEmpty()
-                when (results.size) {
-                    1 -> results.first().inferTypeForAssignee(context)
-                    else -> RecordType(results.map { it.name to it.inferTypeForAssignee(context) })
-                }
-            }
-            is SdsEnumVariant -> {
-                EnumVariantType(callable, isNullable = false)
-            }
-            is SdsExpressionLambda -> {
-                callable.result.inferTypeExpression(context)
-            }
-            is SdsStep -> {
-                val results = callable.resultsOrEmpty()
-                when (results.size) {
-                    1 -> results.first().inferTypeForDeclaration(context)
-                    else -> RecordType(results.map { it.name to it.inferTypeForDeclaration(context) })
-                }
-            }
-            else -> Any(context)
-        }
-        this is SdsExpressionLambda -> CallableType(
-            this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            listOf(result.inferTypeExpression(context)),
-        )
-        this is SdsIndexedAccess -> {
-            when (val receiverType = this.receiver.inferTypeExpression(context)) {
-                is UnresolvedType -> UnresolvedType
-                is VariadicType -> receiverType.elementType
-                else -> Nothing(context)
-            }
-        }
-        this is SdsInfixOperation -> when (operator) {
-            "<", "<=", ">=", ">" -> Boolean(context)
-            "==", "!=" -> Boolean(context)
-            "===", "!==" -> Boolean(context)
-            "or", "and" -> Boolean(context)
-            "+", "-", "*", "/" -> when {
-                this.leftOperand.inferTypeExpression(context) == Int(context) &&
-                    this.rightOperand.inferTypeExpression(context) == Int(context) -> Int(context)
-                else -> Float(context)
-            }
-            "?:" -> {
-                val leftOperandType = this.leftOperand.inferTypeExpression(context)
-                if (leftOperandType.isNullable) {
-                    lowestCommonSupertype(
-                        context,
-                        listOf(
-                            leftOperandType.setIsNullableOnCopy(isNullable = false),
-                            this.rightOperand.inferTypeExpression(context),
-                        ),
-                    )
-                } else {
-                    leftOperandType
-                }
-            }
-            else -> Nothing(context)
-        }
-        this is SdsMemberAccess -> {
-            val memberType = this.member.inferTypeExpression(context)
-            memberType.setIsNullableOnCopy(this.isNullSafe || memberType.isNullable)
-        }
-        this is SdsParenthesizedExpression -> this.expression.inferTypeExpression(context)
-        this is SdsPrefixOperation -> when (operator) {
-            "not" -> Boolean(context)
-            "-" -> when (this.operand.inferTypeExpression(context)) {
-                Int(context) -> Int(context)
-                else -> Float(context)
-            }
-            else -> Nothing(context)
-        }
-        this is SdsReference -> this.declaration.inferType(context)
-        this is SdsSchemaReference -> this.type.inferTypeForType(context)
-        else -> Any(context)
-    }
-}
-
-private fun SdsAbstractType.inferTypeForType(context: EObject): Type {
-    return when {
-        this.eIsProxy() -> UnresolvedType
-        this is SdsCallableType -> CallableType(
-            this.parametersOrEmpty().map { it.inferTypeForDeclaration(context) },
-            this.resultsOrEmpty().map { it.inferTypeForDeclaration(context) },
-        )
-        this is SdsMemberType -> {
-            this.member.inferTypeForType(context)
-        }
-        this is SdsNamedType -> {
-            this.declaration.inferTypeForDeclaration(context).setIsNullableOnCopy(this.isNullable)
-        }
-        this is SdsParenthesizedType -> {
-            this.type.inferTypeForType(context)
-        }
-        this is SdsSchemaType -> {
-            this.declaration.inferTypeForDeclaration(context)
-        }
-        this is SdsUnionType -> {
-            UnionType(this.typeArgumentsOrEmpty().map { it.value.inferType(context) }.toSet())
-        }
-        else -> Any(context)
-    }
-}
-
-private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
-    if (types.isEmpty()) {
-        return Nothing(context)
-    }
-
-    val unwrappedTypes = unwrapUnionTypes(types)
-    val isNullable = unwrappedTypes.any { it.isNullable }
-    var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
-
-    while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
-        candidate = when (candidate) {
-            is CallableType -> Any(context, candidate.isNullable)
-            is ClassType -> {
-                val superClass = candidate.sdsClass.superClasses().firstOrNull()
-                    ?: return Any(context, candidate.isNullable)
-
-                val typeParametersTypes = superClass.typeParametersOrEmpty()
-                    .map { it.inferTypeForDeclaration(context) }
-                    .filterIsInstance<ParameterisedType>()
-
-                ClassType(superClass, typeParametersTypes, candidate.isNullable)
-            }
-            is EnumType -> Any(context, candidate.isNullable)
-            is EnumVariantType -> {
-                val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
-                    ?: return Any(context, candidate.isNullable)
-                EnumType(containingEnum, candidate.isNullable)
-            }
-            is RecordType -> Any(context, candidate.isNullable)
-            // TODO: Correct ?
-            is ParameterisedType -> Any(context, candidate.isNullable)
-            is UnionType -> throw AssertionError("Union types should have been unwrapped.")
-            UnresolvedType -> Any(context, candidate.isNullable)
-            is VariadicType -> Any(context, candidate.isNullable)
-        }
-    }
-
-    return candidate
-}
-
-private fun unwrapUnionTypes(types: List<Type>): List<Type> {
-    return types.flatMap {
-        when (it) {
-            is UnionType -> it.possibleTypes
-            else -> listOf(it)
-        }
-    }
-}
-
-private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
-    if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
-        return true
-    }
-
-    return otherTypes.all { it.isSubstitutableFor(candidate) }
-}
- */

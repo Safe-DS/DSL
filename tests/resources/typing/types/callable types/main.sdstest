@@ -1,0 +1,16 @@
+package tests.typing.types.callableTypes
+
+// $TEST$ serialization () -> ()
+fun myFunction1(f: »() -> ()«)
+
+// $TEST$ serialization () -> (r1: Int, r2: String)
+fun myFunction2(f: »() -> (r1: Int, r2: String)«)
+
+// $TEST$ serialization (p1: Int, p2: String) -> ()
+fun myFunction3(f: »(p1: Int, p2: String) -> ()«)
+
+// $TEST$ serialization (p1: Int, p2: String) -> (r1: Int, r2: String)
+fun myFunction4(f: »(p1: Int, p2: String) -> (r1: Int, r2: String)«)
+
+// $TEST$ serialization (p1: $Unknown) -> (r1: $Unknown)
+fun myFunction5(f: »(p1) -> (r1)«)

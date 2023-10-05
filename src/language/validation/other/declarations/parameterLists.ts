@@ -11,7 +11,7 @@ export const parameterListMustNotHaveOptionalAndVariadicParameters = (
 ) => {
     const hasOptional = node.parameters.find((p) => p.defaultValue);
     if (hasOptional) {
-        const variadicRequiredParameters = node.parameters.filter((p) => p.variadic && !p.defaultValue);
+        const variadicRequiredParameters = node.parameters.filter((p) => p.isVariadic && !p.defaultValue);
 
         for (const variadic of variadicRequiredParameters) {
             accept('error', 'A callable with optional parameters must not have a variadic parameter.', {
@@ -31,7 +31,7 @@ export const parameterListMustNotHaveRequiredParametersAfterOptionalParameters =
     for (const parameter of node.parameters) {
         if (parameter.defaultValue) {
             foundOptional = true;
-        } else if (foundOptional && !parameter.variadic) {
+        } else if (foundOptional && !parameter.isVariadic) {
             accept('error', 'After the first optional parameter all parameters must be optional.', {
                 node: parameter,
                 property: 'name',
@@ -52,7 +52,7 @@ export const parameterListVariadicParameterMustBeLast = (node: SdsParameterList,
             });
         }
 
-        if (parameter.variadic) {
+        if (parameter.isVariadic) {
             foundVariadic = true;
         }
     }

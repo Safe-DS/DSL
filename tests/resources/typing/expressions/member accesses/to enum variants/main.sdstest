@@ -1,0 +1,10 @@
+package tests.typing.expressions.references.toEnumVariants
+
+enum MyEnum {
+    MyEnumVariant
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization $type<MyEnumVariant>
+    »MyEnum.MyEnumVariant«;
+}

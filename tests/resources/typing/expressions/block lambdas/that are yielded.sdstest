@@ -1,0 +1,24 @@
+package tests.typing.expressions.blockLambdas
+
+segment mySegment() -> (
+    r: (p: String) -> (r: Int, s: String),
+    s: () -> (),
+    t: Int,
+) {
+    // $TEST$ serialization (p: String) -> (r: Int, s: String)
+    yield r = »(p) {
+        yield r = 1;
+        yield s = "";
+    }«;
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: String)
+    yield s = »(p) {
+        yield r = 1;
+        yield s = "";
+    }«;
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    yield t = »(p) {
+        yield r, yield s = 1;
+    }«;
+}

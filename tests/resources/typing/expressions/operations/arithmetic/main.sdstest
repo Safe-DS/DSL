@@ -1,0 +1,36 @@
+package tests.typing.operations.arithmetic
+
+pipeline myPipeline {
+    // $TEST$ serialization Int
+    val additionIntInt = »1 + 1«;
+    // $TEST$ serialization Int
+    val subtractionIntInt = »1 - 1«;
+    // $TEST$ serialization Int
+    val multiplicationIntInt = »1 * 1«;
+    // $TEST$ serialization Int
+    val divisionIntInt = »1 / 1«;
+    // $TEST$ serialization Int
+    val negationInt = »-1«;
+
+    // $TEST$ serialization Float
+    val additionIntFloat = »1 + 1.0«;
+    // $TEST$ serialization Float
+    val subtractionIntFloat = »1 - 1.0«;
+    // $TEST$ serialization Float
+    val multiplicationIntFloat = »1 * 1.0«;
+    // $TEST$ serialization Float
+    val divisionIntFloat = »1 / 1.0«;
+    // $TEST$ serialization Float
+    val negationFloat = »-1.0«;
+
+    // $TEST$ serialization Float
+    val additionInvalid = »true + true«;
+    // $TEST$ serialization Float
+    val subtractionInvalid  = »true - true«;
+    // $TEST$ serialization Float
+    val multiplicationInvalid  = »true * true«;
+    // $TEST$ serialization Float
+    val divisionInvalid  = »true / true«;
+    // $TEST$ serialization Float
+    val negationInvalid  = »-true«;
+}

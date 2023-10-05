@@ -1,0 +1,13 @@
+package tests.typing.expressions.calls.ofEnumVariants
+
+enum E {
+    V
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization V
+    »E.V()«;
+
+    // $TEST$ serialization $Unknown
+    »E.V()()«;
+}

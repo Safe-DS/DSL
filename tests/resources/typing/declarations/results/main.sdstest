@@ -1,0 +1,14 @@
+package tests.typing.declarations.results
+
+// $TEST$ equivalence_class functionResult
+// $TEST$ equivalence_class functionResult
+fun myFun() -> (»r«: »String«)
+
+segment mySegment(
+    // $TEST$ equivalence_class callableTypeResult
+    // $TEST$ equivalence_class callableTypeResult
+    p: () -> (»r«: »String«)
+
+// $TEST$ equivalence_class segmentResult
+// $TEST$ equivalence_class segmentResult
+) -> (»r«: »String«) {}

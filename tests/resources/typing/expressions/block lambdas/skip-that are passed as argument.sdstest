@@ -1,0 +1,40 @@
+package tests.typing.expressions.blockLambdas
+
+fun higherOrderFunction1(param: (p: String) -> (r: Int, s: String))
+fun higherOrderFunction2(param: () -> ())
+fun normalFunction(param: Int)
+
+segment mySegment() {
+    // $TEST$ serialization (p: String) -> (r: Int, s: String)
+    higherOrderFunction1(»(p) {
+        yield r = 1;
+        yield s = "";
+    }«);
+
+    // $TEST$ serialization (p: String) -> (r: Int, s: $Unknown)
+    higherOrderFunction1(param = »(p) {
+        yield r, yield s = 1;
+    }«);
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: String)
+    higherOrderFunction2(»(p) {
+        yield r = 1;
+        yield s = "";
+    }«);
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    higherOrderFunction2(param = »(p) {
+        yield r, yield s = 1;
+    }«);
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: String)
+    normalFunction(»(p) {
+        yield r = 1;
+        yield s = "";
+    }«);
+
+    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    normalFunction(param = »(p) {
+        yield r, yield s = 1;
+    }«);
+}

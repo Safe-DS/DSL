@@ -1,6 +1,0 @@
-package tests.typingoperations.strictEquality
-
-pipeline myPipeline {
-    val strictlyEquals = (1 === 1);
-    val notStrictlyEquals = (1 !== 1);
-}

@@ -1,3 +1,0 @@
-package tests.typingtypes.parenthesizedTypes
-
-fun myFun(a: (Int), b: (String))

@@ -1,0 +1,10 @@
+package tests.typing.expressions.memberAccesses.toNestedClasses
+
+class MyClass {
+    class MyNestedClass
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization $type<MyNestedClass>
+    »MyClass.MyNestedClass«;
+}
