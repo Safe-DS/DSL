@@ -1,4 +1,4 @@
-package tests.typing.declarations.parameters.ofBlockLambdas
+package tests.typing.declarations.parameters.ofBlockLambdas.thatAreYielded
 
 segment mySegment() -> (
     // $TEST$ equivalence_class parameterType2
