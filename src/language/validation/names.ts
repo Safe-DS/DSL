@@ -136,11 +136,7 @@ const acceptCasingWarning = (
 // -----------------------------------------------------------------------------
 
 export const annotationMustContainUniqueNames = (node: SdsAnnotation, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(
-        parametersOrEmpty(node),
-        (name) => `A parameter with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
 };
 
 export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: ValidationAcceptor): void => {
@@ -159,11 +155,7 @@ export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: 
 };
 
 export const callableTypeMustContainUniqueNames = (node: SdsCallableType, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(
-        parametersOrEmpty(node),
-        (name) => `A parameter with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
     namesMustBeUnique(
         resultsOrEmpty(node.resultList),
         (name) => `A result with name '${name}' exists already.`,
@@ -172,10 +164,7 @@ export const callableTypeMustContainUniqueNames = (node: SdsCallableType, accept
 };
 
 export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [
-        ...typeParametersOrEmpty(node.typeParameterList),
-        ...parametersOrEmpty(node),
-    ];
+    const typeParametersAndParameters = [...typeParametersOrEmpty(node.typeParameterList), ...parametersOrEmpty(node)];
     namesMustBeUnique(
         typeParametersAndParameters,
         (name) => `A type parameter or parameter with name '${name}' exists already.`,
@@ -194,10 +183,7 @@ export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcce
 };
 
 export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [
-        ...typeParametersOrEmpty(node.typeParameterList),
-        ...parametersOrEmpty(node),
-    ];
+    const typeParametersAndParameters = [...typeParametersOrEmpty(node.typeParameterList), ...parametersOrEmpty(node)];
     namesMustBeUnique(
         typeParametersAndParameters,
         (name) => `A type parameter or parameter with name '${name}' exists already.`,
@@ -206,18 +192,11 @@ export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: 
 };
 
 export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(
-        parametersOrEmpty(node),
-        (name) => `A parameter with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
 };
 
 export const functionMustContainUniqueNames = (node: SdsFunction, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [
-        ...typeParametersOrEmpty(node.typeParameterList),
-        ...parametersOrEmpty(node),
-    ];
+    const typeParametersAndParameters = [...typeParametersOrEmpty(node.typeParameterList), ...parametersOrEmpty(node)];
     namesMustBeUnique(
         typeParametersAndParameters,
         (name) => `A type parameter or parameter with name '${name}' exists already.`,

@@ -19,7 +19,7 @@ import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
 import { SafeDsCoreClasses } from './builtins/safe-ds-core-classes.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
-import {SafeDsNodeMapper} from "./helpers/safe-ds-node-mapper.js";
+import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -30,7 +30,7 @@ export type SafeDsAddedServices = {
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
-    },
+    };
     types: {
         TypeComputer: SafeDsTypeComputer;
     };

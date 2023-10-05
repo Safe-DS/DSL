@@ -45,7 +45,7 @@ describe('SafeDsNodeMapper', () => {
 
                 const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
-                expect(parameterNames).toStrictEqual(["p2", "p3", "p1"]);
+                expect(parameterNames).toStrictEqual(['p2', 'p3', 'p1']);
             });
         });
 
@@ -61,7 +61,7 @@ describe('SafeDsNodeMapper', () => {
 
                 const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
-                expect(parameterNames).toStrictEqual(["p1", "p2", "p3"]);
+                expect(parameterNames).toStrictEqual(['p1', 'p2', 'p3']);
             });
 
             it('should return undefined if a prior argument is named', async () => {
@@ -75,7 +75,7 @@ describe('SafeDsNodeMapper', () => {
 
                 const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
-                expect(parameterNames).toStrictEqual(["p2", undefined, undefined]);
+                expect(parameterNames).toStrictEqual(['p2', undefined, undefined]);
             });
 
             it('should return undefined if argument is out of bounds and there is no final variadic parameter', async () => {
@@ -89,7 +89,7 @@ describe('SafeDsNodeMapper', () => {
 
                 const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
-                expect(parameterNames).toStrictEqual(["p1", "p2", undefined]);
+                expect(parameterNames).toStrictEqual(['p1', 'p2', undefined]);
             });
 
             it('should return return the final variadic parameter if argument is out of bounds', async () => {
@@ -103,7 +103,7 @@ describe('SafeDsNodeMapper', () => {
 
                 const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(firstCall).map(parameterNameOrNull);
-                expect(parameterNames).toStrictEqual(["p1", "p2", "p3", "p3", "p3"]);
+                expect(parameterNames).toStrictEqual(['p1', 'p2', 'p3', 'p3', 'p3']);
             });
         });
 

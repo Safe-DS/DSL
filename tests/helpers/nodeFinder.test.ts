@@ -4,7 +4,7 @@ import { createSafeDsServices } from '../../src/language/safe-ds-module.js';
 import { EmptyFileSystem } from 'langium';
 import { AssertionError } from 'assert';
 import { clearDocuments, parseHelper } from 'langium/test';
-import {isSdsClass, isSdsDeclaration, isSdsEnum} from '../../src/language/generated/ast.js';
+import { isSdsClass, isSdsDeclaration, isSdsEnum } from '../../src/language/generated/ast.js';
 
 describe('getNodeByLocation', () => {
     const services = createSafeDsServices(EmptyFileSystem).SafeDs;
