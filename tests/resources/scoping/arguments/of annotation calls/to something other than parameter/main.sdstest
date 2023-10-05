@@ -1,0 +1,9 @@
+package tests.scoping.arguments.ofAnnotationCalls.toSomethingOtherThanParameter
+
+annotation MyAnnotation(a: Int)
+
+@MyAnnotation(
+    // $TEST$ unresolved
+    »MyAnnotation« = 0,
+)
+pipeline myPipeline {}

@@ -1,4 +1,4 @@
-package tests.scoping.arguments.ofAnnotationCalls
+package tests.scoping.arguments.ofAnnotationCalls.toParameter
 
 annotation MyAnnotation(
     // $TEST$ target a
