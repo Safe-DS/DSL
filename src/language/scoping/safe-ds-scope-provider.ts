@@ -35,7 +35,9 @@ import {
     isSdsTypeArgument,
     isSdsWildcardImport,
     isSdsYield,
+    SdsAbstractCall,
     SdsArgument,
+    SdsCallable,
     SdsDeclaration,
     SdsExpression,
     SdsImportedDeclaration,
@@ -111,30 +113,32 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
         const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
-        if (isSdsAnnotationCall(containingAbstractCall)) {
-            const annotation = containingAbstractCall.annotation?.ref;
-            if (!annotation) {
-                return EMPTY_SCOPE;
-            }
+        const callable = this.callToCallableOrNull(containingAbstractCall);
+        if (!callable) {
+            return EMPTY_SCOPE;
+        }
 
-            const parameters = parametersOrEmpty(annotation.parameterList);
-            return this.createScopeForNodes(parameters);
-        } else if (isSdsCall(containingAbstractCall)) {
-            const receiverType = this.typeComputer.computeType(containingAbstractCall.receiver);
+        const parameters = parametersOrEmpty(callable.parameterList);
+        return this.createScopeForNodes(parameters);
+    }
+
+    private callToCallableOrNull(node: SdsAbstractCall | undefined): SdsCallable | null {
+        if (isSdsAnnotationCall(node)) {
+            return node.annotation?.ref ?? null;
+        } else if (isSdsCall(node)) {
+            const receiverType = this.typeComputer.computeType(node.receiver);
             if (receiverType instanceof CallableType) {
-                const parameters = parametersOrEmpty(receiverType.sdsCallable.parameterList);
-                return this.createScopeForNodes(parameters);
+                return receiverType.sdsCallable;
             } else if (receiverType instanceof StaticType) {
                 const declaration = receiverType.instanceType.sdsDeclaration;
                 if (isSdsCallable(declaration)) {
-                    const parameters = parametersOrEmpty(declaration.parameterList);
-                    return this.createScopeForNodes(parameters);
+                    return declaration;
                 }
             }
 
-            return EMPTY_SCOPE;
+            return null;
         } /* c8 ignore start */ else {
-            return EMPTY_SCOPE;
+            return null;
         } /* c8 ignore stop */
     }
 
