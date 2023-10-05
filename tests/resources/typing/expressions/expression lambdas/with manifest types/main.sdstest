@@ -1,4 +1,4 @@
-package tests.typing.expressions.expressionLambdas
+package tests.typing.expressions.expressionLambdas.withManifestTypes
 
 segment mySegment() {
     // $TEST$ serialization (p: Int) -> (result: Int)

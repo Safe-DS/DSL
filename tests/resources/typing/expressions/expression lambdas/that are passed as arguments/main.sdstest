@@ -1,4 +1,4 @@
-package tests.typing.expressions.expressionLambdas
+package tests.typing.expressions.expressionLambdas.thatArePassedAsArguments
 
 fun higherOrderFunction1(param: (p: String) -> (r: Int))
 fun higherOrderFunction2(param: () -> ())

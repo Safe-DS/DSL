@@ -1,4 +1,4 @@
-package tests.typing.expressions.blockLambdas
+package tests.typing.expressions.blockLambdas.withManifestTypes
 
 segment mySegment() {
     // $TEST$ serialization (p: Int) -> (r: Int, s: String)
