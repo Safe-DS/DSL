@@ -4,8 +4,9 @@ import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
-import { getNodeByLocation, locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../helpers/location.js';
 import { createTypingTests } from './creator.js';
+import { getNodeByLocation } from '../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const typeComputer = services.types.TypeComputer;

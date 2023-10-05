@@ -4,10 +4,11 @@ import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
-import { getNodeByLocation, locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../helpers/location.js';
 import { createPartialEvaluationTests } from './creator.js';
 import { toConstantExpressionOrNull } from '../../../src/language/partialEvaluation/toConstantExpressionOrNull.js';
 import { Location } from 'vscode-languageserver';
+import { getNodeByLocation } from '../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
