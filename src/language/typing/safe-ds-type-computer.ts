@@ -79,16 +79,19 @@ import {
     resultsOrEmpty,
     typeArgumentsOrEmpty,
 } from '../helpers/shortcuts.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 
 export class SafeDsTypeComputer {
-    readonly astNodeLocator: AstNodeLocator;
-    readonly coreClasses: SafeDsCoreClasses;
+    private readonly astNodeLocator: AstNodeLocator;
+    private readonly coreClasses: SafeDsCoreClasses;
+    private readonly nodeMapper: SafeDsNodeMapper;
 
     readonly typeCache: WorkspaceCache<string, Type>;
 
     constructor(readonly services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.coreClasses = services.builtins.CoreClasses;
+        this.nodeMapper = services.helpers.NodeMapper;
 
         this.typeCache = new WorkspaceCache(services.shared);
     }
@@ -214,20 +217,20 @@ export class SafeDsTypeComputer {
         const containerOfLambda = containingCallable.$container;
 
         // Lambda passed as argument
-        /* c8 ignore start */
         if (isSdsArgument(containerOfLambda)) {
-            // val containerType = when (val container = callable.eContainer()) {
-            //     is SdsArgument -> container.parameterOrNull()?.inferType(context)
-            // }
-            //
-            // return when (containerType) {
-            //     is CallableType -> containerType.parameters.getOrElse(thisIndex) { Any(context) }
-            // else -> Any(context)
-            // }
+            const parameter = this.nodeMapper.argumentToParameterOrUndefined(containerOfLambda);
+            if (!parameter) {
+                return UnknownType;
+            }
 
-            return NotImplementedType;
+            const parameterType = this.computeType(parameter?.type);
+            if (!(parameterType instanceof CallableType)) {
+                return UnknownType;
+            }
+
+            const parameterPosition = node.$containerIndex ?? -1;
+            return parameterType.getParameterTypeByPosition(parameterPosition) ?? UnknownType;
         }
-        /* c8 ignore stop */
 
         // Yielded lambda
         else if (isSdsAssignment(containerOfLambda)) {

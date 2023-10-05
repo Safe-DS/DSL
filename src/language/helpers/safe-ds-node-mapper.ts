@@ -23,10 +23,10 @@ import { argumentsOrEmpty, parametersOrEmpty, typeArgumentsOrEmpty, typeParamete
 import { isNamedArgument, isNamedTypeArgument } from './checks.js';
 
 export class SafeDsNodeMapper {
-    private readonly typeComputer: SafeDsTypeComputer;
+    private readonly typeComputer: () => SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
-        this.typeComputer = new SafeDsTypeComputer(services);
+        this.typeComputer = () => services.types.TypeComputer;
     }
 
     /**
@@ -36,7 +36,7 @@ export class SafeDsNodeMapper {
         if (isSdsAnnotationCall(node)) {
             return node.annotation?.ref;
         } else if (isSdsCall(node)) {
-            const receiverType = this.typeComputer.computeType(node.receiver);
+            const receiverType = this.typeComputer().computeType(node.receiver);
             if (receiverType instanceof CallableType) {
                 return receiverType.sdsCallable;
             } else if (receiverType instanceof StaticType) {
