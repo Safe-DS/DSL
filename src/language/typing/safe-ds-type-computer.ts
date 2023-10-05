@@ -514,15 +514,6 @@ export class SafeDsTypeComputer {
         return this.cachedInt;
     }
 
-    private cachedNothing: Type = UnknownType;
-
-    private Nothing(): Type {
-        if (this.cachedNothing === UnknownType) {
-            this.cachedNothing = this.createCoreType(this.coreClasses.Nothing);
-        }
-        return this.cachedNothing;
-    }
-
     private cachedNothingOrNull: Type = UnknownType;
 
     private NothingOrNull(): Type {
