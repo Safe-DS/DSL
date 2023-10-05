@@ -11,11 +11,9 @@ import {
 } from 'langium';
 import {
     isSdsAbstractCall,
-    isSdsAnnotationCall,
     isSdsArgument,
     isSdsAssignment,
     isSdsBlock,
-    isSdsCall,
     isSdsCallable,
     isSdsClass,
     isSdsEnum,
@@ -35,9 +33,7 @@ import {
     isSdsTypeArgument,
     isSdsWildcardImport,
     isSdsYield,
-    SdsAbstractCall,
     SdsArgument,
-    SdsCallable,
     SdsDeclaration,
     SdsExpression,
     SdsImportedDeclaration,
@@ -68,10 +64,11 @@ import { isStatic } from '../helpers/checks.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
-import { CallableType, StaticType } from '../typing/model.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     private readonly astReflection: AstReflection;
+    private readonly nodeMapper: SafeDsNodeMapper;
     private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
@@ -79,6 +76,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         super(services);
 
         this.astReflection = services.shared.AstReflection;
+        this.nodeMapper = services.helpers.NodeMapper;
         this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
     }
@@ -113,33 +111,13 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
         const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
-        const callable = this.callToCallableOrNull(containingAbstractCall);
+        const callable = this.nodeMapper.callToCallableOrNull(containingAbstractCall);
         if (!callable) {
             return EMPTY_SCOPE;
         }
 
         const parameters = parametersOrEmpty(callable.parameterList);
         return this.createScopeForNodes(parameters);
-    }
-
-    private callToCallableOrNull(node: SdsAbstractCall | undefined): SdsCallable | null {
-        if (isSdsAnnotationCall(node)) {
-            return node.annotation?.ref ?? null;
-        } else if (isSdsCall(node)) {
-            const receiverType = this.typeComputer.computeType(node.receiver);
-            if (receiverType instanceof CallableType) {
-                return receiverType.sdsCallable;
-            } else if (receiverType instanceof StaticType) {
-                const declaration = receiverType.instanceType.sdsDeclaration;
-                if (isSdsCallable(declaration)) {
-                    return declaration;
-                }
-            }
-
-            return null;
-        } /* c8 ignore start */ else {
-            return null;
-        } /* c8 ignore stop */
     }
 
     private getScopeForImportedDeclarationDeclaration(node: SdsImportedDeclaration): Scope {
