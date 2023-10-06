@@ -5,11 +5,13 @@ import {
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
+    isSdsEnumVariant,
     isSdsFunction,
     isSdsModule,
     isSdsModuleMember,
     isSdsPlaceholder,
     isSdsSegment,
+    isSdsTypeParameterList,
     SdsAbstractCall,
     SdsAnnotatedObject,
     SdsAnnotationCall,
@@ -31,6 +33,7 @@ import {
     SdsLiteralType,
     SdsModule,
     SdsModuleMember,
+    SdsNamedTypeDeclaration,
     SdsParameter,
     SdsPlaceholder,
     SdsQualifiedImport,
@@ -77,7 +80,7 @@ export const isStatic = (node: SdsClassMember): boolean => {
 // Accessors for list elements
 // -------------------------------------------------------------------------------------------------
 
-export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] {
+export const annotationCallsOrEmpty = (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] => {
     if (!node) {
         /* c8 ignore next 2 */
         return [];
@@ -90,62 +93,87 @@ export const annotationCallsOrEmpty = function (node: SdsAnnotatedObject | undef
         return node?.annotationCalls ?? [];
     }
 };
-export const argumentsOrEmpty = function (node: SdsAbstractCall | undefined): SdsArgument[] {
+export const argumentsOrEmpty = (node: SdsAbstractCall | undefined): SdsArgument[] => {
     return node?.argumentList?.arguments ?? [];
 };
-export const assigneesOrEmpty = function (node: SdsAssignment | undefined): SdsAssignee[] {
+export const assigneesOrEmpty = (node: SdsAssignment | undefined): SdsAssignee[] => {
     return node?.assigneeList?.assignees ?? [];
 };
-export const blockLambdaResultsOrEmpty = function (node: SdsBlockLambda | undefined): SdsBlockLambdaResult[] {
+export const blockLambdaResultsOrEmpty = (node: SdsBlockLambda | undefined): SdsBlockLambdaResult[] => {
     return stream(statementsOrEmpty(node?.body))
         .filter(isSdsAssignment)
         .flatMap(assigneesOrEmpty)
         .filter(isSdsBlockLambdaResult)
         .toArray();
 };
-export const importedDeclarationsOrEmpty = function (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] {
+export const importedDeclarationsOrEmpty = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
     return node?.importedDeclarationList?.importedDeclarations ?? [];
 };
-export const literalsOrEmpty = function (node: SdsLiteralType | undefined): SdsLiteral[] {
+
+export const literalsOrEmpty = (node: SdsLiteralType | undefined): SdsLiteral[] => {
     return node?.literalList?.literals ?? [];
 };
-export const classMembersOrEmpty = function (
+export const classMembersOrEmpty = (
     node: SdsClass | undefined,
     filterFunction: (member: SdsClassMember) => boolean = () => true,
-): SdsClassMember[] {
+): SdsClassMember[] => {
     return node?.body?.members?.filter(filterFunction) ?? [];
 };
-export const enumVariantsOrEmpty = function (node: SdsEnum | undefined): SdsEnumVariant[] {
+
+export const enumVariantsOrEmpty = (node: SdsEnum | undefined): SdsEnumVariant[] => {
     return node?.body?.variants ?? [];
 };
-export const importsOrEmpty = function (node: SdsModule | undefined): SdsImport[] {
+
+export const importsOrEmpty = (node: SdsModule | undefined): SdsImport[] => {
     return node?.imports ?? [];
 };
-export const moduleMembersOrEmpty = function (node: SdsModule | undefined): SdsModuleMember[] {
+
+export const moduleMembersOrEmpty = (node: SdsModule | undefined): SdsModuleMember[] => {
     return node?.members?.filter(isSdsModuleMember) ?? [];
 };
-export const packageNameOrUndefined = function (node: AstNode | undefined): string | undefined {
+
+export const packageNameOrUndefined = (node: AstNode | undefined): string | undefined => {
     return getContainerOfType(node, isSdsModule)?.name;
 };
-export const parametersOrEmpty = function (node: SdsCallable | undefined): SdsParameter[] {
+
+export const parametersOrEmpty = (node: SdsCallable | undefined): SdsParameter[] => {
     return node?.parameterList?.parameters ?? [];
 };
-export const placeholdersOrEmpty = function (node: SdsBlock | undefined): SdsPlaceholder[] {
+
+export const placeholdersOrEmpty = (node: SdsBlock | undefined): SdsPlaceholder[] => {
     return stream(statementsOrEmpty(node))
         .filter(isSdsAssignment)
         .flatMap(assigneesOrEmpty)
         .filter(isSdsPlaceholder)
         .toArray();
 };
-export const resultsOrEmpty = function (node: SdsResultList | undefined): SdsResult[] {
+
+export const resultsOrEmpty = (node: SdsResultList | undefined): SdsResult[] => {
     return node?.results ?? [];
 };
-export const statementsOrEmpty = function (node: SdsBlock | undefined): SdsStatement[] {
+
+export const statementsOrEmpty = (node: SdsBlock | undefined): SdsStatement[] => {
     return node?.statements ?? [];
 };
-export const typeArgumentsOrEmpty = function (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] {
+
+export const typeArgumentsOrEmpty = (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] => {
     return node?.typeArguments ?? [];
 };
-export const typeParametersOrEmpty = function (node: SdsTypeParameterList | undefined): SdsTypeParameter[] {
-    return node?.typeParameters ?? [];
+
+export const typeParametersOrEmpty = (
+    node: SdsTypeParameterList | SdsNamedTypeDeclaration | undefined,
+): SdsTypeParameter[] => {
+    if (!node) {
+        return [];
+    }
+
+    if (isSdsTypeParameterList(node)) {
+        return node.typeParameters;
+    } else if (isSdsClass(node)) {
+        return typeParametersOrEmpty(node.typeParameterList);
+    } else if (isSdsEnumVariant(node)) {
+        return typeParametersOrEmpty(node.typeParameterList);
+    } /* c8 ignore start */ else {
+        return [];
+    } /* c8 ignore stop */
 };

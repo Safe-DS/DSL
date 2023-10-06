@@ -6,8 +6,6 @@ import {
     isSdsBlock,
     isSdsCall,
     isSdsCallable,
-    isSdsClass,
-    isSdsEnumVariant,
     isSdsNamedType,
     isSdsReference,
     isSdsSegment,
@@ -16,7 +14,6 @@ import {
     SdsAbstractCall,
     SdsArgument,
     SdsCallable,
-    SdsNamedTypeDeclaration,
     SdsParameter,
     SdsPlaceholder,
     SdsReference,
@@ -202,17 +199,7 @@ export class SafeDsNodeMapper {
 
         // Find type parameter at the same position
         const namedTypeDeclaration = containingType.declaration.ref;
-        const typeParameters = this.typeParametersOfNamedTypeDeclarationOrEmpty(namedTypeDeclaration);
+        const typeParameters = typeParametersOrEmpty(namedTypeDeclaration);
         return typeParameters[typeArgumentPosition];
-    }
-
-    private typeParametersOfNamedTypeDeclarationOrEmpty(node: SdsNamedTypeDeclaration | undefined): SdsTypeParameter[] {
-        if (isSdsClass(node)) {
-            return typeParametersOrEmpty(node.typeParameterList);
-        } else if (isSdsEnumVariant(node)) {
-            return typeParametersOrEmpty(node.typeParameterList);
-        } else {
-            return [];
-        }
     }
 }
