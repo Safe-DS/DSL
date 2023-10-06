@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
-import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import {
     isSdsAbstractResult,
@@ -32,7 +31,7 @@ describe('SafeDsNodeMapper', () => {
 
         it.each([
             {
-                name: "no value",
+                name: 'no value',
                 code: `
                     fun f()
 
@@ -42,7 +41,7 @@ describe('SafeDsNodeMapper', () => {
                 `,
             },
             {
-                name: "only one value",
+                name: 'only one value',
                 code: `
                     segment mySegment() {
                         _, val a = 1;
@@ -98,7 +97,7 @@ describe('SafeDsNodeMapper', () => {
                         val a, val b = f();
                     };
                 `,
-                expected: ["r1", "r2"],
+                expected: ['r1', 'r2'],
                 index: 3,
             },
             {
@@ -108,7 +107,7 @@ describe('SafeDsNodeMapper', () => {
                         val a, val b = f();
                     };
                 `,
-                expected: ["r1", "r2"],
+                expected: ['r1', 'r2'],
             },
             {
                 name: 'function (one result)',
@@ -119,7 +118,7 @@ describe('SafeDsNodeMapper', () => {
                         val a = f();
                     };
                 `,
-                expected: ["r1"],
+                expected: ['r1'],
             },
             {
                 name: 'function (multiple results)',
@@ -130,7 +129,7 @@ describe('SafeDsNodeMapper', () => {
                         val a, val b = f();
                     };
                 `,
-                expected: ["r1", "r2"],
+                expected: ['r1', 'r2'],
             },
             {
                 name: 'segment',
@@ -141,7 +140,7 @@ describe('SafeDsNodeMapper', () => {
                         val a, val b = s();
                     };
                 `,
-                expected: ["r1", "r2"],
+                expected: ['r1', 'r2'],
             },
         ])(
             'should return the corresponding result if the RHS is a call of a $name',
