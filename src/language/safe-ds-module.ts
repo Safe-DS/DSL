@@ -20,12 +20,14 @@ import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
 import { SafeDsCoreClasses } from './builtins/safe-ds-core-classes.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
+import { SafeDsCoreAnnotations } from './builtins/safe-ds-core-annotations.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type SafeDsAddedServices = {
     builtins: {
+        CoreAnnotations: SafeDsCoreAnnotations;
         CoreClasses: SafeDsCoreClasses;
     };
     helpers: {
@@ -52,6 +54,7 @@ export type SafeDsServices = LangiumServices & SafeDsAddedServices;
  */
 export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeDsAddedServices> = {
     builtins: {
+        CoreAnnotations: (services) => new SafeDsCoreAnnotations(services),
         CoreClasses: (services) => new SafeDsCoreClasses(services),
     },
     helpers: {

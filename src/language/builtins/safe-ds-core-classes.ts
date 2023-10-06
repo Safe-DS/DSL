@@ -8,69 +8,44 @@ const CORE_CLASSES_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreClass
 
 export class SafeDsCoreClasses {
     private readonly langiumDocuments: LangiumDocuments;
+    private readonly cache: Map<string, SdsClass> = new Map();
 
     constructor(services: SafeDsServices) {
         this.langiumDocuments = services.shared.workspace.LangiumDocuments;
     }
 
-    private cachedAny: SdsClass | undefined;
-
     /* c8 ignore start */
     get Any(): SdsClass | undefined {
-        if (!this.cachedAny) {
-            this.cachedAny = this.getClass('Any');
-        }
-        return this.cachedAny;
+        return this.getClass('Any');
     }
 
     /* c8 ignore stop */
 
-    private cachedBoolean: SdsClass | undefined;
-
     get Boolean(): SdsClass | undefined {
-        if (!this.cachedBoolean) {
-            this.cachedBoolean = this.getClass('Boolean');
-        }
-        return this.cachedBoolean;
+        return this.getClass('Boolean');
     }
-
-    private cachedFloat: SdsClass | undefined;
 
     get Float(): SdsClass | undefined {
-        if (!this.cachedFloat) {
-            this.cachedFloat = this.getClass('Float');
-        }
-        return this.cachedFloat;
+        return this.getClass('Float');
     }
-
-    private cachedInt: SdsClass | undefined;
 
     get Int(): SdsClass | undefined {
-        if (!this.cachedInt) {
-            this.cachedInt = this.getClass('Int');
-        }
-        return this.cachedInt;
+        return this.getClass('Int');
     }
-
-    private cachedNothing: SdsClass | undefined;
 
     get Nothing(): SdsClass | undefined {
-        if (!this.cachedNothing) {
-            this.cachedNothing = this.getClass('Nothing');
-        }
-        return this.cachedNothing;
+        return this.getClass('Nothing');
     }
 
-    private cachedString: SdsClass | undefined;
-
     get String(): SdsClass | undefined {
-        if (!this.cachedString) {
-            this.cachedString = this.getClass('String');
-        }
-        return this.cachedString;
+        return this.getClass('String');
     }
 
     private getClass(name: string): SdsClass | undefined {
+        if (this.cache.has(name)) {
+            return this.cache.get(name);
+        }
+
         if (!this.langiumDocuments.hasDocument(CORE_CLASSES_URI)) {
             /* c8 ignore next 2 */
             return undefined;

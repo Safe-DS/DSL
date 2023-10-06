@@ -39,8 +39,8 @@ enum AnnotationTarget {
     @Description("The annotation can be called on results.")
     Result
 
-    @Description("The annotation can be called on steps.")
-    Step
+    @Description("The annotation can be called on segments.")
+    Segment
 
     @Description("The annotation can be called on type parameters.")
     TypeParameter
@@ -60,8 +60,7 @@ annotation Repeatable
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
-    AnnotationTarget.Step,
-    AnnotationTarget.TypeParameter,
+    AnnotationTarget.Segment,
 )
 annotation Deprecated(
     @Description("What to use instead.")
@@ -87,8 +86,7 @@ annotation Deprecated(
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
-    AnnotationTarget.Step,
-    AnnotationTarget.TypeParameter,
+    AnnotationTarget.Segment,
 )
 annotation Experimental
 

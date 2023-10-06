@@ -47,6 +47,8 @@ import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } fro
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
 import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
+import { annotationCallAnnotationShouldNotBeDeprecated } from './builtins/deprecated.js';
+import {annotationCallAnnotationShouldNotBeExperimental} from "./builtins/experimental.js";
 
 /**
  * Register custom validation checks.
@@ -56,7 +58,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
-        SdsAnnotationCall: [annotationCallArgumentListShouldBeNeeded],
+        SdsAnnotationCall: [
+            annotationCallAnnotationShouldNotBeDeprecated(services),
+            annotationCallAnnotationShouldNotBeExperimental(services),
+            annotationCallArgumentListShouldBeNeeded,
+        ],
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
