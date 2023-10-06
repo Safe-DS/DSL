@@ -5,7 +5,6 @@ import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { EmptyFileSystem } from 'langium';
 import { getSyntaxErrors } from '../../helpers/diagnostics.js';
-import { clearDocuments } from 'langium/test';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'formatting';
