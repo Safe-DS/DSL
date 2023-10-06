@@ -3,6 +3,7 @@ import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import {
     isSdsAbstractCall,
     isSdsAnnotationCall,
+    isSdsAssignment,
     isSdsBlock,
     isSdsCall,
     isSdsCallable,
@@ -12,8 +13,11 @@ import {
     isSdsType,
     isSdsYield,
     SdsAbstractCall,
+    SdsAbstractResult,
     SdsArgument,
+    SdsAssignee,
     SdsCallable,
+    SdsExpression,
     SdsParameter,
     SdsPlaceholder,
     SdsReference,
@@ -25,6 +29,7 @@ import {
 import { CallableType, StaticType } from '../typing/model.js';
 import { findLocalReferences, getContainerOfType } from 'langium';
 import {
+    abstractResultsOrEmpty,
     argumentsOrEmpty,
     isNamedArgument,
     isNamedTypeArgument,
@@ -79,6 +84,40 @@ export class SafeDsNodeMapper {
         }
 
         return undefined;
+    }
+
+    /**
+     * Returns the result, block lambda result, or expression that is assigned to the given assignee. If nothing is
+     * assigned, `undefined` is returned.
+     */
+    assigneeToAssignedObjectOrUndefined(node: SdsAssignee | undefined): SdsAbstractResult | SdsExpression | undefined {
+        if (!node) {
+            return undefined;
+        }
+
+        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        /* c8 ignore start */
+        if (!containingAssignment) {
+            return undefined;
+        }
+        /* c8 ignore stop */
+
+        const assigneePosition = node.$containerIndex ?? -1;
+        const expression = containingAssignment.expression;
+
+        // If the RHS is not a call, the first assignee gets the entire RHS
+        if (!isSdsCall(expression)) {
+            if (assigneePosition === 0) {
+                return expression;
+            } else {
+                return undefined;
+            }
+        }
+
+        // If the RHS is a call, the assignee gets the corresponding result
+        const callable = this.callToCallableOrUndefined(expression);
+        const abstractResults = abstractResultsOrEmpty(callable);
+        return abstractResults[assigneePosition];
     }
 
     /**
