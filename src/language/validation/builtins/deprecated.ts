@@ -6,7 +6,8 @@ import {
     SdsAnnotationCall,
     SdsArgument,
     SdsAssignee,
-    SdsNamedType, SdsReference,
+    SdsNamedType,
+    SdsReference,
 } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 
@@ -65,30 +66,32 @@ export const argumentCorrespondingParameterShouldNotBeDeprecated =
         }
     };
 
-export const namedTypeDeclarationShouldNotBeDeprecated = (services: SafeDsServices) => (node: SdsNamedType, accept: ValidationAcceptor) => {
-    const declaration = node.declaration.ref;
-    if (!declaration) {
-        return;
-    }
+export const namedTypeDeclarationShouldNotBeDeprecated =
+    (services: SafeDsServices) => (node: SdsNamedType, accept: ValidationAcceptor) => {
+        const declaration = node.declaration.ref;
+        if (!declaration) {
+            return;
+        }
 
-    if (services.builtins.Annotations.isDeprecated(declaration)) {
-        accept('warning', `The referenced declaration '${declaration.name}' is deprecated.`, {
-            node,
-            code: CODE_DEPRECATED_REFERENCED_DECLARATION,
-        });
-    }
-};
+        if (services.builtins.Annotations.isDeprecated(declaration)) {
+            accept('warning', `The referenced declaration '${declaration.name}' is deprecated.`, {
+                node,
+                code: CODE_DEPRECATED_REFERENCED_DECLARATION,
+            });
+        }
+    };
 
-export const referenceTargetShouldNotBeDeprecated = (services: SafeDsServices) => (node: SdsReference, accept: ValidationAcceptor) => {
-    const target = node.target.ref;
-    if (!target || isSdsParameter(target)) {
-        return;
-    }
+export const referenceTargetShouldNotBeDeprecated =
+    (services: SafeDsServices) => (node: SdsReference, accept: ValidationAcceptor) => {
+        const target = node.target.ref;
+        if (!target || isSdsParameter(target)) {
+            return;
+        }
 
-    if (services.builtins.Annotations.isDeprecated(target)) {
-        accept('warning', `The referenced declaration '${target.name}' is deprecated.`, {
-            node,
-            code: CODE_DEPRECATED_REFERENCED_DECLARATION,
-        });
-    }
-};
+        if (services.builtins.Annotations.isDeprecated(target)) {
+            accept('warning', `The referenced declaration '${target.name}' is deprecated.`, {
+                node,
+                code: CODE_DEPRECATED_REFERENCED_DECLARATION,
+            });
+        }
+    };

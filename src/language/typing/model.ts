@@ -106,7 +106,7 @@ export class NamedTupleType extends Type {
         return this.entries[position]?.type;
     }
 
-    get length (): number {
+    get length(): number {
         return this.entries.length;
     }
 
