@@ -1,146 +1,26 @@
 package tests.validation.builtins.deprecated.correspondingParameter
 
-@Deprecated
-annotation DeprecatedAnnotation
-annotation ValidAnnotation
-
-@Deprecated
-class DeprecatedClass
-class ValidClass {
-
-    @Deprecated
-    attr deprecatedAttribute: Int
-    attr validAttribute: Int
-}
-
-@Deprecated
-enum DeprecatedEnum
-enum ValidEnum {
-    @Deprecated DeprecatedEnumVariant
-    ValidEnumVariant
-}
-
-@Deprecated
-fun deprecatedFunction()
-fun validFunction(
+fun f(
     @Deprecated deprecatedParameter: Int = 1,
     validParameter: Int = 1
-) -> (
-    @Deprecated deprecatedResult: Int,
-    validResult: Int
 )
 
-@Deprecated segment deprecatedStep() {}
-segment validStep() {}
-
-// $TEST$ warning "The called annotation is deprecated."
-@»DeprecatedAnnotation«
-// $TEST$ no warning "The called annotation is deprecated."
-@»ValidAnnotation«
-// $TEST$ no warning "The called annotation is deprecated."
-@»Unresolved«
-segment testStep1(
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    @Deprecated deprecatedParameter: »DeprecatedClass« = 1,
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    validParameter: »ValidClass« = 1,
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    param3: »DeprecatedEnum« = 1,
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    param4: »ValidEnum« = 1,
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    param5: »Unresolved« = 1
-)
--> (
-    @Deprecated deprecatedResult: Int,
-    validResult: Int
-) {
-
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    »deprecatedParameter«;
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    »validParameter«;
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    validParameter.»deprecatedAttribute«;
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    validParameter.»validAttribute«;
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    ValidEnum.»DeprecatedEnumVariant«;
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    ValidEnum.»ValidEnumVariant«;
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    »deprecatedFunction«();
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    »validFunction«();
-
-    validFunction(
-        // $TEST$ warning "The corresponding parameter is deprecated."
+pipeline myPipeline {
+    f(
+        // $TEST$ warning "The corresponding parameter 'deprecatedParameter' is deprecated."
         »deprecatedParameter = 1«,
-        // $TEST$ no warning "The corresponding parameter is deprecated."
+        // $TEST$ no warning r"The corresponding parameter '\w*' is deprecated\."
         »validParameter = 1«,
-        // $TEST$ no warning "The corresponding parameter is deprecated."
+        // $TEST$ no warning r"The corresponding parameter '\w*' is deprecated\."
         »unresolved = 1«,
     );
 
-    validFunction(
-        // $TEST$ warning "The corresponding parameter is deprecated."
+    f(
+        // $TEST$ warning "The corresponding parameter 'deprecatedParameter' is deprecated."
         »1«,
-        // $TEST$ no warning "The corresponding parameter is deprecated."
+        // $TEST$ no warning r"The corresponding parameter '\w*' is deprecated\."
         »1«,
-        // $TEST$ no warning "The corresponding parameter is deprecated."
+        // $TEST$ no warning r"The corresponding parameter '\w*' is deprecated\."
         »1«,
     );
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    validFunction().»deprecatedResult«;
-
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    validFunction().»validResult«;
-
-    // $TEST$ warning "The referenced declaration is deprecated."
-    »deprecatedStep«();
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    »validStep«();
-
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    »unresolved«;
-
-    /*
-     * Showing an error for yields is pointless, since we must yield something.
-     * Deprecation is only relevant for callers.
-     */
-
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    yield »deprecatedResult« = 1;
-    // $TEST$ no warning "The referenced declaration is deprecated."
-    yield »validResult« = 1;
-}
-
-segment testStep2() -> (result1: Int, result2: Int, result3: Int) {
-    // $TEST$ warning "The assigned result is deprecated."
-    // $TEST$ no warning "The assigned result is deprecated."
-    // $TEST$ no warning "The assigned result is deprecated."
-    »val a«, »val b«, »val c« = validFunction();
-
-    // $TEST$ warning "The assigned result is deprecated."
-    // $TEST$ no warning "The assigned result is deprecated."
-    // $TEST$ no warning "The assigned result is deprecated."
-    »yield result1«, »yield result2«, »yield result3« = validFunction();
-
-    // $TEST$ no warning "The assigned result is deprecated."
-    // $TEST$ no warning "The assigned result is deprecated."
-    // $TEST$ no warning "The assigned result is deprecated."
-    »_«, »_«, »_« = validFunction();
-
-    // $TEST$ no warning "The assigned result is deprecated."
-    »val d« = a;
-    // $TEST$ no warning "The assigned result is deprecated."
-    »val e« = b;
-    // $TEST$ no warning "The assigned result is deprecated."
-    »val f« = 1;
 }

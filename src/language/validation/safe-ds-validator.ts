@@ -50,13 +50,13 @@ import {argumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './o
 import {parameterMustNotBeVariadicAndOptional} from './other/declarations/parameters.js';
 import {referenceTargetMustNotBeAnnotationPipelineOrSchema} from './other/expressions/references.js';
 import {
-    annotationCallAnnotationShouldNotBeDeprecated,
-    assigneeAssignedResultShouldNotBeDeprecated
+    annotationCallAnnotationShouldNotBeDeprecated, argumentCorrespondingParameterShouldNotBeDeprecated,
+    assigneeAssignedResultShouldNotBeDeprecated,
 } from './builtins/deprecated.js';
 import {
-    annotationCallAnnotationShouldNotBeExperimental,
-    assigneeAssignedResultShouldNotBeExperimental
-} from "./builtins/experimental.js";
+    annotationCallAnnotationShouldNotBeExperimental, argumentCorrespondingParameterShouldNotBeExperimental,
+    assigneeAssignedResultShouldNotBeExperimental,
+} from './builtins/experimental.js';
 
 /**
  * Register custom validation checks.
@@ -74,6 +74,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
+        ],
+        SdsArgument: [
+            argumentCorrespondingParameterShouldNotBeDeprecated(services),
+            argumentCorrespondingParameterShouldNotBeExperimental(services),
         ],
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],

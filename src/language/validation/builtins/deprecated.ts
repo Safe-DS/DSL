@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from 'langium';
-import { isSdsResult, isSdsWildcard, SdsAnnotationCall, SdsAssignee } from '../../generated/ast.js';
+import { isSdsResult, isSdsWildcard, SdsAnnotationCall, SdsArgument, SdsAssignee } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 
 export const CODE_DEPRECATED_ASSIGNED_RESULT = 'deprecated/assigned-result';
@@ -21,7 +21,6 @@ export const assigneeAssignedResultShouldNotBeDeprecated =
         if (services.builtins.Annotations.isDeprecated(assignedObject)) {
             accept('warning', `The assigned result '${assignedObject.name}' is deprecated.`, {
                 node,
-                property: 'assignedObject',
                 code: CODE_DEPRECATED_ASSIGNED_RESULT,
             });
         }
@@ -38,6 +37,21 @@ export const annotationCallAnnotationShouldNotBeDeprecated =
             accept('warning', `The called annotation '${annotation.name}' is deprecated.`, {
                 node,
                 property: 'annotation',
+                code: CODE_DEPRECATED_CALLED_ANNOTATION,
+            });
+        }
+    };
+
+export const argumentCorrespondingParameterShouldNotBeDeprecated =
+    (services: SafeDsServices) => (node: SdsArgument, accept: ValidationAcceptor) => {
+        const parameter = services.helpers.NodeMapper.argumentToParameterOrUndefined(node);
+        if (!parameter) {
+            return;
+        }
+
+        if (services.builtins.Annotations.isDeprecated(parameter)) {
+            accept('warning', `The corresponding parameter '${parameter.name}' is deprecated.`, {
+                node,
                 code: CODE_DEPRECATED_CALLED_ANNOTATION,
             });
         }

@@ -1,0 +1,26 @@
+package tests.validation.builtins.experimental.correspondingParameter
+
+fun f(
+    @Experimental experimentalParameter: Int = 1,
+    validParameter: Int = 1
+)
+
+pipeline myPipeline {
+    f(
+        // $TEST$ warning "The corresponding parameter 'experimentalParameter' is experimental."
+        »experimentalParameter = 1«,
+        // $TEST$ no warning r"The corresponding parameter '\w*' is experimental\."
+        »validParameter = 1«,
+        // $TEST$ no warning r"The corresponding parameter '\w*' is experimental\."
+        »unresolved = 1«,
+    );
+
+    f(
+        // $TEST$ warning "The corresponding parameter 'experimentalParameter' is experimental."
+        »1«,
+        // $TEST$ no warning r"The corresponding parameter '\w*' is experimental\."
+        »1«,
+        // $TEST$ no warning r"The corresponding parameter '\w*' is experimental\."
+        »1«,
+    );
+}
