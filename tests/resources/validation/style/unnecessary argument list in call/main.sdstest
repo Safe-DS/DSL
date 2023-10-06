@@ -1,11 +1,5 @@
 package tests.validation.style.unnecessaryArgumentListInCall
 
-
-
-pipeline myPipeline {
-
-}
-
 annotation MyAnnotation
 
 class MyClass()
