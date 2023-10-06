@@ -8,9 +8,8 @@ import {
     IndexManager,
     LangiumDocuments,
 } from 'langium';
-import { packageNameOrUndefined } from '../helpers/shortcuts.js';
 import { isSdsSegment } from '../generated/ast.js';
-import { isInternal } from '../helpers/checks.js';
+import { isInternal, packageNameOrUndefined } from '../helpers/nodeProperties.js';
 
 export class SafeDsPackageManager {
     private readonly astNodeLocator: AstNodeLocator;

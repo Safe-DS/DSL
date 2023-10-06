@@ -47,20 +47,20 @@ import {
     SdsTypeArgument,
     SdsYield,
 } from '../generated/ast.js';
+import { isContainedIn } from '../helpers/astUtils.js';
 import {
     assigneesOrEmpty,
     classMembersOrEmpty,
     enumVariantsOrEmpty,
     importedDeclarationsOrEmpty,
     importsOrEmpty,
+    isStatic,
     packageNameOrUndefined,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
     typeParametersOrEmpty,
-} from '../helpers/shortcuts.js';
-import { isContainedIn } from '../helpers/ast.js';
-import { isStatic } from '../helpers/checks.js';
+} from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
