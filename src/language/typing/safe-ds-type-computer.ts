@@ -1,4 +1,12 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
+import {
+    AstNode,
+    AstNodeLocator,
+    findLocalReferences,
+    getContainerOfType,
+    getDocument,
+    streamAllContents,
+    WorkspaceCache
+} from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
 import {
@@ -47,7 +55,7 @@ import {
     isSdsNull,
     isSdsParameter,
     isSdsParenthesizedExpression,
-    isSdsPipeline,
+    isSdsPipeline, isSdsPlaceholder,
     isSdsPrefixOperation,
     isSdsReference,
     isSdsResult,

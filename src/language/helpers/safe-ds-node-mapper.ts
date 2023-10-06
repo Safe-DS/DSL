@@ -2,30 +2,35 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import {
     isSdsAbstractCall,
-    isSdsAnnotationCall,
+    isSdsAnnotationCall, isSdsBlock,
     isSdsCall,
     isSdsCallable,
     isSdsClass,
     isSdsEnumVariant,
-    isSdsNamedType,
+    isSdsNamedType, isSdsReference,
+    isSdsSegment,
     isSdsType,
+    isSdsYield,
     SdsAbstractCall,
     SdsArgument,
     SdsCallable,
     SdsNamedTypeDeclaration,
-    SdsParameter,
+    SdsParameter, SdsPlaceholder,
+    SdsReference,
+    SdsResult,
     SdsTypeArgument,
     SdsTypeParameter,
+    SdsYield,
 } from '../generated/ast.js';
 import { CallableType, StaticType } from '../typing/model.js';
-import { getContainerOfType } from 'langium';
+import { findLocalReferences, getContainerOfType } from 'langium';
 import {
     argumentsOrEmpty,
     isNamedArgument,
     isNamedTypeArgument,
     parametersOrEmpty,
     typeArgumentsOrEmpty,
-    typeParametersOrEmpty
+    typeParametersOrEmpty,
 } from './nodeProperties.js';
 
 export class SafeDsNodeMapper {
@@ -33,27 +38,6 @@ export class SafeDsNodeMapper {
 
     constructor(services: SafeDsServices) {
         this.typeComputer = () => services.types.TypeComputer;
-    }
-
-    /**
-     * Returns the callable that is called by the given call. If no callable can be found, returns undefined.
-     */
-    callToCallableOrUndefined(node: SdsAbstractCall | undefined): SdsCallable | undefined {
-        if (isSdsAnnotationCall(node)) {
-            return node.annotation?.ref;
-        } else if (isSdsCall(node)) {
-            const receiverType = this.typeComputer().computeType(node.receiver);
-            if (receiverType instanceof CallableType) {
-                return receiverType.sdsCallable;
-            } else if (receiverType instanceof StaticType) {
-                const declaration = receiverType.instanceType.sdsDeclaration;
-                if (isSdsCallable(declaration)) {
-                    return declaration;
-                }
-            }
-        }
-
-        return undefined;
     }
 
     /**
@@ -95,6 +79,88 @@ export class SafeDsNodeMapper {
         }
 
         return undefined;
+    }
+
+    /**
+     * Returns the callable that is called by the given call. If no callable can be found, returns undefined.
+     */
+    callToCallableOrUndefined(node: SdsAbstractCall | undefined): SdsCallable | undefined {
+        if (!node) {
+            return undefined;
+        }
+
+        if (isSdsAnnotationCall(node)) {
+            return node.annotation?.ref;
+        } else if (isSdsCall(node)) {
+            const receiverType = this.typeComputer().computeType(node.receiver);
+            if (receiverType instanceof CallableType) {
+                return receiverType.sdsCallable;
+            } else if (receiverType instanceof StaticType) {
+                const declaration = receiverType.instanceType.sdsDeclaration;
+                if (isSdsCallable(declaration)) {
+                    return declaration;
+                }
+            }
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Returns all references that target the given parameter.
+     */
+    parameterToReferences(node: SdsParameter | undefined): SdsReference[] {
+        if (!node) {
+            return [];
+        }
+
+        const containingCallable = getContainerOfType(node, isSdsCallable);
+        if (!containingCallable) {
+            return [];
+        }
+
+        return findLocalReferences(node, containingCallable)
+            .map((it) => it.$refNode?.astNode)
+            .filter(isSdsReference)
+            .toArray();
+    }
+
+    /**
+     * Returns all references that target the given placeholder.
+     */
+    placeholderToReferences(node: SdsPlaceholder | undefined): SdsReference[] {
+        if (!node) {
+            return [];
+        }
+
+        const containingBlock = getContainerOfType(node, isSdsBlock);
+        if (!containingBlock) {
+            return [];
+        }
+
+        return findLocalReferences(node, containingBlock)
+            .map((it) => it.$refNode?.astNode)
+            .filter(isSdsReference)
+            .toArray();
+    }
+
+    /**
+     * Returns all yields that assign to the given result.
+     */
+    resultToYields(node: SdsResult | undefined): SdsYield[] {
+        if (!node) {
+            return [];
+        }
+
+        const containingSegment = getContainerOfType(node, isSdsSegment);
+        if (!containingSegment) {
+            return [];
+        }
+
+        return findLocalReferences(node, containingSegment)
+            .map((it) => it.$refNode?.astNode)
+            .filter(isSdsYield)
+            .toArray();
     }
 
     /**

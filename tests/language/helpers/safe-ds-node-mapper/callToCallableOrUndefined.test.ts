@@ -29,8 +29,8 @@ describe('SafeDsNodeMapper', () => {
                     pipeline myPipeline {}
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)).toBeUndefined();
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
             });
 
             it('should return the called annotation', async () => {
@@ -41,8 +41,8 @@ describe('SafeDsNodeMapper', () => {
                     class MyClass
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsAnnotation');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsAnnotation');
             });
         });
 
@@ -58,8 +58,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)).toBeUndefined();
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
             });
 
             it('should return undefined if receiver is not callable', async () => {
@@ -71,8 +71,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)).toBeUndefined();
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
             });
 
             it('should return the called annotation', async () => {
@@ -84,8 +84,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsAnnotation');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsAnnotation');
             });
 
             it('should return the called annotation (aliased)', async () => {
@@ -98,8 +98,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsAnnotation');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsAnnotation');
             });
 
             it('should return the called block lambda (aliased)', async () => {
@@ -110,8 +110,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsBlockLambda');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsBlockLambda');
             });
 
             it('should return the called callable type', async () => {
@@ -121,8 +121,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsCallableType');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsCallableType');
             });
 
             it('should return the called callable type (aliased)', async () => {
@@ -133,8 +133,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsCallableType');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsCallableType');
             });
 
             it('should return the called class', async () => {
@@ -146,8 +146,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsClass');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsClass');
             });
 
             it('should return the called class (aliased)', async () => {
@@ -160,8 +160,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsClass');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsClass');
             });
 
             it('should return the called enum variant', async () => {
@@ -175,8 +175,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsEnumVariant');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsEnumVariant');
             });
 
             it('should return the called enum variant (aliased)', async () => {
@@ -191,8 +191,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsEnumVariant');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsEnumVariant');
             });
 
             it('should return the called expression lambda (aliased)', async () => {
@@ -203,8 +203,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsExpressionLambda');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsExpressionLambda');
             });
 
             it('should return the called function', async () => {
@@ -216,8 +216,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsFunction');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsFunction');
             });
 
             it('should return the called function (aliased)', async () => {
@@ -230,8 +230,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsFunction');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsFunction');
             });
 
             it('should return the called segment', async () => {
@@ -243,8 +243,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsSegment');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsSegment');
             });
 
             it('should return the called segment (aliased)', async () => {
@@ -257,8 +257,8 @@ describe('SafeDsNodeMapper', () => {
                     }
                 `;
 
-                const firstCall = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(firstCall)?.$type).toBe('SdsSegment');
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsSegment');
             });
         });
     });
