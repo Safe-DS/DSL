@@ -5,7 +5,6 @@ import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { EmptyFileSystem } from 'langium';
 import { getSyntaxErrors } from '../../helpers/diagnostics.js';
-import { clearDocuments } from 'langium/test';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'formatting';
@@ -30,14 +29,12 @@ const createFormattingTest = async (relativeResourcePath: string): Promise<Forma
     const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim();
 
     // Original code must not contain syntax errors
-    await clearDocuments(services);
     const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
     if (syntaxErrorsInOriginalCode.length > 0) {
         return invalidTest(relativeResourcePath, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
     }
 
     // Expected formatted code must not contain syntax errors
-    await clearDocuments(services);
     const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
     if (syntaxErrorsInExpectedFormattedCode.length > 0) {
         return invalidTest(
