@@ -2,12 +2,14 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import {
     isSdsAbstractCall,
-    isSdsAnnotationCall, isSdsBlock,
+    isSdsAnnotationCall,
+    isSdsBlock,
     isSdsCall,
     isSdsCallable,
     isSdsClass,
     isSdsEnumVariant,
-    isSdsNamedType, isSdsReference,
+    isSdsNamedType,
+    isSdsReference,
     isSdsSegment,
     isSdsType,
     isSdsYield,
@@ -15,7 +17,8 @@ import {
     SdsArgument,
     SdsCallable,
     SdsNamedTypeDeclaration,
-    SdsParameter, SdsPlaceholder,
+    SdsParameter,
+    SdsPlaceholder,
     SdsReference,
     SdsResult,
     SdsTypeArgument,
@@ -115,9 +118,11 @@ export class SafeDsNodeMapper {
         }
 
         const containingCallable = getContainerOfType(node, isSdsCallable);
+        /* c8 ignore start */
         if (!containingCallable) {
             return [];
         }
+        /* c8 ignore stop */
 
         return findLocalReferences(node, containingCallable)
             .map((it) => it.$refNode?.astNode)
@@ -134,9 +139,11 @@ export class SafeDsNodeMapper {
         }
 
         const containingBlock = getContainerOfType(node, isSdsBlock);
+        /* c8 ignore start */
         if (!containingBlock) {
             return [];
         }
+        /* c8 ignore stop */
 
         return findLocalReferences(node, containingBlock)
             .map((it) => it.$refNode?.astNode)
