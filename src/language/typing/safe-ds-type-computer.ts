@@ -1,12 +1,4 @@
-import {
-    AstNode,
-    AstNodeLocator,
-    findLocalReferences,
-    getContainerOfType,
-    getDocument,
-    streamAllContents,
-    WorkspaceCache
-} from 'langium';
+import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsCoreClasses } from '../builtins/safe-ds-core-classes.js';
 import {
@@ -55,7 +47,7 @@ import {
     isSdsNull,
     isSdsParameter,
     isSdsParenthesizedExpression,
-    isSdsPipeline, isSdsPlaceholder,
+    isSdsPipeline,
     isSdsPrefixOperation,
     isSdsReference,
     isSdsResult,
@@ -86,8 +78,8 @@ import {
     blockLambdaResultsOrEmpty,
     parametersOrEmpty,
     resultsOrEmpty,
-    typeArgumentsOrEmpty
-} from "../helpers/nodeProperties.js";
+    typeArgumentsOrEmpty,
+} from '../helpers/nodeProperties.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
