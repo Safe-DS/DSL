@@ -16,7 +16,7 @@ export abstract class SafeDsModuleMembers<T extends SdsModuleMember> {
         const key = `${uri.toString()}#${name}`;
 
         if (this.cache.has(key)) {
-            return this.cache.get(name);
+            return this.cache.get(key);
         }
 
         if (!this.langiumDocuments.hasDocument(uri)) {
@@ -37,7 +37,7 @@ export abstract class SafeDsModuleMembers<T extends SdsModuleMember> {
             return undefined;
         }
 
-        this.cache.set(name, firstMatchingModuleMember);
+        this.cache.set(key, firstMatchingModuleMember);
         return firstMatchingModuleMember;
     }
 }
