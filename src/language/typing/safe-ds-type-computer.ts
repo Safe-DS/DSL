@@ -377,7 +377,7 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         const rightOperandType = this.computeType(node.rightOperand);
 
-        if (leftOperandType === this.Int() && rightOperandType === this.Int()) {
+        if (leftOperandType.equals(this.Int()) && rightOperandType.equals(this.Int())) {
             return this.Int();
         } else {
             return this.Float();
@@ -398,7 +398,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const leftOperandType = this.computeType(node.operand);
 
-        if (leftOperandType === this.Int()) {
+        if (leftOperandType.equals(this.Int())) {
             return this.Int();
         } else {
             return this.Float();
@@ -501,49 +501,24 @@ export class SafeDsTypeComputer {
     // Builtin types
     // -----------------------------------------------------------------------------------------------------------------
 
-    private cachedBoolean: Type = UnknownType;
-
     private Boolean(): Type {
-        if (this.cachedBoolean === UnknownType) {
-            this.cachedBoolean = this.createCoreType(this.coreClasses.Boolean);
-        }
-        return this.cachedBoolean;
+        return this.createCoreType(this.coreClasses.Boolean);
     }
-
-    private cachedFloat: Type = UnknownType;
 
     private Float(): Type {
-        if (this.cachedFloat === UnknownType) {
-            this.cachedFloat = this.createCoreType(this.coreClasses.Float);
-        }
-        return this.cachedFloat;
+        return this.createCoreType(this.coreClasses.Float);
     }
-
-    private cachedInt: Type = UnknownType;
 
     private Int(): Type {
-        if (this.cachedInt === UnknownType) {
-            this.cachedInt = this.createCoreType(this.coreClasses.Int);
-        }
-        return this.cachedInt;
+        return this.createCoreType(this.coreClasses.Int);
     }
-
-    private cachedNothingOrNull: Type = UnknownType;
 
     private NothingOrNull(): Type {
-        if (this.cachedNothingOrNull === UnknownType) {
-            this.cachedNothingOrNull = this.createCoreType(this.coreClasses.Nothing, true);
-        }
-        return this.cachedNothingOrNull;
+        return this.createCoreType(this.coreClasses.Nothing, true);
     }
 
-    private cachedString: Type = UnknownType;
-
     private String(): Type {
-        if (this.cachedString === UnknownType) {
-            this.cachedString = this.createCoreType(this.coreClasses.String);
-        }
-        return this.cachedString;
+        return this.createCoreType(this.coreClasses.String);
     }
 
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
