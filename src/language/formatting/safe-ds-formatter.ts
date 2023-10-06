@@ -14,7 +14,7 @@ import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
 import oneSpace = Formatting.oneSpace;
 import indent = Formatting.indent;
-import {annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty} from "../helpers/nodeProperties.js";
+import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/nodeProperties.js';
 
 const newLinesWithIndent = function (count: number, options?: FormattingActionOptions): FormattingAction {
     return {

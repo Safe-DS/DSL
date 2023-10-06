@@ -51,13 +51,15 @@ import { isContainedIn } from '../helpers/astUtils.js';
 import {
     assigneesOrEmpty,
     classMembersOrEmpty,
-    enumVariantsOrEmpty, importedDeclarationsOrEmpty,
+    enumVariantsOrEmpty,
+    importedDeclarationsOrEmpty,
     importsOrEmpty,
-    isStatic, packageNameOrUndefined,
+    isStatic,
+    packageNameOrUndefined,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
-    typeParametersOrEmpty
+    typeParametersOrEmpty,
 } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
