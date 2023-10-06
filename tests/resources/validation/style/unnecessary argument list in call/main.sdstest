@@ -1,0 +1,65 @@
+package tests.validation.style.unnecessaryArgumentListInCall
+
+annotation MyAnnotation
+
+class MyClass()
+
+enum MyEnum {
+    EnumVariantWithoutParameterList
+    EnumVariantWithEmptyParameterList()
+    EnumVariantWithoutRequiredParameters(a: Int = 0, vararg b: Int)
+    EnumVariantWithRequiredParameters(a: Int)
+}
+
+fun myFunction()
+
+segment mySegment1() {}
+
+segment mySegment2(
+    callableType: () -> (),
+) {
+    val blockLambda = () {};
+    val expressionLambda = () -> 0;
+
+    // $TEST$ no info "This argument list can be removed."
+    MyAnnotation»()«;
+
+    // $TEST$ no info "This argument list can be removed."
+    MyClass»()«;
+
+    // $TEST$ info "This argument list can be removed."
+    MyEnum.EnumVariantWithoutParameterList»()«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.EnumVariantWithoutParameterList»(1)«;
+    // $TEST$ info "This argument list can be removed."
+    MyEnum.EnumVariantWithEmptyParameterList»()«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.EnumVariantWithEmptyParameterList»(1)«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.EnumVariantWithoutRequiredParameters»()«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.EnumVariantWithoutRequiredParameters»(1)«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.EnumVariantWithRequiredParameters»()«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.EnumVariantWithRequiredParameters»(1)«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.Unresolved»()«;
+    // $TEST$ no info "This argument list can be removed."
+    MyEnum.Unresolved»(1)«;
+
+    // $TEST$ no info "This argument list can be removed."
+    myFunction»()«;
+
+    // $TEST$ no info "This argument list can be removed."
+    mySegment1»()«;
+
+    // $TEST$ no info "This argument list can be removed."
+    callableType»()«;
+
+    // $TEST$ no info "This argument list can be removed."
+    blockLambda»()«;
+
+    // $TEST$ no info "This argument list can be removed."
+    expressionLambda»()«;
+}

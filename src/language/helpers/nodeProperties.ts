@@ -63,6 +63,10 @@ export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
     return Boolean(node.typeParameter);
 };
 
+export const isRequiredParameter = (node: SdsParameter): boolean => {
+    return !node.defaultValue && !node.isVariadic;
+};
+
 export const isStatic = (node: SdsClassMember): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
         return true;

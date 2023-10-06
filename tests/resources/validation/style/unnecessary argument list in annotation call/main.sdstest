@@ -1,0 +1,35 @@
+package tests.validation.style.unnecessaryArgumentListInAnnotationCall
+
+@Repeatable
+annotation AnnotationWithoutParameterList
+
+@Repeatable
+annotation AnnotationWithEmptyParameterList()
+
+@Repeatable
+annotation AnnotationWithoutRequiredParameters(a: Int = 0, vararg b: Int)
+
+@Repeatable
+annotation AnnotationWithRequiredParameters(a: Int)
+
+// $TEST$ info "This argument list can be removed."
+@AnnotationWithoutParameterList»()«
+// $TEST$ no info "This argument list can be removed."
+@AnnotationWithoutParameterList»(1)«
+// $TEST$ info "This argument list can be removed."
+@AnnotationWithEmptyParameterList»()«
+// $TEST$ no info "This argument list can be removed."
+@AnnotationWithEmptyParameterList»(1)«
+// $TEST$ info "This argument list can be removed."
+@AnnotationWithoutRequiredParameters»()«
+// $TEST$ no info "This argument list can be removed."
+@AnnotationWithoutRequiredParameters»(1)«
+// $TEST$ no info "This argument list can be removed."
+@AnnotationWithRequiredParameters»()«
+// $TEST$ no info "This argument list can be removed."
+@AnnotationWithRequiredParameters»(1)«
+// $TEST$ no info "This argument list can be removed."
+@Unresolved»()«
+// $TEST$ no info "This argument list can be removed."
+@Unresolved»(1)«
+class MyClass
