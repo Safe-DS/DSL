@@ -16,8 +16,9 @@ import {
     segmentMustContainUniqueNames,
 } from './names.js';
 import {
+    annotationCallArgumentListShouldBeNeeded,
     annotationParameterListShouldNotBeEmpty,
-    assignmentShouldHaveMoreThanWildcardsAsAssignees,
+    assignmentShouldHaveMoreThanWildcardsAsAssignees, callArgumentListShouldBeNeeded,
     classBodyShouldNotBeEmpty,
     constraintListShouldNotBeEmpty,
     enumBodyShouldNotBeEmpty,
@@ -52,9 +53,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
     const checks: ValidationChecks<SafeDsAstType> = {
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
+        SdsAnnotationCall: [annotationCallArgumentListShouldBeNeeded],
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
+        SdsCall: [callArgumentListShouldBeNeeded(services)],
         SdsCallableType: [callableTypeMustContainUniqueNames, callableTypeMustNotHaveOptionalParameters],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],

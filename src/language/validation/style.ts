@@ -1,7 +1,8 @@
 import {
+    isSdsEnumVariant,
     isSdsWildcard,
-    SdsAnnotation,
-    SdsAssignment,
+    SdsAnnotation, SdsAnnotationCall,
+    SdsAssignment, SdsCall,
     SdsClassBody,
     SdsConstraintList,
     SdsEnumBody,
@@ -11,8 +12,10 @@ import {
     SdsTypeParameterList,
     SdsUnionType,
 } from '../generated/ast.js';
-import { ValidationAcceptor } from 'langium';
-import { isEmpty } from 'radash';
+import {ValidationAcceptor} from 'langium';
+import {isEmpty} from 'radash';
+import {isRequiredParameter, parametersOrEmpty} from "../helpers/nodeProperties.js";
+import {SafeDsServices} from "../safe-ds-module.js";
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
@@ -25,6 +28,55 @@ export const CODE_STYLE_UNNECESSARY_RESULT_LIST = 'style/unnecessary-result-list
 export const CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST = 'style/unnecessary-type-argument-list';
 export const CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST = 'style/unnecessary-type-parameter-list';
 export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
+
+// -----------------------------------------------------------------------------
+// Unnecessary argument list
+// -----------------------------------------------------------------------------
+
+export const annotationCallArgumentListShouldBeNeeded = (
+    node: SdsAnnotationCall,
+    accept: ValidationAcceptor,
+): void => {
+    const argumentList = node.argumentList;
+    if (!argumentList || !isEmpty(argumentList.arguments)) {
+        return;
+    }
+
+    const annotation = node.annotation?.ref;
+    if (!annotation) {
+        return;
+    }
+
+    const hasRequiredParameters = parametersOrEmpty(annotation).some(isRequiredParameter);
+    if (!hasRequiredParameters) {
+        accept('info', 'This argument list can be removed.', {
+            node: argumentList,
+            code: CODE_STYLE_UNNECESSARY_ARGUMENT_LIST,
+        })
+    }
+}
+
+export const callArgumentListShouldBeNeeded = (services: SafeDsServices) => (
+    node: SdsCall,
+    accept: ValidationAcceptor,
+): void => {
+    const argumentList = node.argumentList;
+    if (!argumentList || !isEmpty(argumentList.arguments)) {
+        return;
+    }
+
+    const callable = services.helpers.NodeMapper.callToCallableOrUndefined(node);
+    if (!isSdsEnumVariant(callable)) {
+        return;
+    }
+
+    if (isEmpty(parametersOrEmpty(callable))) {
+        accept('info', 'This argument list can be removed.', {
+            node: argumentList,
+            code: CODE_STYLE_UNNECESSARY_ARGUMENT_LIST,
+        })
+    }
+}
 
 // -----------------------------------------------------------------------------
 // Unnecessary assignment
