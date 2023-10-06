@@ -25,7 +25,7 @@ describe('SafeDsNodeMapper', () => {
     });
 
     describe('assigneeToAssignedObjectOrUndefined', () => {
-        it('should return an empty list if passed undefined', async () => {
+        it('should return undefined if passed undefined', async () => {
             expect(nodeMapper.assigneeToAssignedObjectOrUndefined(undefined)?.$type).toBeUndefined();
         });
 
