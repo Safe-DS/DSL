@@ -1,5 +1,12 @@
 import { ValidationAcceptor } from 'langium';
-import { isSdsResult, isSdsWildcard, SdsAnnotationCall, SdsArgument, SdsAssignee } from '../../generated/ast.js';
+import {
+    isSdsResult,
+    isSdsWildcard,
+    SdsAnnotationCall,
+    SdsArgument,
+    SdsAssignee,
+    SdsNamedType,
+} from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 
 export const CODE_EXPERIMENTAL_ASSIGNED_RESULT = 'experimental/assigned-result';
@@ -28,7 +35,7 @@ export const assigneeAssignedResultShouldNotBeExperimental =
 
 export const annotationCallAnnotationShouldNotBeExperimental =
     (services: SafeDsServices) => (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        const annotation = node.annotation?.ref;
+        const annotation = node.annotation.ref;
         if (!annotation) {
             return;
         }
@@ -53,6 +60,21 @@ export const argumentCorrespondingParameterShouldNotBeExperimental =
             accept('warning', `The corresponding parameter '${parameter.name}' is experimental.`, {
                 node,
                 code: CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
+            });
+        }
+    };
+
+export const namedTypeDeclarationShouldNotBeExperimental =
+    (services: SafeDsServices) => (node: SdsNamedType, accept: ValidationAcceptor) => {
+        const declaration = node.declaration.ref;
+        if (!declaration) {
+            return;
+        }
+
+        if (services.builtins.Annotations.isExperimental(declaration)) {
+            accept('warning', `The referenced declaration '${declaration.name}' is experimental.`, {
+                node,
+                code: CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
             });
         }
     };

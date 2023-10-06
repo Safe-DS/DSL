@@ -51,11 +51,11 @@ import {parameterMustNotBeVariadicAndOptional} from './other/declarations/parame
 import {referenceTargetMustNotBeAnnotationPipelineOrSchema} from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated, argumentCorrespondingParameterShouldNotBeDeprecated,
-    assigneeAssignedResultShouldNotBeDeprecated,
+    assigneeAssignedResultShouldNotBeDeprecated, namedTypeDeclarationShouldNotBeDeprecated,
 } from './builtins/deprecated.js';
 import {
     annotationCallAnnotationShouldNotBeExperimental, argumentCorrespondingParameterShouldNotBeExperimental,
-    assigneeAssignedResultShouldNotBeExperimental,
+    assigneeAssignedResultShouldNotBeExperimental, namedTypeDeclarationShouldNotBeExperimental,
 } from './builtins/experimental.js';
 
 /**
@@ -95,7 +95,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsMemberAccess: [memberAccessNullSafetyShouldBeNeeded(services)],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
-        SdsNamedType: [namedTypeTypeArgumentListShouldBeNeeded],
+        SdsNamedType: [
+            namedTypeDeclarationShouldNotBeDeprecated(services),
+            namedTypeDeclarationShouldNotBeExperimental(services),
+            namedTypeTypeArgumentListShouldBeNeeded
+        ],
         SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
         SdsParameterList: [
             parameterListMustNotHaveOptionalAndVariadicParameters,

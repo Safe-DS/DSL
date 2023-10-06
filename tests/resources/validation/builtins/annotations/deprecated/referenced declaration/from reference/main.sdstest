@@ -1,0 +1,96 @@
+package tests.validation.builtins.deprecated.referencedDeclaration.fromReference
+
+@Deprecated
+class DeprecatedClass
+class ValidClass {
+
+    @Deprecated
+    static attr deprecatedAttribute: Int
+    static attr validAttribute: Int
+}
+
+@Deprecated
+enum DeprecatedEnum
+enum ValidEnum {
+    @Deprecated DeprecatedEnumVariant
+
+    ValidEnumVariant
+}
+
+@Deprecated
+fun deprecatedFunction()
+fun validFunction(
+    @Deprecated deprecatedParameter: Int = 1,
+    validParameter: Int = 1
+) -> (
+    @Deprecated
+    deprecatedResult: Int,
+    validResult: Int
+)
+
+@Deprecated
+segment deprecatedSegment() {}
+segment validSegment() {}
+
+segment mySegment(
+    // $TEST$ warning "The referenced declaration 'DeprecatedClass' is deprecated."
+    @Deprecated deprecatedParameter: »DeprecatedClass« = 1,
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    validParameter: »ValidClass« = 1,
+
+    // $TEST$ warning "The referenced declaration 'DeprecatedEnum' is deprecated."
+    param3: »DeprecatedEnum« = 1,
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    param4: »ValidEnum« = 1,
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    param5: »Unresolved« = 1
+)
+-> (
+    @Deprecated deprecatedResult: Int,
+    validResult: Int
+) {
+    /*
+     * Deprecation is only relevant for callers
+     */
+
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »deprecatedParameter«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »validParameter«;
+
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    yield »deprecatedResult« = 1;
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    yield »validResult« = 1;
+
+
+    // $TEST$ warning "The referenced declaration 'deprecatedAttribute' is deprecated."
+    ValidClass.»deprecatedAttribute«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    ValidClass.»validAttribute«;
+
+    // $TEST$ warning "The referenced declaration 'DeprecatedEnumVariant' is deprecated."
+    ValidEnum.»DeprecatedEnumVariant«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    ValidEnum.»ValidEnumVariant«;
+
+    // $TEST$ warning "The referenced declaration 'deprecatedFunction' is deprecated."
+    »deprecatedFunction«();
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »validFunction«();
+
+    // $TEST$ warning "The referenced declaration 'deprecatedResult' is deprecated."
+    validFunction().»deprecatedResult«;
+
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    validFunction().»validResult«;
+
+    // $TEST$ warning "The referenced declaration 'deprecatedSegment' is deprecated."
+    »deprecatedSegment«();
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »validSegment«();
+
+
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »unresolved«;
+}
