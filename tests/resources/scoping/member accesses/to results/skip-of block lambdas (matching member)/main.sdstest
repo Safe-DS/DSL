@@ -1,0 +1,15 @@
+package tests.scoping.memberAccesses.toResults.ofBlockLambdas.matchingMember
+
+class MyClass() {
+    // $TEST$ target MyClass_result
+    attr »result«: Int
+}
+
+pipeline myPipeline {
+    val lambdaWithOneResultWithIdenticalMember = () {
+        yield result = MyClass();
+    };
+
+    // $TEST$ references MyClass_result
+    lambdaWithOneResultWithIdenticalMember().»result«;
+}

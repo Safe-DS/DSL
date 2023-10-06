@@ -1,0 +1,15 @@
+package tests.scoping.memberAccesses.toResults.ofFunctions
+
+// $TEST$ target functionWithOneResult_singleResult
+fun functionWithOneResult() -> »singleResult«: Int
+
+// $TEST$ target functionWithTwoResults_result1
+fun functionWithTwoResults() -> (»result1«: Int, result2: Int)
+
+pipeline myPipeline {
+    // $TEST$ references functionWithOneResult_singleResult
+    functionWithOneResult().»singleResult«;
+
+    // $TEST$ references functionWithTwoResults_result1
+    functionWithTwoResults().»result1«;
+}

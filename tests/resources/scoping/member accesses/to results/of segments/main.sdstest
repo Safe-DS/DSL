@@ -1,0 +1,15 @@
+package tests.scoping.memberAccesses.toResults.ofSegments
+
+// $TEST$ target segmentWithOneResult_singleResult
+segment segmentWithOneResult() -> »singleResult«: Int {}
+
+// $TEST$ target segmentWithTwoResults_result1
+segment segmentWithTwoResults() -> (»result1«: Int, result2: Int) {}
+
+pipeline myPipeline {
+    // $TEST$ references segmentWithOneResult_singleResult
+    segmentWithOneResult().»singleResult«;
+
+    // $TEST$ references segmentWithTwoResults_result1
+    segmentWithTwoResults().»result1«;
+}

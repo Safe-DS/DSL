@@ -1,0 +1,15 @@
+package tests.scoping.memberAccesses.toResults.ofCallableTypes
+
+segment mySegment(
+    // $TEST$ target callableWithOneResult_singleResult
+    callableWithOneResult: () -> »singleResult«: Int,
+
+    // $TEST$ target callableWithTwoResults_result1
+    callableWithTwoResults: () -> (»result1«: Int, result2: Int),
+) {
+    // $TEST$ references callableWithOneResult_singleResult
+    callableWithOneResult().»singleResult«;
+
+    // $TEST$ references callableWithTwoResults_result1
+    callableWithTwoResults().»result1«;
+}

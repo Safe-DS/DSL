@@ -13,7 +13,7 @@ import {
     isSdsAbstractCall,
     isSdsArgument,
     isSdsAssignment,
-    isSdsBlock,
+    isSdsBlock, isSdsCall,
     isSdsCallable,
     isSdsClass,
     isSdsEnum,
@@ -49,6 +49,7 @@ import {
 } from '../generated/ast.js';
 import { isContainedIn } from '../helpers/astUtils.js';
 import {
+    abstractResultsOrEmpty,
     assigneesOrEmpty,
     classMembersOrEmpty,
     enumVariantsOrEmpty,
@@ -185,35 +186,41 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return this.createScopeForNodes(enumVariantsOrEmpty(declaration));
         }
 
-        //     // Call results
-        //     var resultScope = IScope.NULLSCOPE
-        //     if (receiver is SdsCall) {
-        //         val results = receiver.resultsOrNull()
-        //         when {
-        //             results == null -> return IScope.NULLSCOPE
-        //             results.size > 1 -> return Scopes.scopeFor(results)
-        //             results.size == 1 -> resultScope = Scopes.scopeFor(results)
-        //         }
-        //     }
-        //
-        //     // Members
-        //     val type = (receiver.type() as? NamedType) ?: return resultScope
-        //
-        //     return when {
-        //         type.isNullable && !context.isNullSafe -> resultScope
-        //         type is ClassType -> {
-        //             val members = type.sdsClass.classMembersOrEmpty().filter { !it.isStatic() }
-        //             val superTypeMembers = type.sdsClass.superClassMembers()
-        //                 .filter { !it.isStatic() }
-        //         .toList()
-        //
-        //             Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
-        //         }
-        //         type is EnumVariantType -> Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
-        //     else -> resultScope
-        //     }
+        // Call results
+        let resultScope = EMPTY_SCOPE;
+        if (isSdsCall(node.receiver)) {
+            const callable = this.nodeMapper.callToCallableOrUndefined(node.receiver);
+            const results = abstractResultsOrEmpty(callable);
 
-        return EMPTY_SCOPE;
+            if (results.length === 0) {
+                return EMPTY_SCOPE;
+            } else if (results.length > 1) {
+                return this.createScopeForNodes(results);
+            } else {
+                // If there is only one result, it can be accessed by name but members of the result with the same name
+                // take precedence.
+                resultScope = this.createScopeForNodes(results);
+            }
+        }
+
+        // // Members
+        // val type = (receiver.type() as? NamedType) ?: return resultScope
+        //
+        // return when {
+        //     type.isNullable && !context.isNullSafe -> resultScope
+        //     type is ClassType -> {
+        //         val members = type.sdsClass.classMembersOrEmpty().filter { !it.isStatic() }
+        //         val superTypeMembers = type.sdsClass.superClassMembers()
+        //             .filter { !it.isStatic() }
+        //     .toList()
+        //
+        //         Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
+        //     }
+        //     type is EnumVariantType -> Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
+        // else -> resultScope
+        // }
+
+        return resultScope;
     }
 
     /**
