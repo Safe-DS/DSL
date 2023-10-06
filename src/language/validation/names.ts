@@ -20,8 +20,9 @@ import {
     parametersOrEmpty,
     placeholdersOrEmpty,
     resultsOrEmpty,
-    typeParametersOrEmpty
+    typeParametersOrEmpty,
 } from '../helpers/nodeProperties.js';
+import { duplicatesBy } from '../helpers/collectionUtils.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -238,23 +239,11 @@ const namesMustBeUnique = (
     createMessage: (name: string) => string,
     accept: ValidationAcceptor,
 ): void => {
-    const knownNames = new Set<string>();
-
-    for (const node of nodes) {
-        const name = node.name;
-        if (!name) {
-            /* c8 ignore next 2 */
-            continue;
-        }
-
-        if (knownNames.has(name)) {
-            accept('error', createMessage(name), {
-                node,
-                property: 'name',
-                code: CODE_NAME_DUPLICATE,
-            });
-        } else {
-            knownNames.add(name);
-        }
+    for (const node of duplicatesBy(nodes, (it) => it.name)) {
+        accept('error', createMessage(node.name), {
+            node,
+            property: 'name',
+            code: CODE_NAME_DUPLICATE,
+        });
     }
 };
