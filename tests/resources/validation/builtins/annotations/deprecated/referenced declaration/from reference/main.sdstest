@@ -19,10 +19,7 @@ enum ValidEnum {
 
 @Deprecated
 fun deprecatedFunction()
-fun validFunction(
-    @Deprecated deprecatedParameter: Int = 1,
-    validParameter: Int = 1
-) -> (
+fun validFunction() -> (
     @Deprecated
     deprecatedResult: Int,
     validResult: Int
@@ -33,17 +30,8 @@ segment deprecatedSegment() {}
 segment validSegment() {}
 
 segment mySegment(
-    // $TEST$ warning "The referenced declaration 'DeprecatedClass' is deprecated."
-    @Deprecated deprecatedParameter: »DeprecatedClass« = 1,
-    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
-    validParameter: »ValidClass« = 1,
-
-    // $TEST$ warning "The referenced declaration 'DeprecatedEnum' is deprecated."
-    param3: »DeprecatedEnum« = 1,
-    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
-    param4: »ValidEnum« = 1,
-    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
-    param5: »Unresolved« = 1
+    @Deprecated deprecatedParameter: ValidClass,
+    validParameter: ValidClass,
 )
 -> (
     @Deprecated deprecatedResult: Int,
@@ -64,15 +52,27 @@ segment mySegment(
     yield »validResult« = 1;
 
 
+    // $TEST$ warning "The referenced declaration 'DeprecatedClass' is deprecated."
+    »DeprecatedClass«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »ValidClass«;
+
     // $TEST$ warning "The referenced declaration 'deprecatedAttribute' is deprecated."
     ValidClass.»deprecatedAttribute«;
     // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
     ValidClass.»validAttribute«;
 
+
+    // $TEST$ warning "The referenced declaration 'DeprecatedEnum' is deprecated."
+    »DeprecatedEnum«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    »ValidEnum«;
+
     // $TEST$ warning "The referenced declaration 'DeprecatedEnumVariant' is deprecated."
     ValidEnum.»DeprecatedEnumVariant«;
     // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
     ValidEnum.»ValidEnumVariant«;
+
 
     // $TEST$ warning "The referenced declaration 'deprecatedFunction' is deprecated."
     »deprecatedFunction«();
@@ -81,9 +81,9 @@ segment mySegment(
 
     // $TEST$ warning "The referenced declaration 'deprecatedResult' is deprecated."
     validFunction().»deprecatedResult«;
-
     // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
     validFunction().»validResult«;
+
 
     // $TEST$ warning "The referenced declaration 'deprecatedSegment' is deprecated."
     »deprecatedSegment«();

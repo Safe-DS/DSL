@@ -1,11 +1,12 @@
 import { ValidationAcceptor } from 'langium';
 import {
+    isSdsParameter,
     isSdsResult,
     isSdsWildcard,
     SdsAnnotationCall,
     SdsArgument,
     SdsAssignee,
-    SdsNamedType,
+    SdsNamedType, SdsReference,
 } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 
@@ -72,6 +73,20 @@ export const namedTypeDeclarationShouldNotBeDeprecated = (services: SafeDsServic
 
     if (services.builtins.Annotations.isDeprecated(declaration)) {
         accept('warning', `The referenced declaration '${declaration.name}' is deprecated.`, {
+            node,
+            code: CODE_DEPRECATED_REFERENCED_DECLARATION,
+        });
+    }
+};
+
+export const referenceTargetShouldNotBeDeprecated = (services: SafeDsServices) => (node: SdsReference, accept: ValidationAcceptor) => {
+    const target = node.target.ref;
+    if (!target || isSdsParameter(target)) {
+        return;
+    }
+
+    if (services.builtins.Annotations.isDeprecated(target)) {
+        accept('warning', `The referenced declaration '${target.name}' is deprecated.`, {
             node,
             code: CODE_DEPRECATED_REFERENCED_DECLARATION,
         });

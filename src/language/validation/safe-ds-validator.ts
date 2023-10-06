@@ -1,6 +1,6 @@
-import {ValidationChecks} from 'langium';
-import {SafeDsAstType} from '../generated/ast.js';
-import type {SafeDsServices} from '../safe-ds-module.js';
+import { ValidationChecks } from 'langium';
+import { SafeDsAstType } from '../generated/ast.js';
+import type { SafeDsServices } from '../safe-ds-module.js';
 import {
     annotationMustContainUniqueNames,
     blockLambdaMustContainUniqueNames,
@@ -31,31 +31,35 @@ import {
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
-import {templateStringMustHaveExpressionBetweenTwoStringParts} from './other/expressions/templateStrings.js';
-import {yieldMustNotBeUsedInPipeline} from './other/statements/assignments.js';
-import {attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint} from './types.js';
-import {moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage} from './other/modules.js';
-import {
-    typeParameterConstraintLeftOperandMustBeOwnTypeParameter
-} from './other/declarations/typeParameterConstraints.js';
+import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
+import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
+import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
+import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import {
     parameterListMustNotHaveOptionalAndVariadicParameters,
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
-import {unionTypeMustHaveTypeArguments} from './other/types/unionTypes.js';
-import {callableTypeMustNotHaveOptionalParameters} from './other/types/callableTypes.js';
-import {typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './other/types/typeArgumentLists.js';
-import {argumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './other/argumentLists.js';
-import {parameterMustNotBeVariadicAndOptional} from './other/declarations/parameters.js';
-import {referenceTargetMustNotBeAnnotationPipelineOrSchema} from './other/expressions/references.js';
+import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
+import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
+import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
+import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
+import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
+import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
 import {
-    annotationCallAnnotationShouldNotBeDeprecated, argumentCorrespondingParameterShouldNotBeDeprecated,
-    assigneeAssignedResultShouldNotBeDeprecated, namedTypeDeclarationShouldNotBeDeprecated,
+    annotationCallAnnotationShouldNotBeDeprecated,
+    argumentCorrespondingParameterShouldNotBeDeprecated,
+    assigneeAssignedResultShouldNotBeDeprecated,
+    namedTypeDeclarationShouldNotBeDeprecated,
+    referenceTargetShouldNotBeDeprecated,
 } from './builtins/deprecated.js';
 import {
-    annotationCallAnnotationShouldNotBeExperimental, argumentCorrespondingParameterShouldNotBeExperimental,
-    assigneeAssignedResultShouldNotBeExperimental, namedTypeDeclarationShouldNotBeExperimental,
+    annotationCallAnnotationShouldNotBeExperimental,
+    argumentCorrespondingParameterShouldNotBeExperimental,
+    assigneeAssignedResultShouldNotBeExperimental,
+    namedTypeDeclarationShouldNotBeExperimental,
+    referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
 
 /**
@@ -98,7 +102,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
-            namedTypeTypeArgumentListShouldBeNeeded
+            namedTypeTypeArgumentListShouldBeNeeded,
         ],
         SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
         SdsParameterList: [
@@ -107,7 +111,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterListVariadicParameterMustBeLast,
         ],
         SdsPipeline: [pipelineMustContainUniqueNames],
-        SdsReference: [referenceTargetMustNotBeAnnotationPipelineOrSchema],
+        SdsReference: [
+            referenceTargetMustNotBeAnnotationPipelineOrSchema,
+            referenceTargetShouldNotBeDeprecated(services),
+            referenceTargetShouldNotExperimental(services),
+        ],
         SdsResult: [resultMustHaveTypeHint],
         SdsSegment: [segmentMustContainUniqueNames, segmentResultListShouldNotBeEmpty],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],

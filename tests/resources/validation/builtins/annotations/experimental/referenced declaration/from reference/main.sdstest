@@ -19,10 +19,7 @@ enum ValidEnum {
 
 @Experimental
 fun experimentalFunction()
-fun validFunction(
-    @Experimental experimentalParameter: Int = 1,
-    validParameter: Int = 1
-) -> (
+fun validFunction() -> (
     @Experimental
     experimentalResult: Int,
     validResult: Int
@@ -33,17 +30,8 @@ segment experimentalSegment() {}
 segment validSegment() {}
 
 segment mySegment(
-    // $TEST$ warning "The referenced declaration 'ExperimentalClass' is experimental."
-    @Experimental experimentalParameter: »ExperimentalClass« = 1,
-    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
-    validParameter: »ValidClass« = 1,
-
-    // $TEST$ warning "The referenced declaration 'ExperimentalEnum' is experimental."
-    param3: »ExperimentalEnum« = 1,
-    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
-    param4: »ValidEnum« = 1,
-    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
-    param5: »Unresolved« = 1
+    @Experimental experimentalParameter: ValidClass,
+    validParameter: ValidClass,
 )
 -> (
     @Experimental experimentalResult: Int,
@@ -64,15 +52,27 @@ segment mySegment(
     yield »validResult« = 1;
 
 
+    // $TEST$ warning "The referenced declaration 'ExperimentalClass' is experimental."
+    »ExperimentalClass«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
+    »ValidClass«;
+
     // $TEST$ warning "The referenced declaration 'experimentalAttribute' is experimental."
     ValidClass.»experimentalAttribute«;
     // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
     ValidClass.»validAttribute«;
 
+
+    // $TEST$ warning "The referenced declaration 'ExperimentalEnum' is experimental."
+    »ExperimentalEnum«;
+    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
+    »ValidEnum«;
+
     // $TEST$ warning "The referenced declaration 'ExperimentalEnumVariant' is experimental."
     ValidEnum.»ExperimentalEnumVariant«;
     // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
     ValidEnum.»ValidEnumVariant«;
+
 
     // $TEST$ warning "The referenced declaration 'experimentalFunction' is experimental."
     »experimentalFunction«();
@@ -81,9 +81,9 @@ segment mySegment(
 
     // $TEST$ warning "The referenced declaration 'experimentalResult' is experimental."
     validFunction().»experimentalResult«;
-
     // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
     validFunction().»validResult«;
+
 
     // $TEST$ warning "The referenced declaration 'experimentalSegment' is experimental."
     »experimentalSegment«();
