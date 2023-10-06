@@ -23,7 +23,7 @@ import {
     constraintListShouldNotBeEmpty,
     enumBodyShouldNotBeEmpty,
     enumVariantParameterListShouldNotBeEmpty,
-    functionResultListShouldNotBeEmpty,
+    functionResultListShouldNotBeEmpty, namedTypeTypeArgumentListShouldBeNeeded,
     segmentResultListShouldNotBeEmpty,
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
@@ -69,6 +69,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
+        SdsNamedType: [namedTypeTypeArgumentListShouldBeNeeded],
         SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
         SdsParameterList: [
             parameterListMustNotHaveOptionalAndVariadicParameters,

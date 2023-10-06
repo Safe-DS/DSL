@@ -7,14 +7,14 @@ import {
     SdsConstraintList,
     SdsEnumBody,
     SdsEnumVariant,
-    SdsFunction,
+    SdsFunction, SdsNamedType,
     SdsSegment,
     SdsTypeParameterList,
     SdsUnionType,
 } from '../generated/ast.js';
 import {ValidationAcceptor} from 'langium';
 import {isEmpty} from 'radash';
-import {isRequiredParameter, parametersOrEmpty} from "../helpers/nodeProperties.js";
+import {isRequiredParameter, parametersOrEmpty, typeParametersOrEmpty} from "../helpers/nodeProperties.js";
 import {SafeDsServices} from "../safe-ds-module.js";
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
@@ -30,7 +30,7 @@ export const CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST = 'style/unnecessary-typ
 export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
 
 // -----------------------------------------------------------------------------
-// Unnecessary argument list
+// Unnecessary argument lists
 // -----------------------------------------------------------------------------
 
 export const annotationCallArgumentListShouldBeNeeded = (
@@ -39,6 +39,7 @@ export const annotationCallArgumentListShouldBeNeeded = (
 ): void => {
     const argumentList = node.argumentList;
     if (!argumentList || !isEmpty(argumentList.arguments)) {
+        // If there are arguments, they are either needed or erroneous (i.e. we already show an error)
         return;
     }
 
@@ -62,6 +63,7 @@ export const callArgumentListShouldBeNeeded = (services: SafeDsServices) => (
 ): void => {
     const argumentList = node.argumentList;
     if (!argumentList || !isEmpty(argumentList.arguments)) {
+        // If there are arguments, they are either needed or erroneous (i.e. we already show an error)
         return;
     }
 
@@ -79,7 +81,7 @@ export const callArgumentListShouldBeNeeded = (services: SafeDsServices) => (
 }
 
 // -----------------------------------------------------------------------------
-// Unnecessary assignment
+// Unnecessary assignments
 // -----------------------------------------------------------------------------
 
 export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (
@@ -118,7 +120,7 @@ export const enumBodyShouldNotBeEmpty = (node: SdsEnumBody, accept: ValidationAc
 };
 
 // -----------------------------------------------------------------------------
-// Unnecessary constraint list
+// Unnecessary constraint lists
 // -----------------------------------------------------------------------------
 
 export const constraintListShouldNotBeEmpty = (node: SdsConstraintList, accept: ValidationAcceptor) => {
@@ -177,6 +179,33 @@ export const segmentResultListShouldNotBeEmpty = (node: SdsSegment, accept: Vali
         });
     }
 };
+
+// -----------------------------------------------------------------------------
+// Unnecessary type argument lists
+// -----------------------------------------------------------------------------
+
+export const namedTypeTypeArgumentListShouldBeNeeded = (
+    node: SdsNamedType,
+    accept: ValidationAcceptor,
+): void => {
+    const typeArgumentList = node.typeArgumentList;
+    if (!typeArgumentList || !isEmpty(typeArgumentList.typeArguments)) {
+        // If there are type arguments, they are either needed or erroneous (i.e. we already show an error)
+        return;
+    }
+
+    const namedTypeDeclaration = node.declaration?.ref;
+    if (!namedTypeDeclaration) {
+        return;
+    }
+
+    if (isEmpty(typeParametersOrEmpty(namedTypeDeclaration))) {
+        accept('info', 'This type argument list can be removed.', {
+            node: typeArgumentList,
+            code: CODE_STYLE_UNNECESSARY_ARGUMENT_LIST,
+        })
+    }
+}
 
 // -----------------------------------------------------------------------------
 // Unnecessary type parameter lists
