@@ -1,6 +1,6 @@
-import { ValidationChecks } from 'langium';
-import { SafeDsAstType } from '../generated/ast.js';
-import type { SafeDsServices } from '../safe-ds-module.js';
+import {ValidationChecks} from 'langium';
+import {SafeDsAstType} from '../generated/ast.js';
+import type {SafeDsServices} from '../safe-ds-module.js';
 import {
     annotationMustContainUniqueNames,
     blockLambdaMustContainUniqueNames,
@@ -31,24 +31,32 @@ import {
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
-import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
-import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
-import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
-import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
-import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
+import {templateStringMustHaveExpressionBetweenTwoStringParts} from './other/expressions/templateStrings.js';
+import {yieldMustNotBeUsedInPipeline} from './other/statements/assignments.js';
+import {attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint} from './types.js';
+import {moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage} from './other/modules.js';
+import {
+    typeParameterConstraintLeftOperandMustBeOwnTypeParameter
+} from './other/declarations/typeParameterConstraints.js';
 import {
     parameterListMustNotHaveOptionalAndVariadicParameters,
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
-import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
-import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
-import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
-import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
-import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
-import { annotationCallAnnotationShouldNotBeDeprecated } from './builtins/deprecated.js';
-import {annotationCallAnnotationShouldNotBeExperimental} from "./builtins/experimental.js";
+import {unionTypeMustHaveTypeArguments} from './other/types/unionTypes.js';
+import {callableTypeMustNotHaveOptionalParameters} from './other/types/callableTypes.js';
+import {typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './other/types/typeArgumentLists.js';
+import {argumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './other/argumentLists.js';
+import {parameterMustNotBeVariadicAndOptional} from './other/declarations/parameters.js';
+import {referenceTargetMustNotBeAnnotationPipelineOrSchema} from './other/expressions/references.js';
+import {
+    annotationCallAnnotationShouldNotBeDeprecated,
+    assigneeAssignedResultShouldNotBeDeprecated
+} from './builtins/deprecated.js';
+import {
+    annotationCallAnnotationShouldNotBeExperimental,
+    assigneeAssignedResultShouldNotBeExperimental
+} from "./builtins/experimental.js";
 
 /**
  * Register custom validation checks.
@@ -56,6 +64,10 @@ import {annotationCallAnnotationShouldNotBeExperimental} from "./builtins/experi
 export const registerValidationChecks = function (services: SafeDsServices) {
     const registry = services.validation.ValidationRegistry;
     const checks: ValidationChecks<SafeDsAstType> = {
+        SdsAssignee: [
+            assigneeAssignedResultShouldNotBeDeprecated(services),
+            assigneeAssignedResultShouldNotBeExperimental(services),
+        ],
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
         SdsAnnotationCall: [

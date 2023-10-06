@@ -6,7 +6,7 @@ import { annotationCallsOrEmpty, moduleMembersOrEmpty } from '../helpers/nodePro
 
 const CORE_ANNOTATIONS_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreAnnotations.sdsstub');
 
-export class SafeDsCoreAnnotations {
+export class SafeDsAnnotations {
     private readonly langiumDocuments: LangiumDocuments;
     private readonly cache: Map<string, SdsAnnotation> = new Map();
 

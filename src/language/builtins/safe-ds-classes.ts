@@ -6,7 +6,7 @@ import { moduleMembersOrEmpty } from '../helpers/nodeProperties.js';
 
 const CORE_CLASSES_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreClasses.sdsstub');
 
-export class SafeDsCoreClasses {
+export class SafeDsClasses {
     private readonly langiumDocuments: LangiumDocuments;
     private readonly cache: Map<string, SdsClass> = new Map();
 

@@ -17,18 +17,18 @@ import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
 import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
-import { SafeDsCoreClasses } from './builtins/safe-ds-core-classes.js';
+import { SafeDsClasses } from './builtins/safe-ds-classes.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
-import { SafeDsCoreAnnotations } from './builtins/safe-ds-core-annotations.js';
+import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type SafeDsAddedServices = {
     builtins: {
-        CoreAnnotations: SafeDsCoreAnnotations;
-        CoreClasses: SafeDsCoreClasses;
+        Annotations: SafeDsAnnotations;
+        Classes: SafeDsClasses;
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
@@ -54,8 +54,8 @@ export type SafeDsServices = LangiumServices & SafeDsAddedServices;
  */
 export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeDsAddedServices> = {
     builtins: {
-        CoreAnnotations: (services) => new SafeDsCoreAnnotations(services),
-        CoreClasses: (services) => new SafeDsCoreClasses(services),
+        Annotations: (services) => new SafeDsAnnotations(services),
+        Classes: (services) => new SafeDsClasses(services),
     },
     helpers: {
         NodeMapper: (services) => new SafeDsNodeMapper(services),

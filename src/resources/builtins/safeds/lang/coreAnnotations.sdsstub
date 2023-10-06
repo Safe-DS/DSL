@@ -18,9 +18,6 @@ enum AnnotationTarget {
     @Description("The annotation can be called on classes.")
     Class
 
-    @Description("The annotation can be called on compilation units (i.e. files).")
-    CompilationUnit
-
     @Description("The annotation can be called on enums.")
     Enum
 
@@ -29,6 +26,9 @@ enum AnnotationTarget {
 
     @Description("The annotation can be called on functions.")
     Function
+
+    @Description("The annotation can be called on modules (i.e. files).")
+    Module
 
     @Description("The annotation can be called on parameters.")
     Parameter
