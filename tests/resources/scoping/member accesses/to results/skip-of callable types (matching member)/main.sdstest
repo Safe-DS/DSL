@@ -1,0 +1,13 @@
+package tests.scoping.memberAccesses.toResults.ofCallableTypes.matchingMember
+
+class MyClass() {
+    // $TEST$ target MyClass_result
+    attr »result«: Int
+}
+
+segment mySegment(
+    callableWithIdenticalMember: () -> result: MyClass
+) {
+    // $TEST$ references MyClass_result
+    callableWithIdenticalMember().»result«;
+}

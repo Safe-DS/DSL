@@ -16,7 +16,7 @@ describe('SafeDsNodeMapper', () => {
 
     describe('typeArgumentToTypeParameterOrUndefined', () => {
         it('should return undefined if passed undefined', () => {
-            expect(nodeMapper.typeArgumentToTypeParameterOrUndefined(undefined)).toBeUndefined();
+            expect(nodeMapper.typeArgumentToTypeParameterOrUndefined(undefined)?.$type).toBeUndefined();
         });
 
         describe('named type argument', () => {

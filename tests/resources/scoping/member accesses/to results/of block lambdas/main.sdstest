@@ -1,0 +1,20 @@
+package tests.scoping.memberAccesses.toResults.ofBlockLambdas
+
+pipeline myPipeline {
+    val lambdaWithOneResult = () {
+        // $TEST$ target lambdaWithOneResult_singleResult
+        yield »singleResult« = 1;
+    };
+    val lambdaWithTwoResults = () {
+        // $TEST$ target lambdaWithTwoResults_result1
+        yield »result1« = 1;
+        yield result1 = 1;
+        yield result2 = 1;
+    };
+
+    // $TEST$ references lambdaWithOneResult_singleResult
+    lambdaWithOneResult().»singleResult«;
+
+    // $TEST$ references lambdaWithTwoResults_result1
+    lambdaWithTwoResults().»result1«;
+}

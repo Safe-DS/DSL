@@ -30,7 +30,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBeUndefined();
             });
 
             it('should return the called annotation', async () => {
@@ -59,7 +59,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBeUndefined();
             });
 
             it('should return undefined if receiver is not callable', async () => {
@@ -72,7 +72,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
+                expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBeUndefined();
             });
 
             it('should return the called annotation', async () => {

@@ -1,7 +1,9 @@
 import {
     isSdsAssignment,
     isSdsAttribute,
+    isSdsBlockLambda,
     isSdsBlockLambdaResult,
+    isSdsCallableType,
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
@@ -13,6 +15,7 @@ import {
     isSdsSegment,
     isSdsTypeParameterList,
     SdsAbstractCall,
+    SdsAbstractResult,
     SdsAnnotatedObject,
     SdsAnnotationCall,
     SdsArgument,
@@ -83,6 +86,24 @@ export const isStatic = (node: SdsClassMember): boolean => {
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements
 // -------------------------------------------------------------------------------------------------
+
+export const abstractResultsOrEmpty = (node: SdsCallable | undefined): SdsAbstractResult[] => {
+    if (!node) {
+        return [];
+    }
+
+    if (isSdsBlockLambda(node)) {
+        return blockLambdaResultsOrEmpty(node);
+    } else if (isSdsCallableType(node)) {
+        return resultsOrEmpty(node.resultList);
+    } else if (isSdsFunction(node)) {
+        return resultsOrEmpty(node.resultList);
+    } else if (isSdsSegment(node)) {
+        return resultsOrEmpty(node.resultList);
+    } /* c8 ignore start */ else {
+        return [];
+    } /* c8 ignore stop */
+};
 
 export const annotationCallsOrEmpty = (node: SdsAnnotatedObject | undefined): SdsAnnotationCall[] => {
     if (!node) {

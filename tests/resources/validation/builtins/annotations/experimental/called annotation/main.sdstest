@@ -1,0 +1,13 @@
+package tests.validation.builtins.experimental.calledAnnotation
+
+@Experimental
+annotation ExperimentalAnnotation
+annotation ValidAnnotation
+
+// $TEST$ warning "The called annotation 'ExperimentalAnnotation' is experimental."
+@»ExperimentalAnnotation«
+// $TEST$ no warning r"The called annotation '\w*' is experimental\."
+@»ValidAnnotation«
+// $TEST$ no warning r"The called annotation '\w*' is experimental\."
+@»Unresolved«
+pipeline myPipeline {}

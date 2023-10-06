@@ -106,6 +106,10 @@ export class NamedTupleType extends Type {
         return this.entries[position]?.type;
     }
 
+    get length(): number {
+        return this.entries.length;
+    }
+
     override copyWithNullability(_isNullable: boolean): NamedTupleType {
         return this;
     }

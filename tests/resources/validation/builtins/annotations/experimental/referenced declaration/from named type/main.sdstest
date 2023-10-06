@@ -1,0 +1,32 @@
+package tests.validation.builtins.experimental.referencedDeclaration.fromNamedType
+
+@Experimental
+class ExperimentalClass
+class ValidClass
+
+@Experimental
+enum ExperimentalEnum
+enum ValidEnum {
+    @Experimental ExperimentalEnumVariant
+    ValidEnumVariant
+}
+
+segment mySegment(
+    // $TEST$ warning "The referenced declaration 'ExperimentalClass' is experimental."
+    p1: »ExperimentalClass«,
+    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
+    p2: »ValidClass«,
+
+    // $TEST$ warning "The referenced declaration 'ExperimentalEnum' is experimental."
+    p3: »ExperimentalEnum«,
+    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
+    p4: »ValidEnum«,
+
+    // $TEST$ warning "The referenced declaration 'ExperimentalEnumVariant' is experimental."
+    p5: ValidEnum.»ExperimentalEnumVariant«,
+    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
+    p6: ValidEnum.»ValidEnumVariant«,
+
+    // $TEST$ no warning r"The referenced declaration '\w*' is experimental\."
+    p7: »Unresolved«
+) {}

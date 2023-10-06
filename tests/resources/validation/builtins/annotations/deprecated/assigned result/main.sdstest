@@ -1,0 +1,30 @@
+package tests.validation.builtins.deprecated.assignedResult
+
+fun myFunction() -> (
+    @Deprecated deprecatedResult: Int,
+    validResult: Int
+)
+
+segment mySegment() -> (result1: Int, result2: Int, result3: Int) {
+    // $TEST$ warning "The assigned result 'deprecatedResult' is deprecated."
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    »val a«, »val b«, »val c« = myFunction();
+
+    // $TEST$ warning "The assigned result 'deprecatedResult' is deprecated."
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    »yield result1«, »yield result2«, »yield result3« = myFunction();
+
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    »_«, »_«, »_« = myFunction();
+
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    »val d« = a;
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    »val e« = b;
+    // $TEST$ no warning r"The assigned result '\w*' is deprecated\."
+    »val f« = 1;
+}

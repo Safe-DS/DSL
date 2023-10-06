@@ -1,0 +1,32 @@
+package tests.validation.builtins.deprecated.referencedDeclaration.fromNamedType
+
+@Deprecated
+class DeprecatedClass
+class ValidClass
+
+@Deprecated
+enum DeprecatedEnum
+enum ValidEnum {
+    @Deprecated DeprecatedEnumVariant
+    ValidEnumVariant
+}
+
+segment mySegment(
+    // $TEST$ warning "The referenced declaration 'DeprecatedClass' is deprecated."
+    p1: »DeprecatedClass«,
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    p2: »ValidClass«,
+
+    // $TEST$ warning "The referenced declaration 'DeprecatedEnum' is deprecated."
+    p3: »DeprecatedEnum«,
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    p4: »ValidEnum«,
+
+    // $TEST$ warning "The referenced declaration 'DeprecatedEnumVariant' is deprecated."
+    p5: ValidEnum.»DeprecatedEnumVariant«,
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    p6: ValidEnum.»ValidEnumVariant«,
+
+    // $TEST$ no warning r"The referenced declaration '\w*' is deprecated\."
+    p7: »Unresolved«
+) {}
