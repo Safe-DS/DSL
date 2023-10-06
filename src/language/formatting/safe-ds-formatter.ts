@@ -9,12 +9,12 @@ import {
     isAstNode,
 } from 'langium';
 import * as ast from '../generated/ast.js';
-import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/shortcuts.js';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
 import oneSpace = Formatting.oneSpace;
 import indent = Formatting.indent;
+import {annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty} from "../helpers/nodeProperties.js";
 
 const newLinesWithIndent = function (count: number, options?: FormattingActionOptions): FormattingAction {
     return {

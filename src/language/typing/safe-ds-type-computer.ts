@@ -72,14 +72,14 @@ import {
     SdsSegment,
     SdsType,
 } from '../generated/ast.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     assigneesOrEmpty,
     blockLambdaResultsOrEmpty,
     parametersOrEmpty,
     resultsOrEmpty,
-    typeArgumentsOrEmpty,
-} from '../helpers/shortcuts.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
+    typeArgumentsOrEmpty
+} from "../helpers/nodeProperties.js";
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;

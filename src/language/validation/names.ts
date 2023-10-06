@@ -15,13 +15,13 @@ import { ValidationAcceptor } from 'langium';
 import {
     blockLambdaResultsOrEmpty,
     classMembersOrEmpty,
+    enumVariantsOrEmpty,
+    isStatic,
     parametersOrEmpty,
     placeholdersOrEmpty,
     resultsOrEmpty,
-    typeParametersOrEmpty,
-    enumVariantsOrEmpty,
-} from '../helpers/shortcuts.js';
-import { isStatic } from '../helpers/checks.js';
+    typeParametersOrEmpty
+} from '../helpers/nodeProperties.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';

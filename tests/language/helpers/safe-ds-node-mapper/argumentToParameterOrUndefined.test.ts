@@ -4,7 +4,8 @@ import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { isSdsAbstractCall, SdsArgument } from '../../../../src/language/generated/ast.js';
-import { argumentsOrEmpty } from '../../../../src/language/helpers/shortcuts.js';
+
+import {argumentsOrEmpty} from "../../../../src/language/helpers/nodeProperties";
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;

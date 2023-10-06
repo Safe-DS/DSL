@@ -19,8 +19,14 @@ import {
 } from '../generated/ast.js';
 import { CallableType, StaticType } from '../typing/model.js';
 import { getContainerOfType } from 'langium';
-import { argumentsOrEmpty, parametersOrEmpty, typeArgumentsOrEmpty, typeParametersOrEmpty } from './shortcuts.js';
-import { isNamedArgument, isNamedTypeArgument } from './checks.js';
+import {
+    argumentsOrEmpty,
+    isNamedArgument,
+    isNamedTypeArgument,
+    parametersOrEmpty,
+    typeArgumentsOrEmpty,
+    typeParametersOrEmpty
+} from './nodeProperties.js';
 
 export class SafeDsNodeMapper {
     private readonly typeComputer: () => SafeDsTypeComputer;

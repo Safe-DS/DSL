@@ -2,7 +2,8 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { resolveRelativePathToBuiltinFile } from './fileFinder.js';
 import { isSdsClass, isSdsModule, SdsClass } from '../generated/ast.js';
 import { LangiumDocuments } from 'langium';
-import { moduleMembersOrEmpty } from '../helpers/shortcuts.js';
+
+import {moduleMembersOrEmpty} from "../helpers/nodeProperties.js";
 
 const CORE_CLASSES_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreClasses.sdsstub');
 
