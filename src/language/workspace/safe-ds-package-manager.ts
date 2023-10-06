@@ -125,6 +125,7 @@ export class SafeDsPackageManager {
         for (const description of this.indexManager.allElements()) {
             const node = this.loadAstNode(description);
             if (!node) {
+                /* c8 ignore next 2 */
                 continue;
             }
 
@@ -148,9 +149,9 @@ export class SafeDsPackageManager {
         if (this.langiumDocuments.hasDocument(nodeDescription.documentUri)) {
             const document = this.langiumDocuments.getOrCreateDocument(nodeDescription.documentUri);
             return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
-        }
-
-        return undefined;
+        } /* c8 ignore start */ else {
+            return undefined;
+        } /* c8 ignore stop */
     }
 
     /**
