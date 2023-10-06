@@ -1,17 +1,18 @@
 import { SafeDsServices } from '../safe-ds-module.js';
 import { resolveRelativePathToBuiltinFile } from './fileFinder.js';
 import { isSdsAnnotation, isSdsModule, SdsAnnotatedObject, SdsAnnotation } from '../generated/ast.js';
-import { LangiumDocuments } from 'langium';
+import { LangiumDocuments, WorkspaceCache } from 'langium';
 import { annotationCallsOrEmpty, moduleMembersOrEmpty } from '../helpers/nodeProperties.js';
 
 const CORE_ANNOTATIONS_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreAnnotations.sdsstub');
 
 export class SafeDsAnnotations {
     private readonly langiumDocuments: LangiumDocuments;
-    private readonly cache: Map<string, SdsAnnotation> = new Map();
+    private readonly cache: WorkspaceCache<string, SdsAnnotation>;
 
     constructor(services: SafeDsServices) {
         this.langiumDocuments = services.shared.workspace.LangiumDocuments;
+        this.cache = new WorkspaceCache(services.shared);
     }
 
     isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
@@ -59,6 +60,7 @@ export class SafeDsAnnotations {
             return undefined;
         }
 
+        this.cache.set(name, firstMatchingModuleMember);
         return firstMatchingModuleMember;
     }
 }
