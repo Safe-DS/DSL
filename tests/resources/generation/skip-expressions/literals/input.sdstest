@@ -1,0 +1,14 @@
+package tests.generator.literals
+
+fun f(param: Any?)
+
+pipeline test {
+    f(true);
+    f(false);
+    f(1.0);
+    f(1);
+    f(null);
+    f("");
+    f("multi
+line");
+}

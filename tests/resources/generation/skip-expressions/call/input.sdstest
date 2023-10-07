@@ -1,0 +1,32 @@
+package tests.generator.call
+
+fun f(param: Any?)
+
+fun g1(
+    param1: Int,
+    param2: Int = 0
+) -> result: Boolean
+
+fun g2(
+    param1: Int,
+    vararg param3: Int
+) -> result: Boolean
+
+fun h1(
+    @PythonName("param_1") param1: Int,
+    @PythonName("param_2") param2: Int = 0
+) -> result: Boolean
+
+fun h2(
+    @PythonName("param_1") param1: Int,
+    @PythonName("param_3") vararg param3: Int
+) -> result: Boolean
+
+pipeline test {
+    f((g1(1, 2)));
+    f((g1(param2 = 1, param1 = 2)));
+    f((g2(2, 3, 4)));
+    f((h1(1, 2)));
+    f((h1(param2 = 1, param1 = 2)));
+    f((h2(2, 3, 4)));
+}

@@ -1,17 +1,18 @@
-import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
+import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { EmptyFileSystem } from 'langium';
 import { getSyntaxErrors } from '../../helpers/diagnostics.js';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 
 export const createFormattingTests = async (): Promise<FormattingTest[]> => {
-    const testCases = listTestResources(root).map(createFormattingTest);
+    const testCases = listSafeDSResources(root).map(createFormattingTest);
     return Promise.all(testCases);
 };
 
@@ -53,12 +54,12 @@ const createFormattingTest = async (relativeResourcePath: string): Promise<Forma
 /**
  * Report a test that has errors.
  *
- * @param pathRelativeToResources The path to the test file relative to the resources directory.
+ * @param relativeResourcePath The path to the test file relative to the `resources` directory.
  * @param error The error that occurred.
  */
-const invalidTest = (pathRelativeToResources: string, error: Error): FormattingTest => {
+const invalidTest = (relativeResourcePath: string, error: Error): FormattingTest => {
     return {
-        testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
+        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
         originalCode: '',
         expectedFormattedCode: '',
         error,
@@ -78,12 +79,7 @@ const normalizeLineBreaks = (code: string): string => {
 /**
  * A description of a formatting test.
  */
-interface FormattingTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface FormattingTest extends TestDescription {
     /**
      * The original code before formatting.
      */
@@ -93,11 +89,6 @@ interface FormattingTest {
      * The expected formatted code.
      */
     expectedFormattedCode: string;
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**

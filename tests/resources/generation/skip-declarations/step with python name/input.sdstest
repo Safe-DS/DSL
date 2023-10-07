@@ -1,0 +1,8 @@
+package tests.generator.stepWithPythonName
+
+fun f()
+
+@PythonName("test_step")
+segment testStep() {
+    f();
+}

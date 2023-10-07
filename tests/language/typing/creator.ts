@@ -10,6 +10,7 @@ import { URI } from 'vscode-uri';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'typing';
@@ -117,12 +118,7 @@ const invalidTest = (testName: string, error: Error): TypingTest => {
 /**
  * A description of a typing test.
  */
-interface TypingTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface TypingTest extends TestDescription {
     /**
      * The URIs of the files that should be loaded into the workspace.
      */
@@ -137,11 +133,6 @@ interface TypingTest {
      * The serialized type of a node should match the expected type.
      */
     serializationAssertions: SerializationAssertion[];
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**

@@ -1,6 +1,6 @@
 import path from 'path';
 import { globSync } from 'glob';
-import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions';
+import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { group } from 'radash';
 
 const resourcesPath = path.join(__dirname, '..', 'resources');
@@ -21,11 +21,24 @@ export const resolvePathRelativeToResources = (pathRelativeToResources: string) 
  * @param pathRelativeToResources The root directory relative to `tests/resources/`.
  * @return Paths to the Safe-DS files relative to `pathRelativeToResources`.
  */
-export const listTestResources = (pathRelativeToResources: string): string[] => {
+export const listSafeDSResources = (pathRelativeToResources: string): string[] => {
     const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
     const cwd = resolvePathRelativeToResources(pathRelativeToResources);
 
     return globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
+};
+
+/**
+ * Lists all Python files in the given directory relative to `tests/resources/`.
+ *
+ * @param pathRelativeToResources The root directory relative to `tests/resources/`.
+ * @return Paths to the Python files relative to `pathRelativeToResources`.
+ */
+export const listPythonResources = (pathRelativeToResources: string): string[] => {
+    const pattern = `**/*.py`;
+    const cwd = resolvePathRelativeToResources(pathRelativeToResources);
+
+    return globSync(pattern, { cwd, nodir: true });
 };
 
 /**
@@ -38,7 +51,7 @@ export const listTestResources = (pathRelativeToResources: string): string[] => 
 export const listTestsResourcesGroupedByParentDirectory = (
     pathRelativeToResources: string,
 ): Record<string, string[]> => {
-    const paths = listTestResources(pathRelativeToResources);
+    const paths = listSafeDSResources(pathRelativeToResources);
     return group(paths, (p) => path.dirname(p)) as Record<string, string[]>;
 };
 

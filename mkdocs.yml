@@ -41,6 +41,7 @@ nav:
       - Typing Testing: development/typing-testing.md
       - Partial Evaluation Testing: development/partial-evaluation-testing.md
       - Validation Testing: development/validation-testing.md
+      - Generation Testing: development/generation-testing.md
       - Formatting Testing: development/formatting-testing.md
       - Langium Quickstart: development/langium-quickstart.md
 

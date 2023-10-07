@@ -15,7 +15,7 @@ test.
 2. Add files with the extension `.sdstest` **directly inside the folder**. All files in a folder will be loaded into the
    same workspace, so they can reference each other. Files in different folders are loaded into different workspaces, so
    they cannot reference each other.
-3. Add the Safe-DS code that you want to test to the file.
+3. Add the Safe-DS code that you want to test to the files.
 4. Surround entire nodes whose type you want to check with test markers, e.g. `1 + 2`. For declarations, it is also
    possible to surround only their name, e.g. `class »C«`.
 5. For each pair of test markers, add a test comment with one of the formats listed below. Test comments and test

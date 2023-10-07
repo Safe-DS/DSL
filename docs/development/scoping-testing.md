@@ -15,7 +15,7 @@ test.
 2. Add files with the extension `.sdstest` **directly inside
    the folder**. All files in a folder will be loaded into the same workspace, so they can
    reference each other. Files in different folders are loaded into different workspaces, so they cannot reference each other.
-3. Add the Safe-DS code that you want to test to the file.
+3. Add the Safe-DS code that you want to test to the files.
 4. Surround **the name** of any declaration that you want to reference with test markers, e.g. `class »C«`. Add a
    comment in the preceding line with the following format (replace `<id>` with some unique identifier):
     ```ts

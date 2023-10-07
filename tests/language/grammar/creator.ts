@@ -1,13 +1,14 @@
-import { listTestResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
+import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const root = 'grammar';
 
 export const createGrammarTests = (): GrammarTest[] => {
-    return listTestResources(root).map(createGrammarTest);
+    return listSafeDSResources(root).map(createGrammarTest);
 };
 
 const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
@@ -49,12 +50,12 @@ const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
 /**
  * Report a test that has errors.
  *
- * @param pathRelativeToResources The path to the test file relative to the resources directory.
+ * @param relativeResourcePath The path to the test file relative to the `resources` directory.
  * @param error The error that occurred.
  */
-const invalidTest = (pathRelativeToResources: string, error: Error): GrammarTest => {
+const invalidTest = (relativeResourcePath: string, error: Error): GrammarTest => {
     return {
-        testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
+        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
         code: '',
         expectedResult: 'invalid',
         error,
@@ -64,12 +65,7 @@ const invalidTest = (pathRelativeToResources: string, error: Error): GrammarTest
 /**
  * A description of a grammar test.
  */
-interface GrammarTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface GrammarTest extends TestDescription {
     /**
      * The code to parse.
      */
@@ -79,11 +75,6 @@ interface GrammarTest {
      * The expected result after parsing the program.
      */
     expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**

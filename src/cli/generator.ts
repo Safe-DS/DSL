@@ -7,6 +7,7 @@ import chalk from 'chalk';
 import { createSafeDsServices } from '../language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 
+/* c8 ignore start */
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createSafeDsServices(NodeFileSystem).SafeDs;
     const module = await extractAstNode<SdsModule>(fileName, services);
@@ -14,12 +15,17 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
     // eslint-disable-next-line no-console
     console.log(chalk.green(`Python code generated successfully: ${generatedFilePath}`));
 };
+/* c8 ignore stop */
 
 export type GenerateOptions = {
     destination?: string;
 };
 
-export const generatePython = function (module: SdsModule, filePath: string, destination: string | undefined): string {
+export const generatePython = function (
+    module: SdsModule,
+    filePath: string,
+    destination: string | undefined,
+): string[] {
     const data = extractDestinationAndName(filePath, destination);
     const generatedFilePath = `${path.join(data.destination, data.name)}.py`;
 
@@ -31,5 +37,5 @@ export const generatePython = function (module: SdsModule, filePath: string, des
         fs.mkdirSync(data.destination, { recursive: true });
     }
     fs.writeFileSync(generatedFilePath, toString(fileNode));
-    return generatedFilePath;
+    return [generatedFilePath];
 };

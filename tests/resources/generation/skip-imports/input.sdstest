@@ -1,0 +1,25 @@
+package tests.generator.imports
+
+from tests.generator.differentPackage import function1InDifferentPackage
+from tests.generator.differentPackage import function2InDifferentPackage as g
+from tests.generator.withPythonModule import function1InCompilationUnitWithPythonModule
+from tests.generator.withPythonModule import function2InCompilationUnitWithPythonModule as h
+
+fun f(param: Any?)
+
+pipeline test {
+    f(step1InSamePackage());
+    f(step1InSamePackage());
+    f(step2InSamePackage());
+    f(step2InSamePackage());
+
+    f(function1InDifferentPackage());
+    f(function1InDifferentPackage());
+    f(g());
+    f(g());
+
+    f(function1InCompilationUnitWithPythonModule());
+    f(function1InCompilationUnitWithPythonModule());
+    f(h());
+    f(h());
+}
