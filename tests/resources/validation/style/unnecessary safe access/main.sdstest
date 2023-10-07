@@ -1,10 +1,19 @@
 package tests.validation.style.unnecessarySafeAccess
 
+class MyClass
+
+fun nullableMyClass() -> result: MyClass?
+
 pipeline test {
     // $TEST$ info "The receiver is never null, so the safe access is unnecessary."
     »1?.toString«();
+
     // $TEST$ no info "The receiver is never null, so the safe access is unnecessary."
     »null?.toString«();
+
+    // $TEST$ no info "The receiver is never null, so the safe access is unnecessary."
+    »nullableMyClass()?.toString«();
+
     // $TEST$ no info "The receiver is never null, so the safe access is unnecessary."
     »unresolved?.toString«();
 }

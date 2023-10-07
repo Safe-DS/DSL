@@ -67,6 +67,7 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
+import { ClassType, EnumVariantType } from '../typing/model.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     private readonly astReflection: AstReflection;
@@ -176,13 +177,13 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         // Static access
         const declaration = this.getUniqueReferencedDeclarationForExpression(node.receiver);
         if (isSdsClass(declaration)) {
-            return this.createScopeForNodes(classMembersOrEmpty(declaration, isStatic));
-
-            //     val superTypeMembers = receiverDeclaration.superClassMembers()
-            //         .filter { it.isStatic() }
-            // .toList()
+            const ownStaticMembers = classMembersOrEmpty(declaration, isStatic);
+            // val superTypeMembers = receiverDeclaration.superClassMembers()
+            //     .filter { it.isStatic() }
+            //     .toList()
             //
-            //     return Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers))
+            // return Scopes.scopeFor(ownStaticMembers, Scopes.scopeFor(superTypeMembers))
+            return this.createScopeForNodes(ownStaticMembers);
         } else if (isSdsEnum(declaration)) {
             return this.createScopeForNodes(enumVariantsOrEmpty(declaration));
         }
@@ -193,9 +194,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             const callable = this.nodeMapper.callToCallableOrUndefined(node.receiver);
             const results = abstractResultsOrEmpty(callable);
 
-            if (results.length === 0) {
-                return EMPTY_SCOPE;
-            } else if (results.length > 1) {
+            if (results.length > 1) {
                 return this.createScopeForNodes(results);
             } else {
                 // If there is only one result, it can be accessed by name but members of the result with the same name
@@ -204,22 +203,24 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             }
         }
 
-        // // Members
-        // val type = (receiver.type() as? NamedType) ?: return resultScope
-        //
-        // return when {
-        //     type.isNullable && !context.isNullSafe -> resultScope
-        //     type is ClassType -> {
-        //         val members = type.sdsClass.classMembersOrEmpty().filter { !it.isStatic() }
-        //         val superTypeMembers = type.sdsClass.superClassMembers()
-        //             .filter { !it.isStatic() }
-        //     .toList()
-        //
-        //         Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
-        //     }
-        //     type is EnumVariantType -> Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
-        // else -> resultScope
-        // }
+        // Members
+        let receiverType = this.typeComputer.computeType(node.receiver).unwrap();
+        if (receiverType.isNullable && !node.isNullSafe) {
+            return resultScope;
+        }
+
+        if (receiverType instanceof ClassType) {
+            const ownInstanceMembers = classMembersOrEmpty(receiverType.sdsClass, (it) => !isStatic(it));
+            // val superTypeMembers = type.sdsClass.superClassMembers()
+            //     .filter { !it.isStatic() }
+            //     .toList()
+            //
+            // Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
+            return this.createScopeForNodes(ownInstanceMembers, resultScope);
+        } else if (receiverType instanceof EnumVariantType) {
+            // Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
+            return resultScope;
+        }
 
         return resultScope;
     }

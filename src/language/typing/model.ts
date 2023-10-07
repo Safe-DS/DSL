@@ -12,6 +12,10 @@ import {
 export abstract class Type {
     abstract isNullable: boolean;
 
+    unwrap(): Type {
+        return this;
+    }
+
     abstract copyWithNullability(isNullable: boolean): Type;
 
     abstract equals(other: Type): boolean;
@@ -108,6 +112,17 @@ export class NamedTupleType extends Type {
 
     get length(): number {
         return this.entries.length;
+    }
+
+    /**
+     * If this only has one entry, returns its type. Otherwise, returns this.
+     */
+    override unwrap(): Type {
+        if (this.entries.length === 1) {
+            return this.entries[0].type;
+        }
+
+        return this;
     }
 
     override copyWithNullability(_isNullable: boolean): NamedTupleType {

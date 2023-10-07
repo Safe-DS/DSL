@@ -685,10 +685,10 @@ SdsChainedExpression returns SdsExpression:
         {SdsCall.receiver=current}
         argumentList=SdsCallArgumentList
 
-    | {SdsIndexedAccess.receiver=current}
+    |   {SdsIndexedAccess.receiver=current}
         '[' index=SdsExpression ']'
 
-    | {SdsMemberAccess.receiver=current}
+    |   {SdsMemberAccess.receiver=current}
         (isNullSafe?='?')?
         '.'
         member=SdsReference
