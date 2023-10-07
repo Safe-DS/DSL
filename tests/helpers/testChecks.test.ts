@@ -8,6 +8,7 @@ import {
     NoCommentsError,
 } from './testChecks.js';
 import { Range } from 'vscode-languageserver';
+import { URI } from 'langium';
 
 const uri = 'file:///test.sdstest';
 
@@ -75,7 +76,7 @@ ${OPEN}${CLOSE}
             id: 'two comments, two ranges',
         },
     ])('should associated comments and ranges ($id)', ({ program, expected }) => {
-        const result = findTestChecks(program, uri);
+        const result = findTestChecks(program, URI.parse(uri));
         expect(result.isOk).toBeTruthy();
 
         if (result.isOk) {
@@ -89,7 +90,7 @@ ${OPEN}${CLOSE}
             // $TEST$ no_syntax_error
             ${OPEN}\n${CLOSE}${CLOSE}
         `,
-            uri,
+            URI.parse(uri),
         );
         expect(result.isErr).toBeTruthy();
 
@@ -104,7 +105,7 @@ ${OPEN}${CLOSE}
             // $TEST$ no_syntax_error
             ${OPEN}\n${OPEN}${OPEN}${CLOSE}
         `,
-            uri,
+            URI.parse(uri),
         );
         expect(result.isErr).toBeTruthy();
 
@@ -119,7 +120,7 @@ ${OPEN}${CLOSE}
             // $TEST$ no_syntax_error
             ${OPEN}\n${CLOSE}${OPEN}\n${CLOSE}
         `,
-            uri,
+            URI.parse(uri),
         );
         expect(result.isErr).toBeTruthy();
 
@@ -129,7 +130,7 @@ ${OPEN}${CLOSE}
     });
 
     it('should report if no test comments are found if corresponding check is enabled', () => {
-        const result = findTestChecks('', uri, { failIfNoComments: true });
+        const result = findTestChecks('', URI.parse(uri), { failIfNoComments: true });
         expect(result.isErr).toBeTruthy();
 
         if (result.isErr) {
@@ -142,7 +143,7 @@ ${OPEN}${CLOSE}
             `
             // $TEST$ no_syntax_error
         `,
-            uri,
+            URI.parse(uri),
             { failIfFewerRangesThanComments: true },
         );
         expect(result.isErr).toBeTruthy();

@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { createValidationTests, ExpectedIssue } from './creator.js';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
@@ -27,9 +26,7 @@ describe('validation', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) =>
-            services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(uri)),
-        );
+        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
         await services.shared.workspace.DocumentBuilder.build(documents, { validation: true });
 
         // Ensure all expected issues match
@@ -75,7 +72,7 @@ describe('validation', async () => {
  * @param expectedIssue The expected issue.
  */
 const getMatchingActualIssues = (expectedIssue: ExpectedIssue): Diagnostic[] => {
-    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(expectedIssue.uri));
+    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(expectedIssue.uri);
     let result = document.diagnostics ?? [];
 
     // Filter by severity
@@ -119,7 +116,7 @@ const getMatchingActualIssues = (expectedIssue: ExpectedIssue): Diagnostic[] => 
  */
 const issueLocationToString = (expectedIssue: ExpectedIssue): string => {
     if (expectedIssue.range) {
-        return `at ${locationToString({ uri: expectedIssue.uri, range: expectedIssue.range })}`;
+        return `at ${locationToString({ uri: expectedIssue.uri.toString(), range: expectedIssue.range })}`;
     } else {
         return `in ${expectedIssue.uri}`;
     }

@@ -2,6 +2,7 @@ import { Location, Range } from 'vscode-languageserver';
 import { findTestComments } from './testComments.js';
 import { findTestRanges, FindTestRangesError } from './testRanges.js';
 import { Result } from 'true-myth';
+import { URI } from 'langium';
 
 /**
  * Finds all test checks, i.e. test comments and their corresponding test ranges.
@@ -12,7 +13,7 @@ import { Result } from 'true-myth';
  */
 export const findTestChecks = (
     program: string,
-    uri: string,
+    uri: URI,
     options: FindTestChecksOptions = {},
 ): Result<TestCheck[], FindTestChecksError> => {
     const { failIfNoComments = false, failIfFewerRangesThanComments = false } = options;
@@ -41,7 +42,12 @@ export const findTestChecks = (
         return Result.err(new FewerRangesThanCommentsError(comments, ranges));
     }
 
-    return Result.ok(comments.map((comment, index) => ({ comment, location: { uri, range: ranges[index] } })));
+    return Result.ok(
+        comments.map((comment, index) => ({
+            comment,
+            location: { uri: uri.toString(), range: ranges[index] },
+        })),
+    );
 };
 
 /**

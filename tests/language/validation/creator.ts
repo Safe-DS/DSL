@@ -1,57 +1,39 @@
-import {
-    listTestsResourcesGroupedByParentDirectory,
-    resolvePathRelativeToResources,
-} from '../../helpers/testResources.js';
-import path from 'path';
+import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
-import { URI } from 'vscode-uri';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
-import { EmptyFileSystem } from 'langium';
+import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { DocumentUri, Range } from 'vscode-languageserver-types';
+import { Range } from 'vscode-languageserver-types';
 import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const root = 'validation';
+const rootResourceName = 'validation';
 
 export const createValidationTests = (): Promise<ValidationTest[]> => {
-    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
-    const testCases = Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) =>
-        createValidationTest(dirname, paths),
-    );
+    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const testCases = filesGroupedByParentDirectory.map((entry) => createValidationTest(...entry));
 
     return Promise.all(testCases);
 };
 
-const createValidationTest = async (
-    relativeParentDirectoryPath: string,
-    relativeResourcePaths: string[],
-): Promise<ValidationTest> => {
-    const uris: string[] = [];
+const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<ValidationTest> => {
     const issues: ExpectedIssue[] = [];
 
-    for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
-        const uri = URI.file(absolutePath).toString();
-        uris.push(uri);
-
-        const code = fs.readFileSync(absolutePath).toString();
+    for (const uri of uris) {
+        const code = fs.readFileSync(uri.fsPath).toString();
 
         // File must not contain any syntax errors
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
-            return invalidTest(
-                `INVALID TEST FILE [${relativeResourcePath}]`,
-                new SyntaxErrorsInCodeError(syntaxErrors),
-            );
+            return invalidTest(uri, new SyntaxErrorsInCodeError(syntaxErrors));
         }
 
         const checksResult = findTestChecks(code, uri);
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, checksResult.error);
+            return invalidTest(uri, checksResult.error);
         }
 
         for (const check of checksResult.value) {
@@ -60,10 +42,7 @@ const createValidationTest = async (
 
             // Overall comment is invalid
             if (!match) {
-                return invalidTest(
-                    `INVALID TEST FILE [${relativeResourcePath}]`,
-                    new InvalidCommentError(check.comment),
-                );
+                return invalidTest(uri, new InvalidCommentError(check.comment));
             }
 
             // Extract groups from the match
@@ -74,7 +53,7 @@ const createValidationTest = async (
 
             // Validate the severity
             if (!validSeverities.includes(severity as any)) {
-                return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new InvalidSeverityError(severity));
+                return invalidTest(uri, new InvalidSeverityError(severity));
             }
 
             // Add the issue
@@ -89,8 +68,9 @@ const createValidationTest = async (
         }
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${relativeParentDirectoryPath}] should be validated correctly`,
+        testName: `[${shortenedResourceName}] should be validated correctly`,
         uris,
         expectedIssues: issues,
     };
@@ -99,12 +79,14 @@ const createValidationTest = async (
 /**
  * Report a test that has errors.
  *
- * @param relativeResourcePath The path to the test file relative to the `resources` directory.
+ * @param uri The URI of the test file.
  * @param error The error that occurred.
  */
-const invalidTest = (relativeResourcePath: string, error: Error): ValidationTest => {
+const invalidTest = (uri: URI, error: Error): ValidationTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+    const testName = `INVALID TEST FILE [${shortenedResourceName}]`;
     return {
-        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
+        testName,
         uris: [],
         expectedIssues: [],
         error,
@@ -118,7 +100,7 @@ interface ValidationTest extends TestDescription {
     /**
      * The URIs of the files that should be loaded into the workspace.
      */
-    uris: string[];
+    uris: URI[];
 
     /**
      * The issues we expect to find in the workspace.
@@ -153,7 +135,7 @@ export interface ExpectedIssue {
     /**
      * The URI of the file containing the issue.
      */
-    uri: DocumentUri;
+    uri: URI;
 
     /**
      * The range of the issue. If undefined, the issue is expected to be present in the whole file.

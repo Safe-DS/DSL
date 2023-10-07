@@ -2,57 +2,87 @@ import path from 'path';
 import { globSync } from 'glob';
 import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { group } from 'radash';
+import { URI } from 'langium';
 
 const resourcesPath = path.join(__dirname, '..', 'resources');
 
 /**
- * Resolves the given path relative to `tests/resources/`.
- *
- * @param pathRelativeToResources The path relative to `tests/resources/`.
- * @return The resolved absolute path.
+ * A path relative to `tests/resources/`.
  */
-export const resolvePathRelativeToResources = (pathRelativeToResources: string) => {
-    return path.join(resourcesPath, pathRelativeToResources);
+export type ResourceName = string;
+
+/**
+ * A path relative to `tests/resources/` or a subdirectory thereof.
+ */
+export type ShortenedResourceName = string;
+
+/**
+ * Returns the URI that corresponds to the resource with the given name.
+ *
+ * @param resourceName The resource name.
+ * @return The corresponding URI.
+ */
+export const resourceNameToUri = (resourceName: ResourceName): URI => {
+    return URI.file(path.join(resourcesPath, resourceName));
 };
 
 /**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/` that are not skipped.
+ * Returns the resource name that corresponds to the given URI. If `rootResourceName` is given, the result is relative
+ * to `tests/resources/<rootResourceName>`. Otherwise, the result is relative to `tests/resources/`.
  *
- * @param pathRelativeToResources The root directory relative to `tests/resources/`.
- * @return Paths to the Safe-DS files relative to `pathRelativeToResources`.
+ * @param uri The URI.
+ * @param rootResourceName The corresponding root resource name.
  */
-export const listSafeDSResources = (pathRelativeToResources: string): string[] => {
+export const uriToShortenedResourceName = (uri: URI, rootResourceName?: ResourceName): ShortenedResourceName => {
+    const rootPath = rootResourceName ? path.join(resourcesPath, rootResourceName) : resourcesPath;
+    return path.relative(rootPath, uri.fsPath);
+};
+
+/**
+ * Lists all Safe-DS files in the given root directory that are not skipped.
+ *
+ * @param rootResourceName The resource name of the root directory.
+ * @return URIs of the discovered Safe-DS files.
+ */
+export const listSafeDsFiles = (rootResourceName: ResourceName): URI[] => {
     const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
-    const cwd = resolvePathRelativeToResources(pathRelativeToResources);
+    const cwd = resourceNameToUri(rootResourceName).fsPath;
 
-    return globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
+    return globSync(pattern, { cwd, nodir: true })
+        .filter(isNotSkipped)
+        .map((it) => URI.file(path.join(cwd, it)));
 };
 
 /**
- * Lists all Python files in the given directory relative to `tests/resources/`.
+ * Lists all Python files in the given root directory.
  *
- * @param pathRelativeToResources The root directory relative to `tests/resources/`.
- * @return Paths to the Python files relative to `pathRelativeToResources`.
+ * @param rootResourceName The resource name of the root directory.
+ * @return URIs of the discovered Python files.
  */
-export const listPythonResources = (pathRelativeToResources: string): string[] => {
+export const listPythonFiles = (rootResourceName: ResourceName): URI[] => {
     const pattern = `**/*.py`;
-    const cwd = resolvePathRelativeToResources(pathRelativeToResources);
+    const cwd = resourceNameToUri(rootResourceName).fsPath;
 
-    return globSync(pattern, { cwd, nodir: true });
+    return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
 };
 
 /**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/` that are not skipped. The result is
- * grouped by the parent directory.
+ * Lists all Safe-DS files in the given root directory that are not skipped. The result is grouped by the parent
+ * directory.
  *
- * @param pathRelativeToResources The root directory relative to `tests/resources/`.
- * @return Paths to the Safe-DS files relative to `pathRelativeToResources` grouped by the parent directory.
+ * @param rootResourceName The resource name of the root directory.
+ * @return URIs of the discovered Safe-DS files grouped by the parent directory.
  */
-export const listTestsResourcesGroupedByParentDirectory = (
-    pathRelativeToResources: string,
-): Record<string, string[]> => {
-    const paths = listSafeDSResources(pathRelativeToResources);
-    return group(paths, (p) => path.dirname(p)) as Record<string, string[]>;
+export const listSafeDsFilesGroupedByParentDirectory = (rootResourceName: ResourceName): [URI, URI[]][] => {
+    const uris = listSafeDsFiles(rootResourceName);
+    const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>;
+
+    const result: [URI, URI[]][] = [];
+    for (const [parentDirectory, urisInParentDirectory] of Object.entries(groupedByParentDirectory)) {
+        result.push([URI.file(parentDirectory), urisInParentDirectory]);
+    }
+
+    return result;
 };
 
 const isNotSkipped = (pathRelativeToResources: string) => {

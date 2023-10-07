@@ -1,29 +1,27 @@
-import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
-import path from 'path';
+import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { EmptyFileSystem } from 'langium';
+import { EmptyFileSystem, URI } from 'langium';
 import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const root = 'formatting';
+const rootResourceName = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 
 export const createFormattingTests = async (): Promise<FormattingTest[]> => {
-    const testCases = listSafeDSResources(root).map(createFormattingTest);
+    const testCases = listSafeDsFiles(rootResourceName).map(createFormattingTest);
     return Promise.all(testCases);
 };
 
-const createFormattingTest = async (relativeResourcePath: string): Promise<FormattingTest> => {
-    const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
-    const program = fs.readFileSync(absolutePath).toString();
+const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
+    const program = fs.readFileSync(uri.fsPath).toString();
     const parts = program.split(separator);
 
     // Must contain exactly one separator
     if (parts.length !== 2) {
-        return invalidTest(relativeResourcePath, new SeparatorError(parts.length - 1));
+        return invalidTest(uri, new SeparatorError(parts.length - 1));
     }
 
     const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
@@ -32,20 +30,18 @@ const createFormattingTest = async (relativeResourcePath: string): Promise<Forma
     // Original code must not contain syntax errors
     const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
     if (syntaxErrorsInOriginalCode.length > 0) {
-        return invalidTest(relativeResourcePath, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
+        return invalidTest(uri, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
     }
 
     // Expected formatted code must not contain syntax errors
     const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
     if (syntaxErrorsInExpectedFormattedCode.length > 0) {
-        return invalidTest(
-            relativeResourcePath,
-            new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode),
-        );
+        return invalidTest(uri, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     return {
-        testName: `${relativeResourcePath} should be formatted correctly`,
+        testName: `[${shortenedResourceName}] should be formatted correctly`,
         originalCode,
         expectedFormattedCode,
     };
@@ -54,12 +50,13 @@ const createFormattingTest = async (relativeResourcePath: string): Promise<Forma
 /**
  * Report a test that has errors.
  *
- * @param relativeResourcePath The path to the test file relative to the `resources` directory.
+ * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (relativeResourcePath: string, error: Error): FormattingTest => {
+const invalidTest = (uri: URI, error: Error): FormattingTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     return {
-        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
+        testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         originalCode: '',
         expectedFormattedCode: '',
         error,

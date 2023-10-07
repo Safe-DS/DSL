@@ -1,43 +1,43 @@
-import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
-import path from 'path';
+import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
 import { TestDescription } from '../../helpers/testDescription.js';
+import { URI } from 'langium';
 
-const root = 'grammar';
+const rootResourceName = 'grammar';
 
 export const createGrammarTests = (): GrammarTest[] => {
-    return listSafeDSResources(root).map(createGrammarTest);
+    return listSafeDsFiles(rootResourceName).map(createGrammarTest);
 };
 
-const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
-    const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
-    const code = fs.readFileSync(absolutePath).toString();
+const createGrammarTest = (uri: URI): GrammarTest => {
+    const code = fs.readFileSync(uri.fsPath).toString();
     const comments = findTestComments(code);
 
     // Must contain at least one comment
     if (comments.length === 0) {
-        return invalidTest(relativeResourcePath, new NoCommentsError());
+        return invalidTest(uri, new NoCommentsError());
     }
 
     // Must contain no more than one comment
     if (comments.length > 1) {
-        return invalidTest(relativeResourcePath, new MultipleCommentsError(comments));
+        return invalidTest(uri, new MultipleCommentsError(comments));
     }
 
     const comment = comments[0];
 
     // Must contain a valid comment
     if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
-        return invalidTest(relativeResourcePath, new InvalidCommentError(comment));
+        return invalidTest(uri, new InvalidCommentError(comment));
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     let testName: string;
     if (comment === 'syntax_error') {
-        testName = `[${relativeResourcePath}] should have syntax errors`;
+        testName = `[${shortenedResourceName}] should have syntax errors`;
     } else {
-        testName = `[${relativeResourcePath}] should not have syntax errors`;
+        testName = `[${shortenedResourceName}] should not have syntax errors`;
     }
 
     return {
@@ -50,12 +50,13 @@ const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
 /**
  * Report a test that has errors.
  *
- * @param relativeResourcePath The path to the test file relative to the `resources` directory.
+ * @param uri The URI of the test file.
  * @param error The error that occurred.
  */
-const invalidTest = (relativeResourcePath: string, error: Error): GrammarTest => {
+const invalidTest = (uri: URI, error: Error): GrammarTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     return {
-        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
+        testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         code: '',
         expectedResult: 'invalid',
         error,
