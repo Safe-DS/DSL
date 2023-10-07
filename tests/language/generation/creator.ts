@@ -31,7 +31,9 @@ const createGenerationTest = async (
     relativeResourcePaths: string[],
 ): Promise<GenerationTest> => {
     const inputUris: string[] = [];
-    const outputFiles = readOutputFiles(path.join(root, relativeParentDirectoryPath, 'output'));
+    const expectedOutputRoot = path.join(root, relativeParentDirectoryPath, 'output')
+    const actualOutputRoot = resolvePathRelativeToResources(path.join(root, relativeParentDirectoryPath, 'generated'));
+    const expectedOutputFiles = readOutputFiles(expectedOutputRoot, actualOutputRoot);
 
     for (const relativeResourcePath of relativeResourcePaths) {
         const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
@@ -57,20 +59,20 @@ const createGenerationTest = async (
     return {
         testName: `[${relativeParentDirectoryPath}] should be generated correctly`,
         inputUris,
-        outputFiles,
-        outputRoot: resolvePathRelativeToResources(path.join(root, relativeParentDirectoryPath)),
+        expectedOutputFiles,
+        actualOutputRoot,
     };
 };
 
-const readOutputFiles = (rootDirectory: string): OutputFile[] => {
-    const relativeResourcePaths = listPythonResources(rootDirectory);
-    const outputFiles: OutputFile[] = [];
+const readOutputFiles = (expectedOutputRoot: string, actualOutputRoot: string): ExpectedOutputFile[] => {
+    const relativeResourcePaths = listPythonResources(expectedOutputRoot);
+    const outputFiles: ExpectedOutputFile[] = [];
 
     for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources(path.join(rootDirectory, relativeResourcePath));
+        const absolutePath = resolvePathRelativeToResources(path.join(expectedOutputRoot, relativeResourcePath));
         const code = fs.readFileSync(absolutePath).toString();
         outputFiles.push({
-            path: relativeResourcePath,
+            absolutePath: path.join(actualOutputRoot, relativeResourcePath),
             content: code,
         });
     }
@@ -81,15 +83,15 @@ const readOutputFiles = (rootDirectory: string): OutputFile[] => {
 /**
  * Report a test that has errors.
  *
- * @param pathRelativeToResources The path to the test file relative to the resources directory.
+ * @param pathRelativeToResources The path to the test file relative to the `resources` directory.
  * @param error The error that occurred.
  */
 const invalidTest = (pathRelativeToResources: string, error: Error): GenerationTest => {
     return {
         testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
         inputUris: [],
-        outputFiles: [],
-        outputRoot: pathRelativeToResources,
+        expectedOutputFiles: [],
+        actualOutputRoot: '',
         error,
     };
 };
@@ -104,29 +106,29 @@ interface GenerationTest extends TestDescription {
     inputUris: string[];
 
     /**
-     * Placeholder until the program should be run.
+     * Location after which execution should be stopped.
      */
     runUntil?: Location;
 
     /**
      * The expected generated code.
      */
-    outputFiles: OutputFile[];
+    expectedOutputFiles: ExpectedOutputFile[];
 
     /**
-     * The directory, where output files should be temporarily stored
+     * The directory, where actual output files should be temporarily stored.
      */
-    outputRoot: string;
+    actualOutputRoot: string;
 }
 
 /**
- * A file containing the expected output
+ * A file containing the expected output.
  */
-interface OutputFile {
+interface ExpectedOutputFile {
     /**
-     * Path to the output file.
+     * Absolute path to the output file.
      */
-    path: string;
+    absolutePath: string;
 
     /**
      * Content of the output file.

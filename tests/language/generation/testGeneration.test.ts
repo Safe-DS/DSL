@@ -1,12 +1,11 @@
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
-import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
 import { SdsModule } from '../../../src/language/generated/ast.js';
 import { generatePython } from '../../../src/cli/generator.js';
-import path from 'path';
 import fs from 'fs';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
@@ -36,24 +35,25 @@ describe('generation', async () => {
 
         // Generate code for all documents
         const actualOutputPaths: string[] = [];
-        const outputRoot = path.join(test.outputRoot, 'generated');
 
         for (const document of documents) {
             const module = document.parseResult.value as SdsModule;
             const fileName = document.uri.fsPath;
-            const generatedFilePaths = generatePython(module, fileName, outputRoot);
+            const generatedFilePaths = generatePython(module, fileName, test.actualOutputRoot);
             actualOutputPaths.push(...generatedFilePaths);
         }
 
         // File paths must match
-        const expectedOutputPaths = test.outputFiles.map((file) => file.path).sort();
+        const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.absolutePath).sort();
         expect(actualOutputPaths.sort()).toStrictEqual(expectedOutputPaths);
 
         // File contents must match
-        for (const expectedOutput of test.outputFiles) {
-            const actualOutputPath = path.join(outputRoot, expectedOutput.path);
-            const actualCode = fs.readFileSync(actualOutputPath).toString();
-            expect(actualCode).toBe(expectedOutput.content);
+        for (const expectedOutputFile of test.expectedOutputFiles) {
+            const actualCode = fs.readFileSync(expectedOutputFile.absolutePath).toString();
+            expect(actualCode).toBe(expectedOutputFile.content);
         }
+
+        // Remove generated files (if the test fails, the files are kept for debugging)
+        fs.rmSync(test.actualOutputRoot, { recursive: true, force: true });
     });
 });

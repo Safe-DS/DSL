@@ -54,7 +54,7 @@ const createFormattingTest = async (relativeResourcePath: string): Promise<Forma
 /**
  * Report a test that has errors.
  *
- * @param pathRelativeToResources The path to the test file relative to the resources directory.
+ * @param pathRelativeToResources The path to the test file relative to the `resources` directory.
  * @param error The error that occurred.
  */
 const invalidTest = (pathRelativeToResources: string, error: Error): FormattingTest => {
