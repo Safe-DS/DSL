@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { URI } from 'vscode-uri';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
@@ -28,9 +27,7 @@ describe('typing', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) =>
-            services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(uri)),
-        );
+        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
         await services.shared.workspace.DocumentBuilder.build(documents);
 
         // Ensure all nodes in the equivalence class have the same type

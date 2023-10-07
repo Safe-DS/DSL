@@ -1,4 +1,4 @@
-import {listSafeDsFiles, ShortenedResourceName, uriToShortenedResourceName} from '../../helpers/testResources.js';
+import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
@@ -16,13 +16,12 @@ export const createFormattingTests = async (): Promise<FormattingTest[]> => {
 };
 
 const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     const program = fs.readFileSync(uri.fsPath).toString();
     const parts = program.split(separator);
 
     // Must contain exactly one separator
     if (parts.length !== 2) {
-        return invalidTest(shortenedResourceName, new SeparatorError(parts.length - 1));
+        return invalidTest(uri, new SeparatorError(parts.length - 1));
     }
 
     const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
@@ -31,18 +30,16 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
     // Original code must not contain syntax errors
     const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
     if (syntaxErrorsInOriginalCode.length > 0) {
-        return invalidTest(shortenedResourceName, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
+        return invalidTest(uri, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
     }
 
     // Expected formatted code must not contain syntax errors
     const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
     if (syntaxErrorsInExpectedFormattedCode.length > 0) {
-        return invalidTest(
-            shortenedResourceName,
-            new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode),
-        );
+        return invalidTest(uri, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be formatted correctly`,
         originalCode,
@@ -53,10 +50,11 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
 /**
  * Report a test that has errors.
  *
- * @param shortenedResourceName A path relative to `tests/resources/` or a subdirectory thereof.
+ * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (shortenedResourceName: ShortenedResourceName, error: Error): FormattingTest => {
+const invalidTest = (uri: URI, error: Error): FormattingTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     return {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         originalCode: '',

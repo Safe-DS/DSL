@@ -1,4 +1,4 @@
-import {listSafeDsFiles, ShortenedResourceName, uriToShortenedResourceName} from '../../helpers/testResources.js';
+import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
@@ -12,27 +12,27 @@ export const createGrammarTests = (): GrammarTest[] => {
 };
 
 const createGrammarTest = (uri: URI): GrammarTest => {
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     const code = fs.readFileSync(uri.fsPath).toString();
     const comments = findTestComments(code);
 
     // Must contain at least one comment
     if (comments.length === 0) {
-        return invalidTest(shortenedResourceName, new NoCommentsError());
+        return invalidTest(uri, new NoCommentsError());
     }
 
     // Must contain no more than one comment
     if (comments.length > 1) {
-        return invalidTest(shortenedResourceName, new MultipleCommentsError(comments));
+        return invalidTest(uri, new MultipleCommentsError(comments));
     }
 
     const comment = comments[0];
 
     // Must contain a valid comment
     if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
-        return invalidTest(shortenedResourceName, new InvalidCommentError(comment));
+        return invalidTest(uri, new InvalidCommentError(comment));
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     let testName: string;
     if (comment === 'syntax_error') {
         testName = `[${shortenedResourceName}] should have syntax errors`;
@@ -50,10 +50,11 @@ const createGrammarTest = (uri: URI): GrammarTest => {
 /**
  * Report a test that has errors.
  *
- * @param shortenedResourceName A path relative to `tests/resources/` or a subdirectory thereof.
+ * @param uri The URI of the test file.
  * @param error The error that occurred.
  */
-const invalidTest = (shortenedResourceName: ShortenedResourceName, error: Error): GrammarTest => {
+const invalidTest = (uri: URI, error: Error): GrammarTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
     return {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         code: '',

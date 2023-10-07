@@ -18,7 +18,6 @@ export const createPartialEvaluationTests = (): Promise<PartialEvaluationTest[]>
 };
 
 const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): Promise<PartialEvaluationTest> => {
-    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     const groupIdToLocations: Map<string, Location[]> = new Map();
     const serializationAssertions: SerializationAssertion[] = [];
     const undefinedAssertions: UndefinedAssertion[] = [];
@@ -29,10 +28,7 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
         // File must not contain any syntax errors
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
-            return invalidTest(
-                'FILE', uri,
-                new SyntaxErrorsInCodeError(syntaxErrors),
-            );
+            return invalidTest('FILE', uri, new SyntaxErrorsInCodeError(syntaxErrors));
         }
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
@@ -84,6 +80,7 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
         }
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be partially evaluated correctly`,
         uris,
@@ -100,9 +97,9 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
  * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (level: "FILE" | "SUITE", uri: URI, error: Error): PartialEvaluationTest => {
+const invalidTest = (level: 'FILE' | 'SUITE', uri: URI, error: Error): PartialEvaluationTest => {
     const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
-    const testName = `INVALID TEST ${level} [${shortenedResourceName}]`
+    const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,
         uris: [],

@@ -18,7 +18,6 @@ export const createScopingTests = (): Promise<ScopingTest[]> => {
 };
 
 const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<ScopingTest> => {
-    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     const references: ExpectedReferenceWithTargetId[] = [];
     const targets: Map<string, Target> = new Map();
 
@@ -88,6 +87,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
         }
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be scoped correctly`,
         uris,
