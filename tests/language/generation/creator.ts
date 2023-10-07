@@ -31,7 +31,7 @@ const createGenerationTest = async (
     relativeResourcePaths: string[],
 ): Promise<GenerationTest> => {
     const inputUris: string[] = [];
-    const expectedOutputRoot = path.join(root, relativeParentDirectoryPath, 'output')
+    const expectedOutputRoot = path.join(root, relativeParentDirectoryPath, 'output');
     const actualOutputRoot = resolvePathRelativeToResources(path.join(root, relativeParentDirectoryPath, 'generated'));
     const expectedOutputFiles = readOutputFiles(expectedOutputRoot, actualOutputRoot);
 
