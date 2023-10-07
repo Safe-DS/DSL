@@ -54,6 +54,13 @@ const createGenerationTest = async (
         if (checksResult.isErr) {
             return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, checksResult.error);
         }
+
+        if (checksResult.value.length > 1) {
+            return invalidTest(
+                `INVALID TEST FILE [${relativeResourcePath}]`,
+                new MultipleChecksError(checksResult.value.length)
+            );
+        }
     }
 
     return {
@@ -134,4 +141,13 @@ interface ExpectedOutputFile {
      * Content of the output file.
      */
     content: string;
+}
+
+/**
+ * Found multiple test checks.
+ */
+class MultipleChecksError extends Error {
+    constructor(readonly count: number) {
+        super(`Found ${count} test checks (generation tests expect none or one).`);
+    }
 }
