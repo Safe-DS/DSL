@@ -1,6 +1,6 @@
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
-import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
@@ -44,7 +44,6 @@ describe('generation', async () => {
             const generatedFilePaths = generatePython(module, fileName, outputRoot);
             actualOutputPaths.push(...generatedFilePaths);
         }
-
 
         const expectedOutputPaths = test.outputFiles.map((file) => file.path).sort();
         expect(actualOutputPaths.sort()).equals(expectedOutputPaths);
