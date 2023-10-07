@@ -15,7 +15,7 @@ validation test.
 2. Add files with the extension `.sdstest`, `.sdspipe`, or `.sdsstub` **directly inside the folder**. All files in a
    folder will be loaded into the same workspace, so they can reference each other. Files in different folders are
    loaded into different workspaces, so they cannot reference each other.
-3. Add the Safe-DS code that you want to test to the file.
+3. Add the Safe-DS code that you want to test to the files.
 4. Specify the expected validation results using test comments (see [below](#format-of-test-comments)) and test
    markers (e.g. `fun »F«()`). The test comments are used to specify
     * the presence or absence of an issue,
