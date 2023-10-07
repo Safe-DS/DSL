@@ -1,6 +1,6 @@
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
@@ -45,13 +45,15 @@ describe('generation', async () => {
             actualOutputPaths.push(...generatedFilePaths);
         }
 
+        // File paths must match
         const expectedOutputPaths = test.outputFiles.map((file) => file.path).sort();
-        expect(actualOutputPaths.sort()).equals(expectedOutputPaths);
+        expect(actualOutputPaths.sort()).toStrictEqual(expectedOutputPaths);
 
+        // File contents must match
         for (const expectedOutput of test.outputFiles) {
             const actualOutputPath = path.join(outputRoot, expectedOutput.path);
             const actualCode = fs.readFileSync(actualOutputPath).toString();
-            expect(actualCode).equals(expectedOutput.content);
+            expect(actualCode).toBe(expectedOutput.content);
         }
     });
 });

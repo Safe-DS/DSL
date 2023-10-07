@@ -32,6 +32,7 @@ const createGenerationTest = async (
 ): Promise<GenerationTest> => {
     const inputUris: string[] = [];
     const outputFiles = readOutputFiles(path.join(root, relativeParentDirectoryPath, 'output'));
+
     for (const relativeResourcePath of relativeResourcePaths) {
         const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
         const uri = URI.file(absolutePath).toString();
@@ -62,16 +63,18 @@ const createGenerationTest = async (
 };
 
 const readOutputFiles = (rootDirectory: string): OutputFile[] => {
-    const pythonFiles = listPythonResources(rootDirectory);
+    const relativeResourcePaths = listPythonResources(rootDirectory);
     const outputFiles: OutputFile[] = [];
-    for (const outputFile of pythonFiles) {
-        const absolutePath = resolvePathRelativeToResources(path.join(rootDirectory, outputFile));
+
+    for (const relativeResourcePath of relativeResourcePaths) {
+        const absolutePath = resolvePathRelativeToResources(path.join(rootDirectory, relativeResourcePath));
         const code = fs.readFileSync(absolutePath).toString();
         outputFiles.push({
-            path: outputFile,
+            path: relativeResourcePath,
             content: code,
         });
     }
+
     return outputFiles;
 };
 
