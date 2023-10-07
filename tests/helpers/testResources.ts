@@ -9,12 +9,12 @@ const resourcesPath = path.join(__dirname, '..', 'resources');
 /**
  * A path relative to `tests/resources/`.
  */
-type ResourceName = string;
+export type ResourceName = string;
 
 /**
  * A path relative to `tests/resources/` or a subdirectory thereof.
  */
-type ShortenedResourceName = string;
+export type ShortenedResourceName = string;
 
 /**
  * Resolves the given path relative to `tests/resources/`.
@@ -46,19 +46,6 @@ export const resourceNameToUri = (resourceName: ResourceName): URI => {
 export const uriToShortenedResourceName = (uri: URI, rootResourceName?: ResourceName): ShortenedResourceName => {
     const rootPath = rootResourceName ? path.join(resourcesPath, rootResourceName) : resourcesPath;
     return path.relative(rootPath, uri.fsPath);
-}
-
-/**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/` that are not skipped.
- *
- * @param pathRelativeToResources The root directory relative to `tests/resources/`.
- * @return Paths to the Safe-DS files relative to `pathRelativeToResources`.
- */
-export const listSafeDSResources_PathBased = (pathRelativeToResources: string): string[] => {
-    const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
-    const cwd = resolvePathRelativeToResources_PathBased(pathRelativeToResources);
-
-    return globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
 };
 
 /**
@@ -112,8 +99,24 @@ export const listPythonFiles = (rootResourceName: ResourceName): URI[] => {
 export const listTestsResourcesGroupedByParentDirectory_PathBased = (
     pathRelativeToResources: string,
 ): Record<string, string[]> => {
-    const paths = listSafeDSResources_PathBased(pathRelativeToResources);
+    const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
+    const cwd = resolvePathRelativeToResources_PathBased(pathRelativeToResources);
+
+    const paths = globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
+
     return group(paths, (p) => path.dirname(p)) as Record<string, string[]>;
+};
+
+export const listSafeDsFilesGroupedByParentDirectory = (rootResourceName: ResourceName): Map<URI, URI[]> => {
+    const uris = listSafeDsFiles(rootResourceName);
+    const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>
+
+    const result = new Map<URI, URI[]>();
+    for (const [parentDirectory, urisInParentDirectory] of Object.entries(groupedByParentDirectory)) {
+        result.set(URI.file(parentDirectory), urisInParentDirectory);
+    }
+
+    return result;
 };
 
 const isNotSkipped = (pathRelativeToResources: string) => {
