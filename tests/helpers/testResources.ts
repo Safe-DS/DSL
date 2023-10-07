@@ -107,13 +107,20 @@ export const listTestsResourcesGroupedByParentDirectory_PathBased = (
     return group(paths, (p) => path.dirname(p)) as Record<string, string[]>;
 };
 
-export const listSafeDsFilesGroupedByParentDirectory = (rootResourceName: ResourceName): Map<URI, URI[]> => {
+/**
+ * Lists all Safe-DS files in the given root directory that are not skipped. The result is grouped by the parent
+ * directory.
+ *
+ * @param rootResourceName The resource name of the root directory.
+ * @return URIs of the discovered Safe-DS files grouped by the parent directory.
+ */
+export const listSafeDsFilesGroupedByParentDirectory = (rootResourceName: ResourceName): [URI, URI[]][] => {
     const uris = listSafeDsFiles(rootResourceName);
     const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>
 
-    const result = new Map<URI, URI[]>();
+    const result: [URI, URI[]][] = [];
     for (const [parentDirectory, urisInParentDirectory] of Object.entries(groupedByParentDirectory)) {
-        result.set(URI.file(parentDirectory), urisInParentDirectory);
+        result.push([URI.file(parentDirectory), urisInParentDirectory]);
     }
 
     return result;

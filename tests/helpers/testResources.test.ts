@@ -54,7 +54,7 @@ describe('listPythonFiles', () => {
 describe('listSafeDsFilesGroupedByParentDirectory', () => {
     it('should return all Safe-DS files in a directory that are not skipped and group them by parent directory', () => {
         const rootResourceName = 'helpers/listSafeDsFiles';
-        const result = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+        const result = new Map(listSafeDsFilesGroupedByParentDirectory(rootResourceName));
 
         // Compare the keys, i.e. the parent directories
         const actualKeys = [...result.keys()];

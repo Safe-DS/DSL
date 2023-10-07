@@ -1,50 +1,35 @@
-import {
-    listTestsResourcesGroupedByParentDirectory_PathBased,
-    resolvePathRelativeToResources_PathBased,
-} from '../../helpers/testResources.js';
-import path from 'path';
+import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
-import { URI } from 'vscode-uri';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
-import { EmptyFileSystem } from 'langium';
+import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
-const root = 'partial evaluation';
+const rootResourceName = 'partial evaluation';
 
 export const createPartialEvaluationTests = (): Promise<PartialEvaluationTest[]> => {
-    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory_PathBased(root);
-    const testCases = Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) =>
-        createPartialEvaluationTest(dirname, paths),
-    );
+    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const testCases = filesGroupedByParentDirectory.map((entry) => createPartialEvaluationTest(...entry));
 
     return Promise.all(testCases);
 };
 
-const createPartialEvaluationTest = async (
-    relativeParentDirectoryPath: string,
-    relativeResourcePaths: string[],
-): Promise<PartialEvaluationTest> => {
-    const uris: string[] = [];
+const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): Promise<PartialEvaluationTest> => {
     const groupIdToLocations: Map<string, Location[]> = new Map();
     const serializationAssertions: SerializationAssertion[] = [];
     const undefinedAssertions: UndefinedAssertion[] = [];
 
-    for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources_PathBased(path.join(root, relativeResourcePath));
-        const uri = URI.file(absolutePath).toString();
-        uris.push(uri);
-
-        const code = fs.readFileSync(absolutePath).toString();
+    for (const uri of uris) {
+        const code = fs.readFileSync(uri.fsPath).toString();
 
         // File must not contain any syntax errors
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
             return invalidTest(
-                `INVALID TEST FILE [${relativeResourcePath}]`,
+                'FILE', uri,
                 new SyntaxErrorsInCodeError(syntaxErrors),
             );
         }
@@ -53,7 +38,7 @@ const createPartialEvaluationTest = async (
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, checksResult.error);
+            return invalidTest('FILE', uri, checksResult.error);
         }
 
         for (const check of checksResult.value) {
@@ -87,22 +72,19 @@ const createPartialEvaluationTest = async (
                 continue;
             }
 
-            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new InvalidCommentError(check.comment));
+            return invalidTest('FILE', uri, new InvalidCommentError(check.comment));
         }
     }
 
     // Check that all equivalence classes have at least two locations
     for (const [id, locations] of groupIdToLocations) {
         if (locations.length < 2) {
-            return invalidTest(
-                `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
-                new SingletonEquivalenceClassError(id),
-            );
+            return invalidTest('SUITE', parentDirectory, new SingletonEquivalenceClassError(id));
         }
     }
 
     return {
-        testName: `[${relativeParentDirectoryPath}] should be partially evaluated correctly`,
+        testName: `[${parentDirectory}] should be partially evaluated correctly`,
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,
@@ -113,10 +95,13 @@ const createPartialEvaluationTest = async (
 /**
  * Report a test that has errors.
  *
- * @param testName The name of the test.
+ * @param level Whether a test file or a test suite is invalid.
+ * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (testName: string, error: Error): PartialEvaluationTest => {
+const invalidTest = (level: "FILE" | "SUITE", uri: URI, error: Error): PartialEvaluationTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+    const testName = `INVALID TEST ${level} [${shortenedResourceName}]`
     return {
         testName,
         uris: [],
@@ -134,7 +119,7 @@ interface PartialEvaluationTest extends TestDescription {
     /**
      * The URIs of the files that should be loaded into the workspace.
      */
-    uris: string[];
+    uris: URI[];
 
     /**
      * All nodes in an equivalence class should evaluate to the same constant expression.
