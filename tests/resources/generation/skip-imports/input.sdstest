@@ -1,9 +1,9 @@
 package tests.generator.imports
 
-import tests.generator.differentPackage.function1InDifferentPackage
-import tests.generator.differentPackage.function2InDifferentPackage as g
-import tests.generator.withPythonModule.function1InCompilationUnitWithPythonModule
-import tests.generator.withPythonModule.function2InCompilationUnitWithPythonModule as h
+from tests.generator.differentPackage import function1InDifferentPackage
+from tests.generator.differentPackage import function2InDifferentPackage as g
+from tests.generator.withPythonModule import function1InCompilationUnitWithPythonModule
+from tests.generator.withPythonModule import function2InCompilationUnitWithPythonModule as h
 
 fun f(param: Any?)
 
