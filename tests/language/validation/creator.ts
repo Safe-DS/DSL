@@ -10,6 +10,7 @@ import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnost
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { DocumentUri, Range } from 'vscode-languageserver-types';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'validation';
@@ -113,12 +114,7 @@ const invalidTest = (testName: string, error: Error): ValidationTest => {
 /**
  * A description of a validation test.
  */
-interface ValidationTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface ValidationTest extends TestDescription {
     /**
      * The URIs of the files that should be loaded into the workspace.
      */
@@ -128,11 +124,6 @@ interface ValidationTest {
      * The issues we expect to find in the workspace.
      */
     expectedIssues: ExpectedIssue[];
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**

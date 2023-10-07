@@ -1,6 +1,6 @@
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { clearDocuments } from 'langium/test';
-import { afterEach, describe, expect, it } from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
@@ -13,28 +13,39 @@ const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const generationTests = createGenerationTests();
 
 describe('generation', async () => {
+    beforeEach(async () => {
+        // Load the builtin library
+        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
+    });
+
     afterEach(async () => {
         await clearDocuments(services);
     });
 
-    // Test that the original code is generated correctly
     it.each(await generationTests)('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
             throw test.error;
         }
+
+        // Load all documents
+        const documents = test.inputUris.map((uri) =>
+            services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(uri)),
+        );
+        await services.shared.workspace.DocumentBuilder.build(documents);
+
+        // Generate code for all documents
         const actualOutputPaths: string[] = [];
         const outputRoot = path.join(test.outputRoot, 'generated');
-        for (const inputUri of test.inputUris) {
-            const fileName = URI.parse(inputUri).fsPath;
 
-            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
-            await services.shared.workspace.DocumentBuilder.build([document]);
+        for (const document of documents) {
             const module = document.parseResult.value as SdsModule;
-
+            const fileName = document.uri.fsPath;
             const generatedFilePaths = generatePython(module, fileName, outputRoot);
             actualOutputPaths.push(...generatedFilePaths);
         }
+
+
         const expectedOutputPaths = test.outputFiles.map((file) => file.path).sort();
         expect(actualOutputPaths.sort()).equals(expectedOutputPaths);
 

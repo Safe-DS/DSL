@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const root = 'grammar';
 
@@ -64,12 +65,7 @@ const invalidTest = (pathRelativeToResources: string, error: Error): GrammarTest
 /**
  * A description of a grammar test.
  */
-interface GrammarTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface GrammarTest extends TestDescription {
     /**
      * The code to parse.
      */
@@ -79,11 +75,6 @@ interface GrammarTest {
      * The expected result after parsing the program.
      */
     expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**

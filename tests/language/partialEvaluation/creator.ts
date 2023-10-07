@@ -10,6 +10,7 @@ import { URI } from 'vscode-uri';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'partial evaluation';
@@ -129,12 +130,7 @@ const invalidTest = (testName: string, error: Error): PartialEvaluationTest => {
 /**
  * A description of a partial evaluation test.
  */
-interface PartialEvaluationTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface PartialEvaluationTest extends TestDescription {
     /**
      * The URIs of the files that should be loaded into the workspace.
      */
@@ -154,11 +150,6 @@ interface PartialEvaluationTest {
      * The node should not evaluate to a constant expression.
      */
     undefinedAssertions: UndefinedAssertion[];
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**

@@ -1,6 +1,6 @@
 import path from 'path';
 import { globSync } from 'glob';
-import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions';
+import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { group } from 'radash';
 
 const resourcesPath = path.join(__dirname, '..', 'resources');

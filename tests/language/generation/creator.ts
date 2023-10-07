@@ -6,12 +6,12 @@ import {
 import path from 'path';
 import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { EmptyFileSystem } from 'langium';
 import { ErrorsInCodeError, getErrors } from '../../helpers/diagnostics.js';
 import { URI } from 'vscode-uri';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
+import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
@@ -68,7 +68,6 @@ const readOutputFiles = (rootDirectory: string): OutputFile[] => {
         const absolutePath = resolvePathRelativeToResources(path.join(rootDirectory, outputFile));
         const code = fs.readFileSync(absolutePath).toString();
         outputFiles.push({
-            uri: URI.file(absolutePath).toString(),
             path: outputFile,
             content: code,
         });
@@ -95,12 +94,7 @@ const invalidTest = (pathRelativeToResources: string, error: Error): GenerationT
 /**
  * A description of a generation test.
  */
-interface GenerationTest {
-    /**
-     * The name of the test.
-     */
-    testName: string;
-
+interface GenerationTest extends TestDescription {
     /**
      * The original code.
      */
@@ -120,11 +114,6 @@ interface GenerationTest {
      * The directory, where output files should be temporarily stored
      */
     outputRoot: string;
-
-    /**
-     * An error that occurred while creating the test. If this is undefined, the test is valid.
-     */
-    error?: Error;
 }
 
 /**
@@ -135,11 +124,6 @@ interface OutputFile {
      * Path to the output file.
      */
     path: string;
-
-    /**
-     * URI pointing to the output file.
-     */
-    uri: string;
 
     /**
      * Content of the output file.
