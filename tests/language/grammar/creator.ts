@@ -1,4 +1,4 @@
-import { listSafeDSResources, resolvePathRelativeToResources } from '../../helpers/testResources.js';
+import { listSafeDSResources_PathBased, resolvePathRelativeToResources_PathBased } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
@@ -8,11 +8,11 @@ import { TestDescription } from '../../helpers/testDescription.js';
 const root = 'grammar';
 
 export const createGrammarTests = (): GrammarTest[] => {
-    return listSafeDSResources(root).map(createGrammarTest);
+    return listSafeDSResources_PathBased(root).map(createGrammarTest);
 };
 
 const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
-    const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
+    const absolutePath = resolvePathRelativeToResources_PathBased(path.join(root, relativeResourcePath));
     const code = fs.readFileSync(absolutePath).toString();
     const comments = findTestComments(code);
 

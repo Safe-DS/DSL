@@ -1,9 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { listSafeDSResources, listTestsResourcesGroupedByParentDirectory } from './testResources.js';
+import {
+    listPythonFiles,
+    listSafeDsFiles,
+    listTestsResourcesGroupedByParentDirectory_PathBased,
+    resourceNameToUri,
+} from './testResources.js';
 
-describe('listTestResources', () => {
-    it('should yield all Safe-DS files in a directory that are not skipped', () => {
-        const result = listSafeDSResources('helpers/listTestResources');
+describe('listSafeDsFiles', () => {
+    it('should yield all Safe-DS files in a resource directory that are not skipped', () => {
+        const rootResourceName = 'helpers/listSafeDsFiles';
+
+        const actual = listSafeDsFiles(rootResourceName)
+            .map((uri) => uri.fsPath)
+            .sort();
+
         const expected = [
             'pipeline file.sdspipe',
             'stub file.sdsstub',
@@ -11,14 +21,33 @@ describe('listTestResources', () => {
             'nested/pipeline file.sdspipe',
             'nested/stub file.sdsstub',
             'nested/test file.sdstest',
-        ];
-        expect(normalizePaths(result)).toStrictEqual(normalizePaths(expected));
+        ]
+            .map((resourceName) => resourceNameToUri(`${rootResourceName}/${resourceName}`).fsPath)
+            .sort();
+
+        expect(actual).toStrictEqual(expected);
+    });
+});
+
+describe('listPythonFiles', () => {
+    it('should yield all Python files in a resource directory', () => {
+        const rootResourceName = 'helpers/listPythonFiles';
+
+        const actual = listPythonFiles(rootResourceName)
+            .map((uri) => uri.fsPath)
+            .sort();
+
+        const expected = ['python file.py', 'nested/python file.py']
+            .map((resourceName) => resourceNameToUri(`${rootResourceName}/${resourceName}`).fsPath)
+            .sort();
+
+        expect(actual).toStrictEqual(expected);
     });
 });
 
 describe('listTestResourcesGroupedByParentDirectory', () => {
     it('should yield all Safe-DS files in a directory that are not skipped and group them by parent directory', () => {
-        const result = listTestsResourcesGroupedByParentDirectory('helpers/listTestResources');
+        const result = listTestsResourcesGroupedByParentDirectory_PathBased('helpers/listTestResources');
 
         const keys = Object.keys(result);
         expect(normalizePaths(keys)).toStrictEqual(normalizePaths(['.', 'nested']));
@@ -42,7 +71,7 @@ describe('listTestResourcesGroupedByParentDirectory', () => {
  * @return The normalized paths.
  */
 const normalizePaths = (paths: string[]): string[] => {
-    return paths.map(normalizePath).sort();
+    return paths.sort();
 };
 
 /**

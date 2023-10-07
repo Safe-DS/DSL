@@ -1,6 +1,6 @@
 import {
-    listTestsResourcesGroupedByParentDirectory,
-    resolvePathRelativeToResources,
+    listTestsResourcesGroupedByParentDirectory_PathBased,
+    resolvePathRelativeToResources_PathBased,
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
@@ -16,7 +16,7 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const root = 'scoping';
 
 export const createScopingTests = (): Promise<ScopingTest[]> => {
-    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
+    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory_PathBased(root);
     const testCases = Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) =>
         createScopingTest(dirname, paths),
     );
@@ -33,7 +33,7 @@ const createScopingTest = async (
     const targets: Map<string, Target> = new Map();
 
     for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
+        const absolutePath = resolvePathRelativeToResources_PathBased(path.join(root, relativeResourcePath));
         const uri = URI.file(absolutePath).toString();
         uris.push(uri);
 

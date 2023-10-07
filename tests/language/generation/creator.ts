@@ -1,7 +1,7 @@
 import {
-    listPythonResources,
-    listTestsResourcesGroupedByParentDirectory,
-    resolvePathRelativeToResources,
+    listPythonResources_PathBased,
+    listTestsResourcesGroupedByParentDirectory_PathBased,
+    resolvePathRelativeToResources_PathBased,
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
@@ -19,7 +19,7 @@ await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 const root = 'generation';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
-    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory(root);
+    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory_PathBased(root);
     const testCases = Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) =>
         createGenerationTest(dirname, paths),
     );
@@ -33,12 +33,12 @@ const createGenerationTest = async (
 ): Promise<GenerationTest> => {
     const inputUris: string[] = [];
     const expectedOutputRoot = path.join(root, relativeParentDirectoryPath, 'output');
-    const actualOutputRoot = resolvePathRelativeToResources(path.join(root, relativeParentDirectoryPath, 'generated'));
+    const actualOutputRoot = resolvePathRelativeToResources_PathBased(path.join(root, relativeParentDirectoryPath, 'generated'));
     const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
     let runUntil: Location | undefined;
 
     for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
+        const absolutePath = resolvePathRelativeToResources_PathBased(path.join(root, relativeResourcePath));
         const uri = URI.file(absolutePath).toString();
         inputUris.push(uri);
 
@@ -100,11 +100,11 @@ const createGenerationTest = async (
 };
 
 const readExpectedOutputFiles = (expectedOutputRoot: string, actualOutputRoot: string): ExpectedOutputFile[] => {
-    const relativeResourcePaths = listPythonResources(expectedOutputRoot);
+    const relativeResourcePaths = listPythonResources_PathBased(expectedOutputRoot);
     const expectedOutputFiles: ExpectedOutputFile[] = [];
 
     for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources(path.join(expectedOutputRoot, relativeResourcePath));
+        const absolutePath = resolvePathRelativeToResources_PathBased(path.join(expectedOutputRoot, relativeResourcePath));
         const code = fs.readFileSync(absolutePath).toString();
         expectedOutputFiles.push({
             absolutePath: path.join(actualOutputRoot, relativeResourcePath),
