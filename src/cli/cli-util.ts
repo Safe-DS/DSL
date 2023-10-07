@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { AstNode, LangiumDocument, LangiumServices, URI } from 'langium';
 
+/* c8 ignore start */
 export const extractAstNode = async function <T extends AstNode>(
     fileName: string,
     services: LangiumServices,
@@ -46,6 +47,7 @@ export const extractDocument = async function (fileName: string, services: Langi
 
     return document;
 };
+/* c8 ignore stop */
 
 interface FilePathData {
     destination: string;
