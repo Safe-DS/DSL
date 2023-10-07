@@ -27,9 +27,7 @@ describe('validation', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) =>
-            services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(uri)),
-        );
+        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
         await services.shared.workspace.DocumentBuilder.build(documents, { validation: true });
 
         // Ensure all expected issues match
