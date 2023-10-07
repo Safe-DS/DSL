@@ -1,8 +1,6 @@
 package tests.generation.dummy
 
 pipeline myPipeline {
-    // $TEST$ run_until_here
-    // $TEST$ run_until_here
+    // $TEST$ run_until
     val »a« = 1;
-    val »b« = 1;
 }

@@ -12,6 +12,7 @@ import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { TestDescription } from '../../helpers/testDescription.js';
+import { locationToString } from '../../helpers/location.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
@@ -33,7 +34,8 @@ const createGenerationTest = async (
     const inputUris: string[] = [];
     const expectedOutputRoot = path.join(root, relativeParentDirectoryPath, 'output');
     const actualOutputRoot = resolvePathRelativeToResources(path.join(root, relativeParentDirectoryPath, 'generated'));
-    const expectedOutputFiles = readOutputFiles(expectedOutputRoot, actualOutputRoot);
+    const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
+    let runUntil: Location | undefined;
 
     for (const relativeResourcePath of relativeResourcePaths) {
         const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
@@ -55,36 +57,62 @@ const createGenerationTest = async (
             return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, checksResult.error);
         }
 
+        // Must contain at most one comment
         if (checksResult.value.length > 1) {
             return invalidTest(
                 `INVALID TEST FILE [${relativeResourcePath}]`,
-                new MultipleChecksError(checksResult.value.length)
+                new MultipleChecksError(checksResult.value.length),
             );
         }
+
+        // Comment must match the expected format
+        if (checksResult.value.length === 1) {
+            const check = checksResult.value[0];
+
+            // Expected unresolved reference
+            if (check.comment !== 'run_until') {
+                return invalidTest(
+                    `INVALID TEST FILE [${relativeResourcePath}]`,
+                    new InvalidCommentError(check.comment),
+                );
+            }
+        }
+
+        // Must not contain multiple run_until locations in various files
+        const newRunUntil = checksResult.value[0]?.location;
+        if (runUntil && newRunUntil) {
+            return invalidTest(
+                `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
+                new MultipleRunUntilLocationsError([runUntil, newRunUntil]),
+            );
+        }
+
+        runUntil = newRunUntil;
     }
 
     return {
         testName: `[${relativeParentDirectoryPath}] should be generated correctly`,
         inputUris,
-        expectedOutputFiles,
         actualOutputRoot,
+        expectedOutputFiles,
+        runUntil,
     };
 };
 
-const readOutputFiles = (expectedOutputRoot: string, actualOutputRoot: string): ExpectedOutputFile[] => {
+const readExpectedOutputFiles = (expectedOutputRoot: string, actualOutputRoot: string): ExpectedOutputFile[] => {
     const relativeResourcePaths = listPythonResources(expectedOutputRoot);
-    const outputFiles: ExpectedOutputFile[] = [];
+    const expectedOutputFiles: ExpectedOutputFile[] = [];
 
     for (const relativeResourcePath of relativeResourcePaths) {
         const absolutePath = resolvePathRelativeToResources(path.join(expectedOutputRoot, relativeResourcePath));
         const code = fs.readFileSync(absolutePath).toString();
-        outputFiles.push({
+        expectedOutputFiles.push({
             absolutePath: path.join(actualOutputRoot, relativeResourcePath),
             content: code,
         });
     }
 
-    return outputFiles;
+    return expectedOutputFiles;
 };
 
 /**
@@ -97,8 +125,8 @@ const invalidTest = (pathRelativeToResources: string, error: Error): GenerationT
     return {
         testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
         inputUris: [],
-        expectedOutputFiles: [],
         actualOutputRoot: '',
+        expectedOutputFiles: [],
         error,
     };
 };
@@ -113,9 +141,9 @@ interface GenerationTest extends TestDescription {
     inputUris: string[];
 
     /**
-     * Location after which execution should be stopped.
+     * The directory, where actual output files should be temporarily stored.
      */
-    runUntil?: Location;
+    actualOutputRoot: string;
 
     /**
      * The expected generated code.
@@ -123,9 +151,9 @@ interface GenerationTest extends TestDescription {
     expectedOutputFiles: ExpectedOutputFile[];
 
     /**
-     * The directory, where actual output files should be temporarily stored.
+     * Location after which execution should be stopped.
      */
-    actualOutputRoot: string;
+    runUntil?: Location;
 }
 
 /**
@@ -149,5 +177,24 @@ interface ExpectedOutputFile {
 class MultipleChecksError extends Error {
     constructor(readonly count: number) {
         super(`Found ${count} test checks (generation tests expect none or one).`);
+    }
+}
+
+/**
+ * A test comment did not match the expected format.
+ */
+class InvalidCommentError extends Error {
+    constructor(readonly comment: string) {
+        super(`Invalid test comment (valid values 'run_until'): ${comment}`);
+    }
+}
+
+/**
+ * Multiple files have a run_until locations.
+ */
+class MultipleRunUntilLocationsError extends Error {
+    constructor(readonly locations: Location[]) {
+        const locationsString = locations.map((it) => `\n    - ${locationToString(it)}`).join('');
+        super(`Found multiple run_until locations:${locationsString}`);
     }
 }
