@@ -7,12 +7,14 @@ import path from 'path';
 import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { EmptyFileSystem } from 'langium';
-import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
+import { ErrorsInCodeError, getErrors } from '../../helpers/diagnostics.js';
 import { URI } from 'vscode-uri';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
+import { NodeFileSystem } from 'langium/node';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = createSafeDsServices(NodeFileSystem).SafeDs;
+await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 const root = 'generation';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
@@ -37,13 +39,10 @@ const createGenerationTest = async (
 
         const code = fs.readFileSync(absolutePath).toString();
 
-        // File must not contain any syntax errors
-        const errors = await getSyntaxErrors(services, code);
+        // File must not contain any errors
+        const errors = await getErrors(services, code);
         if (errors.length > 0) {
-            return invalidTest(
-                `INVALID TEST FILE [${relativeResourcePath}]`,
-                new SyntaxErrorsInCodeError(errors),
-            );
+            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new ErrorsInCodeError(errors));
         }
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });

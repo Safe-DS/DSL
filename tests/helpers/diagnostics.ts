@@ -12,12 +12,8 @@ let nextId = 0;
  * @returns The syntax errors.
  */
 export const getSyntaxErrors = async (services: LangiumServices, code: string): Promise<Diagnostic[]> => {
-    const diagnostics = await getDiagnostics(services, code);
-    return diagnostics.filter(
-        (d) =>
-            d.severity === DiagnosticSeverity.Error &&
-            (d.data?.code === 'lexing-error' || d.data?.code === 'parsing-error'),
-    );
+    const diagnostics = await getErrors(services, code);
+    return diagnostics.filter((d) => d.data?.code === 'lexing-error' || d.data?.code === 'parsing-error');
 };
 
 /**
@@ -28,8 +24,20 @@ export const getSyntaxErrors = async (services: LangiumServices, code: string): 
  * @returns The errors.
  */
 export const getLinkingErrors = async (services: LangiumServices, code: string): Promise<Diagnostic[]> => {
+    const diagnostics = await getErrors(services, code);
+    return diagnostics.filter((d) => d.data?.code === 'linking-error');
+};
+
+/**
+ * Get all errors from a code snippet.
+ *
+ * @param services The language services.
+ * @param code The code snippet to check.
+ * @returns The errors.
+ */
+export const getErrors = async (services: LangiumServices, code: string): Promise<Diagnostic[]> => {
     const diagnostics = await getDiagnostics(services, code);
-    return diagnostics.filter((d) => d.severity === DiagnosticSeverity.Error && d.data?.code === 'linking-error');
+    return diagnostics.filter((d) => d.severity === DiagnosticSeverity.Error);
 };
 
 /**
@@ -56,5 +64,16 @@ export class SyntaxErrorsInCodeError extends Error {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
 
         super(`Code has syntax errors:\n${syntaxErrorsAsString}`);
+    }
+}
+
+/**
+ * The code contains syntax errors.
+ */
+export class ErrorsInCodeError extends Error {
+    constructor(readonly errors: Diagnostic[]) {
+        const syntaxErrorsAsString = errors.map((e) => `- ${e.message}`).join(`\n`);
+
+        super(`Code has errors:\n${syntaxErrorsAsString}`);
     }
 }
