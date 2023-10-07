@@ -118,12 +118,12 @@ const readExpectedOutputFiles = (expectedOutputRoot: string, actualOutputRoot: s
 /**
  * Report a test that has errors.
  *
- * @param pathRelativeToResources The path to the test file relative to the `resources` directory.
+ * @param testName The name of the test.
  * @param error The error that occurred.
  */
-const invalidTest = (pathRelativeToResources: string, error: Error): GenerationTest => {
+const invalidTest = (testName: string, error: Error): GenerationTest => {
     return {
-        testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
+        testName,
         inputUris: [],
         actualOutputRoot: '',
         expectedOutputFiles: [],

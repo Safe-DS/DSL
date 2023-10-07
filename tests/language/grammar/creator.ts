@@ -50,12 +50,12 @@ const createGrammarTest = (relativeResourcePath: string): GrammarTest => {
 /**
  * Report a test that has errors.
  *
- * @param pathRelativeToResources The path to the test file relative to the `resources` directory.
+ * @param relativeResourcePath The path to the test file relative to the `resources` directory.
  * @param error The error that occurred.
  */
-const invalidTest = (pathRelativeToResources: string, error: Error): GrammarTest => {
+const invalidTest = (relativeResourcePath: string, error: Error): GrammarTest => {
     return {
-        testName: `INVALID TEST FILE [${pathRelativeToResources}]`,
+        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
         code: '',
         expectedResult: 'invalid',
         error,

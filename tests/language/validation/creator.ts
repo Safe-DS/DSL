@@ -99,12 +99,12 @@ const createValidationTest = async (
 /**
  * Report a test that has errors.
  *
- * @param testName The name of the test.
+ * @param relativeResourcePath The path to the test file relative to the `resources` directory.
  * @param error The error that occurred.
  */
-const invalidTest = (testName: string, error: Error): ValidationTest => {
+const invalidTest = (relativeResourcePath: string, error: Error): ValidationTest => {
     return {
-        testName,
+        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
         uris: [],
         expectedIssues: [],
         error,
