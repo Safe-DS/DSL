@@ -75,7 +75,7 @@ export const listPythonFiles = (rootResourceName: ResourceName): URI[] => {
  */
 export const listSafeDsFilesGroupedByParentDirectory = (rootResourceName: ResourceName): [URI, URI[]][] => {
     const uris = listSafeDsFiles(rootResourceName);
-    const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>
+    const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>;
 
     const result: [URI, URI[]][] = [];
     for (const [parentDirectory, urisInParentDirectory] of Object.entries(groupedByParentDirectory)) {
