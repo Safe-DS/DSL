@@ -5,9 +5,19 @@ class MyClass() {
     attr »result«: Int
 }
 
+enum MyEnum {
+    // $TEST$ target MyEnum_result
+    MyEnumVariant(»result«: Int)
+}
+
 segment mySegment(
-    callableWithIdenticalMember: () -> result: MyClass
+    f1: () -> result: MyClass,
+    f2: () -> result: MyEnum.MyEnumVariant,
 ) {
+
     // $TEST$ references MyClass_result
-    callableWithIdenticalMember().»result«;
+    f1().»result«;
+
+    // $TEST$ references MyEnum_result
+    f2().»result«;
 }

@@ -5,9 +5,18 @@ class MyClass() {
     attr »result«: Int
 }
 
-segment segmentWithOneResultWithIdenticalMember() -> result: MyClass {}
+enum MyEnum {
+    // $TEST$ target MyEnum_result
+    MyEnumVariant(»result«: Int)
+}
+
+segment s1() -> result: MyClass {}
+segment s2() -> result: MyEnum.MyEnumVariant {}
 
 pipeline myPipeline {
     // $TEST$ references MyClass_result
-    segmentWithOneResultWithIdenticalMember().»result«;
+    s1().»result«;
+
+    // $TEST$ references MyEnum_result
+    s2().»result«;
 }

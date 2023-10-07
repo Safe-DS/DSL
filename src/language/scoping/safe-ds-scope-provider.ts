@@ -218,8 +218,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             // Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
             return this.createScopeForNodes(ownInstanceMembers, resultScope);
         } else if (receiverType instanceof EnumVariantType) {
-            // Scopes.scopeFor(type.sdsEnumVariant.parametersOrEmpty())
-            return resultScope;
+            const parameters = parametersOrEmpty(receiverType.sdsEnumVariant);
+            return this.createScopeForNodes(parameters, resultScope);
         }
 
         return resultScope;

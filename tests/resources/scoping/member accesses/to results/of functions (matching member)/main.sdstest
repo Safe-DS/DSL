@@ -5,9 +5,18 @@ class MyClass() {
     attr »result«: Int
 }
 
-fun functionWithOneResultWithIdenticalMember() -> result: MyClass
+enum MyEnum {
+    // $TEST$ target MyEnum_result
+    MyEnumVariant(»result«: Int)
+}
+
+fun f1() -> result: MyClass
+fun f2() -> result: MyEnum.MyEnumVariant
 
 pipeline myPipeline {
     // $TEST$ references MyClass_result
-    functionWithOneResultWithIdenticalMember().»result«;
+    f1().»result«;
+
+    // $TEST$ references MyEnum_result
+    f2().»result«;
 }
