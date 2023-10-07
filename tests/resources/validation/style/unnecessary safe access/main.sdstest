@@ -15,5 +15,8 @@ pipeline test {
     »nullableMyClass()?.toString«();
 
     // $TEST$ no info "The receiver is never null, so the safe access is unnecessary."
+    nullableMyClass()»?.toString«(); // Langium currently computes the wrong range for a member access
+
+    // $TEST$ no info "The receiver is never null, so the safe access is unnecessary."
     »unresolved?.toString«();
 }

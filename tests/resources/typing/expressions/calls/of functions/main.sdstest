@@ -4,7 +4,7 @@ fun f1() -> r: String
 fun f2() -> (r: String, s: Int)
 
 pipeline myPipeline {
-    // $TEST$ serialization (r: String)
+    // $TEST$ serialization String
     »f1()«;
 
     // $TEST$ serialization (r: String, s: Int)

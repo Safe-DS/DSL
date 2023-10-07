@@ -204,7 +204,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         // Members
-        let receiverType = this.typeComputer.computeType(node.receiver).unwrap();
+        let receiverType = this.typeComputer.computeType(node.receiver);
         if (receiverType.isNullable && !node.isNullSafe) {
             return resultScope;
         }

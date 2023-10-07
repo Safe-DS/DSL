@@ -104,7 +104,7 @@ export class SafeDsTypeComputer {
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         const key = `${documentUri}~${nodePath}`;
-        return this.typeCache.get(key, () => this.doComputeType(node));
+        return this.typeCache.get(key, () => this.doComputeType(node).unwrap());
     }
 
     // fun SdsAbstractObject.hasPrimitiveType(): Boolean {
