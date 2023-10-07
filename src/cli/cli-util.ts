@@ -3,6 +3,13 @@ import path from 'path';
 import fs from 'fs';
 import { AstNode, LangiumDocument, LangiumServices, URI } from 'langium';
 
+export const extractAstNode = async function <T extends AstNode>(
+    fileName: string,
+    services: LangiumServices,
+): Promise<T> {
+    return (await extractDocument(fileName, services)).parseResult?.value as T;
+};
+
 export const extractDocument = async function (fileName: string, services: LangiumServices): Promise<LangiumDocument> {
     const extensions = services.LanguageMetaData.fileExtensions;
     if (!extensions.includes(path.extname(fileName))) {
@@ -20,11 +27,11 @@ export const extractDocument = async function (fileName: string, services: Langi
     const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
     await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
 
-    const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
-    if (validationErrors.length > 0) {
+    const errors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
+    if (errors.length > 0) {
         // eslint-disable-next-line no-console
-        console.error(chalk.red('There are validation errors:'));
-        for (const validationError of validationErrors) {
+        console.error(chalk.red(`The document ${fileName} has errors:`));
+        for (const validationError of errors) {
             // eslint-disable-next-line no-console
             console.error(
                 chalk.red(
@@ -38,13 +45,6 @@ export const extractDocument = async function (fileName: string, services: Langi
     }
 
     return document;
-};
-
-export const extractAstNode = async function <T extends AstNode>(
-    fileName: string,
-    services: LangiumServices,
-): Promise<T> {
-    return (await extractDocument(fileName, services)).parseResult?.value as T;
 };
 
 interface FilePathData {

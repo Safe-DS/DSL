@@ -30,7 +30,6 @@ const createGenerationTest = async (
 ): Promise<GenerationTest> => {
     const inputUris: string[] = [];
     const outputFiles = readOutputFiles(path.join(root, relativeParentDirectoryPath, 'output'));
-    //const outputUris =
     for (const relativeResourcePath of relativeResourcePaths) {
         const absolutePath = resolvePathRelativeToResources(path.join(root, relativeResourcePath));
         const uri = URI.file(absolutePath).toString();
@@ -39,11 +38,11 @@ const createGenerationTest = async (
         const code = fs.readFileSync(absolutePath).toString();
 
         // File must not contain any syntax errors
-        const syntaxErrors = await getSyntaxErrors(services, code);
-        if (syntaxErrors.length > 0) {
+        const errors = await getSyntaxErrors(services, code);
+        if (errors.length > 0) {
             return invalidTest(
                 `INVALID TEST FILE [${relativeResourcePath}]`,
-                new SyntaxErrorsInCodeError(syntaxErrors),
+                new SyntaxErrorsInCodeError(errors),
             );
         }
 

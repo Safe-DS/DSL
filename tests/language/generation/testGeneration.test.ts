@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
-import { extractAstNode } from '../../../src/cli/cli-util.js';
 import { SdsModule } from '../../../src/language/generated/ast.js';
 import { generatePython } from '../../../src/cli/generator.js';
 import path from 'path';
@@ -28,7 +27,11 @@ describe('generation', async () => {
         const outputRoot = path.join(test.outputRoot, 'generated');
         for (const inputUri of test.inputUris) {
             const fileName = URI.parse(inputUri).fsPath;
-            const module = await extractAstNode<SdsModule>(fileName, services);
+
+            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
+            await services.shared.workspace.DocumentBuilder.build([document]);
+            const module = document.parseResult.value as SdsModule;
+
             const generatedFilePaths = generatePython(module, fileName, outputRoot);
             actualOutputPaths.push(...generatedFilePaths);
         }
