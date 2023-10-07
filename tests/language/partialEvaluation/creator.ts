@@ -18,6 +18,7 @@ export const createPartialEvaluationTests = (): Promise<PartialEvaluationTest[]>
 };
 
 const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): Promise<PartialEvaluationTest> => {
+    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     const groupIdToLocations: Map<string, Location[]> = new Map();
     const serializationAssertions: SerializationAssertion[] = [];
     const undefinedAssertions: UndefinedAssertion[] = [];
@@ -84,7 +85,7 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
     }
 
     return {
-        testName: `[${parentDirectory}] should be partially evaluated correctly`,
+        testName: `[${shortenedResourceName}] should be partially evaluated correctly`,
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,

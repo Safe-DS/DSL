@@ -1,4 +1,4 @@
-import {listSafeDsFiles, uriToShortenedResourceName} from '../../helpers/testResources.js';
+import {listSafeDsFiles, ShortenedResourceName, uriToShortenedResourceName} from '../../helpers/testResources.js';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
@@ -53,12 +53,12 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
 /**
  * Report a test that has errors.
  *
- * @param relativeResourcePath The path to the test file relative to the `resources` directory.
+ * @param shortenedResourceName A path relative to `tests/resources/` or a subdirectory thereof.
  * @param error The error that occurred.
  */
-const invalidTest = (relativeResourcePath: string, error: Error): FormattingTest => {
+const invalidTest = (shortenedResourceName: ShortenedResourceName, error: Error): FormattingTest => {
     return {
-        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
+        testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         originalCode: '',
         expectedFormattedCode: '',
         error,

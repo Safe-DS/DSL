@@ -1,4 +1,4 @@
-import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
+import {listSafeDsFiles, ShortenedResourceName, uriToShortenedResourceName} from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
@@ -50,12 +50,12 @@ const createGrammarTest = (uri: URI): GrammarTest => {
 /**
  * Report a test that has errors.
  *
- * @param relativeResourcePath The path to the test file relative to the `resources` directory.
+ * @param shortenedResourceName A path relative to `tests/resources/` or a subdirectory thereof.
  * @param error The error that occurred.
  */
-const invalidTest = (relativeResourcePath: string, error: Error): GrammarTest => {
+const invalidTest = (shortenedResourceName: ShortenedResourceName, error: Error): GrammarTest => {
     return {
-        testName: `INVALID TEST FILE [${relativeResourcePath}]`,
+        testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         code: '',
         expectedResult: 'invalid',
         error,
