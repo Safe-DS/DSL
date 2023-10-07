@@ -1,68 +1,55 @@
 import {
-    listPythonResources_PathBased,
-    listTestsResourcesGroupedByParentDirectory_PathBased,
-    resolvePathRelativeToResources_PathBased,
+    listPythonFiles,
+    listSafeDsFilesGroupedByParentDirectory,
+    uriToShortenedResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { ErrorsInCodeError, getErrors } from '../../helpers/diagnostics.js';
-import { URI } from 'vscode-uri';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { TestDescription } from '../../helpers/testDescription.js';
 import { locationToString } from '../../helpers/location.js';
+import { URI } from 'langium';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-const root = 'generation';
+const rootResourceName = 'generation';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
-    const pathsGroupedByParentDirectory = listTestsResourcesGroupedByParentDirectory_PathBased(root);
-    const testCases = Object.entries(pathsGroupedByParentDirectory).map(([dirname, paths]) =>
-        createGenerationTest(dirname, paths),
-    );
+    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const testCases = filesGroupedByParentDirectory.map((entry) => createGenerationTest(...entry));
 
     return Promise.all(testCases);
 };
 
-const createGenerationTest = async (
-    relativeParentDirectoryPath: string,
-    relativeResourcePaths: string[],
-): Promise<GenerationTest> => {
-    const inputUris: string[] = [];
-    const expectedOutputRoot = path.join(root, relativeParentDirectoryPath, 'output');
-    const actualOutputRoot = resolvePathRelativeToResources_PathBased(path.join(root, relativeParentDirectoryPath, 'generated'));
+const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Promise<GenerationTest> => {
+    const expectedOutputRoot = URI.file(path.join(parentDirectory.fsPath, 'output'));
+    const actualOutputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
     const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
     let runUntil: Location | undefined;
 
-    for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources_PathBased(path.join(root, relativeResourcePath));
-        const uri = URI.file(absolutePath).toString();
-        inputUris.push(uri);
-
-        const code = fs.readFileSync(absolutePath).toString();
+    for (const uri of inputUris) {
+        const code = fs.readFileSync(uri.fsPath).toString();
 
         // File must not contain any errors
         const errors = await getErrors(services, code);
         if (errors.length > 0) {
-            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, new ErrorsInCodeError(errors));
+            return invalidTest('FILE', uri, new ErrorsInCodeError(errors));
         }
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest(`INVALID TEST FILE [${relativeResourcePath}]`, checksResult.error);
+            return invalidTest('FILE', uri, checksResult.error);
         }
 
         // Must contain at most one comment
         if (checksResult.value.length > 1) {
-            return invalidTest(
-                `INVALID TEST FILE [${relativeResourcePath}]`,
-                new MultipleChecksError(checksResult.value.length),
-            );
+            return invalidTest('FILE', uri, new MultipleChecksError(checksResult.value.length));
         }
 
         // Comment must match the expected format
@@ -71,27 +58,22 @@ const createGenerationTest = async (
 
             // Expected unresolved reference
             if (check.comment !== 'run_until') {
-                return invalidTest(
-                    `INVALID TEST FILE [${relativeResourcePath}]`,
-                    new InvalidCommentError(check.comment),
-                );
+                return invalidTest('FILE', uri, new InvalidCommentError(check.comment));
             }
         }
 
         // Must not contain multiple run_until locations in various files
         const newRunUntil = checksResult.value[0]?.location;
         if (runUntil && newRunUntil) {
-            return invalidTest(
-                `INVALID TEST SUITE [${relativeParentDirectoryPath}]`,
-                new MultipleRunUntilLocationsError([runUntil, newRunUntil]),
-            );
+            return invalidTest('SUITE', parentDirectory, new MultipleRunUntilLocationsError([runUntil, newRunUntil]));
         }
 
         runUntil = newRunUntil;
     }
 
+    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${relativeParentDirectoryPath}] should be generated correctly`,
+        testName: `[${shortenedResourceName}] should be generated correctly`,
         inputUris,
         actualOutputRoot,
         expectedOutputFiles,
@@ -99,33 +81,35 @@ const createGenerationTest = async (
     };
 };
 
-const readExpectedOutputFiles = (expectedOutputRoot: string, actualOutputRoot: string): ExpectedOutputFile[] => {
-    const relativeResourcePaths = listPythonResources_PathBased(expectedOutputRoot);
-    const expectedOutputFiles: ExpectedOutputFile[] = [];
-
-    for (const relativeResourcePath of relativeResourcePaths) {
-        const absolutePath = resolvePathRelativeToResources_PathBased(path.join(expectedOutputRoot, relativeResourcePath));
-        const code = fs.readFileSync(absolutePath).toString();
-        expectedOutputFiles.push({
-            absolutePath: path.join(actualOutputRoot, relativeResourcePath),
-            content: code,
-        });
-    }
-
-    return expectedOutputFiles;
+/**
+ * Read all expected output files.
+ *
+ * @param expectedOutputRoot Where the expected output files are located.
+ * @param actualOutputRoot Where the actual output files supposed to be located.
+ */
+const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI): ExpectedOutputFile[] => {
+    return listPythonFiles(uriToShortenedResourceName(expectedOutputRoot)).map((uri) => {
+        return {
+            uri: URI.file(path.join(actualOutputRoot.fsPath, path.relative(expectedOutputRoot.fsPath, uri.fsPath))),
+            code: fs.readFileSync(uri.fsPath).toString(),
+        };
+    });
 };
 
 /**
  * Report a test that has errors.
  *
- * @param testName The name of the test.
+ * @param level Whether a test file or a test suite is invalid.
+ * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (testName: string, error: Error): GenerationTest => {
+const invalidTest = (level: 'FILE' | 'SUITE', uri: URI, error: Error): GenerationTest => {
+    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+    const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,
         inputUris: [],
-        actualOutputRoot: '',
+        actualOutputRoot: URI.file(''),
         expectedOutputFiles: [],
         error,
     };
@@ -138,12 +122,12 @@ interface GenerationTest extends TestDescription {
     /**
      * The original code.
      */
-    inputUris: string[];
+    inputUris: URI[];
 
     /**
      * The directory, where actual output files should be temporarily stored.
      */
-    actualOutputRoot: string;
+    actualOutputRoot: URI;
 
     /**
      * The expected generated code.
@@ -161,14 +145,14 @@ interface GenerationTest extends TestDescription {
  */
 interface ExpectedOutputFile {
     /**
-     * Absolute path to the output file.
+     * URI of the output file.
      */
-    absolutePath: string;
+    uri: URI;
 
     /**
      * Content of the output file.
      */
-    content: string;
+    code: string;
 }
 
 /**

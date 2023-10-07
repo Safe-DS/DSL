@@ -17,16 +17,6 @@ export type ResourceName = string;
 export type ShortenedResourceName = string;
 
 /**
- * Resolves the given path relative to `tests/resources/`.
- *
- * @param pathRelativeToResources The path relative to `tests/resources/`.
- * @return The resolved absolute path.
- */
-export const resolvePathRelativeToResources_PathBased = (pathRelativeToResources: string) => {
-    return path.join(resourcesPath, pathRelativeToResources);
-};
-
-/**
  * Returns the URI that corresponds to the resource with the given name.
  *
  * @param resourceName The resource name.
@@ -64,19 +54,6 @@ export const listSafeDsFiles = (rootResourceName: ResourceName): URI[] => {
 };
 
 /**
- * Lists all Python files in the given directory relative to `tests/resources/`.
- *
- * @param pathRelativeToResources The root directory relative to `tests/resources/`.
- * @return Paths to the Python files relative to `pathRelativeToResources`.
- */
-export const listPythonResources_PathBased = (pathRelativeToResources: string): string[] => {
-    const pattern = `**/*.py`;
-    const cwd = resolvePathRelativeToResources_PathBased(pathRelativeToResources);
-
-    return globSync(pattern, { cwd, nodir: true });
-};
-
-/**
  * Lists all Python files in the given root directory.
  *
  * @param rootResourceName The resource name of the root directory.
@@ -87,24 +64,6 @@ export const listPythonFiles = (rootResourceName: ResourceName): URI[] => {
     const cwd = resourceNameToUri(rootResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
-};
-
-/**
- * Lists all Safe-DS files in the given directory relative to `tests/resources/` that are not skipped. The result is
- * grouped by the parent directory.
- *
- * @param pathRelativeToResources The root directory relative to `tests/resources/`.
- * @return Paths to the Safe-DS files relative to `pathRelativeToResources` grouped by the parent directory.
- */
-export const listTestsResourcesGroupedByParentDirectory_PathBased = (
-    pathRelativeToResources: string,
-): Record<string, string[]> => {
-    const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
-    const cwd = resolvePathRelativeToResources_PathBased(pathRelativeToResources);
-
-    const paths = globSync(pattern, { cwd, nodir: true }).filter(isNotSkipped);
-
-    return group(paths, (p) => path.dirname(p)) as Record<string, string[]>;
 };
 
 /**

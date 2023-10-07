@@ -4,7 +4,7 @@ import { findTestChecks } from '../../helpers/testChecks.js';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { DocumentUri, Range } from 'vscode-languageserver-types';
+import { Range } from 'vscode-languageserver-types';
 import { TestDescription } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
@@ -62,7 +62,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
                 severity: severity as Severity,
                 message,
                 messageIsRegex,
-                uri: uri.toString(),
+                uri,
                 range: check.location?.range,
             });
         }
@@ -135,7 +135,7 @@ export interface ExpectedIssue {
     /**
      * The URI of the file containing the issue.
      */
-    uri: DocumentUri;
+    uri: URI;
 
     /**
      * The range of the issue. If undefined, the issue is expected to be present in the whole file.
