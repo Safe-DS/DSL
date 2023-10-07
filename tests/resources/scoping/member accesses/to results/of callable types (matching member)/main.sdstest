@@ -1,0 +1,23 @@
+package tests.scoping.memberAccesses.toResults.ofCallableTypes.matchingMember
+
+class MyClass() {
+    // $TEST$ target MyClass_result
+    attr »result«: Int
+}
+
+enum MyEnum {
+    // $TEST$ target MyEnum_result
+    MyEnumVariant(»result«: Int)
+}
+
+segment mySegment(
+    f1: () -> result: MyClass,
+    f2: () -> result: MyEnum.MyEnumVariant,
+) {
+
+    // $TEST$ references MyClass_result
+    f1().»result«;
+
+    // $TEST$ references MyEnum_result
+    f2().»result«;
+}

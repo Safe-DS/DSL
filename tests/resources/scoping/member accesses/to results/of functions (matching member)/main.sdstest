@@ -1,0 +1,22 @@
+package tests.scoping.memberAccesses.toResults.ofFunctions.matchingMember
+
+class MyClass() {
+    // $TEST$ target MyClass_result
+    attr »result«: Int
+}
+
+enum MyEnum {
+    // $TEST$ target MyEnum_result
+    MyEnumVariant(»result«: Int)
+}
+
+fun f1() -> result: MyClass
+fun f2() -> result: MyEnum.MyEnumVariant
+
+pipeline myPipeline {
+    // $TEST$ references MyClass_result
+    f1().»result«;
+
+    // $TEST$ references MyEnum_result
+    f2().»result«;
+}

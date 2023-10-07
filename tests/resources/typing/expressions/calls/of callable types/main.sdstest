@@ -4,7 +4,7 @@ segment mySegment(
     p1: () -> r: String,
     p2: () -> (r: String, s: Int)
 ) {
-    // $TEST$ serialization (r: String)
+    // $TEST$ serialization String
     »p1()«;
 
     // $TEST$ serialization (r: String, s: Int)

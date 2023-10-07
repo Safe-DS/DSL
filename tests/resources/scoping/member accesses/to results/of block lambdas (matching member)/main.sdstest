@@ -5,11 +5,23 @@ class MyClass() {
     attr »result«: Int
 }
 
+enum MyEnum {
+    // $TEST$ target MyEnum_result
+    MyEnumVariant(»result«: Int)
+}
+
 pipeline myPipeline {
-    val lambdaWithOneResultWithIdenticalMember = () {
+    val f1 = () {
         yield result = MyClass();
     };
 
+    val f2 = () {
+        yield result = MyEnum.MyEnumVariant(0);
+    };
+
     // $TEST$ references MyClass_result
-    lambdaWithOneResultWithIdenticalMember().»result«;
+    f1().»result«;
+
+    // $TEST$ references MyEnum_result
+    f2().»result«;
 }

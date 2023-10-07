@@ -49,12 +49,56 @@ class MyClass {
 
 class AnotherClass
 
+fun nullableMyClass() -> result: MyClass?
+
 pipeline myPipeline {
+    // $TEST$ references myInstanceMethod
+    val myClass = MyClass();
+    myClass.»myInstanceMethod«();
+
+
+    // $TEST$ references redeclaredAsInstanceAttribute
+    MyClass().»redeclaredAsInstanceAttribute«();
+
+    // $TEST$ references redeclaredAsStaticAttribute
+    MyClass().»redeclaredAsStaticAttribute«();
+
+    // $TEST$ references redeclaredAsNestedClass
+    MyClass().»redeclaredAsNestedClass«();
+
+    // $TEST$ references redeclaredAsNestedEnum
+    MyClass().»redeclaredAsNestedEnum«();
+
+    // $TEST$ references redeclaredAsInstanceMethod
+    MyClass().»redeclaredAsInstanceMethod«();
+
+    // $TEST$ references redeclaredAsStaticMethod
+    MyClass().»redeclaredAsStaticMethod«();
+
+    // $TEST$ references declaredPreviouslyAsStaticAttribute
+    MyClass().»declaredPreviouslyAsStaticAttribute«();
+
+    // $TEST$ references declaredPreviouslyAsNestedClass
+    MyClass().»declaredPreviouslyAsNestedClass«();
+
+    // $TEST$ references declaredPreviouslyAsNestedEnum
+    MyClass().»declaredPreviouslyAsNestedEnum«();
+
+    // $TEST$ references declaredPreviouslyAsStaticMethod
+    MyClass().»declaredPreviouslyAsStaticMethod«();
+
+    // $TEST$ references myInstanceMethod
+    nullableMyClass()?.»myInstanceMethod«();
+
+
     // $TEST$ unresolved
     MyClass.»myInstanceMethod«;
 
     // $TEST$ unresolved
     AnotherClass().»myInstanceMethod«;
+
+    // $TEST$ unresolved
+    nullableMyClass().»myInstanceAttribute«;
 
     // $TEST$ unresolved
     unresolved.»myInstanceMethod«;
