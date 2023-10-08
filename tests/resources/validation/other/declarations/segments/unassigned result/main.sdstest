@@ -1,0 +1,17 @@
+package tests.validation.other.declarations.segments.unassignedResult
+
+// $TEST$ no error "Nothing is assigned to this result."
+// $TEST$ no error "Nothing is assigned to this result."
+// $TEST$ no error "Nothing is assigned to this result."
+// $TEST$ no error "Nothing is assigned to this result."
+// $TEST$ error "Nothing is assigned to this result."
+segment mySegment() -> (»a«: Int, »b«: Int, »c«: Int, »d«: Int, »e«: Int) {
+    yield b = 1;
+    yield a = 1;
+
+    yield c = 1;
+    yield c = 1;
+
+    // While nothing is assigned to d, the programmer still states their intention to do so. We already show another error for this.
+    _, yield d = 1;
+}

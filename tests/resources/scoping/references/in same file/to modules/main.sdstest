@@ -1,0 +1,6 @@
+package tests
+
+pipeline myPipeline {
+    // $TEST$ unresolved
+    »tests«;
+}

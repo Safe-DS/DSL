@@ -13,7 +13,7 @@ import {
     isSdsModuleMember,
     isSdsPlaceholder,
     isSdsSegment,
-    isSdsTypeParameterList,
+    isSdsTypeParameterList, isSdsYield,
     SdsAbstractCall,
     SdsAbstractResult,
     SdsAnnotatedObject,
@@ -46,7 +46,7 @@ import {
     SdsTypeArgument,
     SdsTypeArgumentList,
     SdsTypeParameter,
-    SdsTypeParameterList,
+    SdsTypeParameterList, SdsYield,
 } from '../generated/ast.js';
 import { AstNode, getContainerOfType, stream } from 'langium';
 
@@ -201,4 +201,12 @@ export const typeParametersOrEmpty = (
     } /* c8 ignore start */ else {
         return [];
     } /* c8 ignore stop */
+};
+
+export const yieldsOrEmpty = (node: SdsBlock | undefined): SdsYield[] => {
+    return stream(statementsOrEmpty(node))
+        .filter(isSdsAssignment)
+        .flatMap(assigneesOrEmpty)
+        .filter(isSdsYield)
+        .toArray();
 };
