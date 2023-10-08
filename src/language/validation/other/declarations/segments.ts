@@ -1,25 +1,13 @@
 import { SdsSegment } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { parametersOrEmpty, resultsOrEmpty, yieldsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { parametersOrEmpty, resultsOrEmpty } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { duplicatesBy } from '../../../helpers/collectionUtils.js';
 
 export const CODE_SEGMENT_DUPLICATE_YIELD = 'segment/duplicate-yield';
 export const CODE_SEGMENT_UNASSIGNED_RESULT = 'segment/unassigned-result';
 export const CODE_SEGMENT_UNUSED_PARAMETER = 'segment/unused-parameter';
 
-export const segmentResultMustOnlyBeAssignedOnce = (node: SdsSegment, accept: ValidationAcceptor) => {
-    const yields = yieldsOrEmpty(node.body);
-    for (const duplicate of duplicatesBy(yields, (it) => it.result?.ref)) {
-        accept('error', `The result '${duplicate.result?.$refText}' has been assigned already.`, {
-            node: duplicate,
-            property: 'result',
-            code: CODE_SEGMENT_DUPLICATE_YIELD,
-        });
-    }
-};
-
-export const segmentResultMustBeAssigned =
+export const segmentResultMustBeAssignedExactlyOnce =
     (services: SafeDsServices) => (node: SdsSegment, accept: ValidationAcceptor) => {
         const results = resultsOrEmpty(node.resultList);
         for (const result of results) {
@@ -29,6 +17,16 @@ export const segmentResultMustBeAssigned =
                     node: result,
                     property: 'name',
                     code: CODE_SEGMENT_UNASSIGNED_RESULT,
+                });
+                continue;
+            }
+
+            const duplicateYields = yields.tail(1)
+            for (const duplicate of duplicateYields) {
+                accept('error', `The result '${result.name}' has been assigned already.`, {
+                    node: duplicate,
+                    property: 'result',
+                    code: CODE_SEGMENT_DUPLICATE_YIELD,
                 });
             }
         }
