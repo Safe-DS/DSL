@@ -53,6 +53,27 @@ describe('SafeDsNodeMapper', () => {
             expect(nodeMapper.parameterToReferences(parameter)).toHaveLength(2);
         });
 
+        it('should return references in own parameter list', async () => {
+            const code = `
+                segment mySegment(p1: Int, p2: Int = p1) {};
+            `;
+
+            const parameter = await getNodeOfType(services, code, isSdsParameter);
+            expect(nodeMapper.parameterToReferences(parameter)).toHaveLength(1);
+        });
+
+        it('should return references in nested parameter list', async () => {
+            const code = `
+                segment mySegment(p1: Int) {
+                    (p2: Int = p1) {};
+                    (p2: Int = p1) -> 1;
+                };
+            `;
+
+            const parameter = await getNodeOfType(services, code, isSdsParameter);
+            expect(nodeMapper.parameterToReferences(parameter)).toHaveLength(2);
+        });
+
         it('should not return references to other parameters', async () => {
             const code = `
                 segment mySegment(p1: Int, p2: Int) {
