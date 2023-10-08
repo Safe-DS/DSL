@@ -6,6 +6,7 @@ class `annotation`
 class `as`
 class `attr`
 class `class`
+class `const`
 class `enum`
 class `false`
 class `fun`
