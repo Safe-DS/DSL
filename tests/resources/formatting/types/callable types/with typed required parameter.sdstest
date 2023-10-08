@@ -1,9 +1,9 @@
 segment mySegment(
-    f: ( param :  Int )  ->  ( )
+    f: ( a :  Int )  ->  ( )
 ) {}
 
 // -----------------------------------------------------------------------------
 
 segment mySegment(
-    f: (param: Int) -> ()
+    f: (a: Int) -> ()
 ) {}
