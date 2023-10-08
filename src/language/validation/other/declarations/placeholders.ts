@@ -1,8 +1,8 @@
-import {isSdsBlock, isSdsStatement, SdsPlaceholder} from '../../../generated/ast.js';
-import {getContainerOfType, ValidationAcceptor} from 'langium';
+import { isSdsBlock, isSdsStatement, SdsPlaceholder } from '../../../generated/ast.js';
+import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import {statementsOrEmpty} from "../../../helpers/nodeProperties.js";
-import {last} from "radash";
+import { statementsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { last } from 'radash';
 
 export const CODE_PLACEHOLDER_UNUSED = 'placeholder/unused';
 

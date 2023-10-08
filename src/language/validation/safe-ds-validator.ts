@@ -45,7 +45,10 @@ import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import {parameterMustNotBeVariadicAndOptional, segmentParameterShouldBeUsed} from './other/declarations/parameters.js';
+import {
+    parameterMustNotBeVariadicAndOptional,
+    segmentParameterShouldBeUsed,
+} from './other/declarations/parameters.js';
 import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated,
@@ -61,7 +64,7 @@ import {
     namedTypeDeclarationShouldNotBeExperimental,
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
-import {placeholderShouldBeUsed} from "./other/declarations/placeholders.js";
+import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
 
 /**
  * Register custom validation checks.
@@ -112,9 +115,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterListVariadicParameterMustBeLast,
         ],
         SdsPipeline: [pipelineMustContainUniqueNames],
-        SdsPlaceholder: [
-            placeholderShouldBeUsed(services),
-        ],
+        SdsPlaceholder: [placeholderShouldBeUsed(services)],
         SdsReference: [
             referenceTargetMustNotBeAnnotationPipelineOrSchema,
             referenceTargetShouldNotBeDeprecated(services),
@@ -124,7 +125,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsSegment: [
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),
-            segmentResultListShouldNotBeEmpty
+            segmentResultListShouldNotBeEmpty,
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeArgumentList: [typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments],
