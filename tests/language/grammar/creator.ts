@@ -44,6 +44,7 @@ const createGrammarTest = (uri: URI): GrammarTest => {
         testName,
         code,
         expectedResult: comment,
+        uri,
     };
 };
 
@@ -59,6 +60,7 @@ const invalidTest = (uri: URI, error: Error): GrammarTest => {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         code: '',
         expectedResult: 'invalid',
+        uri: URI.file(''),
         error,
     };
 };
@@ -76,6 +78,11 @@ interface GrammarTest extends TestDescription {
      * The expected result after parsing the program.
      */
     expectedResult: 'syntax_error' | 'no_syntax_error' | 'invalid';
+
+    /**
+     * The URI of the corresponding file.
+     */
+    uri: URI;
 }
 
 /**

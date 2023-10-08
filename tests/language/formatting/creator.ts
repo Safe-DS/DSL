@@ -44,6 +44,7 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
         testName: `[${shortenedResourceName}] should be formatted correctly`,
         originalCode,
         expectedFormattedCode,
+        uri,
     };
 };
 
@@ -59,6 +60,7 @@ const invalidTest = (uri: URI, error: Error): FormattingTest => {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         originalCode: '',
         expectedFormattedCode: '',
+        uri: URI.file(''),
         error,
     };
 };
@@ -86,6 +88,11 @@ interface FormattingTest extends TestDescription {
      * The expected formatted code.
      */
     expectedFormattedCode: string;
+
+    /**
+     * The URI of the corresponding file.
+     */
+    uri: URI;
 }
 
 /**
