@@ -3,7 +3,7 @@ import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js
 import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
-import { isSdsPlaceholder } from '../../../../src/language/generated/ast.js';
+import {isSdsParameter, isSdsPlaceholder} from '../../../../src/language/generated/ast.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
@@ -47,12 +47,28 @@ describe('SafeDsNodeMapper', () => {
         it('should return references nested in body', async () => {
             const code = `
                 segment mySegment() {
+                    () {
+                        val a1 = 1;
+
+                        () {
+                            a1;
+                        };
+                        () -> a1;
+                    };
+                };
+            `;
+
+            const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
+            expect(nodeMapper.placeholderToReferences(placeholder)).toHaveLength(2);
+        });
+
+        it('should return references in nested parameter list', async () => {
+            const code = `
+                segment mySegment(p1: Int) {
                     val a1 = 1;
 
-                    () {
-                        a1;
-                    };
-                    () -> a1;
+                    (p2: Int = a1) {};
+                    (p2: Int = a1) -> 1;
                 };
             `;
 
