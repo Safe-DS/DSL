@@ -1,6 +1,7 @@
 class MyClass {
     enum MyEnum {
         MyEnumVariant1 ( const  vararg  a :  Int )
+
         MyEnumVariant2 ( vararg  const  a :  Int )
     }
 }
@@ -10,6 +11,7 @@ class MyClass {
 class MyClass {
     enum MyEnum {
         MyEnumVariant1(const vararg a: Int)
+
         MyEnumVariant2(vararg const a: Int)
     }
 }

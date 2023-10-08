@@ -1,7 +1,9 @@
 segment  mySegment1 ( const  vararg  a  =  1 )  { }
+
 segment  mySegment2 ( vararg  const  a  =  1 )  { }
 
 // -----------------------------------------------------------------------------
 
 segment mySegment1(const vararg a = 1) {}
+
 segment mySegment2(vararg const a = 1) {}

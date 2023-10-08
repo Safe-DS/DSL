@@ -1,5 +1,6 @@
 enum MyEnum {
     MyEnumVariant1 ( const  vararg  a :  Int )
+
     MyEnumVariant2 ( vararg  const  a :  Int )
 }
 
@@ -7,5 +8,6 @@ enum MyEnum {
 
 enum MyEnum {
     MyEnumVariant1(const vararg a: Int)
+
     MyEnumVariant2(vararg const a: Int)
 }
