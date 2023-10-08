@@ -1,0 +1,5 @@
+segment  mySegment ( const  a :  Int  =  1 )  { }
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(const a: Int = 1) {}
