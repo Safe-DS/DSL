@@ -1,0 +1,44 @@
+package tests.validation.declarations.placeholders.unused
+
+fun f() -> (r1: Int, r2: Int)
+
+segment mySegment() {
+    // $TEST$ warning "This placeholder is unused and can be removed."
+    val »unused« = 1;
+
+    // $TEST$ no warning "This placeholder is unused and can be removed."
+    val »used« = 1;
+    used;
+
+    // $TEST$ no warning "This placeholder is unused and can be removed."
+    // $TEST$ no warning "This placeholder is unused and can be removed."
+    val »last1«, val »last2« = f();
+}
+
+pipeline myPipeline1 {
+    // $TEST$ warning "This placeholder is unused and can be removed."
+    val »unused« = 1;
+
+    // $TEST$ no warning "This placeholder is unused and can be removed."
+    val »used« = 1;
+    used;
+
+    // $TEST$ no warning "This placeholder is unused and can be removed."
+    // $TEST$ no warning "This placeholder is unused and can be removed."
+    val »last1«, val »last2« = f();
+}
+
+pipeline myPipeline2 {
+    () {
+        // $TEST$ warning "This placeholder is unused and can be removed."
+        val »unused« = 1;
+
+        // $TEST$ no warning "This placeholder is unused and can be removed."
+        val »used« = 1;
+        used;
+
+        // $TEST$ no warning "This placeholder is unused and can be removed."
+        // $TEST$ no warning "This placeholder is unused and can be removed."
+        val »last1«, val »last2« = f();
+    };
+}

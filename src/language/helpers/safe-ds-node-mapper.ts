@@ -27,7 +27,7 @@ import {
     SdsYield,
 } from '../generated/ast.js';
 import { CallableType, StaticType } from '../typing/model.js';
-import { findLocalReferences, getContainerOfType } from 'langium';
+import { findLocalReferences, getContainerOfType, Stream, stream } from 'langium';
 import {
     abstractResultsOrEmpty,
     argumentsOrEmpty,
@@ -148,62 +148,59 @@ export class SafeDsNodeMapper {
     /**
      * Returns all references that target the given parameter.
      */
-    parameterToReferences(node: SdsParameter | undefined): SdsReference[] {
+    parameterToReferences(node: SdsParameter | undefined): Stream<SdsReference> {
         if (!node) {
-            return [];
+            return stream();
         }
 
         const containingCallable = getContainerOfType(node, isSdsCallable);
         /* c8 ignore start */
         if (!containingCallable) {
-            return [];
+            return stream();
         }
         /* c8 ignore stop */
 
         return findLocalReferences(node, containingCallable)
             .map((it) => it.$refNode?.astNode)
-            .filter(isSdsReference)
-            .toArray();
+            .filter(isSdsReference);
     }
 
     /**
      * Returns all references that target the given placeholder.
      */
-    placeholderToReferences(node: SdsPlaceholder | undefined): SdsReference[] {
+    placeholderToReferences(node: SdsPlaceholder | undefined): Stream<SdsReference> {
         if (!node) {
-            return [];
+            return stream();
         }
 
         const containingBlock = getContainerOfType(node, isSdsBlock);
         /* c8 ignore start */
         if (!containingBlock) {
-            return [];
+            return stream();
         }
         /* c8 ignore stop */
 
         return findLocalReferences(node, containingBlock)
             .map((it) => it.$refNode?.astNode)
-            .filter(isSdsReference)
-            .toArray();
+            .filter(isSdsReference);
     }
 
     /**
      * Returns all yields that assign to the given result.
      */
-    resultToYields(node: SdsResult | undefined): SdsYield[] {
+    resultToYields(node: SdsResult | undefined): Stream<SdsYield> {
         if (!node) {
-            return [];
+            return stream();
         }
 
         const containingSegment = getContainerOfType(node, isSdsSegment);
         if (!containingSegment) {
-            return [];
+            return stream();
         }
 
         return findLocalReferences(node, containingSegment)
             .map((it) => it.$refNode?.astNode)
-            .filter(isSdsYield)
-            .toArray();
+            .filter(isSdsYield);
     }
 
     /**

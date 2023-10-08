@@ -1,0 +1,49 @@
+package tests.validation.declarations.parameters.unused
+
+segment mySegment(
+    // $TEST$ warning "This parameter is unused and can be removed."
+    »unused«: Int,
+    // $TEST$ no warning "This parameter is unused and can be removed."
+    »used«: Int
+) {
+    used;
+
+    /*
+     * Since we only allow lambdas as arguments, there signature is predefined, so no warning should be emitted.
+     */
+
+    (
+        // $TEST$ no warning "This parameter is unused and can be removed."
+        »unused«: Int,
+        // $TEST$ no warning "This parameter is unused and can be removed."
+        »used«: Int
+    ) {
+        used;
+    };
+
+    (
+        // $TEST$ no warning "This parameter is unused and can be removed."
+        »unused«: Int,
+        // $TEST$ no warning "This parameter is unused and can be removed."
+        »used«: Int
+    ) -> used;
+}
+
+// $TEST$ no warning "This parameter is unused and can be removed."
+annotation MyAnnotation(»unused«: Int)
+
+// $TEST$ no warning "This parameter is unused and can be removed."
+class MyClass(»unused«: Int)
+
+enum MyEnum {
+    // $TEST$ no warning "This parameter is unused and can be removed."
+    MyEnumVariant(»unused«: Int)
+}
+
+fun myFunction(
+    // $TEST$ no warning "This parameter is unused and can be removed."
+    »unused«: Int,
+
+    // $TEST$ no warning "This parameter is unused and can be removed."
+    myCallableType: (»unused«: Int) -> (),
+)
