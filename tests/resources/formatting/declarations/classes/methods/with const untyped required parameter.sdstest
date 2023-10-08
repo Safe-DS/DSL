@@ -1,0 +1,9 @@
+class MyClass {
+    fun  myFunction ( const  a )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction(const a)
+}

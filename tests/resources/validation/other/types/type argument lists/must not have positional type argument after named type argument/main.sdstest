@@ -1,4 +1,4 @@
-package tests.validation.types.typeArgumentLists.mustNotHavePositionalTypeArgumentAfterNamedTypeArgument
+package tests.validation.other.types.typeArgumentLists.mustNotHavePositionalTypeArgumentAfterNamedTypeArgument
 
 // $TEST$ no error "After the first named type argument all type arguments must be named."
 // $TEST$ no error "After the first named type argument all type arguments must be named."

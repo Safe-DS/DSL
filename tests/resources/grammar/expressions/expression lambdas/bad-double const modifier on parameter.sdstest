@@ -1,0 +1,5 @@
+// $TEST$ syntax_error
+
+pipeline myPipeline {
+    (const const a: String) -> 1;
+}

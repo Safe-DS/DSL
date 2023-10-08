@@ -1,0 +1,6 @@
+// $TEST$ no_syntax_error
+
+segment mySegment(
+    f: (const vararg a: Int = 1) -> (),
+    g: (vararg const a: Int = 1) -> ()
+) {}

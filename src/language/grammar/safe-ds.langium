@@ -416,6 +416,7 @@ SdsParameterList returns SdsParameterList:
 ;
 
 interface SdsParameter extends SdsLocalVariable {
+    isConstant: boolean
     isVariadic: boolean
     ^type?: SdsType
     defaultValue?: SdsExpression
@@ -423,7 +424,7 @@ interface SdsParameter extends SdsLocalVariable {
 
 SdsParameter returns SdsParameter:
     annotationCalls+=SdsAnnotationCall*
-    isVariadic?='vararg'?
+    (isConstant?='const' & isVariadic?='vararg')
     name=ID
     (':' ^type=SdsType)?
     ('=' defaultValue=SdsExpression)?

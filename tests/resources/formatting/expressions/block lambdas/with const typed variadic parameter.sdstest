@@ -1,0 +1,11 @@
+pipeline myPipeline {
+    ( const  vararg  a :  Int )  { };
+    ( vararg  const  a :  Int )  { };
+}
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    (const vararg a: Int) {};
+    (vararg const a: Int) {};
+}

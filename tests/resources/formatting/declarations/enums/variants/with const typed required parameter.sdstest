@@ -1,0 +1,9 @@
+enum MyEnum {
+    MyEnumVariant ( const  a :  Int )
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant(const a: Int)
+}

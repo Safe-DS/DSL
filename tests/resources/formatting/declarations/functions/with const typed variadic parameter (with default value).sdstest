@@ -1,0 +1,9 @@
+fun  myFunction1 ( const  vararg  a :  Int  =  1 )
+
+fun  myFunction2 ( vararg  const  a :  Int  =  1 )
+
+// -----------------------------------------------------------------------------
+
+fun myFunction1(const vararg a: Int = 1)
+
+fun myFunction2(vararg const a: Int = 1)

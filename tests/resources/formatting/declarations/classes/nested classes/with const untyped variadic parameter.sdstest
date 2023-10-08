@@ -1,0 +1,13 @@
+class MyOuterClass {
+    class  MyClass1 ( const  vararg  a )
+
+    class  MyClass2 ( vararg  const  a )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    class MyClass1(const vararg a)
+
+    class MyClass2(vararg const a)
+}

@@ -1,0 +1,5 @@
+// $TEST$ syntax_error
+
+enum MyEnum {
+    MyEnumVariant(vararg vararg a: String)
+}

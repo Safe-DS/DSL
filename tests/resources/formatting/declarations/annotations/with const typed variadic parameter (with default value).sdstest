@@ -1,0 +1,9 @@
+annotation  MyAnnotation1 ( const  vararg  a :  Int  =  1 )
+
+annotation  MyAnnotation2 ( vararg  const  a :  Int  =  1 )
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation1(const vararg a: Int = 1)
+
+annotation MyAnnotation2(vararg const a: Int = 1)
