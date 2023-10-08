@@ -1,0 +1,11 @@
+segment mySegment(
+    f: ( const  vararg  a :  Int )  ->  ( ),
+    g: ( vararg  const  a :  Int )  ->  ( )
+) {}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(
+    f: (const vararg a: Int) -> (),
+    g: (vararg const a: Int) -> ()
+) {}

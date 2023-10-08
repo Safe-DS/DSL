@@ -1,0 +1,15 @@
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant1 ( const  vararg  a  =  1 )
+        MyEnumVariant2 ( vararg  const  a  =  1 )
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    enum MyEnum {
+        MyEnumVariant1(const vararg a = 1)
+        MyEnumVariant2(vararg const a = 1)
+    }
+}
