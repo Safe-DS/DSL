@@ -13,7 +13,8 @@ import {
     isSdsModuleMember,
     isSdsPlaceholder,
     isSdsSegment,
-    isSdsTypeParameterList, isSdsYield,
+    isSdsTypeParameterList,
+    isSdsYield,
     SdsAbstractCall,
     SdsAbstractResult,
     SdsAnnotatedObject,
@@ -46,7 +47,8 @@ import {
     SdsTypeArgument,
     SdsTypeArgumentList,
     SdsTypeParameter,
-    SdsTypeParameterList, SdsYield,
+    SdsTypeParameterList,
+    SdsYield,
 } from '../generated/ast.js';
 import { AstNode, getContainerOfType, stream } from 'langium';
 

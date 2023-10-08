@@ -21,7 +21,7 @@ export const segmentResultMustBeAssignedExactlyOnce =
                 continue;
             }
 
-            const duplicateYields = yields.tail(1)
+            const duplicateYields = yields.tail(1);
             for (const duplicate of duplicateYields) {
                 accept('error', `The result '${result.name}' has been assigned already.`, {
                     node: duplicate,
