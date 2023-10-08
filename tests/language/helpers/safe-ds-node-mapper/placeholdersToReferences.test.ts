@@ -3,7 +3,7 @@ import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js
 import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
-import {isSdsParameter, isSdsPlaceholder} from '../../../../src/language/generated/ast.js';
+import { isSdsPlaceholder } from '../../../../src/language/generated/ast.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
@@ -15,7 +15,7 @@ describe('SafeDsNodeMapper', () => {
 
     describe('placeholderToReferences', () => {
         it('should return an empty list if passed undefined', async () => {
-            expect(nodeMapper.placeholderToReferences(undefined)).toStrictEqual([]);
+            expect(nodeMapper.placeholderToReferences(undefined).toArray()).toStrictEqual([]);
         });
 
         it('should return references in default values', async () => {
@@ -27,7 +27,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.placeholderToReferences(placeholder)).toHaveLength(1);
+            expect(nodeMapper.placeholderToReferences(placeholder).toArray()).toHaveLength(1);
         });
 
         it('should return references directly in body', async () => {
@@ -41,7 +41,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.placeholderToReferences(placeholder)).toHaveLength(2);
+            expect(nodeMapper.placeholderToReferences(placeholder).toArray()).toHaveLength(2);
         });
 
         it('should return references nested in body', async () => {
@@ -59,7 +59,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.placeholderToReferences(placeholder)).toHaveLength(2);
+            expect(nodeMapper.placeholderToReferences(placeholder).toArray()).toHaveLength(2);
         });
 
         it('should return references in nested parameter list', async () => {
@@ -73,7 +73,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.placeholderToReferences(placeholder)).toHaveLength(2);
+            expect(nodeMapper.placeholderToReferences(placeholder).toArray()).toHaveLength(2);
         });
 
         it('should not return references to other placeholders', async () => {
@@ -88,7 +88,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.placeholderToReferences(placeholder)).toHaveLength(1);
+            expect(nodeMapper.placeholderToReferences(placeholder).toArray()).toHaveLength(1);
         });
     });
 });
