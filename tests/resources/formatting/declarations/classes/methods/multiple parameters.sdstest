@@ -33,6 +33,8 @@ class MyClass {
 
           const  vararg  h2 :  Int  =  3 ,
 
+@Annotation  vararg  const  a3 ,
+
              vararg  const  c3 ,
 
                vararg  const  d3 :  Int  =  1 ,
@@ -65,6 +67,8 @@ class MyClass {
         const f2: Int = 2,
         const vararg g2: Int,
         const vararg h2: Int = 3,
+        @Annotation
+        vararg const a3,
         vararg const c3,
         vararg const d3: Int = 1,
         vararg const g3: Int,
