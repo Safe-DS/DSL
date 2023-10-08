@@ -35,14 +35,19 @@ import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/e
 import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
-import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
+import {
+    typeParameterConstraintLeftOperandMustBeOwnTypeParameter,
+} from './other/declarations/typeParameterConstraints.js';
 import {
     parameterListMustNotHaveOptionalAndVariadicParameters,
     parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
     parameterListVariadicParameterMustBeLast,
 } from './other/declarations/parameterLists.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
-import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
+import {
+    callableTypeMustNotHaveOptionalParameters,
+    callableTypeParameterMustNotHaveConstModifier,
+} from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
@@ -63,6 +68,8 @@ import {
 } from './builtins/experimental.js';
 import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
+import { annotationParameterShouldNotHaveConstModifier } from './other/declarations/annotations.js';
+import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 
 /**
  * Register custom validation checks.
@@ -75,7 +82,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             assigneeAssignedResultShouldNotBeExperimental(services),
         ],
         SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
-        SdsAnnotation: [annotationMustContainUniqueNames, annotationParameterListShouldNotBeEmpty],
+        SdsAnnotation: [
+            annotationMustContainUniqueNames,
+            annotationParameterListShouldNotBeEmpty,
+            annotationParameterShouldNotHaveConstModifier,
+        ],
         SdsAnnotationCall: [
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
@@ -89,7 +100,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsCall: [callArgumentListShouldBeNeeded(services)],
-        SdsCallableType: [callableTypeMustContainUniqueNames, callableTypeMustNotHaveOptionalParameters],
+        SdsCallableType: [
+            callableTypeMustContainUniqueNames,
+            callableTypeMustNotHaveOptionalParameters,
+            callableTypeParameterMustNotHaveConstModifier,
+        ],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
@@ -99,6 +114,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
+        SdsLambda: [lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [memberAccessNullSafetyShouldBeNeeded(services)],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsNamedType: [
