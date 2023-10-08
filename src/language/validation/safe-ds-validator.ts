@@ -45,10 +45,7 @@ import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import { callableTypeMustNotHaveOptionalParameters } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import {
-    parameterMustNotBeVariadicAndOptional,
-    segmentParameterShouldBeUsed,
-} from './other/declarations/parameters.js';
+import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
 import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated,
@@ -65,6 +62,7 @@ import {
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
 import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
+import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 
 /**
  * Register custom validation checks.
@@ -125,6 +123,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsSegment: [
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),
+            segmentResultMustBeAssignedExactlyOnce(services),
             segmentResultListShouldNotBeEmpty,
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],

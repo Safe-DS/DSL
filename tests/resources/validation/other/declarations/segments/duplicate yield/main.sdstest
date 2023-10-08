@@ -1,0 +1,20 @@
+package tests.validation.other.declarations.segments.duplicateYield
+
+segment mySegment() -> (a: Int, b: Int, c: Int) {
+    // $TEST$ no error r"The result '\w*' has been assigned already\."
+    yield »a« = 1;
+
+    // $TEST$ no error r"The result '\w*' has been assigned already\."
+    yield »b« = 1;
+    // $TEST$ error "The result 'b' has been assigned already."
+    yield »b« = 1;
+
+    // $TEST$ no error r"The result '\w*' has been assigned already\."
+    // $TEST$ error "The result 'c' has been assigned already."
+    yield »c«, yield »c« = 1;
+
+    // $TEST$ no error r"The result '\w*' has been assigned already\."
+    yield »unresolved« = 1;
+    // $TEST$ no error r"The result '\w*' has been assigned already\."
+    yield »unresolved« = 1;
+}
