@@ -1,6 +1,6 @@
-import {ValidationChecks} from 'langium';
-import {SafeDsAstType} from '../generated/ast.js';
-import type {SafeDsServices} from '../safe-ds-module.js';
+import { ValidationChecks } from 'langium';
+import { SafeDsAstType } from '../generated/ast.js';
+import type { SafeDsServices } from '../safe-ds-module.js';
 import {
     annotationMustContainUniqueNames,
     blockLambdaMustContainUniqueNames,
@@ -32,24 +32,20 @@ import {
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
-import {templateStringMustHaveExpressionBetweenTwoStringParts} from './other/expressions/templateStrings.js';
-import {yieldMustNotBeUsedInPipeline} from './other/statements/assignments.js';
-import {attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint} from './types.js';
-import {moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage} from './other/modules.js';
-import {
-    typeParameterConstraintLeftOperandMustBeOwnTypeParameter
-} from './other/declarations/typeParameterConstraints.js';
-import {
-    parameterListMustNotHaveRequiredParametersAfterOptionalParameters
-} from './other/declarations/parameterLists.js';
-import {unionTypeMustHaveTypeArguments} from './other/types/unionTypes.js';
+import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
+import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
+import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
+import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
+import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
+import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import {
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
-import {typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './other/types/typeArgumentLists.js';
-import {argumentListMustNotHavePositionalArgumentsAfterNamedArguments} from './other/argumentLists.js';
-import {referenceTargetMustNotBeAnnotationPipelineOrSchema} from './other/expressions/references.js';
+import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
+import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
+import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated,
     argumentCorrespondingParameterShouldNotBeDeprecated,
@@ -64,9 +60,9 @@ import {
     namedTypeDeclarationShouldNotBeExperimental,
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
-import {placeholderShouldBeUsed} from './other/declarations/placeholders.js';
-import {segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce} from './other/declarations/segments.js';
-import {lambdaParameterMustNotHaveConstModifier} from './other/expressions/lambdas.js';
+import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
+import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
+import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 
 /**
  * Register custom validation checks.
