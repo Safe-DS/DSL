@@ -7,8 +7,8 @@ segment mySegment() {
         yield s = "";
     }«;
 
-    // $TEST$ serialization (p: vararg<String>) -> (r: Int, s: $Unknown)
-    »(vararg p: String) {
+    // $TEST$ serialization (p: String) -> (r: Int, s: $Unknown)
+    »(p: String) {
         yield r, yield s = 1;
     }«;
 }

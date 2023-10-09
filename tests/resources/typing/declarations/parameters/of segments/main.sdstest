@@ -4,8 +4,5 @@ package tests.typing.declarations.parameters.ofSegments
 // $TEST$ equivalence_class parameterType
 segment mySegment1(»p«: »Int«) {}
 
-// $TEST$ serialization vararg<String>
-segment mySegment2(vararg »p«: String) {}
-
 // $TEST$ serialization $Unknown
-segment mySegment3(»p«) {}
+segment mySegment2(»p«) {}
