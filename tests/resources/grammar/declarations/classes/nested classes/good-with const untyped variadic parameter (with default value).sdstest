@@ -1,0 +1,6 @@
+// $TEST$ no_syntax_error
+
+class MyOuterClass {
+    class MyClass1(const vararg a = 1)
+    class MyClass2(vararg const a = 1)
+}

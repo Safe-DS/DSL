@@ -1,0 +1,9 @@
+segment  mySegment1 ( const  vararg  a :  Int  =  1 )  { }
+
+segment  mySegment2 ( vararg  const  a :  Int  =  1 )  { }
+
+// -----------------------------------------------------------------------------
+
+segment mySegment1(const vararg a: Int = 1) {}
+
+segment mySegment2(vararg const a: Int = 1) {}

@@ -1,0 +1,9 @@
+class  MyClass1 ( const  vararg  a :  Int )
+
+class  MyClass2 ( vararg  const  a :  Int )
+
+// -----------------------------------------------------------------------------
+
+class MyClass1(const vararg a: Int)
+
+class MyClass2(vararg const a: Int)

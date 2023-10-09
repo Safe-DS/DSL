@@ -1,0 +1,5 @@
+// $TEST$ syntax_error
+
+class MyClass {
+    fun myFunction(const const a: String)
+}

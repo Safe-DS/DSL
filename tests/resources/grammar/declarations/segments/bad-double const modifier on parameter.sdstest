@@ -1,0 +1,3 @@
+// $TEST$ syntax_error
+
+segment mySegment(const const a: String)

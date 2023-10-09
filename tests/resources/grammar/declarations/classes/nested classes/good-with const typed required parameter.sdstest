@@ -1,0 +1,5 @@
+// $TEST$ no_syntax_error
+
+class MyOuterClass {
+    class MyClass(const a: Int)
+}

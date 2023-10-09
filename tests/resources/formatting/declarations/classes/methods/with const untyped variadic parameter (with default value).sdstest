@@ -1,0 +1,13 @@
+class MyClass {
+    fun  myFunction1 ( const  vararg  a  =  1 )
+
+    fun  myFunction2 ( vararg  const  a  =  1 )
+}
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    fun myFunction1(const vararg a = 1)
+
+    fun myFunction2(vararg const a = 1)
+}

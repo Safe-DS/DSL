@@ -9,12 +9,13 @@ import {
     isAstNode,
 } from 'langium';
 import * as ast from '../generated/ast.js';
+import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/nodeProperties.js';
+import { last } from 'radash';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
 import oneSpace = Formatting.oneSpace;
 import indent = Formatting.indent;
-import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/nodeProperties.js';
 
 const newLinesWithIndent = function (count: number, options?: FormattingActionOptions): FormattingAction {
     return {
@@ -549,14 +550,13 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsParameter(node: ast.SdsParameter): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length === 0) {
-            if (node.isVariadic) {
-                formatter.property('name').prepend(oneSpace());
-            }
-        } else {
-            formatter.property('name').prepend(newLine());
+        const lastAnnotationCall = last(annotationCallsOrEmpty(node));
+        if (lastAnnotationCall) {
+            formatter.node(lastAnnotationCall).append(newLine());
         }
 
+        formatter.keyword('const').append(oneSpace());
+        formatter.keyword('vararg').append(oneSpace());
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
         formatter.keyword('=').surround(oneSpace());
     }

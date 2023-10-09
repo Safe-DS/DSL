@@ -1,0 +1,6 @@
+// $TEST$ no_syntax_error
+
+pipeline myPipeline {
+    (const vararg a) {};
+    (vararg const a) {};
+}

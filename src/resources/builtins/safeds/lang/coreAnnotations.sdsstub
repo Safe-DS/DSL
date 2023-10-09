@@ -97,7 +97,3 @@ annotation Pure
 @Description("The function has no side effects.")
 @Target(AnnotationTarget.Function)
 annotation NoSideEffects
-
-@Description("Values assigned to this parameter must be constant.")
-@Target(AnnotationTarget.Parameter)
-annotation Constant
