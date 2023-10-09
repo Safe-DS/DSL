@@ -14,7 +14,7 @@ export const callableTypeParameterMustNotHaveConstModifier = (
         if (parameter.isConstant) {
             accept('error', 'The const modifier is not applicable to parameters of callable types.', {
                 node: parameter,
-                property: 'name',
+                property: 'isConstant',
                 code: CODE_CALLABLE_TYPE_CONST_MODIFIER,
             });
         }

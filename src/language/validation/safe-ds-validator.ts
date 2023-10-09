@@ -18,6 +18,7 @@ import {
 import {
     annotationCallArgumentListShouldBeNeeded,
     annotationParameterListShouldNotBeEmpty,
+    annotationParameterShouldNotHaveConstModifier,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
     callArgumentListShouldBeNeeded,
     classBodyShouldNotBeEmpty,
@@ -61,7 +62,6 @@ import {
 } from './builtins/experimental.js';
 import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
-import { annotationParameterShouldNotHaveConstModifier } from './other/declarations/annotations.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 
 /**

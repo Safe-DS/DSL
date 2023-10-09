@@ -9,7 +9,7 @@ export const lambdaParameterMustNotHaveConstModifier = (node: SdsLambda, accept:
         if (parameter.isConstant) {
             accept('error', 'The const modifier is not applicable to parameters of lambdas.', {
                 node: parameter,
-                property: 'name',
+                property: 'isConstant',
                 code: CODE_LAMBDA_CONST_MODIFIER,
             });
         }
