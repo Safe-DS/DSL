@@ -1,0 +1,8 @@
+package tests.typing.expressions.lists
+
+// TODO: Improve once type parameters are supported
+pipeline myPipeline {
+
+    // $TEST$ serialization List
+    »[]«;
+}

@@ -1,17 +1,23 @@
 package tests.typing.expressions.indexedAccesses
 
-// $TEST$ equivalence_class elementType
-segment mySegment1(vararg params: »Int«) {
-    // $TEST$ equivalence_class elementType
-    »params[0]«;
+// TODO: Improve once type parameters are supported
+segment mySegment1(param: List<Int>) {
+    // $TEST$ serialization Any?
+    »param[0]«;
 }
 
-segment mySegment2(params: String) {
+// TODO: Improve once type parameters are supported
+segment mySegment2(param: Map<String, Int>) {
+    // $TEST$ serialization Any?
+    »param[""]«;
+}
+
+segment mySegment3(param: String) {
     // $TEST$ serialization $Unknown
-    »params[0]«;
+    »param[0]«;
 }
 
-segment mySegment3() {
+segment mySegment4() {
     // $TEST$ serialization $Unknown
     »unresolved[0]«;
 }

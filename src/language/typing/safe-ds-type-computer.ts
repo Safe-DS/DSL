@@ -39,7 +39,9 @@ import {
     isSdsInfixOperation,
     isSdsInt,
     isSdsLambda,
+    isSdsList,
     isSdsLiteralType,
+    isSdsMap,
     isSdsMemberAccess,
     isSdsMemberType,
     isSdsNamedType,
@@ -65,6 +67,7 @@ import {
     SdsDeclaration,
     SdsExpression,
     SdsFunction,
+    SdsIndexedAccess,
     SdsInfixOperation,
     SdsParameter,
     SdsPrefixOperation,
@@ -259,6 +262,10 @@ export class SafeDsTypeComputer {
             return this.Float();
         } else if (isSdsInt(node)) {
             return this.Int();
+        } else if (isSdsList(node)) {
+            return this.List();
+        } else if (isSdsMap(node)) {
+            return this.Map();
         } else if (isSdsNull(node)) {
             return this.NothingOrNull();
         } else if (isSdsString(node)) {
@@ -289,12 +296,7 @@ export class SafeDsTypeComputer {
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsIndexedAccess(node)) {
-            const receiverType = this.computeType(node.receiver);
-            if (receiverType instanceof VariadicType) {
-                return receiverType.elementType;
-            } else {
-                return UnknownType;
-            }
+            return this.computeTypeOfIndexedAccess(node);
         } else if (isSdsInfixOperation(node)) {
             switch (node.operator) {
                 // Boolean operators
@@ -371,6 +373,17 @@ export class SafeDsTypeComputer {
         }
 
         return UnknownType;
+    }
+
+    private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
+        const receiverType = this.computeType(node.receiver);
+        if (receiverType.equals(this.List()) || receiverType.equals(this.Map())) {
+            return this.AnyOrNull();
+        } else if (receiverType instanceof VariadicType) {
+            return receiverType.elementType;
+        } else {
+            return UnknownType;
+        }
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -501,6 +514,10 @@ export class SafeDsTypeComputer {
     // Builtin types
     // -----------------------------------------------------------------------------------------------------------------
 
+    private AnyOrNull(): Type {
+        return this.createCoreType(this.coreClasses.Any, true);
+    }
+
     private Boolean(): Type {
         return this.createCoreType(this.coreClasses.Boolean);
     }
@@ -511,6 +528,14 @@ export class SafeDsTypeComputer {
 
     private Int(): Type {
         return this.createCoreType(this.coreClasses.Int);
+    }
+
+    private List(): Type {
+        return this.createCoreType(this.coreClasses.List);
+    }
+
+    private Map(): Type {
+        return this.createCoreType(this.coreClasses.Map);
     }
 
     private NothingOrNull(): Type {
