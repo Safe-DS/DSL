@@ -1,4 +1,4 @@
-import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
+import { listTestSafeDsFiles, uriToShortenedTestResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { Diagnostic } from 'vscode-languageserver-types';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
@@ -11,7 +11,7 @@ const rootResourceName = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 
 export const createFormattingTests = async (): Promise<FormattingTest[]> => {
-    const testCases = listSafeDsFiles(rootResourceName).map(createFormattingTest);
+    const testCases = listTestSafeDsFiles(rootResourceName).map(createFormattingTest);
     return Promise.all(testCases);
 };
 
@@ -39,7 +39,7 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
         return invalidTest(new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode, uri));
     }
 
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(uri, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be formatted correctly`,
         originalCode,
@@ -54,7 +54,7 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
  * @param error The error that occurred.
  */
 const invalidTest = (error: TestDescriptionError): FormattingTest => {
-    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     return {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         originalCode: '',

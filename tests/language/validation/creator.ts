@@ -1,4 +1,7 @@
-import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
+import {
+    listTestSafeDsFilesGroupedByParentDirectory,
+    uriToShortenedTestResourceName,
+} from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
@@ -11,7 +14,7 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'validation';
 
 export const createValidationTests = (): Promise<ValidationTest[]> => {
-    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
     const testCases = filesGroupedByParentDirectory.map((entry) => createValidationTest(...entry));
 
     return Promise.all(testCases);
@@ -68,7 +71,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
         }
     }
 
-    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be validated correctly`,
         uris,
@@ -82,7 +85,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
  * @param error The error that occurred.
  */
 const invalidTest = (error: TestDescriptionError): ValidationTest => {
-    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST FILE [${shortenedResourceName}]`;
     return {
         testName,

@@ -1,8 +1,8 @@
-import { resolveRelativePathToBuiltinFile } from './fileFinder.js';
 import { isSdsClass, SdsClass } from '../generated/ast.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
+import { resourceNameToUri } from '../../helpers/resources.js';
 
-const CORE_CLASSES_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreClasses.sdsstub');
+const CORE_CLASSES_URI = resourceNameToUri('builtins/safeds/lang/coreClasses.sdsstub');
 
 export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
     get Any(): SdsClass | undefined {

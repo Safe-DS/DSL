@@ -1,9 +1,9 @@
-import { resolveRelativePathToBuiltinFile } from './fileFinder.js';
 import { isSdsAnnotation, SdsAnnotatedObject, SdsAnnotation } from '../generated/ast.js';
 import { annotationCallsOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
+import { resourceNameToUri } from '../../helpers/resources.js';
 
-const CORE_ANNOTATIONS_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreAnnotations.sdsstub');
+const CORE_ANNOTATIONS_URI = resourceNameToUri('builtins/safeds/lang/coreAnnotations.sdsstub');
 
 export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
