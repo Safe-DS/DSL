@@ -1,0 +1,9 @@
+// $TEST$ no_syntax_error
+
+pipeline myPipeline {
+    {
+        1: {
+            2: "three"
+        }
+    };
+}
