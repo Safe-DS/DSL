@@ -2,6 +2,8 @@ package tests.validation.names.casing
 
 // $TEST$ no warning "Names of schemas should be UpperCamelCase."
 schema »SchemaUppercase1« {}
+// $TEST$ no warning "Names of schemas should be UpperCamelCase."
+schema »`SchemaUppercase2`« {}
 // $TEST$ warning "Names of schemas should be UpperCamelCase."
 schema »schemaLowercase« {}
 // $TEST$ warning "Names of schemas should be UpperCamelCase."

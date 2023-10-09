@@ -3,6 +3,8 @@ package tests.validation.names.casing
 enum MyEnum {
     // $TEST$ no warning "Names of enum variants should be UpperCamelCase."
     »EnumVariantUppercase1«
+    // $TEST$ no warning "Names of enum variants should be UpperCamelCase."
+    »`EnumVariantUppercase2`«
     // $TEST$ warning "Names of enum variants should be UpperCamelCase."
     »enumVariantLowercase«
     // $TEST$ warning "Names of enum variants should be UpperCamelCase."

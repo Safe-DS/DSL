@@ -2,6 +2,8 @@ package tests.validation.names.casing
 
 // $TEST$ no warning "Names of classes should be UpperCamelCase."
 class »ClassUppercase1«
+// $TEST$ no warning "Names of classes should be UpperCamelCase."
+class »`ClassUppercase2`«
 // $TEST$ warning "Names of classes should be UpperCamelCase."
 class »classLowercase«
 // $TEST$ warning "Names of classes should be UpperCamelCase."
