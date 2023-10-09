@@ -36,12 +36,8 @@ import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/e
 import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
-import {
-    typeParameterConstraintLeftOperandMustBeOwnTypeParameter,
-} from './other/declarations/typeParameterConstraints.js';
-import {
-    parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
-} from './other/declarations/parameterLists.js';
+import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
+import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import {
     callableTypeMustNotHaveOptionalParameters,
