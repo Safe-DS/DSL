@@ -1,0 +1,6 @@
+package tests.validation.style.unnecessaryConstModifierOnAnnotationParameters
+
+annotation MyAnnotation(
+    // $TEST$ no info "Annotation parameters are always const, so this modifier can be removed."
+    p2: Int,
+)

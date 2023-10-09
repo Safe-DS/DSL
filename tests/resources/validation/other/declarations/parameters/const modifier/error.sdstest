@@ -1,0 +1,20 @@
+package tests.validation.other.declarations.parameters.illegalConstModifier
+
+fun f(
+    g: (
+        // $TEST$ error "The const modifier is not applicable to parameters of callable types."
+        »const« p1: Int
+    ) -> ()
+)
+
+pipeline myPipeline {
+    (
+        // $TEST$ error "The const modifier is not applicable to parameters of lambdas."
+        »const« p1: Int
+    ) {};
+
+    (
+        // $TEST$ error "The const modifier is not applicable to parameters of lambdas."
+        »const« p1: Int
+    ) -> 1;
+}

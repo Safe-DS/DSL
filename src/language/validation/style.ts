@@ -25,6 +25,7 @@ import { UnknownType } from '../typing/model.js';
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
 export const CODE_STYLE_UNNECESSARY_BODY = 'style/unnecessary-body';
+export const CODE_STYLE_UNNECESSARY_CONST_MODIFIER = 'style/unnecessary-const-modifier';
 export const CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST = 'style/unnecessary-constraint-list';
 export const CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR = 'style/unnecessary-elvis-operator';
 export const CODE_STYLE_UNNECESSARY_PARAMETER_LIST = 'style/unnecessary-parameter-list';
@@ -117,6 +118,22 @@ export const enumBodyShouldNotBeEmpty = (node: SdsEnumBody, accept: ValidationAc
             node,
             code: CODE_STYLE_UNNECESSARY_BODY,
         });
+    }
+};
+
+// -----------------------------------------------------------------------------
+// Unnecessary const modifier
+// -----------------------------------------------------------------------------
+
+export const annotationParameterShouldNotHaveConstModifier = (node: SdsAnnotation, accept: ValidationAcceptor) => {
+    for (const parameter of parametersOrEmpty(node)) {
+        if (parameter.isConstant) {
+            accept('info', 'Annotation parameters are always const, so this modifier can be removed.', {
+                node: parameter,
+                property: 'isConstant',
+                code: CODE_STYLE_UNNECESSARY_CONST_MODIFIER,
+            });
+        }
     }
 };
 
@@ -224,7 +241,7 @@ export const namedTypeTypeArgumentListShouldBeNeeded = (node: SdsNamedType, acce
     if (isEmpty(typeParametersOrEmpty(namedTypeDeclaration))) {
         accept('info', 'This type argument list can be removed.', {
             node: typeArgumentList,
-            code: CODE_STYLE_UNNECESSARY_ARGUMENT_LIST,
+            code: CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST,
         });
     }
 };
