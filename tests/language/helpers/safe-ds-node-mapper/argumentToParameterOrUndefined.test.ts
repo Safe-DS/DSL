@@ -52,7 +52,7 @@ describe('SafeDsNodeMapper', () => {
         describe('positional argument', () => {
             it('should return the parameter at the same index if all prior arguments are positional', async () => {
                 const code = `
-                    fun f(p1: Int = 0, vararg p2: Int, p3: Int) {}
+                    fun f(p1: Int = 0, p2: Int, p3: Int) {}
 
                     pipeline myPipeline {
                         f(1, 2, 3);
@@ -66,7 +66,7 @@ describe('SafeDsNodeMapper', () => {
 
             it('should return undefined if a prior argument is named', async () => {
                 const code = `
-                    fun f(p1: Int = 0, vararg p2: Int, p3: Int) {}
+                    fun f(p1: Int = 0, p2: Int, p3: Int) {}
 
                     pipeline myPipeline {
                         f(p2 = 1, 2, 3);
@@ -78,9 +78,9 @@ describe('SafeDsNodeMapper', () => {
                 expect(parameterNames).toStrictEqual(['p2', undefined, undefined]);
             });
 
-            it('should return undefined if argument is out of bounds and there is no final variadic parameter', async () => {
+            it('should return undefined if argument is out of bounds', async () => {
                 const code = `
-                    fun f(vararg p1: Int, p2: Int) {}
+                    fun f(p1: Int, p2: Int) {}
 
                     pipeline myPipeline {
                         f(1, 2, 3);
@@ -90,20 +90,6 @@ describe('SafeDsNodeMapper', () => {
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
                 const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['p1', 'p2', undefined]);
-            });
-
-            it('should return return the final variadic parameter if argument is out of bounds', async () => {
-                const code = `
-                    fun f(p1: Int, p2: Int = 0, vararg p3: Int) {}
-
-                    pipeline myPipeline {
-                        f(1, 2, 3, 4, 5);
-                    }
-                `;
-
-                const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
-                expect(parameterNames).toStrictEqual(['p1', 'p2', 'p3', 'p3', 'p3']);
             });
         });
 
