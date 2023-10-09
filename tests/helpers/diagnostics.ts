@@ -1,6 +1,7 @@
 import { parseHelper } from 'langium/test';
-import { LangiumServices } from 'langium';
+import { LangiumServices, URI } from 'langium';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
+import { TestDescriptionError } from './testDescription.js';
 
 let nextId = 0;
 
@@ -59,21 +60,21 @@ const getDiagnostics = async (services: LangiumServices, code: string): Promise<
 /**
  * The code contains syntax errors.
  */
-export class SyntaxErrorsInCodeError extends Error {
-    constructor(readonly syntaxErrors: Diagnostic[]) {
+export class SyntaxErrorsInCodeError extends TestDescriptionError {
+    constructor(readonly syntaxErrors: Diagnostic[], uri: URI) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `    - ${e.message}`).join(`\n`);
 
-        super(`Code has syntax errors:\n${syntaxErrorsAsString}`);
+        super(`Code has syntax errors:\n${syntaxErrorsAsString}`, uri);
     }
 }
 
 /**
  * The code contains syntax errors.
  */
-export class ErrorsInCodeError extends Error {
-    constructor(readonly errors: Diagnostic[]) {
+export class ErrorsInCodeError extends TestDescriptionError {
+    constructor(readonly errors: Diagnostic[], uri: URI) {
         const syntaxErrorsAsString = errors.map((e) => `    - ${e.message}`).join(`\n`);
 
-        super(`Code has errors:\n${syntaxErrorsAsString}`);
+        super(`Code has errors:\n${syntaxErrorsAsString}`, uri);
     }
 }

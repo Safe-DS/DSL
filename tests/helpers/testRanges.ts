@@ -1,7 +1,9 @@
 import { Result } from 'true-myth';
-import { Range, Position } from 'vscode-languageserver';
+import { Position, Range } from 'vscode-languageserver';
 import { CLOSE, OPEN } from './testMarker.js';
 import { positionToString } from './location.js';
+import { TestDescriptionError } from './testDescription.js';
+import { URI } from 'langium';
 
 /**
  * Finds test ranges, i.e. parts of the program delimited by opening and closing test markers. They are sorted by the
@@ -9,12 +11,13 @@ import { positionToString } from './location.js';
  * Nested test markers are supported.
  *
  * @param program The program with test markers.
+ * @param uri The URI of the program.
  * @return A wrapper that indicates success of failure.
  * @see FindTestRangesError
  * @see CLOSE
  * @see OPEN
  */
-export const findTestRanges = (program: string): Result<Range[], FindTestRangesError> => {
+export const findTestRanges = (program: string, uri: URI): Result<Range[], FindTestRangesError> => {
     let currentLine = 0;
     let currentColumn = 0;
     let previousChar: string | null = null;
@@ -34,7 +37,7 @@ export const findTestRanges = (program: string): Result<Range[], FindTestRangesE
                 currentColumn++;
 
                 if (testRangeStarts.length === 0) {
-                    return Result.err(new CloseWithoutOpenError(Position.create(currentLine, currentColumn - 1)));
+                    return Result.err(new CloseWithoutOpenError(Position.create(currentLine, currentColumn - 1), uri));
                 }
 
                 finishedLocations.push(
@@ -62,6 +65,7 @@ export const findTestRanges = (program: string): Result<Range[], FindTestRangesE
         return Result.err(
             new OpenWithoutCloseError(
                 testRangeStarts.map((position) => Position.create(position.line, position.character - 1)),
+                uri,
             ),
         );
     } else {
@@ -83,17 +87,23 @@ export type FindTestRangesError = CloseWithoutOpenError | OpenWithoutCloseError;
 /**
  * Found a closing test marker without a previous opening test marker.
  */
-export class CloseWithoutOpenError extends Error {
-    constructor(readonly position: Position) {
-        super(`Found '${CLOSE}' without previous '${OPEN}' at ${positionToString(position)}.`);
+export class CloseWithoutOpenError extends TestDescriptionError {
+    constructor(
+        readonly position: Position,
+        uri: URI,
+    ) {
+        super(`Found '${CLOSE}' without previous '${OPEN}' at ${positionToString(position)}.`, uri);
     }
 }
 
 /**
  * Reached the end of the program but there were still unclosed opening test markers.
  */
-export class OpenWithoutCloseError extends Error {
-    constructor(readonly positions: Position[]) {
-        super(`Found '${OPEN}' without following '${CLOSE}' at ${positions.map(positionToString).join(', ')}.`);
+export class OpenWithoutCloseError extends TestDescriptionError {
+    constructor(
+        readonly positions: Position[],
+        uri: URI,
+    ) {
+        super(`Found '${OPEN}' without following '${CLOSE}' at ${positions.map(positionToString).join(', ')}.`, uri);
     }
 }

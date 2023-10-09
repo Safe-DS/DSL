@@ -2,10 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { CloseWithoutOpenError, findTestRanges, OpenWithoutCloseError } from './testRanges.js';
 import { Position, Range } from 'vscode-languageserver';
 import { CLOSE, OPEN } from './testMarker.js';
+import { URI } from 'langium';
+
+const uri = URI.file('');
 
 describe('findTestRanges', () => {
     it('should find all ranges enclosed by test markers in order of opening markers', () => {
-        const result = findTestRanges(`text${OPEN}text${CLOSE}\n${OPEN}text${CLOSE}`);
+        const result = findTestRanges(`text${OPEN}text${CLOSE}\n${OPEN}text${CLOSE}`, uri);
         expect(result.isOk).toBeTruthy();
 
         if (result.isOk) {
@@ -15,7 +18,7 @@ describe('findTestRanges', () => {
     });
 
     it('should handle nested test markers', () => {
-        const result = findTestRanges(`${OPEN}\n    ${OPEN}${CLOSE}\n${CLOSE}`);
+        const result = findTestRanges(`${OPEN}\n    ${OPEN}${CLOSE}\n${CLOSE}`, uri);
         expect(result.isOk).toBeTruthy();
 
         if (result.isOk) {
@@ -25,7 +28,7 @@ describe('findTestRanges', () => {
     });
 
     it('should handle line feed (Unix)', () => {
-        const result = findTestRanges(`\n${OPEN}\n${CLOSE}`);
+        const result = findTestRanges(`\n${OPEN}\n${CLOSE}`, uri);
         expect(result.isOk).toBeTruthy();
 
         if (result.isOk) {
@@ -35,7 +38,7 @@ describe('findTestRanges', () => {
     });
 
     it('should handle carriage return (MacOS)', () => {
-        const result = findTestRanges(`\r${OPEN}\r${CLOSE}`);
+        const result = findTestRanges(`\r${OPEN}\r${CLOSE}`, uri);
         expect(result.isOk).toBeTruthy();
 
         if (result.isOk) {
@@ -45,7 +48,7 @@ describe('findTestRanges', () => {
     });
 
     it('should handle carriage return + line feed (Windows)', () => {
-        const result = findTestRanges(`\r\n${OPEN}\r\n${CLOSE}`);
+        const result = findTestRanges(`\r\n${OPEN}\r\n${CLOSE}`, uri);
         expect(result.isOk).toBeTruthy();
 
         if (result.isOk) {
@@ -55,7 +58,7 @@ describe('findTestRanges', () => {
     });
 
     it('should report closing test markers without matching opening test marker', () => {
-        const result = findTestRanges(`${OPEN}\n${CLOSE}${CLOSE}`);
+        const result = findTestRanges(`${OPEN}\n${CLOSE}${CLOSE}`, uri);
         expect(result.isErr).toBeTruthy();
 
         if (result.isErr) {
@@ -67,7 +70,7 @@ describe('findTestRanges', () => {
     });
 
     it('should report opening test markers without matching closing test marker', () => {
-        const result = findTestRanges(`${OPEN}\n${OPEN}${OPEN}${CLOSE}`);
+        const result = findTestRanges(`${OPEN}\n${OPEN}${OPEN}${CLOSE}`, uri);
         expect(result.isErr).toBeTruthy();
 
         if (result.isErr) {

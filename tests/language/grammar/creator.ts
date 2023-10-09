@@ -2,7 +2,7 @@ import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testR
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
-import { TestDescription } from '../../helpers/testDescription.js';
+import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 import { URI } from 'langium';
 
 const rootResourceName = 'grammar';
@@ -17,19 +17,19 @@ const createGrammarTest = (uri: URI): GrammarTest => {
 
     // Must contain at least one comment
     if (comments.length === 0) {
-        return invalidTest(uri, new NoCommentsError());
+        return invalidTest(new NoCommentsError(uri));
     }
 
     // Must contain no more than one comment
     if (comments.length > 1) {
-        return invalidTest(uri, new MultipleCommentsError(comments));
+        return invalidTest(new MultipleCommentsError(comments, uri));
     }
 
     const comment = comments[0];
 
     // Must contain a valid comment
     if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {
-        return invalidTest(uri, new InvalidCommentError(comment));
+        return invalidTest(new InvalidCommentError(comment, uri));
     }
 
     const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
@@ -51,11 +51,10 @@ const createGrammarTest = (uri: URI): GrammarTest => {
 /**
  * Report a test that has errors.
  *
- * @param uri The URI of the test file.
  * @param error The error that occurred.
  */
-const invalidTest = (uri: URI, error: Error): GrammarTest => {
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+const invalidTest = (error: TestDescriptionError): GrammarTest => {
+    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
     return {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         code: '',
@@ -88,17 +87,23 @@ interface GrammarTest extends TestDescription {
 /**
  * Found multiple test comments.
  */
-class MultipleCommentsError extends Error {
-    constructor(readonly comments: string[]) {
-        super(`Found multiple test comments (grammar tests expect only one): ${comments}`);
+class MultipleCommentsError extends TestDescriptionError {
+    constructor(
+        readonly comments: string[],
+        uri: URI,
+    ) {
+        super(`Found multiple test comments (grammar tests expect only one): ${comments}`, uri);
     }
 }
 
 /**
  * Found one test comment but it was invalid.
  */
-class InvalidCommentError extends Error {
-    constructor(readonly comment: string) {
-        super(`Invalid test comment (valid values are 'syntax_error' and 'no_syntax_error'): ${comment}`);
+class InvalidCommentError extends TestDescriptionError {
+    constructor(
+        readonly comment: string,
+        uri: URI,
+    ) {
+        super(`Invalid test comment (valid values are 'syntax_error' and 'no_syntax_error'): ${comment}`, uri);
     }
 }

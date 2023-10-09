@@ -1,11 +1,11 @@
 import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
-import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
+import {getSyntaxErrors, SyntaxErrorsInCodeError} from '../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { Range } from 'vscode-languageserver-types';
-import { TestDescription } from '../../helpers/testDescription.js';
+import {TestDescription, TestDescriptionError} from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'validation';
@@ -26,14 +26,14 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
         // File must not contain any syntax errors
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
-            return invalidTest(uri, new SyntaxErrorsInCodeError(syntaxErrors));
+            return invalidTest(new SyntaxErrorsInCodeError(syntaxErrors, uri));
         }
 
         const checksResult = findTestChecks(code, uri);
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest(uri, checksResult.error);
+            return invalidTest(checksResult.error);
         }
 
         for (const check of checksResult.value) {
@@ -42,7 +42,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
 
             // Overall comment is invalid
             if (!match) {
-                return invalidTest(uri, new InvalidCommentError(check.comment));
+                return invalidTest(new InvalidCommentError(check.comment, uri));
             }
 
             // Extract groups from the match
@@ -53,7 +53,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
 
             // Validate the severity
             if (!validSeverities.includes(severity as any)) {
-                return invalidTest(uri, new InvalidSeverityError(severity));
+                return invalidTest(new InvalidSeverityError(severity, uri));
             }
 
             // Add the issue
@@ -79,11 +79,10 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
 /**
  * Report a test that has errors.
  *
- * @param uri The URI of the test file.
  * @param error The error that occurred.
  */
-const invalidTest = (uri: URI, error: Error): ValidationTest => {
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+const invalidTest = (error: TestDescriptionError): ValidationTest => {
+    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST FILE [${shortenedResourceName}]`;
     return {
         testName,
@@ -161,17 +160,17 @@ export type Severity = (typeof validSeverities)[number];
 /**
  * A test comment did not match the expected format.
  */
-class InvalidCommentError extends Error {
-    constructor(readonly comment: string) {
-        super(`Invalid test comment (refer to the documentation for guidance): ${comment}`);
+class InvalidCommentError extends TestDescriptionError {
+    constructor(readonly comment: string, uri: URI) {
+        super(`Invalid test comment (refer to the documentation for guidance): ${comment}`, uri);
     }
 }
 
 /**
  * A test comment did not specify a valid severity.
  */
-class InvalidSeverityError extends Error {
-    constructor(readonly type: string) {
-        super(`Invalid severity (valid values are ${validSeverities.join(', ')}): ${type}`);
+class InvalidSeverityError extends TestDescriptionError {
+    constructor(readonly type: string, uri: URI) {
+        super(`Invalid severity (valid values are ${validSeverities.join(', ')}): ${type}`, uri);
     }
 }
