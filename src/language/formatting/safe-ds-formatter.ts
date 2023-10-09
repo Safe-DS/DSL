@@ -142,6 +142,12 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatSdsIndexedAccess(node);
         } else if (ast.isSdsMemberAccess(node)) {
             this.formatSdsMemberAccess(node);
+        } else if (ast.isSdsList(node)) {
+            this.formatSdsList(node);
+        } else if (ast.isSdsMap(node)) {
+            this.formatSdsMap(node);
+        } else if (ast.isSdsMapEntry(node)) {
+            this.formatSdsMapEntry(node);
         } else if (ast.isSdsParenthesizedExpression(node)) {
             this.formatSdsParenthesizedExpression(node);
         } else if (ast.isSdsTemplateStringStart(node)) {
@@ -727,6 +733,55 @@ export class SafeDsFormatter extends AbstractFormatter {
         formatter.keyword('.').surround(noSpace());
     }
 
+    private formatSdsList(node: ast.SdsList) {
+        const formatter = this.getNodeFormatter(node);
+
+        const openingSquareBracket = formatter.keyword('[');
+        const closingSquareBracket = formatter.keyword(']');
+
+        const elements = node.elements;
+
+        if (elements.some((it) => this.isComplexExpression(it))) {
+            formatter.nodes(...elements).prepend(indent());
+            formatter.keywords(',').prepend(noSpace());
+            closingSquareBracket.prepend(newLine());
+        } else {
+            openingSquareBracket.append(noSpace());
+            formatter.nodes(...elements.slice(1)).prepend(oneSpace());
+            formatter.keywords(',').prepend(noSpace());
+            closingSquareBracket.prepend(noSpace());
+        }
+    }
+
+    private formatSdsMap(node: ast.SdsMap) {
+        const formatter = this.getNodeFormatter(node);
+
+        const openingCurlyBrace = formatter.keyword('{');
+        const closingCurlyBrace = formatter.keyword('}');
+
+        const entries = node.entries;
+
+        if (
+            entries.length >= 2 ||
+            entries.some((it) => this.isComplexExpression(it.key) || this.isComplexExpression(it.value))
+        ) {
+            formatter.nodes(...entries).prepend(indent());
+            formatter.keywords(',').prepend(noSpace());
+            closingCurlyBrace.prepend(newLine());
+        } else {
+            openingCurlyBrace.append(noSpace());
+            formatter.nodes(...entries.slice(1)).prepend(oneSpace());
+            formatter.keywords(',').prepend(noSpace());
+            closingCurlyBrace.prepend(noSpace());
+        }
+    }
+
+    private formatSdsMapEntry(node: ast.SdsMapEntry) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword(':').prepend(noSpace()).append(oneSpace());
+    }
+
     private formatSdsParenthesizedExpression(node: ast.SdsParenthesizedExpression): void {
         const formatter = this.getNodeFormatter(node);
 
@@ -754,12 +809,12 @@ export class SafeDsFormatter extends AbstractFormatter {
 
     /**
      * Returns whether the expression is considered complex and requires special formatting like placing the associated
-     * argument on its own line.
+     * expression on its own line.
      *
      * @param node The expression to check.
      */
     private isComplexExpression(node: ast.SdsExpression | undefined): boolean {
-        return ast.isSdsChainedExpression(node);
+        return ast.isSdsChainedExpression(node) || ast.isSdsList(node) || ast.isSdsMap(node);
     }
 
     // -----------------------------------------------------------------------------
