@@ -4,7 +4,8 @@ import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import {
     isSdsClass,
-    isSdsModule, isSdsTemplateStringEnd,
+    isSdsModule,
+    isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
 } from '../../../src/language/generated/ast.js';
