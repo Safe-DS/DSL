@@ -41,6 +41,17 @@ describe('runConverter', () => {
         expect(firstTemplateStringStart.value).toBe('start');
     });
 
+    it('should handle escape sequences in TEMPLATE_STRING_STARTs', async () => {
+        const code = `
+            pipeline myPipeline {
+                "\\tstart{{ 1 }}inner{{ 2 }}end";
+            }
+        `;
+
+        const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringStart);
+        expect(firstTemplateStringStart.value).toBe('\tstart');
+    });
+
     it('should remove delimiters from TEMPLATE_STRING_INNERs', async () => {
         const code = `
             pipeline myPipeline {
@@ -52,6 +63,17 @@ describe('runConverter', () => {
         expect(firstTemplateStringInner.value).toBe('inner');
     });
 
+    it('should handle escape sequences in TEMPLATE_STRING_INNERs', async () => {
+        const code = `
+            pipeline myPipeline {
+                "start{{ 1 }}\\tinner{{ 2 }}end";
+            }
+        `;
+
+        const firstTemplateStringInner = await getNodeOfType(services, code, isSdsTemplateStringInner);
+        expect(firstTemplateStringInner.value).toBe('\tinner');
+    });
+
     it('should remove delimiters from TEMPLATE_STRING_ENDs', async () => {
         const code = `
             pipeline myPipeline {
@@ -61,5 +83,16 @@ describe('runConverter', () => {
 
         const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
         expect(firstTemplateStringEnd.value).toBe('end');
+    });
+
+    it('should handle escape sequences in TEMPLATE_STRING_ENDs', async () => {
+        const code = `
+            pipeline myPipeline {
+                "start{{ 1 }}inner{{ 2 }}\\tend";
+            }
+        `;
+
+        const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
+        expect(firstTemplateStringEnd.value).toBe('\tend');
     });
 });
