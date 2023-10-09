@@ -21,7 +21,7 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
 
     // Must contain exactly one separator
     if (parts.length !== 2) {
-        return invalidTest(uri, new SeparatorError(parts.length - 1));
+        return invalidTest(uri, new SeparatorError(uri, parts.length - 1));
     }
 
     const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
@@ -30,13 +30,13 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
     // Original code must not contain syntax errors
     const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);
     if (syntaxErrorsInOriginalCode.length > 0) {
-        return invalidTest(uri, new SyntaxErrorsInOriginalCodeError(syntaxErrorsInOriginalCode));
+        return invalidTest(uri, new SyntaxErrorsInOriginalCodeError(uri, syntaxErrorsInOriginalCode));
     }
 
     // Expected formatted code must not contain syntax errors
     const syntaxErrorsInExpectedFormattedCode = await getSyntaxErrors(services, expectedFormattedCode);
     if (syntaxErrorsInExpectedFormattedCode.length > 0) {
-        return invalidTest(uri, new SyntaxErrorsInExpectedFormattedCodeError(syntaxErrorsInExpectedFormattedCode));
+        return invalidTest(uri, new SyntaxErrorsInExpectedFormattedCodeError(uri, syntaxErrorsInExpectedFormattedCode));
     }
 
     const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
@@ -99,8 +99,8 @@ interface FormattingTest extends TestDescription {
  * The file contains no or more than one separator.
  */
 class SeparatorError extends Error {
-    constructor(readonly number_of_separators: number) {
-        super(`Expected exactly one separator but found ${number_of_separators}.`);
+    constructor(readonly uri: URI, readonly number_of_separators: number) {
+        super(`Expected exactly one separator in ${uri.toString()} but found ${number_of_separators}.`);
     }
 }
 
@@ -108,10 +108,10 @@ class SeparatorError extends Error {
  * The original code contains syntax errors.
  */
 class SyntaxErrorsInOriginalCodeError extends Error {
-    constructor(readonly syntaxErrors: Diagnostic[]) {
+    constructor(readonly uri: URI, readonly syntaxErrors: Diagnostic[]) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
 
-        super(`Original code has syntax errors:\n${syntaxErrorsAsString}`);
+        super(`Original code in ${uri.toString()} has syntax errors:\n${syntaxErrorsAsString}`);
     }
 }
 
@@ -119,9 +119,9 @@ class SyntaxErrorsInOriginalCodeError extends Error {
  * The expected formatted code contains syntax errors.
  */
 class SyntaxErrorsInExpectedFormattedCodeError extends Error {
-    constructor(readonly syntaxErrors: Diagnostic[]) {
+    constructor(readonly uri: URI, readonly syntaxErrors: Diagnostic[]) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `- ${e.message}`).join(`\n`);
 
-        super(`Expected formatted code has syntax errors:\n${syntaxErrorsAsString}`);
+        super(`Expected formatted code in ${uri.toString()} has syntax errors:\n${syntaxErrorsAsString}`);
     }
 }
