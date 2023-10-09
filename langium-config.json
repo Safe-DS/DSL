@@ -6,7 +6,7 @@
             "grammar": "src/language/grammar/safe-ds.langium",
             "fileExtensions": [".sdspipe", ".sdsstub", ".sdstest"],
             "textMate": {
-                "out": "syntaxes/safe-ds.tmLanguage.json"
+                "out": "syntaxes/safe-ds.generated.tmLanguage.json"
             }
         }
     ],
