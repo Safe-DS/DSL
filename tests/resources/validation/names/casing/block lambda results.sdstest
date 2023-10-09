@@ -6,6 +6,8 @@ pipeline myPipeline1 {
         yield »LambdaResultUppercase« = 1;
         // $TEST$ no warning "Names of block lambda results should be lowerCamelCase."
         yield »lambdaResultLowercase1« = 1;
+        // $TEST$ no warning "Names of block lambda results should be lowerCamelCase."
+        yield »`lambdaResultLowercase2`« = 1;
         // $TEST$ warning "Names of block lambda results should be lowerCamelCase."
         yield »_lambdaResultUnderscore« = 1;
         // $TEST$ warning "Names of block lambda results should be lowerCamelCase."

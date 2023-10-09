@@ -5,6 +5,8 @@ pipeline myPipeline2 {
     val »PlaceholderUppercase« = 1;
     // $TEST$ no warning "Names of placeholders should be lowerCamelCase."
     val »placeholderLowercase1« = 1;
+    // $TEST$ no warning "Names of placeholders should be lowerCamelCase."
+    val »`placeholderLowercase2`« = 1;
     // $TEST$ warning "Names of placeholders should be lowerCamelCase."
     val »_placeholderUnderscore« = 1;
     // $TEST$ warning "Names of placeholders should be lowerCamelCase."

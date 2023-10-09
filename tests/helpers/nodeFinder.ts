@@ -1,7 +1,7 @@
 import { Location, Range } from 'vscode-languageserver';
 import { isRangeEqual, parseHelper } from 'langium/test';
 import { SafeDsServices } from '../../src/language/safe-ds-module.js';
-import { AstNode, streamAllContents, URI } from 'langium';
+import { AstNode, streamAllContents, streamAst, URI } from 'langium';
 import { SdsModule } from '../../src/language/generated/ast.js';
 import { AssertionError } from 'assert';
 import { locationToString } from './location.js';
@@ -67,7 +67,7 @@ export const getNodeOfType = async <T extends AstNode>(
 ): Promise<T> => {
     const document = await parseHelper(services)(code);
     const module = document.parseResult.value as SdsModule;
-    const candidates = streamAllContents(module).filter(predicate).toArray();
+    const candidates = streamAst(module).filter(predicate).toArray();
 
     if (candidates.length === 0) {
         throw new AssertionError({ message: `Expected to find a matching node but found none.` });

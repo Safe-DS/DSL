@@ -5,6 +5,8 @@ fun myFunction1(
     »ParameterUppercase«: Int,
     // $TEST$ no warning "Names of parameters should be lowerCamelCase."
     »parameterLowercase1«: Int,
+    // $TEST$ no warning "Names of parameters should be lowerCamelCase."
+    »`parameterLowercase2`«: Int,
     // $TEST$ warning "Names of parameters should be lowerCamelCase."
     »_parameterUnderscore«: Int,
     // $TEST$ warning "Names of parameters should be lowerCamelCase."

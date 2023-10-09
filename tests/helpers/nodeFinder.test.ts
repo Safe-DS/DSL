@@ -85,10 +85,12 @@ describe('getNodeOfType', () => {
 
     it('should return the nth matching node if an index is set', async () => {
         const code = `
+            package p
+
             class C
             enum D
         `;
-        const node = await getNodeOfType(services, code, isSdsDeclaration, 1);
+        const node = await getNodeOfType(services, code, isSdsDeclaration, 2);
         expect(node).to.satisfy(isSdsEnum);
     });
 });
