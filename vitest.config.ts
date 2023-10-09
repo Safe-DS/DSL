@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
     test: {
         chaiConfig: {
-            truncateThreshold: 0,
+            truncateThreshold: 200,
         },
         coverage: {
             provider: 'v8',
