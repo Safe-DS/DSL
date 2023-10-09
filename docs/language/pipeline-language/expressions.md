@@ -219,7 +219,6 @@ There are some restriction regarding the choice of positional vs. named argument
 - For all [parameters][parameters] of the callee there must be at most one argument.
 - For all [required parameters][required-parameters] there must be exactly one argument.
 - After a named argument all arguments must be named.
-- [Variadic parameters][variadic-parameters] can only be assigned by position.
 
 ### Legal Callees
 
@@ -402,17 +401,17 @@ createValueWrapper()
 
 ## Indexed Accesses
 
-An indexed access is currently only used to access one value assigned to a [variadic parameter][variadic-parameters]. In the following example, we use an index access to retrieve the first value that is assigned to the [variadic parameter][variadic-parameters] `values` of the segment `printFirst`:
+An indexed access is currently only used to access elements of a list or values of a map by their key. In the following example, we use an index access to retrieve the first element of the `values` list:
 
 ```txt
-segment printFirst(vararg values: Int) {
+segment printFirst(values: List<Int>) {
     print(values[0]);
 }
 ```
 
 These are the elements of the syntax:
 
-- The name of the variadic parameter (here `values`).
+- An expression that evaluates to a list or map (here the [reference](#references) `values`).
 - An opening square bracket.
 - The index, which is an expression that evaluates to an integer. The first element has index 0.
 - A closing square bracket.
@@ -434,16 +433,16 @@ This is a [class][classes] `LinearRegression`, which has a constructor and an in
 We can then use those declarations in a [segment][segments]:
 
 ```txt
-segment mySegment(vararg regressions: LinearRegression) {
+segment mySegment(regressions: List<LinearRegression>) {
     regressions[0].drawAsGraph();
 }
 ```
 
-This segment is called `mySegment` and has a [variadic parameter][variadic-parameters] `regressions` of type `LinearRegression`. This means we can pass an arbitrary number of instances of `LinearRegression` to the segment when we [call](#calls) it.
+This segment is called `mySegment` and has a [parameter][parameters] `regressions` of type `List<LinearRegression>`.
 
 In the body of the segment we then
 
-1. access the first instance that was pass using an [indexed access](#indexed-accesses),
+1. access the first instance in the list using an [indexed access](#indexed-accesses),
 2. access the instance method `drawAsGraph` of this instance using a [member access](#member-accesses),
 3. [call](#calls) this method.
 
@@ -456,7 +455,7 @@ class IntList {
     fun filter(filterFunction: (element: Int) -> shouldKeep: Boolean) -> filteredList: IntList
 }
 
-fun intListOf(vararg elements: Int) -> result: IntList
+fun intListOf(elements: List<Int>) -> result: IntList
 ```
 
 First, we declare a [class][classes] `IntList`, which has a single [method][methods] called `filter`. The `filter` method returns a single result called `filteredList`, which is a new `IntList`. `filteredList` is supposed to only contain the elements of the receiving `IntList` for which the `filterFunction` [parameter][parameters] returns `true`.
@@ -566,7 +565,6 @@ If the default precedence of operators is not sufficient, parentheses can be use
 [packages]: ../common/packages.md
 [parameters]: ../common/parameters.md
 [required-parameters]: ../common/parameters.md#required-parameters
-[variadic-parameters]: ../common/parameters.md#variadic-parameters
 [results]: ../common/results.md
 [types]: ../common/types.md
 [callable-types]: ../common/types.md#callable-types
