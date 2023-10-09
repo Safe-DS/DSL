@@ -23,7 +23,7 @@ export const callableTypeParameterMustNotHaveConstModifier = (
 
 export const callableTypeMustNotHaveOptionalParameters = (node: SdsCallableType, accept: ValidationAcceptor): void => {
     for (const parameter of parametersOrEmpty(node)) {
-        if (parameter.defaultValue && !parameter.isVariadic) {
+        if (parameter.defaultValue) {
             accept('error', 'A callable type must not have optional parameters.', {
                 node: parameter,
                 property: 'defaultValue',

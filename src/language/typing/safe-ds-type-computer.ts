@@ -14,7 +14,6 @@ import {
     Type,
     UnionType,
     UnknownType,
-    VariadicType,
 } from './model.js';
 import {
     isSdsAnnotation,
@@ -203,12 +202,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfParameter(node: SdsParameter): Type {
         // Manifest type
         if (node.type) {
-            const manifestParameterType = this.computeType(node.type);
-            if (node.isVariadic) {
-                return new VariadicType(manifestParameterType);
-            } else {
-                return manifestParameterType;
-            }
+            return this.computeType(node.type);
         }
 
         // Infer type from context
@@ -379,8 +373,6 @@ export class SafeDsTypeComputer {
         const receiverType = this.computeType(node.receiver);
         if (receiverType.equals(this.List()) || receiverType.equals(this.Map())) {
             return this.AnyOrNull();
-        } else if (receiverType instanceof VariadicType) {
-            return receiverType.elementType;
         } else {
             return UnknownType;
         }

@@ -330,34 +330,6 @@ export class UnionType extends Type {
     }
 }
 
-export class VariadicType extends Type {
-    override readonly isNullable = false;
-
-    constructor(readonly elementType: Type) {
-        super();
-    }
-
-    override copyWithNullability(_isNullable: boolean): VariadicType {
-        return this;
-    }
-
-    override equals(other: Type): boolean {
-        if (other === this) {
-            return true;
-        }
-
-        if (!(other instanceof VariadicType)) {
-            return false;
-        }
-
-        return other.elementType.equals(this.elementType);
-    }
-
-    override toString(): string {
-        return `vararg<${this.elementType}>`;
-    }
-}
-
 class UnknownTypeClass extends Type {
     readonly isNullable = false;
 

@@ -67,7 +67,7 @@ export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
 };
 
 export const isRequiredParameter = (node: SdsParameter): boolean => {
-    return !node.defaultValue && !node.isVariadic;
+    return !node.defaultValue;
 };
 
 export const isStatic = (node: SdsClassMember): boolean => {
