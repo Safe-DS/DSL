@@ -721,20 +721,10 @@ SdsCallArgument returns SdsArgument:
 ;
 
 SdsPrimaryExpression returns SdsExpression:
-    SdsList
-  | SdsLiteral
-  | SdsMap
+    SdsLiteral
   | SdsParenthesizedExpression
   | SdsReference
   | SdsTemplateString
-;
-
-interface SdsList extends SdsExpression {
-    elements: SdsExpression[]
-}
-
-SdsList returns SdsList:
-    {SdsList} '[' (elements+=SdsExpression (',' elements+=SdsExpression)* ','? )? ']'
 ;
 
 interface SdsLiteral extends SdsExpression {}
@@ -743,6 +733,8 @@ SdsLiteral returns SdsLiteral:
     SdsBoolean
   | SdsFloat
   | SdsInt
+  | SdsList
+  | SdsMap
   | SdsNull
   | SdsString
 ;
@@ -774,21 +766,15 @@ SdsInt returns SdsInt:
     value=INT
 ;
 
-interface SdsNull extends SdsLiteral {}
-
-SdsNull returns SdsNull:
-    {SdsNull} 'null'
-;
-
-interface SdsString extends SdsLiteral {
-    value: string
+interface SdsList extends SdsLiteral {
+    elements: SdsExpression[]
 }
 
-SdsString returns SdsString:
-    value=STRING
+SdsList returns SdsList:
+    {SdsList} '[' (elements+=SdsExpression (',' elements+=SdsExpression)* ','? )? ']'
 ;
 
-interface SdsMap extends SdsExpression {
+interface SdsMap extends SdsLiteral {
     entries: SdsMapEntry[]
 }
 
@@ -803,6 +789,20 @@ interface SdsMapEntry extends SdsObject {
 
 SdsMapEntry returns SdsMapEntry:
     key=SdsExpression ':' value=SdsExpression
+;
+
+interface SdsNull extends SdsLiteral {}
+
+SdsNull returns SdsNull:
+    {SdsNull} 'null'
+;
+
+interface SdsString extends SdsLiteral {
+    value: string
+}
+
+SdsString returns SdsString:
+    value=STRING
 ;
 
 interface SdsParenthesizedExpression extends SdsExpression {
