@@ -5,9 +5,9 @@ import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
 import { isEmpty } from 'radash';
-import { AssertionError } from 'assert';
 import { URI } from 'langium';
 import { locationToString } from '../../helpers/location.js';
+import {AssertionError} from "assert";
 
 const workspace = createSafeDsServices(NodeFileSystem).SafeDs.shared.workspace;
 const builtinFiles = listBuiltinFiles();
@@ -33,6 +33,7 @@ describe('builtin files', () => {
             ) ?? [];
 
         if (!isEmpty(errorsOrWarnings)) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
             throw new InvalidBuiltinFileError(errorsOrWarnings, uri);
         }
     });
@@ -41,7 +42,7 @@ describe('builtin files', () => {
 /**
  * A builtin file has errors or warnings.
  */
-export class InvalidBuiltinFileError extends AssertionError {
+class InvalidBuiltinFileError extends AssertionError {
     constructor(
         readonly diagnostics: Diagnostic[],
         uri: URI,
