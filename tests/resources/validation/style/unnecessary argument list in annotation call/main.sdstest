@@ -7,7 +7,7 @@ annotation AnnotationWithoutParameterList
 annotation AnnotationWithEmptyParameterList()
 
 @Repeatable
-annotation AnnotationWithoutRequiredParameters(a: Int = 0, vararg b: Int)
+annotation AnnotationWithoutRequiredParameters(a: Int = 0)
 
 @Repeatable
 annotation AnnotationWithRequiredParameters(a: Int)

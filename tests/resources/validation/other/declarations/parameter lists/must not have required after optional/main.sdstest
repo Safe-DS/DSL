@@ -4,8 +4,7 @@ package tests.validation.other.declarations.parameterLists.mustNotHaveRequiredAf
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
-// $TEST$ no error "After the first optional parameter all parameters must be optional."
-annotation MyAnnotation1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int)
+annotation MyAnnotation1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2)
 
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -19,8 +18,7 @@ annotation MyAnnotation3(»a«: Int)
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
-// $TEST$ no error "After the first optional parameter all parameters must be optional."
-class MyClass1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int)
+class MyClass1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2)
 
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -35,8 +33,7 @@ enum MyEnum {
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    MyEnumVariant1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int)
+    MyEnumVariant1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2)
 
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -51,8 +48,7 @@ enum MyEnum {
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
-// $TEST$ no error "After the first optional parameter all parameters must be optional."
-fun myFunction1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int)
+fun myFunction1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2)
 
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -66,8 +62,7 @@ fun myFunction3(»a«: Int)
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
-// $TEST$ no error "After the first optional parameter all parameters must be optional."
-segment mySegment1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int) {}
+segment mySegment1(»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2) {}
 
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
 // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -82,8 +77,7 @@ pipeline myPipeline {
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    (»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int) {};
+    (»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2) {};
 
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -97,8 +91,7 @@ pipeline myPipeline {
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    (»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int) -> 1;
+    (»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2) -> 1;
 
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
@@ -114,8 +107,7 @@ fun myFunction4(
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    // $TEST$ no error "After the first optional parameter all parameters must be optional."
-    p1: (»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2, vararg »e«: Int) -> (),
+    p1: (»a«: Int, »b«: Int = 1, »c«: Int, »d«: Int = 2) -> (),
 
     // $TEST$ no error "After the first optional parameter all parameters must be optional."
     // $TEST$ no error "After the first optional parameter all parameters must be optional."

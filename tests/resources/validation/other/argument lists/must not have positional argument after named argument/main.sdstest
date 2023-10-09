@@ -1,6 +1,6 @@
 package tests.validation.other.argumentLists.mustNotHavePositionalArgumentAfterNamedArgument
 
-annotation MyAnnotation(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
+annotation MyAnnotation(a: Int, b: Int = 0, c: Int = 0, d: Int = 0)
 
 // $TEST$ no error "After the first named argument all arguments must be named."
 // $TEST$ no error "After the first named argument all arguments must be named."
@@ -33,7 +33,7 @@ class MyClass5
 @UnresolvedAnnotation(»a = 0«)
 class MyClass3
 
-fun f(a: Int, b: Int = 0, c: Int = 0, d: Int = 0, vararg e: Int)
+fun f(a: Int, b: Int = 0, c: Int = 0, d: Int = 0)
 
 pipeline myPipeline {
     // $TEST$ no error "After the first named argument all arguments must be named."

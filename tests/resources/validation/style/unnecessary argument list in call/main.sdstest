@@ -7,7 +7,7 @@ class MyClass()
 enum MyEnum {
     EnumVariantWithoutParameterList
     EnumVariantWithEmptyParameterList()
-    EnumVariantWithoutRequiredParameters(a: Int = 0, vararg b: Int)
+    EnumVariantWithoutRequiredParameters(a: Int = 0)
     EnumVariantWithRequiredParameters(a: Int)
 }
 
