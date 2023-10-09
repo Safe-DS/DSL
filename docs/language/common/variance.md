@@ -5,7 +5,7 @@
 Variance deals with the question, which generic types are compatible with each other. We explain this concept using the following [class][classes]:
 
 ```txt
-class Stack<T>(vararg initialElements: T) {
+class Stack<T>(initialElements: List<T>) {
     fun push(element: T)
 
     fun pop() -> element: T

@@ -1,4 +1,0 @@
-// $TEST$ no_syntax_error
-
-class MyClass1(const vararg a: Int)
-class MyClass2(vararg const a: Int)

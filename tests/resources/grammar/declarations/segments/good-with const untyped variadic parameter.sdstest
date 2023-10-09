@@ -1,4 +1,0 @@
-// $TEST$ no_syntax_error
-
-segment mySegment1(const vararg a) {}
-segment mySegment2(vararg const a) {}

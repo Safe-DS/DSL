@@ -6,7 +6,7 @@ segment mySegment(myCallableType: (
     // $TEST$ target b
     »b«: Int = 0,
     // $TEST$ target c
-    vararg »c«: Int
+    »c«: Int
 ) -> ()) {
     myCallableType(
         // $TEST$ references c

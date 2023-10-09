@@ -4,8 +4,5 @@ package tests.typing.declarations.parameters.ofCallableTypes
 // $TEST$ equivalence_class parameterType
 annotation MyAnnotation1(f: (»p«: »Int«) -> ())
 
-// $TEST$ serialization vararg<String>
-annotation MyAnnotation2(f: (vararg »p«: String) -> ())
-
 // $TEST$ serialization $Unknown
-annotation MyAnnotation3(f: (»p«) -> ())
+annotation MyAnnotation2(f: (»p«) -> ())

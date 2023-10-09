@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass ( vararg  a )
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass(vararg a)
-}

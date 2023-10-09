@@ -1,5 +1,0 @@
-fun  myFunction ( vararg  a :  Int )
-
-// -----------------------------------------------------------------------------
-
-fun myFunction(vararg a: Int)

@@ -5,7 +5,7 @@ import { Location } from 'vscode-languageserver';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { TestDescription } from '../../helpers/testDescription.js';
+import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'scoping';
@@ -27,14 +27,14 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
         // File must not contain any syntax errors
         const syntaxErrors = await getSyntaxErrors(services, code);
         if (syntaxErrors.length > 0) {
-            return invalidTest('FILE', uri, new SyntaxErrorsInCodeError(syntaxErrors));
+            return invalidTest('FILE', new SyntaxErrorsInCodeError(syntaxErrors, uri));
         }
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest('FILE', uri, checksResult.error);
+            return invalidTest('FILE', checksResult.error);
         }
 
         for (const check of checksResult.value) {
@@ -62,7 +62,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
                 const id = targetMatch.groups!.id!;
 
                 if (targets.has(id)) {
-                    return invalidTest('SUITE', parentDirectory, new DuplicateTargetIdError(id));
+                    return invalidTest('SUITE', new DuplicateTargetIdError(id, parentDirectory));
                 } else {
                     targets.set(id, {
                         id,
@@ -72,7 +72,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
                 continue;
             }
 
-            return invalidTest('FILE', uri, new InvalidCommentError(check.comment));
+            return invalidTest('FILE', new InvalidCommentError(check.comment, uri));
         }
     }
 
@@ -80,7 +80,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
     for (const reference of references) {
         if (reference.targetId) {
             if (!targets.has(reference.targetId)) {
-                return invalidTest('SUITE', parentDirectory, new MissingTargetError(reference.targetId));
+                return invalidTest('SUITE', new MissingTargetError(reference.targetId, parentDirectory));
             }
 
             reference.targetLocation = targets.get(reference.targetId)!.location;
@@ -99,11 +99,10 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
  * Report a test that has errors.
  *
  * @param level Whether a test file or a test suite is invalid.
- * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (level: 'FILE' | 'SUITE', uri: URI, error: Error): ScopingTest => {
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): ScopingTest => {
+    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,
@@ -173,10 +172,14 @@ interface Target {
 /**
  * A test comment did not match the expected format.
  */
-class InvalidCommentError extends Error {
-    constructor(readonly comment: string) {
+class InvalidCommentError extends TestDescriptionError {
+    constructor(
+        readonly comment: string,
+        uri: URI,
+    ) {
         super(
             `Invalid test comment (valid values are 'references <targetId>', 'unresolved', and 'target <id>'): ${comment}`,
+            uri,
         );
     }
 }
@@ -184,17 +187,23 @@ class InvalidCommentError extends Error {
 /**
  * Several targets have the same ID.
  */
-class DuplicateTargetIdError extends Error {
-    constructor(readonly id: string) {
-        super(`Target ID ${id} is used more than once`);
+class DuplicateTargetIdError extends TestDescriptionError {
+    constructor(
+        readonly id: string,
+        uri: URI,
+    ) {
+        super(`Target ID ${id} is used more than once`, uri);
     }
 }
 
 /**
  * A reference points to a target that does not exist.
  */
-class MissingTargetError extends Error {
-    constructor(readonly targetId: string) {
-        super(`No target with ID ${targetId} exists`);
+class MissingTargetError extends TestDescriptionError {
+    constructor(
+        readonly targetId: string,
+        uri: URI,
+    ) {
+        super(`No target with ID ${targetId} exists`, uri);
     }
 }

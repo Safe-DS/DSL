@@ -283,7 +283,7 @@ The annotation can target these declaration types. If the @Target annotation is 
 
 **Parameters:**
 
-* `vararg targets: AnnotationTarget` - The valid targets.
+* `targets: List<AnnotationTarget>` - The valid targets.
 
 **Valid targets:**
 

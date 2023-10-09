@@ -18,5 +18,14 @@ class Int sub Number
 @Description("A floating-point number.")
 class Float sub Number
 
+@Description("A floating-point number.")
+class Float sub Number
+
+@Description("A list of elements.")
+class List<E>
+
+@Description("A map of keys to values.")
+class Map<K, V>
+
 @Description("Some text.")
 class String

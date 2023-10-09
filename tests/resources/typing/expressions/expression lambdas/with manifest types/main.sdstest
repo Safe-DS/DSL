@@ -3,7 +3,4 @@ package tests.typing.expressions.expressionLambdas.withManifestTypes
 segment mySegment() {
     // $TEST$ serialization (p: Int) -> (result: Int)
     »(p: Int) -> 1«;
-
-    // $TEST$ serialization (p: vararg<String>) -> (result: Int)
-    »(vararg p: String) -> 1«;
 }

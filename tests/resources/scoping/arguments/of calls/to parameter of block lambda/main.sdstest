@@ -7,7 +7,7 @@ pipeline myPipeline {
         // $TEST$ target b
         »b«: Int = 0,
         // $TEST$ target c
-        vararg »c«: Int
+        »c«: Int
     ) {};
 
     myBlockLambda(

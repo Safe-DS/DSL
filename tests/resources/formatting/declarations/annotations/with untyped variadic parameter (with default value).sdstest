@@ -1,5 +1,0 @@
-annotation  MyAnnotation ( vararg  a  =  1 )
-
-// -----------------------------------------------------------------------------
-
-annotation MyAnnotation(vararg a = 1)

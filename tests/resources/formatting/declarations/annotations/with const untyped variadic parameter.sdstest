@@ -1,9 +1,0 @@
-annotation  MyAnnotation1 ( const  vararg  a )
-
-annotation  MyAnnotation2 ( vararg  const  a )
-
-// -----------------------------------------------------------------------------
-
-annotation MyAnnotation1(const vararg a)
-
-annotation MyAnnotation2(vararg const a)

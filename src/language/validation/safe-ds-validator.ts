@@ -36,11 +36,7 @@ import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js'
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
-import {
-    parameterListMustNotHaveOptionalAndVariadicParameters,
-    parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
-    parameterListVariadicParameterMustBeLast,
-} from './other/declarations/parameterLists.js';
+import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import {
     callableTypeMustNotHaveOptionalParameters,
@@ -48,7 +44,6 @@ import {
 } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import { parameterMustNotBeVariadicAndOptional } from './other/declarations/parameters.js';
 import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated,
@@ -120,12 +115,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeDeclarationShouldNotBeExperimental(services),
             namedTypeTypeArgumentListShouldBeNeeded,
         ],
-        SdsParameter: [parameterMustHaveTypeHint, parameterMustNotBeVariadicAndOptional],
-        SdsParameterList: [
-            parameterListMustNotHaveOptionalAndVariadicParameters,
-            parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
-            parameterListVariadicParameterMustBeLast,
-        ],
+        SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholderShouldBeUsed(services)],
         SdsReference: [

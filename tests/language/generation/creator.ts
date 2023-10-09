@@ -10,7 +10,7 @@ import { ErrorsInCodeError, getErrors } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
-import { TestDescription } from '../../helpers/testDescription.js';
+import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 import { locationToString } from '../../helpers/location.js';
 import { URI } from 'langium';
 
@@ -37,19 +37,19 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         // File must not contain any errors
         const errors = await getErrors(services, code);
         if (errors.length > 0) {
-            return invalidTest('FILE', uri, new ErrorsInCodeError(errors));
+            return invalidTest('FILE', new ErrorsInCodeError(errors, uri));
         }
 
         const checksResult = findTestChecks(code, uri, { failIfFewerRangesThanComments: true });
 
         // Something went wrong when finding test checks
         if (checksResult.isErr) {
-            return invalidTest('FILE', uri, checksResult.error);
+            return invalidTest('FILE', checksResult.error);
         }
 
         // Must contain at most one comment
         if (checksResult.value.length > 1) {
-            return invalidTest('FILE', uri, new MultipleChecksError(checksResult.value.length));
+            return invalidTest('FILE', new MultipleChecksError(checksResult.value.length, uri));
         }
 
         // Comment must match the expected format
@@ -58,14 +58,14 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
 
             // Expected unresolved reference
             if (check.comment !== 'run_until') {
-                return invalidTest('FILE', uri, new InvalidCommentError(check.comment));
+                return invalidTest('FILE', new InvalidCommentError(check.comment, uri));
             }
         }
 
         // Must not contain multiple run_until locations in various files
         const newRunUntil = checksResult.value[0]?.location;
         if (runUntil && newRunUntil) {
-            return invalidTest('SUITE', parentDirectory, new MultipleRunUntilLocationsError([runUntil, newRunUntil]));
+            return invalidTest('SUITE', new MultipleRunUntilLocationsError([runUntil, newRunUntil], parentDirectory));
         }
 
         runUntil = newRunUntil;
@@ -100,11 +100,10 @@ const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI)
  * Report a test that has errors.
  *
  * @param level Whether a test file or a test suite is invalid.
- * @param uri The URI of the test file or test suite.
  * @param error The error that occurred.
  */
-const invalidTest = (level: 'FILE' | 'SUITE', uri: URI, error: Error): GenerationTest => {
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): GenerationTest => {
+    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,
@@ -158,27 +157,36 @@ interface ExpectedOutputFile {
 /**
  * Found multiple test checks.
  */
-class MultipleChecksError extends Error {
-    constructor(readonly count: number) {
-        super(`Found ${count} test checks (generation tests expect none or one).`);
+class MultipleChecksError extends TestDescriptionError {
+    constructor(
+        readonly count: number,
+        uri: URI,
+    ) {
+        super(`Found ${count} test checks (generation tests expect none or one).`, uri);
     }
 }
 
 /**
  * A test comment did not match the expected format.
  */
-class InvalidCommentError extends Error {
-    constructor(readonly comment: string) {
-        super(`Invalid test comment (valid values 'run_until'): ${comment}`);
+class InvalidCommentError extends TestDescriptionError {
+    constructor(
+        readonly comment: string,
+        uri: URI,
+    ) {
+        super(`Invalid test comment (valid values 'run_until'): ${comment}`, uri);
     }
 }
 
 /**
  * Multiple files have a run_until locations.
  */
-class MultipleRunUntilLocationsError extends Error {
-    constructor(readonly locations: Location[]) {
+class MultipleRunUntilLocationsError extends TestDescriptionError {
+    constructor(
+        readonly locations: Location[],
+        uri: URI,
+    ) {
         const locationsString = locations.map((it) => `\n    - ${locationToString(it)}`).join('');
-        super(`Found multiple run_until locations:${locationsString}`);
+        super(`Found multiple run_until locations:${locationsString}`, uri);
     }
 }

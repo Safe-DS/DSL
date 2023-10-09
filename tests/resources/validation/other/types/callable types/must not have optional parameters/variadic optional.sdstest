@@ -1,8 +1,0 @@
-package tests.validation.other.types.callableTypes.mustNotHaveOptionalParameters
-
-fun f(
-    g: (
-        // $TEST$ no error "A callable type must not have optional parameters."
-        vararg p: Int = 1,
-    ) -> ()
-)

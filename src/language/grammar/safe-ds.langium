@@ -342,7 +342,7 @@ SdsAnnotationCall returns SdsAnnotationCall:
 ;
 
 SdsAnnotationCallArgumentList returns SdsArgumentList:
-    {SdsArgumentList} '(' (arguments+=SdsAnnotationCallArgument  (',' arguments+=SdsAnnotationCallArgument  )* ','? )? ')'
+    {SdsArgumentList} '(' (arguments+=SdsAnnotationCallArgument  (',' arguments+=SdsAnnotationCallArgument)* ','? )? ')'
 ;
 
 SdsAnnotationCallArgument returns SdsArgument:
@@ -417,14 +417,13 @@ SdsParameterList returns SdsParameterList:
 
 interface SdsParameter extends SdsLocalVariable {
     isConstant: boolean
-    isVariadic: boolean
     ^type?: SdsType
     defaultValue?: SdsExpression
 }
 
 SdsParameter returns SdsParameter:
     annotationCalls+=SdsAnnotationCall*
-    (isConstant?='const' & isVariadic?='vararg')
+    isConstant?='const'?
     name=ID
     (':' ^type=SdsType)?
     ('=' defaultValue=SdsExpression)?
@@ -485,7 +484,7 @@ interface SdsAssigneeList extends SdsObject {
 }
 
 SdsAssigneeList returns SdsAssigneeList:
-    assignees+=SdsAssignee  (',' assignees+=SdsAssignee  )* ','?
+    assignees+=SdsAssignee  (',' assignees+=SdsAssignee)* ','?
 ;
 
 interface SdsAssignee extends SdsObject {}
@@ -554,7 +553,7 @@ SdsBlockLambdaAssignment returns SdsAssignment:
 ;
 
 SdsBlockLambdaAssigneeList returns SdsAssigneeList:
-    assignees+=SdsBlockLambdaAssignee  (',' assignees+=SdsBlockLambdaAssignee  )* ','?
+    assignees+=SdsBlockLambdaAssignee  (',' assignees+=SdsBlockLambdaAssignee)* ','?
 ;
 
 interface SdsBlockLambdaResult extends SdsAssignee, SdsAbstractResult {}
@@ -733,6 +732,8 @@ SdsLiteral returns SdsLiteral:
     SdsBoolean
   | SdsFloat
   | SdsInt
+  | SdsList
+  | SdsMap
   | SdsNull
   | SdsString
 ;
@@ -764,6 +765,31 @@ SdsInt returns SdsInt:
     value=INT
 ;
 
+interface SdsList extends SdsLiteral {
+    elements: SdsExpression[]
+}
+
+SdsList returns SdsList:
+    {SdsList} '[' (elements+=SdsExpression (',' elements+=SdsExpression)* ','? )? ']'
+;
+
+interface SdsMap extends SdsLiteral {
+    entries: SdsMapEntry[]
+}
+
+SdsMap returns SdsMap:
+    {SdsMap} '{' (entries+=SdsMapEntry (',' entries+=SdsMapEntry)* ','? )? '}'
+;
+
+interface SdsMapEntry extends SdsObject {
+    key: SdsExpression
+    value: SdsExpression
+}
+
+SdsMapEntry returns SdsMapEntry:
+    key=SdsExpression ':' value=SdsExpression
+;
+
 interface SdsNull extends SdsLiteral {}
 
 SdsNull returns SdsNull:
@@ -778,20 +804,20 @@ SdsString returns SdsString:
     value=STRING
 ;
 
-interface SdsReference extends SdsExpression {
-    target: @SdsDeclaration
-}
-
-SdsReference returns SdsReference:
-    target=[SdsDeclaration:ID]
-;
-
 interface SdsParenthesizedExpression extends SdsExpression {
     expression: SdsExpression
 }
 
 SdsParenthesizedExpression returns SdsParenthesizedExpression:
     '(' expression=SdsExpression  ')'
+;
+
+interface SdsReference extends SdsExpression {
+    target: @SdsDeclaration
+}
+
+SdsReference returns SdsReference:
+    target=[SdsDeclaration:ID]
 ;
 
 interface SdsTemplateString extends SdsExpression {
@@ -1010,7 +1036,7 @@ interface SdsColumnList extends SdsObject {
 }
 
 SdsColumnList returns SdsColumnList:
-    {SdsColumnList} '{' (columns+=SdsColumn  (',' columns+=SdsColumn  )* ','? )? '}'
+    {SdsColumnList} '{' (columns+=SdsColumn  (',' columns+=SdsColumn)* ','? )? '}'
 ;
 
 interface SdsColumn extends SdsObject {

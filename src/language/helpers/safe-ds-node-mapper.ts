@@ -77,12 +77,6 @@ export class SafeDsNodeMapper {
             return parameters[argumentPosition];
         }
 
-        // If no parameter is found, check if the last parameter is variadic
-        const lastParameter = parameters[parameters.length - 1];
-        if (lastParameter?.isVariadic) {
-            return lastParameter;
-        }
-
         return undefined;
     }
 

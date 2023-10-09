@@ -5,12 +5,9 @@ import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 const CORE_CLASSES_URI = resolveRelativePathToBuiltinFile('safeds/lang/coreClasses.sdsstub');
 
 export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
-    /* c8 ignore start */
     get Any(): SdsClass | undefined {
         return this.getClass('Any');
     }
-
-    /* c8 ignore stop */
 
     get Boolean(): SdsClass | undefined {
         return this.getClass('Boolean');
@@ -22,6 +19,14 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
 
     get Int(): SdsClass | undefined {
         return this.getClass('Int');
+    }
+
+    get List(): SdsClass | undefined {
+        return this.getClass('List');
+    }
+
+    get Map(): SdsClass | undefined {
+        return this.getClass('Map');
     }
 
     get Nothing(): SdsClass | undefined {

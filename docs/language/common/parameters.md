@@ -2,9 +2,8 @@
 
 _Parameters_ define the expected inputs of some declaration that can be [called][calls]. We refer to such declarations as _callables_. We distinguish between
 
-- [required parameters](#required-parameters), which must always be passed,
-- [optional parameters](#optional-parameters), which use a default value if no value is passed explicitly, and
-- [variadic parameters](#variadic-parameters), which can accept zero or more values.
+- [required parameters](#required-parameters), which must always be passed, and
+- [optional parameters](#optional-parameters), which use a default value if no value is passed explicitly.
 
 ## Required Parameters
 
@@ -36,21 +35,6 @@ These are the syntactic elements:
 - An equals sign.
 - The default value of the parameter (here `1`). This must be a constant expression, i.e. something that can be evaluated by the compiler. Particularly [calls][calls] usually do not fulfill this requirement.
 
-## Variadic Parameters
-
-_Variadic parameters_ can consume arbitrarily many [arguments][calls]. Here is an example:
-
-```txt
-vararg variadicParameter: Int
-```
-
-Let us break down the syntax:
-
-- The keyword `vararg`
-- The name of the parameter (here `variadicParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
-- A colon.
-- The [type][types] of the parameter (here `Int`).
-
 ## Complete Example
 
 Let us now look at a full example of a [segment][segments] called `doSomething` with one [required parameter](#required-parameters) and one [optional parameter](#optional-parameters):
@@ -72,8 +56,6 @@ The interesting part is the list of parameters, which uses the following syntact
 Several restrictions apply to the order of parameters and to combinations of the various categories of parameters:
 
 - After an [optional parameter](#optional-parameters) all parameters must be optional.
-- A single [variadic parameter](#variadic-parameters) can be added at the end of the parameter list.
-- Implied by this: A callable cannot have both [optional parameters](#optional-parameters) and [variadic parameters](#variadic-parameters).
 
 ## Corresponding Python Code
 
@@ -83,7 +65,7 @@ Parameters must be ordered the same way in Python as they are in Safe-DS. Moreov
 
 - Name
 - Type
-- Kind (required vs. optional vs. variadic)
+- Optionality (required vs. optional)
 - Default value for optional parameters
 
 Let's look at these elements in turn.
@@ -114,19 +96,17 @@ In this case, the Safe-DS parameters `xPred` and `xTest` refer to the Python par
 
 The Safe-DS type of a parameter should capture the legal values of this parameter accurately. Ideally, the Python parameter should also have a matching [type hint][types-python].
 
-### Matching Kind
+### Matching Optionality
 
 Parameters kinds must match on the Safe-DS and Python sides as well. Concretely, this means:
 
 - All required parameters in Safe-DS must be required in Python.
 - All optional parameters in Safe-DS must be optional in Python.
-- All variadic parameters in Safe-DS must be variadic in Python (`*args`).
 
 Moreover, it must be possible to pass
 
-- required parameters by position,
-- optional parameters by name,
-- variadic parameters by position.
+- required parameters by position, and
+- optional parameters by name.
 
 These rules allow us to restrict required parameters to [positional-only][python-positional-only] or optional parameters to [keyword-only][python-keyword-only]. We can also keep both unrestricted.
 
@@ -160,21 +140,6 @@ def optional(a: int = 1):
 // Safe-DS code
 
 fun optional(a: Int = 1)
-```
-
-#### Variadic Parameter
-
-```py
-# Python code
-
-def variadic(*a: int):
-    pass
-```
-
-```txt
-// Safe-DS code
-
-fun variadic(vararg a: Int)
 ```
 
 ### Matching Default Value
