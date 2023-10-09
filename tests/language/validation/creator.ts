@@ -1,11 +1,11 @@
 import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
-import {getSyntaxErrors, SyntaxErrorsInCodeError} from '../../helpers/diagnostics.js';
+import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { Range } from 'vscode-languageserver-types';
-import {TestDescription, TestDescriptionError} from '../../helpers/testDescription.js';
+import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'validation';
@@ -161,7 +161,10 @@ export type Severity = (typeof validSeverities)[number];
  * A test comment did not match the expected format.
  */
 class InvalidCommentError extends TestDescriptionError {
-    constructor(readonly comment: string, uri: URI) {
+    constructor(
+        readonly comment: string,
+        uri: URI,
+    ) {
         super(`Invalid test comment (refer to the documentation for guidance): ${comment}`, uri);
     }
 }
@@ -170,7 +173,10 @@ class InvalidCommentError extends TestDescriptionError {
  * A test comment did not specify a valid severity.
  */
 class InvalidSeverityError extends TestDescriptionError {
-    constructor(readonly type: string, uri: URI) {
+    constructor(
+        readonly type: string,
+        uri: URI,
+    ) {
         super(`Invalid severity (valid values are ${validSeverities.join(', ')}): ${type}`, uri);
     }
 }

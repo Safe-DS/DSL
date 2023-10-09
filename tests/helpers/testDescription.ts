@@ -1,4 +1,4 @@
-import {URI} from "langium";
+import { URI } from 'langium';
 
 /**
  * A description of a test. This interface should be extended to describe tests of specific components.

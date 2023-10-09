@@ -116,9 +116,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeTypeArgumentListShouldBeNeeded,
         ],
         SdsParameter: [parameterMustHaveTypeHint],
-        SdsParameterList: [
-            parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
-        ],
+        SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholderShouldBeUsed(services)],
         SdsReference: [

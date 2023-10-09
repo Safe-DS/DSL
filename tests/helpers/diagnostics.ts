@@ -61,7 +61,10 @@ const getDiagnostics = async (services: LangiumServices, code: string): Promise<
  * The code contains syntax errors.
  */
 export class SyntaxErrorsInCodeError extends TestDescriptionError {
-    constructor(readonly syntaxErrors: Diagnostic[], uri: URI) {
+    constructor(
+        readonly syntaxErrors: Diagnostic[],
+        uri: URI,
+    ) {
         const syntaxErrorsAsString = syntaxErrors.map((e) => `    - ${e.message}`).join(`\n`);
 
         super(`Code has syntax errors:\n${syntaxErrorsAsString}`, uri);
@@ -72,7 +75,10 @@ export class SyntaxErrorsInCodeError extends TestDescriptionError {
  * The code contains syntax errors.
  */
 export class ErrorsInCodeError extends TestDescriptionError {
-    constructor(readonly errors: Diagnostic[], uri: URI) {
+    constructor(
+        readonly errors: Diagnostic[],
+        uri: URI,
+    ) {
         const syntaxErrorsAsString = errors.map((e) => `    - ${e.message}`).join(`\n`);
 
         super(`Code has errors:\n${syntaxErrorsAsString}`, uri);

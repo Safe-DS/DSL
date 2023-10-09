@@ -1,9 +1,9 @@
-import {Location, Range} from 'vscode-languageserver';
-import {findTestComments} from './testComments.js';
-import {findTestRanges, FindTestRangesError} from './testRanges.js';
-import {Result} from 'true-myth';
-import {URI} from 'langium';
-import {TestDescriptionError} from './testDescription.js';
+import { Location, Range } from 'vscode-languageserver';
+import { findTestComments } from './testComments.js';
+import { findTestRanges, FindTestRangesError } from './testRanges.js';
+import { Result } from 'true-myth';
+import { URI } from 'langium';
+import { TestDescriptionError } from './testDescription.js';
 
 /**
  * Finds all test checks, i.e. test comments and their corresponding test ranges.
