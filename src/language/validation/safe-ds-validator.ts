@@ -36,8 +36,12 @@ import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/e
 import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
 import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
-import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
-import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
+import {
+    typeParameterConstraintLeftOperandMustBeOwnTypeParameter,
+} from './other/declarations/typeParameterConstraints.js';
+import {
+    parameterListMustNotHaveRequiredParametersAfterOptionalParameters,
+} from './other/declarations/parameterLists.js';
 import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
 import {
     callableTypeMustNotHaveOptionalParameters,
@@ -63,6 +67,7 @@ import {
 import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
+import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
 
 /**
  * Register custom validation checks.
@@ -107,6 +112,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
+        SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
         SdsLambda: [lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [memberAccessNullSafetyShouldBeNeeded(services)],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
