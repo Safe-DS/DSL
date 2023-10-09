@@ -1,6 +1,6 @@
 import { DefaultWorkspaceManager, LangiumDocument, LangiumDocumentFactory, LangiumSharedServices } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver';
-import { listBuiltinsFiles } from '../builtins/fileFinder.js';
+import { listBuiltinFiles } from '../builtins/fileFinder.js';
 
 export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
     private documentFactory: LangiumDocumentFactory;
@@ -17,7 +17,7 @@ export class SafeDsWorkspaceManager extends DefaultWorkspaceManager {
         await super.loadAdditionalDocuments(folders, collector);
 
         // Load builtin files
-        for (const uri of listBuiltinsFiles()) {
+        for (const uri of listBuiltinFiles()) {
             collector(this.documentFactory.create(uri));
         }
     }

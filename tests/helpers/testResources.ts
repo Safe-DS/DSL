@@ -4,26 +4,26 @@ import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensio
 import { group } from 'radash';
 import { URI } from 'langium';
 
-const resourcesPath = path.join(__dirname, '..', 'resources');
+const TEST_RESOURCES_PATH = path.join(__dirname, '..', 'resources');
 
 /**
  * A path relative to `tests/resources/`.
  */
-export type ResourceName = string;
+export type TestResourceName = string;
 
 /**
  * A path relative to `tests/resources/` or a subdirectory thereof.
  */
-export type ShortenedResourceName = string;
+export type ShortenedTestResourceName = string;
 
 /**
  * Returns the URI that corresponds to the resource with the given name.
  *
- * @param resourceName The resource name.
+ * @param testResourceName The resource name.
  * @return The corresponding URI.
  */
-export const resourceNameToUri = (resourceName: ResourceName): URI => {
-    return URI.file(path.join(resourcesPath, resourceName));
+export const testResourceNameToUri = (testResourceName: TestResourceName): URI => {
+    return URI.file(path.join(TEST_RESOURCES_PATH, testResourceName));
 };
 
 /**
@@ -31,22 +31,25 @@ export const resourceNameToUri = (resourceName: ResourceName): URI => {
  * to `tests/resources/<rootResourceName>`. Otherwise, the result is relative to `tests/resources/`.
  *
  * @param uri The URI.
- * @param rootResourceName The corresponding root resource name.
+ * @param rootTestResourceName The corresponding root resource name.
  */
-export const uriToShortenedResourceName = (uri: URI, rootResourceName?: ResourceName): ShortenedResourceName => {
-    const rootPath = rootResourceName ? path.join(resourcesPath, rootResourceName) : resourcesPath;
+export const uriToShortenedTestResourceName = (
+    uri: URI,
+    rootTestResourceName?: TestResourceName,
+): ShortenedTestResourceName => {
+    const rootPath = rootTestResourceName ? path.join(TEST_RESOURCES_PATH, rootTestResourceName) : TEST_RESOURCES_PATH;
     return path.relative(rootPath, uri.fsPath);
 };
 
 /**
  * Lists all Safe-DS files in the given root directory that are not skipped.
  *
- * @param rootResourceName The resource name of the root directory.
+ * @param rootTestResourceName The resource name of the root directory.
  * @return URIs of the discovered Safe-DS files.
  */
-export const listSafeDsFiles = (rootResourceName: ResourceName): URI[] => {
+export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI[] => {
     const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
-    const cwd = resourceNameToUri(rootResourceName).fsPath;
+    const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true })
         .filter(isNotSkipped)
@@ -56,12 +59,12 @@ export const listSafeDsFiles = (rootResourceName: ResourceName): URI[] => {
 /**
  * Lists all Python files in the given root directory.
  *
- * @param rootResourceName The resource name of the root directory.
+ * @param rootTestResourceName The resource name of the root directory.
  * @return URIs of the discovered Python files.
  */
-export const listPythonFiles = (rootResourceName: ResourceName): URI[] => {
+export const listTestPythonFiles = (rootTestResourceName: TestResourceName): URI[] => {
     const pattern = `**/*.py`;
-    const cwd = resourceNameToUri(rootResourceName).fsPath;
+    const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
 };
@@ -70,11 +73,11 @@ export const listPythonFiles = (rootResourceName: ResourceName): URI[] => {
  * Lists all Safe-DS files in the given root directory that are not skipped. The result is grouped by the parent
  * directory.
  *
- * @param rootResourceName The resource name of the root directory.
+ * @param rootTestResourceName The resource name of the root directory.
  * @return URIs of the discovered Safe-DS files grouped by the parent directory.
  */
-export const listSafeDsFilesGroupedByParentDirectory = (rootResourceName: ResourceName): [URI, URI[]][] => {
-    const uris = listSafeDsFiles(rootResourceName);
+export const listTestSafeDsFilesGroupedByParentDirectory = (rootTestResourceName: TestResourceName): [URI, URI[]][] => {
+    const uris = listTestSafeDsFiles(rootTestResourceName);
     const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>;
 
     const result: [URI, URI[]][] = [];

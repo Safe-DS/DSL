@@ -1,4 +1,4 @@
-import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
+import { listTestSafeDsFilesGroupedByParentDirectory, uriToShortenedTestResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
@@ -11,7 +11,7 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'scoping';
 
 export const createScopingTests = (): Promise<ScopingTest[]> => {
-    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
     const testCases = filesGroupedByParentDirectory.map((entry) => createScopingTest(...entry));
 
     return Promise.all(testCases);
@@ -87,7 +87,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
         }
     }
 
-    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be scoped correctly`,
         uris,
@@ -102,7 +102,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
  * @param error The error that occurred.
  */
 const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): ScopingTest => {
-    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,

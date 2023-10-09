@@ -1,4 +1,4 @@
-import { listSafeDsFiles, uriToShortenedResourceName } from '../../helpers/testResources.js';
+import { listTestSafeDsFiles, uriToShortenedTestResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestComments } from '../../helpers/testComments.js';
 import { NoCommentsError } from '../../helpers/testChecks.js';
@@ -8,7 +8,7 @@ import { URI } from 'langium';
 const rootResourceName = 'grammar';
 
 export const createGrammarTests = (): GrammarTest[] => {
-    return listSafeDsFiles(rootResourceName).map(createGrammarTest);
+    return listTestSafeDsFiles(rootResourceName).map(createGrammarTest);
 };
 
 const createGrammarTest = (uri: URI): GrammarTest => {
@@ -32,7 +32,7 @@ const createGrammarTest = (uri: URI): GrammarTest => {
         return invalidTest(new InvalidCommentError(comment, uri));
     }
 
-    const shortenedResourceName = uriToShortenedResourceName(uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(uri, rootResourceName);
     let testName: string;
     if (comment === 'syntax_error') {
         testName = `[${shortenedResourceName}] should have syntax errors`;
@@ -54,7 +54,7 @@ const createGrammarTest = (uri: URI): GrammarTest => {
  * @param error The error that occurred.
  */
 const invalidTest = (error: TestDescriptionError): GrammarTest => {
-    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     return {
         testName: `INVALID TEST FILE [${shortenedResourceName}]`,
         code: '',

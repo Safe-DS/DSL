@@ -28,7 +28,6 @@ const plugins = [
         },
     },
     copy({
-        // resolveFrom: 'cwd',
         assets: {
             from: ['./src/resources/**/*'],
             to: ['./resources'],

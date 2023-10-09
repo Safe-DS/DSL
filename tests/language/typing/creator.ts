@@ -1,4 +1,4 @@
-import { listSafeDsFilesGroupedByParentDirectory, uriToShortenedResourceName } from '../../helpers/testResources.js';
+import { listTestSafeDsFilesGroupedByParentDirectory, uriToShortenedTestResourceName } from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
@@ -11,7 +11,7 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'typing';
 
 export const createTypingTests = (): Promise<TypingTest[]> => {
-    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
     const testCases = filesGroupedByParentDirectory.map((entry) => createTypingTest(...entry));
 
     return Promise.all(testCases);
@@ -70,7 +70,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
         }
     }
 
-    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be typed correctly`,
         uris,
@@ -86,7 +86,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
  * @param error The error that occurred.
  */
 const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): TypingTest => {
-    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,

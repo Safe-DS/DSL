@@ -1,33 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import {
-    listPythonFiles,
-    listSafeDsFiles,
-    listSafeDsFilesGroupedByParentDirectory,
-    ResourceName,
-    resourceNameToUri,
-    ShortenedResourceName,
-    uriToShortenedResourceName,
+    listTestPythonFiles,
+    listTestSafeDsFiles,
+    listTestSafeDsFilesGroupedByParentDirectory,
+    TestResourceName,
+    testResourceNameToUri,
+    ShortenedTestResourceName,
+    uriToShortenedTestResourceName,
 } from './testResources.js';
 import { URI } from 'langium';
 
-describe('uriToShortenedResourceName', () => {
+describe('uriToShortenedTestResourceName', () => {
     it('should return the corresponding resource name if no root resource name is given', () => {
         const resourceName = 'helpers/listSafeDsFiles';
-        const actual = uriToShortenedResourceName(resourceNameToUri(resourceName));
+        const actual = uriToShortenedTestResourceName(testResourceNameToUri(resourceName));
         expect(normalizeResourceName(actual)).toBe(normalizeResourceName(resourceName));
     });
 
     it('should return a shortened resource name if a root resource name is given', () => {
         const resourceName = 'helpers/nested/listSafeDsFiles';
-        const actual = uriToShortenedResourceName(resourceNameToUri(resourceName), 'helpers/nested');
+        const actual = uriToShortenedTestResourceName(testResourceNameToUri(resourceName), 'helpers/nested');
         expect(actual).toBe('listSafeDsFiles');
     });
 });
 
-describe('listSafeDsFiles', () => {
+describe('listTestSafeDsFiles', () => {
     it('should return all Safe-DS files in a resource directory that are not skipped', () => {
         const rootResourceName = 'helpers/listSafeDsFiles';
-        const actual = listSafeDsFiles(rootResourceName);
+        const actual = listTestSafeDsFiles(rootResourceName);
         const expected = [
             'pipeline file.sdspipe',
             'stub file.sdsstub',
@@ -41,20 +41,20 @@ describe('listSafeDsFiles', () => {
     });
 });
 
-describe('listPythonFiles', () => {
+describe('listTestPythonFiles', () => {
     it('should return all Python files in a resource directory', () => {
         const rootResourceName = 'helpers/listPythonFiles';
-        const actual = listPythonFiles(rootResourceName);
+        const actual = listTestPythonFiles(rootResourceName);
         const expected = ['python file.py', 'nested/python file.py'];
 
         expectFileListsToMatch(rootResourceName, actual, expected);
     });
 });
 
-describe('listSafeDsFilesGroupedByParentDirectory', () => {
+describe('listTestSafeDsFilesGroupedByParentDirectory', () => {
     it('should return all Safe-DS files in a directory that are not skipped and group them by parent directory', () => {
         const rootResourceName = 'helpers/listSafeDsFiles';
-        const result = new Map(listSafeDsFilesGroupedByParentDirectory(rootResourceName));
+        const result = new Map(listTestSafeDsFilesGroupedByParentDirectory(rootResourceName));
 
         // Compare the keys, i.e. the parent directories
         const actualKeys = [...result.keys()];
@@ -63,14 +63,14 @@ describe('listSafeDsFilesGroupedByParentDirectory', () => {
 
         // Compare the values, i.e. the files, in the root directory
         const actualValuesDirectlyInRoot = [...result.entries()].find(
-            ([key]) => uriToShortenedResourceName(key, rootResourceName) === '',
+            ([key]) => uriToShortenedTestResourceName(key, rootResourceName) === '',
         )!;
         const expectedValuesDirectlyInRoot = ['pipeline file.sdspipe', 'stub file.sdsstub', 'test file.sdstest'];
         expectFileListsToMatch(rootResourceName, actualValuesDirectlyInRoot[1], expectedValuesDirectlyInRoot);
 
         // Compare the values, i.e. the files, in the nested directory
         const actualValuesInNested = [...result.entries()].find(
-            ([key]) => uriToShortenedResourceName(key, rootResourceName) === 'nested',
+            ([key]) => uriToShortenedTestResourceName(key, rootResourceName) === 'nested',
         )!;
         const expectedValuesInNested = [
             'nested/pipeline file.sdspipe',
@@ -89,11 +89,11 @@ describe('listSafeDsFilesGroupedByParentDirectory', () => {
  * @param expectedShortenedResourceNames The expected shortened resource names.
  */
 const expectFileListsToMatch = (
-    rootResourceName: ResourceName,
+    rootResourceName: TestResourceName,
     actualUris: URI[],
-    expectedShortenedResourceNames: ShortenedResourceName[],
+    expectedShortenedResourceNames: ShortenedTestResourceName[],
 ): void => {
-    const actualShortenedResourceNames = actualUris.map((uri) => uriToShortenedResourceName(uri, rootResourceName));
+    const actualShortenedResourceNames = actualUris.map((uri) => uriToShortenedTestResourceName(uri, rootResourceName));
     expect(normalizeResourceNames(actualShortenedResourceNames)).toStrictEqual(
         normalizeResourceNames(expectedShortenedResourceNames),
     );

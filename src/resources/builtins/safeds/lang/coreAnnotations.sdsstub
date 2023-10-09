@@ -4,7 +4,7 @@ package safeds.lang
 @Target(AnnotationTarget.Annotation)
 annotation Target(
     @Description("The valid targets.")
-    vararg targets: AnnotationTarget
+    targets: List<AnnotationTarget>
 )
 
 @Description("The declaration types that can be targeted by annotations.")
@@ -47,11 +47,11 @@ enum AnnotationTarget {
 }
 
 @Description("The annotation can be called multiple times for the same declaration.")
-@Target(AnnotationTarget.Annotation)
+@Target([AnnotationTarget.Annotation])
 annotation Repeatable
 
 @Description("The declaration should no longer be used.")
-@Target(
+@Target([
     AnnotationTarget.Annotation,
     AnnotationTarget.Attribute,
     AnnotationTarget.Class,
@@ -61,7 +61,7 @@ annotation Repeatable
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
     AnnotationTarget.Segment,
-)
+])
 annotation Deprecated(
     @Description("What to use instead.")
     alternative: String? = null,
@@ -77,7 +77,7 @@ annotation Deprecated(
 )
 
 @Description("The declaration might change without a major version bump.")
-@Target(
+@Target([
     AnnotationTarget.Annotation,
     AnnotationTarget.Attribute,
     AnnotationTarget.Class,
@@ -87,13 +87,13 @@ annotation Deprecated(
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
     AnnotationTarget.Segment,
-)
+])
 annotation Experimental
 
 @Description("The function has no side effects and returns the same results for the same arguments.")
-@Target(AnnotationTarget.Function)
+@Target([AnnotationTarget.Function])
 annotation Pure
 
 @Description("The function has no side effects.")
-@Target(AnnotationTarget.Function)
+@Target([AnnotationTarget.Function])
 annotation NoSideEffects

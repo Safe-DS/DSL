@@ -1,7 +1,7 @@
 import {
-    listPythonFiles,
-    listSafeDsFilesGroupedByParentDirectory,
-    uriToShortenedResourceName,
+    listTestPythonFiles,
+    listTestSafeDsFilesGroupedByParentDirectory,
+    uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
@@ -19,7 +19,7 @@ await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 const rootResourceName = 'generation';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
-    const filesGroupedByParentDirectory = listSafeDsFilesGroupedByParentDirectory(rootResourceName);
+    const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
     const testCases = filesGroupedByParentDirectory.map((entry) => createGenerationTest(...entry));
 
     return Promise.all(testCases);
@@ -71,7 +71,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         runUntil = newRunUntil;
     }
 
-    const shortenedResourceName = uriToShortenedResourceName(parentDirectory, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
         testName: `[${shortenedResourceName}] should be generated correctly`,
         inputUris,
@@ -88,7 +88,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
  * @param actualOutputRoot Where the actual output files supposed to be located.
  */
 const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI): ExpectedOutputFile[] => {
-    return listPythonFiles(uriToShortenedResourceName(expectedOutputRoot)).map((uri) => {
+    return listTestPythonFiles(uriToShortenedTestResourceName(expectedOutputRoot)).map((uri) => {
         return {
             uri: URI.file(path.join(actualOutputRoot.fsPath, path.relative(expectedOutputRoot.fsPath, uri.fsPath))),
             code: fs.readFileSync(uri.fsPath).toString(),
@@ -103,7 +103,7 @@ const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI)
  * @param error The error that occurred.
  */
 const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): GenerationTest => {
-    const shortenedResourceName = uriToShortenedResourceName(error.uri, rootResourceName);
+    const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
         testName,
