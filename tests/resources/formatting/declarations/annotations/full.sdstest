@@ -6,7 +6,7 @@ package test
 
  annotation  MyAnnotation (
    @Annotation3  a :  Int ,
-     vararg  b :  Int  =  3
+     const  b :  Int  =  3
  )
 where  {
    T2  super  Number ,
@@ -22,7 +22,7 @@ package test
 annotation MyAnnotation(
     @Annotation3
     a: Int,
-    vararg b: Int = 3
+    const b: Int = 3
 ) where {
     T2 super Number,
     T3 sub Number

@@ -1,5 +1,0 @@
-segment  mySegment ( vararg  a )  { }
-
-// -----------------------------------------------------------------------------
-
-segment mySegment(vararg a) {}

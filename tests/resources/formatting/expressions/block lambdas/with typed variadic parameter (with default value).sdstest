@@ -1,9 +1,0 @@
-pipeline myPipeline {
-    ( vararg  a :  Int  =  1 )  { };
-}
-
-// -----------------------------------------------------------------------------
-
-pipeline myPipeline {
-    (vararg a: Int = 1) {};
-}

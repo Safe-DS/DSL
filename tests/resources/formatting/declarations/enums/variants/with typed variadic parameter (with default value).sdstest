@@ -1,9 +1,0 @@
-enum MyEnum {
-    MyEnumVariant ( vararg  a :  Int  =  1 )
-}
-
-// -----------------------------------------------------------------------------
-
-enum MyEnum {
-    MyEnumVariant(vararg a: Int = 1)
-}

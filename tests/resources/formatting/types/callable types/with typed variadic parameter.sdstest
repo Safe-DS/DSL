@@ -1,9 +1,0 @@
-segment mySegment(
-    f: ( vararg  a :  Int )  ->  ( )
-) {}
-
-// -----------------------------------------------------------------------------
-
-segment mySegment(
-    f: (vararg a: Int) -> ()
-) {}
