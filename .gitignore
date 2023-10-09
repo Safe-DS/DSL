@@ -12,7 +12,7 @@ dist/
 dist-ssr/
 generated/
 out/
-syntaxes/safe-ds.tmLanguage.json
+syntaxes/safe-ds.generated.tmLanguage.json
 
 # Node
 .npm/
