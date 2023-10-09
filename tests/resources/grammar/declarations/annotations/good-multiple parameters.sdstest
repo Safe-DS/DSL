@@ -3,24 +3,11 @@
 annotation MyAnnotation(
     @Annotation a1,
     b1 = 0,
-    vararg c1,
-    vararg d1: Int = 1,
-    e1: Int,
-    f1: Int = 2,
-    vararg g1: Int,
-    vararg h1: Int = 3,
+    c1: Int,
+    d1: Int = 2,
 
-    @Annotation a2,
+    @Annotation const a2,
     const b2 = 0,
-    const vararg c2,
-    const vararg d2: Int = 1,
-    const e2: Int,
-    const f2: Int = 2,
-    const vararg g2: Int,
-    const vararg h2: Int = 3,
-
-    vararg const c3,
-    vararg const d3: Int = 1,
-    vararg const g3: Int,
-    vararg const h3: Int = 3
+    const c2: Int,
+    const d2: Int = 2
 )

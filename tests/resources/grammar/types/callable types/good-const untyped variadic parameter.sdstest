@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-segment mySegment(
-    f: (const vararg a) -> (),
-    g: (vararg const a) -> ()
-) {}

@@ -1,4 +1,0 @@
-// $TEST$ no_syntax_error
-
-fun myFunction1(const vararg a)
-fun myFunction2(vararg const a)

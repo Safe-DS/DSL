@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-pipeline myPipeline {
-    (const vararg a: Int = 1) {};
-    (vararg const a: Int = 1) {};
-}
