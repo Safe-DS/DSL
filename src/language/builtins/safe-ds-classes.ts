@@ -1,6 +1,6 @@
 import { isSdsClass, SdsClass } from '../generated/ast.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
-import {resourceNameToUri} from "../../helpers/resources.js";
+import { resourceNameToUri } from '../../helpers/resources.js';
 
 const CORE_CLASSES_URI = resourceNameToUri('builtins/safeds/lang/coreClasses.sdsstub');
 

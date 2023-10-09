@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {resourceNameToUri, uriToShortenedResourceName} from '../../src/helpers/resources.js';
+import { resourceNameToUri, uriToShortenedResourceName } from '../../src/helpers/resources.js';
 
 describe('uriToShortenedResourceName', () => {
     it('should return the corresponding resource name if no root resource name is given', () => {

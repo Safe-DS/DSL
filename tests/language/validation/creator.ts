@@ -1,4 +1,7 @@
-import { listTestSafeDsFilesGroupedByParentDirectory, uriToShortenedTestResourceName } from '../../helpers/testResources.js';
+import {
+    listTestSafeDsFilesGroupedByParentDirectory,
+    uriToShortenedTestResourceName,
+} from '../../helpers/testResources.js';
 import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';

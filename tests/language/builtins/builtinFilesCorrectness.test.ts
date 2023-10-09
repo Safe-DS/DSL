@@ -7,7 +7,7 @@ import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
 import { isEmpty } from 'radash';
 import { URI } from 'langium';
 import { locationToString } from '../../helpers/location.js';
-import {AssertionError} from "assert";
+import { AssertionError } from 'assert';
 
 const workspace = createSafeDsServices(NodeFileSystem).SafeDs.shared.workspace;
 const builtinFiles = listBuiltinFiles();
