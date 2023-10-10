@@ -88,6 +88,9 @@ pipeline myPipeline {
     MyClass().»declaredPreviouslyAsStaticMethod«();
 
     // $TEST$ references myInstanceMethod
+    nullableMyClass().»myInstanceMethod«;
+
+    // $TEST$ references myInstanceMethod
     nullableMyClass()?.»myInstanceMethod«();
 
 
@@ -96,9 +99,6 @@ pipeline myPipeline {
 
     // $TEST$ unresolved
     AnotherClass().»myInstanceMethod«;
-
-    // $TEST$ unresolved
-    nullableMyClass().»myInstanceAttribute«;
 
     // $TEST$ unresolved
     unresolved.»myInstanceMethod«;

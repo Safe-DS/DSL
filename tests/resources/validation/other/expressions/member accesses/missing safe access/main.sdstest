@@ -1,0 +1,40 @@
+package validation.other.expressions.memberAccesses.missingSafeAccess
+
+class MyClass() {
+    attr a: Int
+}
+
+fun nullableMyClass() -> instance: MyClass?
+
+pipeline test {
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »1.a«();
+
+    // $TEST$ error "The receiver can be null so a safe access must be used."
+    »null.a«();
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »nullableMyClass().a«(); // This should be where the error is reported. Remove the "no" on the bug in Langium is fixed.
+
+    // $TEST$ error "The receiver can be null so a safe access must be used."
+    nullableMyClass()».a«(); // Langium currently computes the wrong range for a member access
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »unresolved.a«();
+
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »1?.a«();
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »null?.a«();
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »nullableMyClass()?.a«();
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    nullableMyClass()»?.a«(); // Langium currently computes the wrong range for a member access
+
+    // $TEST$ no error "The receiver can be null so a safe access must be used."
+    »unresolved?.a«();
+}
