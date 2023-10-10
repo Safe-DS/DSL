@@ -1,7 +1,41 @@
-import { isSdsAnnotation, isSdsPipeline, isSdsSchema, SdsReference } from '../../../generated/ast.js';
-import { ValidationAcceptor } from 'langium';
+import {
+    isSdsAnnotation,
+    isSdsCall,
+    isSdsFunction,
+    isSdsMemberAccess,
+    isSdsPipeline,
+    isSdsSchema,
+    isSdsSegment,
+    SdsReference,
+} from '../../../generated/ast.js';
+import { AstNode, ValidationAcceptor } from 'langium';
 
+export const CODE_REFERENCE_FUNCTION_POINTER = 'reference/function-pointer';
 export const CODE_REFERENCE_TARGET = 'reference/target';
+
+export const referenceMustNotBeFunctionPointer = (node: SdsReference, accept: ValidationAcceptor): void => {
+    const target = node.target?.ref;
+    if (!isSdsFunction(target) && !isSdsSegment(target)) {
+        return;
+    }
+
+    //
+    let container: AstNode | undefined = node.$container;
+    if (isSdsMemberAccess(container) && node.$containerProperty === 'member') {
+        container = container.$container;
+    }
+
+    if (!isSdsCall(container)) {
+        accept(
+            'error',
+            'Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead.',
+            {
+                node,
+                code: CODE_REFERENCE_FUNCTION_POINTER,
+            },
+        );
+    }
+};
 
 export const referenceTargetMustNotBeAnnotationPipelineOrSchema = (
     node: SdsReference,

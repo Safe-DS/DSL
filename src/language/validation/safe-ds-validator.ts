@@ -45,7 +45,10 @@ import {
 } from './other/types/callableTypes.js';
 import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
+import {
+    referenceMustNotBeFunctionPointer,
+    referenceTargetMustNotBeAnnotationPipelineOrSchema,
+} from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated,
     argumentCorrespondingParameterShouldNotBeDeprecated,
@@ -141,6 +144,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsReference: [
+            referenceMustNotBeFunctionPointer,
             referenceTargetMustNotBeAnnotationPipelineOrSchema,
             referenceTargetShouldNotBeDeprecated(services),
             referenceTargetShouldNotExperimental(services),
