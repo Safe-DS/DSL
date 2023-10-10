@@ -1,0 +1,7 @@
+package tests.validation.builtins.expert.mustNotBeUsedOnParametersOfCallableTypes
+
+// $TEST$ error "The '@Expert' annotation is not applicable to parameters of callable types."
+// $TEST$ error "The '@Expert' annotation is not applicable to parameters of callable types."
+segment mySegment2(
+    f: (»@Expert« a: Int, »@Expert« b: Int = 3) -> ()
+) {}

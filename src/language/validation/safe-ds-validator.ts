@@ -64,6 +64,7 @@ import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
+import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 
 /**
  * Register custom validation checks.
@@ -117,7 +118,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeDeclarationShouldNotBeExperimental(services),
             namedTypeTypeArgumentListShouldBeNeeded,
         ],
-        SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameter: [parameterMustHaveTypeHint, requiredParameterMustNotBeExpert(services)],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholderShouldBeUsed(services)],
