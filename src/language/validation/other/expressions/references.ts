@@ -1,9 +1,11 @@
 import {
     isSdsAnnotation,
     isSdsCall,
-    isSdsFunction, isSdsMemberAccess,
+    isSdsFunction,
+    isSdsMemberAccess,
     isSdsPipeline,
-    isSdsSchema, isSdsSegment,
+    isSdsSchema,
+    isSdsSegment,
     SdsReference,
 } from '../../../generated/ast.js';
 import { AstNode, ValidationAcceptor } from 'langium';
@@ -24,10 +26,14 @@ export const referenceMustNotBeFunctionPointer = (node: SdsReference, accept: Va
     }
 
     if (!isSdsCall(container)) {
-        accept('error', 'Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead.', {
-            node,
-            code: CODE_REFERENCE_FUNCTION_POINTER,
-        });
+        accept(
+            'error',
+            'Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead.',
+            {
+                node,
+                code: CODE_REFERENCE_FUNCTION_POINTER,
+            },
+        );
     }
 };
 
