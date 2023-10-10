@@ -3,9 +3,7 @@ import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsModule } from '../../
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
 
 export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
-
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
-
 export const CODE_MODULE_FORBIDDEN_IN_STUB_FILE = 'module/forbidden-in-stub-file';
 
 export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: ValidationAcceptor): void => {
