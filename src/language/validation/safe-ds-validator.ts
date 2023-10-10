@@ -61,7 +61,7 @@ import {
     namedTypeDeclarationShouldNotBeExperimental,
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
-import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
+import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
@@ -139,7 +139,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
-        SdsPlaceholder: [placeholderShouldBeUsed(services)],
+        SdsPlaceholder: [
+            placeholdersMustNotBeAnAlias,
+            placeholderShouldBeUsed(services)],
         SdsReference: [
             referenceTargetMustNotBeAnnotationPipelineOrSchema,
             referenceTargetShouldNotBeDeprecated(services),
