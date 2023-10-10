@@ -1,0 +1,15 @@
+package tests.other.imports
+
+// $TEST$ error "The package 'tests.other.imports.missing' does not exist."
+from »tests.other.imports.missing« import *
+// $TEST$ error ""The package 'tests.other.imports.missing' does not exist."
+from »tests.other.imports.missing« import C
+// $TEST$ error ""The package 'tests.other.imports.missing' does not exist."
+from »tests.other.imports.missing« import C as D
+
+// $TEST$ warning "The package 'tests.other.imports.empty' is empty."
+from »tests.other.imports.empty« import *
+// $TEST$ warning "The package 'tests.other.imports.empty' is empty."
+from »tests.other.imports.empty« import C
+// $TEST$ warning "The package 'tests.other.imports.empty' is empty."
+from »tests.other.imports.empty« import C as D

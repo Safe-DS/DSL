@@ -1,0 +1,8 @@
+package tests.other.imports
+
+// $TEST$ no error r"The package '\.*' does not exist\."
+// $TEST$ no warning r"The package '\.*' is empty\."
+
+from tests.other.imports.nonEmpty import *
+from tests.other.imports.nonEmpty import C
+from tests.other.imports.nonEmpty import C as D
