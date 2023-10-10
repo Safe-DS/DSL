@@ -1,0 +1,48 @@
+package tests.validation.builtins.deprecated.mustNotBeUsedOnRequiredParameters
+
+// $TEST$ error "A deprecated parameter must be optional."
+// $TEST$ no error "A deprecated parameter must be optional."
+annotation MyAnnotation(@Deprecated »a«: Int, @Deprecated »b«: Int = 3)
+
+// $TEST$ error "A deprecated parameter must be optional."
+// $TEST$ no error "A deprecated parameter must be optional."
+class MyClass(@Deprecated »a«: Int, @Deprecated »b«: Int = 3) {
+
+    // $TEST$ error "A deprecated parameter must be optional."
+    // $TEST$ no error "A deprecated parameter must be optional."
+    class MyClass(@Deprecated »a«: Int, @Deprecated »b«: Int = 3)
+
+    // $TEST$ error "A deprecated parameter must be optional."
+    // $TEST$ no error "A deprecated parameter must be optional."
+    fun myFunction(@Deprecated »a«: Int, @Deprecated »b«: Int = 3)
+}
+
+enum MyEnum {
+
+    // $TEST$ error "A deprecated parameter must be optional."
+    // $TEST$ no error "A deprecated parameter must be optional."
+    MyEnumVariant(@Deprecated »a«: Int, @Deprecated »b«: Int = 3)
+}
+
+// $TEST$ error "A deprecated parameter must be optional."
+// $TEST$ no error "A deprecated parameter must be optional."
+fun myFunction(@Deprecated »a«: Int, @Deprecated »b«: Int = 3)
+
+// $TEST$ error "A deprecated parameter must be optional."
+// $TEST$ no error "A deprecated parameter must be optional."
+segment mySegment1(@Deprecated »a«: Int, @Deprecated »b«: Int = 3) {}
+
+// $TEST$ no error "A deprecated parameter must be optional."
+// $TEST$ no error "A deprecated parameter must be optional."
+segment mySegment2(
+    f: (@Deprecated »a«: Int, @Deprecated »b«: Int = 3) -> ()
+) {
+
+    // $TEST$ no error "A deprecated parameter must be optional."
+    // $TEST$ no error "A deprecated parameter must be optional."
+    val g = (@Deprecated »a«: Int, @Deprecated »b«: Int = 3) {};
+
+    // $TEST$ no error "A deprecated parameter must be optional."
+    // $TEST$ no error "A deprecated parameter must be optional."
+    val h = (@Deprecated »a«: Int, @Deprecated »b«: Int = 3) -> 1;
+}

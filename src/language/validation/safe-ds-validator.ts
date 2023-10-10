@@ -52,6 +52,7 @@ import {
     assigneeAssignedResultShouldNotBeDeprecated,
     namedTypeDeclarationShouldNotBeDeprecated,
     referenceTargetShouldNotBeDeprecated,
+    requiredParameterMustNotBeDeprecated,
 } from './builtins/deprecated.js';
 import {
     annotationCallAnnotationShouldNotBeExperimental,
@@ -125,7 +126,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeDeclarationShouldNotBeExperimental(services),
             namedTypeTypeArgumentListShouldBeNeeded,
         ],
-        SdsParameter: [parameterMustHaveTypeHint, requiredParameterMustNotBeExpert(services)],
+        SdsParameter: [
+            parameterMustHaveTypeHint,
+            requiredParameterMustNotBeDeprecated(services),
+            requiredParameterMustNotBeExpert(services),
+        ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholderShouldBeUsed(services)],

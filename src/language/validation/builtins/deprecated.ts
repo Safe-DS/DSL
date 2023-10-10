@@ -7,14 +7,18 @@ import {
     SdsArgument,
     SdsAssignee,
     SdsNamedType,
+    SdsParameter,
     SdsReference,
 } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
+import { isRequiredParameter } from '../../helpers/nodeProperties.js';
+import { parameterCanBeAnnotated } from '../other/declarations/annotationCalls.js';
 
 export const CODE_DEPRECATED_ASSIGNED_RESULT = 'deprecated/assigned-result';
 export const CODE_DEPRECATED_CALLED_ANNOTATION = 'deprecated/called-annotation';
 export const CODE_DEPRECATED_CORRESPONDING_PARAMETER = 'deprecated/corresponding-parameter';
 export const CODE_DEPRECATED_REFERENCED_DECLARATION = 'deprecated/referenced-declaration';
+export const CODE_DEPRECATED_REQUIRED_PARAMETER = 'deprecated/required-parameter';
 
 export const assigneeAssignedResultShouldNotBeDeprecated =
     (services: SafeDsServices) => (node: SdsAssignee, accept: ValidationAcceptor) => {
@@ -93,5 +97,18 @@ export const referenceTargetShouldNotBeDeprecated =
                 node,
                 code: CODE_DEPRECATED_REFERENCED_DECLARATION,
             });
+        }
+    };
+
+export const requiredParameterMustNotBeDeprecated =
+    (services: SafeDsServices) => (node: SdsParameter, accept: ValidationAcceptor) => {
+        if (isRequiredParameter(node) && parameterCanBeAnnotated(node)) {
+            if (services.builtins.Annotations.isDeprecated(node)) {
+                accept('error', 'A deprecated parameter must be optional.', {
+                    node,
+                    property: 'name',
+                    code: CODE_DEPRECATED_REQUIRED_PARAMETER,
+                });
+            }
         }
     };

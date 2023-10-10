@@ -29,8 +29,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Experimental');
     }
 
-    findExpertAnnotationCall(node: SdsParameter | undefined): SdsAnnotationCall | undefined {
-        return this.findAnnotationCallOf(node, this.Expert);
+    isExpert(node: SdsParameter | undefined): boolean {
+        return this.hasAnnotationCallOf(node, this.Expert);
     }
 
     private get Expert(): SdsAnnotation | undefined {
@@ -39,16 +39,6 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     private hasAnnotationCallOf(node: SdsAnnotatedObject | undefined, expected: SdsAnnotation | undefined): boolean {
         return annotationCallsOrEmpty(node).some((it) => {
-            const actual = it.annotation?.ref;
-            return actual === expected;
-        });
-    }
-
-    private findAnnotationCallOf(
-        node: SdsAnnotatedObject | undefined,
-        expected: SdsAnnotation | undefined,
-    ): SdsAnnotationCall | undefined {
-        return annotationCallsOrEmpty(node).find((it) => {
             const actual = it.annotation?.ref;
             return actual === expected;
         });
