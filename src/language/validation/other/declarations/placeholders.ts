@@ -1,7 +1,8 @@
 import {
     isSdsAssignment,
     isSdsBlock,
-    isSdsParameter, isSdsPlaceholder,
+    isSdsParameter,
+    isSdsPlaceholder,
     isSdsReference,
     isSdsStatement,
     SdsPlaceholder,
@@ -27,13 +28,13 @@ export const placeholdersMustNotBeAnAlias = (node: SdsPlaceholder, accept: Valid
 
     const referenceTarget = rhs.target.ref;
     if (isSdsParameter(referenceTarget) || isSdsPlaceholder(referenceTarget)) {
-        accept('error', "Aliases are not allowed to provide a cleaner graphical view.", {
+        accept('error', 'Aliases are not allowed to provide a cleaner graphical view.', {
             node,
             property: 'name',
             code: CODE_PLACEHOLDER_ALIAS,
         });
     }
-}
+};
 
 export const placeholderShouldBeUsed =
     (services: SafeDsServices) => (node: SdsPlaceholder, accept: ValidationAcceptor) => {

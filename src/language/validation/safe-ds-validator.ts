@@ -139,9 +139,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
-        SdsPlaceholder: [
-            placeholdersMustNotBeAnAlias,
-            placeholderShouldBeUsed(services)],
+        SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsReference: [
             referenceTargetMustNotBeAnnotationPipelineOrSchema,
             referenceTargetShouldNotBeDeprecated(services),
