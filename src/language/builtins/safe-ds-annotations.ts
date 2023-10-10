@@ -11,7 +11,6 @@ import { resourceNameToUri } from '../../helpers/resources.js';
 import {URI} from "langium";
 
 const CORE_ANNOTATIONS_URI = resourceNameToUri('builtins/safeds/lang/coreAnnotations.sdsstub');
-const DOCUMENTATION_ANNOTATIONS_URI = resourceNameToUri('builtins/safeds/lang/documentation.sdsstub');
 
 export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
@@ -35,7 +34,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     private get Expert(): SdsAnnotation | undefined {
-        return this.getAnnotation(DOCUMENTATION_ANNOTATIONS_URI,'Expert');
+        return this.getAnnotation(CORE_ANNOTATIONS_URI,'Expert');
     }
 
     private hasAnnotationCallOf(node: SdsAnnotatedObject | undefined, expected: SdsAnnotation | undefined): boolean {

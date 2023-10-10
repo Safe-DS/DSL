@@ -1,0 +1,10 @@
+package tests.validation.other.declarations.annotationCalls.mustNotBeUsedOnParametersOfCallableTypes
+
+annotation MyAnnotation
+
+// $TEST$ error "Parameters of callable types must not be annotated."
+// $TEST$ error "Parameters of callable types must not be annotated."
+// $TEST$ error "Parameters of callable types must not be annotated."
+segment mySegment(
+    f: (»@MyAnnotation« »@MyAnnotation« a: Int, »@MyAnnotation« b: Int = 3) -> ()
+) {}

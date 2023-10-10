@@ -65,6 +65,11 @@ import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } 
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
+import {
+    callableTypeParametersMustNotBeAnnotated,
+    callableTypeResultsMustNotBeAnnotated,
+    lambdaParametersMustNotBeAnnotated,
+} from './other/declarations/annotationCalls.js';
 
 /**
  * Register custom validation checks.
@@ -98,7 +103,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
+            callableTypeParametersMustNotBeAnnotated,
             callableTypeParameterMustNotHaveConstModifier,
+            callableTypeResultsMustNotBeAnnotated,
         ],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
@@ -110,7 +117,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
-        SdsLambda: [lambdaParameterMustNotHaveConstModifier],
+        SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [memberAccessNullSafetyShouldBeNeeded(services)],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsNamedType: [

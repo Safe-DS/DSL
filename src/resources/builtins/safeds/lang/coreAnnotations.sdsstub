@@ -91,6 +91,11 @@ annotation Deprecated(
 annotation Experimental
 
 @Experimental
+@Description("This parameter should only be used by expert users.")
+@Target([AnnotationTarget.Parameter])
+annotation Expert
+
+@Experimental
 @Description("The function has no side effects and returns the same results for the same arguments.")
 @Target([AnnotationTarget.Function])
 annotation Pure

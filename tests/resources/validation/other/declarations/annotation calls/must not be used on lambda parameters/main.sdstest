@@ -1,0 +1,16 @@
+package tests.validation.other.declarations.annotationCalls.mustNotBeUsedOnLambdaParameters
+
+annotation MyAnnotation
+
+pipeline myPipeline {
+
+    // $TEST$ error "Lambda parameters must not be annotated."
+    // $TEST$ error "Lambda parameters must not be annotated."
+    // $TEST$ error "Lambda parameters must not be annotated."
+    val f = (»@MyAnnotation« »@MyAnnotation« a: Int, »@MyAnnotation« b: Int = 3) {};
+
+    // $TEST$ error "Lambda parameters must not be annotated."
+    // $TEST$ error "Lambda parameters must not be annotated."
+    // $TEST$ error "Lambda parameters must not be annotated."
+    val g = (»@MyAnnotation« »@MyAnnotation« a: Int, »@MyAnnotation« b: Int = 3) -> 1;
+}
