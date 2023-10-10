@@ -71,7 +71,7 @@ import {
     callableTypeResultsMustNotBeAnnotated,
     lambdaParametersMustNotBeAnnotated,
 } from './other/declarations/annotationCalls.js';
-import {memberAccessMustBeNullSafeIfReceiverIsNullable} from "./other/expressions/memberAccesses.js";
+import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
 
 /**
  * Register custom validation checks.
@@ -122,7 +122,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
-            memberAccessNullSafetyShouldBeNeeded(services)
+            memberAccessNullSafetyShouldBeNeeded(services),
         ],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsNamedType: [
