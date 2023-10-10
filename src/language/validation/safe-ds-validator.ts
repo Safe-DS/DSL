@@ -52,6 +52,7 @@ import {
     assigneeAssignedResultShouldNotBeDeprecated,
     namedTypeDeclarationShouldNotBeDeprecated,
     referenceTargetShouldNotBeDeprecated,
+    requiredParameterMustNotBeDeprecated,
 } from './builtins/deprecated.js';
 import {
     annotationCallAnnotationShouldNotBeExperimental,
@@ -64,6 +65,12 @@ import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
+import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
+import {
+    callableTypeParametersMustNotBeAnnotated,
+    callableTypeResultsMustNotBeAnnotated,
+    lambdaParametersMustNotBeAnnotated,
+} from './other/declarations/annotationCalls.js';
 
 /**
  * Register custom validation checks.
@@ -97,7 +104,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
+            callableTypeParametersMustNotBeAnnotated,
             callableTypeParameterMustNotHaveConstModifier,
+            callableTypeResultsMustNotBeAnnotated,
         ],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
@@ -109,7 +118,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
-        SdsLambda: [lambdaParameterMustNotHaveConstModifier],
+        SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [memberAccessNullSafetyShouldBeNeeded(services)],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsNamedType: [
@@ -117,7 +126,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeDeclarationShouldNotBeExperimental(services),
             namedTypeTypeArgumentListShouldBeNeeded,
         ],
-        SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameter: [
+            parameterMustHaveTypeHint,
+            requiredParameterMustNotBeDeprecated(services),
+            requiredParameterMustNotBeExpert(services),
+        ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholderShouldBeUsed(services)],
