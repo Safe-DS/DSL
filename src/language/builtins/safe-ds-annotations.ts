@@ -1,14 +1,8 @@
-import {
-    isSdsAnnotation,
-    SdsAnnotatedObject,
-    SdsAnnotation,
-    SdsAnnotationCall,
-    SdsParameter,
-} from '../generated/ast.js';
+import { isSdsAnnotation, SdsAnnotatedObject, SdsAnnotation, SdsParameter } from '../generated/ast.js';
 import { annotationCallsOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
-import {URI} from "langium";
+import { URI } from 'langium';
 
 const CORE_ANNOTATIONS_URI = resourceNameToUri('builtins/safeds/lang/coreAnnotations.sdsstub');
 
@@ -34,7 +28,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     private get Expert(): SdsAnnotation | undefined {
-        return this.getAnnotation(CORE_ANNOTATIONS_URI,'Expert');
+        return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Expert');
     }
 
     private hasAnnotationCallOf(node: SdsAnnotatedObject | undefined, expected: SdsAnnotation | undefined): boolean {

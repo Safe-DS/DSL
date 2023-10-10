@@ -1,4 +1,3 @@
-import { SafeDsServices } from '../../../safe-ds-module.js';
 import {
     isSdsCallable,
     isSdsCallableType,
@@ -6,15 +5,9 @@ import {
     SdsCallableType,
     SdsLambda,
     SdsParameter,
-    SdsResult,
 } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import {
-    annotationCallsOrEmpty,
-    isRequiredParameter,
-    parametersOrEmpty,
-    resultsOrEmpty,
-} from '../../../helpers/nodeProperties.js';
+import { annotationCallsOrEmpty, parametersOrEmpty, resultsOrEmpty } from '../../../helpers/nodeProperties.js';
 
 export const CODE_ANNOTATION_CALL_TARGET_PARAMETER = 'annotation-call/target-parameter';
 export const CODE_ANNOTATION_CALL_TARGET_RESULT = 'annotation-call/target-result';
