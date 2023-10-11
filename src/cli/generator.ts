@@ -37,6 +37,7 @@ import {
     isSdsReference,
     isSdsResult,
     isSdsSegment,
+    isSdsString,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
@@ -55,6 +56,7 @@ import {
     SdsBlockLambdaResult,
     SdsCall,
     SdsCallable,
+    SdsDeclaration,
     SdsEnumVariant,
     SdsExpression,
     SdsExpressionLambda,
@@ -92,8 +94,10 @@ import {
 import {
     abstractResultsOrEmpty,
     annotationCallsOrEmpty,
+    argumentsOrEmpty,
     assigneesOrEmpty,
     blockLambdaResultsOrEmpty,
+    callResultsOrEmpty,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
@@ -173,14 +177,40 @@ export type GenerateOptions = {
     destination?: string;
 };
 
+const getPythonNameOrDefault = function (object: SdsPipeline | SdsSegment | SdsParameter | SdsDeclaration) {
+    return getPythonName(object) || object.name;
+};
 const getPythonName = function (annotatedObject: SdsAnnotatedObject) {
-    if (annotatedObject.annotationCalls === undefined) {
+    let annotationCalls = annotationCallsOrEmpty(annotatedObject);
+    if (annotationCalls.length === 0) {
         return undefined;
     }
-    // TODO python name
-    for (const annotation of annotationCallsOrEmpty(annotatedObject)) {
-        if (annotation.annotation.ref !== undefined && annotation.annotation.ref.name === 'PythonName') {
-            return JSON.stringify(annotation.annotation.ref);
+    for (const annotationCall of annotationCalls) {
+        if (annotationCall.annotation.ref !== undefined && annotationCall.annotation.ref.name === 'PythonName') {
+            const argumentsArray = argumentsOrEmpty(annotationCall);
+            if (argumentsArray.length !== 0) {
+                if (isSdsString(argumentsArray[0].value)) {
+                    return argumentsArray[0].value.value;
+                }
+            }
+        }
+    }
+    return undefined;
+};
+
+const getPythonModuleName = function (annotatedObject: SdsAnnotatedObject): string | undefined {
+    let annotationCalls = annotationCallsOrEmpty(annotatedObject);
+    if (annotationCalls.length === 0) {
+        return undefined;
+    }
+    for (const annotationCall of annotationCalls) {
+        if (annotationCall.annotation.ref !== undefined && annotationCall.annotation.ref.name === 'PythonModule') {
+            const argumentsArray = argumentsOrEmpty(annotationCall);
+            if (argumentsArray.length !== 0) {
+                if (isSdsString(argumentsArray[0].value)) {
+                    return argumentsArray[0].value.value;
+                }
+            }
         }
     }
     return undefined;
@@ -204,11 +234,15 @@ const generateAssignee = function (assignee: SdsAssignee): string {
 };
 
 const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
-    const requiredAssignees = isSdsCallable(assignment.expression)
-        ? abstractResultsOrEmpty(assignment.expression as SdsCallable).length
-        : 1;
+    const requiredAssignees =
+        isSdsCallable(assignment.expression) || isSdsCall(assignment.expression)
+            ? callResultsOrEmpty(assignment.expression as SdsCallable).length
+            : 1;
     const actualAssignees = assigneesOrEmpty(assignment).map(generateAssignee);
     if (requiredAssignees === actualAssignees.length) {
+        if (assignment.expression !== undefined) {
+            return `${actualAssignees.join(', ')} = ${generateExpression(assignment.expression, frame)}`;
+        }
         return actualAssignees.join(', ');
     }
     if (assignment.expression !== undefined) {
@@ -384,7 +418,6 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     if (isSdsInfixOperation(expression)) {
         const leftOperand = generateExpression(expression.leftOperand, frame);
         const rightOperand = generateExpression(expression.rightOperand, frame);
-        // TODO import codegen somehow
         switch (expression.operator) {
             case 'or':
                 frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
@@ -462,7 +495,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         if (declaration === undefined) {
             return '<TODO undefined declaration for expression:reference>';
         }
-        return declaration.name; // TODO python name, may be fixed with reference / import
+        return getPythonNameOrDefault(declaration); // TODO python name, may be fixed with reference / import
     }
     // SdsArgument' | 'SdsChainedExpression' | 'SdsLambda'
     return `<TODO: expression:with type:${expression.$type}>`;
@@ -473,16 +506,15 @@ const generateParameter = function (
     frame: GenerationInfoFrame,
     defaultValue: boolean = true,
 ): string {
-    // TODO annotations? annotationCalls annotationCallList
     // TODO isConstant?
     if (parameter === undefined) {
         return '';
     }
-    return expandToString`${parameter.name}${
+    return expandToString`${getPythonNameOrDefault(parameter)}${
         defaultValue && parameter.defaultValue !== undefined
             ? '=' + generateExpression(parameter.defaultValue, frame)
             : ''
-    }`; // TODO correspondingPythonName???
+    }`;
 };
 
 const generateParameters = function (parameters: SdsParameterList | undefined, frame: GenerationInfoFrame): string {
@@ -502,9 +534,8 @@ const generateResults = function (result: SdsResultList | undefined): string {
 };
 
 const generateSegment = function (segment: SdsSegment, importSet: Set<ImportData>): string {
-    // TODO annotations PythonName
     const infoFrame = new GenerationInfoFrame(importSet);
-    return expandToString`def ${getPythonName(segment) || segment.name}(${generateParameters(
+    return expandToString`def ${getPythonNameOrDefault(segment)}(${generateParameters(
         segment.parameterList,
         infoFrame,
     )})${
@@ -515,9 +546,8 @@ const generateSegment = function (segment: SdsSegment, importSet: Set<ImportData
 };
 
 const generatePipeline = function (pipeline: SdsPipeline, importSet: Set<ImportData>): string {
-    // TODO annotations PythonName
     const infoFrame = new GenerationInfoFrame(importSet);
-    return expandToString`def ${getPythonName(pipeline) || pipeline.name}():\n${PYTHON_INDENT}${generateBlock(
+    return expandToString`def ${getPythonNameOrDefault(pipeline)}():\n${PYTHON_INDENT}${generateBlock(
         pipeline.body,
         infoFrame,
     )}`;
@@ -604,15 +634,20 @@ export const generatePython = function (
     destination: string | undefined,
 ): string[] {
     const data = extractDestinationAndName(filePath, destination);
-    const packagePath = module.name.split('.');
-
+    const pythonModuleName = getPythonModuleName(module);
+    const packagePath = pythonModuleName === undefined ? module.name.split('.') : [pythonModuleName];
     const parentDirectoryPath = path.join(data.destination, ...packagePath);
 
     const generatedFiles = new Map<string, string>();
     generatedFiles.set(`${path.join(parentDirectoryPath, `gen_${data.name}`)}.py`, generateModule(module));
     for (const pipeline of streamAllContents(module).filter(isSdsPipeline)) {
-        const entryPointFilename = `${path.join(parentDirectoryPath, `gen_${data.name}_${pipeline.name}`)}.py`; // TODO python name?
-        const entryPointContent = expandToStringWithNL`from gen_${data.name} import ${pipeline.name}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${pipeline.name}()`;
+        const entryPointFilename = `${path.join(
+            parentDirectoryPath,
+            `gen_${data.name}_${getPythonNameOrDefault(pipeline)}`,
+        )}.py`;
+        const entryPointContent = expandToStringWithNL`from gen_${data.name} import ${getPythonNameOrDefault(
+            pipeline,
+        )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${getPythonNameOrDefault(pipeline)}()`;
         generatedFiles.set(entryPointFilename, entryPointContent);
     }
     // const fileNode = new CompositeGeneratorNode();

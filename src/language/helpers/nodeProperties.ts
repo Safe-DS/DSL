@@ -3,6 +3,8 @@ import {
     isSdsAttribute,
     isSdsBlockLambda,
     isSdsBlockLambdaResult,
+    isSdsCall,
+    isSdsCallable,
     isSdsCallableType,
     isSdsClass,
     isSdsDeclaration,
@@ -12,6 +14,7 @@ import {
     isSdsModule,
     isSdsModuleMember,
     isSdsPlaceholder,
+    isSdsReference,
     isSdsSegment,
     isSdsTypeParameterList,
     SdsAbstractCall,
@@ -24,6 +27,7 @@ import {
     SdsBlock,
     SdsBlockLambda,
     SdsBlockLambdaResult,
+    SdsCall,
     SdsCallable,
     SdsClass,
     SdsClassMember,
@@ -86,6 +90,17 @@ export const isStatic = (node: SdsClassMember): boolean => {
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements
 // -------------------------------------------------------------------------------------------------
+export const callResultsOrEmpty = (node: SdsCall | SdsCallable | undefined): SdsAbstractResult[] => {
+    if (node && isSdsCall(node)) {
+        if (isSdsReference(node.receiver)) {
+            if (isSdsCallable(node.receiver.target.ref)) {
+                return abstractResultsOrEmpty(node.receiver.target.ref);
+            }
+        }
+        return [];
+    }
+    return abstractResultsOrEmpty(<SdsCallable | undefined>node);
+};
 
 export const abstractResultsOrEmpty = (node: SdsCallable | undefined): SdsAbstractResult[] => {
     if (!node) {
