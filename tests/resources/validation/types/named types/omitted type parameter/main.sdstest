@@ -1,0 +1,65 @@
+
+package tests.validation.types.namedTypes.omittedTypeParameter
+
+class MyClassWithoutTypeParameter
+class MyClassWithOneTypeParameter<T>
+class MyClassWithTwoTypeParameters<K, V>
+
+enum MyEnum {
+    MyEnumVariantWithoutTypeParameter
+    MyEnumVariantWithOneTypeParameter<T>
+    MyEnumVariantWithTwoTypeParameters<K, V>
+}
+
+fun myFunction(
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    p1: MyClassWithoutTypeParameter»<>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    p2: MyClassWithoutTypeParameter»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    p3: MyClassWithoutTypeParameter»<T = Int>«,
+
+    // $TEST$ error "The type parameter 'T' must be set here."
+    p4: MyClassWithOneTypeParameter»<>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    p5: MyClassWithOneTypeParameter»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    p6: MyClassWithOneTypeParameter»<T = Int>«,
+
+    // $TEST$ error "The type parameters 'K', 'V' must be set here."
+    p7: MyClassWithTwoTypeParameters»<>«,
+    // $TEST$ error "The type parameter 'V' must be set here."
+    p8: MyClassWithTwoTypeParameters»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    p9: MyClassWithTwoTypeParameters»<T = Int>«,
+
+
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    q1: MyEnum.MyEnumVariantWithoutTypeParameter»<>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    q2: MyEnum.MyEnumVariantWithoutTypeParameter»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    q3: MyEnum.MyEnumVariantWithoutTypeParameter»<T = Int>«,
+
+    // $TEST$ error "The type parameter 'T' must be set here."
+    q4: MyEnum.MyEnumVariantWithOneTypeParameter»<>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    q5: MyEnum.MyEnumVariantWithOneTypeParameter»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    q6: MyEnum.MyEnumVariantWithOneTypeParameter»<T = Int>«,
+
+    // $TEST$ error "The type parameters 'K', 'V' must be set here."
+    q7: MyEnum.MyEnumVariantWithTwoTypeParameters»<>«,
+    // $TEST$ error "The type parameter 'V' must be set here."
+    q8: MyEnum.MyEnumVariantWithTwoTypeParameters»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    q9: MyEnum.MyEnumVariantWithTwoTypeParameters»<T = Int>«,
+
+
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    a1: Unresolved»<>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    a2: Unresolved»<Int>«,
+    // $TEST$ no error r"The type parameters? '\w*' must be set here\."
+    a3: Unresolved»<T = Int>«,
+)

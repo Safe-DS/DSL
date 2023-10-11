@@ -1,7 +1,9 @@
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { isSdsCallable, isSdsLambda, SdsAttribute, SdsNamedType, SdsParameter, SdsResult } from '../generated/ast.js';
-import { typeParametersOrEmpty } from '../helpers/nodeProperties.js';
+import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
+import { SafeDsServices } from '../safe-ds-module.js';
+import {pluralize} from "../helpers/stringUtils.js";
 
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
@@ -10,28 +12,45 @@ export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 // Missing type arguments
 // -----------------------------------------------------------------------------
 
-export const namedTypeMustHaveTypeArgumentListIfTypeIsParameterized = (
-    node: SdsNamedType,
-    accept: ValidationAcceptor,
-): void => {
-    if (node.typeArgumentList) {
-        return;
-    }
+export const namedTypeMustSetAllTypeParameters =
+    (services: SafeDsServices) =>
+    (node: SdsNamedType, accept: ValidationAcceptor): void => {
+        const expectedTypeParameters = typeParametersOrEmpty(node.declaration.ref);
+        if (isEmpty(expectedTypeParameters)) {
+            return;
+        }
 
-    const typeParameters = typeParametersOrEmpty(node.declaration.ref);
-    if (!isEmpty(typeParameters)) {
-        accept(
-            'error',
-            `The type '${node.declaration.$refText}' is parameterized, so a type argument list must be added.`,
-            {
-                node,
-                code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
-            },
-        );
-    }
-};
+        if (node.typeArgumentList) {
+            const actualTypeParameters = typeArgumentsOrEmpty(node.typeArgumentList).map((it) =>
+                services.helpers.NodeMapper.typeArgumentToTypeParameterOrUndefined(it),
+            );
 
-export const namedTypeMustSetAllTypeParameters = (node: SdsNamedType, accept: ValidationAcceptor): void => {};
+            const missingTypeParameters = expectedTypeParameters.filter((it) => !actualTypeParameters.includes(it));
+            if (!isEmpty(missingTypeParameters)) {
+                const kind = pluralize(missingTypeParameters.length, 'type parameter', 'type parameters');
+                const missingTypeParametersString = missingTypeParameters.map((it) => `'${it.name}'`).join(', ');
+
+                accept(
+                    'error',
+                    `The ${kind} ${missingTypeParametersString} must be set here.`,
+                    {
+                        node,
+                        property: 'typeArgumentList',
+                        code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
+                    },
+                );
+            }
+        } else {
+            accept(
+                'error',
+                `The type '${node.declaration.$refText}' is parameterized, so a type argument list must be added.`,
+                {
+                    node,
+                    code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
+                },
+            );
+        }
+    };
 
 // -----------------------------------------------------------------------------
 // Missing type hints
