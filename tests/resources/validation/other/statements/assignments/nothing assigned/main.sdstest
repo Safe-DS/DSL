@@ -58,6 +58,7 @@ segment mySegment() -> (
     // $TEST$ error "No value is assigned to this assignee."
     »val k«, »val l« = unresolved();
 
+
     // $TEST$ error "No value is assigned to this assignee."
     »yield r1« = noResults();
     // $TEST$ no error "No value is assigned to this assignee."

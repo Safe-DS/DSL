@@ -1,0 +1,24 @@
+package tests.validation.builtins.annotations.repeatable
+
+annotation SingleUse
+
+@Repeatable
+annotation MultiUse
+
+// $TEST$ no error r"The annotation '\w*' is not repeatable\."
+»@SingleUse«
+// $TEST$ no error r"The annotation '\w*' is not repeatable\."
+»@MultiUse«
+// $TEST$ no error r"The annotation '\w*' is not repeatable\."
+»@MultiUse«
+// $TEST$ no error r"The annotation '\w*' is not repeatable\."
+»@UnresolvedAnnotation«
+// $TEST$ no error r"The annotation '\w*' is not repeatable\."
+»@UnresolvedAnnotation«
+class CorrectUse
+
+// $TEST$ no error r"The annotation '\w*' is not repeatable\."
+»@SingleUse«
+// $TEST$ error "The annotation 'SingleUse' is not repeatable."
+»@SingleUse«
+class IncorrectUse

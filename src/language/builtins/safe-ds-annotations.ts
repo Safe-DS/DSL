@@ -31,6 +31,14 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Expert');
     }
 
+    isRepeatable(node: SdsAnnotation | undefined): boolean {
+        return this.hasAnnotationCallOf(node, this.Repeatable);
+    }
+
+    private get Repeatable(): SdsAnnotation | undefined {
+        return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Repeatable');
+    }
+
     private hasAnnotationCallOf(node: SdsAnnotatedObject | undefined, expected: SdsAnnotation | undefined): boolean {
         return annotationCallsOrEmpty(node).some((it) => {
             const actual = it.annotation?.ref;
