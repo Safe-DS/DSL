@@ -48,7 +48,6 @@ import {
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
-import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 import {
     referenceMustNotBeFunctionPointer,
@@ -82,6 +81,10 @@ import {
 import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
+import {
+    namedTypeMustNotSetTypeParameterMultipleTimes,
+    namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments
+} from "./other/types/namedTypes.js";
 
 /**
  * Register custom validation checks.
@@ -140,8 +143,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
+            namedTypeMustNotSetTypeParameterMultipleTimes(services),
             namedTypeMustSetAllTypeParameters(services),
             namedTypeTypeArgumentListShouldBeNeeded,
+            namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
         ],
         SdsParameter: [
             parameterMustHaveTypeHint,
@@ -165,7 +170,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentResultListShouldNotBeEmpty,
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeArgumentList: [typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],

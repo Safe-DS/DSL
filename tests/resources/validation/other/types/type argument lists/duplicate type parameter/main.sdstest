@@ -1,0 +1,36 @@
+package tests.validation.other.types.typeArgumentLists.duplicateTypeParameters
+
+class MyClass<A, B>
+
+fun myFunction(
+    f: MyClass<
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »Int«,
+        // $TEST$ error "The type parameter 'A' is already set."
+        »A = Int«
+    >,
+    g: MyClass<
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »B = Int«,
+        // $TEST$ error "The type parameter 'B' is already set."
+        »B = Int«
+    >,
+    h: MyClass<
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »A = Int«,
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »B = Int«
+    >,
+    i: MyClass<
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »Int«,
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »Int«
+    >,
+    j: MyClass<
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »Unresolved = Int«,
+        // $TEST$ no error r"The type parameter '\w+' is already set\."
+        »Unresolved = Int«
+    >
+)
