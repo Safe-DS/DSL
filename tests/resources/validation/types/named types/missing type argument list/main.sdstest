@@ -1,0 +1,38 @@
+package tests.validation.types.namedTypes.missingTypeArgumentList
+
+class MyClassWithoutTypeParameters
+class MyClassWithTypeParameters<T>
+
+enum MyEnum {
+    MyEnumVariantWithoutTypeParameters
+    MyEnumVariantWithTypeParameters<T>
+}
+
+fun myFunction(
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    a1: »MyClassWithoutTypeParameters«,
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    b1: »MyClassWithoutTypeParameters«<>,
+
+    // $TEST$ error "The type 'MyClassWithTypeParameters' is parameterized, so a type argument list must be added."
+    c1: »MyClassWithTypeParameters«,
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    d1: »MyClassWithTypeParameters«<>,
+
+
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    a2: MyEnum.»MyEnumVariantWithoutTypeParameters«,
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    b2: MyEnum.»MyEnumVariantWithoutTypeParameters«<>,
+
+    // $TEST$ error "The type 'MyEnumVariantWithTypeParameters' is parameterized, so a type argument list must be added."
+    c2: MyEnum.»MyEnumVariantWithTypeParameters«,
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    d2: MyEnum.»MyEnumVariantWithTypeParameters«<>,
+
+
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    e: »UnresolvedClass«,
+    // $TEST$ no error r"The type '\w*' is parameterized, so a type argument list must be added\."
+    f: »UnresolvedClass«<>,
+)
