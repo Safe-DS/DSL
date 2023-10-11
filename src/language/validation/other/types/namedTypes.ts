@@ -52,7 +52,7 @@ export const namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedAr
 export const namedTypeMustNotHaveTooManyTypeArguments = (node: SdsNamedType, accept: ValidationAcceptor): void => {
     // If the declaration is unresolved, we already show another error
     if (!node.declaration.ref) {
-        return
+        return;
     }
 
     const typeParameters = typeParametersOrEmpty(node.declaration.ref);

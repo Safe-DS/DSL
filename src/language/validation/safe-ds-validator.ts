@@ -84,8 +84,8 @@ import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js'
 import {
     namedTypeMustNotHaveTooManyTypeArguments,
     namedTypeMustNotSetTypeParameterMultipleTimes,
-    namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments
-} from "./other/types/namedTypes.js";
+    namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
+} from './other/types/namedTypes.js';
 
 /**
  * Register custom validation checks.

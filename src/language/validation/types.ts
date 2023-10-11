@@ -3,7 +3,7 @@ import { isSdsCallable, isSdsLambda, SdsAttribute, SdsNamedType, SdsParameter, S
 import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
 import { SafeDsServices } from '../safe-ds-module.js';
-import {pluralize} from "../helpers/stringUtils.js";
+import { pluralize } from '../helpers/stringUtils.js';
 
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
@@ -30,15 +30,11 @@ export const namedTypeMustSetAllTypeParameters =
                 const kind = pluralize(missingTypeParameters.length, 'type parameter');
                 const missingTypeParametersString = missingTypeParameters.map((it) => `'${it.name}'`).join(', ');
 
-                accept(
-                    'error',
-                    `The ${kind} ${missingTypeParametersString} must be set here.`,
-                    {
-                        node,
-                        property: 'typeArgumentList',
-                        code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
-                    },
-                );
+                accept('error', `The ${kind} ${missingTypeParametersString} must be set here.`, {
+                    node,
+                    property: 'typeArgumentList',
+                    code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
+                });
             }
         } else {
             accept(
