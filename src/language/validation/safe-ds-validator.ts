@@ -76,6 +76,7 @@ import {
 } from './other/declarations/annotationCalls.js';
 import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
+import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
 
 /**
  * Register custom validation checks.
@@ -98,6 +99,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
         ],
+        SdsAnnotatedObject: [singleUseAnnotationsMustNotBeRepeated(services)],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
