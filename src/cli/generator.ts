@@ -18,6 +18,7 @@ import {
     isSdsCall,
     isSdsCallable,
     isSdsCallableType,
+    isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
     isSdsIndexedAccess,
@@ -34,6 +35,7 @@ import {
     isSdsPlaceholder,
     isSdsPrefixOperation,
     isSdsReference,
+    isSdsResult,
     isSdsSegment,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
@@ -49,13 +51,17 @@ import {
     SdsAssignee,
     SdsAssignment,
     SdsBlock,
+    SdsBlockLambda,
+    SdsBlockLambdaResult,
     SdsCall,
     SdsCallable,
+    SdsEnumVariant,
     SdsExpression,
     SdsExpressionLambda,
     SdsExpressionStatement,
     SdsList,
     SdsMap,
+    SdsMemberAccess,
     SdsModule,
     SdsNamedType,
     SdsParameter,
@@ -87,10 +93,12 @@ import {
     abstractResultsOrEmpty,
     annotationCallsOrEmpty,
     assigneesOrEmpty,
+    blockLambdaResultsOrEmpty,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
+import { group } from 'radash';
 
 /* c8 ignore start */
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
@@ -104,6 +112,62 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
 
 const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
 const PYTHON_INDENT = '    ';
+
+class GenerationInfoFrame {
+    blockLambdaManager: BlockLambdaIdManager;
+    importSet: Set<ImportData>;
+
+    constructor(importSet: Set<ImportData> = new Set<ImportData>()) {
+        this.blockLambdaManager = new BlockLambdaIdManager();
+        this.importSet = importSet;
+    }
+
+    addImport(importData: ImportData) {
+        this.importSet.add(importData);
+    }
+
+    getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
+        return this.blockLambdaManager.getUniqueName(lambda);
+    }
+}
+
+class BlockLambdaIdManager {
+    currentId: number;
+    registeredLambdas: Map<SdsBlockLambda, number>;
+
+    constructor(sequenceIdStart: number = 0) {
+        this.currentId = sequenceIdStart;
+        this.registeredLambdas = new Map<SdsBlockLambda, number>();
+    }
+
+    getId(lambda: SdsBlockLambda): number {
+        if (!this.registeredLambdas.has(lambda)) {
+            this.registeredLambdas.set(lambda, this.currentId);
+            this.currentId++;
+        }
+        return <number>this.registeredLambdas.get(lambda);
+    }
+
+    getUniqueName(lambda: SdsBlockLambda): string {
+        return `__block_lambda_${this.getId(lambda)}`;
+    }
+}
+
+class ImportData {
+    importPath: string;
+    declarationName: string | undefined;
+    alias: string | undefined;
+
+    constructor(
+        importPath: string,
+        declarationName: string | undefined = undefined,
+        alias: string | undefined = undefined,
+    ) {
+        this.importPath = importPath;
+        this.declarationName = declarationName;
+        this.alias = alias;
+    }
+}
 
 export type GenerateOptions = {
     destination?: string;
@@ -125,7 +189,7 @@ const getPythonName = function (annotatedObject: SdsAnnotatedObject) {
 const generateAssignee = function (assignee: SdsAssignee): string {
     switch (true) {
         case isSdsBlockLambdaResult(assignee):
-            return '<TODO: block-lambda-assignemnt>';
+            return (assignee as SdsBlockLambdaResult).name;
         case isSdsPlaceholder(assignee):
             return (assignee as SdsPlaceholder).name;
         case isSdsWildcard(assignee):
@@ -133,40 +197,80 @@ const generateAssignee = function (assignee: SdsAssignee): string {
         case isSdsYield(assignee):
             // TODO handle (assignee as SdsYield).
             return '<TODO: yield:assignment>';
+        default:
+            // TODO more assignees
+            throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
     }
 };
 
-const generateAssignment = function (assignment: SdsAssignment): string {
+const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
     const requiredAssignees = isSdsCallable(assignment.expression)
         ? abstractResultsOrEmpty(assignment.expression as SdsCallable).length
         : 1;
     const actualAssignees = assigneesOrEmpty(assignment).map(generateAssignee);
-    return actualAssignees.concat(Array(requiredAssignees - actualAssignees.length).fill('_')).join(', ');
+    if (requiredAssignees === actualAssignees.length) {
+        return actualAssignees.join(', ');
+    }
+    if (assignment.expression !== undefined) {
+        console.info('Required: ' + requiredAssignees);
+        console.info('Actual: ' + actualAssignees.length);
+        console.info('Assignees: ' + actualAssignees.join(', '));
+        console.info(
+            'Expected: ' +
+                abstractResultsOrEmpty(assignment.expression as SdsCallable)
+                    .map((a) => a.$type + ' - ' + a.name)
+                    .join(', '),
+        );
+        console.info('Expr: ' + assignment.expression.$type);
+        return `${actualAssignees
+            .concat(Array(requiredAssignees - actualAssignees.length).fill('_'))
+            .join(', ')} = ${generateExpression(assignment.expression, frame)}`;
+    } else {
+        return actualAssignees.concat(Array(requiredAssignees - actualAssignees.length).fill('_')).join(', ');
+    }
 };
 
-const generateStatement = function (statement: SdsStatement): string {
+const generateStatement = function (statement: SdsStatement, frame: GenerationInfoFrame): string {
     switch (true) {
         case isSdsAssignment(statement):
-            return generateAssignment(statement as SdsAssignment);
+            return generateAssignment(statement as SdsAssignment, frame);
         case isSdsExpressionStatement(statement):
-            return generateExpression((statement as SdsExpressionStatement).expression);
+            const expressionStatement = statement as SdsExpressionStatement;
+            const blockLambdaCode: string[] = [];
+            for (const lambda of streamAllContents(expressionStatement.expression).filter(isSdsBlockLambda)) {
+                blockLambdaCode.push(generateBlockLambda(lambda, frame));
+            }
+            blockLambdaCode.push(generateExpression(expressionStatement.expression, frame));
+            return expandToString`${blockLambdaCode.join('\n')}`;
         default:
             throw new Error(`Unknown SdsStatement: ${statement}`);
     }
 };
 
-const generateBlock = function (block: SdsBlock): string {
+const generateBlockLambda = function (blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): string {
+    const lambdaResult = blockLambdaResultsOrEmpty(blockLambda);
+    let lambdaBlock = generateBlock(blockLambda.body, frame);
+    if (lambdaResult.length !== 0) {
+        lambdaBlock += `\nreturn ${lambdaResult.map((result) => result.name).join(', ')}`;
+    }
+    return expandToString`def ${frame.getUniqueLambdaBlockName(blockLambda)}(${generateParameters(
+        blockLambda.parameterList,
+        frame,
+    )}):\n${PYTHON_INDENT}${lambdaBlock}`;
+};
+
+const generateBlock = function (block: SdsBlock, frame: GenerationInfoFrame): string {
+    // TODO filter withEffect
     let statements = statementsOrEmpty(block);
     if (statements.length === 0) {
         return 'pass';
     }
-    return expandToString`${statements.map(generateStatement).join('\n')}`;
+    return expandToString`${statements.map((stmt) => generateStatement(stmt, frame)).join('\n')}`;
 };
 
 const generateType = function (type: SdsType | undefined): string | null {
     if (type === undefined) {
-        // TODO do something
-        return '<TODO: type; undefined>';
+        return null;
     }
     switch (true) {
         case isSdsCallableType(type):
@@ -193,27 +297,28 @@ const generateType = function (type: SdsType | undefined): string | null {
     }
 };
 
-const generateArgument = function (argument: SdsArgument) {
+const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
     return expandToString`${
         argument.parameter !== undefined && argument.parameter.ref !== undefined
-            ? generateParameter(argument.parameter.ref) + '='
+            ? generateParameter(argument.parameter.ref, frame, false) + '='
             : ''
-    }${generateExpression(argument.value)}`;
+    }${generateExpression(argument.value, frame)}`;
 };
 
-const generateExpression = function (expression: SdsExpression): string {
+const generateExpression = function (expression: SdsExpression, frame: GenerationInfoFrame): string {
     if (isSdsTemplateString(expression)) {
-        return expandToString`f'${expression.expressions.map(generateExpression).join('')}'`;
+        return `f'${expression.expressions.map((expr) => generateExpression(expr, frame)).join('')}'`;
     }
 
     if (isSdsTemplateStringPart(expression)) {
+        // TODO: really replace both line endings?
         switch (true) {
             case isSdsTemplateStringStart(expression):
-                return `${expression.value.replace('\n', '\\n')}{ `;
+                return `${expression.value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n')}{ `;
             case isSdsTemplateStringInner(expression):
-                return ` }${expression.value.replace('\n', '\\n')}{ `;
+                return ` }${expression.value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n')}{ `;
             case isSdsTemplateStringEnd(expression):
-                return ` }${expression.value.replace('\n', '\\n')}`;
+                return ` }${expression.value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n')}`;
         }
     }
 
@@ -221,17 +326,20 @@ const generateExpression = function (expression: SdsExpression): string {
     if (potentialConstantExpression !== null) {
         switch (true) {
             case potentialConstantExpression instanceof SdsConstantBoolean:
-                return expandToString`${(potentialConstantExpression as SdsConstantBoolean).value ? 'True' : 'False'}`;
-            case potentialConstantExpression instanceof SdsConstantFloat:
-                return expandToString`${(potentialConstantExpression as SdsConstantFloat).value}`;
+                return (potentialConstantExpression as SdsConstantBoolean).value ? 'True' : 'False';
             case potentialConstantExpression instanceof SdsConstantInt:
-                return expandToString`${(potentialConstantExpression as SdsConstantInt).value}`;
+                return String((potentialConstantExpression as SdsConstantInt).value);
+            case potentialConstantExpression instanceof SdsConstantFloat:
+                const floatValue = (potentialConstantExpression as SdsConstantFloat).value;
+                return Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue);
             case potentialConstantExpression instanceof SdsConstantNull:
-                return expandToString`None`;
+                return 'None';
             case potentialConstantExpression instanceof SdsConstantString:
-                return expandToString`${(potentialConstantExpression as SdsConstantString).value.replace('\n', '\\n')}`;
+                return `'${(potentialConstantExpression as SdsConstantString).value
+                    .replaceAll('\r\n', '\\n')
+                    .replaceAll('\n', '\\n')}'`;
             case potentialConstantExpression instanceof SdsConstantEnumVariant:
-                return expandToString`${(potentialConstantExpression as SdsConstantEnumVariant).value}`; // TODO SdsConstantEnumVariant?? generate something useful
+                return String((potentialConstantExpression as SdsConstantEnumVariant).value); // TODO SdsConstantEnumVariant?? generate something useful
             default:
                 throw new Error(`Unknown SdsLiteral: ${expression}`);
         }
@@ -251,58 +359,91 @@ const generateExpression = function (expression: SdsExpression): string {
             case isSdsString(expression):
                 return expandToString`'${(expression as SdsString).value}'`;*/
             case isSdsMap(expression):
-                return expandToString`'${expression as SdsMap}'`; // TODO SdsMap??
+                return `'${expression as SdsMap}'`; // TODO SdsMap??
             case isSdsList(expression):
-                return expandToString`'${expression as SdsList}'`; // TODO SdsList??
+                return `'${expression as SdsList}'`; // TODO SdsList??
             default:
                 throw new Error(`Unknown SdsLiteral: ${expression}`);
         }
     }
     if (isSdsBlockLambda(expression)) {
-        // TODO do something
-        return '<TODO: expr:blocklambda>';
+        const blockLambda = expression as SdsBlockLambda;
+        return frame.getUniqueLambdaBlockName(blockLambda);
     }
     if (isSdsCall(expression)) {
-        return expandToString`${generateExpression(expression.receiver)}(${expression.argumentList.arguments
-            .map(generateArgument)
+        return expandToString`${generateExpression(expression.receiver, frame)}(${expression.argumentList.arguments
+            .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
     }
     if (isSdsExpressionLambda(expression)) {
-        return expandToString`lambda ${generateParameters(expression.parameterList)}: ${generateExpression(
+        return `lambda ${generateParameters(expression.parameterList, frame)}: ${generateExpression(
             expression.result,
+            frame,
         )}`;
     }
     if (isSdsInfixOperation(expression)) {
-        const leftOperand = generateExpression(expression.leftOperand);
-        const rightOperand = generateExpression(expression.rightOperand);
+        const leftOperand = generateExpression(expression.leftOperand, frame);
+        const rightOperand = generateExpression(expression.rightOperand, frame);
         // TODO import codegen somehow
         switch (expression.operator) {
             case 'or':
-                return expandToString`${RUNNER_CODEGEN_PACKAGE}.eager_or(${leftOperand}, ${rightOperand})`;
+                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                return `${RUNNER_CODEGEN_PACKAGE}.eager_or(${leftOperand}, ${rightOperand})`;
             case 'and':
-                return expandToString`${RUNNER_CODEGEN_PACKAGE}.eager_and(${leftOperand}, ${rightOperand})`;
+                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                return `${RUNNER_CODEGEN_PACKAGE}.eager_and(${leftOperand}, ${rightOperand})`;
             case '?:':
-                return expandToString`${RUNNER_CODEGEN_PACKAGE}.eager_elvis(${leftOperand}, ${rightOperand})`;
+                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                return `${RUNNER_CODEGEN_PACKAGE}.eager_elvis(${leftOperand}, ${rightOperand})`;
             case '===':
-                return expandToString`(${leftOperand}) is (${rightOperand})`;
+                return `(${leftOperand}) is (${rightOperand})`;
             case '!==':
-                return expandToString`(${leftOperand}) is not (${rightOperand})`;
+                return `(${leftOperand}) is not (${rightOperand})`;
             default:
-                return expandToString`(${leftOperand}) ${expression.operator} (${rightOperand})`;
+                return `(${leftOperand}) ${expression.operator} (${rightOperand})`;
         }
     }
     if (isSdsIndexedAccess(expression)) {
-        return expandToString`${generateExpression(expression.receiver)}[${generateExpression(expression.index)}]`;
+        return expandToString`${generateExpression(expression.receiver, frame)}[${generateExpression(
+            expression.index,
+            frame,
+        )}]`;
     }
     if (isSdsMemberAccess(expression)) {
-        // TODO return memberaccess??
+        let memberAccess = expression as SdsMemberAccess;
+        const member = memberAccess.member.target.ref;
+        const receiver = generateExpression(memberAccess.receiver, frame);
+        switch (true) {
+            case isSdsBlockLambdaResult(member):
+                let res = member as SdsBlockLambdaResult;
+                return '<TODO: expression:memberaccess:blocklambda>';
+            case isSdsEnumVariant(member):
+                const enumMember = generateExpression(memberAccess.member, frame);
+                const suffix = isSdsCall(expression.$container) ? '' : '()';
+                if (expression.isNullSafe) {
+                    frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                    return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${enumMember}')${suffix}`;
+                } else {
+                    return `${receiver}.${enumMember}${suffix}`;
+                }
+            case isSdsResult(member):
+                return '<TODO: expression:memberaccess:sdsresult>';
+            default:
+                const memberExpression = generateExpression(memberAccess.member, frame);
+                if (expression.isNullSafe) {
+                    frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                    return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
+                } else {
+                    return `${receiver}.${memberExpression}`;
+                }
+        }
         return '<TODO: expression:memberaccess>';
     }
     if (isSdsParenthesizedExpression(expression)) {
-        return expandToString`(${generateExpression(expression.expression)})`;
+        return expandToString`${generateExpression(expression.expression, frame)}`;
     }
     if (isSdsPrefixOperation(expression)) {
-        const operand = generateExpression(expression.operand);
+        const operand = generateExpression(expression.operand, frame);
         switch (expression.operator) {
             case 'not':
                 return expandToString`not (${operand})`;
@@ -321,32 +462,34 @@ const generateExpression = function (expression: SdsExpression): string {
         if (declaration === undefined) {
             return '<TODO undefined declaration for expression:reference>';
         }
-        return declaration.name;
+        return declaration.name; // TODO python name, may be fixed with reference / import
     }
     // SdsArgument' | 'SdsChainedExpression' | 'SdsLambda'
     return `<TODO: expression:with type:${expression.$type}>`;
 };
 
-const generateParameter = function (parameter: SdsParameter | undefined, asNamedAssignment: boolean = false): string {
+const generateParameter = function (
+    parameter: SdsParameter | undefined,
+    frame: GenerationInfoFrame,
+    defaultValue: boolean = true,
+): string {
     // TODO annotations? annotationCalls annotationCallList
     // TODO isConstant?
     if (parameter === undefined) {
         return '';
     }
-    if (!asNamedAssignment) {
-        return expandToString`${parameter.name}`;
-    }
-    const parameterType = generateType(parameter.type);
-    return expandToString`${parameter.name}${parameterType !== null ? `: ${parameterType}` : ''}${
-        parameter.defaultValue !== undefined ? '=' + generateExpression(parameter.defaultValue) : ''
+    return expandToString`${parameter.name}${
+        defaultValue && parameter.defaultValue !== undefined
+            ? '=' + generateExpression(parameter.defaultValue, frame)
+            : ''
     }`; // TODO correspondingPythonName???
 };
 
-const generateParameters = function (parameters: SdsParameterList | undefined): string {
+const generateParameters = function (parameters: SdsParameterList | undefined, frame: GenerationInfoFrame): string {
     if (parameters === undefined) {
         return '';
     }
-    const result = parameters.parameters.map(generateParameter);
+    const result = parameters.parameters.map((param) => generateParameter(param, frame));
     return result.join(', ');
 };
 
@@ -358,36 +501,96 @@ const generateResults = function (result: SdsResultList | undefined): string {
     return '<TODO: resultList>';
 };
 
-const generateSegment = function (segment: SdsSegment): string {
+const generateSegment = function (segment: SdsSegment, importSet: Set<ImportData>): string {
     // TODO annotations PythonName
-    return expandToString`def ${getPythonName(segment) || segment.name}(${generateParameters(segment.parameterList)})${
+    const infoFrame = new GenerationInfoFrame(importSet);
+    return expandToString`def ${getPythonName(segment) || segment.name}(${generateParameters(
+        segment.parameterList,
+        infoFrame,
+    )})${
         segment.resultList !== undefined && segment.resultList.results.length !== 0
             ? ' -> ' + generateResults(segment.resultList)
             : ''
-    }:\n${PYTHON_INDENT}${generateBlock(segment.body)}`;
+    }:\n${PYTHON_INDENT}${generateBlock(segment.body, infoFrame)}`;
 };
 
-const generatePipeline = function (pipeline: SdsPipeline): string {
+const generatePipeline = function (pipeline: SdsPipeline, importSet: Set<ImportData>): string {
     // TODO annotations PythonName
+    const infoFrame = new GenerationInfoFrame(importSet);
     return expandToString`def ${getPythonName(pipeline) || pipeline.name}():\n${PYTHON_INDENT}${generateBlock(
         pipeline.body,
+        infoFrame,
     )}`;
 };
 
+const generateImport = function (importStmt: ImportData): string {
+    if (importStmt.declarationName === undefined && importStmt.alias === undefined) {
+        return `import ${importStmt.importPath}`;
+    } else if (importStmt.declarationName === undefined && importStmt.alias !== undefined) {
+        return `import ${importStmt.importPath} as ${importStmt.alias}`;
+    } else if (importStmt.declarationName !== undefined && importStmt.alias === undefined) {
+        return `from ${importStmt.importPath} import ${importStmt.declarationName}`;
+    } else {
+        return `from ${importStmt.importPath} import ${importStmt.declarationName} as ${importStmt.alias}`;
+    }
+};
+
+const generateImports = function (importSet: Set<ImportData>): string[] {
+    const qualifiedImports = Array.from(importSet)
+        .filter((importStmt) => importStmt.declarationName === undefined)
+        .sort((a, b) => a.importPath.localeCompare(b.importPath))
+        .map(generateImport);
+    const groupedImports = Object.entries(
+        group(
+            Array.from(importSet).filter((importStmt) => importStmt.declarationName !== undefined),
+            (importStmt) => importStmt.importPath,
+        ),
+    ).sort(([key1, _value1], [key2, _value2]) => key1.localeCompare(key2));
+    const declaredImports: string[] = [];
+    for (const [key, value] of groupedImports) {
+        const importedDecls =
+            value
+                ?.filter((importData) => importData !== undefined)
+                .sort((a, b) => (<string>a.declarationName).localeCompare(<string>b.declarationName))
+                .map((localValue) =>
+                    localValue.alias !== undefined
+                        ? `${localValue.declarationName} as ${localValue.alias}`
+                        : <string>localValue.declarationName,
+                ) || [];
+        declaredImports.push(`from ${key} import ${[...new Set(importedDecls)].join(', ')}`);
+    }
+    return [...new Set(qualifiedImports), ...new Set(declaredImports)];
+};
+
 const generateModule = function (module: SdsModule): string {
-    const segments = streamAllContents(module).filter(isSdsSegment).map(generateSegment).toArray();
-    const pipelines = streamAllContents(module).filter(isSdsPipeline).map(generatePipeline).toArray();
+    const importSet = new Set<ImportData>();
+    const segments = streamAllContents(module)
+        .filter(isSdsSegment)
+        .map((segment) => generateSegment(segment, importSet))
+        .toArray();
+    const pipelines = streamAllContents(module)
+        .filter(isSdsPipeline)
+        .map((pipeline) => generatePipeline(pipeline, importSet))
+        .toArray();
+    const imports = generateImports(importSet);
     const output: string[] = [];
+    if (imports.length > 0) {
+        output.push(
+            expandToStringWithNL`# Imports ----------------------------------------------------------------------\n\n${imports.join(
+                '\n',
+            )}`,
+        );
+    }
     if (segments.length > 0) {
         output.push(
-            expandToString`# Steps ------------------------------------------------------------------------\n\n${segments.join(
+            expandToStringWithNL`# Steps ------------------------------------------------------------------------\n\n${segments.join(
                 '\n\n',
             )}`,
         );
     }
     if (pipelines.length > 0) {
         output.push(
-            expandToString`# Pipelines --------------------------------------------------------------------\n\n${pipelines.join(
+            expandToStringWithNL`# Pipelines --------------------------------------------------------------------\n\n${pipelines.join(
                 '\n\n',
             )}`,
         );

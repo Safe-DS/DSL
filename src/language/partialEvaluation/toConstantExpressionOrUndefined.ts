@@ -2,7 +2,7 @@ import {
     ParameterSubstitutions,
     SdsConstantBoolean,
     SdsConstantExpression,
-    SdsConstantFloat,
+    SdsConstantFloat, SdsConstantInt,
     SdsConstantNull,
     SdsConstantString,
     SdsIntermediateBlockLambda,
@@ -74,7 +74,7 @@ const simplify = (node: AstNode, substitutions: ParameterSubstitutions): SdsSimp
     } else if (isSdsFloat(node)) {
         return new SdsConstantFloat(node.value);
     } else if (isSdsInt(node)) {
-        return new SdsConstantFloat(node.value);
+        return new SdsConstantInt(BigInt(node.value));
     } else if (isSdsNull(node)) {
         return new SdsConstantNull();
     } else if (isSdsString(node)) {
