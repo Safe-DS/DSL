@@ -34,7 +34,12 @@ import {
 } from './style.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
 import { assignmentAssigneeMustGetValue, yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
-import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
+import {
+    attributeMustHaveTypeHint,
+    namedTypeMustHaveTypeArgumentListIfTypeIsParameterized, namedTypeMustSetAllTypeParameters,
+    parameterMustHaveTypeHint,
+    resultMustHaveTypeHint
+} from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
@@ -135,6 +140,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
+            namedTypeMustHaveTypeArgumentListIfTypeIsParameterized,
+            namedTypeMustSetAllTypeParameters,
             namedTypeTypeArgumentListShouldBeNeeded,
         ],
         SdsParameter: [
