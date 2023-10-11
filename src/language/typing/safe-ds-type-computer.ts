@@ -88,9 +88,9 @@ export class SafeDsTypeComputer {
     private readonly coreClasses: SafeDsClasses;
     private readonly nodeMapper: SafeDsNodeMapper;
 
-    readonly typeCache: WorkspaceCache<string, Type>;
+    private readonly typeCache: WorkspaceCache<string, Type>;
 
-    constructor(readonly services: SafeDsServices) {
+    constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.coreClasses = services.builtins.Classes;
         this.nodeMapper = services.helpers.NodeMapper;
