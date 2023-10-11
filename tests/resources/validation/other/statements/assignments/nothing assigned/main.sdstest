@@ -1,0 +1,83 @@
+package tests.validation.other.statements.assignments.nothingAssigned
+
+fun noResults()
+fun oneResult() -> first: Int
+fun twoResults() -> (first: Int, second: Int)
+
+segment mySegment() -> (
+    r1: Any?,
+    r2: Any?,
+    r3: Any?,
+    r4: Any?,
+    r5: Any?,
+    r6: Any?,
+    r7: Any?,
+    r8: Any?,
+    r9: Any?,
+    r10: Any?,
+    r11: Any?,
+    r12: Any?,
+    r13: Any?,
+    r14: Any?,
+) {
+    // $TEST$ error "No value is assigned to this assignee."
+    »_« = noResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »_«, »_« = oneResult();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »_«, »_«, »_« = twoResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »_«, »_« = 1;
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »_«, »_« = unresolved;
+    // $TEST$ error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »_«, »_« = unresolved();
+
+    // $TEST$ error "No value is assigned to this assignee."
+    »val a« = noResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »val b«, »val c« = oneResult();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »val d«, »val e«, »val f« = twoResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »val g«, »val h« = 1;
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »val i«, »val j« = unresolved;
+    // $TEST$ error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »val k«, »val l« = unresolved();
+
+    // $TEST$ error "No value is assigned to this assignee."
+    »yield r1« = noResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »yield r2«, »yield r3« = oneResult();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »yield r4«, »yield r5«, »yield r6« = twoResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »yield r7«, »yield r8« = 1;
+    // $TEST$ no error "No value is assigned to this assignee."
+    »yield r9« = oneResult();
+    // $TEST$ no error "No value is assigned to this assignee."
+    »yield r10« = twoResults();
+    // $TEST$ no error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »yield r11«, »yield r12« = unresolved;
+    // $TEST$ error "No value is assigned to this assignee."
+    // $TEST$ error "No value is assigned to this assignee."
+    »yield r13«, »yield r14« = unresolved();
+}

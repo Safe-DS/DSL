@@ -19,7 +19,6 @@ export const referenceMustNotBeFunctionPointer = (node: SdsReference, accept: Va
         return;
     }
 
-    //
     let container: AstNode | undefined = node.$container;
     if (isSdsMemberAccess(container) && node.$containerProperty === 'member') {
         container = container.$container;
