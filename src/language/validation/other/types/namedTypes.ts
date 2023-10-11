@@ -1,11 +1,13 @@
 import { SdsNamedType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { typeArgumentsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../../../helpers/nodeProperties.js';
 import { duplicatesBy } from '../../../helpers/collectionUtils.js';
+import { pluralize } from '../../../helpers/stringUtils.js';
 
 export const CODE_NAMED_TYPE_DUPLICATE_TYPE_PARAMETER = 'named-type/duplicate-type-parameter';
 export const CODE_NAMED_TYPE_POSITIONAL_AFTER_NAMED = 'named-type/positional-after-named';
+export const CODE_NAMED_TYPE_TOO_MANY_TYPE_ARGUMENTS = 'named-type/too-many-type-arguments';
 
 export const namedTypeMustNotSetTypeParameterMultipleTimes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
@@ -44,5 +46,24 @@ export const namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedAr
                 code: CODE_NAMED_TYPE_POSITIONAL_AFTER_NAMED,
             });
         }
+    }
+};
+
+export const namedTypeMustNotHaveTooManyTypeArguments = (node: SdsNamedType, accept: ValidationAcceptor): void => {
+    // If the declaration is unresolved, we already show another error
+    if (!node.declaration.ref) {
+        return
+    }
+
+    const typeParameters = typeParametersOrEmpty(node.declaration.ref);
+    const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+
+    if (typeArguments.length > typeParameters.length) {
+        const kind = pluralize(typeParameters.length, 'type argument');
+        accept('error', `Expected ${typeParameters.length} ${kind} but got ${typeArguments.length}.`, {
+            node,
+            property: 'typeArgumentList',
+            code: CODE_NAMED_TYPE_TOO_MANY_TYPE_ARGUMENTS,
+        });
     }
 };

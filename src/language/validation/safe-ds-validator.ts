@@ -82,6 +82,7 @@ import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressi
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
 import {
+    namedTypeMustNotHaveTooManyTypeArguments,
     namedTypeMustNotSetTypeParameterMultipleTimes,
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments
 } from "./other/types/namedTypes.js";
@@ -143,6 +144,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
+            namedTypeMustNotHaveTooManyTypeArguments,
             namedTypeMustNotSetTypeParameterMultipleTimes(services),
             namedTypeMustSetAllTypeParameters(services),
             namedTypeTypeArgumentListShouldBeNeeded,

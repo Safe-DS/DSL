@@ -27,7 +27,7 @@ export const namedTypeMustSetAllTypeParameters =
 
             const missingTypeParameters = expectedTypeParameters.filter((it) => !actualTypeParameters.includes(it));
             if (!isEmpty(missingTypeParameters)) {
-                const kind = pluralize(missingTypeParameters.length, 'type parameter', 'type parameters');
+                const kind = pluralize(missingTypeParameters.length, 'type parameter');
                 const missingTypeParametersString = missingTypeParameters.map((it) => `'${it.name}'`).join(', ');
 
                 accept(

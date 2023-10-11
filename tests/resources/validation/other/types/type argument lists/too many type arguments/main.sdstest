@@ -1,0 +1,17 @@
+package tests.validation.other.types.typeArgumentLists.tooManyTypeArguments
+
+class MyClass1<T>
+class MyClass2<A, B>
+
+fun myFunction(
+    // $TEST$ no error r"Expected \d* type arguments? but got \d*\."
+    f: MyClass1»<>«,
+    // $TEST$ no error r"Expected \d* type arguments? but got \d*\."
+    g: MyClass1»<Int>«,
+    // $TEST$ error "Expected 1 type argument but got 2."
+    h: MyClass1»<Int, Int>«,
+    // $TEST$ error "Expected 2 type arguments but got 3."
+    i: MyClass2»<Int, Int, Int>«,
+    // $TEST$ no error r"Expected \d* type arguments? but got \d*\."
+    j: Unresolved»<Int, Int>«
+)
