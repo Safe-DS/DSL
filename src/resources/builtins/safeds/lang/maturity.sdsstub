@@ -1,0 +1,41 @@
+package safeds.lang
+
+@Description("The declaration should no longer be used.")
+@Target([
+    AnnotationTarget.Annotation,
+    AnnotationTarget.Attribute,
+    AnnotationTarget.Class,
+    AnnotationTarget.Enum,
+    AnnotationTarget.EnumVariant,
+    AnnotationTarget.Function,
+    AnnotationTarget.Parameter,
+    AnnotationTarget.Result,
+    AnnotationTarget.Segment,
+])
+annotation Deprecated(
+    @Description("What to use instead.")
+    alternative: String? = null,
+
+    @Description("Why the declaration was deprecated.")
+    reason: String? = null,
+
+    @Description("When the declaration was deprecated.")
+    sinceVersion: String? = null,
+
+    @Description("When the declaration will be removed.")
+    removalVersion: String? = null,
+)
+
+@Description("The declaration might change without a major version bump.")
+@Target([
+    AnnotationTarget.Annotation,
+    AnnotationTarget.Attribute,
+    AnnotationTarget.Class,
+    AnnotationTarget.Enum,
+    AnnotationTarget.EnumVariant,
+    AnnotationTarget.Function,
+    AnnotationTarget.Parameter,
+    AnnotationTarget.Result,
+    AnnotationTarget.Segment,
+])
+annotation Experimental

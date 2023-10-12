@@ -4,7 +4,9 @@ import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 
-const CORE_ANNOTATIONS_URI = resourceNameToUri('builtins/safeds/lang/coreAnnotations.sdsstub');
+const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
+const IDE_INTEGRATION_URI = resourceNameToUri('builtins/safeds/lang/ideIntegration.sdsstub');
+const MATURITY_URI = resourceNameToUri('builtins/safeds/lang/maturity.sdsstub');
 
 export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
@@ -12,7 +14,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     private get Deprecated(): SdsAnnotation | undefined {
-        return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Deprecated');
+        return this.getAnnotation(MATURITY_URI, 'Deprecated');
     }
 
     isExperimental(node: SdsAnnotatedObject | undefined): boolean {
@@ -20,7 +22,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     private get Experimental(): SdsAnnotation | undefined {
-        return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Experimental');
+        return this.getAnnotation(MATURITY_URI, 'Experimental');
     }
 
     isExpert(node: SdsParameter | undefined): boolean {
@@ -28,7 +30,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     private get Expert(): SdsAnnotation | undefined {
-        return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Expert');
+        return this.getAnnotation(IDE_INTEGRATION_URI, 'Expert');
     }
 
     isRepeatable(node: SdsAnnotation | undefined): boolean {
@@ -36,7 +38,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     private get Repeatable(): SdsAnnotation | undefined {
-        return this.getAnnotation(CORE_ANNOTATIONS_URI, 'Repeatable');
+        return this.getAnnotation(ANNOTATION_USAGE_URI, 'Repeatable');
     }
 
     private hasAnnotationCallOf(node: SdsAnnotatedObject | undefined, expected: SdsAnnotation | undefined): boolean {
