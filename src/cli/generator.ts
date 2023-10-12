@@ -106,6 +106,7 @@ import {
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
 import { group } from 'radash';
+import { IdManager } from '../language/helpers/idManager.js';
 
 /* c8 ignore start */
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
@@ -121,11 +122,11 @@ const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
 const PYTHON_INDENT = '    ';
 
 class GenerationInfoFrame {
-    blockLambdaManager: BlockLambdaIdManager;
+    blockLambdaManager: IdManager<SdsBlockLambda>;
     importSet: Set<ImportData>;
 
     constructor(importSet: Set<ImportData> = new Set<ImportData>()) {
-        this.blockLambdaManager = new BlockLambdaIdManager();
+        this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
     }
 
@@ -134,29 +135,7 @@ class GenerationInfoFrame {
     }
 
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
-        return this.blockLambdaManager.getUniqueName(lambda);
-    }
-}
-
-class BlockLambdaIdManager {
-    currentId: number;
-    registeredLambdas: Map<SdsBlockLambda, number>;
-
-    constructor(sequenceIdStart: number = 0) {
-        this.currentId = sequenceIdStart;
-        this.registeredLambdas = new Map<SdsBlockLambda, number>();
-    }
-
-    getId(lambda: SdsBlockLambda): number {
-        if (!this.registeredLambdas.has(lambda)) {
-            this.registeredLambdas.set(lambda, this.currentId);
-            this.currentId++;
-        }
-        return <number>this.registeredLambdas.get(lambda);
-    }
-
-    getUniqueName(lambda: SdsBlockLambda): string {
-        return `__block_lambda_${this.getId(lambda)}`;
+        return `__block_lambda_${this.blockLambdaManager.assignId(lambda)}`;
     }
 }
 
