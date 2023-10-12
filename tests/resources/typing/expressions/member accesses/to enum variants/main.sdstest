@@ -6,7 +6,7 @@ enum MyEnum {
 }
 
 pipeline myPipeline {
-    // $TEST$ serialization MyEnumVariantWithoutParameters
+    // $TEST$ serialization $type<MyEnumVariantWithoutParameters>
     »MyEnum.MyEnumVariantWithoutParameters«;
 
     // $TEST$ serialization $type<MyEnumVariantWithParameters>

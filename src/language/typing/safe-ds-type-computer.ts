@@ -366,8 +366,6 @@ export class SafeDsTypeComputer {
             if (!isSdsAnnotation(receiverType.sdsCallable)) {
                 return receiverType.outputType;
             }
-        } else if (receiverType instanceof EnumVariantType && !isSdsCall(node.receiver)) {
-            return receiverType;
         } else if (receiverType instanceof StaticType) {
             const instanceType = receiverType.instanceType;
             if (isSdsCallable(instanceType.sdsDeclaration)) {
@@ -424,11 +422,7 @@ export class SafeDsTypeComputer {
         const instanceType = this.computeType(target);
 
         if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
-            if (isSdsEnumVariant(target) && isEmpty(parametersOrEmpty(target))) {
-                return instanceType;
-            } else {
-                return new StaticType(instanceType.copyWithNullability(false));
-            }
+            return new StaticType(instanceType.copyWithNullability(false));
         } else {
             return instanceType;
         }
