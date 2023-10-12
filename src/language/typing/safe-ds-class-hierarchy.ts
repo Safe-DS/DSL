@@ -41,7 +41,7 @@ export class SafeDsClassHierarchy {
             }
         };
 
-        return stream((generator)());
+        return stream(generator());
     }
 
     /**

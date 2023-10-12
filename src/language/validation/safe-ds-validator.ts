@@ -86,7 +86,7 @@ import {
     namedTypeMustNotSetTypeParameterMultipleTimes,
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
-import {classMustNotInheritItself, classMustOnlyInheritASingleClass} from "./inheritance.js";
+import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
 
 /**
  * Register custom validation checks.
