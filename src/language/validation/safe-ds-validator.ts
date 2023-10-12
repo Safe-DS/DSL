@@ -40,7 +40,8 @@ import {
     yieldMustNotBeUsedInPipeline,
 } from './other/statements/assignments.js';
 import {
-    attributeMustHaveTypeHint, callReceiverMustBeCallable,
+    attributeMustHaveTypeHint,
+    callReceiverMustBeCallable,
     namedTypeMustSetAllTypeParameters,
     parameterMustHaveTypeHint,
     resultMustHaveTypeHint,
@@ -126,10 +127,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCall: [
-            callArgumentListShouldBeNeeded(services),
-            callReceiverMustBeCallable(services),
-        ],
+        SdsCall: [callArgumentListShouldBeNeeded(services), callReceiverMustBeCallable(services)],
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,

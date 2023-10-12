@@ -1,8 +1,8 @@
-import {isSdsCall, isSdsPipeline, SdsAssignment, SdsYield} from '../../../generated/ast.js';
+import { isSdsCall, isSdsPipeline, SdsAssignment, SdsYield } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import {abstractResultsOrEmpty, assigneesOrEmpty} from '../../../helpers/nodeProperties.js';
-import {pluralize} from "../../../helpers/stringUtils.js";
+import { abstractResultsOrEmpty, assigneesOrEmpty } from '../../../helpers/nodeProperties.js';
+import { pluralize } from '../../../helpers/stringUtils.js';
 
 export const CODE_ASSIGNMENT_IMPLICITLY_IGNORED_RESULT = 'assignment/implicitly-ignored-result';
 export const CODE_ASSIGMENT_NOTHING_ASSIGNED = 'assignment/nothing-assigned';
@@ -25,25 +25,27 @@ export const assignmentShouldNotImplicitlyIgnoreResult = (services: SafeDsServic
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsAssignment, accept: ValidationAcceptor): void => {
-        const expression = node.expression
+        const expression = node.expression;
         if (!isSdsCall(expression)) {
-            return
+            return;
         }
 
-        const assignees = assigneesOrEmpty(node)
-        const callable = nodeMapper.callToCallableOrUndefined(expression)
-        const results = abstractResultsOrEmpty(callable)
+        const assignees = assigneesOrEmpty(node);
+        const callable = nodeMapper.callToCallableOrUndefined(expression);
+        const results = abstractResultsOrEmpty(callable);
 
         if (results.length > assignees.length) {
-            const kind = pluralize(results.length - assignees.length, 'result')
-            const names = results.slice(assignees.length).map(result => `'${result.name}'`).join(', ')
+            const kind = pluralize(results.length - assignees.length, 'result');
+            const names = results
+                .slice(assignees.length)
+                .map((result) => `'${result.name}'`)
+                .join(', ');
 
             accept('warning', `The assignment implicitly ignores the ${kind} ${names}.`, {
                 node,
                 code: CODE_ASSIGNMENT_IMPLICITLY_IGNORED_RESULT,
             });
         }
-
     };
 };
 

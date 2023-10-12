@@ -1,8 +1,13 @@
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsAnnotation,
-    isSdsCallable, isSdsClass,
-    isSdsLambda, isSdsMemberAccess, isSdsPipeline, isSdsReference, isSdsSchema,
+    isSdsCallable,
+    isSdsClass,
+    isSdsLambda,
+    isSdsMemberAccess,
+    isSdsPipeline,
+    isSdsReference,
+    isSdsSchema,
     SdsAttribute,
     SdsCall,
     SdsNamedType,
@@ -26,17 +31,17 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsCall, accept: ValidationAcceptor): void => {
-        let receiver = node.receiver
+        let receiver = node.receiver;
         if (isSdsMemberAccess(receiver)) {
-            receiver = receiver.member
+            receiver = receiver.member;
         }
 
         if (isSdsReference(receiver)) {
-            const target = receiver.target.ref
+            const target = receiver.target.ref;
 
             // We already report other errors at this position in those cases
             if (!target || isSdsAnnotation(target) || isSdsPipeline(target) || isSdsSchema(target)) {
-                return
+                return;
             }
         }
 
@@ -47,7 +52,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
                 code: CODE_TYPE_CALLABLE_RECEIVER,
             });
         } else if (isSdsClass(callable) && !callable.parameterList) {
-            accept('error', "Cannot instantiate a class that has no constructor.", {
+            accept('error', 'Cannot instantiate a class that has no constructor.', {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
             });
