@@ -85,19 +85,22 @@ import {
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
-    private readonly coreClasses: SafeDsClasses;
+    private readonly builtinClasses: SafeDsClasses;
     private readonly nodeMapper: SafeDsNodeMapper;
 
     private readonly typeCache: WorkspaceCache<string, Type>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
-        this.coreClasses = services.builtins.Classes;
+        this.builtinClasses = services.builtins.Classes;
         this.nodeMapper = services.helpers.NodeMapper;
 
         this.typeCache = new WorkspaceCache(services.shared);
     }
 
+    /**
+     * Computes the type of the given node.
+     */
     computeType(node: AstNode | undefined): Type {
         if (!node) {
             return UnknownType;
@@ -507,35 +510,35 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     private AnyOrNull(): Type {
-        return this.createCoreType(this.coreClasses.Any, true);
+        return this.createCoreType(this.builtinClasses.Any, true);
     }
 
     private Boolean(): Type {
-        return this.createCoreType(this.coreClasses.Boolean);
+        return this.createCoreType(this.builtinClasses.Boolean);
     }
 
     private Float(): Type {
-        return this.createCoreType(this.coreClasses.Float);
+        return this.createCoreType(this.builtinClasses.Float);
     }
 
     private Int(): Type {
-        return this.createCoreType(this.coreClasses.Int);
+        return this.createCoreType(this.builtinClasses.Int);
     }
 
     private List(): Type {
-        return this.createCoreType(this.coreClasses.List);
+        return this.createCoreType(this.builtinClasses.List);
     }
 
     private Map(): Type {
-        return this.createCoreType(this.coreClasses.Map);
+        return this.createCoreType(this.builtinClasses.Map);
     }
 
     private NothingOrNull(): Type {
-        return this.createCoreType(this.coreClasses.Nothing, true);
+        return this.createCoreType(this.builtinClasses.Nothing, true);
     }
 
     private String(): Type {
-        return this.createCoreType(this.coreClasses.String);
+        return this.createCoreType(this.builtinClasses.String);
     }
 
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {

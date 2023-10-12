@@ -43,6 +43,7 @@ import {
     SdsResult,
     SdsResultList,
     SdsStatement,
+    SdsType,
     SdsTypeArgument,
     SdsTypeArgumentList,
     SdsTypeParameter,
@@ -163,6 +164,10 @@ export const packageNameOrUndefined = (node: AstNode | undefined): string | unde
 
 export const parametersOrEmpty = (node: SdsCallable | undefined): SdsParameter[] => {
     return node?.parameterList?.parameters ?? [];
+};
+
+export const parentTypesOrEmpty = (node: SdsClass | undefined): SdsType[] => {
+    return node?.parentTypeList?.parentTypes ?? [];
 };
 
 export const placeholdersOrEmpty = (node: SdsBlock | undefined): SdsPlaceholder[] => {
