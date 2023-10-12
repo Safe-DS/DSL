@@ -1,0 +1,11 @@
+package safeds.lang
+
+@Experimental
+@Description("The function has no side effects and returns the same results for the same arguments.")
+@Target([AnnotationTarget.Function])
+annotation Pure
+
+@Experimental
+@Description("The function has no side effects.")
+@Target([AnnotationTarget.Function])
+annotation NoSideEffects

@@ -1,0 +1,14 @@
+package tests.validation.types.checking.calledClassMustHaveConstructor
+
+class A
+
+class B()
+
+pipeline test {
+
+    // $TEST$ error "Cannot instantiate a class that has no constructor."
+    val a = »A«();
+
+    // $TEST$ no error "Cannot instantiate a class that has no constructor."
+    val b = »B«();
+}

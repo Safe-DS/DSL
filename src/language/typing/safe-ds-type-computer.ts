@@ -59,6 +59,7 @@ import {
     isSdsTypeProjection,
     isSdsUnionType,
     isSdsYield,
+    SdsAbstractResult,
     SdsAssignee,
     SdsCall,
     SdsCallableType,
@@ -164,7 +165,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfDeclaration(node: SdsDeclaration): Type {
         if (isSdsAnnotation(node)) {
             const parameterEntries = parametersOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType([]));
@@ -193,10 +194,10 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
         const parameterEntries = parametersOrEmpty(node).map(
-            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
         const resultEntries = resultsOrEmpty(node.resultList).map(
-            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
         return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
@@ -278,18 +279,20 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfCall(node);
         } else if (isSdsBlockLambda(node)) {
             const parameterEntries = parametersOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
             const resultEntries = blockLambdaResultsOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsExpressionLambda(node)) {
             const parameterEntries = parametersOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
-            const resultEntries = [new NamedTupleEntry('result', this.computeType(node.result))];
+            const resultEntries = [
+                new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
+            ];
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsIndexedAccess(node)) {

@@ -72,7 +72,8 @@
         ],
         "configurationDefaults": {
             "[safe-ds]": {
-                "editor.wordSeparators": "`~!@#$%^&*()-=+[]{}\\|;:'\",.<>/?»«"
+                "editor.wordSeparators": "`~!@#$%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
             }
         }
     },

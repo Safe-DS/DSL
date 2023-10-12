@@ -34,9 +34,14 @@ import {
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
-import { assignmentAssigneeMustGetValue, yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import {
+    assignmentAssigneeMustGetValue,
+    assignmentShouldNotImplicitlyIgnoreResult,
+    yieldMustNotBeUsedInPipeline,
+} from './other/statements/assignments.js';
 import {
     attributeMustHaveTypeHint,
+    callReceiverMustBeCallable,
     namedTypeMustSetAllTypeParameters,
     parameterMustHaveTypeHint,
     resultMustHaveTypeHint,
@@ -99,7 +104,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             assigneeAssignedResultShouldNotBeDeprecated(services),
             assigneeAssignedResultShouldNotBeExperimental(services),
         ],
-        SdsAssignment: [assignmentAssigneeMustGetValue(services), assignmentShouldHaveMoreThanWildcardsAsAssignees],
+        SdsAssignment: [
+            assignmentAssigneeMustGetValue(services),
+            assignmentShouldNotImplicitlyIgnoreResult(services),
+            assignmentShouldHaveMoreThanWildcardsAsAssignees,
+        ],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty,
@@ -118,7 +127,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCall: [callArgumentListShouldBeNeeded(services)],
+        SdsCall: [callArgumentListShouldBeNeeded(services), callReceiverMustBeCallable(services)],
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
