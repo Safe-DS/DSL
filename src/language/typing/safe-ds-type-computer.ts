@@ -83,7 +83,6 @@ import {
     resultsOrEmpty,
     typeArgumentsOrEmpty,
 } from '../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
