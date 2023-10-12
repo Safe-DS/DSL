@@ -1,12 +1,54 @@
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import { isSdsCallable, isSdsLambda, SdsAttribute, SdsNamedType, SdsParameter, SdsResult } from '../generated/ast.js';
+import {
+    isSdsAnnotation,
+    isSdsCallable,
+    isSdsLambda, isSdsMemberAccess, isSdsPipeline, isSdsReference, isSdsSchema,
+    SdsAttribute,
+    SdsCall,
+    SdsNamedType,
+    SdsParameter,
+    SdsResult,
+} from '../generated/ast.js';
 import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { pluralize } from '../helpers/stringUtils.js';
 
+export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
+
+// -----------------------------------------------------------------------------
+// Type checking
+// -----------------------------------------------------------------------------
+
+export const callReceiverMustBeCallable = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+
+    return (node: SdsCall, accept: ValidationAcceptor): void => {
+        let receiver = node.receiver
+        if (isSdsMemberAccess(receiver)) {
+            receiver = receiver.member
+        }
+
+        if (isSdsReference(receiver)) {
+            const target = receiver.target.ref
+
+            // We already report other errors at this position in those cases
+            if (!target || isSdsAnnotation(target) || isSdsPipeline(target) || isSdsSchema(target)) {
+                return
+            }
+        }
+
+        const callable = nodeMapper.callToCallableOrUndefined(node);
+        if (!callable) {
+            accept('error', 'This expression is not callable.', {
+                node: node.receiver,
+                code: CODE_TYPE_CALLABLE_RECEIVER,
+            });
+        }
+    };
+};
 
 // -----------------------------------------------------------------------------
 // Missing type arguments
