@@ -156,15 +156,18 @@ export const constraintListShouldNotBeEmpty = (node: SdsConstraintList, accept: 
 // Unnecessary import alias
 // -----------------------------------------------------------------------------
 
-export const importedDeclarationAliasShouldDifferFromDeclarationName = (node: SdsImportedDeclaration, accept: ValidationAcceptor) => {
+export const importedDeclarationAliasShouldDifferFromDeclarationName = (
+    node: SdsImportedDeclaration,
+    accept: ValidationAcceptor,
+) => {
     if (node.alias && node.alias.alias === node.declaration.$refText) {
-        accept('info', "This alias can be removed.", {
+        accept('info', 'This alias can be removed.', {
             node,
             property: 'alias',
             code: CODE_STYLE_UNNECESSARY_IMPORT_ALIAS,
         });
     }
-}
+};
 
 // -----------------------------------------------------------------------------
 // Unnecessary parameter lists
