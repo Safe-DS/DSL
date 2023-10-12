@@ -2,7 +2,8 @@ import path from 'path';
 import { globSync } from 'glob';
 import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { group } from 'radash';
-import { URI } from 'langium';
+import { LangiumDocument, URI } from 'langium';
+import { SafeDsServices } from '../../src/language/safe-ds-module.js';
 
 const TEST_RESOURCES_PATH = path.join(__dirname, '..', 'resources');
 
@@ -91,4 +92,15 @@ export const listTestSafeDsFilesGroupedByParentDirectory = (rootTestResourceName
 const isNotSkipped = (pathRelativeToResources: string) => {
     const segments = pathRelativeToResources.split(path.sep);
     return !segments.some((segment) => segment.startsWith('skip'));
+};
+
+/**
+ * For a list of given URIs, load all files into the current workspace.
+ *
+ * @returns List of loaded documents
+ */
+export const loadAllDocuments = async (services: SafeDsServices, uris: URI[]): Promise<LangiumDocument[]> => {
+    const documents = uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
+    await services.shared.workspace.DocumentBuilder.build(documents);
+    return documents;
 };

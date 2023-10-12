@@ -102,6 +102,17 @@ export const callResultsOrEmpty = (node: SdsCall | SdsCallable | undefined): Sds
     return abstractResultsOrEmpty(<SdsCallable | undefined>node);
 };
 
+export const callParametersOrEmpty = (node: SdsCall | undefined): SdsParameter[] => {
+    if (node) {
+        if (isSdsReference(node.receiver)) {
+            if (isSdsCallable(node.receiver.target.ref)) {
+                return parametersOrEmpty(node.receiver.target.ref);
+            }
+        }
+    }
+    return [];
+};
+
 export const abstractResultsOrEmpty = (node: SdsCallable | undefined): SdsAbstractResult[] => {
     if (!node) {
         return [];

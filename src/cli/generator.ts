@@ -7,6 +7,7 @@ import {
     streamAllContents,
     toString,
     getDocument,
+    Reference,
 } from 'langium';
 import path from 'path';
 import {
@@ -97,7 +98,9 @@ import {
     argumentsOrEmpty,
     assigneesOrEmpty,
     blockLambdaResultsOrEmpty,
+    callParametersOrEmpty,
     callResultsOrEmpty,
+    isRequiredParameter,
     parametersOrEmpty,
     resultsOrEmpty,
     statementsOrEmpty,
@@ -333,10 +336,26 @@ const generateType = function (type: SdsType | undefined): string | null {
 
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
     return expandToString`${
-        argument.parameter !== undefined && argument.parameter.ref !== undefined
+        argument.parameter !== undefined &&
+        argument.parameter.ref !== undefined &&
+        !isRequiredParameter(argument.parameter.ref)
             ? generateParameter(argument.parameter.ref, frame, false) + '='
             : ''
     }${generateExpression(argument.value, frame)}`;
+};
+
+const sortArguments = function (argumentList: SdsArgument[], call: SdsCall): SdsArgument[] {
+    // $containerIndex contains the index of the parameter in the receivers parameter list
+    const parameters = callParametersOrEmpty(call);
+    const sortedArgs = argumentList
+        .slice()
+        .filter((value) => value.parameter !== undefined && value.parameter.ref !== undefined)
+        .sort(
+            (a, b) =>
+                parameters.indexOf(<SdsParameter>(<Reference<SdsParameter>>b.parameter).ref) -
+                parameters.indexOf(<SdsParameter>(<Reference<SdsParameter>>a.parameter).ref),
+        );
+    return sortedArgs.length === 0 ? argumentList : sortedArgs;
 };
 
 const generateExpression = function (expression: SdsExpression, frame: GenerationInfoFrame): string {
@@ -405,7 +424,9 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         return frame.getUniqueLambdaBlockName(blockLambda);
     }
     if (isSdsCall(expression)) {
-        return expandToString`${generateExpression(expression.receiver, frame)}(${expression.argumentList.arguments
+        // TODO sort arguments to target order
+        const sortedArgs = sortArguments(expression.argumentList.arguments, expression);
+        return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
     }
