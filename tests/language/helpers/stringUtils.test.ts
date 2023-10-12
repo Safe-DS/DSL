@@ -36,7 +36,7 @@ describe('pluralize', () => {
             singular: 'apple',
             expected: 'apples',
         },
-    ])('should return the singular or plural form based on the count', ({ count, singular, plural, expected }) => {
+    ])('should return the singular or plural form based on the count (%#)', ({ count, singular, plural, expected }) => {
         expect(pluralize(count, singular, plural)).toBe(expected);
     });
 });

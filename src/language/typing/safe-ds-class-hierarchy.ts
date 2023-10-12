@@ -15,12 +15,15 @@ export class SafeDsClassHierarchy {
         this.typeComputer = services.types.TypeComputer;
     }
 
-    streamSuperClasses(node: SdsClass | undefined): Stream<SdsClass> {
-        /* c8 ignore start */
+    /**
+     * Returns a stream of all superclasses of the given class. The class itself is not included in the stream unless
+     * there is a cycle in the inheritance hierarchy. Direct ancestors are returned first, followed by their ancestors
+     * and so on.
+     */
+    streamSuperclasses(node: SdsClass | undefined): Stream<SdsClass> {
         if (!node) {
             return stream();
         }
-        /* c8 ignore stop */
 
         const capturedThis = this;
         const generator = function* () {

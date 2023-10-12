@@ -98,6 +98,9 @@ export class SafeDsTypeComputer {
         this.typeCache = new WorkspaceCache(services.shared);
     }
 
+    /**
+     * Computes the type of the given node.
+     */
     computeType(node: AstNode | undefined): Type {
         if (!node) {
             return UnknownType;

@@ -44,7 +44,7 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
     const classHierarchy = services.types.ClassHierarchy;
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
-        const superClasses = classHierarchy.streamSuperClasses(node);
+        const superClasses = classHierarchy.streamSuperclasses(node);
         if (superClasses.includes(node)) {
             accept('error', "A class must not directly or indirectly be a subtype of itself.", {
                 node: parentTypesOrEmpty(node)[0],

@@ -12,6 +12,11 @@ class MyClass4
 class MyClass5 sub »MyClass4«
 
 // $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
-class MyClass6 sub »Unresolved«
+class MyClass6 sub »MyClass7«
 // $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
-class MyClass7 sub »MyClass6«
+class MyClass7 sub Any, »MyClass6«
+
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass8 sub »Unresolved«
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass9 sub »MyClass8«
