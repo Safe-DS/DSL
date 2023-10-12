@@ -1,11 +1,13 @@
 import {
     isSdsNull,
+    SdsAbstractResult,
     SdsCallable,
     SdsClass,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
     SdsLiteral,
+    SdsParameter,
 } from '../generated/ast.js';
 
 /* c8 ignore start */
@@ -28,8 +30,8 @@ export class CallableType extends Type {
 
     constructor(
         readonly sdsCallable: SdsCallable,
-        readonly inputType: NamedTupleType,
-        readonly outputType: NamedTupleType,
+        readonly inputType: NamedTupleType<SdsParameter>,
+        readonly outputType: NamedTupleType<SdsAbstractResult>,
     ) {
         super();
     }
@@ -99,10 +101,10 @@ export class LiteralType extends Type {
     }
 }
 
-export class NamedTupleType extends Type {
+export class NamedTupleType<T extends SdsDeclaration> extends Type {
     override readonly isNullable = false;
 
-    constructor(readonly entries: NamedTupleEntry[]) {
+    constructor(readonly entries: NamedTupleEntry<T>[]) {
         super();
     }
 
@@ -125,7 +127,7 @@ export class NamedTupleType extends Type {
         return this;
     }
 
-    override copyWithNullability(_isNullable: boolean): NamedTupleType {
+    override copyWithNullability(_isNullable: boolean): NamedTupleType<T> {
         return this;
     }
 
@@ -159,8 +161,9 @@ export class NamedTupleType extends Type {
     }
 }
 
-export class NamedTupleEntry {
+export class NamedTupleEntry<T extends SdsDeclaration> {
     constructor(
+        readonly sdsDeclaration: T | undefined,
         readonly name: string,
         readonly type: Type,
     ) {}
@@ -169,8 +172,8 @@ export class NamedTupleEntry {
         return `${this.name}: ${this.type}`;
     }
 
-    equals(other: NamedTupleEntry): boolean {
-        return this.name === other.name && this.type.equals(other.type);
+    equals(other: NamedTupleEntry<SdsDeclaration>): boolean {
+        return this.sdsDeclaration === other.sdsDeclaration && this.name === other.name && this.type.equals(other.type);
     }
 }
 
