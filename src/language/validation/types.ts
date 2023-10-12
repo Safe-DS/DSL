@@ -1,7 +1,7 @@
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsAnnotation,
-    isSdsCallable,
+    isSdsCallable, isSdsClass,
     isSdsLambda, isSdsMemberAccess, isSdsPipeline, isSdsReference, isSdsSchema,
     SdsAttribute,
     SdsCall,
@@ -43,6 +43,11 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
         const callable = nodeMapper.callToCallableOrUndefined(node);
         if (!callable) {
             accept('error', 'This expression is not callable.', {
+                node: node.receiver,
+                code: CODE_TYPE_CALLABLE_RECEIVER,
+            });
+        } else if (isSdsClass(callable) && !callable.parameterList) {
+            accept('error', "Cannot instantiate a class that has no constructor.", {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
             });
