@@ -6,7 +6,7 @@ import {
     isSdsAssignment,
     isSdsBlock,
     isSdsCall,
-    isSdsCallable,
+    isSdsCallable, isSdsClass, isSdsEnumVariant,
     isSdsNamedType,
     isSdsReference,
     isSdsSegment,
@@ -108,8 +108,17 @@ export class SafeDsNodeMapper {
             }
         }
 
-        // If the RHS is a call, the assignee gets the corresponding result
+        // If the RHS instantiates a class or enum variant, the first assignee gets the entire RHS
         const callable = this.callToCallableOrUndefined(expression);
+        if (isSdsClass(callable) || isSdsEnumVariant(callable)) {
+            if (assigneePosition === 0) {
+                return expression;
+            } else {
+                return undefined;
+            }
+        }
+
+        // Otherwise, the assignee gets the result at the same position
         const abstractResults = abstractResultsOrEmpty(callable);
         return abstractResults[assigneePosition];
     }
