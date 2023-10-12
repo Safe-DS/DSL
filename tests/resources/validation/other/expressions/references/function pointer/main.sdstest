@@ -1,0 +1,68 @@
+package tests.validation.other.expressions.references.target
+
+class MyClass {
+    fun myInstanceMethod()
+    static fun myStaticMethod()
+}
+
+fun myFunction1()
+fun myFunction2(p: Any)
+
+segment mySegment1() {}
+
+segment mySegment2() {
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass().»myInstanceMethod«;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass().»myInstanceMethod«.a;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass().»myInstanceMethod«.a();
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    myFunction2(MyClass().»myInstanceMethod«);
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass().»myInstanceMethod«();
+
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass.»myStaticMethod«;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass.»myStaticMethod«.a;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass.»myStaticMethod«.a();
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    myFunction2(MyClass.»myStaticMethod«);
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    MyClass.»myStaticMethod«();
+
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »myFunction1«;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »myFunction1«.a;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »myFunction1«.a();
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    myFunction2(»myFunction1«);
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »myFunction1«();
+
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »mySegment1«;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »mySegment1«.a;
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »mySegment1«.a();
+    // $TEST$ error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    myFunction2(»mySegment1«);
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »mySegment1«();
+
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »unresolved«;
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »unresolved«.a;
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »unresolved«.a();
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    myFunction2(»unresolved«);
+    // $TEST$ no error "Function pointers are not allowed to provide a cleaner graphical view. Use a lambda instead."
+    »unresolved«();
+}

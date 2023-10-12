@@ -33,8 +33,13 @@ import {
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
-import { yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
-import { attributeMustHaveTypeHint, parameterMustHaveTypeHint, resultMustHaveTypeHint } from './types.js';
+import { assignmentAssigneeMustGetValue, yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import {
+    attributeMustHaveTypeHint,
+    namedTypeMustSetAllTypeParameters,
+    parameterMustHaveTypeHint,
+    resultMustHaveTypeHint,
+} from './types.js';
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
@@ -43,15 +48,18 @@ import {
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
-import { typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/types/typeArgumentLists.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
-import { referenceTargetMustNotBeAnnotationPipelineOrSchema } from './other/expressions/references.js';
+import {
+    referenceMustNotBeFunctionPointer,
+    referenceTargetMustNotBeAnnotationPipelineOrSchema,
+} from './other/expressions/references.js';
 import {
     annotationCallAnnotationShouldNotBeDeprecated,
     argumentCorrespondingParameterShouldNotBeDeprecated,
     assigneeAssignedResultShouldNotBeDeprecated,
     namedTypeDeclarationShouldNotBeDeprecated,
     referenceTargetShouldNotBeDeprecated,
+    requiredParameterMustNotBeDeprecated,
 } from './builtins/deprecated.js';
 import {
     annotationCallAnnotationShouldNotBeExperimental,
@@ -60,10 +68,24 @@ import {
     namedTypeDeclarationShouldNotBeExperimental,
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
-import { placeholderShouldBeUsed } from './other/declarations/placeholders.js';
+import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
+import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
+import {
+    callableTypeParametersMustNotBeAnnotated,
+    callableTypeResultsMustNotBeAnnotated,
+    lambdaParametersMustNotBeAnnotated,
+} from './other/declarations/annotationCalls.js';
+import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
+import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
+import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
+import {
+    namedTypeMustNotHaveTooManyTypeArguments,
+    namedTypeMustNotSetTypeParameterMultipleTimes,
+    namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
+} from './other/types/namedTypes.js';
 
 /**
  * Register custom validation checks.
@@ -75,7 +97,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             assigneeAssignedResultShouldNotBeDeprecated(services),
             assigneeAssignedResultShouldNotBeExperimental(services),
         ],
-        SdsAssignment: [assignmentShouldHaveMoreThanWildcardsAsAssignees],
+        SdsAssignment: [assignmentAssigneeMustGetValue(services), assignmentShouldHaveMoreThanWildcardsAsAssignees],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty,
@@ -86,6 +108,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
         ],
+        SdsAnnotatedObject: [singleUseAnnotationsMustNotBeRepeated(services)],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
@@ -97,7 +120,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
+            callableTypeParametersMustNotBeAnnotated,
             callableTypeParameterMustNotHaveConstModifier,
+            callableTypeResultsMustNotBeAnnotated,
         ],
         SdsClass: [classMustContainUniqueNames],
         SdsClassBody: [classBodyShouldNotBeEmpty],
@@ -108,20 +133,33 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
+        SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
-        SdsLambda: [lambdaParameterMustNotHaveConstModifier],
-        SdsMemberAccess: [memberAccessNullSafetyShouldBeNeeded(services)],
+        SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
+        SdsMemberAccess: [
+            memberAccessMustBeNullSafeIfReceiverIsNullable(services),
+            memberAccessNullSafetyShouldBeNeeded(services),
+        ],
         SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
+            namedTypeMustNotHaveTooManyTypeArguments,
+            namedTypeMustNotSetTypeParameterMultipleTimes(services),
+            namedTypeMustSetAllTypeParameters(services),
             namedTypeTypeArgumentListShouldBeNeeded,
+            namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
         ],
-        SdsParameter: [parameterMustHaveTypeHint],
+        SdsParameter: [
+            parameterMustHaveTypeHint,
+            requiredParameterMustNotBeDeprecated(services),
+            requiredParameterMustNotBeExpert(services),
+        ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
-        SdsPlaceholder: [placeholderShouldBeUsed(services)],
+        SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsReference: [
+            referenceMustNotBeFunctionPointer,
             referenceTargetMustNotBeAnnotationPipelineOrSchema,
             referenceTargetShouldNotBeDeprecated(services),
             referenceTargetShouldNotExperimental(services),
@@ -134,7 +172,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentResultListShouldNotBeEmpty,
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeArgumentList: [typeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],

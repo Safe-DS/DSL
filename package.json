@@ -1,21 +1,59 @@
 {
     "name": "safe-ds",
-    "displayName": "safe-ds",
-    "description": "Statically checked Data Science programs.",
     "version": "0.1.0",
+    "preview": true,
+    "publisher": "Safe-DS",
+    "displayName": "Safe-DS",
+    "description": "Statically checked Data Science programs.",
+    "license": "MIT",
+    "categories": [
+        "Programming Languages",
+        "Machine Learning",
+        "Data Science"
+    ],
+    "keywords": [
+        "dsl",
+        "static checking"
+    ],
+    "galleryBanner": {
+        "color": "#e3e9e9"
+    },
+    "icon": "img/safe-ds_logo_rounded.png",
+    "homepage": "https://dsl.safeds.com",
+    "qna": "https://github.com/orgs/Safe-DS/discussions",
+    "bugs": {
+        "url": "https://github.com/Safe-DS/DSL/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Safe-DS/DSL.git"
+    },
+    "badges": [
+        {
+            "url": "https://github.com/Safe-DS/DSL/actions/workflows/main.yml/badge.svg",
+            "href": "https://github.com/Safe-DS/DSL/actions/workflows/main.yml",
+            "description": "Main"
+        },
+        {
+            "url": "https://codecov.io/gh/Safe-DS/DSL/branch/main/graph/badge.svg?token=ma0ytglhO1",
+            "href": "https://codecov.io/gh/Safe-DS/DSL",
+            "description": "codecov"
+        }
+    ],
     "engines": {
         "vscode": "^1.82.0"
     },
-    "categories": [
-        "Programming Languages"
-    ],
     "contributes": {
         "languages": [
             {
                 "id": "safe-ds",
                 "aliases": [
                     "Safe-DS",
-                    "safe-ds"
+                    "safe-ds",
+                    "SafeDS",
+                    "safeds",
+                    "SDS",
+                    "sds"
                 ],
                 "extensions": [
                     ".sdspipe",
@@ -33,14 +71,14 @@
             }
         ]
     },
+    "type": "module",
+    "main": "out/extension/main.cjs",
     "files": [
         "bin"
     ],
-    "type": "module",
     "bin": {
         "safe-ds-cli": "./bin/cli"
     },
-    "main": "out/extension/main.cjs",
     "scripts": {
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json && node esbuild.mjs",

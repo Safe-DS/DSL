@@ -1,0 +1,48 @@
+package tests.validation.builtins.expert.mustNotBeUsedOnRequiredParameters
+
+// $TEST$ error "An expert parameter must be optional."
+// $TEST$ no error "An expert parameter must be optional."
+annotation MyAnnotation(@Expert »a«: Int, @Expert »b«: Int = 3)
+
+// $TEST$ error "An expert parameter must be optional."
+// $TEST$ no error "An expert parameter must be optional."
+class MyClass(@Expert »a«: Int, @Expert »b«: Int = 3) {
+
+    // $TEST$ error "An expert parameter must be optional."
+    // $TEST$ no error "An expert parameter must be optional."
+    class MyClass(@Expert »a«: Int, @Expert »b«: Int = 3)
+
+    // $TEST$ error "An expert parameter must be optional."
+    // $TEST$ no error "An expert parameter must be optional."
+    fun myFunction(@Expert »a«: Int, @Expert »b«: Int = 3)
+}
+
+enum MyEnum {
+
+    // $TEST$ error "An expert parameter must be optional."
+    // $TEST$ no error "An expert parameter must be optional."
+    MyEnumVariant(@Expert »a«: Int, @Expert »b«: Int = 3)
+}
+
+// $TEST$ error "An expert parameter must be optional."
+// $TEST$ no error "An expert parameter must be optional."
+fun myFunction(@Expert »a«: Int, @Expert »b«: Int = 3)
+
+// $TEST$ error "An expert parameter must be optional."
+// $TEST$ no error "An expert parameter must be optional."
+segment mySegment1(@Expert »a«: Int, @Expert »b«: Int = 3) {}
+
+// $TEST$ no error "An expert parameter must be optional."
+// $TEST$ no error "An expert parameter must be optional."
+segment mySegment2(
+    f: (@Expert »a«: Int, @Expert »b«: Int = 3) -> ()
+) {
+
+    // $TEST$ no error "An expert parameter must be optional."
+    // $TEST$ no error "An expert parameter must be optional."
+    val g = (@Expert »a«: Int, @Expert »b«: Int = 3) {};
+
+    // $TEST$ no error "An expert parameter must be optional."
+    // $TEST$ no error "An expert parameter must be optional."
+    val h = (@Expert »a«: Int, @Expert »b«: Int = 3) -> 1;
+}

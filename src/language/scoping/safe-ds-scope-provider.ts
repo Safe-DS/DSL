@@ -205,9 +205,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         // Members
         let receiverType = this.typeComputer.computeType(node.receiver);
-        if (receiverType.isNullable && !node.isNullSafe) {
-            return resultScope;
-        }
 
         if (receiverType instanceof ClassType) {
             const ownInstanceMembers = classMembersOrEmpty(receiverType.sdsClass, (it) => !isStatic(it));
