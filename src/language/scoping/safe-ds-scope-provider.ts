@@ -409,7 +409,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
                     }
 
                     if (importedDeclaration.alias) {
-                        result.push({ ...description, name: importedDeclaration.alias });
+                        result.push({ ...description, name: importedDeclaration.alias.alias });
                     } else {
                         result.push(description);
                     }
