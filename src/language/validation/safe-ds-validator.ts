@@ -71,7 +71,7 @@ import {
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
-import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
+import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
     callableTypeParametersMustNotBeAnnotated,
@@ -86,6 +86,7 @@ import {
     namedTypeMustNotSetTypeParameterMultipleTimes,
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
+import {classMustOnlyInheritASingleClass} from "./inheritance.js";
 
 /**
  * Register custom validation checks.
@@ -124,7 +125,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callableTypeParameterMustNotHaveConstModifier,
             callableTypeResultsMustNotBeAnnotated,
         ],
-        SdsClass: [classMustContainUniqueNames],
+        SdsClass: [
+            classMustContainUniqueNames,
+            classMustOnlyInheritASingleClass(services),
+        ],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
         SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],

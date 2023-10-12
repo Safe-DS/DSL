@@ -1,4 +1,4 @@
-import { isSdsAnnotation, SdsAnnotatedObject, SdsAnnotation, SdsParameter } from '../generated/ast.js';
+import {isSdsAnnotation, SdsAnnotatedObject, SdsAnnotation, SdsAnnotationCall, SdsParameter} from '../generated/ast.js';
 import { annotationCallsOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
