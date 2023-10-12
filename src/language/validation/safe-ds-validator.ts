@@ -86,7 +86,7 @@ import {
     namedTypeMustNotSetTypeParameterMultipleTimes,
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
-import {classMustOnlyInheritASingleClass} from "./inheritance.js";
+import {classMustNotInheritItself, classMustOnlyInheritASingleClass} from "./inheritance.js";
 
 /**
  * Register custom validation checks.
@@ -128,6 +128,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsClass: [
             classMustContainUniqueNames,
             classMustOnlyInheritASingleClass(services),
+            classMustNotInheritItself(services),
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
