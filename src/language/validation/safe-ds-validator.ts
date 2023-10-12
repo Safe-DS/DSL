@@ -34,7 +34,11 @@ import {
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
-import { assignmentAssigneeMustGetValue, yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import {
+    assignmentAssigneeMustGetValue,
+    assignmentShouldNotImplicitlyIgnoreResult,
+    yieldMustNotBeUsedInPipeline,
+} from './other/statements/assignments.js';
 import {
     attributeMustHaveTypeHint,
     namedTypeMustSetAllTypeParameters,
@@ -99,7 +103,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             assigneeAssignedResultShouldNotBeDeprecated(services),
             assigneeAssignedResultShouldNotBeExperimental(services),
         ],
-        SdsAssignment: [assignmentAssigneeMustGetValue(services), assignmentShouldHaveMoreThanWildcardsAsAssignees],
+        SdsAssignment: [
+            assignmentAssigneeMustGetValue(services),
+            assignmentShouldNotImplicitlyIgnoreResult(services),
+            assignmentShouldHaveMoreThanWildcardsAsAssignees,
+        ],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty,
