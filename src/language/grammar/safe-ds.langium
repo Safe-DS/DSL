@@ -78,11 +78,19 @@ SdsImportedDeclarationList returns SdsImportedDeclarationList:
 
 interface SdsImportedDeclaration extends SdsObject {
     declaration: @SdsModuleMember;
-    alias?: string;
+    alias?: SdsImportedDeclarationAlias;
 }
 
 SdsImportedDeclaration returns SdsImportedDeclaration:
-    declaration=[SdsModuleMember:ID] ('as' alias=ID)?
+    declaration=[SdsModuleMember:ID] alias=SdsImportedDeclarationAlias?
+;
+
+interface SdsImportedDeclarationAlias extends SdsObject {
+    alias: string;
+}
+
+SdsImportedDeclarationAlias returns SdsImportedDeclarationAlias:
+    {SdsImportedDeclarationAlias} 'as' alias=ID
 ;
 
 interface SdsWildcardImport extends SdsImport {}
