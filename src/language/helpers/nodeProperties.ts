@@ -132,13 +132,7 @@ export const blockLambdaResultsOrEmpty = (node: SdsBlockLambda | undefined): Sds
         .filter(isSdsBlockLambdaResult)
         .toArray();
 };
-export const importedDeclarationsOrEmpty = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
-    return node?.importedDeclarationList?.importedDeclarations ?? [];
-};
 
-export const literalsOrEmpty = (node: SdsLiteralType | undefined): SdsLiteral[] => {
-    return node?.literalList?.literals ?? [];
-};
 export const classMembersOrEmpty = (
     node: SdsClass | undefined,
     filterFunction: (member: SdsClassMember) => boolean = () => true,
@@ -152,6 +146,14 @@ export const enumVariantsOrEmpty = (node: SdsEnum | undefined): SdsEnumVariant[]
 
 export const importsOrEmpty = (node: SdsModule | undefined): SdsImport[] => {
     return node?.imports ?? [];
+};
+
+export const importedDeclarationsOrEmpty = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
+    return node?.importedDeclarationList?.importedDeclarations ?? [];
+};
+
+export const literalsOrEmpty = (node: SdsLiteralType | undefined): SdsLiteral[] => {
+    return node?.literalList?.literals ?? [];
 };
 
 export const moduleMembersOrEmpty = (node: SdsModule | undefined): SdsModuleMember[] => {

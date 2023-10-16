@@ -9,7 +9,7 @@ import {
     enumMustContainUniqueNames,
     enumVariantMustContainUniqueNames,
     expressionLambdaMustContainUniqueNames,
-    functionMustContainUniqueNames,
+    functionMustContainUniqueNames, modulesMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
     nameShouldHaveCorrectCasing,
     pipelineMustContainUniqueNames,
@@ -156,7 +156,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
         ],
-        SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
+        SdsModule: [
+            moduleDeclarationsMustMatchFileKind,
+            modulesMustContainUniqueNames,
+            moduleWithDeclarationsMustStatePackage
+        ],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),

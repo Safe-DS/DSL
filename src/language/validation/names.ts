@@ -1,4 +1,5 @@
 import {
+    isSdsQualifiedImport,
     SdsAnnotation,
     SdsBlockLambda,
     SdsCallableType,
@@ -7,7 +8,8 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsExpressionLambda,
-    SdsFunction,
+    SdsFunction, SdsImportedDeclaration,
+    SdsModule,
     SdsPipeline,
     SdsSegment,
 } from '../generated/ast.js';
@@ -16,13 +18,18 @@ import {
     blockLambdaResultsOrEmpty,
     classMembersOrEmpty,
     enumVariantsOrEmpty,
+    importedDeclarationsOrEmpty,
+    importsOrEmpty,
     isStatic,
+    moduleMembersOrEmpty,
     parametersOrEmpty,
     placeholdersOrEmpty,
     resultsOrEmpty,
     typeParametersOrEmpty,
 } from '../helpers/nodeProperties.js';
 import { duplicatesBy } from '../helpers/collectionUtils.js';
+import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
+import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -135,6 +142,42 @@ const acceptCasingWarning = (
 // -----------------------------------------------------------------------------
 // Uniqueness
 // -----------------------------------------------------------------------------
+
+export const modulesMustContainUniqueNames = (node: SdsModule, accept: ValidationAcceptor): void => {
+    // Names of imported declarations must be unique
+    const importedDeclarations = importsOrEmpty(node).filter(isSdsQualifiedImport).flatMap(importedDeclarationsOrEmpty);
+    for (const duplicate of duplicatesBy(importedDeclarations, importedDeclarationName)) {
+        if (duplicate.alias) {
+            accept('error', `A declaration with name '${importedDeclarationName(duplicate)}' was imported already.`, {
+                node: duplicate.alias,
+                property: 'alias',
+                code: CODE_NAME_DUPLICATE,
+            });
+        } else {
+            accept('error', `A declaration with name '${importedDeclarationName(duplicate)}' was imported already.`, {
+                node: duplicate,
+                property: 'declaration',
+                code: CODE_NAME_DUPLICATE,
+            });
+        }
+    }
+
+    // Names of module members must be unique
+    if (isInPipelineFile(node)) {
+        const legalMembers = moduleMembersOrEmpty(node).filter(declarationIsAllowedInPipelineFile);
+        namesMustBeUnique(legalMembers, (name) => `A declaration with name '${name}' exists already in this file.`, accept);
+    } else if (isInStubFile(node)) {
+        const legalMembers = moduleMembersOrEmpty(node).filter(declarationIsAllowedInStubFile);
+        namesMustBeUnique(legalMembers, (name) => `A declaration with name '${name}' exists already in this file.`, accept);
+    } else if (isInTestFile(node)) {
+        const legalMembers = moduleMembersOrEmpty(node);
+        namesMustBeUnique(legalMembers, (name) => `A declaration with name '${name}' exists already in this file.`, accept);
+    }
+};
+
+const importedDeclarationName = (node: SdsImportedDeclaration | undefined): string | undefined => {
+    return node?.alias?.alias ?? node?.declaration.ref?.name
+}
 
 export const annotationMustContainUniqueNames = (node: SdsAnnotation, accept: ValidationAcceptor): void => {
     namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);

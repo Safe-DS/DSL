@@ -1,0 +1,84 @@
+package tests.validation.names.inTestFile
+
+// $TEST$ no error r"A declaration with name '\w*' was imported already\."
+from tests.validation.names.inTestFile.other import »UniqueImport«
+
+// $TEST$ no error r"A declaration with name '\w*' was imported already\."
+from tests.validation.names.inTestFile.other import »DuplicateImport«
+// $TEST$ error "A declaration with name 'DuplicateImport' was imported already."
+from tests.validation.names.inTestFile.other import »DuplicateImport«
+
+// $TEST$ no error r"A declaration with name '\w*' was imported already\."
+// $TEST$ error "A declaration with name 'DuplicateAliasedImport' was imported already."
+from tests.validation.names.inTestFile.other import »DuplicateAliasedImport«, DuplicateImport as »DuplicateAliasedImport«
+
+// $TEST$ no error r"A declaration with name '\w*' was imported already\."
+from tests.validation.names.inTestFile.other import »Unresolved«
+// $TEST$ no error r"A declaration with name '\w*' was imported already\."
+from tests.validation.names.inTestFile.other import »Unresolved«
+
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+annotation »UniqueAnnotation«
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+annotation »DuplicateAnnotation«
+// $TEST$ error "A declaration with name 'DuplicateAnnotation' exists already in this file."
+annotation »DuplicateAnnotation«
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+class »UniqueClass«
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+class »DuplicateClass«
+// $TEST$ error "A declaration with name 'DuplicateClass' exists already in this file."
+class »DuplicateClass«
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+enum »UniqueEnum«
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+enum »DuplicateEnum«
+// $TEST$ error "A declaration with name 'DuplicateEnum' exists already in this file."
+enum »DuplicateEnum«
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+fun »uniqueFunction«()
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+fun »duplicateFunction«()
+// $TEST$ error "A declaration with name 'duplicateFunction' exists already in this file."
+fun »duplicateFunction«()
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+pipeline »uniqueTest« {}
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+pipeline »duplicateTest« {}
+// $TEST$ error "A declaration with name 'duplicateTest' exists already in this file."
+pipeline »duplicateTest« {}
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+schema »UniqueSchema« {}
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+schema »DuplicateSchema« {}
+// $TEST$ error "A declaration with name 'DuplicateSchema' exists already in this file."
+schema »DuplicateSchema« {}
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+segment »uniqueSegment«() {}
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+segment »duplicateSegment«() {}
+// $TEST$ error "A declaration with name 'duplicateSegment' exists already in this file."
+segment »duplicateSegment«() {}
+
+
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+annotation »DuplicateDeclaration«
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+class »DuplicateDeclaration«
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+enum »DuplicateDeclaration«
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+fun »DuplicateDeclaration«()
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+pipeline »DuplicateDeclaration« {}
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+segment »DuplicateDeclaration«() {}
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+schema »DuplicateDeclaration« {}
