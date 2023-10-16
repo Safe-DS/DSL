@@ -1,0 +1,38 @@
+package tests.validation.other.expressions.references.staticEnumReference
+
+enum Enum {
+    Variant
+}
+
+class ClassWithEnum {
+    enum Enum {
+        Variant
+    }
+
+    class ClassWithEnum {
+        enum Enum {
+            Variant
+        }
+    }
+}
+
+pipeline test {
+    // $TEST$ no error "An enum must not be statically referenced."
+    »Unresolved«;
+    // $TEST$ error "An enum must not be statically referenced."
+    »Enum«;
+    // $TEST$ no error "An enum must not be statically referenced."
+    »Enum«();
+    // $TEST$ no error "An enum must not be statically referenced."
+    »Enum«.Variant;
+    // $TEST$ no error "An enum must not be statically referenced."
+    »Enum«.unresolved;
+    // $TEST$ error "An enum must not be statically referenced."
+    ClassWithEnum.»Enum«;
+    // $TEST$ no error "An enum must not be statically referenced."
+    ClassWithEnum.»Enum«.Variant;
+    // $TEST$ error "An enum must not be statically referenced."
+    ClassWithEnum.ClassWithEnum.»Enum«;
+    // $TEST$ no error "An enum must not be statically referenced."
+    ClassWithEnum.ClassWithEnum.»Enum«.Variant;
+}
