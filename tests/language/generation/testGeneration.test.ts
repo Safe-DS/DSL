@@ -38,7 +38,7 @@ describe('generation', async () => {
         for (const document of documents) {
             const module = document.parseResult.value as SdsModule;
             const fileName = document.uri.fsPath;
-            const generatedFilePaths = generatePython(module, fileName, test.actualOutputRoot.fsPath);
+            const generatedFilePaths = generatePython(services, module, fileName, test.actualOutputRoot.fsPath);
             actualOutputPaths.push(...generatedFilePaths);
         }
 

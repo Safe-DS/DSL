@@ -82,7 +82,7 @@ import {
 } from '../language/generated/ast.js';
 import { extractAstNode, extractDestinationAndName } from './cli-util.js';
 import chalk from 'chalk';
-import { createSafeDsServices } from '../language/safe-ds-module.js';
+import { createSafeDsServices, SafeDsServices } from '../language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import { toConstantExpressionOrUndefined } from '../language/partialEvaluation/toConstantExpressionOrUndefined.js';
 import {
@@ -113,7 +113,7 @@ import { IdManager } from '../language/helpers/idManager.js';
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createSafeDsServices(NodeFileSystem).SafeDs;
     const module = await extractAstNode<SdsModule>(fileName, services);
-    const generatedFilePath = generatePython(module, fileName, opts.destination);
+    const generatedFilePath = generatePython(services, module, fileName, opts.destination);
     // eslint-disable-next-line no-console
     console.log(chalk.green(`Python code generated successfully: ${generatedFilePath}`));
 };
@@ -123,10 +123,12 @@ const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
 const PYTHON_INDENT = '    ';
 
 class GenerationInfoFrame {
+    services: SafeDsServices;
     blockLambdaManager: IdManager<SdsBlockLambda>;
     importSet: Map<String, ImportData>;
 
-    constructor(importSet: Map<String, ImportData> = new Map<String, ImportData>()) {
+    constructor(services: SafeDsServices, importSet: Map<String, ImportData> = new Map<String, ImportData>()) {
+        this.services = services;
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
     }
@@ -140,6 +142,10 @@ class GenerationInfoFrame {
 
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
         return `__block_lambda_${this.blockLambdaManager.assignId(lambda)}`;
+    }
+
+    getServices(): SafeDsServices {
+        return this.services;
     }
 }
 
@@ -163,43 +169,11 @@ export type GenerateOptions = {
     destination?: string;
 };
 
-const getPythonNameOrDefault = function (object: SdsPipeline | SdsSegment | SdsParameter | SdsDeclaration) {
-    return getPythonName(object) || object.name;
-};
-const getPythonName = function (annotatedObject: SdsAnnotatedObject) {
-    let annotationCalls = annotationCallsOrEmpty(annotatedObject);
-    if (annotationCalls.length === 0) {
-        return undefined;
-    }
-    for (const annotationCall of annotationCalls) {
-        if (annotationCall.annotation.ref !== undefined && annotationCall.annotation.ref.name === 'PythonName') {
-            const argumentsArray = argumentsOrEmpty(annotationCall);
-            if (argumentsArray.length !== 0) {
-                if (isSdsString(argumentsArray[0].value)) {
-                    return argumentsArray[0].value.value;
-                }
-            }
-        }
-    }
-    return undefined;
-};
-
-const getPythonModuleName = function (annotatedObject: SdsAnnotatedObject): string | undefined {
-    let annotationCalls = annotationCallsOrEmpty(annotatedObject);
-    if (annotationCalls.length === 0) {
-        return undefined;
-    }
-    for (const annotationCall of annotationCalls) {
-        if (annotationCall.annotation.ref !== undefined && annotationCall.annotation.ref.name === 'PythonModule') {
-            const argumentsArray = argumentsOrEmpty(annotationCall);
-            if (argumentsArray.length !== 0) {
-                if (isSdsString(argumentsArray[0].value)) {
-                    return argumentsArray[0].value.value;
-                }
-            }
-        }
-    }
-    return undefined;
+const getPythonNameOrDefault = function (
+    services: SafeDsServices,
+    object: SdsPipeline | SdsSegment | SdsParameter | SdsDeclaration,
+) {
+    return services.builtins.Annotations.getPythonName(object) || object.name;
 };
 
 const generateAssignee = function (assignee: SdsAssignee): string {
@@ -379,8 +353,6 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
                     .replaceAll('\n', '\\n')}'`;
             case potentialConstantExpression instanceof SdsConstantEnumVariant:
                 return String((potentialConstantExpression as SdsConstantEnumVariant).value); // TODO SdsConstantEnumVariant?? generate something useful
-            default:
-                throw new Error(`Unknown SdsLiteral: ${expression}`);
         }
     }
 
@@ -506,7 +478,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         if (declaration === undefined) {
             return '<TODO undefined declaration for expression:reference>';
         }
-        return getPythonNameOrDefault(declaration); // TODO python name, may be fixed with reference / import
+        return getPythonNameOrDefault(frame.getServices(), declaration); // TODO python name, may be fixed with reference / import
     }
     // SdsArgument' | 'SdsChainedExpression' | 'SdsLambda'
     return `<TODO: expression:with type:${expression.$type}>`;
@@ -521,7 +493,7 @@ const generateParameter = function (
     if (parameter === undefined) {
         return '';
     }
-    return expandToString`${getPythonNameOrDefault(parameter)}${
+    return expandToString`${getPythonNameOrDefault(frame.getServices(), parameter)}${
         defaultValue && parameter.defaultValue !== undefined
             ? '=' + generateExpression(parameter.defaultValue, frame)
             : ''
@@ -536,23 +508,31 @@ const generateParameters = function (parameters: SdsParameterList | undefined, f
     return result.join(', ');
 };
 
-const generateSegment = function (segment: SdsSegment, importSet: Map<String, ImportData>): string {
-    const infoFrame = new GenerationInfoFrame(importSet);
+const generateSegment = function (
+    services: SafeDsServices,
+    segment: SdsSegment,
+    importSet: Map<String, ImportData>,
+): string {
+    const infoFrame = new GenerationInfoFrame(services, importSet);
     const segmentResult = segment.resultList?.results || [];
     let segmentBlock = generateBlock(segment.body, infoFrame);
     if (segmentResult.length !== 0) {
         // Segment should always have results
         segmentBlock += `\nreturn ${segmentResult.map((result) => result.name).join(', ')}`;
     }
-    return expandToString`def ${getPythonNameOrDefault(segment)}(${generateParameters(
+    return expandToString`def ${getPythonNameOrDefault(services, segment)}(${generateParameters(
         segment.parameterList,
         infoFrame,
     )}):\n${PYTHON_INDENT}${segmentBlock}`;
 };
 
-const generatePipeline = function (pipeline: SdsPipeline, importSet: Map<String, ImportData>): string {
-    const infoFrame = new GenerationInfoFrame(importSet);
-    return expandToString`def ${getPythonNameOrDefault(pipeline)}():\n${PYTHON_INDENT}${generateBlock(
+const generatePipeline = function (
+    services: SafeDsServices,
+    pipeline: SdsPipeline,
+    importSet: Map<String, ImportData>,
+): string {
+    const infoFrame = new GenerationInfoFrame(services, importSet);
+    return expandToString`def ${getPythonNameOrDefault(services, pipeline)}():\n${PYTHON_INDENT}${generateBlock(
         pipeline.body,
         infoFrame,
     )}`;
@@ -597,15 +577,15 @@ const generateImports = function (importSet: ImportData[]): string[] {
     return [...new Set(qualifiedImports), ...new Set(declaredImports)];
 };
 
-const generateModule = function (module: SdsModule): string {
+const generateModule = function (services: SafeDsServices, module: SdsModule): string {
     const importSet = new Map<String, ImportData>();
     const segments = streamAllContents(module)
         .filter(isSdsSegment)
-        .map((segment) => generateSegment(segment, importSet))
+        .map((segment) => generateSegment(services, segment, importSet))
         .toArray();
     const pipelines = streamAllContents(module)
         .filter(isSdsPipeline)
-        .map((pipeline) => generatePipeline(pipeline, importSet))
+        .map((pipeline) => generatePipeline(services, pipeline, importSet))
         .toArray();
     const imports = generateImports(Array.from(importSet.values()));
     const output: string[] = [];
@@ -634,25 +614,27 @@ const generateModule = function (module: SdsModule): string {
 };
 
 export const generatePython = function (
+    services: SafeDsServices,
     module: SdsModule,
     filePath: string,
     destination: string | undefined,
 ): string[] {
     const data = extractDestinationAndName(filePath, destination);
-    const pythonModuleName = getPythonModuleName(module);
+    const pythonModuleName = services.builtins.Annotations.getPythonModule(module);
     const packagePath = pythonModuleName === undefined ? module.name.split('.') : [pythonModuleName];
     const parentDirectoryPath = path.join(data.destination, ...packagePath);
 
     const generatedFiles = new Map<string, string>();
-    generatedFiles.set(`${path.join(parentDirectoryPath, `gen_${data.name}`)}.py`, generateModule(module));
+    generatedFiles.set(`${path.join(parentDirectoryPath, `gen_${data.name}`)}.py`, generateModule(services, module));
     for (const pipeline of streamAllContents(module).filter(isSdsPipeline)) {
         const entryPointFilename = `${path.join(
             parentDirectoryPath,
-            `gen_${data.name}_${getPythonNameOrDefault(pipeline)}`,
+            `gen_${data.name}_${getPythonNameOrDefault(services, pipeline)}`,
         )}.py`;
         const entryPointContent = expandToStringWithNL`from gen_${data.name} import ${getPythonNameOrDefault(
+            services,
             pipeline,
-        )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${getPythonNameOrDefault(pipeline)}()`;
+        )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${getPythonNameOrDefault(services, pipeline)}()`;
         generatedFiles.set(entryPointFilename, entryPointContent);
     }
     // const fileNode = new CompositeGeneratorNode();

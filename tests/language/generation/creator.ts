@@ -31,9 +31,12 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
     let runUntil: Location | undefined;
     // First read all stubs, then read all the other files; This should avoid broken references
-    await loadAllDocuments(services, inputUris);
+    const sortedInputUris = inputUris
+        .filter((uri) => uri.fsPath.endsWith('sdsstub'))
+        .sort()
+        .concat(...inputUris.filter((uri) => !uri.fsPath.endsWith('sdsstub')).sort());
 
-    for (const uri of inputUris) {
+    for (const uri of sortedInputUris) {
         const code = fs.readFileSync(uri.fsPath).toString();
 
         // File must not contain any errors
