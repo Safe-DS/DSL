@@ -122,7 +122,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
         ],
-        SdsAnnotatedObject: [singleUseAnnotationsMustNotBeRepeated(services)],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
@@ -145,7 +144,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
-        SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
+        SdsDeclaration: [
+            nameMustNotStartWithBlockLambdaPrefix,
+            nameShouldHaveCorrectCasing,
+            singleUseAnnotationsMustNotBeRepeated(services),
+        ],
         SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
