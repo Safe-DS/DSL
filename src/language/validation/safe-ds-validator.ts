@@ -83,6 +83,7 @@ import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lam
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
+    annotationCallMustNotLackArgumentList,
     callableTypeParametersMustNotBeAnnotated,
     callableTypeResultsMustNotBeAnnotated,
     lambdaParametersMustNotBeAnnotated,
@@ -123,6 +124,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
+            annotationCallMustNotLackArgumentList,
         ],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),

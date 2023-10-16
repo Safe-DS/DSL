@@ -2,15 +2,41 @@ import {
     isSdsCallable,
     isSdsCallableType,
     isSdsLambda,
+    SdsAnnotationCall,
     SdsCallableType,
     SdsLambda,
     SdsParameter,
 } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import { annotationCallsOrEmpty, parametersOrEmpty, resultsOrEmpty } from '../../../helpers/nodeProperties.js';
+import {
+    annotationCallsOrEmpty,
+    isRequiredParameter,
+    parametersOrEmpty,
+    resultsOrEmpty,
+} from '../../../helpers/nodeProperties.js';
+import { isEmpty } from 'radash';
 
+export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
 export const CODE_ANNOTATION_CALL_TARGET_PARAMETER = 'annotation-call/target-parameter';
 export const CODE_ANNOTATION_CALL_TARGET_RESULT = 'annotation-call/target-result';
+
+export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+    if (node.argumentList) {
+        return;
+    }
+
+    const requiredParameters = parametersOrEmpty(node.annotation.ref).filter(isRequiredParameter);
+    if (!isEmpty(requiredParameters)) {
+        accept(
+            'error',
+            `The annotation '${node.annotation.$refText}' has required parameters, so an argument list must be added.`,
+            {
+                node,
+                code: CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST,
+            },
+        );
+    }
+};
 
 export const callableTypeParametersMustNotBeAnnotated = (node: SdsCallableType, accept: ValidationAcceptor) => {
     for (const parameter of parametersOrEmpty(node)) {
