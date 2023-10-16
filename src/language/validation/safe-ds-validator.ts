@@ -90,7 +90,7 @@ import {
 } from './other/declarations/annotationCalls.js';
 import {
     memberAccessMustBeNullSafeIfReceiverIsNullable,
-    memberAccessOfEnumVariantMustNotLackInstantiation
+    memberAccessOfEnumVariantMustNotLackInstantiation,
 } from './other/expressions/memberAccesses.js';
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
