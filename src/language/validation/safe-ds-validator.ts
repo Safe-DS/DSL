@@ -96,6 +96,8 @@ import {
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
+import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
+import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 
 /**
  * Register custom validation checks.
@@ -122,7 +124,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
         ],
-        SdsAnnotatedObject: [singleUseAnnotationsMustNotBeRepeated(services)],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
@@ -145,7 +146,12 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
-        SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
+        SdsDeclaration: [
+            nameMustNotStartWithBlockLambdaPrefix,
+            nameShouldHaveCorrectCasing,
+            pythonNameShouldDifferFromSafeDsName(services),
+            singleUseAnnotationsMustNotBeRepeated(services),
+        ],
         SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
@@ -164,6 +170,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
             moduleMustContainUniqueNames,
             moduleWithDeclarationsMustStatePackage,
+            pythonModuleShouldDifferFromSafeDsPackage(services),
         ],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),

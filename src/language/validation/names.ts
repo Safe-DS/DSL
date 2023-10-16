@@ -35,6 +35,7 @@ import { duplicatesBy } from '../helpers/collectionUtils.js';
 import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
 import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 import { SafeDsServices } from '../safe-ds-module.js';
+import { listBuiltinFiles } from '../builtins/fileFinder.js';
 
 export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -225,6 +226,7 @@ export const functionMustContainUniqueNames = (node: SdsFunction, accept: Valida
 
 export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsServices) => {
     const packageManager = services.workspace.PackageManager;
+    const builtinUris = new Set(listBuiltinFiles().map((it) => it.toString()));
 
     return (node: SdsModule, accept: ValidationAcceptor): void => {
         for (const member of moduleMembersOrEmpty(node)) {
@@ -233,7 +235,12 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
             const memberUri = getDocument(member).uri?.toString();
 
             if (
-                declarationsInPackage.some((it) => it.name === member.name && it.documentUri.toString() !== memberUri)
+                declarationsInPackage.some(
+                    (it) =>
+                        it.name === member.name &&
+                        it.documentUri.toString() !== memberUri &&
+                        !builtinUris.has(it.documentUri.toString()),
+                )
             ) {
                 accept('error', `Multiple declarations in this package have the name '${member.name}'.`, {
                     node: member,
