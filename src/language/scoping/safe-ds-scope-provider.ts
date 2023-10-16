@@ -207,7 +207,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         let receiverType = this.typeComputer.computeType(node.receiver);
 
         if (receiverType instanceof ClassType) {
-            const ownInstanceMembers = classMembersOrEmpty(receiverType.sdsClass, (it) => !isStatic(it));
+            const ownInstanceMembers = classMembersOrEmpty(receiverType.declaration, (it) => !isStatic(it));
             // val superTypeMembers = type.sdsClass.superClassMembers()
             //     .filter { !it.isStatic() }
             //     .toList()
@@ -215,7 +215,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             // Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
             return this.createScopeForNodes(ownInstanceMembers, resultScope);
         } else if (receiverType instanceof EnumVariantType) {
-            const parameters = parametersOrEmpty(receiverType.sdsEnumVariant);
+            const parameters = parametersOrEmpty(receiverType.declaration);
             return this.createScopeForNodes(parameters, resultScope);
         }
 

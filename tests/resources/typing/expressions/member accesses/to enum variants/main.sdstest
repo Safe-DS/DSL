@@ -1,12 +1,16 @@
 package tests.typing.expressions.references.toEnumVariants
 
 enum MyEnum {
-    MyEnumVariantWithoutParameters
+    MyEnumVariantWithoutParameterList
+    MyEnumVariantWithoutParameters()
     MyEnumVariantWithParameters(p: Int)
 }
 
 pipeline myPipeline {
-    // $TEST$ serialization $type<MyEnumVariantWithoutParameters>
+    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    »MyEnum.MyEnumVariantWithoutParameterList«;
+
+    // $TEST$ serialization MyEnumVariantWithoutParameters
     »MyEnum.MyEnumVariantWithoutParameters«;
 
     // $TEST$ serialization $type<MyEnumVariantWithParameters>

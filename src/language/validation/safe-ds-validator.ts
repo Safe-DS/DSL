@@ -83,11 +83,15 @@ import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lam
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
+    annotationCallMustNotLackArgumentList,
     callableTypeParametersMustNotBeAnnotated,
     callableTypeResultsMustNotBeAnnotated,
     lambdaParametersMustNotBeAnnotated,
 } from './other/declarations/annotationCalls.js';
-import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
+import {
+    memberAccessMustBeNullSafeIfReceiverIsNullable,
+    memberAccessOfEnumVariantMustNotLackInstantiation,
+} from './other/expressions/memberAccesses.js';
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
 import {
@@ -123,6 +127,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
+            annotationCallMustNotLackArgumentList,
         ],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
@@ -164,6 +169,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
+            memberAccessOfEnumVariantMustNotLackInstantiation,
         ],
         SdsModule: [
             moduleDeclarationsMustMatchFileKind,

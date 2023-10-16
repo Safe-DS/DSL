@@ -69,6 +69,7 @@ import {
     SdsFunction,
     SdsIndexedAccess,
     SdsInfixOperation,
+    SdsMemberAccess,
     SdsParameter,
     SdsPrefixOperation,
     SdsReference,
@@ -83,6 +84,7 @@ import {
     resultsOrEmpty,
     typeArgumentsOrEmpty,
 } from '../helpers/nodeProperties.js';
+import { isEmpty } from 'radash';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
@@ -335,8 +337,7 @@ export class SafeDsTypeComputer {
                     return UnknownType;
             }
         } else if (isSdsMemberAccess(node)) {
-            const memberType = this.computeType(node.member);
-            return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
+            return this.computeTypeOfMemberAccess(node);
         } else if (isSdsParenthesizedExpression(node)) {
             return this.computeType(node.expression);
         } else if (isSdsPrefixOperation(node)) {
@@ -367,7 +368,7 @@ export class SafeDsTypeComputer {
             }
         } else if (receiverType instanceof StaticType) {
             const instanceType = receiverType.instanceType;
-            if (isSdsCallable(instanceType.sdsDeclaration)) {
+            if (isSdsCallable(instanceType.declaration)) {
                 return instanceType;
             }
         }
@@ -404,6 +405,21 @@ export class SafeDsTypeComputer {
         } else {
             return leftOperandType;
         }
+    }
+
+    private computeTypeOfMemberAccess(node: SdsMemberAccess) {
+        const memberType = this.computeType(node.member);
+
+        // A member access of an enum variant without parameters always yields an instance, even if it is not in a call
+        if (memberType instanceof StaticType && !isSdsCall(node.$container)) {
+            const instanceType = memberType.instanceType;
+
+            if (instanceType instanceof EnumVariantType && isEmpty(parametersOrEmpty(instanceType.declaration))) {
+                return instanceType;
+            }
+        }
+
+        return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {

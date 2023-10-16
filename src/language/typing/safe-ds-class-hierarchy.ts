@@ -52,7 +52,7 @@ export class SafeDsClassHierarchy {
         const [firstParentType] = parentTypesOrEmpty(node);
         const computedType = this.typeComputer.computeType(firstParentType);
         if (computedType instanceof ClassType) {
-            return computedType.sdsClass;
+            return computedType.declaration;
         }
 
         return undefined;

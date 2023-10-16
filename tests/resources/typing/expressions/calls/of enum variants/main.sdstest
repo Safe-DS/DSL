@@ -1,37 +1,47 @@
 package tests.typing.expressions.calls.ofEnumVariants
 
 enum MyEnum {
-    MyEnumVariantWithoutParameters
+    MyEnumVariantWithoutParameterList
+    MyEnumVariantWithoutParameters()
     MyEnumVariantWithParameters(p: Int)
 }
 
 pipeline myPipeline {
+    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    »MyEnum.MyEnumVariantWithoutParameterList()«;
+
+    // $TEST$ serialization $Unknown
+    val alias1 = MyEnum.MyEnumVariantWithoutParameterList;
+    »alias1()«;
+
+
     // $TEST$ serialization MyEnumVariantWithoutParameters
     »MyEnum.MyEnumVariantWithoutParameters()«;
 
-    // $TEST$ serialization MyEnumVariantWithoutParameters
-    val alias1 = MyEnum.MyEnumVariantWithoutParameters;
-    »alias1()«;
+    // $TEST$ serialization $Unknown
+    val alias2 = MyEnum.MyEnumVariantWithoutParameters;
+    »alias2()«;
 
     // $TEST$ serialization $Unknown
     »MyEnum.MyEnumVariantWithoutParameters()()«;
 
     // $TEST$ serialization $Unknown
-    val alias2 = MyEnum.MyEnumVariantWithoutParameters();
-    »alias2()«;
+    val alias3 = MyEnum.MyEnumVariantWithoutParameters();
+    »alias3()«;
 
 
     // $TEST$ serialization MyEnumVariantWithParameters
     »MyEnum.MyEnumVariantWithParameters(1)«;
 
     // $TEST$ serialization MyEnumVariantWithParameters
-    val alias3 = MyEnum.MyEnumVariantWithParameters;
-    »alias3(1)«;
+    val alias4 = MyEnum.MyEnumVariantWithParameters;
+    »alias4(1)«;
+
 
     // $TEST$ serialization $Unknown
     »MyEnum.MyEnumVariantWithParameters(1)()«;
 
     // $TEST$ serialization $Unknown
-    val alias4 = MyEnum.MyEnumVariantWithParameters(1);
-    »alias4()«;
+    val alias5 = MyEnum.MyEnumVariantWithParameters(1);
+    »alias5()«;
 }
