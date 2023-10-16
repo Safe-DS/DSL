@@ -79,7 +79,7 @@ enum »DuplicateDeclaration«
 fun »DuplicateDeclaration«()
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 schema »DuplicateDeclaration« {}
-// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+// $TEST$ error r"A declaration with name '\w*' exists already in this file\."
 pipeline »DuplicateDeclaration« {}
 // $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 segment »DuplicateDeclaration«() {}

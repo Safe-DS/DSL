@@ -73,7 +73,7 @@ schema »DuplicateSchema« {}
 pipeline »DuplicateDeclaration« {}
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 segment »DuplicateDeclaration«() {}
-// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 annotation »DuplicateDeclaration«
 // $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 class »DuplicateDeclaration«

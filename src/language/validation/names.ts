@@ -167,20 +167,31 @@ export const modulesMustContainUniqueNames = (node: SdsModule, accept: Validatio
 
     // Names of module members must be unique
     if (isInPipelineFile(node)) {
-        const legalMembers = moduleMembersOrEmpty(node).filter(declarationIsAllowedInPipelineFile);
-        namesMustBeUnique(legalMembers, (name) => `A declaration with name '${name}' exists already in this file.`, accept);
+        namesMustBeUnique(
+            moduleMembersOrEmpty(node),
+            (name) => `A declaration with name '${name}' exists already in this file.`,
+            accept,
+            declarationIsAllowedInPipelineFile,
+        );
     } else if (isInStubFile(node)) {
-        const legalMembers = moduleMembersOrEmpty(node).filter(declarationIsAllowedInStubFile);
-        namesMustBeUnique(legalMembers, (name) => `A declaration with name '${name}' exists already in this file.`, accept);
+        namesMustBeUnique(
+            moduleMembersOrEmpty(node),
+            (name) => `A declaration with name '${name}' exists already in this file.`,
+            accept,
+            declarationIsAllowedInStubFile,
+        );
     } else if (isInTestFile(node)) {
-        const legalMembers = moduleMembersOrEmpty(node);
-        namesMustBeUnique(legalMembers, (name) => `A declaration with name '${name}' exists already in this file.`, accept);
+        namesMustBeUnique(
+            moduleMembersOrEmpty(node),
+            (name) => `A declaration with name '${name}' exists already in this file.`,
+            accept,
+        );
     }
 };
 
 const importedDeclarationName = (node: SdsImportedDeclaration | undefined): string | undefined => {
-    return node?.alias?.alias ?? node?.declaration.ref?.name
-}
+    return node?.alias?.alias ?? node?.declaration.ref?.name;
+};
 
 export const annotationMustContainUniqueNames = (node: SdsAnnotation, accept: ValidationAcceptor): void => {
     namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
@@ -274,7 +285,7 @@ export const schemaMustContainUniqueNames = (node: SdsSchema, accept: Validation
             code: CODE_NAME_DUPLICATE,
         });
     }
-}
+};
 
 export const segmentMustContainUniqueNames = (node: SdsSegment, accept: ValidationAcceptor): void => {
     const parametersAndPlaceholder = [...parametersOrEmpty(node), ...placeholdersOrEmpty(node.body)];
@@ -295,12 +306,15 @@ const namesMustBeUnique = (
     nodes: Iterable<SdsDeclaration>,
     createMessage: (name: string) => string,
     accept: ValidationAcceptor,
+    shouldReportErrorOn: (node: SdsDeclaration) => boolean = () => true,
 ): void => {
     for (const node of duplicatesBy(nodes, (it) => it.name)) {
-        accept('error', createMessage(node.name), {
-            node,
-            property: 'name',
-            code: CODE_NAME_DUPLICATE,
-        });
+        if (shouldReportErrorOn(node)) {
+            accept('error', createMessage(node.name), {
+                node,
+                property: 'name',
+                code: CODE_NAME_DUPLICATE,
+            });
+        }
     }
 };
