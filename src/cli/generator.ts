@@ -1,24 +1,11 @@
 import fs from 'fs';
-import {
-    CompositeGeneratorNode,
-    expandToString,
-    expandToStringWithNL,
-    findLocalReferences,
-    streamAllContents,
-    toString,
-    getDocument,
-    Reference,
-} from 'langium';
+import { expandToString, expandToStringWithNL, getDocument, Reference, streamAllContents } from 'langium';
 import path from 'path';
 import {
-    isQualifiedName,
-    isSdsAssignee,
     isSdsAssignment,
     isSdsBlockLambda,
     isSdsBlockLambdaResult,
     isSdsCall,
-    isSdsCallable,
-    isSdsCallableType,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
@@ -26,11 +13,8 @@ import {
     isSdsInfixOperation,
     isSdsList,
     isSdsLiteral,
-    isSdsLiteralType,
     isSdsMap,
     isSdsMemberAccess,
-    isSdsMemberType,
-    isSdsNamedType,
     isSdsParenthesizedExpression,
     isSdsPipeline,
     isSdsPlaceholder,
@@ -38,46 +22,35 @@ import {
     isSdsReference,
     isSdsResult,
     isSdsSegment,
-    isSdsString,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringPart,
     isSdsTemplateStringStart,
-    isSdsUnionType,
     isSdsWildcard,
     isSdsYield,
-    SdsAnnotatedObject,
     SdsArgument,
-    SdsArgumentList,
     SdsAssignee,
     SdsAssignment,
     SdsBlock,
     SdsBlockLambda,
     SdsBlockLambdaResult,
     SdsCall,
-    SdsCallable,
     SdsDeclaration,
-    SdsEnumVariant,
     SdsExpression,
-    SdsExpressionLambda,
     SdsExpressionStatement,
     SdsList,
     SdsMap,
     SdsMemberAccess,
     SdsModule,
-    SdsNamedType,
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
     SdsPlaceholder,
-    SdsPrefixOperation,
     SdsReference,
     SdsResult,
-    SdsResultList,
     SdsSegment,
     SdsStatement,
-    SdsType,
     SdsYield,
 } from '../language/generated/ast.js';
 import { extractAstNode, extractDestinationAndName } from './cli-util.js';
@@ -95,15 +68,10 @@ import {
 } from '../language/partialEvaluation/model.js';
 import {
     abstractResultsOrEmpty,
-    annotationCallsOrEmpty,
-    argumentsOrEmpty,
     assigneesOrEmpty,
     blockLambdaResultsOrEmpty,
-    callParametersOrEmpty,
-    callResultsOrEmpty,
     isRequiredParameter,
     parametersOrEmpty,
-    resultsOrEmpty,
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
 import { group } from 'radash';
@@ -196,10 +164,11 @@ const generateAssignee = function (assignee: SdsAssignee): string {
 };
 
 const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
-    const requiredAssignees =
-        isSdsCallable(assignment.expression) || isSdsCall(assignment.expression)
-            ? callResultsOrEmpty(assignment.expression as SdsCallable).length
-            : 1;
+    const requiredAssignees = isSdsCall(assignment.expression)
+        ? abstractResultsOrEmpty(
+              frame.getServices().helpers.NodeMapper.callToCallableOrUndefined(assignment.expression),
+          ).length
+        : 1;
     const assignees = assigneesOrEmpty(assignment);
     if (assignees.some((value) => !isSdsWildcard(value))) {
         const actualAssignees = assignees.map(generateAssignee);
@@ -265,35 +234,6 @@ const generateBlock = function (block: SdsBlock, frame: GenerationInfoFrame): st
     return expandToString`${statements.map((stmt) => generateStatement(stmt, frame)).join('\n')}`;
 };
 
-const generateType = function (type: SdsType | undefined): string | null {
-    if (type === undefined) {
-        return null;
-    }
-    switch (true) {
-        case isSdsCallableType(type):
-            // TODO do something
-            return '<TODO: type:callable>';
-        case isSdsLiteralType(type):
-            // TODO do something
-            return '<TODO: type:literal>';
-        case isSdsMemberType(type):
-            // TODO do something
-            return '<TODO: type:member>';
-        case isSdsNamedType(type):
-            const namedType = type as SdsNamedType;
-            if (namedType.typeArgumentList === undefined) {
-                return null;
-            }
-            // TODO do something
-            return '<TODO: type:named>';
-        case isSdsUnionType(type):
-            // TODO do something
-            return '<TODO: type:union>';
-        default:
-            throw new Error(`Unknown SdsType: ${type}`);
-    }
-};
-
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
     return expandToString`${
         argument.parameter !== undefined &&
@@ -304,9 +244,9 @@ const generateArgument = function (argument: SdsArgument, frame: GenerationInfoF
     }${generateExpression(argument.value, frame)}`;
 };
 
-const sortArguments = function (argumentList: SdsArgument[], call: SdsCall): SdsArgument[] {
+const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[], call: SdsCall): SdsArgument[] {
     // $containerIndex contains the index of the parameter in the receivers parameter list
-    const parameters = callParametersOrEmpty(call);
+    const parameters = parametersOrEmpty(services.helpers.NodeMapper.callToCallableOrUndefined(call));
     const sortedArgs = argumentList
         .slice()
         .filter((value) => value.parameter !== undefined && value.parameter.ref !== undefined)
@@ -383,7 +323,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     }
     if (isSdsCall(expression)) {
         // TODO sort arguments to target order
-        const sortedArgs = sortArguments(expression.argumentList.arguments, expression);
+        const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments, expression);
         return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
