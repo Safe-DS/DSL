@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {expandToString, expandToStringWithNL, findRootNode, getDocument, Reference, streamAllContents} from 'langium';
+import {expandToString, expandToStringWithNL, findRootNode, getDocument, streamAllContents} from 'langium';
 import path from 'path';
 import {
     isSdsAssignment,
@@ -38,7 +38,6 @@ import {
     SdsBlock,
     SdsBlockLambda,
     SdsBlockLambdaResult,
-    SdsCall,
     SdsDeclaration,
     SdsExpression,
     SdsExpressionStatement,
@@ -76,7 +75,6 @@ import {
     importedDeclarationsOrEmpty,
     importsOrEmpty,
     isRequiredParameter,
-    parametersOrEmpty,
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
 import {group} from 'radash';
@@ -243,27 +241,27 @@ const generateBlock = function (block: SdsBlock, frame: GenerationInfoFrame): st
 };
 
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
+    const parameter = frame.getServices().helpers.NodeMapper.argumentToParameterOrUndefined(argument);
+    const req = parameter !== undefined && !isRequiredParameter(parameter);
     return expandToString`${
-        argument.parameter !== undefined &&
-        argument.parameter.ref !== undefined &&
-        !isRequiredParameter(argument.parameter.ref)
-            ? generateParameter(argument.parameter.ref, frame, false) + '='
+        parameter !== undefined && !isRequiredParameter(parameter)
+            ? generateParameter(parameter, frame, false) + '='
             : ''
     }${generateExpression(argument.value, frame)}`;
 };
 
-const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[], call: SdsCall): SdsArgument[] {
+const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[]): SdsArgument[] {
     // $containerIndex contains the index of the parameter in the receivers parameter list
-    const parameters = parametersOrEmpty(services.helpers.NodeMapper.callToCallableOrUndefined(call));
-    const sortedArgs = argumentList
+
+    const parameters = argumentList.map((argument) => {
+        return { par: services.helpers.NodeMapper.argumentToParameterOrUndefined(argument), arg: argument };
+    });
+    const sortedArgs = parameters
         .slice()
-        .filter((value) => value.parameter !== undefined && value.parameter.ref !== undefined)
-        .sort(
-            (a, b) =>
-                parameters.indexOf(<SdsParameter>(<Reference<SdsParameter>>b.parameter).ref) -
-                parameters.indexOf(<SdsParameter>(<Reference<SdsParameter>>a.parameter).ref),
-        );
-    return sortedArgs.length === 0 ? argumentList : sortedArgs;
+        .filter((value) => value.par !== undefined)
+        .sort((a, b) => a.par?.$containerIndex - b.par?.$containerIndex)
+        .map((value) => value.arg);
+    return sortedArgs;
 };
 
 const generateExpression = function (expression: SdsExpression, frame: GenerationInfoFrame): string {
@@ -330,8 +328,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         return frame.getUniqueLambdaBlockName(blockLambda);
     }
     if (isSdsCall(expression)) {
-        // TODO sort arguments to target order
-        const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments, expression);
+        const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments);
         return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
