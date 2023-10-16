@@ -96,8 +96,8 @@ import {
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
-import {pythonNameShouldDifferFromSafeDsName} from "./builtins/pythonName.js";
-import {pythonModuleShouldDifferFromSafeDsPackage} from "./builtins/pythonModule.js";
+import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
+import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 
 /**
  * Register custom validation checks.
