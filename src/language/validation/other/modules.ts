@@ -1,6 +1,6 @@
-import {ValidationAcceptor} from 'langium';
-import {isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsDeclaration, SdsModule} from '../../generated/ast.js';
-import {isInPipelineFile, isInStubFile} from '../../helpers/fileExtensions.js';
+import { ValidationAcceptor } from 'langium';
+import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsDeclaration, SdsModule } from '../../generated/ast.js';
+import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
 
 export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
@@ -46,9 +46,9 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
 };
 
 export const declarationIsAllowedInPipelineFile = (declaration: SdsDeclaration): boolean => {
-    return isSdsPipeline(declaration) || isSdsSegment(declaration)
-}
+    return isSdsPipeline(declaration) || isSdsSegment(declaration);
+};
 
 export const declarationIsAllowedInStubFile = (declaration: SdsDeclaration): boolean => {
-    return !isSdsPipeline(declaration) && !isSdsSegment(declaration)
-}
+    return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
+};
