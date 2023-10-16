@@ -88,7 +88,10 @@ import {
     callableTypeResultsMustNotBeAnnotated,
     lambdaParametersMustNotBeAnnotated,
 } from './other/declarations/annotationCalls.js';
-import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
+import {
+    memberAccessMustBeNullSafeIfReceiverIsNullable,
+    memberAccessOfEnumVariantMustNotLackInstantiation
+} from './other/expressions/memberAccesses.js';
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
 import {
@@ -166,6 +169,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
+            memberAccessOfEnumVariantMustNotLackInstantiation,
         ],
         SdsModule: [
             moduleDeclarationsMustMatchFileKind,

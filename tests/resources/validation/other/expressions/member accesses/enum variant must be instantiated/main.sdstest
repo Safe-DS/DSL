@@ -1,0 +1,50 @@
+package tests.validation.other.expressions.memberAccesses.enumVariantMustBeInstantiated
+
+enum MyEnum {
+    EnumVariantWithoutParameterList
+    EnumVariantWithEmptyParameterList()
+    EnumVariantWithoutRequiredParameters(a: Int = 0)
+    EnumVariantWithRequiredParameters(b: Int)
+}
+
+pipeline test {
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»EnumVariantWithoutParameterList«;
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»EnumVariantWithoutParameterList«();
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    val alias1 = MyEnum.EnumVariantWithoutParameterList;
+    »alias1«;
+
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»EnumVariantWithEmptyParameterList«;
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»EnumVariantWithEmptyParameterList«();
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    val alias2 = MyEnum.EnumVariantWithEmptyParameterList;
+    »alias2«;
+
+    // $TEST$ error "The enum variant 'EnumVariantWithoutRequiredParameters' has parameters, so an argument list must be added."
+    MyEnum.»EnumVariantWithoutRequiredParameters«;
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»EnumVariantWithoutRequiredParameters«();
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    val alias3 = MyEnum.EnumVariantWithoutRequiredParameters;
+    »alias3«;
+
+    // $TEST$ error "The enum variant 'EnumVariantWithRequiredParameters' has parameters, so an argument list must be added."
+    MyEnum.»EnumVariantWithRequiredParameters«;
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»EnumVariantWithRequiredParameters«();
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    val alias4 = MyEnum.EnumVariantWithRequiredParameters;
+    »alias4«;
+
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»Unresolved«;
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    MyEnum.»Unresolved«();
+    // $TEST$ no error r"The enum variant '\w*' has parameters, so an argument list must be added\."
+    val alias5 = MyEnum.Unresolved;
+    »alias5«;
+}
