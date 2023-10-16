@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { expandToString, expandToStringWithNL, getDocument, Reference, streamAllContents } from 'langium';
+import {expandToString, expandToStringWithNL, findRootNode, getDocument, Reference, streamAllContents} from 'langium';
 import path from 'path';
 import {
     isSdsAssignment,
@@ -15,10 +15,12 @@ import {
     isSdsLiteral,
     isSdsMap,
     isSdsMemberAccess,
+    isSdsModule,
     isSdsParenthesizedExpression,
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsPrefixOperation,
+    isSdsQualifiedImport,
     isSdsReference,
     isSdsResult,
     isSdsSegment,
@@ -28,6 +30,7 @@ import {
     isSdsTemplateStringPart,
     isSdsTemplateStringStart,
     isSdsWildcard,
+    isSdsWildcardImport,
     isSdsYield,
     SdsArgument,
     SdsAssignee,
@@ -53,11 +56,11 @@ import {
     SdsStatement,
     SdsYield,
 } from '../language/generated/ast.js';
-import { extractAstNode, extractDestinationAndName } from './cli-util.js';
+import {extractAstNode, extractDestinationAndName} from './cli-util.js';
 import chalk from 'chalk';
-import { createSafeDsServices, SafeDsServices } from '../language/safe-ds-module.js';
-import { NodeFileSystem } from 'langium/node';
-import { toConstantExpressionOrUndefined } from '../language/partialEvaluation/toConstantExpressionOrUndefined.js';
+import {createSafeDsServices, SafeDsServices} from '../language/safe-ds-module.js';
+import {NodeFileSystem} from 'langium/node';
+import {toConstantExpressionOrUndefined} from '../language/partialEvaluation/toConstantExpressionOrUndefined.js';
 import {
     SdsConstantBoolean,
     SdsConstantEnumVariant,
@@ -70,12 +73,15 @@ import {
     abstractResultsOrEmpty,
     assigneesOrEmpty,
     blockLambdaResultsOrEmpty,
+    importedDeclarationsOrEmpty,
+    importsOrEmpty,
     isRequiredParameter,
     parametersOrEmpty,
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
-import { group } from 'radash';
-import { IdManager } from '../language/helpers/idManager.js';
+import {group} from 'radash';
+import {IdManager} from '../language/helpers/idManager.js';
+import {isInStubFile} from '../language/helpers/fileExtensions.js';
 
 /* c8 ignore start */
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
@@ -101,10 +107,12 @@ class GenerationInfoFrame {
         this.importSet = importSet;
     }
 
-    addImport(importData: ImportData) {
-        const hashKey = JSON.stringify(importData);
-        if (!this.importSet.has(hashKey)) {
-            this.importSet.set(hashKey, importData);
+    addImport(importData: ImportData | undefined) {
+        if (importData) {
+            const hashKey = JSON.stringify(importData);
+            if (!this.importSet.has(hashKey)) {
+                this.importSet.set(hashKey, importData);
+            }
         }
     }
 
@@ -410,18 +418,93 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
     if (isSdsReference(expression)) {
-        const currentDocument = getDocument(expression);
-        // TODO generate reference
-        // TODO import
         const declaration = (expression as SdsReference).target.ref;
-        //return '<TODO: expression:reference>';
         if (declaration === undefined) {
-            return '<TODO undefined declaration for expression:reference>';
+            throw new Error('Unknown corresponding declaration to reference');
         }
-        return getPythonNameOrDefault(frame.getServices(), declaration); // TODO python name, may be fixed with reference / import
+        const declarationQualifiedName = getReferenceDeclarationQualifiedName(declaration);
+        const referenceImport =
+            getExternalReferenceNeededImport(frame.getServices(), expression, declaration) ||
+            getInternalReferenceNeededImport(frame.getServices(), expression, declaration);
+        frame.addImport(referenceImport);
+        return referenceImport?.alias || getPythonNameOrDefault(frame.getServices(), declaration);
     }
     // SdsArgument' | 'SdsChainedExpression' | 'SdsLambda'
-    return `<TODO: expression:with type:${expression.$type}>`;
+    throw new Error(`Unknown expression type: ${expression.$type}`);
+};
+
+const getExternalReferenceNeededImport = function (
+    services: SafeDsServices,
+    expression: SdsExpression,
+    declaration: SdsDeclaration,
+): ImportData | undefined {
+    const currentModule = <SdsModule>findRootNode(expression);
+    const targetModule = <SdsModule>findRootNode(declaration);
+    for (const value of importsOrEmpty(currentModule)) {
+        // Verify same package
+        if (value.package !== targetModule.name) {
+            continue;
+        }
+        if (isSdsQualifiedImport(value)) {
+            const importedDeclarations = importedDeclarationsOrEmpty(value);
+            for (const importedDeclaration of importedDeclarations) {
+                if (declaration === importedDeclaration.declaration.ref) {
+                    if (importedDeclaration.alias !== undefined) {
+                        return new ImportData(
+                            services.builtins.Annotations.getPythonModule(targetModule) || value.package,
+                            importedDeclaration.declaration?.ref?.name,
+                            importedDeclaration.alias.alias,
+                        );
+                    } else {
+                        return new ImportData(
+                            services.builtins.Annotations.getPythonModule(targetModule) || value.package,
+                            importedDeclaration.declaration?.ref?.name,
+                        );
+                    }
+                }
+            }
+        }
+        if (isSdsWildcardImport(value)) {
+            // TODO wildcard import?
+            throw new Error('Wildcard imports are not yet handled');
+        }
+    }
+    return undefined;
+};
+
+const getInternalReferenceNeededImport = function (
+    services: SafeDsServices,
+    expression: SdsExpression,
+    declaration: SdsDeclaration,
+): ImportData | undefined {
+    const currentModule = <SdsModule>findRootNode(expression);
+    const targetModule = <SdsModule>findRootNode(declaration);
+    if (currentModule !== targetModule && !isInStubFile(targetModule)) {
+        // TODO __skip__ in file name?
+        return new ImportData(
+            `${
+                services.builtins.Annotations.getPythonModule(targetModule) || targetModule.name
+            }.${formatGeneratedFileName(getModuleFileBaseName(targetModule))}`,
+            getPythonNameOrDefault(services, declaration),
+        );
+    }
+    return undefined;
+};
+
+const getModuleFileBaseName = function (module: SdsModule): string {
+    const filePath = getDocument(module).uri.fsPath;
+    return path.basename(filePath, path.extname(filePath));
+};
+
+const getReferenceDeclarationQualifiedName = function (declaration: SdsDeclaration | undefined): string | undefined {
+    if (declaration === undefined) {
+        return undefined;
+    }
+    const rootModule = findRootNode(declaration);
+    if (isSdsModule(rootModule)) {
+        return `${rootModule.name}.${declaration.name}`;
+    }
+    return undefined;
 };
 
 const generateParameter = function (
@@ -553,25 +636,38 @@ const generateModule = function (services: SafeDsServices, module: SdsModule): s
     return expandToStringWithNL`${output.join('\n')}`;
 };
 
+const formatGeneratedFileName = function (baseName: string): string {
+    return `gen_${baseName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '')}`;
+};
+
 export const generatePython = function (
     services: SafeDsServices,
     module: SdsModule,
     filePath: string,
     destination: string | undefined,
 ): string[] {
+    // Do not generate stub files
+    if (isInStubFile(module)) {
+        return [];
+    }
     const data = extractDestinationAndName(filePath, destination);
     const pythonModuleName = services.builtins.Annotations.getPythonModule(module);
     const packagePath = pythonModuleName === undefined ? module.name.split('.') : [pythonModuleName];
     const parentDirectoryPath = path.join(data.destination, ...packagePath);
 
     const generatedFiles = new Map<string, string>();
-    generatedFiles.set(`${path.join(parentDirectoryPath, `gen_${data.name}`)}.py`, generateModule(services, module));
+    generatedFiles.set(
+        `${path.join(parentDirectoryPath, formatGeneratedFileName(data.name))}.py`,
+        generateModule(services, module),
+    );
     for (const pipeline of streamAllContents(module).filter(isSdsPipeline)) {
         const entryPointFilename = `${path.join(
             parentDirectoryPath,
-            `gen_${data.name}_${getPythonNameOrDefault(services, pipeline)}`,
+            `${formatGeneratedFileName(data.name)}_${getPythonNameOrDefault(services, pipeline)}`,
         )}.py`;
-        const entryPointContent = expandToStringWithNL`from gen_${data.name} import ${getPythonNameOrDefault(
+        const entryPointContent = expandToStringWithNL`from ${formatGeneratedFileName(
+            data.name,
+        )} import ${getPythonNameOrDefault(
             services,
             pipeline,
         )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${getPythonNameOrDefault(services, pipeline)}()`;
