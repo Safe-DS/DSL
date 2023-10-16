@@ -12,7 +12,7 @@ import {
     functionMustContainUniqueNames, modulesMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
     nameShouldHaveCorrectCasing,
-    pipelineMustContainUniqueNames,
+    pipelineMustContainUniqueNames, schemaMustContainUniqueNames,
     segmentMustContainUniqueNames,
 } from './names.js';
 import {
@@ -185,6 +185,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             referenceTargetShouldNotExperimental(services),
         ],
         SdsResult: [resultMustHaveTypeHint],
+        SdsSchema: [schemaMustContainUniqueNames],
         SdsSegment: [
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),

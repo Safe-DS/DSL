@@ -27,6 +27,7 @@ import {
     SdsCallable,
     SdsClass,
     SdsClassMember,
+    SdsColumn,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
@@ -42,6 +43,7 @@ import {
     SdsQualifiedImport,
     SdsResult,
     SdsResultList,
+    SdsSchema,
     SdsStatement,
     SdsType,
     SdsTypeArgument,
@@ -138,6 +140,10 @@ export const classMembersOrEmpty = (
     filterFunction: (member: SdsClassMember) => boolean = () => true,
 ): SdsClassMember[] => {
     return node?.body?.members?.filter(filterFunction) ?? [];
+};
+
+export const columnsOrEmpty = (node: SdsSchema | undefined): SdsColumn[] => {
+    return node?.columnList?.columns ?? [];
 };
 
 export const enumVariantsOrEmpty = (node: SdsEnum | undefined): SdsEnumVariant[] => {

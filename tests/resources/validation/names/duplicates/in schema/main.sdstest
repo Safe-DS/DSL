@@ -1,0 +1,10 @@
+package tests.validation.names.duplicates.inSchema
+
+schema S {
+	// $TEST$ no error r"A column with name '\w*' exists already\."
+    »"duplicateColumn"«: Int,
+    // $TEST$ error "A column with name 'duplicateColumn' exists already."
+    »"duplicateColumn"«: Int,
+    // $TEST$ no error r"A column with name '\w*' exists already\."
+    »"uniqueColumn"«: Int,
+}

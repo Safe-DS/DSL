@@ -8,15 +8,18 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsExpressionLambda,
-    SdsFunction, SdsImportedDeclaration,
+    SdsFunction,
+    SdsImportedDeclaration,
     SdsModule,
     SdsPipeline,
+    SdsSchema,
     SdsSegment,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import {
     blockLambdaResultsOrEmpty,
     classMembersOrEmpty,
+    columnsOrEmpty,
     enumVariantsOrEmpty,
     importedDeclarationsOrEmpty,
     importsOrEmpty,
@@ -261,6 +264,17 @@ export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: Valida
         accept,
     );
 };
+
+export const schemaMustContainUniqueNames = (node: SdsSchema, accept: ValidationAcceptor): void => {
+    const duplicates = duplicatesBy(columnsOrEmpty(node), (it) => it.columnName.value);
+    for (const duplicate of duplicates) {
+        accept('error', `A column with name '${duplicate.columnName.value}' exists already.`, {
+            node: duplicate,
+            property: 'columnName',
+            code: CODE_NAME_DUPLICATE,
+        });
+    }
+}
 
 export const segmentMustContainUniqueNames = (node: SdsSegment, accept: ValidationAcceptor): void => {
     const parametersAndPlaceholder = [...parametersOrEmpty(node), ...placeholdersOrEmpty(node.body)];
