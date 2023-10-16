@@ -96,6 +96,7 @@ import {
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
+import {pythonNameShouldDifferFromSafeDsName} from "./builtins/pythonName.js";
 
 /**
  * Register custom validation checks.
@@ -147,6 +148,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsDeclaration: [
             nameMustNotStartWithBlockLambdaPrefix,
             nameShouldHaveCorrectCasing,
+            pythonNameShouldDifferFromSafeDsName(services),
             singleUseAnnotationsMustNotBeRepeated(services),
         ],
         SdsEnum: [enumMustContainUniqueNames],

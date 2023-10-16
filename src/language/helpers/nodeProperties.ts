@@ -17,6 +17,7 @@ import {
     SdsAbstractCall,
     SdsAbstractResult,
     SdsAnnotatedObject,
+    SdsAnnotation,
     SdsAnnotationCall,
     SdsArgument,
     SdsAssignee,
@@ -56,6 +57,16 @@ import { AstNode, getContainerOfType, stream } from 'langium';
 // -------------------------------------------------------------------------------------------------
 // Checks
 // -------------------------------------------------------------------------------------------------
+
+export const hasAnnotationCallOf = (
+    node: SdsAnnotatedObject | undefined,
+    expected: SdsAnnotation | undefined,
+): boolean => {
+    return annotationCallsOrEmpty(node).some((it) => {
+        const actual = it.annotation?.ref;
+        return actual === expected;
+    });
+};
 
 export const isInternal = (node: SdsDeclaration): boolean => {
     return isSdsSegment(node) && node.visibility === 'internal';
@@ -121,6 +132,17 @@ export const annotationCallsOrEmpty = (node: SdsAnnotatedObject | undefined): Sd
         return node?.annotationCalls ?? [];
     }
 };
+
+export const findFirstAnnotationCallOf = (
+    node: SdsAnnotatedObject | undefined,
+    expected: SdsAnnotation | undefined,
+): SdsAnnotationCall | undefined => {
+    return annotationCallsOrEmpty(node).find((it) => {
+        const actual = it.annotation?.ref;
+        return actual === expected;
+    });
+};
+
 export const argumentsOrEmpty = (node: SdsAbstractCall | undefined): SdsArgument[] => {
     return node?.argumentList?.arguments ?? [];
 };

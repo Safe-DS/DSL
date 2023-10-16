@@ -42,30 +42,34 @@ import {
     SdsTemplateString,
 } from '../generated/ast.js';
 
+/* c8 ignore start */
 /**
- * Tries to evaluate this expression. On success an SdsConstantExpression is returned, otherwise `null`.
+ * Tries to evaluate this expression. On success an SdsConstantExpression is returned, otherwise `undefined`.
  */
-export const toConstantExpressionOrUndefined = (node: AstNode): SdsConstantExpression | null => {
+export const toConstantExpressionOrUndefined = (node: AstNode | undefined): SdsConstantExpression | undefined => {
+    if (!node) {
+        return undefined;
+    }
+
     return toConstantExpressionOrNullImpl(node, new Map());
 };
 
-/* c8 ignore start */
 const toConstantExpressionOrNullImpl = (
     node: AstNode,
     substitutions: ParameterSubstitutions,
-): SdsConstantExpression | null => {
+): SdsConstantExpression | undefined => {
     const simplifiedExpression = simplify(node, substitutions)?.unwrap();
     if (simplifiedExpression instanceof SdsConstantExpression) {
         return simplifiedExpression;
     } else {
-        return null;
+        return undefined;
     }
 };
 
-const simplify = (node: AstNode, substitutions: ParameterSubstitutions): SdsSimplifiedExpression | null => {
+const simplify = (node: AstNode, substitutions: ParameterSubstitutions): SdsSimplifiedExpression | undefined => {
     // Only expressions have a value
     if (!isSdsExpression(node)) {
-        return null;
+        return undefined;
     }
 
     // Base cases
@@ -123,40 +127,40 @@ const simplify = (node: AstNode, substitutions: ParameterSubstitutions): SdsSimp
 const simplifyBlockLambda = (
     _node: SdsBlockLambda,
     _substitutions: ParameterSubstitutions,
-): SdsIntermediateBlockLambda | null => {
+): SdsIntermediateBlockLambda | undefined => {
     //     return when {
     //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateBlockLambda(
     //     parameters = parametersOrEmpty(),
     //     results = blockLambdaResultsOrEmpty(),
     //     substitutionsOnCreation = substitutions
     // )
-    // else -> null
+    // else -> undefined
     // }
-    return null;
+    return undefined;
 };
 
 const simplifyExpressionLambda = (
     _node: SdsExpressionLambda,
     _substitutions: ParameterSubstitutions,
-): SdsIntermediateExpressionLambda | null => {
+): SdsIntermediateExpressionLambda | undefined => {
     //     return when {
     //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
     //     parameters = parametersOrEmpty(),
     //     result = result,
     //     substitutionsOnCreation = substitutions
     // )
-    // else -> null
+    // else -> undefined
     // }
-    return null;
+    return undefined;
 };
 
 const simplifyInfixOperation = (
     _node: SdsInfixOperation,
     _substitutions: ParameterSubstitutions,
-): SdsConstantExpression | null => {
+): SdsConstantExpression | undefined => {
     //     // By design none of the operators are short-circuited
-    //     val constantLeft = leftOperand.toConstantExpressionOrUndefined(substitutions) ?: return null
-    //     val constantRight = rightOperand.toConstantExpressionOrUndefined(substitutions) ?: return null
+    //     val constantLeft = leftOperand.toConstantExpressionOrUndefined(substitutions) ?: return undefined
+    //     val constantRight = rightOperand.toConstantExpressionOrUndefined(substitutions) ?: return undefined
     //
     //     return when (operator()) {
     //     Or -> simplifyLogicalOp(constantLeft, Boolean::or, constantRight)
@@ -209,7 +213,7 @@ const simplifyInfixOperation = (
     // )
     // By -> {
     //     if (constantRight == SdsConstantFloat(0.0) || constantRight == SdsConstantInt(0)) {
-    //         return null
+    //         return undefined
     //     }
     //
     //     simplifyArithmeticOp(
@@ -224,7 +228,7 @@ const simplifyInfixOperation = (
     // else -> constantLeft
     // }
     // }
-    return null;
+    return undefined;
 };
 
 // private fun simplifyLogicalOp(
@@ -237,7 +241,7 @@ const simplifyInfixOperation = (
 //     leftOperand is SdsConstantBoolean && rightOperand is SdsConstantBoolean -> {
 //     SdsConstantBoolean(operation(leftOperand.value, rightOperand.value))
 // }
-// else -> null
+// else -> undefined
 // }
 // }
 //
@@ -255,7 +259,7 @@ const simplifyInfixOperation = (
 // leftOperand is SdsConstantNumber && rightOperand is SdsConstantNumber -> {
 //     SdsConstantBoolean(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
 // }
-// else -> null
+// else -> undefined
 // }
 // }
 //
@@ -273,44 +277,44 @@ const simplifyInfixOperation = (
 // leftOperand is SdsConstantNumber && rightOperand is SdsConstantNumber -> {
 //     SdsConstantFloat(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
 // }
-// else -> null
+// else -> undefined
 // }
 // }
 
 const simplifyPrefixOperation = (
     _node: SdsPrefixOperation,
     _substitutions: ParameterSubstitutions,
-): SdsConstantExpression | null => {
-    //     val constantOperand = operand.toConstantExpressionOrUndefined(substitutions) ?: return null
+): SdsConstantExpression | undefined => {
+    //     val constantOperand = operand.toConstantExpressionOrUndefined(substitutions) ?: return undefined
     //
     //     return when (operator()) {
     //     Not -> when (constantOperand) {
     //     is SdsConstantBoolean -> SdsConstantBoolean(!constantOperand.value)
-    // else -> null
+    // else -> undefined
     // }
     // PrefixMinus -> when (constantOperand) {
     //     is SdsConstantFloat -> SdsConstantFloat(-constantOperand.value)
     //     is SdsConstantInt -> SdsConstantInt(-constantOperand.value)
-    // else -> null
+    // else -> undefined
     // }
     // }
-    return null;
+    return undefined;
 };
 
 const simplifyTemplateString = (
     node: SdsTemplateString,
     substitutions: ParameterSubstitutions,
-): SdsConstantExpression | null => {
+): SdsConstantExpression | undefined => {
     const constantExpressions = node.expressions.map((it) => toConstantExpressionOrNullImpl(it, substitutions));
-    if (constantExpressions.some((it) => it === null)) {
-        return null;
+    if (constantExpressions.some((it) => it === undefined)) {
+        return undefined;
     }
 
     return new SdsConstantString(constantExpressions.map((it) => it!.toInterpolationString()).join(''));
 };
 
-const simplifyCall = (_node: SdsCall, _substitutions: ParameterSubstitutions): SdsSimplifiedExpression | null => {
-    //     val simpleReceiver = simplifyReceiver(substitutions) ?: return null
+const simplifyCall = (_node: SdsCall, _substitutions: ParameterSubstitutions): SdsSimplifiedExpression | undefined => {
+    //     val simpleReceiver = simplifyReceiver(substitutions) ?: return undefined
     //     val newSubstitutions = buildNewSubstitutions(simpleReceiver, substitutions)
     //
     //     return when (simpleReceiver) {
@@ -330,14 +334,14 @@ const simplifyCall = (_node: SdsCall, _substitutions: ParameterSubstitutions): S
     //     )
     //     }
     // }
-    return null;
+    return undefined;
 };
 
 // private fun SdsCall.simplifyReceiver(substitutions: ParameterSubstitutions): SdsIntermediateCallable? {
 //     return when (val simpleReceiver = receiver.simplify(substitutions)) {
 //     is SdsIntermediateRecord -> simpleReceiver.unwrap() as? SdsIntermediateCallable
 //     is SdsIntermediateCallable -> simpleReceiver
-// else -> return null
+// else -> return undefined
 // }
 // }
 //
@@ -356,7 +360,7 @@ const simplifyCall = (_node: SdsCall, _substitutions: ParameterSubstitutions): S
 //         .groupBy { it.parameterOrNull() }
 // .mapValues { (parameter, arguments) ->
 //         when {
-//         parameter == null -> null
+//         parameter == undefined -> undefined
 //         parameter.isVariadic -> SdsIntermediateVariadicArguments(
 //             arguments.map { it.simplify(oldSubstitutions) }
 //     )
@@ -367,7 +371,7 @@ const simplifyCall = (_node: SdsCall, _substitutions: ParameterSubstitutions): S
 //     return buildMap {
 //         putAll(substitutionsOnCreation)
 //         substitutionsOnCall.entries.forEach { (parameter, argument) ->
-//             if (parameter != null) {
+//             if (parameter != undefined) {
 //                 put(parameter, argument)
 //             }
 //         }
@@ -377,19 +381,19 @@ const simplifyCall = (_node: SdsCall, _substitutions: ParameterSubstitutions): S
 const simplifyIndexedAccess = (
     _node: SdsIndexedAccess,
     _substitutions: ParameterSubstitutions,
-): SdsSimplifiedExpression | null => {
-    //         val simpleReceiver = receiver.simplify(substitutions) as? SdsIntermediateVariadicArguments ?: return null
-    //         val simpleIndex = index.simplify(substitutions) as? SdsConstantInt ?: return null
+): SdsSimplifiedExpression | undefined => {
+    //         val simpleReceiver = receiver.simplify(substitutions) as? SdsIntermediateVariadicArguments ?: return undefined
+    //         val simpleIndex = index.simplify(substitutions) as? SdsConstantInt ?: return undefined
     //
     //         return simpleReceiver.getArgumentByIndexOrNull(simpleIndex.value)
     //     }
-    return null;
+    return undefined;
 };
 
 const simplifyMemberAccess = (
     _node: SdsMemberAccess,
     _substitutions: ParameterSubstitutions,
-): SdsSimplifiedExpression | null => {
+): SdsSimplifiedExpression | undefined => {
     //     private fun SdsMemberAccess.simplifyMemberAccess(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
     //     if (member.declaration is SdsEnumVariant) {
     //     return member.simplifyReference(substitutions)
@@ -398,42 +402,42 @@ const simplifyMemberAccess = (
     // return when (val simpleReceiver = receiver.simplify(substitutions)) {
     //     SdsConstantNull -> when {
     //         isNullSafe -> SdsConstantNull
-    //     else -> null
+    //     else -> undefined
     //     }
     //     is SdsIntermediateRecord -> simpleReceiver.getSubstitutionByReferenceOrNull(member)
-    // else -> null
+    // else -> undefined
     // }
-    return null;
+    return undefined;
 };
 
 const simplifyReference = (
     _node: SdsReference,
     _substitutions: ParameterSubstitutions,
-): SdsSimplifiedExpression | null => {
+): SdsSimplifiedExpression | undefined => {
     //     return when (val declaration = this.declaration) {
     //     is SdsEnumVariant -> when {
     //         declaration.parametersOrEmpty().isEmpty() -> SdsConstantEnumVariant(declaration)
-    //     else -> null
+    //     else -> undefined
     //     }
     //     is SdsPlaceholder -> declaration.simplifyAssignee(substitutions)
     //     is SdsParameter -> declaration.simplifyParameter(substitutions)
     //     is SdsStep -> declaration.simplifyStep()
-    // else -> null
+    // else -> undefined
     // }
-    return null;
+    return undefined;
 };
 
 // private fun SdsAbstractAssignee.simplifyAssignee(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
 //     val simpleFullAssignedExpression = closestAncestorOrNull<SdsAssignment>()
 //         ?.expression
 //         ?.simplify(substitutions)
-//         ?: return null
+//         ?: return undefined
 //
 //     return when (simpleFullAssignedExpression) {
 //     is SdsIntermediateRecord -> simpleFullAssignedExpression.getSubstitutionByIndexOrNull(indexOrNull())
 //     else -> when {
 //     indexOrNull() == 0 -> simpleFullAssignedExpression
-// else -> null
+// else -> undefined
 // }
 // }
 // }
@@ -442,7 +446,7 @@ const simplifyReference = (
 //     return when {
 //     this in substitutions -> substitutions[this]
 //     isOptional() -> defaultValue?.simplify(substitutions)
-// else -> null
+// else -> undefined
 // }
 // }
 //
@@ -452,7 +456,7 @@ const simplifyReference = (
 //     parameters = parametersOrEmpty(),
 //     results = resultsOrEmpty()
 // )
-// else -> null
+// else -> undefined
 // }
 // }
 /* c8 ignore stop */
