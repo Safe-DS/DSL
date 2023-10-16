@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from 'langium';
-import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsModule } from '../../generated/ast.js';
+import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsDeclaration, SdsModule } from '../../generated/ast.js';
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
 
 export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
@@ -24,7 +24,7 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
 
     if (isInPipelineFile(node)) {
         for (const declaration of declarations) {
-            if (!isSdsPipeline(declaration) && !isSdsSegment(declaration)) {
+            if (!declarationIsAllowedInPipelineFile(declaration)) {
                 accept('error', 'A pipeline file must only declare pipelines and segments.', {
                     node: declaration,
                     property: 'name',
@@ -34,7 +34,7 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
         }
     } else if (isInStubFile(node)) {
         for (const declaration of declarations) {
-            if (isSdsPipeline(declaration) || isSdsSegment(declaration)) {
+            if (!declarationIsAllowedInStubFile(declaration)) {
                 accept('error', 'A stub file must not declare pipelines or segments.', {
                     node: declaration,
                     property: 'name',
@@ -43,4 +43,12 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
             }
         }
     }
+};
+
+export const declarationIsAllowedInPipelineFile = (declaration: SdsDeclaration): boolean => {
+    return isSdsPipeline(declaration) || isSdsSegment(declaration);
+};
+
+export const declarationIsAllowedInStubFile = (declaration: SdsDeclaration): boolean => {
+    return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
 };

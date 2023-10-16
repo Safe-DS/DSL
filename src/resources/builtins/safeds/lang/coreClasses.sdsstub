@@ -18,9 +18,6 @@ class Int sub Number
 @Description("A floating-point number.")
 class Float sub Number
 
-@Description("A floating-point number.")
-class Float sub Number
-
 @Description("A list of elements.")
 class List<E>
 

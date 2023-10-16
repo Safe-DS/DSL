@@ -1,0 +1,11 @@
+package tests.validation.names.acrossFiles.other
+
+annotation UniqueAnnotation
+class UniqueClass
+enum UniqueEnum
+fun uniqueFunction()
+pipeline uniquePipeline {}
+schema UniqueSchema {}
+segment uniquePublicSegment() {}
+internal segment uniqueInternalSegment() {}
+private segment uniquePrivateSegment() {}

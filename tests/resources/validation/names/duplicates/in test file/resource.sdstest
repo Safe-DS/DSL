@@ -1,0 +1,7 @@
+package tests.validation.names.inTestFile.other
+
+class UniqueImport
+
+class DuplicateImport
+
+class DuplicateAliasedImport
