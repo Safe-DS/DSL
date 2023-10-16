@@ -59,6 +59,7 @@ import {
     isSdsTypeProjection,
     isSdsUnionType,
     isSdsYield,
+    SdsAbstractResult,
     SdsAssignee,
     SdsCall,
     SdsCallableType,
@@ -68,6 +69,7 @@ import {
     SdsFunction,
     SdsIndexedAccess,
     SdsInfixOperation,
+    SdsMemberAccess,
     SdsParameter,
     SdsPrefixOperation,
     SdsReference,
@@ -82,22 +84,26 @@ import {
     resultsOrEmpty,
     typeArgumentsOrEmpty,
 } from '../helpers/nodeProperties.js';
+import { isEmpty } from 'radash';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
-    private readonly coreClasses: SafeDsClasses;
+    private readonly builtinClasses: SafeDsClasses;
     private readonly nodeMapper: SafeDsNodeMapper;
 
     private readonly typeCache: WorkspaceCache<string, Type>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
-        this.coreClasses = services.builtins.Classes;
+        this.builtinClasses = services.builtins.Classes;
         this.nodeMapper = services.helpers.NodeMapper;
 
         this.typeCache = new WorkspaceCache(services.shared);
     }
 
+    /**
+     * Computes the type of the given node.
+     */
     computeType(node: AstNode | undefined): Type {
         if (!node) {
             return UnknownType;
@@ -161,7 +167,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfDeclaration(node: SdsDeclaration): Type {
         if (isSdsAnnotation(node)) {
             const parameterEntries = parametersOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType([]));
@@ -190,10 +196,10 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
         const parameterEntries = parametersOrEmpty(node).map(
-            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
         const resultEntries = resultsOrEmpty(node.resultList).map(
-            (it) => new NamedTupleEntry(it.name, this.computeType(it.type)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
         return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
@@ -275,18 +281,20 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfCall(node);
         } else if (isSdsBlockLambda(node)) {
             const parameterEntries = parametersOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
             const resultEntries = blockLambdaResultsOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsExpressionLambda(node)) {
             const parameterEntries = parametersOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it.name, this.computeType(it)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
-            const resultEntries = [new NamedTupleEntry('result', this.computeType(node.result))];
+            const resultEntries = [
+                new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
+            ];
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsIndexedAccess(node)) {
@@ -329,8 +337,7 @@ export class SafeDsTypeComputer {
                     return UnknownType;
             }
         } else if (isSdsMemberAccess(node)) {
-            const memberType = this.computeType(node.member);
-            return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
+            return this.computeTypeOfMemberAccess(node);
         } else if (isSdsParenthesizedExpression(node)) {
             return this.computeType(node.expression);
         } else if (isSdsPrefixOperation(node)) {
@@ -361,7 +368,7 @@ export class SafeDsTypeComputer {
             }
         } else if (receiverType instanceof StaticType) {
             const instanceType = receiverType.instanceType;
-            if (isSdsCallable(instanceType.sdsDeclaration)) {
+            if (isSdsCallable(instanceType.declaration)) {
                 return instanceType;
             }
         }
@@ -398,6 +405,21 @@ export class SafeDsTypeComputer {
         } else {
             return leftOperandType;
         }
+    }
+
+    private computeTypeOfMemberAccess(node: SdsMemberAccess) {
+        const memberType = this.computeType(node.member);
+
+        // A member access of an enum variant without parameters always yields an instance, even if it is not in a call
+        if (memberType instanceof StaticType && !isSdsCall(node.$container)) {
+            const instanceType = memberType.instanceType;
+
+            if (instanceType instanceof EnumVariantType && isEmpty(parametersOrEmpty(instanceType.declaration))) {
+                return instanceType;
+            }
+        }
+
+        return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
@@ -507,35 +529,35 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     private AnyOrNull(): Type {
-        return this.createCoreType(this.coreClasses.Any, true);
+        return this.createCoreType(this.builtinClasses.Any, true);
     }
 
     private Boolean(): Type {
-        return this.createCoreType(this.coreClasses.Boolean);
+        return this.createCoreType(this.builtinClasses.Boolean);
     }
 
     private Float(): Type {
-        return this.createCoreType(this.coreClasses.Float);
+        return this.createCoreType(this.builtinClasses.Float);
     }
 
     private Int(): Type {
-        return this.createCoreType(this.coreClasses.Int);
+        return this.createCoreType(this.builtinClasses.Int);
     }
 
     private List(): Type {
-        return this.createCoreType(this.coreClasses.List);
+        return this.createCoreType(this.builtinClasses.List);
     }
 
     private Map(): Type {
-        return this.createCoreType(this.coreClasses.Map);
+        return this.createCoreType(this.builtinClasses.Map);
     }
 
     private NothingOrNull(): Type {
-        return this.createCoreType(this.coreClasses.Nothing, true);
+        return this.createCoreType(this.builtinClasses.Nothing, true);
     }
 
     private String(): Type {
-        return this.createCoreType(this.coreClasses.String);
+        return this.createCoreType(this.builtinClasses.String);
     }
 
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {

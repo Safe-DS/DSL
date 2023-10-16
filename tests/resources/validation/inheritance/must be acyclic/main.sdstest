@@ -1,0 +1,22 @@
+package tests.validation.inheritance.mustBeAcyclic
+
+// $TEST$ error "A class must not directly or indirectly be a subtype of itself."
+class MyClass1 sub »MyClass3«
+// $TEST$ error "A class must not directly or indirectly be a subtype of itself."
+class MyClass2 sub »MyClass1«
+// $TEST$ error "A class must not directly or indirectly be a subtype of itself."
+class MyClass3 sub »MyClass2«
+
+class MyClass4
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass5 sub »MyClass4«
+
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass6 sub »MyClass7«
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass7 sub Any, »MyClass6«
+
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass8 sub »Unresolved«
+// $TEST$ no error "A class must not directly or indirectly be a subtype of itself."
+class MyClass9 sub »MyClass8«

@@ -73,6 +73,32 @@ describe('SafeDsNodeMapper', () => {
             expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsInt');
         });
 
+        it('should return the entire RHS of an assignment if it is a call of a class', async () => {
+            const code = `
+                class C
+                segment mySegment() {
+                    val a = C();
+                };
+            `;
+
+            const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
+            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsCall');
+        });
+
+        it('should return the entire RHS of an assignment if it is a call of an enum variant', async () => {
+            const code = `
+                enum E {
+                    V
+                }
+                segment mySegment() {
+                    val a = E.V();
+                };
+            `;
+
+            const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
+            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsCall');
+        });
+
         it('should return the entire RHS of an assignment if it is not a call (unresolved reference)', async () => {
             const code = `
                 segment mySegment() {

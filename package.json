@@ -69,7 +69,13 @@
                 "scopeName": "source.safe-ds",
                 "path": "./syntaxes/safe-ds.tmLanguage.json"
             }
-        ]
+        ],
+        "configurationDefaults": {
+            "[safe-ds]": {
+                "editor.wordSeparators": "`~!@#$%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
+            }
+        }
     },
     "type": "module",
     "main": "out/extension/main.cjs",

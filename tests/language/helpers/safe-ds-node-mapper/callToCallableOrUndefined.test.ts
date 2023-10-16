@@ -179,7 +179,7 @@ describe('SafeDsNodeMapper', () => {
                 expect(nodeMapper.callToCallableOrUndefined(call)?.$type).toBe('SdsEnumVariant');
             });
 
-            it('should return the called enum variant (aliased)', async () => {
+            it('should return undefined (aliased enum variant without parameter)', async () => {
                 const code = `
                     enum MyEnum {
                         MyEnumVariant
@@ -188,6 +188,22 @@ describe('SafeDsNodeMapper', () => {
                     pipeline myPipeline {
                         val alias = MyEnum.MyEnumVariant;
                         alias();
+                    }
+                `;
+
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallableOrUndefined(call)).toBeUndefined();
+            });
+
+            it('should return the called enum variant (aliased with parameter)', async () => {
+                const code = `
+                    enum MyEnum {
+                        MyEnumVariant(p: Int)
+                    }
+
+                    pipeline myPipeline {
+                        val alias = MyEnum.MyEnumVariant;
+                        alias(1);
                     }
                 `;
 

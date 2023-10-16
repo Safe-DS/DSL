@@ -1,0 +1,7 @@
+package tests.validation.style.unnecessaryImportAlias
+
+// $TEST$ no info "This alias can be removed."
+from tests.validation.style.unnecessaryImportAlias.other import C »as D«
+// $TEST$ info "This alias can be removed."
+// $TEST$ info "This alias can be removed."
+from tests.validation.style.unnecessaryImportAlias.other import C »as C«, C »as C«

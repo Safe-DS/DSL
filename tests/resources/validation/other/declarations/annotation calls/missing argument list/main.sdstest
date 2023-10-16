@@ -1,0 +1,35 @@
+package tests.validation.other.declarations.annotationCalls.missingArgumentList
+
+@Repeatable
+annotation AnnotationWithoutParameterList
+
+@Repeatable
+annotation AnnotationWithEmptyParameterList()
+
+@Repeatable
+annotation AnnotationWithoutRequiredParameters(a: Int = 0)
+
+@Repeatable
+annotation AnnotationWithRequiredParameters(a: Int)
+
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithoutParameterList«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithoutParameterList()«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithEmptyParameterList«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithEmptyParameterList()«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithoutRequiredParameters«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithoutRequiredParameters()«
+// $TEST$ error "The annotation 'AnnotationWithRequiredParameters' has required parameters, so an argument list must be added."
+»@AnnotationWithRequiredParameters«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@AnnotationWithRequiredParameters()«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@UnresolvedAnnotation«
+// $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
+»@UnresolvedAnnotation()«
+class MyClass

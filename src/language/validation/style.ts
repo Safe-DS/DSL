@@ -10,6 +10,7 @@ import {
     SdsEnumBody,
     SdsEnumVariant,
     SdsFunction,
+    SdsImportedDeclaration,
     SdsMemberAccess,
     SdsNamedType,
     SdsSegment,
@@ -28,6 +29,7 @@ export const CODE_STYLE_UNNECESSARY_BODY = 'style/unnecessary-body';
 export const CODE_STYLE_UNNECESSARY_CONST_MODIFIER = 'style/unnecessary-const-modifier';
 export const CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST = 'style/unnecessary-constraint-list';
 export const CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR = 'style/unnecessary-elvis-operator';
+export const CODE_STYLE_UNNECESSARY_IMPORT_ALIAS = 'style/unnecessary-import-alias';
 export const CODE_STYLE_UNNECESSARY_PARAMETER_LIST = 'style/unnecessary-parameter-list';
 export const CODE_STYLE_UNNECESSARY_RESULT_LIST = 'style/unnecessary-result-list';
 export const CODE_STYLE_UNNECESSARY_SAFE_ACCESS = 'style/unnecessary-safe-access';
@@ -146,6 +148,23 @@ export const constraintListShouldNotBeEmpty = (node: SdsConstraintList, accept: 
         accept('info', 'This constraint list can be removed.', {
             node,
             code: CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST,
+        });
+    }
+};
+
+// -----------------------------------------------------------------------------
+// Unnecessary import alias
+// -----------------------------------------------------------------------------
+
+export const importedDeclarationAliasShouldDifferFromDeclarationName = (
+    node: SdsImportedDeclaration,
+    accept: ValidationAcceptor,
+) => {
+    if (node.alias && node.alias.alias === node.declaration.$refText) {
+        accept('info', 'This alias can be removed.', {
+            node,
+            property: 'alias',
+            code: CODE_STYLE_UNNECESSARY_IMPORT_ALIAS,
         });
     }
 };

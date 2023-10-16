@@ -20,6 +20,7 @@ import {
     SdsAbstractCall,
     SdsAbstractResult,
     SdsAnnotatedObject,
+    SdsAnnotation,
     SdsAnnotationCall,
     SdsArgument,
     SdsAssignee,
@@ -31,6 +32,7 @@ import {
     SdsCallable,
     SdsClass,
     SdsClassMember,
+    SdsColumn,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
@@ -46,7 +48,9 @@ import {
     SdsQualifiedImport,
     SdsResult,
     SdsResultList,
+    SdsSchema,
     SdsStatement,
+    SdsType,
     SdsTypeArgument,
     SdsTypeArgumentList,
     SdsTypeParameter,
@@ -57,6 +61,16 @@ import { AstNode, getContainerOfType, stream } from 'langium';
 // -------------------------------------------------------------------------------------------------
 // Checks
 // -------------------------------------------------------------------------------------------------
+
+export const hasAnnotationCallOf = (
+    node: SdsAnnotatedObject | undefined,
+    expected: SdsAnnotation | undefined,
+): boolean => {
+    return annotationCallsOrEmpty(node).some((it) => {
+        const actual = it.annotation?.ref;
+        return actual === expected;
+    });
+};
 
 export const isInternal = (node: SdsDeclaration): boolean => {
     return isSdsSegment(node) && node.visibility === 'internal';
@@ -144,6 +158,17 @@ export const annotationCallsOrEmpty = (node: SdsAnnotatedObject | undefined): Sd
         return node?.annotationCalls ?? [];
     }
 };
+
+export const findFirstAnnotationCallOf = (
+    node: SdsAnnotatedObject | undefined,
+    expected: SdsAnnotation | undefined,
+): SdsAnnotationCall | undefined => {
+    return annotationCallsOrEmpty(node).find((it) => {
+        const actual = it.annotation?.ref;
+        return actual === expected;
+    });
+};
+
 export const argumentsOrEmpty = (node: SdsAbstractCall | undefined): SdsArgument[] => {
     return node?.argumentList?.arguments ?? [];
 };
@@ -157,18 +182,16 @@ export const blockLambdaResultsOrEmpty = (node: SdsBlockLambda | undefined): Sds
         .filter(isSdsBlockLambdaResult)
         .toArray();
 };
-export const importedDeclarationsOrEmpty = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
-    return node?.importedDeclarationList?.importedDeclarations ?? [];
-};
 
-export const literalsOrEmpty = (node: SdsLiteralType | undefined): SdsLiteral[] => {
-    return node?.literalList?.literals ?? [];
-};
 export const classMembersOrEmpty = (
     node: SdsClass | undefined,
     filterFunction: (member: SdsClassMember) => boolean = () => true,
 ): SdsClassMember[] => {
     return node?.body?.members?.filter(filterFunction) ?? [];
+};
+
+export const columnsOrEmpty = (node: SdsSchema | undefined): SdsColumn[] => {
+    return node?.columnList?.columns ?? [];
 };
 
 export const enumVariantsOrEmpty = (node: SdsEnum | undefined): SdsEnumVariant[] => {
@@ -177,6 +200,14 @@ export const enumVariantsOrEmpty = (node: SdsEnum | undefined): SdsEnumVariant[]
 
 export const importsOrEmpty = (node: SdsModule | undefined): SdsImport[] => {
     return node?.imports ?? [];
+};
+
+export const importedDeclarationsOrEmpty = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
+    return node?.importedDeclarationList?.importedDeclarations ?? [];
+};
+
+export const literalsOrEmpty = (node: SdsLiteralType | undefined): SdsLiteral[] => {
+    return node?.literalList?.literals ?? [];
 };
 
 export const moduleMembersOrEmpty = (node: SdsModule | undefined): SdsModuleMember[] => {
@@ -189,6 +220,10 @@ export const packageNameOrUndefined = (node: AstNode | undefined): string | unde
 
 export const parametersOrEmpty = (node: SdsCallable | undefined): SdsParameter[] => {
     return node?.parameterList?.parameters ?? [];
+};
+
+export const parentTypesOrEmpty = (node: SdsClass | undefined): SdsType[] => {
+    return node?.parentTypeList?.parentTypes ?? [];
 };
 
 export const placeholdersOrEmpty = (node: SdsBlock | undefined): SdsPlaceholder[] => {

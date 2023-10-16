@@ -1,0 +1,52 @@
+package tests.validation.other.statements.assignments.implicitlyIgnoredResult
+
+fun noResults()
+fun oneResult() -> first: Int
+fun twoResults() -> (first: Int, second: Int)
+fun threeResults() -> (first: Int, second: Int, third: Int)
+
+class MyClass()
+
+enum MyEnum {
+    MyEnumVariant
+}
+
+pipeline myPipeline {
+    // $TEST$ warning "The assignment implicitly ignores the result 'second'."
+    »_ = twoResults();«
+    // $TEST$ warning "The assignment implicitly ignores the results 'second', 'third'."
+    »_ = threeResults();«
+
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = oneResult();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _ = twoResults();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _, _ = threeResults();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = MyClass();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = MyEnum.MyEnumVariant();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = 1;«
+
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = noResults();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _ = oneResult();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _, _ = twoResults();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _, _, _ = threeResults();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _ = MyClass();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _ = MyEnum.MyEnumVariant();«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_, _ = 1;«
+
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = unresolved;«
+    // $TEST$ no warning r"The assignment implicitly ignores the result\.*"
+    »_ = unresolved();«
+}

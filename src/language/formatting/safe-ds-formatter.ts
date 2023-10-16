@@ -42,6 +42,8 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatSdsImportedDeclarationList(node);
         } else if (ast.isSdsImportedDeclaration(node)) {
             this.formatSdsImportedDeclaration(node);
+        } else if (ast.isSdsImportedDeclarationAlias(node)) {
+            this.formatSdsImportedDeclarationAlias(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -297,7 +299,13 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsImportedDeclaration(node: ast.SdsImportedDeclaration): void {
         const formatter = this.getNodeFormatter(node);
 
-        formatter.keyword('as').surround(Formatting.oneSpace());
+        formatter.property('alias').prepend(oneSpace());
+    }
+
+    private formatSdsImportedDeclarationAlias(node: ast.SdsImportedDeclarationAlias): void {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword('as').append(oneSpace());
     }
 
     // -----------------------------------------------------------------------------

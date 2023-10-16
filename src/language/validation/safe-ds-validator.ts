@@ -10,9 +10,12 @@ import {
     enumVariantMustContainUniqueNames,
     expressionLambdaMustContainUniqueNames,
     functionMustContainUniqueNames,
+    moduleMemberMustHaveNameThatIsUniqueInPackage,
+    moduleMustContainUniqueNames,
     nameMustNotStartWithBlockLambdaPrefix,
     nameShouldHaveCorrectCasing,
     pipelineMustContainUniqueNames,
+    schemaMustContainUniqueNames,
     segmentMustContainUniqueNames,
 } from './names.js';
 import {
@@ -26,6 +29,7 @@ import {
     enumBodyShouldNotBeEmpty,
     enumVariantParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty,
+    importedDeclarationAliasShouldDifferFromDeclarationName,
     memberAccessNullSafetyShouldBeNeeded,
     namedTypeTypeArgumentListShouldBeNeeded,
     segmentResultListShouldNotBeEmpty,
@@ -33,9 +37,14 @@ import {
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
-import { assignmentAssigneeMustGetValue, yieldMustNotBeUsedInPipeline } from './other/statements/assignments.js';
+import {
+    assignmentAssigneeMustGetValue,
+    assignmentShouldNotImplicitlyIgnoreResult,
+    yieldMustNotBeUsedInPipeline,
+} from './other/statements/assignments.js';
 import {
     attributeMustHaveTypeHint,
+    callReceiverMustBeCallable,
     namedTypeMustSetAllTypeParameters,
     parameterMustHaveTypeHint,
     resultMustHaveTypeHint,
@@ -71,14 +80,18 @@ import {
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
-import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeature.js';
+import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
+    annotationCallMustNotLackArgumentList,
     callableTypeParametersMustNotBeAnnotated,
     callableTypeResultsMustNotBeAnnotated,
     lambdaParametersMustNotBeAnnotated,
 } from './other/declarations/annotationCalls.js';
-import { memberAccessMustBeNullSafeIfReceiverIsNullable } from './other/expressions/memberAccesses.js';
+import {
+    memberAccessMustBeNullSafeIfReceiverIsNullable,
+    memberAccessOfEnumVariantMustNotLackInstantiation,
+} from './other/expressions/memberAccesses.js';
 import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
 import {
@@ -86,6 +99,9 @@ import {
     namedTypeMustNotSetTypeParameterMultipleTimes,
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
+import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
+import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
+import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 
 /**
  * Register custom validation checks.
@@ -97,7 +113,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             assigneeAssignedResultShouldNotBeDeprecated(services),
             assigneeAssignedResultShouldNotBeExperimental(services),
         ],
-        SdsAssignment: [assignmentAssigneeMustGetValue(services), assignmentShouldHaveMoreThanWildcardsAsAssignees],
+        SdsAssignment: [
+            assignmentAssigneeMustGetValue(services),
+            assignmentShouldNotImplicitlyIgnoreResult(services),
+            assignmentShouldHaveMoreThanWildcardsAsAssignees,
+        ],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty,
@@ -107,8 +127,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
+            annotationCallMustNotLackArgumentList,
         ],
-        SdsAnnotatedObject: [singleUseAnnotationsMustNotBeRepeated(services)],
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
@@ -116,7 +136,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCall: [callArgumentListShouldBeNeeded(services)],
+        SdsCall: [callArgumentListShouldBeNeeded(services), callReceiverMustBeCallable(services)],
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
@@ -124,23 +144,40 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callableTypeParameterMustNotHaveConstModifier,
             callableTypeResultsMustNotBeAnnotated,
         ],
-        SdsClass: [classMustContainUniqueNames],
+        SdsClass: [
+            classMustContainUniqueNames,
+            classMustOnlyInheritASingleClass(services),
+            classMustNotInheritItself(services),
+        ],
         SdsClassBody: [classBodyShouldNotBeEmpty],
         SdsConstraintList: [constraintListShouldNotBeEmpty],
-        SdsDeclaration: [nameMustNotStartWithBlockLambdaPrefix, nameShouldHaveCorrectCasing],
+        SdsDeclaration: [
+            nameMustNotStartWithBlockLambdaPrefix,
+            nameShouldHaveCorrectCasing,
+            pythonNameShouldDifferFromSafeDsName(services),
+            singleUseAnnotationsMustNotBeRepeated(services),
+        ],
         SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
+        SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
         SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
+            memberAccessOfEnumVariantMustNotLackInstantiation,
         ],
-        SdsModule: [moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage],
+        SdsModule: [
+            moduleDeclarationsMustMatchFileKind,
+            moduleMemberMustHaveNameThatIsUniqueInPackage(services),
+            moduleMustContainUniqueNames,
+            moduleWithDeclarationsMustStatePackage,
+            pythonModuleShouldDifferFromSafeDsPackage(services),
+        ],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
@@ -165,6 +202,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             referenceTargetShouldNotExperimental(services),
         ],
         SdsResult: [resultMustHaveTypeHint],
+        SdsSchema: [schemaMustContainUniqueNames],
         SdsSegment: [
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),

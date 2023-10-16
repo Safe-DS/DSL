@@ -1,0 +1,87 @@
+package tests.validation.types.checking.receiverofCallMustBeCallable
+
+annotation MyAnnotation
+
+class MyClass {
+    static attr myAttribute: Int
+    class MyClass
+    enum MyEnum
+    static fun myFunction()
+}
+
+enum MyEnum {
+    MySimpleEnumVariant
+    MyComplexEnumVariant()
+}
+
+fun myFunction()
+
+pipeline myPipeline {}
+
+schema MySchema {}
+
+segment mySegment1() {}
+
+segment mySegment2(a: Int, b: () -> ()) {
+    val c = 1;
+    val d = () {};
+    val e = () -> 1;
+
+    // $TEST$ no error "This expression is not callable."
+    »MyAnnotation«();
+    // $TEST$ no error "This expression is not callable."
+    »MyClass«();
+    // $TEST$ error "This expression is not callable."
+    »MyClass.myAttribute«();
+    // $TEST$ no error "This expression is not callable."
+    »MyClass.MyClass«();
+    // $TEST$ error "This expression is not callable."
+    »MyClass.MyEnum«();
+    // $TEST$ no error "This expression is not callable."
+    »MyClass.myFunction«();
+    // $TEST$ error "This expression is not callable."
+    »MyEnum«();
+    // $TEST$ no error "This expression is not callable."
+    »MyEnum.MySimpleEnumVariant«();
+    // $TEST$ no error "This expression is not callable."
+    »MyEnum.MyComplexEnumVariant«();
+    // $TEST$ no error "This expression is not callable."
+    »myFunction«();
+    // $TEST$ no error "This expression is not callable."
+    »myPipeline«();
+    // $TEST$ no error "This expression is not callable."
+    »MySchema«();
+    // $TEST$ no error "This expression is not callable."
+    »mySegment1«();
+    // $TEST$ error "This expression is not callable."
+    »a«();
+    // $TEST$ no error "This expression is not callable."
+    »b«();
+    // $TEST$ error "This expression is not callable."
+    »c«();
+    // $TEST$ no error "This expression is not callable."
+    »d«();
+    // $TEST$ no error "This expression is not callable."
+    »e«();
+    // $TEST$ no error "This expression is not callable."
+    »(d)«();
+    // $TEST$ no error "This expression is not callable."
+    »(e)«();
+
+    /*
+     * If a scoping error for the receiver is reported we should not report another error. If the receiver is
+     * resolved, but it eventually points to something unresolved, we should still report another error, since the
+     * distance to the scoping error might be too large.
+     */
+
+    // $TEST$ no error "This expression is not callable."
+    »unknownGlobal«();
+    // $TEST$ no error "This expression is not callable."
+    »MyClass.unknownMember«();
+    // $TEST$ error "This expression is not callable."
+    val alias1 = unknownGlobal;
+    »alias1«();
+    // $TEST$ error "This expression is not callable."
+    val alias2 = MyClass.unknownMember;
+    »alias2«();
+}

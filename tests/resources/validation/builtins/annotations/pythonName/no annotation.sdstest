@@ -1,0 +1,4 @@
+package tests.validation.builtins.annotations.pythonName
+
+// $TEST$ no info "The Python name is identical to the Safe-DS name, so the annotation call can be removed."
+class TestClass3

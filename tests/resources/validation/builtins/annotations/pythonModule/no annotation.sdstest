@@ -1,0 +1,3 @@
+// $TEST$ no info "The Python module is identical to the Safe-DS package, so the annotation call can be removed."
+
+package tests.validation.builtins.annotations.pythonModule

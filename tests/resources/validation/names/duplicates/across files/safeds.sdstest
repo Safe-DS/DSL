@@ -1,0 +1,8 @@
+package safeds.lang
+
+/*
+ * Declarations from builtin files should be excluded, so we don't get errors while editing them.
+ */
+
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+ class »Any«

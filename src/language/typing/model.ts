@@ -1,11 +1,13 @@
 import {
     isSdsNull,
+    SdsAbstractResult,
     SdsCallable,
     SdsClass,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
     SdsLiteral,
+    SdsParameter,
 } from '../generated/ast.js';
 
 /* c8 ignore start */
@@ -28,8 +30,8 @@ export class CallableType extends Type {
 
     constructor(
         readonly sdsCallable: SdsCallable,
-        readonly inputType: NamedTupleType,
-        readonly outputType: NamedTupleType,
+        readonly inputType: NamedTupleType<SdsParameter>,
+        readonly outputType: NamedTupleType<SdsAbstractResult>,
     ) {
         super();
     }
@@ -99,10 +101,10 @@ export class LiteralType extends Type {
     }
 }
 
-export class NamedTupleType extends Type {
+export class NamedTupleType<T extends SdsDeclaration> extends Type {
     override readonly isNullable = false;
 
-    constructor(readonly entries: NamedTupleEntry[]) {
+    constructor(readonly entries: NamedTupleEntry<T>[]) {
         super();
     }
 
@@ -125,7 +127,7 @@ export class NamedTupleType extends Type {
         return this;
     }
 
-    override copyWithNullability(_isNullable: boolean): NamedTupleType {
+    override copyWithNullability(_isNullable: boolean): NamedTupleType<T> {
         return this;
     }
 
@@ -159,8 +161,9 @@ export class NamedTupleType extends Type {
     }
 }
 
-export class NamedTupleEntry {
+export class NamedTupleEntry<T extends SdsDeclaration> {
     constructor(
+        readonly sdsDeclaration: T | undefined,
         readonly name: string,
         readonly type: Type,
     ) {}
@@ -169,37 +172,37 @@ export class NamedTupleEntry {
         return `${this.name}: ${this.type}`;
     }
 
-    equals(other: NamedTupleEntry): boolean {
-        return this.name === other.name && this.type.equals(other.type);
+    equals(other: NamedTupleEntry<SdsDeclaration>): boolean {
+        return this.sdsDeclaration === other.sdsDeclaration && this.name === other.name && this.type.equals(other.type);
     }
 }
 
-export abstract class NamedType extends Type {
-    protected constructor(readonly sdsDeclaration: SdsDeclaration) {
+export abstract class NamedType<T extends SdsDeclaration> extends Type {
+    protected constructor(readonly declaration: T) {
         super();
     }
 
-    abstract override copyWithNullability(isNullable: boolean): NamedType;
+    abstract override copyWithNullability(isNullable: boolean): NamedType<T>;
 
     override toString(): string {
         if (this.isNullable) {
-            return `${this.sdsDeclaration.name}?`;
+            return `${this.declaration.name}?`;
         } else {
-            return this.sdsDeclaration.name;
+            return this.declaration.name;
         }
     }
 }
 
-export class ClassType extends NamedType {
+export class ClassType extends NamedType<SdsClass> {
     constructor(
-        readonly sdsClass: SdsClass,
+        declaration: SdsClass,
         override readonly isNullable: boolean,
     ) {
-        super(sdsClass);
+        super(declaration);
     }
 
     override copyWithNullability(isNullable: boolean): ClassType {
-        return new ClassType(this.sdsClass, isNullable);
+        return new ClassType(this.declaration, isNullable);
     }
 
     override equals(other: Type): boolean {
@@ -211,20 +214,20 @@ export class ClassType extends NamedType {
             return false;
         }
 
-        return other.sdsClass === this.sdsClass && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isNullable === this.isNullable;
     }
 }
 
-export class EnumType extends NamedType {
+export class EnumType extends NamedType<SdsEnum> {
     constructor(
-        readonly sdsEnum: SdsEnum,
+        declaration: SdsEnum,
         override readonly isNullable: boolean,
     ) {
-        super(sdsEnum);
+        super(declaration);
     }
 
     override copyWithNullability(isNullable: boolean): EnumType {
-        return new EnumType(this.sdsEnum, isNullable);
+        return new EnumType(this.declaration, isNullable);
     }
 
     override equals(other: Type): boolean {
@@ -236,20 +239,20 @@ export class EnumType extends NamedType {
             return false;
         }
 
-        return other.sdsEnum === this.sdsEnum && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isNullable === this.isNullable;
     }
 }
 
-export class EnumVariantType extends NamedType {
+export class EnumVariantType extends NamedType<SdsEnumVariant> {
     constructor(
-        readonly sdsEnumVariant: SdsEnumVariant,
+        declaration: SdsEnumVariant,
         override readonly isNullable: boolean,
     ) {
-        super(sdsEnumVariant);
+        super(declaration);
     }
 
     override copyWithNullability(isNullable: boolean): EnumVariantType {
-        return new EnumVariantType(this.sdsEnumVariant, isNullable);
+        return new EnumVariantType(this.declaration, isNullable);
     }
 
     override equals(other: Type): boolean {
@@ -261,7 +264,7 @@ export class EnumVariantType extends NamedType {
             return false;
         }
 
-        return other.sdsEnumVariant === this.sdsEnumVariant && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isNullable === this.isNullable;
     }
 }
 
@@ -271,7 +274,7 @@ export class EnumVariantType extends NamedType {
 export class StaticType extends Type {
     override readonly isNullable = false;
 
-    constructor(readonly instanceType: NamedType) {
+    constructor(readonly instanceType: NamedType<SdsDeclaration>) {
         super();
     }
 
