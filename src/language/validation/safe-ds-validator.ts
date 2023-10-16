@@ -97,6 +97,7 @@ import {
 } from './other/types/namedTypes.js';
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
 import {pythonNameShouldDifferFromSafeDsName} from "./builtins/pythonName.js";
+import {pythonModuleShouldDifferFromSafeDsPackage} from "./builtins/pythonModule.js";
 
 /**
  * Register custom validation checks.
@@ -169,6 +170,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
             moduleMustContainUniqueNames,
             moduleWithDeclarationsMustStatePackage,
+            pythonModuleShouldDifferFromSafeDsPackage(services),
         ],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),

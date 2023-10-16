@@ -55,7 +55,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
     }
 
-    private get PythonModule(): SdsAnnotation | undefined {
+    get PythonModule(): SdsAnnotation | undefined {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonModule');
     }
 
