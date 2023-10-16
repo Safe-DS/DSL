@@ -1,0 +1,11 @@
+package tests.validation.names.acrossFiles
+
+annotation DuplicateAnnotation
+class DuplicateClass
+enum DuplicateEnum
+fun duplicateFunction()
+pipeline duplicatePipeline {}
+schema DuplicateSchema {}
+segment duplicatePublicSegment() {}
+internal segment duplicateInternalSegment() {}
+private segment duplicatePrivateSegment() {}

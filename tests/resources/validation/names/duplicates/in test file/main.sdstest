@@ -47,11 +47,11 @@ fun »duplicateFunction«()
 fun »duplicateFunction«()
 
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
-pipeline »uniqueTest« {}
+pipeline »uniquePipeline« {}
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
-pipeline »duplicateTest« {}
-// $TEST$ error "A declaration with name 'duplicateTest' exists already in this file."
-pipeline »duplicateTest« {}
+pipeline »duplicatePipeline« {}
+// $TEST$ error "A declaration with name 'duplicatePipeline' exists already in this file."
+pipeline »duplicatePipeline« {}
 
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 schema »UniqueSchema« {}
