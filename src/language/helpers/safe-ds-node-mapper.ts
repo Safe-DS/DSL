@@ -140,7 +140,7 @@ export class SafeDsNodeMapper {
             if (receiverType instanceof CallableType) {
                 return receiverType.sdsCallable;
             } else if (receiverType instanceof StaticType) {
-                const declaration = receiverType.instanceType.sdsDeclaration;
+                const declaration = receiverType.instanceType.declaration;
                 if (isSdsCallable(declaration)) {
                     return declaration;
                 }
