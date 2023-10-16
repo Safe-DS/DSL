@@ -15,7 +15,6 @@ import {
     isSdsLiteral,
     isSdsMap,
     isSdsMemberAccess,
-    isSdsModule,
     isSdsParenthesizedExpression,
     isSdsPipeline,
     isSdsPlaceholder,
@@ -242,7 +241,6 @@ const generateBlock = function (block: SdsBlock, frame: GenerationInfoFrame): st
 
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
     const parameter = frame.getServices().helpers.NodeMapper.argumentToParameterOrUndefined(argument);
-    const req = parameter !== undefined && !isRequiredParameter(parameter);
     return expandToString`${
         parameter !== undefined && !isRequiredParameter(parameter)
             ? generateParameter(parameter, frame, false) + '='
@@ -252,16 +250,16 @@ const generateArgument = function (argument: SdsArgument, frame: GenerationInfoF
 
 const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[]): SdsArgument[] {
     // $containerIndex contains the index of the parameter in the receivers parameter list
-
     const parameters = argumentList.map((argument) => {
         return { par: services.helpers.NodeMapper.argumentToParameterOrUndefined(argument), arg: argument };
     });
-    const sortedArgs = parameters
+    return parameters
         .slice()
         .filter((value) => value.par !== undefined)
-        .sort((a, b) => a.par?.$containerIndex - b.par?.$containerIndex)
+        .sort((a, b) =>
+            a.par !== undefined && b.par !== undefined ? a.par.$containerIndex! - b.par.$containerIndex! : 0,
+        )
         .map((value) => value.arg);
-    return sortedArgs;
 };
 
 const generateExpression = function (expression: SdsExpression, frame: GenerationInfoFrame): string {
@@ -419,7 +417,6 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         if (declaration === undefined) {
             throw new Error('Unknown corresponding declaration to reference');
         }
-        const declarationQualifiedName = getReferenceDeclarationQualifiedName(declaration);
         const referenceImport =
             getExternalReferenceNeededImport(frame.getServices(), expression, declaration) ||
             getInternalReferenceNeededImport(frame.getServices(), expression, declaration);
@@ -462,7 +459,7 @@ const getExternalReferenceNeededImport = function (
             }
         }
         if (isSdsWildcardImport(value)) {
-            // TODO wildcard import?
+            // TODO wildcard import? collisions?
             throw new Error('Wildcard imports are not yet handled');
         }
     }
@@ -491,17 +488,6 @@ const getInternalReferenceNeededImport = function (
 const getModuleFileBaseName = function (module: SdsModule): string {
     const filePath = getDocument(module).uri.fsPath;
     return path.basename(filePath, path.extname(filePath));
-};
-
-const getReferenceDeclarationQualifiedName = function (declaration: SdsDeclaration | undefined): string | undefined {
-    if (declaration === undefined) {
-        return undefined;
-    }
-    const rootModule = findRootNode(declaration);
-    if (isSdsModule(rootModule)) {
-        return `${rootModule.name}.${declaration.name}`;
-    }
-    return undefined;
 };
 
 const generateParameter = function (
