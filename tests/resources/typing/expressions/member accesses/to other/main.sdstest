@@ -1,21 +1,34 @@
 package tests.typing.expressions.memberAccesses.toOther
 
-class C {
+class C() {
     // $TEST$ equivalence_class nonNullableMember
-    static attr »nonNullableMember«: Int
+    attr »nonNullableMember«: Int
 
     // $TEST$ equivalence_class nullableMember
-    static attr »nullableMember«: Any?
+    attr »nullableMember«: Any?
 }
+
+fun nullableC() -> result: C?
 
 pipeline myPipeline {
     // $TEST$ equivalence_class nonNullableMember
-    »C.nonNullableMember«;
+    »C().nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
-    »C.nullableMember«;
+    »C().nullableMember«;
+
+    // $TEST$ equivalence_class nonNullableMember
+    »C()?.nonNullableMember«;
+    // $TEST$ equivalence_class nullableMember
+    »C()?.nullableMember«;
+
+
+    // $TEST$ equivalence_class nonNullableMember
+    »nullableC().nonNullableMember«;
+    // $TEST$ equivalence_class nullableMember
+    »nullableC().nullableMember«;
 
     // $TEST$ serialization Int?
-    »C?.nonNullableMember«;
-    // $TEST$ serialization Any?
-    »C?.nullableMember«;
+    »nullableC()?.nonNullableMember«;
+    // $TEST$ equivalence_class nullableMember
+    »nullableC()?.nullableMember«;
 }
