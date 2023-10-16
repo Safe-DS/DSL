@@ -65,23 +65,15 @@ export const referenceMustNotBeStaticClassOrEnumReference = (node: SdsReference,
 
     // Static reference to the class or enum
     if (isSdsClass(target)) {
-        accept(
-            'error',
-            "A class must not be statically referenced.",
-            {
-                node,
-                code: CODE_REFERENCE_STATIC_CLASS_REFERENCE,
-            },
-        );
+        accept('error', 'A class must not be statically referenced.', {
+            node,
+            code: CODE_REFERENCE_STATIC_CLASS_REFERENCE,
+        });
     } else if (isSdsEnum(target)) {
-        accept(
-            'error',
-            "An enum must not be statically referenced.",
-            {
-                node,
-                code: CODE_REFERENCE_STATIC_ENUM_REFERENCE,
-            },
-        );
+        accept('error', 'An enum must not be statically referenced.', {
+            node,
+            code: CODE_REFERENCE_STATIC_ENUM_REFERENCE,
+        });
     }
 };
 

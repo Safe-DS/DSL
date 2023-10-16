@@ -59,7 +59,8 @@ import {
 } from './other/types/callableTypes.js';
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 import {
-    referenceMustNotBeFunctionPointer, referenceMustNotBeStaticClassOrEnumReference,
+    referenceMustNotBeFunctionPointer,
+    referenceMustNotBeStaticClassOrEnumReference,
     referenceTargetMustNotBeAnnotationPipelineOrSchema,
 } from './other/expressions/references.js';
 import {
