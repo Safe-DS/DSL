@@ -336,11 +336,11 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     }
     if (isSdsMemberAccess(expression)) {
         let memberAccess = expression as SdsMemberAccess;
-        const member = memberAccess.member.target.ref;
+        const member = memberAccess.member?.target.ref!;
         const receiver = generateExpression(memberAccess.receiver, frame);
         // TODO SdsBlockLambdaResult should not be possible? Grammar defines SdsBlockLambdaResult as only part of an assignment. There is no way to parse it anywhere else
         if (isSdsEnumVariant(member)) {
-            const enumMember = generateExpression(memberAccess.member, frame);
+            const enumMember = generateExpression(memberAccess.member!, frame);
             const suffix = isSdsCall(expression.$container) ? '' : '()';
             if (expression.isNullSafe) {
                 frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
@@ -356,7 +356,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             const currentIndex = resultList.indexOf(<SdsResult>member);
             return `${receiver}[${currentIndex}]`;
         } else {
-            const memberExpression = generateExpression(memberAccess.member, frame);
+            const memberExpression = generateExpression(memberAccess.member!, frame);
             if (expression.isNullSafe) {
                 frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
                 return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
