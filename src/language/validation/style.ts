@@ -23,7 +23,7 @@ import { isEmpty } from 'radash';
 import { isRequiredParameter, parametersOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
-import { toConstantExpressionOrUndefined } from '../partialEvaluation/toConstantExpressionOrUndefined.js';
+import { toConstantExpression } from '../partialEvaluation/toConstantExpression.js';
 import { ConstantNull } from '../partialEvaluation/model.js';
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
@@ -177,8 +177,8 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
             );
         }
 
-        const leftValue = toConstantExpressionOrUndefined(node.leftOperand);
-        const rightValue = toConstantExpressionOrUndefined(node.rightOperand);
+        const leftValue = toConstantExpression(node.leftOperand);
+        const rightValue = toConstantExpression(node.rightOperand);
         if (leftValue === ConstantNull && rightValue === ConstantNull) {
             accept(
                 'info',

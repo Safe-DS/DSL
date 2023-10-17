@@ -1,7 +1,7 @@
 package safeds.lang
 
 @Description("The annotation can target these declaration types. If the @Target annotation is not used any declaration type can be targeted.")
-@Target(AnnotationTarget.Annotation)
+@Target([AnnotationTarget.Annotation])
 annotation Target(
     @Description("The valid targets.")
     targets: List<AnnotationTarget>

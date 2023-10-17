@@ -1,7 +1,7 @@
 import { SdsInfixOperation } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { toConstantExpressionOrUndefined } from '../../../partialEvaluation/toConstantExpressionOrUndefined.js';
+import { toConstantExpression } from '../../../partialEvaluation/toConstantExpression.js';
 import { ConstantFloat, ConstantInt } from '../../../partialEvaluation/model.js';
 import { UnknownType } from '../../../typing/model.js';
 
@@ -26,7 +26,7 @@ export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
             return;
         }
 
-        const divisorValue = toConstantExpressionOrUndefined(node.rightOperand);
+        const divisorValue = toConstantExpression(node.rightOperand);
         if (
             divisorValue &&
             (divisorValue.equals(zeroInt) || divisorValue.equals(zeroFloat) || divisorValue.equals(minusZeroFloat))

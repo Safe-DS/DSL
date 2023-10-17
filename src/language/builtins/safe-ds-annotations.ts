@@ -5,7 +5,7 @@ import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { toConstantExpressionOrUndefined } from '../partialEvaluation/toConstantExpressionOrUndefined.js';
+import { toConstantExpression } from '../partialEvaluation/toConstantExpression.js';
 import { ConstantExpression, ConstantString } from '../partialEvaluation/model.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
@@ -97,6 +97,6 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         const expression = argumentsOrEmpty(annotationCall).find(
             (it) => this.nodeMapper.argumentToParameterOrUndefined(it)?.name === parameterName,
         )?.value;
-        return toConstantExpressionOrUndefined(expression);
+        return toConstantExpression(expression);
     }
 }

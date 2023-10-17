@@ -15,7 +15,8 @@ import {
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
-import {toConstantExpressionOrUndefined} from "../../../partialEvaluation/toConstantExpressionOrUndefined.js";
+import {toConstantExpression} from "../../../partialEvaluation/toConstantExpression.js";
+import {UnknownValue} from "../../../partialEvaluation/model.js";
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
@@ -24,9 +25,9 @@ export const CODE_ANNOTATION_CALL_TARGET_RESULT = 'annotation-call/target-result
 
 export const annotationCallArgumentsMustBeConstant = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
     for (const argument of argumentsOrEmpty(node)) {
-        const constantValue = toConstantExpressionOrUndefined(argument.value);
+        const constantValue = toConstantExpression(argument.value);
 
-        if (!constantValue) {
+        if (constantValue === UnknownValue) {
             accept('error', "Arguments of annotation calls must be constant.", {
                 node: argument,
                 property: 'value',
