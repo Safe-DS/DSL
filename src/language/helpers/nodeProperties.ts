@@ -1,5 +1,7 @@
 import {
+    isSdsAbstractCall,
     isSdsAnnotation,
+    isSdsArgumentList,
     isSdsAssignment,
     isSdsAttribute,
     isSdsBlockLambda,
@@ -23,6 +25,7 @@ import {
     SdsAnnotation,
     SdsAnnotationCall,
     SdsArgument,
+    SdsArgumentList,
     SdsAssignee,
     SdsAssignment,
     SdsBlock,
@@ -161,12 +164,18 @@ export const findFirstAnnotationCallOf = (
     });
 };
 
-export const argumentsOrEmpty = (node: SdsAbstractCall | undefined): SdsArgument[] => {
-    return node?.argumentList?.arguments ?? [];
+export const argumentsOrEmpty = (node: SdsArgumentList | SdsAbstractCall | undefined): SdsArgument[] => {
+    if (isSdsArgumentList(node)) {
+        return node.arguments;
+    } else {
+        return node?.argumentList?.arguments ?? [];
+    }
 };
+
 export const assigneesOrEmpty = (node: SdsAssignment | undefined): SdsAssignee[] => {
     return node?.assigneeList?.assignees ?? [];
 };
+
 export const blockLambdaResultsOrEmpty = (node: SdsBlockLambda | undefined): SdsBlockLambdaResult[] => {
     return stream(statementsOrEmpty(node?.body))
         .filter(isSdsAssignment)

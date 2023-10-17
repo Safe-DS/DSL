@@ -58,7 +58,10 @@ import {
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
-import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
+import {
+    argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
+    argumentListMustNotSetParameterMultipleTimes
+} from './other/argumentLists.js';
 import {
     referenceMustNotBeFunctionPointer,
     referenceMustNotBeStaticClassOrEnumReference,
@@ -143,7 +146,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
         ],
-        SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
+        SdsArgumentList: [
+            argumentListMustNotSetParameterMultipleTimes(services),
+            argumentListMustNotHavePositionalArgumentsAfterNamedArguments
+        ],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsCall: [
