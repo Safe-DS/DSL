@@ -91,14 +91,16 @@ export class SafeDsTypeComputer {
     private readonly builtinClasses: SafeDsClasses;
     private readonly nodeMapper: SafeDsNodeMapper;
 
-    private readonly typeCache: WorkspaceCache<string, Type>;
+    private readonly coreTypeCache: WorkspaceCache<string, Type>;
+    private readonly nodeTypeCache: WorkspaceCache<string, Type>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.builtinClasses = services.builtins.Classes;
         this.nodeMapper = services.helpers.NodeMapper;
 
-        this.typeCache = new WorkspaceCache(services.shared);
+        this.coreTypeCache = new WorkspaceCache(services.shared);
+        this.nodeTypeCache = new WorkspaceCache(services.shared);
     }
 
     /**
@@ -112,7 +114,7 @@ export class SafeDsTypeComputer {
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         const key = `${documentUri}~${nodePath}`;
-        return this.typeCache.get(key, () => this.doComputeType(node).unwrap());
+        return this.nodeTypeCache.get(key, () => this.doComputeType(node).unwrap());
     }
 
     // fun SdsAbstractObject.hasPrimitiveType(): Boolean {
@@ -561,10 +563,13 @@ export class SafeDsTypeComputer {
     }
 
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
-        if (coreClass) {
-            return new ClassType(coreClass, isNullable);
-        } /* c8 ignore start */ else {
+        /* c8 ignore start */
+        if (!coreClass) {
             return UnknownType;
-        } /* c8 ignore stop */
+        }
+        /* c8 ignore stop */
+
+        const key = `${coreClass.name}~${isNullable}`
+        return this.coreTypeCache.get(key, () => new ClassType(coreClass, isNullable));
     }
 }
