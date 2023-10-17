@@ -1,0 +1,38 @@
+package tests.validation.other.expressions.infixOperations.divisionByZero
+
+pipeline test {
+    // $TEST$ error "Division by zero."
+    »1.0 / 0.0«;
+    // $TEST$ error "Division by zero."
+    »1.0 / -0.0«;
+    // $TEST$ no error "Division by zero."
+    »1.0 / 1.0«;
+
+    // $TEST$ error "Division by zero."
+    »1.0 / 0«;
+    // $TEST$ no error "Division by zero."
+    »1.0 / 1«;
+
+    // $TEST$ error "Division by zero."
+    »1 / 0.0«;
+    // $TEST$ error "Division by zero."
+    »1 / -0.0«;
+    // $TEST$ no error "Division by zero."
+    »1 / 1.0«;
+
+    // $TEST$ error "Division by zero."
+    »1 / 0«;
+    // $TEST$ no error "Division by zero."
+    »1 / 1«;
+
+    // $TEST$ no error "Division by zero."
+    »null / 0.0«;
+    // $TEST$ no error "Division by zero."
+    »null / -0.0«;
+    // $TEST$ no error "Division by zero."
+    »null / 1.0«;
+    // $TEST$ no error "Division by zero."
+    »null / 0«;
+    // $TEST$ no error "Division by zero."
+    »null / 1«;
+}

@@ -5,8 +5,8 @@ import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { toConstantExpressionOrUndefined } from '../partialEvaluation/toConstantExpressionOrUndefined.js';
-import { SdsConstantExpression, SdsConstantString } from '../partialEvaluation/model.js';
+import { toConstantExpression } from '../partialEvaluation/toConstantExpression.js';
+import { ConstantExpression, ConstantString } from '../partialEvaluation/model.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
 const CODE_GENERATION_URI = resourceNameToUri('builtins/safeds/lang/codeGeneration.sdsstub');
@@ -48,7 +48,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     getPythonModule(node: SdsModule | undefined): string | undefined {
         const value = this.getArgumentValue(node, this.PythonModule, 'qualifiedName');
-        if (value instanceof SdsConstantString) {
+        if (value instanceof ConstantString) {
             return value.value;
         } else {
             return undefined;
@@ -61,7 +61,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     getPythonName(node: SdsAnnotatedObject | undefined): string | undefined {
         const value = this.getArgumentValue(node, this.PythonName, 'name');
-        if (value instanceof SdsConstantString) {
+        if (value instanceof ConstantString) {
             return value.value;
         } else {
             return undefined;
@@ -92,11 +92,11 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         node: SdsAnnotatedObject | undefined,
         annotation: SdsAnnotation | undefined,
         parameterName: string,
-    ): SdsConstantExpression | undefined {
+    ): ConstantExpression | undefined {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
         const expression = argumentsOrEmpty(annotationCall).find(
             (it) => this.nodeMapper.argumentToParameterOrUndefined(it)?.name === parameterName,
         )?.value;
-        return toConstantExpressionOrUndefined(expression);
+        return toConstantExpression(expression);
     }
 }

@@ -1,14 +1,17 @@
 import {
+    isSdsAnnotation,
     isSdsAssignment,
     isSdsAttribute,
     isSdsBlockLambda,
     isSdsBlockLambdaResult,
+    isSdsCallable,
     isSdsCallableType,
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
     isSdsEnumVariant,
     isSdsFunction,
+    isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
     isSdsPlaceholder,
@@ -78,6 +81,21 @@ export const isNamedArgument = (node: SdsArgument): boolean => {
 
 export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
     return Boolean(node.typeParameter);
+};
+
+export const isConstantParameter = (node: SdsParameter | undefined): boolean => {
+    if (!node) {
+        return false;
+    }
+
+    const containingCallable = getContainerOfType(node, isSdsCallable);
+
+    // In those cases, the const modifier is not applicable
+    if (isSdsCallableType(containingCallable) || isSdsLambda(containingCallable)) {
+        return false;
+    }
+
+    return isSdsAnnotation(containingCallable) || node.isConstant;
 };
 
 export const isRequiredParameter = (node: SdsParameter): boolean => {

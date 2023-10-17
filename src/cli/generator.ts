@@ -58,14 +58,14 @@ import {extractAstNode, extractDestinationAndName} from './cli-util.js';
 import chalk from 'chalk';
 import {createSafeDsServices, SafeDsServices} from '../language/safe-ds-module.js';
 import {NodeFileSystem} from 'langium/node';
-import {toConstantExpressionOrUndefined} from '../language/partialEvaluation/toConstantExpressionOrUndefined.js';
+import {toConstantExpression} from '../language/partialEvaluation/toConstantExpression.js';
 import {
-    SdsConstantBoolean,
-    SdsConstantEnumVariant,
-    SdsConstantFloat,
-    SdsConstantInt,
-    SdsConstantNull,
-    SdsConstantString,
+    ConstantBoolean,
+    ConstantEnumVariant,
+    ConstantFloat,
+    ConstantInt,
+    ConstantNull,
+    ConstantString,
 } from '../language/partialEvaluation/model.js';
 import {
     abstractResultsOrEmpty,
@@ -295,24 +295,24 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
-    const potentialConstantExpression = toConstantExpressionOrUndefined(expression);
+    const potentialConstantExpression = toConstantExpression(expression);
     if (potentialConstantExpression !== null) {
         switch (true) {
-            case potentialConstantExpression instanceof SdsConstantBoolean:
-                return (potentialConstantExpression as SdsConstantBoolean).value ? 'True' : 'False';
-            case potentialConstantExpression instanceof SdsConstantInt:
-                return String((potentialConstantExpression as SdsConstantInt).value);
-            case potentialConstantExpression instanceof SdsConstantFloat:
-                const floatValue = (potentialConstantExpression as SdsConstantFloat).value;
+            case potentialConstantExpression instanceof ConstantBoolean:
+                return (potentialConstantExpression as ConstantBoolean).value ? 'True' : 'False';
+            case potentialConstantExpression instanceof ConstantInt:
+                return String((potentialConstantExpression as ConstantInt).value);
+            case potentialConstantExpression instanceof ConstantFloat:
+                const floatValue = (potentialConstantExpression as ConstantFloat).value;
                 return Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue);
-            case potentialConstantExpression instanceof SdsConstantNull:
+            case potentialConstantExpression === ConstantNull:
                 return 'None';
-            case potentialConstantExpression instanceof SdsConstantString:
-                return `'${(potentialConstantExpression as SdsConstantString).value
+            case potentialConstantExpression instanceof ConstantString:
+                return `'${(potentialConstantExpression as ConstantString).value
                     .replaceAll('\r\n', '\\n')
                     .replaceAll('\n', '\\n')}'`;
-            case potentialConstantExpression instanceof SdsConstantEnumVariant:
-                return String((potentialConstantExpression as SdsConstantEnumVariant).value); // TODO SdsConstantEnumVariant?? generate something useful
+            case potentialConstantExpression instanceof ConstantEnumVariant:
+                return String((potentialConstantExpression as ConstantEnumVariant).value); // TODO SdsConstantEnumVariant?? generate something useful
         }
     }
 
