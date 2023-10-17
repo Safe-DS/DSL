@@ -421,7 +421,8 @@ export class SafeDsTypeComputer {
             }
         }
 
-        return memberType.copyWithNullability(node.isNullSafe || memberType.isNullable);
+        const receiverType = this.computeType(node.receiver);
+        return memberType.copyWithNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
