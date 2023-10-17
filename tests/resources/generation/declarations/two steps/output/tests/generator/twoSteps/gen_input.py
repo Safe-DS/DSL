@@ -3,5 +3,5 @@
 def test1(a, b=0):
     f()
 
-def test2(a, *c):
+def test2(a, c):
     f()
