@@ -5,7 +5,7 @@ def test():
         d = g()
         return d
     f1(__block_lambda_0)
-    def __block_lambda_1(a, *c):
+    def __block_lambda_1(a, c):
         d = g()
         return d
     f2(__block_lambda_1)
