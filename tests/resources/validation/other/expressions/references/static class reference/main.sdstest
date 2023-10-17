@@ -1,0 +1,44 @@
+package tests.validation.other.expressions.references.staticClassReference
+
+class ClassWithConstructor()
+
+class ClassWithoutConstructor
+
+class ClassWithStaticMembers {
+    static attr myAttribute: Int
+
+    class InnerClassWithConstructor() {
+        static attr myAttribute: Int
+    }
+
+    class InnerClassWithoutConstructor
+}
+
+pipeline test {
+    // $TEST$ no error "A class must not be statically referenced."
+    »Unresolved«;
+    // $TEST$ error "A class must not be statically referenced."
+    »ClassWithConstructor«;
+    // $TEST$ error "A class must not be statically referenced."
+    »ClassWithoutConstructor«;
+    // $TEST$ no error "A class must not be statically referenced."
+    »ClassWithoutConstructor«();
+    // $TEST$ no error "A class must not be statically referenced."
+    »ClassWithConstructor«();
+    // $TEST$ no error "A class must not be statically referenced."
+    »ClassWithStaticMembers«.myAttribute;
+    // $TEST$ no error "A class must not be statically referenced."
+    »ClassWithStaticMembers«.unresolved;
+    // $TEST$ no error "A class must not be statically referenced."
+    // $TEST$ error "A class must not be statically referenced."
+    »ClassWithStaticMembers«.»InnerClassWithConstructor«;
+    // $TEST$ no error "A class must not be statically referenced."
+    // $TEST$ error "A class must not be statically referenced."
+    »ClassWithStaticMembers«.»InnerClassWithoutConstructor«;
+    // $TEST$ no error "A class must not be statically referenced."
+    // $TEST$ no error "A class must not be statically referenced."
+    »ClassWithStaticMembers«.»InnerClassWithConstructor«();
+    // $TEST$ no error "A class must not be statically referenced."
+    // $TEST$ no error "A class must not be statically referenced."
+    »ClassWithStaticMembers«.»InnerClassWithConstructor«.myAttribute;
+}

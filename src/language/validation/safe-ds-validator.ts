@@ -60,6 +60,7 @@ import {
 import { argumentListMustNotHavePositionalArgumentsAfterNamedArguments } from './other/argumentLists.js';
 import {
     referenceMustNotBeFunctionPointer,
+    referenceMustNotBeStaticClassOrEnumReference,
     referenceTargetMustNotBeAnnotationPipelineOrSchema,
 } from './other/expressions/references.js';
 import {
@@ -197,6 +198,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsReference: [
             referenceMustNotBeFunctionPointer,
+            referenceMustNotBeStaticClassOrEnumReference,
             referenceTargetMustNotBeAnnotationPipelineOrSchema,
             referenceTargetShouldNotBeDeprecated(services),
             referenceTargetShouldNotExperimental(services),
