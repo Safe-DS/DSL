@@ -1,0 +1,16 @@
+package tests.validation.other.expressions.lambdas.context.invalidContext
+
+pipeline invalidContext {
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    »() {}«;
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    »() -> 1«;
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    (»() {}«)();
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    (»() -> 1«)();
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    val a = »() {}«;
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    val b = »() -> 1«;
+}

@@ -1,0 +1,191 @@
+package tests.validation.other.expressions.lambdas.context.assignedToUntypedParameter
+
+/*
+ * Lambdas passed as default values
+ */
+
+@Repeatable
+annotation MyAnnotation(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    f = (»() {}«),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    g = »() -> 1«
+)
+
+class MyClass(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    f = (»() {}«),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    g = »() -> 1«
+)
+
+enum MyEnum {
+    MyEnumVariant(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    )
+}
+
+fun myFunction(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    f = (»() {}«),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    g = »() -> 1«
+)
+
+segment mySegment1(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    f = (»() {}«),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    g = »() -> 1«
+) {}
+
+segment mySegment2(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    f: (p = (»() {}«)) -> (),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    g: (p = »() -> 1«) -> (),
+) {
+    (
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    ) {};
+
+    (
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    ) -> 1;
+}
+
+/*
+ * Lambdas passed as arguments
+ */
+
+@MyAnnotation(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    (»() {}«),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    »() -> 1«
+)
+@MyAnnotation(
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    f = (»() {}«),
+    // $TEST$ error "A lambda must be assigned to a typed parameter."
+    g = »() -> 1«
+)
+segment lambdasPassedAsArguments(
+    callableType: (p, q) -> (),
+) {
+    val blockLambda = (p, q) {};
+    val expressionLambda = (p, q) -> 1;
+
+    MyAnnotation(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    MyAnnotation(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    );
+
+    MyClass(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    MyClass(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    );
+
+    MyEnum.MyEnumVariant(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    MyEnum.MyEnumVariant(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    );
+
+    myFunction(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    myFunction(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    );
+
+    mySegment1(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    mySegment1(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        f = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        g = »() -> 1«
+    );
+
+    callableType(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    callableType(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        p = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        q = »() -> 1«
+    );
+
+    blockLambda(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    blockLambda(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        p = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        q = »() -> 1«
+    );
+
+    expressionLambda(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        »() -> 1«
+    );
+    expressionLambda(
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        p = (»() {}«),
+        // $TEST$ error "A lambda must be assigned to a typed parameter."
+        q = »() -> 1«
+    );
+}
