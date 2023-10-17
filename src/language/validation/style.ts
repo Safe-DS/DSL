@@ -11,6 +11,7 @@ import {
     SdsEnumVariant,
     SdsFunction,
     SdsImportedDeclaration,
+    SdsInfixOperation,
     SdsMemberAccess,
     SdsNamedType,
     SdsSegment,
@@ -22,6 +23,8 @@ import { isEmpty } from 'radash';
 import { isRequiredParameter, parametersOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
+import { toConstantExpressionOrUndefined } from '../partialEvaluation/toConstantExpressionOrUndefined.js';
+import { ConstantNull } from '../partialEvaluation/model.js';
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
@@ -150,6 +153,61 @@ export const constraintListShouldNotBeEmpty = (node: SdsConstraintList, accept: 
             code: CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST,
         });
     }
+};
+
+// -----------------------------------------------------------------------------
+// Unnecessary elvis operator
+// -----------------------------------------------------------------------------
+
+export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsInfixOperation, accept: ValidationAcceptor): void => {
+        if (node.operator !== '?:') return;
+
+        const leftType = typeComputer.computeType(node.leftOperand);
+        if (!leftType.isNullable) {
+            accept(
+                'info',
+                'The left operand is never null, so the elvis operator is unnecessary (keep the left operand).',
+                {
+                    node,
+                    code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
+                },
+            );
+        }
+
+        const leftValue = toConstantExpressionOrUndefined(node.leftOperand);
+        const rightValue = toConstantExpressionOrUndefined(node.rightOperand);
+        if (leftValue === ConstantNull && rightValue === ConstantNull) {
+            accept(
+                'info',
+                'Both operands are always null, so the elvis operator is unnecessary (replace it with null).',
+                {
+                    node,
+                    code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
+                },
+            );
+        } else if (leftValue === ConstantNull) {
+            accept(
+                'info',
+                'The left operand is always null, so the elvis operator is unnecessary (keep the right operand).',
+                {
+                    node,
+                    code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
+                },
+            );
+        } else if (rightValue === ConstantNull) {
+            accept(
+                'info',
+                'The right operand is always null, so the elvis operator is unnecessary (keep the left operand).',
+                {
+                    node,
+                    code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
+                },
+            );
+        }
+    };
 };
 
 // -----------------------------------------------------------------------------

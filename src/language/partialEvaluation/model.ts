@@ -10,23 +10,23 @@ import {
 } from '../generated/ast.js';
 
 /* c8 ignore start */
-export type ParameterSubstitutions = Map<SdsParameter, SdsSimplifiedExpression | undefined>;
-export type ResultSubstitutions = Map<SdsAbstractResult, SdsSimplifiedExpression | undefined>;
+export type ParameterSubstitutions = Map<SdsParameter, SimplifiedExpression | undefined>;
+export type ResultSubstitutions = Map<SdsAbstractResult, SimplifiedExpression | undefined>;
 
-export abstract class SdsSimplifiedExpression {
+export abstract class SimplifiedExpression {
     /**
      * Removes any unnecessary containers from the expression.
      */
-    unwrap(): SdsSimplifiedExpression {
+    unwrap(): SimplifiedExpression {
         return this;
     }
 }
 
-export abstract class SdsIntermediateExpression extends SdsSimplifiedExpression {}
+export abstract class IntermediateExpression extends SimplifiedExpression {}
 
-export abstract class SdsIntermediateCallable extends SdsIntermediateExpression {}
+export abstract class IntermediateCallable extends IntermediateExpression {}
 
-export class SdsIntermediateBlockLambda extends SdsIntermediateCallable {
+export class IntermediateBlockLambda extends IntermediateCallable {
     constructor(
         readonly parameters: SdsParameter[],
         readonly results: SdsBlockLambdaResult[],
@@ -36,7 +36,7 @@ export class SdsIntermediateBlockLambda extends SdsIntermediateCallable {
     }
 }
 
-export class SdsIntermediateExpressionLambda extends SdsIntermediateCallable {
+export class IntermediateExpressionLambda extends IntermediateCallable {
     constructor(
         readonly parameters: SdsParameter[],
         readonly result: SdsExpression,
@@ -46,7 +46,7 @@ export class SdsIntermediateExpressionLambda extends SdsIntermediateCallable {
     }
 }
 
-export class SdsIntermediateStep extends SdsIntermediateCallable {
+export class IntermediateStep extends IntermediateCallable {
     constructor(
         readonly parameters: SdsParameter[],
         readonly results: SdsResult[],
@@ -55,12 +55,12 @@ export class SdsIntermediateStep extends SdsIntermediateCallable {
     }
 }
 
-export class SdsIntermediateRecord extends SdsIntermediateExpression {
+export class IntermediateRecord extends IntermediateExpression {
     constructor(readonly resultSubstitutions: ResultSubstitutions) {
         super();
     }
 
-    getSubstitutionByReferenceOrNull(reference: SdsReference): SdsSimplifiedExpression | null {
+    getSubstitutionByReferenceOrNull(reference: SdsReference): SimplifiedExpression | null {
         const referencedDeclaration = reference.target;
         if (!isSdsAbstractResult(referencedDeclaration)) {
             return null;
@@ -69,7 +69,7 @@ export class SdsIntermediateRecord extends SdsIntermediateExpression {
         return this.resultSubstitutions.get(referencedDeclaration) ?? null;
     }
 
-    getSubstitutionByIndexOrNull(index: number | null): SdsSimplifiedExpression | null {
+    getSubstitutionByIndexOrNull(index: number | null): SimplifiedExpression | null {
         if (index === null) {
             return null;
         }
@@ -79,7 +79,7 @@ export class SdsIntermediateRecord extends SdsIntermediateExpression {
     /**
      * If the record contains exactly one substitution its value is returned. Otherwise, it returns `this`.
      */
-    override unwrap(): SdsSimplifiedExpression {
+    override unwrap(): SimplifiedExpression {
         if (this.resultSubstitutions.size === 1) {
             return this.resultSubstitutions.values().next().value;
         } else {
@@ -95,12 +95,12 @@ export class SdsIntermediateRecord extends SdsIntermediateExpression {
     }
 }
 
-export class SdsIntermediateVariadicArguments extends SdsIntermediateExpression {
-    constructor(readonly arguments_: (SdsSimplifiedExpression | null)[]) {
+export class IntermediateVariadicArguments extends IntermediateExpression {
+    constructor(readonly arguments_: (SimplifiedExpression | null)[]) {
         super();
     }
 
-    getArgumentByIndexOrNull(index: number | null): SdsSimplifiedExpression | null {
+    getArgumentByIndexOrNull(index: number | null): SimplifiedExpression | null {
         if (index === null) {
             return null;
         }
@@ -108,8 +108,8 @@ export class SdsIntermediateVariadicArguments extends SdsIntermediateExpression 
     }
 }
 
-export abstract class SdsConstantExpression extends SdsSimplifiedExpression {
-    abstract equals(other: SdsConstantExpression): boolean;
+export abstract class ConstantExpression extends SimplifiedExpression {
+    abstract equals(other: ConstantExpression): boolean;
 
     abstract override toString(): string;
 
@@ -121,13 +121,13 @@ export abstract class SdsConstantExpression extends SdsSimplifiedExpression {
     }
 }
 
-export class SdsConstantBoolean extends SdsConstantExpression {
+export class ConstantBoolean extends ConstantExpression {
     constructor(readonly value: boolean) {
         super();
     }
 
-    equals(other: SdsConstantExpression): boolean {
-        return other instanceof SdsConstantBoolean && this.value === other.value;
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantBoolean && this.value === other.value;
     }
 
     toString(): string {
@@ -135,13 +135,13 @@ export class SdsConstantBoolean extends SdsConstantExpression {
     }
 }
 
-export class SdsConstantEnumVariant extends SdsConstantExpression {
+export class ConstantEnumVariant extends ConstantExpression {
     constructor(readonly value: SdsEnumVariant) {
         super();
     }
 
-    equals(other: SdsConstantExpression): boolean {
-        return other instanceof SdsConstantEnumVariant && this.value === other.value;
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantEnumVariant && this.value === other.value;
     }
 
     toString(): string {
@@ -149,15 +149,15 @@ export class SdsConstantEnumVariant extends SdsConstantExpression {
     }
 }
 
-export abstract class SdsConstantNumber extends SdsConstantExpression {}
+export abstract class ConstantNumber extends ConstantExpression {}
 
-export class SdsConstantFloat extends SdsConstantNumber {
+export class ConstantFloat extends ConstantNumber {
     constructor(readonly value: number) {
         super();
     }
 
-    equals(other: SdsConstantExpression): boolean {
-        return other instanceof SdsConstantFloat && this.value === other.value;
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantFloat && this.value === other.value;
     }
 
     toString(): string {
@@ -165,13 +165,13 @@ export class SdsConstantFloat extends SdsConstantNumber {
     }
 }
 
-export class SdsConstantInt extends SdsConstantNumber {
+export class ConstantInt extends ConstantNumber {
     constructor(readonly value: bigint) {
         super();
     }
 
-    equals(other: SdsConstantExpression): boolean {
-        return other instanceof SdsConstantInt && this.value === other.value;
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantInt && this.value === other.value;
     }
 
     toString(): string {
@@ -179,9 +179,9 @@ export class SdsConstantInt extends SdsConstantNumber {
     }
 }
 
-export class SdsConstantNull extends SdsConstantExpression {
-    equals(other: SdsConstantExpression): boolean {
-        return other instanceof SdsConstantNull;
+class ConstantNullClass extends ConstantExpression {
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantNullClass;
     }
 
     toString(): string {
@@ -189,13 +189,15 @@ export class SdsConstantNull extends SdsConstantExpression {
     }
 }
 
-export class SdsConstantString extends SdsConstantExpression {
+export const ConstantNull = new ConstantNullClass();
+
+export class ConstantString extends ConstantExpression {
     constructor(readonly value: string) {
         super();
     }
 
-    equals(other: SdsConstantExpression): boolean {
-        return other instanceof SdsConstantString && this.value === other.value;
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantString && this.value === other.value;
     }
 
     toString(): string {
