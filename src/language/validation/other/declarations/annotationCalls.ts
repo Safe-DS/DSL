@@ -9,14 +9,15 @@ import {
 } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import {
-    annotationCallsOrEmpty, argumentsOrEmpty,
+    annotationCallsOrEmpty,
+    argumentsOrEmpty,
     isRequiredParameter,
     parametersOrEmpty,
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
-import {toConstantExpression} from "../../../partialEvaluation/toConstantExpression.js";
-import {UnknownValue} from "../../../partialEvaluation/model.js";
+import { toConstantExpression } from '../../../partialEvaluation/toConstantExpression.js';
+import { UnknownValue } from '../../../partialEvaluation/model.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
@@ -28,14 +29,14 @@ export const annotationCallArgumentsMustBeConstant = (node: SdsAnnotationCall, a
         const constantValue = toConstantExpression(argument.value);
 
         if (constantValue === UnknownValue) {
-            accept('error', "Arguments of annotation calls must be constant.", {
+            accept('error', 'Arguments of annotation calls must be constant.', {
                 node: argument,
                 property: 'value',
                 code: CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT,
             });
         }
     }
-}
+};
 
 export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
     if (node.argumentList) {
