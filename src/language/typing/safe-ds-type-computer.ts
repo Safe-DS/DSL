@@ -259,21 +259,21 @@ export class SafeDsTypeComputer {
     private computeTypeOfExpression(node: SdsExpression): Type {
         // Terminal cases
         if (isSdsBoolean(node)) {
-            return this.Boolean();
+            return this.Boolean;
         } else if (isSdsFloat(node)) {
-            return this.Float();
+            return this.Float;
         } else if (isSdsInt(node)) {
-            return this.Int();
+            return this.Int;
         } else if (isSdsList(node)) {
-            return this.List();
+            return this.List;
         } else if (isSdsMap(node)) {
-            return this.Map();
+            return this.Map;
         } else if (isSdsNull(node)) {
-            return this.NothingOrNull();
+            return this.NothingOrNull;
         } else if (isSdsString(node)) {
-            return this.String();
+            return this.String;
         } else if (isSdsTemplateString(node)) {
-            return this.String();
+            return this.String;
         }
 
         // Recursive cases
@@ -306,21 +306,21 @@ export class SafeDsTypeComputer {
                 // Boolean operators
                 case 'or':
                 case 'and':
-                    return this.Boolean();
+                    return this.Boolean;
 
                 // Equality operators
                 case '==':
                 case '!=':
                 case '===':
                 case '!==':
-                    return this.Boolean();
+                    return this.Boolean;
 
                 // Comparison operators
                 case '<':
                 case '<=':
                 case '>=':
                 case '>':
-                    return this.Boolean();
+                    return this.Boolean;
 
                 // Arithmetic operators
                 case '+':
@@ -345,7 +345,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsPrefixOperation(node)) {
             switch (node.operator) {
                 case 'not':
-                    return this.Boolean();
+                    return this.Boolean;
                 case '-':
                     return this.computeTypeOfArithmeticPrefixOperation(node);
 
@@ -380,7 +380,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        if (receiverType.equals(this.List()) || receiverType.equals(this.Map())) {
+        if (receiverType.equals(this.List) || receiverType.equals(this.Map)) {
             return this.AnyOrNull();
         } else {
             return UnknownType;
@@ -391,10 +391,10 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         const rightOperandType = this.computeType(node.rightOperand);
 
-        if (leftOperandType.equals(this.Int()) && rightOperandType.equals(this.Int())) {
-            return this.Int();
+        if (leftOperandType.equals(this.Int) && rightOperandType.equals(this.Int)) {
+            return this.Int;
         } else {
-            return this.Float();
+            return this.Float;
         }
     }
 
@@ -427,10 +427,10 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const leftOperandType = this.computeType(node.operand);
 
-        if (leftOperandType.equals(this.Int())) {
-            return this.Int();
+        if (leftOperandType.equals(this.Int)) {
+            return this.Int;
         } else {
-            return this.Float();
+            return this.Float;
         }
     }
 
@@ -530,35 +530,35 @@ export class SafeDsTypeComputer {
     // Builtin types
     // -----------------------------------------------------------------------------------------------------------------
 
-    private AnyOrNull(): Type {
+    AnyOrNull(): Type {
         return this.createCoreType(this.builtinClasses.Any, true);
     }
 
-    private Boolean(): Type {
+   get Boolean(): Type {
         return this.createCoreType(this.builtinClasses.Boolean);
     }
 
-    private Float(): Type {
+   get  Float(): Type {
         return this.createCoreType(this.builtinClasses.Float);
     }
 
-    private Int(): Type {
+   get  Int(): Type {
         return this.createCoreType(this.builtinClasses.Int);
     }
 
-    private List(): Type {
+    get List(): Type {
         return this.createCoreType(this.builtinClasses.List);
     }
 
-    private Map(): Type {
+    get Map(): Type {
         return this.createCoreType(this.builtinClasses.Map);
     }
 
-    private NothingOrNull(): Type {
+    get NothingOrNull(): Type {
         return this.createCoreType(this.builtinClasses.Nothing, true);
     }
 
-    private String(): Type {
+    get String(): Type {
         return this.createCoreType(this.builtinClasses.String);
     }
 

@@ -2,7 +2,7 @@ import {
     ParameterSubstitutions,
     SdsConstantBoolean,
     SdsConstantExpression,
-    SdsConstantFloat,
+    SdsConstantFloat, SdsConstantInt,
     SdsConstantNull,
     SdsConstantString,
     SdsIntermediateBlockLambda,
@@ -51,10 +51,10 @@ export const toConstantExpressionOrUndefined = (node: AstNode | undefined): SdsC
         return undefined;
     }
 
-    return toConstantExpressionOrNullImpl(node, new Map());
+    return toConstantExpressionOrUndefinedImpl(node, new Map());
 };
 
-const toConstantExpressionOrNullImpl = (
+const toConstantExpressionOrUndefinedImpl = (
     node: AstNode,
     substitutions: ParameterSubstitutions,
 ): SdsConstantExpression | undefined => {
@@ -155,13 +155,16 @@ const simplifyExpressionLambda = (
 };
 
 const simplifyInfixOperation = (
-    _node: SdsInfixOperation,
-    _substitutions: ParameterSubstitutions,
+    node: SdsInfixOperation,
+    substitutions: ParameterSubstitutions,
 ): SdsConstantExpression | undefined => {
-    //     // By design none of the operators are short-circuited
-    //     val constantLeft = leftOperand.toConstantExpressionOrUndefined(substitutions) ?: return undefined
-    //     val constantRight = rightOperand.toConstantExpressionOrUndefined(substitutions) ?: return undefined
-    //
+    // By design none of the operators are short-circuited
+    const constantLeft = toConstantExpressionOrUndefinedImpl(node.leftOperand, substitutions);
+    if (!constantLeft) return;
+
+    const constantRight = toConstantExpressionOrUndefinedImpl(node.rightOperand, substitutions);
+    if (!constantRight) return;
+
     //     return when (operator()) {
     //     Or -> simplifyLogicalOp(constantLeft, Boolean::or, constantRight)
     // And -> simplifyLogicalOp(constantLeft, Boolean::and, constantRight)
@@ -282,22 +285,24 @@ const simplifyInfixOperation = (
 // }
 
 const simplifyPrefixOperation = (
-    _node: SdsPrefixOperation,
-    _substitutions: ParameterSubstitutions,
+    node: SdsPrefixOperation,
+    substitutions: ParameterSubstitutions,
 ): SdsConstantExpression | undefined => {
-    //     val constantOperand = operand.toConstantExpressionOrUndefined(substitutions) ?: return undefined
-    //
-    //     return when (operator()) {
-    //     Not -> when (constantOperand) {
-    //     is SdsConstantBoolean -> SdsConstantBoolean(!constantOperand.value)
-    // else -> undefined
-    // }
-    // PrefixMinus -> when (constantOperand) {
-    //     is SdsConstantFloat -> SdsConstantFloat(-constantOperand.value)
-    //     is SdsConstantInt -> SdsConstantInt(-constantOperand.value)
-    // else -> undefined
-    // }
-    // }
+    const constantOperand = toConstantExpressionOrUndefinedImpl(node.operand, substitutions);
+    if (!constantOperand) return;
+
+    if (node.operator === 'not') {
+        if (constantOperand instanceof SdsConstantBoolean) {
+            return new SdsConstantBoolean(!constantOperand.value);
+        }
+    } else if (node.operator === '-') {
+        if (constantOperand instanceof SdsConstantFloat) {
+            return new SdsConstantFloat(-constantOperand.value);
+        } else if (constantOperand instanceof SdsConstantInt) {
+            return new SdsConstantInt(-constantOperand.value);
+        }
+    }
+
     return undefined;
 };
 
@@ -305,7 +310,7 @@ const simplifyTemplateString = (
     node: SdsTemplateString,
     substitutions: ParameterSubstitutions,
 ): SdsConstantExpression | undefined => {
-    const constantExpressions = node.expressions.map((it) => toConstantExpressionOrNullImpl(it, substitutions));
+    const constantExpressions = node.expressions.map((it) => toConstantExpressionOrUndefinedImpl(it, substitutions));
     if (constantExpressions.some((it) => it === undefined)) {
         return undefined;
     }
