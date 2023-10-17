@@ -9,7 +9,7 @@ fun g1(
 
 fun g2(
     param1: Int,
-    vararg param3: Int
+    param3: Int
 ) -> result: Boolean
 
 fun h1(
@@ -19,14 +19,14 @@ fun h1(
 
 fun h2(
     @PythonName("param_1") param1: Int,
-    @PythonName("param_3") vararg param3: Int
+    @PythonName("param_3") param3: Int
 ) -> result: Boolean
 
 pipeline test {
     f((g1(1, 2)));
     f((g1(param2 = 1, param1 = 2)));
-    f((g2(2, 3, 4)));
+    f((g2(2, 3)));
     f((h1(1, 2)));
     f((h1(param2 = 1, param1 = 2)));
-    f((h2(2, 3, 4)));
+    f((h2(2, 3)));
 }

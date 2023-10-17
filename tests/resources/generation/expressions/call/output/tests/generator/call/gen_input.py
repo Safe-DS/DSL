@@ -3,7 +3,7 @@
 def test():
     f(g1(1, param2=2))
     f(g1(2, param2=1))
-    f(g2(2, 3, 4))
+    f(g2(2, 3))
     f(h1(1, param_2=2))
     f(h1(2, param_2=1))
-    f(h2(2, 3, 4))
+    f(h2(2, 3))
