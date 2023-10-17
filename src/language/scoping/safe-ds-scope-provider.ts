@@ -167,7 +167,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         if (isSdsNamedType(node)) {
             return node.declaration.ref;
         } else if (isSdsMemberType(node)) {
-            return node.member.declaration.ref;
+            return node.member?.declaration?.ref;
         } else {
             return undefined;
         }
@@ -233,7 +233,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         if (isSdsReference(node)) {
             return node.target.ref;
         } else if (isSdsMemberAccess(node)) {
-            return node.member.target.ref;
+            return node.member?.target?.ref;
         } else {
             return undefined;
         }
