@@ -279,6 +279,22 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
+    // TODO move down again, when supported as constant expression
+    if (isSdsLiteral(expression) && (isSdsMap(expression) || isSdsList(expression))) {
+        switch (true) {
+            case isSdsMap(expression):
+                const map = expression as SdsMap;
+                const mapContent = map.entries.map(
+                    (entry) => `${generateExpression(entry.key, frame)}: ${generateExpression(entry.value, frame)}`,
+                );
+                return `{${mapContent.join(', ')}}`;
+            case isSdsList(expression):
+                const list = expression as SdsList;
+                const listContent = list.elements.map((value) => generateExpression(value, frame));
+                return `[${listContent.join(', ')}]`;
+        }
+    }
+
     const potentialConstantExpression = toConstantExpressionOrUndefined(expression);
     if (potentialConstantExpression !== null) {
         switch (true) {
@@ -300,27 +316,6 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
-    if (isSdsLiteral(expression)) {
-        switch (true) {
-            // These should be handled by ConstantExpression
-            /*case isSdsBoolean(expression):
-                return expandToString`${(expression as SdsBoolean).value ? 'True' : 'False'}`;
-            case isSdsFloat(expression):
-                return expandToString`${(expression as SdsFloat).value}`;
-            case isSdsInt(expression):
-                return expandToString`${(expression as SdsInt).value}`;
-            case isSdsNull(expression):
-                return expandToString`None`;
-            case isSdsString(expression):
-                return expandToString`'${(expression as SdsString).value}'`;*/
-            case isSdsMap(expression):
-                return `'${expression as SdsMap}'`; // TODO SdsMap??
-            case isSdsList(expression):
-                return `'${expression as SdsList}'`; // TODO SdsList??
-            default:
-                throw new Error(`Unknown SdsLiteral: ${expression}`);
-        }
-    }
     if (isSdsBlockLambda(expression)) {
         const blockLambda = expression as SdsBlockLambda;
         return frame.getUniqueLambdaBlockName(blockLambda);
@@ -369,9 +364,9 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         const member = memberAccess.member.target.ref;
         const receiver = generateExpression(memberAccess.receiver, frame);
         switch (true) {
-            case isSdsBlockLambdaResult(member):
-                let res = member as SdsBlockLambdaResult;
-                return '<TODO: expression:memberaccess:blocklambda>';
+            // TODO this should not be possible? Grammar defines SdsBlockLambdaResult as only part of an assignment. There is no way to parse it anywhere else
+            /*case isSdsBlockLambdaResult(member):
+                return '<TODO: expression:memberaccess:blocklambda>';*/
             case isSdsEnumVariant(member):
                 const enumMember = generateExpression(memberAccess.member, frame);
                 const suffix = isSdsCall(expression.$container) ? '' : '()';

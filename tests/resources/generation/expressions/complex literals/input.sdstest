@@ -1,0 +1,15 @@
+package tests.generator.complexLiterals
+
+fun f(param: List<Int>)
+
+fun g(param: Map<String, Float>)
+
+fun g2(param: Map<Float, String>)
+
+pipeline test {
+    f([]);
+    f([1, 2, 3]);
+    g({});
+    g({"a": 1.2, "b": 1.0});
+    g2({1.2: "a", 1.0: "b"});
+}
