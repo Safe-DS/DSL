@@ -1,7 +1,3 @@
-# Imports ----------------------------------------------------------------------
-
-import runtimeBridge
-
 # Steps ------------------------------------------------------------------------
 
 def testStep():
@@ -17,9 +13,7 @@ def testStep():
 def testPipeline():
     g()
     a, _, _ = g()
-    runtimeBridge.save_placeholder('a', a)
     x, _, _ = g()
-    runtimeBridge.save_placeholder('x', x)
     f1(a)
     f1(x)
     def __block_lambda_0():
