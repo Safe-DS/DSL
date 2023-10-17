@@ -1,0 +1,82 @@
+package tests.validation.other.argumentLists.missingRequiredParameter
+
+annotation A(a: Int, b: Int = 0)
+
+// $TEST$ error "The parameter 'a' is required and must be set here."
+@A»()«
+class C(a: Int, b: Int = 0)
+
+enum E {
+    V(a: Int, b: Int = 0)
+}
+
+// $TEST$ no error "The parameter 'a' is required and must be set here."
+@A»(a = 1)«
+// $TEST$ no error "The parameter 'b' is required and must be set here."
+@A»(a = 1, b = 1)«
+// $TEST$ no error "The parameter 'a' is required and must be set here."
+@A»(1, 2, 3)«
+fun f(a: Int, b: Int = 0)
+
+step g(f: (a: Int, b: Int = 0) -> ()) {
+    // $TEST$ error "The parameter 'a' is required and must be set here."
+    f»()«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    f»(a = 1)«;
+    // $TEST$ no error "The parameter 'b' is required and must be set here."
+    f»(a = 1, b = 1)«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    f»(1, 2, 3)«;
+}
+
+step stepWithVariadicParameter(vararg values: Int) {}
+
+pipeline myPipeline {
+    // $TEST$ error "The parameter 'a' is required and must be set here."
+    C»()«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    C»(a = 1)«;
+    // $TEST$ no error "The parameter 'b' is required and must be set here."
+    C»(a = 1, b = 1)«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    C»(1, 2, 3)«;
+
+    // $TEST$ error "The parameter 'a' is required and must be set here."
+    E.V»()«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    E.V»(a = 1)«;
+    // $TEST$ no error "The parameter 'b' is required and must be set here."
+    E.V»(a = 1, b = 1)«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    E.V»(1, 2, 3)«;
+
+    // $TEST$ error "The parameter 'a' is required and must be set here."
+    f»()«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    f»(a = 1)«;
+    // $TEST$ no error "The parameter 'b' is required and must be set here."
+    f»(a = 1, b = 1)«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    f»(1, 2, 3)«;
+
+    // $TEST$ error "The parameter 'a' is required and must be set here."
+    ((a, b) {})»()«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    ((a, b) {})»(a = 1)«;
+    // $TEST$ no error "The parameter 'b' is required and must be set here."
+    ((a, b) {})»(a = 1, b = 1)«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    ((a, b) {})»(1, 2, 3)«;
+
+    // $TEST$ error "The parameter 'a' is required and must be set here."
+    ((a, b) -> 1)»()«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    ((a, b) -> 1)»(a = 1)«;
+    // $TEST$ no error "The parameter 'b' is required and must be set here."
+    ((a, b) -> 1)»(a = 1, b = 1)«;
+    // $TEST$ no error "The parameter 'a' is required and must be set here."
+    ((a, b) -> 1)»(1, 2, 3)«;
+
+    // $TEST$ no error "The parameter 'values' is required and must be set here."
+    stepWithVariadicParameter();
+}

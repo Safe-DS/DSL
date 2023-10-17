@@ -1,0 +1,84 @@
+package tests.validation.other.argumentLists.tooManyArguments
+
+annotation MyAnnotation1(a: Int, b: Int = 0)
+annotation MyAnnotation2(a: Int)
+
+// $TEST$ error "Expected between 1 and 2 arguments but got 3."
+@MyAnnotation1»(1, 2, 3)«
+// $TEST$ error "Expected exactly 1 argument but got 3."
+@MyAnnotation2»(1, 2, 3)«
+class MyClass1(a: Int, b: Int = 0)
+
+// $TEST$ no error "Expected between 1 and 2 arguments but got 0."
+@MyAnnotation1»(1)«
+// $TEST$ no error "Expected exactly 1 argument but got 0."
+@MyAnnotation2»(1)«
+// $TEST$ no error "Expected exactly 1 argument but got 2."
+@MyAnnotation3»(1, 2)«
+class MyClass2(a: Int)
+
+enum MyEnum {
+    MyVariant1(a: Int, b: Int = 0)
+    MyVariant2(a: Int)
+}
+
+fun myFunction1(a: Int, b: Int = 0)
+fun myFunction2(a: Int)
+
+step g(f1: (a: Int, b: Int = 0) -> (), f2: (a: Int) -> (), f3: (vararg a: Int) -> ()) {
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    f1»(1, 2, 3)«;
+    // $TEST$ error "Expected exactly 1 argument but got 3."
+    f2»(1, 2, 3)«;
+    // $TEST$ no error "Expected between 1 and 2 arguments but got 0."
+    f1»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 0."
+    f2»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 2."
+    f3»(1, 2)«;
+}
+
+pipeline myPipeline {
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    MyClass1»(1, 2, 3)«;
+    // $TEST$ error "Expected exactly 1 argument but got 3."
+    MyClass2»(1, 2, 3)«;
+    // $TEST$ no error "Expected between 1 and 2 arguments but got 0."
+    MyClass1»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 0."
+    MyClass2»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 2."
+    MyClass3»(1, 2)«;
+
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    MyEnum.MyVariant1»(1, 2, 3)«;
+    // $TEST$ error "Expected exactly 1 argument but got 3."
+    MyEnum.MyVariant2»(1, 2, 3)«;
+    // $TEST$ no error "Expected between 1 and 2 arguments but got 0."
+    MyEnum.MyVariant1»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 0."
+    MyEnum.MyVariant2»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 2."
+    MyEnum.MyVariant3»(1, 2)«;
+
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    myFunction1»(1, 2, 3)«;
+    // $TEST$ error "Expected exactly 1 argument but got 3."
+    myFunction2»(1, 2, 3)«;
+    // $TEST$ no error "Expected between 1 and 2 arguments but got 0."
+    myFunction1»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 0."
+    myFunction2»(1)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 2."
+    myFunction3»(1, 2)«;
+
+    // $TEST$ error "Expected exactly 1 argument but got 3."
+    ((a) {})»(1, 2, 3)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 0."
+    ((a) {})»(1)«;
+
+    // $TEST$ error "Expected exactly 1 argument but got 3."
+    ((a) -> 1)»(1, 2, 3)«;
+    // $TEST$ no error "Expected exactly 1 argument but got 0."
+    ((a) -> 1)»(1)«;
+}
