@@ -83,7 +83,7 @@ import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/d
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import {
     lambdaMustBeAssignedToTypedParameter,
-    lambdaParameterMustNotHaveConstModifier
+    lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
@@ -183,7 +183,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsLambda: [
             lambdaMustBeAssignedToTypedParameter(services),
             lambdaParametersMustNotBeAnnotated,
-            lambdaParameterMustNotHaveConstModifier
+            lambdaParameterMustNotHaveConstModifier,
         ],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
