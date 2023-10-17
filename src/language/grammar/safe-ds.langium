@@ -684,7 +684,7 @@ interface SdsIndexedAccess extends SdsChainedExpression {
 
 interface SdsMemberAccess extends SdsChainedExpression {
     isNullSafe: boolean
-    member: SdsReference
+    member?: SdsReference
 }
 
 SdsChainedExpression returns SdsExpression:
@@ -874,8 +874,8 @@ interface SdsType extends SdsObject {}
 interface SdsNamedTypeDeclaration extends SdsDeclaration {}
 
 interface SdsMemberType extends SdsType {
-    member: SdsNamedType
     receiver: SdsType
+    member?: SdsNamedType
 }
 
 SdsType returns SdsType:

@@ -1,4 +1,4 @@
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstNode, getContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsAnnotation,
     isSdsCallable,
@@ -31,7 +31,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsCall, accept: ValidationAcceptor): void => {
-        let receiver = node.receiver;
+        let receiver: AstNode | undefined = node.receiver;
         if (isSdsMemberAccess(receiver)) {
             receiver = receiver.member;
         }
