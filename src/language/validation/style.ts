@@ -180,10 +180,14 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
         const leftValue = toConstantExpressionOrUndefined(node.leftOperand);
         const rightValue = toConstantExpressionOrUndefined(node.rightOperand);
         if (leftValue === ConstantNull && rightValue === ConstantNull) {
-            accept('info', 'Both operands are always null, so the elvis operator is unnecessary (replace it with null).', {
-                node,
-                code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
-            });
+            accept(
+                'info',
+                'Both operands are always null, so the elvis operator is unnecessary (replace it with null).',
+                {
+                    node,
+                    code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
+                },
+            );
         } else if (leftValue === ConstantNull) {
             accept(
                 'info',
