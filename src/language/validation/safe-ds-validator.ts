@@ -103,6 +103,7 @@ import {
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
 import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
+import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 
 /**
  * Register custom validation checks.
@@ -166,6 +167,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
+        SdsInfixOperation: [divisionDivisorMustNotBeZero(services)],
         SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
