@@ -81,7 +81,10 @@ import {
 } from './builtins/experimental.js';
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
-import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lambdas.js';
+import {
+    lambdaMustBeAssignedToTypedParameter,
+    lambdaParameterMustNotHaveConstModifier,
+} from './other/expressions/lambdas.js';
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
@@ -177,7 +180,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
         SdsInfixOperation: [divisionDivisorMustNotBeZero(services), elvisOperatorShouldBeNeeded(services)],
-        SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
+        SdsLambda: [
+            lambdaMustBeAssignedToTypedParameter(services),
+            lambdaParametersMustNotBeAnnotated,
+            lambdaParameterMustNotHaveConstModifier,
+        ],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),

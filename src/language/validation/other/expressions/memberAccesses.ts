@@ -12,7 +12,7 @@ export const memberAccessOfEnumVariantMustNotLackInstantiation = (
     node: SdsMemberAccess,
     accept: ValidationAcceptor,
 ): void => {
-    const declaration = node.member.target.ref;
+    const declaration = node.member?.target?.ref;
     if (!isSdsEnumVariant(declaration)) {
         return;
     }
