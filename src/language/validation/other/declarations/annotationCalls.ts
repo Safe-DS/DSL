@@ -9,16 +9,32 @@ import {
 } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import {
-    annotationCallsOrEmpty,
+    annotationCallsOrEmpty, argumentsOrEmpty,
     isRequiredParameter,
     parametersOrEmpty,
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
+import {toConstantExpressionOrUndefined} from "../../../partialEvaluation/toConstantExpressionOrUndefined.js";
 
+export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
 export const CODE_ANNOTATION_CALL_TARGET_PARAMETER = 'annotation-call/target-parameter';
 export const CODE_ANNOTATION_CALL_TARGET_RESULT = 'annotation-call/target-result';
+
+export const annotationCallArgumentsMustBeConstant = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+    for (const argument of argumentsOrEmpty(node)) {
+        const constantValue = toConstantExpressionOrUndefined(argument.value);
+
+        if (!constantValue) {
+            accept('error', "Arguments of annotation calls must be constant.", {
+                node: argument,
+                property: 'value',
+                code: CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT,
+            });
+        }
+    }
+}
 
 export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
     if (node.argumentList) {
