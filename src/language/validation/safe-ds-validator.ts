@@ -26,6 +26,7 @@ import {
     callArgumentListShouldBeNeeded,
     classBodyShouldNotBeEmpty,
     constraintListShouldNotBeEmpty,
+    elvisOperatorShouldBeNeeded,
     enumBodyShouldNotBeEmpty,
     enumVariantParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty,
@@ -167,7 +168,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
-        SdsInfixOperation: [divisionDivisorMustNotBeZero(services)],
+        SdsInfixOperation: [divisionDivisorMustNotBeZero(services), elvisOperatorShouldBeNeeded(services)],
         SdsLambda: [lambdaParametersMustNotBeAnnotated, lambdaParameterMustNotHaveConstModifier],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
