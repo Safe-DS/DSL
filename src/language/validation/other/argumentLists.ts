@@ -15,7 +15,7 @@ export const argumentListMustNotSetParameterMultipleTimes = (services: SafeDsSer
         // We already report other errors in those cases
         const containingCall = getContainerOfType(node, isSdsCall);
         const callable = nodeMapper.callToCallableOrUndefined(containingCall);
-        if (isSdsAnnotation(callable) || isSdsLambda(callable)) {
+        if (isSdsAnnotation(callable)) {
             return;
         }
 

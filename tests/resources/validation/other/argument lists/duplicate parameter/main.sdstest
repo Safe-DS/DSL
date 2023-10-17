@@ -141,22 +141,18 @@ segment test(
     );
 
 
-    /*
-     * We can never call a lambda directly and should avoid showing additional errors.
-     */
-
     val myBlockLambda = (a, b) {};
 
     ((a, b) {})(
         // $TEST$ no error r"The parameter '\w+' is already set\."
         »1«,
-        // $TEST$ no error r"The parameter '\w+' is already set\."
+        // $TEST$ error "The parameter 'a' is already set."
         »a = 1«
     );
     myBlockLambda(
         // $TEST$ no error r"The parameter '\w+' is already set\."
         »b = 1«,
-        // $TEST$ no error r"The parameter '\w+' is already set\."
+        // $TEST$ error "The parameter 'b' is already set."
         »b = 1«
     );
     ((a, b) {})(
@@ -172,13 +168,13 @@ segment test(
     ((a, b) -> 1)(
         // $TEST$ no error r"The parameter '\w+' is already set\."
         »1«,
-        // $TEST$ no error r"The parameter '\w+' is already set\."
+        // $TEST$ error "The parameter 'a' is already set."
         »a = 1«
     );
     myExpressionLambda(
         // $TEST$ no error r"The parameter '\w+' is already set\."
         »b = 1«,
-        // $TEST$ no error r"The parameter '\w+' is already set\."
+        // $TEST$ error "The parameter 'b' is already set."
         »b = 1«
     );
     ((a, b) -> 1)(
