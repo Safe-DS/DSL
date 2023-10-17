@@ -535,15 +535,15 @@ export class SafeDsTypeComputer {
         return this.createCoreType(this.builtinClasses.Any, true);
     }
 
-   get Boolean(): Type {
+    get Boolean(): Type {
         return this.createCoreType(this.builtinClasses.Boolean);
     }
 
-   get  Float(): Type {
+    get Float(): Type {
         return this.createCoreType(this.builtinClasses.Float);
     }
 
-   get  Int(): Type {
+    get Int(): Type {
         return this.createCoreType(this.builtinClasses.Int);
     }
 
@@ -570,7 +570,7 @@ export class SafeDsTypeComputer {
         }
         /* c8 ignore stop */
 
-        const key = `${coreClass.name}~${isNullable}`
+        const key = `${coreClass.name}~${isNullable}`;
         return this.coreTypeCache.get(key, () => new ClassType(coreClass, isNullable));
     }
 }
