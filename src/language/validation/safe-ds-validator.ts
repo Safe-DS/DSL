@@ -106,7 +106,8 @@ import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './i
 import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
-import {constantParameterMustHaveConstantDefaultValue} from "./other/declarations/parameters.js";
+import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
+import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
 
 /**
  * Register custom validation checks.
@@ -142,7 +143,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCall: [callArgumentListShouldBeNeeded(services), callReceiverMustBeCallable(services)],
+        SdsCall: [
+            callArgumentListShouldBeNeeded(services),
+            callArgumentsMustBeConstantIfParameterIsConstant(services),
+            callReceiverMustBeCallable(services),
+        ],
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,

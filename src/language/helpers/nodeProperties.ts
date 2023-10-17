@@ -83,7 +83,11 @@ export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
     return Boolean(node.typeParameter);
 };
 
-export const isConstantParameter = (node: SdsParameter): boolean => {
+export const isConstantParameter = (node: SdsParameter | undefined): boolean => {
+    if (!node) {
+        return false;
+    }
+
     const containingCallable = getContainerOfType(node, isSdsCallable);
 
     // In those cases, the const modifier is not applicable
