@@ -179,6 +179,49 @@ export class ConstantInt extends ConstantNumber {
     }
 }
 
+export class ConstantList extends ConstantExpression {
+    constructor(readonly elements: ConstantExpression[]) {
+        super();
+    }
+
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantList && this.elements.every((e, i) => e.equals(other.elements[i]));
+    }
+
+    toString(): string {
+        return `[${this.elements.join(', ')}]`;
+    }
+}
+
+export class ConstantMap extends ConstantExpression {
+    constructor(readonly entries: ConstantMapEntry[]) {
+        super();
+    }
+
+    equals(other: ConstantExpression): boolean {
+        return other instanceof ConstantMap && this.entries.every((e, i) => e.equals(other.entries[i]));
+    }
+
+    toString(): string {
+        return `{${this.entries.join(', ')}}`;
+    }
+}
+
+export class ConstantMapEntry {
+    constructor(
+        readonly key: ConstantExpression,
+        readonly value: ConstantExpression,
+    ) {}
+
+    equals(other: ConstantMapEntry): boolean {
+        return this.key.equals(other.key) && this.value.equals(other.value);
+    }
+
+    toString(): string {
+        return `${this.key}: ${this.value}`;
+    }
+}
+
 class ConstantNullClass extends ConstantExpression {
     equals(other: ConstantExpression): boolean {
         return other instanceof ConstantNullClass;
@@ -208,5 +251,17 @@ export class ConstantString extends ConstantExpression {
         return this.value;
     }
 }
+
+class UnknownValueClass extends ConstantExpression {
+    override equals(other: ConstantExpression): boolean {
+        return other instanceof UnknownValueClass;
+    }
+
+    toString(): string {
+        return '$unknown';
+    }
+}
+
+export const UnknownValue = new UnknownValueClass();
 
 /* c8 ignore stop */

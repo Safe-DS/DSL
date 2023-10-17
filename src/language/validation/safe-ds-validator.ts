@@ -85,6 +85,7 @@ import { lambdaParameterMustNotHaveConstModifier } from './other/expressions/lam
 import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
+    annotationCallArgumentsMustBeConstant,
     annotationCallMustNotLackArgumentList,
     callableTypeParametersMustNotBeAnnotated,
     callableTypeResultsMustNotBeAnnotated,
@@ -105,6 +106,8 @@ import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './i
 import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
+import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
+import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
 
 /**
  * Register custom validation checks.
@@ -130,6 +133,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
+            annotationCallArgumentsMustBeConstant,
             annotationCallMustNotLackArgumentList,
         ],
         SdsArgument: [
@@ -139,7 +143,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgumentList: [argumentListMustNotHavePositionalArgumentsAfterNamedArguments],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
-        SdsCall: [callArgumentListShouldBeNeeded(services), callReceiverMustBeCallable(services)],
+        SdsCall: [
+            callArgumentListShouldBeNeeded(services),
+            callArgumentsMustBeConstantIfParameterIsConstant(services),
+            callReceiverMustBeCallable(services),
+        ],
         SdsCallableType: [
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
@@ -192,6 +200,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
         ],
         SdsParameter: [
+            constantParameterMustHaveConstantDefaultValue,
             parameterMustHaveTypeHint,
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),

@@ -1,0 +1,133 @@
+package tests.validation.other.parameters.defaultValueMustBeConstantIfParameterIsConstant
+
+fun f() -> value: Int
+
+annotation MyAnnotation(
+    // $TEST$ no error "Default values of annotation parameters must be constant."
+    param1: Int = »1«,
+    // $TEST$ no error "Default values of annotation parameters must be constant."
+    param2: Int = »-2«,
+    // $TEST$ error "Default values of annotation parameters must be constant."
+    param3: Int = »f()«,
+
+    // $TEST$ no error "Default values of annotation parameters must be constant."
+    const param4: Int = »1«,
+    // $TEST$ no error "Default values of annotation parameters must be constant."
+    const param5: Int = »-2«,
+    // $TEST$ error "Default values of annotation parameters must be constant."
+    const param6: Int = »f()«
+)
+
+class MyClass(
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param1: Int = »1«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param2: Int = »-2«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param3: Int = »f()«,
+
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    const param4: Int = »1«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    const param5: Int = »-2«,
+    // $TEST$ error "Default values of constant parameters must be constant."
+    const param6: Int = »f()«
+)
+
+enum MyEnum {
+    MyEnumVariant(
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param1: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param2: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param3: Int = »f()«,
+
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param4: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param5: Int = »-2«,
+        // $TEST$ error "Default values of constant parameters must be constant."
+        const param6: Int = »f()«
+    )
+}
+
+fun myFunction(
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param1: Int = »1«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param2: Int = »-2«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param3: Int = »f()«,
+
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    const param4: Int = »1«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    const param5: Int = »-2«,
+    // $TEST$ error "Default values of constant parameters must be constant."
+    const param6: Int = »f()«
+)
+
+segment mySegment(
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param1: Int = »1«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param2: Int = »-2«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    param3: Int = »f()«,
+
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    const param4: Int = »1«,
+    // $TEST$ no error "Default values of constant parameters must be constant."
+    const param5: Int = »-2«,
+    // $TEST$ error "Default values of constant parameters must be constant."
+    const param6: Int = »f()«,
+
+    callableType: (
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param1: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param2: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param3: Int = »f()«,
+
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param4: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param5: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param6: Int = »f()«,
+    ) -> ()
+) {
+    (
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param1: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param2: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param3: Int = »f()«,
+
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param4: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param5: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param6: Int = »f()«,
+    ) {};
+
+    (
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param1: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param2: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        param3: Int = »f()«,
+
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param4: Int = »1«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param5: Int = »-2«,
+        // $TEST$ no error "Default values of constant parameters must be constant."
+        const param6: Int = »f()«,
+    ) -> 1;
+}

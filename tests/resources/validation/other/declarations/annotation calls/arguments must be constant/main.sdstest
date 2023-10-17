@@ -1,0 +1,20 @@
+package tests.validation.other.declarations.annotationCalls.argumentsMustBeConstant
+
+@Repeatable
+annotation MyAnnotation(value: Int)
+
+fun myFunction() -> value: Int
+
+// $TEST$ no error "Arguments of annotation calls must be constant."
+@MyAnnotation(»1«)
+// $TEST$ no error "Arguments of annotation calls must be constant."
+@MyAnnotation(»-2«)
+// $TEST$ error "Arguments of annotation calls must be constant."
+@MyAnnotation(»myFunction()«)
+// $TEST$ error "Arguments of annotation calls must be constant."
+@MyAnnotation(value = »myFunction()«)
+// $TEST$ error "Arguments of annotation calls must be constant."
+@Unresolved(»myFunction()«)
+// $TEST$ error "Arguments of annotation calls must be constant."
+@MyAnnotation(unresolved = »myFunction()«)
+class MyClass
