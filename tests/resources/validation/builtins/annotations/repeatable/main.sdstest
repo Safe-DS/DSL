@@ -6,19 +6,19 @@ annotation SingleUse
 annotation MultiUse
 
 // $TEST$ no error r"The annotation '\w*' is not repeatable\."
-»@SingleUse«
+@»SingleUse«
 // $TEST$ no error r"The annotation '\w*' is not repeatable\."
-»@MultiUse«
+@»MultiUse«
 // $TEST$ no error r"The annotation '\w*' is not repeatable\."
-»@MultiUse«
+@»MultiUse«
 // $TEST$ no error r"The annotation '\w*' is not repeatable\."
-»@UnresolvedAnnotation«
+@»UnresolvedAnnotation«
 // $TEST$ no error r"The annotation '\w*' is not repeatable\."
-»@UnresolvedAnnotation«
+@»UnresolvedAnnotation«
 class CorrectUse
 
 // $TEST$ no error r"The annotation '\w*' is not repeatable\."
-»@SingleUse«
+@»SingleUse«
 // $TEST$ error "The annotation 'SingleUse' is not repeatable."
-»@SingleUse«
+@»SingleUse«
 class IncorrectUse
