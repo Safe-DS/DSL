@@ -1,5 +1,5 @@
 import { SdsInfixOperation } from '../../../generated/ast.js';
-import { convertBigint, ValidationAcceptor } from 'langium';
+import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { toConstantExpressionOrUndefined } from '../../../partialEvaluation/toConstantExpressionOrUndefined.js';
 import { SdsConstantFloat, SdsConstantInt } from '../../../partialEvaluation/model.js';
