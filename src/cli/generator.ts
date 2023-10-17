@@ -36,23 +36,14 @@ import {
     SdsAssignment,
     SdsBlock,
     SdsBlockLambda,
-    SdsBlockLambdaResult,
     SdsDeclaration,
     SdsExpression,
-    SdsExpressionStatement,
-    SdsList,
-    SdsMap,
-    SdsMemberAccess,
     SdsModule,
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
-    SdsPlaceholder,
-    SdsReference,
-    SdsResult,
     SdsSegment,
     SdsStatement,
-    SdsYield,
 } from '../language/generated/ast.js';
 import {extractAstNode, extractDestinationAndName} from './cli-util.js';
 import chalk from 'chalk';
@@ -74,6 +65,7 @@ import {
     importedDeclarationsOrEmpty,
     importsOrEmpty,
     isRequiredParameter,
+    moduleMembersOrEmpty,
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
 import {group} from 'radash';
@@ -151,13 +143,13 @@ const getPythonNameOrDefault = function (
 
 const generateAssignee = function (assignee: SdsAssignee): string {
     if (isSdsBlockLambdaResult(assignee)) {
-        return (assignee as SdsBlockLambdaResult).name;
+        return assignee.name;
     } else if (isSdsPlaceholder(assignee)) {
-        return (assignee as SdsPlaceholder).name;
+        return assignee.name;
     } else if (isSdsWildcard(assignee)) {
         return '_';
     } else if (isSdsYield(assignee)) {
-        return (<SdsYield>assignee).result?.ref?.name!;
+        return assignee.result?.ref?.name!;
     }
     throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
 };
@@ -186,9 +178,9 @@ const generateAssignment = function (assignment: SdsAssignment, frame: Generatio
 
 const generateStatement = function (statement: SdsStatement, frame: GenerationInfoFrame): string {
     if (isSdsAssignment(statement)) {
-        return generateAssignment(statement as SdsAssignment, frame);
+        return generateAssignment(statement, frame);
     } else if (isSdsExpressionStatement(statement)) {
-        const expressionStatement = statement as SdsExpressionStatement;
+        const expressionStatement = statement;
         const blockLambdaCode: string[] = [];
         for (const lambda of streamAllContents(expressionStatement.expression).filter(isSdsBlockLambda)) {
             blockLambdaCode.push(generateBlockLambda(lambda, frame));
@@ -261,14 +253,12 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     // TODO move down again, when supported as constant expression
     if (isSdsLiteral(expression) && (isSdsMap(expression) || isSdsList(expression))) {
         if (isSdsMap(expression)) {
-            const map = expression as SdsMap;
-            const mapContent = map.entries.map(
+            const mapContent = expression.entries.map(
                 (entry) => `${generateExpression(entry.key, frame)}: ${generateExpression(entry.value, frame)}`,
             );
             return `{${mapContent.join(', ')}}`;
         } else if (isSdsList(expression)) {
-            const list = expression as SdsList;
-            const listContent = list.elements.map((value) => generateExpression(value, frame));
+            const listContent = expression.elements.map((value) => generateExpression(value, frame));
             return `[${listContent.join(', ')}]`;
         }
     }
@@ -276,24 +266,23 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     const potentialConstantExpression = toConstantExpression(expression);
     if (potentialConstantExpression !== null) {
         if (potentialConstantExpression instanceof ConstantBoolean) {
-            return (potentialConstantExpression as ConstantBoolean).value ? 'True' : 'False';
+            return potentialConstantExpression.value ? 'True' : 'False';
         } else if (potentialConstantExpression instanceof ConstantInt) {
-            return String((potentialConstantExpression as ConstantInt).value);
+            return String(potentialConstantExpression.value);
         } else if (potentialConstantExpression instanceof ConstantFloat) {
-            const floatValue = (potentialConstantExpression as ConstantFloat).value;
+            const floatValue = potentialConstantExpression.value;
             return Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue);
         } else if (potentialConstantExpression === ConstantNull) {
             return 'None';
         } else if (potentialConstantExpression instanceof ConstantString) {
-            return `'${formatStringSingleLine((potentialConstantExpression as ConstantString).value)}'`;
+            return `'${formatStringSingleLine(potentialConstantExpression.value)}'`;
         } else if (potentialConstantExpression instanceof ConstantEnumVariant) {
-            return (potentialConstantExpression as ConstantEnumVariant).value.name; // TODO correct interpretation of SdsEnumVariant / SdsConstantEnumVariant?
+            return potentialConstantExpression.value.name; // TODO correct interpretation of SdsEnumVariant / SdsConstantEnumVariant?
         }
     }
 
     if (isSdsBlockLambda(expression)) {
-        const blockLambda = expression as SdsBlockLambda;
-        return frame.getUniqueLambdaBlockName(blockLambda);
+        return frame.getUniqueLambdaBlockName(expression);
     }
     if (isSdsCall(expression)) {
         const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments);
@@ -335,12 +324,11 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         )}]`;
     }
     if (isSdsMemberAccess(expression)) {
-        let memberAccess = expression as SdsMemberAccess;
-        const member = memberAccess.member?.target.ref!;
-        const receiver = generateExpression(memberAccess.receiver, frame);
+        const member = expression.member?.target.ref!;
+        const receiver = generateExpression(expression.receiver, frame);
         // TODO SdsBlockLambdaResult should not be possible? Grammar defines SdsBlockLambdaResult as only part of an assignment. There is no way to parse it anywhere else
         if (isSdsEnumVariant(member)) {
-            const enumMember = generateExpression(memberAccess.member!, frame);
+            const enumMember = generateExpression(expression.member!, frame);
             const suffix = isSdsCall(expression.$container) ? '' : '()';
             if (expression.isNullSafe) {
                 frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
@@ -349,14 +337,14 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
                 return `${receiver}.${enumMember}${suffix}`;
             }
         } else if (isSdsResult(member)) {
-            const resultList = (<SdsResult>member).$container.results;
+            const resultList = member.$container.results;
             if (resultList.length === 1) {
                 return receiver;
             }
-            const currentIndex = resultList.indexOf(<SdsResult>member);
+            const currentIndex = resultList.indexOf(member);
             return `${receiver}[${currentIndex}]`;
         } else {
-            const memberExpression = generateExpression(memberAccess.member!, frame);
+            const memberExpression = generateExpression(expression.member!, frame);
             if (expression.isNullSafe) {
                 frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
                 return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
@@ -378,7 +366,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
     if (isSdsReference(expression)) {
-        const declaration = (expression as SdsReference).target.ref!;
+        const declaration = expression.target.ref!;
         const referenceImport =
             getExternalReferenceNeededImport(frame.getServices(), expression, declaration) ||
             getInternalReferenceNeededImport(frame.getServices(), expression, declaration);
@@ -393,6 +381,7 @@ const getExternalReferenceNeededImport = function (
     expression: SdsExpression,
     declaration: SdsDeclaration,
 ): ImportData | undefined {
+    // Root Node is always a module.
     const currentModule = <SdsModule>findRootNode(expression);
     const targetModule = <SdsModule>findRootNode(declaration);
     for (const value of importsOrEmpty(currentModule)) {
@@ -432,6 +421,7 @@ const getInternalReferenceNeededImport = function (
     expression: SdsExpression,
     declaration: SdsDeclaration,
 ): ImportData | undefined {
+    // Root Node is always a module.
     const currentModule = <SdsModule>findRootNode(expression);
     const targetModule = <SdsModule>findRootNode(declaration);
     if (currentModule !== targetModule && !isInStubFile(targetModule)) {
@@ -530,11 +520,11 @@ const generateImports = function (importSet: ImportData[]): string[] {
         const importedDecls =
             value
                 ?.filter((importData) => importData !== undefined)
-                .sort((a, b) => (<string>a.declarationName).localeCompare(<string>b.declarationName))
+                .sort((a, b) => a.declarationName!.localeCompare(b.declarationName!))
                 .map((localValue) =>
                     localValue.alias !== undefined
                         ? `${localValue.declarationName} as ${localValue.alias}`
-                        : <string>localValue.declarationName,
+                        : localValue.declarationName!,
                 ) || [];
         declaredImports.push(`from ${key} import ${[...new Set(importedDecls)].join(', ')}`);
     }
@@ -543,14 +533,12 @@ const generateImports = function (importSet: ImportData[]): string[] {
 
 const generateModule = function (services: SafeDsServices, module: SdsModule): string {
     const importSet = new Map<String, ImportData>();
-    const segments = streamAllContents(module)
+    const segments = moduleMembersOrEmpty(module)
         .filter(isSdsSegment)
-        .map((segment) => generateSegment(services, segment, importSet))
-        .toArray();
-    const pipelines = streamAllContents(module)
+        .map((segment) => generateSegment(services, segment, importSet));
+    const pipelines = moduleMembersOrEmpty(module)
         .filter(isSdsPipeline)
-        .map((pipeline) => generatePipeline(services, pipeline, importSet))
-        .toArray();
+        .map((pipeline) => generatePipeline(services, pipeline, importSet));
     const imports = generateImports(Array.from(importSet.values()));
     const output: string[] = [];
     if (imports.length > 0) {
