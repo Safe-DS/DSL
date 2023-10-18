@@ -1,16 +1,15 @@
 import { SafeDsServices } from '../safe-ds-module.js';
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
 import {
-    ConstantBoolean,
-    ConstantExpression,
-    ConstantFloat,
-    ConstantInt,
-    ConstantList,
-    ConstantMap,
-    ConstantNull,
-    ConstantString, isConstantExpression,
-    ParameterSubstitutions,
-    PartialEvaluationResult,
+    BooleanConstant,
+    Constant,
+    FloatConstant,
+    IntConstant,
+    EvaluatedList,
+    EvaluatedMap,
+    NullConstant,
+    StringConstant, isConstant,
+    ParameterSubstitutions, EvaluatedNode, UnknownEvaluatedNode,
 } from './model.js';
 import {
     isSdsArgument,
@@ -52,7 +51,7 @@ import { isEmpty } from 'radash';
 export class SafeDsPartialEvaluator {
     private astNodeLocator: AstNodeLocator;
 
-    private cache: WorkspaceCache<string, PartialEvaluationResult>;
+    private cache: WorkspaceCache<string, EvaluatedNode>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
@@ -60,22 +59,22 @@ export class SafeDsPartialEvaluator {
         this.cache = new WorkspaceCache(services.shared);
     }
 
-    evaluate(node: AstNode | undefined): PartialEvaluationResult {
+    evaluate(node: AstNode | undefined): EvaluatedNode {
         if (!node) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
         return this.cachedDoEvaluate(node, new Map())?.unwrap();
     }
 
-    private cachedDoEvaluate(node: AstNode, substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    private cachedDoEvaluate(node: AstNode, substitutions: ParameterSubstitutions): EvaluatedNode {
         // Try to evaluate the node without parameter substitutions and cache the result
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         const key = `${documentUri}~${nodePath}`;
         const resultWithoutSubstitutions = this.cache.get(key, () => this.doEvaluate(node, new Map()));
         // A constant expression cannot be simplified further. Ditto, if the parameter substitutions are empty.
-        if (resultWithoutSubstitutions?.unwrap() instanceof ConstantExpression || isEmpty(substitutions)) {
+        if (resultWithoutSubstitutions?.unwrap() instanceof Constant || isEmpty(substitutions)) {
             return resultWithoutSubstitutions;
         }
 
@@ -83,29 +82,29 @@ export class SafeDsPartialEvaluator {
         return this.doEvaluate(node, substitutions);
     }
 
-    private doEvaluate(node: AstNode, substitutions: ParameterSubstitutions): PartialEvaluationResult {
-        // Only expressions have a value
+    private doEvaluate(node: AstNode, substitutions: ParameterSubstitutions): EvaluatedNode {
+        // Only expressions can be evaluated at the moment
         if (!isSdsExpression(node)) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
         // Base cases
         if (isSdsBoolean(node)) {
-            return new ConstantBoolean(node.value);
+            return new BooleanConstant(node.value);
         } else if (isSdsFloat(node)) {
-            return new ConstantFloat(node.value);
+            return new FloatConstant(node.value);
         } else if (isSdsInt(node)) {
-            return new ConstantInt(BigInt(node.value));
+            return new IntConstant(BigInt(node.value));
         } else if (isSdsNull(node)) {
-            return ConstantNull;
+            return NullConstant;
         } else if (isSdsString(node)) {
-            return new ConstantString(node.value);
+            return new StringConstant(node.value);
         } else if (isSdsTemplateStringStart(node)) {
-            return new ConstantString(node.value);
+            return new StringConstant(node.value);
         } else if (isSdsTemplateStringInner(node)) {
-            return new ConstantString(node.value);
+            return new StringConstant(node.value);
         } else if (isSdsTemplateStringEnd(node)) {
-            return new ConstantString(node.value);
+            return new StringConstant(node.value);
         } else if (isSdsBlockLambda(node)) {
             return this.evaluateBlockLambda(node, substitutions);
         } else if (isSdsExpressionLambda(node)) {
@@ -145,7 +144,7 @@ export class SafeDsPartialEvaluator {
         throw new Error(`Missing case to handle ${node.$type}.`);
     }
 
-    evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //     return when {
         //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateBlockLambda(
         //     parameters = parametersOrEmpty(),
@@ -154,13 +153,13 @@ export class SafeDsPartialEvaluator {
         // )
         // else -> undefined
         // }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
     evaluateExpressionLambda(
         _node: SdsExpressionLambda,
         _substitutions: ParameterSubstitutions,
-    ): PartialEvaluationResult {
+    ): EvaluatedNode {
         //     return when {
         //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
         //     parameters = parametersOrEmpty(),
@@ -169,19 +168,19 @@ export class SafeDsPartialEvaluator {
         // )
         // else -> undefined
         // }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
-    evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         // By design none of the operators are short-circuited
         const constantLeft = this.cachedDoEvaluate(node.leftOperand, substitutions);
         if (constantLeft === undefined) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
         const constantRight = this.cachedDoEvaluate(node.rightOperand, substitutions);
         if (constantRight === undefined) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
         //     return when (operator()) {
@@ -250,7 +249,7 @@ export class SafeDsPartialEvaluator {
         // else -> constantLeft
         // }
         // }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
     // private fun evaluateLogicalOp(
@@ -303,47 +302,47 @@ export class SafeDsPartialEvaluator {
     // }
     // }
 
-    evaluateList(_node: SdsList, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
-        return new ConstantList([]);
+    evaluateList(_node: SdsList, _substitutions: ParameterSubstitutions): EvaluatedNode {
+        return new EvaluatedList([]);
     }
 
-    evaluateMap(_node: SdsMap, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
-        return new ConstantMap([]);
+    evaluateMap(_node: SdsMap, _substitutions: ParameterSubstitutions): EvaluatedNode {
+        return new EvaluatedMap([]);
     }
 
-    evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         const constantOperand = this.cachedDoEvaluate(node.operand, substitutions);
         if (constantOperand === undefined) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
         if (node.operator === 'not') {
-            if (constantOperand instanceof ConstantBoolean) {
-                return new ConstantBoolean(!constantOperand.value);
+            if (constantOperand instanceof BooleanConstant) {
+                return new BooleanConstant(!constantOperand.value);
             }
         } else if (node.operator === '-') {
-            if (constantOperand instanceof ConstantFloat) {
-                return new ConstantFloat(-constantOperand.value);
-            } else if (constantOperand instanceof ConstantInt) {
-                return new ConstantInt(-constantOperand.value);
+            if (constantOperand instanceof FloatConstant) {
+                return new FloatConstant(-constantOperand.value);
+            } else if (constantOperand instanceof IntConstant) {
+                return new IntConstant(-constantOperand.value);
             }
         }
 
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
-    evaluateTemplateString(node: SdsTemplateString, substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateTemplateString(node: SdsTemplateString, substitutions: ParameterSubstitutions): EvaluatedNode {
         const expressions = node.expressions.map((it) => this.cachedDoEvaluate(it, substitutions));
-        if (expressions.every(isConstantExpression)) {
-            return new ConstantString(
+        if (expressions.every(isConstant)) {
+            return new StringConstant(
                 expressions.map((it) => it.toInterpolationString()).join(''),
             );
         }
 
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
-    evaluateCall(_node: SdsCall, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateCall(_node: SdsCall, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //     val simpleReceiver = evaluateReceiver(substitutions) ?: return undefined
         //     val newSubstitutions = buildNewSubstitutions(simpleReceiver, substitutions)
         //
@@ -364,7 +363,7 @@ export class SafeDsPartialEvaluator {
         //     )
         //     }
         // }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
     // private fun SdsCall.evaluateReceiver(substitutions: ParameterSubstitutions): SdsIntermediateCallable? {
@@ -408,16 +407,16 @@ export class SafeDsPartialEvaluator {
     //     }
     // }
 
-    evaluateIndexedAccess(_node: SdsIndexedAccess, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateIndexedAccess(_node: SdsIndexedAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //         val simpleReceiver = receiver.evaluate(substitutions) as? SdsIntermediateVariadicArguments ?: return undefined
         //         val simpleIndex = index.evaluate(substitutions) as? SdsConstantInt ?: return undefined
         //
         //         return simpleReceiver.getArgumentByIndexOrNull(simpleIndex.value)
         //     }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
-    evaluateMemberAccess(_node: SdsMemberAccess, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateMemberAccess(_node: SdsMemberAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //     private fun SdsMemberAccess.evaluateMemberAccess(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
         //     if (member.declaration is SdsEnumVariant) {
         //     return member.evaluateReference(substitutions)
@@ -431,10 +430,10 @@ export class SafeDsPartialEvaluator {
         //     is SdsIntermediateRecord -> simpleReceiver.getSubstitutionByReferenceOrNull(member)
         // else -> undefined
         // }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
-    evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): PartialEvaluationResult {
+    evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //     return when (val declaration = this.declaration) {
         //     is SdsEnumVariant -> when {
         //         declaration.parametersOrEmpty().isEmpty() -> SdsConstantEnumVariant(declaration)
@@ -445,7 +444,7 @@ export class SafeDsPartialEvaluator {
         //     is SdsStep -> declaration.evaluateStep()
         // else -> undefined
         // }
-        return undefined;
+        return UnknownEvaluatedNode;
     }
 
     // private fun SdsAbstractAssignee.evaluateAssignee(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {

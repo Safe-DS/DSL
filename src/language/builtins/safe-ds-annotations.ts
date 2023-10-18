@@ -5,7 +5,7 @@ import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { ConstantString, PartialEvaluationResult } from '../partialEvaluation/model.js';
+import { EvaluatedNode, StringConstant } from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
@@ -50,7 +50,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     getPythonModule(node: SdsModule | undefined): string | undefined {
         const value = this.getArgumentValue(node, this.PythonModule, 'qualifiedName');
-        if (value instanceof ConstantString) {
+        if (value instanceof StringConstant) {
             return value.value;
         } else {
             return undefined;
@@ -63,7 +63,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     getPythonName(node: SdsAnnotatedObject | undefined): string | undefined {
         const value = this.getArgumentValue(node, this.PythonName, 'name');
-        if (value instanceof ConstantString) {
+        if (value instanceof StringConstant) {
             return value.value;
         } else {
             return undefined;
@@ -94,7 +94,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         node: SdsAnnotatedObject | undefined,
         annotation: SdsAnnotation | undefined,
         parameterName: string,
-    ): PartialEvaluationResult | undefined {
+    ): EvaluatedNode {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
         const argumentValue = argumentsOrEmpty(annotationCall).find(
             (it) => this.nodeMapper.argumentToParameterOrUndefined(it)?.name === parameterName,

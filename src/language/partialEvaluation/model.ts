@@ -8,44 +8,60 @@ import {
     SdsReference,
     SdsResult,
 } from '../generated/ast.js';
+import { stream } from 'langium';
 
-export type PartialEvaluationResult = SimplifiedExpression | undefined;
-export type ParameterSubstitutions = Map<SdsParameter, PartialEvaluationResult>;
-export type ResultSubstitutions = Map<SdsAbstractResult, PartialEvaluationResult>;
+export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
+export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
 
-export abstract class SimplifiedExpression {
-    abstract equals(other: SimplifiedExpression): boolean;
+/**
+ * A node that has been partially evaluated.
+ */
+export abstract class EvaluatedNode {
+    /**
+     * Whether the node could be evaluated completely.
+     */
+    abstract readonly isFullyEvaluated: boolean;
 
+    /**
+     * Returns whether the node is equal to another node.
+     */
+    abstract equals(other: EvaluatedNode): boolean;
+
+    /**
+     * Returns the string representation of the node.
+     */
     abstract toString(): string;
 
     /**
-     * Removes any unnecessary containers from the expression.
+     * Removes any unnecessary containers from the node.
      */
-    unwrap(): SimplifiedExpression {
+    unwrap(): EvaluatedNode {
         return this;
     }
 }
 
 // -------------------------------------------------------------------------------------------------
-// Constant expressions
+// Constants
 // -------------------------------------------------------------------------------------------------
 
-export abstract class ConstantExpression extends SimplifiedExpression {
+export abstract class Constant extends EvaluatedNode {
+    override readonly isFullyEvaluated: boolean = true;
+
     /**
-     * Returns the string representation of the constant expression if it occurs in a string template.
+     * Returns the string representation of the constant if it occurs in a string template.
      */
     toInterpolationString(): string {
         return this.toString();
     }
 }
 
-export class ConstantBoolean extends ConstantExpression {
+export class BooleanConstant extends Constant {
     constructor(readonly value: boolean) {
         super();
     }
 
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantBoolean && this.value === other.value;
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof BooleanConstant && this.value === other.value;
     }
 
     override toString(): string {
@@ -53,29 +69,15 @@ export class ConstantBoolean extends ConstantExpression {
     }
 }
 
-export class ConstantEnumVariant extends ConstantExpression {
-    constructor(readonly value: SdsEnumVariant) {
-        super();
-    }
+export abstract class NumberConstant extends Constant {}
 
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantEnumVariant && this.value === other.value;
-    }
-
-    override toString(): string {
-        return this.value.name;
-    }
-}
-
-export abstract class ConstantNumber extends ConstantExpression {}
-
-export class ConstantFloat extends ConstantNumber {
+export class FloatConstant extends NumberConstant {
     constructor(readonly value: number) {
         super();
     }
 
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantFloat && this.value === other.value;
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof FloatConstant && this.value === other.value;
     }
 
     override toString(): string {
@@ -83,13 +85,13 @@ export class ConstantFloat extends ConstantNumber {
     }
 }
 
-export class ConstantInt extends ConstantNumber {
+export class IntConstant extends NumberConstant {
     constructor(readonly value: bigint) {
         super();
     }
 
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantInt && this.value === other.value;
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof IntConstant && this.value === other.value;
     }
 
     override toString(): string {
@@ -97,54 +99,9 @@ export class ConstantInt extends ConstantNumber {
     }
 }
 
-export class ConstantList extends ConstantExpression {
-    constructor(readonly elements: ConstantExpression[]) {
-        super();
-    }
-
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantList && this.elements.every((e, i) => e.equals(other.elements[i]));
-    }
-
-    override toString(): string {
-        return `[${this.elements.join(', ')}]`;
-    }
-}
-
-export class ConstantMap extends ConstantExpression {
-    constructor(readonly entries: ConstantMapEntry[]) {
-        super();
-    }
-
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantMap && this.entries.every((e, i) => e.equals(other.entries[i]));
-    }
-
-    override toString(): string {
-        return `{${this.entries.join(', ')}}`;
-    }
-}
-
-export class ConstantMapEntry extends ConstantExpression {
-    constructor(
-        readonly key: ConstantExpression,
-        readonly value: ConstantExpression,
-    ) {
-        super();
-    }
-
-    override equals(other: ConstantMapEntry): boolean {
-        return this.key.equals(other.key) && this.value.equals(other.value);
-    }
-
-    override toString(): string {
-        return `${this.key}: ${this.value}`;
-    }
-}
-
-class ConstantNullClass extends ConstantExpression {
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantNullClass;
+class NullConstantClass extends Constant {
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof NullConstantClass;
     }
 
     override toString(): string {
@@ -152,15 +109,15 @@ class ConstantNullClass extends ConstantExpression {
     }
 }
 
-export const ConstantNull = new ConstantNullClass();
+export const NullConstant = new NullConstantClass();
 
-export class ConstantString extends ConstantExpression {
+export class StringConstant extends Constant {
     constructor(readonly value: string) {
         super();
     }
 
-    override equals(other: ConstantExpression): boolean {
-        return other instanceof ConstantString && this.value === other.value;
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof StringConstant && this.value === other.value;
     }
 
     override toString(): string {
@@ -172,33 +129,30 @@ export class ConstantString extends ConstantExpression {
     }
 }
 
-export const isConstantExpression = (result: PartialEvaluationResult): result is ConstantExpression => {
-    return result instanceof ConstantExpression;
-}
+export const isConstant = (node: EvaluatedNode): node is Constant => {
+    return node instanceof Constant;
+};
 
 // -------------------------------------------------------------------------------------------------
-// Partially bound expressions
+// Closures
 // -------------------------------------------------------------------------------------------------
 
-export abstract class PartiallyBoundExpression extends SimplifiedExpression {}
-
-export abstract class PartiallyBoundCallable extends PartiallyBoundExpression {
-    abstract readonly parameters: SdsParameter[];
+export abstract class Closure extends EvaluatedNode {
+    override readonly isFullyEvaluated: boolean = false;
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
 }
 
-export class PartiallyBoundBlockLambda extends PartiallyBoundCallable {
+export class BlockLambdaClosure extends Closure {
     constructor(
-        override readonly parameters: SdsParameter[],
+        override readonly substitutionsOnCreation: ParameterSubstitutions,
         readonly results: SdsBlockLambdaResult[],
-        override readonly substitutionsOnCreation: ParameterSubstitutions,
     ) {
         super();
     }
 
-    override equals(_other: SimplifiedExpression): boolean {
+    override equals(_other: EvaluatedNode): boolean {
         // TODO
-        return false
+        return false;
     }
 
     override toString(): string {
@@ -207,18 +161,17 @@ export class PartiallyBoundBlockLambda extends PartiallyBoundCallable {
     }
 }
 
-export class PartiallyBoundExpressionLambda extends PartiallyBoundCallable {
+export class ExpressionLambdaClosure extends Closure {
     constructor(
-        override readonly parameters: SdsParameter[],
+        override readonly substitutionsOnCreation: ParameterSubstitutions,
         readonly result: SdsExpression,
-        override readonly substitutionsOnCreation: ParameterSubstitutions,
     ) {
         super();
     }
 
-    override equals(_other: SimplifiedExpression): boolean {
+    override equals(_other: EvaluatedNode): boolean {
         // TODO
-        return false
+        return false;
     }
 
     override toString(): string {
@@ -227,69 +180,150 @@ export class PartiallyBoundExpressionLambda extends PartiallyBoundCallable {
     }
 }
 
-export class PartiallyBoundSegment extends PartiallyBoundCallable {
-    override readonly substitutionsOnCreation = new Map<SdsParameter, PartialEvaluationResult>();
+export class SegmentClosure extends Closure {
+    override readonly substitutionsOnCreation = new Map<SdsParameter, EvaluatedNode>();
 
+    constructor(readonly results: SdsResult[]) {
+        super();
+    }
+
+    override equals(_other: EvaluatedNode): boolean {
+        // TODO
+        return false;
+    }
+
+    override toString(): string {
+        // TODO
+        return '';
+    }
+}
+
+// -------------------------------------------------------------------------------------------------
+// Other
+// -------------------------------------------------------------------------------------------------
+
+export class EvaluatedEnumVariant extends EvaluatedNode {
     constructor(
-        override readonly parameters: SdsParameter[],
-        readonly results: SdsResult[],
+        readonly value: SdsEnumVariant,
+        readonly args: ParameterSubstitutions,
     ) {
         super();
     }
 
-    override equals(_other: SimplifiedExpression): boolean {
-        // TODO
-        return false
+    override readonly isFullyEvaluated: boolean = stream(this.args.values()).every(isFullyEvaluated);
+
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof EvaluatedEnumVariant && this.value === other.value;
     }
 
     override toString(): string {
-        // TODO
-        return '';
+        return this.value.name;
     }
 }
 
-export class PartiallyBoundNamedTuple extends PartiallyBoundExpression {
-    constructor(readonly resultSubstitutions: ResultSubstitutions) {
+export class EvaluatedList extends EvaluatedNode {
+    constructor(readonly elements: EvaluatedNode[]) {
         super();
     }
 
-    getSubstitutionByReference(reference: SdsReference): PartialEvaluationResult | undefined {
+    override readonly isFullyEvaluated: boolean = this.elements.every(isFullyEvaluated);
+
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof EvaluatedList && this.elements.every((e, i) => e.equals(other.elements[i]));
+    }
+
+    override toString(): string {
+        return `[${this.elements.join(', ')}]`;
+    }
+}
+
+export class EvaluatedMap extends EvaluatedNode {
+    constructor(readonly entries: EvaluatedMapEntry[]) {
+        super();
+    }
+
+    override readonly isFullyEvaluated: boolean = this.entries.every(isFullyEvaluated);
+
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof EvaluatedMap && this.entries.every((e, i) => e.equals(other.entries[i]));
+    }
+
+    override toString(): string {
+        return `{${this.entries.join(', ')}}`;
+    }
+}
+
+export class EvaluatedMapEntry extends EvaluatedNode {
+    constructor(
+        readonly key: EvaluatedNode,
+        readonly value: EvaluatedNode,
+    ) {
+        super();
+    }
+
+    override readonly isFullyEvaluated: boolean = this.key.isFullyEvaluated && this.value.isFullyEvaluated;
+
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        }
+
+        if (!(other instanceof EvaluatedMapEntry)) {
+            return false;
+        }
+
+        return this.key.equals(other.key) && this.value.equals(other.value);
+    }
+
+    override toString(): string {
+        return `${this.key}: ${this.value}`;
+    }
+}
+
+export class EvaluatedNamedTuple extends EvaluatedNode {
+    constructor(readonly entries: ResultSubstitutions) {
+        super();
+    }
+
+    override readonly isFullyEvaluated: boolean = stream(this.entries.values()).every(isFullyEvaluated);
+
+    getSubstitutionByReference(reference: SdsReference): EvaluatedNode | undefined {
         const referencedDeclaration = reference.target;
         if (!isSdsAbstractResult(referencedDeclaration)) {
             return undefined;
         }
 
-        return this.resultSubstitutions.get(referencedDeclaration) ?? undefined;
+        return this.entries.get(referencedDeclaration) ?? undefined;
     }
 
-    getSubstitutionByIndex(index: number | undefined): PartialEvaluationResult | undefined {
+    getSubstitutionByIndex(index: number | undefined): EvaluatedNode | undefined {
         if (index === undefined) {
             return undefined;
         }
-        return Array.from(this.resultSubstitutions.values())[index] ?? undefined;
+        return Array.from(this.entries.values())[index] ?? undefined;
     }
 
     /**
      * If the record contains exactly one substitution its value is returned. Otherwise, it returns `this`.
      */
-    override unwrap(): SimplifiedExpression {
-        if (this.resultSubstitutions.size === 1) {
-            return this.resultSubstitutions.values().next().value;
+    override unwrap(): EvaluatedNode {
+        if (this.entries.size === 1) {
+            return this.entries.values().next().value;
         } else {
             return this;
         }
     }
 
-    override equals(other: SimplifiedExpression): boolean {
+    override equals(other: EvaluatedNode): boolean {
         if (other === this) {
             return true;
         }
 
-        if (!(other instanceof PartiallyBoundNamedTuple)) {
+        if (!(other instanceof EvaluatedNamedTuple)) {
             return false;
         }
 
-        if (other.resultSubstitutions.size !== this.resultSubstitutions.size) {
+        if (other.entries.size !== this.entries.size) {
             return false;
         }
 
@@ -299,9 +333,29 @@ export class PartiallyBoundNamedTuple extends PartiallyBoundExpression {
     }
 
     override toString(): string {
-        const entryString = Array.from(this.resultSubstitutions, ([result, value]) => `${result.name}=${value}`).join(
-            ', ',
-        );
+        const entryString = Array.from(this.entries, ([result, value]) => `${result.name}=${value}`).join(', ');
         return `{${entryString}}`;
     }
 }
+
+class UnknownEvaluatedNodeClass extends EvaluatedNode {
+    override readonly isFullyEvaluated: boolean = false;
+
+    override equals(other: EvaluatedNode): boolean {
+        return other instanceof UnknownEvaluatedNodeClass;
+    }
+
+    override toString(): string {
+        return '$unknown';
+    }
+}
+
+export const UnknownEvaluatedNode = new UnknownEvaluatedNodeClass();
+
+// -------------------------------------------------------------------------------------------------
+// Helpers
+// -------------------------------------------------------------------------------------------------
+
+const isFullyEvaluated = (node: EvaluatedNode): boolean => {
+    return node.isFullyEvaluated;
+};

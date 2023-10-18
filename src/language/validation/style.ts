@@ -23,7 +23,7 @@ import { isEmpty } from 'radash';
 import { isRequiredParameter, parametersOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
-import { ConstantNull } from '../partialEvaluation/model.js';
+import { NullConstant } from '../partialEvaluation/model.js';
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
@@ -179,7 +179,7 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
 
         const leftValue = partialEvaluator.evaluate(node.leftOperand);
         const rightValue = partialEvaluator.evaluate(node.rightOperand);
-        if (leftValue === ConstantNull && rightValue === ConstantNull) {
+        if (leftValue === NullConstant && rightValue === NullConstant) {
             accept(
                 'info',
                 'Both operands are always null, so the elvis operator is unnecessary (replace it with null).',
@@ -188,7 +188,7 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
                     code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
                 },
             );
-        } else if (leftValue === ConstantNull) {
+        } else if (leftValue === NullConstant) {
             accept(
                 'info',
                 'The left operand is always null, so the elvis operator is unnecessary (keep the right operand).',
@@ -197,7 +197,7 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
                     code: CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR,
                 },
             );
-        } else if (rightValue === ConstantNull) {
+        } else if (rightValue === NullConstant) {
             accept(
                 'info',
                 'The right operand is always null, so the elvis operator is unnecessary (keep the left operand).',

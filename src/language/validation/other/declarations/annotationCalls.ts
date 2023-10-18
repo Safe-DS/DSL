@@ -16,7 +16,7 @@ import {
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
-import { ConstantExpression } from '../../../partialEvaluation/model.js';
+import { Constant } from '../../../partialEvaluation/model.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
@@ -31,7 +31,7 @@ export const annotationCallArgumentsMustBeConstant = (services: SafeDsServices) 
         for (const argument of argumentsOrEmpty(node)) {
             const evaluatedArgumentValue = partialEvaluator.evaluate(argument.value);
 
-            if (!(evaluatedArgumentValue instanceof ConstantExpression)) {
+            if (!evaluatedArgumentValue.isFullyEvaluated) {
                 accept('error', 'Arguments of annotation calls must be constant.', {
                     node: argument,
                     property: 'value',

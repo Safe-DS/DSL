@@ -5,8 +5,8 @@ import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { locationToString } from '../../helpers/location.js';
 import { createPartialEvaluationTests } from './creator.js';
-import { Location } from 'vscode-languageserver';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
+import { UnknownEvaluatedNode } from '../../../src/language/partialEvaluation/model.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;
@@ -32,16 +32,10 @@ describe('partial evaluation', async () => {
                 const firstLocation = equivalenceClassAssertion.locations[0];
                 const firstNode = getNodeByLocation(services, firstLocation);
                 const firstValue = partialEvaluator.evaluate(firstNode);
-                if (!firstValue) {
-                    return reportMissingSimplification(firstLocation);
-                }
 
                 for (const currentLocation of equivalenceClassAssertion.locations.slice(1)) {
                     const currentNode = getNodeByLocation(services, currentLocation);
                     const currentValue = partialEvaluator.evaluate(currentNode);
-                    if (!currentValue) {
-                        return reportMissingSimplification(currentLocation);
-                    }
 
                     if (!currentValue.equals(firstValue)) {
                         throw new AssertionError({
@@ -60,9 +54,6 @@ describe('partial evaluation', async () => {
         for (const serializationAssertion of test.serializationAssertions) {
             const node = getNodeByLocation(services, serializationAssertion.location);
             const actualValue = partialEvaluator.evaluate(node);
-            if (!actualValue) {
-                return reportMissingSimplification(serializationAssertion.location);
-            }
 
             if (actualValue.toString() !== serializationAssertion.expectedValue) {
                 throw new AssertionError({
@@ -79,7 +70,7 @@ describe('partial evaluation', async () => {
         for (const undefinedAssertion of test.undefinedAssertions) {
             const node = getNodeByLocation(services, undefinedAssertion.location);
             const actualEvaluatedNode = partialEvaluator.evaluate(node);
-            if (actualEvaluatedNode) {
+            if (actualEvaluatedNode !== UnknownEvaluatedNode) {
                 throw new AssertionError({
                     message: `A node was simplified, but it should not be.\n    Location: ${locationToString(
                         undefinedAssertion.location,
@@ -91,9 +82,3 @@ describe('partial evaluation', async () => {
         }
     });
 });
-
-const reportMissingSimplification = (location: Location) => {
-    throw new AssertionError({
-        message: `A node could not be simplified.\n    Location: ${locationToString(location)}`,
-    });
-};
