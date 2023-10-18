@@ -1,6 +1,7 @@
 //@ts-check
 import * as esbuild from 'esbuild';
 import { copy } from 'esbuild-plugin-copy';
+import fs from 'fs/promises';
 
 const watch = process.argv.includes('--watch');
 const minify = process.argv.includes('--minify');
@@ -10,20 +11,18 @@ const success = watch ? 'Watch build succeeded' : 'Build succeeded';
 const getTime = function () {
     const date = new Date();
     return `[${`${padZeroes(date.getHours())}:${padZeroes(date.getMinutes())}:${padZeroes(date.getSeconds())}`}] `;
-}
+};
 
 const padZeroes = function (i) {
     return i.toString().padStart(2, '0');
-}
+};
 
 const plugins = [
     {
-        name: 'watch-plugin',
+        name: 'clean-old-builtins',
         setup(build) {
-            build.onEnd(result => {
-                if (result.errors.length === 0) {
-                    console.log(getTime() + success);
-                }
+            build.onStart(async (result) => {
+                await fs.rm('./out/resources', { force: true, recursive: true });
             });
         },
     },
@@ -34,6 +33,16 @@ const plugins = [
         },
         watch,
     }),
+    {
+        name: 'watch-plugin',
+        setup(build) {
+            build.onEnd((result) => {
+                if (result.errors.length === 0) {
+                    console.log(getTime() + success);
+                }
+            });
+        },
+    },
 ];
 
 const ctx = await esbuild.context({
@@ -41,19 +50,19 @@ const ctx = await esbuild.context({
     entryPoints: ['src/cli/main.ts', 'src/extension/main.ts', 'src/language/main.ts'],
     outdir: 'out',
     bundle: true,
-    target: "ES2017",
+    target: 'ES2017',
     // VSCode's extension host is still using cjs, so we need to transform the code
     format: 'cjs',
     // To prevent confusing node, we explicitly use the `.cjs` extension
     outExtension: {
-        '.js': '.cjs'
+        '.js': '.cjs',
     },
-    loader: {'.ts': 'ts'},
+    loader: { '.ts': 'ts' },
     external: ['vscode'],
     platform: 'node',
     sourcemap: !minify,
     minify,
-    plugins
+    plugins,
 });
 
 if (watch) {
