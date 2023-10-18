@@ -1,0 +1,175 @@
+package tests.validation.other.argumentLists.missingRequiredParameter
+
+@Repeatable
+annotation MyAnnotation(a: Int, b: Int, c: Int = 0)
+
+class MyClass(a: Int, b: Int, c: Int = 0)
+
+enum MyEnum {
+    MyEnumVariant(a: Int, b: Int, c: Int = 0)
+}
+
+fun myFunction(a: Int, b: Int, c: Int = 0)
+
+segment mySegment1(a: Int, b: Int, c: Int = 0) {}
+
+pipeline myPipeline {}
+
+
+// $TEST$ error "The parameters 'a', 'b' must be set here."
+@MyAnnotation»()«
+// $TEST$ error "The parameter 'b' must be set here."
+@MyAnnotation»(1)«
+// $TEST$ no error r"The parameters? .* must be set here\."
+@MyAnnotation»(1, 2)«
+// $TEST$ no error r"The parameters? .* must be set here\."
+@MyAnnotation»(1, 2, 3)«
+// $TEST$ no error r"The parameters? .* must be set here\."
+@MyAnnotation»(1, 2, 3, 4)«
+// $TEST$ error "The parameter 'b' must be set here."
+@MyAnnotation»(1, c = 2)«
+// $TEST$ no error r"The parameters? .* must be set here\."
+@MyAnnotation»(b = 1, a = 2)«
+segment mySegment2(
+    myCallableType: (a: Int, b: Int, c: Int = 0) -> ()
+) {
+    val myBlockLambda = (a: Int, b: Int, c: Int = 0) {};
+    val myExpressionLambda = (a: Int, b: Int, c: Int = 0) -> 1;
+
+    /*
+     * We can never call an annotation directly and should avoid showing additional errors.
+     */
+
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»()«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»(1, 2, 3, 4)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyAnnotation»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    MyClass»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    MyClass»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyClass»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyClass»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyClass»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    MyClass»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyClass»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    MyEnum.MyEnumVariant»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    MyEnum.MyEnumVariant»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyEnum.MyEnumVariant»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyEnum.MyEnumVariant»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyEnum.MyEnumVariant»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    MyEnum.MyEnumVariant»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    MyEnum.MyEnumVariant»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    myFunction»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myFunction»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myFunction»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myFunction»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myFunction»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myFunction»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myFunction»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    mySegment1»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    mySegment1»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    mySegment1»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    mySegment1»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    mySegment1»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    mySegment1»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    mySegment1»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    myCallableType»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myCallableType»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myCallableType»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myCallableType»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myCallableType»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myCallableType»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myCallableType»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    myBlockLambda»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myBlockLambda»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myBlockLambda»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myBlockLambda»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myBlockLambda»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myBlockLambda»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myBlockLambda»(b = 1, a = 2)«;
+
+
+    // $TEST$ error "The parameters 'a', 'b' must be set here."
+    myExpressionLambda»()«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myExpressionLambda»(1)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myExpressionLambda»(1, 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myExpressionLambda»(1, 2, 3)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myExpressionLambda»(1, 2, 3, 4)«;
+    // $TEST$ error "The parameter 'b' must be set here."
+    myExpressionLambda»(1, c = 2)«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myExpressionLambda»(b = 1, a = 2)«;
+
+
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myPipeline»()«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    unresolved»()«;
+}

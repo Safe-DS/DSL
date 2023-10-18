@@ -1,0 +1,186 @@
+package tests.validation.other.argumentLists.tooManyArguments
+
+@Repeatable
+annotation MyAnnotation1(a: Int, b: Int)
+@Repeatable
+annotation MyAnnotation2(a: Int, b: Int = 0)
+
+class MyClass1(a: Int, b: Int)
+class MyClass2(a: Int, b: Int = 0)
+
+enum MyEnum {
+    MyEnumVariant1(a: Int, b: Int)
+    MyEnumVariant2(a: Int, b: Int = 0)
+}
+
+fun myFunction1(a: Int, b: Int)
+fun myFunction2(a: Int, b: Int = 0)
+
+segment mySegment1(a: Int, b: Int) {}
+segment mySegment2(a: Int, b: Int = 0) {}
+
+pipeline myPipeline {}
+
+
+// $TEST$ no error r"Expected .* arguments? but got \d*\."
+@MyAnnotation1»(1)«
+// $TEST$ no error r"Expected .* arguments? but got \d*\."
+@MyAnnotation1»(1, 2)«
+// $TEST$ error "Expected exactly 2 arguments but got 3."
+@MyAnnotation1»(1, 2, 3)«
+// $TEST$ no error r"Expected .* arguments? but got \d*\."
+@MyAnnotation2»()«
+// $TEST$ no error r"Expected .* arguments? but got \d*\."
+@MyAnnotation2»(1)«
+// $TEST$ no error r"Expected .* arguments? but got \d*\."
+@MyAnnotation2»(1, 2)«
+// $TEST$ error "Expected between 1 and 2 arguments but got 3."
+@MyAnnotation2»(1, 2, 3)«
+segment mySegment3(
+    myCallableType1: (a: Int, b: Int) -> (),
+    myCallableType2: (a: Int, b: Int = 0) -> (),
+) {
+    val myBlockLambda1 = (a: Int, b: Int) {};
+    val myBlockLambda2 = (a: Int, b: Int = 0) {};
+
+    val myExpressionLambda1 = (a: Int, b: Int) -> 1;
+    val myExpressionLambda2 = (a: Int, b: Int = 0) -> 1;
+
+
+    /*
+     * We can never call an annotation directly and should avoid showing additional errors.
+     */
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation1»(1, 2)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation2»(1, 2)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyAnnotation2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyClass1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyClass1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    MyClass1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyClass2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyClass2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyClass2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    MyClass2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyEnum.MyEnumVariant1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyEnum.MyEnumVariant1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    MyEnum.MyEnumVariant1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyEnum.MyEnumVariant2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyEnum.MyEnumVariant2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    MyEnum.MyEnumVariant2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    MyEnum.MyEnumVariant2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myFunction1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myFunction1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    myFunction1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myFunction2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myFunction2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myFunction2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    myFunction2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    mySegment1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    mySegment1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    mySegment1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    mySegment2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    mySegment2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    mySegment2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    mySegment2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myCallableType1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myCallableType1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    myCallableType1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myCallableType2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myCallableType2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myCallableType2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    myCallableType2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myBlockLambda1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myBlockLambda1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    myBlockLambda1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myBlockLambda2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myBlockLambda2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myBlockLambda2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    myBlockLambda2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myExpressionLambda1»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myExpressionLambda1»(1, 2)«;
+    // $TEST$ error "Expected exactly 2 arguments but got 3."
+    myExpressionLambda1»(1, 2, 3)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myExpressionLambda2»()«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myExpressionLambda2»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myExpressionLambda2»(1, 2)«;
+    // $TEST$ error "Expected between 1 and 2 arguments but got 3."
+    myExpressionLambda2»(1, 2, 3)«;
+
+
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    myPipeline»(1)«;
+    // $TEST$ no error r"Expected .* arguments? but got \d*\."
+    unresolved»(1)«;
+}

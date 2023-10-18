@@ -1,0 +1,215 @@
+package tests.validation.other.argumentLists.duplicateParameter
+
+@Repeatable
+annotation MyAnnotation(a: Int, b: Int = 0)
+
+class MyClass(a: Int, b: Int = 0)
+
+enum MyEnum {
+    MyEnumVariant(a: Int, b: Int = 0)
+}
+
+fun myFunction(a: Int, b: Int = 0)
+
+segment mySegment(a: Int, b: Int = 0) {}
+
+pipeline myPipeline {}
+
+
+@MyAnnotation(
+    // $TEST$ no error "The parameter 'a' is already set."
+    »1«,
+    // $TEST$ error "The parameter 'a' is already set."
+    »a = 1«
+)
+@MyAnnotation(
+    // $TEST$ no error r"The parameter '\w+' is already set\."
+    »b = 1«,
+    // $TEST$ error "The parameter 'b' is already set."
+    »b = 1«
+)
+@MyAnnotation(
+    // $TEST$ no error "The parameter 'a' is already set."
+    »a = 1«,
+    // $TEST$ no error r"The parameter '\w+' is already set\."
+    »b = 1«
+)
+segment test(
+    myCallableType: (a: Int, b: Int = 0) -> ()
+) {
+
+    /*
+     * We can never call an annotation directly and should avoid showing additional errors.
+     */
+
+    val myAnnotationAlias = MyAnnotation;
+
+    MyAnnotation(
+        // $TEST$ no error "The parameter 'a' is already set."
+        »1«,
+        // $TEST$ no error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    myAnnotationAlias(
+        // $TEST$ no error "The parameter 'b' is already set."
+        »b = 1«,
+        // $TEST$ no error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    MyAnnotation(
+        // $TEST$ no error "The parameter 'a' is already set."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    MyClass(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    MyClass(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«,
+        // $TEST$ error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    MyClass(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    MyEnum.MyEnumVariant(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    MyEnum.MyEnumVariant(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«,
+        // $TEST$ error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    MyEnum.MyEnumVariant(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    myFunction(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    myFunction(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«,
+        // $TEST$ error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    myFunction(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    myCallableType(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    myCallableType(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«,
+        // $TEST$ error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    myCallableType(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    val myBlockLambda = (a, b) {};
+
+    ((a, b) {})(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    myBlockLambda(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«,
+        // $TEST$ error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    ((a, b) {})(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    val myExpressionLambda = (a, b) -> 1;
+
+    ((a, b) -> 1)(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ error "The parameter 'a' is already set."
+        »a = 1«
+    );
+    myExpressionLambda(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«,
+        // $TEST$ error "The parameter 'b' is already set."
+        »b = 1«
+    );
+    ((a, b) -> 1)(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »b = 1«
+    );
+
+
+    myPipeline(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«
+    );
+    myPipeline(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«
+    );
+    unresolved(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«
+    );
+    unresolved(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«
+    );
+}
