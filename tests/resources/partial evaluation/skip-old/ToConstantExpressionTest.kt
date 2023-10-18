@@ -1,58 +1,3 @@
-//package com.larsreimann.safeds.staticAnalysis.partialEvaluation
-//
-//import com.google.inject.Inject
-//import com.larsreimann.safeds.constant.SdsInfixOperationOperator
-//import com.larsreimann.safeds.constant.SdsPrefixOperationOperator
-//import com.larsreimann.safeds.emf.createSdsAnnotation
-//import com.larsreimann.safeds.emf.createSdsArgument
-//import com.larsreimann.safeds.emf.createSdsAssignment
-//import com.larsreimann.safeds.emf.createSdsAttribute
-//import com.larsreimann.safeds.emf.createSdsBlockLambda
-//import com.larsreimann.safeds.emf.createSdsBoolean
-//import com.larsreimann.safeds.emf.createSdsCall
-//import com.larsreimann.safeds.emf.createSdsEnum
-//import com.larsreimann.safeds.emf.createSdsEnumVariant
-//import com.larsreimann.safeds.emf.createSdsExpressionLambda
-//import com.larsreimann.safeds.emf.createSdsFloat
-//import com.larsreimann.safeds.emf.createSdsInfixOperation
-//import com.larsreimann.safeds.emf.createSdsInt
-//import com.larsreimann.safeds.emf.createSdsMemberAccess
-//import com.larsreimann.safeds.emf.createSdsNull
-//import com.larsreimann.safeds.emf.createSdsParameter
-//import com.larsreimann.safeds.emf.createSdsParenthesizedExpression
-//import com.larsreimann.safeds.emf.createSdsPlaceholder
-//import com.larsreimann.safeds.emf.createSdsPrefixOperation
-//import com.larsreimann.safeds.emf.createSdsReference
-//import com.larsreimann.safeds.emf.createSdsStep
-//import com.larsreimann.safeds.emf.createSdsString
-//import com.larsreimann.safeds.emf.createSdsTemplateString
-//import com.larsreimann.safeds.emf.descendants
-//import com.larsreimann.safeds.emf.statementsOrEmpty
-//import com.larsreimann.safeds.safeDS.SafeDSFactory
-//import com.larsreimann.safeds.safeDS.SdsAbstractExpression
-//import com.larsreimann.safeds.safeDS.SdsBlockLambda
-//import com.larsreimann.safeds.safeDS.SdsCompilationUnit
-//import com.larsreimann.safeds.safeDS.SdsExpressionLambda
-//import com.larsreimann.safeds.safeDS.SdsExpressionStatement
-//import com.larsreimann.safeds.safeDS.SdsPipeline
-//import com.larsreimann.safeds.safeDS.SdsStep
-//import com.larsreimann.safeds.testing.ParseHelper
-//import com.larsreimann.safeds.testing.SafeDSInjectorProvider
-//import com.larsreimann.safeds.testing.assertions.findUniqueDeclarationOrFail
-//import io.kotest.matchers.collections.shouldHaveSize
-//import io.kotest.matchers.nulls.shouldBeNull
-//import io.kotest.matchers.nulls.shouldNotBeNull
-//import io.kotest.matchers.shouldBe
-//import io.kotest.matchers.types.shouldBeInstanceOf
-//import org.eclipse.xtext.testing.InjectWith
-//import org.eclipse.xtext.testing.extensions.InjectionExtension
-//import org.junit.jupiter.api.BeforeEach
-//import org.junit.jupiter.api.Nested
-//import org.junit.jupiter.api.Test
-//import org.junit.jupiter.api.extension.ExtendWith
-//import org.junit.jupiter.params.ParameterizedTest
-//import org.junit.jupiter.params.provider.CsvSource
-//
 //@ExtendWith(InjectionExtension::class)
 //@InjectWith(SafeDSInjectorProvider::class)
 //class ToConstantExpressionTest {
@@ -954,17 +899,7 @@
 //            }
 //        }
 //    }
-//
-//    @Nested
-//    inner class ParenthesizedExpression {
-//
-//        @Test
-//        fun `should return expression as constant expression for parenthesized expressions`() {
-//            val testData = createSdsParenthesizedExpression(createSdsNull())
-//            testData.toConstantExpressionOrNull() shouldBe SdsConstantNull
-//        }
-//    }
-//
+
 //    @Nested
 //    inner class Call {
 //

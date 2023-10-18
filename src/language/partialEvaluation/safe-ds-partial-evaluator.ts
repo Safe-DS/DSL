@@ -2,14 +2,16 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
 import {
     BooleanConstant,
-    Constant,
-    FloatConstant,
-    IntConstant,
     EvaluatedList,
     EvaluatedMap,
+    EvaluatedNode,
+    FloatConstant,
+    IntConstant,
+    isConstant,
     NullConstant,
-    StringConstant, isConstant,
-    ParameterSubstitutions, EvaluatedNode, UnknownEvaluatedNode,
+    ParameterSubstitutions,
+    StringConstant,
+    UnknownEvaluatedNode,
 } from './model.js';
 import {
     isSdsArgument,
@@ -73,8 +75,7 @@ export class SafeDsPartialEvaluator {
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         const key = `${documentUri}~${nodePath}`;
         const resultWithoutSubstitutions = this.cache.get(key, () => this.doEvaluate(node, new Map()));
-        // A constant expression cannot be simplified further. Ditto, if the parameter substitutions are empty.
-        if (resultWithoutSubstitutions?.unwrap() instanceof Constant || isEmpty(substitutions)) {
+        if (resultWithoutSubstitutions.isFullyEvaluated || isEmpty(substitutions)) {
             return resultWithoutSubstitutions;
         }
 
@@ -156,10 +157,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateExpressionLambda(
-        _node: SdsExpressionLambda,
-        _substitutions: ParameterSubstitutions,
-    ): EvaluatedNode {
+    evaluateExpressionLambda(_node: SdsExpressionLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //     return when {
         //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
         //     parameters = parametersOrEmpty(),
@@ -334,9 +332,7 @@ export class SafeDsPartialEvaluator {
     evaluateTemplateString(node: SdsTemplateString, substitutions: ParameterSubstitutions): EvaluatedNode {
         const expressions = node.expressions.map((it) => this.cachedDoEvaluate(it, substitutions));
         if (expressions.every(isConstant)) {
-            return new StringConstant(
-                expressions.map((it) => it.toInterpolationString()).join(''),
-            );
+            return new StringConstant(expressions.map((it) => it.toInterpolationString()).join(''));
         }
 
         return UnknownEvaluatedNode;
