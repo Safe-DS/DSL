@@ -16,26 +16,30 @@ import {
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
-import { toConstantExpression } from '../../../partialEvaluation/toConstantExpression.js';
-import { UnknownValue } from '../../../partialEvaluation/model.js';
+import { ConstantExpression } from '../../../partialEvaluation/model.js';
+import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
 export const CODE_ANNOTATION_CALL_TARGET_PARAMETER = 'annotation-call/target-parameter';
 export const CODE_ANNOTATION_CALL_TARGET_RESULT = 'annotation-call/target-result';
 
-export const annotationCallArgumentsMustBeConstant = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-    for (const argument of argumentsOrEmpty(node)) {
-        const constantValue = toConstantExpression(argument.value);
+export const annotationCallArgumentsMustBeConstant = (services: SafeDsServices) => {
+    const partialEvaluator = services.evaluation.PartialEvaluator;
 
-        if (constantValue === UnknownValue) {
-            accept('error', 'Arguments of annotation calls must be constant.', {
-                node: argument,
-                property: 'value',
-                code: CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT,
-            });
+    return (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+        for (const argument of argumentsOrEmpty(node)) {
+            const evaluatedArgumentValue = partialEvaluator.evaluate(argument.value);
+
+            if (!(evaluatedArgumentValue instanceof ConstantExpression)) {
+                accept('error', 'Arguments of annotation calls must be constant.', {
+                    node: argument,
+                    property: 'value',
+                    code: CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT,
+                });
+            }
         }
-    }
+    };
 };
 
 export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, accept: ValidationAcceptor) => {

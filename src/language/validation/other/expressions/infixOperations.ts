@@ -1,14 +1,15 @@
 import { SdsInfixOperation } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { toConstantExpression } from '../../../partialEvaluation/toConstantExpression.js';
-import { ConstantFloat, ConstantInt } from '../../../partialEvaluation/model.js';
+import {ConstantExpression, ConstantFloat, ConstantInt} from '../../../partialEvaluation/model.js';
 import { UnknownType } from '../../../typing/model.js';
 
 export const CODE_INFIX_OPERATION_DIVISION_BY_ZERO = 'infix-operation/division-by-zero';
 
 export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
+    const partialEvaluator = services.evaluation.PartialEvaluator;
     const typeComputer = services.types.TypeComputer;
+
     const zeroInt = new ConstantInt(BigInt(0));
     const zeroFloat = new ConstantFloat(0.0);
     const minusZeroFloat = new ConstantFloat(-0.0);
@@ -26,9 +27,9 @@ export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
             return;
         }
 
-        const divisorValue = toConstantExpression(node.rightOperand);
+        const divisorValue = partialEvaluator.evaluate(node.rightOperand);
         if (
-            divisorValue &&
+            divisorValue instanceof ConstantExpression &&
             (divisorValue.equals(zeroInt) || divisorValue.equals(zeroFloat) || divisorValue.equals(minusZeroFloat))
         ) {
             accept('error', 'Division by zero.', {

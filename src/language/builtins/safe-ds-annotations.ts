@@ -5,8 +5,8 @@ import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { toConstantExpression } from '../partialEvaluation/toConstantExpression.js';
-import { ConstantExpression, ConstantString } from '../partialEvaluation/model.js';
+import { ConstantString, PartialEvaluationResult } from '../partialEvaluation/model.js';
+import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
 const CODE_GENERATION_URI = resourceNameToUri('builtins/safeds/lang/codeGeneration.sdsstub');
@@ -15,11 +15,13 @@ const MATURITY_URI = resourceNameToUri('builtins/safeds/lang/maturity.sdsstub');
 
 export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     private readonly nodeMapper: SafeDsNodeMapper;
+    private readonly partialEvaluator: SafeDsPartialEvaluator;
 
     constructor(services: SafeDsServices) {
         super(services);
 
         this.nodeMapper = services.helpers.NodeMapper;
+        this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
     isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
@@ -92,11 +94,11 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         node: SdsAnnotatedObject | undefined,
         annotation: SdsAnnotation | undefined,
         parameterName: string,
-    ): ConstantExpression | undefined {
+    ): PartialEvaluationResult | undefined {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
-        const expression = argumentsOrEmpty(annotationCall).find(
+        const argumentValue = argumentsOrEmpty(annotationCall).find(
             (it) => this.nodeMapper.argumentToParameterOrUndefined(it)?.name === parameterName,
         )?.value;
-        return toConstantExpression(expression);
+        return this.partialEvaluator.evaluate(argumentValue);
     }
 }
