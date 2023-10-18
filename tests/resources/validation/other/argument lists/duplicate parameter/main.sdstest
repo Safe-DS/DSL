@@ -13,6 +13,9 @@ fun myFunction(a: Int, b: Int = 0)
 
 segment mySegment(a: Int, b: Int = 0) {}
 
+pipeline myPipeline {}
+
+
 @MyAnnotation(
     // $TEST$ no error "The parameter 'a' is already set."
     »1«,
@@ -182,5 +185,31 @@ segment test(
         »a = 1«,
         // $TEST$ no error r"The parameter '\w+' is already set\."
         »b = 1«
+    );
+
+
+    myPipeline(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«
+    );
+    myPipeline(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«
+    );
+    unresolved(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »1«
+    );
+    unresolved(
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«,
+        // $TEST$ no error r"The parameter '\w+' is already set\."
+        »a = 1«
     );
 }

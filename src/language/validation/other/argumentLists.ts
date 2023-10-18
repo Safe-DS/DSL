@@ -1,4 +1,4 @@
-import { isSdsAbstractCall, isSdsAnnotation, isSdsCall, SdsArgumentList } from '../../generated/ast.js';
+import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { argumentsOrEmpty, isRequiredParameter, parametersOrEmpty } from '../../helpers/nodeProperties.js';
@@ -9,6 +9,71 @@ import { pluralize } from '../../helpers/stringUtils.js';
 export const CODE_ARGUMENT_LIST_DUPLICATE_PARAMETER = 'argument-list/duplicate-parameter';
 export const CODE_ARGUMENT_LIST_MISSING_REQUIRED_PARAMETER = 'argument-list/missing-required-parameter';
 export const CODE_ARGUMENT_LIST_POSITIONAL_AFTER_NAMED = 'argument-list/positional-after-named';
+export const CODE_ARGUMENT_LIST_TOO_MANY_ARGUMENTS = 'argument-list/too-many-arguments';
+
+export const argumentListMustNotHavePositionalArgumentsAfterNamedArguments = (
+    node: SdsArgumentList,
+    accept: ValidationAcceptor,
+): void => {
+    let foundNamed = false;
+    for (const argument of node.arguments) {
+        if (argument.parameter) {
+            foundNamed = true;
+        } else if (foundNamed) {
+            accept('error', 'After the first named argument all arguments must be named.', {
+                node: argument,
+                code: CODE_ARGUMENT_LIST_POSITIONAL_AFTER_NAMED,
+            });
+        }
+    }
+};
+
+export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+
+    return (node: SdsAbstractCall, accept: ValidationAcceptor): void => {
+        const actualArgumentCount = argumentsOrEmpty(node).length;
+
+        // We can never have too many arguments in this case
+        if (actualArgumentCount === 0) {
+            return;
+        }
+
+        // We already report other errors in those cases
+        const callable = nodeMapper.callToCallableOrUndefined(node);
+        if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
+            return;
+        }
+
+        const parameters = parametersOrEmpty(callable);
+        const maxArgumentCount = parameters.length;
+
+        // All is good
+        if (actualArgumentCount <= maxArgumentCount) {
+            return;
+        }
+
+        const minArgumentCount = parameters.filter((it) => isRequiredParameter(it)).length;
+        const kind = pluralize(Math.max(minArgumentCount, maxArgumentCount), 'argument');
+        if (minArgumentCount === maxArgumentCount) {
+            accept('error', `Expected exactly ${minArgumentCount} ${kind} but got ${actualArgumentCount}.`, {
+                node,
+                property: 'argumentList',
+                code: CODE_ARGUMENT_LIST_TOO_MANY_ARGUMENTS,
+            });
+        } else {
+            accept(
+                'error',
+                `Expected between ${minArgumentCount} and ${maxArgumentCount} ${kind} but got ${actualArgumentCount}.`,
+                {
+                    node,
+                    property: 'argumentList',
+                    code: CODE_ARGUMENT_LIST_TOO_MANY_ARGUMENTS,
+                },
+            );
+        }
+    };
+};
 
 export const argumentListMustNotSetParameterMultipleTimes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
@@ -35,32 +100,14 @@ export const argumentListMustNotSetParameterMultipleTimes = (services: SafeDsSer
     };
 };
 
-export const argumentListMustNotHavePositionalArgumentsAfterNamedArguments = (
-    node: SdsArgumentList,
-    accept: ValidationAcceptor,
-): void => {
-    let foundNamed = false;
-    for (const argument of node.arguments) {
-        if (argument.parameter) {
-            foundNamed = true;
-        } else if (foundNamed) {
-            accept('error', 'After the first named argument all arguments must be named.', {
-                node: argument,
-                code: CODE_ARGUMENT_LIST_POSITIONAL_AFTER_NAMED,
-            });
-        }
-    }
-};
-
 export const argumentListMustSetAllRequiredParameters = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
 
-    return (node: SdsArgumentList, accept: ValidationAcceptor): void => {
-        const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
-        const callable = nodeMapper.callToCallableOrUndefined(containingAbstractCall);
+    return (node: SdsAbstractCall, accept: ValidationAcceptor): void => {
+        const callable = nodeMapper.callToCallableOrUndefined(node);
 
-        // We already report other errors in this case
-        if (isSdsCall(containingAbstractCall) && isSdsAnnotation(callable)) {
+        // We already report other errors in those cases
+        if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
             return;
         }
 
@@ -78,58 +125,9 @@ export const argumentListMustSetAllRequiredParameters = (services: SafeDsService
 
             accept('error', `The ${kind} ${missingParametersString} must be set here.`, {
                 node,
+                property: 'argumentList',
                 code: CODE_ARGUMENT_LIST_MISSING_REQUIRED_PARAMETER,
             });
         }
     };
 };
-
-// @Check
-//     fun missingRequiredParameter(sdsArgumentList: SdsArgumentList) {
-//         val parameters = sdsArgumentList.parametersOrNull() ?: return
-//         val requiredParameters = parameters.filter { it.isRequired() }
-//         val givenParameters = sdsArgumentList.arguments.mapNotNull { it.parameterOrNull() }
-//         val missingRequiredParameters = requiredParameters - givenParameters.toSet()
-//
-//         missingRequiredParameters.forEach {
-//             error(
-//                 "The parameter '${it.name}' is required and must be set here.",
-//                 null,
-//                 ErrorCode.MISSING_REQUIRED_PARAMETER
-//             )
-//         }
-//     }
-//
-// @Check
-//     fun tooManyArguments(sdsArgumentList: SdsArgumentList) {
-//         val parameters = sdsArgumentList.parametersOrNull()
-//         if (parameters == null || parameters.any { it.isVariadic }) {
-//             return
-//         }
-//
-//         val maximumExpectedNumberOfArguments = parameters.size
-//         val actualNumberOfArguments = sdsArgumentList.arguments.size
-//
-//         if (actualNumberOfArguments > maximumExpectedNumberOfArguments) {
-//             val minimumExpectedNumberOfArguments = parameters.filter { it.isRequired() }.size
-//             val message = buildString {
-//                 append("Expected ")
-//
-//                 when {
-//                     minimumExpectedNumberOfArguments != maximumExpectedNumberOfArguments -> {
-//                         append("between $minimumExpectedNumberOfArguments and $maximumExpectedNumberOfArguments arguments")
-//                     }
-//                     minimumExpectedNumberOfArguments == 1 -> append("exactly 1 argument")
-//                 else -> append("exactly $minimumExpectedNumberOfArguments arguments")
-//                 }
-//
-//                 append(" but got $actualNumberOfArguments.")
-//             }
-//
-//             error(
-//                 message,
-//                 null,
-//                 ErrorCode.TOO_MANY_ARGUMENTS
-//             )
-//         }
-//     }

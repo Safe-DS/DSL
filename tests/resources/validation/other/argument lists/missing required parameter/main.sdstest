@@ -13,6 +13,9 @@ fun myFunction(a: Int, b: Int, c: Int = 0)
 
 segment mySegment1(a: Int, b: Int, c: Int = 0) {}
 
+pipeline myPipeline {}
+
+
 // $TEST$ error "The parameters 'a', 'b' must be set here."
 @MyAnnotation»()«
 // $TEST$ error "The parameter 'b' must be set here."
@@ -163,4 +166,10 @@ segment mySegment2(
     myExpressionLambda»(1, c = 2)«;
     // $TEST$ no error r"The parameters? .* must be set here\."
     myExpressionLambda»(b = 1, a = 2)«;
+
+
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    myPipeline»()«;
+    // $TEST$ no error r"The parameters? .* must be set here\."
+    unresolved»()«;
 }

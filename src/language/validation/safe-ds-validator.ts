@@ -59,7 +59,7 @@ import {
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
 import {
-    argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
+    argumentListMustNotHavePositionalArgumentsAfterNamedArguments, argumentListMustNotHaveTooManyArguments,
     argumentListMustNotSetParameterMultipleTimes, argumentListMustSetAllRequiredParameters
 } from './other/argumentLists.js';
 import {
@@ -130,6 +130,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             assignmentShouldNotImplicitlyIgnoreResult(services),
             assignmentShouldHaveMoreThanWildcardsAsAssignees,
         ],
+        SdsAbstractCall:[
+            argumentListMustNotHaveTooManyArguments(services),
+            argumentListMustSetAllRequiredParameters(services),
+        ],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty,
@@ -147,9 +151,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             argumentCorrespondingParameterShouldNotBeExperimental(services),
         ],
         SdsArgumentList: [
-            argumentListMustNotSetParameterMultipleTimes(services),
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
-            argumentListMustSetAllRequiredParameters(services),
+            argumentListMustNotSetParameterMultipleTimes(services),
         ],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
