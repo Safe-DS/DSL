@@ -46,7 +46,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
         }
 
         const callable = nodeMapper.callToCallableOrUndefined(node);
-        if (!callable) {
+        if (!callable || isSdsAnnotation(callable)) {
             accept('error', 'This expression is not callable.', {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,

@@ -29,6 +29,9 @@ segment mySegment2(a: Int, b: () -> ()) {
 
     // $TEST$ no error "This expression is not callable."
     »MyAnnotation«();
+    // $TEST$ error "This expression is not callable."
+    val myAnnotationAlias = MyAnnotation;
+    »myAnnotationAlias«();
     // $TEST$ no error "This expression is not callable."
     »MyClass«();
     // $TEST$ error "This expression is not callable."
@@ -49,8 +52,14 @@ segment mySegment2(a: Int, b: () -> ()) {
     »myFunction«();
     // $TEST$ no error "This expression is not callable."
     »myPipeline«();
+    // $TEST$ error "This expression is not callable."
+    val myPipelineAlias = MyPipeline;
+    »myPipelineAlias«();
     // $TEST$ no error "This expression is not callable."
     »MySchema«();
+    // $TEST$ error "This expression is not callable."
+    val mySchemaAlias = MySchema;
+    »mySchemaAlias«();
     // $TEST$ no error "This expression is not callable."
     »mySegment1«();
     // $TEST$ error "This expression is not callable."
@@ -69,9 +78,9 @@ segment mySegment2(a: Int, b: () -> ()) {
     »(e)«();
 
     /*
-     * If a scoping error for the receiver is reported we should not report another error. If the receiver is
+     * If a linking error for the receiver is reported we should not report another error. If the receiver is
      * resolved, but it eventually points to something unresolved, we should still report another error, since the
-     * distance to the scoping error might be too large.
+     * distance to the linking error might be too large.
      */
 
     // $TEST$ no error "This expression is not callable."
