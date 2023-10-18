@@ -1,4 +1,4 @@
-package tests.partialValidation.simpleRecursiveCases.templateString
+package tests.partialValidation.simpleRecursiveCases.templateStrings
 
 pipeline test {
     // $TEST$ serialization "start 1 inner1 true inner2 test end"

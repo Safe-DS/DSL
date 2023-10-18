@@ -1,0 +1,56 @@
+package tests.partialEvaluation.higherOrder
+
+pipeline callToBlockLambda {
+    val lambda = (a) { yield result = a; };
+    lambda(1);
+}
+
+pipeline callToExpressionLambda {
+    val lambda = (a) -> a;
+    lambda(1);
+}
+
+step myStep1(a: Int) -> result: Int {
+    yield result = a;
+}
+
+pipeline callToStep {
+    myStep1(1);
+}
+
+step myStep2(vararg params: Int) -> result: Int {
+    yield result = params;
+}
+
+pipeline callToStepWithVariadicParameter {
+    myStep2(1);
+}
+
+step myStep3(vararg params: Int) -> result: Int {
+    yield result = params[0];
+}
+
+pipeline callToStepWithIndexedVariadicParameter {
+    myStep3(1);
+}
+
+pipeline parameterAssignedDuringCall {
+    ((a, b) {
+        val d = b;
+        yield result = ((b, c) -> a + b + c + d)(1, 2);
+    })(3, 4);
+}
+
+step myStep4(param: Int) -> f: () -> (result: Int) {
+    yield f = () -> param;
+}
+
+pipeline parameterAssignedDuringCreationOfLambda {
+    myStep4(1)();
+}
+
+pipeline lambdaAsParameter {
+    val apply = (f) -> f();
+
+    apply(() -> 1);
+}

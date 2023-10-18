@@ -1,4 +1,4 @@
-package tests.partialValidation.baseCases.floatLiteral
+package tests.partialValidation.baseCases.floatLiterals
 
 pipeline test {
     // $TEST$ serialization 1.25
