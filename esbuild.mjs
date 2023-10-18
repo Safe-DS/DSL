@@ -21,7 +21,7 @@ const plugins = [
     {
         name: 'clean-old-builtins',
         setup(build) {
-            build.onStart(async (result) => {
+            build.onStart(async () => {
                 await fs.rm('./out/resources', { force: true, recursive: true });
             });
         },
