@@ -6,7 +6,6 @@ import { AssertionError } from 'assert';
 import { locationToString } from '../../helpers/location.js';
 import { createPartialEvaluationTests } from './creator.js';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
-import { UnknownEvaluatedNode } from '../../../src/language/partialEvaluation/model.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;
@@ -26,7 +25,7 @@ describe('partial evaluation', async () => {
         const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
         await services.shared.workspace.DocumentBuilder.build(documents);
 
-        // Ensure all nodes in the equivalence class get evaluated to the same constant expression
+        // Ensure that partially evaluating nodes in the same equivalence class yields the same result
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {
             if (equivalenceClassAssertion.locations.length > 1) {
                 const firstLocation = equivalenceClassAssertion.locations[0];
@@ -50,7 +49,7 @@ describe('partial evaluation', async () => {
             }
         }
 
-        // Ensure the serialized constant expression matches the expected one
+        // Ensure the serializing the result of partially evaluating a node yields the expected value
         for (const serializationAssertion of test.serializationAssertions) {
             const node = getNodeByLocation(services, serializationAssertion.location);
             const actualValue = partialEvaluator.evaluate(node);
@@ -62,21 +61,6 @@ describe('partial evaluation', async () => {
                     )}`,
                     actual: actualValue.toString(),
                     expected: serializationAssertion.expectedValue,
-                });
-            }
-        }
-
-        // Ensure the node does not get further evaluated
-        for (const undefinedAssertion of test.undefinedAssertions) {
-            const node = getNodeByLocation(services, undefinedAssertion.location);
-            const actualEvaluatedNode = partialEvaluator.evaluate(node);
-            if (actualEvaluatedNode !== UnknownEvaluatedNode) {
-                throw new AssertionError({
-                    message: `A node was simplified, but it should not be.\n    Location: ${locationToString(
-                        undefinedAssertion.location,
-                    )}`,
-                    actual: actualEvaluatedNode.toString(),
-                    expected: '',
                 });
             }
         }

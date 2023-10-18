@@ -22,7 +22,7 @@ partial evaluation test.
    test marker, the second test comment corresponds to the second test marker, etc.
     * `// $TEST$ constant equivalence_class <id>`: Assert that all nodes with the same `<id>` get partially evaluated
       successfully to the same constant expression.
-    * `// $TEST$ constant serialization <value>`: Assert that the node gets partially evaluated to a constant expression
+    * `// $TEST$ serialization <value>`: Assert that the node gets partially evaluated to a constant expression
       that serializes to `<value>`.
     * `// $TEST$ not constant`: Assert that the node cannot be evaluated to a constant expression.
 6. Run the tests. The test runner will automatically pick up the new test.

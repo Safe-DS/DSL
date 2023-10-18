@@ -1,9 +1,9 @@
 package tests.partialValidation.baseCases.floatLiteral
 
 pipeline test {
-    // $TEST$ constant serialization 1.25
+    // $TEST$ serialization 1.25
     »1.25«;
 
-    // $TEST$ constant serialization 0.02
+    // $TEST$ serialization 0.02
     »2e-2«;
 }
