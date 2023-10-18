@@ -102,7 +102,7 @@ const isNotSkipped = (pathRelativeToResources: string) => {
  * @returns List of loaded documents
  */
 export const loadAllDocuments = async (services: SafeDsServices, uris: URI[]): Promise<LangiumDocument[]> => {
-    const documents = await Promise.all(uris.map(async (uri) => await loadDocumentWithDiagnostics(services, uri)));
+    const documents = await Promise.all(uris.map(async (uri) => loadDocumentWithDiagnostics(services, uri)));
     await services.shared.workspace.DocumentBuilder.build(documents);
     return documents;
 };
