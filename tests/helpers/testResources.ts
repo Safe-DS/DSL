@@ -3,7 +3,9 @@ import { globSync } from 'glob';
 import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { group } from 'radash';
 import { LangiumDocument, URI } from 'langium';
+import { parseHelper } from 'langium/test';
 import { SafeDsServices } from '../../src/language/safe-ds-module.js';
+import fs from 'fs';
 
 const TEST_RESOURCES_PATH = path.join(__dirname, '..', 'resources');
 
@@ -100,7 +102,16 @@ const isNotSkipped = (pathRelativeToResources: string) => {
  * @returns List of loaded documents
  */
 export const loadAllDocuments = async (services: SafeDsServices, uris: URI[]): Promise<LangiumDocument[]> => {
-    const documents = uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
+    const documents = await Promise.all(uris.map(async (uri) => await loadDocumentWithDiagnostics(services, uri)));
     await services.shared.workspace.DocumentBuilder.build(documents);
     return documents;
+};
+
+const loadDocumentWithDiagnostics = async function (services: SafeDsServices, uri: URI) {
+    const parse = parseHelper(services);
+    const code = fs.readFileSync(uri.fsPath).toString();
+    return await parse(code, {
+        documentUri: uri.toString(),
+        validation: true,
+    });
 };

@@ -1,12 +1,13 @@
 import {
     listTestPythonFiles,
-    listTestSafeDsFilesGroupedByParentDirectory, loadAllDocuments,
+    listTestSafeDsFilesGroupedByParentDirectory,
+    loadAllDocuments,
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { ErrorsInCodeError, getErrors } from '../../helpers/diagnostics.js';
+import { ErrorsInCodeError, getErrorsByURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
@@ -30,17 +31,14 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     const actualOutputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
     const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
     let runUntil: Location | undefined;
-    // First read all stubs, then read all the other files; This should avoid broken references
-    const sortedInputUris = inputUris
-        .filter((uri) => uri.fsPath.endsWith('sdsstub'))
-        .sort()
-        .concat(...inputUris.filter((uri) => !uri.fsPath.endsWith('sdsstub')).sort());
+    // First read all files; Then check diagnostics
+    await loadAllDocuments(services, inputUris);
 
-    for (const uri of sortedInputUris) {
-        const code = fs.readFileSync(uri.fsPath).toString();
+    for (const uri of inputUris) {
+        const code = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri).textDocument.getText();
 
         // File must not contain any errors
-        const errors = await getErrors(services, code);
+        const errors = getErrorsByURI(services, uri);
         if (errors.length > 0) {
             return invalidTest('FILE', new ErrorsInCodeError(errors, uri));
         }
