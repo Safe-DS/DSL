@@ -110,7 +110,7 @@ export const loadAllDocuments = async (services: SafeDsServices, uris: URI[]): P
 const loadDocumentWithDiagnostics = async function (services: SafeDsServices, uri: URI) {
     const parse = parseHelper(services);
     const code = fs.readFileSync(uri.fsPath).toString();
-    return await parse(code, {
+    return parse(code, {
         documentUri: uri.toString(),
         validation: true,
     });
