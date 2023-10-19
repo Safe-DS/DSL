@@ -235,7 +235,7 @@ const generateImports = function (importSet: ImportData[]): string[] {
     const qualifiedImports = Array.from(importSet)
         .filter((importStmt) => importStmt.declarationName === undefined)
         .sort((a, b) => a.importPath.localeCompare(b.importPath))
-        .map(generateImport);
+        .map(generateQualifiedImport);
     const groupedImports = Object.entries(
         group(
             Array.from(importSet).filter((importStmt) => importStmt.declarationName !== undefined),
@@ -258,15 +258,11 @@ const generateImports = function (importSet: ImportData[]): string[] {
     return [...new Set(qualifiedImports), ...new Set(declaredImports)];
 };
 
-const generateImport = function (importStmt: ImportData): string {
-    if (importStmt.declarationName === undefined && importStmt.alias === undefined) {
+const generateQualifiedImport = function (importStmt: ImportData): string {
+    if (importStmt.alias === undefined) {
         return `import ${importStmt.importPath}`;
-    } else if (importStmt.declarationName === undefined && importStmt.alias !== undefined) {
-        return `import ${importStmt.importPath} as ${importStmt.alias}`;
-    } else if (importStmt.declarationName !== undefined && importStmt.alias === undefined) {
-        return `from ${importStmt.importPath} import ${importStmt.declarationName}`;
     } else {
-        return `from ${importStmt.importPath} import ${importStmt.declarationName} as ${importStmt.alias}`;
+        return `import ${importStmt.importPath} as ${importStmt.alias}`;
     }
 };
 
