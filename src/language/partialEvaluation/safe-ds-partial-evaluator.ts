@@ -89,6 +89,7 @@ export class SafeDsPartialEvaluator {
             return resultWithoutSubstitutions;
         }
 
+        /* c8 ignore next 2 */
         // Try again with parameter substitutions but don't cache the result
         return this.doEvaluate(node, substitutions);
     }
@@ -269,6 +270,7 @@ export class SafeDsPartialEvaluator {
                 }
         }
 
+        /* c8 ignore next */
         return UnknownEvaluatedNode;
     }
 

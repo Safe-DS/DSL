@@ -40,6 +40,16 @@
       "end": "\\`"
     },
     {
+      "name": "string.interpolated.safe-ds",
+      "begin": "\"|}}",
+      "end": "{{|\"",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
+    },
+    {
       "name": "string.quoted.double.safe-ds",
       "begin": "\"",
       "end": "\"",
