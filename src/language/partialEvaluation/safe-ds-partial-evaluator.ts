@@ -175,28 +175,28 @@ export class SafeDsPartialEvaluator {
 
     private evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         // By design none of the operators are short-circuited
-        const constantLeft = this.cachedDoEvaluate(node.leftOperand, substitutions);
-        if (constantLeft === UnknownEvaluatedNode) {
+        const evaluatedLeft = this.cachedDoEvaluate(node.leftOperand, substitutions);
+        if (evaluatedLeft === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
-        const constantRight = this.cachedDoEvaluate(node.rightOperand, substitutions);
-        if (constantRight === UnknownEvaluatedNode) {
+        const evaluatedRight = this.cachedDoEvaluate(node.rightOperand, substitutions);
+        if (evaluatedRight === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
         switch (node.operator) {
             case 'or':
                 return this.evaluateLogicalOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand || rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case 'and':
                 return this.evaluateLogicalOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand && rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             // Equals -> SdsConstantBoolean(constantLeft == constantRight)
             // NotEquals -> SdsConstantBoolean(constantLeft != constantRight)
@@ -204,65 +204,67 @@ export class SafeDsPartialEvaluator {
             // NotIdenticalTo -> SdsConstantBoolean(constantLeft != constantRight)
             case '<':
                 return this.evaluateComparisonOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand < rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '<=':
                 return this.evaluateComparisonOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand <= rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '>=':
                 return this.evaluateComparisonOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand >= rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '>':
                 return this.evaluateComparisonOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand > rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '+':
                 return this.evaluateArithmeticOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand + rightOperand,
                     (leftOperand, rightOperand) => leftOperand + rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '-':
                 return this.evaluateArithmeticOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand - rightOperand,
                     (leftOperand, rightOperand) => leftOperand - rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '*':
                 return this.evaluateArithmeticOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand * rightOperand,
                     (leftOperand, rightOperand) => leftOperand * rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
             case '/':
                 // Division by zero
-                if (zeroes.some(it => it.equals(constantRight))) {
+                if (zeroes.some((it) => it.equals(evaluatedRight))) {
                     return UnknownEvaluatedNode;
                 }
 
                 return this.evaluateArithmeticOp(
-                    constantLeft,
+                    evaluatedLeft,
                     (leftOperand, rightOperand) => leftOperand / rightOperand,
                     (leftOperand, rightOperand) => leftOperand / rightOperand,
-                    constantRight,
+                    evaluatedRight,
                 );
-            // Elvis -> when (constantLeft) {
-            //     SdsConstantNull -> constantRight
-            // else -> constantLeft
-            // }
+            case '?:':
+                if (evaluatedLeft === NullConstant) {
+                    return evaluatedRight;
+                } else {
+                    return evaluatedLeft;
+                }
         }
 
         return UnknownEvaluatedNode;
@@ -322,20 +324,20 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
-        const constantOperand = this.cachedDoEvaluate(node.operand, substitutions);
-        if (constantOperand === UnknownEvaluatedNode) {
+        const evaluatedOperand = this.cachedDoEvaluate(node.operand, substitutions);
+        if (evaluatedOperand === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
         if (node.operator === 'not') {
-            if (constantOperand instanceof BooleanConstant) {
-                return new BooleanConstant(!constantOperand.value);
+            if (evaluatedOperand instanceof BooleanConstant) {
+                return new BooleanConstant(!evaluatedOperand.value);
             }
         } else if (node.operator === '-') {
-            if (constantOperand instanceof FloatConstant) {
-                return new FloatConstant(-constantOperand.value);
-            } else if (constantOperand instanceof IntConstant) {
-                return new IntConstant(-constantOperand.value);
+            if (evaluatedOperand instanceof FloatConstant) {
+                return new FloatConstant(-evaluatedOperand.value);
+            } else if (evaluatedOperand instanceof IntConstant) {
+                return new IntConstant(-evaluatedOperand.value);
             }
         }
 
@@ -506,8 +508,4 @@ export class SafeDsPartialEvaluator {
 }
 
 const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();
-const zeroes = [
-    new IntConstant(BigInt(0)),
-    new FloatConstant(0.0),
-    new FloatConstant(-0.0),
-]
+const zeroes = [new IntConstant(BigInt(0)), new FloatConstant(0.0), new FloatConstant(-0.0)];
