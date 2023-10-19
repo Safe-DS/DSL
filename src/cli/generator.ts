@@ -15,14 +15,12 @@ import {
     isSdsBlockLambdaResult,
     isSdsCall,
     isSdsCallable,
-    isSdsEnum,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
     isSdsIndexedAccess,
     isSdsInfixOperation,
     isSdsList,
-    isSdsLiteral,
     isSdsMap,
     isSdsMemberAccess,
     isSdsParenthesizedExpression,
@@ -61,7 +59,6 @@ import { NodeFileSystem } from 'langium/node';
 import { toConstantExpression } from '../language/partialEvaluation/toConstantExpression.js';
 import {
     ConstantBoolean,
-    ConstantEnumVariant,
     ConstantFloat,
     ConstantInt,
     ConstantNull,
@@ -352,19 +349,6 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
-    // TODO move down again, when supported as constant expression
-    if (isSdsLiteral(expression) && (isSdsMap(expression) || isSdsList(expression))) {
-        if (isSdsMap(expression)) {
-            const mapContent = expression.entries.map(
-                (entry) => `${generateExpression(entry.key, frame)}: ${generateExpression(entry.value, frame)}`,
-            );
-            return `{${mapContent.join(', ')}}`;
-        } else if (isSdsList(expression)) {
-            const listContent = expression.elements.map((value) => generateExpression(value, frame));
-            return `[${listContent.join(', ')}]`;
-        }
-    }
-
     const potentialConstantExpression = toConstantExpression(expression);
     if (potentialConstantExpression !== null) {
         if (potentialConstantExpression instanceof ConstantBoolean) {
@@ -378,10 +362,19 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             return 'None';
         } else if (potentialConstantExpression instanceof ConstantString) {
             return `'${formatStringSingleLine(potentialConstantExpression.value)}'`;
-        } else if (potentialConstantExpression instanceof ConstantEnumVariant) {
-            const enumType = getContainerOfType(potentialConstantExpression.value, isSdsEnum);
-            return `${enumType!.name}.${potentialConstantExpression.value.name}`;
         }
+        // Handled after constant expressions: EnumVariant, List, Map
+    }
+
+    if (isSdsMap(expression)) {
+        const mapContent = expression.entries.map(
+            (entry) => `${generateExpression(entry.key, frame)}: ${generateExpression(entry.value, frame)}`,
+        );
+        return `{${mapContent.join(', ')}}`;
+    }
+    if (isSdsList(expression)) {
+        const listContent = expression.elements.map((value) => generateExpression(value, frame));
+        return `[${listContent.join(', ')}]`;
     }
 
     if (isSdsBlockLambda(expression)) {
@@ -552,7 +545,6 @@ const getInternalReferenceNeededImport = function (
     const currentModule = <SdsModule>findRootNode(expression);
     const targetModule = <SdsModule>findRootNode(declaration);
     if (currentModule !== targetModule && !isInStubFile(targetModule)) {
-        // TODO __skip__ in file name?
         return new ImportData(
             `${
                 services.builtins.Annotations.getPythonModule(targetModule) || targetModule.name
