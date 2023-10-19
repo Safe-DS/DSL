@@ -8,7 +8,7 @@ Annotations attach additional metainformation to declarations. Annotations must 
 
 Let's look at a minimal example of an annotation:
 
-```txt
+```sds
 annotation OnlyForExperts
 ```
 
@@ -21,7 +21,7 @@ This declaration of an annotation has the following syntactic elements:
 
 For the annotation `OnlyForExperts`, no more inputs are required. It is only used to mark declarations. However, say we want to assign a category to a declaration. We could define individual annotations for each category, such as:
 
-```txt
+```sds
 annotation Model
 annotation Data
 ```
@@ -30,7 +30,7 @@ However, these annotations are difficult to process since we need to maintain a 
 
 In the following example, we define the complete `Category` annotation with a single parameter with name `category` and [type][types] `String`.
 
-```txt
+```sds
 annotation Category(category: String)
 ```
 
@@ -57,7 +57,7 @@ The valid targets of an annotation can be restricted with the [`Target`][safeds-
 
 Annotation calls are always located right in front of their target. Exception: In the case of compilations units they are located at the very top of the file. Here is an example that demonstrates how to call the annotation `OnlyForExperts` that we defined above on a [class][classes]:
 
-```txt
+```sds
 @OnlyForExperts
 class VerySpecificMLModel
 ```
@@ -71,14 +71,14 @@ The code `class VerySpecificMLModel` is **not** part of the annotation call but 
 
 For an annotation with parameters, such as the `Category` annotation that we defined above, we must pass arguments. The same syntax is used for arguments of annotation calls as for normal [calls][calls]. We can use positional arguments:
 
-```txt
+```sds
 @Category("model")
 class VerySpecificMLModel
 ```
 
 Or we can use named arguments:
 
-```txt
+```sds
 @Category(category="model")
 class VerySpecificMLModel
 ```

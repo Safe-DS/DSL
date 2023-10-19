@@ -4,7 +4,7 @@
 
 Variance deals with the question, which generic types are compatible with each other. We explain this concept using the following [class][classes]:
 
-```txt
+```sds
 class Stack<T>(initialElements: List<T>) {
     fun push(element: T)
 
@@ -42,7 +42,7 @@ As outlined above, we can only allow covariance if we forbid writing access. Thi
 
 In the `Stack` example, we can make the [class][classes] covariant by adding the keyword `out` to the [type parameter][type-parameters] `T` and removing the writing [method][methods] `push`:
 
-```txt
+```sds
 class Stack<out T> {
     fun pop() -> element: T
 }
@@ -56,7 +56,7 @@ As outlined above, we can only allow contravariance if we forbid reading access.
 
 In the `Stack` example, we can make the [class][classes] contravariant by adding the keyword `in` to the [type parameter][type-parameters] `T` and removing the reading [method][methods] `pop`:
 
-```txt
+```sds
 class Stack<in T> {
     fun push(element: T)
 }

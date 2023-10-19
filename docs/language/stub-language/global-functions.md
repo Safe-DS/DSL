@@ -12,7 +12,7 @@ The syntax to define a global function is as follows:
 - Optionally we can list the _results_ (outputs) after the symbol `->`. If this section is missing it means the global function does not produce results. The list of results is again enclosed in parentheses and we use commas to separate the entries. If there is exactly one result we can omit the parentheses (see `-> dataset: Dataset` in the following example). For each result we specify its name followed by a colon and its type.
 - Note that global functions do **not** have a body since they are part of the [stub language][stub-language], which does not deal with implementation.
 
-```txt
+```sds
 fun loadDataset(name: String) -> dataset: Dataset
 ```
 

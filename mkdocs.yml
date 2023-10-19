@@ -95,8 +95,9 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format # Footnotes
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
+  # Footnotes
   - footnotes
 
   # Keys
@@ -104,9 +105,10 @@ markdown_extensions:
 
   # Icons & emojis
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg # Images
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
+  # Images
   - attr_list
   - md_in_html
 

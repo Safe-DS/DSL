@@ -9,7 +9,7 @@ _Parameters_ define the expected inputs of some declaration that can be [called]
 
 _Required parameters_ must always be passed when the declaration is [called][calls]. Let us look at an example:
 
-```txt
+```sds
 requiredParameter: Int
 ```
 
@@ -23,7 +23,7 @@ Here are the pieces of syntax:
 
 _Optional parameters_ have a default value and, thus, need not be passed as an [argument][calls] unless the default value does not fit. Here is an example:
 
-```txt
+```sds
 optionalParameter: Int = 1
 ```
 
@@ -39,7 +39,7 @@ These are the syntactic elements:
 
 Let us now look at a full example of a [segment][segments] called `doSomething` with one [required parameter](#required-parameters) and one [optional parameter](#optional-parameters):
 
-```txt
+```sds
 segment doSomething(requiredParameter: Int, optionalParameter: Boolean = false) {
     // ...
 }
@@ -81,7 +81,7 @@ def accuracy(x_pred: Dataset, x_test: Dataset) -> float:
     pass
 ```
 
-```txt
+```sds
 // Safe-DS code
 
 fun accuracy(
@@ -121,7 +121,7 @@ def required(a: int):
     pass
 ```
 
-```txt
+```sds
 // Safe-DS code
 
 fun required(a: Int)
@@ -136,7 +136,7 @@ def optional(a: int = 1):
     pass
 ```
 
-```txt
+```sds
 // Safe-DS code
 
 fun optional(a: Int = 1)

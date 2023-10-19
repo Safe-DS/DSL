@@ -8,7 +8,7 @@ Safe-DS has two kinds of imports, namely a _qualified import_, which imports a s
 
 A _qualified import_ makes a single declaration available. Here is an example that imports the [class][classes] `DecisionTree` in the [package][packages] `safeds.model.regression`:
 
-```txt
+```sds
 from safeds.model.regression import DecisionTree
 ```
 
@@ -21,13 +21,13 @@ The syntax consists of the following parts:
 
 Once the declaration is imported, we can refer to it by its name. Here is, for example, a [call][calls] to the constructor of the `DecisionTree` class:
 
-```txt
+```sds
 DecisionTree()
 ```
 
 Multiple declarations can be imported from the same package in a single import statement by separating them with commas:
 
-```txt
+```sds
 from safeds.model.regression import DecisionTree, RandomForest
 ```
 
@@ -35,7 +35,7 @@ from safeds.model.regression import DecisionTree, RandomForest
 
 Sometimes the name of the imported declaration can conflict with other declarations that are imported or that are contained in the importing file. To counter this, declarations can be imported under an alias:
 
-```txt
+```sds
 from safeds.model.regression import DecisionTree as StdlibDecisionTree
 ```
 
@@ -50,13 +50,13 @@ Let us take apart the syntax:
 
 Afterwards, the declaration can **only** be accessed using the alias. The next example shows how to create a new instance of the class now by invoking its constructor:
 
-```txt
+```sds
 StdlibDecisionTree()
 ```
 
 Multiple declarations can be imported with or without an alias in a single import statement by separating them with commas:
 
-```txt
+```sds
 from safeds.model.regression import DecisionTree as StdlibDecisionTree, RandomForest
 ```
 
@@ -66,7 +66,7 @@ We can also import all declarations in a [package][packages] with a single impor
 
 Nevertheless, let us look at an example, which imports all declarations from the [package][packages] `safeds.model.regression`:
 
-```txt
+```sds
 from safeds.model.regression import *
 ```
 
@@ -79,7 +79,7 @@ Here is the breakdown of the syntax:
 
 Afterwards, we can again access declarations by their simple name, such as the [class][classes] `DecisionTree`:
 
-```txt
+```sds
 DecisionTree()
 ```
 

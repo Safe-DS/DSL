@@ -8,7 +8,7 @@ Segments are used to extract a sequence of [statements][statements] from a data 
 
 Let's look at a minimal example of a segment:
 
-```txt
+```sds
 segment loadMovieRatingsSample() {}
 ```
 
@@ -29,7 +29,7 @@ Parameters must be declared in the header of the segment so [callers](#calling-a
 
 In the following example, we give the segment a single parameters with name `nInstances` and [type][types] `Int`.
 
-```txt
+```sds
 segment loadMovieRatingsSample(nInstances: Int) {}
 ```
 
@@ -39,7 +39,7 @@ More information about parameters can be found in the [linked document][paramete
 
 Within the segment we can access the value of a parameter using a [reference][references]. Here is a basic example where we print the value of the `nInstances` parameter to the console:
 
-```txt
+```sds
 segment loadMovieRatingsSample(nInstances: Int) {
     print(nInstances);
 }
@@ -51,7 +51,7 @@ More information about references can be found in the [linked document][referenc
 
 In order to describe what should be done when the segment is executed, we need to add [statements][statements] to its body. The previous example in the section ["References to Parameters"](#references-to-parameters) already contained a statement - an [expression statement][expression-statements] to be precise. Here is another example, this time showing an [assignment][assignments]:
 
-```txt
+```sds
 segment loadMovieRatingsSample(nInstances: Int) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
 }
@@ -67,7 +67,7 @@ More information about statements can be found in the [linked document][statemen
 
 As with [parameters](#parameters) we first need to declare the available results in the headed. This tells [callers](#calling-a-segment) that they can use these results and reminds us to [assign a value to them](#assigning-to-results) in the body of the segment. Let's look at an example:
 
-```txt
+```sds
 segment loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
 }
@@ -81,7 +81,7 @@ More information about the declaration of results can be found in the [linked do
 
 Currently, the program will not compile since we never assigned a value to these results. This can be done with an [assignment][assignments] and the `yield` keyword:
 
-```txt
+```sds
 segment loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {
     val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
     yield features = movieRatingsSample.keepAttributes(
@@ -103,7 +103,7 @@ The order of the [result declarations](#result-declaration) does not need to mat
 
 By default, a segment can be [imported][imports] in any other file and reused there. We say they have `public` visibility. However, it is possible to restrict the visibility of a segment with modifiers:
 
-```txt
+```sds
 internal segment internalSegment() {}
 
 private segment privateSegment() {}
@@ -115,7 +115,7 @@ The segment `internalSegment` is only visible in files with the same [package][p
 
 Inside a [pipeline][pipelines], another segment, or a [lambda][lambdas] we can then [call][calls] a segment, which means the segment is executed when the call is reached: The results of a segment can then be used as needed. In the following example, where we call the segment `loadMovieRatingsSample` that we defined above, we [assign the results to placeholders][assignments-to-placeholders]:
 
-```txt
+```sds
 val features, val target = loadMovieRatingsSample(nInstances = 1000);
 ```
 
