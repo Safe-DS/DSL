@@ -15,9 +15,43 @@ class SafeDsLexer(RegexLexer):
     ]
     filenames = ['*.sdspipe', '*.sdsstub', '*.sdstest']
 
+    keywords = (
+        'and',
+        'annotation',
+        'as',
+        'attr',
+        'class',
+        'const',
+        'enum',
+        'false',
+        'from',
+        'fun',
+        'import',
+        'in',
+        'internal',
+        'literal',
+        'not',
+        'null',
+        'or',
+        'out',
+        'package',
+        'pipeline',
+        'private',
+        'schema',
+        'segment',
+        'static',
+        'sub',
+        'super',
+        'true',
+        'union',
+        'val',
+        'where',
+        'yield',
+    )
+
     tokens = {
         'root': [
-            (words(('pipeline', 'segment'), suffix=r'\b'), Name.Builtin),
+            (words(keywords, suffix=r'\b'), Name.Builtin),
             (r'//.+?$', Comment.Single),
             (r'/\*[\s\S]*?\*/', Comment.Multiline),
             (r'\s+', Whitespace),
