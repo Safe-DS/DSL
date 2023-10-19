@@ -36,7 +36,7 @@ String literals describe text. Their syntax is simply text enclosed by double qu
 
 String literals can contain also contain raw line breaks:
 
-```txt
+```sds
 "Hello,
 
 world!"
@@ -120,7 +120,7 @@ Safe-DS also has shorthand versions for negated equality checks which should be 
 
 The elvis operator `?:` (given its name because it resembles Elvis's haircut) is used to specify a default value that should be used instead if the left operand is `null`. This operator is not short-circuited, so both operand are always evaluated. In the following example the whole expression evaluates to `nullableExpression` if this value is not `null` and to `42` if it is:
 
-```txt
+```sds
 nullableExpression ?: 42
 ```
 
@@ -128,7 +128,7 @@ nullableExpression ?: 42
 
 [String literals](#string-literals) can only be used to denote a fixed string. Sometimes, however, parts of the string have to be computed and then interpolated into the remaining text. This is done with template strings. Here is an example:
 
-```txt
+```sds
 "1 + 2 = {{ 1 + 2 }}"
 ```
 
@@ -140,7 +140,7 @@ These template expressions are evaluated, converted to a string and inserted int
 
 References are used to refer to a declaration, such as a [class][classes] or a [placeholder][placeholders]. The syntax is simply the name of the declaration, as shown in the next snippet where we first declare a [placeholder][placeholders] called `one` and then refer to it when computing the value for the [placeholder][placeholders] called `two`:
 
-```txt
+```sds
 val one = 1;
 val two = one + one;
 ```
@@ -153,7 +153,7 @@ Calls are used to trigger the execution of a specific action, which can, for exa
 
 First, we show the code of the [segment][segments] that we want to call.
 
-```txt
+```sds
 segment createDecisionTree(maxDepth: Int = 10) {
     // ... do something ...
 }
@@ -161,7 +161,7 @@ segment createDecisionTree(maxDepth: Int = 10) {
 
 This [segment][segments] has a single [parameter][parameters] `maxDepth`, which must have [type][types] `Int`, and has the default value `10`. Since it has a default value, we are not required to specify a value when we call this [segment][segments]. The most basic legal call of the [segment][segments] is, thus, this:
 
-```txt
+```sds
 createDecisionTree()
 ```
 
@@ -176,7 +176,7 @@ If we want to override the default value of an optional [parameter][parameters] 
 
 In the case of positional arguments, they are mapped to parameters by position, i.e. the first argument is assigned to the first parameter, the second argument is assigned to the second parameter and so forth. We do this in the following example to set `maxDepth` to 5:
 
-```txt
+```sds
 createDecisionTree(5)
 ```
 
@@ -184,7 +184,7 @@ The syntax for positional argument is simply the expression we want to pass as v
 
 Named arguments, however, are mapped to parameters by name. On the one hand, this can improve readability of the code, since the meaning of a value becomes obvious. On the other hand, it allows to override only specific optional parameters and keep the rest unchanged. Here is how to set `maxDepth` to 5 using a named argument:
 
-```txt
+```sds
 createDecisionTree(maxDepth = 5)
 ```
 
@@ -198,7 +198,7 @@ These are the syntactic elements:
 
 We now add another parameter to the `createDecisionTree` [segment][segments]:
 
-```txt
+```sds
 segment createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
     // ... do something ...
 }
@@ -206,7 +206,7 @@ segment createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
 
 This allows us to show how multiple arguments can be passed:
 
-```txt
+```sds
 createDecisionTree(isBinary = true, maxDepth = 5)
 ```
 
@@ -258,7 +258,7 @@ A member access is used to refer to members of a complex data structure such as
 
 The general syntax of a member access is this:
 
-```txt
+```sds
 <receiver>.<member>
 ```
 
@@ -268,7 +268,7 @@ Here, the receiver is some expression (the legal choices are explained below), w
 
 To understand how we can access members of a [class][classes] we must first look briefly at a declaration of the [class][classes] we use in the following examples:
 
-```txt
+```sds
 class DecisionTree() {
     static attr verboseTraining: Boolean
 
@@ -284,7 +284,7 @@ Moreover, the class has an instance [attribute][attributes]`maxDepth`, which is 
 
 Let us look at how to access the static [attribute][attributes] `verboseTraining` to retrieve its value:
 
-```txt
+```sds
 DecisionTree.verboseTraining
 ```
 
@@ -300,7 +300,7 @@ Note that we cannot access a static member from an instance of the class. We mus
 
 Contrary to static member accesses, we can only access instance members on an instance of a class:
 
-```txt
+```sds
 DecisionTree().maxDepth
 ```
 
@@ -318,7 +318,7 @@ If an expression could be `null` it cannot be used as the receiver of a regular 
 
 The syntax is identical to a normal member access except that we replace the dot with the operator `?.`:
 
-```txt
+```sds
 nullableExpression?.member
 ```
 
@@ -326,7 +326,7 @@ nullableExpression?.member
 
 A member access can also be used to access the [variants][enum-variants] of an [enum][enums]. Here is the declaration of the [enum][enums] that we use in the example:
 
-```txt
+```sds
 enum SvmKernel {
     Linear,
     RBF
@@ -337,7 +337,7 @@ This [enum][enums] is called `SvmKernel` and has the two [variants][enum-variant
 
 We can access the [variant][enum-variants] `Linear` using this member access:
 
-```txt
+```sds
 SvmKernel.Linear
 ```
 
@@ -353,7 +353,7 @@ This syntax is identical to the [member access of static class members](#member-
 
 If the [result record](#result-record) that is produced by a [call](#calls) has multiple results, we can use a member access to select a single one. Here is the [global function][global-functions] we use to explain this concept:
 
-```txt
+```sds
 fun divideWithRemainder(dividend: Int, divisor: Int) -> (quotient: Int, remainder: Int)
 ```
 
@@ -361,7 +361,7 @@ The [global function][global-functions] `divideWithRemainder` has two [parameter
 
 If we are only interested in the remainder of `12` divided by `5`, we can use a member access:
 
-```txt
+```sds
 divideWithRemainder(12, 5).remainder
 ```
 
@@ -375,7 +375,7 @@ While it is also possible to access the result by name if the [result record](#r
 
 To explain this concept further, we need the following declarations:
 
-```txt
+```sds
 class ValueWrapper {
     attr value: Int
 }
@@ -387,7 +387,7 @@ We first declare a [class][classes] called `ValueWrapper`, which has an [attribu
 
 Let us now look at this member access:
 
-```txt
+```sds
 createValueWrapper().value
 ```
 
@@ -395,7 +395,7 @@ This evaluates to the [attribute][attributes], i.e. an integer, rather than the 
 
 If you want the result instead, simply omit the member access:
 
-```txt
+```sds
 createValueWrapper()
 ```
 
@@ -403,7 +403,7 @@ createValueWrapper()
 
 An indexed access is currently only used to access elements of a list or values of a map by their key. In the following example, we use an index access to retrieve the first element of the `values` list:
 
-```txt
+```sds
 segment printFirst(values: List<Int>) {
     print(values[0]);
 }
@@ -422,7 +422,7 @@ Note that accessing a value at an index outside the bounds of the value list cur
 
 Multiple [calls](#calls), [member accesses](#member-accesses), and [indexed accesses](#member-accesses) can be chained together. Let us first look at the declaration of the [class][classes] we need for the example:
 
-```txt
+```sds
 class LinearRegression() {
     fun drawAsGraph()
 }
@@ -432,7 +432,7 @@ This is a [class][classes] `LinearRegression`, which has a constructor and an in
 
 We can then use those declarations in a [segment][segments]:
 
-```txt
+```sds
 segment mySegment(regressions: List<LinearRegression>) {
     regressions[0].drawAsGraph();
 }
@@ -450,7 +450,7 @@ In the body of the segment we then
 
 If you want to write reusable blocks of code, use a [segment][segments]. However, sometimes you need to create a highly application-specific callable that can be passed as argument to some function or returned as the result of a [segment][segments]. We will explain this concept by filtering a list. Here are the relevant declarations:
 
-```txt
+```sds
 class IntList {
     fun filter(filterFunction: (element: Int) -> shouldKeep: Boolean) -> filteredList: IntList
 }
@@ -464,7 +464,7 @@ Second, we declare a [global function][global-functions] `intListOf` that is sup
 
 Say, we now want to keep only the elements in the list that are less than `10`. We can do this by declaring a [segment][segments]:
 
-```txt
+```sds
 segment keepLessThan10(a: Int) -> shouldKeep: Boolean {
     yield shouldKeep = a < 10;
 }
@@ -472,7 +472,7 @@ segment keepLessThan10(a: Int) -> shouldKeep: Boolean {
 
 Here is how to solve the task of keeping only elements below `10` with this [segment][segments]:
 
-```txt
+```sds
 intListOf(1, 4, 11).filter(keepLessThan10)
 ```
 
@@ -484,7 +484,7 @@ The problem here is that this solution is very cumbersome and verbose. We need t
 
 We will first rewrite the above solution using a _block lambda_, which is essentially a [segment][segments] without a name and more concise syntax that can be declared where it is needed:
 
-```txt
+```sds
 intListOf(1, 4, 11).filter(
     (a) { yield shouldKeep = a < 10; }
 )
@@ -503,7 +503,7 @@ The results of a block lambda are [declared in its body using assignments][assig
 
 Often, the body of a [block lambda](#block-lambdas) only consists of yielding a single result, as is the case in the example above. The syntax of [block lambdas](#block-lambdas) is quite verbose for such a common use-case, which is why Safe-DS has _expression lambdas_ as a shorter but less flexible alternative. Using an expression lambda we can rewrite the example above as
 
-```txt
+```sds
 intListOf(1, 4, 11).filter(
     (a) -> a < 10
 )
@@ -521,7 +521,7 @@ These are the syntactic elements:
 
 Both [block lambdas](#block-lambdas) and [expression lambdas](#expression-lambdas) are closures, which means they remember the values of [placeholders][placeholders] and [parameters][parameters] that can be accessed within their body at the time of their creation. Here is an example:
 
-```txt
+```sds
 segment lazyValue(value: Int) -> result: () -> storedValue: Int {
     yield result = () -> value
 }

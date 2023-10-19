@@ -16,7 +16,7 @@ are not planned since we want to keep the language small and easy to learn. More
 
 Expression statements are used to evaluate an [expression][expressions] exactly once. The results of this expression are ignored. Therefore, expression statements are only useful if the expression has side effects. The following snippet demonstrates this by [calling][calls] the `print` function that prints the given string to the console:
 
-```txt
+```sds
 print("Hello, world!");
 ```
 
@@ -35,7 +35,7 @@ Placeholders are used to provide a name for a fixed value. This later allows us 
 
 The next snippet shows how the singular result of an expression (the integer `1`) can be assigned to a placeholder called `one`:
 
-```txt
+```sds
 val one = 1;
 ```
 
@@ -51,7 +51,7 @@ This assignment to a placeholder has the following syntactic elements:
 
 We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [segment][segments], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `one` placeholder (here `1`) to the console:
 
-```txt
+```sds
 segment loadMovieRatingsSample(nInstances: Int) {
     val one = 1;
     print(one);
@@ -68,7 +68,7 @@ In addition to the [declaration of placeholders](#declaring-placeholders), assig
 
 The following snippet shows how we can assign a value to a declared [result][results] of a [segment][segments]:
 
-```txt
+```sds
 segment trulyRandomInt() -> result: Int {
     yield result = 1;
 }
@@ -86,7 +86,7 @@ The assignment here has the following syntactic elements:
 
 Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to segments is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `greeting`, which gets the value `"Hello, world!"`:
 
-```txt
+```sds
 () -> {
     yield greeting = "Hello, world!";
 }
@@ -104,7 +104,7 @@ The assignment here has the following syntactic elements:
 
 In case we want to ignore a result of the expression on the right-hand side of the assignment we can inserting an underscore (called _wildcard_). The following snippet is equivalent to the [expression statement](#expression-statements) `1;`:
 
-```txt
+```sds
 _ = 1;
 ```
 
@@ -114,7 +114,7 @@ So far, the left-hand side of the assignment always had a single assignee. Howev
 
 For example, the `split` method in the next example splits a large dataset into two datasets according to a given ratio. We then ignore the first dataset using a [wildcard](#ignoring-results) and [assign the second result to a placeholder](#declaring-placeholders) called `trainingDataset`. Afterwards, we train a `DecisionTree` using the `trainingDataset` and yield the trained model as a result:
 
-```txt
+```sds
 segment createModel(fullDataset: Dataset) -> trainedModel: Model {
     _, val trainingDataset = fullDataset.split(0.2);
     yield trainedModel = DecisionTree().fit(trainingDataset);

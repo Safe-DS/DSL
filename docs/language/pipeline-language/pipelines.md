@@ -8,7 +8,7 @@ Pipelines are data science programs designed to solve a specific task. They act 
 
 Let's look at a minimal example of a pipeline:
 
-```txt
+```sds
 pipeline predictSpeed {}
 ```
 
@@ -22,7 +22,7 @@ This declaration of a pipeline has the following syntactic elements:
 
 In order to describe what should be done when the pipeline is executed, we need to add [statements][statements] to its body, as shown in this example:
 
-```txt
+```sds
 pipeline predictSpeed {
     val adac = loadDataset("ADAC");
     val adacSample = adac.sample(1000);
