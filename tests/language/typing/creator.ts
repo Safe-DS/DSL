@@ -41,7 +41,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
         }
 
         for (const check of checksResult.value) {
-            // Expected unresolved reference
+            // A set of nodes should all get the same type
             const equivalenceClassMatch = /equivalence_class (?<id>.*)/gu.exec(check.comment);
             if (equivalenceClassMatch) {
                 const id = equivalenceClassMatch.groups!.id;
@@ -51,7 +51,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
                 continue;
             }
 
-            // Expected that reference is resolved and points to the target id
+            // The serialized type of a node should match the expected type
             const serializationMatch = /serialization (?<expectedType>.*)/gu.exec(check.comment);
             if (serializationMatch) {
                 const expectedType = serializationMatch.groups!.expectedType;
@@ -125,7 +125,7 @@ interface TypingTest extends TestDescription {
  */
 interface EquivalenceClassAssertion {
     /**
-     * The locations of the nodes that should all get the same type.
+     * The locations of the nodes to compute the type of.
      */
     locations: Location[];
 }
@@ -135,7 +135,7 @@ interface EquivalenceClassAssertion {
  */
 interface SerializationAssertion {
     /**
-     * The location of the node whose serialized type should be checked.
+     * The location of the node to compute the type of.
      */
     location: Location;
 

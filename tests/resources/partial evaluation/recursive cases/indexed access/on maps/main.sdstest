@@ -1,0 +1,21 @@
+package tests.partialValidation.recursiveCases.indexedAccess.onMaps
+
+pipeline test {
+    // $TEST$ serialization 1
+    »{"1": 1}["1"]«;
+
+    // $TEST$ serialization 2
+    »{"1": 1, "1": 2}["1"]«; // In Python the last matching entry wins, so we need to mimic that behavior
+
+    // $TEST$ serialization 2
+    »{"1": 1, "2": 2, "3": unresolved}["2"]«;
+
+    // $TEST$ serialization $unknown
+    »{"1": 1, "2": 2, "3": unresolved}["3"]«;
+
+    // $TEST$ serialization $unknown
+    »{}[1]«;
+
+    // $TEST$ serialization $unknown
+    »{}[unresolved]«;
+}

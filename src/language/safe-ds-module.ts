@@ -22,6 +22,7 @@ import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClassHierarchy } from './typing/safe-ds-class-hierarchy.js';
+import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -30,6 +31,9 @@ export type SafeDsAddedServices = {
     builtins: {
         Annotations: SafeDsAnnotations;
         Classes: SafeDsClasses;
+    };
+    evaluation: {
+        PartialEvaluator: SafeDsPartialEvaluator;
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
@@ -58,6 +62,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     builtins: {
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
+    },
+    evaluation: {
+        PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),
     },
     helpers: {
         NodeMapper: (services) => new SafeDsNodeMapper(services),

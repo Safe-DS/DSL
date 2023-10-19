@@ -1,6 +1,0 @@
-package tests.partialValidation.baseCases.nullLiteral
-
-pipeline test {
-    // $TEST$ constant serialization null
-    »null«;
-}

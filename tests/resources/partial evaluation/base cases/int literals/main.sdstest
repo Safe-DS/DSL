@@ -1,0 +1,6 @@
+package tests.partialValidation.baseCases.intLiterals
+
+pipeline test {
+    // $TEST$ serialization 123
+    »123«;
+}

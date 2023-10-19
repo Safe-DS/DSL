@@ -1,0 +1,13 @@
+package tests.partialValidation.recursiveCases.calls.unresolved
+
+enum MyEnum {
+    MyEnumVariant
+}
+
+pipeline test {
+    // $TEST$ serialization $unknown
+    »unresolved.MyEnumVariant()«;
+
+    // $TEST$ serialization $unknown
+    »MyEnum.unresolved()«;
+}

@@ -381,6 +381,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
         if (receiverType.equals(this.List) || receiverType.equals(this.Map)) {
+            // TODO: access type arguments
             return this.AnyOrNull();
         } else {
             return UnknownType;
