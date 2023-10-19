@@ -1,0 +1,21 @@
+package tests.validation.other.argumentLists.missingRequiredParameter
+
+// $TEST$ no error r"The parameters? .* must be set here\."
+
+@MyAnnotation
+segment mySegment2(
+    myCallableType: (a: Int, b: Int, c: Int = 0) -> ()
+) {
+    val myBlockLambda = (a: Int, b: Int, c: Int = 0) {};
+    val myExpressionLambda = (a: Int, b: Int, c: Int = 0) -> 1;
+
+    MyAnnotation;
+    MyClass;
+    MyEnum.MyEnumVariant;
+    myFunction;
+    mySegment1;
+    myCallableType;
+    myBlockLambda;
+    myExpressionLambda;
+    myPipeline;
+}

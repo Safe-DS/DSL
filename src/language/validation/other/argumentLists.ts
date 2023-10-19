@@ -104,9 +104,13 @@ export const argumentListMustSetAllRequiredParameters = (services: SafeDsService
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsAbstractCall, accept: ValidationAcceptor): void => {
-        const callable = nodeMapper.callToCallableOrUndefined(node);
+        // We already report other errors in this case
+        if (!node.argumentList) {
+            return;
+        }
 
         // We already report other errors in those cases
+        const callable = nodeMapper.callToCallableOrUndefined(node);
         if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
             return;
         }
