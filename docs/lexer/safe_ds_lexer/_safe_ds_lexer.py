@@ -52,6 +52,7 @@ class SafeDsLexer(RegexLexer):
     tokens = {
         'root': [
             (words(keywords, suffix=r'\b'), Name.Builtin),
+            (r'[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?', Number),
             (r'//.+?$', Comment.Single),
             (r'/\*[\s\S]*?\*/', Comment.Multiline),
             (r'\s+', Whitespace),
