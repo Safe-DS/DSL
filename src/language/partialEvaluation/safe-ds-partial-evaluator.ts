@@ -174,12 +174,12 @@ export class SafeDsPartialEvaluator {
     evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         // By design none of the operators are short-circuited
         const constantLeft = this.cachedDoEvaluate(node.leftOperand, substitutions);
-        if (constantLeft === undefined) {
+        if (constantLeft === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
         const constantRight = this.cachedDoEvaluate(node.rightOperand, substitutions);
-        if (constantRight === undefined) {
+        if (constantRight === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
@@ -312,7 +312,7 @@ export class SafeDsPartialEvaluator {
 
     evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         const constantOperand = this.cachedDoEvaluate(node.operand, substitutions);
-        if (constantOperand === undefined) {
+        if (constantOperand === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 

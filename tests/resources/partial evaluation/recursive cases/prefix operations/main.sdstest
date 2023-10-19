@@ -9,6 +9,9 @@ pipeline `not` {
 
     // $TEST$ serialization $unknown
     »not 0«;
+
+    // $TEST$ serialization $unknown
+    »not unresolved«;
 }
 
 pipeline minus {
@@ -20,4 +23,7 @@ pipeline minus {
 
     // $TEST$ serialization $unknown
     »-true«;
+
+    // $TEST$ serialization $unknown
+    »-unresolved«;
 }
