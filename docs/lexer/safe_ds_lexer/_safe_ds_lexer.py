@@ -1,10 +1,8 @@
 from pygments.lexer import RegexLexer, words
 from pygments.token import Comment, Keyword, Name, Number, Operator, String, Whitespace
 
-keywords_constants = (
-    "false",
-    "null",
-    "true",
+keywords_annotation = (
+    "annotation",
 )
 
 keywords_class = (
@@ -12,7 +10,8 @@ keywords_class = (
     "enum",
 )
 
-keywords_declaration = (
+keywords_constant = (
+    "attr",
     "val",
 )
 
@@ -22,15 +21,19 @@ keywords_function = (
     "segment",
 )
 
+keywords_literal = (
+    "false",
+    "null",
+    "true",
+)
+
 keywords_namespace = (
     "from",
     "package",
 )
 
 keywords_generic = (
-    "annotation",
     "as",
-    "attr",
     "const",
     "import",
     "in",
@@ -53,9 +56,21 @@ operators = (
     "super",
 )
 
+builtins = (
+    "Any",
+    "Nothing",
+    "Boolean",
+    "Number",
+    "Int",
+    "Float",
+    "List"
+    "Map",
+    "String",
+)
 
-identifier_regex = r"[_a-zA-Z][_a-zA-Z0-9]*|`[_a-zA-Z][_a-zA-Z0-9]*`"
-qualified_name_regex = fr"{identifier_regex}(\.{identifier_regex})*"
+identifier_fragment = r"[_a-zA-Z][_a-zA-Z0-9]*"
+identifier_regex = fr"{identifier_fragment}|`{identifier_fragment}`"
+qualified_name_regex = fr"({identifier_regex})(\.({identifier_regex}))*"
 
 
 class SafeDsLexer(RegexLexer):
@@ -77,17 +92,22 @@ class SafeDsLexer(RegexLexer):
             (r'"|}}', String, "string"),
 
             # Keywords
-            (words(keywords_constants, prefix=r"\b", suffix=r"\b"), Keyword.Constant),
-            (words(keywords_declaration, prefix=r"\b", suffix=r"\b"), Keyword.Declaration, "constant"),
+            (words(keywords_annotation, prefix=r"\b", suffix=r"\b"), Keyword, "annotation"),
             (words(keywords_class, prefix=r"\b", suffix=r"\b"), Keyword, "class"),
+            (words(keywords_constant, prefix=r"\b", suffix=r"\b"), Keyword.Declaration, "placeholder"),
             (words(keywords_function, prefix=r"\b", suffix=r"\b"), Keyword, "function"),
+            (words(keywords_literal, prefix=r"\b", suffix=r"\b"), Keyword.Constant),
             (words(keywords_namespace, prefix=r"\b", suffix=r"\b"), Keyword.Namespace, "namespace"),
             (words(keywords_generic, prefix=r"\b", suffix=r"\b"), Keyword),
 
             # Operators
             (words(operators, prefix=r"\b", suffix=r"\b"), Operator.Word),
 
+            # Builtins
+            (words(builtins, prefix=r"\b", suffix=r"\b"), Name.Builtin),
+
             # Identifiers
+            (fr"@{identifier_regex}", Name.Decorator),
             (identifier_regex, Name),
 
             # Comments
@@ -97,17 +117,20 @@ class SafeDsLexer(RegexLexer):
             # Whitespace
             (r"\s+", Whitespace),
         ],
+        "annotation": [
+            (identifier_regex, Name.Decorator, "#pop"),
+        ],
         "class": [
             (identifier_regex, Name.Class, "#pop"),
-        ],
-        "constant": [
-            (identifier_regex, Name.Constant, "#pop"),
         ],
         "function": [
             (identifier_regex, Name.Function, "#pop"),
         ],
         "namespace": [
             (qualified_name_regex, Name.Namespace, "#pop"),
+        ],
+        "placeholder": [
+            (identifier_regex, Name.Constant, "#pop"),
         ],
         "string": [
             (r'([^"{]|\{(?!\{))+', String),
