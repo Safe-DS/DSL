@@ -442,12 +442,19 @@ export class SafeDsPartialEvaluator {
     //     }
     // }
 
-    private evaluateIndexedAccess(_node: SdsIndexedAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        //         val simpleReceiver = receiver.evaluate(substitutions) as? SdsIntermediateVariadicArguments ?: return undefined
-        //         val simpleIndex = index.evaluate(substitutions) as? SdsConstantInt ?: return undefined
-        //
-        //         return simpleReceiver.getArgumentByIndexOrNull(simpleIndex.value)
-        //     }
+    private evaluateIndexedAccess(node: SdsIndexedAccess, substitutions: ParameterSubstitutions): EvaluatedNode {
+        const receiver = this.cachedDoEvaluate(node.receiver, substitutions).unwrap();
+
+        if (receiver instanceof EvaluatedList) {
+            const index = this.cachedDoEvaluate(node.index, substitutions).unwrap();
+            if (index instanceof IntConstant) {
+                return receiver.getElementByIndex(Number(index.value));
+            }
+        } else if (receiver instanceof EvaluatedMap) {
+            const key = this.cachedDoEvaluate(node.index, substitutions).unwrap();
+            return receiver.getLastValueForKey(key);
+        }
+
         return UnknownEvaluatedNode;
     }
 

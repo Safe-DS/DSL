@@ -240,6 +240,13 @@ export class EvaluatedList extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = this.elements.every(isFullyEvaluated);
 
+    getElementByIndex(index: number | undefined): EvaluatedNode {
+        if (index === undefined) {
+            return UnknownEvaluatedNode;
+        }
+        return this.elements[index] ?? UnknownEvaluatedNode;
+    }
+
     override equals(other: EvaluatedNode): boolean {
         return other instanceof EvaluatedList && this.elements.every((e, i) => e.equals(other.elements[i]));
     }
@@ -255,6 +262,10 @@ export class EvaluatedMap extends EvaluatedNode {
     }
 
     override readonly isFullyEvaluated: boolean = this.entries.every(isFullyEvaluated);
+
+    getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
+        return this.entries.findLast(it => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
+    }
 
     override equals(other: EvaluatedNode): boolean {
         return other instanceof EvaluatedMap && this.entries.every((e, i) => e.equals(other.entries[i]));
