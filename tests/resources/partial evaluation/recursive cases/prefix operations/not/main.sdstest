@@ -1,0 +1,15 @@
+package tests.partialValidation.recursiveCases.prefixOperations.`not`
+
+pipeline test {
+    // $TEST$ serialization true
+    »not false«;
+
+    // $TEST$ serialization false
+    »not true«;
+
+    // $TEST$ serialization $unknown
+    »not 0«;
+
+    // $TEST$ serialization $unknown
+    »not unresolved«;
+}

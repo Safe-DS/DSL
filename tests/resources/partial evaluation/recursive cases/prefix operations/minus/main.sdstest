@@ -1,0 +1,15 @@
+package tests.partialValidation.recursiveCases.prefixOperations.minus
+
+pipeline test {
+    // $TEST$ serialization -1.5
+    »-1.5«;
+
+    // $TEST$ serialization -1
+    »-1«;
+
+    // $TEST$ serialization $unknown
+    »-true«;
+
+    // $TEST$ serialization $unknown
+    »-unresolved«;
+}

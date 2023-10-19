@@ -145,7 +145,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //     return when {
         //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateBlockLambda(
         //     parameters = parametersOrEmpty(),
@@ -157,7 +157,10 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateExpressionLambda(_node: SdsExpressionLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateExpressionLambda(
+        _node: SdsExpressionLambda,
+        _substitutions: ParameterSubstitutions,
+    ): EvaluatedNode {
         //     return when {
         //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
         //     parameters = parametersOrEmpty(),
@@ -169,7 +172,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         // By design none of the operators are short-circuited
         const constantLeft = this.cachedDoEvaluate(node.leftOperand, substitutions);
         if (constantLeft === UnknownEvaluatedNode) {
@@ -181,9 +184,21 @@ export class SafeDsPartialEvaluator {
             return UnknownEvaluatedNode;
         }
 
-        //     return when (operator()) {
-        //     Or -> evaluateLogicalOp(constantLeft, Boolean::or, constantRight)
-        // And -> evaluateLogicalOp(constantLeft, Boolean::and, constantRight)
+        switch (node.operator) {
+            case 'or':
+                return this.evaluateLogicalOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand || rightOperand,
+                    constantRight,
+                );
+            case 'and':
+                return this.evaluateLogicalOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand && rightOperand,
+                    constantRight,
+                );
+        }
+
         // Equals -> SdsConstantBoolean(constantLeft == constantRight)
         // NotEquals -> SdsConstantBoolean(constantLeft != constantRight)
         // IdenticalTo -> SdsConstantBoolean(constantLeft == constantRight)
@@ -246,24 +261,21 @@ export class SafeDsPartialEvaluator {
         //     SdsConstantNull -> constantRight
         // else -> constantLeft
         // }
-        // }
         return UnknownEvaluatedNode;
     }
 
-    // private fun evaluateLogicalOp(
-    //     leftOperand: SdsConstantExpression,
-    //     operation: (Boolean, Boolean) -> Boolean,
-    //     rightOperand: SdsConstantExpression,
-    // ): SdsConstantExpression? {
-    //
-    //     return when {
-    //     leftOperand is SdsConstantBoolean && rightOperand is SdsConstantBoolean -> {
-    //     SdsConstantBoolean(operation(leftOperand.value, rightOperand.value))
-    // }
-    // else -> undefined
-    // }
-    // }
-    //
+    private evaluateLogicalOp(
+        leftOperand: EvaluatedNode,
+        operation: (leftOperand: boolean, rightOperand: boolean) => boolean,
+        rightOperand: EvaluatedNode,
+    ): EvaluatedNode {
+        if (leftOperand instanceof BooleanConstant && rightOperand instanceof BooleanConstant) {
+            return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
+        }
+
+        return UnknownEvaluatedNode;
+    }
+
     // private fun evaluateComparisonOp(
     //     leftOperand: SdsConstantExpression,
     //     doubleOperation: (Double, Double) -> Boolean,
@@ -300,11 +312,11 @@ export class SafeDsPartialEvaluator {
     // }
     // }
 
-    evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
         return new EvaluatedList(node.elements.map((it) => this.cachedDoEvaluate(it, substitutions)));
     }
 
-    evaluateMap(node: SdsMap, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateMap(node: SdsMap, substitutions: ParameterSubstitutions): EvaluatedNode {
         return new EvaluatedMap(
             node.entries.map((it) => {
                 const key = this.cachedDoEvaluate(it.key, substitutions);
@@ -314,7 +326,7 @@ export class SafeDsPartialEvaluator {
         );
     }
 
-    evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         const constantOperand = this.cachedDoEvaluate(node.operand, substitutions);
         if (constantOperand === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
@@ -335,7 +347,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateTemplateString(node: SdsTemplateString, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateTemplateString(node: SdsTemplateString, substitutions: ParameterSubstitutions): EvaluatedNode {
         const expressions = node.expressions.map((it) => this.cachedDoEvaluate(it, substitutions));
         if (expressions.every(isConstant)) {
             return new StringConstant(expressions.map((it) => it.toInterpolationString()).join(''));
@@ -344,7 +356,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateCall(node: SdsCall, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateCall(node: SdsCall, substitutions: ParameterSubstitutions): EvaluatedNode {
         const receiver = this.cachedDoEvaluate(node.receiver, substitutions).unwrap();
 
         if (receiver instanceof EvaluatedEnumVariant) {
@@ -427,7 +439,7 @@ export class SafeDsPartialEvaluator {
     //     }
     // }
 
-    evaluateIndexedAccess(_node: SdsIndexedAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateIndexedAccess(_node: SdsIndexedAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
         //         val simpleReceiver = receiver.evaluate(substitutions) as? SdsIntermediateVariadicArguments ?: return undefined
         //         val simpleIndex = index.evaluate(substitutions) as? SdsConstantInt ?: return undefined
         //
@@ -436,7 +448,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateMemberAccess(node: SdsMemberAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateMemberAccess(node: SdsMemberAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
         const member = node.member?.target?.ref;
         if (isSdsEnumVariant(member)) {
             return new EvaluatedEnumVariant(member, undefined);
@@ -453,7 +465,7 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateReference(node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
         // const target = node.target.ref;
 
         //     is SdsPlaceholder -> declaration.evaluateAssignee(substitutions)
