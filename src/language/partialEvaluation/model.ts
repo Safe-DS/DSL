@@ -266,7 +266,7 @@ export class EvaluatedMap extends EvaluatedNode {
     override readonly isFullyEvaluated: boolean = this.entries.every(isFullyEvaluated);
 
     getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
-        return this.entries.findLast(it => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
+        return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
     }
 
     override equals(other: EvaluatedNode): boolean {
