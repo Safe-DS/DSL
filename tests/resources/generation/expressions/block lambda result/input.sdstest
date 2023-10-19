@@ -1,0 +1,26 @@
+package tests.generator.blockLambdaResult
+
+fun g() -> a: Int
+
+fun h(a: Int)
+
+segment f1(l: (a: Int, b: Int) -> d: Int) {
+    h(l(1, 2).d);
+}
+
+segment f2(l: (a: Int, b: Int) -> (d1: Int, e1: Int)) {
+    h(l(1, 2).e1);
+    h(l(1, 2).d1);
+}
+
+pipeline test {
+
+    f1((a: Int, b: Int) {
+        yield d = g();
+    });
+    f2((a: Int, b: Int) {
+        yield d = g();
+        yield e = g();
+    });
+
+}
