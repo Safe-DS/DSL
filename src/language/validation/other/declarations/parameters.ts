@@ -1,7 +1,6 @@
 import { isSdsAnnotation, isSdsCallable, SdsParameter } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { isConstantParameter } from '../../../helpers/nodeProperties.js';
-import { Constant } from '../../../partialEvaluation/model.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_PARAMETER_CONSTANT_DEFAULT_VALUE = 'parameter/constant-default-value';

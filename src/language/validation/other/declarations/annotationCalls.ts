@@ -16,7 +16,6 @@ import {
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
-import { Constant } from '../../../partialEvaluation/model.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';

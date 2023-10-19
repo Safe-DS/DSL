@@ -1,13 +1,7 @@
 import { SdsInfixOperation } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import {
-    Constant,
-    FloatConstant,
-    IntConstant,
-    NullConstant,
-    NumberConstant,
-} from '../../../partialEvaluation/model.js';
+import { FloatConstant, IntConstant, NumberConstant } from '../../../partialEvaluation/model.js';
 import { UnknownType } from '../../../typing/model.js';
 
 export const CODE_INFIX_OPERATION_DIVISION_BY_ZERO = 'infix-operation/division-by-zero';

@@ -2,7 +2,6 @@ import { SdsCall } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { argumentsOrEmpty, isConstantParameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { Constant } from '../../../partialEvaluation/model.js';
 
 export const CODE_CALL_CONSTANT_ARGUMENT = 'call/constant-argument';
 
