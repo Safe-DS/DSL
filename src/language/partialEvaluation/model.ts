@@ -71,7 +71,9 @@ export class BooleanConstant extends Constant {
     }
 }
 
-export abstract class NumberConstant extends Constant {}
+export abstract class NumberConstant extends Constant {
+    abstract readonly value: number | bigint;
+}
 
 export class FloatConstant extends NumberConstant {
     constructor(readonly value: number) {

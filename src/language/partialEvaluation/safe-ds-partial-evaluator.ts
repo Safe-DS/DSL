@@ -11,6 +11,7 @@ import {
     IntConstant,
     isConstant,
     NullConstant,
+    NumberConstant,
     ParameterSubstitutions,
     StringConstant,
     UnknownEvaluatedNode,
@@ -197,70 +198,70 @@ export class SafeDsPartialEvaluator {
                     (leftOperand, rightOperand) => leftOperand && rightOperand,
                     constantRight,
                 );
+            // Equals -> SdsConstantBoolean(constantLeft == constantRight)
+            // NotEquals -> SdsConstantBoolean(constantLeft != constantRight)
+            // IdenticalTo -> SdsConstantBoolean(constantLeft == constantRight)
+            // NotIdenticalTo -> SdsConstantBoolean(constantLeft != constantRight)
+            case '<':
+                return this.evaluateComparisonOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand < rightOperand,
+                    constantRight,
+                );
+            case '<=':
+                return this.evaluateComparisonOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand <= rightOperand,
+                    constantRight,
+                );
+            case '>=':
+                return this.evaluateComparisonOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand >= rightOperand,
+                    constantRight,
+                );
+            case '>':
+                return this.evaluateComparisonOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand > rightOperand,
+                    constantRight,
+                );
+            // Plus -> evaluateArithmeticOp(
+            //     constantLeft,
+            //     { a, b -> a + b },
+            // { a, b -> a + b },
+            // constantRight
+            // )
+            // InfixMinus -> evaluateArithmeticOp(
+            //     constantLeft,
+            //     { a, b -> a - b },
+            // { a, b -> a - b },
+            // constantRight
+            // )
+            // Times -> evaluateArithmeticOp(
+            //     constantLeft,
+            //     { a, b -> a * b },
+            // { a, b -> a * b },
+            // constantRight
+            // )
+            // By -> {
+            //     if (constantRight == SdsConstantFloat(0.0) || constantRight == SdsConstantInt(0)) {
+            //         return undefined
+            //     }
+            //
+            //     evaluateArithmeticOp(
+            //         constantLeft,
+            //         { a, b -> a / b },
+            //     { a, b -> a / b },
+            //     constantRight
+            // )
+            // }
+            // Elvis -> when (constantLeft) {
+            //     SdsConstantNull -> constantRight
+            // else -> constantLeft
+            // }
         }
 
-        // Equals -> SdsConstantBoolean(constantLeft == constantRight)
-        // NotEquals -> SdsConstantBoolean(constantLeft != constantRight)
-        // IdenticalTo -> SdsConstantBoolean(constantLeft == constantRight)
-        // NotIdenticalTo -> SdsConstantBoolean(constantLeft != constantRight)
-        // LessThan -> evaluateComparisonOp(
-        //     constantLeft,
-        //     { a, b -> a < b },
-        // { a, b -> a < b },
-        // constantRight
-        // )
-        // LessThanOrEquals -> evaluateComparisonOp(
-        //     constantLeft,
-        //     { a, b -> a <= b },
-        // { a, b -> a <= b },
-        // constantRight
-        // )
-        // GreaterThanOrEquals -> evaluateComparisonOp(
-        //     constantLeft,
-        //     { a, b -> a >= b },
-        // { a, b -> a >= b },
-        // constantRight
-        // )
-        // GreaterThan -> evaluateComparisonOp(
-        //     constantLeft,
-        //     { a, b -> a > b },
-        // { a, b -> a > b },
-        // constantRight
-        // )
-        // Plus -> evaluateArithmeticOp(
-        //     constantLeft,
-        //     { a, b -> a + b },
-        // { a, b -> a + b },
-        // constantRight
-        // )
-        // InfixMinus -> evaluateArithmeticOp(
-        //     constantLeft,
-        //     { a, b -> a - b },
-        // { a, b -> a - b },
-        // constantRight
-        // )
-        // Times -> evaluateArithmeticOp(
-        //     constantLeft,
-        //     { a, b -> a * b },
-        // { a, b -> a * b },
-        // constantRight
-        // )
-        // By -> {
-        //     if (constantRight == SdsConstantFloat(0.0) || constantRight == SdsConstantInt(0)) {
-        //         return undefined
-        //     }
-        //
-        //     evaluateArithmeticOp(
-        //         constantLeft,
-        //         { a, b -> a / b },
-        //     { a, b -> a / b },
-        //     constantRight
-        // )
-        // }
-        // Elvis -> when (constantLeft) {
-        //     SdsConstantNull -> constantRight
-        // else -> constantLeft
-        // }
         return UnknownEvaluatedNode;
     }
 
@@ -270,6 +271,20 @@ export class SafeDsPartialEvaluator {
         rightOperand: EvaluatedNode,
     ): EvaluatedNode {
         if (leftOperand instanceof BooleanConstant && rightOperand instanceof BooleanConstant) {
+            return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
+        }
+
+        return UnknownEvaluatedNode;
+    }
+
+    private evaluateComparisonOp(
+        leftOperand: EvaluatedNode,
+        operation: (leftOperand: number | bigint, rightOperand: number | bigint) => boolean,
+        rightOperand: EvaluatedNode,
+    ): EvaluatedNode {
+        if (leftOperand instanceof NumberConstant && rightOperand instanceof NumberConstant) {
+            return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
+        } else if (leftOperand instanceof FloatConstant && rightOperand instanceof FloatConstant) {
             return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
         }
 
