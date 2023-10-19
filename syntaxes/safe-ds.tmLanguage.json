@@ -35,7 +35,7 @@
       "match": "\\b(as|from|import|literal|union|where|yield)\\b"
     },
     {
-      "name": "entity.name.safe-ds",
+      "name": "meta.safe-ds",
       "begin": "\\`",
       "end": "\\`"
     },
