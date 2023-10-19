@@ -1,7 +1,50 @@
 """Pygments lexer for Safe-DS markup."""
 
 from pygments.lexer import RegexLexer, words
-from pygments.token import *
+from pygments.token import Comment, Keyword, Name, Number, Operator, String, Whitespace
+
+constants = (
+    'false',
+    'null',
+    'true'
+)
+
+keywords = (
+    'annotation',
+    'as',
+    'attr',
+    'class',
+    'const',
+    'enum',
+    'fun',
+    'in',
+    'internal',
+    'literal',
+    'out',
+    'pipeline',
+    'private',
+    'schema',
+    'segment',
+    'static',
+    'union',
+    'val',
+    'where',
+    'yield',
+)
+
+namespace = (
+    'from',
+    'import',
+    'package',
+)
+
+operators = (
+    'and',
+    'not',
+    'or',
+    'sub',
+    'super'
+)
 
 
 class SafeDsLexer(RegexLexer):
@@ -15,49 +58,6 @@ class SafeDsLexer(RegexLexer):
         'sds'
     ]
     filenames = ['*.sdspipe', '*.sdsstub', '*.sdstest']
-
-    constants = (
-        'false',
-        'null',
-        'true'
-    )
-
-    keywords = (
-        'annotation',
-        'as',
-        'attr',
-        'class',
-        'const',
-        'enum',
-        'fun',
-        'in',
-        'internal',
-        'literal',
-        'out',
-        'pipeline',
-        'private',
-        'schema',
-        'segment',
-        'static',
-        'union',
-        'val',
-        'where',
-        'yield',
-    )
-
-    namespace = (
-        'from',
-        'import',
-        'package',
-    )
-
-    operators = (
-        'and',
-        'not',
-        'or',
-        'sub',
-        'super'
-    )
 
     tokens = {
         'root': [
