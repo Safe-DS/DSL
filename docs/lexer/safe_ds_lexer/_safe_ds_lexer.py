@@ -1,5 +1,4 @@
-"""Pygments lexer for Safe-DS markup."""
-
+from typing import ClassVar
 from pygments.lexer import RegexLexer, words
 from pygments.token import Comment, Keyword, Name, Number, Operator, String, Whitespace
 
@@ -48,8 +47,8 @@ operators = (
 
 
 class SafeDsLexer(RegexLexer):
-    name = 'safe-ds'
-    aliases = [
+    name: ClassVar[str] = 'safe-ds'
+    aliases: ClassVar[list[str]] = [
         'Safe-DS',
         'safe-ds',
         'SafeDS',
@@ -57,7 +56,7 @@ class SafeDsLexer(RegexLexer):
         'SDS',
         'sds'
     ]
-    filenames = ['*.sdspipe', '*.sdsstub', '*.sdstest']
+    filenames: ClassVar[list[str]] = ['*.sdspipe', '*.sdsstub', '*.sdstest']
 
     tokens = {
         'root': [
