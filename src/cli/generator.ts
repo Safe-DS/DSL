@@ -1,11 +1,21 @@
 import fs from 'fs';
-import { expandToString, expandToStringWithNL, findRootNode, getDocument, streamAllContents } from 'langium';
+import {
+    expandToString,
+    expandToStringWithNL,
+    findRootNode,
+    getContainerOfType,
+    getDocument,
+    streamAllContents,
+} from 'langium';
 import path from 'path';
 import {
+    isSdsAbstractResult,
     isSdsAssignment,
     isSdsBlockLambda,
     isSdsBlockLambdaResult,
     isSdsCall,
+    isSdsCallable,
+    isSdsEnum,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
@@ -21,7 +31,6 @@ import {
     isSdsPrefixOperation,
     isSdsQualifiedImport,
     isSdsReference,
-    isSdsResult,
     isSdsSegment,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
@@ -203,7 +212,6 @@ const generateParameter = function (
     frame: GenerationInfoFrame,
     defaultValue: boolean = true,
 ): string {
-    // TODO isConstant?
     return expandToString`${getPythonNameOrDefault(frame.getServices(), parameter)}${
         defaultValue && parameter.defaultValue !== undefined
             ? '=' + generateExpression(parameter.defaultValue, frame)
@@ -310,7 +318,7 @@ const generateAssignment = function (assignment: SdsAssignment, frame: Generatio
 
 const generateAssignee = function (assignee: SdsAssignee): string {
     if (isSdsBlockLambdaResult(assignee)) {
-        return assignee.name;
+        return `__block_lambda_${assignee.name}`;
     } else if (isSdsPlaceholder(assignee)) {
         return assignee.name;
     } else if (isSdsWildcard(assignee)) {
@@ -325,7 +333,7 @@ const generateBlockLambda = function (blockLambda: SdsBlockLambda, frame: Genera
     const lambdaResult = blockLambdaResultsOrEmpty(blockLambda);
     let lambdaBlock = generateBlock(blockLambda.body, frame);
     if (lambdaResult.length !== 0 && lambdaBlock !== 'pass') {
-        lambdaBlock += `\nreturn ${lambdaResult.map((result) => result.name).join(', ')}`;
+        lambdaBlock += `\nreturn ${lambdaResult.map((result) => `__block_lambda_${result.name}`).join(', ')}`;
     }
     return expandToString`def ${frame.getUniqueLambdaBlockName(blockLambda)}(${generateParameters(
         blockLambda.parameterList,
@@ -375,7 +383,8 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         } else if (potentialConstantExpression instanceof ConstantString) {
             return `'${formatStringSingleLine(potentialConstantExpression.value)}'`;
         } else if (potentialConstantExpression instanceof ConstantEnumVariant) {
-            return potentialConstantExpression.value.name; // TODO correct interpretation of SdsEnumVariant / SdsConstantEnumVariant?
+            const enumType = getContainerOfType(potentialConstantExpression.value, isSdsEnum);
+            return `${enumType!.name}.${potentialConstantExpression.value.name}`;
         }
     }
 
@@ -424,7 +433,6 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     if (isSdsMemberAccess(expression)) {
         const member = expression.member?.target.ref!;
         const receiver = generateExpression(expression.receiver, frame);
-        // TODO SdsBlockLambdaResult should not be possible? Grammar defines SdsBlockLambdaResult as only part of an assignment. There is no way to parse it anywhere else
         if (isSdsEnumVariant(member)) {
             const enumMember = generateExpression(expression.member!, frame);
             const suffix = isSdsCall(expression.$container) ? '' : '()';
@@ -434,8 +442,8 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             } else {
                 return `${receiver}.${enumMember}${suffix}`;
             }
-        } else if (isSdsResult(member)) {
-            const resultList = member.$container.results;
+        } else if (isSdsAbstractResult(member)) {
+            const resultList = abstractResultsOrEmpty(getContainerOfType(member, isSdsCallable));
             if (resultList.length === 1) {
                 return receiver;
             }
