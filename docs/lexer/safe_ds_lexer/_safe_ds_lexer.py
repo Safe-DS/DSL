@@ -1,78 +1,78 @@
-from typing import ClassVar
+
 from pygments.lexer import RegexLexer, words
 from pygments.token import Comment, Keyword, Name, Number, Operator, String, Whitespace
 
 constants = (
-    'false',
-    'null',
-    'true'
+    "false",
+    "null",
+    "true",
 )
 
 keywords = (
-    'annotation',
-    'as',
-    'attr',
-    'class',
-    'const',
-    'enum',
-    'fun',
-    'in',
-    'internal',
-    'literal',
-    'out',
-    'pipeline',
-    'private',
-    'schema',
-    'segment',
-    'static',
-    'union',
-    'val',
-    'where',
-    'yield',
+    "annotation",
+    "as",
+    "attr",
+    "class",
+    "const",
+    "enum",
+    "fun",
+    "in",
+    "internal",
+    "literal",
+    "out",
+    "pipeline",
+    "private",
+    "schema",
+    "segment",
+    "static",
+    "union",
+    "val",
+    "where",
+    "yield",
 )
 
 namespace = (
-    'from',
-    'import',
-    'package',
+    "from",
+    "import",
+    "package",
 )
 
 operators = (
-    'and',
-    'not',
-    'or',
-    'sub',
-    'super'
+    "and",
+    "not",
+    "or",
+    "sub",
+    "super",
 )
 
 
 class SafeDsLexer(RegexLexer):
-    name: ClassVar[str] = 'safe-ds'
-    aliases: ClassVar[list[str]] = [
-        'Safe-DS',
-        'safe-ds',
-        'SafeDS',
-        'safeds',
-        'SDS',
-        'sds'
+    name = "safe-ds"
+    aliases = [
+        "Safe-DS",
+        "safe-ds",
+        "SafeDS",
+        "safeds",
+        "SDS",
+        "sds",
     ]
-    filenames: ClassVar[list[str]] = ['*.sdspipe', '*.sdsstub', '*.sdstest']
+    filenames = ["*.sdspipe", "*.sdsstub", "*.sdstest"]
 
     tokens = {
-        'root': [
-            (r'\b([0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?)\b', Number),
-            (r'"|}}', String, 'string'),
-            (words(constants, prefix=r'\b', suffix=r'\b'), Keyword.Constant),
-            (words(keywords, prefix=r'\b', suffix=r'\b'), Keyword),
-            (words(namespace, prefix=r'\b', suffix=r'\b'), Keyword.Namespace),
-            (words(operators, prefix=r'\b', suffix=r'\b'), Operator.Word),
-            (r'`[_a-zA-Z][_a-zA-Z0-9]*`', Name),
-            (r'//.+?$', Comment.Single),
-            (r'/\*[\s\S]*?\*/', Comment.Multiline),
-            (r'\s+', Whitespace),
+        "root": [
+            (r"\b([0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?)\b", Number),
+            (r'"|}}', String, "string"),
+            (words(constants, prefix=r"\b", suffix=r"\b"), Keyword.Constant),
+            (words(keywords, prefix=r"\b", suffix=r"\b"), Keyword),
+            (words(namespace, prefix=r"\b", suffix=r"\b"), Keyword.Namespace),
+            (words(operators, prefix=r"\b", suffix=r"\b"), Operator.Word),
+            (r"`[_a-zA-Z][_a-zA-Z0-9]*`", Name),
+            (r"//.+?$", Comment.Single),
+            (r"/\*[\s\S]*?\*/", Comment.Multiline),
+            (r"\s+", Whitespace),
         ],
-        'string': [
+        "string": [
             (r'([^"{]|\{(?!\{))+', String),
-            (r'\{\{|"', String, '#pop'),
+            (r'\{\{|"', String, "#pop"),
         ],
     }
