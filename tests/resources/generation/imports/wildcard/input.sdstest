@@ -1,0 +1,18 @@
+package tests.generator.wildcard
+
+from tests.generator.differentPackageWildcard import *
+from tests.generator.withPythonModuleWildcard import *
+
+fun f(param: Any?)
+
+pipeline test {
+    f(function1InDifferentPackage());
+    f(function1InDifferentPackage());
+    f(function2InDifferentPackage());
+    f(function2InDifferentPackage());
+
+    f(function1InCompilationUnitWithPythonModule());
+    f(function1InCompilationUnitWithPythonModule());
+    f(function2InCompilationUnitWithPythonModule());
+    f(function2InCompilationUnitWithPythonModule());
+}

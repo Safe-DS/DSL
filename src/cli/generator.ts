@@ -538,8 +538,10 @@ const getExternalReferenceNeededImport = function (
             }
         }
         if (isSdsWildcardImport(value)) {
-            // TODO wildcard import? collisions?
-            throw new Error('Wildcard imports are not yet handled');
+            return new ImportData(
+                services.builtins.Annotations.getPythonModule(targetModule) || value.package,
+                declaration.name,
+            );
         }
     }
     return undefined;
