@@ -140,9 +140,8 @@ export class SafeDsPartialEvaluator {
             return this.evaluateReference(node, substitutions);
         }
 
-        // Raise if case is missing (should not happen)
         /* c8 ignore next */
-        throw new Error(`Missing case to handle ${node.$type}.`);
+        return UnknownEvaluatedNode;
     }
 
     evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
@@ -300,8 +299,8 @@ export class SafeDsPartialEvaluator {
     // }
     // }
 
-    evaluateList(_node: SdsList, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        return new EvaluatedList([]);
+    evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
+        return new EvaluatedList(node.elements.map((it) => this.cachedDoEvaluate(it, substitutions)));
     }
 
     evaluateMap(_node: SdsMap, _substitutions: ParameterSubstitutions): EvaluatedNode {
