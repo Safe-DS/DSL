@@ -128,7 +128,7 @@ More information about calls can be found in the [linked document][calls].
 [packages]: ../common/packages.md
 [statements]: statements.md
 [assignments]: statements.md#assignments
-[assignments-to-placeholders]: statements.md#assigning-placeholders
+[assignments-to-placeholders]: statements.md#declaring-placeholders
 [expression-statements]: statements.md#expression-statements
 [calls]: expressions.md#calls
 [lambdas]: expressions.md#lambdas
