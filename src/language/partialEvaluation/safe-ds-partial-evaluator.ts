@@ -226,36 +226,39 @@ export class SafeDsPartialEvaluator {
                     (leftOperand, rightOperand) => leftOperand > rightOperand,
                     constantRight,
                 );
-            // Plus -> evaluateArithmeticOp(
-            //     constantLeft,
-            //     { a, b -> a + b },
-            // { a, b -> a + b },
-            // constantRight
-            // )
-            // InfixMinus -> evaluateArithmeticOp(
-            //     constantLeft,
-            //     { a, b -> a - b },
-            // { a, b -> a - b },
-            // constantRight
-            // )
-            // Times -> evaluateArithmeticOp(
-            //     constantLeft,
-            //     { a, b -> a * b },
-            // { a, b -> a * b },
-            // constantRight
-            // )
-            // By -> {
-            //     if (constantRight == SdsConstantFloat(0.0) || constantRight == SdsConstantInt(0)) {
-            //         return undefined
-            //     }
-            //
-            //     evaluateArithmeticOp(
-            //         constantLeft,
-            //         { a, b -> a / b },
-            //     { a, b -> a / b },
-            //     constantRight
-            // )
-            // }
+            case '+':
+                return this.evaluateArithmeticOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand + rightOperand,
+                    (leftOperand, rightOperand) => leftOperand + rightOperand,
+                    constantRight,
+                );
+            case '-':
+                return this.evaluateArithmeticOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand - rightOperand,
+                    (leftOperand, rightOperand) => leftOperand - rightOperand,
+                    constantRight,
+                );
+            case '*':
+                return this.evaluateArithmeticOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand * rightOperand,
+                    (leftOperand, rightOperand) => leftOperand * rightOperand,
+                    constantRight,
+                );
+            case '/':
+                // Division by zero
+                if (zeroes.some(it => it.equals(constantRight))) {
+                    return UnknownEvaluatedNode;
+                }
+
+                return this.evaluateArithmeticOp(
+                    constantLeft,
+                    (leftOperand, rightOperand) => leftOperand / rightOperand,
+                    (leftOperand, rightOperand) => leftOperand / rightOperand,
+                    constantRight,
+                );
             // Elvis -> when (constantLeft) {
             //     SdsConstantNull -> constantRight
             // else -> constantLeft
@@ -284,48 +287,25 @@ export class SafeDsPartialEvaluator {
     ): EvaluatedNode {
         if (leftOperand instanceof NumberConstant && rightOperand instanceof NumberConstant) {
             return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
-        } else if (leftOperand instanceof FloatConstant && rightOperand instanceof FloatConstant) {
-            return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
         }
 
         return UnknownEvaluatedNode;
     }
 
-    // private fun evaluateComparisonOp(
-    //     leftOperand: SdsConstantExpression,
-    //     doubleOperation: (Double, Double) -> Boolean,
-    //     intOperation: (Int, Int) -> Boolean,
-    //     rightOperand: SdsConstantExpression,
-    // ): SdsConstantExpression? {
-    //
-    //     return when {
-    //     leftOperand is SdsConstantInt && rightOperand is SdsConstantInt -> {
-    //     SdsConstantBoolean(intOperation(leftOperand.value, rightOperand.value))
-    // }
-    // leftOperand is SdsConstantNumber && rightOperand is SdsConstantNumber -> {
-    //     SdsConstantBoolean(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
-    // }
-    // else -> undefined
-    // }
-    // }
-    //
-    // private fun evaluateArithmeticOp(
-    //     leftOperand: SdsConstantExpression,
-    //     doubleOperation: (Double, Double) -> Double,
-    //     intOperation: (Int, Int) -> Int,
-    //     rightOperand: SdsConstantExpression,
-    // ): SdsConstantExpression? {
-    //
-    //     return when {
-    //     leftOperand is SdsConstantInt && rightOperand is SdsConstantInt -> {
-    //     SdsConstantInt(intOperation(leftOperand.value, rightOperand.value))
-    // }
-    // leftOperand is SdsConstantNumber && rightOperand is SdsConstantNumber -> {
-    //     SdsConstantFloat(doubleOperation(leftOperand.value.toDouble(), rightOperand.value.toDouble()))
-    // }
-    // else -> undefined
-    // }
-    // }
+    private evaluateArithmeticOp(
+        leftOperand: EvaluatedNode,
+        intOperation: (leftOperand: bigint, rightOperand: bigint) => bigint,
+        floatOperation: (leftOperand: number, rightOperand: number) => number,
+        rightOperand: EvaluatedNode,
+    ): EvaluatedNode {
+        if (leftOperand instanceof IntConstant && rightOperand instanceof IntConstant) {
+            return new IntConstant(intOperation(leftOperand.value, rightOperand.value));
+        } else if (leftOperand instanceof NumberConstant && rightOperand instanceof NumberConstant) {
+            return new FloatConstant(floatOperation(Number(leftOperand.value), Number(rightOperand.value)));
+        }
+
+        return UnknownEvaluatedNode;
+    }
 
     private evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
         return new EvaluatedList(node.elements.map((it) => this.cachedDoEvaluate(it, substitutions)));
@@ -526,3 +506,8 @@ export class SafeDsPartialEvaluator {
 }
 
 const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();
+const zeroes = [
+    new IntConstant(BigInt(0)),
+    new FloatConstant(0.0),
+    new FloatConstant(-0.0),
+]

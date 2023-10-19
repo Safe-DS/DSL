@@ -1,0 +1,38 @@
+package tests.partialValidation.recursiveCases.infixOperations.dividedBy
+
+pipeline test {
+    // $TEST$ serialization 0.5
+    »0.25 / 0.5«;
+
+    // $TEST$ serialization 1.5
+    »1.5 / 1«;
+
+    // $TEST$ serialization 1.6
+    »1 / 0.625«;
+
+    // $TEST$ serialization 1
+    »1 / 1«;
+
+
+    // $TEST$ serialization $unknown
+    »1 / 0«;
+
+    // $TEST$ serialization $unknown
+    »1 / 0.0«;
+
+    // $TEST$ serialization $unknown
+    »1 / -0.0«;
+
+
+    // $TEST$ serialization $unknown
+    »true / 1«;
+
+    // $TEST$ serialization $unknown
+    »1 / true«;
+
+    // $TEST$ serialization $unknown
+    »unresolved / 1«;
+
+    // $TEST$ serialization $unknown
+    »1 / unresolved«;
+}
