@@ -5,6 +5,7 @@ import {
     EvaluatedEnumVariant,
     EvaluatedList,
     EvaluatedMap,
+    EvaluatedMapEntry,
     EvaluatedNode,
     FloatConstant,
     IntConstant,
@@ -40,6 +41,7 @@ import {
     isSdsTemplateStringStart,
     SdsBlockLambda,
     SdsCall,
+    SdsExpression,
     SdsExpressionLambda,
     SdsIndexedAccess,
     SdsInfixOperation,
@@ -72,7 +74,8 @@ export class SafeDsPartialEvaluator {
     }
 
     private cachedDoEvaluate(node: AstNode | undefined, substitutions: ParameterSubstitutions): EvaluatedNode {
-        if (!node) {
+        // Only expressions can be evaluated at the moment
+        if (!isSdsExpression(node)) {
             return UnknownEvaluatedNode;
         }
 
@@ -89,12 +92,7 @@ export class SafeDsPartialEvaluator {
         return this.doEvaluate(node, substitutions);
     }
 
-    private doEvaluate(node: AstNode, substitutions: ParameterSubstitutions): EvaluatedNode {
-        // Only expressions can be evaluated at the moment
-        if (!isSdsExpression(node)) {
-            return UnknownEvaluatedNode;
-        }
-
+    private doEvaluate(node: SdsExpression, substitutions: ParameterSubstitutions): EvaluatedNode {
         // Base cases
         if (isSdsBoolean(node)) {
             return new BooleanConstant(node.value);
@@ -306,8 +304,14 @@ export class SafeDsPartialEvaluator {
         return new EvaluatedList(node.elements.map((it) => this.cachedDoEvaluate(it, substitutions)));
     }
 
-    evaluateMap(_node: SdsMap, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        return new EvaluatedMap([]);
+    evaluateMap(node: SdsMap, substitutions: ParameterSubstitutions): EvaluatedNode {
+        return new EvaluatedMap(
+            node.entries.map((it) => {
+                const key = this.cachedDoEvaluate(it.key, substitutions);
+                const value = this.cachedDoEvaluate(it.value, substitutions);
+                return new EvaluatedMapEntry(key, value);
+            }),
+        );
     }
 
     evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {

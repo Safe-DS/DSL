@@ -1,9 +1,11 @@
-package tests.partialValidation.recursiveCases.lists
+package tests.partialValidation.recursiveCases.arguments
+
+fun f(p: Any?)
 
 pipeline test {
-    // $TEST$ serialization []
-    »[]«;
+    // $TEST$ serialization 1
+    f(»p = 1«);
 
-    // $TEST$ serialization [1, 2.5, null, $unknown]
-    »[1, 2.5, null, f()]«;
+    // $TEST$ serialization null
+    f(»p = null«);
 }

@@ -1,0 +1,15 @@
+package tests.partialValidation.recursiveCases.maps
+
+pipeline test {
+    // $TEST$ serialization {}
+    »{}«;
+
+    // $TEST$ serialization {"a": 1, "b": 2.5, "c": null, "d": $unknown, $unknown: true}
+    »{
+        "a": 1,
+        "b": 2.5,
+        "c": null,
+        "d": unresolved,
+        unresolved: true,
+    }«;
+}
