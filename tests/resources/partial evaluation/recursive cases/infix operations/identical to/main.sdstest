@@ -1,0 +1,15 @@
+package tests.partialValidation.recursiveCases.infixOperations.identicalTo
+
+pipeline test {
+    // $TEST$ serialization true
+    »true === true«;
+
+    // $TEST$ serialization false
+    »false === 1«;
+
+    // $TEST$ serialization $unknown
+    »1 === unresolved«;
+
+    // $TEST$ serialization $unknown
+    »unresolved === 1.25«;
+}

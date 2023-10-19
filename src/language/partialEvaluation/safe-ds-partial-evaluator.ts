@@ -198,10 +198,12 @@ export class SafeDsPartialEvaluator {
                     (leftOperand, rightOperand) => leftOperand && rightOperand,
                     evaluatedRight,
                 );
-            // Equals -> SdsConstantBoolean(constantLeft == constantRight)
-            // NotEquals -> SdsConstantBoolean(constantLeft != constantRight)
-            // IdenticalTo -> SdsConstantBoolean(constantLeft == constantRight)
-            // NotIdenticalTo -> SdsConstantBoolean(constantLeft != constantRight)
+            case '==':
+            case '===':
+                return new BooleanConstant(evaluatedLeft.equals(evaluatedRight));
+            case '!=':
+            case '!==':
+                return new BooleanConstant(!evaluatedLeft.equals(evaluatedRight));
             case '<':
                 return this.evaluateComparisonOp(
                     evaluatedLeft,
@@ -310,10 +312,12 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
+        // TODO: if any entry has side effects, return UnknownEvaluatedNode
         return new EvaluatedList(node.elements.map((it) => this.cachedDoEvaluate(it, substitutions)));
     }
 
     private evaluateMap(node: SdsMap, substitutions: ParameterSubstitutions): EvaluatedNode {
+        // TODO: if any entry has side effects, return UnknownEvaluatedNode
         return new EvaluatedMap(
             node.entries.map((it) => {
                 const key = this.cachedDoEvaluate(it.key, substitutions);
