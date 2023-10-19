@@ -2,6 +2,7 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
 import {
     BooleanConstant,
+    EvaluatedEnumVariant,
     EvaluatedList,
     EvaluatedMap,
     EvaluatedNode,
@@ -18,6 +19,7 @@ import {
     isSdsBlockLambda,
     isSdsBoolean,
     isSdsCall,
+    isSdsEnumVariant,
     isSdsExpression,
     isSdsExpressionLambda,
     isSdsFloat,
@@ -49,32 +51,36 @@ import {
     SdsTemplateString,
 } from '../generated/ast.js';
 import { isEmpty } from 'radash';
+import { argumentsOrEmpty, parametersOrEmpty } from '../helpers/nodeProperties.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 
 export class SafeDsPartialEvaluator {
-    private astNodeLocator: AstNodeLocator;
+    private readonly astNodeLocator: AstNodeLocator;
+    private readonly nodeMapper: SafeDsNodeMapper;
 
-    private cache: WorkspaceCache<string, EvaluatedNode>;
+    private readonly cache: WorkspaceCache<string, EvaluatedNode>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
+        this.nodeMapper = services.helpers.NodeMapper;
 
         this.cache = new WorkspaceCache(services.shared);
     }
 
     evaluate(node: AstNode | undefined): EvaluatedNode {
+        return this.cachedDoEvaluate(node, NO_SUBSTITUTIONS)?.unwrap();
+    }
+
+    private cachedDoEvaluate(node: AstNode | undefined, substitutions: ParameterSubstitutions): EvaluatedNode {
         if (!node) {
             return UnknownEvaluatedNode;
         }
 
-        return this.cachedDoEvaluate(node, new Map())?.unwrap();
-    }
-
-    private cachedDoEvaluate(node: AstNode, substitutions: ParameterSubstitutions): EvaluatedNode {
         // Try to evaluate the node without parameter substitutions and cache the result
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         const key = `${documentUri}~${nodePath}`;
-        const resultWithoutSubstitutions = this.cache.get(key, () => this.doEvaluate(node, new Map()));
+        const resultWithoutSubstitutions = this.cache.get(key, () => this.doEvaluate(node, NO_SUBSTITUTIONS));
         if (resultWithoutSubstitutions.isFullyEvaluated || isEmpty(substitutions)) {
             return resultWithoutSubstitutions;
         }
@@ -112,32 +118,29 @@ export class SafeDsPartialEvaluator {
             return this.evaluateExpressionLambda(node, substitutions);
         }
 
-        // Simple recursive cases
+        // Recursive cases
         else if (isSdsArgument(node)) {
             return this.cachedDoEvaluate(node.value, substitutions);
+        } else if (isSdsCall(node)) {
+            return this.evaluateCall(node, substitutions);
+        } else if (isSdsIndexedAccess(node)) {
+            return this.evaluateIndexedAccess(node, substitutions);
         } else if (isSdsInfixOperation(node)) {
             return this.evaluateInfixOperation(node, substitutions);
         } else if (isSdsList(node)) {
             return this.evaluateList(node, substitutions);
         } else if (isSdsMap(node)) {
             return this.evaluateMap(node, substitutions);
+        } else if (isSdsMemberAccess(node)) {
+            return this.evaluateMemberAccess(node, substitutions);
         } else if (isSdsParenthesizedExpression(node)) {
             return this.cachedDoEvaluate(node.expression, substitutions);
         } else if (isSdsPrefixOperation(node)) {
             return this.evaluatePrefixOperation(node, substitutions);
-        } else if (isSdsTemplateString(node)) {
-            return this.evaluateTemplateString(node, substitutions);
-        }
-
-        // Complex recursive cases
-        else if (isSdsCall(node)) {
-            return this.evaluateCall(node, substitutions);
-        } else if (isSdsIndexedAccess(node)) {
-            return this.evaluateIndexedAccess(node, substitutions);
-        } else if (isSdsMemberAccess(node)) {
-            return this.evaluateMemberAccess(node, substitutions);
         } else if (isSdsReference(node)) {
             return this.evaluateReference(node, substitutions);
+        } else if (isSdsTemplateString(node)) {
+            return this.evaluateTemplateString(node, substitutions);
         }
 
         /* c8 ignore next */
@@ -337,7 +340,33 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateCall(_node: SdsCall, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    evaluateCall(node: SdsCall, substitutions: ParameterSubstitutions): EvaluatedNode {
+        const receiver = this.cachedDoEvaluate(node.receiver, substitutions).unwrap();
+
+        if (receiver instanceof EvaluatedEnumVariant) {
+            // The enum variant has already been instantiated
+            if (receiver.hasBeenInstantiated) {
+                return UnknownEvaluatedNode;
+            }
+
+            // Store default values for all parameters
+            const args = new Map(
+                parametersOrEmpty(receiver.variant).map((it) => {
+                    return [it, this.cachedDoEvaluate(it.defaultValue, NO_SUBSTITUTIONS)];
+                }),
+            );
+
+            // Override default values with the actual arguments
+            argumentsOrEmpty(node).forEach((it) => {
+                const parameter = this.nodeMapper.argumentToParameterOrUndefined(it);
+                if (parameter && args.has(parameter)) {
+                    args.set(parameter, this.cachedDoEvaluate(it.value, substitutions));
+                }
+            });
+
+            return new EvaluatedEnumVariant(receiver.variant, args);
+        }
+
         //     val simpleReceiver = evaluateReceiver(substitutions) ?: return undefined
         //     val newSubstitutions = buildNewSubstitutions(simpleReceiver, substitutions)
         //
@@ -361,14 +390,6 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    // private fun SdsCall.evaluateReceiver(substitutions: ParameterSubstitutions): SdsIntermediateCallable? {
-    //     return when (val simpleReceiver = receiver.evaluate(substitutions)) {
-    //     is SdsIntermediateRecord -> simpleReceiver.unwrap() as? SdsIntermediateCallable
-    //     is SdsIntermediateCallable -> simpleReceiver
-    // else -> return undefined
-    // }
-    // }
-    //
     // private fun SdsCall.buildNewSubstitutions(
     //     simpleReceiver: SdsIntermediateCallable,
     //     oldSubstitutions: ParameterSubstitutions
@@ -411,12 +432,12 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateMemberAccess(_node: SdsMemberAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        //     private fun SdsMemberAccess.evaluateMemberAccess(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
-        //     if (member.declaration is SdsEnumVariant) {
-        //     return member.evaluateReference(substitutions)
-        // }
-        //
+    evaluateMemberAccess(node: SdsMemberAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
+        const member = node.member?.target?.ref;
+        if (isSdsEnumVariant(member)) {
+            return new EvaluatedEnumVariant(member, undefined);
+        }
+
         // return when (val simpleReceiver = receiver.evaluate(substitutions)) {
         //     SdsConstantNull -> when {
         //         isNullSafe -> SdsConstantNull
@@ -428,12 +449,9 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        //     return when (val declaration = this.declaration) {
-        //     is SdsEnumVariant -> when {
-        //         declaration.parametersOrEmpty().isEmpty() -> SdsConstantEnumVariant(declaration)
-        //     else -> undefined
-        //     }
+    evaluateReference(node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
+        // const target = node.target.ref;
+
         //     is SdsPlaceholder -> declaration.evaluateAssignee(substitutions)
         //     is SdsParameter -> declaration.evaluateParameter(substitutions)
         //     is SdsStep -> declaration.evaluateStep()
@@ -475,3 +493,5 @@ export class SafeDsPartialEvaluator {
     // }
     // }
 }
+
+const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();

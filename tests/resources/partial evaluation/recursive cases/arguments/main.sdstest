@@ -1,4 +1,4 @@
-package tests.partialValidation.simpleRecursiveCases.lists
+package tests.partialValidation.recursiveCases.lists
 
 pipeline test {
     // $TEST$ serialization []

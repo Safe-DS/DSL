@@ -1,4 +1,4 @@
-package tests.partialValidation.simpleRecursiveCases.prefixOperations
+package tests.partialValidation.recursiveCases.prefixOperations
 
 pipeline `not` {
     // $TEST$ serialization true

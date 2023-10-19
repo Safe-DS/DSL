@@ -1,4 +1,4 @@
-package tests.partialValidation.simpleRecursiveCases.arguments
+package tests.partialValidation.recursiveCases.arguments
 
 fun f(p: Any?)
 

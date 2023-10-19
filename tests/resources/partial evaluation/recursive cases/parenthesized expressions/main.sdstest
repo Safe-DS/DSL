@@ -1,4 +1,4 @@
-package tests.partialValidation.simpleRecursiveCases.parenthesizedExpression
+package tests.partialValidation.recursiveCases.parenthesizedExpression
 
 pipeline test {
     // $TEST$ equivalence_class value1

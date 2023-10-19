@@ -9,6 +9,8 @@ import {
     SdsResult,
 } from '../generated/ast.js';
 import { stream } from 'langium';
+import { parametersOrEmpty } from '../helpers/nodeProperties.js';
+import { isEmpty } from 'radash';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
@@ -204,20 +206,28 @@ export class SegmentClosure extends Closure {
 
 export class EvaluatedEnumVariant extends EvaluatedNode {
     constructor(
-        readonly value: SdsEnumVariant,
-        readonly args: ParameterSubstitutions,
+        readonly variant: SdsEnumVariant,
+        readonly args: ParameterSubstitutions | undefined,
     ) {
         super();
     }
 
-    override readonly isFullyEvaluated: boolean = stream(this.args.values()).every(isFullyEvaluated);
+    readonly hasBeenInstantiated = this.args !== undefined;
+
+    override readonly isFullyEvaluated: boolean =
+        isEmpty(parametersOrEmpty(this.variant)) ||
+        (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedEnumVariant && this.value === other.value;
+        return other instanceof EvaluatedEnumVariant && this.variant === other.variant;
     }
 
     override toString(): string {
-        return this.value.name;
+        if (!this.args) {
+            return this.variant.name;
+        } else {
+            return `${this.variant.name}(${Array.from(this.args.values()).join(', ')})`;
+        }
     }
 }
 

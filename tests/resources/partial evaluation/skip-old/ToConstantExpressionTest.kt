@@ -86,17 +86,6 @@
 //            recursiveExpressionLambda.simplify(emptyMap()).shouldBeNull()
 //        }
 //    }
-//
-//    @Nested
-//    inner class Argument {
-//
-//        @Test
-//        fun `should return value as constant expression for arguments`() {
-//            val testData = createSdsArgument(value = createSdsNull())
-//            testData.toConstantExpressionOrNull() shouldBe SdsConstantNull
-//        }
-//    }
-//
 //    @Nested
 //    inner class InfixOperation {
 //
@@ -988,42 +977,6 @@
 //
 //    @Nested
 //    inner class MemberAccess {
-//
-//        @Test
-//        fun `should return constant enum variant if referenced enum variant has no parameters`() {
-//            val testEnumVariant = createSdsEnumVariant(name = "TestEnumVariant")
-//            val testEnum = createSdsEnum(
-//                name = "TestEnum",
-//                variants = listOf(testEnumVariant),
-//            )
-//            val testData = createSdsMemberAccess(
-//                receiver = createSdsReference(testEnum),
-//                member = createSdsReference(testEnumVariant),
-//            )
-//
-//            testData.toConstantExpressionOrNull() shouldBe SdsConstantEnumVariant(testEnumVariant)
-//        }
-//
-//        @Test
-//        fun `should return null if referenced enum variant has parameters`() {
-//            val testEnumVariant = createSdsEnumVariant(
-//                name = "TestEnumVariant",
-//                parameters = listOf(
-//                    createSdsParameter(name = "testParameter"),
-//                ),
-//            )
-//            val testEnum = createSdsEnum(
-//                name = "TestEnum",
-//                variants = listOf(testEnumVariant),
-//            )
-//            val testData = createSdsMemberAccess(
-//                receiver = createSdsReference(testEnum),
-//                member = createSdsReference(testEnumVariant),
-//            )
-//
-//            testData.toConstantExpressionOrNull().shouldBeNull()
-//        }
-//
 //        @Test
 //        fun `should return constant null if receiver is constant null and member access is null safe`() {
 //            val testData = createSdsMemberAccess(
@@ -1089,32 +1042,6 @@
 //
 //    @Nested
 //    inner class Reference {
-//
-//        @Test
-//        fun `should return constant enum variant if referenced enum variant has no parameters`() {
-//            val testEnumVariant = createSdsEnumVariant(name = "TestEnumVariant")
-//            val testData = createSdsReference(
-//                declaration = testEnumVariant,
-//            )
-//
-//            testData.toConstantExpressionOrNull() shouldBe SdsConstantEnumVariant(testEnumVariant)
-//        }
-//
-//        @Test
-//        fun `should return null if referenced enum variant has parameters`() {
-//            val testEnumVariant = createSdsEnumVariant(
-//                name = "TestEnumVariant",
-//                parameters = listOf(
-//                    createSdsParameter(name = "testParameter"),
-//                ),
-//            )
-//            val testData = createSdsReference(
-//                declaration = testEnumVariant,
-//            )
-//
-//            testData.toConstantExpressionOrNull().shouldBeNull()
-//        }
-//
 //        @Test
 //        fun `should convert assigned value of referenced placeholder`() {
 //            val testPlaceholder = createSdsPlaceholder("testPlaceholder")
