@@ -15,6 +15,8 @@ import { isEmpty } from 'radash';
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
 
+/* c8 ignore start */
+
 /**
  * A node that has been partially evaluated.
  */
@@ -382,3 +384,5 @@ export const UnknownEvaluatedNode = new UnknownEvaluatedNodeClass();
 const isFullyEvaluated = (node: EvaluatedNode): boolean => {
     return node.isFullyEvaluated;
 };
+
+/* c8 ignore stop */

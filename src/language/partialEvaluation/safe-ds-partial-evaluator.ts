@@ -87,11 +87,10 @@ export class SafeDsPartialEvaluator {
         const resultWithoutSubstitutions = this.cache.get(key, () => this.doEvaluate(node, NO_SUBSTITUTIONS));
         if (resultWithoutSubstitutions.isFullyEvaluated || isEmpty(substitutions)) {
             return resultWithoutSubstitutions;
-        }
-
-        /* c8 ignore next 2 */
-        // Try again with parameter substitutions but don't cache the result
-        return this.doEvaluate(node, substitutions);
+        } /* c8 ignore start */ else {
+            // Try again with parameter substitutions but don't cache the result
+            return this.doEvaluate(node, substitutions);
+        } /* c8 ignore stop */
     }
 
     private doEvaluate(node: SdsExpression, substitutions: ParameterSubstitutions): EvaluatedNode {
@@ -141,10 +140,9 @@ export class SafeDsPartialEvaluator {
             return this.evaluateReference(node, substitutions);
         } else if (isSdsTemplateString(node)) {
             return this.evaluateTemplateString(node, substitutions);
-        }
-
-        /* c8 ignore next */
-        return UnknownEvaluatedNode;
+        } /* c8 ignore start */ else {
+            return UnknownEvaluatedNode;
+        } /* c8 ignore stop */
     }
 
     private evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
@@ -268,10 +266,11 @@ export class SafeDsPartialEvaluator {
                 } else {
                     return evaluatedLeft;
                 }
-        }
 
-        /* c8 ignore next */
-        return UnknownEvaluatedNode;
+            /* c8 ignore next 2 */
+            default:
+                return UnknownEvaluatedNode;
+        }
     }
 
     private evaluateLogicalOp(
