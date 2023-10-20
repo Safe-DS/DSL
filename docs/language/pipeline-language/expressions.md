@@ -8,31 +8,31 @@ Literals are the basic building blocks of expressions. They describe a fixed, co
 
 ### Int Literals
 
-Int literals denote integers. They use the expected syntax. For example, the integer three is written as `3`.
+Int literals denote integers. They use the expected syntax. For example, the integer three is written as `#!sds 3`.
 
 ### Float Literals
 
 Float literals denote floating point numbers. There are two ways to specify them:
 
-- **Decimal form**: One half can be written as `0.5`. Note that neither the integer part nor the decimal part can be omitted, so `.5` and `0.` are syntax errors.
-- **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Safe-DS as `1.0e-3` or `1.0E-3`. You can read this as `1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `1e-3` or `1E-3`.
+- **Decimal form**: One half can be written as `#!sds 0.5`. Note that neither the integer part nor the decimal part can be omitted, so `#!sds .5` and `#!sds 0.` are syntax errors.
+- **Scientific notation**: Writing very large or very small numbers in decimal notation can be cumbersome. In those cases, [scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) is helpful. For example, one thousandth can be written in Safe-DS as `#!sds 1.0e-3` or `#!sds 1.0E-3`. You can read this as `#!sds 1.0 × 10⁻³`. When scientific notation is used, it is allowed to omit the decimal part, so this can be shortened to `#!sds 1e-3` or `#!sds 1E-3`.
 
 ### String Literals
 
-String literals describe text. Their syntax is simply text enclosed by double quotes: `"Hello, world!"`. Various special characters can be denoted with _escape sequences_:
+String literals describe text. Their syntax is simply text enclosed by double quotes: `#!sds "Hello, world!"`. Various special characters can be denoted with _escape sequences_:
 
 | Escape sequence | Meaning                                                              |
 |-----------------|----------------------------------------------------------------------|
-| `\b`            | Backspace                                                            |
-| `\t`            | Tab                                                                  |
-| `\n`            | New line                                                             |
-| `\f`            | Form feed                                                            |
-| `\r`            | Carriage return                                                      |
-| `\"`            | Double quote                                                         |
-| `\'`            | Single quote                                                         |
-| `\\`            | Backslash                                                            |
-| `\{`            | Opening curly brace (used for [template strings](#template-strings)) |
-| `\uXXXX`        | Unicode character, where `XXXX` is its hexadecimal index             |
+| `#!sds \b`      | Backspace                                                            |
+| `#!sds \t`      | Tab                                                                  |
+| `#!sds \n`      | New line                                                             |
+| `#!sds \f`      | Form feed                                                            |
+| `#!sds \r`      | Carriage return                                                      |
+| `#!sds \"`      | Double quote                                                         |
+| `#!sds \'`      | Single quote                                                         |
+| `#!sds \\`      | Backslash                                                            |
+| `#!sds \{`      | Opening curly brace (used for [template strings](#template-strings)) |
+| `#!sds \uXXXX`  | Unicode character, where `#!sds XXXX` is its hexadecimal index       |
 
 String literals can contain also contain raw line breaks:
 
@@ -46,79 +46,79 @@ In order to interpolate text with other computed values, use [template strings](
 
 ### Boolean Literals
 
-To work with truthiness, Safe-DS has the two boolean literals `false` and `true`.
+To work with truthiness, Safe-DS has the two boolean literals `#!sds false` and `#!sds true`.
 
-### `null` Literal
+### `#!sds null` Literal
 
-To denote that a value is unknown or absent, use the literal `null`.
+To denote that a value is unknown or absent, use the literal `#!sds null`.
 
 ## Operations
 
 Operations are special functions that can be applied to one or two expressions. Safe-DS has a fixed set of operations that cannot be extended. We distinguish between
 
-- prefix operations (general form `<operator> <operand>`), and
-- infix operations (general form `<left operand> <operator> <right operand>`).
+- prefix operations (general form `#!sds <operator> <operand>`), and
+- infix operations (general form `#!sds <left operand> <operator> <right operand>`).
 
 ### Operations on Numbers
 
-Numbers can be negated using the unary `-` operator:
+Numbers can be negated using the unary `#!sds -` operator:
 
-- The integer negative three is `-3`.
-- The float negative three is `-3.0`.
+- The integer negative three is `#!sds -3`.
+- The float negative three is `#!sds -3.0`.
 
 The usual arithmetic operations are also supported for integers, floats and combinations of the two. Note that when either operand is a float, the whole expression is evaluated to a float.
 
-- Addition: `0 + 5` (result is an integer)
-- Subtraction: `6 - 2.9` (result is a float)
-- Multiplication: `1.1 * 3` (result is a float)
-- Division: `1.0 / 4.2` (result is a float)
+- Addition: `#!sds 0 + 5` (result is an integer)
+- Subtraction: `#!sds 6 - 2.9` (result is a float)
+- Multiplication: `#!sds 1.1 * 3` (result is a float)
+- Division: `#!sds 1.0 / 4.2` (result is a float)
 
-Finally, two numbers can be compared, which results in a boolean. The integer `3` for example is less than the integer `5`. Safe-DS offers operators to do such checks for order:
+Finally, two numbers can be compared, which results in a boolean. The integer `#!sds 3` for example is less than the integer `#!sds 5`. Safe-DS offers operators to do such checks for order:
 
-- Less than: `5 < 6`
-- Less than or equal: `1 <= 3`
-- Greater than or equal: `7 >= 7`
-- Greater than: `9 > 2`
+- Less than: `#!sds 5 < 6`
+- Less than or equal: `#!sds 1 <= 3`
+- Greater than or equal: `#!sds 7 >= 7`
+- Greater than: `#!sds 9 > 2`
 
 ### Logical Operations
 
-To work with logic, Safe-DS has the two boolean literals `false` and `true` as well as operations to work with them:
+To work with logic, Safe-DS has the two boolean literals `#!sds false` and `#!sds true` as well as operations to work with them:
 
-- (Logical) **negation** (example `not a`): Output is `true` if and only if the operand is false:
+- (Logical) **negation** (example `#!sds not a`): Output is `#!sds true` if and only if the operand is false:
 
-| `not a` | false | true  |
+| `#!sds not a` | false | true  |
 |---------|-------|-------|
 | &nbsp;  | true  | false |
 
-- **Conjunction** (example `a and b`): Output is `true` if and only if both operands are `true`. Note that the second operand is always evaluated, even if the first operand is `false` and, thus, already determines the result of the expression. The operator is not short-circuited:
+- **Conjunction** (example `#!sds a and b`): Output is `#!sds true` if and only if both operands are `#!sds true`. Note that the second operand is always evaluated, even if the first operand is `#!sds false` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
-| `a and b` | false | true  |
+| `#!sds a and b` | false | true  |
 |-----------|-------|-------|
 | **false** | false | false |
 | **true**  | false | true  |
 
-- **Disjunction** (example `a or b`): Output is `true` if and only if at least one operand is `true`. Note that the second operand is always evaluated, even if the first operand is `true` and, thus, already determines the result of the expression. The operator is not short-circuited:
+- **Disjunction** (example `#!sds a or b`): Output is `#!sds true` if and only if at least one operand is `#!sds true`. Note that the second operand is always evaluated, even if the first operand is `#!sds true` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
-| `a or b`  | false | true |
+| `#!sds a or b`  | false | true |
 |-----------|-------|------|
 | **false** | false | true |
 | **true**  | true  | true |
 
 ### Equality Checks
 
-There are two different types of equality in Safe-DS, _identity_ and _structural equality_. Identity checks if two objects are one and the same, whereas structural equality checks if two objects have the same structure and content. Using a real world example, two phones of the same type would be structurally equal but not identical. Both types of equality checks return a boolean literal `true` if the check was positive and `false` if the check was negative. The syntax for these operations is as follows:
+There are two different types of equality in Safe-DS, _identity_ and _structural equality_. Identity checks if two objects are one and the same, whereas structural equality checks if two objects have the same structure and content. Using a real world example, two phones of the same type would be structurally equal but not identical. Both types of equality checks return a boolean literal `#!sds true` if the check was positive and `#!sds false` if the check was negative. The syntax for these operations is as follows:
 
-- Identity: `1 === 2`
-- Structural equality: `1 == 2`
+- Identity: `#!sds 1 === 2`
+- Structural equality: `#!sds 1 == 2`
 
-Safe-DS also has shorthand versions for negated equality checks which should be used instead of an explicit logical negation with the `not` operator:
+Safe-DS also has shorthand versions for negated equality checks which should be used instead of an explicit logical negation with the `#!sds not` operator:
 
-- Negated identity: `1 !== 2`
-- Negated structural equality: `1 != 2`
+- Negated identity: `#!sds 1 !== 2`
+- Negated structural equality: `#!sds 1 != 2`
 
 ### Elvis Operator
 
-The elvis operator `?:` (given its name because it resembles Elvis's haircut) is used to specify a default value that should be used instead if the left operand is `null`. This operator is not short-circuited, so both operand are always evaluated. In the following example the whole expression evaluates to `nullableExpression` if this value is not `null` and to `42` if it is:
+The elvis operator `#!sds ?:` (given its name because it resembles Elvis's haircut) is used to specify a default value that should be used instead if the left operand is `#!sds null`. This operator is not short-circuited, so both operand are always evaluated. In the following example the whole expression evaluates to `#!sds nullableExpression` if this value is not `#!sds null` and to `#!sds 42` if it is:
 
 ```sds
 nullableExpression ?: 42
@@ -132,13 +132,13 @@ nullableExpression ?: 42
 "1 + 2 = {{ 1 + 2 }}"
 ```
 
-The syntax for template strings is similar to [string literals](#string-literals): They are also delimited by double quotes, the text can contain escape sequences, and raw newlines can be inserted. The additional syntax are _template expressions_, which are any expression enclosed by `{{` and `}}`. There must be no space between the curly braces.
+The syntax for template strings is similar to [string literals](#string-literals): They are also delimited by double quotes, the text can contain escape sequences, and raw newlines can be inserted. The additional syntax are _template expressions_, which are any expression enclosed by `#!sds {{` and `#!sds }}`. There must be no space between the curly braces.
 
 These template expressions are evaluated, converted to a string and inserted into the template string at their position. The template string in the example above is, hence, equivalent to the [string literal](#string-literals) "1 + 2 = 3".
 
 ## References
 
-References are used to refer to a declaration, such as a [class][classes] or a [placeholder][placeholders]. The syntax is simply the name of the declaration, as shown in the next snippet where we first declare a [placeholder][placeholders] called `one` and then refer to it when computing the value for the [placeholder][placeholders] called `two`:
+References are used to refer to a declaration, such as a [class][classes] or a [placeholder][placeholders]. The syntax is simply the name of the declaration, as shown in the next snippet where we first declare a [placeholder][placeholders] called `#!sds one` and then refer to it when computing the value for the [placeholder][placeholders] called `#!sds two`:
 
 ```sds
 val one = 1;
@@ -159,22 +159,22 @@ segment createDecisionTree(maxDepth: Int = 10) {
 }
 ```
 
-This [segment][segments] has a single [parameter][parameters] `maxDepth`, which must have [type][types] `Int`, and has the default value `10`. Since it has a default value, we are not required to specify a value when we call this [segment][segments]. The most basic legal call of the [segment][segments] is, thus, this:
+This [segment][segments] has a single [parameter][parameters] `#!sds maxDepth`, which must have [type][types] `#!sds Int`, and has the default value `#!sds 10`. Since it has a default value, we are not required to specify a value when we call this [segment][segments]. The most basic legal call of the [segment][segments] is, thus, this:
 
 ```sds
 createDecisionTree()
 ```
 
-This calls the [segment][segments] `createDecisionTree`, using the default `maxDepth` of `10`.
+This calls the [segment][segments] `#!sds createDecisionTree`, using the default `#!sds maxDepth` of `#!sds 10`.
 
 The syntax consists of these elements:
 
-- The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [segment][segments] `createDecisionTree`)
+- The _callee_ of the call, which is the expression to call (here a [reference](#references) to the [segment][segments] `#!sds createDecisionTree`)
 - The list of arguments, which is delimited by parentheses. In this case the list is empty, so no arguments are passed.
 
 If we want to override the default value of an optional [parameter][parameters] or if the callee has required [parameters][parameters], we need to pass arguments. We can either use _positional arguments_ or _named arguments_.
 
-In the case of positional arguments, they are mapped to parameters by position, i.e. the first argument is assigned to the first parameter, the second argument is assigned to the second parameter and so forth. We do this in the following example to set `maxDepth` to 5:
+In the case of positional arguments, they are mapped to parameters by position, i.e. the first argument is assigned to the first parameter, the second argument is assigned to the second parameter and so forth. We do this in the following example to set `#!sds maxDepth` to 5:
 
 ```sds
 createDecisionTree(5)
@@ -182,7 +182,7 @@ createDecisionTree(5)
 
 The syntax for positional argument is simply the expression we want to pass as value.
 
-Named arguments, however, are mapped to parameters by name. On the one hand, this can improve readability of the code, since the meaning of a value becomes obvious. On the other hand, it allows to override only specific optional parameters and keep the rest unchanged. Here is how to set `maxDepth` to 5 using a named argument:
+Named arguments, however, are mapped to parameters by name. On the one hand, this can improve readability of the code, since the meaning of a value becomes obvious. On the other hand, it allows to override only specific optional parameters and keep the rest unchanged. Here is how to set `#!sds maxDepth` to 5 using a named argument:
 
 ```sds
 createDecisionTree(maxDepth = 5)
@@ -196,7 +196,7 @@ These are the syntactic elements:
 
 ### Passing Multiple Arguments
 
-We now add another parameter to the `createDecisionTree` [segment][segments]:
+We now add another parameter to the `#!sds createDecisionTree` [segment][segments]:
 
 ```sds
 segment createDecisionTree(isBinary: Boolean, maxDepth: Int = 10) {
@@ -276,13 +276,13 @@ class DecisionTree() {
 }
 ```
 
-This class has a static [attribute][attributes] called `verboseTraining`, which has type `Boolean`. Static means that the attribute is shared between all instances of the class and can be accessed on the class itself, rather than a specific instance.
+This class has a static [attribute][attributes] called `#!sds verboseTraining`, which has type `#!sds Boolean`. Static means that the attribute is shared between all instances of the class and can be accessed on the class itself, rather than a specific instance.
 
 Moreover, the class has an instance [attribute][attributes]`maxDepth`, which is an integer. This must be accessed on a specific instance of the class.
 
 #### Member Access of Static Class Member
 
-Let us look at how to access the static [attribute][attributes] `verboseTraining` to retrieve its value:
+Let us look at how to access the static [attribute][attributes] `#!sds verboseTraining` to retrieve its value:
 
 ```sds
 DecisionTree.verboseTraining
@@ -290,9 +290,9 @@ DecisionTree.verboseTraining
 
 These are the syntactic elements of this member access:
 
-- The receiver, which is the name of the class (here `DecisionTree`)
+- The receiver, which is the name of the class (here `#!sds DecisionTree`)
 - A dot.
-- The name of the static member of the class (here `verboseTraining`)
+- The name of the static member of the class (here `#!sds verboseTraining`)
 
 Note that we cannot access a static member from an instance of the class. We must use the class itself.
 
@@ -306,17 +306,17 @@ DecisionTree().maxDepth
 
 We now take apart the syntax again:
 
-- The receiver, here a [call](#calls) of the constructor of the class `DecisionTree`. This creates an instance of this class.
+- The receiver, here a [call](#calls) of the constructor of the class `#!sds DecisionTree`. This creates an instance of this class.
 - A dot.
-- The name of the instance member (here `maxDepth`).
+- The name of the instance member (here `#!sds maxDepth`).
 
 Note that instance members cannot be accessed from the class itself, but only from its instances.
 
 ##### Null-Safe Member Access
 
-If an expression could be `null` it cannot be used as the receiver of a regular member access, since `null` does not have members. Instead a null-safe member access must be used. A null-safe member access evaluates to `null` if its receiver is `null`. Otherwise, it evaluates to the accessed member, just like a normal member access.
+If an expression could be `#!sds null` it cannot be used as the receiver of a regular member access, since `#!sds null` does not have members. Instead a null-safe member access must be used. A null-safe member access evaluates to `#!sds null` if its receiver is `#!sds null`. Otherwise, it evaluates to the accessed member, just like a normal member access.
 
-The syntax is identical to a normal member access except that we replace the dot with the operator `?.`:
+The syntax is identical to a normal member access except that we replace the dot with the operator `#!sds ?.`:
 
 ```sds
 nullableExpression?.member
@@ -333,9 +333,9 @@ enum SvmKernel {
 }
 ```
 
-This [enum][enums] is called `SvmKernel` and has the two [variants][enum-variants] `Linear` and `RBF`.
+This [enum][enums] is called `#!sds SvmKernel` and has the two [variants][enum-variants] `#!sds Linear` and `#!sds RBF`.
 
-We can access the [variant][enum-variants] `Linear` using this member access:
+We can access the [variant][enum-variants] `#!sds Linear` using this member access:
 
 ```sds
 SvmKernel.Linear
@@ -343,9 +343,9 @@ SvmKernel.Linear
 
 These are the elements of the syntax:
 
-- The receiver, which is the name of the [enum][enums] (here `SvmKernel`).
+- The receiver, which is the name of the [enum][enums] (here `#!sds SvmKernel`).
 - A dot.
-- The name of the [variant][enum-variants] (here `Linear`).
+- The name of the [variant][enum-variants] (here `#!sds Linear`).
 
 This syntax is identical to the [member access of static class members](#member-access-of-static-class-member).
 
@@ -357,9 +357,9 @@ If the [result record](#result-record) that is produced by a [call](#calls) has 
 fun divideWithRemainder(dividend: Int, divisor: Int) -> (quotient: Int, remainder: Int)
 ```
 
-The [global function][global-functions] `divideWithRemainder` has two [parameters][parameters], namely `dividend` and `divisor`, both of which have type `Int`. It produces two [results][results], `quotient` and `remainder`, which also have type `Int`.
+The [global function][global-functions] `#!sds divideWithRemainder` has two [parameters][parameters], namely `#!sds dividend` and `#!sds divisor`, both of which have type `#!sds Int`. It produces two [results][results], `#!sds quotient` and `#!sds remainder`, which also have type `#!sds Int`.
 
-If we are only interested in the remainder of `12` divided by `5`, we can use a member access:
+If we are only interested in the remainder of `#!sds 12` divided by `#!sds 5`, we can use a member access:
 
 ```sds
 divideWithRemainder(12, 5).remainder
@@ -369,7 +369,7 @@ Here are the syntactic elements:
 
 - The receiver, which is a [call](#calls).
 - A dot.
-- The name of the result (here `remainder`).
+- The name of the result (here `#!sds remainder`).
 
 While it is also possible to access the result by name if the [result record](#result-record) contains only a single entry, there is no need to do so, since this result can be used directly. If you still use a member access and the singular result of the call has the same name as an instance member of the corresponding class, the instance member wins.
 
@@ -383,7 +383,7 @@ class ValueWrapper {
 fun createValueWrapper() -> value: ValueWrapper
 ```
 
-We first declare a [class][classes] called `ValueWrapper`, which has an [attribute][attributes] `value` of type `Int`. Next, we declare a function, which is supposed to create an instance of the [class][classes] `ValueWrapper` and put it into the [result][results] `value`.
+We first declare a [class][classes] called `#!sds ValueWrapper`, which has an [attribute][attributes] `#!sds value` of type `#!sds Int`. Next, we declare a function, which is supposed to create an instance of the [class][classes] `#!sds ValueWrapper` and put it into the [result][results] `#!sds value`.
 
 Let us now look at this member access:
 
@@ -391,7 +391,7 @@ Let us now look at this member access:
 createValueWrapper().value
 ```
 
-This evaluates to the [attribute][attributes], i.e. an integer, rather than the [result][results], which would be an instance of `ValueWrapper`.
+This evaluates to the [attribute][attributes], i.e. an integer, rather than the [result][results], which would be an instance of `#!sds ValueWrapper`.
 
 If you want the result instead, simply omit the member access:
 
@@ -401,7 +401,7 @@ createValueWrapper()
 
 ## Indexed Accesses
 
-An indexed access is currently only used to access elements of a list or values of a map by their key. In the following example, we use an index access to retrieve the first element of the `values` list:
+An indexed access is currently only used to access elements of a list or values of a map by their key. In the following example, we use an index access to retrieve the first element of the `#!sds values` list:
 
 ```sds
 segment printFirst(values: List<Int>) {
@@ -411,7 +411,7 @@ segment printFirst(values: List<Int>) {
 
 These are the elements of the syntax:
 
-- An expression that evaluates to a list or map (here the [reference](#references) `values`).
+- An expression that evaluates to a list or map (here the [reference](#references) `#!sds values`).
 - An opening square bracket.
 - The index, which is an expression that evaluates to an integer. The first element has index 0.
 - A closing square bracket.
@@ -428,7 +428,7 @@ class LinearRegression() {
 }
 ```
 
-This is a [class][classes] `LinearRegression`, which has a constructor and an instance [method][methods] called `drawAsGraph`.
+This is a [class][classes] `#!sds LinearRegression`, which has a constructor and an instance [method][methods] called `#!sds drawAsGraph`.
 
 We can then use those declarations in a [segment][segments]:
 
@@ -438,12 +438,12 @@ segment mySegment(regressions: List<LinearRegression>) {
 }
 ```
 
-This segment is called `mySegment` and has a [parameter][parameters] `regressions` of type `List<LinearRegression>`.
+This segment is called `#!sds mySegment` and has a [parameter][parameters] `#!sds regressions` of type `#!sds List<LinearRegression>`.
 
 In the body of the segment we then
 
 1. access the first instance in the list using an [indexed access](#indexed-accesses),
-2. access the instance method `drawAsGraph` of this instance using a [member access](#member-accesses),
+2. access the instance method `#!sds drawAsGraph` of this instance using a [member access](#member-accesses),
 3. [call](#calls) this method.
 
 ## Lambdas
@@ -458,11 +458,11 @@ class IntList {
 fun intListOf(elements: List<Int>) -> result: IntList
 ```
 
-First, we declare a [class][classes] `IntList`, which has a single [method][methods] called `filter`. The `filter` method returns a single result called `filteredList`, which is a new `IntList`. `filteredList` is supposed to only contain the elements of the receiving `IntList` for which the `filterFunction` [parameter][parameters] returns `true`.
+First, we declare a [class][classes] `#!sds IntList`, which has a single [method][methods] called `#!sds filter`. The `#!sds filter` method returns a single result called `#!sds filteredList`, which is a new `#!sds IntList`. `#!sds filteredList` is supposed to only contain the elements of the receiving `#!sds IntList` for which the `#!sds filterFunction` [parameter][parameters] returns `#!sds true`.
 
-Second, we declare a [global function][global-functions] `intListOf` that is supposed to wrap `elements` into an `IntList`.
+Second, we declare a [global function][global-functions] `#!sds intListOf` that is supposed to wrap `#!sds elements` into an `#!sds IntList`.
 
-Say, we now want to keep only the elements in the list that are less than `10`. We can do this by declaring a [segment][segments]:
+Say, we now want to keep only the elements in the list that are less than `#!sds 10`. We can do this by declaring a [segment][segments]:
 
 ```sds
 segment keepLessThan10(a: Int) -> shouldKeep: Boolean {
@@ -470,13 +470,13 @@ segment keepLessThan10(a: Int) -> shouldKeep: Boolean {
 }
 ```
 
-Here is how to solve the task of keeping only elements below `10` with this [segment][segments]:
+Here is how to solve the task of keeping only elements below `#!sds 10` with this [segment][segments]:
 
 ```sds
 intListOf(1, 4, 11).filter(keepLessThan10)
 ```
 
-The [call](#calls) to `intListOf` is just there to create an `IntList` that we can use for filtering. The interesting part is the argument we pass to the `filter` [method][methods], which is simply a reference to the [segment][segments] we declared above.
+The [call](#calls) to `#!sds intListOf` is just there to create an `#!sds IntList` that we can use for filtering. The interesting part is the argument we pass to the `#!sds filter` [method][methods], which is simply a reference to the [segment][segments] we declared above.
 
 The problem here is that this solution is very cumbersome and verbose. We need to come up with a name for a [segment][segments] that we will likely use only once. Moreover, the segment must declare the [types][types] of its [parameters][parameters] and its [results][results] in its header. Finally, the declaration of the segment has to happen in a separate location then its use. We can solve those issues with lambdas.
 
@@ -512,7 +512,7 @@ intListOf(1, 4, 11).filter(
 These are the syntactic elements:
 
 - A list of [parameters][parameters], which is enclosed in parentheses. Individual parameters are separated by commas.
-- An arrow `->`.
+- An arrow `#!sds ->`.
 - The expression that should be returned.
 
 ### Closures
@@ -527,9 +527,9 @@ segment lazyValue(value: Int) -> result: () -> storedValue: Int {
 }
 ```
 
-This deserves further explanation: We declare a [segment][segments] `lazyValue`. It takes a single [required parameter][required-parameters] `value` with type `Int`. It produces a single [result][results] called `result`, which has a [callable type][callable-types] that takes no [parameters] and produces a single [result][results] called `storedValue` with type `Int`. In the [body][segment-body] of the [segment][segments] we then [assign][assignments-to-segment-results] an [expression lambda](#expression-lambdas) to the [result][results] `result`.
+This deserves further explanation: We declare a [segment][segments] `#!sds lazyValue`. It takes a single [required parameter][required-parameters] `#!sds value` with type `#!sds Int`. It produces a single [result][results] called `#!sds result`, which has a [callable type][callable-types] that takes no [parameters] and produces a single [result][results] called `#!sds storedValue` with type `#!sds Int`. In the [body][segment-body] of the [segment][segments] we then [assign][assignments-to-segment-results] an [expression lambda](#expression-lambdas) to the [result][results] `#!sds result`.
 
-The interesting part here is that we [refer to](#references) to the [parameter][parameters] `value` within the expression of the lambda. Since lambdas are closures, this means the current `value` is stored when the lambda is created. When we later call this lambda, exactly this value is returned.
+The interesting part here is that we [refer to](#references) to the [parameter][parameters] `#!sds value` within the expression of the lambda. Since lambdas are closures, this means the current `#!sds value` is stored when the lambda is created. When we later call this lambda, exactly this value is returned.
 
 ### Restrictions
 
@@ -541,22 +541,22 @@ At the moment, lambdas can only be used if the context determines the type of it
 
 ## Precedence
 
-We all know that `2 + 3 * 7` is `23` and not `35`. The reason is that the `*` operator has a higher precedence than the `+` operator and is, therefore, evaluated first. These precedence rules are necessary for all types of expressions listed above and shown in the following list. The higher up an expression is in the list, the higher its precedence and the earlier it is evaluated. Expressions listed beside each other have the same precedence and are evaluated from left to right:
+We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason is that the `#!sds *` operator has a higher precedence than the `#!sds +` operator and is, therefore, evaluated first. These precedence rules are necessary for all types of expressions listed above and shown in the following list. The higher up an expression is in the list, the higher its precedence and the earlier it is evaluated. Expressions listed beside each other have the same precedence and are evaluated from left to right:
 
 - **HIGHER PRECEDENCE**
-- `()` (parentheses around an expression)
-- `1` ([integer literals](#int-literals)), `1.0` ([float literals](#float-literals)), `"a"` ([string literals](#string-literals)), `true`/`false` ([boolean literals](#boolean-literals)), `null` ([null literal](#null-literal)), `someName` ([references](#references)), `"age: {{ age }}"` ([template strings](#template-strings))
-- `()` ([calls](#calls)), `.` ([member accesses](#member-accesses)), `?.` ([null-safe member accesses](#null-safe-member-access)), `[]` ([indexed accesses](#indexed-accesses))
-- `-` (unary, [arithmetic negations](#operations-on-numbers))
-- `?:` ([Elvis operators](#elvis-operator))
-- `*`, `/` ([multiplicative operators](#operations-on-numbers))
-- `+`, `-` (binary, [additive operators](#operations-on-numbers))
-- `<`, `<=`, `>=`, `>` ([comparison operators](#operations-on-numbers))
-- `===`, `==`, `!==`, `!=` ([equality operators](#equality-checks))
-- `not` ([logical negations](#logical-operations))
-- `and` ([conjunctions](#logical-operations))
-- `or` ([disjunctions](#logical-operations))
-- `() -> 1` ([expression lambdas](#expression-lambdas)), `() {}` ([block lambdas](#block-lambdas))
+- `#!sds ()` (parentheses around an expression)
+- `#!sds 1` ([integer literals](#int-literals)), `#!sds 1.0` ([float literals](#float-literals)), `#!sds "a"` ([string literals](#string-literals)), `#!sds true`/`false` ([boolean literals](#boolean-literals)), `#!sds null` ([null literal](#null-literal)), `#!sds someName` ([references](#references)), `#!sds "age: {{ age }}"` ([template strings](#template-strings))
+- `#!sds ()` ([calls](#calls)), `#!sds .` ([member accesses](#member-accesses)), `#!sds ?.` ([null-safe member accesses](#null-safe-member-access)), `#!sds []` ([indexed accesses](#indexed-accesses))
+- `#!sds -` (unary, [arithmetic negations](#operations-on-numbers))
+- `#!sds ?:` ([Elvis operators](#elvis-operator))
+- `#!sds *`, `#!sds /` ([multiplicative operators](#operations-on-numbers))
+- `#!sds +`, `#!sds -` (binary, [additive operators](#operations-on-numbers))
+- `#!sds <`, `#!sds <=`, `#!sds >=`, `#!sds >` ([comparison operators](#operations-on-numbers))
+- `#!sds ===`, `#!sds ==`, `#!sds !==`, `#!sds !=` ([equality operators](#equality-checks))
+- `#!sds not` ([logical negations](#logical-operations))
+- `#!sds and` ([conjunctions](#logical-operations))
+- `#!sds or` ([disjunctions](#logical-operations))
+- `#!sds () -> 1` ([expression lambdas](#expression-lambdas)), `#!sds () {}` ([block lambdas](#block-lambdas))
 - **LOWER PRECEDENCE**
 
 If the default precedence of operators is not sufficient, parentheses can be used to force a part of an expression to be evaluated first.

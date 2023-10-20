@@ -41,11 +41,11 @@ from safeds.model.regression import DecisionTree as StdlibDecisionTree
 
 Let us take apart the syntax:
 
-- The keyword `from`.
+- The keyword `#!sds from`.
 - The name of the [package][packages] that contains the declaration (here `safeds.model.regression`).
-- The keyword `import`.
+- The keyword `#!sds import`.
 - The name of the declaration (i.e. `DecisionTree`).
-- The keyword `as`.
+- The keyword `#!sds as`.
 - The alias to use (here `StdlibDecisionTree`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number.
 
 Afterwards, the declaration can **only** be accessed using the alias. The next example shows how to create a new instance of the class now by invoking its constructor:
@@ -77,7 +77,7 @@ Here is the breakdown of the syntax:
 - The keyword `import`.
 - A star.
 
-Afterwards, we can again access declarations by their simple name, such as the [class][classes] `DecisionTree`:
+Afterward, we can again access declarations by their simple name, such as the [class][classes] `DecisionTree`:
 
 ```sds
 DecisionTree()

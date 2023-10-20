@@ -18,7 +18,7 @@ class SomeClass
 class SomeSubclass sub SomeClass
 ```
 
-To denote that a declaration accepts instances of `SomeClass` and its [subclass][subclassing] `SomeSubclass`, we write the name of the class as the type:
+To denote that a declaration accepts instances of `#!sds SomeClass` and its [subclass][subclassing] `#!sds SomeSubclass`, we write the name of the class as the type:
 
 ```sds
 SomeClass
@@ -26,9 +26,9 @@ SomeClass
 
 ##### Nullable Class Types
 
-The value `null` (see [null][null-literal]) deserves special treatment since it is not possible to operate on it in the same manner as on proper instances of a [class][classes]. For this reason `null` cannot be assigned to declarations with class types such as `SomeClass`.
+The value `#!sds null` (see [null][null-literal]) deserves special treatment since it is not possible to operate on it in the same manner as on proper instances of a [class][classes]. For this reason `#!sds null` cannot be assigned to declarations with class types such as `#!sds SomeClass`.
 
-To specifically allow `null` as a value, simply add a question mark to the named type:
+To specifically allow `#!sds null` as a value, simply add a question mark to the named type:
 
 ```sds
 SomeClass?
@@ -45,13 +45,13 @@ enum SomeEnum {
 }
 ```
 
-To denote that a declaration accepts instances of any [variant][variants] of `SomeEnum`, use the name of the enum as the type:
+To denote that a declaration accepts instances of any [variant][variants] of `#!sds SomeEnum`, use the name of the enum as the type:
 
 ```sds
 SomeEnum
 ```
 
-This type expects either the value `SomeEnum.SomeEnumVariant` (see [member access][member-accesses]) or anything constructed from the [variant][variants] `SomeOtherEnumVariant` such as `SomeEnum.SomeOtherEnumVariant(3)`.
+This type expects either the value `#!sds SomeEnum.SomeEnumVariant` (see [member access][member-accesses]) or anything constructed from the [variant][variants] `#!sds SomeOtherEnumVariant` such as `#!sds SomeEnum.SomeOtherEnumVariant(3)`.
 
 #### Type Arguments
 
@@ -63,7 +63,7 @@ If a declaration has [type parameters][type-parameters] we need to assign all of
 class SomeSpecialList<T>
 ```
 
-When we use this [class][classes] as a named type, we need to specify the value for the [type parameter][type-parameters] `T`, which is supposed to denote the type of the elements in the list.Similar to [calls][calls], we can either use _positional type arguments_ or _named type arguments_.
+When we use this [class][classes] as a named type, we need to specify the value for the [type parameter][type-parameters] `#!sds T`, which is supposed to denote the type of the elements in the list.Similar to [calls][calls], we can either use _positional type arguments_ or _named type arguments_.
 
 In the case of positional type arguments, they are mapped to [type parameters][type-parameters] by position, i.e. the first type argument is assigned to the first [type parameter][type-parameters], the second type argument is assigned to the second [type parameter][type-parameters] and so forth.
 
@@ -77,9 +77,9 @@ SomeSpecialList<Int>
 
 Let us break down the syntax:
 
-- The usual named type (here `SomeSpecialList`).
+- The usual named type (here `#!sds SomeSpecialList`).
 - Opening angle bracket.
-- A positional type argument (here `Int`).
+- A positional type argument (here `#!sds Int`).
 - A closing angle bracket.
 
 When a named type argument is used, we explicitly specify the [type parameter][type-parameters] that we want to assign. This allows us to specify them in any order. It can also improve the clarity of the code since the meaning of the type argument becomes more apparent. Here is the type for our list of integers when a named argument is used:
@@ -90,10 +90,10 @@ SomeSpecialList<T = Int>
 
 These are the syntactic elements:
 
-- The usual named type (here `SomeSpecialList`).
+- The usual named type (here `#!sds SomeSpecialList`).
 - Opening angle bracket.
-- A named type argument (here `T = Int`). This in turn consists of
-  - The name of the [type parameter][type-parameters] (here `T`)
+- A named type argument (here `#!sds T = Int`). This in turn consists of
+  - The name of the [type parameter][type-parameters] (here `#!sds T`)
   - An equals sign.
   - The value of the type argument, which is still a [type projection](#type-projection).
 - A closing angle bracket.
@@ -106,7 +106,7 @@ Let us finally look at how multiple type arguments are passed. For this we use t
 class SomeSpecialMap<K, V>
 ```
 
-This [class][classes] has to [type parameters][type-parameters], namely `K` and `V`, which must both be set if we use this [class][classes] as a named type.
+This [class][classes] has to [type parameters][type-parameters], namely `#!sds K` and `#!sds V`, which must both be set if we use this [class][classes] as a named type.
 
 Here is a valid use:
 
@@ -116,7 +116,7 @@ SomeSpecialMap<String, V = Int>
 
 We will again go over the syntax:
 
-- The usual named type (here `SomeSpecialMap`).
+- The usual named type (here `#!sds SomeSpecialMap`).
 - An opening angle bracket.
 - The list of type arguments. Each element is either a positional or a named type argument (see above). Individual elements are separated by commas. A trailing comma is allowed
 - A closing angle bracket.
@@ -131,7 +131,7 @@ The most basic case is that we pass a concrete type as the value. We have alread
 SomeSpecialList<Int>
 ```
 
-The value of the type argument is just another named type (here `Int`).
+The value of the type argument is just another named type (here `#!sds Int`).
 
 ### Member Types
 
@@ -147,7 +147,7 @@ class SomeOuterClass {
 }
 ```
 
-To specify that a declaration accepts instances of `SomeInnerClass` or its [subclasses][subclassing], use the following member type:
+To specify that a declaration accepts instances of `#!sds SomeInnerClass` or its [subclasses][subclassing], use the following member type:
 
 ```sds
 SomeOuterClass.SomeInnerClass
@@ -155,9 +155,9 @@ SomeOuterClass.SomeInnerClass
 
 This has the following syntactic elements:
 
-- Name of the outer [class][classes] (here `SomeOuterClass`).
+- Name of the outer [class][classes] (here `#!sds SomeOuterClass`).
 - A dot.
-- Name of the inner [class][classes] (here `SomeInnerClass`).
+- Name of the inner [class][classes] (here `#!sds SomeInnerClass`).
 
 Classes can be nested multiple levels deep. In this case, use a member access for each level. Let us use the following declarations to explain this:
 
@@ -169,7 +169,7 @@ class SomeOuterClass {
 }
 ```
 
-To specify that a declaration accepts instances of `SomeInnerClass`, or its [subclasses][subclassing], use the following member type:
+To specify that a declaration accepts instances of `#!sds SomeInnerClass`, or its [subclasses][subclassing], use the following member type:
 
 ```sds
 SomeOuterClass.SomeMiddleClass.SomeInnerClass
@@ -183,13 +183,13 @@ class SomeOuterClass<A> {
 }
 ```
 
-To specify that a declaration accepts instances of `SomeInnerClass` where all type parameters are set to `Int`, or its [subclasses][subclassing], use the following member type:
+To specify that a declaration accepts instances of `#!sds SomeInnerClass` where all type parameters are set to `#!sds Int`, or its [subclasses][subclassing], use the following member type:
 
 ```sds
 SomeOuterClass<Int>.SomeInnerClass<Int>
 ```
 
-Finally, as with [named types](#named-types), `null` is not an allowed value by default. To allow it, add a question mark at the end of the member type. This can be used independently from [type arguments](#type-arguments):
+Finally, as with [named types](#named-types), `#!sds null` is not an allowed value by default. To allow it, add a question mark at the end of the member type. This can be used independently from [type arguments](#type-arguments):
 
 ```sds
 SomeOuterClass<Int>.SomeInnerClass<Int>?
@@ -206,7 +206,7 @@ enum SomeEnum {
 }
 ```
 
-To allow only instances of the [variant][variants] `SomeEnumVariant`, use the following member type:
+To allow only instances of the [variant][variants] `#!sds SomeEnumVariant`, use the following member type:
 
 ```sds
 SomeEnum.SomeEnumVariant
@@ -214,9 +214,9 @@ SomeEnum.SomeEnumVariant
 
 Let us take apart the syntax:
 
-- The name of the [enum][enums] (here `SomeEnum`).
+- The name of the [enum][enums] (here `#!sds SomeEnum`).
 - A dot.
-- The name of the [enum variant][variants] (here `SomeEnumVariant`).
+- The name of the [enum variant][variants] (here `#!sds SomeEnumVariant`).
 
 Identical to [class member types](#class-member-types), all [type parameters][type-parameters] of the [enum variant][variants] must be assigned by [type arguments](#type-arguments). We use these declarations to explain the concept:
 
@@ -227,7 +227,7 @@ enum SomeEnum {
 }
 ```
 
-To now allow only instances of the [variant][variants] `SomeEnumVariant` with `Int` values, use the following member type:
+To now allow only instances of the [variant][variants] `#!sds SomeEnumVariant` with `#!sds Int` values, use the following member type:
 
 ```sds
 SomeEnum.SomeEnumVariant<Int>
@@ -243,12 +243,12 @@ union<String, Int>
 
 Here is a breakdown of the syntax:
 
-- The keyword `union`.
+- The keyword `#!sds union`.
 - An opening angle bracket.
 - A list of types, which are separated by commas. A trailing comma is allowed.
 - A closing angle bracket
 
-Note that it is preferable to write the common superclass if this is equivalent to the union type. For example, `Number` has the two subclasses `Int` and `Float`. Therefore, it is usually better to write `Number` as the type rather than `union<Int, Float>`. Use the union type only when you are not able to handle the later addition of further subclasses of `Number` other than `Int` or `Float`.
+Note that it is preferable to write the common superclass if this is equivalent to the union type. For example, `#!sds Number` has the two subclasses `#!sds Int` and `#!sds Float`. Therefore, it is usually better to write `#!sds Number` as the type rather than `#!sds union<Int, Float>`. Use the union type only when you are not able to handle the later addition of further subclasses of `#!sds Number` other than `#!sds Int` or `#!sds Float`.
 
 ### Callable Types
 
@@ -270,7 +270,7 @@ Additionally, a callable types specifies the names and types of parameters and r
 Let us break down the syntax:
 
 - A pair of parentheses, which is the list of expected [parameters][parameters].
-- An arrow `->`.
+- An arrow `#!sds ->`.
 - A pair of parentheses, which is the list of expected [results][results].
 
 We can now add some expected [parameters][parameters]:
@@ -331,20 +331,20 @@ The following table shows how Safe-DS types can be written as Python [type hints
 
 | Safe-DS Type                           | Python Type Hint                                                   |
 |----------------------------------------|--------------------------------------------------------------------|
-| `Boolean`                              | `bool`                                                             |
-| `Float`                                | `float`                                                            |
-| `Int`                                  | `int`                                                              |
-| `String`                               | `str`                                                              |
-| `SomeClass`                            | `SomeClass`                                                        |
-| `SomeEnum`                             | `SomeEnum`                                                         |
-| `SomeClass?`                           | `Optional[SomeClass]`                                              |
-| `SomeEnum?`                            | `Optional[SomeEnum]`                                               |
-| `SomeSpecialList<Int>`                 | `SomeSpecialList[int]`                                             |
-| `SomeOuterClass.SomeInnerClass`        | `SomeOuterClass.SomeInnerClass`                                    |
-| `SomeEnum.SomeEnumVariant`             | `SomeEnum.SomeEnumVariant`                                         |
-| `union<String, Int>`                   | `Union[str, int]`                                                  |
-| `(a: Int, b: Int) -> r: Int`           | `Callable[[int, int], int]`                                        |
-| `(a: Int, b: Int) -> (r: Int, s: Int)` | `Callable[[int, int], Tuple[int, int]]`                            |
+| `#!sds Boolean`                              | `#!sds bool`                                                             |
+| `#!sds Float`                                | `#!sds float`                                                            |
+| `#!sds Int`                                  | `#!sds int`                                                              |
+| `#!sds String`                               | `#!sds str`                                                              |
+| `#!sds SomeClass`                            | `#!sds SomeClass`                                                        |
+| `#!sds SomeEnum`                             | `#!sds SomeEnum`                                                         |
+| `#!sds SomeClass?`                           | `#!sds Optional[SomeClass]`                                              |
+| `#!sds SomeEnum?`                            | `#!sds Optional[SomeEnum]`                                               |
+| `#!sds SomeSpecialList<Int>`                 | `#!sds SomeSpecialList[int]`                                             |
+| `#!sds SomeOuterClass.SomeInnerClass`        | `#!sds SomeOuterClass.SomeInnerClass`                                    |
+| `#!sds SomeEnum.SomeEnumVariant`             | `#!sds SomeEnum.SomeEnumVariant`                                         |
+| `#!sds union<String, Int>`                   | `#!sds Union[str, int]`                                                  |
+| `#!sds (a: Int, b: Int) -> r: Int`           | `#!sds Callable[[int, int], int]`                                        |
+| `#!sds (a: Int, b: Int) -> (r: Int, s: Int)` | `#!sds Callable[[int, int], Tuple[int, int]]`                            |
 
 Most of these are rather self-explanatory. We will, however, cover the translation of [callable types](#callable-types) in a little more detail: In Python, the type hint for a callable type has the following general syntax:
 
@@ -352,18 +352,18 @@ Most of these are rather self-explanatory. We will, however, cover the translati
 Callable[<list of parameter types>, <result type>]
 ```
 
-To get the `<list of parameter types>`, simply
+To get the `#!sds <list of parameter types>`, simply
 
 1. convert the types of the parameters to their Python syntax,
 2. separate them all by commas,
 3. surround them by square brackets.
 
-Getting the `<result type`> depends on the number of results. If there is only a single result, simply write down its type. If there are multiple types, do this instead:
+Getting the `#!sds <result type`> depends on the number of results. If there is only a single result, simply write down its type. If there are multiple types, do this instead:
 
 1. convert the types of the results to their Python syntax,
 2. separate them all by commas,
-3. add the prefix `Tuple[`,
-4. add the suffix `]`.
+3. add the prefix `#!sds Tuple[`,
+4. add the suffix `#!sds ]`.
 
 [variance]: variance.md
 [parameters]: parameters.md

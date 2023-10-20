@@ -8,13 +8,13 @@ result: Int
 
 Here is a breakdown of the syntax:
 
-- The name of the result (here `result`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+- The name of the result (here `#!sds result`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of parameters.
 - A colon.
-- The [type][types] of the parameter (here `Int`).
+- The [type][types] of the parameter (here `#!sds Int`).
 
 ## Complete Example
 
-Let us now look at a full example of a [segment][segments] called `doSomething` with two results:
+Let us now look at a full example of a [segment][segments] called `#!sds doSomething` with two results:
 
 ```sds
 segment doSomething() -> (result1: Int, result2: Boolean) {
@@ -24,7 +24,7 @@ segment doSomething() -> (result1: Int, result2: Boolean) {
 
 The interesting part is the list of results, which uses the following syntactic elements:
 
-- An arrow `->`.
+- An arrow `#!sds ->`.
 - An opening parenthesis.
 - A list of results, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
 - A closing parenthesis.

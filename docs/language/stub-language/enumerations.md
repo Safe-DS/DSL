@@ -6,7 +6,7 @@ An enumeration is a datatype that can take a fixed, finite set of values. The [R
 
 The syntax to declare an enumeration is as follows:
 
-- The keyword `enum`.
+- The keyword `#!sds enum`.
 - The name of the enumeration.
 - A list of the _instances_, i. e. the valid values of the enumeration enclosed in curly braces and separated by commas.
 
