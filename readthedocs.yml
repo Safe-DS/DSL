@@ -7,10 +7,9 @@ build:
   commands:
     - pip install poetry
     - poetry config virtualenvs.create false
-    - cd docs
-    - poetry install
-    - cat mkdocs.yml
-    - mkdocs build --clean --site-dir $READTHEDOCS_OUTPUT/html --config-file mkdocs.yml
+    - cd docs && poetry install
+    - cd docs && cat mkdocs.yml
+    - cd docs && mkdocs build --clean --site-dir $READTHEDOCS_OUTPUT/html --config-file mkdocs.yml
 # Once https://github.com/readthedocs/readthedocs.org/issues/8529 is fixed, replace the commands above with the
 # following to use the default RTD build steps again:
 #  jobs:
