@@ -54,40 +54,68 @@ describe('runConverter', () => {
             unescaped: '\b',
         },
         {
-            escaped: '\\t',
-            unescaped: '\t',
+            escaped: '\\f',
+            unescaped: '\f',
         },
         {
             escaped: '\\n',
             unescaped: '\n',
         },
         {
-            escaped: '\\f',
-            unescaped: '\f',
-        },
-        {
             escaped: '\\r',
             unescaped: '\r',
         },
         {
-            escaped: '\\"',
-            unescaped: '"',
+            escaped: '\\t',
+            unescaped: '\t',
+        },
+        {
+            escaped: '\\v',
+            unescaped: '\v',
+        },
+        {
+            escaped: '\\0',
+            unescaped: '\0',
         },
         {
             escaped: '\\\'',
             unescaped: '\'',
         },
         {
-            escaped: '\\\\',
-            unescaped: '\\',
+            escaped: '\\"',
+            unescaped: '"',
         },
         {
             escaped: '\\{',
             unescaped: '{',
         },
         {
+            escaped: '\\\\',
+            unescaped: '\\',
+        },
+        {
             escaped: '\\u0061',
             unescaped: 'a',
+        },
+        {
+            escaped: '\\u00a9',
+            unescaped: '©',
+        },
+        {
+            escaped: '\\u00A9',
+            unescaped: '©',
+        },
+        {
+            escaped: '\\u',
+            unescaped: 'u',
+        },
+        {
+            escaped: '\\u00',
+            unescaped: 'u00',
+        },
+        {
+            escaped: '\\uWXYZ',
+            unescaped: 'uWXYZ',
         },
     ];
 
