@@ -61,7 +61,8 @@ builtins = (
     "Number",
     "Int",
     "Float",
-    "ListMap",
+    "List",
+    "Map",
     "String",
 )
 
