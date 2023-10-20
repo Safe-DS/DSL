@@ -56,14 +56,6 @@ import { extractAstNode, extractDestinationAndName } from './cli-util.js';
 import chalk from 'chalk';
 import { createSafeDsServices, SafeDsServices } from '../language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
-import { toConstantExpression } from '../language/partialEvaluation/toConstantExpression.js';
-import {
-    ConstantBoolean,
-    ConstantFloat,
-    ConstantInt,
-    ConstantNull,
-    ConstantString,
-} from '../language/partialEvaluation/model.js';
 import {
     abstractResultsOrEmpty,
     assigneesOrEmpty,
@@ -77,6 +69,13 @@ import {
 import { group } from 'radash';
 import { IdManager } from '../language/helpers/idManager.js';
 import { isInStubFile } from '../language/helpers/fileExtensions.js';
+import {
+    BooleanConstant,
+    FloatConstant,
+    IntConstant,
+    NullConstant,
+    StringConstant,
+} from '../language/partialEvaluation/model.js';
 
 const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
 const PYTHON_INDENT = '    ';
@@ -349,22 +348,20 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
-    const potentialConstantExpression = toConstantExpression(expression);
-    if (potentialConstantExpression !== null) {
-        if (potentialConstantExpression instanceof ConstantBoolean) {
-            return potentialConstantExpression.value ? 'True' : 'False';
-        } else if (potentialConstantExpression instanceof ConstantInt) {
-            return String(potentialConstantExpression.value);
-        } else if (potentialConstantExpression instanceof ConstantFloat) {
-            const floatValue = potentialConstantExpression.value;
-            return Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue);
-        } else if (potentialConstantExpression === ConstantNull) {
-            return 'None';
-        } else if (potentialConstantExpression instanceof ConstantString) {
-            return `'${formatStringSingleLine(potentialConstantExpression.value)}'`;
-        }
-        // Handled after constant expressions: EnumVariant, List, Map
+    const partiallyEvaluatedNode = frame.getServices().evaluation.PartialEvaluator.evaluate(expression);
+    if (partiallyEvaluatedNode instanceof BooleanConstant) {
+        return partiallyEvaluatedNode.value ? 'True' : 'False';
+    } else if (partiallyEvaluatedNode instanceof IntConstant) {
+        return String(partiallyEvaluatedNode.value);
+    } else if (partiallyEvaluatedNode instanceof FloatConstant) {
+        const floatValue = partiallyEvaluatedNode.value;
+        return Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue);
+    } else if (partiallyEvaluatedNode === NullConstant) {
+        return 'None';
+    } else if (partiallyEvaluatedNode instanceof StringConstant) {
+        return `'${formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
     }
+    // Handled after constant expressions: EnumVariant, List, Map
 
     if (isSdsMap(expression)) {
         const mapContent = expression.entries.map(
