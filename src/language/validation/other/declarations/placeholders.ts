@@ -11,6 +11,7 @@ import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { statementsOrEmpty } from '../../../helpers/nodeProperties.js';
 import { last } from 'radash';
+import { DiagnosticTag } from 'vscode-languageserver-types';
 
 export const CODE_PLACEHOLDER_ALIAS = 'placeholder/alias';
 export const CODE_PLACEHOLDER_UNUSED = 'placeholder/unused';
@@ -55,5 +56,6 @@ export const placeholderShouldBeUsed =
             node,
             property: 'name',
             code: CODE_PLACEHOLDER_UNUSED,
+            tags: [DiagnosticTag.Unnecessary],
         });
     };
