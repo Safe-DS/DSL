@@ -41,7 +41,7 @@ export const assigneeAssignedResultShouldNotBeDeprecated =
 
 export const annotationCallAnnotationShouldNotBeDeprecated =
     (services: SafeDsServices) => (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        const annotation = node.annotation.ref;
+        const annotation = node.annotation?.ref;
         if (!annotation) {
             return;
         }

@@ -342,7 +342,7 @@ fragment SdsSegmentFragment:
 interface SdsAnnotationCallList extends SdsAnnotatedObject {}
 
 interface SdsAnnotationCall extends SdsAbstractCall {
-    annotation: @SdsAnnotation
+    annotation?: @SdsAnnotation
 }
 
 SdsAnnotationCall returns SdsAnnotationCall:

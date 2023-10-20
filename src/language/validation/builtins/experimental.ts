@@ -37,7 +37,7 @@ export const assigneeAssignedResultShouldNotBeExperimental =
 
 export const annotationCallAnnotationShouldNotBeExperimental =
     (services: SafeDsServices) => (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        const annotation = node.annotation.ref;
+        const annotation = node.annotation?.ref;
         if (!annotation) {
             return;
         }

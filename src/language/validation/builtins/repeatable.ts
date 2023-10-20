@@ -14,7 +14,7 @@ export const singleUseAnnotationsMustNotBeRepeated =
         });
 
         for (const duplicate of duplicatesBy(callsOfSingleUseAnnotations, (it) => it.annotation?.ref)) {
-            accept('error', `The annotation '${duplicate.annotation.$refText}' is not repeatable.`, {
+            accept('error', `The annotation '${duplicate.annotation?.$refText}' is not repeatable.`, {
                 node: duplicate,
                 property: 'annotation',
                 code: CODE_ANNOTATION_NOT_REPEATABLE,
