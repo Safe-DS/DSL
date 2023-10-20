@@ -133,9 +133,11 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
         node: AstNode | undefined,
         additionalModifiers: SemanticTokenModifiers[] = [],
     ): SemanticTokenInfo | void {
+        /* c8 ignore start */
         if (!node) {
             return;
         }
+        /* c8 ignore stop */
 
         if (isSdsAnnotation(node)) {
             return {
