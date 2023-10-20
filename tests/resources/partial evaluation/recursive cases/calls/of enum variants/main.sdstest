@@ -1,0 +1,37 @@
+package tests.partialValidation.recursiveCases.calls.ofEnumVariants
+
+enum MyEnum {
+    MyEnumVariantWithoutParameters
+    MyEnumVariantWithParameters(p: Int, q: Int = 3)
+}
+
+fun f() -> r: Int
+
+pipeline test {
+    // $TEST$ serialization MyEnumVariantWithoutParameters()
+    »MyEnum.MyEnumVariantWithoutParameters()«;
+
+    // $TEST$ serialization MyEnumVariantWithParameters($unknown, 3)
+    »MyEnum.MyEnumVariantWithParameters()«;
+
+        // $TEST$ serialization MyEnumVariantWithParameters(1, 3)
+    »MyEnum.MyEnumVariantWithParameters(1)«;
+
+    // $TEST$ serialization MyEnumVariantWithParameters(1, 2)
+    »MyEnum.MyEnumVariantWithParameters(1, 2)«;
+
+    // $TEST$ serialization MyEnumVariantWithParameters(1, 2)
+    »MyEnum.MyEnumVariantWithParameters(q = 2, p = 1)«;
+
+    // $TEST$ serialization MyEnumVariantWithParameters(1, $unknown)
+    »MyEnum.MyEnumVariantWithParameters(1, f())«;
+
+    // $TEST$ serialization MyEnumVariantWithParameters(1, $unknown)
+    »MyEnum.MyEnumVariantWithParameters(1, f(), 3)«;
+
+    // $TEST$ serialization MyEnumVariantWithParameters(1, $unknown)
+    »MyEnum.MyEnumVariantWithParameters(1, f(), r = 3)«;
+
+    // $TEST$ serialization $unknown
+    »MyEnum.MyEnumVariantWithParameters(q = 2, p = 1)()«;
+}

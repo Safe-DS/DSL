@@ -1,0 +1,11 @@
+package tests.partialValidation.recursiveCases.arguments
+
+fun f(p: Any?)
+
+pipeline test {
+    // $TEST$ serialization 1
+    f(»p = 1«);
+
+    // $TEST$ serialization null
+    f(»p = null«);
+}

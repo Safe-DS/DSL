@@ -23,7 +23,6 @@ export const createPartialEvaluationTests = (): Promise<PartialEvaluationTest[]>
 const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): Promise<PartialEvaluationTest> => {
     const groupIdToLocations: Map<string, Location[]> = new Map();
     const serializationAssertions: SerializationAssertion[] = [];
-    const undefinedAssertions: UndefinedAssertion[] = [];
 
     for (const uri of uris) {
         const code = fs.readFileSync(uri.fsPath).toString();
@@ -42,8 +41,8 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
         }
 
         for (const check of checksResult.value) {
-            // Expected unresolved reference
-            const equivalenceClassMatch = /constant equivalence_class (?<id>.*)/gu.exec(check.comment);
+            // Partially evaluating a set of nodes should yield the same result
+            const equivalenceClassMatch = /equivalence_class (?<id>.*)/gu.exec(check.comment);
             if (equivalenceClassMatch) {
                 const id = equivalenceClassMatch.groups!.id;
                 const priorLocationsInEquivalenceClass = groupIdToLocations.get(id) ?? [];
@@ -52,22 +51,13 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
                 continue;
             }
 
-            // Expected that reference is resolved and points to the target id
-            const serializationMatch = /constant serialization (?<expectedValue>.*)/gu.exec(check.comment);
+            // Partially evaluating a node and serializing the result should yield the expected value.
+            const serializationMatch = /serialization (?<expectedValue>.*)/gu.exec(check.comment);
             if (serializationMatch) {
                 const expectedValue = serializationMatch.groups!.expectedValue;
                 serializationAssertions.push({
                     location: check.location!,
                     expectedValue,
-                });
-                continue;
-            }
-
-            // Expected that reference is resolved and points to the target id
-            const undefinedMatch = /not constant/gu.exec(check.comment);
-            if (undefinedMatch) {
-                undefinedAssertions.push({
-                    location: check.location!,
                 });
                 continue;
             }
@@ -89,7 +79,6 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,
-        undefinedAssertions,
     };
 };
 
@@ -107,7 +96,6 @@ const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): Part
         uris: [],
         equivalenceClassAssertions: [],
         serializationAssertions: [],
-        undefinedAssertions: [],
         error,
     };
 };
@@ -122,54 +110,39 @@ interface PartialEvaluationTest extends TestDescription {
     uris: URI[];
 
     /**
-     * All nodes in an equivalence class should evaluate to the same constant expression.
+     * Partially evaluating nodes in the same equivalence class should yield the same result.
      */
     equivalenceClassAssertions: EquivalenceClassAssertion[];
 
     /**
-     * The serialized constant expression of a node should match the expected value.
+     * Partially evaluating a node and serializing the result should yield the expected value.
      */
     serializationAssertions: SerializationAssertion[];
-
-    /**
-     * The node should not evaluate to a constant expression.
-     */
-    undefinedAssertions: UndefinedAssertion[];
 }
 
 /**
- * A set of nodes should all evaluate to the same constant expression.
+ * Partially evaluating a set of nodes should yield the same result.
  */
 interface EquivalenceClassAssertion {
     /**
-     * The locations of the nodes that should all evaluate to the same constant expression.
+     * The locations of the nodes to partially evaluate.
      */
     locations: Location[];
 }
 
 /**
- * The serialized constant expression of a node should match the expected value.
+ * Partially evaluating a node and serializing the result should yield the expected value.
  */
 interface SerializationAssertion {
     /**
-     * The location of the node whose serialized constant expression should be checked.
+     * The location of the node to partially evaluate.
      */
     location: Location;
 
     /**
-     * The expected serialized constant expression of the node.
+     * The expected serialized evaluation of the node.
      */
     expectedValue: string;
-}
-
-/**
- * The node should not evaluate to a constant expression.
- */
-interface UndefinedAssertion {
-    /**
-     * The location of the node to check.
-     */
-    location: Location;
 }
 
 /**

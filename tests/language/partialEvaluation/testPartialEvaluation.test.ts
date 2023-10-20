@@ -5,12 +5,10 @@ import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { locationToString } from '../../helpers/location.js';
 import { createPartialEvaluationTests } from './creator.js';
-import { toConstantExpression } from '../../../src/language/partialEvaluation/toConstantExpression.js';
-import { Location } from 'vscode-languageserver';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
-import { UnknownValue } from '../../../src/language/partialEvaluation/model.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const partialEvaluator = services.evaluation.PartialEvaluator;
 
 describe('partial evaluation', async () => {
     afterEach(async () => {
@@ -27,26 +25,20 @@ describe('partial evaluation', async () => {
         const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
         await services.shared.workspace.DocumentBuilder.build(documents);
 
-        // Ensure all nodes in the equivalence class get evaluated to the same constant expression
+        // Ensure that partially evaluating nodes in the same equivalence class yields the same result
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {
             if (equivalenceClassAssertion.locations.length > 1) {
                 const firstLocation = equivalenceClassAssertion.locations[0];
                 const firstNode = getNodeByLocation(services, firstLocation);
-                const firstValue = toConstantExpression(firstNode);
-                if (!firstValue) {
-                    return reportUndefinedValue(firstLocation);
-                }
+                const firstValue = partialEvaluator.evaluate(firstNode);
 
                 for (const currentLocation of equivalenceClassAssertion.locations.slice(1)) {
                     const currentNode = getNodeByLocation(services, currentLocation);
-                    const currentValue = toConstantExpression(currentNode);
-                    if (!currentValue) {
-                        return reportUndefinedValue(currentLocation);
-                    }
+                    const currentValue = partialEvaluator.evaluate(currentNode);
 
                     if (!currentValue.equals(firstValue)) {
                         throw new AssertionError({
-                            message: `Two nodes in the same equivalence class evaluate to different constant expressions.\n    Current location: ${locationToString(
+                            message: `Two nodes in the same equivalence class are simplified differently.\n    Current location: ${locationToString(
                                 currentLocation,
                             )}\n    First location: ${locationToString(firstLocation)}`,
                             actual: currentValue.toString(),
@@ -57,17 +49,14 @@ describe('partial evaluation', async () => {
             }
         }
 
-        // Ensure the serialized constant expression matches the expected one
+        // Ensure the serializing the result of partially evaluating a node yields the expected value
         for (const serializationAssertion of test.serializationAssertions) {
             const node = getNodeByLocation(services, serializationAssertion.location);
-            const actualValue = toConstantExpression(node);
-            if (!actualValue) {
-                return reportUndefinedValue(serializationAssertion.location);
-            }
+            const actualValue = partialEvaluator.evaluate(node);
 
             if (actualValue.toString() !== serializationAssertion.expectedValue) {
                 throw new AssertionError({
-                    message: `A node has the wrong serialized constant expression.\n    Location: ${locationToString(
+                    message: `A node has the wrong serialized simplification.\n    Location: ${locationToString(
                         serializationAssertion.location,
                     )}`,
                     actual: actualValue.toString(),
@@ -75,26 +64,5 @@ describe('partial evaluation', async () => {
                 });
             }
         }
-
-        // Ensure the node does not evaluate to a constant expression
-        for (const undefinedAssertion of test.undefinedAssertions) {
-            const node = getNodeByLocation(services, undefinedAssertion.location);
-            const actualValue = toConstantExpression(node);
-            if (actualValue !== UnknownValue) {
-                throw new AssertionError({
-                    message: `A node evaluates to a constant expression, but it should not.\n    Location: ${locationToString(
-                        undefinedAssertion.location,
-                    )}`,
-                    actual: actualValue.toString(),
-                    expected: '$unknown',
-                });
-            }
-        }
     });
 });
-
-const reportUndefinedValue = (location: Location) => {
-    throw new AssertionError({
-        message: `A node could not be evaluated to a constant expression.\n    Location: ${locationToString(location)}`,
-    });
-};

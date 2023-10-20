@@ -71,6 +71,8 @@ ignore = [
     "RET507",
     # superfluous-else-break (sometimes it's more readable)
     "RET508",
+    # mutable-class-default (not helpful for the lexer)
+    "RUF012",
     # private-member-access (we cannot always avoid it if we want a clean API)
     "SLF001",
     # if-else-block-instead-of-if-exp (an if-else block can be more readable)

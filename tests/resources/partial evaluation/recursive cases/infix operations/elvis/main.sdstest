@@ -1,0 +1,15 @@
+package tests.partialValidation.recursiveCases.infixOperations.elvis
+
+pipeline test {
+    // $TEST$ serialization true
+    »true ?: false«;
+
+    // $TEST$ serialization false
+    »null ?: false«;
+
+    // $TEST$ serialization $unknown
+    »unresolved ?: true«;
+
+    // $TEST$ serialization $unknown
+    »true ?: unresolved«;
+}

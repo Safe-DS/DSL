@@ -145,7 +145,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
-            annotationCallArgumentsMustBeConstant,
+            annotationCallArgumentsMustBeConstant(services),
             annotationCallMustNotLackArgumentList,
         ],
         SdsArgument: [
@@ -219,7 +219,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
         ],
         SdsParameter: [
-            constantParameterMustHaveConstantDefaultValue,
+            constantParameterMustHaveConstantDefaultValue(services),
             parameterMustHaveTypeHint,
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),

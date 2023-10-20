@@ -8,7 +8,7 @@ Safe-DS has two types of comments, namely _line comments_, which end at a linebr
 
 Line comments stop at the end of a line:
 
-```txt
+```sds
 // This is a comment.
 ```
 
@@ -18,7 +18,7 @@ As we can see here, they start with two slashes. There must be no space between 
 
 Block comments have a start and end delimiter, which allows them to cover multiple lines:
 
-```txt
+```sds
 /*
 This
 is

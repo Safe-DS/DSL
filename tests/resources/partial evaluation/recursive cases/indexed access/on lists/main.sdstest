@@ -1,0 +1,24 @@
+package tests.partialValidation.recursiveCases.indexedAccess.onLists
+
+pipeline test {
+    // $TEST$ serialization 2
+    »[1, 2, 3][1]«;
+
+    // $TEST$ serialization 1
+    »[1, 2, unresolved][0]«;
+
+    // $TEST$ serialization $unknown
+    »[1, 2, unresolved][2]«;
+
+    // $TEST$ serialization $unknown
+    »[][-1]«;
+
+    // $TEST$ serialization $unknown
+    »[][1]«;
+
+    // $TEST$ serialization $unknown
+    »[][""]«;
+
+    // $TEST$ serialization $unknown
+    »[][unresolved]«;
+}

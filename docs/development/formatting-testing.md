@@ -14,7 +14,7 @@ formatting test.
 
 2. Add the original unformatted Safe-DS code to the top of the file. The code must be syntactically valid.
 3. Add the following separator to the file:
-    ```txt
+    ```sds
     // -----------------------------------------------------------------------------
     ```
 4. Add the expected formatted Safe-DS code to the file below the separator.

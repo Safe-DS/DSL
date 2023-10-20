@@ -12,7 +12,7 @@ The syntax to declare an enumeration is as follows:
 
 Coming back to the ridge solver example from the introduction, we would implement this in Safe-DS as follows, so that only the seven specified values are valid instances of the datatype.
 
-```txt
+```sds
 enum RidgeSolver {
     AUTO,
     SVD,
@@ -36,7 +36,7 @@ enum RidgeSolver {
 
 To express that the type of a declaration is an enumeration we simply write the name of the enumeration as the type. For example, when declaring a [class][classes] called "Ridge" for the ridge regression model we can declare a parameter of type "RidgeSolver" like this:
 
-```txt
+```sds
 class Ridge(solver: RidgeSolver) {
     // ...
 }

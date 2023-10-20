@@ -1,0 +1,28 @@
+package tests.partialValidation.recursiveCases.infixOperations.plus
+
+pipeline test {
+    // $TEST$ serialization 1.75
+    »1.5 + 0.25«;
+
+    // $TEST$ serialization 2.5
+    »1.5 + 1«;
+
+    // $TEST$ serialization 1.25
+    »1 + 0.25«;
+
+    // $TEST$ serialization 2
+    »1 + 1«;
+
+
+    // $TEST$ serialization $unknown
+    »true + 1«;
+
+    // $TEST$ serialization $unknown
+    »1 + true«;
+
+    // $TEST$ serialization $unknown
+    »unresolved + 1«;
+
+    // $TEST$ serialization $unknown
+    »1 + unresolved«;
+}

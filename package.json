@@ -18,7 +18,7 @@
     "galleryBanner": {
         "color": "#e3e9e9"
     },
-    "icon": "img/safe-ds_logo_rounded.png",
+    "icon": "img/safe-ds_logo_rounded_128x128.png",
     "homepage": "https://dsl.safeds.com",
     "qna": "https://github.com/orgs/Safe-DS/discussions",
     "bugs": {
@@ -60,7 +60,11 @@
                     ".sdsstub",
                     ".sdstest"
                 ],
-                "configuration": "./language-configuration.json"
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
             }
         ],
         "grammars": [
@@ -72,6 +76,7 @@
         ],
         "configurationDefaults": {
             "[safe-ds]": {
+                "editor.semanticHighlighting.enabled": true,
                 "editor.wordSeparators": "`~!@#$%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             }

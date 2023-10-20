@@ -35,9 +35,19 @@
       "match": "\\b(as|from|import|literal|union|where|yield)\\b"
     },
     {
-      "name": "entity.name.safe-ds",
+      "name": "meta.safe-ds",
       "begin": "\\`",
       "end": "\\`"
+    },
+    {
+      "name": "string.interpolated.safe-ds",
+      "begin": "\"|}}",
+      "end": "{{|\"",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
     },
     {
       "name": "string.quoted.double.safe-ds",

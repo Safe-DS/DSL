@@ -11,7 +11,7 @@ import {
 } from 'langium';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { registerValidationChecks } from './validation/safe-ds-validator.js';
-import { SafeDsFormatter } from './formatting/safe-ds-formatter.js';
+import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
 import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
@@ -22,6 +22,8 @@ import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClassHierarchy } from './typing/safe-ds-class-hierarchy.js';
+import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -30,6 +32,9 @@ export type SafeDsAddedServices = {
     builtins: {
         Annotations: SafeDsAnnotations;
         Classes: SafeDsClasses;
+    };
+    evaluation: {
+        PartialEvaluator: SafeDsPartialEvaluator;
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
@@ -59,11 +64,15 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
     },
+    evaluation: {
+        PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),
+    },
     helpers: {
         NodeMapper: (services) => new SafeDsNodeMapper(services),
     },
     lsp: {
         Formatter: () => new SafeDsFormatter(),
+        SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
     },
     parser: {
         ValueConverter: () => new SafeDsValueConverter(),

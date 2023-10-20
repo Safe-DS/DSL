@@ -2,7 +2,7 @@
 
 _Results_ define the outputs of some declaration when it is [called][calls]. Here is an example:
 
-```txt
+```sds
 result: Int
 ```
 
@@ -16,7 +16,7 @@ Here is a breakdown of the syntax:
 
 Let us now look at a full example of a [segment][segments] called `doSomething` with two results:
 
-```txt
+```sds
 segment doSomething() -> (result1: Int, result2: Boolean) {
     // ...
 }
@@ -33,11 +33,11 @@ The interesting part is the list of results, which uses the following syntactic 
 
 In case that the callable produces only a single result, we can omit the parentheses. The following two declarations are, hence, equivalent:
 
-```txt
+```sds
 segment doSomething1() -> (result: Int) {}
 ```
 
-```txt
+```sds
 segment doSomething2() -> result: Int {}
 ```
 
@@ -45,11 +45,11 @@ segment doSomething2() -> result: Int {}
 
 In case that the callable produces no results, we can usually omit the entire results list. The following two declarations are, hence equivalent:
 
-```txt
+```sds
 segment doSomething1() -> () {}
 ```
 
-```txt
+```sds
 segment doSomething2() {}
 ```
 
@@ -66,6 +66,6 @@ Since Python results do not have a name, the names of Safe-DS results can be arb
 [stub-language]: ../stub-language/README.md
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
-[callable-types]: types.md#callable-type
+[callable-types]: types.md#callable-types
 [segments]: ../pipeline-language/segments.md
 [calls]: ../pipeline-language/expressions.md#calls

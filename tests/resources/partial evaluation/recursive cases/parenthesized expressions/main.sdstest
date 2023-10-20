@@ -1,0 +1,11 @@
+package tests.partialValidation.recursiveCases.parenthesizedExpression
+
+pipeline test {
+    // $TEST$ equivalence_class value1
+    // $TEST$ equivalence_class value1
+    »(»1«)«;
+
+    // $TEST$ equivalence_class value2
+    // $TEST$ equivalence_class value2
+    »(»null«)«;
+}
