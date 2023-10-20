@@ -18,5 +18,4 @@ segment mySegment3(
     myBlockLambda;
     myExpressionLambda;
     myPipeline;
-    mySegment2;
 }
