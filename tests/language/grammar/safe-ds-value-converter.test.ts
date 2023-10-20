@@ -4,7 +4,9 @@ import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import {
     isSdsClass,
+    isSdsInt,
     isSdsModule,
+    isSdsString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
@@ -13,87 +15,175 @@ import {
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 
 describe('runConverter', () => {
-    it('should remove backticks from IDs (package)', async () => {
-        const code = `
-            package \`foo\`.bar
-        `;
+    describe('ID', () => {
+        it('should remove backticks (package)', async () => {
+            const code = `
+                package \`foo\`.bar
+            `;
 
-        const module = await getNodeOfType(services, code, isSdsModule);
-        expect(module.name).toBe('foo.bar');
+            const module = await getNodeOfType(services, code, isSdsModule);
+            expect(module.name).toBe('foo.bar');
+        });
+
+        it('should remove backticks (declaration)', async () => {
+            const code = `
+                class \`MyClass\`
+            `;
+
+            const firstClass = await getNodeOfType(services, code, isSdsClass);
+            expect(firstClass.name).toBe('MyClass');
+        });
     });
 
-    it('should remove backticks from IDs (declaration)', async () => {
-        const code = `
-            class \`MyClass\`
-        `;
+    describe('INT', () => {
+        it('should return a bigint', async () => {
+            const code = `
+                pipeline myPipeline {
+                    123;
+                }
+            `;
 
-        const firstClass = await getNodeOfType(services, code, isSdsClass);
-        expect(firstClass.name).toBe('MyClass');
+            const firstInt = await getNodeOfType(services, code, isSdsInt);
+            expect(firstInt.value).toBe(123n);
+        });
     });
 
-    it('should remove delimiters from TEMPLATE_STRING_STARTs', async () => {
-        const code = `
-            pipeline myPipeline {
-                "start{{ 1 }}inner{{ 2 }}end";
-            }
-        `;
+    const escapeSequences = [
+        {
+            escaped: '\\b',
+            unescaped: '\b',
+        },
+        {
+            escaped: '\\t',
+            unescaped: '\t',
+        },
+        {
+            escaped: '\\n',
+            unescaped: '\n',
+        },
+        {
+            escaped: '\\f',
+            unescaped: '\f',
+        },
+        {
+            escaped: '\\r',
+            unescaped: '\r',
+        },
+        {
+            escaped: '\\"',
+            unescaped: '"',
+        },
+        {
+            escaped: '\\\'',
+            unescaped: '\'',
+        },
+        {
+            escaped: '\\\\',
+            unescaped: '\\',
+        },
+        {
+            escaped: '\\{',
+            unescaped: '{',
+        },
+        {
+            escaped: '\\u0061',
+            unescaped: 'a',
+        },
+    ];
 
-        const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringStart);
-        expect(firstTemplateStringStart.value).toBe('start');
+    describe('STRING', () => {
+        it('should remove delimiters', async () => {
+            const code = `
+                pipeline myPipeline {
+                    "text";
+                }
+            `;
+
+            const firstTemplateStringStart = await getNodeOfType(services, code, isSdsString);
+            expect(firstTemplateStringStart.value).toBe('text');
+        });
+
+        it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
+            const code = `
+                pipeline myPipeline {
+                    "${escaped}";
+                }
+            `;
+
+            const firstTemplateStringStart = await getNodeOfType(services, code, isSdsString);
+            expect(firstTemplateStringStart.value).toBe(unescaped);
+        });
     });
 
-    it('should handle escape sequences in TEMPLATE_STRING_STARTs', async () => {
-        const code = `
-            pipeline myPipeline {
-                "\\tstart{{ 1 }}inner{{ 2 }}end";
-            }
-        `;
+    describe('TEMPLATE_STRING_START', () => {
+        it('should remove delimiters', async () => {
+            const code = `
+                pipeline myPipeline {
+                    "start{{ 1 }}inner{{ 2 }}end";
+                }
+            `;
 
-        const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringStart);
-        expect(firstTemplateStringStart.value).toBe('\tstart');
+            const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringStart);
+            expect(firstTemplateStringStart.value).toBe('start');
+        });
+
+        it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
+            const code = `
+                pipeline myPipeline {
+                    "${escaped}{{ 1 }}inner{{ 2 }}end";
+                }
+            `;
+
+            const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringStart);
+            expect(firstTemplateStringStart.value).toBe(unescaped);
+        });
     });
 
-    it('should remove delimiters from TEMPLATE_STRING_INNERs', async () => {
-        const code = `
-            pipeline myPipeline {
-                "start{{ 1 }}inner{{ 2 }}end";
-            }
-        `;
+    describe('TEMPLATE_STRING_INNER', () => {
+        it('should remove delimiters', async () => {
+            const code = `
+                pipeline myPipeline {
+                    "start{{ 1 }}inner{{ 2 }}end";
+                }
+            `;
 
-        const firstTemplateStringInner = await getNodeOfType(services, code, isSdsTemplateStringInner);
-        expect(firstTemplateStringInner.value).toBe('inner');
+            const firstTemplateStringInner = await getNodeOfType(services, code, isSdsTemplateStringInner);
+            expect(firstTemplateStringInner.value).toBe('inner');
+        });
+
+        it.each(escapeSequences)('should unescape $escaped', async ({escaped, unescaped}) => {
+            const code = `
+                pipeline myPipeline {
+                    "start{{ 1 }}${escaped}{{ 2 }}end";
+                }
+            `;
+
+            const firstTemplateStringInner = await getNodeOfType(services, code, isSdsTemplateStringInner);
+            expect(firstTemplateStringInner.value).toBe(unescaped);
+        });
     });
 
-    it('should handle escape sequences in TEMPLATE_STRING_INNERs', async () => {
-        const code = `
-            pipeline myPipeline {
-                "start{{ 1 }}\\tinner{{ 2 }}end";
-            }
-        `;
+    describe('TEMPLATE_STRING_END', () => {
+        it('should remove delimiters', async () => {
+            const code = `
+                pipeline myPipeline {
+                    "start{{ 1 }}inner{{ 2 }}end";
+                }
+            `;
 
-        const firstTemplateStringInner = await getNodeOfType(services, code, isSdsTemplateStringInner);
-        expect(firstTemplateStringInner.value).toBe('\tinner');
-    });
+            const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
+            expect(firstTemplateStringEnd.value).toBe('end');
+        });
 
-    it('should remove delimiters from TEMPLATE_STRING_ENDs', async () => {
-        const code = `
-            pipeline myPipeline {
-                "start{{ 1 }}inner{{ 2 }}end";
-            }
-        `;
+        it.each(escapeSequences)('should unescape $escaped', async ({escaped, unescaped}) => {
+            const code = `
+                pipeline myPipeline {
+                    "start{{ 1 }}inner{{ 2 }}${escaped}";
+                }
+            `;
 
-        const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
-        expect(firstTemplateStringEnd.value).toBe('end');
-    });
-
-    it('should handle escape sequences in TEMPLATE_STRING_ENDs', async () => {
-        const code = `
-            pipeline myPipeline {
-                "start{{ 1 }}inner{{ 2 }}\\tend";
-            }
-        `;
-
-        const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
-        expect(firstTemplateStringEnd.value).toBe('\tend');
+            const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
+            expect(firstTemplateStringEnd.value).toBe(unescaped);
+        });
     });
 });

@@ -10,7 +10,7 @@ export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
     const partialEvaluator = services.evaluation.PartialEvaluator;
     const typeComputer = services.types.TypeComputer;
 
-    const zeroInt = new IntConstant(BigInt(0));
+    const zeroInt = new IntConstant(0n);
     const zeroFloat = new FloatConstant(0.0);
     const minusZeroFloat = new FloatConstant(-0.0);
 

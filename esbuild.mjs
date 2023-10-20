@@ -50,7 +50,7 @@ const ctx = await esbuild.context({
     entryPoints: ['src/cli/main.ts', 'src/extension/main.ts', 'src/language/main.ts'],
     outdir: 'out',
     bundle: true,
-    target: 'ES2017',
+    target: 'ES2020',
     // VSCode's extension host is still using cjs, so we need to transform the code
     format: 'cjs',
     // To prevent confusing node, we explicitly use the `.cjs` extension
