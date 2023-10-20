@@ -15,9 +15,9 @@ requiredParameter: Int
 
 Here are the pieces of syntax:
 
-- The name of the parameter (here `requiredParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+- The name of the parameter (here `#!sds requiredParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of parameters.
 - A colon.
-- The [type][types] of the parameter (here `Int`).
+- The [type][types] of the parameter (here `#!sds Int`).
 
 ## Optional Parameters
 
@@ -29,15 +29,15 @@ optionalParameter: Int = 1
 
 These are the syntactic elements:
 
-- The name of the parameter (here `optionalParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of parameters.
+- The name of the parameter (here `#!sds optionalParameter`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of parameters.
 - A colon.
-- The [type][types] of the parameter (here `Int`).
+- The [type][types] of the parameter (here `#!sds Int`).
 - An equals sign.
-- The default value of the parameter (here `1`). This must be a constant expression, i.e. something that can be evaluated by the compiler. Particularly [calls][calls] usually do not fulfill this requirement.
+- The default value of the parameter (here `#!sds 1`). This must be a constant expression, i.e. something that can be evaluated by the compiler. Particularly [calls][calls] usually do not fulfill this requirement.
 
 ## Complete Example
 
-Let us now look at a full example of a [segment][segments] called `doSomething` with one [required parameter](#required-parameters) and one [optional parameter](#optional-parameters):
+Let us now look at a full example of a [segment][segments] called `#!sds doSomething` with one [required parameter](#required-parameters) and one [optional parameter](#optional-parameters):
 
 ```sds
 segment doSomething(requiredParameter: Int, optionalParameter: Boolean = false) {
@@ -72,7 +72,7 @@ Let's look at these elements in turn.
 
 ### Matching Name
 
-By default, parameter names in Safe-DS must be identical to their names in Python. If this is not desired, for example due to clashing name conventions in Safe-DS and Python, the `@PythonName` annotation can be used to link a Safe-DS parameter to a Python parameter with a different name. Here is an example:
+By default, parameter names in Safe-DS must be identical to their names in Python. If this is not desired, for example due to clashing name conventions in Safe-DS and Python, the `#!sds @PythonName` annotation can be used to link a Safe-DS parameter to a Python parameter with a different name. Here is an example:
 
 ```py
 # Python code
@@ -90,7 +90,7 @@ fun accuracy(
 ) -> accuracy: Float
 ```
 
-In this case, the Safe-DS parameters `xPred` and `xTest` refer to the Python parameters `x_pred` and `x_test` respectively.
+In this case, the Safe-DS parameters `#!sds xPred` and `#!sds xTest` refer to the Python parameters `#!py x_pred` and `#!py x_test` respectively.
 
 ### Matching Type
 
@@ -146,14 +146,14 @@ fun optional(a: Int = 1)
 
 Most commonly, default values in Python are literals, since default values are only evaluated once in Python rather than every time the function is called. The following table shows how Safe-DS literals and Python literals correspond:
 
-| Safe-DS Literal                       | Python Literal         |
-|---------------------------------------|------------------------|
-| `1` ([int][int-literals])             | `1`                    |
-| `1.0` ([float][float-literals])       | `1.0`                  |
-| `"hello"` ([string][string-literals]) | `"hello"` or `'hello'` |
-| `false` ([boolean][boolean-literals]) | `False`                |
-| `true` ([boolean][boolean-literals])  | `True`                 |
-| `null` ([null][null-literals])        | `None`                 |
+| Safe-DS Literal                       | Python Literal                    |
+|---------------------------------------|-----------------------------------|
+| `#!sds 1` ([int][int-literals])             | `#!py 1`                          |
+| `#!sds 1.0` ([float][float-literals])       | `#!py 1.0`                        |
+| `#!sds "hello"` ([string][string-literals]) | `#!py "hello"` or `#!sds 'hello'` |
+| `#!sds false` ([boolean][boolean-literals]) | `#!py False`                      |
+| `#!sds true` ([boolean][boolean-literals])  | `#!py True`                       |
+| `#!sds null` ([null][null-literals])        | `#!py None`                       |
 
 [types]: types.md
 [types-python]: types.md#corresponding-python-code

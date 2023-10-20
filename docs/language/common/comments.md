@@ -27,4 +27,4 @@ comment
 */
 ```
 
-They are started with `/*` and end at the inverted delimiter `*/`. There must be no space between the slash and the star. Everything in between the delimiters is the text of the comment.
+They are started with `#!sds /*` and end at the inverted delimiter `#!sds */`. There must be no space between the slash and the star. Everything in between the delimiters is the text of the comment.
