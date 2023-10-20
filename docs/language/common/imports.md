@@ -64,7 +64,7 @@ from safeds.model.regression import DecisionTree as StdlibDecisionTree, RandomFo
 
 We can also import all declarations in a [package][packages] with a single import. While this saves some typing, it also increases the likelihood of name conflicts and can make it harder for readers of the code to determine where a declaration comes from. Therefore, this should be used with caution.
 
-Nevertheless, let us look at an example, which imports all declarations from the [package][packages] `safeds.model.regression`:
+Nevertheless, let us look at an example, which imports all declarations from the [package][packages] `#!sds safeds.model.regression`:
 
 ```sds
 from safeds.model.regression import *
@@ -72,12 +72,12 @@ from safeds.model.regression import *
 
 Here is the breakdown of the syntax:
 
-- The keyword `from`.
-- The name of the [package][packages] to import (here `safeds.model.regression`).
-- The keyword `import`.
+- The keyword `#!sds from`.
+- The name of the [package][packages] to import (here `#!sds safeds.model.regression`).
+- The keyword `#!sds import`.
 - A star.
 
-Afterward, we can again access declarations by their simple name, such as the [class][classes] `DecisionTree`:
+Afterward, we can again access declarations by their simple name, such as the [class][classes] `#!sds DecisionTree`:
 
 ```sds
 DecisionTree()
@@ -85,7 +85,7 @@ DecisionTree()
 
 [Aliases](#qualified-imports-with-alias) cannot be used together with wildcard imports.
 
-Note that declarations in subpackages, i.e. packages that have a different name but the same prefix as the imported one, are **not** imported. Therefore, if we would only `import safeds.model`, we could no longer access the [class][classes] `DecisionTree`.
+Note that declarations in subpackages, i.e. packages that have a different name but the same prefix as the imported one, are **not** imported. Therefore, if we would instead write `#!sds from safeds.model import *`, we could no longer access the [class][classes] `#!sds DecisionTree`.
 
 [classes]: ../stub-language/classes.md
 [packages]: packages.md
