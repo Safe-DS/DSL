@@ -766,7 +766,7 @@ SdsFloat returns SdsFloat:
 ;
 
 interface SdsInt extends SdsNumber {
-    value: number
+    value: bigint
 }
 
 SdsInt returns SdsInt:
@@ -1069,7 +1069,7 @@ terminal FLOAT returns number
     | DECIMAL_DIGIT+ FLOAT_EXPONENT;
 terminal fragment DECIMAL_DIGIT: /[0-9]/;
 terminal fragment FLOAT_EXPONENT: ('e' | 'E' )('+' | '-' )? DECIMAL_DIGIT+;
-terminal INT returns number: DECIMAL_DIGIT+;
+terminal INT returns bigint: DECIMAL_DIGIT+;
 terminal STRING returns string: STRING_START STRING_TEXT* STRING_END;
 terminal fragment STRING_START: STRING_DELIMITER;
 terminal fragment STRING_END: '{'? STRING_DELIMITER;
