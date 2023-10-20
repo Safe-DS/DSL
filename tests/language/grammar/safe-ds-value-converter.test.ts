@@ -78,8 +78,8 @@ describe('runConverter', () => {
             unescaped: '\0',
         },
         {
-            escaped: '\\\'',
-            unescaped: '\'',
+            escaped: "\\'",
+            unescaped: "'",
         },
         {
             escaped: '\\"',
@@ -179,7 +179,7 @@ describe('runConverter', () => {
             expect(firstTemplateStringInner.value).toBe('inner');
         });
 
-        it.each(escapeSequences)('should unescape $escaped', async ({escaped, unescaped}) => {
+        it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
                     "start{{ 1 }}${escaped}{{ 2 }}end";
@@ -203,7 +203,7 @@ describe('runConverter', () => {
             expect(firstTemplateStringEnd.value).toBe('end');
         });
 
-        it.each(escapeSequences)('should unescape $escaped', async ({escaped, unescaped}) => {
+        it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
                     "start{{ 1 }}inner{{ 2 }}${escaped}";
