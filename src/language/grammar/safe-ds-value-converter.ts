@@ -27,22 +27,10 @@ const convertString = (input: string, openingDelimiterLength: number, closingDel
 
     for (let i = openingDelimiterLength; i <= endIndex; i++) {
         const current = input.charAt(i);
-        if (current === '\\') {
-            const next = input.charAt(++i);
-            if (next === 'u') {
-                const codeEndIndex = Math.min(i + 5, endIndex + 1);
-                const code = input.substring(i + 1, codeEndIndex);
-
-                if (code.match(/[\da-fA-F]{4}/gu)) {
-                    result += String.fromCharCode(parseInt(code, 16));
-                } else {
-                    result += 'u' + code;
-                }
-
-                i = codeEndIndex;
-            } else {
-                result += convertEscapeCharacter(next);
-            }
+        if (current === '\\' && i < endIndex) {
+            const [stringToAdd, newIndex] = handleEscapeSequence(input, i + 1, endIndex);
+            result += stringToAdd;
+            i = newIndex - 1; // -1 because the loop will increment it
         } else {
             result += current;
         }
@@ -51,23 +39,42 @@ const convertString = (input: string, openingDelimiterLength: number, closingDel
     return result;
 };
 
-const convertEscapeCharacter = (char: string): string => {
-    switch (char) {
+/**
+ * Handle an escape sequence.
+ *
+ * @param input The entire input string.
+ * @param index The index of the escape sequence (after the slash).
+ * @param endIndex The index of the last character of the input string, excluding delimiters.
+ * @returns An array containing the string to add to the result and the new index.
+ */
+const handleEscapeSequence = (input: string, index: number, endIndex: number): [string, number] => {
+    const current = input.charAt(index);
+    switch (current) {
         case 'b':
-            return '\b';
+            return ['\b', index + 1];
         case 'f':
-            return '\f';
+            return ['\f', index + 1];
         case 'n':
-            return '\n';
+            return ['\n', index + 1];
         case 'r':
-            return '\r';
+            return ['\r', index + 1];
         case 't':
-            return '\t';
+            return ['\t', index + 1];
         case 'v':
-            return '\v';
+            return ['\v', index + 1];
         case '0':
-            return '\0';
-        default:
-            return char;
+            return ['\0', index + 1];
     }
+
+    if (current === 'u' && index + 4 <= endIndex) {
+        const code = input.substring(index + 1, index + 5);
+        if (code.match(/[\da-fA-F]{4}/gu)) {
+            return [
+                String.fromCharCode(parseInt(code, 16)),
+                index + 5,
+            ];
+        }
+    }
+
+    return [current, index + 1];
 };
