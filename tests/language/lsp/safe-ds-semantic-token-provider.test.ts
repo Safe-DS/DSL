@@ -121,7 +121,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
             expectedTokenTypes: [SemanticTokenTypes.class],
         },
         {
-            testName: "named type",
+            testName: 'named type',
             code: `
                 enum E {}
 
@@ -157,7 +157,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
                 }
             `,
             expectedTokenTypes: [SemanticTokenTypes.typeParameter],
-        }
+        },
     ])('should assign the correct token types ($testName)', async ({ code, expectedTokenTypes }) => {
         await checkSemanticTokens(code, expectedTokenTypes);
     });
