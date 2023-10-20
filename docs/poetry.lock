@@ -361,6 +361,20 @@ files = [
 ]
 
 [[package]]
+name = "mkdocs-same-dir"
+version = "0.1.2"
+description = "MkDocs plugin to allow placing mkdocs.yml in the same directory as documentation"
+optional = false
+python-versions = ">=3.6,<4.0"
+files = [
+    {file = "mkdocs-same-dir-0.1.2.tar.gz", hash = "sha256:dfb0d8e8b4930a8c7fc3f8ad558d647e8243cd4e1b6e6178e5fa8c1423b0ee45"},
+    {file = "mkdocs_same_dir-0.1.2-py3-none-any.whl", hash = "sha256:627991894d51a9fcc54e7d3f0c48a2be3c0a248e015bbeb8e90d4f95f1ac59ba"},
+]
+
+[package.dependencies]
+mkdocs = ">=1.0.3,<2.0.0"
+
+[[package]]
 name = "packaging"
 version = "23.2"
 description = "Core utilities for Python packages"
@@ -704,4 +718,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2d189411ece371be96b538ae17cbc247b0972694f95b15fc67fc65b8bb9a0572"
+content-hash = "714d7617010384e744baea954a8fd7553c981bef24bb1ebcca21c5125ba3b012"

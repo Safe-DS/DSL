@@ -4,6 +4,8 @@ repo_name: Safe-DS/DSL
 edit_uri: edit/main/docs/
 site_url: !ENV READTHEDOCS_CANONICAL_URL
 strict: true
+docs_dir: .
+site_dir: ../site
 
 nav:
   - Home:
@@ -77,6 +79,7 @@ theme:
 
 plugins:
   - glightbox
+  - same-dir
   - search
 
 markdown_extensions:
