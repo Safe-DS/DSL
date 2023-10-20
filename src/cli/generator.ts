@@ -196,10 +196,7 @@ const generateSegment = function (
 };
 
 const generateParameters = function (parameters: SdsParameterList | undefined, frame: GenerationInfoFrame): string {
-    if (parameters === undefined) {
-        return '';
-    }
-    const result = parameters.parameters.map((param) => generateParameter(param, frame));
+    const result = (parameters?.parameters || []).map((param) => generateParameter(param, frame));
     return result.join(', ');
 };
 
