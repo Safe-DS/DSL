@@ -1,6 +1,0 @@
-[project]
-name = "safe-ds-lexer"
-version = "0.1.0"
-
-[project.entry-points."pygments.lexers"]
-sds = "safe_ds_lexer:SafeDsLexer"
