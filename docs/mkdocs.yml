@@ -6,6 +6,8 @@ site_url: !ENV READTHEDOCS_CANONICAL_URL
 strict: true
 docs_dir: .
 site_dir: ../site
+exclude_docs:
+  lexer/
 
 nav:
   - Home:
