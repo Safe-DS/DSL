@@ -334,10 +334,6 @@ const generateBlockLambda = function (blockLambda: SdsBlockLambda, frame: Genera
 };
 
 const generateExpression = function (expression: SdsExpression, frame: GenerationInfoFrame): string {
-    if (isSdsTemplateString(expression)) {
-        return `f'${expression.expressions.map((expr) => generateExpression(expr, frame)).join('')}'`;
-    }
-
     if (isSdsTemplateStringPart(expression)) {
         if (isSdsTemplateStringStart(expression)) {
             return `${formatStringSingleLine(expression.value)}{ `;
@@ -362,6 +358,10 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         return `'${formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
     }
     // Handled after constant expressions: EnumVariant, List, Map
+
+    if (isSdsTemplateString(expression)) {
+        return `f'${expression.expressions.map((expr) => generateExpression(expr, frame)).join('')}'`;
+    }
 
     if (isSdsMap(expression)) {
         const mapContent = expression.entries.map(
