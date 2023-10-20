@@ -23,18 +23,18 @@ String literals describe text. Their syntax is simply text enclosed by double qu
 
 | Escape sequence | Meaning                                                              |
 |-----------------|----------------------------------------------------------------------|
-| `#!sds \b`      | Backspace                                                            |
-| `#!sds \f`      | Form feed                                                            |
-| `#!sds \n`      | New line                                                             |
-| `#!sds \r`      | Carriage return                                                      |
-| `#!sds \t`      | Tab                                                                  |
-| `#!sds \v`      | Vertical tab                                                         |
-| `#!sds \0`      | Null character                                                       |
-| `#!sds \'`      | Single quote                                                         |
-| `#!sds \"`      | Double quote                                                         |
-| `#!sds \{`      | Opening curly brace (used for [template strings](#template-strings)) |
-| `#!sds \\`      | Backslash                                                            |
-| `#!sds \uXXXX`  | Unicode character, where `XXXX` is its hexadecimal code              |
+| `\b`            | Backspace                                                            |
+| `\f`            | Form feed                                                            |
+| `\n`            | New line                                                             |
+| `\r`            | Carriage return                                                      |
+| `\t`            | Tab                                                                  |
+| `\v`            | Vertical tab                                                         |
+| `\0`            | Null character                                                       |
+| `\'`            | Single quote                                                         |
+| `\"`            | Double quote                                                         |
+| `\{`            | Opening curly brace (used for [template strings](#template-strings)) |
+| `\\`            | Backslash                                                            |
+| `\uXXXX`        | Unicode character, where `XXXX` is its hexadecimal code              |
 
 String literals can contain also contain raw line breaks:
 
@@ -136,7 +136,7 @@ nullableExpression ?: 42
 
 The syntax for template strings is similar to [string literals](#string-literals): They are also delimited by double quotes, the text can contain escape sequences, and raw newlines can be inserted. The additional syntax are _template expressions_, which are any expression enclosed by `#!sds {{` and `#!sds }}`. There must be no space between the curly braces.
 
-These template expressions are evaluated, converted to a string and inserted into the template string at their position. The template string in the example above is, hence, equivalent to the [string literal](#string-literals) "1 + 2 = 3".
+These template expressions are evaluated, converted to a string and inserted into the template string at their position. The template string in the example above is, hence, equivalent to the [string literal](#string-literals) `#!sds "1 + 2 = 3"`.
 
 ## References
 
