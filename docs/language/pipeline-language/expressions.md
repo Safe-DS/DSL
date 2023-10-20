@@ -24,15 +24,17 @@ String literals describe text. Their syntax is simply text enclosed by double qu
 | Escape sequence | Meaning                                                              |
 |-----------------|----------------------------------------------------------------------|
 | `#!sds \b`      | Backspace                                                            |
-| `#!sds \t`      | Tab                                                                  |
-| `#!sds \n`      | New line                                                             |
 | `#!sds \f`      | Form feed                                                            |
+| `#!sds \n`      | New line                                                             |
 | `#!sds \r`      | Carriage return                                                      |
-| `#!sds \"`      | Double quote                                                         |
+| `#!sds \t`      | Tab                                                                  |
+| `#!sds \v`      | Vertical tab                                                         |
+| `#!sds \0`      | Null character                                                       |
 | `#!sds \'`      | Single quote                                                         |
-| `#!sds \\`      | Backslash                                                            |
+| `#!sds \"`      | Double quote                                                         |
 | `#!sds \{`      | Opening curly brace (used for [template strings](#template-strings)) |
-| `#!sds \uXXXX`  | Unicode character, where `#!sds XXXX` is its hexadecimal index       |
+| `#!sds \\`      | Backslash                                                            |
+| `#!sds \uXXXX`  | Unicode character, where `XXXX` is its hexadecimal code              |
 
 String literals can contain also contain raw line breaks:
 
