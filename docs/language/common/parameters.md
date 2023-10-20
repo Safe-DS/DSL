@@ -90,7 +90,7 @@ fun accuracy(
 ) -> accuracy: Float
 ```
 
-In this case, the Safe-DS parameters `#!sds xPred` and `#!sds xTest` refer to the Python parameters `#!sds x_pred` and `#!sds x_test` respectively.
+In this case, the Safe-DS parameters `#!sds xPred` and `#!sds xTest` refer to the Python parameters `#!py x_pred` and `#!py x_test` respectively.
 
 ### Matching Type
 
@@ -146,14 +146,14 @@ fun optional(a: Int = 1)
 
 Most commonly, default values in Python are literals, since default values are only evaluated once in Python rather than every time the function is called. The following table shows how Safe-DS literals and Python literals correspond:
 
-| Safe-DS Literal                       | Python Literal         |
-|---------------------------------------|------------------------|
-| `#!sds 1` ([int][int-literals])             | `#!sds 1`                    |
-| `#!sds 1.0` ([float][float-literals])       | `#!sds 1.0`                  |
-| `#!sds "hello"` ([string][string-literals]) | `#!sds "hello"` or `#!sds 'hello'` |
-| `#!sds false` ([boolean][boolean-literals]) | `#!sds False`                |
-| `#!sds true` ([boolean][boolean-literals])  | `#!sds True`                 |
-| `#!sds null` ([null][null-literals])        | `#!sds None`                 |
+| Safe-DS Literal                       | Python Literal                    |
+|---------------------------------------|-----------------------------------|
+| `#!sds 1` ([int][int-literals])             | `#!py 1`                          |
+| `#!sds 1.0` ([float][float-literals])       | `#!py 1.0`                        |
+| `#!sds "hello"` ([string][string-literals]) | `#!py "hello"` or `#!sds 'hello'` |
+| `#!sds false` ([boolean][boolean-literals]) | `#!py False`                      |
+| `#!sds true` ([boolean][boolean-literals])  | `#!py True`                       |
+| `#!sds null` ([null][null-literals])        | `#!py None`                       |
 
 [types]: types.md
 [types-python]: types.md#corresponding-python-code

@@ -329,41 +329,41 @@ from typing import Callable, Optional, Tuple, TypeVar, Union
 
 The following table shows how Safe-DS types can be written as Python [type hints][type-hints]:
 
-| Safe-DS Type                           | Python Type Hint                                                   |
-|----------------------------------------|--------------------------------------------------------------------|
-| `#!sds Boolean`                              | `#!sds bool`                                                             |
-| `#!sds Float`                                | `#!sds float`                                                            |
-| `#!sds Int`                                  | `#!sds int`                                                              |
-| `#!sds String`                               | `#!sds str`                                                              |
-| `#!sds SomeClass`                            | `#!sds SomeClass`                                                        |
-| `#!sds SomeEnum`                             | `#!sds SomeEnum`                                                         |
-| `#!sds SomeClass?`                           | `#!sds Optional[SomeClass]`                                              |
-| `#!sds SomeEnum?`                            | `#!sds Optional[SomeEnum]`                                               |
-| `#!sds SomeSpecialList<Int>`                 | `#!sds SomeSpecialList[int]`                                             |
-| `#!sds SomeOuterClass.SomeInnerClass`        | `#!sds SomeOuterClass.SomeInnerClass`                                    |
-| `#!sds SomeEnum.SomeEnumVariant`             | `#!sds SomeEnum.SomeEnumVariant`                                         |
-| `#!sds union<String, Int>`                   | `#!sds Union[str, int]`                                                  |
-| `#!sds (a: Int, b: Int) -> r: Int`           | `#!sds Callable[[int, int], int]`                                        |
-| `#!sds (a: Int, b: Int) -> (r: Int, s: Int)` | `#!sds Callable[[int, int], Tuple[int, int]]`                            |
+| Safe-DS Type                           | Python Type Hint                             |
+|----------------------------------------|----------------------------------------------|
+| `#!sds Boolean`                              | `#!py bool`                                  |
+| `#!sds Float`                                | `#!py float`                                 |
+| `#!sds Int`                                  | `#!py int`                                   |
+| `#!sds String`                               | `#!py str`                                   |
+| `#!sds SomeClass`                            | `#!py SomeClass`                             |
+| `#!sds SomeEnum`                             | `#!py SomeEnum`                              |
+| `#!sds SomeClass?`                           | `#!py Optional[SomeClass]`                   |
+| `#!sds SomeEnum?`                            | `#!py Optional[SomeEnum]`                    |
+| `#!sds SomeSpecialList<Int>`                 | `#!py SomeSpecialList[int]`                  |
+| `#!sds SomeOuterClass.SomeInnerClass`        | `#!py SomeOuterClass.SomeInnerClass`         |
+| `#!sds SomeEnum.SomeEnumVariant`             | `#!py SomeEnum.SomeEnumVariant`              |
+| `#!sds union<String, Int>`                   | `#!py Union[str, int]`                       |
+| `#!sds (a: Int, b: Int) -> r: Int`           | `#!py Callable[[int, int], int]`             |
+| `#!sds (a: Int, b: Int) -> (r: Int, s: Int)` | `#!py Callable[[int, int], Tuple[int, int]]` |
 
 Most of these are rather self-explanatory. We will, however, cover the translation of [callable types](#callable-types) in a little more detail: In Python, the type hint for a callable type has the following general syntax:
 
-```sds
+```txt
 Callable[<list of parameter types>, <result type>]
 ```
 
-To get the `#!sds <list of parameter types>`, simply
+To get the `<list of parameter types>`, simply
 
 1. convert the types of the parameters to their Python syntax,
 2. separate them all by commas,
 3. surround them by square brackets.
 
-Getting the `#!sds <result type`> depends on the number of results. If there is only a single result, simply write down its type. If there are multiple types, do this instead:
+Getting the `<result type`> depends on the number of results. If there is only a single result, simply write down its type. If there are multiple types, do this instead:
 
 1. convert the types of the results to their Python syntax,
 2. separate them all by commas,
-3. add the prefix `#!sds Tuple[`,
-4. add the suffix `#!sds ]`.
+3. add the prefix `Tuple[`,
+4. add the suffix `]`.
 
 [variance]: variance.md
 [parameters]: parameters.md

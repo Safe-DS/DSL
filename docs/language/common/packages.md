@@ -33,7 +33,7 @@ class DecisionTree:
         pass # Implementation omitted
 ```
 
-This file contains the actual implementation of the Python class `#!sds DecisionTree`. We now want to make this Python class available in Safe-DS, which requires the following Safe-DS stub file:
+This file contains the actual implementation of the Python class `#!py DecisionTree`. We now want to make this Python class available in Safe-DS, which requires the following Safe-DS stub file:
 
 ```sds
 // Safe-DS file "safeds/model/regression/_decision_tree/DecisionTree.sdsstub"
@@ -43,7 +43,7 @@ package safeds.model.regression._decision_tree
 class DecisionTree()
 ```
 
-Note that the Safe-DS package corresponds to the path to the Python file, where we replace file separators (here `#!sds /`) by dots and remove the file extension (here `#!sds .py`). Another way to think about this is to ask how a from-import of the Python declaration would look like in Python code that wants to use the Python declaration. In this case we would write
+Note that the Safe-DS package corresponds to the path to the Python file, where we replace file separators (here `/`) by dots and remove the file extension (here `.py`). Another way to think about this is to ask how a from-import of the Python declaration would look like in Python code that wants to use the Python declaration. In this case we would write
 
 ```py
 # Python
@@ -51,7 +51,7 @@ Note that the Safe-DS package corresponds to the path to the Python file, where 
 from safeds.model.regression._decision_tree import DecisionTree
 ```
 
-The part between `#!sds from` and `#!sds import` is exactly what the Safe-DS package has to be.
+The part between `#!py from` and `#!py import` is exactly what the Safe-DS package has to be.
 
 The file path is irrelevant in Safe-DS. For the sake of code organization, however, we advise to use the segments of the package name to create a folder hierarchy and then create a Safe-DS stub file with some fitting name in there.
 
@@ -75,7 +75,7 @@ class DecisionTree:
 from ._decision_tree import DecisionTree
 ```
 
-The addition of the `#!sds __init__.py` file now allows us to import the Python class `#!sds DecisionTree` in another way in Python client code:
+The addition of the `__init__.py` file now allows us to import the Python class `#!py DecisionTree` in another way in Python client code:
 
 ```py
 # Python
@@ -83,7 +83,7 @@ The addition of the `#!sds __init__.py` file now allows us to import the Python 
 from safeds.model.regression import DecisionTree
 ```
 
-Note the omission of the suffix `#!sds ._decision_tree` after `#!sds safeds.model.regression`. Likewise, we can now update the Safe-DS stub code. We again just take everything between `#!sds from` and `#!sds import` and use this as the Safe-DS package name:
+Note the omission of the suffix `#!py ._decision_tree` after `#!py safeds.model.regression`. Likewise, we can now update the Safe-DS stub code. We again just take everything between `#!py from` and `#!py import` and use this as the Safe-DS package name:
 
 ```sds
 // Safe-DS file "safeds/model/regression/DecisionTree.sdsstub"
