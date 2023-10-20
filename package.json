@@ -76,6 +76,7 @@
         ],
         "configurationDefaults": {
             "[safe-ds]": {
+                "editor.semanticHighlighting.enabled": true,
                 "editor.wordSeparators": "`~!@#$%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             }
