@@ -68,7 +68,7 @@ const handleEscapeSequence = (input: string, index: number, endIndex: number): [
 
     if (current === 'u' && index + 4 <= endIndex) {
         const code = input.substring(index + 1, index + 5);
-        if (code.match(/[\da-fA-F]{4}/gu)) {
+        if (code.match(/[0-9a-fA-F]{4}/gu)) {
             return [
                 String.fromCharCode(parseInt(code, 16)),
                 index + 5,
