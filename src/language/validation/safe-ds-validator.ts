@@ -116,6 +116,10 @@ import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModu
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
 import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
+import {
+    literalTypeMustNotContainListLiteral,
+    literalTypeMustNotContainMapLiteral,
+} from './other/types/literalTypes.js';
 
 /**
  * Register custom validation checks.
@@ -197,6 +201,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             lambdaParametersMustNotBeAnnotated,
             lambdaParameterMustNotHaveConstModifier,
         ],
+        SdsLiteralType: [literalTypeMustNotContainListLiteral, literalTypeMustNotContainMapLiteral],
         SdsMap: [mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
