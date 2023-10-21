@@ -1,55 +1,46 @@
 import { AstNode, AstNodeDescription, hasContainerOfType, isAstNode, NodeKindProvider } from 'langium';
 import { CompletionItemKind, SymbolKind } from 'vscode-languageserver';
-import {
-    isSdsAnnotation,
-    isSdsAttribute,
-    isSdsClass,
-    isSdsEnum,
-    isSdsEnumVariant,
-    isSdsFunction,
-    isSdsModule,
-    isSdsParameter,
-    isSdsPipeline,
-    isSdsPlaceholder,
-    isSdsSegment,
-    isSdsTypeParameter,
-} from '../generated/ast.js';
+import { isSdsClass, isSdsFunction, SdsAnnotation } from '../generated/ast.js';
 
 export class SafeDsNodeKindProvider implements NodeKindProvider {
     getSymbolKind(nodeOrDescription: AstNode | AstNodeDescription): SymbolKind {
+        // The WorkspaceSymbolProvider only passes descriptions, where the node might be undefined
         const node = this.getNode(nodeOrDescription);
+        if (isSdsFunction(node) && hasContainerOfType(node, isSdsClass)) {
+            return SymbolKind.Method;
+        }
 
-        if (isSdsAnnotation(node)) {
-            return SymbolKind.Interface;
-        } else if (isSdsAttribute(node)) {
-            return SymbolKind.Property;
-        } else if (isSdsClass(node)) {
-            return SymbolKind.Class;
-        } else if (isSdsEnum(node)) {
-            return SymbolKind.Enum;
-        } else if (isSdsEnumVariant(node)) {
-            return SymbolKind.EnumMember;
-        } else if (isSdsFunction(node)) {
-            if (hasContainerOfType(node, isSdsClass)) {
-                return SymbolKind.Method;
-            } else {
+        const type = this.getNodeType(nodeOrDescription);
+        switch (type) {
+            case SdsAnnotation:
+                return SymbolKind.Interface;
+            case 'SdsAttribute':
+                return SymbolKind.Property;
+            case 'SdsClass':
+                return SymbolKind.Class;
+            case 'SdsEnum':
+                return SymbolKind.Enum;
+            case 'SdsEnumVariant':
+                return SymbolKind.EnumMember;
+            case 'SdsFunction':
                 return SymbolKind.Function;
-            }
-        } else if (isSdsModule(node)) {
-            return SymbolKind.Package;
-        } else if (isSdsParameter(node)) {
-            return SymbolKind.Variable;
-        } else if (isSdsPipeline(node)) {
-            return SymbolKind.Function;
-        } else if (isSdsPlaceholder(node)) {
-            return SymbolKind.Variable;
-        } else if (isSdsSegment(node)) {
-            return SymbolKind.Function;
-        } else if (isSdsTypeParameter(node)) {
-            return SymbolKind.TypeParameter;
-        } /* c8 ignore start */ else {
-            return SymbolKind.Null;
-        } /* c8 ignore stop */
+            case 'SdsModule':
+                return SymbolKind.Package;
+            case 'SdsParameter':
+                return SymbolKind.Variable;
+            case 'SdsPipeline':
+                return SymbolKind.Function;
+            case 'SdsPlaceholder':
+                return SymbolKind.Variable;
+            case 'SdsSegment':
+                return SymbolKind.Function;
+            case 'SdsTypeParameter':
+                return SymbolKind.TypeParameter;
+
+            /* c8 ignore next 2 */
+            default:
+                return SymbolKind.Null;
+        }
     }
 
     /* c8 ignore start */
@@ -64,6 +55,14 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
             return nodeOrDescription;
         } /* c8 ignore start */ else {
             return nodeOrDescription.node;
+        } /* c8 ignore stop */
+    }
+
+    private getNodeType(nodeOrDescription: AstNode | AstNodeDescription): string {
+        if (isAstNode(nodeOrDescription)) {
+            return nodeOrDescription.$type;
+        } /* c8 ignore start */ else {
+            return nodeOrDescription.type;
         } /* c8 ignore stop */
     }
 }
