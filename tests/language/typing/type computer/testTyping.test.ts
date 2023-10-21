@@ -28,7 +28,7 @@ describe('typing', async () => {
         }
 
         // Load all documents
-        await loadDocuments(services, test.uris)
+        await loadDocuments(services, test.uris);
 
         // Ensure all nodes in the equivalence class have the same type
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {
