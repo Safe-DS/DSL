@@ -67,7 +67,7 @@ import {
     SdsExpression,
     SdsFunction,
     SdsIndexedAccess,
-    SdsInfixOperation,
+    SdsInfixOperation, SdsLiteralType,
     SdsMemberAccess,
     SdsParameter,
     SdsPrefixOperation,
@@ -79,13 +79,14 @@ import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     assigneesOrEmpty,
     blockLambdaResultsOrEmpty,
+    literalsOrEmpty,
     parametersOrEmpty,
     resultsOrEmpty,
     typeArgumentsOrEmpty,
 } from '../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
-import { Constant } from '../partialEvaluation/model.js';
+import { Constant, isConstant } from '../partialEvaluation/model.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
 export class SafeDsTypeComputer {
@@ -459,8 +460,7 @@ export class SafeDsTypeComputer {
         if (isSdsCallableType(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsLiteralType(node)) {
-            /* c8 ignore next */
-            return NotImplementedType;
+            return this.computeTypeOfLiteralType(node);
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
@@ -471,6 +471,15 @@ export class SafeDsTypeComputer {
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
+    }
+
+    private computeTypeOfLiteralType(node: SdsLiteralType): Type {
+        const constants = literalsOrEmpty(node).map((it) => this.partialEvaluator.evaluate(it));
+        if (constants.every(isConstant)) {
+            return new LiteralType(constants);
+        } else {
+            return UnknownType;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
