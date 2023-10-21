@@ -90,7 +90,11 @@ import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
-import { indexedAccessesShouldBeUsedWithCaution, mapsShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
+import {
+    indexedAccessesShouldBeUsedWithCaution,
+    literalTypesShouldBeUsedWithCaution,
+    mapsShouldBeUsedWithCaution,
+} from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
     annotationCallArgumentsMustBeConstant,
@@ -201,7 +205,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             lambdaParametersMustNotBeAnnotated,
             lambdaParameterMustNotHaveConstModifier,
         ],
-        SdsLiteralType: [literalTypeMustNotContainListLiteral, literalTypeMustNotContainMapLiteral],
+        SdsLiteralType: [
+            literalTypeMustNotContainListLiteral,
+            literalTypeMustNotContainMapLiteral,
+            literalTypesShouldBeUsedWithCaution,
+        ],
         SdsMap: [mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
