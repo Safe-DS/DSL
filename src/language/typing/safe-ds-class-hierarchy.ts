@@ -24,30 +24,12 @@ export class SafeDsClassHierarchy {
             return false;
         }
 
+        // Nothing is a subclass of everything
         if (node === this.builtinClasses.Nothing) {
             return true;
         }
 
-        return this.streamClassAndSuperclasses(node).includes(other);
-    }
-
-    /**
-     * Returns a stream containing the given class and all its superclasses of the given class. Direct ancestors are
-     * returned first, followed by their ancestors and so on. If there is a cycle in the inheritance hierarchy, the
-     * class is included again once at the end.
-     */
-    streamClassAndSuperclasses(node: SdsClass | undefined): Stream<SdsClass> {
-        if (!node) {
-            return stream();
-        }
-
-        const capturedThis = this;
-        const generator = function* () {
-            yield node;
-            yield* capturedThis.streamSuperclasses(node);
-        };
-
-        return stream(generator());
+        return node === other || this.streamSuperclasses(node).includes(other);
     }
 
     /**

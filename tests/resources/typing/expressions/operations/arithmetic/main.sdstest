@@ -1,6 +1,9 @@
 package tests.typing.operations.arithmetic
 
-pipeline myPipeline {
+fun anyInt() -> r: Int
+fun anyFloat() -> r: Float
+
+pipeline constantOperands {
     // $TEST$ serialization literal<2>
     val additionIntInt = »1 + 1«;
     // $TEST$ serialization literal<0>
@@ -9,8 +12,6 @@ pipeline myPipeline {
     val multiplicationIntInt = »1 * 1«;
     // $TEST$ serialization literal<1>
     val divisionIntInt = »1 / 1«;
-    // $TEST$ serialization literal<-1>
-    val negationInt = »-1«;
 
     // $TEST$ serialization literal<2.5>
     val additionIntFloat = »1 + 1.5«;
@@ -18,11 +19,34 @@ pipeline myPipeline {
     val subtractionIntFloat = »1 - 1.5«;
     // $TEST$ serialization literal<1.5>
     val multiplicationIntFloat = »1 * 1.5«;
+    // $TEST$ serialization literal<1.6>
+    val divisionIntFloat = »1 / 0.625«;
+
+    // $TEST$ serialization literal<2.5>
+    val additionFloatInt = »1.5 + 1«;
+    // $TEST$ serialization literal<0.5>
+    val subtractionFloatInt = »1.5 - 1«;
     // $TEST$ serialization literal<1.5>
-    val divisionIntFloat = »1.5 / 1«;
+    val multiplicationFloatInt = »1.5 * 1«;
+    // $TEST$ serialization literal<1.5>
+    val divisionFloatInt = »1.5 / 1«;
+
+    // $TEST$ serialization literal<2.75>
+    val additionFloatFloat = »1.5 + 1.25«;
+    // $TEST$ serialization literal<0.25>
+    val subtractionFloatFloat = »1.5 - 1.25«;
+    // $TEST$ serialization literal<1.875>
+    val multiplicationFloatFloat = »1.5 * 1.25«;
+    // $TEST$ serialization literal<0.6>
+    val divisionFloatFloat = »1.5 / 2.5«;
+
+    // $TEST$ serialization literal<-1>
+    val negationInt = »-1«;
     // $TEST$ serialization literal<-1.5>
     val negationFloat = »-1.5«;
+}
 
+pipeline invalidOperands {
     // $TEST$ serialization Float
     val additionInvalid = »true + true«;
     // $TEST$ serialization Float
@@ -31,6 +55,50 @@ pipeline myPipeline {
     val multiplicationInvalid  = »true * true«;
     // $TEST$ serialization Float
     val divisionInvalid  = »true / true«;
+
     // $TEST$ serialization Float
     val negationInvalid  = »-true«;
+}
+
+pipeline nonConstantOperands {
+    // $TEST$ serialization Int
+    val additionIntInt = »anyInt() + anyInt()«;
+    // $TEST$ serialization Int
+    val subtractionIntInt = »anyInt() - anyInt()«;
+    // $TEST$ serialization Int
+    val multiplicationIntInt = »anyInt() * anyInt()«;
+    // $TEST$ serialization Int
+    val divisionIntInt = »anyInt() / anyInt()«;
+
+    // $TEST$ serialization Float
+    val additionIntFloat = »anyInt() + anyFloat()«;
+    // $TEST$ serialization Float
+    val subtractionIntFloat = »anyInt() - anyFloat()«;
+    // $TEST$ serialization Float
+    val multiplicationIntFloat = »anyInt() * anyFloat()«;
+    // $TEST$ serialization Float
+    val divisionIntFloat = »anyInt() / anyFloat()«;
+
+    // $TEST$ serialization Float
+    val additionFloatInt = »anyFloat() + anyInt()«;
+    // $TEST$ serialization Float
+    val subtractionFloatInt = »anyFloat() - anyInt()«;
+    // $TEST$ serialization Float
+    val multiplicationFloatInt = »anyFloat() * anyInt()«;
+    // $TEST$ serialization Float
+    val divisionFloatInt = »anyFloat() / anyInt()«;
+
+    // $TEST$ serialization Float
+    val additionFloatFloat = »anyFloat() + anyFloat()«;
+    // $TEST$ serialization Float
+    val subtractionFloatFloat = »anyFloat() - anyFloat()«;
+    // $TEST$ serialization Float
+    val multiplicationFloatFloat = »anyFloat() * anyFloat()«;
+    // $TEST$ serialization Float
+    val divisionFloatFloat = »anyFloat() / anyFloat()«;
+
+    // $TEST$ serialization Int
+    val negationInt = »-anyInt()«;
+    // $TEST$ serialization Float
+    val negationFloat = »-anyFloat()«;
 }

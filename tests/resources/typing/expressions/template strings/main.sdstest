@@ -2,5 +2,8 @@ package tests.typing.expressions.templateStrings
 
 pipeline myPipeline {
     // $TEST$ serialization literal<"1 + 2 = 3">
-    val templateString = »"1 + 2 = {{ 1 + 2 }}"«;
+    val valid = »"1 + 2 = {{ 1 + 2 }}"«;
+
+    // $TEST$ serialization String
+    val invalid = »"1 + 2 = {{ unresolved }}"«;
 }

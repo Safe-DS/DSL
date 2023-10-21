@@ -23,6 +23,7 @@ import {
 } from '../partialEvaluation/model.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
+/* c8 ignore start */
 export class SafeDsTypeChecker {
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
@@ -52,9 +53,9 @@ export class SafeDsTypeChecker {
             return this.staticTypeIsAssignableTo(type, other);
         } else if (type instanceof UnionType) {
             return this.unionTypeIsAssignableTo(type, other);
-        } /* c8 ignore start */ else {
+        } else {
             return false;
-        } /* c8 ignore stop */
+        }
     }
 
     private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
@@ -167,6 +168,7 @@ export class SafeDsTypeChecker {
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
             );
         } else {
+            // TODO: union type
             return false;
         }
     }
@@ -182,9 +184,9 @@ export class SafeDsTypeChecker {
             return this.coreTypes.NothingOrNull;
         } else if (constant instanceof StringConstant) {
             return this.coreTypes.String;
-        } /* c8 ignore start */ else {
+        } else {
             return UnknownType;
-        } /* c8 ignore stop */
+        }
     }
 
     private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
@@ -199,3 +201,4 @@ export class SafeDsTypeChecker {
         return type.equals(other);
     }
 }
+/* c8 ignore stop */

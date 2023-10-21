@@ -22,7 +22,6 @@ import {
     isSdsAssignment,
     isSdsAttribute,
     isSdsBlockLambda,
-    isSdsBoolean,
     isSdsCall,
     isSdsCallable,
     isSdsCallableType,
@@ -32,11 +31,9 @@ import {
     isSdsEnumVariant,
     isSdsExpression,
     isSdsExpressionLambda,
-    isSdsFloat,
     isSdsFunction,
     isSdsIndexedAccess,
     isSdsInfixOperation,
-    isSdsInt,
     isSdsLambda,
     isSdsList,
     isSdsLiteralType,
@@ -45,7 +42,6 @@ import {
     isSdsMemberType,
     isSdsNamedType,
     isSdsNamedTypeDeclaration,
-    isSdsNull,
     isSdsParameter,
     isSdsParenthesizedExpression,
     isSdsPipeline,
@@ -53,7 +49,6 @@ import {
     isSdsReference,
     isSdsResult,
     isSdsSegment,
-    isSdsString,
     isSdsTemplateString,
     isSdsType,
     isSdsTypeProjection,
@@ -67,7 +62,8 @@ import {
     SdsExpression,
     SdsFunction,
     SdsIndexedAccess,
-    SdsInfixOperation, SdsLiteralType,
+    SdsInfixOperation,
+    SdsLiteralType,
     SdsMemberAccess,
     SdsParameter,
     SdsPrefixOperation,
@@ -260,27 +256,17 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
-        // Partial evaluation
+        // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
             return new LiteralType([evaluatedNode]);
         }
 
         // Terminal cases
-        if (isSdsBoolean(node)) {
-            return this.coreTypes.Boolean;
-        } else if (isSdsFloat(node)) {
-            return this.coreTypes.Float;
-        } else if (isSdsInt(node)) {
-            return this.coreTypes.Int;
-        } else if (isSdsList(node)) {
+        if (isSdsList(node)) {
             return this.coreTypes.List;
         } else if (isSdsMap(node)) {
             return this.coreTypes.Map;
-        } else if (isSdsNull(node)) {
-            return this.coreTypes.NothingOrNull;
-        } else if (isSdsString(node)) {
-            return this.coreTypes.String;
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
         }
@@ -477,9 +463,9 @@ export class SafeDsTypeComputer {
         const constants = literalsOrEmpty(node).map((it) => this.partialEvaluator.evaluate(it));
         if (constants.every(isConstant)) {
             return new LiteralType(constants);
-        } else {
+        } /* c8 ignore start */ else {
             return UnknownType;
-        }
+        } /* c8 ignore stop */
     }
 
     // -----------------------------------------------------------------------------------------------------------------

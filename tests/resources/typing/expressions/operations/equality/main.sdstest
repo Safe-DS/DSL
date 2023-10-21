@@ -7,7 +7,16 @@ pipeline myPipeline {
     val notEquals = (»1 != 1«);
 
     // $TEST$ serialization literal<true>
-    val strictlyEquals = (»1 === 1«);
+    val identicalTo = (»1 === 1«);
     // $TEST$ serialization literal<false>
-    val notStrictlyEquals = (»1 !== 1«);
+    val notIdenticalTo = (»1 !== 1«);
+
+    // $TEST$ serialization Boolean
+    val nonConstantEquals = (»1 == unresolved«);
+    // $TEST$ serialization Boolean
+    val nonConstantNotEquals = (»1 != unresolved«);
+    // $TEST$ serialization Boolean
+    val nonConstantIdenticalTo = (»1 === unresolved«);
+    // $TEST$ serialization Boolean
+    val nonConstantNotIdenticalTo = (»1 !== unresolved«);
 }

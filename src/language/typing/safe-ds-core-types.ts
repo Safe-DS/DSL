@@ -6,12 +6,10 @@ import { SdsClass } from '../generated/ast.js';
 
 export class SafeDsCoreTypes {
     private readonly builtinClasses: SafeDsClasses;
-
     private readonly cache: WorkspaceCache<string, Type>;
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
-
         this.cache = new WorkspaceCache(services.shared);
     }
 
@@ -39,9 +37,11 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Map);
     }
 
+    /* c8 ignore start */
     get NothingOrNull(): Type {
         return this.createCoreType(this.builtinClasses.Nothing, true);
     }
+    /* c8 ignore stop */
 
     get String(): Type {
         return this.createCoreType(this.builtinClasses.String);
