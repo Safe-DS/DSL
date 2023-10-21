@@ -1,16 +1,16 @@
 package tests.validation.other.types.unionTypes.mustHaveTypeArguments
 
-// $TEST$ error "A union type must have least one type argument."
+// $TEST$ error "A union type must have at least one type argument."
 segment mySegment1(
     p: union»<>«
 ) {}
 
-// $TEST$ no error "A union type must have least one type argument."
+// $TEST$ no error "A union type must have at least one type argument."
 segment mySegment2(
     p: union»<Int>«
 ) {}
 
-// $TEST$ no error "A union type must have least one type argument."
+// $TEST$ no error "A union type must have at least one type argument."
 segment mySegment3(
     p: union»<Int, Float>«
 ) {}
