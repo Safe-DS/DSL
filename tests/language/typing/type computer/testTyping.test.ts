@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
-import { locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../../helpers/location.js';
 import { createTypingTests } from './creator.js';
-import { getNodeByLocation } from '../../helpers/nodeFinder.js';
+import { getNodeByLocation } from '../../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const typeComputer = services.types.TypeComputer;

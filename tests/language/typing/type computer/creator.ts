@@ -1,14 +1,14 @@
 import {
     listTestSafeDsFilesGroupedByParentDirectory,
     uriToShortenedTestResourceName,
-} from '../../helpers/testResources.js';
+} from '../../../helpers/testResources.js';
 import fs from 'fs';
-import { findTestChecks } from '../../helpers/testChecks.js';
+import { findTestChecks } from '../../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
-import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
+import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
+import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
+import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'typing';

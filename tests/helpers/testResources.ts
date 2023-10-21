@@ -97,21 +97,12 @@ const isNotSkipped = (pathRelativeToResources: string) => {
 };
 
 /**
- * For a list of given URIs, load all files into the current workspace.
+ * Load the documents at the specified URIs into the workspace managed by the given services.
  *
- * @returns List of loaded documents
+ * @returns The loaded documents.
  */
-export const loadAllDocuments = async (services: SafeDsServices, uris: URI[]): Promise<LangiumDocument[]> => {
-    const documents = await Promise.all(uris.map(async (uri) => loadDocumentWithDiagnostics(services, uri)));
-    await services.shared.workspace.DocumentBuilder.build(documents);
+export const loadDocuments = async (services: SafeDsServices, uris: URI[]): Promise<LangiumDocument[]> => {
+    const documents = uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
+    await services.shared.workspace.DocumentBuilder.build(documents, { validation: true });
     return documents;
-};
-
-const loadDocumentWithDiagnostics = async function (services: SafeDsServices, uri: URI) {
-    const parse = parseHelper(services);
-    const code = fs.readFileSync(uri.fsPath).toString();
-    return parse(code, {
-        documentUri: uri.toString(),
-        validation: true,
-    });
 };

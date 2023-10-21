@@ -1,7 +1,7 @@
 import {
     listTestPythonFiles,
     listTestSafeDsFilesGroupedByParentDirectory,
-    loadAllDocuments,
+    loadDocuments,
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
@@ -31,8 +31,9 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     const actualOutputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
     const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
     let runUntil: Location | undefined;
-    // First read all files; Then check diagnostics
-    await loadAllDocuments(services, inputUris);
+
+    // Load all files, so they get linked
+    await loadDocuments(services, inputUris);
 
     for (const uri of inputUris) {
         const code = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri).textDocument.getText();
