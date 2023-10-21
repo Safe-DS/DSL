@@ -1,0 +1,11 @@
+package tests.generator.lists
+
+fun f(param: List<Int>)
+
+fun h() -> result: Int
+
+pipeline test {
+    f([]);
+    f([1, 2, 3]);
+    f([1, h(), h() + 5]);
+}
