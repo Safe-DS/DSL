@@ -11,11 +11,11 @@ def f2(l):
 
 def test():
     def __block_lambda_0(a, b):
-        __block_lambda_d = g()
-        return __block_lambda_d
+        __block_lambda_result_d = g()
+        return __block_lambda_result_d
     f1(__block_lambda_0)
     def __block_lambda_1(a, b):
-        __block_lambda_d = g()
-        __block_lambda_e = g()
-        return __block_lambda_d, __block_lambda_e
+        __block_lambda_result_d = g()
+        __block_lambda_result_e = g()
+        return __block_lambda_result_d, __block_lambda_result_e
     f2(__block_lambda_1)

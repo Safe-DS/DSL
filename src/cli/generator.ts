@@ -310,7 +310,7 @@ const generateAssignment = function (assignment: SdsAssignment, frame: Generatio
 
 const generateAssignee = function (assignee: SdsAssignee): string {
     if (isSdsBlockLambdaResult(assignee)) {
-        return `__block_lambda_${assignee.name}`;
+        return `__block_lambda_result_${assignee.name}`;
     } else if (isSdsPlaceholder(assignee)) {
         return assignee.name;
     } else if (isSdsWildcard(assignee)) {
@@ -326,7 +326,7 @@ const generateBlockLambda = function (blockLambda: SdsBlockLambda, frame: Genera
     const lambdaResult = blockLambdaResultsOrEmpty(blockLambda);
     let lambdaBlock = generateBlock(blockLambda.body, frame);
     if (lambdaResult.length !== 0 && lambdaBlock !== 'pass') {
-        lambdaBlock += `\nreturn ${lambdaResult.map((result) => `__block_lambda_${result.name}`).join(', ')}`;
+        lambdaBlock += `\nreturn ${lambdaResult.map((result) => `__block_lambda_result_${result.name}`).join(', ')}`;
     }
     return expandToString`def ${frame.getUniqueLambdaBlockName(blockLambda)}(${generateParameters(
         blockLambda.parameterList,
