@@ -1,6 +1,6 @@
 import { listTestSafeDsFiles, uriToShortenedTestResourceName } from '../../../helpers/testResources.js';
 import fs from 'fs';
-import { Diagnostic } from 'vscode-languageserver-types';
+import { Diagnostic } from 'vscode-languageserver';
 import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
 import { EmptyFileSystem, URI } from 'langium';
 import { getSyntaxErrors } from '../../../helpers/diagnostics.js';

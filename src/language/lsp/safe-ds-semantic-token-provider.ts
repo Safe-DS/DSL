@@ -29,7 +29,7 @@ import {
     isSdsTypeParameter,
     isSdsTypeParameterConstraint,
 } from '../generated/ast.js';
-import { SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver-types';
+import { SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 

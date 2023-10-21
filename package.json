@@ -109,9 +109,7 @@
         "radash": "^11.0.0",
         "true-myth": "^7.1.0",
         "vscode-languageclient": "^9.0.1",
-        "vscode-languageserver": "^9.0.1",
-        "vscode-languageserver-types": "^3.17.5",
-        "vscode-uri": "^3.0.7"
+        "vscode-languageserver": "^9.0.1"
     },
     "devDependencies": {
         "@lars-reimann/eslint-config": "^5.1.3",

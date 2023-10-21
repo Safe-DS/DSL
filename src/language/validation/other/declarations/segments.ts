@@ -2,7 +2,7 @@ import { SdsSegment } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { parametersOrEmpty, resultsOrEmpty } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { DiagnosticTag } from 'vscode-languageserver-types';
+import { DiagnosticTag } from 'vscode-languageserver';
 
 export const CODE_SEGMENT_DUPLICATE_YIELD = 'segment/duplicate-yield';
 export const CODE_SEGMENT_UNASSIGNED_RESULT = 'segment/unassigned-result';

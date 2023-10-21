@@ -1,5 +1,5 @@
 import { NodeKindProvider } from 'langium';
-import { CompletionItemKind, SymbolKind } from 'vscode-languageserver-types';
+import { CompletionItemKind, SymbolKind } from 'vscode-languageserver';
 
 export class SafeDsNodeKindProvider implements NodeKindProvider {
     getSymbolKind(): SymbolKind {
