@@ -191,7 +191,6 @@ const generateSegment = function (
     const segmentResult = segment.resultList?.results || [];
     let segmentBlock = generateBlock(segment.body, infoFrame);
     if (segmentResult.length !== 0) {
-        // Segment should always have results
         segmentBlock += `\nreturn ${segmentResult.map((result) => `${YIELD_PREFIX}${result.name}`).join(', ')}`;
     }
     return expandToString`def ${getPythonNameOrDefault(services, segment)}(${generateParameters(
