@@ -26,6 +26,7 @@ import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-eval
 import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
 import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
 import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
+import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -99,6 +100,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
 export type SafeDsSharedServices = LangiumSharedServices;
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
+    lsp: {
+        NodeKindProvider: () => new SafeDsNodeKindProvider(),
+    },
     workspace: {
         WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
     },

@@ -2,9 +2,9 @@ import {
     AbstractSemanticTokenProvider,
     AllSemanticTokenTypes,
     AstNode,
+    DefaultSemanticTokenOptions,
     hasContainerOfType,
     SemanticTokenAcceptor,
-    DefaultSemanticTokenOptions,
 } from 'langium';
 import {
     isSdsAnnotation,
