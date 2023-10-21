@@ -126,7 +126,7 @@ import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expres
 import {
     literalTypeMustHaveLiterals,
     literalTypeMustNotContainListLiteral,
-    literalTypeMustNotContainMapLiteral,
+    literalTypeMustNotContainMapLiteral, literalTypeShouldNotHaveDuplicateLiteral,
 } from './other/types/literalTypes.js';
 
 /**
@@ -214,6 +214,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypeMustNotContainListLiteral,
             literalTypeMustNotContainMapLiteral,
             literalTypesShouldBeUsedWithCaution,
+            literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
         SdsMap: [mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [
