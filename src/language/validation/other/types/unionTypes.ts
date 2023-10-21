@@ -27,7 +27,7 @@ export const unionTypeShouldNotHaveDuplicateTypes = (services: SafeDsServices) =
 
         for (const typeArgument of typeArguments) {
             const type = typeComputer.computeType(typeArgument);
-            if (knownTypes.some(it => it.equals(type))) {
+            if (knownTypes.some((it) => it.equals(type))) {
                 accept('warning', `The type '${type.toString()}' was already listed.`, {
                     node: typeArgument,
                     code: CODE_UNION_TYPE_DUPLICATE_TYPE,
