@@ -121,6 +121,7 @@ import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperation
 import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
 import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
 import {
+    literalTypeMustHaveLiterals,
     literalTypeMustNotContainListLiteral,
     literalTypeMustNotContainMapLiteral,
 } from './other/types/literalTypes.js';
@@ -206,6 +207,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             lambdaParameterMustNotHaveConstModifier,
         ],
         SdsLiteralType: [
+            literalTypeMustHaveLiterals,
             literalTypeMustNotContainListLiteral,
             literalTypeMustNotContainMapLiteral,
             literalTypesShouldBeUsedWithCaution,
