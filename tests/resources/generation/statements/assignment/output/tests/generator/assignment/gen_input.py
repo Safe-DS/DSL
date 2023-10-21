@@ -2,11 +2,11 @@
 
 def testStep():
     g()
-    a, _, c = g()
+    a, _, __gen_yield_c = g()
     x, _, _ = g()
     f1(a)
     f1(x)
-    return c
+    return __gen_yield_c
 
 # Pipelines --------------------------------------------------------------------
 

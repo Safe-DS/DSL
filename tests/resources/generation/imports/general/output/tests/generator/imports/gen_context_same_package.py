@@ -1,9 +1,9 @@
 # Steps ------------------------------------------------------------------------
 
 def step1InSamePackage():
-    result = impureFunction()
-    return result
+    __gen_yield_result = impureFunction()
+    return __gen_yield_result
 
 def step2InSamePackage():
-    result = impureFunction()
-    return result
+    __gen_yield_result = impureFunction()
+    return __gen_yield_result

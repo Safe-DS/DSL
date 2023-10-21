@@ -192,7 +192,7 @@ const generateSegment = function (
     let segmentBlock = generateBlock(segment.body, infoFrame);
     if (segmentResult.length !== 0) {
         // Segment should always have results
-        segmentBlock += `\nreturn ${segmentResult.map((result) => result.name).join(', ')}`;
+        segmentBlock += `\nreturn ${segmentResult.map((result) => `${YIELD_PREFIX}${result.name}`).join(', ')}`;
     }
     return expandToString`def ${getPythonNameOrDefault(services, segment)}(${generateParameters(
         segment.parameterList,
@@ -321,7 +321,7 @@ const generateAssignee = function (assignee: SdsAssignee): string {
     } else if (isSdsWildcard(assignee)) {
         return '_';
     } else if (isSdsYield(assignee)) {
-        return assignee.result?.ref?.name!;
+        return `${YIELD_PREFIX}${assignee.result?.ref?.name!}`;
     }
     /* c8 ignore next 2 */
     throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
