@@ -290,8 +290,8 @@ const generateAssignment = function (assignment: SdsAssignment, frame: Generatio
         ? abstractResultsOrEmpty(
               frame.getServices().helpers.NodeMapper.callToCallableOrUndefined(assignment.expression),
           ).length
-        /* c8 ignore next */
-        : 1;
+        : /* c8 ignore next */
+          1;
     const assignees = assigneesOrEmpty(assignment);
     if (assignees.some((value) => !isSdsWildcard(value))) {
         const actualAssignees = assignees.map(generateAssignee);
