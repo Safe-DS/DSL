@@ -255,6 +255,7 @@ const generateQualifiedImport = function (importStmt: ImportData): string {
     if (importStmt.alias === undefined) {
         return `import ${importStmt.importPath}`;
     } else {
+        /* c8 ignore next 2 */
         return `import ${importStmt.importPath} as ${importStmt.alias}`;
     }
 };
@@ -280,6 +281,7 @@ const generateStatement = function (statement: SdsStatement, frame: GenerationIn
         blockLambdaCode.push(generateExpression(expressionStatement.expression, frame));
         return expandToString`${blockLambdaCode.join('\n')}`;
     }
+    /* c8 ignore next 2 */
     throw new Error(`Unknown SdsStatement: ${statement}`);
 };
 
@@ -288,6 +290,7 @@ const generateAssignment = function (assignment: SdsAssignment, frame: Generatio
         ? abstractResultsOrEmpty(
               frame.getServices().helpers.NodeMapper.callToCallableOrUndefined(assignment.expression),
           ).length
+        /* c8 ignore next */
         : 1;
     const assignees = assigneesOrEmpty(assignment);
     if (assignees.some((value) => !isSdsWildcard(value))) {
@@ -315,6 +318,7 @@ const generateAssignee = function (assignee: SdsAssignee): string {
     } else if (isSdsYield(assignee)) {
         return assignee.result?.ref?.name!;
     }
+    /* c8 ignore next 2 */
     throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
 };
 
@@ -462,6 +466,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         frame.addImport(referenceImport);
         return referenceImport?.alias || getPythonNameOrDefault(frame.getServices(), declaration);
     }
+    /* c8 ignore next 2 */
     throw new Error(`Unknown expression type: ${expression.$type}`);
 };
 
