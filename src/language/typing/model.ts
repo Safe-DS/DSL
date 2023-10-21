@@ -8,7 +8,7 @@ import {
     SdsEnumVariant,
     SdsParameter,
 } from '../generated/ast.js';
-import { Constant } from '../partialEvaluation/model.js';
+import {Constant, NullConstant} from '../partialEvaluation/model.js';
 
 /* c8 ignore start */
 export abstract class Type {
@@ -71,7 +71,7 @@ export class LiteralType extends Type {
     constructor(readonly values: Constant[]) {
         super();
 
-        this.isNullable = values.some(isSdsNull);
+        this.isNullable = values.some(it => it === NullConstant);
     }
 
     override copyWithNullability(isNullable: boolean): LiteralType {
