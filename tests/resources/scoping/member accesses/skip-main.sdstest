@@ -500,13 +500,6 @@ class SubClassForHiding sub SuperClassForHiding {
     static fun staticMethodForHiding()
 }
 
-class ClassForResultMemberAccess() {
-    attr result: Int
-}
-enum EnumForResultMemberAccess {
-    result
-}
-
 
 // Access to own members -------------------------------------------------------
 
