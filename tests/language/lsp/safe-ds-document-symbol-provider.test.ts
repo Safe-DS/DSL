@@ -20,7 +20,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
     const testCases: DocumentSymbolProviderTest[] = [
         {
             testName: 'annotation declaration',
-            code: 'annotation A',
+            code: 'annotation A(p: Int)',
             expectedSymbols: [
                 {
                     name: 'A',
@@ -32,8 +32,8 @@ describe('SafeDsSemanticTokenProvider', async () => {
             testName: 'attribute declaration',
             code: `
                 class C {
-                    attr a
-                    static attr b
+                    attr a: Int
+                    static attr b: (p: Int) -> r: Int
                 }
             `,
             expectedSymbols: [
@@ -55,7 +55,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
         },
         {
             testName: 'class declaration',
-            code: 'class C',
+            code: 'class C<T>(p: Int)',
             expectedSymbols: [
                 {
                     name: 'C',
@@ -75,7 +75,11 @@ describe('SafeDsSemanticTokenProvider', async () => {
         },
         {
             testName: 'enum variant declaration',
-            code: 'enum E { V }',
+            code: `
+                enum E {
+                    V<T>(p: Int)
+                }
+            `,
             expectedSymbols: [
                 {
                     name: 'E',
@@ -93,11 +97,11 @@ describe('SafeDsSemanticTokenProvider', async () => {
             testName: 'function declaration',
             code: `
                 class C {
-                    fun f()
-                    static fun g()
+                    fun f<T>(p: Int) -> r: Int
+                    static fun g<T>(p: Int) -> r: Int
                 }
 
-                fun f()
+                fun f<T>(p: Int) -> r: Int
             `,
             expectedSymbols: [
                 {
@@ -131,75 +135,38 @@ describe('SafeDsSemanticTokenProvider', async () => {
             ],
         },
         {
-            testName: 'parameter declaration',
-            code: 'fun f(p: String)',
-            expectedSymbols: [
-                {
-                    name: 'f',
-                    kind: SymbolKind.Function,
-                    // TODO: omit parameter?
-                    children: [
-                        {
-                            name: 'p',
-                            kind: SymbolKind.Variable,
-                        },
-                    ],
-                },
-            ],
-        },
-        {
             testName: 'pipeline declaration',
-            code: 'pipeline p {}',
-            expectedSymbols: [
-                {
-                    name: 'p',
-                    kind: SymbolKind.Function,
-                },
-            ],
-        },
-        {
-            testName: 'placeholder declaration',
             code: `
                 pipeline p {
                     val a = 1;
+
+                    (q: Int) {
+                        yield r = 1;
+                    };
                 }
             `,
             expectedSymbols: [
                 {
                     name: 'p',
                     kind: SymbolKind.Function,
-                    children: [
-                        {
-                            name: 'a',
-                            kind: SymbolKind.Variable,
-                        },
-                    ],
                 },
             ],
         },
         {
             testName: 'segment declaration',
-            code: 'segment s() {}',
+            code: `
+                segment s(p: Int) -> r: Int {
+                    val a = 1;
+
+                    (p: Int) {
+                        yield r = 1;
+                    };
+                }
+            `,
             expectedSymbols: [
                 {
                     name: 's',
                     kind: SymbolKind.Function,
-                },
-            ],
-        },
-        {
-            testName: 'type parameter declaration',
-            code: 'class C<T>',
-            expectedSymbols: [
-                {
-                    name: 'C',
-                    kind: SymbolKind.Class,
-                    children: [
-                        {
-                            name: 'T',
-                            kind: SymbolKind.TypeParameter,
-                        },
-                    ],
                 },
             ],
         },
@@ -227,7 +194,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
         },
     ];
 
-    it.each(testCases)('should assign the correct token types ($testName)', async ({ code, expectedSymbols }) => {
+    it.each(testCases)('should assign the correct symbols ($testName)', async ({ code, expectedSymbols }) => {
         await checkDocumentSymbols(code, expectedSymbols);
     });
 });
@@ -237,49 +204,30 @@ const checkDocumentSymbols = async (code: string, expectedSymbols: SimpleDocumen
     const symbols = (await symbolProvider.getSymbols(document, textDocumentParams(document))) ?? [];
     const simpleSymbols = symbols.map(simplifyDocumentSymbol);
 
-    // eslint-disable-next-line vitest/prefer-strict-equal
-    expect(simpleSymbols).toEqual(expectedSymbols);
+    expect(simpleSymbols).toStrictEqual(expectedSymbols);
 };
 
 const simplifyDocumentSymbol = (symbol: DocumentSymbol): SimpleDocumentSymbol => {
-    return {
+    const result = {
         name: symbol.name,
         kind: symbol.kind,
         tags: symbol.tags,
         detail: symbol.detail,
         children: symbol.children?.map(simplifyDocumentSymbol),
     };
-};
 
-// => Promise < void > {
-// return async input => {
-//     const document = await parseDocument(services, input.text);
-//     const symbolProvider = services.lsp.DocumentSymbolProvider;
-//     const symbols = await symbolProvider?.getSymbols(document, textDocumentParams(document)) ?? [];
-//
-//     if ('assert' in input && typeof input.assert === 'function') {
-//         input.assert(symbols);
-//     } else if ('expectedSymbols' in input) {
-//         const symbolToString = input.symbolToString ?? (symbol => symbol.name);
-//         const expectedSymbols = input.expectedSymbols;
-//
-//         if (symbols.length === expectedSymbols.length) {
-//             for (let i = 0; i < expectedSymbols.length; i++) {
-//                 const expected = expectedSymbols[i];
-//                 const item = symbols[i];
-//                 if (typeof expected === 'string') {
-//                     expectedFunction(symbolToString(item), expected);
-//                 } else {
-//                     expectedFunction(item, expected);
-//                 }
-//             }
-//         } else {
-//             const symbolsMapped = symbols.map((s, i) => expectedSymbols[i] === undefined || typeof expectedSymbols[i] === 'string' ? symbolToString(s) : s);
-//             expectedFunction(symbolsMapped, expectedSymbols, `Expected ${expectedSymbols.length} but found ${symbols.length} symbols in document`);
-//         }
-//     }
-// };
-// }
+    if (!result.tags) {
+        delete result.tags;
+    }
+    if (!result.detail) {
+        delete result.detail;
+    }
+    if (!result.children) {
+        delete result.children;
+    }
+
+    return result;
+};
 
 /**
  * A description of a test case for the document symbol provider.

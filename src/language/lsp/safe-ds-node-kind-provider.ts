@@ -1,6 +1,23 @@
 import { AstNode, AstNodeDescription, hasContainerOfType, isAstNode, NodeKindProvider } from 'langium';
 import { CompletionItemKind, SymbolKind } from 'vscode-languageserver';
-import { isSdsClass, isSdsFunction, SdsAnnotation } from '../generated/ast.js';
+import {
+    isSdsClass,
+    isSdsFunction,
+    SdsAnnotation,
+    SdsAttribute,
+    SdsBlockLambdaResult,
+    SdsClass,
+    SdsEnum,
+    SdsEnumVariant,
+    SdsFunction,
+    SdsModule,
+    SdsParameter,
+    SdsPipeline,
+    SdsPlaceholder,
+    SdsResult,
+    SdsSegment,
+    SdsTypeParameter,
+} from '../generated/ast.js';
 
 export class SafeDsNodeKindProvider implements NodeKindProvider {
     getSymbolKind(nodeOrDescription: AstNode | AstNodeDescription): SymbolKind {
@@ -14,29 +31,37 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
         switch (type) {
             case SdsAnnotation:
                 return SymbolKind.Interface;
-            case 'SdsAttribute':
+            case SdsAttribute:
                 return SymbolKind.Property;
-            case 'SdsClass':
+            /* c8 ignore next 2 */
+            case SdsBlockLambdaResult:
+                return SymbolKind.Variable;
+            case SdsClass:
                 return SymbolKind.Class;
-            case 'SdsEnum':
+            case SdsEnum:
                 return SymbolKind.Enum;
-            case 'SdsEnumVariant':
+            case SdsEnumVariant:
                 return SymbolKind.EnumMember;
-            case 'SdsFunction':
+            case SdsFunction:
                 return SymbolKind.Function;
-            case 'SdsModule':
+            case SdsModule:
                 return SymbolKind.Package;
-            case 'SdsParameter':
+            /* c8 ignore next 2 */
+            case SdsParameter:
                 return SymbolKind.Variable;
-            case 'SdsPipeline':
+            case SdsPipeline:
                 return SymbolKind.Function;
-            case 'SdsPlaceholder':
+            /* c8 ignore next 2 */
+            case SdsPlaceholder:
                 return SymbolKind.Variable;
-            case 'SdsSegment':
+            /* c8 ignore next 2 */
+            case SdsResult:
+                return SymbolKind.Variable;
+            case SdsSegment:
                 return SymbolKind.Function;
-            case 'SdsTypeParameter':
+            /* c8 ignore next 2 */
+            case SdsTypeParameter:
                 return SymbolKind.TypeParameter;
-
             /* c8 ignore next 2 */
             default:
                 return SymbolKind.Null;
