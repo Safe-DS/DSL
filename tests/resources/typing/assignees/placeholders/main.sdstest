@@ -10,7 +10,7 @@ segment mySegment1() -> (r: Int) {
 
 segment mySegment2() -> (r: Int, s: String) {
     // $TEST$ serialization literal<1>
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     val »r«, val »s« = 1;
 }
 

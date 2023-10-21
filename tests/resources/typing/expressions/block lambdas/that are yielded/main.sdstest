@@ -11,13 +11,13 @@ segment mySegment() -> (
         yield s = "";
     }«;
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: literal<"">)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: literal<"">)
     yield s = »(p) {
         yield r = 1;
         yield s = "";
     }«;
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: $Unknown)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
     yield t = »(p) {
         yield r, yield s = 1;
     }«;

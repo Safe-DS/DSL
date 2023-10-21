@@ -1,6 +1,6 @@
 package tests.typing.expressions.references.unresolved
 
 pipeline myPipeline {
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     »unresolved«;
 }
