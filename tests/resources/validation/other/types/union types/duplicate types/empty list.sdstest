@@ -1,0 +1,7 @@
+package tests.validation.other.types.unionTypes.duplicateTypes
+
+// $TEST$ no warning r"The type .* was already listed."
+
+segment mySegment1(
+    p: union<>
+) {}
