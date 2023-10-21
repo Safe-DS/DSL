@@ -27,15 +27,15 @@ pipeline test {
     »0 >= 1«;
 
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 >= true«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »false >= 0«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »unresolved >= false«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »true >= unresolved«;
 }

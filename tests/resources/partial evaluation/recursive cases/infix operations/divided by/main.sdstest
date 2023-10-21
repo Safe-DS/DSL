@@ -14,25 +14,25 @@ pipeline test {
     »1 / 1«;
 
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 / 0«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 / 0.0«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 / -0.0«;
 
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »true / 1«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 / true«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »unresolved / 1«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 / unresolved«;
 }
