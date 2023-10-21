@@ -6,6 +6,6 @@ def testStep():
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():
-    def __block_lambda_0():
+    def __gen_block_lambda_0():
         pass
-    f(__block_lambda_0)
+    f(__gen_block_lambda_0)
