@@ -45,11 +45,11 @@ export const getErrors = async (services: LangiumServices, code: string): Promis
  * Get all errors from a loaded document.
  *
  * @param services The language services.
- * @param uri The URI of the code snippet to check.
+ * @param uri The URI of the document to check.
  * @returns The errors.
  */
-export const getErrorsByURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
-    const diagnostics = getDiagnosticsByURI(services, uri);
+export const getErrorsAtURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
+    const diagnostics = getDiagnosticsAtURI(services, uri);
     return diagnostics.filter((d) => d.severity === DiagnosticSeverity.Error);
 };
 
@@ -73,10 +73,10 @@ const getDiagnostics = async (services: LangiumServices, code: string): Promise<
  * Get all diagnostics from a loaded document.
  *
  * @param services The language services.
- * @param uri The URI of the code snippet to check.
+ * @param uri The URI of the document to check.
  * @returns The diagnostics.
  */
-const getDiagnosticsByURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
+const getDiagnosticsAtURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
     const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
     return document.diagnostics ?? [];
 };

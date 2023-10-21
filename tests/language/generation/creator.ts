@@ -7,7 +7,7 @@ import {
 import path from 'path';
 import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { ErrorsInCodeError, getErrorsByURI } from '../../helpers/diagnostics.js';
+import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
@@ -39,7 +39,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         const code = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri).textDocument.getText();
 
         // File must not contain any errors
-        const errors = getErrorsByURI(services, uri);
+        const errors = getErrorsAtURI(services, uri);
         if (errors.length > 0) {
             return invalidTest('FILE', new ErrorsInCodeError(errors, uri));
         }
