@@ -3,7 +3,7 @@ import { listBuiltinFiles } from '../../../src/language/builtins/fileFinder.js';
 import { uriToShortenedResourceName } from '../../../src/helpers/resources.js';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { isEmpty } from 'radash';
 import { URI } from 'langium';
 import { locationToString } from '../../helpers/location.js';

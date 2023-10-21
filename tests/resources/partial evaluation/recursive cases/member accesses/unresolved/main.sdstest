@@ -5,9 +5,9 @@ enum MyEnum {
 }
 
 pipeline test {
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »unresolved.MyEnumVariant«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »MyEnum.unresolved«;
 }

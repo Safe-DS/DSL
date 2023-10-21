@@ -13,11 +13,11 @@ segment mySegment2(param: Map<String, Int>) {
 }
 
 segment mySegment3(param: String) {
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     »param[0]«;
 }
 
 segment mySegment4() {
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     »unresolved[0]«;
 }

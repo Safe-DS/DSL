@@ -5,6 +5,6 @@ enum MyEnum {
     // $TEST$ equivalence_class parameterType
     MyEnumVariant1(»p«: »Int«)
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     MyEnumVariant2(»p«)
 }

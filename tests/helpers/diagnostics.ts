@@ -1,6 +1,6 @@
 import { parseHelper } from 'langium/test';
 import { LangiumServices, URI } from 'langium';
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { TestDescriptionError } from './testDescription.js';
 
 let nextId = 0;

@@ -13,7 +13,7 @@ import {
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { isRequiredParameter } from '../../helpers/nodeProperties.js';
 import { parameterCanBeAnnotated } from '../other/declarations/annotationCalls.js';
-import { DiagnosticTag } from 'vscode-languageserver-types';
+import { DiagnosticTag } from 'vscode-languageserver';
 
 export const CODE_DEPRECATED_ASSIGNED_RESULT = 'deprecated/assigned-result';
 export const CODE_DEPRECATED_CALLED_ANNOTATION = 'deprecated/called-annotation';

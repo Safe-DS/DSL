@@ -1,12 +1,11 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { URI } from 'vscode-uri';
+import { LangiumDocument, Reference, URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments, isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
 import { isLocationEqual, locationToString } from '../../helpers/location.js';
 import { createScopingTests, ExpectedReference } from './creator.js';
-import { LangiumDocument, Reference } from 'langium';
 import { Location } from 'vscode-languageserver';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;

@@ -7,6 +7,6 @@ pipeline test {
     // $TEST$ serialization "start	1 inner1	true inner2	test end	"
     »"start\t{{ 1 }} inner1\t{{ true }} inner2\t{{ "test" }} end\t"«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »"start {{ call() }} end"«;
 }

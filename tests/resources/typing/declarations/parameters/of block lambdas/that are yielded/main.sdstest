@@ -9,9 +9,9 @@ segment mySegment() -> (
     // $TEST$ equivalence_class parameterType2
     yield r = (»p«) {};
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     yield s = (»p«) {};
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     yield t = (»p«) {};
 }

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
 import { clearDocuments, highlightHelper } from 'langium/test';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { SemanticTokenTypes } from 'vscode-languageserver-types';
+import { SemanticTokenTypes } from 'vscode-languageserver';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 

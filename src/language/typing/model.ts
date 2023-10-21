@@ -350,7 +350,7 @@ class UnknownTypeClass extends Type {
     }
 
     toString(): string {
-        return '$Unknown';
+        return '?';
     }
 }
 

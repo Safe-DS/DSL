@@ -4,6 +4,6 @@ pipeline test {
     // $TEST$ serialization []
     »[]«;
 
-    // $TEST$ serialization [1, 2.5, null, $unknown]
+    // $TEST$ serialization [1, 2.5, null, ?]
     »[1, 2.5, null, unresolved]«;
 }
