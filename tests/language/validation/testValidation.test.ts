@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import { createValidationTests, ExpectedIssue } from './creator.js';
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { AssertionError } from 'assert';
 import { clearDocuments, isRangeEqual } from 'langium/test';
 import { locationToString } from '../../helpers/location.js';

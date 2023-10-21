@@ -7,7 +7,7 @@ import { findTestChecks } from '../../helpers/testChecks.js';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { Range } from 'vscode-languageserver-types';
+import { Range } from 'vscode-languageserver';
 import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;

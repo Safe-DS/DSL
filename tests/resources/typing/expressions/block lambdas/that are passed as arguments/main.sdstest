@@ -12,34 +12,34 @@ segment mySegment() {
         yield s = "";
     }«);
 
-    // $TEST$ serialization (p: String) -> (r: literal<1>, s: $Unknown)
+    // $TEST$ serialization (p: String) -> (r: literal<1>, s: ?)
     higherOrderFunction1(param = »(p) {
         yield r, yield s = 1;
     }«);
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: literal<"">)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: literal<"">)
     higherOrderFunction2(»(p) {
         yield r = 1;
         yield s = "";
     }«);
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: $Unknown)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
     higherOrderFunction2(param = »(p) {
         yield r, yield s = 1;
     }«);
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: literal<"">)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: literal<"">)
     normalFunction(»(p) {
         yield r = 1;
         yield s = "";
     }«);
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: $Unknown)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
     normalFunction(param = »(p) {
         yield r, yield s = 1;
     }«);
 
-    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: $Unknown)
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
     parameterlessFunction(»(p) {
         yield r, yield s = 1;
     }«);

@@ -371,7 +371,7 @@ class UnknownEvaluatedNodeClass extends EvaluatedNode {
     }
 
     override toString(): string {
-        return '$unknown';
+        return '?';
     }
 }
 

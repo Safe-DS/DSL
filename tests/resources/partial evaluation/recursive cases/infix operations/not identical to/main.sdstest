@@ -7,9 +7,9 @@ pipeline test {
     // $TEST$ serialization true
     »false !== 1«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 !== unresolved«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »unresolved !== 1.25«;
 }

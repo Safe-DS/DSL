@@ -12,15 +12,15 @@ segment mySegment() {
     // $TEST$ equivalence_class parameterType1
     higherOrderFunction1(param = (»p«) -> "");
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     higherOrderFunction2((»p«) -> "");
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     higherOrderFunction2(param = (»p«) -> "");
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     normalFunction((»p«) -> "");
 
-    // $TEST$ serialization $Unknown
+    // $TEST$ serialization ?
     normalFunction(param = (»p«) -> "");
 }

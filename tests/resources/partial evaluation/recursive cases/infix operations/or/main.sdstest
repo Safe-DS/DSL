@@ -13,15 +13,15 @@ pipeline test {
     // $TEST$ serialization true
     »true or true«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »1 or true«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »false or 0«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »unresolved or false«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization ?
     »true or unresolved«;
 }
