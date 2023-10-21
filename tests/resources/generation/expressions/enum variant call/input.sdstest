@@ -1,5 +1,3 @@
-// Related to https://github.com/lars-reimann/Safe-DS/issues/118
-
 package tests.generator.enumVariantCall
 
 fun f(p: Any)

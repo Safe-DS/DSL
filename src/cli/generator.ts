@@ -423,12 +423,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         if (isSdsEnumVariant(member)) {
             const enumMember = generateExpression(expression.member!, frame);
             const suffix = isSdsCall(expression.$container) ? '' : '()';
-            if (expression.isNullSafe) {
-                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
-                return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${enumMember}')${suffix}`;
-            } else {
-                return `${receiver}.${enumMember}${suffix}`;
-            }
+            return `${receiver}.${enumMember}${suffix}`;
         } else if (isSdsAbstractResult(member)) {
             const resultList = abstractResultsOrEmpty(getContainerOfType(member, isSdsCallable));
             if (resultList.length === 1) {
