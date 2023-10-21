@@ -5,14 +5,14 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAnnotatedObject,
     isSdsAnnotation,
-    isSdsAttribute, isSdsCallable,
+    isSdsAttribute,
     isSdsClass,
     isSdsEnumVariant,
     isSdsFunction,
     isSdsPipeline,
     isSdsSegment,
 } from '../generated/ast.js';
-import {SafeDsTypeComputer} from "../typing/safe-ds-type-computer.js";
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
 export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider {
     private readonly builtinAnnotations: SafeDsAnnotations;
@@ -65,12 +65,12 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
             const type = this.typeComputer.computeType(node);
             return type?.toString();
         }
-        return undefined
+        return undefined;
     }
 
     private getTags(node: AstNode): SymbolTag[] | undefined {
         if (isSdsAnnotatedObject(node) && this.builtinAnnotations.isDeprecated(node)) {
-            return [SymbolTag.Deprecated]
+            return [SymbolTag.Deprecated];
         } else {
             return undefined;
         }

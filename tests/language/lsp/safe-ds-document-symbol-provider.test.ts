@@ -111,16 +111,19 @@ describe('SafeDsSemanticTokenProvider', async () => {
                         {
                             name: 'f',
                             kind: SymbolKind.Method,
+                            detail: '(p: Int) -> (r: Int)',
                         },
                         {
                             name: 'g',
                             kind: SymbolKind.Method,
+                            detail: '(p: Int) -> (r: Int)',
                         },
                     ],
                 },
                 {
                     name: 'f',
                     kind: SymbolKind.Function,
+                    detail: '(p: Int) -> (r: Int)',
                 },
             ],
         },
@@ -167,6 +170,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
                 {
                     name: 's',
                     kind: SymbolKind.Function,
+                    detail: '(p: Int) -> (r: Int)',
                 },
             ],
         },
