@@ -51,6 +51,7 @@ import {
     isSdsSegment,
     isSdsTemplateString,
     isSdsType,
+    isSdsTypeArgument,
     isSdsTypeProjection,
     isSdsUnionType,
     isSdsYield,
@@ -140,6 +141,8 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfExpression(node);
         } else if (isSdsType(node)) {
             return this.computeTypeOfType(node);
+        } else if (isSdsTypeArgument(node)) {
+            return this.computeType(node.value);
         } else if (isSdsTypeProjection(node)) {
             return this.computeTypeOfType(node.type);
         } /* c8 ignore start */ else {

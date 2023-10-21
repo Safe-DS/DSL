@@ -1,0 +1,14 @@
+package tests.validation.other.types.unionTypes.duplicateTypes
+
+segment mySegment(
+    // $TEST$ no warning r"The type .* was already listed."
+    p: union<»Int«>,
+    q: union<
+        // $TEST$ no warning r"The type .* was already listed."
+        »Int«,
+        // $TEST$ no warning r"The type .* was already listed."
+        »String«,
+        // $TEST$ warning r"The type 'Int' was already listed."
+        »Int«,
+    >,
+) {}

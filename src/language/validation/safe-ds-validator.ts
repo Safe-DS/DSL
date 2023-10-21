@@ -53,7 +53,7 @@ import {
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
-import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
+import { unionTypeMustHaveTypes, unionTypeShouldNotHaveDuplicateTypes } from './other/types/unionTypes.js';
 import {
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
@@ -124,6 +124,7 @@ import {
     literalTypeMustHaveLiterals,
     literalTypeMustNotContainListLiteral,
     literalTypeMustNotContainMapLiteral,
+    literalTypeShouldNotHaveDuplicateLiteral,
 } from './other/types/literalTypes.js';
 
 /**
@@ -211,6 +212,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypeMustNotContainListLiteral,
             literalTypeMustNotContainMapLiteral,
             literalTypesShouldBeUsedWithCaution,
+            literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
         SdsMap: [mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [
@@ -261,7 +263,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
-        SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],
+        SdsUnionType: [
+            unionTypeMustHaveTypes,
+            unionTypeShouldNotHaveDuplicateTypes(services),
+            unionTypeShouldNotHaveASingularTypeArgument,
+        ],
         SdsYield: [yieldMustNotBeUsedInPipeline],
     };
     registry.register(checks);
