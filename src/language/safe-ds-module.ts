@@ -27,7 +27,7 @@ import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provid
 import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
 import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
-import {SafeDsDocumentSymbolProvider} from "./lsp/safe-ds-document-symbol-provider.js";
+import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
