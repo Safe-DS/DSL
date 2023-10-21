@@ -77,7 +77,7 @@ import {
     StringConstant,
 } from '../language/partialEvaluation/model.js';
 
-export const CODEGEN_PREFIX = '__gen_'
+export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
@@ -331,7 +331,9 @@ const generateBlockLambda = function (blockLambda: SdsBlockLambda, frame: Genera
     const lambdaResult = blockLambdaResultsOrEmpty(blockLambda);
     let lambdaBlock = generateBlock(blockLambda.body, frame);
     if (lambdaResult.length !== 0 && lambdaBlock !== 'pass') {
-        lambdaBlock += `\nreturn ${lambdaResult.map((result) => `${BLOCK_LAMBDA_RESULT_PREFIX}${result.name}`).join(', ')}`;
+        lambdaBlock += `\nreturn ${lambdaResult
+            .map((result) => `${BLOCK_LAMBDA_RESULT_PREFIX}${result.name}`)
+            .join(', ')}`;
     }
     return expandToString`def ${frame.getUniqueLambdaBlockName(blockLambda)}(${generateParameters(
         blockLambda.parameterList,
