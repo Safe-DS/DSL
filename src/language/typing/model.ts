@@ -1,5 +1,4 @@
 import {
-    isSdsNull,
     SdsAbstractResult,
     SdsCallable,
     SdsClass,
@@ -68,10 +67,10 @@ export class CallableType extends Type {
 export class LiteralType extends Type {
     override readonly isNullable: boolean;
 
-    constructor(readonly values: Constant[]) {
+    constructor(readonly constants: Constant[]) {
         super();
 
-        this.isNullable = values.some(it => it === NullConstant);
+        this.isNullable = constants.some(it => it === NullConstant);
     }
 
     override copyWithNullability(isNullable: boolean): LiteralType {
@@ -93,15 +92,15 @@ export class LiteralType extends Type {
             return false;
         }
 
-        if (other.values.length !== this.values.length) {
+        if (other.constants.length !== this.constants.length) {
             return false;
         }
 
-        return other.values.every((otherValue) => this.values.some((value) => value.equals(otherValue)));
+        return other.constants.every((otherValue) => this.constants.some((value) => value.equals(otherValue)));
     }
 
     override toString(): string {
-        return `literal<${this.values.join(', ')}>`;
+        return `literal<${this.constants.join(', ')}>`;
     }
 }
 
@@ -304,10 +303,12 @@ export class StaticType extends Type {
 }
 
 export class UnionType extends Type {
-    override readonly isNullable = false;
+    override readonly isNullable: boolean;
 
     constructor(readonly possibleTypes: Type[]) {
         super();
+
+        this.isNullable = possibleTypes.some(it => it.isNullable);
     }
 
     override copyWithNullability(_isNullable: boolean): UnionType {

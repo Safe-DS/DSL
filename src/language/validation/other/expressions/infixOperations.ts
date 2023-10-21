@@ -8,6 +8,7 @@ export const CODE_INFIX_OPERATION_DIVISION_BY_ZERO = 'infix-operation/division-b
 
 export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
     const partialEvaluator = services.evaluation.PartialEvaluator;
+    const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
 
     const zeroInt = new IntConstant(0n);
@@ -22,7 +23,8 @@ export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
         const dividendType = typeComputer.computeType(node.leftOperand);
         if (
             dividendType === UnknownType ||
-            (!dividendType.equals(typeComputer.Int) && !dividendType.equals(typeComputer.Float))
+            (!typeChecker.isAssignableTo(dividendType, typeComputer.Float) &&
+                !typeChecker.isAssignableTo(dividendType, typeComputer.Int))
         ) {
             return;
         }
