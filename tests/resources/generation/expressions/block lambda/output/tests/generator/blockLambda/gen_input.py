@@ -8,7 +8,7 @@ def test():
     def __block_lambda_1(a, c):
         __block_lambda_d = g()
         return __block_lambda_d
-    f2(__block_lambda_1)
+    f1(__block_lambda_1)
     def __block_lambda_2():
         pass
-    f3(__block_lambda_2)
+    f2(__block_lambda_2)
