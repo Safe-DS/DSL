@@ -11,7 +11,6 @@ import {
     UnionType,
     UnknownType,
 } from './model.js';
-import { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SdsDeclaration } from '../generated/ast.js';
 import {
@@ -22,17 +21,15 @@ import {
     NullConstant,
     StringConstant,
 } from '../partialEvaluation/model.js';
-import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
+import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
 export class SafeDsTypeChecker {
-    private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
-    private readonly typeComputer: () => SafeDsTypeComputer;
+    private readonly coreTypes: SafeDsCoreTypes;
 
     constructor(services: SafeDsServices) {
-        this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.types.ClassHierarchy;
-        this.typeComputer = () => services.types.TypeComputer;
+        this.coreTypes = services.types.CoreTypes;
     }
 
     /**
@@ -157,7 +154,7 @@ export class SafeDsTypeChecker {
         }
 
         if (other instanceof ClassType) {
-            if (other.equals(this.typeComputer().AnyOrNull())) {
+            if (other.equals(this.coreTypes.AnyOrNull)) {
                 return true;
             }
 
@@ -176,15 +173,15 @@ export class SafeDsTypeChecker {
 
     private constantToType(constant: Constant): Type {
         if (constant instanceof BooleanConstant) {
-            return this.typeComputer().Boolean;
+            return this.coreTypes.Boolean;
         } else if (constant instanceof FloatConstant) {
-            return this.typeComputer().Float;
+            return this.coreTypes.Float;
         } else if (constant instanceof IntConstant) {
-            return this.typeComputer().Int;
+            return this.coreTypes.Int;
         } else if (constant === NullConstant) {
-            return this.typeComputer().NothingOrNull;
+            return this.coreTypes.NothingOrNull;
         } else if (constant instanceof StringConstant) {
-            return this.typeComputer().String;
+            return this.coreTypes.String;
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */

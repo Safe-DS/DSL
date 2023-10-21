@@ -1,6 +1,5 @@
 import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import {
     CallableType,
     ClassType,
@@ -64,7 +63,6 @@ import {
     SdsAssignee,
     SdsCall,
     SdsCallableType,
-    SdsClass,
     SdsDeclaration,
     SdsExpression,
     SdsFunction,
@@ -88,23 +86,22 @@ import {
 import { isEmpty } from 'radash';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { Constant } from '../partialEvaluation/model.js';
+import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
-    private readonly builtinClasses: SafeDsClasses;
+    private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
 
-    private readonly coreTypeCache: WorkspaceCache<string, Type>;
     private readonly nodeTypeCache: WorkspaceCache<string, Type>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
-        this.builtinClasses = services.builtins.Classes;
+        this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
 
-        this.coreTypeCache = new WorkspaceCache(services.shared);
         this.nodeTypeCache = new WorkspaceCache(services.shared);
     }
 
@@ -270,21 +267,21 @@ export class SafeDsTypeComputer {
 
         // Terminal cases
         if (isSdsBoolean(node)) {
-            return this.Boolean;
+            return this.coreTypes.Boolean;
         } else if (isSdsFloat(node)) {
-            return this.Float;
+            return this.coreTypes.Float;
         } else if (isSdsInt(node)) {
-            return this.Int;
+            return this.coreTypes.Int;
         } else if (isSdsList(node)) {
-            return this.List;
+            return this.coreTypes.List;
         } else if (isSdsMap(node)) {
-            return this.Map;
+            return this.coreTypes.Map;
         } else if (isSdsNull(node)) {
-            return this.NothingOrNull;
+            return this.coreTypes.NothingOrNull;
         } else if (isSdsString(node)) {
-            return this.String;
+            return this.coreTypes.String;
         } else if (isSdsTemplateString(node)) {
-            return this.String;
+            return this.coreTypes.String;
         }
 
         // Recursive cases
@@ -317,21 +314,21 @@ export class SafeDsTypeComputer {
                 // Boolean operators
                 case 'or':
                 case 'and':
-                    return this.Boolean;
+                    return this.coreTypes.Boolean;
 
                 // Equality operators
                 case '==':
                 case '!=':
                 case '===':
                 case '!==':
-                    return this.Boolean;
+                    return this.coreTypes.Boolean;
 
                 // Comparison operators
                 case '<':
                 case '<=':
                 case '>=':
                 case '>':
-                    return this.Boolean;
+                    return this.coreTypes.Boolean;
 
                 // Arithmetic operators
                 case '+':
@@ -356,7 +353,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsPrefixOperation(node)) {
             switch (node.operator) {
                 case 'not':
-                    return this.Boolean;
+                    return this.coreTypes.Boolean;
                 case '-':
                     return this.computeTypeOfArithmeticPrefixOperation(node);
 
@@ -391,9 +388,9 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        if (receiverType.equals(this.List) || receiverType.equals(this.Map)) {
+        if (receiverType.equals(this.coreTypes.List) || receiverType.equals(this.coreTypes.Map)) {
             // TODO: access type arguments
-            return this.AnyOrNull();
+            return this.coreTypes.AnyOrNull;
         } else {
             return UnknownType;
         }
@@ -403,10 +400,10 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         const rightOperandType = this.computeType(node.rightOperand);
 
-        if (leftOperandType.equals(this.Int) && rightOperandType.equals(this.Int)) {
-            return this.Int;
+        if (leftOperandType.equals(this.coreTypes.Int) && rightOperandType.equals(this.coreTypes.Int)) {
+            return this.coreTypes.Int;
         } else {
-            return this.Float;
+            return this.coreTypes.Float;
         }
     }
 
@@ -440,10 +437,10 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const leftOperandType = this.computeType(node.operand);
 
-        if (leftOperandType.equals(this.Int)) {
-            return this.Int;
+        if (leftOperandType.equals(this.coreTypes.Int)) {
+            return this.coreTypes.Int;
         } else {
-            return this.Float;
+            return this.coreTypes.Float;
         }
     }
 
@@ -538,51 +535,4 @@ export class SafeDsTypeComputer {
     //
     //     return otherTypes.all { it.isSubstitutableFor(candidate) }
     // }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // Builtin types
-    // -----------------------------------------------------------------------------------------------------------------
-
-    AnyOrNull(): Type {
-        return this.createCoreType(this.builtinClasses.Any, true);
-    }
-
-    get Boolean(): Type {
-        return this.createCoreType(this.builtinClasses.Boolean);
-    }
-
-    get Float(): Type {
-        return this.createCoreType(this.builtinClasses.Float);
-    }
-
-    get Int(): Type {
-        return this.createCoreType(this.builtinClasses.Int);
-    }
-
-    get List(): Type {
-        return this.createCoreType(this.builtinClasses.List);
-    }
-
-    get Map(): Type {
-        return this.createCoreType(this.builtinClasses.Map);
-    }
-
-    get NothingOrNull(): Type {
-        return this.createCoreType(this.builtinClasses.Nothing, true);
-    }
-
-    get String(): Type {
-        return this.createCoreType(this.builtinClasses.String);
-    }
-
-    private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
-        /* c8 ignore start */
-        if (!coreClass) {
-            return UnknownType;
-        }
-        /* c8 ignore stop */
-
-        const key = `${coreClass.name}~${isNullable}`;
-        return this.coreTypeCache.get(key, () => new ClassType(coreClass, isNullable));
-    }
 }

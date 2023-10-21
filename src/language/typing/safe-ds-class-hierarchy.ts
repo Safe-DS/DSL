@@ -94,8 +94,6 @@ export class SafeDsClassHierarchy {
     }
 }
 
-
-
 // fun SdsClass.superClassMembers() =
 //     this.superClasses().flatMap { it.classMembersOrEmpty().asSequence() }
 //
