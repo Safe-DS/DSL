@@ -1,0 +1,17 @@
+package tests.generator.enumVariantCall
+
+fun f(p: Any)
+
+enum MyEnum {
+   Variant1
+   Variant2(counter: Int)
+}
+
+pipeline test {
+   f(MyEnum.Variant1);
+   f(MyEnum?.Variant1);
+   f(MyEnum.Variant1());
+   f(MyEnum?.Variant1());
+   f(MyEnum.Variant2(1));
+   f(MyEnum?.Variant2(1));
+}

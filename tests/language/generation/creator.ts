@@ -1,12 +1,13 @@
 import {
     listTestPythonFiles,
     listTestSafeDsFilesGroupedByParentDirectory,
+    loadDocuments,
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { ErrorsInCodeError, getErrors } from '../../helpers/diagnostics.js';
+import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
@@ -31,11 +32,14 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
     let runUntil: Location | undefined;
 
+    // Load all files, so they get linked
+    await loadDocuments(services, inputUris, { validation: true });
+
     for (const uri of inputUris) {
-        const code = fs.readFileSync(uri.fsPath).toString();
+        const code = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri).textDocument.getText();
 
         // File must not contain any errors
-        const errors = await getErrors(services, code);
+        const errors = getErrorsAtURI(services, uri);
         if (errors.length > 0) {
             return invalidTest('FILE', new ErrorsInCodeError(errors, uri));
         }

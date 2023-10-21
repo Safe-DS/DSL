@@ -1,0 +1,11 @@
+package tests.generator.twoSteps
+
+fun f()
+
+segment test1(a: Int, b: Int = 0) {
+    f();
+}
+
+segment test2(a: Int, c: Int) {
+    f();
+}

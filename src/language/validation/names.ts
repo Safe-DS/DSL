@@ -36,26 +36,26 @@ import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExt
 import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
+import { CODEGEN_PREFIX } from '../../cli/generator.js';
 
-export const CODE_NAME_BLOCK_LAMBDA_PREFIX = 'name/block-lambda-prefix';
+export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CASING = 'name/casing';
 export const CODE_NAME_DUPLICATE = 'name/duplicate';
 
 // -----------------------------------------------------------------------------
-// Block lambda prefix
+// Codegen prefix
 // -----------------------------------------------------------------------------
 
-export const nameMustNotStartWithBlockLambdaPrefix = (node: SdsDeclaration, accept: ValidationAcceptor) => {
+export const nameMustNotStartWithCodegenPrefix = (node: SdsDeclaration, accept: ValidationAcceptor) => {
     const name = node.name ?? '';
-    const blockLambdaPrefix = '__block_lambda_';
-    if (name.startsWith(blockLambdaPrefix)) {
+    if (name.startsWith(CODEGEN_PREFIX)) {
         accept(
             'error',
-            "Names of declarations must not start with '__block_lambda_'. This is reserved for code generation of block lambdas.",
+            `Names of declarations must not start with '${CODEGEN_PREFIX}'. This is reserved for code generation.`,
             {
                 node,
                 property: 'name',
-                code: CODE_NAME_BLOCK_LAMBDA_PREFIX,
+                code: CODE_NAME_CODEGEN_PREFIX,
             },
         );
     }

@@ -1,0 +1,6 @@
+@PythonModule("special_location")
+
+package tests.generator.withPythonModuleWildcard
+
+fun function1InCompilationUnitWithPythonModule() -> result: Int
+fun function2InCompilationUnitWithPythonModule() -> result: Int

@@ -1,0 +1,8 @@
+package tests.generator.expressionLambda
+
+fun f(param: (a: Int, b: Int) -> r: Int)
+
+pipeline test {
+    f((a, b = 2) -> 1);
+    f((a, c) -> 1);
+}

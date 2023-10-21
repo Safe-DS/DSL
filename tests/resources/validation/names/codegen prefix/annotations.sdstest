@@ -1,0 +1,7 @@
+package tests.validation.names.blockLambdaPrefix
+
+// $TEST$ error "Names of declarations must not start with '__gen_'. This is reserved for code generation."
+annotation »__gen_0«
+
+// $TEST$ no error "Names of declarations must not start with '__gen_'. This is reserved for code generation."
+annotation »_gen_1«

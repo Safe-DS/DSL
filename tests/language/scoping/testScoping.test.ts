@@ -7,6 +7,7 @@ import { AssertionError } from 'assert';
 import { isLocationEqual, locationToString } from '../../helpers/location.js';
 import { createScopingTests, ExpectedReference } from './creator.js';
 import { Location } from 'vscode-languageserver';
+import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
@@ -27,8 +28,7 @@ describe('scoping', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
-        await services.shared.workspace.DocumentBuilder.build(documents);
+        await loadDocuments(services, test.uris);
 
         // Ensure all expected references match
         for (const expectedReference of test.expectedReferences) {

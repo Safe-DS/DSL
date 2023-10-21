@@ -42,6 +42,18 @@ export const getErrors = async (services: LangiumServices, code: string): Promis
 };
 
 /**
+ * Get all errors from a loaded document.
+ *
+ * @param services The language services.
+ * @param uri The URI of the document to check.
+ * @returns The errors.
+ */
+export const getErrorsAtURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
+    const diagnostics = getDiagnosticsAtURI(services, uri);
+    return diagnostics.filter((d) => d.severity === DiagnosticSeverity.Error);
+};
+
+/**
  * Get all diagnostics from a code snippet.
  *
  * @param services The language services.
@@ -54,6 +66,18 @@ const getDiagnostics = async (services: LangiumServices, code: string): Promise<
         documentUri: `file:///$autogen$${nextId++}.sdstest`,
         validation: true,
     });
+    return document.diagnostics ?? [];
+};
+
+/**
+ * Get all diagnostics from a loaded document.
+ *
+ * @param services The language services.
+ * @param uri The URI of the document to check.
+ * @returns The diagnostics.
+ */
+const getDiagnosticsAtURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
+    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
     return document.diagnostics ?? [];
 };
 
