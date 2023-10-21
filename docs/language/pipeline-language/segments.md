@@ -14,8 +14,8 @@ segment loadMovieRatingsSample() {}
 
 This declaration of a segment has the following syntactic elements:
 
-- The keyword `segment`.
-- The name of the segment, here `loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of segments.
+- The keyword `#!sds segment`.
+- The name of the segment, here `#!sds loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of segments.
 - The list of parameters (i.e. inputs) of the segment. This is delimited by parentheses. In the example above, the segment has no parameters.
 - The _body_ of the segment, which contains the [statements][statements] that should be run when the segment is [called](#calling-a-segment). The body is delimited by curly braces. In this example, the body is empty, so running this segment does nothing.
 
@@ -27,7 +27,7 @@ To make a segment configurable, add [parameters][parameters] (inputs). We will f
 
 Parameters must be declared in the header of the segment so [callers](#calling-a-segment) know they are expected to pass them as an argument, and so we can [use them](#references-to-parameters) in the body of the segment.
 
-In the following example, we give the segment a single parameters with name `nInstances` and [type][types] `Int`.
+In the following example, we give the segment a single parameters with name `#!sds nInstances` and [type][types] `#!sds Int`.
 
 ```sds
 segment loadMovieRatingsSample(nInstances: Int) {}
@@ -37,7 +37,7 @@ More information about parameters can be found in the [linked document][paramete
 
 #### References to Parameters
 
-Within the segment we can access the value of a parameter using a [reference][references]. Here is a basic example where we print the value of the `nInstances` parameter to the console:
+Within the segment we can access the value of a parameter using a [reference][references]. Here is a basic example where we print the value of the `#!sds nInstances` parameter to the console:
 
 ```sds
 segment loadMovieRatingsSample(nInstances: Int) {
@@ -73,13 +73,13 @@ segment loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: D
 }
 ```
 
-We added two results to the segment: The first one is called `features` and has type `Dataset`, while the second one is called `target` and also has type `Dataset`.
+We added two results to the segment: The first one is called `#!sds features` and has type `#!sds Dataset`, while the second one is called `#!sds target` and also has type `#!sds Dataset`.
 
 More information about the declaration of results can be found in the [linked document][results].
 
 #### Assigning to Results
 
-Currently, the program will not compile since we never assigned a value to these results. This can be done with an [assignment][assignments] and the `yield` keyword:
+Currently, the program will not compile since we never assigned a value to these results. This can be done with an [assignment][assignments] and the `#!sds yield` keyword:
 
 ```sds
 segment loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: Dataset) {
@@ -95,13 +95,13 @@ segment loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: D
 }
 ```
 
-In the assignment beginning with `yield features =` we specify the value of the result called `features`, while the next assignment beginning with `yield target =` assigns a value to the `target` result.
+In the assignment beginning with `#!sds yield features =` we specify the value of the result called `#!sds features`, while the next assignment beginning with `#!sds yield target =` assigns a value to the `#!sds target` result.
 
-The order of the [result declarations](#result-declaration) does not need to match the order of assignment. However, **each result musts be assigned exactly once**. Note that unlike the `return` in other programming languages, `yield` does not stop the execution of the segment, which allows [assignments][assignments] to different results to be split across multiple [statements][statements].
+The order of the [result declarations](#result-declaration) does not need to match the order of assignment. However, **each result musts be assigned exactly once**. Note that unlike the `#!sds return` in other programming languages, `#!sds yield` does not stop the execution of the segment, which allows [assignments][assignments] to different results to be split across multiple [statements][statements].
 
 ## Visibility
 
-By default, a segment can be [imported][imports] in any other file and reused there. We say they have `public` visibility. However, it is possible to restrict the visibility of a segment with modifiers:
+By default, a segment can be [imported][imports] in any other file and reused there. We say they have public visibility. However, it is possible to restrict the visibility of a segment with modifiers:
 
 ```sds
 internal segment internalSegment() {}
@@ -109,11 +109,11 @@ internal segment internalSegment() {}
 private segment privateSegment() {}
 ```
 
-The segment `internalSegment` is only visible in files with the same [package][packages]. The segment `privateSegment` is only visible in the file it is declared in.
+The segment `#!sds internalSegment` is only visible in files with the same [package][packages]. The segment `#!sds privateSegment` is only visible in the file it is declared in.
 
 ## Calling a Segment
 
-Inside a [pipeline][pipelines], another segment, or a [lambda][lambdas] we can then [call][calls] a segment, which means the segment is executed when the call is reached: The results of a segment can then be used as needed. In the following example, where we call the segment `loadMovieRatingsSample` that we defined above, we [assign the results to placeholders][assignments-to-placeholders]:
+Inside a [pipeline][pipelines], another segment, or a [lambda][lambdas] we can then [call][calls] a segment, which means the segment is executed when the call is reached: The results of a segment can then be used as needed. In the following example, where we call the segment `#!sds loadMovieRatingsSample` that we defined above, we [assign the results to placeholders][assignments-to-placeholders]:
 
 ```sds
 val features, val target = loadMovieRatingsSample(nInstances = 1000);

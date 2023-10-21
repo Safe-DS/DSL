@@ -1,13 +1,13 @@
 package tests.typing.operations.comparison
 
 pipeline myPipeline {
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<false>
     val lessThan = »1 < 1«;
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<true>
     val lessThanOrEquals = »1 <= 1«;
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<true>
     val greaterThanOrEquals = »1 >= 1«;
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<false>
     val greaterThan = »1 > 1«;
 
     // $TEST$ serialization Boolean

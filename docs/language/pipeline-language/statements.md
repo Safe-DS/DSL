@@ -14,7 +14,7 @@ are not planned since we want to keep the language small and easy to learn. More
 
 ## Expression Statements
 
-Expression statements are used to evaluate an [expression][expressions] exactly once. The results of this expression are ignored. Therefore, expression statements are only useful if the expression has side effects. The following snippet demonstrates this by [calling][calls] the `print` function that prints the given string to the console:
+Expression statements are used to evaluate an [expression][expressions] exactly once. The results of this expression are ignored. Therefore, expression statements are only useful if the expression has side effects. The following snippet demonstrates this by [calling][calls] the `#!sds print` function that prints the given string to the console:
 
 ```sds
 print("Hello, world!");
@@ -33,7 +33,7 @@ An assignment evaluates an [expression][expressions], its _right-hand side_, exa
 
 Placeholders are used to provide a name for a fixed value. This later allows us to use this value without recomputing it. In line with those semantics, placeholders must be given a value exactly once: They must be given a value directly when they are declared and that value cannot be changed afterwards (immutability).
 
-The next snippet shows how the singular result of an expression (the integer `1`) can be assigned to a placeholder called `one`:
+The next snippet shows how the singular result of an expression (the integer `#!sds 1`) can be assigned to a placeholder called `#!sds one`:
 
 ```sds
 val one = 1;
@@ -41,15 +41,15 @@ val one = 1;
 
 This assignment to a placeholder has the following syntactic elements:
 
-- The keyword `val`, which indicates that we want to declare a placeholder.
-- The name of the placeholder, here `one`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of placeholders.
-- An `=` sign.
+- The keyword `#!sds val`, which indicates that we want to declare a placeholder.
+- The name of the placeholder, here `#!sds one`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of placeholders.
+- An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
 #### References to Placeholder
 
-We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [segment][segments], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `one` placeholder (here `1`) to the console:
+We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [segment][segments], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `#!sds one` placeholder (here `#!sds 1`) to the console:
 
 ```sds
 segment loadMovieRatingsSample(nInstances: Int) {
@@ -76,15 +76,15 @@ segment trulyRandomInt() -> result: Int {
 
 The assignment here has the following syntactic elements:
 
-- The keyword `yield`, which indicates that we want to assign to a result.
-- The name of the result, here `greeting`. This must be identical to one of the names of a declared result in the header of the segment.
-- An `=` sign.
+- The keyword `#!sds yield`, which indicates that we want to assign to a result.
+- The name of the result, here `#!sds greeting`. This must be identical to one of the names of a declared result in the header of the segment.
+- An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
 #### Declare Results of Block Lambdas
 
-Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to segments is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `greeting`, which gets the value `"Hello, world!"`:
+Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to segments is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `#!sds greeting`, which gets the value `#!sds "Hello, world!"`:
 
 ```sds
 () -> {
@@ -94,15 +94,15 @@ Similar syntax is used to yield results of [block lambdas][block-lambdas]. The d
 
 The assignment here has the following syntactic elements:
 
-- The keyword `yield`, which indicates that we want to declare a result.
-- The name of the result, here `result`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `lowerCamelCase` for the names of results.
-- An `=` sign.
+- The keyword `#!sds yield`, which indicates that we want to declare a result.
+- The name of the result, here `#!sds result`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of results.
+- An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
 ### Ignoring Results
 
-In case we want to ignore a result of the expression on the right-hand side of the assignment we can inserting an underscore (called _wildcard_). The following snippet is equivalent to the [expression statement](#expression-statements) `1;`:
+In case we want to ignore a result of the expression on the right-hand side of the assignment we can inserting an underscore (called _wildcard_). The following snippet is equivalent to the [expression statement](#expression-statements) `#!sds 1;`:
 
 ```sds
 _ = 1;
@@ -112,7 +112,7 @@ _ = 1;
 
 So far, the left-hand side of the assignment always had a single assignee. However, when the right-hand side of the assignment produces more than one value, it is possible to freely decide for each value whether it should be [assigned to a placeholder](#declaring-placeholders), [yielded](#yielding-results) or [ignored](#ignoring-results).
 
-For example, the `split` method in the next example splits a large dataset into two datasets according to a given ratio. We then ignore the first dataset using a [wildcard](#ignoring-results) and [assign the second result to a placeholder](#declaring-placeholders) called `trainingDataset`. Afterwards, we train a `DecisionTree` using the `trainingDataset` and yield the trained model as a result:
+For example, the `#!sds split` method in the next example splits a large dataset into two datasets according to a given ratio. We then ignore the first dataset using a [wildcard](#ignoring-results) and [assign the second result to a placeholder](#declaring-placeholders) called `#!sds trainingDataset`. Afterwards, we train a `#!sds DecisionTree` using the `#!sds trainingDataset` and yield the trained model as a result:
 
 ```sds
 segment createModel(fullDataset: Dataset) -> trainedModel: Model {
@@ -127,7 +127,7 @@ Let us sum up the complete syntax of an assignment:
   - [Placeholder](#declaring-placeholders)
   - [Yield](#yielding-results)
   - [Wildcard](#ignoring-results)
-- An `=` sign.
+- An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 

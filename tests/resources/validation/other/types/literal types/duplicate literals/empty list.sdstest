@@ -1,0 +1,7 @@
+package tests.validation.other.types.literalTypes.duplicateLiterals
+
+// $TEST$ no warning r"The literal .* was already listed."
+
+segment mySegment1(
+    p: literal<>
+) {}

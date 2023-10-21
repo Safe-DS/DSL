@@ -6,6 +6,7 @@ import { isSdsClass, SdsClass } from '../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const builtinClasses = services.builtins.Classes;
 const classHierarchy = services.types.ClassHierarchy;
 
 describe('SafeDsClassHierarchy', async () => {
@@ -16,6 +17,51 @@ describe('SafeDsClassHierarchy', async () => {
 
     afterEach(async () => {
         await clearDocuments(services);
+    });
+
+    describe('isEqualToOrSubclassOf', () => {
+        const testCases = [
+            {
+                testName: 'should return false if node is undefined',
+                node: () => undefined,
+                other: () => builtinClasses.Any,
+                expected: false,
+            },
+            {
+                testName: 'should return false if other is undefined',
+                node: () => builtinClasses.Nothing,
+                other: () => undefined,
+                expected: false,
+            },
+            {
+                testName: 'should return false if node and other are undefined',
+                node: () => undefined,
+                other: () => undefined,
+                expected: false,
+            },
+            {
+                testName: 'should return true if node is Nothing',
+                node: () => builtinClasses.Nothing,
+                other: () => builtinClasses.Any,
+                expected: true,
+            },
+            {
+                testName: 'should return true if node and other are equal',
+                node: () => builtinClasses.Any,
+                other: () => builtinClasses.Any,
+                expected: true,
+            },
+            {
+                testName: 'should return true if node is a subclass of other',
+                node: () => builtinClasses.Int,
+                other: () => builtinClasses.Any,
+                expected: true,
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ node, other, expected }) => {
+            expect(classHierarchy.isEqualToOrSubclassOf(node(), other())).toStrictEqual(expected);
+        });
     });
 
     describe('streamSuperclasses', () => {

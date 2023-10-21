@@ -1,9 +1,11 @@
 package tests.typing.expressions.expressionLambdas.thatAreIsolated
 
+fun g() -> r: Int
+
 segment mySegment() {
     // $TEST$ serialization (p: $Unknown) -> (result: Int)
-    »(p) -> 1«;
+    »(p) -> g()«;
 
-    // $TEST$ serialization (p: $Unknown) -> (result: Int)
+    // $TEST$ serialization (p: $Unknown) -> (result: literal<1>)
     val f = »(p) -> 1«;
 }

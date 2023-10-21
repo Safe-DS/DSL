@@ -100,7 +100,7 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsFloat(node)) {
             return new FloatConstant(node.value);
         } else if (isSdsInt(node)) {
-            return new IntConstant(BigInt(node.value));
+            return new IntConstant(node.value);
         } else if (isSdsNull(node)) {
             return NullConstant;
         } else if (isSdsString(node)) {
@@ -520,4 +520,4 @@ export class SafeDsPartialEvaluator {
 }
 
 const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();
-const zeroes = [new IntConstant(BigInt(0)), new FloatConstant(0.0), new FloatConstant(-0.0)];
+const zeroes = [new IntConstant(0n), new FloatConstant(0.0), new FloatConstant(-0.0)];

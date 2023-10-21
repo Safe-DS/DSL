@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ES2017",
+        "target": "ES2020",
         "module": "Node16",
         "lib": ["ESNext", "DOM", "WebWorker"],
         "sourceMap": true,

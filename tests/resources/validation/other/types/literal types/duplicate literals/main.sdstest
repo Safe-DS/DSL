@@ -1,0 +1,14 @@
+package tests.validation.other.types.literalTypes.duplicateLiterals
+
+segment mySegment(
+    // $TEST$ no warning r"The literal .* was already listed."
+    p: literal<»1«>,
+    q: literal<
+        // $TEST$ no warning r"The literal .* was already listed."
+        »1«,
+        // $TEST$ no warning r"The literal .* was already listed."
+        »2«,
+        // $TEST$ warning r"The literal 1 was already listed."
+        »1«,
+    >,
+) {}

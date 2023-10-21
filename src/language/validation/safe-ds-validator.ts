@@ -53,7 +53,7 @@ import {
 import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
-import { unionTypeMustHaveTypeArguments } from './other/types/unionTypes.js';
+import { unionTypeMustHaveTypes, unionTypeShouldNotHaveDuplicateTypes } from './other/types/unionTypes.js';
 import {
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
@@ -90,7 +90,11 @@ import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
-import { indexedAccessesShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
+import {
+    indexedAccessesShouldBeUsedWithCaution,
+    literalTypesShouldBeUsedWithCaution,
+    mapsShouldBeUsedWithCaution,
+} from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
     annotationCallArgumentsMustBeConstant,
@@ -116,6 +120,12 @@ import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModu
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
 import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
+import {
+    literalTypeMustHaveLiterals,
+    literalTypeMustNotContainListLiteral,
+    literalTypeMustNotContainMapLiteral,
+    literalTypeShouldNotHaveDuplicateLiteral,
+} from './other/types/literalTypes.js';
 
 /**
  * Register custom validation checks.
@@ -197,6 +207,14 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             lambdaParametersMustNotBeAnnotated,
             lambdaParameterMustNotHaveConstModifier,
         ],
+        SdsLiteralType: [
+            literalTypeMustHaveLiterals,
+            literalTypeMustNotContainListLiteral,
+            literalTypeMustNotContainMapLiteral,
+            literalTypesShouldBeUsedWithCaution,
+            literalTypeShouldNotHaveDuplicateLiteral(services),
+        ],
+        SdsMap: [mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
@@ -245,7 +263,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
-        SdsUnionType: [unionTypeMustHaveTypeArguments, unionTypeShouldNotHaveASingularTypeArgument],
+        SdsUnionType: [
+            unionTypeMustHaveTypes,
+            unionTypeShouldNotHaveDuplicateTypes(services),
+            unionTypeShouldNotHaveASingularTypeArgument,
+        ],
         SdsYield: [yieldMustNotBeUsedInPipeline],
     };
     registry.register(checks);

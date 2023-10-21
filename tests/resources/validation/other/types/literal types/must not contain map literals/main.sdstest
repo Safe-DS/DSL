@@ -1,0 +1,6 @@
+package tests.validation.other.types.literalsTypes.mustNotContainMapLiterals
+
+// $TEST$ error "Literal types must not contain map literals."
+segment mySegment(
+    x: literal<»{}«>
+) {}

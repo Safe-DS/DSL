@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "safe-ds-dsl-docs"
+version = "0.1.0"
+description = "Documentation for the Safe-DS DSL"
+authors = ["Lars Reimann <mail@larsreimann.com>"]
+classifiers = ["Private :: Do not Upload"]
+packages = [
+    { include = "safe_ds_lexer", from = "lexer"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mkdocs = "^1.5.3"
+mkdocs-glightbox = "^0.3.4"
+mkdocs-material = "^9.4.6"
+mkdocs-same-dir = "^0.1.2"
+pygments = "^2.16.1"
+
+[tool.poetry.plugins."pygments.lexers"]
+sds = "safe_ds_lexer:SafeDsLexer"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
