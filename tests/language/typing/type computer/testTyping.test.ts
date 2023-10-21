@@ -6,6 +6,7 @@ import { AssertionError } from 'assert';
 import { locationToString } from '../../../helpers/location.js';
 import { createTypingTests } from './creator.js';
 import { getNodeByLocation } from '../../../helpers/nodeFinder.js';
+import { loadDocuments } from '../../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const typeComputer = services.types.TypeComputer;
@@ -27,8 +28,7 @@ describe('typing', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
-        await services.shared.workspace.DocumentBuilder.build(documents);
+        await loadDocuments(services, test.uris)
 
         // Ensure all nodes in the equivalence class have the same type
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {

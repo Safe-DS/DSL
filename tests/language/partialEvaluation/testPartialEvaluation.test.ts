@@ -6,6 +6,7 @@ import { AssertionError } from 'assert';
 import { locationToString } from '../../helpers/location.js';
 import { createPartialEvaluationTests } from './creator.js';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
+import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;
@@ -22,8 +23,7 @@ describe('partial evaluation', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
-        await services.shared.workspace.DocumentBuilder.build(documents);
+        await loadDocuments(services, test.uris);
 
         // Ensure that partially evaluating nodes in the same equivalence class yields the same result
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {

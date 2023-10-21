@@ -6,6 +6,7 @@ import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { AssertionError } from 'assert';
 import { clearDocuments, isRangeEqual } from 'langium/test';
 import { locationToString } from '../../helpers/location.js';
+import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
@@ -26,8 +27,7 @@ describe('validation', async () => {
         }
 
         // Load all documents
-        const documents = test.uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
-        await services.shared.workspace.DocumentBuilder.build(documents, { validation: true });
+        await loadDocuments(services, test.uris, { validation: true });
 
         // Ensure all expected issues match
         for (const expectedIssue of test.expectedIssues) {

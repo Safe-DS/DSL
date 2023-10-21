@@ -2,10 +2,8 @@ import path from 'path';
 import { globSync } from 'glob';
 import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { group } from 'radash';
-import { LangiumDocument, URI } from 'langium';
-import { parseHelper } from 'langium/test';
+import { BuildOptions, LangiumDocument, URI } from 'langium';
 import { SafeDsServices } from '../../src/language/safe-ds-module.js';
-import fs from 'fs';
 
 const TEST_RESOURCES_PATH = path.join(__dirname, '..', 'resources');
 
@@ -99,10 +97,17 @@ const isNotSkipped = (pathRelativeToResources: string) => {
 /**
  * Load the documents at the specified URIs into the workspace managed by the given services.
  *
+ * @param services The language services.
+ * @param uris The URIs of the documents to load.
+ * @param options The build options.
  * @returns The loaded documents.
  */
-export const loadDocuments = async (services: SafeDsServices, uris: URI[]): Promise<LangiumDocument[]> => {
+export const loadDocuments = async (
+    services: SafeDsServices,
+    uris: URI[],
+    options: BuildOptions = {},
+): Promise<LangiumDocument[]> => {
     const documents = uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
-    await services.shared.workspace.DocumentBuilder.build(documents, { validation: true });
+    await services.shared.workspace.DocumentBuilder.build(documents, options);
     return documents;
 };

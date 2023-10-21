@@ -6,6 +6,7 @@ import { createGenerationTests } from './creator.js';
 import { SdsModule } from '../../../src/language/generated/ast.js';
 import { generatePython } from '../../../src/cli/generator.js';
 import fs from 'fs';
+import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const generationTests = createGenerationTests();
@@ -27,10 +28,7 @@ describe('generation', async () => {
         }
 
         // Load all documents
-        const documents = test.inputUris.map((uri) =>
-            services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri),
-        );
-        await services.shared.workspace.DocumentBuilder.build(documents);
+        const documents = await loadDocuments(services, test.inputUris);
 
         // Generate code for all documents
         const actualOutputPaths: string[] = [];

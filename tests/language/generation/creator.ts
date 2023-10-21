@@ -33,7 +33,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     let runUntil: Location | undefined;
 
     // Load all files, so they get linked
-    await loadDocuments(services, inputUris);
+    await loadDocuments(services, inputUris, { validation: true });
 
     for (const uri of inputUris) {
         const code = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri).textDocument.getText();
