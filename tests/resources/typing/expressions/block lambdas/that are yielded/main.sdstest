@@ -5,19 +5,19 @@ segment mySegment() -> (
     s: () -> (),
     t: Int,
 ) {
-    // $TEST$ serialization (p: String) -> (r: Int, s: String)
+    // $TEST$ serialization (p: String) -> (r: literal<1>, s: literal<"">)
     yield r = »(p) {
         yield r = 1;
         yield s = "";
     }«;
 
-    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: String)
+    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: literal<"">)
     yield s = »(p) {
         yield r = 1;
         yield s = "";
     }«;
 
-    // $TEST$ serialization (p: $Unknown) -> (r: Int, s: $Unknown)
+    // $TEST$ serialization (p: $Unknown) -> (r: literal<1>, s: $Unknown)
     yield t = »(p) {
         yield r, yield s = 1;
     }«;

@@ -1,27 +1,27 @@
 package tests.typing.operations.arithmetic
 
 pipeline myPipeline {
-    // $TEST$ serialization Int
+    // $TEST$ serialization literal<2>
     val additionIntInt = »1 + 1«;
-    // $TEST$ serialization Int
+    // $TEST$ serialization literal<0>
     val subtractionIntInt = »1 - 1«;
-    // $TEST$ serialization Int
+    // $TEST$ serialization literal<1>
     val multiplicationIntInt = »1 * 1«;
-    // $TEST$ serialization Int
+    // $TEST$ serialization literal<1>
     val divisionIntInt = »1 / 1«;
-    // $TEST$ serialization Int
+    // $TEST$ serialization literal<-1>
     val negationInt = »-1«;
 
-    // $TEST$ serialization Float
-    val additionIntFloat = »1 + 1.0«;
-    // $TEST$ serialization Float
-    val subtractionIntFloat = »1 - 1.0«;
-    // $TEST$ serialization Float
-    val multiplicationIntFloat = »1 * 1.0«;
-    // $TEST$ serialization Float
-    val divisionIntFloat = »1 / 1.0«;
-    // $TEST$ serialization Float
-    val negationFloat = »-1.0«;
+    // $TEST$ serialization literal<2.5>
+    val additionIntFloat = »1 + 1.5«;
+    // $TEST$ serialization literal<-0.5>
+    val subtractionIntFloat = »1 - 1.5«;
+    // $TEST$ serialization literal<1.5>
+    val multiplicationIntFloat = »1 * 1.5«;
+    // $TEST$ serialization literal<1.5>
+    val divisionIntFloat = »1.5 / 1«;
+    // $TEST$ serialization literal<-1.5>
+    val negationFloat = »-1.5«;
 
     // $TEST$ serialization Float
     val additionInvalid = »true + true«;

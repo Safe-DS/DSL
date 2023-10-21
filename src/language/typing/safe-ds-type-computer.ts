@@ -6,6 +6,7 @@ import {
     ClassType,
     EnumType,
     EnumVariantType,
+    LiteralType,
     NamedTupleEntry,
     NamedTupleType,
     NamedType,
@@ -85,11 +86,14 @@ import {
     typeArgumentsOrEmpty,
 } from '../helpers/nodeProperties.js';
 import { isEmpty } from 'radash';
+import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
+import { Constant } from '../partialEvaluation/model.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly builtinClasses: SafeDsClasses;
     private readonly nodeMapper: SafeDsNodeMapper;
+    private readonly partialEvaluator: SafeDsPartialEvaluator;
 
     private readonly coreTypeCache: WorkspaceCache<string, Type>;
     private readonly nodeTypeCache: WorkspaceCache<string, Type>;
@@ -98,6 +102,7 @@ export class SafeDsTypeComputer {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.builtinClasses = services.builtins.Classes;
         this.nodeMapper = services.helpers.NodeMapper;
+        this.partialEvaluator = services.evaluation.PartialEvaluator;
 
         this.coreTypeCache = new WorkspaceCache(services.shared);
         this.nodeTypeCache = new WorkspaceCache(services.shared);
@@ -257,6 +262,12 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
+        // Partial evaluation
+        const evaluatedNode = this.partialEvaluator.evaluate(node);
+        if (evaluatedNode instanceof Constant) {
+            return new LiteralType([evaluatedNode]);
+        }
+
         // Terminal cases
         if (isSdsBoolean(node)) {
             return this.Boolean;

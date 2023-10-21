@@ -1,13 +1,13 @@
 package tests.typing.operations.equality
 
 pipeline myPipeline {
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<true>
     val equals = (»1 == 1«);
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<false>
     val notEquals = (»1 != 1«);
 
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<true>
     val strictlyEquals = (»1 === 1«);
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<false>
     val notStrictlyEquals = (»1 !== 1«);
 }

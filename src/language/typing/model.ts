@@ -6,9 +6,9 @@ import {
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
-    SdsLiteral,
     SdsParameter,
 } from '../generated/ast.js';
+import { Constant } from '../partialEvaluation/model.js';
 
 /* c8 ignore start */
 export abstract class Type {
@@ -68,7 +68,7 @@ export class CallableType extends Type {
 export class LiteralType extends Type {
     override readonly isNullable: boolean;
 
-    constructor(readonly values: SdsLiteral[]) {
+    constructor(readonly values: Constant[]) {
         super();
 
         this.isNullable = values.some(isSdsNull);
@@ -93,11 +93,15 @@ export class LiteralType extends Type {
             return false;
         }
 
-        throw Error('Not implemented');
+        if (other.values.length !== this.values.length) {
+            return false;
+        }
+
+        return other.values.every((otherValue) => this.values.some((value) => value.equals(otherValue)));
     }
 
     override toString(): string {
-        throw Error('Not implemented');
+        return `literal<${this.values.join(', ')}>`;
     }
 }
 

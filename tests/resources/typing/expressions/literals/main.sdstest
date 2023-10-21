@@ -2,18 +2,18 @@ package tests.typing.expressions.literals
 
 pipeline myPipeline {
 
-    // $TEST$ serialization Boolean
+    // $TEST$ serialization literal<true>
     val booleanLiteral = »true«;
 
-    // $TEST$ serialization Float
-    val floatLiteral = »1.0«;
+    // $TEST$ serialization literal<1.5>
+    val floatLiteral = »1.5«;
 
-    // $TEST$ serialization Int
+    // $TEST$ serialization literal<1>
     val intLiteral = »1«;
 
-    // $TEST$ serialization Nothing?
+    // $TEST$ serialization literal<null>
     val nullLiteral = »null«;
 
-    // $TEST$ serialization String
+    // $TEST$ serialization literal<"myString">
     val stringLiteral = »"myString"«;
 }
