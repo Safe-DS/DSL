@@ -5,21 +5,24 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAnnotatedObject,
     isSdsAnnotation,
-    isSdsAttribute,
+    isSdsAttribute, isSdsCallable,
     isSdsClass,
     isSdsEnumVariant,
     isSdsFunction,
     isSdsPipeline,
     isSdsSegment,
 } from '../generated/ast.js';
+import {SafeDsTypeComputer} from "../typing/safe-ds-type-computer.js";
 
 export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider {
     private readonly builtinAnnotations: SafeDsAnnotations;
+    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         super(services);
 
         this.builtinAnnotations = services.builtins.Annotations;
+        this.typeComputer = services.types.TypeComputer;
     }
 
     protected override getSymbol(document: LangiumDocument, node: AstNode): DocumentSymbol[] {
@@ -27,13 +30,12 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
         const nameNode = this.nameProvider.getNameNode(node);
         if (nameNode && cstNode) {
             const name = this.nameProvider.getName(node);
-            const isDeprecated = isSdsAnnotatedObject(node) && this.builtinAnnotations.isDeprecated(node);
-
             return [
                 {
                     name: name ?? nameNode.text,
                     kind: this.nodeKindProvider.getSymbolKind(node),
-                    tags: isDeprecated ? [SymbolTag.Deprecated] : undefined,
+                    tags: this.getTags(node),
+                    detail: this.getDetails(node),
                     range: cstNode.range,
                     selectionRange: nameNode.range,
                     children: this.getChildSymbols(document, node),
@@ -55,6 +57,22 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
             }
         } else {
             return super.getChildSymbols(document, node);
+        }
+    }
+
+    private getDetails(node: AstNode): string | undefined {
+        if (isSdsFunction(node) || isSdsSegment(node)) {
+            const type = this.typeComputer.computeType(node);
+            return type?.toString();
+        }
+        return undefined
+    }
+
+    private getTags(node: AstNode): SymbolTag[] | undefined {
+        if (isSdsAnnotatedObject(node) && this.builtinAnnotations.isDeprecated(node)) {
+            return [SymbolTag.Deprecated]
+        } else {
+            return undefined;
         }
     }
 
