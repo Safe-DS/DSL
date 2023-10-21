@@ -1,0 +1,16 @@
+package tests.validation.other.types.literalTypes.mustHaveLiterals
+
+// $TEST$ error "A literal type must have at least one literal."
+segment mySegment1(
+    p: literal»<>«
+) {}
+
+// $TEST$ no error "A literal type must have at least one literal."
+segment mySegment2(
+    p: literal»<1>«
+) {}
+
+// $TEST$ no error "A literal type must have at least one literal."
+segment mySegment3(
+    p: literal»<1, "">«
+) {}

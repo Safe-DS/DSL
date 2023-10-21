@@ -90,7 +90,11 @@ import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
-import { indexedAccessesShouldBeUsedWithCaution, mapsShouldBeUsedWithCaution } from './experimentalLanguageFeatures.js';
+import {
+    indexedAccessesShouldBeUsedWithCaution,
+    literalTypesShouldBeUsedWithCaution,
+    mapsShouldBeUsedWithCaution,
+} from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
     annotationCallArgumentsMustBeConstant,
@@ -116,6 +120,11 @@ import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModu
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
 import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
+import {
+    literalTypeMustHaveLiterals,
+    literalTypeMustNotContainListLiteral,
+    literalTypeMustNotContainMapLiteral,
+} from './other/types/literalTypes.js';
 
 /**
  * Register custom validation checks.
@@ -196,6 +205,12 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             lambdaMustBeAssignedToTypedParameter(services),
             lambdaParametersMustNotBeAnnotated,
             lambdaParameterMustNotHaveConstModifier,
+        ],
+        SdsLiteralType: [
+            literalTypeMustHaveLiterals,
+            literalTypeMustNotContainListLiteral,
+            literalTypeMustNotContainMapLiteral,
+            literalTypesShouldBeUsedWithCaution,
         ],
         SdsMap: [mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [

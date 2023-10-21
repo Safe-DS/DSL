@@ -7,7 +7,7 @@ export const CODE_UNION_TYPE_MISSING_TYPE_ARGUMENTS = 'union-type/missing-type-a
 
 export const unionTypeMustHaveTypeArguments = (node: SdsUnionType, accept: ValidationAcceptor): void => {
     if (isEmpty(typeArgumentsOrEmpty(node.typeArgumentList))) {
-        accept('error', 'A union type must have least one type argument.', {
+        accept('error', 'A union type must have at least one type argument.', {
             node,
             property: 'typeArgumentList',
             code: CODE_UNION_TYPE_MISSING_TYPE_ARGUMENTS,

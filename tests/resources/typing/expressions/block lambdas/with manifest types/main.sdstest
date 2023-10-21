@@ -1,13 +1,13 @@
 package tests.typing.expressions.blockLambdas.withManifestTypes
 
 segment mySegment() {
-    // $TEST$ serialization (p: Int) -> (r: Int, s: String)
+    // $TEST$ serialization (p: Int) -> (r: literal<1>, s: literal<"">)
     »(p: Int) {
         yield r = 1;
         yield s = "";
     }«;
 
-    // $TEST$ serialization (p: String) -> (r: Int, s: $Unknown)
+    // $TEST$ serialization (p: String) -> (r: literal<1>, s: $Unknown)
     »(p: String) {
         yield r, yield s = 1;
     }«;

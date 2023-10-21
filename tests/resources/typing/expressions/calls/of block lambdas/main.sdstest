@@ -1,12 +1,12 @@
 package tests.typing.expressions.calls.ofBlockLambdas
 
 pipeline myPipeline {
-    // $TEST$ serialization String
+    // $TEST$ serialization literal<"">
     »(() {
         yield r = "";
     })()«;
 
-    // $TEST$ serialization (r: String, s: Int)
+    // $TEST$ serialization (r: literal<"">, s: literal<1>)
     »(() {
         yield r = "";
         yield s = 1;

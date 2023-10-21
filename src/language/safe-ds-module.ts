@@ -24,6 +24,8 @@ import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClassHierarchy } from './typing/safe-ds-class-hierarchy.js';
 import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
+import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
+import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -41,6 +43,8 @@ export type SafeDsAddedServices = {
     };
     types: {
         ClassHierarchy: SafeDsClassHierarchy;
+        CoreTypes: SafeDsCoreTypes;
+        TypeChecker: SafeDsTypeChecker;
         TypeComputer: SafeDsTypeComputer;
     };
     workspace: {
@@ -83,6 +87,8 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     types: {
         ClassHierarchy: (services) => new SafeDsClassHierarchy(services),
+        CoreTypes: (services) => new SafeDsCoreTypes(services),
+        TypeChecker: (services) => new SafeDsTypeChecker(services),
         TypeComputer: (services) => new SafeDsTypeComputer(services),
     },
     workspace: {

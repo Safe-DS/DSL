@@ -16,9 +16,26 @@ export class SafeDsClassHierarchy {
     }
 
     /**
-     * Returns a stream of all superclasses of the given class. The class itself is not included in the stream unless
-     * there is a cycle in the inheritance hierarchy. Direct ancestors are returned first, followed by their ancestors
-     * and so on.
+     * Returns `true` if the given node is equal to or a subclass of the given other node. If one of the nodes is
+     * undefined, `false` is returned.
+     */
+    isEqualToOrSubclassOf(node: SdsClass | undefined, other: SdsClass | undefined): boolean {
+        if (!node || !other) {
+            return false;
+        }
+
+        // Nothing is a subclass of everything
+        if (node === this.builtinClasses.Nothing) {
+            return true;
+        }
+
+        return node === other || this.streamSuperclasses(node).includes(other);
+    }
+
+    /**
+     * Returns a stream of all superclasses of the given class. Direct ancestors are returned first, followed by their
+     * ancestors and so on. The class itself is not included in the stream unless there is a cycle in the inheritance
+     * hierarchy.
      */
     streamSuperclasses(node: SdsClass | undefined): Stream<SdsClass> {
         if (!node) {
@@ -58,3 +75,22 @@ export class SafeDsClassHierarchy {
         return undefined;
     }
 }
+
+// fun SdsClass.superClassMembers() =
+//     this.superClasses().flatMap { it.classMembersOrEmpty().asSequence() }
+//
+// // TODO only static methods can be hidden
+// fun SdsFunction.hiddenFunction(): SdsFunction? {
+//     val containingClassOrInterface = closestAncestorOrNull<SdsClass>() ?: return null
+//     return containingClassOrInterface.superClassMembers()
+//         .filterIsInstance<SdsFunction>()
+//         .firstOrNull { it.name == name }
+// }
+//
+// fun SdsClass?.inheritedNonStaticMembersOrEmpty(): Set<SdsAbstractDeclaration> {
+//     return this?.parentClassesOrEmpty()
+//         ?.flatMap { it.classMembersOrEmpty() }
+// ?.filter { it is SdsAttribute && !it.isStatic || it is SdsFunction && !it.isStatic }
+// ?.toSet()
+//     .orEmpty()
+// }

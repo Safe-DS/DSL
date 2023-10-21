@@ -1,0 +1,6 @@
+package tests.validation.other.types.literalTypes.mustNotContanListLiterals
+
+// $TEST$ error "Literal types must not contain list literals."
+segment mySegment(
+    x: literal<»[]«>
+) {}
