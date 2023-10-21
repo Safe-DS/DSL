@@ -401,13 +401,13 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         const rightOperand = generateExpression(expression.rightOperand, frame);
         switch (expression.operator) {
             case 'or':
-                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
                 return `${RUNNER_CODEGEN_PACKAGE}.eager_or(${leftOperand}, ${rightOperand})`;
             case 'and':
-                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
                 return `${RUNNER_CODEGEN_PACKAGE}.eager_and(${leftOperand}, ${rightOperand})`;
             case '?:':
-                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
                 return `${RUNNER_CODEGEN_PACKAGE}.eager_elvis(${leftOperand}, ${rightOperand})`;
             case '===':
                 return `(${leftOperand}) is (${rightOperand})`;
@@ -440,7 +440,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         } else {
             const memberExpression = generateExpression(expression.member!, frame);
             if (expression.isNullSafe) {
-                frame.addImport(new ImportData(RUNNER_CODEGEN_PACKAGE));
+                frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
                 return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
             } else {
                 return `${receiver}.${memberExpression}`;
@@ -512,25 +512,25 @@ const getExternalReferenceNeededImport = function (
             for (const importedDeclaration of importedDeclarations) {
                 if (declaration === importedDeclaration.declaration.ref) {
                     if (importedDeclaration.alias !== undefined) {
-                        return new ImportData(
-                            services.builtins.Annotations.getPythonModule(targetModule) || value.package,
-                            importedDeclaration.declaration?.ref?.name,
-                            importedDeclaration.alias.alias,
-                        );
+                        return {
+                            importPath: services.builtins.Annotations.getPythonModule(targetModule) || value.package,
+                            declarationName: importedDeclaration.declaration?.ref?.name,
+                            alias: importedDeclaration.alias.alias,
+                        };
                     } else {
-                        return new ImportData(
-                            services.builtins.Annotations.getPythonModule(targetModule) || value.package,
-                            importedDeclaration.declaration?.ref?.name,
-                        );
+                        return {
+                            importPath: services.builtins.Annotations.getPythonModule(targetModule) || value.package,
+                            declarationName: importedDeclaration.declaration?.ref?.name,
+                        };
                     }
                 }
             }
         }
         if (isSdsWildcardImport(value)) {
-            return new ImportData(
-                services.builtins.Annotations.getPythonModule(targetModule) || value.package,
-                declaration.name,
-            );
+            return {
+                importPath: services.builtins.Annotations.getPythonModule(targetModule) || value.package,
+                declarationName: declaration.name,
+            };
         }
     }
     return undefined;
@@ -545,12 +545,12 @@ const getInternalReferenceNeededImport = function (
     const currentModule = <SdsModule>findRootNode(expression);
     const targetModule = <SdsModule>findRootNode(declaration);
     if (currentModule !== targetModule && !isInStubFile(targetModule)) {
-        return new ImportData(
-            `${
+        return {
+            importPath: `${
                 services.builtins.Annotations.getPythonModule(targetModule) || targetModule.name
             }.${formatGeneratedFileName(getModuleFileBaseName(targetModule))}`,
-            getPythonNameOrDefault(services, declaration),
-        );
+            declarationName: getPythonNameOrDefault(services, declaration),
+        };
     }
     return undefined;
 };
@@ -564,20 +564,10 @@ const formatStringSingleLine = function (value: string): string {
     return value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n');
 };
 
-class ImportData {
-    importPath: string;
-    declarationName: string | undefined;
-    alias: string | undefined;
-
-    constructor(
-        importPath: string,
-        declarationName: string | undefined = undefined,
-        alias: string | undefined = undefined,
-    ) {
-        this.importPath = importPath;
-        this.declarationName = declarationName;
-        this.alias = alias;
-    }
+interface ImportData {
+    readonly importPath: string;
+    readonly declarationName?: string;
+    readonly alias?: string;
 }
 
 class GenerationInfoFrame {
@@ -609,6 +599,6 @@ class GenerationInfoFrame {
     }
 }
 
-export type GenerateOptions = {
+export interface GenerateOptions {
     destination?: string;
-};
+}
