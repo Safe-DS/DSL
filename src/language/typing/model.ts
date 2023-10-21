@@ -7,7 +7,7 @@ import {
     SdsEnumVariant,
     SdsParameter,
 } from '../generated/ast.js';
-import {Constant, NullConstant} from '../partialEvaluation/model.js';
+import { Constant, NullConstant } from '../partialEvaluation/model.js';
 
 /* c8 ignore start */
 export abstract class Type {
@@ -70,7 +70,7 @@ export class LiteralType extends Type {
     constructor(readonly constants: Constant[]) {
         super();
 
-        this.isNullable = constants.some(it => it === NullConstant);
+        this.isNullable = constants.some((it) => it === NullConstant);
     }
 
     override copyWithNullability(isNullable: boolean): LiteralType {
@@ -308,7 +308,7 @@ export class UnionType extends Type {
     constructor(readonly possibleTypes: Type[]) {
         super();
 
-        this.isNullable = possibleTypes.some(it => it.isNullable);
+        this.isNullable = possibleTypes.some((it) => it.isNullable);
     }
 
     override copyWithNullability(_isNullable: boolean): UnionType {
