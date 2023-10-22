@@ -1,0 +1,6 @@
+package tests.validation.experimentalLanguageFeature.unionTypes
+
+fun myFunction(
+    // $TEST$ warning "Union types are experimental and may change without prior notice."
+    p: »union<>«
+)
