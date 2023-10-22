@@ -2,7 +2,7 @@ import { ValidationAcceptor } from 'langium';
 import { SdsDeclaration } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { annotationCallsOrEmpty } from '../../helpers/nodeProperties.js';
-import { duplicatesBy } from '../../helpers/collectionUtils.js';
+import { duplicatesBy } from '../../../helpers/collectionUtils.js';
 
 export const CODE_ANNOTATION_NOT_REPEATABLE = 'annotation/not-repeatable';
 

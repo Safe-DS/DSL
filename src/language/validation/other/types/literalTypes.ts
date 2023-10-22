@@ -1,9 +1,9 @@
 import { isSdsList, isSdsMap, SdsLiteralType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { literalsOrEmpty } from '../../../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { EvaluatedNode } from '../../../partialEvaluation/model.js';
+import { isEmpty } from '../../../../helpers/collectionUtils.js';
 
 export const CODE_LITERAL_TYPE_DUPLICATE_LITERAL = 'literal-type/duplicate-literal';
 export const CODE_LITERAL_TYPE_LIST_LITERAL = 'literal-type/list-literal';

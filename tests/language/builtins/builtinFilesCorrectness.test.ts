@@ -4,10 +4,10 @@ import { uriToShortenedResourceName } from '../../../src/helpers/resources.js';
 import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { isEmpty } from 'radash';
 import { URI } from 'langium';
 import { locationToString } from '../../helpers/location.js';
 import { AssertionError } from 'assert';
+import { isEmpty } from '../../../src/helpers/collectionUtils.js';
 
 const workspace = createSafeDsServices(NodeFileSystem).SafeDs.shared.workspace;
 const builtinFiles = listBuiltinFiles();

@@ -1,7 +1,7 @@
 import { ValidationAcceptor } from 'langium';
 import { SdsImport } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
-import { isEmpty } from 'radash';
+import { isEmpty } from '../../../helpers/collectionUtils.js';
 
 export const CODE_IMPORT_MISSING_PACKAGE = 'import/missing-package';
 export const CODE_IMPORT_EMPTY_PACKAGE = 'import/empty-package';

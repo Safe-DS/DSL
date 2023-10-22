@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { duplicatesBy, uniqueOrUndefined } from '../../../src/language/helpers/collectionUtils.js';
+import { duplicatesBy, isEmpty, uniqueOrUndefined } from '../../src/helpers/collectionUtils.js';
 
 describe('duplicatesBy', () => {
     const id = (element: any) => element;
@@ -22,16 +22,26 @@ describe('duplicatesBy', () => {
     });
 });
 
+describe('isEmpty', () => {
+    it('should return true if the iterable has no elements', () => {
+        expect(isEmpty([])).toBeTruthy();
+    });
+
+    it('should keep false if the iterable has elements', () => {
+        expect(isEmpty([1])).toBeFalsy();
+    });
+});
+
 describe('uniqueOrUndefined', () => {
-    it('should return undefined if the list is empty', () => {
+    it('should return undefined if the iterable is empty', () => {
         expect(uniqueOrUndefined([])).toBeUndefined();
     });
 
-    it('should return the singular element of the list', () => {
+    it('should return the singular element of the iterable', () => {
         expect(uniqueOrUndefined([1])).toBe(1);
     });
 
-    it('should return undefined if the list has multiple elements', () => {
-        expect(uniqueOrUndefined([1, 2])).toBeUndefined();
+    it('should return undefined if the iterable has multiple elements', () => {
+        expect(uniqueOrUndefined([1, undefined])).toBeUndefined();
     });
 });

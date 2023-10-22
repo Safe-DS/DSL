@@ -42,23 +42,22 @@ export class SafeDsClassHierarchy {
             return stream();
         }
 
-        const capturedThis = this;
-        const generator = function* () {
-            const visited = new Set<SdsClass>();
-            let current = capturedThis.parentClassOrUndefined(node);
-            while (current && !visited.has(current)) {
-                yield current;
-                visited.add(current);
-                current = capturedThis.parentClassOrUndefined(current);
-            }
+        return stream(this.superclassesGenerator(node));
+    }
 
-            const anyClass = capturedThis.builtinClasses.Any;
-            if (anyClass && node !== anyClass && !visited.has(anyClass)) {
-                yield anyClass;
-            }
-        };
+    private *superclassesGenerator(node: SdsClass | undefined): Generator<SdsClass, void> {
+        const visited = new Set<SdsClass>();
+        let current = this.parentClassOrUndefined(node);
+        while (current && !visited.has(current)) {
+            yield current;
+            visited.add(current);
+            current = this.parentClassOrUndefined(current);
+        }
 
-        return stream(generator());
+        const anyClass = this.builtinClasses.Any;
+        if (anyClass && node !== anyClass && !visited.has(anyClass)) {
+            yield anyClass;
+        }
     }
 
     /**

@@ -1,9 +1,9 @@
 import { ValidationAcceptor } from 'langium';
 import { SdsClass } from '../generated/ast.js';
 import { parentTypesOrEmpty } from '../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, UnknownType } from '../typing/model.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_INHERITANCE_CYCLE = 'inheritance/cycle';
 export const CODE_INHERITANCE_MULTIPLE_INHERITANCE = 'inheritance/multiple-inheritance';

@@ -53,9 +53,9 @@ import {
     SdsReference,
     SdsTemplateString,
 } from '../generated/ast.js';
-import { isEmpty } from 'radash';
 import { argumentsOrEmpty, parametersOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export class SafeDsPartialEvaluator {
     private readonly astNodeLocator: AstNodeLocator;

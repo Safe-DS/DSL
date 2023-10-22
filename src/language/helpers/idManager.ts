@@ -1,5 +1,5 @@
 /**
- * Handles the mapping of objects, usually nodes of an Safe-DS AST, to their IDs.
+ * Handles the mapping of objects, usually nodes of a Safe-DS AST, to their IDs.
  */
 export class IdManager<T extends WeakKey> {
     /**

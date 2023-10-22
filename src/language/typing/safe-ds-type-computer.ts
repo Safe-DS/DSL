@@ -81,10 +81,10 @@ import {
     resultsOrEmpty,
     typeArgumentsOrEmpty,
 } from '../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { Constant, isConstant } from '../partialEvaluation/model.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
