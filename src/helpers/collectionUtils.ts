@@ -2,7 +2,7 @@ import { Stream, stream } from 'langium';
 
 /**
  * Returns the values of the iterable that are labeled the same as a previous value. The first value with a label is
- * not included. Neither are values with an undefined label.
+ * not included. Neither are values with an `undefined` label.
  *
  * @example
  *     const id = (value: any) => value;
@@ -13,19 +13,19 @@ export const duplicatesBy = <T, K>(iterable: Iterable<T>, labeler: (element: T) 
 };
 
 const duplicatedByGenerator = function* <T, K>(
-    elements: Iterable<T>,
+    iterable: Iterable<T>,
     labeler: (element: T) => K | undefined,
 ): Generator<T, void> {
     const knownLabels = new Set<K>();
 
-    for (const element of elements) {
-        const label = labeler(element);
+    for (const value of iterable) {
+        const label = labeler(value);
         if (label === undefined) {
             continue;
         }
 
         if (knownLabels.has(label)) {
-            yield element;
+            yield value;
         } else {
             knownLabels.add(label);
         }
@@ -33,10 +33,40 @@ const duplicatedByGenerator = function* <T, K>(
 };
 
 /**
+ * Returns the values of the iterable grouped by their label. Values with an `undefined` label are not included.
+ */
+export const groupBy = <T, K>(iterable: Iterable<T>, labeler: (element: T) => K | undefined): Stream<[K, T[]]> => {
+    const groups = new Map<K, T[]>();
+
+    for (const value of iterable) {
+        const label = labeler(value);
+        if (label === undefined) {
+            continue;
+        }
+
+        const group = groups.get(label);
+        if (group === undefined) {
+            groups.set(label, [value]);
+        } else {
+            group.push(value);
+        }
+    }
+
+    return stream(groups.entries());
+};
+
+/**
  * Returns whether the iterable has no values.
  */
 export const isEmpty = (iterable: Iterable<unknown>): boolean => {
     return iterable[Symbol.iterator]().next().done === true;
+};
+
+/**
+ * Returns the last element of the array, or `undefined` if the array is empty.
+ */
+export const last = <T>(array: T[]): T | undefined => {
+    return array[array.length - 1];
 };
 
 /**

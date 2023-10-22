@@ -1,9 +1,9 @@
 import path from 'path';
 import { globSync } from 'glob';
 import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
-import { group } from 'radash';
 import { BuildOptions, LangiumDocument, URI } from 'langium';
 import { SafeDsServices } from '../../src/language/safe-ds-module.js';
+import { groupBy } from '../../src/helpers/collectionUtils.js';
 
 const TEST_RESOURCES_PATH = path.join(__dirname, '..', 'resources');
 
@@ -79,10 +79,10 @@ export const listTestPythonFiles = (rootTestResourceName: TestResourceName): URI
  */
 export const listTestSafeDsFilesGroupedByParentDirectory = (rootTestResourceName: TestResourceName): [URI, URI[]][] => {
     const uris = listTestSafeDsFiles(rootTestResourceName);
-    const groupedByParentDirectory = group(uris, (p) => path.dirname(p.fsPath)) as Record<string, URI[]>;
+    const groupedByParentDirectory = groupBy(uris, (p) => path.dirname(p.fsPath));
 
     const result: [URI, URI[]][] = [];
-    for (const [parentDirectory, urisInParentDirectory] of Object.entries(groupedByParentDirectory)) {
+    for (const [parentDirectory, urisInParentDirectory] of groupedByParentDirectory) {
         result.push([URI.file(parentDirectory), urisInParentDirectory]);
     }
 

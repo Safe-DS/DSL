@@ -10,8 +10,8 @@ import {
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { statementsOrEmpty } from '../../../helpers/nodeProperties.js';
-import { last } from 'radash';
 import { DiagnosticTag } from 'vscode-languageserver';
+import { last } from '../../../../helpers/collectionUtils.js';
 
 export const CODE_PLACEHOLDER_ALIAS = 'placeholder/alias';
 export const CODE_PLACEHOLDER_UNUSED = 'placeholder/unused';

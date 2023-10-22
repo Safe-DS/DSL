@@ -66,7 +66,6 @@ import {
     moduleMembersOrEmpty,
     statementsOrEmpty,
 } from '../language/helpers/nodeProperties.js';
-import { group } from 'radash';
 import { IdManager } from '../language/helpers/idManager.js';
 import { isInStubFile } from '../language/helpers/fileExtensions.js';
 import {
@@ -76,6 +75,7 @@ import {
     NullConstant,
     StringConstant,
 } from '../language/partialEvaluation/model.js';
+import { groupBy } from '../helpers/collectionUtils.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -229,15 +229,13 @@ const generatePipeline = function (
 };
 
 const generateImports = function (importSet: ImportData[]): string[] {
-    const qualifiedImports = Array.from(importSet)
+    const qualifiedImports = importSet
         .filter((importStmt) => importStmt.declarationName === undefined)
         .sort((a, b) => a.importPath.localeCompare(b.importPath))
         .map(generateQualifiedImport);
-    const groupedImports = Object.entries(
-        group(
-            Array.from(importSet).filter((importStmt) => importStmt.declarationName !== undefined),
-            (importStmt) => importStmt.importPath,
-        ),
+    const groupedImports = groupBy(
+        importSet.filter((importStmt) => importStmt.declarationName !== undefined),
+        (importStmt) => importStmt.importPath,
     ).sort(([key1, _value1], [key2, _value2]) => key1.localeCompare(key2));
     const declaredImports: string[] = [];
     for (const [key, value] of groupedImports) {
