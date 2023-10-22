@@ -29,15 +29,15 @@ import {
     SdsYield,
 } from '../generated/ast.js';
 import { CallableType, StaticType } from '../typing/model.js';
-import { findLocalReferences, getContainerOfType, Stream, stream } from 'langium';
+import { EMPTY_STREAM, findLocalReferences, getContainerOfType, Stream } from 'langium';
 import {
     getAbstractResults,
     getArguments,
-    isNamedArgument,
-    isNamedTypeArgument,
     getParameters,
     getTypeArguments,
     getTypeParameters,
+    isNamedArgument,
+    isNamedTypeArgument,
 } from './nodeProperties.js';
 
 export class SafeDsNodeMapper {
@@ -155,13 +155,13 @@ export class SafeDsNodeMapper {
      */
     parameterToReferences(node: SdsParameter | undefined): Stream<SdsReference> {
         if (!node) {
-            return stream();
+            return EMPTY_STREAM;
         }
 
         const containingCallable = getContainerOfType(node, isSdsCallable);
         /* c8 ignore start */
         if (!containingCallable) {
-            return stream();
+            return EMPTY_STREAM;
         }
         /* c8 ignore stop */
 
@@ -175,13 +175,13 @@ export class SafeDsNodeMapper {
      */
     placeholderToReferences(node: SdsPlaceholder | undefined): Stream<SdsReference> {
         if (!node) {
-            return stream();
+            return EMPTY_STREAM;
         }
 
         const containingBlock = getContainerOfType(node, isSdsBlock);
         /* c8 ignore start */
         if (!containingBlock) {
-            return stream();
+            return EMPTY_STREAM;
         }
         /* c8 ignore stop */
 
@@ -195,12 +195,12 @@ export class SafeDsNodeMapper {
      */
     resultToYields(node: SdsResult | undefined): Stream<SdsYield> {
         if (!node) {
-            return stream();
+            return EMPTY_STREAM;
         }
 
         const containingSegment = getContainerOfType(node, isSdsSegment);
         if (!containingSegment) {
-            return stream();
+            return EMPTY_STREAM;
         }
 
         return findLocalReferences(node, containingSegment)

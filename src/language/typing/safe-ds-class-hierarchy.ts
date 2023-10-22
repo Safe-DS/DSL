@@ -1,7 +1,7 @@
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { SdsClass } from '../generated/ast.js';
-import { stream, Stream } from 'langium';
+import { EMPTY_STREAM, stream, Stream } from 'langium';
 import { getParentTypes } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 import { ClassType } from './model.js';
@@ -39,7 +39,7 @@ export class SafeDsClassHierarchy {
      */
     streamSuperclasses(node: SdsClass | undefined): Stream<SdsClass> {
         if (!node) {
-            return stream();
+            return EMPTY_STREAM;
         }
 
         return stream(this.superclassesGenerator(node));
