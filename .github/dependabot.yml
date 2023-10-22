@@ -20,15 +20,3 @@ updates:
     directory: '/docs'
     schedule:
       interval: 'monthly'
-
-  # DSL
-  - package-ecosystem: 'npm'
-    directory: '/DSL'
-    schedule:
-      interval: 'monthly'
-
-  # Runner
-  - package-ecosystem: 'pip'
-    directory: '/Runner'
-    schedule:
-      interval: 'monthly'

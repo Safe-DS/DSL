@@ -236,7 +236,9 @@ const generateImports = function (importSet: ImportData[]): string[] {
     const groupedImports = groupBy(
         importSet.filter((importStmt) => importStmt.declarationName !== undefined),
         (importStmt) => importStmt.importPath,
-    ).sort(([key1, _value1], [key2, _value2]) => key1.localeCompare(key2));
+    )
+        .toArray()
+        .sort(([key1, _value1], [key2, _value2]) => key1.localeCompare(key2));
     const declaredImports: string[] = [];
     for (const [key, value] of groupedImports) {
         const importedDecls =
