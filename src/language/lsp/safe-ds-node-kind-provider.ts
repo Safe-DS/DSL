@@ -15,6 +15,7 @@ import {
     SdsPipeline,
     SdsPlaceholder,
     SdsResult,
+    SdsSchema,
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
@@ -57,6 +58,8 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
             /* c8 ignore next 2 */
             case SdsResult:
                 return SymbolKind.Variable;
+            case SdsSchema:
+                return SymbolKind.Struct;
             case SdsSegment:
                 return SymbolKind.Function;
             /* c8 ignore next 2 */
