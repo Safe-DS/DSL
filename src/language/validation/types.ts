@@ -45,7 +45,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
             }
         }
 
-        const callable = nodeMapper.callToCallableOrUndefined(node);
+        const callable = nodeMapper.callToCallable(node);
         if (!callable || isSdsAnnotation(callable)) {
             accept('error', 'This expression is not callable.', {
                 node: node.receiver,
@@ -74,7 +74,7 @@ export const namedTypeMustSetAllTypeParameters =
 
         if (node.typeArgumentList) {
             const actualTypeParameters = typeArgumentsOrEmpty(node.typeArgumentList).map((it) =>
-                services.helpers.NodeMapper.typeArgumentToTypeParameterOrUndefined(it),
+                services.helpers.NodeMapper.typeArgumentToTypeParameter(it),
             );
 
             const missingTypeParameters = expectedTypeParameters.filter((it) => !actualTypeParameters.includes(it));

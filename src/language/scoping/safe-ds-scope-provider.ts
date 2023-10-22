@@ -114,7 +114,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
         const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
-        const callable = this.nodeMapper.callToCallableOrUndefined(containingAbstractCall);
+        const callable = this.nodeMapper.callToCallable(containingAbstractCall);
         if (!callable) {
             return EMPTY_SCOPE;
         }
@@ -191,7 +191,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         // Call results
         let resultScope = EMPTY_SCOPE;
         if (isSdsCall(node.receiver)) {
-            const callable = this.nodeMapper.callToCallableOrUndefined(node.receiver);
+            const callable = this.nodeMapper.callToCallable(node.receiver);
             const results = abstractResultsOrEmpty(callable);
 
             if (results.length > 1) {

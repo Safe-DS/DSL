@@ -22,7 +22,7 @@ export const assigneeAssignedResultShouldNotBeExperimental =
             return;
         }
 
-        const assignedObject = services.helpers.NodeMapper.assigneeToAssignedObjectOrUndefined(node);
+        const assignedObject = services.helpers.NodeMapper.assigneeToAssignedObject(node);
         if (!isSdsResult(assignedObject)) {
             return;
         }
@@ -53,7 +53,7 @@ export const annotationCallAnnotationShouldNotBeExperimental =
 
 export const argumentCorrespondingParameterShouldNotBeExperimental =
     (services: SafeDsServices) => (node: SdsArgument, accept: ValidationAcceptor) => {
-        const parameter = services.helpers.NodeMapper.argumentToParameterOrUndefined(node);
+        const parameter = services.helpers.NodeMapper.argumentToParameter(node);
         if (!parameter) {
             return;
         }

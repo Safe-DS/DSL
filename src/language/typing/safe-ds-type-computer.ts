@@ -225,7 +225,7 @@ export class SafeDsTypeComputer {
 
         // Lambda passed as argument
         if (isSdsArgument(containerOfLambda)) {
-            const parameter = this.nodeMapper.argumentToParameterOrUndefined(containerOfLambda);
+            const parameter = this.nodeMapper.argumentToParameter(containerOfLambda);
             if (!parameter) {
                 return UnknownType;
             }

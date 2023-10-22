@@ -12,7 +12,7 @@ export const assignmentAssigneeMustGetValue =
     (services: SafeDsServices) =>
     (node: SdsAssignment, accept: ValidationAcceptor): void => {
         for (const assignee of assigneesOrEmpty(node)) {
-            if (!services.helpers.NodeMapper.assigneeToAssignedObjectOrUndefined(assignee)) {
+            if (!services.helpers.NodeMapper.assigneeToAssignedObject(assignee)) {
                 accept('error', 'No value is assigned to this assignee.', {
                     node: assignee,
                     code: CODE_ASSIGMENT_NOTHING_ASSIGNED,
@@ -31,7 +31,7 @@ export const assignmentShouldNotImplicitlyIgnoreResult = (services: SafeDsServic
         }
 
         const assignees = assigneesOrEmpty(node);
-        const callable = nodeMapper.callToCallableOrUndefined(expression);
+        const callable = nodeMapper.callToCallable(expression);
         const results = abstractResultsOrEmpty(callable);
 
         if (results.length > assignees.length) {

@@ -11,7 +11,7 @@ export const callArgumentsMustBeConstantIfParameterIsConstant = (services: SafeD
 
     return (node: SdsCall, accept: ValidationAcceptor) => {
         for (const argument of argumentsOrEmpty(node)) {
-            const parameter = nodeMapper.argumentToParameterOrUndefined(argument);
+            const parameter = nodeMapper.argumentToParameter(argument);
             if (!isConstantParameter(parameter)) continue;
 
             const evaluatedArgumentValue = partialEvaluator.evaluate(argument.value);

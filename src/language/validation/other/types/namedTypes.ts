@@ -11,7 +11,7 @@ export const CODE_NAMED_TYPE_TOO_MANY_TYPE_ARGUMENTS = 'named-type/too-many-type
 
 export const namedTypeMustNotSetTypeParameterMultipleTimes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
-    const typeArgumentToTypeParameterOrUndefined = nodeMapper.typeArgumentToTypeParameterOrUndefined.bind(nodeMapper);
+    const typeArgumentToTypeParameterOrUndefined = nodeMapper.typeArgumentToTypeParameter.bind(nodeMapper);
 
     return (node: SdsNamedType, accept: ValidationAcceptor): void => {
         const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);

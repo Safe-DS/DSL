@@ -50,7 +50,7 @@ export class SafeDsNodeMapper {
     /**
      * Returns the parameter that the argument is assigned to. If there is no matching parameter, returns undefined.
      */
-    argumentToParameterOrUndefined(node: SdsArgument | undefined): SdsParameter | undefined {
+    argumentToParameter(node: SdsArgument | undefined): SdsParameter | undefined {
         if (!node) {
             return undefined;
         }
@@ -73,7 +73,7 @@ export class SafeDsNodeMapper {
         }
 
         // Find parameter at the same position
-        const callable = this.callToCallableOrUndefined(containingAbstractCall);
+        const callable = this.callToCallable(containingAbstractCall);
         const parameters = parametersOrEmpty(callable);
         if (argumentPosition < parameters.length) {
             return parameters[argumentPosition];
@@ -86,7 +86,7 @@ export class SafeDsNodeMapper {
      * Returns the result, block lambda result, or expression that is assigned to the given assignee. If nothing is
      * assigned, `undefined` is returned.
      */
-    assigneeToAssignedObjectOrUndefined(node: SdsAssignee | undefined): SdsAbstractResult | SdsExpression | undefined {
+    assigneeToAssignedObject(node: SdsAssignee | undefined): SdsAbstractResult | SdsExpression | undefined {
         if (!node) {
             return undefined;
         }
@@ -111,7 +111,7 @@ export class SafeDsNodeMapper {
         }
 
         // If the RHS instantiates a class or enum variant, the first assignee gets the entire RHS
-        const callable = this.callToCallableOrUndefined(expression);
+        const callable = this.callToCallable(expression);
         if (isSdsClass(callable) || isSdsEnumVariant(callable)) {
             if (assigneePosition === 0) {
                 return expression;
@@ -128,7 +128,7 @@ export class SafeDsNodeMapper {
     /**
      * Returns the callable that is called by the given call. If no callable can be found, returns undefined.
      */
-    callToCallableOrUndefined(node: SdsAbstractCall | undefined): SdsCallable | undefined {
+    callToCallable(node: SdsAbstractCall | undefined): SdsCallable | undefined {
         if (!node) {
             return undefined;
         }
@@ -212,7 +212,7 @@ export class SafeDsNodeMapper {
      * Returns the type parameter that the type argument is assigned to. If there is no matching type parameter, returns
      * undefined.
      */
-    typeArgumentToTypeParameterOrUndefined(node: SdsTypeArgument | undefined): SdsTypeParameter | undefined {
+    typeArgumentToTypeParameter(node: SdsTypeArgument | undefined): SdsTypeParameter | undefined {
         if (!node) {
             return undefined;
         }

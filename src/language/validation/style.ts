@@ -73,7 +73,7 @@ export const callArgumentListShouldBeNeeded =
             return;
         }
 
-        const callable = services.helpers.NodeMapper.callToCallableOrUndefined(node);
+        const callable = services.helpers.NodeMapper.callToCallable(node);
         if (!isSdsEnumVariant(callable)) {
             return;
         }

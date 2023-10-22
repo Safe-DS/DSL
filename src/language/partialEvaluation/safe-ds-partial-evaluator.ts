@@ -376,7 +376,7 @@ export class SafeDsPartialEvaluator {
 
             // Override default values with the actual arguments
             argumentsOrEmpty(node).forEach((it) => {
-                const parameter = this.nodeMapper.argumentToParameterOrUndefined(it);
+                const parameter = this.nodeMapper.argumentToParameter(it);
                 if (parameter && args.has(parameter)) {
                     args.set(parameter, this.cachedDoEvaluate(it.value, substitutions));
                 }

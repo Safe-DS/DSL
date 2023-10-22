@@ -14,9 +14,9 @@ describe('SafeDsNodeMapper', () => {
         await clearDocuments(services);
     });
 
-    describe('argumentToParameterOrUndefined', () => {
+    describe('argumentToParameter', () => {
         it('should return undefined if passed undefined', () => {
-            expect(nodeMapper.argumentToParameterOrUndefined(undefined)?.$type).toBeUndefined();
+            expect(nodeMapper.argumentToParameter(undefined)?.$type).toBeUndefined();
         });
 
         describe('named argument', () => {
@@ -94,7 +94,7 @@ describe('SafeDsNodeMapper', () => {
         });
 
         const parameterNameOrNull = (node: SdsArgument): string | undefined => {
-            const parameter = nodeMapper.argumentToParameterOrUndefined(node);
+            const parameter = nodeMapper.argumentToParameter(node);
             return parameter?.name ?? undefined;
         };
     });

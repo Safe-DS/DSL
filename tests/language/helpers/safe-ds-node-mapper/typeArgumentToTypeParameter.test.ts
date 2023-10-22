@@ -14,9 +14,9 @@ describe('SafeDsNodeMapper', () => {
         await clearDocuments(services);
     });
 
-    describe('typeArgumentToTypeParameterOrUndefined', () => {
+    describe('typeArgumentToTypeParameter', () => {
         it('should return undefined if passed undefined', () => {
-            expect(nodeMapper.typeArgumentToTypeParameterOrUndefined(undefined)?.$type).toBeUndefined();
+            expect(nodeMapper.typeArgumentToTypeParameter(undefined)?.$type).toBeUndefined();
         });
 
         describe('named type argument', () => {
@@ -134,7 +134,7 @@ describe('SafeDsNodeMapper', () => {
         });
 
         const typeParameterNameOrNull = (node: SdsTypeArgument): string | undefined => {
-            const typeParameter = nodeMapper.typeArgumentToTypeParameterOrUndefined(node);
+            const typeParameter = nodeMapper.typeArgumentToTypeParameter(node);
             return typeParameter?.name ?? undefined;
         };
     });

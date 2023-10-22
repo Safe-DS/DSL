@@ -97,7 +97,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     ): EvaluatedNode {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
         const argumentValue = argumentsOrEmpty(annotationCall).find(
-            (it) => this.nodeMapper.argumentToParameterOrUndefined(it)?.name === parameterName,
+            (it) => this.nodeMapper.argumentToParameter(it)?.name === parameterName,
         )?.value;
         return this.partialEvaluator.evaluate(argumentValue);
     }

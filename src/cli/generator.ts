@@ -291,9 +291,7 @@ const generateStatement = function (statement: SdsStatement, frame: GenerationIn
 
 const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
     const requiredAssignees = isSdsCall(assignment.expression)
-        ? abstractResultsOrEmpty(
-              frame.getServices().helpers.NodeMapper.callToCallableOrUndefined(assignment.expression),
-          ).length
+        ? abstractResultsOrEmpty(frame.getServices().helpers.NodeMapper.callToCallable(assignment.expression)).length
         : /* c8 ignore next */
           1;
     const assignees = assigneesOrEmpty(assignment);
@@ -474,7 +472,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
 const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[]): SdsArgument[] {
     // $containerIndex contains the index of the parameter in the receivers parameter list
     const parameters = argumentList.map((argument) => {
-        return { par: services.helpers.NodeMapper.argumentToParameterOrUndefined(argument), arg: argument };
+        return { par: services.helpers.NodeMapper.argumentToParameter(argument), arg: argument };
     });
     return parameters
         .slice()
@@ -486,7 +484,7 @@ const sortArguments = function (services: SafeDsServices, argumentList: SdsArgum
 };
 
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
-    const parameter = frame.getServices().helpers.NodeMapper.argumentToParameterOrUndefined(argument);
+    const parameter = frame.getServices().helpers.NodeMapper.argumentToParameter(argument);
     return expandToString`${
         parameter !== undefined && !isRequiredParameter(parameter)
             ? generateParameter(parameter, frame, false) + '='

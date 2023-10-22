@@ -39,7 +39,7 @@ export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices
         }
 
         // We already report other errors in those cases
-        const callable = nodeMapper.callToCallableOrUndefined(node);
+        const callable = nodeMapper.callToCallable(node);
         if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
             return;
         }
@@ -76,12 +76,12 @@ export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices
 
 export const argumentListMustNotSetParameterMultipleTimes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
-    const argumentToParameterOrUndefined = nodeMapper.argumentToParameterOrUndefined.bind(nodeMapper);
+    const argumentToParameterOrUndefined = nodeMapper.argumentToParameter.bind(nodeMapper);
 
     return (node: SdsArgumentList, accept: ValidationAcceptor): void => {
         // We already report other errors in this case
         const containingCall = getContainerOfType(node, isSdsCall);
-        const callable = nodeMapper.callToCallableOrUndefined(containingCall);
+        const callable = nodeMapper.callToCallable(containingCall);
         if (isSdsAnnotation(callable)) {
             return;
         }
@@ -109,7 +109,7 @@ export const argumentListMustSetAllRequiredParameters = (services: SafeDsService
         }
 
         // We already report other errors in those cases
-        const callable = nodeMapper.callToCallableOrUndefined(node);
+        const callable = nodeMapper.callToCallable(node);
         if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
             return;
         }
@@ -119,7 +119,7 @@ export const argumentListMustSetAllRequiredParameters = (services: SafeDsService
             return;
         }
 
-        const actualParameters = argumentsOrEmpty(node).map((it) => nodeMapper.argumentToParameterOrUndefined(it));
+        const actualParameters = argumentsOrEmpty(node).map((it) => nodeMapper.argumentToParameter(it));
 
         const missingTypeParameters = expectedParameters.filter((it) => !actualParameters.includes(it));
         if (!isEmpty(missingTypeParameters)) {

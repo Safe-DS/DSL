@@ -19,7 +19,7 @@ export const lambdaMustBeAssignedToTypedParameter = (services: SafeDsServices) =
         if (isSdsParameter(context)) {
             contextIsValid = context.type !== undefined;
         } else if (isSdsArgument(context)) {
-            const parameter = nodeMapper.argumentToParameterOrUndefined(context);
+            const parameter = nodeMapper.argumentToParameter(context);
             // If the resolution of the parameter failed, we already show another error nearby
             contextIsValid = parameter === undefined || parameter.type !== undefined;
         }
