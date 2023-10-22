@@ -1,7 +1,7 @@
 import { SafeDsServices } from '../safe-ds-module.js';
 import { isSdsModule, SdsModuleMember } from '../generated/ast.js';
 import { LangiumDocuments, URI, WorkspaceCache } from 'langium';
-import { moduleMembersOrEmpty } from '../helpers/nodeProperties.js';
+import { getModuleMembers } from '../helpers/nodeProperties.js';
 
 export abstract class SafeDsModuleMembers<T extends SdsModuleMember> {
     private readonly langiumDocuments: LangiumDocuments;
@@ -31,7 +31,7 @@ export abstract class SafeDsModuleMembers<T extends SdsModuleMember> {
             return undefined;
         }
 
-        const firstMatchingModuleMember = moduleMembersOrEmpty(root).find((m) => m.name === name);
+        const firstMatchingModuleMember = getModuleMembers(root).find((m) => m.name === name);
         if (!predicate(firstMatchingModuleMember)) {
             /* c8 ignore next 2 */
             return undefined;

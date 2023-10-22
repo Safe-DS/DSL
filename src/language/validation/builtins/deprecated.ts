@@ -27,7 +27,7 @@ export const assigneeAssignedResultShouldNotBeDeprecated =
             return;
         }
 
-        const assignedObject = services.helpers.NodeMapper.assigneeToAssignedObjectOrUndefined(node);
+        const assignedObject = services.helpers.NodeMapper.assigneeToAssignedObject(node);
         if (!isSdsResult(assignedObject)) {
             return;
         }
@@ -60,7 +60,7 @@ export const annotationCallAnnotationShouldNotBeDeprecated =
 
 export const argumentCorrespondingParameterShouldNotBeDeprecated =
     (services: SafeDsServices) => (node: SdsArgument, accept: ValidationAcceptor) => {
-        const parameter = services.helpers.NodeMapper.argumentToParameterOrUndefined(node);
+        const parameter = services.helpers.NodeMapper.argumentToParameter(node);
         if (!parameter) {
             return;
         }

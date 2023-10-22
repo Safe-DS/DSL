@@ -9,7 +9,7 @@ import {
     SdsResult,
 } from '../generated/ast.js';
 import { stream } from 'langium';
-import { parametersOrEmpty } from '../helpers/nodeProperties.js';
+import { getParameters } from '../helpers/nodeProperties.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
@@ -219,7 +219,7 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
     readonly hasBeenInstantiated = this.args !== undefined;
 
     override readonly isFullyEvaluated: boolean =
-        isEmpty(parametersOrEmpty(this.variant)) ||
+        isEmpty(getParameters(this.variant)) ||
         (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
 
     override equals(other: EvaluatedNode): boolean {

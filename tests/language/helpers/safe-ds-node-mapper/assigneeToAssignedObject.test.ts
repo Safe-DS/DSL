@@ -8,7 +8,7 @@ import {
     isSdsPlaceholder,
     SdsAssignee,
 } from '../../../../src/language/generated/ast.js';
-import { assigneesOrEmpty } from '../../../../src/language/helpers/nodeProperties.js';
+import { getAssignees } from '../../../../src/language/helpers/nodeProperties.js';
 import { NodeFileSystem } from 'langium/node';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
@@ -24,9 +24,9 @@ describe('SafeDsNodeMapper', () => {
         await clearDocuments(services);
     });
 
-    describe('assigneeToAssignedObjectOrUndefined', () => {
+    describe('assigneeToAssignedObject', () => {
         it('should return undefined if passed undefined', async () => {
-            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(undefined)?.$type).toBeUndefined();
+            expect(nodeMapper.assigneeToAssignedObject(undefined)?.$type).toBeUndefined();
         });
 
         it.each([
@@ -59,7 +59,7 @@ describe('SafeDsNodeMapper', () => {
             },
         ])('should return undefined if nothing is assigned ($name)', async ({ code }) => {
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBeUndefined();
+            expect(nodeMapper.assigneeToAssignedObject(placeholder)?.$type).toBeUndefined();
         });
 
         it('should return the entire RHS of an assignment if it is not a call (constant)', async () => {
@@ -70,7 +70,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsInt');
+            expect(nodeMapper.assigneeToAssignedObject(placeholder)?.$type).toBe('SdsInt');
         });
 
         it('should return the entire RHS of an assignment if it is a call of a class', async () => {
@@ -82,7 +82,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsCall');
+            expect(nodeMapper.assigneeToAssignedObject(placeholder)?.$type).toBe('SdsCall');
         });
 
         it('should return the entire RHS of an assignment if it is a call of an enum variant', async () => {
@@ -96,7 +96,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsCall');
+            expect(nodeMapper.assigneeToAssignedObject(placeholder)?.$type).toBe('SdsCall');
         });
 
         it('should return the entire RHS of an assignment if it is not a call (unresolved reference)', async () => {
@@ -107,7 +107,7 @@ describe('SafeDsNodeMapper', () => {
             `;
 
             const placeholder = await getNodeOfType(services, code, isSdsPlaceholder);
-            expect(nodeMapper.assigneeToAssignedObjectOrUndefined(placeholder)?.$type).toBe('SdsReference');
+            expect(nodeMapper.assigneeToAssignedObject(placeholder)?.$type).toBe('SdsReference');
         });
 
         it.each([
@@ -172,13 +172,13 @@ describe('SafeDsNodeMapper', () => {
             'should return the corresponding result if the RHS is a call of a $name',
             async ({ code, expected, index = 0 }) => {
                 const assignment = await getNodeOfType(services, code, isSdsAssignment, index);
-                const abstractResultNames = assigneesOrEmpty(assignment).map(abstractResultNameOrNull);
+                const abstractResultNames = getAssignees(assignment).map(abstractResultNameOrNull);
                 expect(abstractResultNames).toStrictEqual(expected);
             },
         );
 
         const abstractResultNameOrNull = (node: SdsAssignee): string | undefined => {
-            const assignedObject = nodeMapper.assigneeToAssignedObjectOrUndefined(node);
+            const assignedObject = nodeMapper.assigneeToAssignedObject(node);
             if (isSdsAbstractResult(assignedObject)) {
                 return assignedObject.name;
             } else {

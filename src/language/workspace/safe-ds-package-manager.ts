@@ -9,7 +9,7 @@ import {
     LangiumDocuments,
 } from 'langium';
 import { isSdsSegment } from '../generated/ast.js';
-import { isInternal, packageNameOrUndefined } from '../helpers/nodeProperties.js';
+import { isInternal, getPackageName } from '../helpers/nodeProperties.js';
 
 export class SafeDsPackageManager {
     private readonly astNodeLocator: AstNodeLocator;
@@ -129,7 +129,7 @@ export class SafeDsPackageManager {
                 continue;
             }
 
-            const packageName = packageNameOrUndefined(node);
+            const packageName = getPackageName(node);
             if (!packageName || !this.isValidPackageName(packageName)) {
                 /* c8 ignore next 2 */
                 continue;

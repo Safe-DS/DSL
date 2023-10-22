@@ -17,19 +17,19 @@ import {
 } from '../generated/ast.js';
 import { getDocument, ValidationAcceptor } from 'langium';
 import {
-    blockLambdaResultsOrEmpty,
-    classMembersOrEmpty,
-    columnsOrEmpty,
-    enumVariantsOrEmpty,
-    importedDeclarationsOrEmpty,
-    importsOrEmpty,
+    streamBlockLambdaResults,
+    getMatchingClassMembers,
+    getColumns,
+    getEnumVariants,
+    getImportedDeclarations,
+    getImports,
     isStatic,
-    moduleMembersOrEmpty,
-    packageNameOrUndefined,
-    parametersOrEmpty,
-    placeholdersOrEmpty,
-    resultsOrEmpty,
-    typeParametersOrEmpty,
+    getModuleMembers,
+    getPackageName,
+    getParameters,
+    streamPlaceholders,
+    getResults,
+    getTypeParameters,
 } from '../helpers/nodeProperties.js';
 import { duplicatesBy } from '../../helpers/collectionUtils.js';
 import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
@@ -150,54 +150,46 @@ const acceptCasingWarning = (
 // -----------------------------------------------------------------------------
 
 export const annotationMustContainUniqueNames = (node: SdsAnnotation, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
+    namesMustBeUnique(getParameters(node), (name) => `A parameter with name '${name}' exists already.`, accept);
 };
 
 export const blockLambdaMustContainUniqueNames = (node: SdsBlockLambda, accept: ValidationAcceptor): void => {
-    const parametersAndPlaceholders = [...parametersOrEmpty(node), ...placeholdersOrEmpty(node.body)];
+    const parametersAndPlaceholders = [...getParameters(node), ...streamPlaceholders(node.body)];
     namesMustBeUnique(
         parametersAndPlaceholders,
         (name) => `A parameter or placeholder with name '${name}' exists already.`,
         accept,
     );
 
-    namesMustBeUnique(
-        blockLambdaResultsOrEmpty(node),
-        (name) => `A result with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(streamBlockLambdaResults(node), (name) => `A result with name '${name}' exists already.`, accept);
 };
 
 export const callableTypeMustContainUniqueNames = (node: SdsCallableType, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
-    namesMustBeUnique(
-        resultsOrEmpty(node.resultList),
-        (name) => `A result with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(getParameters(node), (name) => `A parameter with name '${name}' exists already.`, accept);
+    namesMustBeUnique(getResults(node.resultList), (name) => `A result with name '${name}' exists already.`, accept);
 };
 
 export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [...typeParametersOrEmpty(node.typeParameterList), ...parametersOrEmpty(node)];
+    const typeParametersAndParameters = [...getTypeParameters(node.typeParameterList), ...getParameters(node)];
     namesMustBeUnique(
         typeParametersAndParameters,
         (name) => `A type parameter or parameter with name '${name}' exists already.`,
         accept,
     );
 
-    const instanceMembers = classMembersOrEmpty(node, (it) => !isStatic(it));
+    const instanceMembers = getMatchingClassMembers(node, (it) => !isStatic(it));
     namesMustBeUnique(instanceMembers, (name) => `An instance member with name '${name}' exists already.`, accept);
 
-    const staticMembers = classMembersOrEmpty(node, isStatic);
+    const staticMembers = getMatchingClassMembers(node, isStatic);
     namesMustBeUnique(staticMembers, (name) => `A static member with name '${name}' exists already.`, accept);
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(enumVariantsOrEmpty(node), (name) => `A variant with name '${name}' exists already.`, accept);
+    namesMustBeUnique(getEnumVariants(node), (name) => `A variant with name '${name}' exists already.`, accept);
 };
 
 export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [...typeParametersOrEmpty(node.typeParameterList), ...parametersOrEmpty(node)];
+    const typeParametersAndParameters = [...getTypeParameters(node.typeParameterList), ...getParameters(node)];
     namesMustBeUnique(
         typeParametersAndParameters,
         (name) => `A type parameter or parameter with name '${name}' exists already.`,
@@ -206,22 +198,18 @@ export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: 
 };
 
 export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda, accept: ValidationAcceptor): void => {
-    namesMustBeUnique(parametersOrEmpty(node), (name) => `A parameter with name '${name}' exists already.`, accept);
+    namesMustBeUnique(getParameters(node), (name) => `A parameter with name '${name}' exists already.`, accept);
 };
 
 export const functionMustContainUniqueNames = (node: SdsFunction, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [...typeParametersOrEmpty(node.typeParameterList), ...parametersOrEmpty(node)];
+    const typeParametersAndParameters = [...getTypeParameters(node.typeParameterList), ...getParameters(node)];
     namesMustBeUnique(
         typeParametersAndParameters,
         (name) => `A type parameter or parameter with name '${name}' exists already.`,
         accept,
     );
 
-    namesMustBeUnique(
-        resultsOrEmpty(node.resultList),
-        (name) => `A result with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(getResults(node.resultList), (name) => `A result with name '${name}' exists already.`, accept);
 };
 
 export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsServices) => {
@@ -229,8 +217,8 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
     const builtinUris = new Set(listBuiltinFiles().map((it) => it.toString()));
 
     return (node: SdsModule, accept: ValidationAcceptor): void => {
-        for (const member of moduleMembersOrEmpty(node)) {
-            const packageName = packageNameOrUndefined(member) ?? '';
+        for (const member of getModuleMembers(node)) {
+            const packageName = getPackageName(member) ?? '';
             const declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
             const memberUri = getDocument(member).uri?.toString();
 
@@ -254,7 +242,7 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
 
 export const moduleMustContainUniqueNames = (node: SdsModule, accept: ValidationAcceptor): void => {
     // Names of imported declarations must be unique
-    const importedDeclarations = importsOrEmpty(node).filter(isSdsQualifiedImport).flatMap(importedDeclarationsOrEmpty);
+    const importedDeclarations = getImports(node).filter(isSdsQualifiedImport).flatMap(getImportedDeclarations);
     for (const duplicate of duplicatesBy(importedDeclarations, importedDeclarationName)) {
         if (duplicate.alias) {
             accept('error', `A declaration with name '${importedDeclarationName(duplicate)}' was imported already.`, {
@@ -274,21 +262,21 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
     // Names of module members must be unique
     if (isInPipelineFile(node)) {
         namesMustBeUnique(
-            moduleMembersOrEmpty(node),
+            getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
             declarationIsAllowedInPipelineFile,
         );
     } else if (isInStubFile(node)) {
         namesMustBeUnique(
-            moduleMembersOrEmpty(node),
+            getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
             declarationIsAllowedInStubFile,
         );
     } else if (isInTestFile(node)) {
         namesMustBeUnique(
-            moduleMembersOrEmpty(node),
+            getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
         );
@@ -301,14 +289,14 @@ const importedDeclarationName = (node: SdsImportedDeclaration | undefined): stri
 
 export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: ValidationAcceptor): void => {
     namesMustBeUnique(
-        placeholdersOrEmpty(node.body),
+        streamPlaceholders(node.body),
         (name) => `A placeholder with name '${name}' exists already.`,
         accept,
     );
 };
 
 export const schemaMustContainUniqueNames = (node: SdsSchema, accept: ValidationAcceptor): void => {
-    const duplicates = duplicatesBy(columnsOrEmpty(node), (it) => it.columnName.value);
+    const duplicates = duplicatesBy(getColumns(node), (it) => it.columnName.value);
     for (const duplicate of duplicates) {
         accept('error', `A column with name '${duplicate.columnName.value}' exists already.`, {
             node: duplicate,
@@ -319,18 +307,14 @@ export const schemaMustContainUniqueNames = (node: SdsSchema, accept: Validation
 };
 
 export const segmentMustContainUniqueNames = (node: SdsSegment, accept: ValidationAcceptor): void => {
-    const parametersAndPlaceholder = [...parametersOrEmpty(node), ...placeholdersOrEmpty(node.body)];
+    const parametersAndPlaceholder = [...getParameters(node), ...streamPlaceholders(node.body)];
     namesMustBeUnique(
         parametersAndPlaceholder,
         (name) => `A parameter or placeholder with name '${name}' exists already.`,
         accept,
     );
 
-    namesMustBeUnique(
-        resultsOrEmpty(node.resultList),
-        (name) => `A result with name '${name}' exists already.`,
-        accept,
-    );
+    namesMustBeUnique(getResults(node.resultList), (name) => `A result with name '${name}' exists already.`, accept);
 };
 
 const namesMustBeUnique = (

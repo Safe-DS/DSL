@@ -1,6 +1,6 @@
 import { SdsCall } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { argumentsOrEmpty, isConstantParameter } from '../../../helpers/nodeProperties.js';
+import { getArguments, isConstantParameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_CALL_CONSTANT_ARGUMENT = 'call/constant-argument';
@@ -10,8 +10,8 @@ export const callArgumentsMustBeConstantIfParameterIsConstant = (services: SafeD
     const partialEvaluator = services.evaluation.PartialEvaluator;
 
     return (node: SdsCall, accept: ValidationAcceptor) => {
-        for (const argument of argumentsOrEmpty(node)) {
-            const parameter = nodeMapper.argumentToParameterOrUndefined(argument);
+        for (const argument of getArguments(node)) {
+            const parameter = nodeMapper.argumentToParameter(argument);
             if (!isConstantParameter(parameter)) continue;
 
             const evaluatedArgumentValue = partialEvaluator.evaluate(argument.value);

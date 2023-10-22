@@ -12,7 +12,7 @@ pipeline testPipeline {
     });
 }
 
-segment testStep() {
+segment testSegment() {
     1;
     _ = 1;
 }

@@ -12,6 +12,6 @@ pipeline testPipeline {
     });
 }
 
-segment testStep() {
+segment testSegment() {
     g();
 }

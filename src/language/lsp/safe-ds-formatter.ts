@@ -9,7 +9,7 @@ import {
     isAstNode,
 } from 'langium';
 import * as ast from '../generated/ast.js';
-import { annotationCallsOrEmpty, literalsOrEmpty, typeArgumentsOrEmpty } from '../helpers/nodeProperties.js';
+import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
@@ -203,7 +203,7 @@ export class SafeDsFormatter extends AbstractFormatter {
 
     private formatSdsModule(node: ast.SdsModule): void {
         const formatter = this.getNodeFormatter(node);
-        const annotations = annotationCallsOrEmpty(node);
+        const annotations = getAnnotationCalls(node);
         const name = node.name;
         const imports = node.imports;
         const members = node.members;
@@ -264,7 +264,7 @@ export class SafeDsFormatter extends AbstractFormatter {
                         formatter.node(value).prepend(noSpace());
                     }
                 } else {
-                    const valueAnnotations = annotationCallsOrEmpty(value);
+                    const valueAnnotations = getAnnotationCalls(value);
                     if (valueAnnotations.length > 0) {
                         formatter.node(valueAnnotations[0]).prepend(newLines(2));
                     } else {
@@ -272,7 +272,7 @@ export class SafeDsFormatter extends AbstractFormatter {
                     }
                 }
             } else {
-                const valueAnnotations = annotationCallsOrEmpty(value);
+                const valueAnnotations = getAnnotationCalls(value);
                 if (valueAnnotations.length > 0) {
                     formatter.node(valueAnnotations[0]).prepend(newLines(2));
                 } else {
@@ -315,7 +315,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsAnnotation(node: ast.SdsAnnotation): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.keyword('annotation').prepend(newLine());
         }
 
@@ -327,7 +327,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsAttribute(node: ast.SdsAttribute): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             if (node.isStatic) {
                 formatter.keyword('static').prepend(newLine());
             } else {
@@ -343,7 +343,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsClass(node: ast.SdsClass): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.keyword('class').prepend(newLine());
         }
 
@@ -389,7 +389,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsEnum(node: ast.SdsEnum): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.keyword('enum').prepend(newLine());
         }
 
@@ -419,11 +419,11 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsEnumVariant(node: ast.SdsEnumVariant): void {
         const formatter = this.getNodeFormatter(node);
 
-        const annotationCalls = annotationCallsOrEmpty(node);
+        const annotationCalls = getAnnotationCalls(node);
 
         formatter.nodes(...annotationCalls.slice(1)).prepend(newLine());
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.property('name').prepend(newLine());
         }
 
@@ -435,7 +435,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     formatSdsFunction(node: ast.SdsFunction): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             if (node.isStatic) {
                 formatter.keyword('static').prepend(newLine());
             } else {
@@ -456,7 +456,7 @@ export class SafeDsFormatter extends AbstractFormatter {
 
         formatter.property('annotationCallList').prepend(noSpace());
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.keyword('pipeline').prepend(newLine());
         }
 
@@ -467,7 +467,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsSegment(node: ast.SdsSegment): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length === 0) {
+        if (getAnnotationCalls(node).length === 0) {
             if (node.visibility) {
                 formatter.keyword('segment').prepend(oneSpace());
             }
@@ -548,7 +548,7 @@ export class SafeDsFormatter extends AbstractFormatter {
 
         if (
             parameters.length >= 3 ||
-            parameters.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
+            parameters.some((it) => getAnnotationCalls(it).length > 0 || this.isComplexType(it.type))
         ) {
             formatter.nodes(...parameters).prepend(indent());
             formatter.keywords(',').prepend(noSpace());
@@ -564,7 +564,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsParameter(node: ast.SdsParameter): void {
         const formatter = this.getNodeFormatter(node);
 
-        const lastAnnotationCall = last(annotationCallsOrEmpty(node));
+        const lastAnnotationCall = last(getAnnotationCalls(node));
         if (lastAnnotationCall) {
             formatter.node(lastAnnotationCall).append(newLine());
         }
@@ -587,7 +587,7 @@ export class SafeDsFormatter extends AbstractFormatter {
 
         if (
             results.length >= 3 ||
-            results.some((it) => annotationCallsOrEmpty(it).length > 0 || this.isComplexType(it.type))
+            results.some((it) => getAnnotationCalls(it).length > 0 || this.isComplexType(it.type))
         ) {
             formatter.nodes(...results).prepend(indent());
             formatter.keywords(',').prepend(noSpace());
@@ -603,7 +603,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsResult(node: ast.SdsResult): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.property('name').prepend(newLine());
         }
 
@@ -880,7 +880,7 @@ export class SafeDsFormatter extends AbstractFormatter {
 
         const typeParameters = node.typeParameters ?? [];
 
-        if (typeParameters.length >= 3 || typeParameters.some((it) => annotationCallsOrEmpty(it).length > 0)) {
+        if (typeParameters.length >= 3 || typeParameters.some((it) => getAnnotationCalls(it).length > 0)) {
             formatter.nodes(...typeParameters).prepend(indent());
             formatter.keywords(',').prepend(noSpace());
             closingBracket.prepend(newLine());
@@ -897,7 +897,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsTypeParameter(node: ast.SdsTypeParameter) {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             if (node.variance) {
                 formatter.property('variance').prepend(newLine());
             } else {
@@ -941,11 +941,11 @@ export class SafeDsFormatter extends AbstractFormatter {
         if (ast.isSdsCallableType(node) || ast.isSdsMemberType(node)) {
             return true;
         } else if (ast.isSdsLiteralType(node)) {
-            return literalsOrEmpty(node).length > 0;
+            return getLiterals(node).length > 0;
         } else if (ast.isSdsNamedType(node)) {
-            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+            return getTypeArguments(node.typeArgumentList).length > 0;
         } else if (ast.isSdsUnionType(node)) {
-            return typeArgumentsOrEmpty(node.typeArgumentList).length > 0;
+            return getTypeArguments(node.typeArgumentList).length > 0;
         } else {
             /* c8 ignore next 2 */
             return false;
@@ -959,7 +959,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsSchema(node: ast.SdsSchema) {
         const formatter = this.getNodeFormatter(node);
 
-        if (annotationCallsOrEmpty(node).length > 0) {
+        if (getAnnotationCalls(node).length > 0) {
             formatter.keyword('schema').prepend(newLine());
         }
 

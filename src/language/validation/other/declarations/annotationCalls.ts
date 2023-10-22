@@ -9,11 +9,11 @@ import {
 } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import {
-    annotationCallsOrEmpty,
-    argumentsOrEmpty,
+    getAnnotationCalls,
+    getArguments,
     isRequiredParameter,
-    parametersOrEmpty,
-    resultsOrEmpty,
+    getParameters,
+    getResults,
 } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { isEmpty } from '../../../../helpers/collectionUtils.js';
@@ -27,7 +27,7 @@ export const annotationCallArgumentsMustBeConstant = (services: SafeDsServices) 
     const partialEvaluator = services.evaluation.PartialEvaluator;
 
     return (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        for (const argument of argumentsOrEmpty(node)) {
+        for (const argument of getArguments(node)) {
             const evaluatedArgumentValue = partialEvaluator.evaluate(argument.value);
 
             if (!evaluatedArgumentValue.isFullyEvaluated) {
@@ -46,7 +46,7 @@ export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, a
         return;
     }
 
-    const requiredParameters = parametersOrEmpty(node.annotation?.ref).filter(isRequiredParameter);
+    const requiredParameters = getParameters(node.annotation?.ref).filter(isRequiredParameter);
     if (!isEmpty(requiredParameters)) {
         accept(
             'error',
@@ -60,8 +60,8 @@ export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, a
 };
 
 export const callableTypeParametersMustNotBeAnnotated = (node: SdsCallableType, accept: ValidationAcceptor) => {
-    for (const parameter of parametersOrEmpty(node)) {
-        for (const annotationCall of annotationCallsOrEmpty(parameter)) {
+    for (const parameter of getParameters(node)) {
+        for (const annotationCall of getAnnotationCalls(parameter)) {
             accept('error', 'Parameters of callable types must not be annotated.', {
                 node: annotationCall,
                 code: CODE_ANNOTATION_CALL_TARGET_PARAMETER,
@@ -71,8 +71,8 @@ export const callableTypeParametersMustNotBeAnnotated = (node: SdsCallableType, 
 };
 
 export const callableTypeResultsMustNotBeAnnotated = (node: SdsCallableType, accept: ValidationAcceptor) => {
-    for (const result of resultsOrEmpty(node.resultList)) {
-        for (const annotationCall of annotationCallsOrEmpty(result)) {
+    for (const result of getResults(node.resultList)) {
+        for (const annotationCall of getAnnotationCalls(result)) {
             accept('error', 'Results of callable types must not be annotated.', {
                 node: annotationCall,
                 code: CODE_ANNOTATION_CALL_TARGET_RESULT,
@@ -82,8 +82,8 @@ export const callableTypeResultsMustNotBeAnnotated = (node: SdsCallableType, acc
 };
 
 export const lambdaParametersMustNotBeAnnotated = (node: SdsLambda, accept: ValidationAcceptor) => {
-    for (const parameter of parametersOrEmpty(node)) {
-        for (const annotationCall of annotationCallsOrEmpty(parameter)) {
+    for (const parameter of getParameters(node)) {
+        for (const annotationCall of getAnnotationCalls(parameter)) {
             accept('error', 'Lambda parameters must not be annotated.', {
                 node: annotationCall,
                 code: CODE_ANNOTATION_CALL_TARGET_PARAMETER,

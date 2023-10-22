@@ -1,6 +1,6 @@
 import { isSdsList, isSdsMap, SdsLiteralType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { literalsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getLiterals } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { EvaluatedNode } from '../../../partialEvaluation/model.js';
 import { isEmpty } from '../../../../helpers/collectionUtils.js';
@@ -11,7 +11,7 @@ export const CODE_LITERAL_TYPE_MAP_LITERAL = 'literal-type/map-literal';
 export const CODE_LITERAL_TYPE_MISSING_LITERALS = 'literal-type/missing-literals';
 
 export const literalTypeMustHaveLiterals = (node: SdsLiteralType, accept: ValidationAcceptor): void => {
-    if (isEmpty(literalsOrEmpty(node))) {
+    if (isEmpty(getLiterals(node))) {
         accept('error', 'A literal type must have at least one literal.', {
             node,
             property: 'literalList',
@@ -21,7 +21,7 @@ export const literalTypeMustHaveLiterals = (node: SdsLiteralType, accept: Valida
 };
 
 export const literalTypeMustNotContainListLiteral = (node: SdsLiteralType, accept: ValidationAcceptor): void => {
-    for (const literal of literalsOrEmpty(node)) {
+    for (const literal of getLiterals(node)) {
         if (isSdsList(literal)) {
             accept('error', 'Literal types must not contain list literals.', {
                 node: literal,
@@ -32,7 +32,7 @@ export const literalTypeMustNotContainListLiteral = (node: SdsLiteralType, accep
 };
 
 export const literalTypeMustNotContainMapLiteral = (node: SdsLiteralType, accept: ValidationAcceptor): void => {
-    for (const literal of literalsOrEmpty(node)) {
+    for (const literal of getLiterals(node)) {
         if (isSdsMap(literal)) {
             accept('error', 'Literal types must not contain map literals.', {
                 node: literal,
@@ -46,7 +46,7 @@ export const literalTypeShouldNotHaveDuplicateLiteral = (services: SafeDsService
     const partialEvaluator = services.evaluation.PartialEvaluator;
 
     return (node: SdsLiteralType, accept: ValidationAcceptor): void => {
-        const literals = literalsOrEmpty(node);
+        const literals = getLiterals(node);
         const constants: EvaluatedNode[] = [];
 
         for (const literal of literals) {

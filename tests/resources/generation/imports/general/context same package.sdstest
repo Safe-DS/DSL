@@ -2,10 +2,10 @@ package tests.generator.imports
 
 fun impureFunction() -> result: Int
 
-segment step1InSamePackage() -> result: Int {
+segment segment1InSamePackage() -> result: Int {
     yield result = impureFunction();
 }
 
-segment step2InSamePackage() -> result: Int {
+segment segment2InSamePackage() -> result: Int {
     yield result = impureFunction();
 }

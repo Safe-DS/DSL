@@ -1,6 +1,6 @@
 import { ValidationAcceptor } from 'langium';
 import { SdsClass } from '../generated/ast.js';
-import { parentTypesOrEmpty } from '../helpers/nodeProperties.js';
+import { getParentTypes } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, UnknownType } from '../typing/model.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
@@ -14,7 +14,7 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
     const computeType = typeComputer.computeType.bind(typeComputer);
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
-        const parentTypes = parentTypesOrEmpty(node);
+        const parentTypes = getParentTypes(node);
         if (isEmpty(parentTypes)) {
             return;
         }
@@ -47,7 +47,7 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
         const superClasses = classHierarchy.streamSuperclasses(node);
         if (superClasses.includes(node)) {
             accept('error', 'A class must not directly or indirectly be a subtype of itself.', {
-                node: parentTypesOrEmpty(node)[0],
+                node: getParentTypes(node)[0],
                 code: CODE_INHERITANCE_CYCLE,
             });
         }

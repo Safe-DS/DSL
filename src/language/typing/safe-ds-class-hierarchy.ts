@@ -2,7 +2,7 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { SdsClass } from '../generated/ast.js';
 import { stream, Stream } from 'langium';
-import { parentTypesOrEmpty } from '../helpers/nodeProperties.js';
+import { getParentTypes } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 import { ClassType } from './model.js';
 
@@ -65,7 +65,7 @@ export class SafeDsClassHierarchy {
      * type is considered, i.e. multiple inheritance is not supported.
      */
     private parentClassOrUndefined(node: SdsClass | undefined): SdsClass | undefined {
-        const [firstParentType] = parentTypesOrEmpty(node);
+        const [firstParentType] = getParentTypes(node);
         const computedType = this.typeComputer.computeType(firstParentType);
         if (computedType instanceof ClassType) {
             return computedType.declaration;

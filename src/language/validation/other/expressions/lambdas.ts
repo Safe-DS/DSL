@@ -1,6 +1,6 @@
 import { isSdsArgument, isSdsParameter, isSdsParenthesizedExpression, SdsLambda } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { parametersOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getParameters } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_LAMBDA_CONTEXT = 'lambda/context';
@@ -19,7 +19,7 @@ export const lambdaMustBeAssignedToTypedParameter = (services: SafeDsServices) =
         if (isSdsParameter(context)) {
             contextIsValid = context.type !== undefined;
         } else if (isSdsArgument(context)) {
-            const parameter = nodeMapper.argumentToParameterOrUndefined(context);
+            const parameter = nodeMapper.argumentToParameter(context);
             // If the resolution of the parameter failed, we already show another error nearby
             contextIsValid = parameter === undefined || parameter.type !== undefined;
         }
@@ -34,7 +34,7 @@ export const lambdaMustBeAssignedToTypedParameter = (services: SafeDsServices) =
 };
 
 export const lambdaParameterMustNotHaveConstModifier = (node: SdsLambda, accept: ValidationAcceptor): void => {
-    for (const parameter of parametersOrEmpty(node)) {
+    for (const parameter of getParameters(node)) {
         if (parameter.isConstant) {
             accept('error', 'The const modifier is not applicable to parameters of lambdas.', {
                 node: parameter,

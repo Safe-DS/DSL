@@ -2,7 +2,7 @@ import { SafeDsServices } from '../../../safe-ds-module.js';
 import { isSdsCall, isSdsEnumVariant, SdsMemberAccess } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { UnknownType } from '../../../typing/model.js';
-import { parametersOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getParameters } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from '../../../../helpers/collectionUtils.js';
 
 export const CODE_MEMBER_ACCESS_MISSING_ENUM_VARIANT_INSTANTIATION = 'member-access/missing-enum-variant-instantiation';
@@ -17,7 +17,7 @@ export const memberAccessOfEnumVariantMustNotLackInstantiation = (
         return;
     }
 
-    if (!isSdsCall(node.$container) && !isEmpty(parametersOrEmpty(declaration))) {
+    if (!isSdsCall(node.$container) && !isEmpty(getParameters(declaration))) {
         accept('error', `The enum variant '${declaration.name}' has parameters, so an argument list must be added.`, {
             node,
             property: 'member',

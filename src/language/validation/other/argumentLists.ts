@@ -1,7 +1,7 @@
 import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../safe-ds-module.js';
-import { argumentsOrEmpty, isRequiredParameter, parametersOrEmpty } from '../../helpers/nodeProperties.js';
+import { getArguments, isRequiredParameter, getParameters } from '../../helpers/nodeProperties.js';
 import { duplicatesBy, isEmpty } from '../../../helpers/collectionUtils.js';
 import { pluralize } from '../../../helpers/stringUtils.js';
 
@@ -31,7 +31,7 @@ export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsAbstractCall, accept: ValidationAcceptor): void => {
-        const actualArgumentCount = argumentsOrEmpty(node).length;
+        const actualArgumentCount = getArguments(node).length;
 
         // We can never have too many arguments in this case
         if (actualArgumentCount === 0) {
@@ -39,12 +39,12 @@ export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices
         }
 
         // We already report other errors in those cases
-        const callable = nodeMapper.callToCallableOrUndefined(node);
+        const callable = nodeMapper.callToCallable(node);
         if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
             return;
         }
 
-        const parameters = parametersOrEmpty(callable);
+        const parameters = getParameters(callable);
         const maxArgumentCount = parameters.length;
 
         // All is good
@@ -76,17 +76,17 @@ export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices
 
 export const argumentListMustNotSetParameterMultipleTimes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
-    const argumentToParameterOrUndefined = nodeMapper.argumentToParameterOrUndefined.bind(nodeMapper);
+    const argumentToParameterOrUndefined = nodeMapper.argumentToParameter.bind(nodeMapper);
 
     return (node: SdsArgumentList, accept: ValidationAcceptor): void => {
         // We already report other errors in this case
         const containingCall = getContainerOfType(node, isSdsCall);
-        const callable = nodeMapper.callToCallableOrUndefined(containingCall);
+        const callable = nodeMapper.callToCallable(containingCall);
         if (isSdsAnnotation(callable)) {
             return;
         }
 
-        const args = argumentsOrEmpty(node);
+        const args = getArguments(node);
         const duplicates = duplicatesBy(args, argumentToParameterOrUndefined);
 
         for (const duplicate of duplicates) {
@@ -109,17 +109,17 @@ export const argumentListMustSetAllRequiredParameters = (services: SafeDsService
         }
 
         // We already report other errors in those cases
-        const callable = nodeMapper.callToCallableOrUndefined(node);
+        const callable = nodeMapper.callToCallable(node);
         if (!callable || (isSdsCall(node) && isSdsAnnotation(callable))) {
             return;
         }
 
-        const expectedParameters = parametersOrEmpty(callable).filter((it) => isRequiredParameter(it));
+        const expectedParameters = getParameters(callable).filter((it) => isRequiredParameter(it));
         if (isEmpty(expectedParameters)) {
             return;
         }
 
-        const actualParameters = argumentsOrEmpty(node).map((it) => nodeMapper.argumentToParameterOrUndefined(it));
+        const actualParameters = getArguments(node).map((it) => nodeMapper.argumentToParameter(it));
 
         const missingTypeParameters = expectedParameters.filter((it) => !actualParameters.includes(it));
         if (!isEmpty(missingTypeParameters)) {
