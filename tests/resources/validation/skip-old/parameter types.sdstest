@@ -1,0 +1,52 @@
+package tests.validation.declarations.annotations.parameterTypes
+
+class MyClass
+
+enum ConstantEnum {
+    Variant1
+    Variant2
+}
+
+enum NonConstantEnum {
+    Variant1(param: Int)
+    Variant2
+}
+
+annotation MyAnnotation(
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    booleanParam: »Boolean«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableBooleanParam: »Boolean?«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    floatParam: »Float«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableFloatParam: »Float?«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    intParam: »Int«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableIntParam: »Int?«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    stringParam: »String«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableStringParam: »String?«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    constantEnumParam: »ConstantEnum«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableConstantEnumParam: »ConstantEnum?«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nonConstantEnumParam: »NonConstantEnum«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableNonConstantEnumParam: »NonConstantEnum?«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    classParam: »MyClass«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableClassParam: »MyClass?«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    unresolvedParam: »Unresolved«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    nullableUnresolvedParam: »Unresolved?«,
+    // $TEST$ error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    callableParam: »() -> ()«,
+    // $TEST$ no error "Parameters of annotations must have type Boolean, Float, Int, String, or a constant enum."
+    vararg variadicParameter: »Int«,
+)

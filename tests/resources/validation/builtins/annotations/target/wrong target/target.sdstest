@@ -1,0 +1,151 @@
+// $TEST$ error "This annotation cannot be applied to a compilation unit."
+»@AnnotationForEnums«
+// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+»@AnnotationForCompilationUnits«
+// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+»@AnnotationForMultipleTargets«
+// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+»@AnnotationForAnything«
+// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+»@UnresolvedAnnotation«
+
+package tests.validation.other.annotationCalls.target
+
+@Target(AnnotationTarget.Annotation)
+annotation AnnotationForAnnotations
+
+@Target(AnnotationTarget.Attribute)
+annotation AnnotationForAttributes
+
+@Target(AnnotationTarget.Class)
+annotation AnnotationForClasses
+
+@Target(AnnotationTarget.CompilationUnit)
+annotation AnnotationForCompilationUnits
+
+@Target(AnnotationTarget.Enum)
+annotation AnnotationForEnums
+
+@Target(AnnotationTarget.EnumVariant)
+annotation AnnotationForEnumVariants
+
+@Target(AnnotationTarget.Function)
+annotation AnnotationForFunctions
+
+@Target(AnnotationTarget.Parameter)
+annotation AnnotationForParameters
+
+@Target(AnnotationTarget.Result)
+annotation AnnotationForResults
+
+@Target(AnnotationTarget.TypeParameter)
+annotation AnnotationForTypeParameters
+
+@Target(AnnotationTarget.Pipeline)
+annotation AnnotationForPipelines
+
+@Target(AnnotationTarget.Step)
+annotation AnnotationForSteps
+
+@Target(AnnotationTarget.CompilationUnit, AnnotationTarget.Class)
+annotation AnnotationForMultipleTargets
+
+annotation AnnotationForAnything
+
+/* Test declarations -------------------------------------------------------- */
+
+// $TEST$ error "This annotation cannot be applied to an annotation."
+»@AnnotationForAttributes«
+// $TEST$ no error "This annotation cannot be applied to an annotation."
+»@AnnotationForAnnotations«
+// $TEST$ no error "This annotation cannot be applied to an annotation."
+»@AnnotationForAnything«
+annotation TestAnnotation
+
+// $TEST$ error "This annotation cannot be applied to a class."
+»@AnnotationForCompilationUnits«
+// $TEST$ no error "This annotation cannot be applied to a class."
+»@AnnotationForClasses«
+// $TEST$ no error "This annotation cannot be applied to a class."
+»@AnnotationForMultipleTargets«
+// $TEST$ no error "This annotation cannot be applied to a class."
+»@AnnotationForAnything«
+class TestClass<
+
+    // $TEST$ error "This annotation cannot be applied to a type parameter."
+    »@AnnotationForPipelines«
+    // $TEST$ no error "This annotation cannot be applied to a type parameter."
+    »@AnnotationForTypeParameters«
+    // $TEST$ no error "This annotation cannot be applied to a type parameter."
+    »@AnnotationForAnything«
+    TEST_TYPE_PARAMETER
+> {
+
+    // $TEST$ error "This annotation cannot be applied to an attribute."
+    »@AnnotationForClasses«
+    // $TEST$ no error "This annotation cannot be applied to an attribute."
+    »@AnnotationForAttributes«
+    // $TEST$ no error "This annotation cannot be applied to an attribute."
+    »@AnnotationForAnything«
+    attr testAttribute: Int
+}
+
+// $TEST$ error "This annotation cannot be applied to an enum."
+»@AnnotationForEnumVariants«
+// $TEST$ no error "This annotation cannot be applied to an enum."
+»@AnnotationForEnums«
+// $TEST$ no error "This annotation cannot be applied to an enum."
+»@AnnotationForAnything«
+enum TestEnum {
+
+    // $TEST$ error "This annotation cannot be applied to an enum variant."
+    »@AnnotationForFunctions«
+    // $TEST$ no error "This annotation cannot be applied to an enum variant."
+    »@AnnotationForEnumVariants«
+    // $TEST$ no error "This annotation cannot be applied to an enum variant."
+    »@AnnotationForAnything«
+    TestEnumVariant
+}
+
+
+// $TEST$ error "This annotation cannot be applied to a function."
+»@AnnotationForParameters«
+// $TEST$ no error "This annotation cannot be applied to a function."
+»@AnnotationForFunctions«
+// $TEST$ no error "This annotation cannot be applied to a function."
+»@AnnotationForAnything«
+fun testFunction(
+
+    // $TEST$ error "This annotation cannot be applied to a parameter."
+    »@AnnotationForResults«
+    // $TEST$ no error "This annotation cannot be applied to a parameter."
+    »@AnnotationForParameters«
+    // $TEST$ no error "This annotation cannot be applied to a parameter."
+    »@AnnotationForAnything«
+    testParameter: Int
+) -> (
+
+    // $TEST$ error "This annotation cannot be applied to a result."
+    »@AnnotationForTypeParameters«
+    // $TEST$ no error "This annotation cannot be applied to a result."
+    »@AnnotationForResults«
+    // $TEST$ no error "This annotation cannot be applied to a result."
+    »@AnnotationForAnything«
+    testResult: Int
+)
+
+// $TEST$ error "This annotation cannot be applied to a pipeline."
+»@AnnotationForSteps«
+// $TEST$ no error "This annotation cannot be applied to a pipeline."
+»@AnnotationForPipelines«
+// $TEST$ no error "This annotation cannot be applied to a pipeline."
+»@AnnotationForAnything«
+pipeline testPipeline {}
+
+// $TEST$ error "This annotation cannot be applied to a step."
+»@AnnotationForAnnotations«
+// $TEST$ no error "This annotation cannot be applied to a step."
+»@AnnotationForSteps«
+// $TEST$ no error "This annotation cannot be applied to a step."
+»@AnnotationForAnything«
+step testStep() {}

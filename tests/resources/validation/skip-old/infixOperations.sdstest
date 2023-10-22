@@ -1,0 +1,230 @@
+package tests.validation.typeChecking.infixOperations
+
+step f(vararg a: Int) {
+
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »true« or »true« ;
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »false« or »false«;
+    // $TEST$ error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »i()« or »i()«;
+    // $TEST$ error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »0« or »0«;
+    // $TEST$ error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »a« or »a«;
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »unresolved« or »unresolved«;
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »C.unresolved« or »C.unresolved«;
+
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »true« and »true«;
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »false« and »false«;
+    // $TEST$ error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »i()« and »i()«;
+    // $TEST$ error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »0« and »0«;
+    // $TEST$ error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »a« and »a«;
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »unresolved« and »unresolved«;
+    // $TEST$ no error "The left operand of a logical infix operation must be an instance of the class 'Boolean'."
+    // $TEST$ no error "The right operand of a logical infix operation must be an instance of the class 'Boolean'."
+    »C.unresolved« and »C.unresolved«;
+
+
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« + »0.0«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0« + »0«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »h()« + »h()«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »""« + »""«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »a« + »a«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« + »unresolved«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« + »C.unresolved«;
+
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« - »0.0«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0« - »0«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »h()« - »h()«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »""« - »""«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »a« - »a«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« - »unresolved«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« - »C.unresolved«;
+
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« * »0.0«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0« * »0«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »h()« * »h()«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »""« * »""«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »a« * »a«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« * »unresolved«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« * »C.unresolved«;
+
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« / »0.0«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »0« / »0«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »h()« / »h()«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »""« / »""«;
+    // $TEST$ error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »a« / »a«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« / »unresolved«;
+    // $TEST$ no error "The left operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of an arithmetic infix operation must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« / »C.unresolved«;
+
+
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« < »0.0«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0« < »0«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »h()« < »h()«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »""« < »""«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »a« < »a«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« < »unresolved«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« < »C.unresolved«;
+
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« <= »0.0«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0« <= »0«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »h()« <= »h()«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »""« <= »""«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »a« <= »a«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« <= »unresolved«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« <= »C.unresolved«;
+
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« >= »0.0«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0« >= »0«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »h()« >= »h()«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »""« >= »""«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »a« >= »a«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« >= »unresolved«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« >= »C.unresolved«;
+
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0.0« > »0.0«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »0« > »0«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »h()« > »h()«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »""« > »""«;
+    // $TEST$ error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »a« > »a«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »unresolved« > »unresolved«;
+    // $TEST$ no error "The left operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    // $TEST$ no error "The right operand of a comparison must be an instance of the class 'Float' or the class 'Int'."
+    »C.unresolved« > »C.unresolved«;
+}
+
+fun g()
+fun h() -> index: Int?
+fun i() -> isTrue: Boolean?

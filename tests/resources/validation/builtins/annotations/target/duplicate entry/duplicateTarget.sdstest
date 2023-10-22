@@ -1,0 +1,11 @@
+package tests.validation.other.annotationCalls.duplicateTarget
+
+@Target(
+    // $TEST$ warning "This annotation target is used multiple times."
+    »AnnotationTarget.Annotation«,
+    // $TEST$ warning "This annotation target is used multiple times."
+    »AnnotationTarget.Annotation«,
+    // $TEST$ no warning "This annotation target is used multiple times."
+    »AnnotationTarget.Class«
+)
+annotation TestAnnotation
