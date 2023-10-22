@@ -1,6 +1,7 @@
 import { ValidationAcceptor } from 'langium';
 import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsDeclaration, SdsModule } from '../../generated/ast.js';
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
+import { getModuleMembers } from '../../helpers/nodeProperties.js';
 
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
 export const CODE_MODULE_FORBIDDEN_IN_STUB_FILE = 'module/forbidden-in-stub-file';
@@ -43,10 +44,10 @@ export const declarationIsAllowedInStubFile = (declaration: SdsDeclaration): boo
 
 export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: ValidationAcceptor): void => {
     if (!node.name) {
-        const declarations = node.members.filter(isSdsDeclaration);
-        if (declarations.length > 0) {
+        const members = getModuleMembers(node);
+        if (members.length > 0) {
             accept('error', 'A module with declarations must state its package.', {
-                node: declarations[0],
+                node: members[0],
                 property: 'name',
                 code: CODE_MODULE_MISSING_PACKAGE,
             });
