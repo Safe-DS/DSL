@@ -1,7 +1,9 @@
 import {
     isSdsQualifiedImport,
     SdsAnnotation,
+    SdsAttribute,
     SdsBlockLambda,
+    SdsBlockLambdaResult,
     SdsCallableType,
     SdsClass,
     SdsDeclaration,
@@ -11,11 +13,15 @@ import {
     SdsFunction,
     SdsImportedDeclaration,
     SdsModule,
+    SdsParameter,
     SdsPipeline,
+    SdsPlaceholder,
+    SdsResult,
     SdsSchema,
     SdsSegment,
+    SdsTypeParameter,
 } from '../generated/ast.js';
-import { getDocument, ValidationAcceptor } from 'langium';
+import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
 import {
     getColumns,
     getEnumVariants,
@@ -37,6 +43,7 @@ import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } fr
 import { SafeDsServices } from '../safe-ds-module.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
 import { CODEGEN_PREFIX } from '../../cli/generator.js';
+import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -67,21 +74,21 @@ export const nameMustNotStartWithCodegenPrefix = (node: SdsDeclaration, accept: 
 
 export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: ValidationAcceptor): void => {
     switch (node.$type) {
-        case 'SdsAnnotation':
+        case SdsAnnotation:
             return nameShouldBeUpperCamelCase(node, 'annotations', accept);
-        case 'SdsAttribute':
+        case SdsAttribute:
             return nameShouldBeLowerCamelCase(node, 'attributes', accept);
-        case 'SdsBlockLambdaResult':
+        case SdsBlockLambdaResult:
             return nameShouldBeLowerCamelCase(node, 'block lambda results', accept);
-        case 'SdsClass':
+        case SdsClass:
             return nameShouldBeUpperCamelCase(node, 'classes', accept);
-        case 'SdsEnum':
+        case SdsEnum:
             return nameShouldBeUpperCamelCase(node, 'enums', accept);
-        case 'SdsEnumVariant':
+        case SdsEnumVariant:
             return nameShouldBeUpperCamelCase(node, 'enum variants', accept);
-        case 'SdsFunction':
+        case SdsFunction:
             return nameShouldBeLowerCamelCase(node, 'functions', accept);
-        case 'SdsModule':
+        case SdsModule:
             const name = node.name ?? '';
             const segments = name.split('.');
             if (name !== '' && segments.every((it) => it !== '') && !segments.every(isLowerCamelCase)) {
@@ -92,19 +99,19 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
                 });
             }
             return;
-        case 'SdsParameter':
+        case SdsParameter:
             return nameShouldBeLowerCamelCase(node, 'parameters', accept);
-        case 'SdsPipeline':
+        case SdsPipeline:
             return nameShouldBeLowerCamelCase(node, 'pipelines', accept);
-        case 'SdsPlaceholder':
+        case SdsPlaceholder:
             return nameShouldBeLowerCamelCase(node, 'placeholders', accept);
-        case 'SdsResult':
+        case SdsResult:
             return nameShouldBeLowerCamelCase(node, 'results', accept);
-        case 'SdsSchema':
+        case SdsSchema:
             return nameShouldBeUpperCamelCase(node, 'schemas', accept);
-        case 'SdsSegment':
+        case SdsSegment:
             return nameShouldBeLowerCamelCase(node, 'segments', accept);
-        case 'SdsTypeParameter':
+        case SdsTypeParameter:
             return nameShouldBeUpperCamelCase(node, 'type parameters', accept);
     }
     /* c8 ignore next */
@@ -224,7 +231,17 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
 
         for (const member of getModuleMembers(node)) {
             const packageName = getPackageName(member) ?? '';
-            const declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
+
+            let declarationsInPackage: AstNodeDescription[];
+            let kind: string;
+            if (packageName.startsWith(BUILTINS_ROOT_PACKAGE)) {
+                // For a builtin package the simple names of declarations must be unique
+                declarationsInPackage = packageManager.getDeclarationsInPackageOrSubpackage(BUILTINS_ROOT_PACKAGE);
+                kind = 'builtin declarations';
+            } else {
+                declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
+                kind = 'declarations in this package';
+            }
 
             if (
                 declarationsInPackage.some(
@@ -234,7 +251,7 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
                         !builtinUris.has(it.documentUri.toString()),
                 )
             ) {
-                accept('error', `Multiple declarations in this package have the name '${member.name}'.`, {
+                accept('error', `Multiple ${kind} have the name '${member.name}'.`, {
                     node: member,
                     property: 'name',
                     code: CODE_NAME_DUPLICATE,

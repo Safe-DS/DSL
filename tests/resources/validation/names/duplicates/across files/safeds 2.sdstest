@@ -1,0 +1,20 @@
+package safeds.lang.other
+
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateAnnotation'."
+annotation »DuplicateAnnotation«
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateClass'."
+class »DuplicateClass«
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateEnum'."
+enum »DuplicateEnum«
+// $TEST$ error "Multiple builtin declarations have the name 'duplicateFunction'."
+fun »duplicateFunction«()
+// $TEST$ no error r"Multiple builtin declarations have the name '\w*'\."
+pipeline »duplicatePipeline« {}
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateSchema'."
+schema »DuplicateSchema« {}
+// $TEST$ error "Multiple builtin declarations have the name 'duplicatePublicSegment'."
+segment »duplicatePublicSegment«() {}
+// $TEST$ error "Multiple builtin declarations have the name 'duplicateInternalSegment'."
+internal segment »duplicateInternalSegment«() {}
+// $TEST$ no error r"Multiple builtin declarations have the name '\w*'\."
+private segment »duplicatePrivateSegment«() {}

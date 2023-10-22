@@ -1,11 +1,20 @@
 package tests.validation.names.acrossFiles.other
 
-annotation UniqueAnnotation
-class UniqueClass
-enum UniqueEnum
-fun uniqueFunction()
-pipeline uniquePipeline {}
-schema UniqueSchema {}
-segment uniquePublicSegment() {}
-internal segment uniqueInternalSegment() {}
-private segment uniquePrivateSegment() {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+annotation »UniqueAnnotation«
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+class »UniqueClass«
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+enum »UniqueEnum«
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+fun »uniqueFunction«()
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+pipeline »uniquePipeline« {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+schema »UniqueSchema« {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+segment »uniquePublicSegment«() {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+internal segment »uniqueInternalSegment«() {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+private segment »uniquePrivateSegment«() {}
