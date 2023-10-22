@@ -98,6 +98,7 @@ import {
     indexedAccessesShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
     mapsShouldBeUsedWithCaution,
+    unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import {
@@ -273,6 +274,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [
             unionTypeMustHaveTypes,
+            unionTypesShouldBeUsedWithCaution,
             unionTypeShouldNotHaveDuplicateTypes(services),
             unionTypeShouldNotHaveASingularTypeArgument,
         ],
