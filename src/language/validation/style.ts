@@ -19,11 +19,11 @@ import {
     SdsUnionType,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { isEmpty } from 'radash';
 import { isRequiredParameter, parametersOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
 import { NullConstant } from '../partialEvaluation/model.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';

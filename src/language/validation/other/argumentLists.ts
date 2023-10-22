@@ -2,9 +2,8 @@ import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '..
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { argumentsOrEmpty, isRequiredParameter, parametersOrEmpty } from '../../helpers/nodeProperties.js';
-import { duplicatesBy } from '../../helpers/collectionUtils.js';
-import { isEmpty } from 'radash';
-import { pluralize } from '../../helpers/stringUtils.js';
+import { duplicatesBy, isEmpty } from '../../../helpers/collectionUtils.js';
+import { pluralize } from '../../../helpers/stringUtils.js';
 
 export const CODE_ARGUMENT_LIST_DUPLICATE_PARAMETER = 'argument-list/duplicate-parameter';
 export const CODE_ARGUMENT_LIST_MISSING_REQUIRED_PARAMETER = 'argument-list/missing-required-parameter';

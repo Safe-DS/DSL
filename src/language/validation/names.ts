@@ -31,7 +31,7 @@ import {
     resultsOrEmpty,
     typeParametersOrEmpty,
 } from '../helpers/nodeProperties.js';
-import { duplicatesBy } from '../helpers/collectionUtils.js';
+import { duplicatesBy } from '../../helpers/collectionUtils.js';
 import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
 import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 import { SafeDsServices } from '../safe-ds-module.js';

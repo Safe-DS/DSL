@@ -15,8 +15,8 @@ import {
     parametersOrEmpty,
     resultsOrEmpty,
 } from '../../../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
 import { SafeDsServices } from '../../../safe-ds-module.js';
+import { isEmpty } from '../../../../helpers/collectionUtils.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';

@@ -2,8 +2,8 @@ import { SdsNamedType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../../../helpers/nodeProperties.js';
-import { duplicatesBy } from '../../../helpers/collectionUtils.js';
-import { pluralize } from '../../../helpers/stringUtils.js';
+import { duplicatesBy } from '../../../../helpers/collectionUtils.js';
+import { pluralize } from '../../../../helpers/stringUtils.js';
 
 export const CODE_NAMED_TYPE_DUPLICATE_TYPE_PARAMETER = 'named-type/duplicate-type-parameter';
 export const CODE_NAMED_TYPE_POSITIONAL_AFTER_NAMED = 'named-type/positional-after-named';

@@ -1,9 +1,9 @@
 import { SdsUnionType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { isEmpty } from 'radash';
 import { typeArgumentsOrEmpty } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { Type } from '../../../typing/model.js';
+import { isEmpty } from '../../../../helpers/collectionUtils.js';
 
 export const CODE_UNION_TYPE_DUPLICATE_TYPE = 'union-type/duplicate-type';
 export const CODE_UNION_TYPE_MISSING_TYPES = 'union-type/missing-types';

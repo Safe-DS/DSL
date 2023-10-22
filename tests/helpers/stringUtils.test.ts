@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pluralize } from '../../../src/language/helpers/stringUtils.js';
+import { pluralize } from '../../src/helpers/stringUtils.js';
 
 describe('pluralize', () => {
     it.each([

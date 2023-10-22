@@ -10,7 +10,7 @@ import {
 } from '../generated/ast.js';
 import { stream } from 'langium';
 import { parametersOrEmpty } from '../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;

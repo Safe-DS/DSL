@@ -15,9 +15,9 @@ import {
     SdsResult,
 } from '../generated/ast.js';
 import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
-import { isEmpty } from 'radash';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { pluralize } from '../helpers/stringUtils.js';
+import { pluralize } from '../../helpers/stringUtils.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
