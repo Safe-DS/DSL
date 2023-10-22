@@ -1,6 +1,6 @@
 import { SdsSegment } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { parametersOrEmpty, resultsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getParameters, getResults } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { DiagnosticTag } from 'vscode-languageserver';
 
@@ -10,7 +10,7 @@ export const CODE_SEGMENT_UNUSED_PARAMETER = 'segment/unused-parameter';
 
 export const segmentResultMustBeAssignedExactlyOnce =
     (services: SafeDsServices) => (node: SdsSegment, accept: ValidationAcceptor) => {
-        const results = resultsOrEmpty(node.resultList);
+        const results = getResults(node.resultList);
         for (const result of results) {
             const yields = services.helpers.NodeMapper.resultToYields(result);
             if (yields.isEmpty()) {
@@ -35,7 +35,7 @@ export const segmentResultMustBeAssignedExactlyOnce =
 
 export const segmentParameterShouldBeUsed =
     (services: SafeDsServices) => (node: SdsSegment, accept: ValidationAcceptor) => {
-        for (const parameter of parametersOrEmpty(node)) {
+        for (const parameter of getParameters(node)) {
             const usages = services.helpers.NodeMapper.parameterToReferences(parameter);
 
             if (usages.isEmpty()) {

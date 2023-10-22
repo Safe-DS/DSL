@@ -53,7 +53,7 @@ import {
     SdsReference,
     SdsTemplateString,
 } from '../generated/ast.js';
-import { argumentsOrEmpty, parametersOrEmpty } from '../helpers/nodeProperties.js';
+import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 
@@ -369,13 +369,13 @@ export class SafeDsPartialEvaluator {
 
             // Store default values for all parameters
             const args = new Map(
-                parametersOrEmpty(receiver.variant).map((it) => {
+                getParameters(receiver.variant).map((it) => {
                     return [it, this.cachedDoEvaluate(it.defaultValue, NO_SUBSTITUTIONS)];
                 }),
             );
 
             // Override default values with the actual arguments
-            argumentsOrEmpty(node).forEach((it) => {
+            getArguments(node).forEach((it) => {
                 const parameter = this.nodeMapper.argumentToParameter(it);
                 if (parameter && args.has(parameter)) {
                     args.set(parameter, this.cachedDoEvaluate(it.value, substitutions));

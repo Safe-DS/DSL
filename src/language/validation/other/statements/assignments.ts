@@ -1,7 +1,7 @@
 import { isSdsCall, isSdsPipeline, SdsAssignment, SdsYield } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { abstractResultsOrEmpty, assigneesOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getAbstractResults, getAssignees } from '../../../helpers/nodeProperties.js';
 import { pluralize } from '../../../../helpers/stringUtils.js';
 
 export const CODE_ASSIGNMENT_IMPLICITLY_IGNORED_RESULT = 'assignment/implicitly-ignored-result';
@@ -11,7 +11,7 @@ export const CODE_ASSIGMENT_YIELD_FORBIDDEN_IN_PIPELINE = 'assignment/yield-forb
 export const assignmentAssigneeMustGetValue =
     (services: SafeDsServices) =>
     (node: SdsAssignment, accept: ValidationAcceptor): void => {
-        for (const assignee of assigneesOrEmpty(node)) {
+        for (const assignee of getAssignees(node)) {
             if (!services.helpers.NodeMapper.assigneeToAssignedObject(assignee)) {
                 accept('error', 'No value is assigned to this assignee.', {
                     node: assignee,
@@ -30,9 +30,9 @@ export const assignmentShouldNotImplicitlyIgnoreResult = (services: SafeDsServic
             return;
         }
 
-        const assignees = assigneesOrEmpty(node);
+        const assignees = getAssignees(node);
         const callable = nodeMapper.callToCallable(expression);
-        const results = abstractResultsOrEmpty(callable);
+        const results = getAbstractResults(callable);
 
         if (results.length > assignees.length) {
             const kind = pluralize(results.length - assignees.length, 'result');

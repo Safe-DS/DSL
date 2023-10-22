@@ -74,12 +74,12 @@ import {
 } from '../generated/ast.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
-    assigneesOrEmpty,
-    blockLambdaResultsOrEmpty,
-    literalsOrEmpty,
-    parametersOrEmpty,
-    resultsOrEmpty,
-    typeArgumentsOrEmpty,
+    getAssignees,
+    streamBlockLambdaResults,
+    getLiterals,
+    getParameters,
+    getResults,
+    getTypeArguments,
 } from '../helpers/nodeProperties.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { Constant, isConstant } from '../partialEvaluation/model.js';
@@ -170,7 +170,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfDeclaration(node: SdsDeclaration): Type {
         if (isSdsAnnotation(node)) {
-            const parameterEntries = parametersOrEmpty(node).map(
+            const parameterEntries = getParameters(node).map(
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
@@ -199,10 +199,10 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
-        const parameterEntries = parametersOrEmpty(node).map(
+        const parameterEntries = getParameters(node).map(
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
-        const resultEntries = resultsOrEmpty(node.resultList).map(
+        const resultEntries = getResults(node.resultList).map(
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
@@ -241,7 +241,7 @@ export class SafeDsTypeComputer {
 
         // Yielded lambda
         else if (isSdsAssignment(containerOfLambda)) {
-            const firstAssignee = assigneesOrEmpty(containerOfLambda)[0];
+            const firstAssignee = getAssignees(containerOfLambda)[0];
             if (!isSdsYield(firstAssignee)) {
                 return UnknownType;
             }
@@ -280,16 +280,16 @@ export class SafeDsTypeComputer {
         } else if (isSdsCall(node)) {
             return this.computeTypeOfCall(node);
         } else if (isSdsBlockLambda(node)) {
-            const parameterEntries = parametersOrEmpty(node).map(
+            const parameterEntries = getParameters(node).map(
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
-            const resultEntries = blockLambdaResultsOrEmpty(node).map(
-                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
-            );
+            const resultEntries = streamBlockLambdaResults(node)
+                .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
+                .toArray();
 
             return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsExpressionLambda(node)) {
-            const parameterEntries = parametersOrEmpty(node).map(
+            const parameterEntries = getParameters(node).map(
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
             );
             const resultEntries = [
@@ -415,7 +415,7 @@ export class SafeDsTypeComputer {
         if (memberType instanceof StaticType && !isSdsCall(node.$container)) {
             const instanceType = memberType.instanceType;
 
-            if (instanceType instanceof EnumVariantType && isEmpty(parametersOrEmpty(instanceType.declaration))) {
+            if (instanceType instanceof EnumVariantType && isEmpty(getParameters(instanceType.declaration))) {
                 return instanceType;
             }
         }
@@ -455,7 +455,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsNamedType(node)) {
             return this.computeType(node.declaration.ref).copyWithNullability(node.isNullable);
         } else if (isSdsUnionType(node)) {
-            const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+            const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         } /* c8 ignore start */ else {
             return UnknownType;
@@ -463,7 +463,7 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfLiteralType(node: SdsLiteralType): Type {
-        const constants = literalsOrEmpty(node).map((it) => this.partialEvaluator.evaluate(it));
+        const constants = getLiterals(node).map((it) => this.partialEvaluator.evaluate(it));
         if (constants.every(isConstant)) {
             return new LiteralType(constants);
         } /* c8 ignore start */ else {

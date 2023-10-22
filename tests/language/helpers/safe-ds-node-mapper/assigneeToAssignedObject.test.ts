@@ -8,7 +8,7 @@ import {
     isSdsPlaceholder,
     SdsAssignee,
 } from '../../../../src/language/generated/ast.js';
-import { assigneesOrEmpty } from '../../../../src/language/helpers/nodeProperties.js';
+import { getAssignees } from '../../../../src/language/helpers/nodeProperties.js';
 import { NodeFileSystem } from 'langium/node';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
@@ -172,7 +172,7 @@ describe('SafeDsNodeMapper', () => {
             'should return the corresponding result if the RHS is a call of a $name',
             async ({ code, expected, index = 0 }) => {
                 const assignment = await getNodeOfType(services, code, isSdsAssignment, index);
-                const abstractResultNames = assigneesOrEmpty(assignment).map(abstractResultNameOrNull);
+                const abstractResultNames = getAssignees(assignment).map(abstractResultNameOrNull);
                 expect(abstractResultNames).toStrictEqual(expected);
             },
         );

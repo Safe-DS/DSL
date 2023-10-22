@@ -1,7 +1,7 @@
 import { SdsCallableType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 
-import { parametersOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getParameters } from '../../../helpers/nodeProperties.js';
 
 export const CODE_CALLABLE_TYPE_CONST_MODIFIER = 'callable-type/const-modifier';
 export const CODE_CALLABLE_TYPE_NO_OPTIONAL_PARAMETERS = 'callable-type/no-optional-parameters';
@@ -10,7 +10,7 @@ export const callableTypeParameterMustNotHaveConstModifier = (
     node: SdsCallableType,
     accept: ValidationAcceptor,
 ): void => {
-    for (const parameter of parametersOrEmpty(node)) {
+    for (const parameter of getParameters(node)) {
         if (parameter.isConstant) {
             accept('error', 'The const modifier is not applicable to parameters of callable types.', {
                 node: parameter,
@@ -22,7 +22,7 @@ export const callableTypeParameterMustNotHaveConstModifier = (
 };
 
 export const callableTypeMustNotHaveOptionalParameters = (node: SdsCallableType, accept: ValidationAcceptor): void => {
-    for (const parameter of parametersOrEmpty(node)) {
+    for (const parameter of getParameters(node)) {
         if (parameter.defaultValue) {
             accept('error', 'A callable type must not have optional parameters.', {
                 node: parameter,

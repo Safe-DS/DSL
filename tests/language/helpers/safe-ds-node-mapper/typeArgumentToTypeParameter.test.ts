@@ -4,7 +4,7 @@ import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { isSdsNamedType, isSdsUnionType, SdsTypeArgument } from '../../../../src/language/generated/ast.js';
-import { typeArgumentsOrEmpty } from '../../../../src/language/helpers/nodeProperties.js';
+import { getTypeArguments } from '../../../../src/language/helpers/nodeProperties.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
@@ -28,7 +28,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined]);
             });
 
@@ -40,7 +40,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined]);
             });
 
@@ -52,7 +52,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['T2', 'T3', 'T1']);
             });
         });
@@ -66,7 +66,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined]);
             });
 
@@ -80,7 +80,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType, 1);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['T1', 'T2', 'T3']);
             });
 
@@ -92,7 +92,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['T2', undefined, undefined]);
             });
 
@@ -104,7 +104,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const namedType = await getNodeOfType(services, code, isSdsNamedType);
-                const parameterNames = typeArgumentsOrEmpty(namedType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['T1', 'T2', undefined]);
             });
 
@@ -116,7 +116,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const unionType = await getNodeOfType(services, code, isSdsUnionType);
-                const parameterNames = typeArgumentsOrEmpty(unionType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(unionType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined, undefined]);
             });
 
@@ -128,7 +128,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const unionType = await getNodeOfType(services, code, isSdsUnionType);
-                const parameterNames = typeArgumentsOrEmpty(unionType.typeArgumentList).map(typeParameterNameOrNull);
+                const parameterNames = getTypeArguments(unionType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined, undefined]);
             });
         });

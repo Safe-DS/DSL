@@ -57,14 +57,14 @@ import chalk from 'chalk';
 import { createSafeDsServices, SafeDsServices } from '../language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import {
-    abstractResultsOrEmpty,
-    assigneesOrEmpty,
-    blockLambdaResultsOrEmpty,
-    importedDeclarationsOrEmpty,
-    importsOrEmpty,
+    getAbstractResults,
+    getAssignees,
+    streamBlockLambdaResults,
+    getImportedDeclarations,
+    getImports,
     isRequiredParameter,
-    moduleMembersOrEmpty,
-    statementsOrEmpty,
+    getModuleMembers,
+    getStatements,
 } from '../language/helpers/nodeProperties.js';
 import { IdManager } from '../language/helpers/idManager.js';
 import { isInStubFile } from '../language/helpers/fileExtensions.js';
@@ -150,10 +150,10 @@ const formatGeneratedFileName = function (baseName: string): string {
 
 const generateModule = function (services: SafeDsServices, module: SdsModule): string {
     const importSet = new Map<String, ImportData>();
-    const segments = moduleMembersOrEmpty(module)
+    const segments = getModuleMembers(module)
         .filter(isSdsSegment)
         .map((segment) => generateSegment(services, segment, importSet));
-    const pipelines = moduleMembersOrEmpty(module)
+    const pipelines = getModuleMembers(module)
         .filter(isSdsPipeline)
         .map((pipeline) => generatePipeline(services, pipeline, importSet));
     const imports = generateImports(Array.from(importSet.values()));
@@ -266,7 +266,7 @@ const generateQualifiedImport = function (importStmt: ImportData): string {
 
 const generateBlock = function (block: SdsBlock, frame: GenerationInfoFrame): string {
     // TODO filter withEffect
-    let statements = statementsOrEmpty(block);
+    let statements = getStatements(block);
     if (statements.length === 0) {
         return 'pass';
     }
@@ -291,10 +291,10 @@ const generateStatement = function (statement: SdsStatement, frame: GenerationIn
 
 const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
     const requiredAssignees = isSdsCall(assignment.expression)
-        ? abstractResultsOrEmpty(frame.getServices().helpers.NodeMapper.callToCallable(assignment.expression)).length
+        ? getAbstractResults(frame.getServices().helpers.NodeMapper.callToCallable(assignment.expression)).length
         : /* c8 ignore next */
           1;
-    const assignees = assigneesOrEmpty(assignment);
+    const assignees = getAssignees(assignment);
     if (assignees.some((value) => !isSdsWildcard(value))) {
         const actualAssignees = assignees.map(generateAssignee);
         if (requiredAssignees === actualAssignees.length) {
@@ -325,12 +325,10 @@ const generateAssignee = function (assignee: SdsAssignee): string {
 };
 
 const generateBlockLambda = function (blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): string {
-    const lambdaResult = blockLambdaResultsOrEmpty(blockLambda);
+    const results = streamBlockLambdaResults(blockLambda);
     let lambdaBlock = generateBlock(blockLambda.body, frame);
-    if (lambdaResult.length !== 0 && lambdaBlock !== 'pass') {
-        lambdaBlock += `\nreturn ${lambdaResult
-            .map((result) => `${BLOCK_LAMBDA_RESULT_PREFIX}${result.name}`)
-            .join(', ')}`;
+    if (!results.isEmpty()) {
+        lambdaBlock += `\nreturn ${results.map((result) => `${BLOCK_LAMBDA_RESULT_PREFIX}${result.name}`).join(', ')}`;
     }
     return expandToString`def ${frame.getUniqueLambdaBlockName(blockLambda)}(${generateParameters(
         blockLambda.parameterList,
@@ -429,7 +427,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             const suffix = isSdsCall(expression.$container) ? '' : '()';
             return `${receiver}.${enumMember}${suffix}`;
         } else if (isSdsAbstractResult(member)) {
-            const resultList = abstractResultsOrEmpty(getContainerOfType(member, isSdsCallable));
+            const resultList = getAbstractResults(getContainerOfType(member, isSdsCallable));
             if (resultList.length === 1) {
                 return receiver;
             }
@@ -500,13 +498,13 @@ const getExternalReferenceNeededImport = function (
     // Root Node is always a module.
     const currentModule = <SdsModule>findRootNode(expression);
     const targetModule = <SdsModule>findRootNode(declaration);
-    for (const value of importsOrEmpty(currentModule)) {
+    for (const value of getImports(currentModule)) {
         // Verify same package
         if (value.package !== targetModule.name) {
             continue;
         }
         if (isSdsQualifiedImport(value)) {
-            const importedDeclarations = importedDeclarationsOrEmpty(value);
+            const importedDeclarations = getImportedDeclarations(value);
             for (const importedDeclaration of importedDeclarations) {
                 if (declaration === importedDeclaration.declaration.ref) {
                     if (importedDeclaration.alias !== undefined) {

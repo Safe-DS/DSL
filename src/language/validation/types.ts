@@ -14,7 +14,7 @@ import {
     SdsParameter,
     SdsResult,
 } from '../generated/ast.js';
-import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
+import { getTypeArguments, getTypeParameters } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { pluralize } from '../../helpers/stringUtils.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
@@ -67,13 +67,13 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
 export const namedTypeMustSetAllTypeParameters =
     (services: SafeDsServices) =>
     (node: SdsNamedType, accept: ValidationAcceptor): void => {
-        const expectedTypeParameters = typeParametersOrEmpty(node.declaration.ref);
+        const expectedTypeParameters = getTypeParameters(node.declaration.ref);
         if (isEmpty(expectedTypeParameters)) {
             return;
         }
 
         if (node.typeArgumentList) {
-            const actualTypeParameters = typeArgumentsOrEmpty(node.typeArgumentList).map((it) =>
+            const actualTypeParameters = getTypeArguments(node.typeArgumentList).map((it) =>
                 services.helpers.NodeMapper.typeArgumentToTypeParameter(it),
             );
 

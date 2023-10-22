@@ -1,6 +1,6 @@
 import { SdsUnionType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { typeArgumentsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getTypeArguments } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { Type } from '../../../typing/model.js';
 import { isEmpty } from '../../../../helpers/collectionUtils.js';
@@ -9,7 +9,7 @@ export const CODE_UNION_TYPE_DUPLICATE_TYPE = 'union-type/duplicate-type';
 export const CODE_UNION_TYPE_MISSING_TYPES = 'union-type/missing-types';
 
 export const unionTypeMustHaveTypes = (node: SdsUnionType, accept: ValidationAcceptor): void => {
-    if (isEmpty(typeArgumentsOrEmpty(node.typeArgumentList))) {
+    if (isEmpty(getTypeArguments(node.typeArgumentList))) {
         accept('error', 'A union type must have at least one type.', {
             node,
             property: 'typeArgumentList',
@@ -22,7 +22,7 @@ export const unionTypeShouldNotHaveDuplicateTypes = (services: SafeDsServices) =
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsUnionType, accept: ValidationAcceptor): void => {
-        const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+        const typeArguments = getTypeArguments(node.typeArgumentList);
         const knownTypes: Type[] = [];
 
         for (const typeArgument of typeArguments) {

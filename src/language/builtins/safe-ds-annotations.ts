@@ -1,5 +1,5 @@
 import { isSdsAnnotation, SdsAnnotatedObject, SdsAnnotation, SdsModule, SdsParameter } from '../generated/ast.js';
-import { argumentsOrEmpty, findFirstAnnotationCallOf, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
+import { getArguments, findFirstAnnotationCallOf, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
@@ -96,7 +96,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         parameterName: string,
     ): EvaluatedNode {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
-        const argumentValue = argumentsOrEmpty(annotationCall).find(
+        const argumentValue = getArguments(annotationCall).find(
             (it) => this.nodeMapper.argumentToParameter(it)?.name === parameterName,
         )?.value;
         return this.partialEvaluator.evaluate(argumentValue);

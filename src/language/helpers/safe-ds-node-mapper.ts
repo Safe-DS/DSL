@@ -31,13 +31,13 @@ import {
 import { CallableType, StaticType } from '../typing/model.js';
 import { findLocalReferences, getContainerOfType, Stream, stream } from 'langium';
 import {
-    abstractResultsOrEmpty,
-    argumentsOrEmpty,
+    getAbstractResults,
+    getArguments,
     isNamedArgument,
     isNamedTypeArgument,
-    parametersOrEmpty,
-    typeArgumentsOrEmpty,
-    typeParametersOrEmpty,
+    getParameters,
+    getTypeArguments,
+    getTypeParameters,
 } from './nodeProperties.js';
 
 export class SafeDsNodeMapper {
@@ -62,7 +62,7 @@ export class SafeDsNodeMapper {
 
         // Positional argument
         const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall)!;
-        const args = argumentsOrEmpty(containingAbstractCall);
+        const args = getArguments(containingAbstractCall);
         const argumentPosition = node.$containerIndex ?? -1;
 
         // A prior argument is named
@@ -74,7 +74,7 @@ export class SafeDsNodeMapper {
 
         // Find parameter at the same position
         const callable = this.callToCallable(containingAbstractCall);
-        const parameters = parametersOrEmpty(callable);
+        const parameters = getParameters(callable);
         if (argumentPosition < parameters.length) {
             return parameters[argumentPosition];
         }
@@ -121,7 +121,7 @@ export class SafeDsNodeMapper {
         }
 
         // Otherwise, the assignee gets the result at the same position
-        const abstractResults = abstractResultsOrEmpty(callable);
+        const abstractResults = getAbstractResults(callable);
         return abstractResults[assigneePosition];
     }
 
@@ -228,7 +228,7 @@ export class SafeDsNodeMapper {
             return undefined;
         }
 
-        const typeArguments = typeArgumentsOrEmpty(containingType.typeArgumentList);
+        const typeArguments = getTypeArguments(containingType.typeArgumentList);
         const typeArgumentPosition = node.$containerIndex ?? -1;
 
         // A prior type argument is named
@@ -240,7 +240,7 @@ export class SafeDsNodeMapper {
 
         // Find type parameter at the same position
         const namedTypeDeclaration = containingType.declaration.ref;
-        const typeParameters = typeParametersOrEmpty(namedTypeDeclaration);
+        const typeParameters = getTypeParameters(namedTypeDeclaration);
         return typeParameters[typeArgumentPosition];
     }
 }

@@ -9,7 +9,7 @@ import {
 } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { statementsOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getStatements } from '../../../helpers/nodeProperties.js';
 import { DiagnosticTag } from 'vscode-languageserver';
 import { last } from '../../../../helpers/collectionUtils.js';
 
@@ -47,7 +47,7 @@ export const placeholderShouldBeUsed =
         // Don't show a warning if the placeholder is declared in the last statement in the block
         const containingStatement = getContainerOfType(node, isSdsStatement);
         const containingBlock = getContainerOfType(containingStatement, isSdsBlock);
-        const allStatementsInBlock = statementsOrEmpty(containingBlock);
+        const allStatementsInBlock = getStatements(containingBlock);
         if (last(allStatementsInBlock) === containingStatement) {
             return;
         }

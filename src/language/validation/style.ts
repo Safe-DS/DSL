@@ -19,7 +19,7 @@ import {
     SdsUnionType,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { isRequiredParameter, parametersOrEmpty, typeParametersOrEmpty } from '../helpers/nodeProperties.js';
+import { isRequiredParameter, getParameters, getTypeParameters } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
 import { NullConstant } from '../partialEvaluation/model.js';
@@ -55,7 +55,7 @@ export const annotationCallArgumentListShouldBeNeeded = (node: SdsAnnotationCall
         return;
     }
 
-    const hasRequiredParameters = parametersOrEmpty(annotation).some(isRequiredParameter);
+    const hasRequiredParameters = getParameters(annotation).some(isRequiredParameter);
     if (!hasRequiredParameters) {
         accept('info', 'This argument list can be removed.', {
             node: argumentList,
@@ -78,7 +78,7 @@ export const callArgumentListShouldBeNeeded =
             return;
         }
 
-        if (isEmpty(parametersOrEmpty(callable))) {
+        if (isEmpty(getParameters(callable))) {
             accept('info', 'This argument list can be removed.', {
                 node: argumentList,
                 code: CODE_STYLE_UNNECESSARY_ARGUMENT_LIST,
@@ -130,7 +130,7 @@ export const enumBodyShouldNotBeEmpty = (node: SdsEnumBody, accept: ValidationAc
 // -----------------------------------------------------------------------------
 
 export const annotationParameterShouldNotHaveConstModifier = (node: SdsAnnotation, accept: ValidationAcceptor) => {
-    for (const parameter of parametersOrEmpty(node)) {
+    for (const parameter of getParameters(node)) {
         if (parameter.isConstant) {
             accept('info', 'Annotation parameters are always const, so this modifier can be removed.', {
                 node: parameter,
@@ -315,7 +315,7 @@ export const namedTypeTypeArgumentListShouldBeNeeded = (node: SdsNamedType, acce
         return;
     }
 
-    if (isEmpty(typeParametersOrEmpty(namedTypeDeclaration))) {
+    if (isEmpty(getTypeParameters(namedTypeDeclaration))) {
         accept('info', 'This type argument list can be removed.', {
             node: typeArgumentList,
             code: CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST,

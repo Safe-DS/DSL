@@ -4,7 +4,7 @@ import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { isSdsAbstractCall, SdsArgument } from '../../../../src/language/generated/ast.js';
-import { argumentsOrEmpty } from '../../../../src/language/helpers/nodeProperties.js';
+import { getArguments } from '../../../../src/language/helpers/nodeProperties.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
@@ -30,7 +30,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
+                const parameterNames = getArguments(call).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual([undefined]);
             });
 
@@ -44,7 +44,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
+                const parameterNames = getArguments(call).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['p2', 'p3', 'p1']);
             });
         });
@@ -60,7 +60,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
+                const parameterNames = getArguments(call).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['p1', 'p2', 'p3']);
             });
 
@@ -74,7 +74,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
+                const parameterNames = getArguments(call).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['p2', undefined, undefined]);
             });
 
@@ -88,7 +88,7 @@ describe('SafeDsNodeMapper', () => {
                 `;
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
-                const parameterNames = argumentsOrEmpty(call).map(parameterNameOrNull);
+                const parameterNames = getArguments(call).map(parameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['p1', 'p2', undefined]);
             });
         });

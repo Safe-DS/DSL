@@ -1,7 +1,7 @@
 import { SdsNamedType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { typeArgumentsOrEmpty, typeParametersOrEmpty } from '../../../helpers/nodeProperties.js';
+import { getTypeArguments, getTypeParameters } from '../../../helpers/nodeProperties.js';
 import { duplicatesBy } from '../../../../helpers/collectionUtils.js';
 import { pluralize } from '../../../../helpers/stringUtils.js';
 
@@ -14,7 +14,7 @@ export const namedTypeMustNotSetTypeParameterMultipleTimes = (services: SafeDsSe
     const typeArgumentToTypeParameterOrUndefined = nodeMapper.typeArgumentToTypeParameter.bind(nodeMapper);
 
     return (node: SdsNamedType, accept: ValidationAcceptor): void => {
-        const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+        const typeArguments = getTypeArguments(node.typeArgumentList);
         const duplicates = duplicatesBy(typeArguments, typeArgumentToTypeParameterOrUndefined);
 
         for (const duplicate of duplicates) {
@@ -55,8 +55,8 @@ export const namedTypeMustNotHaveTooManyTypeArguments = (node: SdsNamedType, acc
         return;
     }
 
-    const typeParameters = typeParametersOrEmpty(node.declaration.ref);
-    const typeArguments = typeArgumentsOrEmpty(node.typeArgumentList);
+    const typeParameters = getTypeParameters(node.declaration.ref);
+    const typeArguments = getTypeArguments(node.typeArgumentList);
 
     if (typeArguments.length > typeParameters.length) {
         const kind = pluralize(typeParameters.length, 'type argument');
