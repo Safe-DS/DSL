@@ -1,7 +1,9 @@
 import {
     isSdsQualifiedImport,
     SdsAnnotation,
+    SdsAttribute,
     SdsBlockLambda,
+    SdsBlockLambdaResult,
     SdsCallableType,
     SdsClass,
     SdsDeclaration,
@@ -11,9 +13,13 @@ import {
     SdsFunction,
     SdsImportedDeclaration,
     SdsModule,
+    SdsParameter,
     SdsPipeline,
+    SdsPlaceholder,
+    SdsResult,
     SdsSchema,
     SdsSegment,
+    SdsTypeParameter,
 } from '../generated/ast.js';
 import { getDocument, ValidationAcceptor } from 'langium';
 import {
@@ -67,21 +73,21 @@ export const nameMustNotStartWithCodegenPrefix = (node: SdsDeclaration, accept: 
 
 export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: ValidationAcceptor): void => {
     switch (node.$type) {
-        case 'SdsAnnotation':
+        case SdsAnnotation:
             return nameShouldBeUpperCamelCase(node, 'annotations', accept);
-        case 'SdsAttribute':
+        case SdsAttribute:
             return nameShouldBeLowerCamelCase(node, 'attributes', accept);
-        case 'SdsBlockLambdaResult':
+        case SdsBlockLambdaResult:
             return nameShouldBeLowerCamelCase(node, 'block lambda results', accept);
-        case 'SdsClass':
+        case SdsClass:
             return nameShouldBeUpperCamelCase(node, 'classes', accept);
-        case 'SdsEnum':
+        case SdsEnum:
             return nameShouldBeUpperCamelCase(node, 'enums', accept);
-        case 'SdsEnumVariant':
+        case SdsEnumVariant:
             return nameShouldBeUpperCamelCase(node, 'enum variants', accept);
-        case 'SdsFunction':
+        case SdsFunction:
             return nameShouldBeLowerCamelCase(node, 'functions', accept);
-        case 'SdsModule':
+        case SdsModule:
             const name = node.name ?? '';
             const segments = name.split('.');
             if (name !== '' && segments.every((it) => it !== '') && !segments.every(isLowerCamelCase)) {
@@ -92,19 +98,19 @@ export const nameShouldHaveCorrectCasing = (node: SdsDeclaration, accept: Valida
                 });
             }
             return;
-        case 'SdsParameter':
+        case SdsParameter:
             return nameShouldBeLowerCamelCase(node, 'parameters', accept);
-        case 'SdsPipeline':
+        case SdsPipeline:
             return nameShouldBeLowerCamelCase(node, 'pipelines', accept);
-        case 'SdsPlaceholder':
+        case SdsPlaceholder:
             return nameShouldBeLowerCamelCase(node, 'placeholders', accept);
-        case 'SdsResult':
+        case SdsResult:
             return nameShouldBeLowerCamelCase(node, 'results', accept);
-        case 'SdsSchema':
+        case SdsSchema:
             return nameShouldBeUpperCamelCase(node, 'schemas', accept);
-        case 'SdsSegment':
+        case SdsSegment:
             return nameShouldBeLowerCamelCase(node, 'segments', accept);
-        case 'SdsTypeParameter':
+        case SdsTypeParameter:
             return nameShouldBeUpperCamelCase(node, 'type parameters', accept);
     }
     /* c8 ignore next */
