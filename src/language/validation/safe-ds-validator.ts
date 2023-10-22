@@ -126,6 +126,7 @@ import {
     literalTypeMustNotContainMapLiteral,
     literalTypeShouldNotHaveDuplicateLiteral,
 } from './other/types/literalTypes.js';
+import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
 
 /**
  * Register custom validation checks.
@@ -150,12 +151,14 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty,
             annotationParameterShouldNotHaveConstModifier,
+            targetShouldNotHaveDuplicateEntries(services),
         ],
         SdsAnnotationCall: [
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
             annotationCallArgumentListShouldBeNeeded,
             annotationCallArgumentsMustBeConstant(services),
+            annotationCallMustHaveCorrectTarget(services),
             annotationCallMustNotLackArgumentList,
         ],
         SdsArgument: [

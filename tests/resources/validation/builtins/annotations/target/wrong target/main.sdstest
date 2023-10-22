@@ -1,15 +1,15 @@
 // $TEST$ error "This annotation cannot be applied to a compilation unit."
 »@AnnotationForEnums«
-// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForCompilationUnits«
-// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForMultipleTargets«
-// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForAnything«
-// $TEST$ no error "This annotation cannot be applied to a compilation unit."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@UnresolvedAnnotation«
 
-package tests.validation.other.annotationCalls.target
+package tests.validation.builtins.annotations.target.wrongTarget
 
 @Target(AnnotationTarget.Annotation)
 annotation AnnotationForAnnotations
@@ -45,7 +45,7 @@ annotation AnnotationForTypeParameters
 annotation AnnotationForPipelines
 
 @Target(AnnotationTarget.Step)
-annotation AnnotationForSteps
+annotation AnnotationForSegments
 
 @Target(AnnotationTarget.CompilationUnit, AnnotationTarget.Class)
 annotation AnnotationForMultipleTargets
@@ -64,19 +64,19 @@ annotation TestAnnotation
 
 // $TEST$ error "This annotation cannot be applied to a class."
 »@AnnotationForCompilationUnits«
-// $TEST$ no error "This annotation cannot be applied to a class."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForClasses«
-// $TEST$ no error "This annotation cannot be applied to a class."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForMultipleTargets«
-// $TEST$ no error "This annotation cannot be applied to a class."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForAnything«
 class TestClass<
 
-    // $TEST$ error "This annotation cannot be applied to a type parameter."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForPipelines«
-    // $TEST$ no error "This annotation cannot be applied to a type parameter."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForTypeParameters«
-    // $TEST$ no error "This annotation cannot be applied to a type parameter."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForAnything«
     TEST_TYPE_PARAMETER
 > {
@@ -110,42 +110,42 @@ enum TestEnum {
 
 // $TEST$ error "This annotation cannot be applied to a function."
 »@AnnotationForParameters«
-// $TEST$ no error "This annotation cannot be applied to a function."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForFunctions«
-// $TEST$ no error "This annotation cannot be applied to a function."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForAnything«
 fun testFunction(
 
     // $TEST$ error "This annotation cannot be applied to a parameter."
     »@AnnotationForResults«
-    // $TEST$ no error "This annotation cannot be applied to a parameter."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForParameters«
-    // $TEST$ no error "This annotation cannot be applied to a parameter."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForAnything«
     testParameter: Int
 ) -> (
 
     // $TEST$ error "This annotation cannot be applied to a result."
     »@AnnotationForTypeParameters«
-    // $TEST$ no error "This annotation cannot be applied to a result."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForResults«
-    // $TEST$ no error "This annotation cannot be applied to a result."
+    // $TEST$ no error r"This annotation cannot be applied to .*"
     »@AnnotationForAnything«
     testResult: Int
 )
 
 // $TEST$ error "This annotation cannot be applied to a pipeline."
-»@AnnotationForSteps«
-// $TEST$ no error "This annotation cannot be applied to a pipeline."
+»@AnnotationForSegments«
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForPipelines«
-// $TEST$ no error "This annotation cannot be applied to a pipeline."
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForAnything«
 pipeline testPipeline {}
 
-// $TEST$ error "This annotation cannot be applied to a step."
+// $TEST$ error "This annotation cannot be applied to a segment."
 »@AnnotationForAnnotations«
-// $TEST$ no error "This annotation cannot be applied to a step."
-»@AnnotationForSteps«
-// $TEST$ no error "This annotation cannot be applied to a step."
+// $TEST$ no error r"This annotation cannot be applied to .*"
+»@AnnotationForSegments«
+// $TEST$ no error r"This annotation cannot be applied to .*"
 »@AnnotationForAnything«
-step testStep() {}
+segment testSegment() {}
