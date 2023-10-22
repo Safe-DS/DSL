@@ -63,9 +63,11 @@ export const annotationCallMustHaveCorrectTarget = (services: SafeDsServices) =>
         }
 
         const actualTarget = getActualTarget(node);
+        /* c8 ignore start */
         if (!actualTarget) {
             return;
         }
+        /* c8 ignore stop */
 
         const validTargets = builtinAnnotations
             .streamValidTargets(annotation)
