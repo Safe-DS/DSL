@@ -8,14 +8,14 @@ import { URI } from 'langium';
 import { locationToString } from '../../helpers/location.js';
 import { AssertionError } from 'assert';
 import { isEmpty } from '../../../src/helpers/collectionUtils.js';
+import { loadDocuments } from '../../helpers/testResources.js';
 
-const workspace = createSafeDsServices(NodeFileSystem).SafeDs.shared.workspace;
+const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const builtinFiles = listBuiltinFiles();
 
 describe('builtin files', () => {
     beforeAll(async () => {
-        const documents = builtinFiles.map((uri) => workspace.LangiumDocuments.getOrCreateDocument(uri));
-        await workspace.DocumentBuilder.build(documents, { validation: true });
+        await loadDocuments(services, builtinFiles, { validation: true });
     });
 
     const testCases = builtinFiles.map((uri) => ({
@@ -23,7 +23,7 @@ describe('builtin files', () => {
         shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
     }));
     it.each(testCases)('[$shortenedResourceName] should have no errors or warnings', async ({ uri }) => {
-        const document = workspace.LangiumDocuments.getOrCreateDocument(uri);
+        const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
 
         const errorsOrWarnings =
             document.diagnostics?.filter(
