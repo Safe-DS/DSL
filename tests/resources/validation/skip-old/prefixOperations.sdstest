@@ -1,0 +1,38 @@
+package tests.validation.typeChecking.prefixOperations
+
+step f(vararg a: Int) {
+
+    // $TEST$ no error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »true«;
+    // $TEST$ no error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »false«;
+    // $TEST$ error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »i()«;
+    // $TEST$ error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »0«;
+    // $TEST$ error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »a«;
+    // $TEST$ no error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »unresolved«;
+    // $TEST$ no error "The operand of a logical negation must be an instance of the class 'Boolean'."
+    not »C.unresolved«;
+
+    // $TEST$ no error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»0.0«;
+    // $TEST$ no error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»0«;
+    // $TEST$ error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»h()«;
+    // $TEST$ error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»""«;
+    // $TEST$ error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»a«;
+    // $TEST$ no error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»unresolved«;
+    // $TEST$ no error "The operand of an arithmetic negation must be an instance of the class 'Float' or the class 'Int'."
+    -»C.unresolved«;
+}
+
+fun g()
+fun h() -> index: Int?
+fun i() -> isTrue: Boolean?

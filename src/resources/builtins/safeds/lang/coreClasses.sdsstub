@@ -1,28 +1,46 @@
 package safeds.lang
 
-@Description("The common superclass of all classes.")
+/**
+ * The common superclass of all classes.
+ */
 class Any
 
-@Description("The common subclass of all classes.")
+/**
+ * The common subclass of all classes.
+ */
 class Nothing
 
-@Description("A truth value.")
+/**
+ * A truth value.
+ */
 class Boolean
 
-@Description("A number.")
+/**
+ * A number.
+ */
 class Number
 
-@Description("An integer.")
+/**
+ * An integer.
+ */
 class Int sub Number
 
-@Description("A floating-point number.")
+/**
+ * A floating-point number.
+ */
 class Float sub Number
 
-@Description("A list of elements.")
+/**
+ * A list of elements.
+ */
 class List<E>
 
-@Description("A map of keys to values.")
+/**
+ * A map of keys to values.
+ */
 class Map<K, V>
 
-@Description("Some text.")
+/**
+ * Some text.
+ */
 class String

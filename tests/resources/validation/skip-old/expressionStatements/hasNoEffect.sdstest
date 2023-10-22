@@ -1,0 +1,78 @@
+package tests.validation.statements.expressionStatements.hasNoEffect
+
+fun impureFunction()
+@Pure fun pureFunction() -> a: Int
+
+class MyClass() {
+    fun impureFunction()
+    @Pure fun pureFunction()
+}
+
+step pureStep() {
+    val a = pureFunction();
+}
+
+step impureStep() {
+    impureFunction();
+}
+
+step recursiveA() {
+    recursiveB();
+}
+
+step recursiveB() {
+    recursiveA();
+}
+
+step myStep() {
+    // $TEST$ warning "This statement does nothing."
+    »1 + 2;«
+    // $TEST$ warning "This statement does nothing."
+    »pureFunction();«
+    // $TEST$ warning "This statement does nothing."
+    »MyClass().pureFunction();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »impureFunction();«
+    // $TEST$ no warning "This statement does nothing."
+    »MyClass().impureFunction();«
+
+    () {
+        // $TEST$ warning "This statement does nothing."
+        »1 + 2;«
+        // $TEST$ warning "This statement does nothing."
+        »pureFunction();«
+        // $TEST$ warning "This statement does nothing."
+        »MyClass().pureFunction();«
+
+        // $TEST$ no warning "This statement does nothing."
+        »impureFunction();«
+        // $TEST$ no warning "This statement does nothing."
+        »MyClass().impureFunction();«
+    };
+
+    // $TEST$ warning "This statement does nothing."
+    »(() {
+        pureFunction();
+        MyClass().pureFunction();
+    })();«
+
+    // $TEST$ warning "This statement does nothing."
+    »pureStep();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »(() {
+        impureFunction();
+    })();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »(() {
+        MyClass().impureFunction();
+    })();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »impureStep();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »recursiveA();«
+}

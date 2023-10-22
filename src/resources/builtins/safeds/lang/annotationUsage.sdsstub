@@ -1,51 +1,83 @@
 package safeds.lang
 
-@Description("The annotation can target these declaration types. If the @Target annotation is not used any declaration type can be targeted.")
+/**
+ * The annotation must target only the specified declaration types. By default, any declaration type can be targeted.
+ *
+ * @param targets An exhaustive list of the valid targets.
+ */
 @Target([AnnotationTarget.Annotation])
 annotation Target(
-    @Description("The valid targets.")
     targets: List<AnnotationTarget>
 )
 
-@Description("The declaration types that can be targeted by annotations.")
+/**
+ * The declaration types that can be targeted by annotations.
+ */
 enum AnnotationTarget {
-    @Description("The annotation can be called on annotations.")
+
+    /**
+     * The annotation can be called on annotations.
+     */
     Annotation
 
-    @Description("The annotation can be called on attributes.")
+    /**
+     * The annotation can be called on attributes.
+     */
     Attribute
 
-    @Description("The annotation can be called on classes.")
+    /**
+     * The annotation can be called on classes.
+     */
     Class
 
-    @Description("The annotation can be called on enums.")
+    /**
+     * The annotation can be called on enums.
+     */
     Enum
 
-    @Description("The annotation can be called on enum variants.")
+    /**
+     * The annotation can be called on enum variants.
+     */
     EnumVariant
 
-    @Description("The annotation can be called on functions.")
+    /**
+     * The annotation can be called on functions.
+     */
     Function
 
-    @Description("The annotation can be called on modules (i.e. files).")
+    /**
+     * The annotation can be called on modules (i.e. files).
+     */
     Module
 
-    @Description("The annotation can be called on parameters.")
+    /**
+     * The annotation can be called on parameters.
+     */
     Parameter
 
-    @Description("The annotation can be called on pipelines.")
+    /**
+     * The annotation can be called on pipelines.
+     */
     Pipeline
 
-    @Description("The annotation can be called on results.")
+    /**
+     * The annotation can be called on results.
+     */
     Result
 
-    @Description("The annotation can be called on segments.")
+    /**
+     * The annotation can be called on segments.
+     */
     Segment
 
-    @Description("The annotation can be called on type parameters.")
+    /**
+     * The annotation can be called on type parameters.
+     */
     TypeParameter
 }
 
-@Description("The annotation can be called multiple times for the same declaration.")
+/**
+ * The annotation can be called multiple times for the same declaration.
+ */
 @Target([AnnotationTarget.Annotation])
 annotation Repeatable

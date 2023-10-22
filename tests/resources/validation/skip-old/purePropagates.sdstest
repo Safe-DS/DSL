@@ -1,0 +1,21 @@
+package tests.validation.declarations.functions.purePropagates
+
+class MyOpenClass {
+    @Pure fun pureFunction1()
+    @Pure fun pureFunction2()
+    fun impureFunction1()
+}
+
+class MyClass sub MyOpenClass {
+    // $TEST$ no error "One of the supertypes of this class declares a pure function with this name, so this must be pure as well."
+    @Pure fun »ownPureFunction«()
+    // $TEST$ no error "One of the supertypes of this class declares a pure function with this name, so this must be pure as well."
+    fun »ownImpureFunction«()
+
+    // $TEST$ error "One of the supertypes of this class declares a pure function with this name, so this must be pure as well."
+    fun »pureFunction1«()
+    // $TEST$ no error "One of the supertypes of this class declares a pure function with this name, so this must be pure as well."
+    @Pure fun »pureFunction2«()
+    // $TEST$ no error "One of the supertypes of this class declares a pure function with this name, so this must be pure as well."
+    @Pure fun »impureFunction1«()
+}

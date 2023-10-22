@@ -1,0 +1,172 @@
+// $TEST$ error "The annotation 'AnnotationForEnums' cannot be applied to a module."
+@»AnnotationForEnums«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForModules«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForMultipleTargets«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+
+package tests.validation.builtins.annotations.target.wrongTarget
+
+@Target([AnnotationTarget.Annotation])
+annotation AnnotationForAnnotations
+
+@Target([AnnotationTarget.Attribute])
+annotation AnnotationForAttributes
+
+@Target([AnnotationTarget.Class])
+annotation AnnotationForClasses
+
+@Target([AnnotationTarget.Enum])
+annotation AnnotationForEnums
+
+@Target([AnnotationTarget.EnumVariant])
+annotation AnnotationForEnumVariants
+
+@Target([AnnotationTarget.Function])
+annotation AnnotationForFunctions
+
+@Target([AnnotationTarget.Module])
+annotation AnnotationForModules
+
+@Target([AnnotationTarget.Parameter])
+annotation AnnotationForParameters
+
+@Target([AnnotationTarget.Result])
+annotation AnnotationForResults
+
+@Target([AnnotationTarget.TypeParameter])
+annotation AnnotationForTypeParameters
+
+@Target([AnnotationTarget.Pipeline])
+annotation AnnotationForPipelines
+
+@Target([AnnotationTarget.Segment])
+annotation AnnotationForSegments
+
+@Target([AnnotationTarget.Module, AnnotationTarget.Class])
+annotation AnnotationForMultipleTargets
+
+annotation AnnotationForAnything
+
+/* Test declarations -------------------------------------------------------- */
+
+// $TEST$ error "The annotation 'AnnotationForAttributes' cannot be applied to an annotation."
+@»AnnotationForAttributes«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnnotations«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+annotation TestAnnotation
+
+// $TEST$ error "The annotation 'AnnotationForModules' cannot be applied to a class."
+@»AnnotationForModules«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForClasses«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForMultipleTargets«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+class TestClass<
+
+    // $TEST$ error "The annotation 'AnnotationForPipelines' cannot be applied to a type parameter."
+    @»AnnotationForPipelines«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForTypeParameters«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForAnything«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»Unresolved«
+    TEST_TYPE_PARAMETER
+> {
+
+    // $TEST$ error "The annotation 'AnnotationForClasses' cannot be applied to an attribute."
+    @»AnnotationForClasses«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForAttributes«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForAnything«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»Unresolved«
+    attr testAttribute: Int
+}
+
+// $TEST$ error "The annotation 'AnnotationForEnumVariants' cannot be applied to an enum."
+@»AnnotationForEnumVariants«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForEnums«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+enum TestEnum {
+
+    // $TEST$ error "The annotation 'AnnotationForFunctions' cannot be applied to an enum variant."
+    @»AnnotationForFunctions«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForEnumVariants«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForAnything«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»Unresolved«
+    TestEnumVariant
+}
+
+// $TEST$ error "The annotation 'AnnotationForParameters' cannot be applied to a function."
+@»AnnotationForParameters«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForFunctions«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+fun testFunction(
+
+    // $TEST$ error "The annotation 'AnnotationForResults' cannot be applied to a parameter."
+    @»AnnotationForResults«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForParameters«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForAnything«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»Unresolved«
+    testParameter: Int
+) -> (
+
+    // $TEST$ error "The annotation 'AnnotationForTypeParameters' cannot be applied to a result."
+    @»AnnotationForTypeParameters«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForResults«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»AnnotationForAnything«
+    // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+    @»Unresolved«
+    testResult: Int
+)
+
+// $TEST$ error "The annotation 'AnnotationForSegments' cannot be applied to a pipeline."
+@»AnnotationForSegments«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForPipelines«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+pipeline testPipeline {}
+
+// $TEST$ error "The annotation 'AnnotationForAnnotations' cannot be applied to a segment."
+@»AnnotationForAnnotations«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForSegments«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+segment testSegment() {}

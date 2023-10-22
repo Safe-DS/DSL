@@ -1,0 +1,39 @@
+package tests.validation.typeChecking.indexedAccesses
+
+step f(a: Int, vararg b: Int) {
+    // $TEST$ error "The receiver of an indexed access must refer to a variadic parameter."
+    »a«[0];
+
+    // $TEST$ no error "The receiver of an indexed access must refer to a variadic parameter."
+    »b«[0];
+
+    // $TEST$ no error "The receiver of an indexed access must refer to a variadic parameter."
+    »unresolved«[0];
+
+    // $TEST$ no error "The receiver of an indexed access must refer to a variadic parameter."
+    »C.unresolved«[0];
+
+    // $TEST$ no error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»0«];
+
+    // $TEST$ error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»""«];
+
+    // $TEST$ error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»g«];
+
+    // $TEST$ error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»h()«];
+
+    // $TEST$ error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»b«];
+
+    // $TEST$ no error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»unresolved«];
+
+    // $TEST$ no error "The index of an indexed access must be an instance of the class 'Int'."
+    b[»C.unresolved«];
+}
+
+fun g()
+fun h() -> index: Int?

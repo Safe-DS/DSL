@@ -29,6 +29,7 @@ import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
 import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
+import { SafeDsEnums } from './builtins/safe-ds-enums.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -37,6 +38,7 @@ export type SafeDsAddedServices = {
     builtins: {
         Annotations: SafeDsAnnotations;
         Classes: SafeDsClasses;
+        Enums: SafeDsEnums;
     };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
@@ -70,6 +72,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     builtins: {
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
+        Enums: (services) => new SafeDsEnums(services),
     },
     evaluation: {
         PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),

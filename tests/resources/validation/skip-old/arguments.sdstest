@@ -1,0 +1,336 @@
+package tests.validation.typeChecking.arguments
+
+step myStep(vararg variadicParam: Int) {
+
+    // $TEST$ no error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»f2«);
+    // $TEST$ error "An argument of type 'B' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»B()«);
+    // $TEST$ error "An argument of type 'C' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(callableType = »C()«);
+    // $TEST$ error "An argument of type 'D' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»maybeC()«);
+    // $TEST$ error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»someVariantOfMyEnum2()«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»MyEnum1.Variant1«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»aOrC()«);
+    // $TEST$ error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type '(Int) -> (Int)'."
+    f1(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f1(unresolved = »1«);
+
+    // $TEST$ error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'C'."
+    f2(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'C'."
+    f2(»f2«);
+    // $TEST$ error "An argument of type 'B' cannot be assigned to a parameter of type 'C'."
+    f2(»B()«);
+    // $TEST$ no error "An argument of type 'C' cannot be assigned to a parameter of type 'C'."
+    f2(classType = »C()«);
+    // $TEST$ no error "An argument of type 'D' cannot be assigned to a parameter of type 'C'."
+    f2(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type 'C'."
+    f2(»maybeC()«);
+    // $TEST$ error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'C'."
+    f2(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'C'."
+    f2(»someVariantOfMyEnum2()«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'C'."
+    f2(»MyEnum1.Variant1«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'C'."
+    f2(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'C'."
+    f2(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'C'."
+    f2(»aOrC()«);
+    // $TEST$ error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'C'."
+    f2(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'C'."
+    f2(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'C'."
+    f2(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f2(unresolved = »1«);
+
+    // $TEST$ error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»f2«);
+    // $TEST$ error "An argument of type 'B' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»B()«);
+    // $TEST$ error "An argument of type 'C' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(enumType = »C()«);
+    // $TEST$ error "An argument of type 'D' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»maybeC()«);
+    // $TEST$ no error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»someVariantOfMyEnum2()«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»MyEnum1.Variant1«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»aOrC()«);
+    // $TEST$ error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'MyEnum1'."
+    f3(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f3(unresolved = »1«);
+
+    // $TEST$ error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»f2«);
+    // $TEST$ error "An argument of type 'B' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»B()«);
+    // $TEST$ error "An argument of type 'C' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(enumVariantType = »C()«);
+    // $TEST$ error "An argument of type 'D' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»maybeC()«);
+    // $TEST$ error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»someVariantOfMyEnum2()«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»MyEnum1.Variant1«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»aOrC()«);
+    // $TEST$ error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'MyEnum1.Variant1'."
+    f4(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f4(unresolved = »1«);
+
+    // $TEST$ error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»f2«);
+    // $TEST$ no error "An argument of type 'B' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»B()«);
+    // $TEST$ no error "An argument of type 'C' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(unionType = »C()«);
+    // $TEST$ no error "An argument of type 'D' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»maybeC()«);
+    // $TEST$ error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»someVariantOfMyEnum2()«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»MyEnum1.Variant1«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»aOrC()«);
+    // $TEST$ no error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'union<B, C>'."
+    f5(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f5(unresolved = »1«);
+
+    // $TEST$ error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»f2«);
+    // $TEST$ error "An argument of type 'B' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»B()«);
+    // $TEST$ error "An argument of type 'C' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(unresolvedType = »C()«);
+    // $TEST$ error "An argument of type 'D' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»maybeC()«);
+    // $TEST$ error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»someVariantOfMyEnum2()«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»MyEnum1.Variant1«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»aOrC()«);
+    // $TEST$ error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type '$Unresolved'."
+    f6(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f6(unresolved = »1«);
+
+    // $TEST$ error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»intToInt«);
+    // $TEST$ error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»f2«);
+    // $TEST$ error "An argument of type 'B' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»B()«);
+    // $TEST$ no error "An argument of type 'C' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(unresolvedType = »C()«);
+    // $TEST$ no error "An argument of type 'D' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»maybeC()«);
+    // $TEST$ error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»someVariantOfMyEnum1()«);
+    // $TEST$ error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»someVariantOfMyEnum2()«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»MyEnum1.Variant1«);
+    // $TEST$ error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»MyEnum1.Variant2«);
+    // $TEST$ error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»MyEnum2.Variant1«);
+    // $TEST$ error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»aOrC()«);
+    // $TEST$ error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»bOrC()«);
+    // $TEST$ error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'vararg<C>'."
+    f7(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f7(unresolved = »1«);
+
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f8(»(vararg a: Int) {}«);
+
+    // $TEST$ no error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'Any'."
+    f9(»intToInt«);
+    // $TEST$ no error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'Any'."
+    f9(»f2«);
+    // $TEST$ no error "An argument of type 'B' cannot be assigned to a parameter of type 'Any'."
+    f9(»B()«);
+    // $TEST$ no error "An argument of type 'C' cannot be assigned to a parameter of type 'Any'."
+    f9(callableType = »C()«);
+    // $TEST$ no error "An argument of type 'D' cannot be assigned to a parameter of type 'Any'."
+    f9(»D()«);
+    // $TEST$ error "An argument of type 'C?' cannot be assigned to a parameter of type 'Any'."
+    f9(»maybeC()«);
+    // $TEST$ no error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'Any'."
+    f9(»someVariantOfMyEnum1()«);
+    // $TEST$ no error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'Any'."
+    f9(»someVariantOfMyEnum2()«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'Any'."
+    f9(»MyEnum1.Variant1«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'Any'."
+    f9(»MyEnum1.Variant2«);
+    // $TEST$ no error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'Any'."
+    f9(»MyEnum2.Variant1«);
+    // $TEST$ no error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'Any'."
+    f9(»aOrC()«);
+    // $TEST$ no error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'Any'."
+    f9(»bOrC()«);
+    // $TEST$ no error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'Any'."
+    f9(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'Any'."
+    f9(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f9(unresolved = »1«);
+
+    // $TEST$ no error "An argument of type '(Int) -> (Int)' cannot be assigned to a parameter of type 'Any?'."
+    f10(»intToInt«);
+    // $TEST$ no error "An argument of type '(C) -> ()' cannot be assigned to a parameter of type 'Any?'."
+    f10(»f2«);
+    // $TEST$ no error "An argument of type 'B' cannot be assigned to a parameter of type 'Any?'."
+    f10(»B()«);
+    // $TEST$ no error "An argument of type 'C' cannot be assigned to a parameter of type 'Any?'."
+    f10(callableType = »C()«);
+    // $TEST$ no error "An argument of type 'D' cannot be assigned to a parameter of type 'Any?'."
+    f10(»D()«);
+    // $TEST$ no error "An argument of type 'C?' cannot be assigned to a parameter of type 'Any?'."
+    f10(»maybeC()«);
+    // $TEST$ no error "An argument of type 'MyEnum1' cannot be assigned to a parameter of type 'Any?'."
+    f10(»someVariantOfMyEnum1()«);
+    // $TEST$ no error "An argument of type 'MyEnum2' cannot be assigned to a parameter of type 'Any?'."
+    f10(»someVariantOfMyEnum2()«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant1' cannot be assigned to a parameter of type 'Any?'."
+    f10(»MyEnum1.Variant1«);
+    // $TEST$ no error "An argument of type 'MyEnum1.Variant2' cannot be assigned to a parameter of type 'Any?'."
+    f10(»MyEnum1.Variant2«);
+    // $TEST$ no error "An argument of type 'MyEnum2.Variant1' cannot be assigned to a parameter of type 'Any?'."
+    f10(»MyEnum2.Variant1«);
+    // $TEST$ no error "An argument of type 'union<A, C>' cannot be assigned to a parameter of type 'Any?'."
+    f10(»aOrC()«);
+    // $TEST$ no error "An argument of type 'union<B, C>' cannot be assigned to a parameter of type 'Any?'."
+    f10(»bOrC()«);
+    // $TEST$ no error "An argument of type 'vararg<Int>' cannot be assigned to a parameter of type 'Any?'."
+    f10(»variadicParam«);
+    // $TEST$ no error "An argument of type '$Unresolved' cannot be assigned to a parameter of type 'Any?'."
+    f10(»unresolved«);
+    // $TEST$ no error r"An argument of type '[^']*' cannot be assigned to a parameter of type '[^']*'."
+    f10(unresolved = »1«);
+}
+
+fun f1(callableType: (a: Int) -> (r: Int))
+fun f2(classType: C)
+fun f3(enumType: MyEnum1)
+fun f4(enumVariantType: MyEnum1.Variant1)
+fun f5(unionType: union<B, C>)
+fun f6(unresolvedType: Unresolved)
+fun f7(vararg variadicType: C)
+fun f8(callableType: (vararg a: Int) -> ())
+fun f9(any: Any)
+fun f10(anyOrNull: Any?)
+
+class A()
+class B()
+class C()
+class D() sub C
+
+enum MyEnum1 {
+    Variant1
+    Variant2
+}
+enum MyEnum2 {
+    Variant1
+    Variant2
+}
+
+fun maybeC() -> instanceOrNull: C?
+fun aOrC() -> instance: union<A, C>
+fun bOrC() -> instance: union<B, C>
+fun someVariantOfMyEnum1() -> variant: MyEnum1
+fun someVariantOfMyEnum2() -> variant: MyEnum2
+fun intToInt(a: Int) -> (r: Int)

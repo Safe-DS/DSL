@@ -153,6 +153,10 @@ export const getAnnotationCalls = (node: SdsAnnotatedObject | undefined): SdsAnn
     }
 };
 
+export const getAnnotationCallTarget = (node: SdsAnnotationCall | undefined): SdsDeclaration | undefined => {
+    return getContainerOfType(node, isSdsDeclaration);
+};
+
 export const findFirstAnnotationCallOf = (
     node: SdsAnnotatedObject | undefined,
     expected: SdsAnnotation | undefined,
