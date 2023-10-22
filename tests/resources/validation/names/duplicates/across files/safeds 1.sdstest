@@ -7,21 +7,21 @@ package safeds.lang
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 class »Any«
 
-// $TEST$ error "Multiple declarations in this package have the name 'DuplicateAnnotation'."
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateAnnotation'."
 annotation »DuplicateAnnotation«
-// $TEST$ error "Multiple declarations in this package have the name 'DuplicateClass'."
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateClass'."
 class »DuplicateClass«
-// $TEST$ error "Multiple declarations in this package have the name 'DuplicateEnum'."
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateEnum'."
 enum »DuplicateEnum«
-// $TEST$ error "Multiple declarations in this package have the name 'duplicateFunction'."
+// $TEST$ error "Multiple builtin declarations have the name 'duplicateFunction'."
 fun »duplicateFunction«()
-// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+// $TEST$ no error r"Multiple builtin declarations have the name '\w*'\."
 pipeline »duplicatePipeline« {}
-// $TEST$ error "Multiple declarations in this package have the name 'DuplicateSchema'."
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateSchema'."
 schema »DuplicateSchema« {}
-// $TEST$ error "Multiple declarations in this package have the name 'duplicatePublicSegment'."
+// $TEST$ error "Multiple builtin declarations have the name 'duplicatePublicSegment'."
 segment »duplicatePublicSegment«() {}
-// $TEST$ error "Multiple declarations in this package have the name 'duplicateInternalSegment'."
+// $TEST$ error "Multiple builtin declarations have the name 'duplicateInternalSegment'."
 internal segment »duplicateInternalSegment«() {}
-// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+// $TEST$ no error r"Multiple builtin declarations have the name '\w*'\."
 private segment »duplicatePrivateSegment«() {}

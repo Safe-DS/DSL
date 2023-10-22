@@ -233,11 +233,14 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
             const packageName = getPackageName(member) ?? '';
 
             let declarationsInPackage: AstNodeDescription[];
+            let kind: string;
             if (packageName.startsWith(BUILTINS_ROOT_PACKAGE)) {
                 // For a builtin package the simple names of declarations must be unique
                 declarationsInPackage = packageManager.getDeclarationsInPackageOrSubpackage(BUILTINS_ROOT_PACKAGE);
+                kind = 'builtin declarations';
             } else {
                 declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
+                kind = 'declarations in this package';
             }
 
             if (
@@ -248,7 +251,7 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
                         !builtinUris.has(it.documentUri.toString()),
                 )
             ) {
-                accept('error', `Multiple declarations in this package have the name '${member.name}'.`, {
+                accept('error', `Multiple ${kind} have the name '${member.name}'.`, {
                     node: member,
                     property: 'name',
                     code: CODE_NAME_DUPLICATE,
