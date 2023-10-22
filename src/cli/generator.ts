@@ -167,7 +167,7 @@ const generateModule = function (services: SafeDsServices, module: SdsModule): s
     }
     if (segments.length > 0) {
         output.push(
-            expandToStringWithNL`# Steps ------------------------------------------------------------------------\n\n${segments.join(
+            expandToStringWithNL`# Segments ---------------------------------------------------------------------\n\n${segments.join(
                 '\n\n',
             )}`,
         );
