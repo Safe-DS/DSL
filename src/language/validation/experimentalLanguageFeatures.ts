@@ -1,9 +1,21 @@
-import { SdsIndexedAccess, SdsLiteralType, SdsMap, SdsUnionType } from '../generated/ast.js';
-import { ValidationAcceptor } from 'langium';
+import {
+    isSdsIndexedAccess,
+    isSdsMap,
+    isSdsUnionType,
+    SdsIndexedAccess,
+    SdsLiteralType,
+    SdsMap,
+    SdsUnionType,
+} from '../generated/ast.js';
+import { hasContainerOfType, ValidationAcceptor } from 'langium';
 
 export const CODE_EXPERIMENTAL_LANGUAGE_FEATURE = 'experimental/language-feature';
 
 export const indexedAccessesShouldBeUsedWithCaution = (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+    if (hasContainerOfType(node.$container, isSdsIndexedAccess)) {
+        return;
+    }
+
     accept('warning', 'Indexed accesses are experimental and may change without prior notice.', {
         node,
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
@@ -18,6 +30,10 @@ export const literalTypesShouldBeUsedWithCaution = (node: SdsLiteralType, accept
 };
 
 export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcceptor): void => {
+    if (hasContainerOfType(node.$container, isSdsMap)) {
+        return;
+    }
+
     accept('warning', 'Map literals are experimental and may change without prior notice.', {
         node,
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
@@ -25,6 +41,10 @@ export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcce
 };
 
 export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: ValidationAcceptor): void => {
+    if (hasContainerOfType(node.$container, isSdsUnionType)) {
+        return;
+    }
+
     accept('warning', 'Union types are experimental and may change without prior notice.', {
         node,
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,

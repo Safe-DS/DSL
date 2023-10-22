@@ -2,6 +2,6 @@ package tests.validation.other.types.unionTypes.duplicateTypes
 
 // $TEST$ no warning r"The type .* was already listed."
 
-segment mySegment1(
+fun myFunction1(
     p: union<>
-) {}
+)

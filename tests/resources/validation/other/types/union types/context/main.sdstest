@@ -1,0 +1,61 @@
+package tests.validation.other.types.unionTypes.context
+
+annotation MyAnnotation(
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    p: »union<Int>«,
+)
+
+class MyClass<T>(
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    p: »union<Int>«,
+) {
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    attr a: »union<Int>«
+}
+
+enum MyEnum {
+    MyEnumVariant<T>(
+        // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+        p: »union<Int>«,
+    )
+}
+
+fun myFunction(
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    p: »union<Int>«,
+) -> (
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    r: »union<Int>«,
+)
+
+segment mySegment1(
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    p: »union<Int>«,
+) -> (
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    r: »union<Int>«,
+) {}
+
+segment mySegment2(
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    c: (p: »union<Int>«) -> (r: »union<Int>«),
+) {
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    (
+        p: »union<Int>«,
+    ) {};
+
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    (
+        p: »union<Int>«,
+    ) -> 1;
+}
+
+segment mySegment3(
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    p1: MyClass<»union<Int>«>,
+
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    p2: MyEnum.MyEnumVariant<»union<Int>«>,
+) {}

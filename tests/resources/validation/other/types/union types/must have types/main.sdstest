@@ -1,16 +1,16 @@
 package tests.validation.other.types.unionTypes.mustHaveTypes
 
 // $TEST$ error "A union type must have at least one type."
-segment mySegment1(
+fun myFunction1(
     p: union»<>«
-) {}
+)
 
 // $TEST$ no error "A union type must have at least one type."
-segment mySegment2(
+fun myFunction2(
     p: union»<Int>«
-) {}
+)
 
 // $TEST$ no error "A union type must have at least one type."
-segment mySegment3(
+fun myFunction3(
     p: union»<Int, Float>«
-) {}
+)
