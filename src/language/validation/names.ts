@@ -17,19 +17,19 @@ import {
 } from '../generated/ast.js';
 import { getDocument, ValidationAcceptor } from 'langium';
 import {
-    streamBlockLambdaResults,
-    getMatchingClassMembers,
     getColumns,
     getEnumVariants,
     getImportedDeclarations,
     getImports,
-    isStatic,
+    getMatchingClassMembers,
     getModuleMembers,
     getPackageName,
     getParameters,
-    streamPlaceholders,
     getResults,
     getTypeParameters,
+    isStatic,
+    streamBlockLambdaResults,
+    streamPlaceholders,
 } from '../helpers/nodeProperties.js';
 import { duplicatesBy } from '../../helpers/collectionUtils.js';
 import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
@@ -217,16 +217,20 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
     const builtinUris = new Set(listBuiltinFiles().map((it) => it.toString()));
 
     return (node: SdsModule, accept: ValidationAcceptor): void => {
+        const moduleUri = getDocument(node).uri?.toString();
+        if (builtinUris.has(moduleUri)) {
+            return;
+        }
+
         for (const member of getModuleMembers(node)) {
             const packageName = getPackageName(member) ?? '';
             const declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
-            const memberUri = getDocument(member).uri?.toString();
 
             if (
                 declarationsInPackage.some(
                     (it) =>
                         it.name === member.name &&
-                        it.documentUri.toString() !== memberUri &&
+                        it.documentUri.toString() !== moduleUri &&
                         !builtinUris.has(it.documentUri.toString()),
                 )
             ) {

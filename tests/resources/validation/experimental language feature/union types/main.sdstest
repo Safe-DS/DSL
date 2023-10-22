@@ -2,5 +2,12 @@ package tests.validation.experimentalLanguageFeature.unionTypes
 
 fun myFunction(
     // $TEST$ warning "Union types are experimental and may change without prior notice."
-    p: »union<>«
+    p: »union<Int, Float>«,
+
+    // $TEST$ no warning "Union types are experimental and may change without prior notice."
+    q: union<»union<Int, Float>«, Int>,
+
+    // $TEST$ no warning "Union types are experimental and may change without prior notice."
+    // $TEST$ no warning "Union types are experimental and may change without prior notice."
+    r: union<(p: »union<Int, Float>«) -> (r: »union<Int, Float>«), Int>,
 )

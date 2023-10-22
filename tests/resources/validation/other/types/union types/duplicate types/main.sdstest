@@ -1,6 +1,6 @@
 package tests.validation.other.types.unionTypes.duplicateTypes
 
-segment mySegment(
+fun myFunction2(
     // $TEST$ no warning r"The type .* was already listed."
     p: union<»Int«>,
     q: union<
@@ -11,4 +11,4 @@ segment mySegment(
         // $TEST$ warning r"The type 'Int' was already listed."
         »Int«,
     >,
-) {}
+)

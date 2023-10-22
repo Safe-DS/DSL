@@ -1,0 +1,16 @@
+package tests.validation.other.types.unionTypes.context
+
+/*
+ * We already show an error for the outer union type, if it's used in the wrong context.
+ */
+
+class MyClass1 {
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    attr a: union<Int, »union<Int>«>
+}
+
+class MyClass2 {
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    attr a: union<Int, (p: »union<Int>«) -> (r: »union<Int>«)>
+}
