@@ -21,7 +21,7 @@ import {
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
-import { getDocument, ValidationAcceptor } from 'langium';
+import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
 import {
     getColumns,
     getEnumVariants,
@@ -43,6 +43,7 @@ import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } fr
 import { SafeDsServices } from '../safe-ds-module.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
 import { CODEGEN_PREFIX } from '../../cli/generator.js';
+import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -230,7 +231,14 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
 
         for (const member of getModuleMembers(node)) {
             const packageName = getPackageName(member) ?? '';
-            const declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
+
+            let declarationsInPackage: AstNodeDescription[];
+            if (packageName.startsWith(BUILTINS_ROOT_PACKAGE)) {
+                // For a builtin package the simple names of declarations must be unique
+                declarationsInPackage = packageManager.getDeclarationsInPackageOrSubpackage(BUILTINS_ROOT_PACKAGE);
+            } else {
+                declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);
+            }
 
             if (
                 declarationsInPackage.some(
