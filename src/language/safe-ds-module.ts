@@ -28,6 +28,7 @@ import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
 import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
+import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -106,6 +107,7 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
+        DocumentBuilder: (services) => new SafeDsDocumentBuilder(services),
         WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
     },
 };
