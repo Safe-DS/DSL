@@ -1,23 +1,12 @@
 import { ValidationAcceptor } from 'langium';
 import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsDeclaration, SdsModule } from '../../generated/ast.js';
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
+import { getModuleMembers } from '../../helpers/nodeProperties.js';
 
-export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
 export const CODE_MODULE_FORBIDDEN_IN_STUB_FILE = 'module/forbidden-in-stub-file';
-
-export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: ValidationAcceptor): void => {
-    if (!node.name) {
-        const declarations = node.members.filter(isSdsDeclaration);
-        if (declarations.length > 0) {
-            accept('error', 'A module with declarations must state its package.', {
-                node: declarations[0],
-                property: 'name',
-                code: CODE_MODULE_MISSING_PACKAGE,
-            });
-        }
-    }
-};
+export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
+export const CODE_MODULE_PIPELINE_FILE_IN_SAFEDS_PACKAGE = 'module/pipeline-file-in-safeds-package';
 
 export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: ValidationAcceptor): void => {
     const declarations = node.members.filter(isSdsDeclaration);
@@ -51,4 +40,27 @@ export const declarationIsAllowedInPipelineFile = (declaration: SdsDeclaration):
 
 export const declarationIsAllowedInStubFile = (declaration: SdsDeclaration): boolean => {
     return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
+};
+
+export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: ValidationAcceptor): void => {
+    if (!node.name) {
+        const members = getModuleMembers(node);
+        if (members.length > 0) {
+            accept('error', 'A module with declarations must state its package.', {
+                node: members[0],
+                property: 'name',
+                code: CODE_MODULE_MISSING_PACKAGE,
+            });
+        }
+    }
+};
+
+export const pipelineFileMustNotBeInSafedsPackage = (node: SdsModule, accept: ValidationAcceptor): void => {
+    if (isInPipelineFile(node) && node.name?.startsWith('safeds')) {
+        accept('error', "A pipeline file must not be in a 'safeds' package.", {
+            node,
+            property: 'name',
+            code: CODE_MODULE_PIPELINE_FILE_IN_SAFEDS_PACKAGE,
+        });
+    }
 };

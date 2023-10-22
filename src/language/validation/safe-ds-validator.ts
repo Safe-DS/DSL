@@ -50,7 +50,11 @@ import {
     parameterMustHaveTypeHint,
     resultMustHaveTypeHint,
 } from './types.js';
-import { moduleDeclarationsMustMatchFileKind, moduleWithDeclarationsMustStatePackage } from './other/modules.js';
+import {
+    moduleDeclarationsMustMatchFileKind,
+    moduleWithDeclarationsMustStatePackage,
+    pipelineFileMustNotBeInSafedsPackage,
+} from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
 import { unionTypeMustHaveTypes, unionTypeShouldNotHaveDuplicateTypes } from './other/types/unionTypes.js';
@@ -228,6 +232,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
             moduleMustContainUniqueNames,
             moduleWithDeclarationsMustStatePackage,
+            pipelineFileMustNotBeInSafedsPackage,
             pythonModuleShouldDifferFromSafeDsPackage(services),
         ],
         SdsNamedType: [

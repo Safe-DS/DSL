@@ -1,0 +1,3 @@
+// $TEST$ no error "A pipeline file must not be in a 'safeds' package."
+
+package »safeds«
