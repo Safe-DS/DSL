@@ -1,0 +1,8 @@
+package tests.generator.segmentWithPythonName
+
+fun f()
+
+@PythonName("test_segment")
+segment testSegment() {
+    f();
+}

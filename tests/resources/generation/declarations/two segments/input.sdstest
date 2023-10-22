@@ -1,4 +1,4 @@
-package tests.generator.twoSteps
+package tests.generator.twoSegments
 
 fun f()
 

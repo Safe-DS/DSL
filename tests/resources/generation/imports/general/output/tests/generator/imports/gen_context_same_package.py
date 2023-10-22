@@ -1,9 +1,9 @@
 # Segments ---------------------------------------------------------------------
 
-def step1InSamePackage():
+def segment1InSamePackage():
     __gen_yield_result = impureFunction()
     return __gen_yield_result
 
-def step2InSamePackage():
+def segment2InSamePackage():
     __gen_yield_result = impureFunction()
     return __gen_yield_result

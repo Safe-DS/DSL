@@ -1,0 +1,3 @@
+package tests.generator.emptySegment
+
+segment test() {}

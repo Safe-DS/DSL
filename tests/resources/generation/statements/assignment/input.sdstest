@@ -21,7 +21,7 @@ pipeline testPipeline {
     });
 }
 
-segment testStep() -> c: Int {
+segment testSegment() -> c: Int {
     _, _ ,_ = g();
     val a, _, yield c = g();
     val x = g();
