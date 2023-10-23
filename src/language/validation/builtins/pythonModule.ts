@@ -20,6 +20,7 @@ export const pythonModuleShouldDifferFromSafeDsPackage = (services: SafeDsServic
             'The Python module is identical to the Safe-DS package, so the annotation call can be removed.',
             {
                 node: annotationCall,
+                property: 'annotation',
                 code: CODE_PYTHON_MODULE_SAME_AS_SAFE_DS_PACKAGE,
             },
         );

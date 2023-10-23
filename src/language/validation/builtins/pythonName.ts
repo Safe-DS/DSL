@@ -17,6 +17,7 @@ export const pythonNameShouldDifferFromSafeDsName = (services: SafeDsServices) =
         const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.PythonName)!;
         accept('info', 'The Python name is identical to the Safe-DS name, so the annotation call can be removed.', {
             node: annotationCall,
+            property: 'annotation',
             code: CODE_PYTHON_NAME_SAME_AS_SAFE_DS_NAME,
         });
     };
