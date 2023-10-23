@@ -2,7 +2,7 @@ import { AbstractInlayHintProvider, AstNode, InlayHintAcceptor } from 'langium';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { isSdsArgument, isSdsBlockLambdaResult, isSdsPlaceholder } from '../generated/ast.js';
+import { isSdsArgument, isSdsBlockLambdaResult, isSdsPlaceholder, isSdsYield } from '../generated/ast.js';
 import { isPositionalArgument } from '../helpers/nodeProperties.js';
 import { InlayHintKind } from 'vscode-languageserver';
 
@@ -32,7 +32,7 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
                     kind: InlayHintKind.Parameter,
                 });
             }
-        } else if (isSdsBlockLambdaResult(node) || isSdsPlaceholder(node)) {
+        } else if (isSdsBlockLambdaResult(node) || isSdsPlaceholder(node) || isSdsYield(node)) {
             const type = this.typeComputer.computeType(node);
             acceptor({
                 position: cstNode.range.end,
