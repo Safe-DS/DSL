@@ -389,11 +389,21 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
                 return generatePythonCall(pythonCall, argumentsMap);
             }
         }
-        if (isSdsMemberAccess(expression.receiver) && isSdsReference(expression.receiver.member) && isSdsFunction(expression.receiver.member.target.ref)) {
-            const pythonCall = frame.getServices().builtins.Annotations.getPythonCall(expression.receiver.member.target.ref);
+        if (
+            isSdsMemberAccess(expression.receiver) &&
+            isSdsReference(expression.receiver.member) &&
+            isSdsFunction(expression.receiver.member.target.ref)
+        ) {
+            const pythonCall = frame
+                .getServices()
+                .builtins.Annotations.getPythonCall(expression.receiver.member.target.ref);
             if (pythonCall) {
                 const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
-                return generatePythonCall(pythonCall, argumentsMap, generateExpression(expression.receiver.receiver, frame));
+                return generatePythonCall(
+                    pythonCall,
+                    argumentsMap,
+                    generateExpression(expression.receiver.receiver, frame),
+                );
             }
         }
         const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments);
