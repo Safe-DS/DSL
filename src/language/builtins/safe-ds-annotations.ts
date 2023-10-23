@@ -66,6 +66,19 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(IDE_INTEGRATION_URI, 'Expert');
     }
 
+    getPythonCall(node: SdsFunction | undefined): string | undefined {
+        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
+        if (value instanceof StringConstant) {
+            return value.value;
+        } else {
+            return undefined;
+        }
+    }
+
+    get PythonCall(): SdsAnnotation | undefined {
+        return this.getAnnotation(CODE_GENERATION_URI, 'PythonCall');
+    }
+
     getPythonModule(node: SdsModule | undefined): string | undefined {
         const value = this.getArgumentValue(node, this.PythonModule, 'qualifiedName');
         if (value instanceof StringConstant) {
@@ -90,19 +103,6 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     get PythonName(): SdsAnnotation | undefined {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonName');
-    }
-
-    getPythonCall(node: SdsFunction | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
-        if (value instanceof StringConstant) {
-            return value.value;
-        } else {
-            return undefined;
-        }
-    }
-
-    get PythonCall(): SdsAnnotation | undefined {
-        return this.getAnnotation(CODE_GENERATION_URI, 'PythonCall');
     }
 
     isRepeatable(node: SdsAnnotation | undefined): boolean {
