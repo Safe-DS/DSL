@@ -612,9 +612,9 @@ interface ImportData {
 }
 
 class GenerationInfoFrame {
-    services: SafeDsServices;
-    blockLambdaManager: IdManager<SdsBlockLambda>;
-    importSet: Map<String, ImportData>;
+    readonly services: SafeDsServices;
+    private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
+    private readonly importSet: Map<String, ImportData>;
 
     constructor(services: SafeDsServices, importSet: Map<String, ImportData> = new Map<String, ImportData>()) {
         this.services = services;
