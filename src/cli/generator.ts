@@ -210,7 +210,7 @@ const generateParameter = function (
     frame: GenerationInfoFrame,
     defaultValue: boolean = true,
 ): string {
-    return expandToString`${getPythonNameOrDefault(frame.getServices(), parameter)}${
+    return expandToString`${getPythonNameOrDefault(frame.services, parameter)}${
         defaultValue && parameter.defaultValue !== undefined
             ? '=' + generateExpression(parameter.defaultValue, frame)
             : ''
@@ -292,7 +292,7 @@ const generateStatement = function (statement: SdsStatement, frame: GenerationIn
 
 const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
     const requiredAssignees = isSdsCall(assignment.expression)
-        ? getAbstractResults(frame.getServices().helpers.NodeMapper.callToCallable(assignment.expression)).length
+        ? getAbstractResults(frame.services.helpers.NodeMapper.callToCallable(assignment.expression)).length
         : /* c8 ignore next */
           1;
     const assignees = getAssignees(assignment);
@@ -348,7 +348,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
-    const partiallyEvaluatedNode = frame.getServices().evaluation.PartialEvaluator.evaluate(expression);
+    const partiallyEvaluatedNode = frame.services.evaluation.PartialEvaluator.evaluate(expression);
     if (partiallyEvaluatedNode instanceof BooleanConstant) {
         return partiallyEvaluatedNode.value ? 'True' : 'False';
     } else if (partiallyEvaluatedNode instanceof IntConstant) {
@@ -383,7 +383,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     }
     if (isSdsCall(expression)) {
         if (isSdsReference(expression.receiver) && isSdsFunction(expression.receiver.target.ref)) {
-            const pythonCall = frame.getServices().builtins.Annotations.getPythonCall(expression.receiver.target.ref);
+            const pythonCall = frame.services.builtins.Annotations.getPythonCall(expression.receiver.target.ref);
             if (pythonCall) {
                 const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
                 return generatePythonCall(pythonCall, argumentsMap);
@@ -394,9 +394,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             isSdsReference(expression.receiver.member) &&
             isSdsFunction(expression.receiver.member.target.ref)
         ) {
-            const pythonCall = frame
-                .getServices()
-                .builtins.Annotations.getPythonCall(expression.receiver.member.target.ref);
+            const pythonCall = frame.services.builtins.Annotations.getPythonCall(expression.receiver.member.target.ref);
             if (pythonCall) {
                 const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
                 return generatePythonCall(
@@ -406,7 +404,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
                 );
             }
         }
-        const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments);
+        const sortedArgs = sortArguments(frame.services, expression.argumentList.arguments);
         return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
@@ -483,10 +481,10 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     if (isSdsReference(expression)) {
         const declaration = expression.target.ref!;
         const referenceImport =
-            getExternalReferenceNeededImport(frame.getServices(), expression, declaration) ||
-            getInternalReferenceNeededImport(frame.getServices(), expression, declaration);
+            getExternalReferenceNeededImport(frame.services, expression, declaration) ||
+            getInternalReferenceNeededImport(frame.services, expression, declaration);
         frame.addImport(referenceImport);
-        return referenceImport?.alias || getPythonNameOrDefault(frame.getServices(), declaration);
+        return referenceImport?.alias || getPythonNameOrDefault(frame.services, declaration);
     }
     /* c8 ignore next 2 */
     throw new Error(`Unknown expression type: ${expression.$type}`);
@@ -508,10 +506,7 @@ const generatePythonCall = function (
 const getArgumentsMap = function (argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, string> {
     const argumentsMap = new Map<string, string>();
     argumentList.reduce((map, value) => {
-        map.set(
-            frame.getServices().helpers.NodeMapper.argumentToParameter(value)?.name!,
-            generateArgument(value, frame),
-        );
+        map.set(frame.services.helpers.NodeMapper.argumentToParameter(value)?.name!, generateArgument(value, frame));
         return map;
     }, argumentsMap);
     return argumentsMap;
@@ -532,7 +527,7 @@ const sortArguments = function (services: SafeDsServices, argumentList: SdsArgum
 };
 
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
-    const parameter = frame.getServices().helpers.NodeMapper.argumentToParameter(argument);
+    const parameter = frame.services.helpers.NodeMapper.argumentToParameter(argument);
     return expandToString`${
         parameter !== undefined && !isRequiredParameter(parameter)
             ? generateParameter(parameter, frame, false) + '='
@@ -638,10 +633,6 @@ class GenerationInfoFrame {
 
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
         return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
-    }
-
-    getServices(): SafeDsServices {
-        return this.services;
     }
 }
 
