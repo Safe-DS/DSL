@@ -361,61 +361,44 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     } else if (partiallyEvaluatedNode instanceof StringConstant) {
         return `'${formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
     }
+
     // Handled after constant expressions: EnumVariant, List, Map
-
-    if (isSdsTemplateString(expression)) {
+    else if (isSdsTemplateString(expression)) {
         return `f'${expression.expressions.map((expr) => generateExpression(expr, frame)).join('')}'`;
-    }
-
-    if (isSdsMap(expression)) {
+    } else if (isSdsMap(expression)) {
         const mapContent = expression.entries.map(
             (entry) => `${generateExpression(entry.key, frame)}: ${generateExpression(entry.value, frame)}`,
         );
         return `{${mapContent.join(', ')}}`;
-    }
-    if (isSdsList(expression)) {
+    } else if (isSdsList(expression)) {
         const listContent = expression.elements.map((value) => generateExpression(value, frame));
         return `[${listContent.join(', ')}]`;
-    }
-
-    if (isSdsBlockLambda(expression)) {
+    } else if (isSdsBlockLambda(expression)) {
         return frame.getUniqueLambdaBlockName(expression);
-    }
-    if (isSdsCall(expression)) {
-        if (isSdsReference(expression.receiver) && isSdsFunction(expression.receiver.target.ref)) {
-            const pythonCall = frame.services.builtins.Annotations.getPythonCall(expression.receiver.target.ref);
+    } else if (isSdsCall(expression)) {
+        const callable = frame.services.helpers.NodeMapper.callToCallable(expression);
+        if (isSdsFunction(callable)) {
+            const pythonCall = frame.services.builtins.Annotations.getPythonCall(callable);
             if (pythonCall) {
+                let thisParam: string | undefined = undefined;
+                if (isSdsMemberAccess(expression.receiver)) {
+                    thisParam = generateExpression(expression.receiver.receiver, frame);
+                }
                 const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
-                return generatePythonCall(pythonCall, argumentsMap);
+                return generatePythonCall(pythonCall, argumentsMap, thisParam);
             }
         }
-        if (
-            isSdsMemberAccess(expression.receiver) &&
-            isSdsReference(expression.receiver.member) &&
-            isSdsFunction(expression.receiver.member.target.ref)
-        ) {
-            const pythonCall = frame.services.builtins.Annotations.getPythonCall(expression.receiver.member.target.ref);
-            if (pythonCall) {
-                const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
-                return generatePythonCall(
-                    pythonCall,
-                    argumentsMap,
-                    generateExpression(expression.receiver.receiver, frame),
-                );
-            }
-        }
+
         const sortedArgs = sortArguments(frame.services, expression.argumentList.arguments);
         return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
-    }
-    if (isSdsExpressionLambda(expression)) {
+    } else if (isSdsExpressionLambda(expression)) {
         return `lambda ${generateParameters(expression.parameterList, frame)}: ${generateExpression(
             expression.result,
             frame,
         )}`;
-    }
-    if (isSdsInfixOperation(expression)) {
+    } else if (isSdsInfixOperation(expression)) {
         const leftOperand = generateExpression(expression.leftOperand, frame);
         const rightOperand = generateExpression(expression.rightOperand, frame);
         switch (expression.operator) {
@@ -435,14 +418,12 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             default:
                 return `(${leftOperand}) ${expression.operator} (${rightOperand})`;
         }
-    }
-    if (isSdsIndexedAccess(expression)) {
+    } else if (isSdsIndexedAccess(expression)) {
         return expandToString`${generateExpression(expression.receiver, frame)}[${generateExpression(
             expression.index,
             frame,
         )}]`;
-    }
-    if (isSdsMemberAccess(expression)) {
+    } else if (isSdsMemberAccess(expression)) {
         const member = expression.member?.target.ref!;
         const receiver = generateExpression(expression.receiver, frame);
         if (isSdsEnumVariant(member)) {
@@ -465,11 +446,9 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
                 return `${receiver}.${memberExpression}`;
             }
         }
-    }
-    if (isSdsParenthesizedExpression(expression)) {
+    } else if (isSdsParenthesizedExpression(expression)) {
         return expandToString`${generateExpression(expression.expression, frame)}`;
-    }
-    if (isSdsPrefixOperation(expression)) {
+    } else if (isSdsPrefixOperation(expression)) {
         const operand = generateExpression(expression.operand, frame);
         switch (expression.operator) {
             case 'not':
@@ -477,8 +456,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             case '-':
                 return expandToString`-(${operand})`;
         }
-    }
-    if (isSdsReference(expression)) {
+    } else if (isSdsReference(expression)) {
         const declaration = expression.target.ref!;
         const referenceImport =
             getExternalReferenceNeededImport(frame.services, expression, declaration) ||
