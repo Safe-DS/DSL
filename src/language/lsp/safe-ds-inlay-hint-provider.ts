@@ -19,9 +19,11 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
 
     override computeInlayHint(node: AstNode, acceptor: InlayHintAcceptor) {
         const cstNode = node.$cstNode;
+        /* c8 ignore start */
         if (!cstNode) {
             return;
         }
+        /* c8 ignore stop */
 
         if (isSdsArgument(node) && isPositionalArgument(node)) {
             const parameter = this.nodeMapper.argumentToParameter(node);
