@@ -4,6 +4,7 @@ import {
     SdsAnnotatedObject,
     SdsAnnotation,
     SdsEnumVariant,
+    SdsFunction,
     SdsModule,
     SdsParameter,
 } from '../generated/ast.js';
@@ -89,6 +90,19 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     get PythonName(): SdsAnnotation | undefined {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonName');
+    }
+
+    getPythonCall(node: SdsFunction | undefined): string | undefined {
+        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
+        if (value instanceof StringConstant) {
+            return value.value;
+        } else {
+            return undefined;
+        }
+    }
+
+    get PythonCall(): SdsAnnotation | undefined {
+        return this.getAnnotation(CODE_GENERATION_URI, 'PythonCall');
     }
 
     isRepeatable(node: SdsAnnotation | undefined): boolean {

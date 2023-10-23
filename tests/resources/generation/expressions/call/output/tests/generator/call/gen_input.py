@@ -5,3 +5,6 @@ def test():
     f(g(2, param2=1))
     f(h(1, param_2=2))
     f(h(2, param_2=1))
+    'abc'.i()
+    'abc'.j(123)
+    k(456, 1.23)

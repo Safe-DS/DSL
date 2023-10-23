@@ -24,3 +24,13 @@ annotation PythonModule(
 annotation PythonName(
     name: String
 )
+
+/**
+ * The specification of a corresponding function call in Python. By default, the function is called as specified in the stub.
+ */
+@Target([
+    AnnotationTarget.Function,
+])
+annotation PythonCall(
+    callSpecification: String
+)

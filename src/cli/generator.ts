@@ -18,6 +18,7 @@ import {
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
+    isSdsFunction,
     isSdsIndexedAccess,
     isSdsInfixOperation,
     isSdsList,
@@ -59,12 +60,12 @@ import { NodeFileSystem } from 'langium/node';
 import {
     getAbstractResults,
     getAssignees,
-    streamBlockLambdaResults,
     getImportedDeclarations,
     getImports,
-    isRequiredParameter,
     getModuleMembers,
     getStatements,
+    isRequiredParameter,
+    streamBlockLambdaResults,
 } from '../language/helpers/nodeProperties.js';
 import { IdManager } from '../language/helpers/idManager.js';
 import { isInStubFile } from '../language/helpers/fileExtensions.js';
@@ -381,6 +382,20 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         return frame.getUniqueLambdaBlockName(expression);
     }
     if (isSdsCall(expression)) {
+        if (isSdsReference(expression.receiver) && isSdsFunction(expression.receiver.target.ref)) {
+            const pythonCall = frame.getServices().builtins.Annotations.getPythonCall(expression.receiver.target.ref);
+            if (pythonCall) {
+                const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
+                return generatePythonCall(pythonCall, argumentsMap);
+            }
+        }
+        if (isSdsMemberAccess(expression.receiver) && isSdsReference(expression.receiver.member) && isSdsFunction(expression.receiver.member.target.ref)) {
+            const pythonCall = frame.getServices().builtins.Annotations.getPythonCall(expression.receiver.member.target.ref);
+            if (pythonCall) {
+                const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
+                return generatePythonCall(pythonCall, argumentsMap, generateExpression(expression.receiver.receiver, frame));
+            }
+        }
         const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments);
         return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
@@ -465,6 +480,31 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     }
     /* c8 ignore next 2 */
     throw new Error(`Unknown expression type: ${expression.$type}`);
+};
+
+const generatePythonCall = function (
+    pythonCall: string,
+    argumentsMap: Map<string, string>,
+    thisParam: string | undefined = undefined,
+): string {
+    if (thisParam) {
+        argumentsMap.set('this', thisParam);
+    }
+    // Extract each placeholder from annotation: Match only strings that start with '$'
+    // Use look-ahead to only match up to a '.', ',', ')' or a whitespace
+    return pythonCall.replace(/\$.+?(?=[\s.,)])/gu, (value) => argumentsMap.get(value.substring(1))!);
+};
+
+const getArgumentsMap = function (argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, string> {
+    const argumentsMap = new Map<string, string>();
+    argumentList.reduce((map, value) => {
+        map.set(
+            frame.getServices().helpers.NodeMapper.argumentToParameter(value)?.name!,
+            generateArgument(value, frame),
+        );
+        return map;
+    }, argumentsMap);
+    return argumentsMap;
 };
 
 const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[]): SdsArgument[] {
