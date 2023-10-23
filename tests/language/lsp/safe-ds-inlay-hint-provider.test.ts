@@ -93,16 +93,12 @@ describe('SafeDsInlayHintProvider', async () => {
     ];
 
     it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
-        await checkInlayHints(code);
+        const actualInlayHints = await getActualInlayHints(code);
+        const expectedInlayHints = getExpectedInlayHints(code);
+
+        expect(actualInlayHints).toStrictEqual(expectedInlayHints);
     });
 });
-
-const checkInlayHints = async (code: string) => {
-    const actualInlayHints = await getActualInlayHints(code);
-    const expectedInlayHints = getExpectedInlayHints(code);
-
-    expect(actualInlayHints).toStrictEqual(expectedInlayHints);
-};
 
 const getActualInlayHints = async (code: string): Promise<SimpleInlayHint[] | undefined> => {
     const document = await parse(code);
@@ -127,7 +123,7 @@ const getActualInlayHints = async (code: string): Promise<SimpleInlayHint[] | un
 };
 
 const getExpectedInlayHints = (code: string): SimpleInlayHint[] => {
-    const testChecks = findTestChecks(code, URI.file('test.sdstest'), { failIfFewerRangesThanComments: true });
+    const testChecks = findTestChecks(code, URI.file('file:///test.sdstest'), { failIfFewerRangesThanComments: true });
     if (testChecks.isErr) {
         throw new Error(testChecks.error.message);
     }
