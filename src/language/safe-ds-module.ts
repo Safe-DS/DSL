@@ -30,6 +30,7 @@ import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
 import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsEnums } from './builtins/safe-ds-enums.js';
+import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -83,6 +84,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     lsp: {
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
+        InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
     },
     parser: {
