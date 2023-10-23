@@ -139,6 +139,7 @@ import {
     literalTypeShouldNotHaveDuplicateLiteral,
 } from './other/types/literalTypes.js';
 import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
+import { pythonCallMustOnlyContainValidTemplateExpressions } from './builtins/pythonCall.js';
 
 /**
  * Register custom validation checks.
@@ -215,6 +216,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsFunction: [
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
+            pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
