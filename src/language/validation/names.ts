@@ -235,7 +235,7 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
             let declarationsInPackage: AstNodeDescription[];
             let kind: string;
             if (packageName.startsWith(BUILTINS_ROOT_PACKAGE)) {
-                // For a builtin package the simple names of declarations must be unique
+                // For a builtin package, the simple names of declarations must be unique
                 declarationsInPackage = packageManager.getDeclarationsInPackageOrSubpackage(BUILTINS_ROOT_PACKAGE);
                 kind = 'builtin declarations';
             } else {

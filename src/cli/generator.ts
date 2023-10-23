@@ -18,6 +18,7 @@ import {
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
+    isSdsFunction,
     isSdsIndexedAccess,
     isSdsInfixOperation,
     isSdsList,
@@ -59,12 +60,12 @@ import { NodeFileSystem } from 'langium/node';
 import {
     getAbstractResults,
     getAssignees,
-    streamBlockLambdaResults,
     getImportedDeclarations,
     getImports,
-    isRequiredParameter,
     getModuleMembers,
     getStatements,
+    isRequiredParameter,
+    streamBlockLambdaResults,
 } from '../language/helpers/nodeProperties.js';
 import { IdManager } from '../language/helpers/idManager.js';
 import { isInStubFile } from '../language/helpers/fileExtensions.js';
@@ -209,7 +210,7 @@ const generateParameter = function (
     frame: GenerationInfoFrame,
     defaultValue: boolean = true,
 ): string {
-    return expandToString`${getPythonNameOrDefault(frame.getServices(), parameter)}${
+    return expandToString`${getPythonNameOrDefault(frame.services, parameter)}${
         defaultValue && parameter.defaultValue !== undefined
             ? '=' + generateExpression(parameter.defaultValue, frame)
             : ''
@@ -291,7 +292,7 @@ const generateStatement = function (statement: SdsStatement, frame: GenerationIn
 
 const generateAssignment = function (assignment: SdsAssignment, frame: GenerationInfoFrame): string {
     const requiredAssignees = isSdsCall(assignment.expression)
-        ? getAbstractResults(frame.getServices().helpers.NodeMapper.callToCallable(assignment.expression)).length
+        ? getAbstractResults(frame.services.helpers.NodeMapper.callToCallable(assignment.expression)).length
         : /* c8 ignore next */
           1;
     const assignees = getAssignees(assignment);
@@ -347,7 +348,7 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
         }
     }
 
-    const partiallyEvaluatedNode = frame.getServices().evaluation.PartialEvaluator.evaluate(expression);
+    const partiallyEvaluatedNode = frame.services.evaluation.PartialEvaluator.evaluate(expression);
     if (partiallyEvaluatedNode instanceof BooleanConstant) {
         return partiallyEvaluatedNode.value ? 'True' : 'False';
     } else if (partiallyEvaluatedNode instanceof IntConstant) {
@@ -360,39 +361,44 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
     } else if (partiallyEvaluatedNode instanceof StringConstant) {
         return `'${formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
     }
+
     // Handled after constant expressions: EnumVariant, List, Map
-
-    if (isSdsTemplateString(expression)) {
+    else if (isSdsTemplateString(expression)) {
         return `f'${expression.expressions.map((expr) => generateExpression(expr, frame)).join('')}'`;
-    }
-
-    if (isSdsMap(expression)) {
+    } else if (isSdsMap(expression)) {
         const mapContent = expression.entries.map(
             (entry) => `${generateExpression(entry.key, frame)}: ${generateExpression(entry.value, frame)}`,
         );
         return `{${mapContent.join(', ')}}`;
-    }
-    if (isSdsList(expression)) {
+    } else if (isSdsList(expression)) {
         const listContent = expression.elements.map((value) => generateExpression(value, frame));
         return `[${listContent.join(', ')}]`;
-    }
-
-    if (isSdsBlockLambda(expression)) {
+    } else if (isSdsBlockLambda(expression)) {
         return frame.getUniqueLambdaBlockName(expression);
-    }
-    if (isSdsCall(expression)) {
-        const sortedArgs = sortArguments(frame.getServices(), expression.argumentList.arguments);
+    } else if (isSdsCall(expression)) {
+        const callable = frame.services.helpers.NodeMapper.callToCallable(expression);
+        if (isSdsFunction(callable)) {
+            const pythonCall = frame.services.builtins.Annotations.getPythonCall(callable);
+            if (pythonCall) {
+                let thisParam: string | undefined = undefined;
+                if (isSdsMemberAccess(expression.receiver)) {
+                    thisParam = generateExpression(expression.receiver.receiver, frame);
+                }
+                const argumentsMap = getArgumentsMap(expression.argumentList.arguments, frame);
+                return generatePythonCall(pythonCall, argumentsMap, thisParam);
+            }
+        }
+
+        const sortedArgs = sortArguments(frame.services, expression.argumentList.arguments);
         return expandToString`${generateExpression(expression.receiver, frame)}(${sortedArgs
             .map((arg) => generateArgument(arg, frame))
             .join(', ')})`;
-    }
-    if (isSdsExpressionLambda(expression)) {
+    } else if (isSdsExpressionLambda(expression)) {
         return `lambda ${generateParameters(expression.parameterList, frame)}: ${generateExpression(
             expression.result,
             frame,
         )}`;
-    }
-    if (isSdsInfixOperation(expression)) {
+    } else if (isSdsInfixOperation(expression)) {
         const leftOperand = generateExpression(expression.leftOperand, frame);
         const rightOperand = generateExpression(expression.rightOperand, frame);
         switch (expression.operator) {
@@ -412,14 +418,12 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             default:
                 return `(${leftOperand}) ${expression.operator} (${rightOperand})`;
         }
-    }
-    if (isSdsIndexedAccess(expression)) {
+    } else if (isSdsIndexedAccess(expression)) {
         return expandToString`${generateExpression(expression.receiver, frame)}[${generateExpression(
             expression.index,
             frame,
         )}]`;
-    }
-    if (isSdsMemberAccess(expression)) {
+    } else if (isSdsMemberAccess(expression)) {
         const member = expression.member?.target.ref!;
         const receiver = generateExpression(expression.receiver, frame);
         if (isSdsEnumVariant(member)) {
@@ -442,11 +446,9 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
                 return `${receiver}.${memberExpression}`;
             }
         }
-    }
-    if (isSdsParenthesizedExpression(expression)) {
+    } else if (isSdsParenthesizedExpression(expression)) {
         return expandToString`${generateExpression(expression.expression, frame)}`;
-    }
-    if (isSdsPrefixOperation(expression)) {
+    } else if (isSdsPrefixOperation(expression)) {
         const operand = generateExpression(expression.operand, frame);
         switch (expression.operator) {
             case 'not':
@@ -454,17 +456,37 @@ const generateExpression = function (expression: SdsExpression, frame: Generatio
             case '-':
                 return expandToString`-(${operand})`;
         }
-    }
-    if (isSdsReference(expression)) {
+    } else if (isSdsReference(expression)) {
         const declaration = expression.target.ref!;
         const referenceImport =
-            getExternalReferenceNeededImport(frame.getServices(), expression, declaration) ||
-            getInternalReferenceNeededImport(frame.getServices(), expression, declaration);
+            getExternalReferenceNeededImport(frame.services, expression, declaration) ||
+            getInternalReferenceNeededImport(frame.services, expression, declaration);
         frame.addImport(referenceImport);
-        return referenceImport?.alias || getPythonNameOrDefault(frame.getServices(), declaration);
+        return referenceImport?.alias || getPythonNameOrDefault(frame.services, declaration);
     }
     /* c8 ignore next 2 */
     throw new Error(`Unknown expression type: ${expression.$type}`);
+};
+
+const generatePythonCall = function (
+    pythonCall: string,
+    argumentsMap: Map<string, string>,
+    thisParam: string | undefined = undefined,
+): string {
+    if (thisParam) {
+        argumentsMap.set('this', thisParam);
+    }
+
+    return pythonCall.replace(/\$[_a-zA-Z][_a-zA-Z0-9]*/gu, (value) => argumentsMap.get(value.substring(1))!);
+};
+
+const getArgumentsMap = function (argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, string> {
+    const argumentsMap = new Map<string, string>();
+    argumentList.reduce((map, value) => {
+        map.set(frame.services.helpers.NodeMapper.argumentToParameter(value)?.name!, generateArgument(value, frame));
+        return map;
+    }, argumentsMap);
+    return argumentsMap;
 };
 
 const sortArguments = function (services: SafeDsServices, argumentList: SdsArgument[]): SdsArgument[] {
@@ -482,7 +504,7 @@ const sortArguments = function (services: SafeDsServices, argumentList: SdsArgum
 };
 
 const generateArgument = function (argument: SdsArgument, frame: GenerationInfoFrame) {
-    const parameter = frame.getServices().helpers.NodeMapper.argumentToParameter(argument);
+    const parameter = frame.services.helpers.NodeMapper.argumentToParameter(argument);
     return expandToString`${
         parameter !== undefined && !isRequiredParameter(parameter)
             ? generateParameter(parameter, frame, false) + '='
@@ -567,9 +589,9 @@ interface ImportData {
 }
 
 class GenerationInfoFrame {
-    services: SafeDsServices;
-    blockLambdaManager: IdManager<SdsBlockLambda>;
-    importSet: Map<String, ImportData>;
+    readonly services: SafeDsServices;
+    private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
+    private readonly importSet: Map<String, ImportData>;
 
     constructor(services: SafeDsServices, importSet: Map<String, ImportData> = new Map<String, ImportData>()) {
         this.services = services;
@@ -588,10 +610,6 @@ class GenerationInfoFrame {
 
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
         return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
-    }
-
-    getServices(): SafeDsServices {
-        return this.services;
     }
 }
 

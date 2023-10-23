@@ -12,3 +12,4 @@ def test():
     f(C().c)
     f(safeds_runner.codegen.safe_access(factory(), 'a'))
     f(safeds_runner.codegen.safe_access(factory(), 'c'))
+    f(1.i(C()))

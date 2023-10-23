@@ -12,9 +12,21 @@ fun h(
     @PythonName("param_2") param2: Int = 0
 ) -> result: Boolean
 
+@PythonCall("$param.i()")
+fun i(param: Any?)
+
+@PythonCall("$param.j($param2)")
+fun j(param: Any?, param2: Any?)
+
+@PythonCall("k($param2, $param)")
+fun k(param: Any?, param2: Any?)
+
 pipeline test {
     f((g(1, 2)));
     f((g(param2 = 1, param1 = 2)));
     f((h(1, 2)));
     f((h(param2 = 1, param1 = 2)));
+    i("abc");
+    j("abc", 123);
+    k(1.23, 456);
 }

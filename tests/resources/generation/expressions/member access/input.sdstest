@@ -9,6 +9,8 @@ fun h() -> (result1: Boolean, result2: Boolean)
 class C() {
     attr a: Int
     @PythonName("c") attr b: Int
+
+    @PythonCall("$param.i($this)") fun i(param: Any?)
 }
 
 fun factory() -> instance: C?
@@ -21,4 +23,5 @@ pipeline test {
     f(C().b);
     f(factory()?.a);
     f(factory()?.b);
+    f(C().i(1));
 }
