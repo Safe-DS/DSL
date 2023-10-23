@@ -81,6 +81,10 @@ export const isNamedArgument = (node: SdsArgument): boolean => {
     return Boolean(node.parameter);
 };
 
+export const isPositionalArgument = (node: SdsArgument): boolean => {
+    return !node.parameter;
+};
+
 export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
     return Boolean(node.typeParameter);
 };
