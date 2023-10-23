@@ -124,7 +124,10 @@ import {
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
-import { pythonNameShouldDifferFromSafeDsName } from './builtins/pythonName.js';
+import {
+    pythonNameMustNotBeSetIfPythonCallIsSet,
+    pythonNameShouldDifferFromSafeDsName,
+} from './builtins/pythonName.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
@@ -209,7 +212,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumBody: [enumBodyShouldNotBeEmpty],
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
-        SdsFunction: [functionMustContainUniqueNames, functionResultListShouldNotBeEmpty],
+        SdsFunction: [
+            functionMustContainUniqueNames,
+            functionResultListShouldNotBeEmpty,
+            pythonNameMustNotBeSetIfPythonCallIsSet(services),
+        ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
         SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],

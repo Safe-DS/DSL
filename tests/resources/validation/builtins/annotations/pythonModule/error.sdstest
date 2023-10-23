@@ -1,4 +1,4 @@
 // $TEST$ info "The Python module is identical to the Safe-DS package, so the annotation call can be removed."
-»@PythonModule("tests.validation.builtins.annotations.pythonModule")«
+@»PythonModule«("tests.validation.builtins.annotations.pythonModule")
 
 package tests.validation.builtins.annotations.pythonModule

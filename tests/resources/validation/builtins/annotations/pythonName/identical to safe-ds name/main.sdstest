@@ -1,11 +1,11 @@
-package tests.validation.builtins.annotations.pythonName
+package tests.validation.builtins.annotations.pythonName.identicalToSafeDsName
 
 // $TEST$ info "The Python name is identical to the Safe-DS name, so the annotation call can be removed."
-»@PythonName("TestClass1")«
+@»PythonName«("TestClass1")
 class TestClass1
 
 // $TEST$ no info "The Python name is identical to the Safe-DS name, so the annotation call can be removed."
-»@PythonName("Test_Class_2")«
+@»PythonName«("Test_Class_2")
 // $TEST$ no info "The Python name is identical to the Safe-DS name, so the annotation call can be removed."
-»@PythonName("TestClass2")«
+@»PythonName«("TestClass2")
 class TestClass2
