@@ -476,9 +476,8 @@ const generatePythonCall = function (
     if (thisParam) {
         argumentsMap.set('this', thisParam);
     }
-    // Extract each placeholder from annotation: Match only strings that start with '$'
-    // Use look-ahead to only match up to a '.', ',', ')' or a whitespace
-    return pythonCall.replace(/\$.+?(?=[\s.,)])/gu, (value) => argumentsMap.get(value.substring(1))!);
+
+    return pythonCall.replace(/\$[_a-zA-Z][_a-zA-Z0-9]*/gu, (value) => argumentsMap.get(value.substring(1))!);
 };
 
 const getArgumentsMap = function (argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, string> {
