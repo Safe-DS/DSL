@@ -74,8 +74,30 @@
                     "end": "\\*/",
                     "patterns": [
                         {
-                            "name": "keyword.other.safe-ds",
-                            "match": "(@param|@result|@since|@typeParam)\\b"
+                            "match": "(@param|@result)\\s+([_a-zA-Z][_a-zA-Z0-9]*)?",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.safe-ds"
+                                },
+                                "2": {
+                                    "name": "variable.parameter.safe-ds"
+                                }
+                            }
+                        },
+                        {
+                            "match": "(@since)\\b",
+                            "name": "keyword.other.safe-ds"
+                        },
+                        {
+                            "match": "(@typeParam)\\s+([_a-zA-Z][_a-zA-Z0-9]*)?",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.safe-ds"
+                                },
+                                "2": {
+                                    "name": "entity.name.type.parameter"
+                                }
+                            }
                         }
                     ]
                 },

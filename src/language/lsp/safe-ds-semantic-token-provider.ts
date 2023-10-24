@@ -24,6 +24,7 @@ import {
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsReference,
+    isSdsResult,
     isSdsSchema,
     isSdsSegment,
     isSdsTypeArgument,
@@ -206,6 +207,12 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
             return {
                 type: SemanticTokenTypes.variable,
                 modifier: [SemanticTokenModifiers.readonly, ...additionalModifiers],
+            };
+        } else if (isSdsResult(node)) {
+            return {
+                // For lack of a better option, we use the token type for parameters here
+                type: SemanticTokenTypes.parameter,
+                modifier: additionalModifiers,
             };
         } else if (isSdsSchema(node)) {
             return {
