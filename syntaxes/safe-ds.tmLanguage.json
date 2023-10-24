@@ -1,98 +1,94 @@
 {
-  "name": "safe-ds",
-  "scopeName": "source.safe-ds",
-  "fileTypes": [
-    ".sdspipe",
-    ".sdsstub",
-    ".sdstest"
-  ],
-  "patterns": [
-    {
-      "include": "#comments"
-    },
-    {
-      "name": "constant.numeric.safe-ds",
-      "match": "\\b([0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b"
-    },
-    {
-      "name": "constant.language.safe-ds",
-      "match": "\\b(false|null|true)\\b"
-    },
-    {
-      "name": "storage.type.safe-ds",
-      "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|schema|segment|val)\\b"
-    },
-    {
-      "name": "storage.modifier.safe-ds",
-      "match": "\\b(const|in|internal|out|private|static)\\b"
-    },
-    {
-      "name": "keyword.operator.safe-ds",
-      "match": "\\b(and|not|or|sub|super)\\b"
-    },
-    {
-      "name": "keyword.other.safe-ds",
-      "match": "\\b(as|from|import|literal|union|where|yield)\\b"
-    },
-    {
-      "name": "meta.safe-ds",
-      "begin": "\\`",
-      "end": "\\`"
-    },
-    {
-      "name": "string.interpolated.safe-ds",
-      "begin": "\"|}}",
-      "end": "{{|\"",
-      "patterns": [
+    "name": "safe-ds",
+    "scopeName": "source.safe-ds",
+    "fileTypes": [
+        ".sdspipe",
+        ".sdsstub",
+        ".sdstest"
+    ],
+    "patterns": [
         {
-          "include": "#string-character-escape"
-        }
-      ]
-    },
-    {
-      "name": "string.quoted.double.safe-ds",
-      "begin": "\"",
-      "end": "\"",
-      "patterns": [
-        {
-          "include": "#string-character-escape"
-        }
-      ]
-    }
-  ],
-  "repository": {
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.line.double-slash.safe-ds",
-          "begin": "//",
-          "beginCaptures": {
-            "1": {
-              "name": "punctuation.whitespace.comment.leading.safe-ds"
-            }
-          },
-          "end": "(?=$)"
+            "include": "#comments"
         },
         {
-          "name": "comment.block.safe-ds",
-          "begin": "/\\*",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.comment.safe-ds"
-            }
-          },
-          "end": "\\*/",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.definition.comment.safe-ds"
-            }
-          }
+            "name": "constant.numeric.safe-ds",
+            "match": "\\b([0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b"
+        },
+        {
+            "name": "constant.language.safe-ds",
+            "match": "\\b(false|null|true)\\b"
+        },
+        {
+            "name": "storage.type.safe-ds",
+            "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|schema|segment|val)\\b"
+        },
+        {
+            "name": "storage.modifier.safe-ds",
+            "match": "\\b(const|in|internal|out|private|static)\\b"
+        },
+        {
+            "name": "keyword.operator.safe-ds",
+            "match": "\\b(and|not|or|sub|super)\\b"
+        },
+        {
+            "name": "keyword.other.safe-ds",
+            "match": "\\b(as|from|import|literal|union|where|yield)\\b"
+        },
+        {
+            "name": "meta.safe-ds",
+            "begin": "\\`",
+            "end": "\\`"
+        },
+        {
+            "name": "string.interpolated.safe-ds",
+            "begin": "\"|}}",
+            "end": "{{|\"",
+            "patterns": [
+                {
+                    "include": "#string-character-escape"
+                }
+            ]
+        },
+        {
+            "name": "string.quoted.double.safe-ds",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "include": "#string-character-escape"
+                }
+            ]
         }
-      ]
-    },
-    "string-character-escape": {
-      "name": "constant.character.escape.safe-ds",
-      "match": "\\\\(b|f|n|r|t|v|0|'|\"|{|\\\\|u[0-9a-fA-F]{4})"
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.double-slash.safe-ds",
+                    "begin": "//",
+                    "end": "(?=$)"
+                },
+                {
+                    "name": "comment.block.documentation.safe-ds",
+                    "begin": "/\\*\\*",
+                    "end": "\\*/",
+                    "patterns": [
+                        {
+                            "name": "keyword.other.safe-ds",
+                            "match": "(@param|@result|@since|@typeParam)\\b"
+                        }
+                    ]
+                },
+                {
+                    "name": "comment.block.safe-ds",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                }
+            ]
+        },
+        "string-character-escape": {
+            "name": "constant.character.escape.safe-ds",
+            "match": "\\\\(b|f|n|r|t|v|0|'|\"|{|\\\\|u[0-9a-fA-F]{4})"
+        }
     }
-  }
 }
