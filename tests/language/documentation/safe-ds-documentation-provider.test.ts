@@ -3,9 +3,9 @@ import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { AstNode, EmptyFileSystem } from 'langium';
 import { clearDocuments } from 'langium/test';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
-import { AssertionError } from 'assert';
 import {
     isSdsAnnotation,
+    isSdsFunction,
     isSdsParameter,
     isSdsResult,
     isSdsTypeParameter,
@@ -170,11 +170,20 @@ describe('SafeDsDocumentationProvider', () => {
 
     it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
         const node = await getNodeOfType(services, code, predicate);
-        if (!node) {
-            throw new AssertionError({ message: 'Node not found.' });
-        }
-
         expect(documentationProvider.getDocumentation(node)).toStrictEqual(expectedDocumentation);
+    });
+
+    it('should resolve links', async () => {
+        const code = `
+            /**
+             * {@link myFunction2}
+             */
+            fun myFunction1()
+
+            fun myFunction2()
+        `;
+        const node = await getNodeOfType(services, code, isSdsFunction);
+        expect(documentationProvider.getDocumentation(node)).toMatch(/\[myFunction2\]\(.*\)/u);
     });
 });
 
