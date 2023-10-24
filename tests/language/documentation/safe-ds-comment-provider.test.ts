@@ -258,9 +258,27 @@ describe('SafeDsCommentProvider', () => {
     });
 });
 
+/**
+ * A description of a test case for the comment provider.
+ */
 interface CommentProviderTest {
+    /**
+     * A short description of the test case.
+     */
     testName: string;
+
+    /**
+     * The code to test.
+     */
     code: string;
+
+    /**
+     * A predicate to find the node to test.
+     */
     predicate: (node: unknown) => node is AstNode;
+
+    /**
+     * The expected comment.
+     */
     expectedComment: string | undefined;
 }
