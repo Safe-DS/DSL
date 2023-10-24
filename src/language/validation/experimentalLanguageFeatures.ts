@@ -25,6 +25,7 @@ export const indexedAccessesShouldBeUsedWithCaution = (node: SdsIndexedAccess, a
 export const literalTypesShouldBeUsedWithCaution = (node: SdsLiteralType, accept: ValidationAcceptor): void => {
     accept('warning', 'Literal types are experimental and may change without prior notice.', {
         node,
+        keyword: 'literal',
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
     });
 };
@@ -47,6 +48,7 @@ export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: Va
 
     accept('warning', 'Union types are experimental and may change without prior notice.', {
         node,
+        keyword: 'union',
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
     });
 };
