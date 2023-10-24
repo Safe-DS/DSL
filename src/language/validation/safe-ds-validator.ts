@@ -284,7 +284,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentResultListShouldNotBeEmpty,
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeParameter: [typeParameterMustHaveSufficientContext],
+        SdsTypeParameter: [typeParameterMustHaveSufficientContext(services)],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [
