@@ -96,7 +96,7 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                 });
             }
         } else if (isSdsNamedType(node)) {
-            const info = this.computeSemanticTokenInfoForDeclaration(node.declaration.ref);
+            const info = this.computeSemanticTokenInfoForDeclaration(node.declaration?.ref);
             if (info) {
                 acceptor({
                     node,

@@ -76,7 +76,7 @@ export const argumentCorrespondingParameterShouldNotBeDeprecated =
 
 export const namedTypeDeclarationShouldNotBeDeprecated =
     (services: SafeDsServices) => (node: SdsNamedType, accept: ValidationAcceptor) => {
-        const declaration = node.declaration.ref;
+        const declaration = node.declaration?.ref;
         if (!declaration) {
             return;
         }

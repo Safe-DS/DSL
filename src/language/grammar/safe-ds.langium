@@ -922,7 +922,7 @@ SdsLiteralList returns SdsLiteralList:
 ;
 
 interface SdsNamedType extends SdsType {
-    declaration: @SdsNamedTypeDeclaration
+    declaration?: @SdsNamedTypeDeclaration
     typeArgumentList?: SdsTypeArgumentList
     isNullable: boolean
 }

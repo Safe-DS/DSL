@@ -52,16 +52,16 @@ import { isContainedIn } from '../helpers/astUtils.js';
 import {
     getAbstractResults,
     getAssignees,
-    getMatchingClassMembers,
     getEnumVariants,
     getImportedDeclarations,
     getImports,
-    isStatic,
+    getMatchingClassMembers,
     getPackageName,
     getParameters,
     getResults,
     getStatements,
     getTypeParameters,
+    isStatic,
 } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
@@ -165,7 +165,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
      */
     private getUniqueReferencedDeclarationForType(node: SdsType): SdsNamedTypeDeclaration | undefined {
         if (isSdsNamedType(node)) {
-            return node.declaration.ref;
+            return node.declaration?.ref;
         } else if (isSdsMemberType(node)) {
             return node.member?.declaration?.ref;
         } else {
@@ -335,7 +335,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return EMPTY_SCOPE;
         }
 
-        const namedTypeDeclaration = containingNamedType.declaration.ref;
+        const namedTypeDeclaration = containingNamedType.declaration?.ref;
         if (isSdsClass(namedTypeDeclaration)) {
             const typeParameters = getTypeParameters(namedTypeDeclaration.typeParameterList);
             return this.createScopeForNodes(typeParameters);

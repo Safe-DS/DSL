@@ -75,11 +75,11 @@ import {
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     getAssignees,
-    streamBlockLambdaResults,
     getLiterals,
     getParameters,
     getResults,
     getTypeArguments,
+    streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { Constant, isConstant } from '../partialEvaluation/model.js';
@@ -453,7 +453,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
-            return this.computeType(node.declaration.ref).copyWithNullability(node.isNullable);
+            return this.computeType(node.declaration?.ref).copyWithNullability(node.isNullable);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));

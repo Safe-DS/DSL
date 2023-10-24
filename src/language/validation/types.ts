@@ -67,7 +67,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
 export const namedTypeMustSetAllTypeParameters =
     (services: SafeDsServices) =>
     (node: SdsNamedType, accept: ValidationAcceptor): void => {
-        const expectedTypeParameters = getTypeParameters(node.declaration.ref);
+        const expectedTypeParameters = getTypeParameters(node.declaration?.ref);
         if (isEmpty(expectedTypeParameters)) {
             return;
         }
@@ -91,7 +91,7 @@ export const namedTypeMustSetAllTypeParameters =
         } else {
             accept(
                 'error',
-                `The type '${node.declaration.$refText}' is parameterized, so a type argument list must be added.`,
+                `The type '${node.declaration?.$refText}' is parameterized, so a type argument list must be added.`,
                 {
                     node,
                     code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
