@@ -4,6 +4,7 @@ import {
     DeepPartial,
     DefaultSharedModuleContext,
     inject,
+    JSDocDocumentationProvider,
     LangiumServices,
     LangiumSharedServices,
     Module,
@@ -31,6 +32,7 @@ import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-prov
 import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsEnums } from './builtins/safe-ds-enums.js';
 import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
+import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -74,6 +76,10 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
         Enums: (services) => new SafeDsEnums(services),
+    },
+    documentation: {
+        CommentProvider: (services) => new SafeDsCommentProvider(services),
+        DocumentationProvider: (services) => new JSDocDocumentationProvider(services),
     },
     evaluation: {
         PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),
