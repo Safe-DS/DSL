@@ -19,7 +19,7 @@ import {
     SdsUnionType,
 } from '../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { isRequiredParameter, getParameters, getTypeParameters } from '../helpers/nodeProperties.js';
+import { getParameters, getTypeParameters, isRequiredParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
 import { NullConstant } from '../partialEvaluation/model.js';
@@ -218,7 +218,7 @@ export const importedDeclarationAliasShouldDifferFromDeclarationName = (
     node: SdsImportedDeclaration,
     accept: ValidationAcceptor,
 ) => {
-    if (node.alias && node.alias.alias === node.declaration.$refText) {
+    if (node.alias && node.alias.alias === node.declaration?.$refText) {
         accept('info', 'This alias can be removed.', {
             node,
             property: 'alias',

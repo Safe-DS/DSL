@@ -239,7 +239,7 @@ export class SafeDsNodeMapper {
         }
 
         // Find type parameter at the same position
-        const namedTypeDeclaration = containingType.declaration.ref;
+        const namedTypeDeclaration = containingType.declaration?.ref;
         const typeParameters = getTypeParameters(namedTypeDeclaration);
         return typeParameters[typeArgumentPosition];
     }

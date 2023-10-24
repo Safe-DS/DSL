@@ -68,7 +68,7 @@ export const argumentCorrespondingParameterShouldNotBeExperimental =
 
 export const namedTypeDeclarationShouldNotBeExperimental =
     (services: SafeDsServices) => (node: SdsNamedType, accept: ValidationAcceptor) => {
-        const declaration = node.declaration.ref;
+        const declaration = node.declaration?.ref;
         if (!declaration) {
             return;
         }

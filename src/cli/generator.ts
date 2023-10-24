@@ -528,7 +528,7 @@ const getExternalReferenceNeededImport = function (
         if (isSdsQualifiedImport(value)) {
             const importedDeclarations = getImportedDeclarations(value);
             for (const importedDeclaration of importedDeclarations) {
-                if (declaration === importedDeclaration.declaration.ref) {
+                if (declaration === importedDeclaration.declaration?.ref) {
                     if (importedDeclaration.alias !== undefined) {
                         return {
                             importPath: services.builtins.Annotations.getPythonModule(targetModule) || value.package,

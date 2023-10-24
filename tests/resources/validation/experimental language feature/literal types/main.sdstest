@@ -2,5 +2,5 @@ package tests.validation.experimentalLanguageFeature.literalTypes
 
 fun myFunction(
     // $TEST$ warning "Literal types are experimental and may change without prior notice."
-    p: »literal<>«
+    p: »literal«<>
 )

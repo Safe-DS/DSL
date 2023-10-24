@@ -140,6 +140,7 @@ import {
 } from './other/types/literalTypes.js';
 import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
 import { pythonCallMustOnlyContainValidTemplateExpressions } from './builtins/pythonCall.js';
+import { typeParameterMustHaveSufficientContext } from './other/declarations/typeParameters.js';
 
 /**
  * Register custom validation checks.
@@ -283,6 +284,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentResultListShouldNotBeEmpty,
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsTypeParameter: [typeParameterMustHaveSufficientContext],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [
