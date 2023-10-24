@@ -1,27 +1,29 @@
 package tests.validation.other.declarations.typeParameters.insufficientContext
 
-// $TEST$ error "Insufficient context to infer this type parameter."
+// $TEST$ no error "Insufficient context to infer this type parameter."
 class MyClass1<»T«>
 // $TEST$ error "Insufficient context to infer this type parameter."
-class MyClass2<»T«> {
+class MyClass2<»T«>()
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass3<»T«>() {
     attr myAttr: T
 }
 // $TEST$ no error "Insufficient context to infer this type parameter."
-class MyClass3<»T«>(param: T)
+class MyClass4<»T«>(param: T)
 // $TEST$ no error "Insufficient context to infer this type parameter."
-class MyClass4<»T«>(param: MyClass4<T>?)
+class MyClass5<»T«>(param: MyClass4<T>?)
 // $TEST$ no error "Insufficient context to infer this type parameter."
-class MyClass5<»T«>(param: MyEnum.MyEnumVariant1<T>)
+class MyClass6<»T«>(param: MyEnum.MyEnumVariant1<T>)
 // $TEST$ no error "Insufficient context to infer this type parameter."
-class MyClass6<»T«>(param: () -> (r: T))
+class MyClass7<»T«>(param: () -> (r: T))
 // $TEST$ error "Insufficient context to infer this type parameter."
-class MyClass7<»T«>(param: (p: T) -> ())
+class MyClass8<»T«>(param: (p: T) -> ())
 // $TEST$ error "Insufficient context to infer this type parameter."
-class MyClass8<»T«>(param: () -> (r: (p: T) -> ()))
+class MyClass9<»T«>(param: () -> (r: (p: T) -> ()))
 // $TEST$ error "Insufficient context to infer this type parameter."
-class MyClass9<»T«>(param: union<T>)
+class MyClass10<»T«>(param: union<T>)
 // $TEST$ error "Insufficient context to infer this type parameter."
-class MyClass10<»T«>(param: union<T, Int>)
+class MyClass11<»T«>(param: union<T, Int>)
 
 enum MyEnum {
     // $TEST$ error "Insufficient context to infer this type parameter."
