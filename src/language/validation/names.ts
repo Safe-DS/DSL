@@ -305,7 +305,7 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
 };
 
 const importedDeclarationName = (node: SdsImportedDeclaration | undefined): string | undefined => {
-    return node?.alias?.alias ?? node?.declaration.ref?.name;
+    return node?.alias?.alias ?? node?.declaration?.ref?.name;
 };
 
 export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: ValidationAcceptor): void => {

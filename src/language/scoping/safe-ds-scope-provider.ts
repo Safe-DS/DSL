@@ -403,7 +403,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         for (const imp of imports) {
             if (isSdsQualifiedImport(imp)) {
                 for (const importedDeclaration of getImportedDeclarations(imp)) {
-                    const description = importedDeclaration.declaration.$nodeDescription;
+                    const description = importedDeclaration.declaration?.$nodeDescription;
                     if (!description || !this.astReflection.isSubtype(description.type, referenceType)) {
                         continue;
                     }

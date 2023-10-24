@@ -77,7 +77,7 @@ SdsImportedDeclarationList returns SdsImportedDeclarationList:
 ;
 
 interface SdsImportedDeclaration extends SdsObject {
-    declaration: @SdsModuleMember;
+    declaration?: @SdsModuleMember;
     alias?: SdsImportedDeclarationAlias;
 }
 
@@ -384,7 +384,7 @@ SdsConstraint returns SdsConstraint:
 ;
 
 interface SdsTypeParameterConstraint extends SdsConstraint {
-    leftOperand: @SdsTypeParameter
+    leftOperand?: @SdsTypeParameter
     operator: string
     rightOperand: SdsType
 }

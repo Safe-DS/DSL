@@ -7,7 +7,7 @@ export const typeParameterConstraintLeftOperandMustBeOwnTypeParameter = (
     node: SdsTypeParameterConstraint,
     accept: ValidationAcceptor,
 ) => {
-    const typeParameter = node.leftOperand.ref;
+    const typeParameter = node.leftOperand?.ref;
     if (!typeParameter) {
         return;
     }
