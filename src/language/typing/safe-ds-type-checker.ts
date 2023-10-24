@@ -198,6 +198,7 @@ export class SafeDsTypeChecker {
     }
 
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
+        //     return this.possibleTypes.all { it.isSubstitutableFor(other) }
         return type.equals(other);
     }
 }
