@@ -3,6 +3,6 @@
     "compilerOptions": {
         "noEmit": true
     },
-    "include": ["./.eslintrc.cjs", "./bin/cli.js", "./docs/javascript/**/*", "./src/**/*", "./tests/**/*"],
+    "include": [".eslintrc.cjs", "release.config.cjs", "bin/cli.js", "docs/javascript/**/*", "src/**/*", "tests/**/*"],
     "exclude": []
 }

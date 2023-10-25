@@ -22,7 +22,7 @@ const plugins = [
         name: 'clean-old-builtins',
         setup(build) {
             build.onStart(async () => {
-                await fs.rm('./out/resources', { force: true, recursive: true });
+                await fs.rm('./dist/resources', { force: true, recursive: true });
             });
         },
     },
@@ -48,7 +48,7 @@ const plugins = [
 const ctx = await esbuild.context({
     // Entry points for the vscode extension and the language server
     entryPoints: ['src/cli/main.ts', 'src/extension/main.ts', 'src/language/main.ts'],
-    outdir: 'out',
+    outdir: 'dist',
     bundle: true,
     target: 'ES2020',
     // VSCode's extension host is still using cjs, so we need to transform the code
