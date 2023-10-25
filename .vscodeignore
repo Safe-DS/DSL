@@ -4,7 +4,9 @@
 # Whitelist
 !dist
 !img
+!syntaxes/safe-ds.tmLanguage.json
 !CHANGELOG.md
 !CITATION.cff
+!language-configuration.json
 !LICENSE
 !README.md

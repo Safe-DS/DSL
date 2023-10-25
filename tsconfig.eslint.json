@@ -4,12 +4,12 @@
         "noEmit": true
     },
     "include": [
-        "./.eslintrc.cjs",
+        ".eslintrc.cjs",
         "release.config.js",
-        "./bin/cli.js",
-        "./docs/javascript/**/*",
-        "./src/**/*",
-        "./tests/**/*"
+        "bin/cli.js",
+        "docs/javascript/**/*",
+        "src/**/*",
+        "tests/**/*"
     ],
     "exclude": []
 }
