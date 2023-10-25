@@ -16,7 +16,7 @@
         "static checking"
     ],
     "galleryBanner": {
-        "color": "#e3e9e9"
+        "color": "#e9eded"
     },
     "icon": "img/safe-ds_logo_rounded_128x128.png",
     "homepage": "https://dsl.safeds.com",
@@ -95,7 +95,8 @@
         "test": "vitest --dir tests",
         "test-with-coverage": "vitest --coverage --dir tests",
         "test-ui": "vitest --ui --coverage --dir tests",
-        "vscode:prepublish": "npm run langium:generate && npm run build -- --minify"
+        "vscode:prepublish": "npm run langium:generate && npm run build -- --minify",
+        "deploy": "vsce publish"
     },
     "dependencies": {
         "chalk": "^5.3.0",

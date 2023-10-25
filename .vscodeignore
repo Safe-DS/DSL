@@ -3,6 +3,7 @@
 
 # Whitelist
 !dist
+!img
 !CHANGELOG.md
 !CITATION.cff
 !LICENSE
