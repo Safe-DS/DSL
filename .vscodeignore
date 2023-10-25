@@ -1,0 +1,27 @@
+.github/
+.vscode/
+bin/
+coverage/
+docs/
+out/
+src/
+tests/
+
+.editorconfig
+.eslintignore
+.eslintrc.js
+.gitattributes
+.gitignore
+.mega-linter.yml
+CITATION.cff
+esbuild.mjs
+langium-config.json
+readthedocs.yml
+release.config.js
+tsconfig.eslint.json
+tsconfig.json
+vitest.config.js
+
+# Uncompiled/unbundled files
+*.js
+*.ts
