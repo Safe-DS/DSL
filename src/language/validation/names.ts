@@ -42,8 +42,8 @@ import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExt
 import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
-import { CODEGEN_PREFIX } from '../../cli/generator.js';
 import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
+import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CASING = 'name/casing';

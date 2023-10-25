@@ -3,12 +3,11 @@ import { clearDocuments } from 'langium/test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
-import { SdsModule } from '../../../src/language/generated/ast.js';
-import { generatePython } from '../../../src/cli/generator.js';
-import fs from 'fs';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { stream } from 'langium';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const pythonGenerator = services.generation.PythonGenerator;
 const generationTests = createGenerationTests();
 
 describe('generation', async () => {
@@ -31,26 +30,23 @@ describe('generation', async () => {
         const documents = await loadDocuments(services, test.inputUris);
 
         // Generate code for all documents
-        const actualOutputPaths: string[] = [];
-
-        for (const document of documents) {
-            const module = document.parseResult.value as SdsModule;
-            const fileName = document.uri.fsPath;
-            const generatedFilePaths = generatePython(services, module, fileName, test.actualOutputRoot.fsPath);
-            actualOutputPaths.push(...generatedFilePaths);
-        }
+        const actualOutputs = stream(documents)
+            .flatMap((document) => pythonGenerator.generate(document, test.actualOutputRoot.fsPath))
+            .map((textDocument) => [textDocument.uri, textDocument.getText()])
+            .toMap(
+                (entry) => entry[0],
+                (entry) => entry[1],
+            );
 
         // File paths must match
-        const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.fsPath).sort();
-        expect(actualOutputPaths.sort()).toStrictEqual(expectedOutputPaths);
+        const actualOutputPaths = Array.from(actualOutputs.keys()).sort();
+        const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.toString()).sort();
+        expect(actualOutputPaths).toStrictEqual(expectedOutputPaths);
 
         // File contents must match
         for (const expectedOutputFile of test.expectedOutputFiles) {
-            const actualCode = fs.readFileSync(expectedOutputFile.uri.fsPath).toString();
+            const actualCode = actualOutputs.get(expectedOutputFile.uri.toString());
             expect(actualCode).toBe(expectedOutputFile.code);
         }
-
-        // Remove generated files (if the test fails, the files are kept for debugging)
-        fs.rmSync(test.actualOutputRoot.fsPath, { recursive: true, force: true });
     });
 });
