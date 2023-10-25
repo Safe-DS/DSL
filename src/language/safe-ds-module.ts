@@ -33,6 +33,7 @@ import { SafeDsEnums } from './builtins/safe-ds-enums.js';
 import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
+import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -45,6 +46,9 @@ export type SafeDsAddedServices = {
     };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
+    };
+    generation: {
+        PythonGenerator: SafeDsPythonGenerator;
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
@@ -83,6 +87,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     evaluation: {
         PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),
+    },
+    generation: {
+        PythonGenerator: (services) => new SafeDsPythonGenerator(services),
     },
     helpers: {
         NodeMapper: (services) => new SafeDsNodeMapper(services),
