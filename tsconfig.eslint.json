@@ -5,7 +5,7 @@
     },
     "include": [
         ".eslintrc.cjs",
-        "release.config.js",
+        "release.config.cjs",
         "bin/cli.js",
         "docs/javascript/**/*",
         "src/**/*",

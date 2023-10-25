@@ -96,7 +96,7 @@
         "test-with-coverage": "vitest --coverage --dir tests",
         "test-ui": "vitest --ui --coverage --dir tests",
         "vscode:prepublish": "npm run langium:generate && npm run build -- --minify",
-        "deploy": "vsce publish"
+        "package": "vsce package"
     },
     "dependencies": {
         "chalk": "^5.3.0",
@@ -124,6 +124,7 @@
         "esbuild-plugin-copy": "^2.1.1",
         "langium-cli": "^2.0.1",
         "semantic-release": "^22.0.5",
+        "semantic-release-vsce": "^5.6.3",
         "typescript": "^5.2.2",
         "vitest": "^0.34.6"
     },
