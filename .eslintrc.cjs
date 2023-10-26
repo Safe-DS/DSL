@@ -12,6 +12,7 @@ module.exports = {
     extends: '@lars-reimann',
     rules: {
         'import/extensions': 'off',
+        'import/no-extraneous-dependencies': 'off',
         'vitest/prefer-lowercase-title': 'off',
     },
 };
