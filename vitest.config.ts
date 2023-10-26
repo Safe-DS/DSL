@@ -10,6 +10,6 @@ export default defineConfig({
             include: ['**/src'],
             exclude: ['**/generated'],
         },
-        exclude: ['node_modules', 'dist', 'lib', 'out'],
+        exclude: ['node_modules', 'dist', 'lib'],
     },
 });

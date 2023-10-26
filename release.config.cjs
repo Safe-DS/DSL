@@ -4,13 +4,20 @@ module.exports = {
         ['@semantic-release/commit-analyzer', { preset: 'conventionalcommits' }],
         ['@semantic-release/release-notes-generator', { preset: 'conventionalcommits' }],
         ['@semantic-release/changelog', { changelogFile: 'packages/safe-ds-vscode/CHANGELOG.md' }],
-        ['semantic-release-vsce', { packageVsix: true }],
+        [
+            '@semantic-release/exec',
+            {
+                prepareCmd: 'npm version ${nextRelease.version}',
+                publishCmd: 'npm run package && npm run publish',
+                execCwd: 'packages/safe-ds-vscode',
+            },
+        ],
         [
             '@semantic-release/github',
             {
                 assets: [
                     {
-                        path: '*.vsix',
+                        path: 'packages/safe-ds-vscode/*.vsix',
                     },
                 ],
             },

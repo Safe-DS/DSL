@@ -94,6 +94,7 @@
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
         "build": "tsc -b tsconfig.json && node esbuild.mjs",
+        "build:clean": "npm run clean && npm run build",
         "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
         "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
         "vscode:prepublish": "npm run langium:generate && npm run clean && npm run build -- --minify",

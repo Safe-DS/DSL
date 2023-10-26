@@ -4,7 +4,6 @@
 # Compilation/build outputs
 **/dist/
 **/lib/
-**/out/
 
 # Configuration
 /vitest.config.ts
