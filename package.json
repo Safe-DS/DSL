@@ -1,5 +1,6 @@
 {
     "name": "safe-ds",
+    "version": "0.1.0",
     "private": true,
     "prettier": "@lars-reimann/prettier-config",
     "type": "module",
