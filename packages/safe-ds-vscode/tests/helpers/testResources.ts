@@ -4,8 +4,9 @@ import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensio
 import { BuildOptions, LangiumDocument, URI } from 'langium';
 import { SafeDsServices } from '../../src/language/safe-ds-module.js';
 import { groupBy } from '../../src/helpers/collectionUtils.js';
+import { fileURLToPath } from 'url';
 
-const TEST_RESOURCES_PATH = path.join(__dirname, '..', 'resources');
+const TEST_RESOURCES_PATH = fileURLToPath(new URL('../resources', import.meta.url));
 
 /**
  * A path relative to `tests/resources/`.

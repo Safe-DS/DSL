@@ -7,7 +7,7 @@ import { extractDocument } from './cli-util.js';
 import { createSafeDsServices } from 'safe-ds';
 
 /* c8 ignore start */
-export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
+export const generate = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createSafeDsServices(NodeFileSystem).SafeDs;
     const document = await extractDocument(fileName, services);
     const generatedFiles = services.generation.PythonGenerator.generate(document, opts.destination);
