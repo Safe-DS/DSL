@@ -1,8 +1,14 @@
 {
-    "extends": "./tsconfig.json",
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "noEmit": true
     },
-    "include": [".eslintrc.cjs", "release.config.cjs", "bin/cli.js", "docs/javascript/**/*", "src/**/*", "tests/**/*"],
-    "exclude": []
+    "include": [
+        "docs/javascript/**/*",
+        "**/src/**/*",
+        "**/tests/**/*",
+        ".eslintrc.cjs",
+        "packages/safe-ds-vscode/bin/cli.js",
+        "release.config.cjs"
+    ]
 }

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "Node16",
+        "lib": ["ESNext", "DOM", "WebWorker"],
+        "sourceMap": true,
+        "outDir": "lib",
+        "strict": true,
+        "noImplicitReturns": true,
+        "noImplicitOverride": true,
+        "noUnusedLocals": false,
+        "moduleResolution": "Node16",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strictNullChecks": true,
+        "forceConsistentCasingInFileNames": true,
+        "composite": true
+    }
+}

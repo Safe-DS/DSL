@@ -18,7 +18,11 @@ module.exports = {
         [
             '@semantic-release/git',
             {
-                assets: ['package.json', 'package-lock.json', 'CHANGELOG.md'],
+                assets: [
+                    'packages/safe-ds-vscode/package.json',
+                    'packages/safe-ds-vscode/package-lock.json',
+                    'packages/safe-ds-vscode/CHANGELOG.md',
+                ],
             },
         ],
     ],
