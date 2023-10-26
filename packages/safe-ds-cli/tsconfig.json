@@ -1,10 +1,9 @@
 {
     "extends": "../../tsconfig.base.json",
-    "references": [{ "path": "../safe-ds-vscode" }],
+    "references": [{ "path": "../safe-ds-vscode/tsconfig.src.json" }],
     "compilerOptions": {
-        "rootDir": "src",
-        "outDir": "lib",
+        "rootDir": ".",
         "noEmit": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "test/**/*"]
 }
