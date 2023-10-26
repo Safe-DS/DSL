@@ -5,11 +5,11 @@ import url from 'node:url';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-const projectRoot = path.resolve(__dirname, '..', '..');
+const projectRoot = path.resolve(__dirname, '..');
 
 describe('program', () => {
     beforeAll(() => {
-        execSync('npm run build', { cwd: projectRoot });
+        execSync('npm run build:clean', { cwd: projectRoot });
     });
 
     it('should show usage if no arguments are passed', () => {
