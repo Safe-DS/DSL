@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import path from 'node:path';
-import { spawnSync, execSync } from 'node:child_process';
+import { execSync, spawnSync } from 'node:child_process';
 import url from 'node:url';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

@@ -1,10 +1,8 @@
 //@ts-check
 import * as esbuild from 'esbuild';
-import { copy } from 'esbuild-plugin-copy';
-import fs from 'fs/promises';
 
 const watch = process.argv.includes('--watch');
-const minify = process.argv.includes('--minify');
+const minify = true;
 
 const success = watch ? 'Watch build succeeded' : 'Build succeeded';
 
@@ -19,21 +17,6 @@ const padZeroes = function (i) {
 
 const plugins = [
     {
-        name: 'clean-old-builtins',
-        setup(build) {
-            build.onStart(async () => {
-                await fs.rm('./dist/resources', { force: true, recursive: true });
-            });
-        },
-    },
-    copy({
-        assets: {
-            from: ['./src/resources/**/*'],
-            to: ['./resources'],
-        },
-        watch,
-    }),
-    {
         name: 'watch-plugin',
         setup(build) {
             build.onEnd((result) => {
@@ -46,8 +29,7 @@ const plugins = [
 ];
 
 const ctx = await esbuild.context({
-    // Entry points for the vscode extension and the language server
-    entryPoints: ['src/extension/main.ts', 'src/language/main.ts'],
+    entryPoints: ['src/main.ts'],
     outdir: 'dist',
     bundle: true,
     target: 'ES2020',

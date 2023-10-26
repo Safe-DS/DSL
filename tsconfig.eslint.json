@@ -8,7 +8,7 @@
         "**/src/**/*",
         "**/tests/**/*",
         ".eslintrc.cjs",
-        "packages/safe-ds-vscode/bin/cli.js",
+        "packages/safe-ds-cli/bin/cli.js",
         "release.config.cjs"
     ]
 }
