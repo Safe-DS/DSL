@@ -1,9 +1,9 @@
 import { Command } from 'commander';
-import { SafeDsLanguageMetaData } from '../language/generated/module.js';
+import { SafeDsLanguageMetaData } from 'safe-ds';
 import { generateAction } from './generator.js';
 import * as path from 'node:path';
 
-const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
+const packagePath = path.resolve(__dirname, '..', 'package.json');
 
 const fileExtensions = SafeDsLanguageMetaData.fileExtensions.join(', ');
 

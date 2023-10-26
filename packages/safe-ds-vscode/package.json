@@ -1,12 +1,12 @@
 {
     "name": "safe-ds",
     "version": "0.2.0",
+    "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
         "name": "Lars Reimann",
         "email": "mail@larsreimann.com"
     },
-    "private": true,
     "license": "MIT",
     "keywords": [
         "dsl",
@@ -90,21 +90,29 @@
     },
     "type": "module",
     "main": "dist/extension/main.cjs",
+    "files": [
+        "lib",
+        "src"
+    ],
+    "exports": {
+        ".": {
+            "types": "./lib/language/index.d.ts",
+            "import": "./lib/language/index.js"
+        }
+    },
     "scripts": {
+        "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
         "build": "tsc -b tsconfig.json && node esbuild.mjs",
         "build:clean": "npm run clean && npm run build",
         "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
-        "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
         "vscode:prepublish": "npm run langium:generate && npm run clean && npm run build -- --minify",
         "package": "vsce package",
         "deploy": "vsce publish"
     },
     "dependencies": {
-        "chalk": "^5.3.0",
         "chevrotain": "^11.0.3",
-        "commander": "^11.1.0",
         "glob": "^10.3.10",
         "langium": "^2.0.2",
         "vscode-languageclient": "^9.0.1",

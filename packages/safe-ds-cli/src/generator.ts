@@ -1,10 +1,10 @@
 import chalk from 'chalk';
-import { createSafeDsServices } from '../language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import fs from 'node:fs';
 import { URI } from 'langium';
 import path from 'node:path';
 import { extractDocument } from './cli-util.js';
+import { createSafeDsServices } from 'safe-ds';
 
 /* c8 ignore start */
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
