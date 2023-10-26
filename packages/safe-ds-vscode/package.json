@@ -1,5 +1,5 @@
 {
-    "name": "@safe-ds/vscode",
+    "name": "safe-ds",
     "version": "0.2.0",
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -90,20 +90,15 @@
     },
     "type": "module",
     "main": "dist/extension/main.cjs",
-    "exports": {
-        ".": {
-            "types": "./lib/index.d.ts",
-            "import": "./lib/index.js"
-        }
-    },
     "scripts": {
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
         "build": "tsc -b tsconfig.json && node esbuild.mjs",
         "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
-        "clean": "shx rm -rf dist out tsconfig.tsbuildinfo",
-        "vscode:prepublish": "npm run langium:generate && npm run build -- --minify",
-        "package": "vsce package"
+        "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
+        "vscode:prepublish": "npm run langium:generate && npm run clean && npm run build -- --minify",
+        "package": "vsce package",
+        "deploy": "vsce publish"
     },
     "dependencies": {
         "chalk": "^5.3.0",
