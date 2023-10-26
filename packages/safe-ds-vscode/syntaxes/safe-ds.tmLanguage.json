@@ -1,11 +1,7 @@
 {
     "name": "safe-ds",
     "scopeName": "source.safe-ds",
-    "fileTypes": [
-        ".sdspipe",
-        ".sdsstub",
-        ".sdstest"
-    ],
+    "fileTypes": [".sdspipe", ".sdsstub", ".sdstest"],
     "patterns": [
         {
             "include": "#comments"
