@@ -5,6 +5,12 @@ module.exports = {
         ['@semantic-release/release-notes-generator', { preset: 'conventionalcommits' }],
         ['@semantic-release/changelog', { changelogFile: 'packages/safe-ds-vscode/CHANGELOG.md' }],
         [
+            '@semantic-release/npm',
+            {
+                pkgRoot: 'packages/safe-ds-cli',
+            },
+        ],
+        [
             '@semantic-release/exec',
             {
                 prepareCmd: 'npm version ${nextRelease.version}',
@@ -26,8 +32,8 @@ module.exports = {
             '@semantic-release/git',
             {
                 assets: [
+                    'packages/safe-ds-cli/package.json',
                     'packages/safe-ds-vscode/package.json',
-                    'packages/safe-ds-vscode/package-lock.json',
                     'packages/safe-ds-vscode/CHANGELOG.md',
                 ],
             },
