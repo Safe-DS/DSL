@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Extension",
+            "args": ["--extensionDevelopmentPath=${workspaceFolder}/packages/safe-ds-vscode"],
+            "preLaunchTask": "npm: build",
+            "request": "launch",
+            "type": "extensionHost"
+        }
+    ]
+}

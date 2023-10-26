@@ -2,8 +2,9 @@
 .idea/
 *.iml
 
-# VSCode Settings
-.vscode/
+# VSCode
+.vscode/**/*
+!.vscode/launch.json
 
 # Compilation/build outputs
 build/
@@ -11,8 +12,10 @@ coverage/
 dist/
 dist-ssr/
 generated/
+lib/
 out/
-syntaxes/safe-ds.generated.tmLanguage.json
+*.tsbuildinfo
+*.vsix
 
 # Node
 .npm/

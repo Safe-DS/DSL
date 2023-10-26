@@ -3,14 +3,21 @@ module.exports = {
     plugins: [
         ['@semantic-release/commit-analyzer', { preset: 'conventionalcommits' }],
         ['@semantic-release/release-notes-generator', { preset: 'conventionalcommits' }],
-        ['@semantic-release/changelog', { changelogFile: 'CHANGELOG.md' }],
-        ['semantic-release-vsce', { packageVsix: true }],
+        ['@semantic-release/changelog', { changelogFile: 'packages/safe-ds-vscode/CHANGELOG.md' }],
+        [
+            '@semantic-release/exec',
+            {
+                prepareCmd: 'npm version ${nextRelease.version}',
+                publishCmd: 'npm run package && npm run publish',
+                execCwd: 'packages/safe-ds-vscode',
+            },
+        ],
         [
             '@semantic-release/github',
             {
                 assets: [
                     {
-                        path: '*.vsix',
+                        path: 'packages/safe-ds-vscode/*.vsix',
                     },
                 ],
             },
@@ -18,7 +25,11 @@ module.exports = {
         [
             '@semantic-release/git',
             {
-                assets: ['package.json', 'package-lock.json', 'CHANGELOG.md'],
+                assets: [
+                    'packages/safe-ds-vscode/package.json',
+                    'packages/safe-ds-vscode/package-lock.json',
+                    'packages/safe-ds-vscode/CHANGELOG.md',
+                ],
             },
         ],
     ],

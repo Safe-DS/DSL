@@ -7,9 +7,9 @@ export default defineConfig({
         },
         coverage: {
             provider: 'v8',
-            include: ['src'],
+            include: ['**/src'],
             exclude: ['**/generated'],
         },
-        exclude: ['node_modules', 'dist', 'out'],
+        exclude: ['node_modules', 'dist', 'lib'],
     },
 });

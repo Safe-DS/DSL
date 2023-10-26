@@ -1,7 +1,9 @@
-# Compilation/build outputs
-build/
-dist/
-out/
+# Dependencies
+**/node_modules/
 
-# DSL
+# Compilation/build outputs
+**/dist/
+**/lib/
+
+# Configuration
 /vitest.config.ts
