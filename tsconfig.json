@@ -1,5 +1,8 @@
 {
     "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true
+    },
     "files": [],
     "references": [{ "path": "./packages/safe-ds-vscode/tsconfig.json" }]
 }

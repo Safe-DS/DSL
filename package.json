@@ -8,7 +8,7 @@
     ],
     "scripts": {
         "langium:generate": "npm run langium:generate -w=@safe-ds/vscode",
-        "build": "tsc -b tsconfig.base.json && npm run build -w=@safe-ds/vscode",
+        "build": "tsc -b tsconfig.json && npm run build -w=@safe-ds/vscode",
         "watch": "concurrently -n tsc,vscode -c blue,yellow \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/vscode\"",
         "clean": "shx rm -rf packages/*/dist packages/*/lib packages/*/*.tsbuildinfo",
         "build:clean": "npm run clean && npm run build",
