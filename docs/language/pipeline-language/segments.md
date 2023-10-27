@@ -97,7 +97,7 @@ segment loadMovieRatingsSample(nInstances: Int) -> (features: Dataset, target: D
 
 In the assignment beginning with `#!sds yield features =` we specify the value of the result called `#!sds features`, while the next assignment beginning with `#!sds yield target =` assigns a value to the `#!sds target` result.
 
-The order of the [result declarations](#result-declaration) does not need to match the order of assignment. However, **each result musts be assigned exactly once**. Note that unlike the `#!sds return` in other programming languages, `#!sds yield` does not stop the execution of the segment, which allows [assignments][assignments] to different results to be split across multiple [statements][statements].
+The order of the [result declarations](#result-declaration) does not need to match the order of assignment. However, **each result must be assigned exactly once**. Note that unlike the `#!sds return` in other programming languages, `#!sds yield` does not stop the execution of the segment, which allows [assignments][assignments] to different results to be split across multiple [statements][statements].
 
 ## Visibility
 

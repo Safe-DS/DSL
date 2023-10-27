@@ -74,16 +74,12 @@ Let's look at these elements in turn.
 
 By default, parameter names in Safe-DS must be identical to their names in Python. If this is not desired, for example due to clashing name conventions in Safe-DS and Python, the `#!sds @PythonName` annotation can be used to link a Safe-DS parameter to a Python parameter with a different name. Here is an example:
 
-```py
-# Python code
-
+```py title="Python"
 def accuracy(x_pred: Dataset, x_test: Dataset) -> float:
     pass
 ```
 
-```sds
-// Safe-DS code
-
+```sds title="Safe-DS" hl_lines="2-3"
 fun accuracy(
     @PythonName("x_pred") xPred: Dataset,
     @PythonName("x_test") xTest: Dataset
@@ -114,31 +110,23 @@ The following three examples show valid pairs of Python and Safe-DS programs.
 
 #### Required Parameter
 
-```py
-# Python code
-
+```py title="Python"
 def required(a: int):
     pass
 ```
 
-```sds
-// Safe-DS code
-
+```sds title="Safe-DS"
 fun required(a: Int)
 ```
 
 #### Optional Parameter
 
-```py
-# Python code
-
+```py title="Python"
 def optional(a: int = 1):
     pass
 ```
 
-```sds
-// Safe-DS code
-
+```sds title="Safe-DS"
 fun optional(a: Int = 1)
 ```
 
