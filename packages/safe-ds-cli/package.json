@@ -1,7 +1,6 @@
 {
     "name": "@safe-ds/cli",
-    "version": "0.2.0",
-    "private": true,
+    "version": "0.2.2",
     "description": "A command line interface for the Safe-DS DSL.",
     "author": {
         "name": "Lars Reimann",
@@ -26,22 +25,20 @@
     },
     "type": "module",
     "bin": {
-        "safe-ds": "./bin/cli"
+        "safe-ds": "./bin/cli.js"
     },
     "exports": null,
     "files": [
         "bin",
-        "dist",
-        "src"
+        "dist"
     ],
     "scripts": {
         "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
         "build": "tsc -b tsconfig.json && node esbuild.mjs",
         "build:clean": "npm run clean && npm run build",
-        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
-        "start": "node ./bin/cli"
+        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\""
     },
-    "dependencies": {
+    "devDependencies": {
         "chalk": "^5.3.0",
         "commander": "^11.1.0",
         "esbuild": "^0.19.5",
