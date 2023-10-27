@@ -4,7 +4,7 @@
         "module": "Node16",
         "lib": ["ESNext", "DOM", "WebWorker"],
         "sourceMap": true,
-        "outDir": "lib",
+        "noEmit": true,
         "strict": true,
         "noImplicitReturns": true,
         "noImplicitOverride": true,

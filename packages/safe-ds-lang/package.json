@@ -36,7 +36,7 @@
         }
     },
     "scripts": {
-        "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
+        "clean": "shx rm -rf dist lib *.tsbuildinfo",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
         "build": "tsc -b tsconfig.json",

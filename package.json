@@ -13,7 +13,7 @@
         "langium:watch": "npm run langium:watch -w=@safe-ds/lang",
         "build": "tsc -b tsconfig.json && npm run build --workspaces",
         "build:clean": "npm run clean && npm run build",
-        "watch": "concurrently -n tsc,cli,vscode -c blue,yellow,red \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/cli\" \"npm run watch -w=safe-ds\"",
+        "watch": "concurrently -n tsc,cli,lang,vscode -c blue,yellow,red,green \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/cli\" \"npm run watch -w=@safe-ds/lang\" \"npm run watch -w=safe-ds\"",
         "test": "vitest",
         "test-with-coverage": "vitest --coverage",
         "test-ui": "vitest --ui --coverage"
