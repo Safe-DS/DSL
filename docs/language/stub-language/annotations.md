@@ -57,7 +57,7 @@ The valid targets of an annotation can be restricted with the [`Target`][safeds-
 
 Annotation calls are always located right in front of their target. Exception: In the case of compilations units they are located at the very top of the file. Here is an example that demonstrates how to call the annotation `#!sds OnlyForExperts` that we defined above on a [class][classes]:
 
-```sds
+```sds hl_lines="1"
 @OnlyForExperts
 class VerySpecificMLModel
 ```
@@ -71,14 +71,14 @@ The code `#!sds class VerySpecificMLModel` is **not** part of the annotation cal
 
 For an annotation with parameters, such as the `#!sds Category` annotation that we defined above, we must pass arguments. The same syntax is used for arguments of annotation calls as for normal [calls][calls]. We can use positional arguments:
 
-```sds
+```sds hl_lines="1"
 @Category("model")
 class VerySpecificMLModel
 ```
 
 Or we can use named arguments:
 
-```sds
+```sds hl_lines="1"
 @Category(category="model")
 class VerySpecificMLModel
 ```

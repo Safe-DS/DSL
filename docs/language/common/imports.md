@@ -1,6 +1,6 @@
 # Imports
 
-By default, only declarations in the same package as the current file or in the `safeds.lang` [package][packages] are accessible. All other declarations must be imported first.
+By default, only declarations in the same package as the current file or in a package whose name starts with `safeds` [package][packages] are accessible. All other declarations must be imported first.
 
 Safe-DS has two kinds of imports, namely a _qualified import_, which imports a single declaration, and a _wildcard import_, which imports everything in a [package][packages].
 

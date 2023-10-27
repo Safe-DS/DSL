@@ -25,9 +25,7 @@ In order for code generation to work properly, the Safe-DS package of a Safe-DS 
 
 The first option is to use the file that contains the actual implementation of the declaration. Let us start with the following Python code to explain this idea:
 
-```py
-# Python file "safeds/model/regression/_decision_tree.py"
-
+```py title="Python file 'safeds/model/regression/_decision_tree.py'"
 class DecisionTree:
     def __init__(self):
         pass # Implementation omitted
@@ -35,9 +33,7 @@ class DecisionTree:
 
 This file contains the actual implementation of the Python class `#!py DecisionTree`. We now want to make this Python class available in Safe-DS, which requires the following Safe-DS stub file:
 
-```sds
-// Safe-DS file "safeds/model/regression/_decision_tree/DecisionTree.sdsstub"
-
+```sds title="Safe-DS file 'safeds/model/regression/_decision_tree/DecisionTree.sdsstub'"
 package safeds.model.regression._decision_tree
 
 class DecisionTree()
@@ -45,9 +41,7 @@ class DecisionTree()
 
 Note that the Safe-DS package corresponds to the path to the Python file, where we replace file separators (here `/`) by dots and remove the file extension (here `.py`). Another way to think about this is to ask how a from-import of the Python declaration would look like in Python code that wants to use the Python declaration. In this case we would write
 
-```py
-# Python
-
+```py title="Python"
 from safeds.model.regression._decision_tree import DecisionTree
 ```
 
@@ -61,33 +55,25 @@ The second option is to chose the Safe-DS package that corresponds to a [Python 
 
 We will demonstrate this by extending the example we used above:
 
-```py
-# Python file "safeds/model/regression/_decision_tree.py"
-
+```py title="Python file 'safeds/model/regression/_decision_tree.py'"
 class DecisionTree:
     def __init__(self):
         pass # Implementation omitted
 ```
 
-```py
-# Python file "safeds/model/regression/__init__.py
-
+```py title="Python file 'safeds/model/regression/__init__.py'"
 from ._decision_tree import DecisionTree
 ```
 
 The addition of the `__init__.py` file now allows us to import the Python class `#!py DecisionTree` in another way in Python client code:
 
-```py
-# Python
-
+```py title="Python"
 from safeds.model.regression import DecisionTree
 ```
 
 Note the omission of the suffix `#!py ._decision_tree` after `#!py safeds.model.regression`. Likewise, we can now update the Safe-DS stub code. We again just take everything between `#!py from` and `#!py import` and use this as the Safe-DS package name:
 
-```sds
-// Safe-DS file "safeds/model/regression/DecisionTree.sdsstub"
-
+```sds title="Safe-DS file 'safeds/model/regression/DecisionTree.sdsstub'"
 package safeds.model.regression
 
 class DecisionTree()
@@ -105,9 +91,7 @@ Choosing the Safe-DS package according to the rules described above is essential
 
 The first two options are self-explanatory. Let us now look at the third one. We use our initial example from the Section ["File Contains Implementation"](#file-contains-implementation) again:
 
-```py
-# Python file "safeds/model/regression/_decision_tree.py"
-
+```py title="Python file 'safeds/model/regression/_decision_tree.py'"
 class DecisionTree:
     def __init__(self):
         pass # Implementation omitted
@@ -115,9 +99,7 @@ class DecisionTree:
 
 Our original solution leads to a warning because the Safe-DS package name contains the segment `#!sds _decision_tree`, which is not `#!sds lowerCamelCase` due to the underscores:
 
-```sds
-// Safe-DS file "safeds/model/regression/_decision_tree/DecisionTree.sdsstub"
-
+```sds title="Safe-DS file 'safeds/model/regression/_decision_tree/DecisionTree.sdsstub'"
 package safeds.model.regression._decision_tree
 
 class DecisionTree()
@@ -125,9 +107,7 @@ class DecisionTree()
 
 By [calling][annotation-calls] the [annotation][annotations] `#!sds @PythonModule`, we can also specify the corresponding [Python module][python-modules], however. If this [annotation][annotations] is [called][annotation-calls], it takes precedence over the Safe-DS package name. This allows us to pick an arbitrary Safe-DS package that respects the Safe-DS naming convention. We can even group multiple [Python modules][python-modules] together in one Safe-DS package without relying on Python's `#!sds __init__.py` files:
 
-```sds
-// Safe-DS file "safeds/model/regression/DecisionTree.sdsstub"
-
+```sds title="Safe-DS file 'safeds/model/regression/DecisionTree.sdsstub'" hl_lines="1"
 @PythonModule("safeds.model.regression._decision_tree")
 
 package safeds.model.regression
@@ -140,11 +120,9 @@ Here is a breakdown of this:
 - We [call][annotation-calls] the `#!sds @PythonModule` [annotation][annotations] before we declare the Safe-DS package. The [Python module][python-modules] that exports the Python declarations that correspond to the Safe-DS declarations in this stub file is passed as a [string literal][string-literals] (here `#!sds safeds.model.regression._decision_tree`). This is used only for code generation and does not affect users of Safe-DS.
 - We specify the Safe-DS package as usual. This must be used when we [import][imports] the declaration in another Safe-DS file:
 
-    `#!sds ``sds
-    // Safe-DS
-
-    from safeds.model.regression import DecisionTree
-    `#!sds ``
+```sds title="Safe-DS"
+from safeds.model.regression import DecisionTree
+```
 
 It is important to note that the `#!sds @PythonModule` annotation only affects the one Safe-DS file that contains it rather than the entire Safe-DS package. This allows different Safe-DS files in the same package to point to different [Python modules][python-modules].
 
