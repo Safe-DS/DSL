@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { URI } from 'langium';
 import path from 'node:path';
 import { extractDocument } from './cli-util.js';
-import { createSafeDsServices } from 'safe-ds';
+import { createSafeDsServices } from '@safe-ds/lang';
 
 /* c8 ignore start */
 export const generate = async (fileName: string, opts: GenerateOptions): Promise<void> => {

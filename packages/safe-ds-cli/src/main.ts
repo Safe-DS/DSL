@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { SafeDsLanguageMetaData } from 'safe-ds';
+import { SafeDsLanguageMetaData } from '@safe-ds/lang';
 import { generate } from './generate.js';
 import * as path from 'node:path';
 

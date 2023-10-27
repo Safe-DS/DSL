@@ -3,6 +3,7 @@
     "files": [],
     "references": [
         { "path": "./packages/safe-ds-cli/tsconfig.json" },
+        { "path": "./packages/safe-ds-lang/tsconfig.json" },
         { "path": "./packages/safe-ds-vscode/tsconfig.json" }
     ]
 }

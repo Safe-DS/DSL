@@ -1,6 +1,6 @@
 {
     "extends": "../../tsconfig.base.json",
-    "references": [{ "path": "../safe-ds-vscode/tsconfig.src.json" }],
+    "references": [{ "path": "../safe-ds-lang/tsconfig.src.json" }],
     "compilerOptions": {
         "rootDir": ".",
         "noEmit": true

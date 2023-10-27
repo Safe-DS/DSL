@@ -1,0 +1,58 @@
+{
+    "name": "@safe-ds/lang",
+    "version": "0.2.0",
+    "private": true,
+    "description": "A language server for the Safe-DS DSL.",
+    "author": {
+        "name": "Lars Reimann",
+        "email": "mail@larsreimann.com"
+    },
+    "license": "MIT",
+    "keywords": [
+        "dsl",
+        "data science",
+        "machine learning",
+        "programming language",
+        "static checking"
+    ],
+    "homepage": "https://dsl.safeds.com",
+    "bugs": {
+        "url": "https://github.com/Safe-DS/DSL/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Safe-DS/DSL.git",
+        "directory": "packages/safe-ds-lang"
+    },
+    "type": "module",
+    "files": [
+        "lib",
+        "src"
+    ],
+    "exports": {
+        ".": {
+            "types": "./lib/language/index.d.ts",
+            "import": "./lib/language/index.js"
+        }
+    },
+    "scripts": {
+        "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
+        "langium:generate": "langium generate",
+        "langium:watch": "langium generate --watch",
+        "build": "tsc -b tsconfig.json",
+        "build:clean": "npm run clean && npm run build",
+        "watch": "tsc -b tsconfig.json --watch"
+    },
+    "dependencies": {
+        "chevrotain": "^11.0.3",
+        "glob": "^10.3.10",
+        "langium": "^2.0.2",
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.11"
+    },
+    "devDependencies": {
+        "@types/node": "^18.18.6",
+        "langium-cli": "^2.0.1",
+        "true-myth": "^7.1.0"
+    }
+}
