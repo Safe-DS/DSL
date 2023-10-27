@@ -89,7 +89,7 @@
         }
     },
     "type": "module",
-    "main": "dist/main.cjs",
+    "main": "dist/extension/main.cjs",
     "scripts": {
         "clean": "shx rm -rf dist lib *.tsbuildinfo",
         "build": "tsc -b tsconfig.json && node esbuild.mjs",

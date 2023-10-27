@@ -28,7 +28,7 @@ const plugins = [
     },
     copy({
         assets: {
-            from: ['./src/resources/**/*'],
+            from: ['../safe-ds-lang/src/resources/**/*'],
             to: ['./resources'],
         },
         watch,
@@ -46,9 +46,10 @@ const plugins = [
 ];
 
 const ctx = await esbuild.context({
-    // Entry points for the vscode extension and the language server
-    entryPoints: ['src/main.ts', 'src/startLanguageServer.ts'],
+    // Entry points for the VS Code extension and the language server
+    entryPoints: ['src/extension/main.ts', 'src/extension/startLanguageServer.ts'],
     outdir: 'dist',
+    outbase: 'src',
     bundle: true,
     target: 'ES2020',
     // VSCode's extension host is still using cjs, so we need to transform the code
