@@ -100,7 +100,7 @@ export class SafeDsPythonGenerator {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
-    generate(document: LangiumDocument, destination: string | undefined): TextDocument[] {
+    generate(document: LangiumDocument, destination: URI): TextDocument[] {
         const node = document.parseResult.value;
 
         // Do not generate stub files
@@ -108,24 +108,23 @@ export class SafeDsPythonGenerator {
             return [];
         }
 
-        const filePath = document.uri.fsPath;
-        const data = extractDestinationAndName(filePath, destination);
+        const name = path.parse(document.uri.fsPath).name;
         const pythonModuleName = this.builtinAnnotations.getPythonModule(node);
         const packagePath = pythonModuleName === undefined ? node.name.split('.') : [pythonModuleName];
-        const parentDirectoryPath = path.join(data.destination, ...packagePath);
+        const parentDirectoryPath = path.join(destination.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
         generatedFiles.set(
-            `${path.join(parentDirectoryPath, this.formatGeneratedFileName(data.name))}.py`,
+            `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`,
             this.generateModule(node),
         );
         for (const pipeline of streamAllContents(node).filter(isSdsPipeline)) {
             const entryPointFilename = `${path.join(
                 parentDirectoryPath,
-                `${this.formatGeneratedFileName(data.name)}_${this.getPythonNameOrDefault(pipeline)}`,
+                `${this.formatGeneratedFileName(name)}_${this.getPythonNameOrDefault(pipeline)}`,
             )}.py`;
             const entryPointContent = expandToStringWithNL`from ${this.formatGeneratedFileName(
-                data.name,
+                name,
             )} import ${this.getPythonNameOrDefault(
                 pipeline,
             )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${this.getPythonNameOrDefault(pipeline)}()`;
@@ -600,16 +599,3 @@ class GenerationInfoFrame {
         return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
     }
 }
-
-interface FilePathData {
-    destination: string;
-    name: string;
-}
-
-const extractDestinationAndName = function (filePath: string, destination: string | undefined): FilePathData {
-    const baseFilePath = path.basename(filePath, path.extname(filePath)).replace(/[.-]/gu, '');
-    return {
-        destination: destination ?? path.join(path.dirname(baseFilePath), 'generated'),
-        name: path.basename(baseFilePath),
-    };
-};

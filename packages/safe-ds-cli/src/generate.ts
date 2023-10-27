@@ -10,12 +10,12 @@ import { createSafeDsServices } from 'safe-ds';
 export const generate = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createSafeDsServices(NodeFileSystem).SafeDs;
     const document = await extractDocument(fileName, services);
-    const generatedFiles = services.generation.PythonGenerator.generate(document, opts.destination);
+    const destination = opts.destination ?? path.join(path.dirname(fileName), 'generated');
+    const generatedFiles = services.generation.PythonGenerator.generate(document, URI.file(path.resolve(destination)));
 
     for (const file of generatedFiles) {
         const fsPath = URI.parse(file.uri).fsPath;
         const parentDirectoryPath = path.dirname(fsPath);
-
         if (!fs.existsSync(parentDirectoryPath)) {
             fs.mkdirSync(parentDirectoryPath, { recursive: true });
         }

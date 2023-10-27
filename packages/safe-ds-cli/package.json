@@ -1,7 +1,6 @@
 {
     "name": "@safe-ds/cli",
     "version": "0.2.0",
-    "private": true,
     "description": "A command line interface for the Safe-DS DSL.",
     "author": {
         "name": "Lars Reimann",
@@ -31,8 +30,7 @@
     "exports": null,
     "files": [
         "bin",
-        "dist",
-        "src"
+        "dist"
     ],
     "scripts": {
         "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
