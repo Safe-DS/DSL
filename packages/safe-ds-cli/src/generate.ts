@@ -23,7 +23,6 @@ export const generate = async (fileName: string, opts: GenerateOptions): Promise
         fs.writeFileSync(fsPath, file.getText());
     }
 
-    // eslint-disable-next-line no-console
     console.log(chalk.green(`Python code generated successfully.`));
 };
 

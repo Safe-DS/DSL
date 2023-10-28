@@ -15,4 +15,12 @@ module.exports = {
         'import/no-extraneous-dependencies': 'off',
         'vitest/prefer-lowercase-title': 'off',
     },
+    overrides: [
+        {
+            files: ['packages/safe-ds-cli/**'],
+            rules: {
+                'no-console': 'off',
+            },
+        },
+    ],
 };
