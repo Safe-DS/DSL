@@ -22,7 +22,7 @@ describe('safe-ds', () => {
 
     it('should show version if -V flag is passed', () => {
         const process = spawnSync('node', ['./bin/cli', '-V'], { cwd: projectRoot });
-        expect(process.stdout.toString()).toMatch(/\d+\.\d+\.\d+/);
+        expect(process.stdout.toString()).toMatch(/\d+\.\d+\.\d+/u);
     });
 
     describe('generate', () => {
@@ -50,7 +50,7 @@ describe('safe-ds', () => {
 
         it('should show an error if the file does not exist', () => {
             const process = spawnGenerateProcess('missing.sdstest');
-            expect(process.stderr.toString()).toMatch(/File .* does not exist./);
+            expect(process.stderr.toString()).toMatch(/File .* does not exist./u);
         });
 
         it('should show an error if the file has the wrong extension', () => {
