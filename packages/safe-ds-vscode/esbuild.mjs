@@ -47,7 +47,7 @@ const plugins = [
 
 const ctx = await esbuild.context({
     // Entry points for the VS Code extension and the language server
-    entryPoints: ['src/extension/main.ts', 'src/extension/startLanguageServer.ts'],
+    entryPoints: ['src/extension/mainClient.ts', 'src/extension/mainServer.ts'],
     outdir: 'dist',
     outbase: 'src',
     bundle: true,
