@@ -12,7 +12,7 @@ module.exports = {
             '@semantic-release/exec',
             {
                 prepareCmd: 'npm version ${nextRelease.version}',
-                publishCmd: 'npm run package && npm run publish',
+                publishCmd: 'npm run package && npm run deploy',
                 execCwd: 'packages/safe-ds-vscode',
             },
         ],
