@@ -341,6 +341,10 @@ export class EvaluatedMapEntry extends EvaluatedNode {
     }
 }
 
+/**
+ * A named tuple is a record that contains a mapping from result declarations to their values. It is used to represent
+ * the result of a call to a block lambda or a segment.
+ */
 export class EvaluatedNamedTuple extends EvaluatedNode {
     constructor(readonly entries: ResultSubstitutions) {
         super();
@@ -348,20 +352,28 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = stream(this.entries.values()).every(isFullyEvaluated);
 
-    getSubstitutionByReference(reference: SdsReference): EvaluatedNode | undefined {
+    /**
+     * Returns the substitution for the target of the given reference. If the target of the reference does not occur in
+     * the map, `UnknownEvaluatedNode` is returned.
+     *
+     * @param reference A reference to the result to look for.
+     */
+    getSubstitutionByReference(reference: SdsReference): EvaluatedNode {
         const referencedDeclaration = reference.target;
         if (!isSdsAbstractResult(referencedDeclaration)) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
-        return this.entries.get(referencedDeclaration) ?? undefined;
+        return this.entries.get(referencedDeclaration) ?? UnknownEvaluatedNode;
     }
 
-    getSubstitutionByIndex(index: number | undefined): EvaluatedNode | undefined {
-        if (index === undefined) {
-            return undefined;
-        }
-        return Array.from(this.entries.values())[index] ?? undefined;
+    /**
+     * Returns the substitution at the given index. If the index is out of bounds, `UnknownEvaluatedNode` is returned.
+     *
+     * @param index The index of the substitution to look for.
+     */
+    getSubstitutionByIndex(index: number): EvaluatedNode {
+        return Array.from(this.entries.values())[index] ?? UnknownEvaluatedNode;
     }
 
     /**

@@ -1,6 +1,12 @@
 import { EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
-import { isSdsEnumVariant, isSdsExpressionLambda, isSdsResult } from '../../../src/language/generated/ast.js';
+import {
+    isSdsBlockLambdaResult,
+    isSdsEnumVariant,
+    isSdsExpressionLambda,
+    isSdsReference,
+    isSdsResult,
+} from '../../../src/language/generated/ast.js';
 import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import {
@@ -29,17 +35,24 @@ enum MyEnum {
     MyEnumVariant1
     MyEnumVariant2(p: Int)
 }
-segment mySegment() -> result: Int {
+segment mySegment() -> (result1: Int, result2: Int) {
     () -> 1;
     () -> 2;
+
+    (() { yield a; }).a;
+    MyEnum;
 }
 `;
-const result = await getNodeOfType(services, code, isSdsResult);
 const enumVariantWithoutParameters = await getNodeOfType(services, code, isSdsEnumVariant, 0);
 const enumVariantWithParameters = await getNodeOfType(services, code, isSdsEnumVariant, 1);
+const result1 = await getNodeOfType(services, code, isSdsResult, 0);
+const result2 = await getNodeOfType(services, code, isSdsResult, 0);
 const enumVariantParameter = getParameters(enumVariantWithParameters)[0]!;
 const expressionLambdaResult1 = (await getNodeOfType(services, code, isSdsExpressionLambda, 0)).result;
 const expressionLambdaResult2 = (await getNodeOfType(services, code, isSdsExpressionLambda, 1)).result;
+const blockLambdaResult1 = await getNodeOfType(services, code, isSdsBlockLambdaResult, 0);
+const reference1 = await getNodeOfType(services, code, isSdsReference, 0);
+const reference2 = await getNodeOfType(services, code, isSdsReference, 0);
 
 describe('partial evaluation model', async () => {
     const equalsTests: EqualsTest<EvaluatedNode>[] = [
@@ -79,7 +92,7 @@ describe('partial evaluation model', async () => {
         },
         {
             node: () => new SegmentClosure([]),
-            unequalNodeOfSameType: () => new SegmentClosure([result]),
+            unequalNodeOfSameType: () => new SegmentClosure([result1]),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -211,12 +224,12 @@ describe('partial evaluation model', async () => {
             expectedString: '()',
         },
         {
-            node: new EvaluatedNamedTuple(new Map([[result, NullConstant]])),
-            expectedString: '(result = null)',
+            node: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+            expectedString: '(result1 = null)',
         },
         {
-            node: new EvaluatedNamedTuple(new Map([[result, UnknownEvaluatedNode]])),
-            expectedString: '(result = ?)',
+            node: new EvaluatedNamedTuple(new Map([[result1, UnknownEvaluatedNode]])),
+            expectedString: '(result1 = ?)',
         },
         {
             node: UnknownEvaluatedNode,
@@ -319,11 +332,11 @@ describe('partial evaluation model', async () => {
             expectedValue: true,
         },
         {
-            node: new EvaluatedNamedTuple(new Map([[result, NullConstant]])),
+            node: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
             expectedValue: true,
         },
         {
-            node: new EvaluatedNamedTuple(new Map([[result, UnknownEvaluatedNode]])),
+            node: new EvaluatedNamedTuple(new Map([[result1, UnknownEvaluatedNode]])),
             expectedValue: false,
         },
         {
@@ -349,18 +362,6 @@ describe('partial evaluation model', async () => {
         it(`should return the expected string representation (${node.constructor.name} -- ${node})`, () => {
             expect(node.toInterpolationString()).toStrictEqual(expectedString);
         });
-    });
-
-    describe('BlockLambdaClosure', () => {
-        // TODO
-    });
-
-    describe('ExpressionLambdaClosure', () => {
-        // TODO
-    });
-
-    describe('SegmentClosure', () => {
-        // TODO
     });
 
     describe('EvaluatedList', () => {
@@ -411,15 +412,57 @@ describe('partial evaluation model', async () => {
 
     describe('EvaluatedNamedTuple', () => {
         describe('getSubstitutionByReference', () => {
-            // TODO
+            it.each([
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[blockLambdaResult1, NullConstant]])),
+                    reference: reference1,
+                    expectedValue: NullConstant,
+                },
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+                    reference: reference2,
+                    expectedValue: UnknownEvaluatedNode,
+                },
+            ])('should return the substitution for the target of the given reference', () => {});
         });
 
         describe('getSubstitutionByIndex', () => {
-            // TODO
+            it.each([
+                {
+                    tuple: new EvaluatedNamedTuple(new Map()),
+                    index: 0,
+                    expectedValue: UnknownEvaluatedNode,
+                },
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+                    index: 0,
+                    expectedValue: NullConstant,
+                },
+            ])('should return the substitution at the given index', ({ tuple, index, expectedValue }) => {
+                expect(tuple.getSubstitutionByIndex(index)).toStrictEqual(expectedValue);
+            });
         });
 
         describe('unwrap', () => {
-            // TODO
+            it('should return the single substitution if the tuple contains exactly one substitution', () => {
+                const tuple = new EvaluatedNamedTuple(new Map([[result1, NullConstant]]));
+                expect(tuple.unwrap()).toStrictEqual(NullConstant);
+            });
+
+            it('should return the tuple if it contains no substitutions', () => {
+                const tuple = new EvaluatedNamedTuple(new Map([]));
+                expect(tuple.unwrap()).toStrictEqual(tuple);
+            });
+
+            it('should return the tuple if it contains more than one substitution', () => {
+                const tuple = new EvaluatedNamedTuple(
+                    new Map([
+                        [result1, NullConstant],
+                        [result2, NullConstant],
+                    ]),
+                );
+                expect(tuple.unwrap()).toStrictEqual(tuple);
+            });
         });
     });
 });
