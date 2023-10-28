@@ -39,9 +39,9 @@
         "clean": "shx rm -rf dist lib *.tsbuildinfo",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
-        "build": "tsc -b tsconfig.json && shx cp -r src/resources/ lib/",
+        "build": "tsc -b tsconfig.src.json && shx cp -r src/resources/ lib/",
         "build:clean": "npm run clean && npm run build",
-        "watch": "tsc -b tsconfig.json --watch"
+        "watch": "tsc -b tsconfig.src.json --watch"
     },
     "dependencies": {
         "chevrotain": "^11.0.3",

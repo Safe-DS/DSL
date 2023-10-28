@@ -1,8 +1,8 @@
 {
-    "extends": "../../tsconfig.base.json",
-    "references": [{ "path": "../safe-ds-lang/tsconfig.src.json" }],
+    "extends": "./tsconfig.src.json",
     "compilerOptions": {
-        "rootDir": "."
+        "rootDir": ".",
+        "noEmit": true
     },
-    "include": ["src/**/*", "test/**/*"]
+    "include": ["src/**/*", "tests/**/*"]
 }
