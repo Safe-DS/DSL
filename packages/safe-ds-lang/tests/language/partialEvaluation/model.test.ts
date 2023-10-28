@@ -1,5 +1,7 @@
 import { EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
+import { isSdsEnumVariant, isSdsExpressionLambda, isSdsResult } from '../../../src/language/generated/ast.js';
+import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import {
     BlockLambdaClosure,
@@ -19,8 +21,25 @@ import {
     StringConstant,
     UnknownEvaluatedNode,
 } from '../../../src/language/partialEvaluation/model.js';
+import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const code = `
+enum MyEnum {
+    MyEnumVariant1
+    MyEnumVariant2(p: Int)
+}
+segment mySegment() -> result: Int {
+    () -> 1;
+    () -> 2;
+}
+`;
+const result = await getNodeOfType(services, code, isSdsResult);
+const enumVariantWithoutParameters = await getNodeOfType(services, code, isSdsEnumVariant, 0);
+const enumVariantWithParameters = await getNodeOfType(services, code, isSdsEnumVariant, 1);
+const enumVariantParameter = getParameters(enumVariantWithParameters)[0]!;
+const expressionLambdaResult1 = (await getNodeOfType(services, code, isSdsExpressionLambda, 0)).result;
+const expressionLambdaResult2 = (await getNodeOfType(services, code, isSdsExpressionLambda, 1)).result;
 
 describe('partial evaluation model', async () => {
     const equalsTests: EqualsTest<EvaluatedNode>[] = [
@@ -54,13 +73,13 @@ describe('partial evaluation model', async () => {
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new ExpressionLambdaClosure([], []),
-            unequalNodeOfSameType: () => new ExpressionLambdaClosure([], []),
+            node: () => new ExpressionLambdaClosure(new Map(), expressionLambdaResult1),
+            unequalNodeOfSameType: () => new ExpressionLambdaClosure(new Map(), expressionLambdaResult2),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new SegmentClosure([], []),
-            unequalNodeOfSameType: () => new SegmentClosure([], []),
+            node: () => new SegmentClosure([]),
+            unequalNodeOfSameType: () => new SegmentClosure([result]),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -74,13 +93,13 @@ describe('partial evaluation model', async () => {
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedMap([], []),
-            unequalNodeOfSameType: () => new EvaluatedMap([], []),
+            node: () => new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+            unequalNodeOfSameType: () => new EvaluatedMap([new EvaluatedMapEntry(NullConstant, new IntConstant(1n))]),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedMapEntry([], []),
-            unequalNodeOfSameType: () => new EvaluatedMapEntry([], []),
+            node: () => new EvaluatedMapEntry(NullConstant, NullConstant),
+            unequalNodeOfSameType: () => new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -137,20 +156,35 @@ describe('partial evaluation model', async () => {
             expectedString: '"foo"',
         },
         {
-            node: new BlockLambdaClosure([], []),
-            expectedString: '[] => []',
+            node: new BlockLambdaClosure(new Map(), []),
+            expectedString: '$BlockLambdaClosure',
         },
         {
-            node: new ExpressionLambdaClosure([], []),
-            expectedString: '() => []',
+            node: new ExpressionLambdaClosure(new Map(), expressionLambdaResult1),
+            expectedString: '$ExpressionLambdaClosure',
         },
         {
-            node: new SegmentClosure([], []),
-            expectedString: '[] => []',
+            node: new SegmentClosure([]),
+            expectedString: '$SegmentClosure',
         },
         {
-            node: new EvaluatedEnumVariant([], []),
-            expectedString: '[]',
+            node: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
+            expectedString: 'MyEnumVariant1',
+        },
+        {
+            node: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
+            expectedString: 'MyEnumVariant2',
+        },
+        {
+            node: new EvaluatedEnumVariant(
+                enumVariantWithParameters,
+                new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
+            ),
+            expectedString: 'MyEnumVariant2(?)',
+        },
+        {
+            node: new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
+            expectedString: 'MyEnumVariant2(null)',
         },
         {
             node: new EvaluatedList([]),
@@ -173,8 +207,16 @@ describe('partial evaluation model', async () => {
             expectedString: 'null: null',
         },
         {
-            node: new EvaluatedNamedTuple([], []),
-            expectedString: '[:]',
+            node: new EvaluatedNamedTuple(new Map()),
+            expectedString: '()',
+        },
+        {
+            node: new EvaluatedNamedTuple(new Map([[result, NullConstant]])),
+            expectedString: '(result = null)',
+        },
+        {
+            node: new EvaluatedNamedTuple(new Map([[result, UnknownEvaluatedNode]])),
+            expectedString: '(result = ?)',
         },
         {
             node: UnknownEvaluatedNode,
@@ -183,7 +225,7 @@ describe('partial evaluation model', async () => {
     ];
 
     describe.each(toStringTests)('toString', ({ node, expectedString }) => {
-        it(`should return the expected string representation (${node.constructor.name})`, () => {
+        it(`should return the expected string representation (${node.constructor.name} -- ${node})`, () => {
             expect(node.toString()).toStrictEqual(expectedString);
         });
     });
@@ -210,20 +252,35 @@ describe('partial evaluation model', async () => {
             expectedValue: true,
         },
         {
-            node: new BlockLambdaClosure([], []),
+            node: new BlockLambdaClosure(new Map(), []),
             expectedValue: false,
         },
         {
-            node: new ExpressionLambdaClosure([], []),
+            node: new ExpressionLambdaClosure(new Map(), expressionLambdaResult1),
             expectedValue: false,
         },
         {
-            node: new SegmentClosure([], []),
+            node: new SegmentClosure([]),
             expectedValue: false,
         },
         {
-            node: new EvaluatedEnumVariant([], []),
+            node: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
+            expectedValue: true,
+        },
+        {
+            node: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
             expectedValue: false,
+        },
+        {
+            node: new EvaluatedEnumVariant(
+                enumVariantWithParameters,
+                new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
+            ),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
+            expectedValue: true,
         },
         {
             node: new EvaluatedList([NullConstant]),
@@ -258,7 +315,15 @@ describe('partial evaluation model', async () => {
             expectedValue: false,
         },
         {
-            node: new EvaluatedNamedTuple([], []),
+            node: new EvaluatedNamedTuple(new Map()),
+            expectedValue: true,
+        },
+        {
+            node: new EvaluatedNamedTuple(new Map([[result, NullConstant]])),
+            expectedValue: true,
+        },
+        {
+            node: new EvaluatedNamedTuple(new Map([[result, UnknownEvaluatedNode]])),
             expectedValue: false,
         },
         {
@@ -286,24 +351,76 @@ describe('partial evaluation model', async () => {
         });
     });
 
-    describe('BlockLambdaClosure', () => {});
+    describe('BlockLambdaClosure', () => {
+        // TODO
+    });
 
-    describe('ExpressionLambdaClosure', () => {});
+    describe('ExpressionLambdaClosure', () => {
+        // TODO
+    });
 
-    describe('SegmentClosure', () => {});
+    describe('SegmentClosure', () => {
+        // TODO
+    });
 
     describe('EvaluatedList', () => {
-        // TODO test getElementByIndex
+        describe('getElementByIndex', () => {
+            it.each([
+                {
+                    list: new EvaluatedList([]),
+                    index: 0,
+                    expectedValue: UnknownEvaluatedNode,
+                },
+                {
+                    list: new EvaluatedList([new IntConstant(1n)]),
+                    index: 0,
+                    expectedValue: new IntConstant(1n),
+                },
+            ])('should return the element at the given index (%#)', ({ list, index, expectedValue }) => {
+                expect(list.getElementByIndex(index)).toStrictEqual(expectedValue);
+            });
+        });
     });
 
     describe('EvaluatedMap', () => {
-        // TODO test getLastValueForKey
+        describe('getLastValueForKey', () => {
+            it.each([
+                {
+                    map: new EvaluatedMap([]),
+                    key: NullConstant,
+                    expectedValue: UnknownEvaluatedNode,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+                    key: NullConstant,
+                    expectedValue: NullConstant,
+                },
+                {
+                    map: new EvaluatedMap([
+                        new EvaluatedMapEntry(NullConstant, NullConstant),
+                        new EvaluatedMapEntry(NullConstant, new IntConstant(1n)),
+                    ]),
+                    key: NullConstant,
+                    expectedValue: new IntConstant(1n),
+                },
+            ])('should return the last value for the given key (%#)', ({ map, key, expectedValue }) => {
+                expect(map.getLastValueForKey(key)).toStrictEqual(expectedValue);
+            });
+        });
     });
 
     describe('EvaluatedNamedTuple', () => {
-        // TODO test getSubstitutionByReference
-        // TODO test getSubstitutionByIndex
-        // TODO test unwrap
+        describe('getSubstitutionByReference', () => {
+            // TODO
+        });
+
+        describe('getSubstitutionByIndex', () => {
+            // TODO
+        });
+
+        describe('unwrap', () => {
+            // TODO
+        });
     });
 });
 

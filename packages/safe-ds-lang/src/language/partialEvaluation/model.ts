@@ -154,14 +154,19 @@ export class BlockLambdaClosure extends Closure {
         super();
     }
 
-    override equals(_other: EvaluatedNode): boolean {
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof BlockLambdaClosure)) {
+            return false;
+        }
+
         // TODO
         return false;
     }
 
     override toString(): string {
-        // TODO
-        return '';
+        return `$BlockLambdaClosure`;
     }
 }
 
@@ -173,14 +178,20 @@ export class ExpressionLambdaClosure extends Closure {
         super();
     }
 
-    override equals(_other: EvaluatedNode): boolean {
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof ExpressionLambdaClosure)) {
+            return false;
+        }
+
         // TODO
         return false;
     }
 
     override toString(): string {
         // TODO
-        return '';
+        return '$ExpressionLambdaClosure';
     }
 }
 
@@ -191,14 +202,19 @@ export class SegmentClosure extends Closure {
         super();
     }
 
-    override equals(_other: EvaluatedNode): boolean {
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof SegmentClosure)) {
+            return false;
+        }
+
         // TODO
         return false;
     }
 
     override toString(): string {
-        // TODO
-        return '';
+        return `$SegmentClosure`;
     }
 }
 
@@ -240,15 +256,25 @@ export class EvaluatedList extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = this.elements.every(isFullyEvaluated);
 
-    getElementByIndex(index: number | undefined): EvaluatedNode {
-        if (index === undefined) {
-            return UnknownEvaluatedNode;
-        }
+    /**
+     * Returns the element at the given index. If the index is out of bounds, `UnknownEvaluatedNode` is returned.
+     *
+     * @param index The index of the element to look for.
+     */
+    getElementByIndex(index: number): EvaluatedNode {
         return this.elements[index] ?? UnknownEvaluatedNode;
     }
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedList && this.elements.every((e, i) => e.equals(other.elements[i]));
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof EvaluatedList)) {
+            return false;
+        } else if (other.elements.length !== this.elements.length) {
+            return false;
+        }
+
+        return this.elements.every((e, i) => e.equals(other.elements[i]));
     }
 
     override toString(): string {
@@ -263,12 +289,26 @@ export class EvaluatedMap extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = this.entries.every(isFullyEvaluated);
 
+    /**
+     * Returns the last value for the given key. If the key does not occur in the map, `UnknownEvaluatedNode` is
+     * returned.
+     *
+     * @param key The key to look for.
+     */
     getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
         return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
     }
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedMap && this.entries.every((e, i) => e.equals(other.entries[i]));
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof EvaluatedMap)) {
+            return false;
+        } else if (other.entries.length !== this.entries.length) {
+            return false;
+        }
+
+        return this.entries.every((e, i) => e.equals(other.entries[i]));
     }
 
     override toString(): string {
@@ -289,9 +329,7 @@ export class EvaluatedMapEntry extends EvaluatedNode {
     override equals(other: EvaluatedNode): boolean {
         if (other === this) {
             return true;
-        }
-
-        if (!(other instanceof EvaluatedMapEntry)) {
+        } else if (!(other instanceof EvaluatedMapEntry)) {
             return false;
         }
 
@@ -340,13 +378,9 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
     override equals(other: EvaluatedNode): boolean {
         if (other === this) {
             return true;
-        }
-
-        if (!(other instanceof EvaluatedNamedTuple)) {
+        } else if (!(other instanceof EvaluatedNamedTuple)) {
             return false;
-        }
-
-        if (other.entries.size !== this.entries.size) {
+        } else if (other.entries.size !== this.entries.size) {
             return false;
         }
 
@@ -356,8 +390,8 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
     }
 
     override toString(): string {
-        const entryString = Array.from(this.entries, ([result, value]) => `${result.name}=${value}`).join(', ');
-        return `{${entryString}}`;
+        const entryString = Array.from(this.entries, ([result, value]) => `${result.name} = ${value}`).join(', ');
+        return `(${entryString})`;
     }
 }
 
