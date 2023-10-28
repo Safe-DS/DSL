@@ -1,8 +1,8 @@
 import { WorkspaceCache } from 'langium';
-import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { ClassType, Type, UnknownType } from './model.js';
 import { SdsClass } from '../generated/ast.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { ClassType, Type, UnknownType } from './model.js';
 
 export class SafeDsCoreTypes {
     private readonly builtinClasses: SafeDsClasses;
@@ -37,11 +37,9 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Map);
     }
 
-    /* c8 ignore start */
     get NothingOrNull(): Type {
         return this.createCoreType(this.builtinClasses.Nothing, true);
     }
-    /* c8 ignore stop */
 
     get String(): Type {
         return this.createCoreType(this.builtinClasses.String);

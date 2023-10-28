@@ -1,12 +1,12 @@
-import { afterEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
-import { AssertionError } from 'assert';
+import { afterEach, describe, it } from 'vitest';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { locationToString } from '../../helpers/location.js';
-import { createPartialEvaluationTests } from './creator.js';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { createPartialEvaluationTests } from './creator.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;

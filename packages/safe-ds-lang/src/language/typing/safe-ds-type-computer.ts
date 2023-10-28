@@ -1,20 +1,5 @@
 import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
-import { SafeDsServices } from '../safe-ds-module.js';
-import {
-    CallableType,
-    ClassType,
-    EnumType,
-    EnumVariantType,
-    LiteralType,
-    NamedTupleEntry,
-    NamedTupleType,
-    NamedType,
-    NotImplementedType,
-    StaticType,
-    Type,
-    UnionType,
-    UnknownType,
-} from './model.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsAnnotation,
     isSdsArgument,
@@ -72,7 +57,6 @@ import {
     SdsSegment,
     SdsType,
 } from '../generated/ast.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     getAssignees,
     getLiterals,
@@ -81,10 +65,26 @@ import {
     getTypeArguments,
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
-import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { Constant, isConstant } from '../partialEvaluation/model.js';
+import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import {
+    CallableType,
+    ClassType,
+    EnumType,
+    EnumVariantType,
+    LiteralType,
+    NamedTupleEntry,
+    NamedTupleType,
+    NamedType,
+    NotImplementedType,
+    StaticType,
+    Type,
+    UnionType,
+    UnknownType,
+} from './model.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
@@ -475,12 +475,9 @@ export class SafeDsTypeComputer {
     // Helpers
     // -----------------------------------------------------------------------------------------------------------------
 
-    /* c8 ignore start */
     private lowestCommonSupertype(..._types: Type[]): Type {
         return NotImplementedType;
     }
-
-    /* c8 ignore stop */
 
     // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
     //     if (types.isEmpty()) {
