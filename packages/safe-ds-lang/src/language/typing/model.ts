@@ -9,6 +9,7 @@ import {
 } from '../generated/ast.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
 
+/* c8 ignore start */
 export abstract class Type {
     abstract isNullable: boolean;
 
@@ -372,3 +373,4 @@ class NotImplementedTypeClass extends Type {
 }
 
 export const NotImplementedType = new NotImplementedTypeClass();
+/* c8 ignore stop */

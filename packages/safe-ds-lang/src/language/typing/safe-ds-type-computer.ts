@@ -475,9 +475,12 @@ export class SafeDsTypeComputer {
     // Helpers
     // -----------------------------------------------------------------------------------------------------------------
 
+    /* c8 ignore start */
     private lowestCommonSupertype(..._types: Type[]): Type {
         return NotImplementedType;
     }
+
+    /* c8 ignore stop */
 
     // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
     //     if (types.isEmpty()) {

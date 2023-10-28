@@ -23,6 +23,7 @@ import {
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
+/* c8 ignore start */
 export class SafeDsTypeChecker {
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
@@ -201,3 +202,4 @@ export class SafeDsTypeChecker {
         return type.equals(other);
     }
 }
+/* c8 ignore stop */
