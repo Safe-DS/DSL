@@ -7,7 +7,9 @@ export default defineConfig({
         },
         coverage: {
             provider: 'v8',
-            include: ['**/src'],
+            // For the CLI: Since we run it in a subprocess, coverage is not collected.
+            // For the VS Code extension: We cannot test the existing code at the moment.
+            include: ['packages/safe-ds-lang/src'],
             exclude: ['**/generated'],
         },
         exclude: ['node_modules', 'dist', 'lib'],

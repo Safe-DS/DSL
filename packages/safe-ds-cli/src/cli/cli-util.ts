@@ -1,9 +1,8 @@
 import chalk from 'chalk';
-import path from 'node:path';
-import fs from 'node:fs';
 import { LangiumDocument, LangiumServices, URI } from 'langium';
+import fs from 'node:fs';
+import path from 'node:path';
 
-/* c8 ignore start */
 export const extractDocument = async function (fileName: string, services: LangiumServices): Promise<LangiumDocument> {
     const extensions = services.LanguageMetaData.fileExtensions;
     if (!extensions.includes(path.extname(fileName))) {
@@ -36,4 +35,3 @@ export const extractDocument = async function (fileName: string, services: Langi
 
     return document as LangiumDocument;
 };
-/* c8 ignore stop */
