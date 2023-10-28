@@ -1,4 +1,4 @@
 package tests.validation.inheritance.noMultipleInheritance
 
 // $TEST$ no error "Multiple inheritance is not supported. Only the first parent type will be considered."
-class TestClass
+class TestClass2

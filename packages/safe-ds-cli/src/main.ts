@@ -1,14 +1,16 @@
 import { Command } from 'commander';
-import { SafeDsLanguageMetaData } from 'safe-ds';
+import { SafeDsLanguageMetaData } from '@safe-ds/lang';
 import { generate } from './generate.js';
-import * as path from 'node:path';
+import { fileURLToPath } from 'url';
+import { createRequire } from 'node:module';
 
 const fileExtensions = SafeDsLanguageMetaData.fileExtensions.join(', ');
 
 const program = new Command();
 
 // Version command
-const packagePath = path.resolve(__dirname, '..', 'package.json');
+const packagePath = fileURLToPath(new URL('../package.json', import.meta.url));
+const require = createRequire(import.meta.url);
 program
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     .version(require(packagePath).version);

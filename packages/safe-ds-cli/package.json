@@ -30,20 +30,22 @@
     "exports": null,
     "files": [
         "bin",
-        "dist"
+        "lib",
+        "src"
     ],
     "scripts": {
-        "clean": "shx rm -rf dist lib tsconfig.tsbuildinfo",
-        "build": "tsc -b tsconfig.json && node esbuild.mjs",
+        "clean": "shx rm -rf dist lib *.tsbuildinfo",
+        "build": "tsc -b tsconfig.src.json",
         "build:clean": "npm run clean && npm run build",
-        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\""
+        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.src.json --watch\""
     },
-    "devDependencies": {
+    "dependencies": {
+        "@safe-ds/lang": "^0.2.0",
+        "@types/node": "^20.8.9",
         "chalk": "^5.3.0",
         "commander": "^11.1.0",
         "esbuild": "^0.19.5",
-        "langium": "^2.0.2",
-        "safe-ds": "^0.2.0"
+        "langium": "^2.0.2"
     },
     "engines": {
         "node": ">=18.0.0"

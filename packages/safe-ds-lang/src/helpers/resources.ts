@@ -1,9 +1,17 @@
-import path from 'path';
-import { URI } from 'langium';
-import { SAFE_DS_FILE_EXTENSIONS } from '../language/helpers/fileExtensions.js';
 import { globSync } from 'glob';
+import { URI } from 'langium';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { SAFE_DS_FILE_EXTENSIONS } from '../language/helpers/fileExtensions.js';
 
-const RESOURCES_PATH = path.join(__dirname, '..', 'resources');
+let RESOURCES_PATH: string;
+try {
+    // For CJS (safe-ds-vscode)
+    RESOURCES_PATH = path.join(__dirname, '..', 'resources');
+} /* c8 ignore start */ catch (e) {
+    // For ESM (safe-ds-cli)
+    RESOURCES_PATH = fileURLToPath(new URL('../resources', import.meta.url));
+} /* c8 ignore stop */
 
 /**
  * A path relative to `src/resources/`.
