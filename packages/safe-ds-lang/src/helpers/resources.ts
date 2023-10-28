@@ -1,8 +1,8 @@
-import path from 'path';
-import { URI } from 'langium';
-import { SAFE_DS_FILE_EXTENSIONS } from '../language/helpers/fileExtensions.js';
 import { globSync } from 'glob';
+import { URI } from 'langium';
+import path from 'path';
 import { fileURLToPath } from 'url';
+import { SAFE_DS_FILE_EXTENSIONS } from '../language/helpers/fileExtensions.js';
 
 let RESOURCES_PATH: string;
 try {

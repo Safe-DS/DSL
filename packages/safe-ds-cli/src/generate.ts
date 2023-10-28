@@ -1,14 +1,14 @@
+import { createSafeDsServicesWithBuiltins } from '@safe-ds/lang';
 import chalk from 'chalk';
+import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import fs from 'node:fs';
-import { URI } from 'langium';
 import path from 'node:path';
 import { extractDocument } from './cli-util.js';
-import { createSafeDsServices } from '@safe-ds/lang';
 
 /* c8 ignore start */
 export const generate = async (fileName: string, opts: GenerateOptions): Promise<void> => {
-    const services = createSafeDsServices(NodeFileSystem).SafeDs;
+    const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     const document = await extractDocument(fileName, services);
     const destination = opts.destination ?? path.join(path.dirname(fileName), 'generated');
     const generatedFiles = services.generation.PythonGenerator.generate(document, URI.file(path.resolve(destination)));
