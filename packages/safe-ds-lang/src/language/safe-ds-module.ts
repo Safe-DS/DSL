@@ -9,31 +9,31 @@ import {
     Module,
     PartialLangiumServices,
 } from 'langium';
-import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
-import { registerValidationChecks } from './validation/safe-ds-validator.js';
-import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
-import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
-import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
-import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
-import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
-import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
-import { SafeDsClasses } from './builtins/safe-ds-classes.js';
-import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
-import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
-import { SafeDsClassHierarchy } from './typing/safe-ds-class-hierarchy.js';
-import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
-import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
-import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
-import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
-import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
-import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
-import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
+import { SafeDsClasses } from './builtins/safe-ds-classes.js';
 import { SafeDsEnums } from './builtins/safe-ds-enums.js';
-import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
+import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
+import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
+import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
+import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
+import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
+import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
+import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
+import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
+import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
+import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
+import { SafeDsClassHierarchy } from './typing/safe-ds-class-hierarchy.js';
+import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
+import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
+import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
+import { registerValidationChecks } from './validation/safe-ds-validator.js';
+import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
+import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
+import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -171,6 +171,7 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
  * @param context Optional module context with the LSP connection.
  * @return An object wrapping the shared services and the language-specific services.
  */
+/* c8 ignore start */
 export const createSafeDsServicesWithBuiltins = async function (context: DefaultSharedModuleContext): Promise<{
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
@@ -179,3 +180,4 @@ export const createSafeDsServicesWithBuiltins = async function (context: Default
     await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     return { shared, SafeDs };
 };
+/* c8 ignore stop */

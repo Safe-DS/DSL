@@ -8,10 +8,10 @@ let RESOURCES_PATH: string;
 try {
     // For CJS (safe-ds-vscode)
     RESOURCES_PATH = path.join(__dirname, '..', 'resources');
-} catch (e) {
+} /* c8 ignore start */ catch (e) {
     // For ESM (safe-ds-cli)
     RESOURCES_PATH = fileURLToPath(new URL('../resources', import.meta.url));
-}
+} /* c8 ignore stop */
 
 /**
  * A path relative to `src/resources/`.
