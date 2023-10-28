@@ -17,7 +17,7 @@ module.exports = {
     },
     overrides: [
         {
-            files: ['packages/safe-ds-cli/**'],
+            files: ['packages/safe-ds-cli/src/**'],
             rules: {
                 'no-console': 'off',
             },
