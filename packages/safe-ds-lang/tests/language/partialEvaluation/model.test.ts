@@ -1,11 +1,11 @@
 import { EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
 import {
-    isSdsBlockLambdaResult,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsReference,
     isSdsResult,
+    type SdsBlockLambdaResult,
 } from '../../../src/language/generated/ast.js';
 import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
@@ -39,7 +39,7 @@ segment mySegment() -> (result1: Int, result2: Int) {
     () -> 1;
     () -> 2;
 
-    (() { yield a; }).a;
+    (() { yield a; })().a;
     MyEnum;
 }
 `;
@@ -50,9 +50,9 @@ const result2 = await getNodeOfType(services, code, isSdsResult, 0);
 const enumVariantParameter = getParameters(enumVariantWithParameters)[0]!;
 const expressionLambdaResult1 = (await getNodeOfType(services, code, isSdsExpressionLambda, 0)).result;
 const expressionLambdaResult2 = (await getNodeOfType(services, code, isSdsExpressionLambda, 1)).result;
-const blockLambdaResult1 = await getNodeOfType(services, code, isSdsBlockLambdaResult, 0);
 const reference1 = await getNodeOfType(services, code, isSdsReference, 0);
-const reference2 = await getNodeOfType(services, code, isSdsReference, 0);
+const reference2 = await getNodeOfType(services, code, isSdsReference, 1);
+const blockLambdaResult1 = reference1.target.ref as SdsBlockLambdaResult;
 
 describe('partial evaluation model', async () => {
     const equalsTests: EqualsTest<EvaluatedNode>[] = [
@@ -81,23 +81,25 @@ describe('partial evaluation model', async () => {
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new BlockLambdaClosure([], []),
-            unequalNodeOfSameType: () => new BlockLambdaClosure([], []),
+            node: () => new BlockLambdaClosure(new Map([[enumVariantParameter, NullConstant]]), []),
+            unequalNodeOfSameType: () => new BlockLambdaClosure(new Map(), []),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new ExpressionLambdaClosure(new Map(), expressionLambdaResult1),
+            node: () =>
+                new ExpressionLambdaClosure(new Map([[enumVariantParameter, NullConstant]]), expressionLambdaResult1),
             unequalNodeOfSameType: () => new ExpressionLambdaClosure(new Map(), expressionLambdaResult2),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new SegmentClosure([]),
-            unequalNodeOfSameType: () => new SegmentClosure([result1]),
+            node: () => new SegmentClosure([result1]),
+            unequalNodeOfSameType: () => new SegmentClosure([]),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedEnumVariant([], []),
-            unequalNodeOfSameType: () => new EvaluatedEnumVariant([], []),
+            node: () =>
+                new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
+            unequalNodeOfSameType: () => new EvaluatedEnumVariant(enumVariantWithoutParameters, new Map()),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -116,8 +118,8 @@ describe('partial evaluation model', async () => {
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedNamedTuple([], []),
-            unequalNodeOfSameType: () => new EvaluatedNamedTuple([], []),
+            node: () => new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+            unequalNodeOfSameType: () => new EvaluatedNamedTuple(new Map()),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -423,7 +425,12 @@ describe('partial evaluation model', async () => {
                     reference: reference2,
                     expectedValue: UnknownEvaluatedNode,
                 },
-            ])('should return the substitution for the target of the given reference', () => {});
+            ])(
+                'should return the substitution for the target of the given reference',
+                ({ tuple, reference, expectedValue }) => {
+                    expect(tuple.getSubstitutionByReference(reference)).toStrictEqual(expectedValue);
+                },
+            );
         });
 
         describe('getSubstitutionByIndex', () => {

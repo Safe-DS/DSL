@@ -3,6 +3,7 @@ import { NodeFileSystem } from 'langium/node';
 import { createConnection, ProposedFeatures } from 'vscode-languageserver/node.js';
 import { createSafeDsServices } from './safe-ds-module.js';
 
+/* c8 ignore start */
 export const startLanguageServer = () => {
     // Create a connection to the client
     const connection = createConnection(ProposedFeatures.all);
@@ -14,3 +15,4 @@ export const startLanguageServer = () => {
     // Start the language server with the shared services
     doStartLanguageServer(shared);
 };
+/* c8 ignore stop */

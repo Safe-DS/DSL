@@ -4,6 +4,7 @@ import {
     isSdsAbstractResult,
     SdsAbstractResult,
     SdsBlockLambdaResult,
+    type SdsDeclaration,
     SdsEnumVariant,
     SdsExpression,
     SdsParameter,
@@ -161,8 +162,11 @@ export class BlockLambdaClosure extends Closure {
             return false;
         }
 
-        // TODO
-        return false;
+        return (
+            this.results.length === other.results.length &&
+            substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation) &&
+            this.results.every((thisResult, i) => thisResult === other.results[i])
+        );
     }
 
     override toString(): string {
@@ -185,12 +189,13 @@ export class ExpressionLambdaClosure extends Closure {
             return false;
         }
 
-        // TODO
-        return false;
+        return (
+            this.result === other.result &&
+            substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation)
+        );
     }
 
     override toString(): string {
-        // TODO
         return '$ExpressionLambdaClosure';
     }
 }
@@ -209,8 +214,10 @@ export class SegmentClosure extends Closure {
             return false;
         }
 
-        // TODO
-        return false;
+        return (
+            this.results.length === other.results.length &&
+            this.results.every((thisResult, i) => thisResult === other.results[i])
+        );
     }
 
     override toString(): string {
@@ -237,7 +244,17 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedEnumVariant && this.variant === other.variant;
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof EvaluatedEnumVariant)) {
+            return false;
+        }
+
+        return (
+            this.variant === other.variant &&
+            this.hasBeenInstantiated === other.hasBeenInstantiated &&
+            substitutionsAreEqual(this.args, other.args)
+        );
     }
 
     override toString(): string {
@@ -270,11 +287,11 @@ export class EvaluatedList extends EvaluatedNode {
             return true;
         } else if (!(other instanceof EvaluatedList)) {
             return false;
-        } else if (other.elements.length !== this.elements.length) {
-            return false;
         }
 
-        return this.elements.every((e, i) => e.equals(other.elements[i]));
+        return (
+            this.elements.length === other.elements.length && this.elements.every((e, i) => e.equals(other.elements[i]))
+        );
     }
 
     override toString(): string {
@@ -304,11 +321,12 @@ export class EvaluatedMap extends EvaluatedNode {
             return true;
         } else if (!(other instanceof EvaluatedMap)) {
             return false;
-        } else if (other.entries.length !== this.entries.length) {
-            return false;
         }
 
-        return this.entries.every((e, i) => e.equals(other.entries[i]));
+        return (
+            this.entries.length === other.entries.length &&
+            this.entries.every((entry, i) => entry.equals(other.entries[i]))
+        );
     }
 
     override toString(): string {
@@ -359,7 +377,7 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
      * @param reference A reference to the result to look for.
      */
     getSubstitutionByReference(reference: SdsReference): EvaluatedNode {
-        const referencedDeclaration = reference.target;
+        const referencedDeclaration = reference.target.ref;
         if (!isSdsAbstractResult(referencedDeclaration)) {
             return UnknownEvaluatedNode;
         }
@@ -392,13 +410,9 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
             return true;
         } else if (!(other instanceof EvaluatedNamedTuple)) {
             return false;
-        } else if (other.entries.size !== this.entries.size) {
-            return false;
         }
 
-        // TODO
-
-        return true;
+        return substitutionsAreEqual(this.entries, other.entries);
     }
 
     override toString(): string {
@@ -427,4 +441,21 @@ export const UnknownEvaluatedNode = new UnknownEvaluatedNodeClass();
 
 const isFullyEvaluated = (node: EvaluatedNode): boolean => {
     return node.isFullyEvaluated;
+};
+
+const substitutionsAreEqual = (
+    a: Map<SdsDeclaration, EvaluatedNode> | undefined,
+    b: Map<SdsDeclaration, EvaluatedNode> | undefined,
+): boolean => {
+    if (a?.size !== b?.size) {
+        return false;
+    }
+
+    const aEntries = Array.from(a?.entries() ?? []);
+    const bEntries = Array.from(b?.entries() ?? []);
+
+    return aEntries.every(([aEntry, aValue], i) => {
+        const [bEntry, bValue] = bEntries[i];
+        return aEntry === bEntry && aValue.equals(bValue);
+    });
 };
