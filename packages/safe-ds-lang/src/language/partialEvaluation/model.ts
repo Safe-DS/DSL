@@ -1,21 +1,20 @@
+import { stream } from 'langium';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsAbstractResult,
     SdsAbstractResult,
     SdsBlockLambdaResult,
+    type SdsDeclaration,
     SdsEnumVariant,
     SdsExpression,
     SdsParameter,
     SdsReference,
     SdsResult,
 } from '../generated/ast.js';
-import { stream } from 'langium';
 import { getParameters } from '../helpers/nodeProperties.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
-
-/* c8 ignore start */
 
 /**
  * A node that has been partially evaluated.
@@ -156,14 +155,22 @@ export class BlockLambdaClosure extends Closure {
         super();
     }
 
-    override equals(_other: EvaluatedNode): boolean {
-        // TODO
-        return false;
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof BlockLambdaClosure)) {
+            return false;
+        }
+
+        return (
+            this.results.length === other.results.length &&
+            substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation) &&
+            this.results.every((thisResult, i) => thisResult === other.results[i])
+        );
     }
 
     override toString(): string {
-        // TODO
-        return '';
+        return `$BlockLambdaClosure`;
     }
 }
 
@@ -175,14 +182,21 @@ export class ExpressionLambdaClosure extends Closure {
         super();
     }
 
-    override equals(_other: EvaluatedNode): boolean {
-        // TODO
-        return false;
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof ExpressionLambdaClosure)) {
+            return false;
+        }
+
+        return (
+            this.result === other.result &&
+            substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation)
+        );
     }
 
     override toString(): string {
-        // TODO
-        return '';
+        return '$ExpressionLambdaClosure';
     }
 }
 
@@ -193,14 +207,21 @@ export class SegmentClosure extends Closure {
         super();
     }
 
-    override equals(_other: EvaluatedNode): boolean {
-        // TODO
-        return false;
+    override equals(other: EvaluatedNode): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof SegmentClosure)) {
+            return false;
+        }
+
+        return (
+            this.results.length === other.results.length &&
+            this.results.every((thisResult, i) => thisResult === other.results[i])
+        );
     }
 
     override toString(): string {
-        // TODO
-        return '';
+        return `$SegmentClosure`;
     }
 }
 
@@ -223,7 +244,17 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedEnumVariant && this.variant === other.variant;
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof EvaluatedEnumVariant)) {
+            return false;
+        }
+
+        return (
+            this.variant === other.variant &&
+            this.hasBeenInstantiated === other.hasBeenInstantiated &&
+            substitutionsAreEqual(this.args, other.args)
+        );
     }
 
     override toString(): string {
@@ -242,15 +273,25 @@ export class EvaluatedList extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = this.elements.every(isFullyEvaluated);
 
-    getElementByIndex(index: number | undefined): EvaluatedNode {
-        if (index === undefined) {
-            return UnknownEvaluatedNode;
-        }
+    /**
+     * Returns the element at the given index. If the index is out of bounds, `UnknownEvaluatedNode` is returned.
+     *
+     * @param index The index of the element to look for.
+     */
+    getElementByIndex(index: number): EvaluatedNode {
         return this.elements[index] ?? UnknownEvaluatedNode;
     }
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedList && this.elements.every((e, i) => e.equals(other.elements[i]));
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof EvaluatedList)) {
+            return false;
+        }
+
+        return (
+            this.elements.length === other.elements.length && this.elements.every((e, i) => e.equals(other.elements[i]))
+        );
     }
 
     override toString(): string {
@@ -265,12 +306,27 @@ export class EvaluatedMap extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = this.entries.every(isFullyEvaluated);
 
+    /**
+     * Returns the last value for the given key. If the key does not occur in the map, `UnknownEvaluatedNode` is
+     * returned.
+     *
+     * @param key The key to look for.
+     */
     getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
         return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
     }
 
     override equals(other: EvaluatedNode): boolean {
-        return other instanceof EvaluatedMap && this.entries.every((e, i) => e.equals(other.entries[i]));
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof EvaluatedMap)) {
+            return false;
+        }
+
+        return (
+            this.entries.length === other.entries.length &&
+            this.entries.every((entry, i) => entry.equals(other.entries[i]))
+        );
     }
 
     override toString(): string {
@@ -291,9 +347,7 @@ export class EvaluatedMapEntry extends EvaluatedNode {
     override equals(other: EvaluatedNode): boolean {
         if (other === this) {
             return true;
-        }
-
-        if (!(other instanceof EvaluatedMapEntry)) {
+        } else if (!(other instanceof EvaluatedMapEntry)) {
             return false;
         }
 
@@ -305,6 +359,10 @@ export class EvaluatedMapEntry extends EvaluatedNode {
     }
 }
 
+/**
+ * A named tuple is a record that contains a mapping from result declarations to their values. It is used to represent
+ * the result of a call to a block lambda or a segment.
+ */
 export class EvaluatedNamedTuple extends EvaluatedNode {
     constructor(readonly entries: ResultSubstitutions) {
         super();
@@ -312,20 +370,28 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = stream(this.entries.values()).every(isFullyEvaluated);
 
-    getSubstitutionByReference(reference: SdsReference): EvaluatedNode | undefined {
-        const referencedDeclaration = reference.target;
+    /**
+     * Returns the substitution for the target of the given reference. If the target of the reference does not occur in
+     * the map, `UnknownEvaluatedNode` is returned.
+     *
+     * @param reference A reference to the result to look for.
+     */
+    getSubstitutionByReference(reference: SdsReference): EvaluatedNode {
+        const referencedDeclaration = reference.target.ref;
         if (!isSdsAbstractResult(referencedDeclaration)) {
-            return undefined;
+            return UnknownEvaluatedNode;
         }
 
-        return this.entries.get(referencedDeclaration) ?? undefined;
+        return this.entries.get(referencedDeclaration) ?? UnknownEvaluatedNode;
     }
 
-    getSubstitutionByIndex(index: number | undefined): EvaluatedNode | undefined {
-        if (index === undefined) {
-            return undefined;
-        }
-        return Array.from(this.entries.values())[index] ?? undefined;
+    /**
+     * Returns the substitution at the given index. If the index is out of bounds, `UnknownEvaluatedNode` is returned.
+     *
+     * @param index The index of the substitution to look for.
+     */
+    getSubstitutionByIndex(index: number): EvaluatedNode {
+        return Array.from(this.entries.values())[index] ?? UnknownEvaluatedNode;
     }
 
     /**
@@ -342,24 +408,16 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
     override equals(other: EvaluatedNode): boolean {
         if (other === this) {
             return true;
-        }
-
-        if (!(other instanceof EvaluatedNamedTuple)) {
+        } else if (!(other instanceof EvaluatedNamedTuple)) {
             return false;
         }
 
-        if (other.entries.size !== this.entries.size) {
-            return false;
-        }
-
-        // TODO
-
-        return true;
+        return substitutionsAreEqual(this.entries, other.entries);
     }
 
     override toString(): string {
-        const entryString = Array.from(this.entries, ([result, value]) => `${result.name}=${value}`).join(', ');
-        return `{${entryString}}`;
+        const entryString = Array.from(this.entries, ([result, value]) => `${result.name} = ${value}`).join(', ');
+        return `(${entryString})`;
     }
 }
 
@@ -385,4 +443,19 @@ const isFullyEvaluated = (node: EvaluatedNode): boolean => {
     return node.isFullyEvaluated;
 };
 
-/* c8 ignore stop */
+const substitutionsAreEqual = (
+    a: Map<SdsDeclaration, EvaluatedNode> | undefined,
+    b: Map<SdsDeclaration, EvaluatedNode> | undefined,
+): boolean => {
+    if (a?.size !== b?.size) {
+        return false;
+    }
+
+    const aEntries = Array.from(a?.entries() ?? []);
+    const bEntries = Array.from(b?.entries() ?? []);
+
+    return aEntries.every(([aEntry, aValue], i) => {
+        const [bEntry, bValue] = bEntries[i];
+        return aEntry === bEntry && aValue.equals(bValue);
+    });
+};

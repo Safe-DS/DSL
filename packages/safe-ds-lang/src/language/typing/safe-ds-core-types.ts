@@ -1,8 +1,8 @@
 import { WorkspaceCache } from 'langium';
-import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { ClassType, Type, UnknownType } from './model.js';
 import { SdsClass } from '../generated/ast.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { ClassType, Type, UnknownType } from './model.js';
 
 export class SafeDsCoreTypes {
     private readonly builtinClasses: SafeDsClasses;

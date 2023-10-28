@@ -1,3 +1,12 @@
+import { SdsDeclaration } from '../generated/ast.js';
+import {
+    BooleanConstant,
+    Constant,
+    FloatConstant,
+    IntConstant,
+    NullConstant,
+    StringConstant,
+} from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
     CallableType,
@@ -12,15 +21,6 @@ import {
     UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
-import { SdsDeclaration } from '../generated/ast.js';
-import {
-    BooleanConstant,
-    Constant,
-    FloatConstant,
-    IntConstant,
-    NullConstant,
-    StringConstant,
-} from '../partialEvaluation/model.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
 /* c8 ignore start */
