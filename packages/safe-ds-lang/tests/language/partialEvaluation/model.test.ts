@@ -100,36 +100,86 @@ describe('partial evaluation model', async () => {
             expect(nodeInstance.equals(nodeInstance)).toBeTruthy();
         });
 
-        it('should return false if the other node is an instance of another class', () => {
+        it(`should return false if the other node is an instance of another class (${node().constructor.name})`, () => {
             expect(node().equals(nodeOfOtherType())).toBeFalsy();
         });
 
-        it('should return true if both nodes have the same values', () => {
+        it(`should return true if both nodes have the same values (${node().constructor.name})`, () => {
             expect(node().equals(node())).toBeTruthy();
         });
 
         if (unequalNodeOfSameType) {
-            it('should return false if both nodes have different values', () => {
+            it(`should return false if both nodes have different values (${node().constructor.name})`, () => {
                 expect(node().equals(unequalNodeOfSameType())).toBeFalsy();
             });
         }
     });
 
     const toStringTests: ToStringTest<EvaluatedNode>[] = [
-        { node: new BooleanConstant(true), expectedString: 'true' },
-        { node: new FloatConstant(1.0), expectedString: '1.0' },
-        { node: new IntConstant(1n), expectedString: '1' },
-        { node: NullConstant, expectedString: 'null' },
-        { node: new StringConstant('foo'), expectedString: '"foo"' },
-        { node: new BlockLambdaClosure([], []), expectedString: '[] => []' },
-        { node: new ExpressionLambdaClosure([], []), expectedString: '() => []' },
-        { node: new SegmentClosure([], []), expectedString: '[] => []' },
-        { node: new EvaluatedEnumVariant([], []), expectedString: '[]' },
-        { node: new EvaluatedList([new IntConstant(1n)]), expectedString: '[1]' },
-        { node: new EvaluatedMap([], []), expectedString: '[:]' },
-        { node: new EvaluatedMapEntry([], []), expectedString: '[] => []' },
-        { node: new EvaluatedNamedTuple([], []), expectedString: '[:]' },
-        { node: UnknownEvaluatedNode, expectedString: 'unknown' },
+        {
+            node: new BooleanConstant(true),
+            expectedString: 'true',
+        },
+        {
+            node: new FloatConstant(1.5),
+            expectedString: '1.5',
+        },
+        {
+            node: new IntConstant(1n),
+            expectedString: '1',
+        },
+        {
+            node: NullConstant,
+            expectedString: 'null',
+        },
+        {
+            node: new StringConstant('foo'),
+            expectedString: '"foo"',
+        },
+        {
+            node: new BlockLambdaClosure([], []),
+            expectedString: '[] => []',
+        },
+        {
+            node: new ExpressionLambdaClosure([], []),
+            expectedString: '() => []',
+        },
+        {
+            node: new SegmentClosure([], []),
+            expectedString: '[] => []',
+        },
+        {
+            node: new EvaluatedEnumVariant([], []),
+            expectedString: '[]',
+        },
+        {
+            node: new EvaluatedList([]),
+            expectedString: '[]',
+        },
+        {
+            node: new EvaluatedList([NullConstant]),
+            expectedString: '[null]',
+        },
+        {
+            node: new EvaluatedMap([]),
+            expectedString: '{}',
+        },
+        {
+            node: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+            expectedString: '{null: null}',
+        },
+        {
+            node: new EvaluatedMapEntry(NullConstant, NullConstant),
+            expectedString: 'null: null',
+        },
+        {
+            node: new EvaluatedNamedTuple([], []),
+            expectedString: '[:]',
+        },
+        {
+            node: UnknownEvaluatedNode,
+            expectedString: '?',
+        },
     ];
 
     describe.each(toStringTests)('toString', ({ node, expectedString }) => {
@@ -139,24 +189,86 @@ describe('partial evaluation model', async () => {
     });
 
     const isFullyEvaluatedTests: IsFullyEvaluatedTest[] = [
-        { node: new BooleanConstant(true), expectedIsFullyEvaluated: true },
-        { node: new FloatConstant(1.0), expectedIsFullyEvaluated: true },
-        { node: new IntConstant(1n), expectedIsFullyEvaluated: true },
-        { node: NullConstant, expectedIsFullyEvaluated: true },
-        { node: new StringConstant('foo'), expectedIsFullyEvaluated: true },
-        { node: new BlockLambdaClosure([], []), expectedIsFullyEvaluated: false },
-        { node: new ExpressionLambdaClosure([], []), expectedIsFullyEvaluated: false },
-        { node: new SegmentClosure([], []), expectedIsFullyEvaluated: false },
-        { node: new EvaluatedEnumVariant([], []), expectedIsFullyEvaluated: false },
-        { node: new EvaluatedList([new IntConstant(1n)]), expectedIsFullyEvaluated: false },
-        { node: new EvaluatedMap([], []), expectedIsFullyEvaluated: false },
-        { node: new EvaluatedMapEntry([], []), expectedIsFullyEvaluated: false },
-        { node: new EvaluatedNamedTuple([], []), expectedIsFullyEvaluated: false },
-        { node: UnknownEvaluatedNode, expectedIsFullyEvaluated: false },
+        {
+            node: new BooleanConstant(true),
+            expectedValue: true,
+        },
+        {
+            node: new FloatConstant(1.0),
+            expectedValue: true,
+        },
+        {
+            node: new IntConstant(1n),
+            expectedValue: true,
+        },
+        {
+            node: NullConstant,
+            expectedValue: true,
+        },
+        {
+            node: new StringConstant('foo'),
+            expectedValue: true,
+        },
+        {
+            node: new BlockLambdaClosure([], []),
+            expectedValue: false,
+        },
+        {
+            node: new ExpressionLambdaClosure([], []),
+            expectedValue: false,
+        },
+        {
+            node: new SegmentClosure([], []),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedEnumVariant([], []),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedList([NullConstant]),
+            expectedValue: true,
+        },
+        {
+            node: new EvaluatedList([UnknownEvaluatedNode]),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+            expectedValue: true,
+        },
+        {
+            node: new EvaluatedMap([new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant)]),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, UnknownEvaluatedNode)]),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedMapEntry(NullConstant, NullConstant),
+            expectedValue: true,
+        },
+        {
+            node: new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedMapEntry(NullConstant, UnknownEvaluatedNode),
+            expectedValue: false,
+        },
+        {
+            node: new EvaluatedNamedTuple([], []),
+            expectedValue: false,
+        },
+        {
+            node: UnknownEvaluatedNode,
+            expectedValue: false,
+        },
     ];
-    describe.each(isFullyEvaluatedTests)('isFullyEvaluated', ({ node, expectedIsFullyEvaluated }) => {
+    describe.each(isFullyEvaluatedTests)('isFullyEvaluated', ({ node, expectedValue }) => {
         it(`should return the expected value (${node.constructor.name} -- ${node})`, () => {
-            expect(node.isFullyEvaluated).toStrictEqual(expectedIsFullyEvaluated);
+            expect(node.isFullyEvaluated).toStrictEqual(expectedValue);
         });
     });
 
@@ -169,7 +281,7 @@ describe('partial evaluation model', async () => {
     ];
 
     describe.each(toInterpolationStringTests)('toInterpolationString', ({ node, expectedString }) => {
-        it(`should return the expected string representation (${node.constructor.name})`, () => {
+        it(`should return the expected string representation (${node.constructor.name} -- ${node})`, () => {
             expect(node.toInterpolationString()).toStrictEqual(expectedString);
         });
     });
@@ -207,7 +319,7 @@ interface IsFullyEvaluatedTest {
     /**
      * Whether the node is fully evaluated.
      */
-    expectedIsFullyEvaluated: boolean;
+    expectedValue: boolean;
 }
 
 /**
