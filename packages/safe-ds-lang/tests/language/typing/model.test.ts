@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsEnumVariant, isSdsFunction } from '../../../src/language/generated/ast.js';
 import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { BooleanConstant, IntConstant } from '../../../src/language/partialEvaluation/model.js';
+import { BooleanConstant, IntConstant, NullConstant } from '../../../src/language/partialEvaluation/model.js';
 import {
     CallableType,
     ClassType,
@@ -173,6 +173,21 @@ describe('type model', async () => {
         {
             type: new LiteralType([new BooleanConstant(true)]),
             isNullable: true,
+            expectedCopy: new LiteralType([new BooleanConstant(true), NullConstant]),
+        },
+        {
+            type: new LiteralType([new BooleanConstant(true), NullConstant]),
+            isNullable: false,
+            expectedCopy: new LiteralType([new BooleanConstant(true)]),
+        },
+        {
+            type: new LiteralType([new BooleanConstant(true), NullConstant]),
+            isNullable: true,
+            expectedCopy: new LiteralType([new BooleanConstant(true), NullConstant]),
+        },
+        {
+            type: new LiteralType([new BooleanConstant(true)]),
+            isNullable: false,
             expectedCopy: new LiteralType([new BooleanConstant(true)]),
         },
         {

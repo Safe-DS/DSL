@@ -106,6 +106,16 @@ export class LiteralType extends Type {
     override toString(): string {
         return `literal<${this.constants.join(', ')}>`;
     }
+
+    override updateNullability(isNullable: boolean): LiteralType {
+        if (this.isNullable && !isNullable) {
+            return new LiteralType(this.constants.filter((it) => it !== NullConstant));
+        } else if (!this.isNullable && isNullable) {
+            return new LiteralType([...this.constants, NullConstant]);
+        } else {
+            return this;
+        }
+    }
 }
 
 export class NamedTupleType<T extends SdsDeclaration> extends Type {
