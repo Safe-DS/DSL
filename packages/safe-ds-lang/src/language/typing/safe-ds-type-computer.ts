@@ -160,7 +160,7 @@ export class SafeDsTypeComputer {
         const assigneePosition = node.$containerIndex ?? -1;
         const expressionType = this.computeType(containingAssignment?.expression);
         if (expressionType instanceof NamedTupleType) {
-            return expressionType.getTypeOfEntryByPosition(assigneePosition) ?? UnknownType;
+            return expressionType.getTypeOfEntryByIndex(assigneePosition);
         } else if (assigneePosition === 0) {
             return expressionType;
         }
@@ -236,7 +236,7 @@ export class SafeDsTypeComputer {
             }
 
             const parameterPosition = node.$containerIndex ?? -1;
-            return parameterType.getParameterTypeByPosition(parameterPosition) ?? UnknownType;
+            return parameterType.getParameterTypeByIndex(parameterPosition);
         }
 
         // Yielded lambda
@@ -252,7 +252,7 @@ export class SafeDsTypeComputer {
             }
 
             const parameterPosition = node.$containerIndex ?? -1;
-            return resultType.getParameterTypeByPosition(parameterPosition) ?? UnknownType;
+            return resultType.getParameterTypeByIndex(parameterPosition);
         }
 
         return UnknownType;
@@ -363,7 +363,7 @@ export class SafeDsTypeComputer {
         const receiverType = this.computeType(node.receiver);
 
         if (receiverType instanceof CallableType) {
-            if (!isSdsAnnotation(receiverType.sdsCallable)) {
+            if (!isSdsAnnotation(receiverType.callable)) {
                 return receiverType.outputType;
             }
         } else if (receiverType instanceof StaticType) {
@@ -402,7 +402,7 @@ export class SafeDsTypeComputer {
         if (leftOperandType.isNullable) {
             /* c8 ignore next 3 */
             const rightOperandType = this.computeType(node.rightOperand);
-            return this.lowestCommonSupertype(leftOperandType.copyWithNullability(false), rightOperandType);
+            return this.lowestCommonSupertype(leftOperandType.updateNullability(false), rightOperandType);
         } else {
             return leftOperandType;
         }
@@ -421,7 +421,7 @@ export class SafeDsTypeComputer {
         }
 
         const receiverType = this.computeType(node.receiver);
-        return memberType.copyWithNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
+        return memberType.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
@@ -439,7 +439,7 @@ export class SafeDsTypeComputer {
         const instanceType = this.computeType(target);
 
         if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
-            return new StaticType(instanceType.copyWithNullability(false));
+            return new StaticType(instanceType.updateNullability(false));
         } else {
             return instanceType;
         }
@@ -453,7 +453,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
-            return this.computeType(node.declaration?.ref).copyWithNullability(node.isNullable);
+            return this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));

@@ -1,5 +1,4 @@
-import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { EMPTY_STREAM, findLocalReferences, getContainerOfType, Stream } from 'langium';
 import {
     isSdsAbstractCall,
     isSdsAnnotationCall,
@@ -28,8 +27,9 @@ import {
     SdsTypeParameter,
     SdsYield,
 } from '../generated/ast.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { CallableType, StaticType } from '../typing/model.js';
-import { EMPTY_STREAM, findLocalReferences, getContainerOfType, Stream } from 'langium';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import {
     getAbstractResults,
     getArguments,
@@ -138,7 +138,7 @@ export class SafeDsNodeMapper {
         } else if (isSdsCall(node)) {
             const receiverType = this.typeComputer().computeType(node.receiver);
             if (receiverType instanceof CallableType) {
-                return receiverType.sdsCallable;
+                return receiverType.callable;
             } else if (receiverType instanceof StaticType) {
                 const declaration = receiverType.instanceType.declaration;
                 if (isSdsCallable(declaration)) {
