@@ -1,0 +1,84 @@
+package tests.scoping.references.inSameFile.toParameters.fromDefaultValueOfParameter
+
+annotation MyAnnotation(
+    // $TEST$ target annotation_param
+    // $TEST$ unresolved
+    »p«: String = »q«,
+    // $TEST$ references annotation_param
+    q: String = »p«,
+    // $TEST$ unresolved
+    r: String = »r«,
+)
+
+class MyClass(
+    // $TEST$ target class_param
+    // $TEST$ unresolved
+    »p«: String = »q«,
+    // $TEST$ references class_param
+    q: String = »p«,
+    // $TEST$ unresolved
+    r: String = »r«,
+)
+
+enum MyEnum {
+    MyEnumVariant(
+        // $TEST$ target enum_variant_param
+        // $TEST$ unresolved
+        »p«: String = »q«,
+        // $TEST$ references enum_variant_param
+        q: String = »p«,
+        // $TEST$ unresolved
+        r: String = »r«,
+    )
+}
+
+fun myFunction(
+    // $TEST$ target function_param
+    // $TEST$ unresolved
+    »p«: String = »q«,
+    // $TEST$ references function_param
+    q: String = »p«,
+    // $TEST$ unresolved
+    r: String = »r«,
+)
+
+segment mySegment1(
+    // $TEST$ target segment_param
+    // $TEST$ unresolved
+    »p«: String = »q«,
+    // $TEST$ references segment_param
+    q: String = »p«,
+    // $TEST$ unresolved
+    r: String = »r«,
+) {}
+
+segment mySegment2(
+    p: (
+        // $TEST$ target callable_type_param
+        // $TEST$ unresolved
+        »p«: String = »q«,
+        // $TEST$ references callable_type_param
+        q: String = »p«,
+        // $TEST$ unresolved
+        r: String = »r«,
+    ) -> ()
+) {
+    (
+        // $TEST$ target block_lambda_param
+        // $TEST$ unresolved
+        »p«: String = »q«,
+        // $TEST$ references block_lambda_param
+        q: String = »p«,
+        // $TEST$ unresolved
+        r: String = »r«,
+    ) {};
+    (
+        // $TEST$ target block_function_param
+        // $TEST$ unresolved
+        »p«: String = »q«,
+        // $TEST$ references block_function_param
+        q: String = »p«,
+        // $TEST$ unresolved
+        r: String = »r«,
+    ) -> 1;
+}
