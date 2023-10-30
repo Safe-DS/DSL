@@ -251,25 +251,25 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         // Declarations in this file
         currentScope = this.globalDeclarationsInSameFile(node, currentScope);
 
-        // // Declarations in containing classes
-        // context.containingClassOrNull()?.let {
-        //     result = classMembers(it, result)
-        // }
-        //
+        // Declarations in containing declarations
+        currentScope = this.containingDeclarations(node, currentScope);
 
         // Declarations in containing blocks
         return this.localDeclarations(node, currentScope);
     }
 
-    // private fun classMembers(context: SdsClass, parentScope: IScope): IScope {
-    //     return when (val containingClassOrNull = context.containingClassOrNull()) {
-    //         is SdsClass -> Scopes.scopeFor(
-    //             context.classMembersOrEmpty(),
-    //             classMembers(containingClassOrNull, parentScope),
-    //         )
-    //     else -> Scopes.scopeFor(context.classMembersOrEmpty(), parentScope)
-    //     }
-    // }
+    private containingDeclarations(node: AstNode, outerScope: Scope): Scope {
+        const result = [];
+
+        // Only containing classes, enums, and enum variants can be referenced
+        let current = getContainerOfType(node.$container, isSdsNamedTypeDeclaration);
+        while (current) {
+            result.push(current);
+            current = getContainerOfType(current.$container, isSdsNamedTypeDeclaration);
+        }
+
+        return this.createScopeForNodes(result, outerScope);
+    }
 
     private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
         const module = getContainerOfType(node, isSdsModule);
