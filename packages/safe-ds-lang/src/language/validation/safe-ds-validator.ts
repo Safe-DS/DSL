@@ -93,7 +93,11 @@ import {
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
-import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
+import {
+    segmentParameterShouldBeUsed,
+    segmentResultMustBeAssignedExactlyOnce,
+    segmentShouldBeUsed,
+} from './other/declarations/segments.js';
 import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
@@ -282,6 +286,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentParameterShouldBeUsed(services),
             segmentResultMustBeAssignedExactlyOnce(services),
             segmentResultListShouldNotBeEmpty,
+            segmentShouldBeUsed(services),
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeParameter: [typeParameterMustHaveSufficientContext],
