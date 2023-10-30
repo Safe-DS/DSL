@@ -6,13 +6,16 @@ import { DiagnosticTag } from 'vscode-languageserver';
 
 export const CODE_SEGMENT_DUPLICATE_YIELD = 'segment/duplicate-yield';
 export const CODE_SEGMENT_UNASSIGNED_RESULT = 'segment/unassigned-result';
+export const CODE_SEGMENT_UNUSED = 'segment/unused';
 export const CODE_SEGMENT_UNUSED_PARAMETER = 'segment/unused-parameter';
 
-export const segmentResultMustBeAssignedExactlyOnce =
-    (services: SafeDsServices) => (node: SdsSegment, accept: ValidationAcceptor) => {
+export const segmentResultMustBeAssignedExactlyOnce = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+
+    return (node: SdsSegment, accept: ValidationAcceptor) => {
         const results = getResults(node.resultList);
         for (const result of results) {
-            const yields = services.helpers.NodeMapper.resultToYields(result);
+            const yields = nodeMapper.resultToYields(result);
             if (yields.isEmpty()) {
                 accept('error', 'Nothing is assigned to this result.', {
                     node: result,
@@ -32,11 +35,35 @@ export const segmentResultMustBeAssignedExactlyOnce =
             }
         }
     };
+};
 
-export const segmentParameterShouldBeUsed =
-    (services: SafeDsServices) => (node: SdsSegment, accept: ValidationAcceptor) => {
+export const segmentShouldBeUsed = (services: SafeDsServices) => {
+    const referenceProvider = services.references.References;
+
+    return (node: SdsSegment, accept: ValidationAcceptor) => {
+        // Don't show this warning for public segments
+        if (node.visibility === undefined) {
+            return;
+        }
+
+        const references = referenceProvider.findReferences(node, {});
+        if (references.isEmpty()) {
+            accept('warning', 'This segment is unused and can be removed.', {
+                node,
+                property: 'name',
+                code: CODE_SEGMENT_UNUSED,
+                tags: [DiagnosticTag.Unnecessary],
+            });
+        }
+    };
+};
+
+export const segmentParameterShouldBeUsed = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+
+    return (node: SdsSegment, accept: ValidationAcceptor) => {
         for (const parameter of getParameters(node)) {
-            const usages = services.helpers.NodeMapper.parameterToReferences(parameter);
+            const usages = nodeMapper.parameterToReferences(parameter);
 
             if (usages.isEmpty()) {
                 accept('warning', 'This parameter is unused and can be removed.', {
@@ -48,3 +75,4 @@ export const segmentParameterShouldBeUsed =
             }
         }
     };
+};

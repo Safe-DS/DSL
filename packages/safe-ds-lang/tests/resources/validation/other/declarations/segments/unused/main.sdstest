@@ -1,0 +1,17 @@
+package tests.validation.other.declarations.segments.unused
+
+// $TEST$ warning "This segment is unused and can be removed."
+private segment »myUnusedPrivateSegment«() {}
+
+// $TEST$ no warning "This segment is unused and can be removed."
+private segment »myUsedPrivateSegment«() {}
+
+// $TEST$ warning "This segment is unused and can be removed."
+internal segment »myUnusedInternalSegment«() {}
+
+// $TEST$ no warning "This segment is unused and can be removed."
+internal segment »myUsedInternalSegment«() {}
+
+pipeline myPipeline1 {
+    myUsedPrivateSegment();
+}
