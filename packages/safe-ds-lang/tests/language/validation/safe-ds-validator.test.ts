@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import { createValidationTests, ExpectedIssue } from './creator.js';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';

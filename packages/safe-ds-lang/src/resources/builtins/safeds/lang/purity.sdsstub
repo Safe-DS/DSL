@@ -10,3 +10,53 @@ package safeds.lang
 @Experimental
 @Target([AnnotationTarget.Function])
 annotation Pure
+
+/**
+ * Indicates that the function has side effects and/or does not always return the same results given the same arguments.
+ *
+ * @param allReasons
+ *     A list of **all** reasons why the function is impure. If no specific {@link ImpurityReason} applies, include
+ *     `ImpurityReason.Other`.
+ */
+@Experimental
+@Target([AnnotationTarget.Function])
+annotation Impure(allReasons: List<ImpurityReason>)
+
+/**
+ * A reason why a function is impure.
+ */
+enum ImpurityReason {
+
+    /**
+     * The function reads from a file and the file path is a constant.
+     *
+     * @param path The path of the file.
+     */
+    FileReadFromConstantPath(path: String)
+
+    /**
+     * The function reads from a file and the file path is given by a parameter.
+     *
+     * @param parameterName The name of the parameter that specifies the file path.
+     */
+    FileReadFromParameterizedPath(parameterName: String)
+
+    /**
+     * The function writes to a file and the file path is a constant.
+     *
+     * @param path The path of the file.
+     */
+    FileWriteToConstantPath(path: String)
+
+    /**
+     * The function writes to a file and the file path is given by a parameter.
+     *
+     * @param parameterName The name of the parameter that specifies the file path.
+     */
+    FileWriteToParameterizedPath(parameterName: String)
+
+    /**
+     * The function is impure for some other reason. If possible, use a more specific reason.
+     */
+    Other
+}

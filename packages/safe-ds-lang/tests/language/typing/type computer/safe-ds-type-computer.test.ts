@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';

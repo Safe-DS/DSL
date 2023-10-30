@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { EmptyFileSystem } from 'langium';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import {
