@@ -1,0 +1,43 @@
+package tests.scoping.memberAccesses.toClassMembers.hiding
+
+class MySuperClass {
+    // $TEST$ target MySuperClass_myStaticAttribute
+    static attr »myStaticAttribute«: Int
+
+    // $TEST$ target MySuperClass_myNestedClass
+    class »MyNestedClass«
+
+    // $TEST$ target MySuperClass_myNestedEnum
+    enum »MyNestedEnum«
+
+    // $TEST$ target MySuperClass_myStaticMethod
+    static fun »myStaticMethod1«()
+}
+
+class MyClass sub MySuperClass {
+    // $TEST$ target MyClass_myStaticAttribute
+    static attr »myStaticAttribute«: Int
+
+    // $TEST$ target MyClass_myNestedClass
+    class »MyNestedClass«
+
+    // $TEST$ target MyClass_myNestedEnum
+    enum »MyNestedEnum«
+
+    // $TEST$ target MyClass_myStaticMethod
+    static fun »myStaticMethod1«()
+}
+
+pipeline myPipeline {
+    // $TEST$ references MyClass_myStaticAttribute
+    MyClass.»myStaticAttribute«;
+
+    // $TEST$ references MyClass_myNestedClass
+    MyClass.»MyNestedClass«;
+
+    // $TEST$ references MyClass_myNestedEnum
+    MyClass.»MyNestedEnum«;
+
+    // $TEST$ references MyClass_myStaticMethod
+    MyClass.»myStaticMethod1«();
+}

@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { isSdsClass, SdsClass } from '../../../src/language/generated/ast.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
@@ -129,6 +129,75 @@ describe('SafeDsClassHierarchy', async () => {
         it.each(testCases)('$testName', async ({ code, expected }) => {
             const firstClass = await getNodeOfType(services, code, isSdsClass);
             expect(superclassNames(firstClass)).toStrictEqual(expected);
+        });
+    });
+
+    describe('streamSuperclassMembers', () => {
+        const superclassMemberNames = (node: SdsClass | undefined) =>
+            classHierarchy
+                .streamSuperclassMembers(node)
+                .map((member) => member.name)
+                .toArray();
+
+        it('should return an empty stream if passed undefined', () => {
+            expect(superclassMemberNames(undefined)).toStrictEqual([]);
+        });
+
+        const testCases = [
+            {
+                testName: 'should return the members of the parent type',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                    }
+
+                    class B sub A
+                `,
+                index: 1,
+                expected: ['a', 'f'],
+            },
+            {
+                testName: 'should only consider members of the first parent type',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                    }
+
+                    class B {
+                        attr b: Int
+                        fun g()
+                    }
+
+                    class C sub A, B
+                `,
+                index: 2,
+                expected: ['a', 'f'],
+            },
+            {
+                testName: 'should return members of all superclasses',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                    }
+
+                    class B sub A {
+                        attr b: Int
+                        fun g()
+                    }
+
+                    class C sub B
+                `,
+                index: 2,
+                expected: ['b', 'g', 'a', 'f'],
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, index, expected }) => {
+            const firstClass = await getNodeOfType(services, code, isSdsClass, index);
+            expect(superclassMemberNames(firstClass)).toStrictEqual(expected);
         });
     });
 });

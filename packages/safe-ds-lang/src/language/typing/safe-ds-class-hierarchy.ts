@@ -1,10 +1,10 @@
-import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { SdsClass } from '../generated/ast.js';
 import { EMPTY_STREAM, stream, Stream } from 'langium';
-import { getParentTypes } from '../helpers/nodeProperties.js';
-import { SafeDsTypeComputer } from './safe-ds-type-computer.js';
+import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
+import { SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { getMatchingClassMembers, getParentTypes } from '../helpers/nodeProperties.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType } from './model.js';
+import { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 
 export class SafeDsClassHierarchy {
     private readonly builtinClasses: SafeDsClasses;
@@ -60,6 +60,14 @@ export class SafeDsClassHierarchy {
         }
     }
 
+    streamSuperclassMembers(node: SdsClass | undefined): Stream<SdsClassMember> {
+        if (!node) {
+            return EMPTY_STREAM;
+        }
+
+        return this.streamSuperclasses(node).flatMap(getMatchingClassMembers);
+    }
+
     /**
      * Returns the parent class of the given class, or undefined if there is no parent class. Only the first parent
      * type is considered, i.e. multiple inheritance is not supported.
@@ -74,22 +82,3 @@ export class SafeDsClassHierarchy {
         return undefined;
     }
 }
-
-// fun SdsClass.superClassMembers() =
-//     this.superClasses().flatMap { it.classMembersOrEmpty().asSequence() }
-//
-// // TODO only static methods can be hidden
-// fun SdsFunction.hiddenFunction(): SdsFunction? {
-//     val containingClassOrInterface = closestAncestorOrNull<SdsClass>() ?: return null
-//     return containingClassOrInterface.superClassMembers()
-//         .filterIsInstance<SdsFunction>()
-//         .firstOrNull { it.name == name }
-// }
-//
-// fun SdsClass?.inheritedNonStaticMembersOrEmpty(): Set<SdsAbstractDeclaration> {
-//     return this?.parentClassesOrEmpty()
-//         ?.flatMap { it.classMembersOrEmpty() }
-// ?.filter { it is SdsAttribute && !it.isStatic || it is SdsFunction && !it.isStatic }
-// ?.toSet()
-//     .orEmpty()
-// }

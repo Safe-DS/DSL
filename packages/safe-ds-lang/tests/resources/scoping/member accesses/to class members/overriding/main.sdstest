@@ -1,0 +1,25 @@
+package tests.scoping.memberAccesses.toClassMembers.overriding
+
+class MySuperClass {
+    // $TEST$ target MySuperClass_myInstanceAttribute
+    attr »myInstanceAttribute«: Int
+
+    // $TEST$ target MySuperClass_myInstanceMethod
+    fun »myInstanceMethod1«()
+}
+
+class MyClass() sub MySuperClass {
+    // $TEST$ target MyClass_myInstanceAttribute
+    attr »myInstanceAttribute«: Int
+
+    // $TEST$ target MyClass_myInstanceMethod
+    fun »myInstanceMethod1«()
+}
+
+pipeline myPipeline {
+    // $TEST$ references MyClass_myInstanceAttribute
+    MyClass().»myInstanceAttribute«;
+
+    // $TEST$ references MyClass_myInstanceMethod
+    MyClass().»myInstanceMethod1«();
+}
