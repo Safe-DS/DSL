@@ -42,7 +42,7 @@ class »MyClass«(
         p = »MyClass«()
     )
     @MyAnnotation(
-        // $TEST$ references enum
+        // $TEST$ unresolved
         p = »MyEnum«
     )
     // $TEST$ target enum
@@ -73,7 +73,7 @@ class »MyClass«(
     }
 
     @MyAnnotation(
-        // $TEST$ references innerClass
+        // $TEST$ references outerClass
         p = »MyClass«()
     )
     @MyAnnotation(

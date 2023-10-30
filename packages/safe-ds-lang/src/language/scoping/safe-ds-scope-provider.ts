@@ -11,6 +11,7 @@ import {
 } from 'langium';
 import {
     isSdsAbstractCall,
+    isSdsAnnotationCall,
     isSdsArgument,
     isSdsAssignment,
     isSdsBlock,
@@ -54,6 +55,7 @@ import {
 import { isContainedIn } from '../helpers/astUtils.js';
 import {
     getAbstractResults,
+    getAnnotationCallTarget,
     getAssignees,
     getEnumVariants,
     getImportedDeclarations,
@@ -261,8 +263,17 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private containingDeclarations(node: AstNode, outerScope: Scope): Scope {
         const result = [];
 
+        // Cannot reference the target of an annotation call from inside the annotation call
+        let start: AstNode | undefined;
+        const containingAnnotationCall = getContainerOfType(node, isSdsAnnotationCall);
+        if (containingAnnotationCall) {
+            start = getAnnotationCallTarget(containingAnnotationCall)?.$container;
+        } else {
+            start = node.$container;
+        }
+
         // Only containing classes, enums, and enum variants can be referenced
-        let current = getContainerOfType(node.$container, isSdsNamedTypeDeclaration);
+        let current = getContainerOfType(start, isSdsNamedTypeDeclaration);
         while (current) {
             result.push(current);
             current = getContainerOfType(current.$container, isSdsNamedTypeDeclaration);
