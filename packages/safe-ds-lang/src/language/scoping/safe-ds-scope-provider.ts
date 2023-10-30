@@ -26,6 +26,7 @@ import {
     isSdsModule,
     isSdsNamedType,
     isSdsNamedTypeDeclaration,
+    isSdsParameter,
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsReference,
@@ -35,12 +36,14 @@ import {
     isSdsWildcardImport,
     isSdsYield,
     SdsArgument,
+    type SdsCallable,
     SdsDeclaration,
     SdsExpression,
     SdsImportedDeclaration,
     SdsMemberAccess,
     SdsMemberType,
     SdsNamedTypeDeclaration,
+    type SdsParameter,
     SdsPlaceholder,
     SdsReference,
     SdsStatement,
@@ -285,9 +288,17 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private localDeclarations(node: AstNode, outerScope: Scope): Scope {
-        // Parameters
         const containingCallable = getContainerOfType(node.$container, isSdsCallable);
-        const parameters = getParameters(containingCallable);
+
+        // Parameters (up to the containing parameter)
+        const containingParameter = getContainerOfType(node, isSdsParameter);
+
+        let parameters: Iterable<SdsParameter>;
+        if (containingCallable && containingParameter) {
+            parameters = this.parametersUpToParameter(containingCallable, containingParameter);
+        } else {
+            parameters = getParameters(containingCallable);
+        }
 
         // Placeholders up to the containing statement
         const containingStatement = getContainerOfType(node.$container, isSdsStatement);
@@ -308,6 +319,19 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return this.createScopeForNodes(localDeclarations, this.localDeclarations(containingCallable, outerScope));
         } else {
             return this.createScopeForNodes(localDeclarations, outerScope);
+        }
+    }
+
+    private *parametersUpToParameter(
+        callable: SdsCallable,
+        parameter: SdsParameter,
+    ): Generator<SdsParameter, void, undefined> {
+        for (const current of getParameters(callable)) {
+            if (current === parameter) {
+                return;
+            }
+
+            yield current;
         }
     }
 
