@@ -1,0 +1,84 @@
+package tests.scoping.memberAccesses.toClassMembers.inheritance
+
+class MySuperClass1 {
+    // $TEST$ target MySuperClass1_myInstanceAttribute
+    attr »myInstanceAttribute1«: Int
+
+    // $TEST$ target MySuperClass1_myInstanceMethod
+    fun »myInstanceMethod1«()
+
+
+    // $TEST$ target MySuperClass1_myStaticAttribute
+    static attr »myStaticAttribute1«: Int
+
+    // $TEST$ target MySuperClass1_myNestedClass
+    class »MyNestedClass1«
+
+    // $TEST$ target MySuperClass1_myNestedEnum
+    enum »MyNestedEnum1«
+
+    // $TEST$ target MySuperClass1_myStaticMethod
+    static fun »myStaticMethod1«()
+}
+
+class MySuperClass2 {
+    // $TEST$ target MySuperClass2_myInstanceAttribute
+    attr »myInstanceAttribute2«: Int
+
+    // $TEST$ target MySuperClass2_myInstanceMethod
+    fun »myInstanceMethod2«()
+
+
+    // $TEST$ target MySuperClass2_myStaticAttribute
+    static attr »myStaticAttribute2«: Int
+
+    // $TEST$ target MySuperClass2_myNestedClass
+    class »MyNestedClass2«
+
+    // $TEST$ target MySuperClass2_myNestedEnum
+    enum »MyNestedEnum2«
+
+    // $TEST$ target MySuperClass2_myStaticMethod
+    static fun »myStaticMethod2«()
+}
+
+class MyClass() sub MySuperClass1, MySuperClass2
+
+pipeline myPipeline {
+    // $TEST$ references MySuperClass1_myInstanceAttribute
+    MyClass().»myInstanceAttribute1«;
+
+    // $TEST$ references MySuperClass1_myInstanceMethod
+    MyClass().»myInstanceMethod1«();
+
+    // $TEST$ references MySuperClass1_myStaticAttribute
+    MyClass.»myStaticAttribute1«;
+
+    // $TEST$ references MySuperClass1_myNestedClass
+    MyClass.»MyNestedClass1«;
+
+    // $TEST$ references MySuperClass1_myNestedEnum
+    MyClass.»MyNestedEnum1«;
+
+    // $TEST$ references MySuperClass1_myStaticMethod
+    MyClass.»myStaticMethod1«();
+
+
+    // $TEST$ unresolved
+    MyClass().»myInstanceAttribute2«;
+
+    // $TEST$ unresolved
+    MyClass().»myInstanceMethod2«();
+
+    // $TEST$ unresolved
+    MyClass.»myStaticAttribute2«;
+
+    // $TEST$ unresolved
+    MyClass.»MyNestedClass2«;
+
+    // $TEST$ unresolved
+    MyClass.»MyNestedEnum2«;
+
+    // $TEST$ unresolved
+    MyClass.»myStaticMethod2«();
+}

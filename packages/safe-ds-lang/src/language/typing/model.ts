@@ -137,17 +137,6 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
         return this.entries[index]?.type ?? UnknownType;
     }
 
-    /**
-     * If this only has one entry, returns its type. Otherwise, returns this.
-     */
-    override unwrap(): Type {
-        if (this.entries.length === 1) {
-            return this.entries[0].type;
-        }
-
-        return this;
-    }
-
     override equals(other: Type): boolean {
         if (other === this) {
             return true;
@@ -163,6 +152,17 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
 
     override toString(): string {
         return `(${this.entries.join(', ')})`;
+    }
+
+    /**
+     * If this only has one entry, returns its type. Otherwise, returns this.
+     */
+    override unwrap(): Type {
+        if (this.entries.length === 1) {
+            return this.entries[0].type;
+        }
+
+        return this;
     }
 }
 
