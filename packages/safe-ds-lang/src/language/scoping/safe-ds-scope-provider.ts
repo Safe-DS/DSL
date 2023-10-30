@@ -63,14 +63,16 @@ import {
     getTypeParameters,
     isStatic,
 } from '../helpers/nodeProperties.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
+import { ClassType, EnumVariantType } from '../typing/model.js';
+import type { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { ClassType, EnumVariantType } from '../typing/model.js';
 
 export class SafeDsScopeProvider extends DefaultScopeProvider {
     private readonly astReflection: AstReflection;
+    private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
@@ -79,6 +81,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         super(services);
 
         this.astReflection = services.shared.AstReflection;
+        this.classHierarchy = services.types.ClassHierarchy;
         this.nodeMapper = services.helpers.NodeMapper;
         this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
@@ -178,12 +181,9 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         const declaration = this.getUniqueReferencedDeclarationForExpression(node.receiver);
         if (isSdsClass(declaration)) {
             const ownStaticMembers = getMatchingClassMembers(declaration, isStatic);
-            // val superTypeMembers = receiverDeclaration.superClassMembers()
-            //     .filter { it.isStatic() }
-            //     .toList()
-            //
-            // return Scopes.scopeFor(ownStaticMembers, Scopes.scopeFor(superTypeMembers))
-            return this.createScopeForNodes(ownStaticMembers);
+            const superclassStaticMembers = this.classHierarchy.streamSuperclassMembers(declaration).filter(isStatic);
+
+            return this.createScopeForNodes(ownStaticMembers, this.createScopeForNodes(superclassStaticMembers));
         } else if (isSdsEnum(declaration)) {
             return this.createScopeForNodes(getEnumVariants(declaration));
         }
@@ -208,12 +208,14 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         if (receiverType instanceof ClassType) {
             const ownInstanceMembers = getMatchingClassMembers(receiverType.declaration, (it) => !isStatic(it));
-            // val superTypeMembers = type.sdsClass.superClassMembers()
-            //     .filter { !it.isStatic() }
-            //     .toList()
-            //
-            // Scopes.scopeFor(members, Scopes.scopeFor(superTypeMembers, resultScope))
-            return this.createScopeForNodes(ownInstanceMembers, resultScope);
+            const superclassInstanceMembers = this.classHierarchy
+                .streamSuperclassMembers(receiverType.declaration)
+                .filter((it) => !isStatic(it));
+
+            return this.createScopeForNodes(
+                ownInstanceMembers,
+                this.createScopeForNodes(superclassInstanceMembers, resultScope),
+            );
         } else if (receiverType instanceof EnumVariantType) {
             const parameters = getParameters(receiverType.declaration);
             return this.createScopeForNodes(parameters, resultScope);
