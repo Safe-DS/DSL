@@ -1,0 +1,115 @@
+package tests.scoping.references.inSameFile.toContainingDeclarations
+
+@Repeatable
+annotation MyAnnotation(p: Any?)
+
+// $TEST$ target outerClass
+class »MyClass«(
+    @MyAnnotation(
+        // $TEST$ references outerClass
+        p = »MyClass«()
+    )
+    // $TEST$ references outerClass
+    p: Any? = »MyClass«()
+) {
+
+    @MyAnnotation(
+        // $TEST$ references outerClass
+        p = »MyClass«()
+    )
+    @MyAnnotation(
+        // $TEST$ unresolved
+        p = »MyEnum«
+    )
+    fun f(
+        @MyAnnotation(
+            // $TEST$ references outerClass
+            p = »MyClass«()
+        )
+        // $TEST$ references outerClass
+        p1: Any? = »MyClass«(),
+
+        @MyAnnotation(
+            // $TEST$ unresolved
+            p = »MyEnum«
+        )
+        // $TEST$ unresolved
+        p2: Any? = »MyEnum«
+    )
+
+    @MyAnnotation(
+        // $TEST$ references outerClass
+        p = »MyClass«()
+    )
+    @MyAnnotation(
+        // $TEST$ unresolved
+        p = »MyEnum«
+    )
+    // $TEST$ target enum
+    enum »MyEnum« {
+        // $TEST$ target variant
+        »MyEnumVariant«(
+            @MyAnnotation(
+                // $TEST$ references outerClass
+                p = »MyClass«()
+            )
+            // $TEST$ references outerClass
+            p1: Any? = »MyClass«(),
+
+            @MyAnnotation(
+                // $TEST$ references enum
+                p = »MyEnum«
+            )
+            // $TEST$ references enum
+            p2: Any? = »MyEnum«,
+
+            @MyAnnotation(
+                // $TEST$ references variant
+                p = »MyEnumVariant«
+            )
+            // $TEST$ references variant
+            p3: Any? = »MyEnumVariant«,
+        )
+    }
+
+    @MyAnnotation(
+        // $TEST$ references outerClass
+        p = »MyClass«()
+    )
+    @MyAnnotation(
+        // $TEST$ unresolved
+        p = »MyEnum«
+    )
+    // $TEST$ target innerClass
+    class »MyClass«(
+        @MyAnnotation(
+            // $TEST$ references innerClass
+            p = »MyClass«()
+        )
+        // $TEST$ references innerClass
+        p1: Any? = »MyClass«(),
+
+        @MyAnnotation(
+            // $TEST$ unresolved
+            p = »MyEnum«
+        )
+        // $TEST$ unresolved
+        p2: Any? = »MyEnum«
+    ) {
+        fun f(
+            @MyAnnotation(
+                // $TEST$ references innerClass
+                p = »MyClass«()
+            )
+            // $TEST$ references innerClass
+            p1: Any? = »MyClass«(),
+
+            @MyAnnotation(
+                // $TEST$ unresolved
+                p = »MyEnum«
+            )
+            // $TEST$ unresolved
+            p2: Any? = »MyEnum«
+        )
+    }
+}
