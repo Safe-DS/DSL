@@ -12,6 +12,12 @@ internal segment »myUnusedInternalSegment«() {}
 // $TEST$ no warning "This segment is unused and can be removed."
 internal segment »myUsedInternalSegment«() {}
 
+// $TEST$ no warning "This segment is unused and can be removed."
+segment »myUnusedPublicSegment«() {}
+
+// $TEST$ no warning "This segment is unused and can be removed."
+segment »myUsedPublicSegment«() {}
+
 pipeline myPipeline1 {
     myUsedPrivateSegment();
 }
