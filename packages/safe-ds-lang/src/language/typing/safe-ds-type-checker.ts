@@ -18,12 +18,10 @@ import {
     StaticType,
     Type,
     UnionType,
-    UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
-/* c8 ignore start */
 export class SafeDsTypeChecker {
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
@@ -159,10 +157,7 @@ export class SafeDsTypeChecker {
                 return true;
             }
 
-            return type.constants.every((constant) => {
-                const constantType = this.constantToType(constant);
-                return this.isAssignableTo(constantType, other);
-            });
+            return type.constants.every((constant) => this.constantIsAssignableToClassType(constant, other));
         } else if (other instanceof LiteralType) {
             return type.constants.every((constant) =>
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
@@ -173,20 +168,23 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private constantToType(constant: Constant): Type {
+    private constantIsAssignableToClassType(constant: Constant, other: ClassType): boolean {
+        let classType: Type;
         if (constant instanceof BooleanConstant) {
-            return this.coreTypes.Boolean;
+            classType = this.coreTypes.Boolean;
         } else if (constant instanceof FloatConstant) {
-            return this.coreTypes.Float;
+            classType = this.coreTypes.Float;
         } else if (constant instanceof IntConstant) {
-            return this.coreTypes.Int;
+            classType = this.coreTypes.Int;
         } else if (constant === NullConstant) {
-            return this.coreTypes.NothingOrNull;
+            classType = this.coreTypes.NothingOrNull;
         } else if (constant instanceof StringConstant) {
-            return this.coreTypes.String;
-        } else {
-            return UnknownType;
-        }
+            classType = this.coreTypes.String;
+        } /* c8 ignore start */ else {
+            throw new Error(`Unexpected constant type: ${constant}`);
+        } /* c8 ignore stop */
+
+        return this.isAssignableTo(classType, other);
     }
 
     private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
@@ -202,4 +200,3 @@ export class SafeDsTypeChecker {
         return type.equals(other);
     }
 }
-/* c8 ignore stop */

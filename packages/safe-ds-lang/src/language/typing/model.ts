@@ -332,19 +332,3 @@ class UnknownTypeClass extends Type {
 }
 
 export const UnknownType = new UnknownTypeClass();
-
-/* c8 ignore start */
-class NotImplementedTypeClass extends Type {
-    override readonly isNullable = false;
-
-    override equals(other: Type): boolean {
-        return other instanceof NotImplementedTypeClass;
-    }
-
-    override toString(): string {
-        return '$NotImplemented';
-    }
-}
-
-export const NotImplementedType = new NotImplementedTypeClass();
-/* c8 ignore stop */

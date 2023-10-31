@@ -78,19 +78,20 @@ import {
     NamedTupleEntry,
     NamedTupleType,
     NamedType,
-    NotImplementedType,
     StaticType,
     Type,
     UnionType,
     UnknownType,
 } from './model.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
+import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
+    private readonly typeChecker: SafeDsTypeChecker;
 
     private readonly nodeTypeCache: WorkspaceCache<string, Type>;
 
@@ -99,6 +100,7 @@ export class SafeDsTypeComputer {
         this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
+        this.typeChecker = services.types.TypeChecker;
 
         this.nodeTypeCache = new WorkspaceCache(services.shared);
     }
@@ -116,21 +118,6 @@ export class SafeDsTypeComputer {
         const key = `${documentUri}~${nodePath}`;
         return this.nodeTypeCache.get(key, () => this.doComputeType(node).unwrap());
     }
-
-    // fun SdsAbstractObject.hasPrimitiveType(): Boolean {
-    //     val type = type()
-    //     if (type !is ClassType) {
-    //         return false
-    //     }
-    //
-    //     val qualifiedName = type.sdsClass.qualifiedNameOrNull()
-    //     return qualifiedName in setOf(
-    //         StdlibClasses.Boolean,
-    //         StdlibClasses.Float,
-    //         StdlibClasses.Int,
-    //         StdlibClasses.String,
-    //     )
-    // }
 
     private doComputeType(node: AstNode): Type {
         if (isSdsAssignee(node)) {
@@ -400,7 +387,6 @@ export class SafeDsTypeComputer {
     private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isNullable) {
-            /* c8 ignore next 3 */
             const rightOperandType = this.computeType(node.rightOperand);
             return this.lowestCommonSupertype(leftOperandType.updateNullability(false), rightOperandType);
         } else {
@@ -475,62 +461,56 @@ export class SafeDsTypeComputer {
     // Helpers
     // -----------------------------------------------------------------------------------------------------------------
 
-    /* c8 ignore start */
-    private lowestCommonSupertype(..._types: Type[]): Type {
-        return NotImplementedType;
+    private lowestCommonSupertype(...types: Type[]): Type {
+        if (isEmpty(types)) {
+            return this.coreTypes.Nothing;
+        }
+
+        const unwrappedTypes = this.unwrapUnionTypes(types);
+
+        //     val isNullable = unwrappedTypes.any { it.isNullable }
+        //     var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
+        //
+        //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
+        //         candidate = when (candidate) {
+        //             is CallableType -> Any(context, candidate.isNullable)
+        //             is ClassType -> {
+        //                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
+        //                     ?: return Any(context, candidate.isNullable)
+        //
+        //                 ClassType(superClass, typeParametersTypes, candidate.isNullable)
+        //             }
+        //             is EnumType -> Any(context, candidate.isNullable)
+        //             is EnumVariantType -> {
+        //                 val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
+        //                     ?: return Any(context, candidate.isNullable)
+        //                 EnumType(containingEnum, candidate.isNullable)
+        //             }
+        //             is RecordType -> Any(context, candidate.isNullable)
+        //             // TODO: Correct ?
+        //             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
+        //             UnresolvedType -> Any(context, candidate.isNullable)
+        //             is VariadicType -> Any(context, candidate.isNullable)
+        //         }
+        //     }
+        //
+        //     return candidate
+        // }
+
+        return UnknownType;
     }
 
-    /* c8 ignore stop */
+    private unwrapUnionTypes(types: Type[]): Type[] {
+        return types.flatMap((it) => {
+            if (it instanceof UnionType) {
+                return it.possibleTypes;
+            } else {
+                return [it];
+            }
+        });
+    }
 
-    // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
-    //     if (types.isEmpty()) {
-    //         return Nothing(context)
-    //     }
-    //
-    //     val unwrappedTypes = unwrapUnionTypes(types)
-    //     val isNullable = unwrappedTypes.any { it.isNullable }
-    //     var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
-    //
-    //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
-    //         candidate = when (candidate) {
-    //             is CallableType -> Any(context, candidate.isNullable)
-    //             is ClassType -> {
-    //                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
-    //                     ?: return Any(context, candidate.isNullable)
-    //
-    //                 ClassType(superClass, typeParametersTypes, candidate.isNullable)
-    //             }
-    //             is EnumType -> Any(context, candidate.isNullable)
-    //             is EnumVariantType -> {
-    //                 val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
-    //                     ?: return Any(context, candidate.isNullable)
-    //                 EnumType(containingEnum, candidate.isNullable)
-    //             }
-    //             is RecordType -> Any(context, candidate.isNullable)
-    //             // TODO: Correct ?
-    //             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
-    //             UnresolvedType -> Any(context, candidate.isNullable)
-    //             is VariadicType -> Any(context, candidate.isNullable)
-    //         }
-    //     }
-    //
-    //     return candidate
-    // }
-    //
-    // private fun unwrapUnionTypes(types: List<Type>): List<Type> {
-    //     return types.flatMap {
-    //         when (it) {
-    //             is UnionType -> it.possibleTypes
-    //         else -> listOf(it)
-    //         }
-    //     }
-    // }
-    //
-    // private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
-    //     if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
-    //         return true
-    //     }
-    //
-    //     return otherTypes.all { it.isSubstitutableFor(candidate) }
-    // }
+    private isLowestCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
+        return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
+    }
 }
