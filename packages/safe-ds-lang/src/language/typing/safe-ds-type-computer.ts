@@ -43,10 +43,12 @@ import {
     isSdsYield,
     SdsAbstractResult,
     SdsAssignee,
+    type SdsBlockLambda,
     SdsCall,
     SdsCallableType,
     SdsDeclaration,
     SdsExpression,
+    type SdsExpressionLambda,
     SdsFunction,
     SdsIndexedAccess,
     SdsInfixOperation,
@@ -162,7 +164,7 @@ export class SafeDsTypeComputer {
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
-            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType([]));
+            return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType());
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
@@ -196,7 +198,7 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
     }
 
     private computeTypeOfParameter(node: SdsParameter): Type {
@@ -252,7 +254,7 @@ export class SafeDsTypeComputer {
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
-            return new LiteralType([evaluatedNode]);
+            return new LiteralType(evaluatedNode);
         }
 
         // Terminal cases
@@ -267,26 +269,12 @@ export class SafeDsTypeComputer {
         // Recursive cases
         else if (isSdsArgument(node)) {
             return this.computeType(node.value);
+        } else if (isSdsBlockLambda(node)) {
+            return this.computeTypeOfBlockLambda(node);
         } else if (isSdsCall(node)) {
             return this.computeTypeOfCall(node);
-        } else if (isSdsBlockLambda(node)) {
-            const parameterEntries = getParameters(node).map(
-                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
-            );
-            const resultEntries = streamBlockLambdaResults(node)
-                .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
-                .toArray();
-
-            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsExpressionLambda(node)) {
-            const parameterEntries = getParameters(node).map(
-                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
-            );
-            const resultEntries = [
-                new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
-            ];
-
-            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+            return this.computeTypeOfExpressionLambda(node);
         } else if (isSdsIndexedAccess(node)) {
             return this.computeTypeOfIndexedAccess(node);
         } else if (isSdsInfixOperation(node)) {
@@ -349,6 +337,17 @@ export class SafeDsTypeComputer {
         } /* c8 ignore stop */
     }
 
+    private computeTypeOfBlockLambda(node: SdsBlockLambda): Type {
+        const parameterEntries = getParameters(node).map(
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
+        );
+        const resultEntries = streamBlockLambdaResults(node)
+            .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
+            .toArray();
+
+        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+    }
+
     private computeTypeOfCall(node: SdsCall): Type {
         const receiverType = this.computeType(node.receiver);
 
@@ -364,6 +363,17 @@ export class SafeDsTypeComputer {
         }
 
         return UnknownType;
+    }
+
+    private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
+        const parameterEntries = getParameters(node).map(
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
+        );
+        const resultEntries = [
+            new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
+        ];
+
+        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
     }
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
@@ -445,7 +455,7 @@ export class SafeDsTypeComputer {
             return this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
-            return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
+            return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
@@ -454,7 +464,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfLiteralType(node: SdsLiteralType): Type {
         const constants = getLiterals(node).map((it) => this.partialEvaluator.evaluate(it));
         if (constants.every(isConstant)) {
-            return new LiteralType(constants);
+            return new LiteralType(...constants);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -470,12 +480,11 @@ export class SafeDsTypeComputer {
         }
 
         const unwrappedTypes = this.unwrapUnionTypes(types);
-        const isNullable = unwrappedTypes.some((it) => it.isNullable);
-        let candidate = unwrappedTypes[0].updateNullability(isNullable);
+        const firstNullableType = unwrappedTypes.find((it) => it.isNullable);
+        let candidate = firstNullableType ?? unwrappedTypes[0];
 
-        //     val isNullable = unwrappedTypes.any { it.isNullable }
-        //     var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
-        //
+        while (!this.isLowestCommonSupertype(candidate, unwrappedTypes)) {}
+
         //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
         //         candidate = when (candidate) {
         //             is CallableType -> Any(context, candidate.isNullable)

@@ -1,7 +1,7 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsEnumVariant, isSdsFunction } from '../../../src/language/generated/ast.js';
-import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
+import { getParameters, getResults } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { BooleanConstant, IntConstant, NullConstant } from '../../../src/language/partialEvaluation/model.js';
 import {
@@ -21,7 +21,7 @@ import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const code = `
-    fun f1(p)
+    fun f1(p) -> r
     fun f2(),
 
     class C1
@@ -35,6 +35,7 @@ const code = `
 `;
 const callable1 = await getNodeOfType(services, code, isSdsFunction, 0);
 const parameter = getParameters(callable1)[0]!;
+const result = getResults(callable1.resultList)[0]!;
 const callable2 = await getNodeOfType(services, code, isSdsFunction, 1);
 const class1 = await getNodeOfType(services, code, isSdsClass, 0);
 const class2 = await getNodeOfType(services, code, isSdsClass, 1);
@@ -49,20 +50,20 @@ describe('type model', async () => {
             type: () =>
                 new CallableType(
                     callable1,
-                    new NamedTupleType([new NamedTupleEntry(parameter, 'p', UnknownType)]),
-                    new NamedTupleType([]),
+                    new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+                    new NamedTupleType(),
                 ),
-            unequalTypeOfSameType: () => new CallableType(callable2, new NamedTupleType([]), new NamedTupleType([])),
+            unequalTypeOfSameType: () => new CallableType(callable2, new NamedTupleType(), new NamedTupleType()),
             typeOfOtherType: () => UnknownType,
         },
         {
-            type: () => new LiteralType([new BooleanConstant(true)]),
-            unequalTypeOfSameType: () => new LiteralType([new IntConstant(1n)]),
+            type: () => new LiteralType(new BooleanConstant(true)),
+            unequalTypeOfSameType: () => new LiteralType(new IntConstant(1n)),
             typeOfOtherType: () => UnknownType,
         },
         {
-            type: () => new NamedTupleType([new NamedTupleEntry(parameter, 'p', UnknownType)]),
-            unequalTypeOfSameType: () => new NamedTupleType([]),
+            type: () => new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+            unequalTypeOfSameType: () => new NamedTupleType(),
             typeOfOtherType: () => UnknownType,
         },
         {
@@ -86,13 +87,13 @@ describe('type model', async () => {
             typeOfOtherType: () => UnknownType,
         },
         {
-            type: () => new UnionType([UnknownType]),
-            unequalTypeOfSameType: () => new UnionType([]),
+            type: () => new UnionType(UnknownType),
+            unequalTypeOfSameType: () => new UnionType(),
             typeOfOtherType: () => UnknownType,
         },
         {
             type: () => UnknownType,
-            typeOfOtherType: () => new UnionType([]),
+            typeOfOtherType: () => new UnionType(),
         },
     ];
     describe.each(equalsTests)('equals', ({ type, unequalTypeOfSameType, typeOfOtherType }) => {
@@ -120,17 +121,17 @@ describe('type model', async () => {
         {
             type: new CallableType(
                 callable1,
-                new NamedTupleType([new NamedTupleEntry(parameter, 'p', UnknownType)]),
-                new NamedTupleType([]),
+                new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+                new NamedTupleType(),
             ),
             expectedString: '(p: ?) -> ()',
         },
         {
-            type: new LiteralType([new BooleanConstant(true)]),
+            type: new LiteralType(new BooleanConstant(true)),
             expectedString: 'literal<true>',
         },
         {
-            type: new NamedTupleType([new NamedTupleEntry(parameter, 'p', UnknownType)]),
+            type: new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
             expectedString: '(p: ?)',
         },
         {
@@ -150,7 +151,7 @@ describe('type model', async () => {
             expectedString: '$type<C1>',
         },
         {
-            type: new UnionType([UnknownType]),
+            type: new UnionType(UnknownType),
             expectedString: 'union<?>',
         },
         {
@@ -164,49 +165,123 @@ describe('type model', async () => {
         });
     });
 
+    const unwrapTests: UnwrapTest[] = [
+        {
+            type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+            expectedType: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+        },
+        {
+            type: new CallableType(
+                callable1,
+                new NamedTupleType(new NamedTupleEntry(parameter, 'p', new UnionType(UnknownType))),
+                new NamedTupleType(new NamedTupleEntry(result, 'r', new UnionType(UnknownType))),
+            ),
+            expectedType: new CallableType(
+                callable1,
+                new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+                new NamedTupleType(new NamedTupleEntry(result, 'r', UnknownType)),
+            ),
+        },
+        {
+            type: new LiteralType(new BooleanConstant(true)),
+            expectedType: new LiteralType(new BooleanConstant(true)),
+        },
+        {
+            type: new NamedTupleType(),
+            expectedType: new NamedTupleType(),
+        },
+        {
+            type: new NamedTupleType(
+                new NamedTupleEntry(parameter, 'p', new UnionType(UnknownType)),
+                new NamedTupleEntry(parameter, 'p', new UnionType(UnknownType)),
+            ),
+            expectedType: new NamedTupleType(
+                new NamedTupleEntry(parameter, 'p', UnknownType),
+                new NamedTupleEntry(parameter, 'p', UnknownType),
+            ),
+        },
+        {
+            type: new ClassType(class1, false),
+            expectedType: new ClassType(class1, false),
+        },
+        {
+            type: new EnumType(enum1, false),
+            expectedType: new EnumType(enum1, false),
+        },
+        {
+            type: new EnumVariantType(enumVariant1, false),
+            expectedType: new EnumVariantType(enumVariant1, false),
+        },
+        {
+            type: new StaticType(new ClassType(class1, false)),
+            expectedType: new StaticType(new ClassType(class1, false)),
+        },
+        {
+            type: new UnionType(),
+            expectedType: new UnionType(),
+        },
+        {
+            type: new UnionType(new ClassType(class1, false)),
+            expectedType: new ClassType(class1, false),
+        },
+        {
+            type: new UnionType(new UnionType(new ClassType(class1, false))),
+            expectedType: new ClassType(class1, false),
+        },
+        {
+            type: UnknownType,
+            expectedType: UnknownType,
+        },
+    ];
+    describe.each(unwrapTests)('unwrap', ({ type, expectedType }) => {
+        it(`should remove any unnecessary containers (${type.constructor.name} -- ${type})`, () => {
+            expect(type.unwrap()).toSatisfy((actualType) => (<Type>actualType).equals(expectedType)); //.equals(expectedType)).toBeTruthy();
+        });
+    });
+
     const updateNullabilityTest: UpdateNullabilityTest[] = [
         {
-            type: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+            type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
             isNullable: true,
-            expectedType: new UnionType([
-                new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
-                new LiteralType([NullConstant]),
-            ]),
+            expectedType: new UnionType(
+                new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+                new LiteralType(NullConstant),
+            ),
         },
         {
-            type: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+            type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
             isNullable: false,
-            expectedType: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+            expectedType: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
         },
         {
-            type: new LiteralType([new BooleanConstant(true)]),
+            type: new LiteralType(new BooleanConstant(true)),
             isNullable: true,
-            expectedType: new LiteralType([new BooleanConstant(true), NullConstant]),
+            expectedType: new LiteralType(new BooleanConstant(true), NullConstant),
         },
         {
-            type: new LiteralType([new BooleanConstant(true), NullConstant]),
+            type: new LiteralType(new BooleanConstant(true), NullConstant),
             isNullable: false,
-            expectedType: new LiteralType([new BooleanConstant(true)]),
+            expectedType: new LiteralType(new BooleanConstant(true)),
         },
         {
-            type: new LiteralType([new BooleanConstant(true), NullConstant]),
+            type: new LiteralType(new BooleanConstant(true), NullConstant),
             isNullable: true,
-            expectedType: new LiteralType([new BooleanConstant(true), NullConstant]),
+            expectedType: new LiteralType(new BooleanConstant(true), NullConstant),
         },
         {
-            type: new LiteralType([new BooleanConstant(true)]),
+            type: new LiteralType(new BooleanConstant(true)),
             isNullable: false,
-            expectedType: new LiteralType([new BooleanConstant(true)]),
+            expectedType: new LiteralType(new BooleanConstant(true)),
         },
         {
-            type: new NamedTupleType([]),
+            type: new NamedTupleType(),
             isNullable: true,
-            expectedType: new UnionType([new NamedTupleType([]), new LiteralType([NullConstant])]),
+            expectedType: new UnionType(new NamedTupleType(), new LiteralType(NullConstant)),
         },
         {
-            type: new NamedTupleType([]),
+            type: new NamedTupleType(),
             isNullable: false,
-            expectedType: new NamedTupleType([]),
+            expectedType: new NamedTupleType(),
         },
         {
             type: new ClassType(class1, false),
@@ -241,10 +316,7 @@ describe('type model', async () => {
         {
             type: new StaticType(new ClassType(class1, false)),
             isNullable: true,
-            expectedType: new UnionType([
-                new StaticType(new ClassType(class1, false)),
-                new LiteralType([NullConstant]),
-            ]),
+            expectedType: new UnionType(new StaticType(new ClassType(class1, false)), new LiteralType(NullConstant)),
         },
         {
             type: new StaticType(new ClassType(class1, false)),
@@ -252,34 +324,34 @@ describe('type model', async () => {
             expectedType: new StaticType(new ClassType(class1, false)),
         },
         {
-            type: new UnionType([]),
+            type: new UnionType(),
             isNullable: true,
-            expectedType: new LiteralType([NullConstant]),
+            expectedType: new LiteralType(NullConstant),
         },
         {
-            type: new UnionType([]),
+            type: new UnionType(),
             isNullable: false,
-            expectedType: new UnionType([]),
+            expectedType: new UnionType(),
         },
         {
-            type: new UnionType([new ClassType(class1, false)]),
+            type: new UnionType(new ClassType(class1, false)),
             isNullable: true,
-            expectedType: new UnionType([new ClassType(class1, true)]),
+            expectedType: new UnionType(new ClassType(class1, true)),
         },
         {
-            type: new UnionType([new ClassType(class1, false)]),
+            type: new UnionType(new ClassType(class1, false)),
             isNullable: false,
-            expectedType: new UnionType([new ClassType(class1, false)]),
+            expectedType: new UnionType(new ClassType(class1, false)),
         },
         {
-            type: new UnionType([new ClassType(class1, true)]),
+            type: new UnionType(new ClassType(class1, true)),
             isNullable: true,
-            expectedType: new UnionType([new ClassType(class1, true)]),
+            expectedType: new UnionType(new ClassType(class1, true)),
         },
         {
-            type: new UnionType([new ClassType(class1, true)]),
+            type: new UnionType(new ClassType(class1, true)),
             isNullable: false,
-            expectedType: new UnionType([new ClassType(class1, false)]),
+            expectedType: new UnionType(new ClassType(class1, false)),
         },
         {
             type: UnknownType,
@@ -302,15 +374,15 @@ describe('type model', async () => {
         describe('getParameterTypeByIndex', () => {
             it.each([
                 {
-                    type: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+                    type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
                     index: 0,
                     expectedType: UnknownType,
                 },
                 {
                     type: new CallableType(
                         callable1,
-                        new NamedTupleType([new NamedTupleEntry(parameter, 'p', new ClassType(class1, false))]),
-                        new NamedTupleType([]),
+                        new NamedTupleType(new NamedTupleEntry(parameter, 'p', new ClassType(class1, false))),
+                        new NamedTupleType(),
                     ),
                     index: 0,
                     expectedType: new ClassType(class1, false),
@@ -325,12 +397,12 @@ describe('type model', async () => {
         describe('getTypeOfEntryByIndex', () => {
             it.each([
                 {
-                    type: new NamedTupleType([]),
+                    type: new NamedTupleType(),
                     index: 0,
                     expectedType: UnknownType,
                 },
                 {
-                    type: new NamedTupleType([new NamedTupleEntry(parameter, 'p', new ClassType(class1, false))]),
+                    type: new NamedTupleType(new NamedTupleEntry(parameter, 'p', new ClassType(class1, false))),
                     index: 0,
                     expectedType: new ClassType(class1, false),
                 },
@@ -338,53 +410,8 @@ describe('type model', async () => {
                 expect(type.getTypeOfEntryByIndex(index).equals(expectedType)).toBeTruthy();
             });
         });
-
-        describe('unwrap', () => {
-            it.each([
-                {
-                    type: new NamedTupleType([]),
-                    expectedType: new NamedTupleType([]),
-                },
-                {
-                    type: new NamedTupleType([new NamedTupleEntry(parameter, 'p', UnknownType)]),
-                    expectedType: UnknownType,
-                },
-                {
-                    type: new NamedTupleType([
-                        new NamedTupleEntry(parameter, 'p', UnknownType),
-                        new NamedTupleEntry(parameter, 'p', UnknownType),
-                    ]),
-                    expectedType: new NamedTupleType([
-                        new NamedTupleEntry(parameter, 'p', UnknownType),
-                        new NamedTupleEntry(parameter, 'p', UnknownType),
-                    ]),
-                },
-            ])('should return the expected type (%#)', ({ type, expectedType }) => {
-                expect(type.unwrap().equals(expectedType)).toBeTruthy();
-            });
-        });
     });
 });
-
-/**
- * Tests for {@link Type.updateNullability}.
- */
-interface UpdateNullabilityTest {
-    /**
-     * The type to test.
-     */
-    type: Type;
-
-    /**
-     * The new nullability.
-     */
-    isNullable: boolean;
-
-    /**
-     * The expected result.
-     */
-    expectedType: Type;
-}
 
 /**
  * Tests for {@link Type.equals}.
@@ -420,4 +447,39 @@ interface ToStringTest<T extends Type> {
      * The expected string representation of the type.
      */
     expectedString: string;
+}
+
+/**
+ * Tests for {@link Type.unwrap}.
+ */
+interface UnwrapTest {
+    /**
+     * The type to test.
+     */
+    type: Type;
+
+    /**
+     * The expected result.
+     */
+    expectedType: Type;
+}
+
+/**
+ * Tests for {@link Type.updateNullability}.
+ */
+interface UpdateNullabilityTest {
+    /**
+     * The type to test.
+     */
+    type: Type;
+
+    /**
+     * The new nullability.
+     */
+    isNullable: boolean;
+
+    /**
+     * The expected result.
+     */
+    expectedType: Type;
 }
