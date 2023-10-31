@@ -38,6 +38,7 @@ import {
     isSdsTemplateString,
     isSdsType,
     isSdsTypeArgument,
+    isSdsTypeParameter,
     isSdsTypeProjection,
     isSdsUnionType,
     isSdsYield,
@@ -192,6 +193,8 @@ export class SafeDsTypeComputer {
             return UnknownType;
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
+        } else if (isSdsTypeParameter(node)) {
+            return UnknownType;
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
@@ -597,7 +600,7 @@ export class SafeDsTypeComputer {
                 return candidateType;
             }
         }
-
+        /* c8 ignore next */
         return this.getAny(isNullable);
     }
 
@@ -606,10 +609,6 @@ export class SafeDsTypeComputer {
         enumVariantTypes: EnumVariantType[],
         isNullable: boolean,
     ): Type {
-        if (isEmpty(enumTypes) && isEmpty(enumVariantTypes)) {
-            return this.coreTypes.Nothing;
-        }
-
         // Build candidates & other
         const candidates: Type[] = [];
         if (!isEmpty(enumTypes)) {
