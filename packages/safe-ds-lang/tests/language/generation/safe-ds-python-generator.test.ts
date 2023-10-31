@@ -4,7 +4,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
 import { loadDocuments } from '../../helpers/testResources.js';
-import { stream } from 'langium';
+import { stream, URI } from 'langium';
+import path from 'path';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const pythonGenerator = services.generation.PythonGenerator;
@@ -35,7 +36,7 @@ describe('generation', async () => {
                 pythonGenerator.generate(
                     document,
                     test.actualOutputRoot,
-                    undefined /*URI.file(path.join(test.actualOutputRoot.fsPath, '..', 'srcmap.txt'))*/,
+                    URI.file(path.join(test.actualOutputRoot.fsPath, 'sourcemap.json')),
                 ),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])

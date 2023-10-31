@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.sdstest"],"names":["test","f","explainmodel"],"mappings":"AAAA;;AAOA,IAASA,IAAI;IACTC,CAAC,CAACC,aAAY","file":"gen_input.py","sourcesContent":["package tests.generator.reference\r\n\r\nfun f(param: Any?)\r\n\r\n@PythonName(\"explain_model\")\r\nfun explainModel() -> result: Int\r\n\r\npipeline test {\r\n    f(explainModel());\r\n}\r\n"]}

@@ -165,7 +165,10 @@ export class SafeDsPythonGenerator {
         const mapper: SourceMapGenerator = new SourceMapGenerator(<StartOfSourceMap>{
             file: `${generatedFileName}.py`,
         });
-        mapper.setSourceContent(document.uri.fsPath, sourceTextFull);
+        // Use only the filename (and extension) in the source map
+        const inputPath = path.parse(document.uri.fsPath);
+        const inputFile = `${inputPath.name}${inputPath.ext}`;
+        mapper.setSourceContent(inputFile, sourceTextFull);
         new TreeStreamImpl(trace, (r) => r.children ?? [], { includeRoot: true }).forEach((r) => {
             if (!r.sourceRegion || !r.targetRegion || r.children?.[0].targetRegion.offset === r.targetRegion.offset) {
                 return;
@@ -181,7 +184,7 @@ export class SafeDsPythonGenerator {
                 mapper.addMapping({
                     original: { line: sourceStart.line + 1, column: sourceStart.character },
                     generated: { line: targetStart.line + 1, column: targetStart.character },
-                    source: document.uri.fsPath,
+                    source: inputFile,
                     name: /^[_a-zA-Z][_a-zA-Z0-9]*$/u.test(sourceText) ? sourceText.toLowerCase() : undefined,
                 });
             }
@@ -202,7 +205,7 @@ export class SafeDsPythonGenerator {
                 mapper.addMapping({
                     original: { line: sourceEnd.line + 1, column: sourceEnd.character },
                     generated: { line: targetEnd.line + 1, column: targetEnd.character },
-                    source: document.uri.fsPath,
+                    source: inputFile,
                 });
             }
         });

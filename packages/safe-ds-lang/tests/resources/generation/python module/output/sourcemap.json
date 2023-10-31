@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.sdstest"],"names":["test","f"],"mappings":"AAAA;;AAMA,IAAQA,IAAI;IACRC,CAAC","file":"gen_input.py","sourcesContent":["@PythonModule(\"special_module\")\r\n\r\npackage tests.generator.pythonModule\r\n\r\nfun f()\r\n\r\nsegment test() {\r\n    f();\r\n}\r\n"]}

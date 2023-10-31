@@ -1,5 +1,5 @@
 import {
-    listTestPythonFiles,
+    listTestPythonJsonFiles,
     listTestSafeDsFilesGroupedByParentDirectory,
     loadDocuments,
     uriToShortenedTestResourceName,
@@ -92,7 +92,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
  * @param actualOutputRoot Where the actual output files supposed to be located.
  */
 const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI): ExpectedOutputFile[] => {
-    return listTestPythonFiles(uriToShortenedTestResourceName(expectedOutputRoot)).map((uri) => {
+    return listTestPythonJsonFiles(uriToShortenedTestResourceName(expectedOutputRoot)).map((uri) => {
         return {
             uri: URI.file(path.join(actualOutputRoot.fsPath, path.relative(expectedOutputRoot.fsPath, uri.fsPath))),
             code: fs.readFileSync(uri.fsPath).toString(),

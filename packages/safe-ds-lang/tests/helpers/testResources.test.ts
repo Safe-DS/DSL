@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-    listTestPythonFiles,
+    listTestPythonJsonFiles,
     listTestSafeDsFiles,
     listTestSafeDsFilesGroupedByParentDirectory,
     TestResourceName,
@@ -44,7 +44,7 @@ describe('listTestSafeDsFiles', () => {
 describe('listTestPythonFiles', () => {
     it('should return all Python files in a resource directory', () => {
         const rootResourceName = 'helpers/listPythonFiles';
-        const actual = listTestPythonFiles(rootResourceName);
+        const actual = listTestPythonJsonFiles(rootResourceName);
         const expected = ['python file.py', 'nested/python file.py'];
 
         expectFileListsToMatch(rootResourceName, actual, expected);

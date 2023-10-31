@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.sdstest"],"names":["test"],"mappings":"AAAA;;AAEA,IAASA,IAAI;IAAC,IAAE","file":"gen_input.py","sourcesContent":["package tests.generator.emptyPipeline\r\n\r\npipeline test {}\r\n"]}

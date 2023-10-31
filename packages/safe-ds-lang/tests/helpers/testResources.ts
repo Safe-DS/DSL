@@ -59,13 +59,13 @@ export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI
 };
 
 /**
- * Lists all Python files in the given root directory.
+ * Lists all Python files and JSON files in the given root directory.
  *
  * @param rootTestResourceName The resource name of the root directory.
  * @return URIs of the discovered Python files.
  */
-export const listTestPythonFiles = (rootTestResourceName: TestResourceName): URI[] => {
-    const pattern = `**/*.py`;
+export const listTestPythonJsonFiles = (rootTestResourceName: TestResourceName): URI[] => {
+    const pattern = `**/*.{json,py}`;
     const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
