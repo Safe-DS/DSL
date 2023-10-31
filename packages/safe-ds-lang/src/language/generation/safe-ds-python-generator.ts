@@ -48,13 +48,18 @@ import {
 import { isInStubFile, isStubFile } from '../helpers/fileExtensions.js';
 import path from 'path';
 import {
-    expandToString,
-    expandToStringWithNL,
+    CompositeGeneratorNode,
+    expandTracedToNode,
     findRootNode,
     getContainerOfType,
     getDocument,
+    joinToNode,
+    joinTracedToNode,
     LangiumDocument,
+    NL,
     streamAllContents,
+    toStringAndTrace,
+    traceToNode,
     URI,
 } from 'langium';
 import {
@@ -89,6 +94,8 @@ const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
 const PYTHON_INDENT = '    ';
 
+const NLNL = new CompositeGeneratorNode(NL, NL);
+
 export class SafeDsPythonGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
     private readonly nodeMapper: SafeDsNodeMapper;
@@ -114,21 +121,23 @@ export class SafeDsPythonGenerator {
         const parentDirectoryPath = path.join(destination.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
-        generatedFiles.set(
-            `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`,
-            this.generateModule(node),
-        );
+        const generatedModule = this.generateModule(node);
+        const { text, trace } = toStringAndTrace(generatedModule);
+        generatedFiles.set(`${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`, text);
         for (const pipeline of streamAllContents(node).filter(isSdsPipeline)) {
             const entryPointFilename = `${path.join(
                 parentDirectoryPath,
                 `${this.formatGeneratedFileName(name)}_${this.getPythonNameOrDefault(pipeline)}`,
             )}.py`;
-            const entryPointContent = expandToStringWithNL`from ${this.formatGeneratedFileName(
+            const entryPointContent = expandTracedToNode(pipeline)`from ${this.formatGeneratedFileName(
                 name,
             )} import ${this.getPythonNameOrDefault(
                 pipeline,
-            )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${this.getPythonNameOrDefault(pipeline)}()`;
-            generatedFiles.set(entryPointFilename, entryPointContent);
+            )}\n\nif __name__ == '__main__':\n${PYTHON_INDENT}${this.getPythonNameOrDefault(
+                pipeline,
+            )}()`.appendNewLine();
+            const generatedPipelineEntry = toStringAndTrace(entryPointContent);
+            generatedFiles.set(entryPointFilename, generatedPipelineEntry.text);
         }
 
         return Array.from(generatedFiles.entries()).map(([fsPath, content]) =>
@@ -144,7 +153,7 @@ export class SafeDsPythonGenerator {
         return `gen_${baseName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '')}`;
     }
 
-    private generateModule(module: SdsModule): string {
+    private generateModule(module: SdsModule): CompositeGeneratorNode {
         const importSet = new Map<String, ImportData>();
         const segments = getModuleMembers(module)
             .filter(isSdsSegment)
@@ -153,67 +162,90 @@ export class SafeDsPythonGenerator {
             .filter(isSdsPipeline)
             .map((pipeline) => this.generatePipeline(pipeline, importSet));
         const imports = this.generateImports(Array.from(importSet.values()));
-        const output: string[] = [];
+        const output = new CompositeGeneratorNode();
+        output.trace(module);
         if (imports.length > 0) {
-            output.push(
-                expandToStringWithNL`# Imports ----------------------------------------------------------------------\n\n${imports.join(
-                    '\n',
-                )}`,
-            );
+            output.append('# Imports ----------------------------------------------------------------------');
+            output.appendNewLine();
+            output.appendNewLine();
+            output.append(joinToNode(imports, (importDecl) => importDecl, { separator: NL }));
+            output.appendNewLine();
         }
         if (segments.length > 0) {
-            output.push(
-                expandToStringWithNL`# Segments ---------------------------------------------------------------------\n\n${segments.join(
-                    '\n\n',
-                )}`,
-            );
+            output.appendNewLineIf(imports.length > 0);
+            output.append('# Segments ---------------------------------------------------------------------');
+            output.appendNewLine();
+            output.appendNewLine();
+            output.append(joinToNode(segments, (segment) => segment, { separator: NLNL }));
+            output.appendNewLine();
         }
         if (pipelines.length > 0) {
-            output.push(
-                expandToStringWithNL`# Pipelines --------------------------------------------------------------------\n\n${pipelines.join(
-                    '\n\n',
-                )}`,
-            );
+            output.appendNewLineIf(imports.length > 0 || segments.length > 0);
+            output.append('# Pipelines --------------------------------------------------------------------');
+            output.appendNewLine();
+            output.appendNewLine();
+            output.append(joinToNode(pipelines, (pipeline) => pipeline, { separator: NLNL }));
+            output.appendNewLine();
         }
-        return expandToStringWithNL`${output.join('\n')}`;
+        return output;
     }
 
-    private generateSegment(segment: SdsSegment, importSet: Map<String, ImportData>): string {
+    private generateSegment(segment: SdsSegment, importSet: Map<String, ImportData>): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(importSet);
         const segmentResult = segment.resultList?.results || [];
         let segmentBlock = this.generateBlock(segment.body, infoFrame);
         if (segmentResult.length !== 0) {
-            segmentBlock += `\nreturn ${segmentResult.map((result) => `${YIELD_PREFIX}${result.name}`).join(', ')}`;
+            segmentBlock.appendNewLine();
+            segmentBlock.append(
+                expandTracedToNode(segment.resultList!)`return ${joinTracedToNode(segment.resultList!, 'results')(
+                    segmentResult,
+                    (result) => expandTracedToNode(result)`${YIELD_PREFIX}${result.name}`,
+                    { separator: ', ' },
+                )}`,
+            );
         }
-        return expandToString`def ${this.getPythonNameOrDefault(segment)}(${this.generateParameters(
+        return expandTracedToNode(segment)`def ${this.getPythonNameOrDefault(segment)}(${this.generateParameters(
             segment.parameterList,
             infoFrame,
-        )}):\n${PYTHON_INDENT}${segmentBlock}`;
+        )}):`
+            .appendNewLine()
+            .indent({ indentedChildren: [segmentBlock], indentation: PYTHON_INDENT });
     }
 
-    private generateParameters(parameters: SdsParameterList | undefined, frame: GenerationInfoFrame): string {
-        const result = (parameters?.parameters || []).map((param) => this.generateParameter(param, frame));
-        return result.join(', ');
+    private generateParameters(
+        parameters: SdsParameterList | undefined,
+        frame: GenerationInfoFrame,
+    ): CompositeGeneratorNode | undefined {
+        if (!parameters) {
+            return undefined;
+        }
+        return joinTracedToNode(parameters, 'parameters')(
+            parameters?.parameters || [],
+            (param) => this.generateParameter(param, frame),
+            { separator: ', ' },
+        );
     }
 
     private generateParameter(
         parameter: SdsParameter,
         frame: GenerationInfoFrame,
         defaultValue: boolean = true,
-    ): string {
-        return expandToString`${this.getPythonNameOrDefault(parameter)}${
+    ): CompositeGeneratorNode {
+        return expandTracedToNode(parameter)`${traceToNode(parameter, 'name')(this.getPythonNameOrDefault(parameter))}${
             defaultValue && parameter.defaultValue !== undefined
-                ? '=' + this.generateExpression(parameter.defaultValue, frame)
+                ? expandTracedToNode(parameter)`=${this.generateExpression(parameter.defaultValue, frame)}`
                 : ''
         }`;
     }
 
-    private generatePipeline(pipeline: SdsPipeline, importSet: Map<String, ImportData>): string {
+    private generatePipeline(pipeline: SdsPipeline, importSet: Map<String, ImportData>): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(importSet);
-        return expandToString`def ${this.getPythonNameOrDefault(pipeline)}():\n${PYTHON_INDENT}${this.generateBlock(
-            pipeline.body,
-            infoFrame,
-        )}`;
+        return expandTracedToNode(pipeline)`def ${traceToNode(
+            pipeline,
+            'name',
+        )(this.getPythonNameOrDefault(pipeline))}():`
+            .appendNewLine()
+            .indent({ indentedChildren: [this.generateBlock(pipeline.body, infoFrame)], indentation: PYTHON_INDENT });
     }
 
     private generateImports(importSet: ImportData[]): string[] {
@@ -252,32 +284,37 @@ export class SafeDsPythonGenerator {
         }
     }
 
-    private generateBlock(block: SdsBlock, frame: GenerationInfoFrame): string {
+    private generateBlock(block: SdsBlock, frame: GenerationInfoFrame): CompositeGeneratorNode {
         // TODO filter withEffect
         let statements = getStatements(block);
         if (statements.length === 0) {
-            return 'pass';
+            return traceToNode(block)('pass');
         }
-        return expandToString`${statements.map((stmt) => this.generateStatement(stmt, frame)).join('\n')}`;
+        return joinTracedToNode(block, 'statements')(statements, (stmt) => this.generateStatement(stmt, frame), {
+            separator: NL,
+        })!;
+        // return statements.map((stmt) => this.generateStatement(stmt, frame).appendNewLine());
     }
 
-    private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame): string {
+    private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame): CompositeGeneratorNode {
         if (isSdsAssignment(statement)) {
-            return this.generateAssignment(statement, frame);
+            return traceToNode(statement)(this.generateAssignment(statement, frame));
         } else if (isSdsExpressionStatement(statement)) {
-            const expressionStatement = statement;
-            const blockLambdaCode: string[] = [];
-            for (const lambda of streamAllContents(expressionStatement.expression).filter(isSdsBlockLambda)) {
+            const blockLambdaCode: CompositeGeneratorNode[] = [];
+            for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
                 blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
             }
-            blockLambdaCode.push(this.generateExpression(expressionStatement.expression, frame));
-            return expandToString`${blockLambdaCode.join('\n')}`;
+            blockLambdaCode.push(this.generateExpression(statement.expression, frame));
+
+            return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
+                separator: NL,
+            })!;
         }
         /* c8 ignore next 2 */
         throw new Error(`Unknown SdsStatement: ${statement}`);
     }
 
-    private generateAssignment(assignment: SdsAssignment, frame: GenerationInfoFrame): string {
+    private generateAssignment(assignment: SdsAssignment, frame: GenerationInfoFrame): CompositeGeneratorNode {
         const requiredAssignees = isSdsCall(assignment.expression)
             ? getAbstractResults(this.nodeMapper.callToCallable(assignment.expression)).length
             : /* c8 ignore next */
@@ -286,165 +323,224 @@ export class SafeDsPythonGenerator {
         if (assignees.some((value) => !isSdsWildcard(value))) {
             const actualAssignees = assignees.map(this.generateAssignee);
             if (requiredAssignees === actualAssignees.length) {
-                return `${actualAssignees.join(', ')} = ${this.generateExpression(assignment.expression!, frame)}`;
+                return expandTracedToNode(assignment)`${joinTracedToNode(assignment)(
+                    actualAssignees,
+                    (actualAssignee) => actualAssignee,
+                    { separator: ', ' },
+                )} = ${this.generateExpression(assignment.expression!, frame)}`;
             } else {
                 // Add wildcards to match given results
-                return `${actualAssignees
-                    .concat(Array(requiredAssignees - actualAssignees.length).fill('_'))
-                    .join(', ')} = ${this.generateExpression(assignment.expression!, frame)}`;
+                return expandTracedToNode(assignment)`${joinTracedToNode(assignment)(
+                    actualAssignees.concat(Array(requiredAssignees - actualAssignees.length).fill('_')),
+                    (actualAssignee) => actualAssignee,
+                    { separator: ', ' },
+                )} = ${this.generateExpression(assignment.expression!, frame)}`;
             }
         } else {
-            return this.generateExpression(assignment.expression!, frame);
+            return traceToNode(assignment)(this.generateExpression(assignment.expression!, frame));
         }
     }
 
-    private generateAssignee(assignee: SdsAssignee): string {
+    private generateAssignee(assignee: SdsAssignee): CompositeGeneratorNode {
         if (isSdsBlockLambdaResult(assignee)) {
-            return `${BLOCK_LAMBDA_RESULT_PREFIX}${assignee.name}`;
+            return expandTracedToNode(assignee)`${BLOCK_LAMBDA_RESULT_PREFIX}${assignee.name}`;
         } else if (isSdsPlaceholder(assignee)) {
-            return assignee.name;
+            return traceToNode(assignee)(assignee.name);
         } else if (isSdsWildcard(assignee)) {
-            return '_';
+            return traceToNode(assignee)('_');
         } else if (isSdsYield(assignee)) {
-            return `${YIELD_PREFIX}${assignee.result?.ref?.name!}`;
+            return expandTracedToNode(assignee)`${YIELD_PREFIX}${assignee.result?.ref?.name!}`;
         }
         /* c8 ignore next 2 */
         throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
     }
 
-    private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): string {
-        const results = streamBlockLambdaResults(blockLambda);
+    private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): CompositeGeneratorNode {
+        const results = streamBlockLambdaResults(blockLambda).toArray();
         let lambdaBlock = this.generateBlock(blockLambda.body, frame);
-        if (!results.isEmpty()) {
-            lambdaBlock += `\nreturn ${results
-                .map((result) => `${BLOCK_LAMBDA_RESULT_PREFIX}${result.name}`)
-                .join(', ')}`;
+        if (results.length !== 0) {
+            lambdaBlock.appendNewLine();
+            lambdaBlock.append(
+                expandTracedToNode(blockLambda)`return ${joinTracedToNode(blockLambda)(
+                    results,
+                    (result) =>
+                        expandTracedToNode(result)`${BLOCK_LAMBDA_RESULT_PREFIX}${traceToNode(
+                            result,
+                            'name',
+                        )(result.name)}`,
+                    { separator: ', ' },
+                )}`,
+            );
         }
-        return expandToString`def ${frame.getUniqueLambdaBlockName(blockLambda)}(${this.generateParameters(
-            blockLambda.parameterList,
-            frame,
-        )}):\n${PYTHON_INDENT}${lambdaBlock}`;
+        return expandTracedToNode(blockLambda)`def ${frame.getUniqueLambdaBlockName(
+            blockLambda,
+        )}(${this.generateParameters(blockLambda.parameterList, frame)}):`
+            .appendNewLine()
+            .indent({
+                indentedChildren: [lambdaBlock],
+                indentation: PYTHON_INDENT,
+            });
     }
 
-    private generateExpression(expression: SdsExpression, frame: GenerationInfoFrame): string {
+    private generateExpression(expression: SdsExpression, frame: GenerationInfoFrame): CompositeGeneratorNode {
         if (isSdsTemplateStringPart(expression)) {
             if (isSdsTemplateStringStart(expression)) {
-                return `${this.formatStringSingleLine(expression.value)}{ `;
+                return expandTracedToNode(expression)`${this.formatStringSingleLine(expression.value)}{ `;
             } else if (isSdsTemplateStringInner(expression)) {
-                return ` }${this.formatStringSingleLine(expression.value)}{ `;
+                return expandTracedToNode(expression)` }${this.formatStringSingleLine(expression.value)}{ `;
             } else if (isSdsTemplateStringEnd(expression)) {
-                return ` }${this.formatStringSingleLine(expression.value)}`;
+                return expandTracedToNode(expression)` }${this.formatStringSingleLine(expression.value)}`;
             }
         }
 
         const partiallyEvaluatedNode = this.partialEvaluator.evaluate(expression);
         if (partiallyEvaluatedNode instanceof BooleanConstant) {
-            return partiallyEvaluatedNode.value ? 'True' : 'False';
+            return traceToNode(expression)(partiallyEvaluatedNode.value ? 'True' : 'False');
         } else if (partiallyEvaluatedNode instanceof IntConstant) {
-            return String(partiallyEvaluatedNode.value);
+            return traceToNode(expression)(String(partiallyEvaluatedNode.value));
         } else if (partiallyEvaluatedNode instanceof FloatConstant) {
             const floatValue = partiallyEvaluatedNode.value;
-            return Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue);
+            return traceToNode(expression)(Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue));
         } else if (partiallyEvaluatedNode === NullConstant) {
-            return 'None';
+            return traceToNode(expression)('None');
         } else if (partiallyEvaluatedNode instanceof StringConstant) {
-            return `'${this.formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
+            return expandTracedToNode(expression)`'${this.formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
         }
 
         // Handled after constant expressions: EnumVariant, List, Map
         else if (isSdsTemplateString(expression)) {
-            return `f'${expression.expressions.map((expr) => this.generateExpression(expr, frame)).join('')}'`;
+            return expandTracedToNode(expression)`f'${joinTracedToNode(expression, 'expressions')(
+                expression.expressions,
+                (expr) => this.generateExpression(expr, frame),
+                { separator: '' },
+            )}'`;
         } else if (isSdsMap(expression)) {
-            const mapContent = expression.entries.map(
+            return expandTracedToNode(expression)`{${joinTracedToNode(expression, 'entries')(
+                expression.entries,
                 (entry) =>
-                    `${this.generateExpression(entry.key, frame)}: ${this.generateExpression(entry.value, frame)}`,
-            );
-            return `{${mapContent.join(', ')}}`;
+                    expandTracedToNode(entry)`${traceToNode(
+                        entry,
+                        'key',
+                    )(this.generateExpression(entry.key, frame))}: ${traceToNode(
+                        entry,
+                        'value',
+                    )(this.generateExpression(entry.value, frame))}`,
+                { separator: ', ' },
+            )}}`;
         } else if (isSdsList(expression)) {
-            const listContent = expression.elements.map((value) => this.generateExpression(value, frame));
-            return `[${listContent.join(', ')}]`;
+            return expandTracedToNode(expression)`[${joinTracedToNode(expression, 'elements')(
+                expression.elements,
+                (value) => this.generateExpression(value, frame),
+                { separator: ', ' },
+            )}]`;
         } else if (isSdsBlockLambda(expression)) {
-            return frame.getUniqueLambdaBlockName(expression);
+            return traceToNode(expression)(frame.getUniqueLambdaBlockName(expression));
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             if (isSdsFunction(callable)) {
                 const pythonCall = this.builtinAnnotations.getPythonCall(callable);
                 if (pythonCall) {
-                    let thisParam: string | undefined = undefined;
+                    let thisParam: CompositeGeneratorNode | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
                     const argumentsMap = this.getArgumentsMap(expression.argumentList.arguments, frame);
-                    return this.generatePythonCall(pythonCall, argumentsMap, thisParam);
+                    return this.generatePythonCall(expression, pythonCall, argumentsMap, thisParam);
                 }
             }
 
             const sortedArgs = this.sortArguments(expression.argumentList.arguments);
-            return expandToString`${this.generateExpression(expression.receiver, frame)}(${sortedArgs
-                .map((arg) => this.generateArgument(arg, frame))
-                .join(', ')})`;
+            return expandTracedToNode(expression)`${traceToNode(
+                expression,
+                'receiver',
+            )(this.generateExpression(expression.receiver, frame))}(${traceToNode(
+                expression,
+                'argumentList',
+            )(
+                joinTracedToNode(expression.argumentList, 'arguments')(
+                    sortedArgs,
+                    (arg) => this.generateArgument(arg, frame),
+                    { separator: ', ' },
+                ),
+            )})`;
         } else if (isSdsExpressionLambda(expression)) {
-            return `lambda ${this.generateParameters(expression.parameterList, frame)}: ${this.generateExpression(
-                expression.result,
-                frame,
-            )}`;
+            return expandTracedToNode(expression)`lambda ${traceToNode(
+                expression,
+                'parameterList',
+            )(this.generateParameters(expression.parameterList, frame))}: ${traceToNode(
+                expression,
+                'result',
+            )(this.generateExpression(expression.result, frame))}`;
         } else if (isSdsInfixOperation(expression)) {
+            //const leftOperand = traceToNode(
+            //    expression,
+            //    'leftOperand',
+            //)(this.generateExpression(expression.leftOperand, frame));
             const leftOperand = this.generateExpression(expression.leftOperand, frame);
+            // TODO property?
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
             switch (expression.operator) {
                 case 'or':
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return `${RUNNER_CODEGEN_PACKAGE}.eager_or(${leftOperand}, ${rightOperand})`;
+                    return expandTracedToNode(
+                        expression,
+                    )`${RUNNER_CODEGEN_PACKAGE}.eager_or(${leftOperand}, ${rightOperand})`;
                 case 'and':
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return `${RUNNER_CODEGEN_PACKAGE}.eager_and(${leftOperand}, ${rightOperand})`;
+                    return expandTracedToNode(
+                        expression,
+                    )`${RUNNER_CODEGEN_PACKAGE}.eager_and(${leftOperand}, ${rightOperand})`;
                 case '?:':
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return `${RUNNER_CODEGEN_PACKAGE}.eager_elvis(${leftOperand}, ${rightOperand})`;
+                    return expandTracedToNode(
+                        expression,
+                    )`${RUNNER_CODEGEN_PACKAGE}.eager_elvis(${leftOperand}, ${rightOperand})`;
                 case '===':
-                    return `(${leftOperand}) is (${rightOperand})`;
+                    return expandTracedToNode(expression)`(${leftOperand}) is (${rightOperand})`;
                 case '!==':
-                    return `(${leftOperand}) is not (${rightOperand})`;
+                    return expandTracedToNode(expression)`(${leftOperand}) is not (${rightOperand})`;
                 default:
-                    return `(${leftOperand}) ${expression.operator} (${rightOperand})`;
+                    return expandTracedToNode(expression)`(${leftOperand}) ${expression.operator} (${rightOperand})`;
             }
         } else if (isSdsIndexedAccess(expression)) {
-            return expandToString`${this.generateExpression(expression.receiver, frame)}[${this.generateExpression(
-                expression.index,
+            return expandTracedToNode(expression)`${this.generateExpression(
+                expression.receiver,
                 frame,
-            )}]`;
+            )}[${this.generateExpression(expression.index, frame)}]`;
         } else if (isSdsMemberAccess(expression)) {
             const member = expression.member?.target.ref!;
             const receiver = this.generateExpression(expression.receiver, frame);
             if (isSdsEnumVariant(member)) {
                 const enumMember = this.generateExpression(expression.member!, frame);
                 const suffix = isSdsCall(expression.$container) ? '' : '()';
-                return `${receiver}.${enumMember}${suffix}`;
+                return expandTracedToNode(expression)`${receiver}.${enumMember}${suffix}`;
             } else if (isSdsAbstractResult(member)) {
                 const resultList = getAbstractResults(getContainerOfType(member, isSdsCallable));
                 if (resultList.length === 1) {
-                    return receiver;
+                    return traceToNode(expression)(receiver);
                 }
                 const currentIndex = resultList.indexOf(member);
-                return `${receiver}[${currentIndex}]`;
+                return expandTracedToNode(expression)`${receiver}[${traceToNode(member)(String(currentIndex))}]`;
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return `${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
+                    return expandTracedToNode(
+                        expression,
+                    )`${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
                 } else {
-                    return `${receiver}.${memberExpression}`;
+                    return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }
             }
         } else if (isSdsParenthesizedExpression(expression)) {
-            return expandToString`${this.generateExpression(expression.expression, frame)}`;
+            return expandTracedToNode(expression)`${this.generateExpression(expression.expression, frame)}`;
         } else if (isSdsPrefixOperation(expression)) {
             const operand = this.generateExpression(expression.operand, frame);
             switch (expression.operator) {
                 case 'not':
-                    return expandToString`not (${operand})`;
+                    return expandTracedToNode(expression)`not (${operand})`;
                 case '-':
-                    return expandToString`-(${operand})`;
+                    return expandTracedToNode(expression)`-(${operand})`;
             }
         } else if (isSdsReference(expression)) {
             const declaration = expression.target.ref!;
@@ -452,26 +548,41 @@ export class SafeDsPythonGenerator {
                 this.getExternalReferenceNeededImport(expression, declaration) ||
                 this.getInternalReferenceNeededImport(expression, declaration);
             frame.addImport(referenceImport);
-            return referenceImport?.alias || this.getPythonNameOrDefault(declaration);
+            return traceToNode(expression)(referenceImport?.alias || this.getPythonNameOrDefault(declaration));
         }
         /* c8 ignore next 2 */
         throw new Error(`Unknown expression type: ${expression.$type}`);
     }
 
     private generatePythonCall(
+        expression: SdsExpression,
         pythonCall: string,
-        argumentsMap: Map<string, string>,
-        thisParam: string | undefined = undefined,
-    ): string {
+        argumentsMap: Map<string, CompositeGeneratorNode>,
+        thisParam: CompositeGeneratorNode | undefined = undefined,
+    ): CompositeGeneratorNode {
         if (thisParam) {
             argumentsMap.set('this', thisParam);
         }
-
-        return pythonCall.replace(/\$[_a-zA-Z][_a-zA-Z0-9]*/gu, (value) => argumentsMap.get(value.substring(1))!);
+        const splitRegex = /(\$[_a-zA-Z][_a-zA-Z0-9]*)/gu;
+        const splitPythonCallDefinition = pythonCall.split(splitRegex);
+        return joinTracedToNode(expression)(
+            splitPythonCallDefinition,
+            (part) => {
+                if (splitRegex.test(part)) {
+                    return argumentsMap.get(part.substring(1))!;
+                } else {
+                    return part;
+                }
+            },
+            { separator: '' },
+        )!;
     }
 
-    private getArgumentsMap(argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, string> {
-        const argumentsMap = new Map<string, string>();
+    private getArgumentsMap(
+        argumentList: SdsArgument[],
+        frame: GenerationInfoFrame,
+    ): Map<string, CompositeGeneratorNode> {
+        const argumentsMap = new Map<string, CompositeGeneratorNode>();
         argumentList.reduce((map, value) => {
             map.set(this.nodeMapper.argumentToParameter(value)?.name!, this.generateArgument(value, frame));
             return map;
@@ -493,11 +604,11 @@ export class SafeDsPythonGenerator {
             .map((value) => value.arg);
     }
 
-    private generateArgument(argument: SdsArgument, frame: GenerationInfoFrame) {
+    private generateArgument(argument: SdsArgument, frame: GenerationInfoFrame): CompositeGeneratorNode {
         const parameter = this.nodeMapper.argumentToParameter(argument);
-        return expandToString`${
+        return expandTracedToNode(argument)`${
             parameter !== undefined && !isRequiredParameter(parameter)
-                ? this.generateParameter(parameter, frame, false) + '='
+                ? expandTracedToNode(argument)`${this.generateParameter(parameter, frame, false)}=`
                 : ''
         }${this.generateExpression(argument.value, frame)}`;
     }
