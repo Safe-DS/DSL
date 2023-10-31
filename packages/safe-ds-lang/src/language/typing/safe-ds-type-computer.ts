@@ -1,4 +1,4 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
+import { AstNode, AstNodeLocator, getContainerOfType, getDocument, stream, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsAnnotation,
@@ -33,19 +33,23 @@ import {
     isSdsPrefixOperation,
     isSdsReference,
     isSdsResult,
+    isSdsSchema,
     isSdsSegment,
     isSdsTemplateString,
     isSdsType,
     isSdsTypeArgument,
+    isSdsTypeParameter,
     isSdsTypeProjection,
     isSdsUnionType,
     isSdsYield,
     SdsAbstractResult,
     SdsAssignee,
+    type SdsBlockLambda,
     SdsCall,
     SdsCallableType,
     SdsDeclaration,
     SdsExpression,
+    type SdsExpressionLambda,
     SdsFunction,
     SdsIndexedAccess,
     SdsInfixOperation,
@@ -78,30 +82,39 @@ import {
     NamedTupleEntry,
     NamedTupleType,
     NamedType,
-    NotImplementedType,
     StaticType,
     Type,
     UnionType,
     UnknownType,
 } from './model.js';
+import type { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
+import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
+    private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
+    private readonly typeChecker: SafeDsTypeChecker;
 
     private readonly nodeTypeCache: WorkspaceCache<string, Type>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
+        this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
+        this.typeChecker = services.types.TypeChecker;
 
         this.nodeTypeCache = new WorkspaceCache(services.shared);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Compute type
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Computes the type of the given node.
@@ -117,21 +130,6 @@ export class SafeDsTypeComputer {
         return this.nodeTypeCache.get(key, () => this.doComputeType(node).unwrap());
     }
 
-    // fun SdsAbstractObject.hasPrimitiveType(): Boolean {
-    //     val type = type()
-    //     if (type !is ClassType) {
-    //         return false
-    //     }
-    //
-    //     val qualifiedName = type.sdsClass.qualifiedNameOrNull()
-    //     return qualifiedName in setOf(
-    //         StdlibClasses.Boolean,
-    //         StdlibClasses.Float,
-    //         StdlibClasses.Int,
-    //         StdlibClasses.String,
-    //     )
-    // }
-
     private doComputeType(node: AstNode): Type {
         if (isSdsAssignee(node)) {
             return this.computeTypeOfAssignee(node);
@@ -146,7 +144,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsTypeProjection(node)) {
             return this.computeTypeOfType(node.type);
         } /* c8 ignore start */ else {
-            return UnknownType;
+            throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
     }
 
@@ -174,7 +172,7 @@ export class SafeDsTypeComputer {
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
-            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType([]));
+            return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType());
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
@@ -191,10 +189,14 @@ export class SafeDsTypeComputer {
             return UnknownType;
         } else if (isSdsResult(node)) {
             return this.computeType(node.type);
+        } else if (isSdsSchema(node)) {
+            return UnknownType;
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
-        } /* c8 ignore start */ else {
+        } else if (isSdsTypeParameter(node)) {
             return UnknownType;
+        } /* c8 ignore start */ else {
+            throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
     }
 
@@ -206,7 +208,7 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
     }
 
     private computeTypeOfParameter(node: SdsParameter): Type {
@@ -262,7 +264,7 @@ export class SafeDsTypeComputer {
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
-            return new LiteralType([evaluatedNode]);
+            return new LiteralType(evaluatedNode);
         }
 
         // Terminal cases
@@ -277,26 +279,12 @@ export class SafeDsTypeComputer {
         // Recursive cases
         else if (isSdsArgument(node)) {
             return this.computeType(node.value);
+        } else if (isSdsBlockLambda(node)) {
+            return this.computeTypeOfBlockLambda(node);
         } else if (isSdsCall(node)) {
             return this.computeTypeOfCall(node);
-        } else if (isSdsBlockLambda(node)) {
-            const parameterEntries = getParameters(node).map(
-                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
-            );
-            const resultEntries = streamBlockLambdaResults(node)
-                .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
-                .toArray();
-
-            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
         } else if (isSdsExpressionLambda(node)) {
-            const parameterEntries = getParameters(node).map(
-                (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
-            );
-            const resultEntries = [
-                new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
-            ];
-
-            return new CallableType(node, new NamedTupleType(parameterEntries), new NamedTupleType(resultEntries));
+            return this.computeTypeOfExpressionLambda(node);
         } else if (isSdsIndexedAccess(node)) {
             return this.computeTypeOfIndexedAccess(node);
         } else if (isSdsInfixOperation(node)) {
@@ -355,8 +343,19 @@ export class SafeDsTypeComputer {
         } else if (isSdsReference(node)) {
             return this.computeTypeOfReference(node);
         } /* c8 ignore start */ else {
-            return UnknownType;
+            throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
+    }
+
+    private computeTypeOfBlockLambda(node: SdsBlockLambda): Type {
+        const parameterEntries = getParameters(node).map(
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
+        );
+        const resultEntries = streamBlockLambdaResults(node)
+            .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
+            .toArray();
+
+        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
     }
 
     private computeTypeOfCall(node: SdsCall): Type {
@@ -374,6 +373,17 @@ export class SafeDsTypeComputer {
         }
 
         return UnknownType;
+    }
+
+    private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
+        const parameterEntries = getParameters(node).map(
+            (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
+        );
+        const resultEntries = [
+            new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
+        ];
+
+        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
     }
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
@@ -400,7 +410,6 @@ export class SafeDsTypeComputer {
     private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isNullable) {
-            /* c8 ignore next 3 */
             const rightOperandType = this.computeType(node.rightOperand);
             return this.lowestCommonSupertype(leftOperandType.updateNullability(false), rightOperandType);
         } else {
@@ -456,81 +465,189 @@ export class SafeDsTypeComputer {
             return this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
-            return new UnionType(typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
+            return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         } /* c8 ignore start */ else {
-            return UnknownType;
+            throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
     }
 
     private computeTypeOfLiteralType(node: SdsLiteralType): Type {
         const constants = getLiterals(node).map((it) => this.partialEvaluator.evaluate(it));
         if (constants.every(isConstant)) {
-            return new LiteralType(constants);
+            return new LiteralType(...constants);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Helpers
+    // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
-    /* c8 ignore start */
-    private lowestCommonSupertype(..._types: Type[]): Type {
-        return NotImplementedType;
+    lowestCommonSupertype(...types: Type[]): Type {
+        // No types given
+        const flattenedAndUnwrappedTypes = [...this.flattenUnionTypesAndUnwrap(types)];
+        if (isEmpty(flattenedAndUnwrappedTypes)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Includes type with unknown supertype
+        const groupedTypes = this.groupTypes(flattenedAndUnwrappedTypes);
+        if (groupedTypes.hasTypeWithUnknownSupertype) {
+            return UnknownType;
+        }
+
+        // Some shortcuts to avoid unnecessary computation
+        if (
+            isEmpty(groupedTypes.classTypes) &&
+            isEmpty(groupedTypes.constants) &&
+            isEmpty(groupedTypes.enumTypes) &&
+            isEmpty(groupedTypes.enumVariantTypes)
+        ) {
+            return this.coreTypes.Nothing;
+        } else if (flattenedAndUnwrappedTypes.length === 1) {
+            return flattenedAndUnwrappedTypes[0];
+        }
+
+        const isNullable = flattenedAndUnwrappedTypes.some((it) => it.isNullable);
+
+        // Class-based types
+        if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
+            if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
+                return this.getAny(isNullable);
+            } else {
+                return this.lowestCommonSupertypeForClassBasedTypes(
+                    groupedTypes.classTypes,
+                    groupedTypes.constants,
+                    isNullable,
+                );
+            }
+        }
+
+        // Enum-based types
+        return this.lowestCommonSupertypeForEnumBasedTypes(
+            groupedTypes.enumTypes,
+            groupedTypes.enumVariantTypes,
+            isNullable,
+        );
     }
 
-    /* c8 ignore stop */
+    /**
+     * Flattens union types and unwraps all others.
+     */
+    private *flattenUnionTypesAndUnwrap(types: Type[]): Generator<Type, void, undefined> {
+        for (const type of types) {
+            if (type instanceof UnionType) {
+                yield* this.flattenUnionTypesAndUnwrap(type.possibleTypes);
+            } else {
+                yield type.unwrap();
+            }
+        }
+    }
 
-    // private fun lowestCommonSupertype(context: EObject, types: List<Type>): Type {
-    //     if (types.isEmpty()) {
-    //         return Nothing(context)
-    //     }
-    //
-    //     val unwrappedTypes = unwrapUnionTypes(types)
-    //     val isNullable = unwrappedTypes.any { it.isNullable }
-    //     var candidate = unwrappedTypes.first().setIsNullableOnCopy(isNullable)
-    //
-    //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
-    //         candidate = when (candidate) {
-    //             is CallableType -> Any(context, candidate.isNullable)
-    //             is ClassType -> {
-    //                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
-    //                     ?: return Any(context, candidate.isNullable)
-    //
-    //                 ClassType(superClass, typeParametersTypes, candidate.isNullable)
-    //             }
-    //             is EnumType -> Any(context, candidate.isNullable)
-    //             is EnumVariantType -> {
-    //                 val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
-    //                     ?: return Any(context, candidate.isNullable)
-    //                 EnumType(containingEnum, candidate.isNullable)
-    //             }
-    //             is RecordType -> Any(context, candidate.isNullable)
-    //             // TODO: Correct ?
-    //             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
-    //             UnresolvedType -> Any(context, candidate.isNullable)
-    //             is VariadicType -> Any(context, candidate.isNullable)
-    //         }
-    //     }
-    //
-    //     return candidate
-    // }
-    //
-    // private fun unwrapUnionTypes(types: List<Type>): List<Type> {
-    //     return types.flatMap {
-    //         when (it) {
-    //             is UnionType -> it.possibleTypes
-    //         else -> listOf(it)
-    //         }
-    //     }
-    // }
-    //
-    // private fun isLowestCommonSupertype(candidate: Type, otherTypes: List<Type>): Boolean {
-    //     if (candidate is ClassType && candidate.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any) {
-    //         return true
-    //     }
-    //
-    //     return otherTypes.all { it.isSubstitutableFor(candidate) }
-    // }
+    /**
+     * Group the given types by their kind.
+     */
+    private groupTypes(types: Type[]): GroupTypesResult {
+        const result: GroupTypesResult = {
+            classTypes: [],
+            constants: [],
+            enumTypes: [],
+            enumVariantTypes: [],
+            hasTypeWithUnknownSupertype: false,
+        };
+
+        for (const type of types) {
+            if (type instanceof ClassType) {
+                result.classTypes.push(type);
+            } else if (type instanceof EnumType) {
+                result.enumTypes.push(type);
+            } else if (type instanceof EnumVariantType) {
+                result.enumVariantTypes.push(type);
+            } else if (type instanceof LiteralType) {
+                result.constants.push(...type.constants);
+            } else {
+                // Other types don't have a clear lowest common supertype
+                result.hasTypeWithUnknownSupertype = true;
+                return result;
+            }
+        }
+
+        return result;
+    }
+
+    private lowestCommonSupertypeForClassBasedTypes(
+        classTypes: ClassType[],
+        constants: Constant[],
+        isNullable: boolean,
+    ): Type {
+        // If there are only constants, return a literal type
+        const literalType = new LiteralType(...constants);
+        if (isEmpty(classTypes)) {
+            return literalType;
+        }
+
+        // Find the class type that is compatible to all other types
+        const candidateClasses = stream(
+            [classTypes[0].declaration],
+            this.classHierarchy.streamSuperclasses(classTypes[0].declaration),
+        );
+        const other = [...classTypes.slice(1), literalType];
+
+        for (const candidateClass of candidateClasses) {
+            const candidateType = new ClassType(candidateClass, isNullable);
+            if (this.isCommonSupertype(candidateType, other)) {
+                return candidateType;
+            }
+        }
+        /* c8 ignore next */
+        return this.getAny(isNullable);
+    }
+
+    private lowestCommonSupertypeForEnumBasedTypes(
+        enumTypes: EnumType[],
+        enumVariantTypes: EnumVariantType[],
+        isNullable: boolean,
+    ): Type {
+        // Build candidates & other
+        const candidates: Type[] = [];
+        if (!isEmpty(enumTypes)) {
+            candidates.push(enumTypes[0].updateNullability(isNullable));
+        } else {
+            if (!isEmpty(enumVariantTypes)) {
+                candidates.push(enumVariantTypes[0].updateNullability(isNullable));
+
+                const containingEnum = getContainerOfType(enumVariantTypes[0].declaration, isSdsEnum);
+                if (containingEnum) {
+                    candidates.push(new EnumType(containingEnum, isNullable));
+                }
+            }
+        }
+        const other = [...enumTypes, ...enumVariantTypes];
+
+        // Check whether a candidate type is compatible to all other types
+        for (const candidate of candidates) {
+            if (this.isCommonSupertype(candidate, other)) {
+                return candidate;
+            }
+        }
+
+        return this.getAny(isNullable);
+    }
+
+    private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
+        return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
+    }
+
+    private getAny(isNullable: boolean): Type {
+        return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
+    }
+}
+
+interface GroupTypesResult {
+    classTypes: ClassType[];
+    constants: Constant[];
+    enumTypes: EnumType[];
+    enumVariantTypes: EnumVariantType[];
+    hasTypeWithUnknownSupertype: boolean;
 }

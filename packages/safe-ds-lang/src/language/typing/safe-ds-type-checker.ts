@@ -1,4 +1,5 @@
-import { SdsDeclaration } from '../generated/ast.js';
+import { getContainerOfType } from 'langium';
+import { isSdsEnum, SdsDeclaration } from '../generated/ast.js';
 import {
     BooleanConstant,
     Constant,
@@ -18,7 +19,6 @@ import {
     StaticType,
     Type,
     UnionType,
-    UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
@@ -112,13 +112,18 @@ export class SafeDsTypeChecker {
     }
 
     private enumTypeIsAssignableTo(type: EnumType, other: Type): boolean {
+        if (type.isNullable && !other.isNullable) {
+            return false;
+        }
+
+        if (other instanceof EnumType) {
+            return type.declaration === other.declaration;
+        }
+
         //     return when (val unwrappedOther = unwrapVariadicType(other)) {
         //         is ClassType -> {
         //             (!this.isNullable || unwrappedOther.isNullable) &&
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is EnumType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnum == unwrappedOther.sdsEnum
         //         }
         //         is UnionType -> {
         //             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
@@ -130,17 +135,20 @@ export class SafeDsTypeChecker {
     }
 
     private enumVariantTypeIsAssignableTo(type: EnumVariantType, other: Type): boolean {
+        if (type.isNullable && !other.isNullable) {
+            return false;
+        }
+
+        if (other instanceof EnumType) {
+            const containingEnum = getContainerOfType(type.declaration, isSdsEnum);
+            return containingEnum === other.declaration;
+        } else if (other instanceof EnumVariantType) {
+            return type.declaration === other.declaration;
+        }
         //     return when (val unwrappedOther = unwrapVariadicType(other)) {
         //         is ClassType -> {
         //             (!this.isNullable || unwrappedOther.isNullable) &&
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is EnumType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) &&
-        //             this.sdsEnumVariant in unwrappedOther.sdsEnum.variantsOrEmpty()
-        //         }
-        //         is EnumVariantType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnumVariant == unwrappedOther.sdsEnumVariant
         //         }
         //         is UnionType -> unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
         //     else -> false
@@ -159,10 +167,7 @@ export class SafeDsTypeChecker {
                 return true;
             }
 
-            return type.constants.every((constant) => {
-                const constantType = this.constantToType(constant);
-                return this.isAssignableTo(constantType, other);
-            });
+            return type.constants.every((constant) => this.constantIsAssignableToClassType(constant, other));
         } else if (other instanceof LiteralType) {
             return type.constants.every((constant) =>
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
@@ -173,22 +178,26 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private constantToType(constant: Constant): Type {
+    private constantIsAssignableToClassType(constant: Constant, other: ClassType): boolean {
+        let classType: Type;
         if (constant instanceof BooleanConstant) {
-            return this.coreTypes.Boolean;
+            classType = this.coreTypes.Boolean;
         } else if (constant instanceof FloatConstant) {
-            return this.coreTypes.Float;
+            classType = this.coreTypes.Float;
         } else if (constant instanceof IntConstant) {
-            return this.coreTypes.Int;
+            classType = this.coreTypes.Int;
         } else if (constant === NullConstant) {
-            return this.coreTypes.NothingOrNull;
+            classType = this.coreTypes.NothingOrNull;
         } else if (constant instanceof StringConstant) {
-            return this.coreTypes.String;
-        } else {
-            return UnknownType;
-        }
+            classType = this.coreTypes.String;
+        } /* c8 ignore start */ else {
+            throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
+        } /* c8 ignore stop */
+
+        return this.isAssignableTo(classType, other);
     }
 
+    /* c8 ignore start */
     private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
         return type.equals(other);
     }
