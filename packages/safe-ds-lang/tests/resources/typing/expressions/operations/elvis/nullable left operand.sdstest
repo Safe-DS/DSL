@@ -13,7 +13,7 @@ pipeline elvisWithNullableLeftOperand {
     // $TEST$ serialization Number
     »intOrNull() ?: 1.0«;
     // $TEST$ serialization Any
-     »intOrNull() ?: ""«;
+    »intOrNull() ?: ""«;
     // $TEST$ serialization Any?
     »intOrNull() ?: stringOrNull()«;
 }
