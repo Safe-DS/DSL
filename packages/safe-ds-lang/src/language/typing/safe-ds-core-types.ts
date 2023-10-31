@@ -13,11 +13,9 @@ export class SafeDsCoreTypes {
         this.cache = new WorkspaceCache(services.shared);
     }
 
-    /* c8 ignore start */
     get Any(): Type {
         return this.createCoreType(this.builtinClasses.Any, false);
     }
-    /* c8 ignore stop */
 
     get AnyOrNull(): Type {
         return this.createCoreType(this.builtinClasses.Any, true);

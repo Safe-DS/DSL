@@ -474,57 +474,85 @@ export class SafeDsTypeComputer {
     // Helpers
     // -----------------------------------------------------------------------------------------------------------------
 
-    private lowestCommonSupertype(...types: Type[]): Type {
-        if (isEmpty(types)) {
+    lowestCommonSupertype(...types: Type[]): Type {
+        const flattenedAndUnwrappedTypes = [...this.flattenUnionTypesAndUnwrap(types)];
+        const isNullable = flattenedAndUnwrappedTypes.some((it) => it.isNullable);
+
+        if (isEmpty(flattenedAndUnwrappedTypes)) {
             return this.coreTypes.Nothing;
         }
 
-        const unwrappedTypes = this.unwrapUnionTypes(types);
-        const firstNullableType = unwrappedTypes.find((it) => it.isNullable);
-        let candidate = firstNullableType ?? unwrappedTypes[0];
+        // Includes type with unknown supertype
+        const groupedTypes = this.groupTypes(flattenedAndUnwrappedTypes);
+        if (groupedTypes.hasTypeWithUnknownSupertype) {
+            return UnknownType;
+        }
 
-        while (!this.isLowestCommonSupertype(candidate, unwrappedTypes)) {}
-
-        //     while (!isLowestCommonSupertype(candidate, unwrappedTypes)) {
-        //         candidate = when (candidate) {
-        //             is CallableType -> Any(context, candidate.isNullable)
-        //             is ClassType -> {
-        //                 val superClass = candidate.sdsClass.superClasses().firstOrNull()
-        //                     ?: return Any(context, candidate.isNullable)
-        //
-        //                 ClassType(superClass, typeParametersTypes, candidate.isNullable)
-        //             }
-        //             is EnumType -> Any(context, candidate.isNullable)
-        //             is EnumVariantType -> {
-        //                 val containingEnum = candidate.sdsEnumVariant.containingEnumOrNull()
-        //                     ?: return Any(context, candidate.isNullable)
-        //                 EnumType(containingEnum, candidate.isNullable)
-        //             }
-        //             is RecordType -> Any(context, candidate.isNullable)
-        //             // TODO: Correct ?
-        //             is UnionType -> throw AssertionError("Union types should have been unwrapped.")
-        //             UnresolvedType -> Any(context, candidate.isNullable)
-        //             is VariadicType -> Any(context, candidate.isNullable)
-        //         }
-        //     }
-        //
-        //     return candidate
-        // }
+        // Has only one type. For the sake of consistency, we do this check after the unknown supertype check.
+        if (flattenedAndUnwrappedTypes.length === 1) {
+            return flattenedAndUnwrappedTypes[0];
+        }
 
         return UnknownType;
     }
 
-    private unwrapUnionTypes(types: Type[]): Type[] {
-        return types.flatMap((it) => {
-            if (it instanceof UnionType) {
-                return it.possibleTypes;
+    /**
+     * Flattens union types and unwraps all others.
+     */
+    private *flattenUnionTypesAndUnwrap(types: Type[]): Generator<Type, void, undefined> {
+        for (const type of types) {
+            if (type instanceof UnionType) {
+                yield* this.flattenUnionTypesAndUnwrap(type.possibleTypes);
             } else {
-                return [it];
+                yield type.unwrap();
             }
-        });
+        }
+    }
+
+    /**
+     * Group the given types by their kind.
+     */
+    private groupTypes(types: Type[]): GroupTypesResult {
+        const result: GroupTypesResult = {
+            classTypes: [],
+            enumTypes: [],
+            enumVariantTypes: [],
+            constants: [],
+            hasTypeWithUnknownSupertype: false,
+        };
+
+        for (const type of types) {
+            if (type instanceof ClassType) {
+                result.classTypes.push(type);
+            } else if (type instanceof EnumType) {
+                result.enumTypes.push(type);
+            } else if (type instanceof EnumVariantType) {
+                result.enumVariantTypes.push(type);
+            } else if (type instanceof LiteralType) {
+                result.constants.push(...type.constants);
+            } else {
+                // Other types don't have a clear lowest common supertype
+                result.hasTypeWithUnknownSupertype = true;
+                return result;
+            }
+        }
+
+        return result;
     }
 
     private isLowestCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
     }
+
+    private getAny(isNullable: boolean): Type {
+        return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
+    }
+}
+
+interface GroupTypesResult {
+    classTypes: ClassType[];
+    constants: Constant[];
+    enumTypes: EnumType[];
+    enumVariantTypes: EnumVariantType[];
+    hasTypeWithUnknownSupertype: boolean;
 }

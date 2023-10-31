@@ -235,7 +235,7 @@ describe('type model', async () => {
     ];
     describe.each(unwrapTests)('unwrap', ({ type, expectedType }) => {
         it(`should remove any unnecessary containers (${type.constructor.name} -- ${type})`, () => {
-            expect(type.unwrap()).toSatisfy((actualType) => (<Type>actualType).equals(expectedType)); //.equals(expectedType)).toBeTruthy();
+            expect(type.unwrap()).toSatisfy((actualType: Type) => actualType.equals(expectedType));
         });
     });
 
