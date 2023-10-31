@@ -179,7 +179,8 @@ export class SafeDsPythonGenerator {
             const sourceText =
                 sourceEnd && sourceTextFull.length >= r.sourceRegion.end
                     ? sourceTextFull.substring(r.sourceRegion.offset, r.sourceRegion.end)
-                    : '';
+                    : /* c8 ignore next */
+                    '';
             if (sourceStart && targetStart) {
                 mapper.addMapping({
                     original: { line: sourceStart.line + 1, column: sourceStart.character },
@@ -192,7 +193,8 @@ export class SafeDsPythonGenerator {
             const targetText =
                 targetEnd && generatedText.length >= r.targetRegion.end
                     ? generatedText.substring(r.targetRegion.offset, r.targetRegion.end)
-                    : '';
+                    : /* c8 ignore next */
+                    '';
             if (
                 sourceEnd &&
                 targetEnd &&
@@ -284,6 +286,7 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
     ): CompositeGeneratorNode | undefined {
         if (!parameters) {
+            /* c8 ignore next 2 */
             return undefined;
         }
         return joinTracedToNode(parameters, 'parameters')(
