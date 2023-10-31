@@ -47,6 +47,7 @@
         "chevrotain": "^11.0.3",
         "glob": "^10.3.10",
         "langium": "^2.0.2",
+        "source-map": "^0.7.4",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.11"
     },

@@ -49,6 +49,7 @@ import { isInStubFile, isStubFile } from '../helpers/fileExtensions.js';
 import path from 'path';
 import {
     CompositeGeneratorNode,
+    expandToNode,
     expandTracedToNode,
     findRootNode,
     getContainerOfType,
@@ -59,7 +60,9 @@ import {
     NL,
     streamAllContents,
     toStringAndTrace,
+    TraceRegion,
     traceToNode,
+    TreeStreamImpl,
     URI,
 } from 'langium';
 import {
@@ -85,6 +88,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
+import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -107,7 +111,7 @@ export class SafeDsPythonGenerator {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
-    generate(document: LangiumDocument, destination: URI): TextDocument[] {
+    generate(document: LangiumDocument, destination: URI, sourceMapDestination: URI | undefined): TextDocument[] {
         const node = document.parseResult.value;
 
         // Do not generate stub files
@@ -123,6 +127,12 @@ export class SafeDsPythonGenerator {
         const generatedFiles = new Map<string, string>();
         const generatedModule = this.generateModule(node);
         const { text, trace } = toStringAndTrace(generatedModule);
+        if (sourceMapDestination) {
+            generatedFiles.set(
+                sourceMapDestination.fsPath,
+                this.generateSourceMap(document, text, trace, this.formatGeneratedFileName(name)),
+            );
+        }
         generatedFiles.set(`${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`, text);
         for (const pipeline of streamAllContents(node).filter(isSdsPipeline)) {
             const entryPointFilename = `${path.join(
@@ -143,6 +153,60 @@ export class SafeDsPythonGenerator {
         return Array.from(generatedFiles.entries()).map(([fsPath, content]) =>
             TextDocument.create(URI.file(fsPath).toString(), 'py', 0, content),
         );
+    }
+
+    private generateSourceMap(
+        document: LangiumDocument,
+        generatedText: String,
+        trace: TraceRegion,
+        generatedFileName: string,
+    ): string {
+        const sourceTextFull = document.textDocument.getText();
+        const mapper: SourceMapGenerator = new SourceMapGenerator(<StartOfSourceMap>{
+            file: `${generatedFileName}.py`,
+        });
+        mapper.setSourceContent(document.uri.fsPath, sourceTextFull);
+        new TreeStreamImpl(trace, (r) => r.children ?? [], { includeRoot: true }).forEach((r) => {
+            if (!r.sourceRegion || !r.targetRegion || r.children?.[0].targetRegion.offset === r.targetRegion.offset) {
+                return;
+            }
+            const sourceStart = r.sourceRegion.range?.start;
+            const targetStart = r.targetRegion.range?.start;
+            const sourceEnd = r.sourceRegion?.range?.end;
+            const sourceText =
+                sourceEnd && sourceTextFull.length >= r.sourceRegion.end
+                    ? sourceTextFull.substring(r.sourceRegion.offset, r.sourceRegion.end)
+                    : '';
+            if (sourceStart && targetStart) {
+                mapper.addMapping({
+                    original: { line: sourceStart.line + 1, column: sourceStart.character },
+                    generated: { line: targetStart.line + 1, column: targetStart.character },
+                    source: document.uri.fsPath,
+                    name: /^[_a-zA-Z][_a-zA-Z0-9]*$/u.test(sourceText) ? sourceText.toLowerCase() : undefined,
+                });
+            }
+            const targetEnd = r.targetRegion?.range?.end;
+            const targetText =
+                targetEnd && generatedText.length >= r.targetRegion.end
+                    ? generatedText.substring(r.targetRegion.offset, r.targetRegion.end)
+                    : '';
+            if (
+                sourceEnd &&
+                targetEnd &&
+                !r.children &&
+                sourceText &&
+                targetText &&
+                !/\s/u.test(sourceText) &&
+                !/\s/u.test(targetText)
+            ) {
+                mapper.addMapping({
+                    original: { line: sourceEnd.line + 1, column: sourceEnd.character },
+                    generated: { line: targetEnd.line + 1, column: targetEnd.character },
+                    source: document.uri.fsPath,
+                });
+            }
+        });
+        return mapper.toString();
     }
 
     private getPythonNameOrDefault(object: SdsDeclaration) {
@@ -204,10 +268,10 @@ export class SafeDsPythonGenerator {
                 )}`,
             );
         }
-        return expandTracedToNode(segment)`def ${this.getPythonNameOrDefault(segment)}(${this.generateParameters(
-            segment.parameterList,
-            infoFrame,
-        )}):`
+        return expandTracedToNode(segment)`def ${traceToNode(
+            segment,
+            'name',
+        )(this.getPythonNameOrDefault(segment))}(${this.generateParameters(segment.parameterList, infoFrame)}):`
             .appendNewLine()
             .indent({ indentedChildren: [segmentBlock], indentation: PYTHON_INDENT });
     }
@@ -233,7 +297,7 @@ export class SafeDsPythonGenerator {
     ): CompositeGeneratorNode {
         return expandTracedToNode(parameter)`${traceToNode(parameter, 'name')(this.getPythonNameOrDefault(parameter))}${
             defaultValue && parameter.defaultValue !== undefined
-                ? expandTracedToNode(parameter)`=${this.generateExpression(parameter.defaultValue, frame)}`
+                ? expandToNode`=${this.generateExpression(parameter.defaultValue, frame)}`
                 : ''
         }`;
     }
@@ -293,7 +357,6 @@ export class SafeDsPythonGenerator {
         return joinTracedToNode(block, 'statements')(statements, (stmt) => this.generateStatement(stmt, frame), {
             separator: NL,
         })!;
-        // return statements.map((stmt) => this.generateStatement(stmt, frame).appendNewLine());
     }
 
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame): CompositeGeneratorNode {
@@ -323,14 +386,14 @@ export class SafeDsPythonGenerator {
         if (assignees.some((value) => !isSdsWildcard(value))) {
             const actualAssignees = assignees.map(this.generateAssignee);
             if (requiredAssignees === actualAssignees.length) {
-                return expandTracedToNode(assignment)`${joinTracedToNode(assignment)(
+                return expandTracedToNode(assignment)`${joinToNode(
                     actualAssignees,
                     (actualAssignee) => actualAssignee,
                     { separator: ', ' },
                 )} = ${this.generateExpression(assignment.expression!, frame)}`;
             } else {
                 // Add wildcards to match given results
-                return expandTracedToNode(assignment)`${joinTracedToNode(assignment)(
+                return expandTracedToNode(assignment)`${joinToNode(
                     actualAssignees.concat(Array(requiredAssignees - actualAssignees.length).fill('_')),
                     (actualAssignee) => actualAssignee,
                     { separator: ', ' },
@@ -343,13 +406,19 @@ export class SafeDsPythonGenerator {
 
     private generateAssignee(assignee: SdsAssignee): CompositeGeneratorNode {
         if (isSdsBlockLambdaResult(assignee)) {
-            return expandTracedToNode(assignee)`${BLOCK_LAMBDA_RESULT_PREFIX}${assignee.name}`;
+            return expandTracedToNode(assignee)`${BLOCK_LAMBDA_RESULT_PREFIX}${traceToNode(
+                assignee,
+                'name',
+            )(assignee.name)}`;
         } else if (isSdsPlaceholder(assignee)) {
             return traceToNode(assignee)(assignee.name);
         } else if (isSdsWildcard(assignee)) {
             return traceToNode(assignee)('_');
         } else if (isSdsYield(assignee)) {
-            return expandTracedToNode(assignee)`${YIELD_PREFIX}${assignee.result?.ref?.name!}`;
+            return expandTracedToNode(assignee)`${YIELD_PREFIX}${traceToNode(
+                assignee,
+                'result',
+            )(assignee.result?.ref?.name!)}`;
         }
         /* c8 ignore next 2 */
         throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
@@ -361,7 +430,7 @@ export class SafeDsPythonGenerator {
         if (results.length !== 0) {
             lambdaBlock.appendNewLine();
             lambdaBlock.append(
-                expandTracedToNode(blockLambda)`return ${joinTracedToNode(blockLambda)(
+                expandTracedToNode(blockLambda)`return ${joinToNode(
                     results,
                     (result) =>
                         expandTracedToNode(result)`${BLOCK_LAMBDA_RESULT_PREFIX}${traceToNode(
@@ -450,57 +519,56 @@ export class SafeDsPythonGenerator {
             }
 
             const sortedArgs = this.sortArguments(expression.argumentList.arguments);
-            return expandTracedToNode(expression)`${traceToNode(
-                expression,
-                'receiver',
-            )(this.generateExpression(expression.receiver, frame))}(${traceToNode(
-                expression,
-                'argumentList',
-            )(
-                joinTracedToNode(expression.argumentList, 'arguments')(
-                    sortedArgs,
-                    (arg) => this.generateArgument(arg, frame),
-                    { separator: ', ' },
-                ),
+            return expandTracedToNode(expression)`${this.generateExpression(
+                expression.receiver,
+                frame,
+            )}(${joinTracedToNode(expression.argumentList, 'arguments')(
+                sortedArgs,
+                (arg) => this.generateArgument(arg, frame),
+                { separator: ', ' },
             )})`;
         } else if (isSdsExpressionLambda(expression)) {
-            return expandTracedToNode(expression)`lambda ${traceToNode(
-                expression,
-                'parameterList',
-            )(this.generateParameters(expression.parameterList, frame))}: ${traceToNode(
-                expression,
-                'result',
-            )(this.generateExpression(expression.result, frame))}`;
+            return expandTracedToNode(expression)`lambda ${this.generateParameters(
+                expression.parameterList,
+                frame,
+            )}: ${this.generateExpression(expression.result, frame)}`;
         } else if (isSdsInfixOperation(expression)) {
-            //const leftOperand = traceToNode(
-            //    expression,
-            //    'leftOperand',
-            //)(this.generateExpression(expression.leftOperand, frame));
             const leftOperand = this.generateExpression(expression.leftOperand, frame);
-            // TODO property?
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
             switch (expression.operator) {
                 case 'or':
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(
+                    return expandTracedToNode(expression)`${traceToNode(
                         expression,
-                    )`${RUNNER_CODEGEN_PACKAGE}.eager_or(${leftOperand}, ${rightOperand})`;
+                        'operator',
+                    )(`${RUNNER_CODEGEN_PACKAGE}.eager_or`)}(${leftOperand}, ${rightOperand})`;
                 case 'and':
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(
+                    return expandTracedToNode(expression)`${traceToNode(
                         expression,
-                    )`${RUNNER_CODEGEN_PACKAGE}.eager_and(${leftOperand}, ${rightOperand})`;
+                        'operator',
+                    )(`${RUNNER_CODEGEN_PACKAGE}.eager_and`)}(${leftOperand}, ${rightOperand})`;
                 case '?:':
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(
+                    return expandTracedToNode(expression)`${traceToNode(
                         expression,
-                    )`${RUNNER_CODEGEN_PACKAGE}.eager_elvis(${leftOperand}, ${rightOperand})`;
+                        'operator',
+                    )(`${RUNNER_CODEGEN_PACKAGE}.eager_elvis`)}(${leftOperand}, ${rightOperand})`;
                 case '===':
-                    return expandTracedToNode(expression)`(${leftOperand}) is (${rightOperand})`;
+                    return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                        expression,
+                        'operator',
+                    )('is')} (${rightOperand})`;
                 case '!==':
-                    return expandTracedToNode(expression)`(${leftOperand}) is not (${rightOperand})`;
+                    return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                        expression,
+                        'operator',
+                    )('is not')} (${rightOperand})`;
                 default:
-                    return expandTracedToNode(expression)`(${leftOperand}) ${expression.operator} (${rightOperand})`;
+                    return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                        expression,
+                        'operator',
+                    )(expression.operator)} (${rightOperand})`;
             }
         } else if (isSdsIndexedAccess(expression)) {
             return expandTracedToNode(expression)`${this.generateExpression(
@@ -520,14 +588,15 @@ export class SafeDsPythonGenerator {
                     return traceToNode(expression)(receiver);
                 }
                 const currentIndex = resultList.indexOf(member);
-                return expandTracedToNode(expression)`${receiver}[${traceToNode(member)(String(currentIndex))}]`;
+                return expandTracedToNode(expression)`${receiver}[${traceToNode(expression.member!)(String(currentIndex))}]`;
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
                     frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(
+                    return expandTracedToNode(expression)`${traceToNode(
                         expression,
-                    )`${RUNNER_CODEGEN_PACKAGE}.safe_access(${receiver}, '${memberExpression}')`;
+                        'isNullSafe',
+                    )(`${RUNNER_CODEGEN_PACKAGE}.safe_access`)}(${receiver}, '${memberExpression}')`;
                 } else {
                     return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }
@@ -538,9 +607,9 @@ export class SafeDsPythonGenerator {
             const operand = this.generateExpression(expression.operand, frame);
             switch (expression.operator) {
                 case 'not':
-                    return expandTracedToNode(expression)`not (${operand})`;
+                    return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('not')} (${operand})`;
                 case '-':
-                    return expandTracedToNode(expression)`-(${operand})`;
+                    return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('-')}(${operand})`;
             }
         } else if (isSdsReference(expression)) {
             const declaration = expression.target.ref!;
@@ -608,7 +677,7 @@ export class SafeDsPythonGenerator {
         const parameter = this.nodeMapper.argumentToParameter(argument);
         return expandTracedToNode(argument)`${
             parameter !== undefined && !isRequiredParameter(parameter)
-                ? expandTracedToNode(argument)`${this.generateParameter(parameter, frame, false)}=`
+                ? expandToNode`${this.generateParameter(parameter, frame, false)}=`
                 : ''
         }${this.generateExpression(argument.value, frame)}`;
     }

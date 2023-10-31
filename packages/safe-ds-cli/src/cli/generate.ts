@@ -10,7 +10,11 @@ export const generate = async (fileName: string, opts: GenerateOptions): Promise
     const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     const document = await extractDocument(fileName, services);
     const destination = opts.destination ?? path.join(path.dirname(fileName), 'generated');
-    const generatedFiles = services.generation.PythonGenerator.generate(document, URI.file(path.resolve(destination)));
+    const generatedFiles = services.generation.PythonGenerator.generate(
+        document,
+        URI.file(path.resolve(destination)),
+        opts.sourceMapDestination ? URI.file(path.resolve(opts.sourceMapDestination)) : undefined,
+    );
 
     for (const file of generatedFiles) {
         const fsPath = URI.parse(file.uri).fsPath;
@@ -27,4 +31,5 @@ export const generate = async (fileName: string, opts: GenerateOptions): Promise
 
 export interface GenerateOptions {
     destination?: string;
+    sourceMapDestination?: string;
 }
