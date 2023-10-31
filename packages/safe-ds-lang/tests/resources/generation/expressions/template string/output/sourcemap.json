@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdstest"],"names":["test","f","g"],"mappings":"AAAA;;AAMA,IAASA,IAAI;IACTC,CAAC,CAAC,EAAA,SACHC,CAAC,EAAG,YACEA,CAAC,EAAG","file":"gen_input.py","sourcesContent":["package tests.generator.templateString\r\n\r\nfun f(param: Any?)\r\n\r\nfun g() -> result: Int\r\n\r\npipeline test {\r\n    f(\"start\r\n{{ g() }}\r\ninner {{ g() }}\r\nend\");\r\n}\r\n"]}
+{"version":3,"sources":["input.sdstest"],"names":["test","f","g"],"mappings":"AAAA;;AAMA,IAASA,IAAI;IACTC,CAAC,CAAC,EAAA,SACHC,CAAC,EAAG,YACEA,CAAC,EAAG","file":"gen_input.py"}

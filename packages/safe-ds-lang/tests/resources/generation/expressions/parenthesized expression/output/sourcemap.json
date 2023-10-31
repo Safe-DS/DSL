@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdstest"],"names":["test","f","g"],"mappings":"AAAA;;AAMA,IAASA,IAAI;IACTC,CAAC,CAAEC,CAAC","file":"gen_input.py","sourcesContent":["package tests.generator.parenthesizedExpression\r\n\r\nfun f(param: Any?)\r\n\r\nfun g() -> result: Boolean\r\n\r\npipeline test {\r\n    f((g()));\r\n}\r\n"]}
+{"version":3,"sources":["input.sdstest"],"names":["test","f","g"],"mappings":"AAAA;;AAMA,IAASA,IAAI;IACTC,CAAC,CAAEC,CAAC","file":"gen_input.py"}

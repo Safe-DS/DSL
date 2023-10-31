@@ -168,7 +168,7 @@ export class SafeDsPythonGenerator {
         // Use only the filename (and extension) in the source map
         const inputPath = path.parse(document.uri.fsPath);
         const inputFile = `${inputPath.name}${inputPath.ext}`;
-        mapper.setSourceContent(inputFile, sourceTextFull);
+
         new TreeStreamImpl(trace, (r) => r.children ?? [], { includeRoot: true }).forEach((r) => {
             if (!r.sourceRegion || !r.targetRegion || r.children?.[0].targetRegion.offset === r.targetRegion.offset) {
                 return;

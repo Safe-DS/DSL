@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdstest"],"names":["testpipeline","f"],"mappings":"AAAA;;AAKA,IAASA,aAAY;IACjBC,CAAC","file":"gen_input.py","sourcesContent":["package tests.generator.pipelineWithPythonName\r\n\r\nfun f()\r\n\r\n@PythonName(\"test_pipeline\")\r\npipeline testPipeline {\r\n    f();\r\n}\r\n"]}
+{"version":3,"sources":["input.sdstest"],"names":["testpipeline","f"],"mappings":"AAAA;;AAKA,IAASA,aAAY;IACjBC,CAAC","file":"gen_input.py"}

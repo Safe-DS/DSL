@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdstest"],"names":["test"],"mappings":"AAAA;;AAEA,IAAQA,IAAI;IAAG,IAAE","file":"gen_input.py","sourcesContent":["package tests.generator.emptySegment\r\n\r\nsegment test() {}\r\n"]}
+{"version":3,"sources":["input.sdstest"],"names":["test"],"mappings":"AAAA;;AAEA,IAAQA,IAAI;IAAG,IAAE","file":"gen_input.py"}

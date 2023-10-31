@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdstest"],"names":["test","params","f"],"mappings":"AAAA;;AAIA,IAAQA,IAAI,CAACC,MAAM;IACfC,CAAC,CAACD,MAAM,CAAC,CAAC","file":"gen_input.py","sourcesContent":["package tests.generator.indexedAccess\r\n\r\nfun f(param: Any?)\r\n\r\nsegment test(params: List<Int>) {\r\n    f(params[0]);\r\n}\r\n"]}
+{"version":3,"sources":["input.sdstest"],"names":["test","params","f"],"mappings":"AAAA;;AAIA,IAAQA,IAAI,CAACC,MAAM;IACfC,CAAC,CAACD,MAAM,CAAC,CAAC","file":"gen_input.py"}
