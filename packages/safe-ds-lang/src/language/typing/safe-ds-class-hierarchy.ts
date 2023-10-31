@@ -1,23 +1,19 @@
 import { EMPTY_STREAM, stream, Stream } from 'langium';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { isSdsClass, isSdsNamedType, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getMatchingClassMembers, getParentTypes } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType } from './model.js';
-import { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 
 export class SafeDsClassHierarchy {
     private readonly builtinClasses: SafeDsClasses;
-    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
-        this.typeComputer = services.types.TypeComputer;
     }
 
     /**
      * Returns `true` if the given node is equal to or a subclass of the given other node. If one of the nodes is
-     * undefined, `false` is returned.
+     * `undefined`, `false` is returned.
      */
     isEqualToOrSubclassOf(node: SdsClass | undefined, other: SdsClass | undefined): boolean {
         if (!node || !other) {
@@ -74,9 +70,11 @@ export class SafeDsClassHierarchy {
      */
     private parentClassOrUndefined(node: SdsClass | undefined): SdsClass | undefined {
         const [firstParentType] = getParentTypes(node);
-        const computedType = this.typeComputer.computeType(firstParentType);
-        if (computedType instanceof ClassType) {
-            return computedType.declaration;
+        if (isSdsNamedType(firstParentType)) {
+            const declaration = firstParentType.declaration?.ref;
+            if (isSdsClass(declaration)) {
+                return declaration;
+            }
         }
 
         return undefined;

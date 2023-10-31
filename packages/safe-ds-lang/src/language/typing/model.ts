@@ -1,3 +1,4 @@
+import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     SdsAbstractResult,
     SdsCallable,
@@ -29,19 +30,14 @@ export abstract class Type {
     abstract toString(): string;
 
     /**
-     * Returns a copy of this type with the given nullability. If nullability is fixed for a type, it may return the
-     * instance itself.
-     */
-    updateNullability(_isNullable: boolean): Type {
-        return this;
-    }
-
-    /**
      * Removes any unnecessary containers from the type.
      */
-    unwrap(): Type {
-        return this;
-    }
+    abstract unwrap(): Type;
+
+    /**
+     * Returns a copy of this type with the given nullability.
+     */
+    abstract updateNullability(isNullable: boolean): Type;
 }
 
 export class CallableType extends Type {
@@ -79,14 +75,32 @@ export class CallableType extends Type {
     override toString(): string {
         return `${this.inputType} -> ${this.outputType}`;
     }
+
+    override unwrap(): CallableType {
+        return new CallableType(
+            this.callable,
+            new NamedTupleType(...this.inputType.entries.map((it) => it.unwrap())),
+            new NamedTupleType(...this.outputType.entries.map((it) => it.unwrap())),
+        );
+    }
+
+    override updateNullability(isNullable: boolean): Type {
+        if (!isNullable) {
+            return this;
+        }
+
+        return new UnionType(this, new LiteralType(NullConstant));
+    }
 }
 
 export class LiteralType extends Type {
+    readonly constants: Constant[];
     override readonly isNullable: boolean;
 
-    constructor(readonly constants: Constant[]) {
+    constructor(...constants: Constant[]) {
         super();
 
+        this.constants = constants;
         this.isNullable = constants.some((it) => it === NullConstant);
     }
 
@@ -107,11 +121,15 @@ export class LiteralType extends Type {
         return `literal<${this.constants.join(', ')}>`;
     }
 
+    override unwrap(): LiteralType {
+        return this;
+    }
+
     override updateNullability(isNullable: boolean): LiteralType {
         if (this.isNullable && !isNullable) {
-            return new LiteralType(this.constants.filter((it) => it !== NullConstant));
+            return new LiteralType(...this.constants.filter((it) => it !== NullConstant));
         } else if (!this.isNullable && isNullable) {
-            return new LiteralType([...this.constants, NullConstant]);
+            return new LiteralType(...this.constants, NullConstant);
         } else {
             return this;
         }
@@ -119,16 +137,23 @@ export class LiteralType extends Type {
 }
 
 export class NamedTupleType<T extends SdsDeclaration> extends Type {
+    readonly entries: NamedTupleEntry<T>[];
     override readonly isNullable = false;
 
-    constructor(readonly entries: NamedTupleEntry<T>[]) {
+    constructor(...entries: NamedTupleEntry<T>[]) {
         super();
+
+        this.entries = entries;
     }
 
     /**
      * The length of this tuple.
      */
-    readonly length: number = this.entries.length;
+    /* c8 ignore start */
+    get length(): number {
+        return this.entries.length;
+    }
+    /* c8 ignore stop */
 
     /**
      * Returns the type of the entry at the given index. If the index is out of bounds, returns `undefined`.
@@ -159,10 +184,18 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
      */
     override unwrap(): Type {
         if (this.entries.length === 1) {
-            return this.entries[0].type;
+            return this.entries[0].type.unwrap();
         }
 
-        return this;
+        return new NamedTupleType(...this.entries.map((it) => it.unwrap()));
+    }
+
+    override updateNullability(isNullable: boolean): Type {
+        if (!isNullable) {
+            return this;
+        }
+
+        return new UnionType(this, new LiteralType(NullConstant));
     }
 }
 
@@ -180,6 +213,10 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
     toString(): string {
         return `${this.name}: ${this.type}`;
     }
+
+    unwrap(): NamedTupleEntry<T> {
+        return new NamedTupleEntry(this.declaration, this.name, this.type.unwrap());
+    }
 }
 
 export abstract class NamedType<T extends SdsDeclaration> extends Type {
@@ -196,6 +233,10 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
     }
 
     abstract override updateNullability(isNullable: boolean): NamedType<T>;
+
+    unwrap(): NamedType<T> {
+        return this;
+    }
 }
 
 export class ClassType extends NamedType<SdsClass> {
@@ -290,14 +331,28 @@ export class StaticType extends Type {
     override toString(): string {
         return `$type<${this.instanceType}>`;
     }
+
+    override unwrap(): Type {
+        return this;
+    }
+
+    override updateNullability(isNullable: boolean): Type {
+        if (!isNullable) {
+            return this;
+        }
+
+        return new UnionType(this, new LiteralType(NullConstant));
+    }
 }
 
 export class UnionType extends Type {
+    readonly possibleTypes: Type[];
     override readonly isNullable: boolean;
 
-    constructor(readonly possibleTypes: Type[]) {
+    constructor(...possibleTypes: Type[]) {
         super();
 
+        this.possibleTypes = possibleTypes;
         this.isNullable = possibleTypes.some((it) => it.isNullable);
     }
 
@@ -317,6 +372,28 @@ export class UnionType extends Type {
     override toString(): string {
         return `union<${this.possibleTypes.join(', ')}>`;
     }
+
+    override unwrap(): Type {
+        if (this.possibleTypes.length === 1) {
+            return this.possibleTypes[0].unwrap();
+        }
+
+        return new UnionType(...this.possibleTypes.map((it) => it.unwrap()));
+    }
+
+    override updateNullability(isNullable: boolean): Type {
+        if (this.isNullable && !isNullable) {
+            return new UnionType(...this.possibleTypes.map((it) => it.updateNullability(false)));
+        } else if (!this.isNullable && isNullable) {
+            if (isEmpty(this.possibleTypes)) {
+                return new LiteralType(NullConstant);
+            } else {
+                return new UnionType(...this.possibleTypes.map((it) => it.updateNullability(true)));
+            }
+        } else {
+            return this;
+        }
+    }
 }
 
 class UnknownTypeClass extends Type {
@@ -329,22 +406,14 @@ class UnknownTypeClass extends Type {
     override toString(): string {
         return '?';
     }
+
+    override unwrap(): Type {
+        return this;
+    }
+
+    override updateNullability(_isNullable: boolean): Type {
+        return this;
+    }
 }
 
 export const UnknownType = new UnknownTypeClass();
-
-/* c8 ignore start */
-class NotImplementedTypeClass extends Type {
-    override readonly isNullable = false;
-
-    override equals(other: Type): boolean {
-        return other instanceof NotImplementedTypeClass;
-    }
-
-    override toString(): string {
-        return '$NotImplemented';
-    }
-}
-
-export const NotImplementedType = new NotImplementedTypeClass();
-/* c8 ignore stop */
