@@ -588,7 +588,9 @@ export class SafeDsPythonGenerator {
                     return traceToNode(expression)(receiver);
                 }
                 const currentIndex = resultList.indexOf(member);
-                return expandTracedToNode(expression)`${receiver}[${traceToNode(expression.member!)(String(currentIndex))}]`;
+                return expandTracedToNode(expression)`${receiver}[${traceToNode(expression.member!)(
+                    String(currentIndex),
+                )}]`;
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
