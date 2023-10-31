@@ -1,6 +1,14 @@
+import { streamAllContents } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
-import { isSdsClass, isSdsEnum, isSdsEnumVariant, isSdsFunction } from '../../../../src/language/generated/ast.js';
+import {
+    isSdsClass,
+    isSdsEnum,
+    isSdsEnumVariant,
+    isSdsFunction,
+    isSdsModule,
+} from '../../../../src/language/generated/ast.js';
+import { getModuleMembers } from '../../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { BooleanConstant, IntConstant, NullConstant } from '../../../../src/language/partialEvaluation/model.js';
 import {
@@ -29,32 +37,48 @@ const code = `
         Variant1
         Variant2
     }
-    enum Enum2
+    enum Enum2 {
+        Variant3
+    }
 `;
-const func = await getNodeOfType(services, code, isSdsFunction, 0);
+const module = await getNodeOfType(services, code, isSdsModule);
+const func = getModuleMembers(module).find(isSdsFunction)!;
 const callableType = typeComputer.computeType(func);
 
-const class1 = await getNodeOfType(services, code, isSdsClass, 0);
-const class2 = await getNodeOfType(services, code, isSdsClass, 1);
-const class3 = await getNodeOfType(services, code, isSdsClass, 2);
+const classes = getModuleMembers(module).filter(isSdsClass);
+const class1 = classes[0];
+const class2 = classes[1];
+const class3 = classes[2];
 const classType1 = typeComputer.computeType(class1) as ClassType;
 const classType2 = typeComputer.computeType(class2) as ClassType;
 const classType3 = typeComputer.computeType(class3) as ClassType;
 
-const enum1 = await getNodeOfType(services, code, isSdsEnum, 0);
-const enum2 = await getNodeOfType(services, code, isSdsEnum, 1);
+const enums = getModuleMembers(module).filter(isSdsEnum);
+const enum1 = enums[0];
+const enum2 = enums[1];
 const enumType1 = typeComputer.computeType(enum1);
 const enumType2 = typeComputer.computeType(enum2);
 
-const enumVariant1 = await getNodeOfType(services, code, isSdsEnumVariant, 0);
-const enumVariant2 = await getNodeOfType(services, code, isSdsEnumVariant, 1);
+const enumVariants = streamAllContents(module).filter(isSdsEnumVariant).toArray();
+const enumVariant1 = enumVariants[0];
+const enumVariant2 = enumVariants[1];
+const enumVariant3 = enumVariants[2];
 const enumVariantType1 = typeComputer.computeType(enumVariant1);
 const enumVariantType2 = typeComputer.computeType(enumVariant2);
+const enumVariantType3 = typeComputer.computeType(enumVariant3);
 
 const tests: LowestCommonSupertypeTest[] = [
     // No types
     {
         types: [],
+        expected: coreTypes.Nothing,
+    },
+    {
+        types: [new LiteralType()],
+        expected: coreTypes.Nothing,
+    },
+    {
+        types: [new UnionType()],
         expected: coreTypes.Nothing,
     },
     // Union types get flattened
@@ -144,7 +168,6 @@ const tests: LowestCommonSupertypeTest[] = [
         expected: coreTypes.AnyOrNull,
     },
     // Class type & literal type
-    // TODO
     {
         types: [classType1, new LiteralType()],
         expected: classType1,
@@ -239,6 +262,10 @@ const tests: LowestCommonSupertypeTest[] = [
     },
     {
         types: [enumVariantType1, enumVariantType2],
+        expected: enumType1,
+    },
+    {
+        types: [enumVariantType1, enumVariantType3],
         expected: coreTypes.Any,
     },
     {
@@ -247,6 +274,10 @@ const tests: LowestCommonSupertypeTest[] = [
     },
     {
         types: [enumVariantType1.updateNullability(true), enumVariantType2],
+        expected: enumType1.updateNullability(true),
+    },
+    {
+        types: [enumVariantType1.updateNullability(true), enumVariantType3],
         expected: coreTypes.AnyOrNull,
     },
     // Enum variant type & literal type

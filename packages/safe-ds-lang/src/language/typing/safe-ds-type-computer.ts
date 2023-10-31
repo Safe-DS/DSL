@@ -1,4 +1,4 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
+import { AstNode, AstNodeLocator, getContainerOfType, getDocument, stream, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsAnnotation,
@@ -86,11 +86,13 @@ import {
     UnionType,
     UnknownType,
 } from './model.js';
+import type { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
+    private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
@@ -100,6 +102,7 @@ export class SafeDsTypeComputer {
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
+        this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
@@ -107,6 +110,10 @@ export class SafeDsTypeComputer {
 
         this.nodeTypeCache = new WorkspaceCache(services.shared);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Compute type
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Computes the type of the given node.
@@ -471,13 +478,12 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Helpers
+    // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
     lowestCommonSupertype(...types: Type[]): Type {
+        // No types given
         const flattenedAndUnwrappedTypes = [...this.flattenUnionTypesAndUnwrap(types)];
-        const isNullable = flattenedAndUnwrappedTypes.some((it) => it.isNullable);
-
         if (isEmpty(flattenedAndUnwrappedTypes)) {
             return this.coreTypes.Nothing;
         }
@@ -488,12 +494,39 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
-        // Has only one type. For the sake of consistency, we do this check after the unknown supertype check.
-        if (flattenedAndUnwrappedTypes.length === 1) {
+        // Some shortcuts to avoid unnecessary computation
+        if (
+            isEmpty(groupedTypes.classTypes) &&
+            isEmpty(groupedTypes.constants) &&
+            isEmpty(groupedTypes.enumTypes) &&
+            isEmpty(groupedTypes.enumVariantTypes)
+        ) {
+            return this.coreTypes.Nothing;
+        } else if (flattenedAndUnwrappedTypes.length === 1) {
             return flattenedAndUnwrappedTypes[0];
         }
 
-        return UnknownType;
+        const isNullable = flattenedAndUnwrappedTypes.some((it) => it.isNullable);
+
+        // Class-based types
+        if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
+            if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
+                return this.getAny(isNullable);
+            } else {
+                return this.lowestCommonSupertypeForClassBasedTypes(
+                    groupedTypes.classTypes,
+                    groupedTypes.constants,
+                    isNullable,
+                );
+            }
+        }
+
+        // Enum-based types
+        return this.lowestCommonSupertypeForEnumBasedTypes(
+            groupedTypes.enumTypes,
+            groupedTypes.enumVariantTypes,
+            isNullable,
+        );
     }
 
     /**
@@ -515,9 +548,9 @@ export class SafeDsTypeComputer {
     private groupTypes(types: Type[]): GroupTypesResult {
         const result: GroupTypesResult = {
             classTypes: [],
+            constants: [],
             enumTypes: [],
             enumVariantTypes: [],
-            constants: [],
             hasTypeWithUnknownSupertype: false,
         };
 
@@ -540,7 +573,46 @@ export class SafeDsTypeComputer {
         return result;
     }
 
-    private isLowestCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
+    private lowestCommonSupertypeForClassBasedTypes(
+        classTypes: ClassType[],
+        constants: Constant[],
+        isNullable: boolean,
+    ): Type {
+        const literalType = new LiteralType(...constants);
+
+        if (isEmpty(classTypes)) {
+            return literalType;
+        }
+
+        const candidateClasses = stream(
+            [classTypes[0].declaration],
+            this.classHierarchy.streamSuperclasses(classTypes[0].declaration),
+        );
+        const other = [...classTypes.slice(1), literalType];
+
+        for (const candidateClass of candidateClasses) {
+            const candidateType = new ClassType(candidateClass, isNullable);
+            if (this.isCommonSupertype(candidateType, other)) {
+                return candidateType;
+            }
+        }
+
+        return this.getAny(isNullable);
+    }
+
+    private lowestCommonSupertypeForEnumBasedTypes(
+        _enumTypes: EnumType[],
+        _enumVariantTypes: EnumVariantType[],
+        _isNullable: boolean,
+    ): Type {
+        return UnknownType;
+    }
+
+    private lowestCommonSupertypeForEnumTypes(enumTypes: EnumType[], isNullable: boolean): Type {
+        return UnknownType;
+    }
+
+    private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
     }
 

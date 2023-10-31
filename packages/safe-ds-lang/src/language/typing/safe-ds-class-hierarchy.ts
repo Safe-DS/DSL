@@ -13,7 +13,7 @@ export class SafeDsClassHierarchy {
 
     /**
      * Returns `true` if the given node is equal to or a subclass of the given other node. If one of the nodes is
-     * undefined, `false` is returned.
+     * `undefined`, `false` is returned.
      */
     isEqualToOrSubclassOf(node: SdsClass | undefined, other: SdsClass | undefined): boolean {
         if (!node || !other) {
