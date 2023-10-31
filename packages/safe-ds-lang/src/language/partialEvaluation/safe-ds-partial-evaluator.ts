@@ -1,21 +1,5 @@
-import { SafeDsServices } from '../safe-ds-module.js';
 import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
-import {
-    BooleanConstant,
-    EvaluatedEnumVariant,
-    EvaluatedList,
-    EvaluatedMap,
-    EvaluatedMapEntry,
-    EvaluatedNode,
-    FloatConstant,
-    IntConstant,
-    isConstant,
-    NullConstant,
-    NumberConstant,
-    ParameterSubstitutions,
-    StringConstant,
-    UnknownEvaluatedNode,
-} from './model.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsArgument,
     isSdsBlockLambda,
@@ -55,7 +39,23 @@ import {
 } from '../generated/ast.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import {
+    BooleanConstant,
+    EvaluatedEnumVariant,
+    EvaluatedList,
+    EvaluatedMap,
+    EvaluatedMapEntry,
+    EvaluatedNode,
+    FloatConstant,
+    IntConstant,
+    isConstant,
+    NullConstant,
+    NumberConstant,
+    ParameterSubstitutions,
+    StringConstant,
+    UnknownEvaluatedNode,
+} from './model.js';
 
 export class SafeDsPartialEvaluator {
     private readonly astNodeLocator: AstNodeLocator;
@@ -141,7 +141,7 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsTemplateString(node)) {
             return this.evaluateTemplateString(node, substitutions);
         } /* c8 ignore start */ else {
-            return UnknownEvaluatedNode;
+            throw new Error(`Unexpected node type: ${node.$type}`);
         } /* c8 ignore stop */
     }
 
@@ -269,7 +269,7 @@ export class SafeDsPartialEvaluator {
 
             /* c8 ignore next 2 */
             default:
-                return UnknownEvaluatedNode;
+                throw new Error(`Unexpected operator: ${node.operator}`);
         }
     }
 

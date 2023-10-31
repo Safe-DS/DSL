@@ -181,7 +181,7 @@ export class SafeDsTypeChecker {
         } else if (constant instanceof StringConstant) {
             classType = this.coreTypes.String;
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected constant type: ${constant}`);
+            throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
         } /* c8 ignore stop */
 
         return this.isAssignableTo(classType, other);

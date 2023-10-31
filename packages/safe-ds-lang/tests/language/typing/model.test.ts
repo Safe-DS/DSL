@@ -168,82 +168,133 @@ describe('type model', async () => {
         {
             type: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
             isNullable: true,
-            expectedCopy: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+            expectedType: new UnionType([
+                new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+                new LiteralType([NullConstant]),
+            ]),
+        },
+        {
+            type: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
+            isNullable: false,
+            expectedType: new CallableType(callable1, new NamedTupleType([]), new NamedTupleType([])),
         },
         {
             type: new LiteralType([new BooleanConstant(true)]),
             isNullable: true,
-            expectedCopy: new LiteralType([new BooleanConstant(true), NullConstant]),
+            expectedType: new LiteralType([new BooleanConstant(true), NullConstant]),
         },
         {
             type: new LiteralType([new BooleanConstant(true), NullConstant]),
             isNullable: false,
-            expectedCopy: new LiteralType([new BooleanConstant(true)]),
+            expectedType: new LiteralType([new BooleanConstant(true)]),
         },
         {
             type: new LiteralType([new BooleanConstant(true), NullConstant]),
             isNullable: true,
-            expectedCopy: new LiteralType([new BooleanConstant(true), NullConstant]),
+            expectedType: new LiteralType([new BooleanConstant(true), NullConstant]),
         },
         {
             type: new LiteralType([new BooleanConstant(true)]),
             isNullable: false,
-            expectedCopy: new LiteralType([new BooleanConstant(true)]),
+            expectedType: new LiteralType([new BooleanConstant(true)]),
         },
         {
             type: new NamedTupleType([]),
             isNullable: true,
-            expectedCopy: new NamedTupleType([]),
+            expectedType: new UnionType([new NamedTupleType([]), new LiteralType([NullConstant])]),
+        },
+        {
+            type: new NamedTupleType([]),
+            isNullable: false,
+            expectedType: new NamedTupleType([]),
         },
         {
             type: new ClassType(class1, false),
             isNullable: true,
-            expectedCopy: new ClassType(class1, true),
+            expectedType: new ClassType(class1, true),
         },
         {
             type: new ClassType(class1, true),
             isNullable: false,
-            expectedCopy: new ClassType(class1, false),
+            expectedType: new ClassType(class1, false),
         },
         {
             type: new EnumType(enum1, false),
             isNullable: true,
-            expectedCopy: new EnumType(enum1, true),
+            expectedType: new EnumType(enum1, true),
         },
         {
             type: new EnumType(enum1, true),
             isNullable: false,
-            expectedCopy: new EnumType(enum1, false),
+            expectedType: new EnumType(enum1, false),
         },
         {
             type: new EnumVariantType(enumVariant1, false),
             isNullable: true,
-            expectedCopy: new EnumVariantType(enumVariant1, true),
+            expectedType: new EnumVariantType(enumVariant1, true),
         },
         {
             type: new EnumVariantType(enumVariant1, true),
             isNullable: false,
-            expectedCopy: new EnumVariantType(enumVariant1, false),
+            expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
             type: new StaticType(new ClassType(class1, false)),
             isNullable: true,
-            expectedCopy: new StaticType(new ClassType(class1, false)),
+            expectedType: new UnionType([
+                new StaticType(new ClassType(class1, false)),
+                new LiteralType([NullConstant]),
+            ]),
+        },
+        {
+            type: new StaticType(new ClassType(class1, false)),
+            isNullable: false,
+            expectedType: new StaticType(new ClassType(class1, false)),
+        },
+        {
+            type: new UnionType([]),
+            isNullable: true,
+            expectedType: new LiteralType([NullConstant]),
         },
         {
             type: new UnionType([]),
             isNullable: false,
-            expectedCopy: new UnionType([]),
+            expectedType: new UnionType([]),
+        },
+        {
+            type: new UnionType([new ClassType(class1, false)]),
+            isNullable: true,
+            expectedType: new UnionType([new ClassType(class1, true)]),
+        },
+        {
+            type: new UnionType([new ClassType(class1, false)]),
+            isNullable: false,
+            expectedType: new UnionType([new ClassType(class1, false)]),
+        },
+        {
+            type: new UnionType([new ClassType(class1, true)]),
+            isNullable: true,
+            expectedType: new UnionType([new ClassType(class1, true)]),
+        },
+        {
+            type: new UnionType([new ClassType(class1, true)]),
+            isNullable: false,
+            expectedType: new UnionType([new ClassType(class1, false)]),
         },
         {
             type: UnknownType,
             isNullable: true,
-            expectedCopy: UnknownType,
+            expectedType: UnknownType,
+        },
+        {
+            type: UnknownType,
+            isNullable: false,
+            expectedType: UnknownType,
         },
     ];
-    describe.each(updateNullabilityTest)('updateNullability', ({ type, isNullable, expectedCopy }) => {
+    describe.each(updateNullabilityTest)('updateNullability', ({ type, isNullable, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
-            expect(type.updateNullability(isNullable).equals(expectedCopy)).toBeTruthy();
+            expect(type.updateNullability(isNullable).equals(expectedType)).toBeTruthy();
         });
     });
 
@@ -332,7 +383,7 @@ interface UpdateNullabilityTest {
     /**
      * The expected result.
      */
-    expectedCopy: Type;
+    expectedType: Type;
 }
 
 /**
