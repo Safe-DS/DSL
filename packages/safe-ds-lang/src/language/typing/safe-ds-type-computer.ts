@@ -578,12 +578,13 @@ export class SafeDsTypeComputer {
         constants: Constant[],
         isNullable: boolean,
     ): Type {
+        // If there are only constants, return a literal type
         const literalType = new LiteralType(...constants);
-
         if (isEmpty(classTypes)) {
             return literalType;
         }
 
+        // Find the class type that is compatible to all other types
         const candidateClasses = stream(
             [classTypes[0].declaration],
             this.classHierarchy.streamSuperclasses(classTypes[0].declaration),
@@ -601,15 +602,38 @@ export class SafeDsTypeComputer {
     }
 
     private lowestCommonSupertypeForEnumBasedTypes(
-        _enumTypes: EnumType[],
-        _enumVariantTypes: EnumVariantType[],
-        _isNullable: boolean,
+        enumTypes: EnumType[],
+        enumVariantTypes: EnumVariantType[],
+        isNullable: boolean,
     ): Type {
-        return UnknownType;
-    }
+        if (isEmpty(enumTypes) && isEmpty(enumVariantTypes)) {
+            return this.coreTypes.Nothing;
+        }
 
-    private lowestCommonSupertypeForEnumTypes(enumTypes: EnumType[], isNullable: boolean): Type {
-        return UnknownType;
+        // Build candidates & other
+        const candidates: Type[] = [];
+        if (!isEmpty(enumTypes)) {
+            candidates.push(enumTypes[0].updateNullability(isNullable));
+        } else {
+            if (!isEmpty(enumVariantTypes)) {
+                candidates.push(enumVariantTypes[0].updateNullability(isNullable));
+
+                const containingEnum = getContainerOfType(enumVariantTypes[0].declaration, isSdsEnum);
+                if (containingEnum) {
+                    candidates.push(new EnumType(containingEnum, isNullable));
+                }
+            }
+        }
+        const other = [...enumTypes, ...enumVariantTypes];
+
+        // Check whether a candidate type is compatible to all other types
+        for (const candidate of candidates) {
+            if (this.isCommonSupertype(candidate, other)) {
+                return candidate;
+            }
+        }
+
+        return this.getAny(isNullable);
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {

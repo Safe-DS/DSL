@@ -1,4 +1,5 @@
-import { SdsDeclaration } from '../generated/ast.js';
+import { getContainerOfType } from 'langium';
+import { isSdsEnum, SdsDeclaration } from '../generated/ast.js';
 import {
     BooleanConstant,
     Constant,
@@ -110,13 +111,18 @@ export class SafeDsTypeChecker {
     }
 
     private enumTypeIsAssignableTo(type: EnumType, other: Type): boolean {
+        if (type.isNullable && !other.isNullable) {
+            return false;
+        }
+
+        if (other instanceof EnumType) {
+            return type.declaration === other.declaration;
+        }
+
         //     return when (val unwrappedOther = unwrapVariadicType(other)) {
         //         is ClassType -> {
         //             (!this.isNullable || unwrappedOther.isNullable) &&
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is EnumType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnum == unwrappedOther.sdsEnum
         //         }
         //         is UnionType -> {
         //             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
@@ -128,17 +134,20 @@ export class SafeDsTypeChecker {
     }
 
     private enumVariantTypeIsAssignableTo(type: EnumVariantType, other: Type): boolean {
+        if (type.isNullable && !other.isNullable) {
+            return false;
+        }
+
+        if (other instanceof EnumType) {
+            const containingEnum = getContainerOfType(type.declaration, isSdsEnum);
+            return containingEnum === other.declaration;
+        } else if (other instanceof EnumVariantType) {
+            return type.declaration === other.declaration;
+        }
         //     return when (val unwrappedOther = unwrapVariadicType(other)) {
         //         is ClassType -> {
         //             (!this.isNullable || unwrappedOther.isNullable) &&
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is EnumType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) &&
-        //             this.sdsEnumVariant in unwrappedOther.sdsEnum.variantsOrEmpty()
-        //         }
-        //         is EnumVariantType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) && this.sdsEnumVariant == unwrappedOther.sdsEnumVariant
         //         }
         //         is UnionType -> unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
         //     else -> false
