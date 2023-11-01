@@ -12,7 +12,7 @@ packages = [
 python = "^3.11"
 mkdocs = "^1.5.3"
 mkdocs-glightbox = "^0.3.4"
-mkdocs-material = "^9.4.6"
+mkdocs-material = "^9.4.7"
 mkdocs-same-dir = "^0.1.2"
 pygments = "^2.16.1"
 
