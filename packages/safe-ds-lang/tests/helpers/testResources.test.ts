@@ -41,7 +41,7 @@ describe('listTestSafeDsFiles', () => {
     });
 });
 
-describe('listTestPythonFiles', () => {
+describe('listTestFilesWithExtensions', () => {
     it('should return all Python files in a resource directory', () => {
         const rootResourceName = 'helpers/listPythonFiles';
         const actual = listTestFilesWithExtensions(rootResourceName, ['py']);
