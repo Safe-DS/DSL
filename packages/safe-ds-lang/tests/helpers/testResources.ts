@@ -50,7 +50,8 @@ export const uriToShortenedTestResourceName = (
  * @return URIs of the discovered Safe-DS files.
  */
 export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI[] => {
-    return listTestFilesWithExtensions(rootTestResourceName, SAFE_DS_FILE_EXTENSIONS).filter(isNotSkipped);
+    const rootPath = testResourceNameToUri(rootTestResourceName).fsPath;
+    return listTestFilesWithExtensions(rootTestResourceName, SAFE_DS_FILE_EXTENSIONS).filter(uri => isNotSkipped(path.relative(rootPath, uri.fsPath)));
 };
 
 /**
@@ -86,8 +87,8 @@ export const listTestSafeDsFilesGroupedByParentDirectory = (rootTestResourceName
     return result;
 };
 
-const isNotSkipped = (pathRelativeToResources: URI) => {
-    const segments = pathRelativeToResources.fsPath.split(path.sep);
+const isNotSkipped = (pathRelativeToResources: string) => {
+    const segments = pathRelativeToResources.split(path.sep);
     return !segments.some((segment) => segment.startsWith('skip'));
 };
 
