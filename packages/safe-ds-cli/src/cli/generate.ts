@@ -6,11 +6,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { extractDocument } from './cli-util.js';
 
-export const generate = async (fileName: string, opts: GenerateOptions): Promise<void> => {
+export const generate = async (fileName: string, opts: CliGenerateOptions): Promise<void> => {
     const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     const document = await extractDocument(fileName, services);
     const destination = opts.destination ?? path.join(path.dirname(fileName), 'generated');
-    const generatedFiles = services.generation.PythonGenerator.generate(document, URI.file(path.resolve(destination)));
+    const generatedFiles = services.generation.PythonGenerator.generate(document, {
+        destination: URI.file(path.resolve(destination)),
+        createSourceMaps: opts.sourcemaps,
+    });
 
     for (const file of generatedFiles) {
         const fsPath = URI.parse(file.uri).fsPath;
@@ -25,6 +28,8 @@ export const generate = async (fileName: string, opts: GenerateOptions): Promise
     console.log(chalk.green(`Python code generated successfully.`));
 };
 
-export interface GenerateOptions {
+export interface CliGenerateOptions {
     destination?: string;
+    sourcemaps: boolean;
+    quiet: boolean;
 }
