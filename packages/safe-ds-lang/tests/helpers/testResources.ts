@@ -51,7 +51,9 @@ export const uriToShortenedTestResourceName = (
  */
 export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI[] => {
     const rootPath = testResourceNameToUri(rootTestResourceName).fsPath;
-    return listTestFilesWithExtensions(rootTestResourceName, SAFE_DS_FILE_EXTENSIONS).filter(uri => isNotSkipped(path.relative(rootPath, uri.fsPath)));
+    return listTestFilesWithExtensions(rootTestResourceName, SAFE_DS_FILE_EXTENSIONS).filter((uri) =>
+        isNotSkipped(path.relative(rootPath, uri.fsPath)),
+    );
 };
 
 /**
@@ -62,7 +64,7 @@ export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI
  * @return URIs of the discovered files.
  */
 export const listTestFilesWithExtensions = (rootTestResourceName: TestResourceName, extensions: string[]): URI[] => {
-    const pattern = extensions.length === 1 ? `**/*.${extensions[0]}` : `**/*.{${extensions.join(",")}}`;
+    const pattern = extensions.length === 1 ? `**/*.${extensions[0]}` : `**/*.{${extensions.join(',')}}`;
     const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
