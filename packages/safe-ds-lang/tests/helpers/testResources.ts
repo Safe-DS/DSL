@@ -50,22 +50,18 @@ export const uriToShortenedTestResourceName = (
  * @return URIs of the discovered Safe-DS files.
  */
 export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI[] => {
-    const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
-    const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
-
-    return globSync(pattern, { cwd, nodir: true })
-        .filter(isNotSkipped)
-        .map((it) => URI.file(path.join(cwd, it)));
+    return listTestFilesWithExtensions(rootTestResourceName, SAFE_DS_FILE_EXTENSIONS).filter(isNotSkipped);
 };
 
 /**
- * Lists all Python files and JSON files in the given root directory.
+ * Lists all files that end in any of the provided extensions in the given root directory.
  *
  * @param rootTestResourceName The resource name of the root directory.
- * @return URIs of the discovered Python files.
+ * @param extensions The array containing file extensions to match
+ * @return URIs of the discovered files.
  */
-export const listTestPythonJsonFiles = (rootTestResourceName: TestResourceName): URI[] => {
-    const pattern = `**/*.{json,py}`;
+export const listTestFilesWithExtensions = (rootTestResourceName: TestResourceName, extensions: string[]): URI[] => {
+    const pattern = `**/*.{${extensions.join(",")}}`;
     const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
@@ -90,8 +86,8 @@ export const listTestSafeDsFilesGroupedByParentDirectory = (rootTestResourceName
     return result;
 };
 
-const isNotSkipped = (pathRelativeToResources: string) => {
-    const segments = pathRelativeToResources.split(path.sep);
+const isNotSkipped = (pathRelativeToResources: URI) => {
+    const segments = pathRelativeToResources.fsPath.split(path.sep);
     return !segments.some((segment) => segment.startsWith('skip'));
 };
 

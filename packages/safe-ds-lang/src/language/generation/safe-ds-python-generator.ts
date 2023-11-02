@@ -111,7 +111,7 @@ export class SafeDsPythonGenerator {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
-    generate(document: LangiumDocument, destination: URI, sourceMapDestination: URI | undefined): TextDocument[] {
+    generate(document: LangiumDocument, destination: URI, createSourceMaps: boolean): TextDocument[] {
         const node = document.parseResult.value;
 
         // Do not generate stub files
@@ -127,13 +127,14 @@ export class SafeDsPythonGenerator {
         const generatedFiles = new Map<string, string>();
         const generatedModule = this.generateModule(node);
         const { text, trace } = toStringAndTrace(generatedModule);
-        if (sourceMapDestination) {
+        const pythonOutputPath = `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`;
+        if (createSourceMaps) {
             generatedFiles.set(
-                sourceMapDestination.fsPath,
+                `${pythonOutputPath}.map`,
                 this.generateSourceMap(document, text, trace, this.formatGeneratedFileName(name)),
             );
         }
-        generatedFiles.set(`${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`, text);
+        generatedFiles.set(pythonOutputPath, text);
         for (const pipeline of streamAllContents(node).filter(isSdsPipeline)) {
             const entryPointFilename = `${path.join(
                 parentDirectoryPath,

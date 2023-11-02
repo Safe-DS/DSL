@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
-    listTestPythonJsonFiles,
+    listTestFilesWithExtensions,
     listTestSafeDsFiles,
     listTestSafeDsFilesGroupedByParentDirectory,
+    ShortenedTestResourceName,
     TestResourceName,
     testResourceNameToUri,
-    ShortenedTestResourceName,
     uriToShortenedTestResourceName,
 } from './testResources.js';
 import { URI } from 'langium';
@@ -44,7 +44,7 @@ describe('listTestSafeDsFiles', () => {
 describe('listTestPythonFiles', () => {
     it('should return all Python files in a resource directory', () => {
         const rootResourceName = 'helpers/listPythonFiles';
-        const actual = listTestPythonJsonFiles(rootResourceName);
+        const actual = listTestFilesWithExtensions(rootResourceName, ['py']);
         const expected = ['python file.py', 'nested/python file.py'];
 
         expectFileListsToMatch(rootResourceName, actual, expected);

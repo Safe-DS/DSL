@@ -13,7 +13,7 @@ export const generate = async (fileName: string, opts: GenerateOptions): Promise
     const generatedFiles = services.generation.PythonGenerator.generate(
         document,
         URI.file(path.resolve(destination)),
-        opts.sourceMapDestination ? URI.file(path.resolve(opts.sourceMapDestination)) : undefined,
+        opts.createSourceMaps,
     );
 
     for (const file of generatedFiles) {
@@ -31,5 +31,5 @@ export const generate = async (fileName: string, opts: GenerateOptions): Promise
 
 export interface GenerateOptions {
     destination?: string;
-    sourceMapDestination?: string;
+    createSourceMaps: boolean;
 }
