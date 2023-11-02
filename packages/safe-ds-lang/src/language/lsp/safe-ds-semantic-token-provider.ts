@@ -1,11 +1,6 @@
-import {
-    AbstractSemanticTokenProvider,
-    AllSemanticTokenTypes,
-    AstNode,
-    DefaultSemanticTokenOptions,
-    hasContainerOfType,
-    SemanticTokenAcceptor,
-} from 'langium';
+import { AbstractSemanticTokenProvider, AstNode, hasContainerOfType, SemanticTokenAcceptor } from 'langium';
+import { SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver';
+import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import {
     isSdsAnnotation,
     isSdsAnnotationCall,
@@ -31,17 +26,7 @@ import {
     isSdsTypeParameter,
     isSdsTypeParameterConstraint,
 } from '../generated/ast.js';
-import { SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-
-// Add a new semantic token type for decorators, which is missing in langium v2.0.2
-if (!AllSemanticTokenTypes[SemanticTokenTypes.decorator]) {
-    const maxValue = Math.max(...Object.values(AllSemanticTokenTypes));
-    AllSemanticTokenTypes[SemanticTokenTypes.decorator] = maxValue + 1;
-
-    DefaultSemanticTokenOptions.legend.tokenTypes = Object.keys(AllSemanticTokenTypes);
-}
 
 export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
     private readonly builtinClasses: SafeDsClasses;
