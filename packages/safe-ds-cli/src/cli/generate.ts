@@ -6,7 +6,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { extractDocument } from './cli-util.js';
 
-
 export const generate = async (fileName: string, opts: CliGenerateOptions): Promise<void> => {
     const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     const document = await extractDocument(fileName, services);
