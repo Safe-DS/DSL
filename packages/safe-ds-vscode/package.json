@@ -86,6 +86,16 @@
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             }
+        },
+        "configuration": {
+            "title": "Safe-DS",
+            "properties": {
+                "safe-ds.runner.command": {
+                    "description": "Command to start the Safe-DS runner",
+                    "type": "string",
+                    "default": "python -m runner"
+                }
+            }
         }
     },
     "type": "module",
