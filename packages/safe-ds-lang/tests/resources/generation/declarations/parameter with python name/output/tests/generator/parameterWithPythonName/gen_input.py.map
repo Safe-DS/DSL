@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.sdstest"],"names":["test","param1","param2","param3","f1","f2"],"mappings":"AAAA;;AAKA,IAAQA,IAAI,CAACC,MAAM,EAA8BC,OAAM,EAA8BC,OAAM,CAAQ,CAAC;IAChGC,EAAE,CAAC,OAACH,MAAM,EAAOC,MAAM,EAAOC,MAAM,CAAQ,CAAC,EAAK,CAAC;IAChD,yBAACF,MAAM,EAAOC,MAAM,EAAOC,MAAM,CAAQ,CAAC;QAAE,IAAE;IAAjDE,EAAE,CAAC","file":"gen_input.py"}

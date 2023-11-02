@@ -22,6 +22,7 @@ program
     .option('-d, --destination <dir>', 'destination directory of generation')
     .option('-r, --root <dir>', 'source root folder')
     .option('-q, --quiet', 'whether the program should print something', false)
+    .option('-s, --sourcemaps', 'whether source maps should be generated', false)
     .description('generate Python code')
     .action(generate);
 

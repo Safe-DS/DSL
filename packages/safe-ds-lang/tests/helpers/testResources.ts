@@ -50,22 +50,21 @@ export const uriToShortenedTestResourceName = (
  * @return URIs of the discovered Safe-DS files.
  */
 export const listTestSafeDsFiles = (rootTestResourceName: TestResourceName): URI[] => {
-    const pattern = `**/*.{${SAFE_DS_FILE_EXTENSIONS.join(',')}}`;
-    const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
-
-    return globSync(pattern, { cwd, nodir: true })
-        .filter(isNotSkipped)
-        .map((it) => URI.file(path.join(cwd, it)));
+    const rootPath = testResourceNameToUri(rootTestResourceName).fsPath;
+    return listTestFilesWithExtensions(rootTestResourceName, SAFE_DS_FILE_EXTENSIONS).filter((uri) =>
+        isNotSkipped(path.relative(rootPath, uri.fsPath)),
+    );
 };
 
 /**
- * Lists all Python files in the given root directory.
+ * Lists all files that end in any of the provided extensions in the given root directory.
  *
  * @param rootTestResourceName The resource name of the root directory.
- * @return URIs of the discovered Python files.
+ * @param extensions The array containing file extensions to match
+ * @return URIs of the discovered files.
  */
-export const listTestPythonFiles = (rootTestResourceName: TestResourceName): URI[] => {
-    const pattern = `**/*.py`;
+export const listTestFilesWithExtensions = (rootTestResourceName: TestResourceName, extensions: string[]): URI[] => {
+    const pattern = extensions.length === 1 ? `**/*.${extensions[0]}` : `**/*.{${extensions.join(',')}}`;
     const cwd = testResourceNameToUri(rootTestResourceName).fsPath;
 
     return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.join(cwd, it)));
