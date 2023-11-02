@@ -111,7 +111,7 @@ export class SafeDsPythonGenerator {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
-    generate(document: LangiumDocument, destination: URI, createSourceMaps: boolean): TextDocument[] {
+    generate(document: LangiumDocument, generateOptions: GenerateOptions): TextDocument[] {
         const node = document.parseResult.value;
 
         // Do not generate stub files
@@ -122,13 +122,13 @@ export class SafeDsPythonGenerator {
         const name = path.parse(document.uri.fsPath).name;
         const pythonModuleName = this.builtinAnnotations.getPythonModule(node);
         const packagePath = pythonModuleName === undefined ? node.name.split('.') : [pythonModuleName];
-        const parentDirectoryPath = path.join(destination.fsPath, ...packagePath);
+        const parentDirectoryPath = path.join(generateOptions.destination!.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
         const generatedModule = this.generateModule(node);
         const { text, trace } = toStringAndTrace(generatedModule);
         const pythonOutputPath = `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`;
-        if (createSourceMaps) {
+        if (generateOptions.createSourceMaps) {
             generatedFiles.set(
                 `${pythonOutputPath}.map`,
                 this.generateSourceMap(document, text, trace, this.formatGeneratedFileName(name)),
@@ -787,4 +787,9 @@ class GenerationInfoFrame {
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
         return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
     }
+}
+
+export interface GenerateOptions {
+    destination: URI;
+    createSourceMaps: boolean;
 }

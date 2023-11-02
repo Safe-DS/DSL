@@ -32,11 +32,10 @@ describe('generation', async () => {
         // Generate code for all documents
         const actualOutputs = stream(documents)
             .flatMap((document) =>
-                pythonGenerator.generate(
-                    document,
-                    test.actualOutputRoot,
-                    true,
-                ),
+                pythonGenerator.generate(document, {
+                    destination: test.actualOutputRoot,
+                    createSourceMaps: true,
+                }),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])
             .toMap(
