@@ -21,6 +21,7 @@ import { pluralize } from '../../helpers/stringUtils.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
+export const CODE_TYPE_DEFAULT_VALUE = 'type/default-value';
 export const CODE_TYPE_YIELD = 'type/yield';
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
@@ -58,6 +59,33 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
             });
+        }
+    };
+};
+
+export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsParameter, accept: ValidationAcceptor) => {
+        const defaultValue = node.defaultValue;
+        if (!defaultValue) {
+            return;
+        }
+
+        const defaultValueType = typeComputer.computeType(defaultValue);
+        const parameterType = typeComputer.computeType(node);
+
+        if (!typeChecker.isAssignableTo(defaultValueType, parameterType)) {
+            accept(
+                'error',
+                `A default value of type '${defaultValueType}' cannot be assigned to a parameter of type '${parameterType}'.`,
+                {
+                    node,
+                    property: 'defaultValue',
+                    code: CODE_TYPE_DEFAULT_VALUE,
+                },
+            );
         }
     };
 };

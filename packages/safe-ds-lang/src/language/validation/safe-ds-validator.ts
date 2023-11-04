@@ -47,6 +47,7 @@ import {
     attributeMustHaveTypeHint,
     callReceiverMustBeCallable,
     namedTypeMustSetAllTypeParameters,
+    parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
     resultMustHaveTypeHint,
     yieldTypeMustMatchResultType,
@@ -267,6 +268,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),
             parameterMustHaveTypeHint,
+            parameterDefaultValueTypeMustMatchParameterType(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
