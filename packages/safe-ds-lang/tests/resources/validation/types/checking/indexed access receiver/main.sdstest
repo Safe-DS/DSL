@@ -1,0 +1,12 @@
+package tests.validation.types.checking.indexedAccessReceiver
+
+pipeline myPipeline {
+    // $TEST$ no error r"The receiver of an indexed access must be of type 'List' or 'Map' but was of type .*\."
+    »[1]«[0];
+
+    // $TEST$ no error r"The receiver of an indexed access must be of type 'List' or 'Map' but was of type .*\."
+    »{0: 1}«[0];
+
+    // $TEST$ error "The receiver of an indexed access must be of type 'List' or 'Map' but was of type 'literal<1>'."
+    »1«[0];
+}

@@ -47,6 +47,7 @@ import {
     argumentTypeMustMatchParameterType,
     attributeMustHaveTypeHint,
     callReceiverMustBeCallable,
+    indexedAccessReceiverMustBeListOrMap,
     namedTypeMustSetAllTypeParameters,
     parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
@@ -230,7 +231,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
-        SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
+        SdsIndexedAccess: [indexedAccessReceiverMustBeListOrMap(services), indexedAccessesShouldBeUsedWithCaution],
         SdsInfixOperation: [divisionDivisorMustNotBeZero(services), elvisOperatorShouldBeNeeded(services)],
         SdsLambda: [
             lambdaMustBeAssignedToTypedParameter(services),

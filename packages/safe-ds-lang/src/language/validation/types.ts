@@ -11,6 +11,7 @@ import {
     SdsArgument,
     SdsAttribute,
     SdsCall,
+    SdsIndexedAccess,
     SdsNamedType,
     SdsParameter,
     SdsResult,
@@ -87,6 +88,25 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
             });
+        }
+    };
+};
+
+export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+        const receiverType = typeComputer.computeType(node.receiver);
+        if (receiverType !== coreTypes.List && receiverType !== coreTypes.Map) {
+            accept(
+                'error',
+                `The receiver of an indexed access must be of type 'List' or 'Map' but was of type '${receiverType}'.`,
+                {
+                    node: node.receiver,
+                    code: CODE_TYPE_MISMATCH,
+                },
+            );
         }
     };
 };
