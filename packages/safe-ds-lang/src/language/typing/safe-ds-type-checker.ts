@@ -19,11 +19,11 @@ import {
     StaticType,
     Type,
     UnionType,
+    UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
-/* c8 ignore start */
 export class SafeDsTypeChecker {
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
@@ -53,9 +53,11 @@ export class SafeDsTypeChecker {
             return this.staticTypeIsAssignableTo(type, other);
         } else if (type instanceof UnionType) {
             return this.unionTypeIsAssignableTo(type, other);
-        } else {
+        } else if (type === UnknownType) {
             return false;
-        }
+        } /* c8 ignore start */ else {
+            throw new Error(`Unexpected type: ${type.constructor.name}`);
+        } /* c8 ignore stop */
     }
 
     private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
@@ -197,7 +199,6 @@ export class SafeDsTypeChecker {
         return this.isAssignableTo(classType, other);
     }
 
-    /* c8 ignore start */
     private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
         return type.equals(other);
     }
@@ -211,4 +212,3 @@ export class SafeDsTypeChecker {
         return type.equals(other);
     }
 }
-/* c8 ignore stop */
