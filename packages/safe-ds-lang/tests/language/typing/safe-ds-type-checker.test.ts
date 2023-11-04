@@ -144,7 +144,7 @@ describe('SafeDsTypeChecker', async () => {
         {
             type1: callableType8,
             type2: callableType7,
-            expected: false,
+            expected: true,
         },
         {
             type1: callableType9,

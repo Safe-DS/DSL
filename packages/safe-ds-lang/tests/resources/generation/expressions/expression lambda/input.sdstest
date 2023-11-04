@@ -4,5 +4,5 @@ fun f(param: (a: Int, b: Int) -> r: Int)
 
 pipeline test {
     f((a, b = 2) -> 1);
-    f((a, c) -> 1);
+    f((a, b) -> 1);
 }

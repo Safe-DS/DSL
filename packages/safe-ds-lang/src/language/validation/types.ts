@@ -92,11 +92,15 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
 
 export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
     const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
-        if (receiverType !== coreTypes.List && receiverType !== coreTypes.Map) {
+        if (
+            !typeChecker.isAssignableTo(receiverType, coreTypes.List) &&
+            !typeChecker.isAssignableTo(receiverType, coreTypes.Map)
+        ) {
             accept('error', `Expected type '${coreTypes.List}' or '${coreTypes.Map}' but got '${receiverType}'.`, {
                 node: node.receiver,
                 code: CODE_TYPE_MISMATCH,
@@ -112,7 +116,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
-        if (receiverType === coreTypes.List) {
+        if (typeChecker.isAssignableTo(receiverType, coreTypes.List)) {
             const indexType = typeComputer.computeType(node.index);
             if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
