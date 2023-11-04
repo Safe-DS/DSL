@@ -12,6 +12,7 @@ import {
     SdsAttribute,
     SdsCall,
     SdsIndexedAccess,
+    SdsInfixOperation,
     SdsNamedType,
     SdsParameter,
     SdsPrefixOperation,
@@ -120,6 +121,65 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
                     code: CODE_TYPE_MISMATCH,
                 });
             }
+        }
+    };
+};
+
+export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsInfixOperation, accept: ValidationAcceptor): void => {
+        const leftType = typeComputer.computeType(node.leftOperand);
+        const rightType = typeComputer.computeType(node.rightOperand);
+        switch (node.operator) {
+            case 'or':
+            case 'and':
+                if (!typeChecker.isAssignableTo(leftType, coreTypes.Boolean)) {
+                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
+                        node: node.leftOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                if (!typeChecker.isAssignableTo(rightType, coreTypes.Boolean)) {
+                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
+                        node: node.rightOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                return;
+            case '<':
+            case '<=':
+            case '>=':
+            case '>':
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                if (
+                    !typeChecker.isAssignableTo(leftType, coreTypes.Float) &&
+                    !typeChecker.isAssignableTo(leftType, coreTypes.Int)
+                ) {
+                    accept('error', `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${leftType}'.`, {
+                        node: node.leftOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                if (
+                    !typeChecker.isAssignableTo(rightType, coreTypes.Float) &&
+                    !typeChecker.isAssignableTo(rightType, coreTypes.Int)
+                ) {
+                    accept(
+                        'error',
+                        `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${rightType}'.`,
+                        {
+                            node: node.rightOperand,
+                            code: CODE_TYPE_MISMATCH,
+                        },
+                    );
+                }
+                return;
         }
     };
 };
