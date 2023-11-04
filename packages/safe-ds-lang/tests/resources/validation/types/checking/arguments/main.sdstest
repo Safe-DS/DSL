@@ -1,0 +1,20 @@
+package tests.validation.types.checking.arguments
+
+fun f(p: Int)
+
+segment mySegment() {
+    // $TEST$ no error r"A value of type .* cannot be assigned to a parameter of type .*\."
+    f(»1«);
+
+    // $TEST$ no error r"A value of type .* cannot be assigned to a parameter of type .*\."
+    f(p = »1«);
+
+    // $TEST$ error "A value of type 'literal<"">' cannot be assigned to a parameter of type 'Int'."
+    f(»""«);
+
+    // $TEST$ error "A value of type 'literal<"">' cannot be assigned to a parameter of type 'Int'."
+    f(p = »""«);
+
+    // $TEST$ no error r"A value of type .* cannot be assigned to a parameter of type .*\."
+    f(unresolved = »1«);
+}

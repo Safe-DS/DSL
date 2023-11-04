@@ -8,6 +8,7 @@ import {
     isSdsPipeline,
     isSdsReference,
     isSdsSchema,
+    SdsArgument,
     SdsAttribute,
     SdsCall,
     SdsNamedType,
@@ -21,14 +22,41 @@ import { pluralize } from '../../helpers/stringUtils.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
-export const CODE_TYPE_DEFAULT_VALUE = 'type/default-value';
-export const CODE_TYPE_YIELD = 'type/yield';
+export const CODE_TYPE_MISMATCH = 'type/mismatch';
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 
 // -----------------------------------------------------------------------------
 // Type checking
 // -----------------------------------------------------------------------------
+
+export const argumentTypeMustMatchParameterType = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsArgument, accept: ValidationAcceptor) => {
+        const parameter = nodeMapper.argumentToParameter(node);
+        if (!parameter) {
+            return;
+        }
+
+        const argumentType = typeComputer.computeType(node);
+        const parameterType = typeComputer.computeType(parameter);
+
+        if (!typeChecker.isAssignableTo(argumentType, parameterType)) {
+            accept(
+                'error',
+                `A value of type '${argumentType}' cannot be assigned to a parameter of type '${parameterType}'.`,
+                {
+                    node,
+                    property: 'value',
+                    code: CODE_TYPE_MISMATCH,
+                },
+            );
+        }
+    };
+};
 
 export const callReceiverMustBeCallable = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
@@ -83,7 +111,7 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
                 {
                     node,
                     property: 'defaultValue',
-                    code: CODE_TYPE_DEFAULT_VALUE,
+                    code: CODE_TYPE_MISMATCH,
                 },
             );
         }
@@ -107,7 +135,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
             accept('error', `A value of type '${yieldType}' cannot be assigned to a result of type '${resultType}'.`, {
                 node,
                 property: 'result',
-                code: CODE_TYPE_YIELD,
+                code: CODE_TYPE_MISMATCH,
             });
         }
     };

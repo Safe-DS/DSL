@@ -12,5 +12,5 @@ segment mySegment2() -> result: Int {
 
 segment mySegment3() {
     // $TEST$ no error r"A value of type .* cannot be assigned to a result of type .*\."
-    yield »result« = 1;
+    yield »unresolved« = 1;
 }

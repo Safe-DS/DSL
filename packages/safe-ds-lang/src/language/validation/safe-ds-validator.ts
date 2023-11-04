@@ -44,6 +44,7 @@ import {
     yieldMustNotBeUsedInPipeline,
 } from './other/statements/assignments.js';
 import {
+    argumentTypeMustMatchParameterType,
     attributeMustHaveTypeHint,
     callReceiverMustBeCallable,
     namedTypeMustSetAllTypeParameters,
@@ -184,6 +185,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
+            argumentTypeMustMatchParameterType(services),
         ],
         SdsArgumentList: [
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
