@@ -260,8 +260,28 @@ describe('SafeDsTypeChecker', async () => {
             expected: true,
         },
         {
+            type1: new LiteralType(new BooleanConstant(true)),
+            type2: coreTypes.Boolean,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new FloatConstant(1.5)),
+            type2: coreTypes.Float,
+            expected: true,
+        },
+        {
             type1: new LiteralType(new IntConstant(1n)),
             type2: coreTypes.Int,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(NullConstant),
+            type2: coreTypes.NothingOrNull,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new StringConstant('')),
+            type2: coreTypes.String,
             expected: true,
         },
         {

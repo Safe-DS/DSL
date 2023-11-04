@@ -62,8 +62,6 @@ export class SafeDsTypeChecker {
             return this.staticTypeIsAssignableTo(type, other);
         } else if (type instanceof UnionType) {
             return this.unionTypeIsAssignableTo(type, other);
-        } else if (type === UnknownType) {
-            return false;
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
