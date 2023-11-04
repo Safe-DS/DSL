@@ -17,7 +17,14 @@ import {
     NullConstant,
     StringConstant,
 } from '../../../src/language/partialEvaluation/model.js';
-import { ClassType, LiteralType, Type, UnionType, UnknownType } from '../../../src/language/typing/model.js';
+import {
+    ClassType,
+    LiteralType,
+    StaticType,
+    Type,
+    UnionType,
+    UnknownType,
+} from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
@@ -374,8 +381,23 @@ describe('SafeDsTypeChecker', async () => {
         },
         // Named tuple type to X
         // TODO
-        // Static type to X
-        // TODO
+        // Static type to static type
+        {
+            type1: new StaticType(classType1),
+            type2: new StaticType(classType1),
+            expected: true,
+        },
+        {
+            type1: new StaticType(classType1),
+            type2: new StaticType(classType2),
+            expected: false,
+        },
+        // Static type to other
+        {
+            type1: new StaticType(classType1),
+            type2: enumType1,
+            expected: false,
+        },
         // Union type to X
         {
             type1: new UnionType(),
