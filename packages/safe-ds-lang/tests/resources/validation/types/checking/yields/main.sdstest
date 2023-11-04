@@ -1,16 +1,16 @@
 package tests.validation.types.checking.yields
 
 segment mySegment1() -> result: Int {
-    // $TEST$ no error r"A value of type .* cannot be assigned to a result of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     yield »result« = 1;
 }
 
 segment mySegment2() -> result: Int {
-    // $TEST$ error "A value of type 'literal<"">' cannot be assigned to a result of type 'Int'."
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
     yield »result« = "";
 }
 
 segment mySegment3() {
-    // $TEST$ no error r"A value of type .* cannot be assigned to a result of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     yield »unresolved« = 1;
 }

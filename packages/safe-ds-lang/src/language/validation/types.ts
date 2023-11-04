@@ -47,15 +47,11 @@ export const argumentTypeMustMatchParameterType = (services: SafeDsServices) => 
         const parameterType = typeComputer.computeType(parameter);
 
         if (!typeChecker.isAssignableTo(argumentType, parameterType)) {
-            accept(
-                'error',
-                `A value of type '${argumentType}' cannot be assigned to a parameter of type '${parameterType}'.`,
-                {
-                    node,
-                    property: 'value',
-                    code: CODE_TYPE_MISMATCH,
-                },
-            );
+            accept('error', `Expected type '${parameterType}' but got '${argumentType}'.`, {
+                node,
+                property: 'value',
+                code: CODE_TYPE_MISMATCH,
+            });
         }
     };
 };
@@ -100,14 +96,10 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
         if (receiverType !== coreTypes.List && receiverType !== coreTypes.Map) {
-            accept(
-                'error',
-                `The receiver of an indexed access must be of type '${coreTypes.List}' or '${coreTypes.Map}' but was of type '${receiverType}'.`,
-                {
-                    node: node.receiver,
-                    code: CODE_TYPE_MISMATCH,
-                },
-            );
+            accept('error', `Expected type '${coreTypes.List}' or '${coreTypes.Map}' but got '${receiverType}'.`, {
+                node: node.receiver,
+                code: CODE_TYPE_MISMATCH,
+            });
         }
     };
 };
@@ -122,15 +114,11 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
         if (receiverType === coreTypes.List) {
             const indexType = typeComputer.computeType(node.index);
             if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
-                accept(
-                    'error',
-                    `The index of an indexed access on a list must be of type '${coreTypes.Int}' but was of type '${indexType}'.`,
-                    {
-                        node,
-                        property: 'index',
-                        code: CODE_TYPE_MISMATCH,
-                    },
-                );
+                accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
+                    node,
+                    property: 'index',
+                    code: CODE_TYPE_MISMATCH,
+                });
             }
         }
     };
@@ -150,15 +138,11 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
         const parameterType = typeComputer.computeType(node);
 
         if (!typeChecker.isAssignableTo(defaultValueType, parameterType)) {
-            accept(
-                'error',
-                `A default value of type '${defaultValueType}' cannot be assigned to a parameter of type '${parameterType}'.`,
-                {
-                    node,
-                    property: 'defaultValue',
-                    code: CODE_TYPE_MISMATCH,
-                },
-            );
+            accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
+                node,
+                property: 'defaultValue',
+                code: CODE_TYPE_MISMATCH,
+            });
         }
     };
 };
@@ -173,15 +157,11 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
         switch (node.operator) {
             case 'not':
                 if (!typeChecker.isAssignableTo(operandType, coreTypes.Boolean)) {
-                    accept(
-                        'error',
-                        `The operand of a logical negation must be of type '${coreTypes.Boolean}' but was of type '${operandType}'.`,
-                        {
-                            node,
-                            property: 'operand',
-                            code: CODE_TYPE_MISMATCH,
-                        },
-                    );
+                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${operandType}'.`, {
+                        node,
+                        property: 'operand',
+                        code: CODE_TYPE_MISMATCH,
+                    });
                 }
                 return;
             case '-':
@@ -191,7 +171,7 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
                 ) {
                     accept(
                         'error',
-                        `The operand of an arithmetic negation must be of type '${coreTypes.Float}' or '${coreTypes.Int}' but was of type '${operandType}'.`,
+                        `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${operandType}'.`,
                         {
                             node,
                             property: 'operand',
@@ -218,7 +198,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const resultType = typeComputer.computeType(result);
 
         if (!typeChecker.isAssignableTo(yieldType, resultType)) {
-            accept('error', `A value of type '${yieldType}' cannot be assigned to a result of type '${resultType}'.`, {
+            accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',
                 code: CODE_TYPE_MISMATCH,

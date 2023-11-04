@@ -3,18 +3,18 @@ package tests.validation.types.checking.arguments
 fun f(p: Int)
 
 segment mySegment() {
-    // $TEST$ no error r"A value of type .* cannot be assigned to a parameter of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     f(»1«);
 
-    // $TEST$ no error r"A value of type .* cannot be assigned to a parameter of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     f(p = »1«);
 
-    // $TEST$ error "A value of type 'literal<"">' cannot be assigned to a parameter of type 'Int'."
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
     f(»""«);
 
-    // $TEST$ error "A value of type 'literal<"">' cannot be assigned to a parameter of type 'Int'."
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
     f(p = »""«);
 
-    // $TEST$ no error r"A value of type .* cannot be assigned to a parameter of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     f(unresolved = »1«);
 }

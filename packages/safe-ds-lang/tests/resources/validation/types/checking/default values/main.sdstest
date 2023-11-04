@@ -1,19 +1,19 @@
 package tests.validation.types.checking.defaultValues
 
 fun myFun(
-    // $TEST$ no error r"A default value of type .* cannot be assigned to a parameter of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     param1: Int = »1«,
 
-    // $TEST$ error "A default value of type 'literal<"">' cannot be assigned to a parameter of type 'Int'."
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
     param2: Int = »""«,
 )
 
 fun myOtherFun(callback: (a: Int) -> ())
 
 segment mySegment() {
-    // $TEST$ no error r"A default value of type .* cannot be assigned to a parameter of type .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
     myOtherFun((a = »1«) {});
 
-    // $TEST$ error "A default value of type 'literal<"">' cannot be assigned to a parameter of type 'Int'."
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
     myOtherFun((a = »""«) {});
 }
