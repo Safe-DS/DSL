@@ -1,7 +1,6 @@
 import { streamAllContents } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
     isSdsClass,
     isSdsEnum,
@@ -10,11 +9,12 @@ import {
     isSdsModule,
 } from '../../../src/language/generated/ast.js';
 import { getModuleMembers } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServices } from '../../../src/language/index.js';
-import { ClassType, Type, UnionType, UnknownType } from '../../../src/language/typing/model.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { IntConstant, NullConstant, StringConstant } from '../../../src/language/partialEvaluation/model.js';
+import { ClassType, LiteralType, Type, UnionType, UnknownType } from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
 const typeChecker = services.types.TypeChecker;
 const typeComputer = services.types.TypeComputer;
@@ -61,15 +61,6 @@ const enumVariantType2 = typeComputer.computeType(enumVariant2);
 const enumVariantType3 = typeComputer.computeType(enumVariant3);
 
 describe('SafeDsTypeChecker', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     const testCases: IsAssignableToTest[] = [
         // Callable type to X
         // TODO
@@ -92,7 +83,7 @@ describe('SafeDsTypeChecker', async () => {
         {
             type1: classType1,
             type2: coreTypes.Any,
-            expected: false,
+            expected: true,
         },
         {
             type1: classType2.updateNullability(true),
@@ -125,8 +116,74 @@ describe('SafeDsTypeChecker', async () => {
         // TODO
         // Enum variant type to X
         // TODO
-        // Literal type to X
-        // TODO
+        // Literal type to class type
+        {
+            type1: new LiteralType(),
+            type2: classType1,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n)),
+            type2: coreTypes.Int,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n)),
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n)),
+            type2: coreTypes.String,
+            expected: false,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n), NullConstant),
+            type2: coreTypes.Int.updateNullability(true),
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n), NullConstant),
+            type2: coreTypes.Int,
+            expected: false,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n), new StringConstant('')),
+            type2: coreTypes.Int,
+            expected: false,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n), new StringConstant('')),
+            type2: coreTypes.String,
+            expected: false,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n), new StringConstant('')),
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),
+            type2: coreTypes.AnyOrNull,
+            expected: true,
+        },
+        // Literal type to union type
+        {
+            type1: new LiteralType(new IntConstant(1n)),
+            type2: new UnionType(coreTypes.Any),
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new IntConstant(1n)),
+            type2: new UnionType(coreTypes.String),
+            expected: false,
+        },
+        // Literal type to other
+        {
+            type1: new LiteralType(new IntConstant(1n)),
+            type2: enumType1,
+            expected: false,
+        },
         // Named tuple type to X
         // TODO
         // Static type to X

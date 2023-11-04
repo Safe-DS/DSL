@@ -37,6 +37,12 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is assignable {@link other}.
      */
     isAssignableTo(type: Type, other: Type): boolean {
+        if (type === UnknownType || other === UnknownType) {
+            return false;
+        } else if (other instanceof UnionType) {
+            return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
+        }
+
         if (type instanceof CallableType) {
             return this.callableTypeIsAssignableTo(type, other);
         } else if (type instanceof ClassType) {
@@ -89,9 +95,6 @@ export class SafeDsTypeChecker {
         //         is ClassType -> {
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         //         }
-        //         is UnionType -> {
-        //             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
-        //         }
         //     else -> false
         //     }
         // }
@@ -106,8 +109,6 @@ export class SafeDsTypeChecker {
 
         if (other instanceof ClassType) {
             return this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration);
-        } else if (other instanceof UnionType) {
-            return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         } else {
             return false;
         }
@@ -126,9 +127,6 @@ export class SafeDsTypeChecker {
         //         is ClassType -> {
         //             (!this.isNullable || unwrappedOther.isNullable) &&
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is UnionType -> {
-        //             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
         //         }
         //     else -> false
         //     }
@@ -152,7 +150,6 @@ export class SafeDsTypeChecker {
         //             (!this.isNullable || unwrappedOther.isNullable) &&
         //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
         //         }
-        //         is UnionType -> unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
         //     else -> false
         //     }
 
@@ -175,7 +172,6 @@ export class SafeDsTypeChecker {
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
             );
         } else {
-            // TODO: union type
             return false;
         }
     }
