@@ -10,7 +10,13 @@ import {
 } from '../../../src/language/generated/ast.js';
 import { getModuleMembers } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { IntConstant, NullConstant, StringConstant } from '../../../src/language/partialEvaluation/model.js';
+import {
+    BooleanConstant,
+    FloatConstant,
+    IntConstant,
+    NullConstant,
+    StringConstant,
+} from '../../../src/language/partialEvaluation/model.js';
 import { ClassType, LiteralType, Type, UnionType, UnknownType } from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
@@ -297,6 +303,37 @@ describe('SafeDsTypeChecker', async () => {
             type1: new LiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),
             type2: coreTypes.AnyOrNull,
             expected: true,
+        },
+        // Literal type to literal type
+        {
+            type1: new LiteralType(),
+            type2: new LiteralType(),
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new BooleanConstant(true)),
+            type2: new LiteralType(new BooleanConstant(true)),
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new BooleanConstant(true)),
+            type2: new LiteralType(new BooleanConstant(false)),
+            expected: false,
+        },
+        {
+            type1: new LiteralType(new BooleanConstant(true)),
+            type2: new LiteralType(new FloatConstant(1.5)),
+            expected: false,
+        },
+        {
+            type1: new LiteralType(new BooleanConstant(true), NullConstant),
+            type2: new LiteralType(new BooleanConstant(true), NullConstant),
+            expected: true,
+        },
+        {
+            type1: new LiteralType(new BooleanConstant(true), NullConstant),
+            type2: new LiteralType(new BooleanConstant(true)),
+            expected: false,
         },
         // Literal type to union type
         {
