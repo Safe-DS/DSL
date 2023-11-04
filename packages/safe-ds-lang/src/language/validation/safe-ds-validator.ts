@@ -49,6 +49,7 @@ import {
     namedTypeMustSetAllTypeParameters,
     parameterMustHaveTypeHint,
     resultMustHaveTypeHint,
+    yieldTypeMustMatchResultType,
 } from './types.js';
 import {
     moduleDeclarationsMustMatchFileKind,
@@ -299,7 +300,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             unionTypeShouldNotHaveDuplicateTypes(services),
             unionTypeShouldNotHaveASingularTypeArgument,
         ],
-        SdsYield: [yieldMustNotBeUsedInPipeline],
+        SdsYield: [yieldMustNotBeUsedInPipeline, yieldTypeMustMatchResultType(services)],
     };
     registry.register(checks);
 };

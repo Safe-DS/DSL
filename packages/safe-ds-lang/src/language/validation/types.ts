@@ -13,6 +13,7 @@ import {
     SdsNamedType,
     SdsParameter,
     SdsResult,
+    SdsYield,
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
@@ -20,6 +21,7 @@ import { pluralize } from '../../helpers/stringUtils.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
+export const CODE_TYPE_YIELD = 'type/yield';
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 
@@ -55,6 +57,29 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
             accept('error', 'Cannot instantiate a class that has no constructor.', {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
+            });
+        }
+    };
+};
+
+export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsYield, accept: ValidationAcceptor) => {
+        const result = node.result?.ref;
+        if (!result) {
+            return;
+        }
+
+        const yieldType = typeComputer.computeType(node);
+        const resultType = typeComputer.computeType(result);
+
+        if (!typeChecker.isAssignableTo(yieldType, resultType)) {
+            accept('error', `A value of type '${yieldType}' cannot be assigned to a result of type '${resultType}'.`, {
+                node,
+                property: 'result',
+                code: CODE_TYPE_YIELD,
             });
         }
     };
