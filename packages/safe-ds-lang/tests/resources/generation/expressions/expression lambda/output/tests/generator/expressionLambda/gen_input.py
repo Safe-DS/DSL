@@ -2,4 +2,4 @@
 
 def test():
     f(lambda a, b=2: 1)
-    f(lambda a, c: 1)
+    f(lambda a, b: 1)

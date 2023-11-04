@@ -6,7 +6,7 @@ import fs from 'fs';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { Range } from 'vscode-languageserver';
 import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 
@@ -40,7 +40,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
         }
 
         for (const check of checksResult.value) {
-            const regex = /\s*(?<isAbsent>no\s+)?(?<severity>\S+)\s*(?:(?<messageIsRegex>r)?"(?<message>[^"]*)")?/gu;
+            const regex = /\s*(?<isAbsent>no\s+)?(?<severity>\S+)\s*(?:(?<messageIsRegex>r)?"(?<message>.*)")?/gu;
             const match = regex.exec(check.comment);
 
             // Overall comment is invalid

@@ -1,0 +1,15 @@
+package tests.validation.types.checking.indexedAccessReceiver
+
+pipeline myPipeline {
+    // $TEST$ no error r"Expected type 'List' or 'Map' but got .*\."
+    »[1]«[0];
+
+    // $TEST$ no error r"Expected type 'List' or 'Map' but got .*\."
+    »{0: 1}«[0];
+
+    // $TEST$ error "Expected type 'List' or 'Map' but got 'literal<1>'."
+    »1«[0];
+
+    // $TEST$ error "Expected type 'List' or 'Map' but got '?'."
+    »unresolved«[0];
+}

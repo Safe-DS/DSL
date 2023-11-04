@@ -105,10 +105,7 @@ export class SafeDsTypeChecker {
                 const typeEntry = type.outputType.entries[i];
                 const otherEntry = other.outputType.entries[i];
 
-                // Names must match
-                if (typeEntry.name !== otherEntry.name) {
-                    return false;
-                }
+                // Names must not match since we always fetch results by index
 
                 // Types must be covariant
                 if (!this.isAssignableTo(typeEntry.type, otherEntry.type)) {

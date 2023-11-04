@@ -10,7 +10,7 @@ class C() {
     attr a: Int
     @PythonName("c") attr b: Int
 
-    @PythonCall("$param.i($this)") fun i(param: Any?)
+    @PythonCall("$param.i($this)") fun i(param: Any?) -> result: Boolean
 }
 
 fun factory() -> instance: C?

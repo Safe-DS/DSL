@@ -8,11 +8,16 @@ import {
     isSdsPipeline,
     isSdsReference,
     isSdsSchema,
+    SdsArgument,
     SdsAttribute,
     SdsCall,
+    SdsIndexedAccess,
+    SdsInfixOperation,
     SdsNamedType,
     SdsParameter,
+    SdsPrefixOperation,
     SdsResult,
+    SdsYield,
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
@@ -20,12 +25,37 @@ import { pluralize } from '../../helpers/stringUtils.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
+export const CODE_TYPE_MISMATCH = 'type/mismatch';
 export const CODE_TYPE_MISSING_TYPE_ARGUMENTS = 'type/missing-type-arguments';
 export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 
 // -----------------------------------------------------------------------------
 // Type checking
 // -----------------------------------------------------------------------------
+
+export const argumentTypeMustMatchParameterType = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsArgument, accept: ValidationAcceptor) => {
+        const parameter = nodeMapper.argumentToParameter(node);
+        if (!parameter) {
+            return;
+        }
+
+        const argumentType = typeComputer.computeType(node);
+        const parameterType = typeComputer.computeType(parameter);
+
+        if (!typeChecker.isAssignableTo(argumentType, parameterType)) {
+            accept('error', `Expected type '${parameterType}' but got '${argumentType}'.`, {
+                node,
+                property: 'value',
+                code: CODE_TYPE_MISMATCH,
+            });
+        }
+    };
+};
 
 export const callReceiverMustBeCallable = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
@@ -55,6 +85,187 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
             accept('error', 'Cannot instantiate a class that has no constructor.', {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
+            });
+        }
+    };
+};
+
+export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+        const receiverType = typeComputer.computeType(node.receiver);
+        if (
+            !typeChecker.isAssignableTo(receiverType, coreTypes.List) &&
+            !typeChecker.isAssignableTo(receiverType, coreTypes.Map)
+        ) {
+            accept('error', `Expected type '${coreTypes.List}' or '${coreTypes.Map}' but got '${receiverType}'.`, {
+                node: node.receiver,
+                code: CODE_TYPE_MISMATCH,
+            });
+        }
+    };
+};
+
+export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+        const receiverType = typeComputer.computeType(node.receiver);
+        if (typeChecker.isAssignableTo(receiverType, coreTypes.List)) {
+            const indexType = typeComputer.computeType(node.index);
+            if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
+                accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
+                    node,
+                    property: 'index',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+        }
+    };
+};
+
+export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsInfixOperation, accept: ValidationAcceptor): void => {
+        const leftType = typeComputer.computeType(node.leftOperand);
+        const rightType = typeComputer.computeType(node.rightOperand);
+        switch (node.operator) {
+            case 'or':
+            case 'and':
+                if (!typeChecker.isAssignableTo(leftType, coreTypes.Boolean)) {
+                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
+                        node: node.leftOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                if (!typeChecker.isAssignableTo(rightType, coreTypes.Boolean)) {
+                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
+                        node: node.rightOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                return;
+            case '<':
+            case '<=':
+            case '>=':
+            case '>':
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                if (
+                    !typeChecker.isAssignableTo(leftType, coreTypes.Float) &&
+                    !typeChecker.isAssignableTo(leftType, coreTypes.Int)
+                ) {
+                    accept('error', `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${leftType}'.`, {
+                        node: node.leftOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                if (
+                    !typeChecker.isAssignableTo(rightType, coreTypes.Float) &&
+                    !typeChecker.isAssignableTo(rightType, coreTypes.Int)
+                ) {
+                    accept(
+                        'error',
+                        `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${rightType}'.`,
+                        {
+                            node: node.rightOperand,
+                            code: CODE_TYPE_MISMATCH,
+                        },
+                    );
+                }
+                return;
+        }
+    };
+};
+
+export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsParameter, accept: ValidationAcceptor) => {
+        const defaultValue = node.defaultValue;
+        if (!defaultValue) {
+            return;
+        }
+
+        const defaultValueType = typeComputer.computeType(defaultValue);
+        const parameterType = typeComputer.computeType(node);
+
+        if (!typeChecker.isAssignableTo(defaultValueType, parameterType)) {
+            accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
+                node,
+                property: 'defaultValue',
+                code: CODE_TYPE_MISMATCH,
+            });
+        }
+    };
+};
+
+export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsPrefixOperation, accept: ValidationAcceptor): void => {
+        const operandType = typeComputer.computeType(node.operand);
+        switch (node.operator) {
+            case 'not':
+                if (!typeChecker.isAssignableTo(operandType, coreTypes.Boolean)) {
+                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${operandType}'.`, {
+                        node,
+                        property: 'operand',
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
+                return;
+            case '-':
+                if (
+                    !typeChecker.isAssignableTo(operandType, coreTypes.Float) &&
+                    !typeChecker.isAssignableTo(operandType, coreTypes.Int)
+                ) {
+                    accept(
+                        'error',
+                        `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${operandType}'.`,
+                        {
+                            node,
+                            property: 'operand',
+                            code: CODE_TYPE_MISMATCH,
+                        },
+                    );
+                }
+                return;
+        }
+    };
+};
+
+export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsYield, accept: ValidationAcceptor) => {
+        const result = node.result?.ref;
+        if (!result) {
+            return;
+        }
+
+        const yieldType = typeComputer.computeType(node);
+        const resultType = typeComputer.computeType(result);
+
+        if (!typeChecker.isAssignableTo(yieldType, resultType)) {
+            accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
+                node,
+                property: 'result',
+                code: CODE_TYPE_MISMATCH,
             });
         }
     };

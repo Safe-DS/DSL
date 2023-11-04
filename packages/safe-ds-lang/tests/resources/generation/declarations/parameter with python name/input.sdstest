@@ -4,6 +4,6 @@ fun f1(param: (a: Int, b: Int, c: Int) -> r: Int)
 fun f2(param: (a: Int, b: Int, c: Int) -> ())
 
 segment test(param1: Int, @PythonName("param_2") param2: Int, @PythonName("param_3") param3: Int = 0) {
-    f1((param1: Int, param2: Int, param3: Int = 0) -> 1);
-    f2((param1: Int, param2: Int, param3: Int = 0) {});
+    f1((a: Int, b: Int, c: Int = 0) -> 1);
+    f2((a: Int, b: Int, c: Int = 0) {});
 }

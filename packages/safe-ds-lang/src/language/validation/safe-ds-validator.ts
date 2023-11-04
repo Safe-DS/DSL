@@ -44,11 +44,18 @@ import {
     yieldMustNotBeUsedInPipeline,
 } from './other/statements/assignments.js';
 import {
+    argumentTypeMustMatchParameterType,
     attributeMustHaveTypeHint,
     callReceiverMustBeCallable,
+    indexedAccessIndexMustHaveCorrectType,
+    indexedAccessReceiverMustBeListOrMap,
+    infixOperationOperandsMustHaveCorrectType,
     namedTypeMustSetAllTypeParameters,
+    parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
+    prefixOperationOperandMustHaveCorrectType,
     resultMustHaveTypeHint,
+    yieldTypeMustMatchResultType,
 } from './types.js';
 import {
     moduleDeclarationsMustMatchFileKind,
@@ -182,6 +189,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
+            argumentTypeMustMatchParameterType(services),
         ],
         SdsArgumentList: [
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
@@ -226,8 +234,16 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
-        SdsIndexedAccess: [indexedAccessesShouldBeUsedWithCaution],
-        SdsInfixOperation: [divisionDivisorMustNotBeZero(services), elvisOperatorShouldBeNeeded(services)],
+        SdsIndexedAccess: [
+            indexedAccessIndexMustHaveCorrectType(services),
+            indexedAccessReceiverMustBeListOrMap(services),
+            indexedAccessesShouldBeUsedWithCaution,
+        ],
+        SdsInfixOperation: [
+            divisionDivisorMustNotBeZero(services),
+            elvisOperatorShouldBeNeeded(services),
+            infixOperationOperandsMustHaveCorrectType(services),
+        ],
         SdsLambda: [
             lambdaMustBeAssignedToTypedParameter(services),
             lambdaParametersMustNotBeAnnotated,
@@ -266,12 +282,14 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),
             parameterMustHaveTypeHint,
+            parameterDefaultValueTypeMustMatchParameterType(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
+        SdsPrefixOperation: [prefixOperationOperandMustHaveCorrectType(services)],
         SdsReference: [
             referenceMustNotBeFunctionPointer,
             referenceMustNotBeStaticClassOrEnumReference,
@@ -299,7 +317,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             unionTypeShouldNotHaveDuplicateTypes(services),
             unionTypeShouldNotHaveASingularTypeArgument,
         ],
-        SdsYield: [yieldMustNotBeUsedInPipeline],
+        SdsYield: [yieldMustNotBeUsedInPipeline, yieldTypeMustMatchResultType(services)],
     };
     registry.register(checks);
 };
