@@ -186,7 +186,18 @@ export class SafeDsTypeChecker {
     }
 
     private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
-        return type.equals(other);
+        if (other instanceof NamedTupleType) {
+            return (
+                type.length === other.length &&
+                type.entries.every((typeEntry, index) => {
+                    const otherEntry = other.entries[index];
+                    // We deliberately ignore the declarations here
+                    return typeEntry.name === otherEntry.name && this.isAssignableTo(typeEntry.type, otherEntry.type);
+                })
+            );
+        } else {
+            return false;
+        }
     }
 
     private staticTypeIsAssignableTo(type: Type, other: Type): boolean {

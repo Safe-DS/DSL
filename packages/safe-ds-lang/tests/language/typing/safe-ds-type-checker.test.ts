@@ -20,6 +20,8 @@ import {
 import {
     ClassType,
     LiteralType,
+    NamedTupleEntry,
+    NamedTupleType,
     StaticType,
     Type,
     UnionType,
@@ -379,8 +381,43 @@ describe('SafeDsTypeChecker', async () => {
             type2: enumType1,
             expected: false,
         },
-        // Named tuple type to X
-        // TODO
+        // Named tuple type to named tuple type
+        {
+            type1: new NamedTupleType(),
+            type2: new NamedTupleType(),
+            expected: true,
+        },
+        {
+            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            expected: true,
+        },
+        {
+            type1: new NamedTupleType(new NamedTupleEntry(class1, 'a', coreTypes.Int)),
+            type2: new NamedTupleType(new NamedTupleEntry(class2, 'a', coreTypes.Int)),
+            expected: true,
+        },
+        {
+            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Any)),
+            expected: true,
+        },
+        {
+            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Any)),
+            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            expected: false,
+        },
+        {
+            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'b', coreTypes.Int)),
+            expected: false,
+        },
+        // Named tuple type to other
+        {
+            type1: new NamedTupleType(),
+            type2: enumType1,
+            expected: false,
+        },
         // Static type to static type
         {
             type1: new StaticType(classType1),
