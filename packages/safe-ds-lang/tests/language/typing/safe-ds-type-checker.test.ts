@@ -30,9 +30,7 @@ const code = `
         Variant1
         Variant2
     }
-    enum Enum2 {
-        Variant3
-    }
+    enum Enum2
 `;
 const module = await getNodeOfType(services, code, isSdsModule);
 const func = getModuleMembers(module).find(isSdsFunction)!;
@@ -55,10 +53,8 @@ const enumType2 = typeComputer.computeType(enum2);
 const enumVariants = streamAllContents(module).filter(isSdsEnumVariant).toArray();
 const enumVariant1 = enumVariants[0];
 const enumVariant2 = enumVariants[1];
-const enumVariant3 = enumVariants[2];
 const enumVariantType1 = typeComputer.computeType(enumVariant1);
 const enumVariantType2 = typeComputer.computeType(enumVariant2);
-const enumVariantType3 = typeComputer.computeType(enumVariant3);
 
 describe('SafeDsTypeChecker', async () => {
     const testCases: IsAssignableToTest[] = [
@@ -112,10 +108,145 @@ describe('SafeDsTypeChecker', async () => {
             type2: enumType1,
             expected: false,
         },
-        // Enum type to X
-        // TODO
-        // Enum variant type to X
-        // TODO
+        // Enum type to class type
+        {
+            type1: enumType1,
+            type2: classType1,
+            expected: false,
+        },
+        {
+            type1: enumType1,
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: enumType1.updateNullability(true),
+            type2: coreTypes.Any,
+            expected: false,
+        },
+        {
+            type1: enumType1.updateNullability(true),
+            type2: coreTypes.AnyOrNull,
+            expected: true,
+        },
+        // Enum type to enum type
+        {
+            type1: enumType1,
+            type2: enumType1,
+            expected: true,
+        },
+        {
+            type1: enumType1,
+            type2: enumType2,
+            expected: false,
+        },
+        {
+            type1: enumType1.updateNullability(true),
+            type2: enumType1,
+            expected: false,
+        },
+        {
+            type1: enumType1.updateNullability(true),
+            type2: enumType1.updateNullability(true),
+            expected: true,
+        },
+        // Enum type to union type
+        {
+            type1: enumType1,
+            type2: new UnionType(enumType1),
+            expected: true,
+        },
+        {
+            type1: enumType1,
+            type2: new UnionType(enumType2),
+            expected: false,
+        },
+        // Enum type to other
+        {
+            type1: enumType1,
+            type2: new LiteralType(),
+            expected: false,
+        },
+        // Enum variant type to class type
+        {
+            type1: enumVariantType1,
+            type2: classType1,
+            expected: false,
+        },
+        {
+            type1: enumVariantType1,
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: enumVariantType1.updateNullability(true),
+            type2: coreTypes.Any,
+            expected: false,
+        },
+        {
+            type1: enumVariantType1.updateNullability(true),
+            type2: coreTypes.AnyOrNull,
+            expected: true,
+        },
+        // Enum variant type to enum type
+        {
+            type1: enumVariantType1,
+            type2: enumType1,
+            expected: true,
+        },
+        {
+            type1: enumVariantType1,
+            type2: enumType2,
+            expected: false,
+        },
+        {
+            type1: enumVariantType1.updateNullability(true),
+            type2: enumType1,
+            expected: false,
+        },
+        {
+            type1: enumVariantType1.updateNullability(true),
+            type2: enumType1.updateNullability(true),
+            expected: true,
+        },
+        // Enum variant type to enum variant type
+        {
+            type1: enumVariantType1,
+            type2: enumVariantType1,
+            expected: true,
+        },
+        {
+            type1: enumVariantType1,
+            type2: enumVariantType2,
+            expected: false,
+        },
+        {
+            type1: enumVariantType1.updateNullability(true),
+            type2: enumVariantType1,
+            expected: false,
+        },
+        {
+            type1: enumVariantType1.updateNullability(true),
+            type2: enumVariantType1.updateNullability(true),
+            expected: true,
+        },
+        // Enum variant type to union type
+        {
+            type1: enumVariantType1,
+            type2: new UnionType(enumType1),
+            expected: true,
+        },
+        {
+            type1: enumVariantType1,
+            type2: new UnionType(enumType2),
+            expected: false,
+        },
+        // Enum variant type to other
+        {
+            type1: enumVariantType1,
+            type2: new LiteralType(),
+            expected: false,
+        },
         // Literal type to class type
         {
             type1: new LiteralType(),

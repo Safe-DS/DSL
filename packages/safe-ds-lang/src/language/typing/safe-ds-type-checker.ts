@@ -1,4 +1,5 @@
 import { getContainerOfType } from 'langium';
+import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, SdsDeclaration } from '../generated/ast.js';
 import {
     BooleanConstant,
@@ -25,10 +26,12 @@ import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
 export class SafeDsTypeChecker {
+    private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
 
     constructor(services: SafeDsServices) {
+        this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
     }
@@ -119,19 +122,13 @@ export class SafeDsTypeChecker {
             return false;
         }
 
-        if (other instanceof EnumType) {
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof EnumType) {
             return type.declaration === other.declaration;
+        } else {
+            return false;
         }
-
-        //     return when (val unwrappedOther = unwrapVariadicType(other)) {
-        //         is ClassType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) &&
-        //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //     else -> false
-        //     }
-
-        return type.equals(other);
     }
 
     private enumVariantTypeIsAssignableTo(type: EnumVariantType, other: Type): boolean {
@@ -139,21 +136,16 @@ export class SafeDsTypeChecker {
             return false;
         }
 
-        if (other instanceof EnumType) {
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof EnumType) {
             const containingEnum = getContainerOfType(type.declaration, isSdsEnum);
             return containingEnum === other.declaration;
         } else if (other instanceof EnumVariantType) {
             return type.declaration === other.declaration;
+        } else {
+            return false;
         }
-        //     return when (val unwrappedOther = unwrapVariadicType(other)) {
-        //         is ClassType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) &&
-        //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //     else -> false
-        //     }
-
-        return type.equals(other);
     }
 
     private literalTypeIsAssignableTo(type: LiteralType, other: Type): boolean {
