@@ -52,6 +52,7 @@ import {
     namedTypeMustSetAllTypeParameters,
     parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
+    prefixOperationOperandMustHaveCorrectType,
     resultMustHaveTypeHint,
     yieldTypeMustMatchResultType,
 } from './types.js';
@@ -283,6 +284,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
+        SdsPrefixOperation: [prefixOperationOperandMustHaveCorrectType(services)],
         SdsReference: [
             referenceMustNotBeFunctionPointer,
             referenceMustNotBeStaticClassOrEnumReference,

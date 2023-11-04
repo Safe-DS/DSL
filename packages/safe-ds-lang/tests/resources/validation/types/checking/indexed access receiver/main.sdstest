@@ -9,4 +9,7 @@ pipeline myPipeline {
 
     // $TEST$ error "The receiver of an indexed access must be of type 'List' or 'Map' but was of type 'literal<1>'."
     »1«[0];
+
+    // $TEST$ error "The receiver of an indexed access must be of type 'List' or 'Map' but was of type '?'."
+    »unresolved«[0];
 }

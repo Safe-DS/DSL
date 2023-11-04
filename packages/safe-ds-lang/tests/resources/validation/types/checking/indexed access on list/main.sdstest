@@ -9,4 +9,7 @@ pipeline myPipeline {
 
     // $TEST$ no error r"The index of an indexed access on a list must be of type 'Int' but was of type .*\."
     {"": ""}[»""«];
+
+    // $TEST$ no error r"The index of an indexed access on a list must be of type 'Int' but was of type .*\."
+    unresolved[»""«];
 }

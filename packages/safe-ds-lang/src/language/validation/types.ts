@@ -14,6 +14,7 @@ import {
     SdsIndexedAccess,
     SdsNamedType,
     SdsParameter,
+    SdsPrefixOperation,
     SdsResult,
     SdsYield,
 } from '../generated/ast.js';
@@ -101,7 +102,7 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
         if (receiverType !== coreTypes.List && receiverType !== coreTypes.Map) {
             accept(
                 'error',
-                `The receiver of an indexed access must be of type 'List' or 'Map' but was of type '${receiverType}'.`,
+                `The receiver of an indexed access must be of type '${coreTypes.List}' or '${coreTypes.Map}' but was of type '${receiverType}'.`,
                 {
                     node: node.receiver,
                     code: CODE_TYPE_MISMATCH,
@@ -123,7 +124,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
             if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
                 accept(
                     'error',
-                    `The index of an indexed access on a list must be of type 'Int' but was of type '${indexType}'.`,
+                    `The index of an indexed access on a list must be of type '${coreTypes.Int}' but was of type '${indexType}'.`,
                     {
                         node,
                         property: 'index',
@@ -158,6 +159,47 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
                     code: CODE_TYPE_MISMATCH,
                 },
             );
+        }
+    };
+};
+
+export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsPrefixOperation, accept: ValidationAcceptor): void => {
+        const operandType = typeComputer.computeType(node.operand);
+        switch (node.operator) {
+            case 'not':
+                if (!typeChecker.isAssignableTo(operandType, coreTypes.Boolean)) {
+                    accept(
+                        'error',
+                        `The operand of a logical negation must be of type '${coreTypes.Boolean}' but was of type '${operandType}'.`,
+                        {
+                            node,
+                            property: 'operand',
+                            code: CODE_TYPE_MISMATCH,
+                        },
+                    );
+                }
+                return;
+            case '-':
+                if (
+                    !typeChecker.isAssignableTo(operandType, coreTypes.Float) &&
+                    !typeChecker.isAssignableTo(operandType, coreTypes.Int)
+                ) {
+                    accept(
+                        'error',
+                        `The operand of an arithmetic negation must be of type '${coreTypes.Float}' or '${coreTypes.Int}' but was of type '${operandType}'.`,
+                        {
+                            node,
+                            property: 'operand',
+                            code: CODE_TYPE_MISMATCH,
+                        },
+                    );
+                }
+                return;
         }
     };
 };

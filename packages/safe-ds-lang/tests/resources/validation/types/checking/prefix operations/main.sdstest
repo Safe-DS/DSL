@@ -1,0 +1,20 @@
+package tests.validation.types.checking.prefixOperations
+
+segment mySegment() {
+
+    // $TEST$ no error r"The operand of a logical negation must be of type 'Boolean' but was of type .*\."
+    not »true«;
+    // $TEST$ error "The operand of a logical negation must be of type 'Boolean' but was of type 'literal<0>'."
+    not »0«;
+    // $TEST$ no error r"The operand of a logical negation must be of type 'Boolean' but was of type .*\."
+    not »unresolved«;
+
+    // $TEST$ no error r"The operand of an arithmetic negation must be of type 'Float' or 'Int' but was of type .*\."
+    -»0.0«;
+    // $TEST$ no error r"The operand of an arithmetic negation must be of type 'Float' or 'Int' but was of type .*\."
+    -»0«;
+    // $TEST$ error "The operand of an arithmetic negation must be of type 'Float' or 'Int' but was of type 'literal<"">'."
+    -»""«;
+    // $TEST$ no error r"The operand of an arithmetic negation must be of type 'Float' or 'Int' but was of type .*\."
+    -»unresolved«;
+}
