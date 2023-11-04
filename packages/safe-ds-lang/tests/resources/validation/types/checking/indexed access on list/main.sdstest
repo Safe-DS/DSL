@@ -1,0 +1,12 @@
+package tests.validation.types.checking.indexedAccessOnList
+
+pipeline myPipeline {
+    // $TEST$ no error r"The index of an indexed access on a list must be of type 'Int' but was of type .*\."
+    [1][»0«];
+
+    // $TEST$ error "The index of an indexed access on a list must be of type 'Int' but was of type 'literal<"">'."
+    [0][»""«];
+
+    // $TEST$ no error r"The index of an indexed access on a list must be of type 'Int' but was of type .*\."
+    {"": ""}[»""«];
+}

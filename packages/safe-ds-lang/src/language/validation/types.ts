@@ -111,6 +111,30 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
     };
 };
 
+export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreTypes = services.types.CoreTypes;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+        const receiverType = typeComputer.computeType(node.receiver);
+        if (receiverType === coreTypes.List) {
+            const indexType = typeComputer.computeType(node.index);
+            if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
+                accept(
+                    'error',
+                    `The index of an indexed access on a list must be of type 'Int' but was of type '${indexType}'.`,
+                    {
+                        node,
+                        property: 'index',
+                        code: CODE_TYPE_MISMATCH,
+                    },
+                );
+            }
+        }
+    };
+};
+
 export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDsServices) => {
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
