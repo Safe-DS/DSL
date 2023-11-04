@@ -189,7 +189,36 @@ describe('SafeDsTypeChecker', async () => {
         // Static type to X
         // TODO
         // Union type to X
-        // TODO
+        {
+            type1: new UnionType(),
+            type2: classType1,
+            expected: true,
+        },
+        {
+            type1: new UnionType(classType1),
+            type2: classType1,
+            expected: true,
+        },
+        {
+            type1: new UnionType(classType1, classType2),
+            type2: classType1,
+            expected: true,
+        },
+        {
+            type1: new UnionType(classType1, classType3),
+            type2: classType1,
+            expected: false,
+        },
+        {
+            type1: new UnionType(classType1.updateNullability(true)),
+            type2: classType1,
+            expected: false,
+        },
+        {
+            type1: new UnionType(classType1.updateNullability(true)),
+            type2: classType1.updateNullability(true),
+            expected: true,
+        },
         // Unknown to X
         {
             type1: UnknownType,
