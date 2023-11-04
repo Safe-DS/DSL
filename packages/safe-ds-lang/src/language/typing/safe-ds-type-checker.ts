@@ -68,39 +68,60 @@ export class SafeDsTypeChecker {
     }
 
     private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
-        //     return when (val unwrappedOther = unwrapVariadicType(other)) {
-        //         is CallableType -> {
-        //             // TODO: We need to compare names of parameters & results and can allow additional optional parameters
-        //
-        //             // Sizes must match (too strict requirement -> should be loosened later)
-        //             if (this.parameters.size != unwrappedOther.parameters.size || this.results.size != this.results.size) {
-        //                 return false
-        //             }
-        //
-        //             // Actual parameters must be supertypes of expected parameters (contravariance)
-        //             this.parameters.zip(unwrappedOther.parameters).forEach { (thisParameter, otherParameter) ->
-        //                 if (!otherParameter.isSubstitutableFor(thisParameter)) {
-        //                     return false
-        //                 }
-        //             }
-        //
-        //             // Expected results must be subtypes of expected results (covariance)
-        //             this.results.zip(unwrappedOther.results).forEach { (thisResult, otherResult) ->
-        //                 if (!thisResult.isSubstitutableFor(otherResult)) {
-        //                     return false
-        //                 }
-        //             }
-        //
-        //             true
-        //         }
-        //         is ClassType -> {
-        //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //     else -> false
-        //     }
-        // }
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof CallableType) {
+            // Must accept at least as many parameters and produce at least as many results
+            if (type.inputType.length < other.inputType.length || type.outputType.length < other.outputType.length) {
+                return false;
+            }
 
-        return type.equals(other);
+            // Check expected parameters
+            for (let i = 0; i < other.inputType.length; i++) {
+                const typeEntry = type.inputType.entries[i];
+                const otherEntry = other.inputType.entries[i];
+
+                // Names must match
+                if (typeEntry.name !== otherEntry.name) {
+                    return false;
+                }
+
+                // Types must be contravariant
+                if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
+                    return false;
+                }
+            }
+
+            // Additional parameters must be optional
+            for (let i = other.inputType.length; i < type.inputType.length; i++) {
+                const typeEntry = type.inputType.entries[i];
+                if (!typeEntry.declaration?.defaultValue) {
+                    return false;
+                }
+            }
+
+            // Check expected results
+            for (let i = 0; i < other.outputType.length; i++) {
+                const typeEntry = type.outputType.entries[i];
+                const otherEntry = other.outputType.entries[i];
+
+                // Names must match
+                if (typeEntry.name !== otherEntry.name) {
+                    return false;
+                }
+
+                // Types must be covariant
+                if (!this.isAssignableTo(typeEntry.type, otherEntry.type)) {
+                    return false;
+                }
+            }
+
+            // Additional results are OK
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private classTypeIsAssignableTo(type: ClassType, other: Type): boolean {

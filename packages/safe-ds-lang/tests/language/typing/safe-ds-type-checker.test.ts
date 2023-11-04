@@ -35,7 +35,16 @@ const typeChecker = services.types.TypeChecker;
 const typeComputer = services.types.TypeComputer;
 
 const code = `
-    fun func() -> ()
+    fun func1() -> ()
+    fun func2(p: Int = 0) -> ()
+    fun func3(p: Int) -> ()
+    fun func4(r: Int) -> ()
+    fun func5(p: Any) -> ()
+    fun func6(p: String) -> ()
+    fun func7() -> (r: Int)
+    fun func8() -> (s: Int)
+    fun func9() -> (r: Any)
+    fun func10() -> (r: String)
 
     class Class1
     class Class2 sub Class1
@@ -48,8 +57,17 @@ const code = `
     enum Enum2
 `;
 const module = await getNodeOfType(services, code, isSdsModule);
-const func = getModuleMembers(module).find(isSdsFunction)!;
-const callableType = typeComputer.computeType(func);
+const functions = getModuleMembers(module).filter(isSdsFunction);
+const callableType1 = typeComputer.computeType(functions[0]);
+const callableType2 = typeComputer.computeType(functions[1]);
+const callableType3 = typeComputer.computeType(functions[2]);
+const callableType4 = typeComputer.computeType(functions[3]);
+const callableType5 = typeComputer.computeType(functions[4]);
+const callableType6 = typeComputer.computeType(functions[5]);
+const callableType7 = typeComputer.computeType(functions[6]);
+const callableType8 = typeComputer.computeType(functions[7]);
+const callableType9 = typeComputer.computeType(functions[8]);
+const callableType10 = typeComputer.computeType(functions[9]);
 
 const classes = getModuleMembers(module).filter(isSdsClass);
 const class1 = classes[0];
@@ -73,8 +91,93 @@ const enumVariantType2 = typeComputer.computeType(enumVariant2);
 
 describe('SafeDsTypeChecker', async () => {
     const testCases: IsAssignableToTest[] = [
-        // Callable type to X
-        // TODO
+        {
+            type1: callableType1,
+            type2: callableType1,
+            expected: true,
+        },
+        {
+            type1: callableType2,
+            type2: callableType1,
+            expected: true,
+        },
+        {
+            type1: callableType1,
+            type2: callableType2,
+            expected: false,
+        },
+        {
+            type1: callableType3,
+            type2: callableType1,
+            expected: false,
+        },
+        {
+            type1: callableType3,
+            type2: callableType4,
+            expected: false,
+        },
+        {
+            type1: callableType3,
+            type2: callableType5,
+            expected: false,
+        },
+        {
+            type1: callableType5,
+            type2: callableType3,
+            expected: true,
+        },
+        {
+            type1: callableType6,
+            type2: callableType3,
+            expected: false,
+        },
+        {
+            type1: callableType7,
+            type2: callableType1,
+            expected: true,
+        },
+        {
+            type1: callableType1,
+            type2: callableType7,
+            expected: false,
+        },
+        {
+            type1: callableType8,
+            type2: callableType7,
+            expected: false,
+        },
+        {
+            type1: callableType9,
+            type2: callableType7,
+            expected: false,
+        },
+        {
+            type1: callableType7,
+            type2: callableType9,
+            expected: true,
+        },
+        {
+            type1: callableType10,
+            type2: callableType7,
+            expected: false,
+        },
+        // Callable type to class type
+        {
+            type1: callableType1,
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: callableType1,
+            type2: coreTypes.AnyOrNull,
+            expected: true,
+        },
+        // Callable type to other
+        {
+            type1: callableType1,
+            type2: enumType1,
+            expected: false,
+        },
         // Class type to class type
         {
             type1: classType1,
