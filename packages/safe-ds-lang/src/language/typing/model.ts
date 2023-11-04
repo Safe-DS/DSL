@@ -149,11 +149,9 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
     /**
      * The length of this tuple.
      */
-    /* c8 ignore start */
     get length(): number {
         return this.entries.length;
     }
-    /* c8 ignore stop */
 
     /**
      * Returns the type of the entry at the given index. If the index is out of bounds, returns `undefined`.

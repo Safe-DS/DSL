@@ -1,4 +1,5 @@
 import { getContainerOfType } from 'langium';
+import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, SdsDeclaration } from '../generated/ast.js';
 import {
     BooleanConstant,
@@ -19,16 +20,18 @@ import {
     StaticType,
     Type,
     UnionType,
+    UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 
-/* c8 ignore start */
 export class SafeDsTypeChecker {
+    private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
 
     constructor(services: SafeDsServices) {
+        this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
     }
@@ -37,6 +40,12 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is assignable {@link other}.
      */
     isAssignableTo(type: Type, other: Type): boolean {
+        if (type === UnknownType || other === UnknownType) {
+            return false;
+        } else if (other instanceof UnionType) {
+            return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
+        }
+
         if (type instanceof CallableType) {
             return this.callableTypeIsAssignableTo(type, other);
         } else if (type instanceof ClassType) {
@@ -53,48 +62,66 @@ export class SafeDsTypeChecker {
             return this.staticTypeIsAssignableTo(type, other);
         } else if (type instanceof UnionType) {
             return this.unionTypeIsAssignableTo(type, other);
-        } else {
-            return false;
-        }
+        } /* c8 ignore start */ else {
+            throw new Error(`Unexpected type: ${type.constructor.name}`);
+        } /* c8 ignore stop */
     }
 
     private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
-        //     return when (val unwrappedOther = unwrapVariadicType(other)) {
-        //         is CallableType -> {
-        //             // TODO: We need to compare names of parameters & results and can allow additional optional parameters
-        //
-        //             // Sizes must match (too strict requirement -> should be loosened later)
-        //             if (this.parameters.size != unwrappedOther.parameters.size || this.results.size != this.results.size) {
-        //                 return false
-        //             }
-        //
-        //             // Actual parameters must be supertypes of expected parameters (contravariance)
-        //             this.parameters.zip(unwrappedOther.parameters).forEach { (thisParameter, otherParameter) ->
-        //                 if (!otherParameter.isSubstitutableFor(thisParameter)) {
-        //                     return false
-        //                 }
-        //             }
-        //
-        //             // Expected results must be subtypes of expected results (covariance)
-        //             this.results.zip(unwrappedOther.results).forEach { (thisResult, otherResult) ->
-        //                 if (!thisResult.isSubstitutableFor(otherResult)) {
-        //                     return false
-        //                 }
-        //             }
-        //
-        //             true
-        //         }
-        //         is ClassType -> {
-        //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is UnionType -> {
-        //             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
-        //         }
-        //     else -> false
-        //     }
-        // }
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof CallableType) {
+            // Must accept at least as many parameters and produce at least as many results
+            if (type.inputType.length < other.inputType.length || type.outputType.length < other.outputType.length) {
+                return false;
+            }
 
-        return type.equals(other);
+            // Check expected parameters
+            for (let i = 0; i < other.inputType.length; i++) {
+                const typeEntry = type.inputType.entries[i];
+                const otherEntry = other.inputType.entries[i];
+
+                // Names must match
+                if (typeEntry.name !== otherEntry.name) {
+                    return false;
+                }
+
+                // Types must be contravariant
+                if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
+                    return false;
+                }
+            }
+
+            // Additional parameters must be optional
+            for (let i = other.inputType.length; i < type.inputType.length; i++) {
+                const typeEntry = type.inputType.entries[i];
+                if (!typeEntry.declaration?.defaultValue) {
+                    return false;
+                }
+            }
+
+            // Check expected results
+            for (let i = 0; i < other.outputType.length; i++) {
+                const typeEntry = type.outputType.entries[i];
+                const otherEntry = other.outputType.entries[i];
+
+                // Names must match
+                if (typeEntry.name !== otherEntry.name) {
+                    return false;
+                }
+
+                // Types must be covariant
+                if (!this.isAssignableTo(typeEntry.type, otherEntry.type)) {
+                    return false;
+                }
+            }
+
+            // Additional results are OK
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private classTypeIsAssignableTo(type: ClassType, other: Type): boolean {
@@ -104,8 +131,6 @@ export class SafeDsTypeChecker {
 
         if (other instanceof ClassType) {
             return this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration);
-        } else if (other instanceof UnionType) {
-            return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         } else {
             return false;
         }
@@ -116,22 +141,13 @@ export class SafeDsTypeChecker {
             return false;
         }
 
-        if (other instanceof EnumType) {
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof EnumType) {
             return type.declaration === other.declaration;
+        } else {
+            return false;
         }
-
-        //     return when (val unwrappedOther = unwrapVariadicType(other)) {
-        //         is ClassType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) &&
-        //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is UnionType -> {
-        //             unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
-        //         }
-        //     else -> false
-        //     }
-
-        return type.equals(other);
     }
 
     private enumVariantTypeIsAssignableTo(type: EnumVariantType, other: Type): boolean {
@@ -139,22 +155,16 @@ export class SafeDsTypeChecker {
             return false;
         }
 
-        if (other instanceof EnumType) {
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof EnumType) {
             const containingEnum = getContainerOfType(type.declaration, isSdsEnum);
             return containingEnum === other.declaration;
         } else if (other instanceof EnumVariantType) {
             return type.declaration === other.declaration;
+        } else {
+            return false;
         }
-        //     return when (val unwrappedOther = unwrapVariadicType(other)) {
-        //         is ClassType -> {
-        //             (!this.isNullable || unwrappedOther.isNullable) &&
-        //             unwrappedOther.sdsClass.qualifiedNameOrNull() == StdlibClasses.Any
-        //         }
-        //         is UnionType -> unwrappedOther.possibleTypes.any { this.isSubstitutableFor(it) }
-        //     else -> false
-        //     }
-
-        return type.equals(other);
     }
 
     private literalTypeIsAssignableTo(type: LiteralType, other: Type): boolean {
@@ -173,7 +183,6 @@ export class SafeDsTypeChecker {
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
             );
         } else {
-            // TODO: union type
             return false;
         }
     }
@@ -197,9 +206,19 @@ export class SafeDsTypeChecker {
         return this.isAssignableTo(classType, other);
     }
 
-    /* c8 ignore start */
     private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
-        return type.equals(other);
+        if (other instanceof NamedTupleType) {
+            return (
+                type.length === other.length &&
+                type.entries.every((typeEntry, index) => {
+                    const otherEntry = other.entries[index];
+                    // We deliberately ignore the declarations here
+                    return typeEntry.name === otherEntry.name && this.isAssignableTo(typeEntry.type, otherEntry.type);
+                })
+            );
+        } else {
+            return false;
+        }
     }
 
     private staticTypeIsAssignableTo(type: Type, other: Type): boolean {
@@ -207,8 +226,6 @@ export class SafeDsTypeChecker {
     }
 
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
-        //     return this.possibleTypes.all { it.isSubstitutableFor(other) }
-        return type.equals(other);
+        return type.possibleTypes.every((it) => this.isAssignableTo(it, other));
     }
 }
-/* c8 ignore stop */

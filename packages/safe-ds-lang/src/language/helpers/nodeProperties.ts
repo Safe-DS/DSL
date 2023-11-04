@@ -1,3 +1,4 @@
+import { AstNode, getContainerOfType, Stream, stream } from 'langium';
 import {
     isSdsAnnotation,
     isSdsArgumentList,
@@ -57,7 +58,6 @@ import {
     SdsTypeParameter,
     SdsTypeParameterList,
 } from '../generated/ast.js';
-import { AstNode, getContainerOfType, Stream, stream } from 'langium';
 
 // -------------------------------------------------------------------------------------------------
 // Checks
