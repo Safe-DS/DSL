@@ -6,7 +6,8 @@
             "args": ["--extensionDevelopmentPath=${workspaceFolder}/packages/safe-ds-vscode"],
             "preLaunchTask": "npm: build",
             "request": "launch",
-            "type": "extensionHost"
+            "type": "extensionHost",
+            "sourceMaps": true
         }
     ]
 }
