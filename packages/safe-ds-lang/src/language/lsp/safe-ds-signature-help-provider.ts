@@ -72,9 +72,12 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
             signatures: [
                 {
                     label: this.typeComputer.computeType(callable).toString(),
-                    parameters: getParameters(callable).map((parameter) => ({
-                        label: parameter.name,
-                    })),
+                    parameters: getParameters(callable).map((parameter) => {
+                        const type = this.typeComputer.computeType(parameter);
+                        return {
+                            label: `${parameter.name}: ${type}`,
+                        };
+                    }),
                     documentation: createMarkupContent(this.documentationProvider.getDocumentation(callable)),
                 },
             ],
