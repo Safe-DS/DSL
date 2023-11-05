@@ -100,7 +100,7 @@ describe('SafeDsSignatureHelpProvider', async () => {
             `,
             expectedSignature: [
                 {
-                    label: '(p: Int) -> ()',
+                    label: 'A(p: Int) -> ()',
                     documentation: {
                         kind: 'markdown',
                         value: 'Lorem ipsum.',
@@ -114,7 +114,34 @@ describe('SafeDsSignatureHelpProvider', async () => {
             ],
         },
         {
-            testName: 'call',
+            testName: 'call (class)',
+            code: `
+                /**
+                 * Lorem ipsum.
+                 */
+                class C(p: Int)
+
+                pipeline myPipeline {
+                    C(»«);
+                }
+            `,
+            expectedSignature: [
+                {
+                    label: 'C(p: Int)',
+                    documentation: {
+                        kind: 'markdown',
+                        value: 'Lorem ipsum.',
+                    },
+                    parameters: [
+                        {
+                            label: 'p: Int',
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            testName: 'call (function)',
             code: `
                 /**
                  * Lorem ipsum.
@@ -127,11 +154,30 @@ describe('SafeDsSignatureHelpProvider', async () => {
             `,
             expectedSignature: [
                 {
-                    label: '(p: Int) -> ()',
+                    label: 'f(p: Int) -> ()',
                     documentation: {
                         kind: 'markdown',
                         value: 'Lorem ipsum.',
                     },
+                    parameters: [
+                        {
+                            label: 'p: Int',
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            testName: 'call (lambda)',
+            code: `
+                pipeline myPipeline {
+                    ((p: Int) {})(»«);
+                }
+            `,
+            expectedSignature: [
+                {
+                    label: '(p: Int) -> ()',
+                    documentation: undefined,
                     parameters: [
                         {
                             label: 'p: Int',

@@ -4,6 +4,7 @@ import {
     findLeafNodeAtOffset,
     findNodesForKeyword,
     getContainerOfType,
+    isNamed,
     type LangiumDocument,
     type MaybePromise,
     type SignatureHelpProvider,
@@ -15,11 +16,12 @@ import type {
     SignatureHelpParams,
 } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
-import { isSdsAbstractCall } from '../generated/ast.js';
+import { isSdsAbstractCall, SdsCallable, SdsParameter } from '../generated/ast.js';
 import { getParameters } from '../helpers/nodeProperties.js';
 import { type SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { type SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { CallableType, NamedType } from '../typing/model.js';
 
 export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
     private readonly documentationProvider: DocumentationProvider;
@@ -75,13 +77,8 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
         return {
             signatures: [
                 {
-                    label: this.typeComputer.computeType(callable).toString(),
-                    parameters: getParameters(callable).map((parameter) => {
-                        const type = this.typeComputer.computeType(parameter);
-                        return {
-                            label: `${parameter.name}: ${type}`,
-                        };
-                    }),
+                    label: this.getLabel(callable),
+                    parameters: getParameters(callable).map(this.getParameterInformation),
                     documentation: createMarkupContent(this.documentationProvider.getDocumentation(callable)),
                 },
             ],
@@ -90,6 +87,31 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
         };
     }
 
+    private getLabel(callable: SdsCallable): string {
+        const type = this.typeComputer.computeType(callable);
+
+        if (type instanceof NamedType) {
+            return `${type.declaration.name}(${getParameters(callable)
+                .map((it) => this.getParameterLabel(it))
+                .join(', ')})`;
+        } else if (type instanceof CallableType && isNamed(callable)) {
+            return `${callable.name}${type}`;
+        } else {
+            return type.toString();
+        }
+    }
+
+    private getParameterInformation = (parameter: SdsParameter) => {
+        return {
+            label: this.getParameterLabel(parameter),
+        };
+    };
+
+    private getParameterLabel = (parameter: SdsParameter) => {
+        const type = this.typeComputer.computeType(parameter);
+        return `${parameter.name}: ${type}`;
+    };
+
     /* c8 ignore start */
     get signatureHelpOptions(): SignatureHelpOptions {
         return {
@@ -97,5 +119,6 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
             retriggerCharacters: [','],
         };
     }
+
     /* c8 ignore stop */
 }
