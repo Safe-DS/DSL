@@ -38,15 +38,19 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
         _cancelToken?: CancellationToken,
     ): MaybePromise<SignatureHelp | undefined> {
         const rootCstNode = document.parseResult.value.$cstNode;
+        /* c8 ignore start */
         if (!rootCstNode) {
             return undefined;
         }
+        /* c8 ignore stop */
 
         const offset = document.textDocument.offsetAt(params.position);
         const sourceCstNode = findLeafNodeAtOffset(rootCstNode, offset);
+        /* c8 ignore start */
         if (!sourceCstNode) {
             return undefined;
         }
+        /* c8 ignore stop */
 
         return this.getSignature(sourceCstNode.astNode, offset);
     }
@@ -86,10 +90,12 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
         };
     }
 
+    /* c8 ignore start */
     get signatureHelpOptions(): SignatureHelpOptions {
         return {
             triggerCharacters: ['('],
             retriggerCharacters: [','],
         };
     }
+    /* c8 ignore stop */
 }

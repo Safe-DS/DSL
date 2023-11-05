@@ -205,11 +205,13 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
     ) {}
 
     equals(other: unknown): boolean {
+        /* c8 ignore start */
         if (other === this) {
             return true;
         } else if (!(other instanceof NamedTupleEntry)) {
             return false;
         }
+        /* c8 ignore stop */
 
         return this.declaration === other.declaration && this.name === other.name && this.type.equals(other.type);
     }
