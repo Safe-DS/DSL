@@ -26,7 +26,7 @@ export const findTestRanges = (program: string, uri: URI): Result<Range[], FindT
     const finishedLocations: Range[] = [];
 
     for (let currentIndex = 0; currentIndex < program.length; currentIndex++) {
-        const currentChar = program[currentIndex];
+        const currentChar = program[currentIndex]!;
         switch (currentChar) {
             case OPEN:
                 currentColumn++;

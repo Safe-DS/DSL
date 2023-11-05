@@ -22,7 +22,7 @@ export abstract class Type {
     /**
      * Returns whether the type is equal to another type.
      */
-    abstract equals(other: Type): boolean;
+    abstract equals(other: unknown): boolean;
 
     /**
      * Returns a string representation of this type.
@@ -58,7 +58,7 @@ export class CallableType extends Type {
         return this.inputType.getTypeOfEntryByIndex(index);
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof CallableType)) {
@@ -104,7 +104,7 @@ export class LiteralType extends Type {
         this.isNullable = constants.some((it) => it === NullConstant);
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof LiteralType)) {
@@ -160,7 +160,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
         return this.entries[index]?.type ?? UnknownType;
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof NamedTupleType)) {
@@ -182,7 +182,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
      */
     override unwrap(): Type {
         if (this.entries.length === 1) {
-            return this.entries[0].type.unwrap();
+            return this.entries[0]!.type.unwrap();
         }
 
         return new NamedTupleType(...this.entries.map((it) => it.unwrap()));
@@ -204,7 +204,13 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
         readonly type: Type,
     ) {}
 
-    equals(other: NamedTupleEntry<SdsDeclaration>): boolean {
+    equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof NamedTupleEntry)) {
+            return false;
+        }
+
         return this.declaration === other.declaration && this.name === other.name && this.type.equals(other.type);
     }
 
@@ -245,7 +251,7 @@ export class ClassType extends NamedType<SdsClass> {
         super(declaration);
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof ClassType)) {
@@ -268,7 +274,7 @@ export class EnumType extends NamedType<SdsEnum> {
         super(declaration);
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EnumType)) {
@@ -291,7 +297,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
         super(declaration);
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EnumVariantType)) {
@@ -316,7 +322,7 @@ export class StaticType extends Type {
         super();
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof StaticType)) {
@@ -354,7 +360,7 @@ export class UnionType extends Type {
         this.isNullable = possibleTypes.some((it) => it.isNullable);
     }
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof UnionType)) {
@@ -373,7 +379,7 @@ export class UnionType extends Type {
 
     override unwrap(): Type {
         if (this.possibleTypes.length === 1) {
-            return this.possibleTypes[0].unwrap();
+            return this.possibleTypes[0]!.unwrap();
         }
 
         return new UnionType(...this.possibleTypes.map((it) => it.unwrap()));
@@ -397,7 +403,7 @@ export class UnionType extends Type {
 class UnknownTypeClass extends Type {
     readonly isNullable = false;
 
-    override equals(other: Type): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof UnknownTypeClass;
     }
 

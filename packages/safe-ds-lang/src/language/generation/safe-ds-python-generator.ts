@@ -171,7 +171,7 @@ export class SafeDsPythonGenerator {
         const inputFile = `${inputPath.name}${inputPath.ext}`;
 
         new TreeStreamImpl(trace, (r) => r.children ?? [], { includeRoot: true }).forEach((r) => {
-            if (!r.sourceRegion || !r.targetRegion || r.children?.[0].targetRegion.offset === r.targetRegion.offset) {
+            if (!r.sourceRegion || !r.targetRegion || r.children?.[0]?.targetRegion.offset === r.targetRegion.offset) {
                 return;
             }
             const sourceStart = r.sourceRegion.range?.start;

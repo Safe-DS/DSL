@@ -78,8 +78,8 @@ export class SafeDsTypeChecker {
 
             // Check expected parameters
             for (let i = 0; i < other.inputType.length; i++) {
-                const typeEntry = type.inputType.entries[i];
-                const otherEntry = other.inputType.entries[i];
+                const typeEntry = type.inputType.entries[i]!;
+                const otherEntry = other.inputType.entries[i]!;
 
                 // Names must match
                 if (typeEntry.name !== otherEntry.name) {
@@ -94,7 +94,7 @@ export class SafeDsTypeChecker {
 
             // Additional parameters must be optional
             for (let i = other.inputType.length; i < type.inputType.length; i++) {
-                const typeEntry = type.inputType.entries[i];
+                const typeEntry = type.inputType.entries[i]!;
                 if (!typeEntry.declaration?.defaultValue) {
                     return false;
                 }
@@ -102,8 +102,8 @@ export class SafeDsTypeChecker {
 
             // Check expected results
             for (let i = 0; i < other.outputType.length; i++) {
-                const typeEntry = type.outputType.entries[i];
-                const otherEntry = other.outputType.entries[i];
+                const typeEntry = type.outputType.entries[i]!;
+                const otherEntry = other.outputType.entries[i]!;
 
                 // Names must not match since we always fetch results by index
 
@@ -207,8 +207,8 @@ export class SafeDsTypeChecker {
         if (other instanceof NamedTupleType) {
             return (
                 type.length === other.length &&
-                type.entries.every((typeEntry, index) => {
-                    const otherEntry = other.entries[index];
+                type.entries.every((typeEntry, i) => {
+                    const otherEntry = other.entries[i]!;
                     // We deliberately ignore the declarations here
                     return typeEntry.name === otherEntry.name && this.isAssignableTo(typeEntry.type, otherEntry.type);
                 })

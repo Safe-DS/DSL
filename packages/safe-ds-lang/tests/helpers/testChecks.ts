@@ -44,10 +44,20 @@ export const findTestChecks = (
     }
 
     return Result.ok(
-        comments.map((comment, index) => ({
-            comment,
-            location: { uri: uri.toString(), range: ranges[index] },
-        })),
+        comments.map((comment, index) => {
+            const range = ranges[index];
+
+            if (range) {
+                return {
+                    comment,
+                    location: { uri: uri.toString(), range },
+                };
+            } else {
+                return {
+                    comment,
+                };
+            }
+        }),
     );
 };
 

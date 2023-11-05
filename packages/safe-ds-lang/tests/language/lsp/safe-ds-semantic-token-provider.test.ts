@@ -174,23 +174,29 @@ describe('SafeDsSemanticTokenProvider', async () => {
 });
 
 const checkSemanticTokens = async (code: string, expectedTokenTypes: SemanticTokenTypes[]) => {
-    const tokensWithRanges = await highlightHelper(services)(code);
+    const actualTokensWithRanges = await highlightHelper(services)(code);
     expectedTokenTypes.forEach((expectedTokenType, index) => {
-        const range = tokensWithRanges.ranges[index];
-        const tokensAtRange = tokensWithRanges.tokens.filter(
+        const range = actualTokensWithRanges.ranges[index];
+        if (!range) {
+            throw new AssertionError({
+                message: `No range found for token at index ${index}.`,
+            });
+        }
+
+        const tokensAtRange = actualTokensWithRanges.tokens.filter(
             (token) => token.offset === range[0] && token.offset + token.text.length === range[1],
         );
 
         if (tokensAtRange.length !== 1) {
             throw new AssertionError({
-                message: `Expected exactly one token at offset range ${range}, but found ${tokensAtRange.length}`,
+                message: `Expected exactly one token at offset range ${range}, but found ${tokensAtRange.length}.`,
             });
         }
 
-        const tokenAtRange = tokensAtRange[0];
+        const tokenAtRange = tokensAtRange[0]!;
         if (tokenAtRange.tokenType !== expectedTokenType) {
             throw new AssertionError({
-                message: `Expected token at offset range ${range} to be of type ${expectedTokenType}, but was ${tokenAtRange.tokenType}`,
+                message: `Expected token at offset range ${range} to be of type ${expectedTokenType}, but was ${tokenAtRange.tokenType}.`,
                 actual: tokenAtRange.tokenType,
                 expected: expectedTokenType,
             });

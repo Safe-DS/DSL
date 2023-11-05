@@ -60,7 +60,7 @@ import {
 import {
     moduleDeclarationsMustMatchFileKind,
     moduleWithDeclarationsMustStatePackage,
-    pipelineFileMustNotBeInSafedsPackage,
+    pipelineFileMustNotBeInBuiltinPackage,
 } from './other/modules.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
@@ -267,7 +267,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
             moduleMustContainUniqueNames,
             moduleWithDeclarationsMustStatePackage,
-            pipelineFileMustNotBeInSafedsPackage,
+            pipelineFileMustNotBeInBuiltinPackage,
             pythonModuleShouldDifferFromSafeDsPackage(services),
         ],
         SdsNamedType: [
