@@ -1,4 +1,5 @@
 import { AstNode, DefaultCommentProvider, isAstNodeWithComment } from 'langium';
+import { MarkupContent } from 'vscode-languageserver';
 import {
     isSdsBlockLambdaResult,
     isSdsDeclaration,
@@ -31,3 +32,14 @@ export class SafeDsCommentProvider extends DefaultCommentProvider {
         }
     }
 }
+
+export const createMarkupContent = (documentation: string | undefined): MarkupContent | undefined => {
+    if (!documentation) {
+        return undefined;
+    }
+
+    return {
+        kind: 'markdown',
+        value: documentation,
+    };
+};
