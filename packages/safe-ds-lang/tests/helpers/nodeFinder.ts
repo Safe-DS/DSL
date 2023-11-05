@@ -77,5 +77,5 @@ export const getNodeOfType = async <T extends AstNode>(
         });
     }
 
-    return candidates[index];
+    return candidates[index]!;
 };

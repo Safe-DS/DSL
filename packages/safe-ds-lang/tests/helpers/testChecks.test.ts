@@ -26,10 +26,6 @@ describe('findTestChecks', () => {
             expected: [
                 {
                     comment: 'no_syntax_error',
-                    location: {
-                        uri,
-                        range: undefined,
-                    },
                 },
             ],
             id: 'one comment, no range',

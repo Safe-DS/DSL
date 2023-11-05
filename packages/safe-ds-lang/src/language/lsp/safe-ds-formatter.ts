@@ -10,12 +10,12 @@ import {
 } from 'langium';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
+import { last } from '../../helpers/collectionUtils.js';
 import noSpace = Formatting.noSpace;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
 import oneSpace = Formatting.oneSpace;
 import indent = Formatting.indent;
-import { last } from '../../helpers/collectionUtils.js';
 
 const newLinesWithIndent = function (count: number, options?: FormattingActionOptions): FormattingAction {
     return {
@@ -266,7 +266,7 @@ export class SafeDsFormatter extends AbstractFormatter {
                 } else {
                     const valueAnnotations = getAnnotationCalls(value);
                     if (valueAnnotations.length > 0) {
-                        formatter.node(valueAnnotations[0]).prepend(newLines(2));
+                        formatter.node(valueAnnotations[0]!).prepend(newLines(2));
                     } else {
                         formatter.node(value).prepend(newLines(2));
                     }
@@ -274,7 +274,7 @@ export class SafeDsFormatter extends AbstractFormatter {
             } else {
                 const valueAnnotations = getAnnotationCalls(value);
                 if (valueAnnotations.length > 0) {
-                    formatter.node(valueAnnotations[0]).prepend(newLines(2));
+                    formatter.node(valueAnnotations[0]!).prepend(newLines(2));
                 } else {
                     formatter.node(value).prepend(newLines(2));
                 }
@@ -852,7 +852,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const literals = node.literals ?? [];
 
         if (literals.length > 0) {
-            formatter.node(literals[0]).prepend(noSpace());
+            formatter.node(literals[0]!).prepend(noSpace());
             formatter.nodes(...literals.slice(1)).prepend(oneSpace());
         }
 
@@ -886,7 +886,7 @@ export class SafeDsFormatter extends AbstractFormatter {
             closingBracket.prepend(newLine());
         } else {
             if (typeParameters.length > 0) {
-                formatter.node(typeParameters[0]).prepend(noSpace());
+                formatter.node(typeParameters[0]!).prepend(noSpace());
                 formatter.nodes(...typeParameters.slice(1)).prepend(oneSpace());
             }
             formatter.keywords(',').prepend(noSpace());
@@ -913,7 +913,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const typeArguments = node.typeArguments ?? [];
 
         if (typeArguments.length > 0) {
-            formatter.node(typeArguments[0]).prepend(noSpace());
+            formatter.node(typeArguments[0]!).prepend(noSpace());
             formatter.nodes(...typeArguments.slice(1)).prepend(oneSpace());
         }
 

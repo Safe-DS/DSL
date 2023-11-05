@@ -506,7 +506,7 @@ export class SafeDsTypeComputer {
         ) {
             return this.coreTypes.Nothing;
         } else if (flattenedAndUnwrappedTypes.length === 1) {
-            return flattenedAndUnwrappedTypes[0];
+            return flattenedAndUnwrappedTypes[0]!;
         }
 
         const isNullable = flattenedAndUnwrappedTypes.some((it) => it.isNullable);
@@ -589,8 +589,8 @@ export class SafeDsTypeComputer {
 
         // Find the class type that is compatible to all other types
         const candidateClasses = stream(
-            [classTypes[0].declaration],
-            this.classHierarchy.streamSuperclasses(classTypes[0].declaration),
+            [classTypes[0]!.declaration],
+            this.classHierarchy.streamSuperclasses(classTypes[0]!.declaration),
         );
         const other = [...classTypes.slice(1), literalType];
 
@@ -612,12 +612,12 @@ export class SafeDsTypeComputer {
         // Build candidates & other
         const candidates: Type[] = [];
         if (!isEmpty(enumTypes)) {
-            candidates.push(enumTypes[0].updateNullability(isNullable));
+            candidates.push(enumTypes[0]!.updateNullability(isNullable));
         } else {
             if (!isEmpty(enumVariantTypes)) {
-                candidates.push(enumVariantTypes[0].updateNullability(isNullable));
+                candidates.push(enumVariantTypes[0]!.updateNullability(isNullable));
 
-                const containingEnum = getContainerOfType(enumVariantTypes[0].declaration, isSdsEnum);
+                const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
                 if (containingEnum) {
                     candidates.push(new EnumType(containingEnum, isNullable));
                 }

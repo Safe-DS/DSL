@@ -1,11 +1,12 @@
 import { AbstractInlayHintProvider, AstNode, DocumentationProvider, InlayHintAcceptor } from 'langium';
-import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { SafeDsServices } from '../safe-ds-module.js';
+import { InlayHintKind, MarkupContent } from 'vscode-languageserver';
+import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { isSdsArgument, isSdsBlockLambdaResult, isSdsPlaceholder, isSdsYield } from '../generated/ast.js';
 import { isPositionalArgument } from '../helpers/nodeProperties.js';
-import { InlayHintKind, MarkupContent } from 'vscode-languageserver';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { NamedType } from '../typing/model.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
 export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
     private readonly documentationProvider: DocumentationProvider;
@@ -35,14 +36,14 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
                     position: cstNode.range.start,
                     label: `${parameter.name} = `,
                     kind: InlayHintKind.Parameter,
-                    tooltip: createTooltip(this.documentationProvider.getDocumentation(parameter)),
+                    tooltip: createMarkupContent(this.documentationProvider.getDocumentation(parameter)),
                 });
             }
         } else if (isSdsBlockLambdaResult(node) || isSdsPlaceholder(node) || isSdsYield(node)) {
             const type = this.typeComputer.computeType(node);
             let tooltip: MarkupContent | undefined = undefined;
             if (type instanceof NamedType) {
-                tooltip = createTooltip(this.documentationProvider.getDocumentation(type.declaration));
+                tooltip = createMarkupContent(this.documentationProvider.getDocumentation(type.declaration));
             }
 
             acceptor({
@@ -54,14 +55,3 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
         }
     }
 }
-
-const createTooltip = (documentation: string | undefined): MarkupContent | undefined => {
-    if (!documentation) {
-        return undefined;
-    }
-
-    return {
-        kind: 'markdown',
-        value: documentation,
-    };
-};

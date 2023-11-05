@@ -25,7 +25,7 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
         const computedType = computeType(firstParentType);
         if (computedType !== UnknownType && !(computedType instanceof ClassType)) {
             accept('error', 'A class must only inherit classes.', {
-                node: firstParentType,
+                node: firstParentType!,
                 code: CODE_INHERITANCE_NOT_A_CLASS,
             });
         }
@@ -47,7 +47,7 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
         const superClasses = classHierarchy.streamSuperclasses(node);
         if (superClasses.includes(node)) {
             accept('error', 'A class must not directly or indirectly be a subtype of itself.', {
-                node: getParentTypes(node)[0],
+                node: getParentTypes(node)[0]!,
                 code: CODE_INHERITANCE_CYCLE,
             });
         }

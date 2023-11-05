@@ -7,7 +7,7 @@ import { findTestChecks } from '../../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../../helpers/diagnostics.js';
 import { EmptyFileSystem, URI } from 'langium';
-import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
@@ -44,7 +44,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
             // A set of nodes should all get the same type
             const equivalenceClassMatch = /equivalence_class (?<id>.*)/gu.exec(check.comment);
             if (equivalenceClassMatch) {
-                const id = equivalenceClassMatch.groups!.id;
+                const id = equivalenceClassMatch.groups!.id!;
                 const priorLocationsInEquivalenceClass = groupIdToLocations.get(id) ?? [];
                 priorLocationsInEquivalenceClass.push(check.location!);
                 groupIdToLocations.set(id, priorLocationsInEquivalenceClass);
@@ -54,7 +54,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
             // The serialized type of a node should match the expected type
             const serializationMatch = /serialization (?<expectedType>.*)/gu.exec(check.comment);
             if (serializationMatch) {
-                const expectedType = serializationMatch.groups!.expectedType;
+                const expectedType = serializationMatch.groups!.expectedType!;
                 serializationAssertions.push({
                     location: check.location!,
                     expectedType,

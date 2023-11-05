@@ -6,7 +6,7 @@ import {
 } from '../../helpers/testResources.js';
 import path from 'path';
 import fs from 'fs';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
@@ -58,7 +58,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
 
         // Comment must match the expected format
         if (checksResult.value.length === 1) {
-            const check = checksResult.value[0];
+            const check = checksResult.value[0]!;
 
             // Expected unresolved reference
             if (check.comment !== 'run_until') {

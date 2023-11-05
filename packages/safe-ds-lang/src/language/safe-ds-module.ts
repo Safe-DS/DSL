@@ -23,6 +23,7 @@ import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
 import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
+import { SafeDsSignatureHelpProvider } from './lsp/safe-ds-signature-help-provider.js';
 import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
 import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
@@ -99,6 +100,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
+        SignatureHelp: (services) => new SafeDsSignatureHelpProvider(services),
     },
     parser: {
         ValueConverter: () => new SafeDsValueConverter(),

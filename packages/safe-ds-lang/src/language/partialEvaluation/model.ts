@@ -26,9 +26,9 @@ export abstract class EvaluatedNode {
     abstract readonly isFullyEvaluated: boolean;
 
     /**
-     * Returns whether the node is equal to another node.
+     * Returns whether the node is equal to another value.
      */
-    abstract equals(other: EvaluatedNode): boolean;
+    abstract equals(other: unknown): boolean;
 
     /**
      * Returns the string representation of the node.
@@ -63,7 +63,7 @@ export class BooleanConstant extends Constant {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof BooleanConstant && this.value === other.value;
     }
 
@@ -81,7 +81,7 @@ export class FloatConstant extends NumberConstant {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof FloatConstant && this.value === other.value;
     }
 
@@ -95,7 +95,7 @@ export class IntConstant extends NumberConstant {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof IntConstant && this.value === other.value;
     }
 
@@ -105,7 +105,7 @@ export class IntConstant extends NumberConstant {
 }
 
 class NullConstantClass extends Constant {
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof NullConstantClass;
     }
 
@@ -121,7 +121,7 @@ export class StringConstant extends Constant {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof StringConstant && this.value === other.value;
     }
 
@@ -155,7 +155,7 @@ export class BlockLambdaClosure extends Closure {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof BlockLambdaClosure)) {
@@ -182,7 +182,7 @@ export class ExpressionLambdaClosure extends Closure {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof ExpressionLambdaClosure)) {
@@ -207,7 +207,7 @@ export class SegmentClosure extends Closure {
         super();
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof SegmentClosure)) {
@@ -243,7 +243,7 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         isEmpty(getParameters(this.variant)) ||
         (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EvaluatedEnumVariant)) {
@@ -282,7 +282,7 @@ export class EvaluatedList extends EvaluatedNode {
         return this.elements[index] ?? UnknownEvaluatedNode;
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EvaluatedList)) {
@@ -316,7 +316,7 @@ export class EvaluatedMap extends EvaluatedNode {
         return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EvaluatedMap)) {
@@ -344,7 +344,7 @@ export class EvaluatedMapEntry extends EvaluatedNode {
 
     override readonly isFullyEvaluated: boolean = this.key.isFullyEvaluated && this.value.isFullyEvaluated;
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EvaluatedMapEntry)) {
@@ -405,7 +405,7 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
         }
     }
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         if (other === this) {
             return true;
         } else if (!(other instanceof EvaluatedNamedTuple)) {
@@ -424,7 +424,7 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
 class UnknownEvaluatedNodeClass extends EvaluatedNode {
     override readonly isFullyEvaluated: boolean = false;
 
-    override equals(other: EvaluatedNode): boolean {
+    override equals(other: unknown): boolean {
         return other instanceof UnknownEvaluatedNodeClass;
     }
 
@@ -455,7 +455,7 @@ const substitutionsAreEqual = (
     const bEntries = Array.from(b?.entries() ?? []);
 
     return aEntries.every(([aEntry, aValue], i) => {
-        const [bEntry, bValue] = bEntries[i];
+        const [bEntry, bValue] = bEntries[i]!;
         return aEntry === bEntry && aValue.equals(bValue);
     });
 };

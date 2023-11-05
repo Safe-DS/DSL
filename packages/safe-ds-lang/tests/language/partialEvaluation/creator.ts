@@ -44,7 +44,7 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
             // Partially evaluating a set of nodes should yield the same result
             const equivalenceClassMatch = /equivalence_class (?<id>.*)/gu.exec(check.comment);
             if (equivalenceClassMatch) {
-                const id = equivalenceClassMatch.groups!.id;
+                const id = equivalenceClassMatch.groups!.id!;
                 const priorLocationsInEquivalenceClass = groupIdToLocations.get(id) ?? [];
                 priorLocationsInEquivalenceClass.push(check.location!);
                 groupIdToLocations.set(id, priorLocationsInEquivalenceClass);
@@ -54,7 +54,7 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
             // Partially evaluating a node and serializing the result should yield the expected value.
             const serializationMatch = /serialization (?<expectedValue>.*)/gu.exec(check.comment);
             if (serializationMatch) {
-                const expectedValue = serializationMatch.groups!.expectedValue;
+                const expectedValue = serializationMatch.groups!.expectedValue!;
                 serializationAssertions.push({
                     location: check.location!,
                     expectedValue,

@@ -67,7 +67,7 @@ export class SafeDsNodeMapper {
 
         // A prior argument is named
         for (let i = 0; i < argumentPosition; i++) {
-            if (isNamedArgument(args[i])) {
+            if (isNamedArgument(args[i]!)) {
                 return undefined;
             }
         }
@@ -233,7 +233,7 @@ export class SafeDsNodeMapper {
 
         // A prior type argument is named
         for (let i = 0; i < typeArgumentPosition; i++) {
-            if (isNamedTypeArgument(typeArguments[i])) {
+            if (isNamedTypeArgument(typeArguments[i]!)) {
                 return undefined;
             }
         }

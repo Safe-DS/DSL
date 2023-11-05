@@ -209,7 +209,7 @@ const getExpectedSimpleInlayHints = (code: string): SimpleInlayHint[] => {
         const afterMatch = /after "(?<label>[^"]*)"/gu.exec(check.comment);
         if (afterMatch) {
             return {
-                label: afterMatch.groups!.label,
+                label: afterMatch.groups!.label!,
                 position: {
                     line: range.start.line,
                     character: range.start.character - 1,
@@ -220,7 +220,7 @@ const getExpectedSimpleInlayHints = (code: string): SimpleInlayHint[] => {
         const beforeMatch = /before "(?<label>[^"]*)"/gu.exec(check.comment);
         if (beforeMatch) {
             return {
-                label: beforeMatch.groups!.label,
+                label: beforeMatch.groups!.label!,
                 position: {
                     line: range.end.line,
                     character: range.end.character + 1,

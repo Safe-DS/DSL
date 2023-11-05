@@ -24,8 +24,8 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
         return invalidTest(new SeparatorError(parts.length - 1, uri));
     }
 
-    const originalCode = normalizeLineBreaks(parts[0]).trimEnd();
-    const expectedFormattedCode = normalizeLineBreaks(parts[1]).trim();
+    const originalCode = normalizeLineBreaks(parts[0]!).trimEnd();
+    const expectedFormattedCode = normalizeLineBreaks(parts[1]!).trim();
 
     // Original code must not contain syntax errors
     const syntaxErrorsInOriginalCode = await getSyntaxErrors(services, originalCode);

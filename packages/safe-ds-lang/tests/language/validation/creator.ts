@@ -50,7 +50,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
 
             // Extract groups from the match
             const presence = match.groups!.isAbsent ? 'absent' : 'present';
-            const severity = match.groups!.severity;
+            const severity = match.groups!.severity!;
             const messageIsRegex = match.groups!.messageIsRegex === 'r';
             const message = match.groups!.message;
 
