@@ -8,6 +8,7 @@ package safeds.lang
  * call. `$this` is replaced by the receiver of the call. `$param` is replaced by the value of the parameter called
  * `param`. Otherwise, the string is used as-is.
  */
+@Experimental
 @Target([AnnotationTarget.Function])
 annotation PythonCall(
     callSpecification: String
