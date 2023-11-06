@@ -1,10 +1,12 @@
 import { EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
 import {
+    isSdsBlockLambda,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsReference,
     isSdsResult,
+    isSdsSegment,
     type SdsBlockLambdaResult,
 } from '../../../src/language/generated/ast.js';
 import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
@@ -42,17 +44,27 @@ segment mySegment() -> (result1: Int, result2: Int) {
     (() { yield a; })().a;
     MyEnum;
 }
+
+segment mySegment2() {}
 `;
 const enumVariantWithoutParameters = await getNodeOfType(services, code, isSdsEnumVariant, 0);
 const enumVariantWithParameters = await getNodeOfType(services, code, isSdsEnumVariant, 1);
+const enumVariantParameter = getParameters(enumVariantWithParameters)[0]!;
+
 const result1 = await getNodeOfType(services, code, isSdsResult, 0);
 const result2 = await getNodeOfType(services, code, isSdsResult, 0);
-const enumVariantParameter = getParameters(enumVariantWithParameters)[0]!;
-const expressionLambdaResult1 = (await getNodeOfType(services, code, isSdsExpressionLambda, 0)).result;
-const expressionLambdaResult2 = (await getNodeOfType(services, code, isSdsExpressionLambda, 1)).result;
+
+const expressionLambda1 = await getNodeOfType(services, code, isSdsExpressionLambda, 0);
+const expressionLambda2 = await getNodeOfType(services, code, isSdsExpressionLambda, 1);
+
 const reference1 = await getNodeOfType(services, code, isSdsReference, 0);
 const reference2 = await getNodeOfType(services, code, isSdsReference, 1);
+
+const blockLambda1 = await getNodeOfType(services, code, isSdsBlockLambda, 0);
 const blockLambdaResult1 = reference1.target.ref as SdsBlockLambdaResult;
+
+const segment1 = await getNodeOfType(services, code, isSdsSegment, 0);
+const segment2 = await getNodeOfType(services, code, isSdsSegment, 1);
 
 describe('partial evaluation model', async () => {
     const equalsTests: EqualsTest<EvaluatedNode>[] = [
@@ -81,19 +93,18 @@ describe('partial evaluation model', async () => {
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new BlockLambdaClosure(new Map([[enumVariantParameter, NullConstant]]), []),
-            unequalNodeOfSameType: () => new BlockLambdaClosure(new Map(), []),
+            node: () => new BlockLambdaClosure(blockLambda1, new Map([[enumVariantParameter, NullConstant]])),
+            unequalNodeOfSameType: () => new BlockLambdaClosure(blockLambda1, new Map()),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () =>
-                new ExpressionLambdaClosure(new Map([[enumVariantParameter, NullConstant]]), expressionLambdaResult1),
-            unequalNodeOfSameType: () => new ExpressionLambdaClosure(new Map(), expressionLambdaResult2),
+            node: () => new ExpressionLambdaClosure(expressionLambda1, new Map([[enumVariantParameter, NullConstant]])),
+            unequalNodeOfSameType: () => new ExpressionLambdaClosure(expressionLambda2, new Map()),
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new SegmentClosure([result1]),
-            unequalNodeOfSameType: () => new SegmentClosure([]),
+            node: () => new SegmentClosure(segment1),
+            unequalNodeOfSameType: () => new SegmentClosure(segment2),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -171,15 +182,15 @@ describe('partial evaluation model', async () => {
             expectedString: '"foo"',
         },
         {
-            node: new BlockLambdaClosure(new Map(), []),
+            node: new BlockLambdaClosure(blockLambda1, new Map()),
             expectedString: '$BlockLambdaClosure',
         },
         {
-            node: new ExpressionLambdaClosure(new Map(), expressionLambdaResult1),
+            node: new ExpressionLambdaClosure(expressionLambda1, new Map()),
             expectedString: '$ExpressionLambdaClosure',
         },
         {
-            node: new SegmentClosure([]),
+            node: new SegmentClosure(segment1),
             expectedString: '$SegmentClosure',
         },
         {
@@ -267,15 +278,15 @@ describe('partial evaluation model', async () => {
             expectedValue: true,
         },
         {
-            node: new BlockLambdaClosure(new Map(), []),
+            node: new BlockLambdaClosure(blockLambda1, new Map()),
             expectedValue: false,
         },
         {
-            node: new ExpressionLambdaClosure(new Map(), expressionLambdaResult1),
+            node: new ExpressionLambdaClosure(expressionLambda1, new Map()),
             expectedValue: false,
         },
         {
-            node: new SegmentClosure([]),
+            node: new SegmentClosure(segment1),
             expectedValue: false,
         },
         {
