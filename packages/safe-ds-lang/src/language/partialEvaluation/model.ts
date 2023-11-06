@@ -1,17 +1,20 @@
-import { stream } from 'langium';
+import { type NamedAstNode, stream } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsAbstractResult,
-    SdsAbstractResult,
-    SdsBlockLambdaResult,
+    type SdsAbstractResult,
+    type SdsBlockLambda,
+    type SdsBlockLambdaResult,
+    type SdsCallable,
     type SdsDeclaration,
-    SdsEnumVariant,
-    SdsExpression,
-    SdsParameter,
-    SdsReference,
-    SdsResult,
+    type SdsEnumVariant,
+    type SdsExpression,
+    type SdsExpressionLambda,
+    type SdsLambda,
+    type SdsParameter,
+    type SdsReference,
 } from '../generated/ast.js';
-import { getParameters } from '../helpers/nodeProperties.js';
+import { getParameters, streamBlockLambdaResults } from '../helpers/nodeProperties.js';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
@@ -139,20 +142,27 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 };
 
 // -------------------------------------------------------------------------------------------------
-// Closures
+// Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class Closure extends EvaluatedNode {
+export abstract class EvaluatedCallable<T extends SdsCallable> extends EvaluatedNode {
+    abstract readonly callable: T;
     override readonly isFullyEvaluated: boolean = false;
+}
+
+export abstract class Closure<T extends SdsLambda> extends EvaluatedCallable<T> {
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
 }
 
-export class BlockLambdaClosure extends Closure {
+export class BlockLambdaClosure extends Closure<SdsBlockLambda> {
+    readonly results: SdsBlockLambdaResult[];
+
     constructor(
+        override readonly callable: SdsBlockLambda,
         override readonly substitutionsOnCreation: ParameterSubstitutions,
-        readonly results: SdsBlockLambdaResult[],
     ) {
         super();
+        this.results = streamBlockLambdaResults(callable).toArray();
     }
 
     override equals(other: unknown): boolean {
@@ -163,9 +173,8 @@ export class BlockLambdaClosure extends Closure {
         }
 
         return (
-            this.results.length === other.results.length &&
-            substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation) &&
-            this.results.every((thisResult, i) => thisResult === other.results[i])
+            this.callable === other.callable &&
+            substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation)
         );
     }
 
@@ -174,12 +183,15 @@ export class BlockLambdaClosure extends Closure {
     }
 }
 
-export class ExpressionLambdaClosure extends Closure {
+export class ExpressionLambdaClosure extends Closure<SdsExpressionLambda> {
+    readonly result: SdsExpression;
+
     constructor(
+        override readonly callable: SdsExpressionLambda,
         override readonly substitutionsOnCreation: ParameterSubstitutions,
-        readonly result: SdsExpression,
     ) {
         super();
+        this.result = callable.result;
     }
 
     override equals(other: unknown): boolean {
@@ -190,7 +202,7 @@ export class ExpressionLambdaClosure extends Closure {
         }
 
         return (
-            this.result === other.result &&
+            this.callable === other.callable &&
             substitutionsAreEqual(this.substitutionsOnCreation, other.substitutionsOnCreation)
         );
     }
@@ -200,28 +212,19 @@ export class ExpressionLambdaClosure extends Closure {
     }
 }
 
-export class SegmentClosure extends Closure {
-    override readonly substitutionsOnCreation = new Map<SdsParameter, EvaluatedNode>();
+export class NamedCallable<T extends SdsCallable & NamedAstNode> extends EvaluatedCallable<T> {
+    override readonly isFullyEvaluated: boolean = false;
 
-    constructor(readonly results: SdsResult[]) {
+    constructor(override readonly callable: T) {
         super();
     }
 
     override equals(other: unknown): boolean {
-        if (other === this) {
-            return true;
-        } else if (!(other instanceof SegmentClosure)) {
-            return false;
-        }
-
-        return (
-            this.results.length === other.results.length &&
-            this.results.every((thisResult, i) => thisResult === other.results[i])
-        );
+        return other instanceof NamedCallable && this.callable === other.callable;
     }
 
     override toString(): string {
-        return `$SegmentClosure`;
+        return this.callable.name;
     }
 }
 

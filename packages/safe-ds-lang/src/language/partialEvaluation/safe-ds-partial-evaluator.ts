@@ -19,15 +19,14 @@ import {
     isSdsParenthesizedExpression,
     isSdsPrefixOperation,
     isSdsReference,
+    isSdsSegment,
     isSdsString,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
-    SdsBlockLambda,
     SdsCall,
     SdsExpression,
-    SdsExpressionLambda,
     SdsIndexedAccess,
     SdsInfixOperation,
     SdsList,
@@ -41,15 +40,18 @@ import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
+    BlockLambdaClosure,
     BooleanConstant,
     EvaluatedEnumVariant,
     EvaluatedList,
     EvaluatedMap,
     EvaluatedMapEntry,
     EvaluatedNode,
+    ExpressionLambdaClosure,
     FloatConstant,
     IntConstant,
     isConstant,
+    NamedCallable,
     NullConstant,
     NumberConstant,
     ParameterSubstitutions,
@@ -71,12 +73,11 @@ export class SafeDsPartialEvaluator {
     }
 
     evaluate(node: AstNode | undefined): EvaluatedNode {
-        return this.cachedDoEvaluate(node, NO_SUBSTITUTIONS)?.unwrap();
+        return this.evaluateWithSubstitutions(node, NO_SUBSTITUTIONS)?.unwrap();
     }
 
-    private cachedDoEvaluate(node: AstNode | undefined, substitutions: ParameterSubstitutions): EvaluatedNode {
-        // Only expressions can be evaluated at the moment
-        if (!isSdsExpression(node)) {
+    private evaluateWithSubstitutions(node: AstNode | undefined, substitutions: ParameterSubstitutions): EvaluatedNode {
+        if (!node) {
             return UnknownEvaluatedNode;
         }
 
@@ -84,16 +85,31 @@ export class SafeDsPartialEvaluator {
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         const key = `${documentUri}~${nodePath}`;
-        const resultWithoutSubstitutions = this.cache.get(key, () => this.doEvaluate(node, NO_SUBSTITUTIONS));
+        const resultWithoutSubstitutions = this.cache.get(key, () =>
+            this.doEvaluateWithSubstitutions(node, NO_SUBSTITUTIONS),
+        );
         if (resultWithoutSubstitutions.isFullyEvaluated || isEmpty(substitutions)) {
             return resultWithoutSubstitutions;
         } /* c8 ignore start */ else {
             // Try again with parameter substitutions but don't cache the result
-            return this.doEvaluate(node, substitutions);
+            return this.doEvaluateWithSubstitutions(node, substitutions);
         } /* c8 ignore stop */
     }
 
-    private doEvaluate(node: SdsExpression, substitutions: ParameterSubstitutions): EvaluatedNode {
+    private doEvaluateWithSubstitutions(
+        node: AstNode | undefined,
+        substitutions: ParameterSubstitutions,
+    ): EvaluatedNode {
+        if (isSdsExpression(node)) {
+            return this.evaluateExpression(node, substitutions);
+        } else if (isSdsSegment(node)) {
+            return new NamedCallable(node);
+        } else {
+            return UnknownEvaluatedNode;
+        }
+    }
+
+    private evaluateExpression(node: SdsExpression, substitutions: ParameterSubstitutions): EvaluatedNode {
         // Base cases
         if (isSdsBoolean(node)) {
             return new BooleanConstant(node.value);
@@ -112,14 +128,14 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsTemplateStringEnd(node)) {
             return new StringConstant(node.value);
         } else if (isSdsBlockLambda(node)) {
-            return this.evaluateBlockLambda(node, substitutions);
+            return new BlockLambdaClosure(node, substitutions);
         } else if (isSdsExpressionLambda(node)) {
-            return this.evaluateExpressionLambda(node, substitutions);
+            return new ExpressionLambdaClosure(node, substitutions);
         }
 
         // Recursive cases
         else if (isSdsArgument(node)) {
-            return this.cachedDoEvaluate(node.value, substitutions);
+            return this.evaluateWithSubstitutions(node.value, substitutions);
         } else if (isSdsCall(node)) {
             return this.evaluateCall(node, substitutions);
         } else if (isSdsIndexedAccess(node)) {
@@ -133,7 +149,7 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsMemberAccess(node)) {
             return this.evaluateMemberAccess(node, substitutions);
         } else if (isSdsParenthesizedExpression(node)) {
-            return this.cachedDoEvaluate(node.expression, substitutions);
+            return this.evaluateWithSubstitutions(node.expression, substitutions);
         } else if (isSdsPrefixOperation(node)) {
             return this.evaluatePrefixOperation(node, substitutions);
         } else if (isSdsReference(node)) {
@@ -141,45 +157,18 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsTemplateString(node)) {
             return this.evaluateTemplateString(node, substitutions);
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            throw new Error(`Unexpected expression type: ${node.$type}`);
         } /* c8 ignore stop */
-    }
-
-    private evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        //     return when {
-        //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateBlockLambda(
-        //     parameters = parametersOrEmpty(),
-        //     results = blockLambdaResultsOrEmpty(),
-        //     substitutionsOnCreation = substitutions
-        // )
-        // else -> undefined
-        // }
-        return UnknownEvaluatedNode;
-    }
-
-    private evaluateExpressionLambda(
-        _node: SdsExpressionLambda,
-        _substitutions: ParameterSubstitutions,
-    ): EvaluatedNode {
-        //     return when {
-        //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
-        //     parameters = parametersOrEmpty(),
-        //     result = result,
-        //     substitutionsOnCreation = substitutions
-        // )
-        // else -> undefined
-        // }
-        return UnknownEvaluatedNode;
     }
 
     private evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
         // By design none of the operators are short-circuited
-        const evaluatedLeft = this.cachedDoEvaluate(node.leftOperand, substitutions);
+        const evaluatedLeft = this.evaluateWithSubstitutions(node.leftOperand, substitutions);
         if (evaluatedLeft === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
-        const evaluatedRight = this.cachedDoEvaluate(node.rightOperand, substitutions);
+        const evaluatedRight = this.evaluateWithSubstitutions(node.rightOperand, substitutions);
         if (evaluatedRight === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
@@ -314,22 +303,22 @@ export class SafeDsPartialEvaluator {
 
     private evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
         // TODO: if any entry has side effects, return UnknownEvaluatedNode
-        return new EvaluatedList(node.elements.map((it) => this.cachedDoEvaluate(it, substitutions)));
+        return new EvaluatedList(node.elements.map((it) => this.evaluateWithSubstitutions(it, substitutions)));
     }
 
     private evaluateMap(node: SdsMap, substitutions: ParameterSubstitutions): EvaluatedNode {
         // TODO: if any entry has side effects, return UnknownEvaluatedNode
         return new EvaluatedMap(
             node.entries.map((it) => {
-                const key = this.cachedDoEvaluate(it.key, substitutions);
-                const value = this.cachedDoEvaluate(it.value, substitutions);
+                const key = this.evaluateWithSubstitutions(it.key, substitutions);
+                const value = this.evaluateWithSubstitutions(it.value, substitutions);
                 return new EvaluatedMapEntry(key, value);
             }),
         );
     }
 
     private evaluatePrefixOperation(node: SdsPrefixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
-        const evaluatedOperand = this.cachedDoEvaluate(node.operand, substitutions);
+        const evaluatedOperand = this.evaluateWithSubstitutions(node.operand, substitutions);
         if (evaluatedOperand === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
@@ -350,7 +339,7 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateTemplateString(node: SdsTemplateString, substitutions: ParameterSubstitutions): EvaluatedNode {
-        const expressions = node.expressions.map((it) => this.cachedDoEvaluate(it, substitutions));
+        const expressions = node.expressions.map((it) => this.evaluateWithSubstitutions(it, substitutions));
         if (expressions.every(isConstant)) {
             return new StringConstant(expressions.map((it) => it.toInterpolationString()).join(''));
         }
@@ -359,7 +348,7 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateCall(node: SdsCall, substitutions: ParameterSubstitutions): EvaluatedNode {
-        const receiver = this.cachedDoEvaluate(node.receiver, substitutions).unwrap();
+        const receiver = this.evaluateWithSubstitutions(node.receiver, substitutions).unwrap();
 
         if (receiver instanceof EvaluatedEnumVariant) {
             // The enum variant has already been instantiated
@@ -370,15 +359,17 @@ export class SafeDsPartialEvaluator {
             // Store default values for all parameters
             const args = new Map(
                 getParameters(receiver.variant).map((it) => {
-                    return [it, this.cachedDoEvaluate(it.defaultValue, NO_SUBSTITUTIONS)];
+                    // TODO We may refer to other parameters in the default value, so we must pass substitutions
+                    return [it, this.evaluateWithSubstitutions(it.defaultValue, NO_SUBSTITUTIONS)];
                 }),
             );
 
             // Override default values with the actual arguments
+            // TODO: If any argument has side effects, return UnknownEvaluatedNode
             getArguments(node).forEach((it) => {
                 const parameter = this.nodeMapper.argumentToParameter(it);
                 if (parameter && args.has(parameter)) {
-                    args.set(parameter, this.cachedDoEvaluate(it.value, substitutions));
+                    args.set(parameter, this.evaluateWithSubstitutions(it.value, substitutions));
                 }
             });
 
@@ -387,7 +378,7 @@ export class SafeDsPartialEvaluator {
 
         //     val simpleReceiver = evaluateReceiver(substitutions) ?: return undefined
         //     val newSubstitutions = buildNewSubstitutions(simpleReceiver, substitutions)
-        //
+        //     // TODO Also check whether the callable has side effects
         //     return when (simpleReceiver) {
         //     is SdsIntermediateBlockLambda -> {
         //         SdsIntermediateRecord(
@@ -442,15 +433,15 @@ export class SafeDsPartialEvaluator {
     // }
 
     private evaluateIndexedAccess(node: SdsIndexedAccess, substitutions: ParameterSubstitutions): EvaluatedNode {
-        const receiver = this.cachedDoEvaluate(node.receiver, substitutions).unwrap();
+        const receiver = this.evaluateWithSubstitutions(node.receiver, substitutions).unwrap();
 
         if (receiver instanceof EvaluatedList) {
-            const index = this.cachedDoEvaluate(node.index, substitutions).unwrap();
+            const index = this.evaluateWithSubstitutions(node.index, substitutions).unwrap();
             if (index instanceof IntConstant) {
                 return receiver.getElementByIndex(Number(index.value));
             }
         } else if (receiver instanceof EvaluatedMap) {
-            const key = this.cachedDoEvaluate(node.index, substitutions).unwrap();
+            const key = this.evaluateWithSubstitutions(node.index, substitutions).unwrap();
             return receiver.getLastValueForKey(key);
         }
 
@@ -475,11 +466,11 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
+        // TODO: always call evaluateWithSubstitutions so caching works
         // const target = node.target.ref;
 
         //     is SdsPlaceholder -> declaration.evaluateAssignee(substitutions)
         //     is SdsParameter -> declaration.evaluateParameter(substitutions)
-        //     is SdsStep -> declaration.evaluateStep()
         // else -> undefined
         // }
         return UnknownEvaluatedNode;
@@ -504,16 +495,6 @@ export class SafeDsPartialEvaluator {
     //     return when {
     //     this in substitutions -> substitutions[this]
     //     isOptional() -> defaultValue?.evaluate(substitutions)
-    // else -> undefined
-    // }
-    // }
-    //
-    // private fun SdsStep.evaluateStep(): SdsIntermediateStep? {
-    //     return when {
-    //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateStep(
-    //     parameters = parametersOrEmpty(),
-    //     results = resultsOrEmpty()
-    // )
     // else -> undefined
     // }
     // }
