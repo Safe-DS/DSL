@@ -1,4 +1,6 @@
 import { AstNode, getContainerOfType, ValidationAcceptor } from 'langium';
+import { isEmpty } from '../../helpers/collectionUtils.js';
+import { pluralize } from '../../helpers/stringUtils.js';
 import {
     isSdsAnnotation,
     isSdsCallable,
@@ -21,8 +23,6 @@ import {
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { pluralize } from '../../helpers/stringUtils.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -76,12 +76,12 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
         }
 
         const callable = nodeMapper.callToCallable(node);
-        if (!callable || isSdsAnnotation(callable)) {
+        if (node.receiver && (!callable || isSdsAnnotation(callable))) {
             accept('error', 'This expression is not callable.', {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
             });
-        } else if (isSdsClass(callable) && !callable.parameterList) {
+        } else if (node.receiver && isSdsClass(callable) && !callable.parameterList) {
             accept('error', 'Cannot instantiate a class that has no constructor.', {
                 node: node.receiver,
                 code: CODE_TYPE_CALLABLE_RECEIVER,
@@ -98,6 +98,7 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
         if (
+            node.receiver &&
             !typeChecker.isAssignableTo(receiverType, coreTypes.List) &&
             !typeChecker.isAssignableTo(receiverType, coreTypes.Map)
         ) {
@@ -140,13 +141,13 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
         switch (node.operator) {
             case 'or':
             case 'and':
-                if (!typeChecker.isAssignableTo(leftType, coreTypes.Boolean)) {
+                if (node.leftOperand && !typeChecker.isAssignableTo(leftType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
                         node: node.leftOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
                 }
-                if (!typeChecker.isAssignableTo(rightType, coreTypes.Boolean)) {
+                if (node.rightOperand && !typeChecker.isAssignableTo(rightType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
                         node: node.rightOperand,
                         code: CODE_TYPE_MISMATCH,
@@ -162,6 +163,7 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
             case '*':
             case '/':
                 if (
+                    node.leftOperand &&
                     !typeChecker.isAssignableTo(leftType, coreTypes.Float) &&
                     !typeChecker.isAssignableTo(leftType, coreTypes.Int)
                 ) {
@@ -171,6 +173,7 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                     });
                 }
                 if (
+                    node.rightOperand &&
                     !typeChecker.isAssignableTo(rightType, coreTypes.Float) &&
                     !typeChecker.isAssignableTo(rightType, coreTypes.Int)
                 ) {
