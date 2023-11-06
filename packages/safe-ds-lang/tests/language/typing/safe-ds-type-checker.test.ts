@@ -19,6 +19,8 @@ import {
 } from '../../../src/language/partialEvaluation/model.js';
 import {
     ClassType,
+    EnumType,
+    EnumVariantType,
     LiteralType,
     NamedTupleEntry,
     NamedTupleType,
@@ -45,13 +47,15 @@ const code = `
     fun func8() -> (s: Int)
     fun func9() -> (r: Any)
     fun func10() -> (r: String)
+    fun func11() -> (r: Class1)
+    fun func12() -> (r: Enum1)
 
-    class Class1
-    class Class2 sub Class1
+    class Class1(p: Int)
+    class Class2() sub Class1
     class Class3
 
     enum Enum1 {
-        Variant1
+        Variant1(p: Int)
         Variant2
     }
     enum Enum2
@@ -68,6 +72,8 @@ const callableType7 = typeComputer.computeType(functions[6]);
 const callableType8 = typeComputer.computeType(functions[7]);
 const callableType9 = typeComputer.computeType(functions[8]);
 const callableType10 = typeComputer.computeType(functions[9]);
+const callableType11 = typeComputer.computeType(functions[10]);
+const callableType12 = typeComputer.computeType(functions[11]);
 
 const classes = getModuleMembers(module).filter(isSdsClass);
 const class1 = classes[0];
@@ -80,14 +86,14 @@ const classType3 = typeComputer.computeType(class3) as ClassType;
 const enums = getModuleMembers(module).filter(isSdsEnum);
 const enum1 = enums[0];
 const enum2 = enums[1];
-const enumType1 = typeComputer.computeType(enum1);
-const enumType2 = typeComputer.computeType(enum2);
+const enumType1 = typeComputer.computeType(enum1) as EnumType;
+const enumType2 = typeComputer.computeType(enum2) as EnumType;
 
 const enumVariants = streamAllContents(module).filter(isSdsEnumVariant).toArray();
 const enumVariant1 = enumVariants[0];
 const enumVariant2 = enumVariants[1];
-const enumVariantType1 = typeComputer.computeType(enumVariant1);
-const enumVariantType2 = typeComputer.computeType(enumVariant2);
+const enumVariantType1 = typeComputer.computeType(enumVariant1) as EnumVariantType;
+const enumVariantType2 = typeComputer.computeType(enumVariant2) as EnumVariantType;
 
 describe('SafeDsTypeChecker', async () => {
     const testCases: IsAssignableToTest[] = [
@@ -520,6 +526,47 @@ describe('SafeDsTypeChecker', async () => {
             type1: new NamedTupleType(),
             type2: enumType1,
             expected: false,
+        },
+        // Static type to callable type
+        {
+            type1: new StaticType(classType1),
+            type2: callableType1,
+            expected: false,
+        },
+        {
+            type1: new StaticType(classType1),
+            type2: callableType3,
+            expected: true,
+        },
+        {
+            type1: new StaticType(classType2),
+            type2: callableType11,
+            expected: true,
+        },
+        {
+            type1: new StaticType(classType3),
+            type2: callableType1,
+            expected: false,
+        },
+        {
+            type1: new StaticType(enumType1),
+            type2: callableType1,
+            expected: false,
+        },
+        {
+            type1: new StaticType(enumVariantType1),
+            type2: callableType1,
+            expected: false,
+        },
+        {
+            type1: new StaticType(enumVariantType1),
+            type2: callableType3,
+            expected: true,
+        },
+        {
+            type1: new StaticType(enumVariantType2),
+            type2: callableType12,
+            expected: true,
         },
         // Static type to static type
         {
