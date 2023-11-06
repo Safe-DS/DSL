@@ -1,21 +1,20 @@
-import { stream } from 'langium';
+import { type NamedAstNode, stream } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsAbstractResult,
-    SdsAbstractResult,
+    type SdsAbstractResult,
     type SdsBlockLambda,
-    SdsBlockLambdaResult,
+    type SdsBlockLambdaResult,
     type SdsCallable,
     type SdsDeclaration,
-    SdsEnumVariant,
-    SdsExpression,
+    type SdsEnumVariant,
+    type SdsExpression,
     type SdsExpressionLambda,
-    SdsParameter,
-    SdsReference,
-    SdsResult,
-    type SdsSegment,
+    type SdsLambda,
+    type SdsParameter,
+    type SdsReference,
 } from '../generated/ast.js';
-import { getParameters, getResults, streamBlockLambdaResults } from '../helpers/nodeProperties.js';
+import { getParameters, streamBlockLambdaResults } from '../helpers/nodeProperties.js';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
@@ -143,12 +142,15 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 };
 
 // -------------------------------------------------------------------------------------------------
-// Closures
+// Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class Closure<T extends SdsCallable> extends EvaluatedNode {
-    override readonly isFullyEvaluated: boolean = false;
+export abstract class EvaluatedCallable<T extends SdsCallable> extends EvaluatedNode {
     abstract readonly callable: T;
+    override readonly isFullyEvaluated: boolean = false;
+}
+
+export abstract class Closure<T extends SdsLambda> extends EvaluatedCallable<T> {
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
 }
 
@@ -210,27 +212,19 @@ export class ExpressionLambdaClosure extends Closure<SdsExpressionLambda> {
     }
 }
 
-export class SegmentClosure extends Closure<SdsSegment> {
-    override readonly substitutionsOnCreation = new Map<SdsParameter, EvaluatedNode>();
-    readonly results: SdsResult[];
+export class NamedCallable<T extends SdsCallable & NamedAstNode> extends EvaluatedCallable<T> {
+    override readonly isFullyEvaluated: boolean = false;
 
-    constructor(override readonly callable: SdsSegment) {
+    constructor(override readonly callable: T) {
         super();
-        this.results = getResults(callable.resultList);
     }
 
     override equals(other: unknown): boolean {
-        if (other === this) {
-            return true;
-        } else if (!(other instanceof SegmentClosure)) {
-            return false;
-        }
-
-        return this.callable === other.callable;
+        return other instanceof NamedCallable && this.callable === other.callable;
     }
 
     override toString(): string {
-        return `$SegmentClosure`;
+        return this.callable.name;
     }
 }
 

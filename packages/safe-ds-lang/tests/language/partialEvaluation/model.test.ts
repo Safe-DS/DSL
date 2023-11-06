@@ -24,8 +24,8 @@ import {
     ExpressionLambdaClosure,
     FloatConstant,
     IntConstant,
+    NamedCallable,
     NullConstant,
-    SegmentClosure,
     StringConstant,
     UnknownEvaluatedNode,
 } from '../../../src/language/partialEvaluation/model.js';
@@ -103,8 +103,8 @@ describe('partial evaluation model', async () => {
             nodeOfOtherType: () => NullConstant,
         },
         {
-            node: () => new SegmentClosure(segment1),
-            unequalNodeOfSameType: () => new SegmentClosure(segment2),
+            node: () => new NamedCallable(segment1),
+            unequalNodeOfSameType: () => new NamedCallable(segment2),
             nodeOfOtherType: () => NullConstant,
         },
         {
@@ -190,8 +190,8 @@ describe('partial evaluation model', async () => {
             expectedString: '$ExpressionLambdaClosure',
         },
         {
-            node: new SegmentClosure(segment1),
-            expectedString: '$SegmentClosure',
+            node: new NamedCallable(segment1),
+            expectedString: 'mySegment',
         },
         {
             node: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
@@ -286,7 +286,7 @@ describe('partial evaluation model', async () => {
             expectedValue: false,
         },
         {
-            node: new SegmentClosure(segment1),
+            node: new NamedCallable(segment1),
             expectedValue: false,
         },
         {

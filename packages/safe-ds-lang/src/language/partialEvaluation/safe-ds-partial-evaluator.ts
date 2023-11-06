@@ -51,10 +51,10 @@ import {
     FloatConstant,
     IntConstant,
     isConstant,
+    NamedCallable,
     NullConstant,
     NumberConstant,
     ParameterSubstitutions,
-    SegmentClosure,
     StringConstant,
     UnknownEvaluatedNode,
 } from './model.js';
@@ -103,7 +103,7 @@ export class SafeDsPartialEvaluator {
         if (isSdsExpression(node)) {
             return this.evaluateExpression(node, substitutions);
         } else if (isSdsSegment(node)) {
-            return new SegmentClosure(node);
+            return new NamedCallable(node);
         } else {
             return UnknownEvaluatedNode;
         }
