@@ -1,14 +1,17 @@
 package safeds.lang
 
 /**
- * Indicates that the function has no side effects and always returns the same results given the same arguments.
+ * **If called on a function:** Indicates that the function has no side effects and always returns the same results
+ * given the same arguments.
  *
- * Calls to such a function may be eliminated, if the result is not used. Moreover, the function can be memoized, i.e.
+ * Calls to such a function may be eliminated, if its results are not used. Moreover, the function can be memoized, i.e.
  * we can remember its results for a set of arguments. Finally, a pure function can be called at any time, allowing
  * reordering of calls or parallelization.
+ *
+ * **If called on a parameter:** Indicates that the parameter only accepts pure callables.
  */
 @Experimental
-@Target([AnnotationTarget.Function])
+@Target([AnnotationTarget.Function, AnnotationTarget.Parameter])
 annotation Pure
 
 /**
@@ -54,6 +57,13 @@ enum ImpurityReason {
      * @param parameterName The name of the parameter that specifies the file path.
      */
     FileWriteToParameterizedPath(parameterName: String)
+
+    /**
+     * The function calls another, potentially impure function that gets passed as a parameter.
+     *
+     * @param parameterName The name of the parameter that accepts the function.
+     */
+    PotentiallyImpureParameterCall(parameterName: String)
 
     /**
      * The function is impure for some other reason. If possible, use a more specific reason.
