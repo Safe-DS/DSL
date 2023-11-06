@@ -59,6 +59,13 @@ enum ImpurityReason {
     FileWriteToParameterizedPath(parameterName: String)
 
     /**
+     * The function calls another, potentially impure function that gets passed as a parameter.
+     *
+     * @param parameterName The name of the parameter that accepts the function.
+     */
+    PotentiallyImpureParameterCall(parameterName: String)
+
+    /**
      * The function is impure for some other reason. If possible, use a more specific reason.
      */
     Other
