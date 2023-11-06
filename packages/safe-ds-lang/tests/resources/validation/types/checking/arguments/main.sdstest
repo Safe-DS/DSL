@@ -1,0 +1,20 @@
+package tests.validation.types.checking.arguments
+
+fun f(p: Int)
+
+segment mySegment() {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(»1«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(p = »1«);
+
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+    f(»""«);
+
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+    f(p = »""«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(unresolved = »1«);
+}

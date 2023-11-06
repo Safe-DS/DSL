@@ -9,7 +9,7 @@ pipeline test {
     f1((a: Int, b: Int = 2) {
         yield d = g();
     });
-    f1((a: Int, c: Int) {
+    f1((a: Int, b: Int) {
         yield d = g();
     });
     f2(() {});

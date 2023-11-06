@@ -28,7 +28,7 @@ describe('partial evaluation', async () => {
         // Ensure that partially evaluating nodes in the same equivalence class yields the same result
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {
             if (equivalenceClassAssertion.locations.length > 1) {
-                const firstLocation = equivalenceClassAssertion.locations[0];
+                const firstLocation = equivalenceClassAssertion.locations[0]!;
                 const firstNode = getNodeByLocation(services, firstLocation);
                 const firstValue = partialEvaluator.evaluate(firstNode);
 

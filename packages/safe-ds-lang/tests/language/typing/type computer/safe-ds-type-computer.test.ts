@@ -33,7 +33,7 @@ describe('typing', async () => {
         // Ensure all nodes in the equivalence class have the same type
         for (const equivalenceClassAssertion of test.equivalenceClassAssertions) {
             if (equivalenceClassAssertion.locations.length > 1) {
-                const firstLocation = equivalenceClassAssertion.locations[0];
+                const firstLocation = equivalenceClassAssertion.locations[0]!;
                 const firstNode = getNodeByLocation(services, firstLocation);
                 const firstType = typeComputer.computeType(firstNode);
 

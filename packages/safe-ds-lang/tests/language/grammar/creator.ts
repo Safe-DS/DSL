@@ -25,7 +25,7 @@ const createGrammarTest = (uri: URI): GrammarTest => {
         return invalidTest(new MultipleCommentsError(comments, uri));
     }
 
-    const comment = comments[0];
+    const comment = comments[0]!;
 
     // Must contain a valid comment
     if (comment !== 'syntax_error' && comment !== 'no_syntax_error') {

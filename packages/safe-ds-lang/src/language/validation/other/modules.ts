@@ -7,7 +7,7 @@ import { BUILTINS_ROOT_PACKAGE } from '../../builtins/packageNames.js';
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
 export const CODE_MODULE_FORBIDDEN_IN_STUB_FILE = 'module/forbidden-in-stub-file';
 export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
-export const CODE_MODULE_PIPELINE_FILE_IN_SAFEDS_PACKAGE = 'module/pipeline-file-in-safeds-package';
+export const CODE_MODULE_PIPELINE_FILE_IN_BUILTIN_PACKAGE = 'module/pipeline-file-in-builtin-package';
 
 export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: ValidationAcceptor): void => {
     const declarations = node.members.filter(isSdsDeclaration);
@@ -48,7 +48,7 @@ export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: 
         const members = getModuleMembers(node);
         if (members.length > 0) {
             accept('error', 'A module with declarations must state its package.', {
-                node: members[0],
+                node: members[0]!,
                 property: 'name',
                 code: CODE_MODULE_MISSING_PACKAGE,
             });
@@ -56,12 +56,12 @@ export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: 
     }
 };
 
-export const pipelineFileMustNotBeInSafedsPackage = (node: SdsModule, accept: ValidationAcceptor): void => {
+export const pipelineFileMustNotBeInBuiltinPackage = (node: SdsModule, accept: ValidationAcceptor): void => {
     if (isInPipelineFile(node) && node.name?.startsWith(BUILTINS_ROOT_PACKAGE)) {
         accept('error', `A pipeline file must not be in a '${BUILTINS_ROOT_PACKAGE}' package.`, {
             node,
             property: 'name',
-            code: CODE_MODULE_PIPELINE_FILE_IN_SAFEDS_PACKAGE,
+            code: CODE_MODULE_PIPELINE_FILE_IN_BUILTIN_PACKAGE,
         });
     }
 };
