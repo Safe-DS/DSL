@@ -1,6 +1,7 @@
 import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { isSdsEnum, SdsDeclaration } from '../generated/ast.js';
+import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
+import { getParameters } from '../helpers/nodeProperties.js';
 import {
     BooleanConstant,
     Constant,
@@ -16,6 +17,7 @@ import {
     EnumType,
     EnumVariantType,
     LiteralType,
+    NamedTupleEntry,
     NamedTupleType,
     StaticType,
     Type,
@@ -24,16 +26,19 @@ import {
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
+import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
+    private readonly typeComputer: () => SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
+        this.typeComputer = () => services.types.TypeComputer;
     }
 
     /**
@@ -218,8 +223,48 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private staticTypeIsAssignableTo(type: Type, other: Type): boolean {
-        return type.equals(other);
+    private staticTypeIsAssignableTo(type: StaticType, other: Type): boolean {
+        if (other instanceof CallableType) {
+            return this.isAssignableTo(this.associatedCallableTypeForStaticType(type), other);
+        } else {
+            return type.equals(other);
+        }
+    }
+
+    private associatedCallableTypeForStaticType(type: StaticType): Type {
+        const instanceType = type.instanceType;
+        if (instanceType instanceof ClassType) {
+            const declaration = instanceType.declaration;
+            if (!declaration.parameterList) {
+                return UnknownType;
+            }
+
+            const parameterEntries = new NamedTupleType(
+                ...getParameters(declaration).map(
+                    (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
+                ),
+            );
+            const resultEntries = new NamedTupleType(
+                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
+            );
+
+            return new CallableType(declaration, parameterEntries, resultEntries);
+        } else if (instanceType instanceof EnumVariantType) {
+            const declaration = instanceType.declaration;
+
+            const parameterEntries = new NamedTupleType(
+                ...getParameters(declaration).map(
+                    (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
+                ),
+            );
+            const resultEntries = new NamedTupleType(
+                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
+            );
+
+            return new CallableType(declaration, parameterEntries, resultEntries);
+        } else {
+            return UnknownType;
+        }
     }
 
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
