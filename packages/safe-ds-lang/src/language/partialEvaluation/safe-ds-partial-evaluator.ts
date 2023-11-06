@@ -19,15 +19,14 @@ import {
     isSdsParenthesizedExpression,
     isSdsPrefixOperation,
     isSdsReference,
+    isSdsSegment,
     isSdsString,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
-    SdsBlockLambda,
     SdsCall,
     SdsExpression,
-    SdsExpressionLambda,
     SdsIndexedAccess,
     SdsInfixOperation,
     SdsList,
@@ -41,18 +40,21 @@ import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
+    BlockLambdaClosure,
     BooleanConstant,
     EvaluatedEnumVariant,
     EvaluatedList,
     EvaluatedMap,
     EvaluatedMapEntry,
     EvaluatedNode,
+    ExpressionLambdaClosure,
     FloatConstant,
     IntConstant,
     isConstant,
     NullConstant,
     NumberConstant,
     ParameterSubstitutions,
+    SegmentClosure,
     StringConstant,
     UnknownEvaluatedNode,
 } from './model.js';
@@ -100,6 +102,8 @@ export class SafeDsPartialEvaluator {
     ): EvaluatedNode {
         if (isSdsExpression(node)) {
             return this.evaluateExpression(node, substitutions);
+        } else if (isSdsSegment(node)) {
+            return new SegmentClosure(node);
         } else {
             return UnknownEvaluatedNode;
         }
@@ -124,9 +128,9 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsTemplateStringEnd(node)) {
             return new StringConstant(node.value);
         } else if (isSdsBlockLambda(node)) {
-            return this.evaluateBlockLambda(node, substitutions);
+            return new BlockLambdaClosure(node, substitutions);
         } else if (isSdsExpressionLambda(node)) {
-            return this.evaluateExpressionLambda(node, substitutions);
+            return new ExpressionLambdaClosure(node, substitutions);
         }
 
         // Recursive cases
@@ -155,33 +159,6 @@ export class SafeDsPartialEvaluator {
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected expression type: ${node.$type}`);
         } /* c8 ignore stop */
-    }
-
-    private evaluateBlockLambda(_node: SdsBlockLambda, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        //     return when {
-        //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateBlockLambda(
-        //     parameters = parametersOrEmpty(),
-        //     results = blockLambdaResultsOrEmpty(),
-        //     substitutionsOnCreation = substitutions
-        // )
-        // else -> undefined
-        // }
-        return UnknownEvaluatedNode;
-    }
-
-    private evaluateExpressionLambda(
-        _node: SdsExpressionLambda,
-        _substitutions: ParameterSubstitutions,
-    ): EvaluatedNode {
-        //     return when {
-        //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateExpressionLambda(
-        //     parameters = parametersOrEmpty(),
-        //     result = result,
-        //     substitutionsOnCreation = substitutions
-        // )
-        // else -> undefined
-        // }
-        return UnknownEvaluatedNode;
     }
 
     private evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
@@ -388,6 +365,7 @@ export class SafeDsPartialEvaluator {
             );
 
             // Override default values with the actual arguments
+            // TODO: If any argument has side effects, return UnknownEvaluatedNode
             getArguments(node).forEach((it) => {
                 const parameter = this.nodeMapper.argumentToParameter(it);
                 if (parameter && args.has(parameter)) {
@@ -488,11 +466,11 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
+        // TODO: always call evaluateWithSubstitutions so caching works
         // const target = node.target.ref;
 
         //     is SdsPlaceholder -> declaration.evaluateAssignee(substitutions)
         //     is SdsParameter -> declaration.evaluateParameter(substitutions)
-        //     is SdsStep -> declaration.evaluateStep()
         // else -> undefined
         // }
         return UnknownEvaluatedNode;
@@ -517,16 +495,6 @@ export class SafeDsPartialEvaluator {
     //     return when {
     //     this in substitutions -> substitutions[this]
     //     isOptional() -> defaultValue?.evaluate(substitutions)
-    // else -> undefined
-    // }
-    // }
-    //
-    // private fun SdsStep.evaluateStep(): SdsIntermediateStep? {
-    //     return when {
-    //     callableHasNoSideEffects(resultIfUnknown = true) -> SdsIntermediateStep(
-    //     parameters = parametersOrEmpty(),
-    //     results = resultsOrEmpty()
-    // )
     // else -> undefined
     // }
     // }

@@ -1,0 +1,4 @@
+package tests.partialValidation.invalidNodes
+
+// $TEST$ serialization ?
+»class C«
