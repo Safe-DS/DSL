@@ -8,7 +8,7 @@ package safeds.lang
  * we can remember its results for a set of arguments. Finally, a pure function can be called at any time, allowing
  * reordering of calls or parallelization.
  *
- * **If called on a parameter:** Indicates that the parameter only accepts pure functions.
+ * **If called on a parameter:** Indicates that the parameter only accepts pure callables.
  */
 @Experimental
 @Target([AnnotationTarget.Function, AnnotationTarget.Parameter])
