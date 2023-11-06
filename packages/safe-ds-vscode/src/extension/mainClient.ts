@@ -8,7 +8,7 @@ let client: LanguageClient;
 
 // This function is called when the extension is activated.
 export const activate = function (context: vscode.ExtensionContext): void {
-    console.info('Starting extension...');
+    console.log('Starting extension...');
     client = startLanguageClient(context);
     startPythonServer().then(r => {});
 };

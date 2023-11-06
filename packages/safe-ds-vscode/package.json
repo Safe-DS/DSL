@@ -110,11 +110,13 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
-        "vscode-languageclient": "^9.0.1"
+        "vscode-languageclient": "^9.0.1",
+        "ws": "^8.14.2"
     },
     "devDependencies": {
         "@types/node": "^18.18.8",
         "@types/vscode": "^1.83.2",
+        "@types/ws": "^8.5.8",
         "@vscode/vsce": "^2.22.0",
         "esbuild": "^0.19.5"
     },
