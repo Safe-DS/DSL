@@ -1,12 +1,15 @@
 import {
     type AstNode,
     findDeclarationNodeAtOffset,
+    findLeafNodeAtOffset,
+    getContainerOfType,
     getDocument,
     type GrammarConfig,
     type LangiumDocument,
     type LangiumDocuments,
     type LangiumServices,
     type NameProvider,
+    NodeKindProvider,
     type ReferenceDescription,
     type References,
     type Stream,
@@ -20,9 +23,10 @@ import {
     type TypeHierarchySubtypesParams,
     type TypeHierarchySupertypesParams,
 } from 'vscode-languageserver';
-import { isSdsClass } from '../generated/ast.js';
+import { isSdsClass, isSdsParentTypeList } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
+import { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
 
 export interface TypeHierarchyProvider {
     prepareTypeHierarchy(
@@ -146,17 +150,69 @@ export abstract class AbstractTypeHierarchyProvider implements TypeHierarchyProv
 
 export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     private readonly classHierarchy: SafeDsClassHierarchy;
+    private readonly nodeKindProvider: NodeKindProvider;
+    private readonly nodeInfoProvider: SafeDsNodeInfoProvider;
 
     constructor(services: SafeDsServices) {
         super(services);
         this.classHierarchy = services.types.ClassHierarchy;
+        this.nodeKindProvider = services.shared.lsp.NodeKindProvider;
+        this.nodeInfoProvider = services.lsp.NodeInfoProvider;
     }
 
-    protected getSubtypes(_node: AstNode, _references: Stream<ReferenceDescription>): TypeHierarchyItem[] | undefined {
-        return undefined;
+    protected override getTypeHierarchyItem(targetNode: AstNode): Partial<TypeHierarchyItem> | undefined {
+        {
+            return {
+                kind: this.nodeKindProvider.getSymbolKind(targetNode),
+                tags: this.nodeInfoProvider.getTags(targetNode),
+                detail: this.nodeInfoProvider.getDetails(targetNode),
+            };
+        }
     }
 
-    protected getSupertypes(node: AstNode): TypeHierarchyItem[] | undefined {
+    protected override getSubtypes(
+        _node: AstNode,
+        references: Stream<ReferenceDescription>,
+    ): TypeHierarchyItem[] | undefined {
+        const items = references
+            .flatMap((it) => {
+                const document = this.documents.getOrCreateDocument(it.sourceUri);
+                const rootNode = document.parseResult.value;
+                if (!rootNode.$cstNode) {
+                    /* c8 ignore next 2 */
+                    return undefined;
+                }
+
+                const targetCstNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
+                if (!targetCstNode) {
+                    /* c8 ignore next 2 */
+                    return undefined;
+                }
+
+                // Only consider the first parent type
+                const targetNode = targetCstNode.astNode;
+                if (!isSdsParentTypeList(targetNode.$container) || targetNode.$containerIndex !== 0) {
+                    return undefined;
+                }
+
+                const containingClass = getContainerOfType(targetNode, isSdsClass);
+                if (!containingClass) {
+                    return undefined;
+                }
+
+                return this.getTypeHierarchyItems(containingClass, document);
+            })
+            .filter((it) => it !== undefined)
+            .toArray() as TypeHierarchyItem[];
+
+        if (items.length === 0) {
+            return undefined;
+        }
+
+        return items;
+    }
+
+    protected override getSupertypes(node: AstNode): TypeHierarchyItem[] | undefined {
         if (!isSdsClass(node)) {
             return undefined;
         }

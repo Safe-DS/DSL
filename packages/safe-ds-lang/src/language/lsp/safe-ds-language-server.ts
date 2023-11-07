@@ -172,6 +172,7 @@ export const createTypeHierarchyRequestHandler = function <
             throw new Error(message);
         }
         try {
+            // eslint-disable-next-line @typescript-eslint/return-await
             return await serviceCall(language, params, cancelToken);
         } catch (err) {
             return responseError<E>(err);
