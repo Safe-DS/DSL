@@ -2,20 +2,22 @@ import {
     AbstractCallHierarchyProvider,
     type AstNode,
     type CstNode,
+    findLeafNodeAtOffset,
+    getContainerOfType,
     getDocument,
     type NodeKindProvider,
     type ReferenceDescription,
     type Stream,
 } from 'langium';
-import {
-    type CallHierarchyIncomingCall,
-    type CallHierarchyOutgoingCall,
-    type Range,
+import type {
+    CallHierarchyIncomingCall,
+    CallHierarchyOutgoingCall,
+    Range,
     SymbolKind,
     SymbolTag,
 } from 'vscode-languageserver';
 import type { SafeDsCallGraphComputer } from '../flow/safe-ds-call-graph-computer.js';
-import type { SdsCallable } from '../generated/ast.js';
+import { isSdsDeclaration, type SdsCall, type SdsCallable, type SdsDeclaration } from '../generated/ast.js';
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import type { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
@@ -48,10 +50,75 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
     }
 
     protected getIncomingCalls(
-        _node: AstNode,
-        _references: Stream<ReferenceDescription>,
+        node: AstNode,
+        references: Stream<ReferenceDescription>,
     ): CallHierarchyIncomingCall[] | undefined {
-        return undefined;
+        const result: CallHierarchyIncomingCall[] = [];
+
+        this.getUniqueCallers(references).forEach((caller) => {
+            if (!caller.$cstNode) {
+                return;
+            }
+
+            const callerNameCstNode = this.nameProvider.getNameNode(caller);
+            if (!callerNameCstNode) {
+                return;
+            }
+
+            // Find all calls inside the caller that refer to the given node. This can also handle aliases.
+            const callsOfNode = this.getCallsOf(caller, node);
+            if (callsOfNode.length === 0 || callsOfNode.some((it) => !it.$cstNode)) {
+                return;
+            }
+
+            const callerDocumentUri = getDocument(caller).uri.toString();
+
+            result.push({
+                from: {
+                    name: callerNameCstNode.text,
+                    range: caller.$cstNode.range,
+                    selectionRange: callerNameCstNode.range,
+                    uri: callerDocumentUri,
+                    ...this.getCallHierarchyItem(caller),
+                },
+                fromRanges: callsOfNode.map((it) => it.$cstNode!.range),
+            });
+        });
+
+        if (result.length === 0) {
+            return undefined;
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns all declarations that contain at least one of the given references.
+     */
+    private getUniqueCallers(references: Stream<ReferenceDescription>): Stream<SdsDeclaration> {
+        return references
+            .map((it) => {
+                const document = this.documents.getOrCreateDocument(it.sourceUri);
+                const rootNode = document.parseResult.value;
+                if (!rootNode.$cstNode) {
+                    return undefined;
+                }
+
+                const targetNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
+                if (!targetNode) {
+                    return undefined;
+                }
+
+                return getContainerOfType(targetNode.astNode, isSdsDeclaration);
+            })
+            .distinct()
+            .filter(isSdsDeclaration);
+    }
+
+    private getCallsOf(caller: AstNode, callee: AstNode): SdsCall[] {
+        return this.callGraphComputer
+            .getCalls(caller)
+            .filter((call) => this.nodeMapper.callToCallable(call) === callee);
     }
 
     protected getOutgoingCalls(node: AstNode): CallHierarchyOutgoingCall[] | undefined {
