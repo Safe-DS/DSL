@@ -114,13 +114,13 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
                     return undefined;
                 }
 
-                const targetNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
-                if (!targetNode) {
+                const targetCstNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
+                if (!targetCstNode) {
                     /* c8 ignore next 2 */
                     return undefined;
                 }
 
-                const containingDeclaration = getContainerOfType(targetNode.astNode, isSdsDeclaration);
+                const containingDeclaration = getContainerOfType(targetCstNode.astNode, isSdsDeclaration);
                 if (isSdsParameter(containingDeclaration)) {
                     // For parameters, we return their containing callable instead
                     return getContainerOfType(containingDeclaration.$container, isSdsDeclaration);
