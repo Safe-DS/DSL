@@ -12,6 +12,7 @@ import {
     NodeKindProvider,
     type ReferenceDescription,
     type References,
+    stream,
     type Stream,
     URI,
 } from 'langium';
@@ -23,10 +24,19 @@ import {
     type TypeHierarchySubtypesParams,
     type TypeHierarchySupertypesParams,
 } from 'vscode-languageserver';
-import { isSdsClass, isSdsParentTypeList } from '../generated/ast.js';
+import {
+    isSdsClass,
+    isSdsEnum,
+    isSdsEnumVariant,
+    isSdsParentTypeList,
+    SdsClass,
+    SdsEnum,
+    SdsEnumVariant,
+} from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
+import { getEnumVariants } from '../helpers/nodeProperties.js';
 
 export interface TypeHierarchyProvider {
     prepareTypeHierarchy(
@@ -170,11 +180,57 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
         }
     }
 
+    protected override getSupertypes(node: AstNode): TypeHierarchyItem[] | undefined {
+        if (isSdsClass(node)) {
+            return this.getSupertypesOfClass(node);
+        } else if (isSdsEnumVariant(node)) {
+            return this.getSupertypesOfEnumVariant(node);
+        } else {
+            return undefined;
+        }
+    }
+
+    private getSupertypesOfClass(node: SdsClass): TypeHierarchyItem[] | undefined {
+        const parentClass = this.classHierarchy.streamSuperclasses(node).head();
+        if (!parentClass) {
+            return undefined;
+        }
+
+        return this.getTypeHierarchyItems(parentClass, getDocument(parentClass));
+    }
+
+    private getSupertypesOfEnumVariant(node: SdsEnumVariant): TypeHierarchyItem[] | undefined {
+        const containingEnum = getContainerOfType(node, isSdsEnum);
+        if (!containingEnum) {
+            return undefined;
+        }
+
+        return this.getTypeHierarchyItems(containingEnum, getDocument(containingEnum));
+    }
+
     protected override getSubtypes(
-        _node: AstNode,
+        node: AstNode,
         references: Stream<ReferenceDescription>,
     ): TypeHierarchyItem[] | undefined {
-        const items = references
+        let items: TypeHierarchyItem[];
+
+        if (isSdsClass(node)) {
+            items = this.getSubtypesOfClass(references);
+        } else if (isSdsEnum(node)) {
+            items = this.getSubtypesOfEnum(node);
+        } else {
+            return undefined;
+        }
+
+        if (items.length === 0) {
+            return undefined;
+        }
+
+        return items;
+    }
+
+    private getSubtypesOfClass(references: Stream<ReferenceDescription>): TypeHierarchyItem[] {
+        return references
             .flatMap((it) => {
                 const document = this.documents.getOrCreateDocument(it.sourceUri);
                 const rootNode = document.parseResult.value;
@@ -204,24 +260,15 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
             })
             .filter((it) => it !== undefined)
             .toArray() as TypeHierarchyItem[];
-
-        if (items.length === 0) {
-            return undefined;
-        }
-
-        return items;
     }
 
-    protected override getSupertypes(node: AstNode): TypeHierarchyItem[] | undefined {
-        if (!isSdsClass(node)) {
-            return undefined;
-        }
+    private getSubtypesOfEnum(node: SdsEnum): TypeHierarchyItem[] {
+        const variants = getEnumVariants(node);
+        const document = getDocument(node);
 
-        const parentClass = this.classHierarchy.parentClassOrUndefined(node);
-        if (!parentClass) {
-            return undefined;
-        }
-
-        return this.getTypeHierarchyItems(parentClass, getDocument(parentClass));
+        return stream(variants)
+            .flatMap((it) => this.getTypeHierarchyItems(it, document))
+            .filter((it) => it !== undefined)
+            .toArray() as TypeHierarchyItem[];
     }
 }
