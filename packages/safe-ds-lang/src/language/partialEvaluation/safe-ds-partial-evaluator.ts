@@ -82,10 +82,7 @@ export class SafeDsPartialEvaluator {
         }
 
         // Try to evaluate the node without parameter substitutions and cache the result
-        const documentUri = getDocument(node).uri.toString();
-        const nodePath = this.astNodeLocator.getAstNodePath(node);
-        const key = `${documentUri}~${nodePath}`;
-        const resultWithoutSubstitutions = this.cache.get(key, () =>
+        const resultWithoutSubstitutions = this.cache.get(this.getNodeId(node), () =>
             this.doEvaluateWithSubstitutions(node, NO_SUBSTITUTIONS),
         );
         if (resultWithoutSubstitutions.isFullyEvaluated || isEmpty(substitutions)) {
@@ -94,6 +91,12 @@ export class SafeDsPartialEvaluator {
             // Try again with parameter substitutions but don't cache the result
             return this.doEvaluateWithSubstitutions(node, substitutions);
         } /* c8 ignore stop */
+    }
+
+    private getNodeId(node: AstNode) {
+        const documentUri = getDocument(node).uri.toString();
+        const nodePath = this.astNodeLocator.getAstNodePath(node);
+        return `${documentUri}~${nodePath}`;
     }
 
     private doEvaluateWithSubstitutions(
