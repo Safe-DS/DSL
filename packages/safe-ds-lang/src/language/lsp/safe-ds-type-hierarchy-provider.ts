@@ -38,6 +38,7 @@ import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
 import { getEnumVariants } from '../helpers/nodeProperties.js';
 
+/* c8 ignore start */
 export interface TypeHierarchyProvider {
     prepareTypeHierarchy(
         document: LangiumDocument,
@@ -157,6 +158,7 @@ export abstract class AbstractTypeHierarchyProvider implements TypeHierarchyProv
         references: Stream<ReferenceDescription>,
     ): TypeHierarchyItem[] | undefined;
 }
+/* c8 ignore stop */
 
 export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     private readonly classHierarchy: SafeDsClassHierarchy;
@@ -193,6 +195,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     private getSupertypesOfClass(node: SdsClass): TypeHierarchyItem[] | undefined {
         const parentClass = this.classHierarchy.streamSuperclasses(node).head();
         if (!parentClass) {
+            /* c8 ignore next 2 */
             return undefined;
         }
 
@@ -202,6 +205,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     private getSupertypesOfEnumVariant(node: SdsEnumVariant): TypeHierarchyItem[] | undefined {
         const containingEnum = getContainerOfType(node, isSdsEnum);
         if (!containingEnum) {
+            /* c8 ignore next 2 */
             return undefined;
         }
 
@@ -253,6 +257,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
 
                 const containingClass = getContainerOfType(targetNode, isSdsClass);
                 if (!containingClass) {
+                    /* c8 ignore next 2 */
                     return undefined;
                 }
 

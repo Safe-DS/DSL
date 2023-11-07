@@ -2,6 +2,7 @@
  * This file can be removed, once Langium supports the TypeHierarchyProvider directly.
  */
 
+/* c8 ignore start */
 import type { LangiumServices, LangiumSharedServices } from 'langium';
 import {
     addCallHierarchyHandler,
@@ -189,3 +190,4 @@ const responseError = function <E = void>(err: unknown): ResponseError<E> {
     }
     throw err;
 };
+/* c8 ignore stop */
