@@ -17,7 +17,13 @@ import type {
     SymbolTag,
 } from 'vscode-languageserver';
 import type { SafeDsCallGraphComputer } from '../flow/safe-ds-call-graph-computer.js';
-import { isSdsDeclaration, type SdsCall, type SdsCallable, type SdsDeclaration } from '../generated/ast.js';
+import {
+    isSdsDeclaration,
+    isSdsParameter,
+    type SdsCall,
+    type SdsCallable,
+    type SdsDeclaration,
+} from '../generated/ast.js';
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import type { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
@@ -55,13 +61,15 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
     ): CallHierarchyIncomingCall[] | undefined {
         const result: CallHierarchyIncomingCall[] = [];
 
-        this.getUniqueCallers(references).forEach((caller) => {
+        this.getUniquePotentialCallers(references).forEach((caller) => {
             if (!caller.$cstNode) {
+                /* c8 ignore next 2 */
                 return;
             }
 
             const callerNameCstNode = this.nameProvider.getNameNode(caller);
             if (!callerNameCstNode) {
+                /* c8 ignore next 2 */
                 return;
             }
 
@@ -93,23 +101,32 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
     }
 
     /**
-     * Returns all declarations that contain at least one of the given references.
+     * Returns all declarations that contain at least one of the given references. Some of them might not be actual
+     * callers, since the references might not occur in a call. This has to be checked later.
      */
-    private getUniqueCallers(references: Stream<ReferenceDescription>): Stream<SdsDeclaration> {
+    private getUniquePotentialCallers(references: Stream<ReferenceDescription>): Stream<SdsDeclaration> {
         return references
             .map((it) => {
                 const document = this.documents.getOrCreateDocument(it.sourceUri);
                 const rootNode = document.parseResult.value;
                 if (!rootNode.$cstNode) {
+                    /* c8 ignore next 2 */
                     return undefined;
                 }
 
                 const targetNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
                 if (!targetNode) {
+                    /* c8 ignore next 2 */
                     return undefined;
                 }
 
-                return getContainerOfType(targetNode.astNode, isSdsDeclaration);
+                const containingDeclaration = getContainerOfType(targetNode.astNode, isSdsDeclaration);
+                if (isSdsParameter(containingDeclaration)) {
+                    // For parameters, we return their containing callable instead
+                    return getContainerOfType(containingDeclaration.$container, isSdsDeclaration);
+                } else {
+                    return containingDeclaration;
+                }
             })
             .distinct()
             .filter(isSdsDeclaration);
@@ -132,16 +149,19 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
         calls.forEach((call) => {
             const callCstNode = call.$cstNode;
             if (!callCstNode) {
+                /* c8 ignore next 2 */
                 return;
             }
 
             const callable = this.nodeMapper.callToCallable(call);
             if (!callable?.$cstNode) {
+                /* c8 ignore next 2 */
                 return;
             }
 
             const callableNameCstNode = this.nameProvider.getNameNode(callable);
             if (!callableNameCstNode) {
+                /* c8 ignore next 2 */
                 return;
             }
 
