@@ -1,3 +1,5 @@
+import { EMPTY_STREAM, getContainerOfType, Stream, stream, URI } from 'langium';
+import { resourceNameToUri } from '../../helpers/resources.js';
 import {
     isSdsAnnotation,
     isSdsEnum,
@@ -15,19 +17,18 @@ import {
     getParameters,
     hasAnnotationCallOf,
 } from '../helpers/nodeProperties.js';
-import { SafeDsModuleMembers } from './safe-ds-module-members.js';
-import { resourceNameToUri } from '../../helpers/resources.js';
-import { EMPTY_STREAM, getContainerOfType, Stream, stream, URI } from 'langium';
-import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { EvaluatedEnumVariant, EvaluatedList, EvaluatedNode, StringConstant } from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsEnums } from './safe-ds-enums.js';
+import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
 const CODE_GENERATION_URI = resourceNameToUri('builtins/safeds/lang/codeGeneration.sdsstub');
 const IDE_INTEGRATION_URI = resourceNameToUri('builtins/safeds/lang/ideIntegration.sdsstub');
 const MATURITY_URI = resourceNameToUri('builtins/safeds/lang/maturity.sdsstub');
+const PURITY_URI = resourceNameToUri('builtins/safeds/lang/purity.sdsstub');
 
 export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     private readonly builtinEnums: SafeDsEnums;
@@ -73,6 +74,14 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         } else {
             return undefined;
         }
+    }
+
+    isPure(node: SdsFunction | SdsParameter | undefined): boolean {
+        return hasAnnotationCallOf(node, this.Pure);
+    }
+
+    private get Pure(): SdsAnnotation | undefined {
+        return this.getAnnotation(PURITY_URI, 'Pure');
     }
 
     get PythonCall(): SdsAnnotation | undefined {

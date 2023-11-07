@@ -1,0 +1,14 @@
+package tests.validation.builtins.pure.pureParameterMustHaveCallableType
+
+// $TEST$ error "A pure parameter must have a callable type."
+// $TEST$ error "A pure parameter must have a callable type."
+// $TEST$ no error "A pure parameter must have a callable type."
+// $TEST$ no error "A pure parameter must have a callable type."
+// $TEST$ no error "A pure parameter must have a callable type."
+annotation MyAnnotation(
+    @Pure »a«: Int,
+    @Pure »b«: Unresolved,
+    @Pure »c«: () -> (),
+    @Pure »d«,
+    »e«: Int,
+)
