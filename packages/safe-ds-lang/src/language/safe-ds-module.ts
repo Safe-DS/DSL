@@ -14,13 +14,16 @@ import { SafeDsClasses } from './builtins/safe-ds-classes.js';
 import { SafeDsEnums } from './builtins/safe-ds-enums.js';
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
+import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
+import { SafeDsCallHierarchyProvider } from './lsp/safe-ds-call-hierarchy-provider.js';
 import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
 import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
 import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
+import { SafeDsNodeInfoProvider } from './lsp/safe-ds-node-info-provider.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
 import { SafeDsSignatureHelpProvider } from './lsp/safe-ds-signature-help-provider.js';
@@ -48,11 +51,17 @@ export type SafeDsAddedServices = {
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
     };
+    flow: {
+        CallGraphComputer: SafeDsCallGraphComputer;
+    };
     generation: {
         PythonGenerator: SafeDsPythonGenerator;
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
+    };
+    lsp: {
+        NodeInfoProvider: SafeDsNodeInfoProvider;
     };
     types: {
         ClassHierarchy: SafeDsClassHierarchy;
@@ -89,6 +98,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     evaluation: {
         PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),
     },
+    flow: {
+        CallGraphComputer: (services) => new SafeDsCallGraphComputer(services),
+    },
     generation: {
         PythonGenerator: (services) => new SafeDsPythonGenerator(services),
     },
@@ -96,9 +108,11 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         NodeMapper: (services) => new SafeDsNodeMapper(services),
     },
     lsp: {
+        CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
+        NodeInfoProvider: (services) => new SafeDsNodeInfoProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
         SignatureHelp: (services) => new SafeDsSignatureHelpProvider(services),
     },

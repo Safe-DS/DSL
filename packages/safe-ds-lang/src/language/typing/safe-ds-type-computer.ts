@@ -123,11 +123,13 @@ export class SafeDsTypeComputer {
         if (!node) {
             return UnknownType;
         }
+        return this.nodeTypeCache.get(this.getNodeId(node), () => this.doComputeType(node).unwrap());
+    }
 
+    private getNodeId(node: AstNode) {
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
-        const key = `${documentUri}~${nodePath}`;
-        return this.nodeTypeCache.get(key, () => this.doComputeType(node).unwrap());
+        return `${documentUri}~${nodePath}`;
     }
 
     private doComputeType(node: AstNode): Type {
