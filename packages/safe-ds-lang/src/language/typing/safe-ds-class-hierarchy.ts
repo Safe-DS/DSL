@@ -68,7 +68,7 @@ export class SafeDsClassHierarchy {
      * Returns the parent class of the given class, or undefined if there is no parent class. Only the first parent
      * type is considered, i.e. multiple inheritance is not supported.
      */
-    private parentClassOrUndefined(node: SdsClass | undefined): SdsClass | undefined {
+    parentClassOrUndefined(node: SdsClass | undefined): SdsClass | undefined {
         const [firstParentType] = getParentTypes(node);
         if (isSdsNamedType(firstParentType)) {
             const declaration = firstParentType.declaration?.ref;
