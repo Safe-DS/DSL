@@ -96,7 +96,7 @@ export abstract class AbstractTypeHierarchyProvider implements TypeHierarchyProv
 
         return [
             {
-                kind: SymbolKind.Method,
+                kind: SymbolKind.Class,
                 name,
                 range: targetNode.$cstNode.range,
                 selectionRange: nameNode.range,
@@ -226,11 +226,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
             return undefined;
         }
 
-        if (items.length === 0) {
-            return undefined;
-        }
-
-        return items;
+        return items.length === 0 ? undefined : items;
     }
 
     private getSubtypesOfClass(references: Stream<ReferenceDescription>): TypeHierarchyItem[] {
@@ -240,31 +236,30 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
                 const rootNode = document.parseResult.value;
                 if (!rootNode.$cstNode) {
                     /* c8 ignore next 2 */
-                    return undefined;
+                    return [];
                 }
 
                 const targetCstNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
                 if (!targetCstNode) {
                     /* c8 ignore next 2 */
-                    return undefined;
+                    return [];
                 }
 
                 // Only consider the first parent type
                 const targetNode = targetCstNode.astNode;
                 if (!isSdsParentTypeList(targetNode.$container) || targetNode.$containerIndex !== 0) {
-                    return undefined;
+                    return [];
                 }
 
                 const containingClass = getContainerOfType(targetNode, isSdsClass);
                 if (!containingClass) {
                     /* c8 ignore next 2 */
-                    return undefined;
+                    return [];
                 }
 
-                return this.getTypeHierarchyItems(containingClass, document);
+                return this.getTypeHierarchyItems(containingClass, document) ?? [];
             })
-            .filter((it) => it !== undefined)
-            .toArray() as TypeHierarchyItem[];
+            .toArray();
     }
 
     private getSubtypesOfEnum(node: SdsEnum): TypeHierarchyItem[] {
@@ -272,8 +267,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
         const document = getDocument(node);
 
         return stream(variants)
-            .flatMap((it) => this.getTypeHierarchyItems(it, document))
-            .filter((it) => it !== undefined)
-            .toArray() as TypeHierarchyItem[];
+            .flatMap((it) => this.getTypeHierarchyItems(it, document) ?? [])
+            .toArray();
     }
 }
