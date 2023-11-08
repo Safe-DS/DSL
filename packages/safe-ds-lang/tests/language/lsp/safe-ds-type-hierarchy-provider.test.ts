@@ -182,7 +182,7 @@ const getUniqueTypeHierarchyItem = async (code: string): Promise<TypeHierarchyIt
         }) ?? [];
 
     if (items.length !== 1) {
-        throw new Error(`Expected exactly one call hierarchy item, but got ${items.length}.`);
+        throw new Error(`Expected exactly one type hierarchy item, but got ${items.length}.`);
     }
 
     return items[0]!;
