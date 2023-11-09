@@ -1,4 +1,4 @@
-fun  myFunction < @Annotation  T ,  in  S ,  out  U > ( )
+fun myFunction< @Annotation  T ,  in  S ,  out  U >()
 
 // -----------------------------------------------------------------------------
 

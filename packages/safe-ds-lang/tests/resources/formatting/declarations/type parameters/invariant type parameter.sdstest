@@ -1,5 +1,5 @@
-fun  myFunction < out  T > ( )
+fun myFunction< T >()
 
 // -----------------------------------------------------------------------------
 
-fun myFunction<out T>()
+fun myFunction<T>()

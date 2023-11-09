@@ -1,5 +1,8 @@
-class  MyClass < in  T >
+fun myFunction< @Annotation  T >()
 
 // -----------------------------------------------------------------------------
 
-class MyClass<in T>
+fun myFunction<
+    @Annotation
+    T
+>()
