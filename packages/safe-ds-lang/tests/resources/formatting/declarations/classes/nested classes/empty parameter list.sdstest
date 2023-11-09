@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass ( )
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass()
-}

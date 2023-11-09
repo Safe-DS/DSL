@@ -1,0 +1,11 @@
+class MyOuterClass {
+    enum  MyEnum  {  MyEnumVariant  }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    enum MyEnum {
+        MyEnumVariant
+    }
+}

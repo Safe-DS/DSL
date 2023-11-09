@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass ( const  a )
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass(const a)
-}

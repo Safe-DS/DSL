@@ -1,9 +1,0 @@
-class MyClass {
-    fun  myFunction ( const  a :  Int )
-}
-
-// -----------------------------------------------------------------------------
-
-class MyClass {
-    fun myFunction(const a: Int)
-}

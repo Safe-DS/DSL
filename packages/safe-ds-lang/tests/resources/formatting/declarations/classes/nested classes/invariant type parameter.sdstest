@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass < T >
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass<T>
-}
