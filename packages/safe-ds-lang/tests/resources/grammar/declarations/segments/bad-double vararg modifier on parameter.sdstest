@@ -1,3 +1,0 @@
-// $TEST$ syntax_error
-
-segment mySegment(vararg vararg a: String)

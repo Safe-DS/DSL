@@ -1,0 +1,6 @@
+// $TEST$ syntax_error
+
+annotation MyAnnotation where {
+    T sub Number
+    S super Number
+}

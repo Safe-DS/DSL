@@ -1,7 +1,0 @@
-// $TEST$ syntax_error
-
-class MyClass {
-    enum MyEnum {
-        MyEnumVariant(vararg vararg a: String)
-    }
-}
