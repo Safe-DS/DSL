@@ -1,0 +1,10 @@
+enum MyEnum {
+    MyEnumVariant  where  {
+     }
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    MyEnumVariant where {}
+}

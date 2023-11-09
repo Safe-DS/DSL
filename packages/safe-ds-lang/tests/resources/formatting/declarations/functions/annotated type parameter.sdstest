@@ -1,8 +1,0 @@
-fun  myFunction < @Annotation  T > ( )
-
-// -----------------------------------------------------------------------------
-
-fun myFunction<
-    @Annotation
-    T
->()

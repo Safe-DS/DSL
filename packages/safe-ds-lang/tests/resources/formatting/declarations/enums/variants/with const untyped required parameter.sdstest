@@ -1,9 +1,0 @@
-enum MyEnum {
-    MyEnumVariant ( const  a )
-}
-
-// -----------------------------------------------------------------------------
-
-enum MyEnum {
-    MyEnumVariant(const a)
-}

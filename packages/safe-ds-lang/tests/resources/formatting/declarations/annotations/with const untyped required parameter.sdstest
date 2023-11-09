@@ -1,5 +1,0 @@
-annotation  MyAnnotation ( const  a )
-
-// -----------------------------------------------------------------------------
-
-annotation MyAnnotation(const a)

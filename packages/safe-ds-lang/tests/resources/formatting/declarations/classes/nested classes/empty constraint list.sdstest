@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass  where  { }
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass where {}
-}
