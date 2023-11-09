@@ -1,5 +1,5 @@
-fun  myFunction ( )
+segment  mySegment ( )  ->  ( )  { }
 
 // -----------------------------------------------------------------------------
 
-fun myFunction()
+segment mySegment() -> () {}
