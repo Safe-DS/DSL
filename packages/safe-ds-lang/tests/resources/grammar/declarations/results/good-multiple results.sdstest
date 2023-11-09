@@ -3,6 +3,5 @@
 segment mySegment() -> (
     @Annotation a,
     b,
-    c: Int,
-    d: Int
+    c: Int
 ) {}
