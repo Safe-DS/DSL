@@ -1,5 +1,0 @@
-annotation  MyAnnotation ( a :  Int  =  1 )
-
-// -----------------------------------------------------------------------------
-
-annotation MyAnnotation(a: Int = 1)

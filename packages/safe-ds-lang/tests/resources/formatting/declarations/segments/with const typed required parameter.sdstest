@@ -1,5 +1,0 @@
-segment  mySegment ( const  a :  Int )  { }
-
-// -----------------------------------------------------------------------------
-
-segment mySegment(const a: Int) {}

@@ -1,4 +1,4 @@
-fun  myFunction < @Annotation  in  T > ( )
+fun myFunction< @Annotation  in  T > ( )
 
 // -----------------------------------------------------------------------------
 
