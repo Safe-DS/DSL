@@ -1,9 +1,6 @@
-class  MyClass where  {
-     T  sub  Number
+annotation  MyAnnotation  where  {
  }
 
 // -----------------------------------------------------------------------------
 
-class MyClass where {
-    T sub Number
-}
+annotation MyAnnotation where {}

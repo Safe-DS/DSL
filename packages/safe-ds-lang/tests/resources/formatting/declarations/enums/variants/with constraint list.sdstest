@@ -1,13 +1,10 @@
 enum MyEnum {
     MyEnumVariant  where  {
-         T  super  Number
-   }
+     }
 }
 
 // -----------------------------------------------------------------------------
 
 enum MyEnum {
-    MyEnumVariant where {
-        T super Number
-    }
+    MyEnumVariant where {}
 }
