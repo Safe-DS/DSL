@@ -1,5 +1,0 @@
-// $TEST$ syntax_error
-
-enum MyEnum {
-    MyEnumVariant(const const a: String)
-}

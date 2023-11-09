@@ -1,4 +1,4 @@
-// $TEST$ no_syntax_error
+// $TEST$ syntax_error
 
 annotation MyAnnotation where {
     T sub Number

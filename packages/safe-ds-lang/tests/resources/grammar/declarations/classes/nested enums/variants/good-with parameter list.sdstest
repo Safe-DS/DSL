@@ -2,6 +2,6 @@
 
 class MyClass {
     enum MyEnum {
-        MyEnumVariant(const a: Int = 1)
+        MyEnumVariant()
     }
 }

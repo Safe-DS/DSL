@@ -1,5 +1,0 @@
-// $TEST$ no_syntax_error
-
-pipeline myPipeline {
-    (const a: Int) -> 1;
-}
