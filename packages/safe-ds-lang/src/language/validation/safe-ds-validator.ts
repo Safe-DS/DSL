@@ -149,6 +149,8 @@ import {
     indexedAccessIndexMustHaveCorrectType,
     indexedAccessReceiverMustBeListOrMap,
     infixOperationOperandsMustHaveCorrectType,
+    listMustNotContainNamedTuples,
+    mapMustNotContainNamedTuples,
     namedTypeMustSetAllTypeParameters,
     parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
@@ -253,6 +255,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             lambdaParametersMustNotBeAnnotated,
             lambdaParameterMustNotHaveConstModifier,
         ],
+        SdsList: [listMustNotContainNamedTuples(services)],
         SdsLiteralType: [
             literalTypeMustHaveLiterals,
             literalTypeMustNotContainListLiteral,
@@ -260,7 +263,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypesShouldBeUsedWithCaution,
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
-        SdsMap: [mapsShouldBeUsedWithCaution],
+        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
