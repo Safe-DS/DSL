@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { isSdsClass, SdsClass } from '../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { getMatchingClassMembers } from '../../../src/language/helpers/nodeProperties.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const builtinClasses = services.builtins.Classes;
@@ -197,7 +198,8 @@ describe('SafeDsClassHierarchy', async () => {
 
         it.each(testCases)('$testName', async ({ code, index, expected }) => {
             const firstClass = await getNodeOfType(services, code, isSdsClass, index);
-            expect(superclassMemberNames(firstClass)).toStrictEqual(expected);
+            const anyMembers = getMatchingClassMembers(builtinClasses.Any).map((member) => member.name);
+            expect(superclassMemberNames(firstClass)).toStrictEqual(expected.concat(anyMembers));
         });
     });
 });
