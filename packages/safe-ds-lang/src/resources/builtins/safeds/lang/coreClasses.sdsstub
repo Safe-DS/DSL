@@ -3,7 +3,14 @@ package safeds.lang
 /**
  * The common superclass of all classes.
  */
-class Any
+class Any {
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @PythonCall("str($this)")
+    fun toString() -> s: String
+}
 
 /**
  * The common subclass of all classes.
