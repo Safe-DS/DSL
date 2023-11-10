@@ -16,6 +16,7 @@ import {
     SdsIndexedAccess,
     SdsInfixOperation,
     SdsList,
+    SdsMap,
     SdsNamedType,
     SdsParameter,
     SdsPrefixOperation,
@@ -202,6 +203,32 @@ export const listMustNotContainNamedTuples = (services: SafeDsServices) => {
             if (elementType instanceof NamedTupleType) {
                 accept('error', `Cannot add a value of type '${elementType}' to a list.`, {
                     node: element,
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+        }
+    };
+};
+
+export const mapMustNotContainNamedTuples = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsMap, accept: ValidationAcceptor): void => {
+        for (const entry of node.entries) {
+            const keyType = typeComputer.computeType(entry.key);
+            if (keyType instanceof NamedTupleType) {
+                accept('error', `Cannot use a value of type '${keyType}' as a map key.`, {
+                    node: entry,
+                    property: 'key',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+
+            const valueKey = typeComputer.computeType(entry.value);
+            if (valueKey instanceof NamedTupleType) {
+                accept('error', `Cannot use a value of type '${valueKey}' as a map value.`, {
+                    node: entry,
+                    property: 'value',
                     code: CODE_TYPE_MISMATCH,
                 });
             }
