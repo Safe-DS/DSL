@@ -15,6 +15,7 @@ import {
     SdsCall,
     SdsIndexedAccess,
     SdsInfixOperation,
+    SdsList,
     SdsNamedType,
     SdsParameter,
     SdsPrefixOperation,
@@ -23,6 +24,7 @@ import {
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
+import { NamedTupleType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -187,6 +189,22 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                     );
                 }
                 return;
+        }
+    };
+};
+
+export const listMustNotContainNamedTuples = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsList, accept: ValidationAcceptor): void => {
+        for (const element of node.elements) {
+            const elementType = typeComputer.computeType(element);
+            if (elementType instanceof NamedTupleType) {
+                accept('error', `Cannot add a value of type '${elementType}' to a list.`, {
+                    node: element,
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
         }
     };
 };

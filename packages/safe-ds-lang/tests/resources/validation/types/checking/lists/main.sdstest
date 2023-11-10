@@ -1,0 +1,16 @@
+package tests.validation.types.checking.lists
+
+fun noResults()
+fun oneResult() -> r: Int
+fun twoResults() -> (r1: Int, r2: Int)
+
+segment mySegment() {
+    [
+        // $TEST$ error "Cannot add a value of type '()' to a list."
+        »noResults()«,
+        // $TEST$ no error r"Cannot add a value of type '.*' to a list\."
+        »oneResult()«,
+        // $TEST$ error "Cannot add a value of type '(r1: Int, r2: Int)' to a list."
+        »twoResults()«
+    ];
+}
