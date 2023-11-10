@@ -70,7 +70,15 @@ import {
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { Constant, isConstant } from '../partialEvaluation/model.js';
+import {
+    BooleanConstant,
+    Constant,
+    FloatConstant,
+    IntConstant,
+    isConstant,
+    NullConstant,
+    StringConstant,
+} from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
@@ -479,6 +487,30 @@ export class SafeDsTypeComputer {
             return new LiteralType(...constants);
         } /* c8 ignore start */ else {
             return UnknownType;
+        } /* c8 ignore stop */
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Compute class types for literal types and their constants
+    // -----------------------------------------------------------------------------------------------------------------
+
+    computeClassTypeForLiteralType(literalType: LiteralType): Type {
+        return this.lowestCommonSupertype(...literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
+    }
+
+    computeClassTypeForConstant(constant: Constant): Type {
+        if (constant instanceof BooleanConstant) {
+            return this.coreTypes.Boolean;
+        } else if (constant instanceof FloatConstant) {
+            return this.coreTypes.Float;
+        } else if (constant instanceof IntConstant) {
+            return this.coreTypes.Int;
+        } else if (constant === NullConstant) {
+            return this.coreTypes.NothingOrNull;
+        } else if (constant instanceof StringConstant) {
+            return this.coreTypes.String;
+        } /* c8 ignore start */ else {
+            throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
         } /* c8 ignore stop */
     }
 
