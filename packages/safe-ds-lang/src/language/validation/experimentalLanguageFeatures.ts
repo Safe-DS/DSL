@@ -2,6 +2,7 @@ import {
     isSdsIndexedAccess,
     isSdsMap,
     isSdsUnionType,
+    SdsConstraintList,
     SdsIndexedAccess,
     SdsLiteralType,
     SdsMap,
@@ -10,6 +11,14 @@ import {
 import { hasContainerOfType, ValidationAcceptor } from 'langium';
 
 export const CODE_EXPERIMENTAL_LANGUAGE_FEATURE = 'experimental/language-feature';
+
+export const constraintListsShouldBeUsedWithCaution = (node: SdsConstraintList, accept: ValidationAcceptor): void => {
+    accept('warning', 'Constraint lists & constraints are experimental and may change without prior notice.', {
+        node,
+        keyword: 'where',
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
 
 export const indexedAccessesShouldBeUsedWithCaution = (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
     if (hasContainerOfType(node.$container, isSdsIndexedAccess)) {
