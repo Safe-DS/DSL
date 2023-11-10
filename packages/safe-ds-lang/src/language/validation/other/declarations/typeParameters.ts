@@ -1,13 +1,16 @@
+import { findLocalReferences, getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsCallable,
     isSdsClass,
+    isSdsDeclaration,
+    isSdsNamedTypeDeclaration,
     isSdsParameterList,
     isSdsUnionType,
     SdsTypeParameter,
 } from '../../../generated/ast.js';
-import { findLocalReferences, getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'langium';
 
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
+export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
 
 export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
     const containingCallable = getContainerOfType(node, isSdsCallable);
@@ -44,4 +47,30 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
             code: CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT,
         });
     }
+};
+
+export const typeParameterMustNotBeUsedInNestedNamedTypeDeclarations = (
+    node: SdsTypeParameter,
+    accept: ValidationAcceptor,
+) => {
+    // Only classes can have nested named type declarations
+    const declarationWithTypeParameter = getContainerOfType(node.$container, isSdsDeclaration);
+    if (!isSdsClass(declarationWithTypeParameter)) {
+        return;
+    }
+
+    findLocalReferences(node).forEach((it) => {
+        const reference = it.$refNode?.astNode;
+        const containingNamedTypeDeclaration = getContainerOfType(reference, isSdsNamedTypeDeclaration);
+        if (
+            reference &&
+            containingNamedTypeDeclaration &&
+            containingNamedTypeDeclaration !== declarationWithTypeParameter
+        ) {
+            accept('error', 'Type parameters cannot be used in nested named type declarations.', {
+                node: reference,
+                code: CODE_TYPE_PARAMETER_USAGE,
+            });
+        }
+    });
 };

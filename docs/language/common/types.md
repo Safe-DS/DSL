@@ -40,7 +40,7 @@ A declaration with an _enum type_ must be one of the [variants][variants] of the
 
 ```sds
 enum SomeEnum {
-    SomeEnumVariant,
+    SomeEnumVariant
     SomeOtherEnumVariant(count: Int)
 }
 ```

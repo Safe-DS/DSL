@@ -72,7 +72,10 @@ import {
     segmentShouldBeUsed,
 } from './other/declarations/segments.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
-import { typeParameterMustHaveSufficientContext } from './other/declarations/typeParameters.js';
+import {
+    typeParameterMustHaveSufficientContext,
+    typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
+} from './other/declarations/typeParameters.js';
 import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import {
@@ -309,7 +312,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentShouldBeUsed(services),
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeParameter: [typeParameterMustHaveSufficientContext],
+        SdsTypeParameter: [
+            typeParameterMustHaveSufficientContext,
+            typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
+        ],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
         SdsUnionType: [
