@@ -59,3 +59,8 @@ segment mySegment3(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: MyEnum.MyEnumVariant<»union<Int>«>,
 ) {}
+
+segment mySegment4(
+    // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
+    p1: »union<Int>«.MyClass
+) {}
