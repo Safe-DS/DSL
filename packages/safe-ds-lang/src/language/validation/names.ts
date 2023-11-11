@@ -1,3 +1,7 @@
+import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
+import { duplicatesBy } from '../../helpers/collectionUtils.js';
+import { listBuiltinFiles } from '../builtins/fileFinder.js';
+import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 import {
     isSdsQualifiedImport,
     SdsAnnotation,
@@ -21,13 +25,14 @@ import {
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
-import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
+import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
+import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
 import {
+    getClassMembers,
     getColumns,
     getEnumVariants,
     getImportedDeclarations,
     getImports,
-    getMatchingClassMembers,
     getModuleMembers,
     getPackageName,
     getParameters,
@@ -37,13 +42,8 @@ import {
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
-import { duplicatesBy } from '../../helpers/collectionUtils.js';
-import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
-import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { listBuiltinFiles } from '../builtins/fileFinder.js';
-import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
-import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
+import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CASING = 'name/casing';
@@ -184,10 +184,10 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
         accept,
     );
 
-    const instanceMembers = getMatchingClassMembers(node, (it) => !isStatic(it));
+    const instanceMembers = getClassMembers(node).filter((it) => !isStatic(it));
     namesMustBeUnique(instanceMembers, (name) => `An instance member with name '${name}' exists already.`, accept);
 
-    const staticMembers = getMatchingClassMembers(node, isStatic);
+    const staticMembers = getClassMembers(node).filter(isStatic);
     namesMustBeUnique(staticMembers, (name) => `A static member with name '${name}' exists already.`, accept);
 };
 

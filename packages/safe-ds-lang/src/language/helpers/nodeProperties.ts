@@ -197,11 +197,8 @@ export const streamBlockLambdaResults = (node: SdsBlockLambda | undefined): Stre
         .filter(isSdsBlockLambdaResult);
 };
 
-export const getMatchingClassMembers = (
-    node: SdsClass | undefined,
-    filterFunction: (member: SdsClassMember) => boolean = () => true,
-): SdsClassMember[] => {
-    return node?.body?.members?.filter(filterFunction) ?? [];
+export const getClassMembers = (node: SdsClass | undefined): SdsClassMember[] => {
+    return node?.body?.members ?? [];
 };
 
 export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {

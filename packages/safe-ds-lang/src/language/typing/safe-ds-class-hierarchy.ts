@@ -1,7 +1,7 @@
-import { EMPTY_STREAM, stream, Stream } from 'langium';
+import { EMPTY_STREAM, getContainerOfType, stream, Stream } from 'langium';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsClass, isSdsNamedType, SdsClass, type SdsClassMember } from '../generated/ast.js';
-import { getMatchingClassMembers, getParentTypes } from '../helpers/nodeProperties.js';
+import { getClassMembers, getParentTypes, isStatic } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 
 export class SafeDsClassHierarchy {
@@ -61,7 +61,7 @@ export class SafeDsClassHierarchy {
             return EMPTY_STREAM;
         }
 
-        return this.streamSuperclasses(node).flatMap(getMatchingClassMembers);
+        return this.streamSuperclasses(node).flatMap(getClassMembers);
     }
 
     /**
