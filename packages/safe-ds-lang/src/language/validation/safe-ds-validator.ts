@@ -51,6 +51,7 @@ import {
     functionMustContainUniqueNames,
     moduleMemberMustHaveNameThatIsUniqueInPackage,
     moduleMustContainUniqueNames,
+    nameMustNotOccurOnCoreDeclaration,
     nameMustNotStartWithCodegenPrefix,
     nameShouldHaveCorrectCasing,
     pipelineMustContainUniqueNames,
@@ -231,6 +232,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
         SdsConstraintList: [constraintListsShouldBeUsedWithCaution, constraintListShouldNotBeEmpty],
         SdsDeclaration: [
+            nameMustNotOccurOnCoreDeclaration(services),
             nameMustNotStartWithCodegenPrefix,
             nameShouldHaveCorrectCasing,
             pythonNameShouldDifferFromSafeDsName(services),

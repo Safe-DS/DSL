@@ -41,7 +41,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             );
         } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
-            if (isInSafedsLangAnyClass(node)) {
+            if (isInSafedsLangAnyClass(services, node)) {
                 return;
             }
 
@@ -54,9 +54,12 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
     };
 };
 
-const isInSafedsLangAnyClass = (node: SdsClassMember): boolean => {
+const isInSafedsLangAnyClass = (services: SafeDsServices, node: SdsClassMember): boolean => {
     const containingClass = getContainerOfType(node, isSdsClass);
-    return isSdsClass(containingClass) && getQualifiedName(containingClass) === 'safeds.lang.Any';
+    return (
+        isSdsClass(containingClass) &&
+        getQualifiedName(containingClass) === getQualifiedName(services.builtins.Classes.Any)
+    );
 };
 
 export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {

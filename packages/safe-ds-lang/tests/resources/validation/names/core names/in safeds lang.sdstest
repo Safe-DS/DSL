@@ -1,0 +1,4 @@
+package safeds.lang
+
+// $TEST$ no error "Names of core declarations must not be used for own declarations."
+annotation »Number«
