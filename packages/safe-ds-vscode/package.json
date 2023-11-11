@@ -86,7 +86,13 @@
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             }
-        }
+        },
+        "snippets": [
+            {
+                "language": "safe-ds",
+                "path": "./snippets/safe-ds.json"
+            }
+        ]
     },
     "type": "module",
     "main": "dist/extension/mainClient.cjs",
