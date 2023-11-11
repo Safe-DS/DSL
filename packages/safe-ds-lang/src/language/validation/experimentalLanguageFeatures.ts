@@ -1,14 +1,17 @@
+import { hasContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsIndexedAccess,
     isSdsMap,
+    isSdsTypeArgumentList,
     isSdsUnionType,
     SdsConstraintList,
     SdsIndexedAccess,
     SdsLiteralType,
     SdsMap,
+    type SdsTypeArgumentList,
+    type SdsTypeParameterList,
     SdsUnionType,
 } from '../generated/ast.js';
-import { hasContainerOfType, ValidationAcceptor } from 'langium';
 
 export const CODE_EXPERIMENTAL_LANGUAGE_FEATURE = 'experimental/language-feature';
 
@@ -58,6 +61,30 @@ export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: Va
     accept('warning', 'Union types are experimental and may change without prior notice.', {
         node,
         keyword: 'union',
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
+
+export const typeArgumentListsShouldBeUsedWithCaution = (
+    node: SdsTypeArgumentList,
+    accept: ValidationAcceptor,
+): void => {
+    if (hasContainerOfType(node.$container, isSdsTypeArgumentList)) {
+        return;
+    }
+
+    accept('warning', 'Type argument lists & type arguments are experimental and may change without prior notice.', {
+        node,
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
+
+export const typeParameterListsShouldBeUsedWithCaution = (
+    node: SdsTypeParameterList,
+    accept: ValidationAcceptor,
+): void => {
+    accept('warning', 'Type parameter lists & type parameters are experimental and may change without prior notice.', {
+        node,
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
     });
 };
