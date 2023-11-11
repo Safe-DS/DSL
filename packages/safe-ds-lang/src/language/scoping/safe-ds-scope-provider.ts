@@ -70,7 +70,7 @@ import {
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType, EnumVariantType } from '../typing/model.js';
+import { ClassType, EnumVariantType, LiteralType } from '../typing/model.js';
 import type { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
@@ -210,6 +210,9 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         // Members
         let receiverType = this.typeComputer.computeType(node.receiver);
+        if (receiverType instanceof LiteralType) {
+            receiverType = this.typeComputer.computeClassTypeForLiteralType(receiverType);
+        }
 
         if (receiverType instanceof ClassType) {
             const ownInstanceMembers = getMatchingClassMembers(receiverType.declaration, (it) => !isStatic(it));

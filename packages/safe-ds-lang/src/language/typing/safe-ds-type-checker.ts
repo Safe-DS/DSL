@@ -2,14 +2,7 @@ import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
 import { getParameters } from '../helpers/nodeProperties.js';
-import {
-    BooleanConstant,
-    Constant,
-    FloatConstant,
-    IntConstant,
-    NullConstant,
-    StringConstant,
-} from '../partialEvaluation/model.js';
+import { Constant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
     CallableType,
@@ -190,21 +183,7 @@ export class SafeDsTypeChecker {
     }
 
     private constantIsAssignableToClassType(constant: Constant, other: ClassType): boolean {
-        let classType: Type;
-        if (constant instanceof BooleanConstant) {
-            classType = this.coreTypes.Boolean;
-        } else if (constant instanceof FloatConstant) {
-            classType = this.coreTypes.Float;
-        } else if (constant instanceof IntConstant) {
-            classType = this.coreTypes.Int;
-        } else if (constant === NullConstant) {
-            classType = this.coreTypes.NothingOrNull;
-        } else if (constant instanceof StringConstant) {
-            classType = this.coreTypes.String;
-        } /* c8 ignore start */ else {
-            throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
-        } /* c8 ignore stop */
-
+        const classType = this.typeComputer().computeClassTypeForConstant(constant);
         return this.isAssignableTo(classType, other);
     }
 

@@ -9,9 +9,24 @@ import { locationToString } from '../../helpers/location.js';
 import { AssertionError } from 'assert';
 import { isEmpty } from '../../../src/helpers/collectionUtils.js';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { CODE_EXPERIMENTAL_LANGUAGE_FEATURE } from '../../../src/language/validation/experimentalLanguageFeatures.js';
+import {
+    CODE_EXPERIMENTAL_ASSIGNED_RESULT,
+    CODE_EXPERIMENTAL_CALLED_ANNOTATION,
+    CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
+    CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
+} from '../../../src/language/validation/builtins/experimental.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const builtinFiles = listBuiltinFiles();
+
+const ignoredWarnings: (number | string | undefined)[] = [
+    CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    CODE_EXPERIMENTAL_ASSIGNED_RESULT,
+    CODE_EXPERIMENTAL_CALLED_ANNOTATION,
+    CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
+    CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
+];
 
 describe('builtin files', () => {
     beforeAll(async () => {
@@ -22,6 +37,7 @@ describe('builtin files', () => {
         uri,
         shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
     }));
+
     it.each(testCases)('[$shortenedResourceName] should have no errors or warnings', async ({ uri }) => {
         const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
 
@@ -29,7 +45,7 @@ describe('builtin files', () => {
             document.diagnostics?.filter(
                 (diagnostic) =>
                     diagnostic.severity === DiagnosticSeverity.Error ||
-                    diagnostic.severity === DiagnosticSeverity.Warning,
+                    (diagnostic.severity === DiagnosticSeverity.Warning && !ignoredWarnings.includes(diagnostic.code)),
             ) ?? [];
 
         if (!isEmpty(errorsOrWarnings)) {
