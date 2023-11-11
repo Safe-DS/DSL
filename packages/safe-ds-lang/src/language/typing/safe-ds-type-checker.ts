@@ -84,6 +84,11 @@ export class SafeDsTypeChecker {
                     return false;
                 }
 
+                // Optionality must match (all but required to optional is OK)
+                if (!typeEntry.declaration?.defaultValue && otherEntry.declaration?.defaultValue) {
+                    return false;
+                }
+
                 // Types must be contravariant
                 if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
                     return false;

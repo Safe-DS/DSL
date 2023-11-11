@@ -35,7 +35,7 @@
         "description": "An enumeration."
     },
     "Minimal Function": {
-        "prefix": ["minimal-function"],
+        "prefix": ["minimal-function", "minimal-method"],
         "body": ["fun ${1:myFunction}($0)"],
         "description": "A minimal function."
     },
