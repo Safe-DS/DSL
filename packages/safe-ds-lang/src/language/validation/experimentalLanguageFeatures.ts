@@ -4,13 +4,13 @@ import {
     isSdsMap,
     isSdsTypeArgumentList,
     isSdsUnionType,
-    SdsConstraintList,
-    SdsIndexedAccess,
-    SdsLiteralType,
-    SdsMap,
+    type SdsConstraintList,
+    type SdsIndexedAccess,
+    type SdsLiteralType,
+    type SdsMap,
     type SdsTypeArgumentList,
     type SdsTypeParameterList,
-    SdsUnionType,
+    type SdsUnionType,
 } from '../generated/ast.js';
 
 export const CODE_EXPERIMENTAL_LANGUAGE_FEATURE = 'experimental/language-feature';
@@ -55,19 +55,6 @@ export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcce
     });
 };
 
-export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: ValidationAcceptor): void => {
-    // There's already a warning on the container
-    if (hasContainerOfType(node.$container, isSdsUnionType)) {
-        return;
-    }
-
-    accept('warning', 'Union types are experimental and may change without prior notice.', {
-        node,
-        keyword: 'union',
-        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
-    });
-};
-
 export const typeArgumentListsShouldBeUsedWithCaution = (
     node: SdsTypeArgumentList,
     accept: ValidationAcceptor,
@@ -92,6 +79,19 @@ export const typeParameterListsShouldBeUsedWithCaution = (
 ): void => {
     accept('warning', 'Type parameter lists & type parameters are experimental and may change without prior notice.', {
         node,
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
+
+export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
+    if (hasContainerOfType(node.$container, isSdsUnionType)) {
+        return;
+    }
+
+    accept('warning', 'Union types are experimental and may change without prior notice.', {
+        node,
+        keyword: 'union',
         code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
     });
 };
