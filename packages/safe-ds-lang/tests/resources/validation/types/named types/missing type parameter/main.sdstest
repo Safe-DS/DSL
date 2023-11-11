@@ -30,7 +30,7 @@ fun myFunction(
     p7: MyClassWithTwoTypeParameters»<>«,
     // $TEST$ error "The type parameter 'V' must be set here."
     p8: MyClassWithTwoTypeParameters»<Int>«,
-    // $TEST$ no error r"The type parameters? .* must be set here\."
+    // $TEST$ error "The type parameters 'K', 'V' must be set here."
     p9: MyClassWithTwoTypeParameters»<T = Int>«,
 
 
@@ -52,7 +52,7 @@ fun myFunction(
     q7: MyEnum.MyEnumVariantWithTwoTypeParameters»<>«,
     // $TEST$ error "The type parameter 'V' must be set here."
     q8: MyEnum.MyEnumVariantWithTwoTypeParameters»<Int>«,
-    // $TEST$ no error r"The type parameters? .* must be set here\."
+    // $TEST$ error "The type parameters 'K', 'V' must be set here."
     q9: MyEnum.MyEnumVariantWithTwoTypeParameters»<T = Int>«,
 
 

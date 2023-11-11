@@ -1,4 +1,4 @@
-import { ValidationAcceptor } from 'langium';
+import { expandToStringWithNL, ValidationAcceptor } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import { SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes } from '../helpers/nodeProperties.js';
@@ -25,11 +25,19 @@ export const classMemberMustMatchOverriddenMember = (services: SafeDsServices) =
         const overriddenMemberType = typeComputer.computeType(overriddenMember);
 
         if (!typeChecker.isAssignableTo(ownMemberType, overriddenMemberType)) {
-            accept('error', 'Overriding member does not match the overridden member.', {
-                node,
-                property: 'name',
-                code: CODE_INHERITANCE_MUST_MATCH_OVERRIDDEN_MEMBER,
-            });
+            accept(
+                'error',
+                expandToStringWithNL`
+                    Overriding member does not match the overridden member:
+                    - Expected type: ${overriddenMemberType}
+                    - Actual type:   ${ownMemberType}
+                `,
+                {
+                    node,
+                    property: 'name',
+                    code: CODE_INHERITANCE_MUST_MATCH_OVERRIDDEN_MEMBER,
+                },
+            );
         }
     };
 };
