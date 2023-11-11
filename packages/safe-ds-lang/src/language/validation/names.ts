@@ -1,7 +1,7 @@
 import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
 import { duplicatesBy } from '../../helpers/collectionUtils.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
-import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
+import { BUILTINS_LANG_PACKAGE, BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 import {
     isSdsQualifiedImport,
     SdsAnnotation,
@@ -46,6 +46,7 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
+export const CODE_NAME_CORE_DECLARATION = 'name/core-declaration';
 export const CODE_NAME_CASING = 'name/casing';
 export const CODE_NAME_DUPLICATE = 'name/duplicate';
 
@@ -66,6 +67,36 @@ export const nameMustNotStartWithCodegenPrefix = (node: SdsDeclaration, accept: 
             },
         );
     }
+};
+
+// -----------------------------------------------------------------------------
+// Core declaration
+// -----------------------------------------------------------------------------
+
+export const nameMustNotOccurOnCoreDeclaration = (services: SafeDsServices) => {
+    const packageManager = services.workspace.PackageManager;
+
+    return (node: SdsDeclaration, accept: ValidationAcceptor) => {
+        if (!node.name) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        // Prevents the error from showing when editing the builtin files
+        const packageName = getPackageName(node);
+        if (packageName === BUILTINS_LANG_PACKAGE) {
+            return;
+        }
+
+        const coreDeclarations = packageManager.getDeclarationsInPackage(BUILTINS_LANG_PACKAGE);
+        if (coreDeclarations.some((it) => it.name === node.name)) {
+            accept('error', 'Names of core declarations must not be used for own declarations.', {
+                node,
+                property: 'name',
+                code: CODE_NAME_CORE_DECLARATION,
+            });
+        }
+    };
 };
 
 // -----------------------------------------------------------------------------
