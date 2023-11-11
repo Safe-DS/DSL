@@ -1,0 +1,71 @@
+package tests.validation.other.types.callableTypes.context
+
+annotation MyAnnotation(
+    // $TEST$ no error "Callable types must only be used for parameters."
+    p: »() -> ()«,
+)
+
+class MyClass<T>(
+    // $TEST$ no error "Callable types must only be used for parameters."
+    p: »() -> ()«,
+) {
+    // $TEST$ error "Callable types must only be used for parameters."
+    attr a: »() -> ()«
+}
+
+enum MyEnum {
+    MyEnumVariant<T>(
+        // $TEST$ no error "Callable types must only be used for parameters."
+        p: »() -> ()«,
+    )
+}
+
+fun myFunction(
+    // $TEST$ no error "Callable types must only be used for parameters."
+    p: »() -> ()«,
+) -> (
+    // $TEST$ error "Callable types must only be used for parameters."
+    r: »() -> ()«,
+)
+
+segment mySegment1(
+    // $TEST$ no error "Callable types must only be used for parameters."
+    p: »() -> ()«,
+) -> (
+    // $TEST$ error "Callable types must only be used for parameters."
+    r: »() -> ()«,
+) {}
+
+segment mySegment2(
+    // $TEST$ no error "Callable types must only be used for parameters."
+    // $TEST$ error "Callable types must only be used for parameters."
+    c: (p: »() -> ()«) -> (r: »() -> ()«),
+) {
+    // $TEST$ no error "Callable types must only be used for parameters."
+    (
+        p: »() -> ()«,
+    ) {};
+
+    // $TEST$ no error "Callable types must only be used for parameters."
+    (
+        p: »() -> ()«,
+    ) -> 1;
+}
+
+segment mySegment3(
+    // $TEST$ error "Callable types must only be used for parameters."
+    p1: MyClass<»() -> ()«>,
+
+    // $TEST$ error "Callable types must only be used for parameters."
+    p2: MyEnum.MyEnumVariant<»() -> ()«>,
+) {}
+
+segment mySegment4(
+    // $TEST$ error "Callable types must only be used for parameters."
+    p1: »() -> ()«.MyClass
+) {}
+
+segment mySegment5(
+    // $TEST$ error "Callable types must only be used for parameters."
+    p1: union<»() -> ()«>
+) {}

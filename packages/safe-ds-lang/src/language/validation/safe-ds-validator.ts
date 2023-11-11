@@ -112,6 +112,7 @@ import {
     yieldMustNotBeUsedInPipeline,
 } from './other/statements/assignments.js';
 import {
+    callableTypeMustBeUsedInCorrectContext,
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
@@ -217,6 +218,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callReceiverMustBeCallable(services),
         ],
         SdsCallableType: [
+            callableTypeMustBeUsedInCorrectContext,
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
             callableTypeParametersMustNotBeAnnotated,

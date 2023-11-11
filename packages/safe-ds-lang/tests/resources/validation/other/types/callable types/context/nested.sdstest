@@ -1,0 +1,16 @@
+package tests.validation.other.types.callableTypes.context
+
+/*
+ * We already show an error for the outer callable type, if it's used in the wrong context.
+ */
+
+class MyClass1 {
+    // $TEST$ no error "Callable types must only be used for parameters."
+    attr a: () -> (r: »() -> ()«)
+}
+
+class MyClass2 {
+    // $TEST$ no error "Callable types must only be used for parameters."
+    // $TEST$ no error "Callable types must only be used for parameters."
+    attr a: () -> (r: (p: »() -> ()«) -> (r: »() -> ()«))
+}
