@@ -1,13 +1,13 @@
-import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/index.js';
-import { LangiumDocument, Reference, URI } from 'langium';
-import { NodeFileSystem } from 'langium/node';
-import { clearDocuments, isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
-import { isLocationEqual, locationToString } from '../../helpers/location.js';
-import { createScopingTests, ExpectedReference } from './creator.js';
+import { DocumentValidator, LangiumDocument, Reference, URI } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+import { clearDocuments, isRangeEqual, validationHelper } from 'langium/test';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Location } from 'vscode-languageserver';
+import { createSafeDsServices } from '../../../src/language/index.js';
+import { isLocationEqual, locationToString } from '../../helpers/location.js';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { createScopingTests, ExpectedReference } from './creator.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
@@ -67,6 +67,28 @@ describe('scoping', async () => {
                 }
             }
         }
+    });
+
+    it('should resolve members on literals', async () => {
+        const code = `
+            pipeline myPipeline {
+                1.toString();
+            }
+        `;
+        const { diagnostics } = await validationHelper(services)(code);
+        const linkingError = diagnostics.filter((d) => d.data?.code === DocumentValidator.LinkingError);
+        expect(linkingError).toStrictEqual([]);
+    });
+
+    it('should resolve members on literal types', async () => {
+        const code = `
+            segment mySegment(p: literal<"">) {
+                p.toString();
+            }
+        `;
+        const { diagnostics } = await validationHelper(services)(code);
+        const linkingError = diagnostics.filter((d) => d.data?.code === DocumentValidator.LinkingError);
+        expect(linkingError).toStrictEqual([]);
     });
 });
 
