@@ -24,6 +24,7 @@ export const constraintListsShouldBeUsedWithCaution = (node: SdsConstraintList, 
 };
 
 export const indexedAccessesShouldBeUsedWithCaution = (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
     if (hasContainerOfType(node.$container, isSdsIndexedAccess)) {
         return;
     }
@@ -43,6 +44,7 @@ export const literalTypesShouldBeUsedWithCaution = (node: SdsLiteralType, accept
 };
 
 export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
     if (hasContainerOfType(node.$container, isSdsMap)) {
         return;
     }
@@ -54,6 +56,7 @@ export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcce
 };
 
 export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
     if (hasContainerOfType(node.$container, isSdsUnionType)) {
         return;
     }
@@ -69,7 +72,11 @@ export const typeArgumentListsShouldBeUsedWithCaution = (
     node: SdsTypeArgumentList,
     accept: ValidationAcceptor,
 ): void => {
-    if (hasContainerOfType(node.$container, isSdsTypeArgumentList)) {
+    // There's already a warning on the container
+    if (
+        hasContainerOfType(node.$container, isSdsTypeArgumentList) ||
+        hasContainerOfType(node.$container, isSdsUnionType)
+    ) {
         return;
     }
 
