@@ -7,10 +7,11 @@ import { ClassType, UnknownType } from '../typing/model.js';
 
 export const CODE_INHERITANCE_CYCLE = 'inheritance/cycle';
 export const CODE_INHERITANCE_MULTIPLE_INHERITANCE = 'inheritance/multiple-inheritance';
-export const CODE_INHERITANCE_MUST_MATCH_OVERRIDDEN_MEMBER = 'inheritance/must-match-overridden-member';
+export const CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER = 'inheritance/identical-to-overridden-member';
+export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/incompatible-to-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
 
-export const classMemberMustMatchOverriddenMember = (services: SafeDsServices) => {
+export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
     const classHierarchy = services.types.ClassHierarchy;
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
@@ -35,9 +36,15 @@ export const classMemberMustMatchOverriddenMember = (services: SafeDsServices) =
                 {
                     node,
                     property: 'name',
-                    code: CODE_INHERITANCE_MUST_MATCH_OVERRIDDEN_MEMBER,
+                    code: CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER,
                 },
             );
+        } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
+            accept('info', 'Overriding member is identical to overridden member and can be removed.', {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER,
+            });
         }
     };
 };

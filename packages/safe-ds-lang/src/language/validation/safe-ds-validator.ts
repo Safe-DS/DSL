@@ -36,7 +36,7 @@ import {
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import {
-    classMemberMustMatchOverriddenMember,
+    classMemberMustMatchOverriddenMemberAndShouldBeNeeded,
     classMustNotInheritItself,
     classMustOnlyInheritASingleClass,
 } from './inheritance.js';
@@ -228,7 +228,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             classMustNotInheritItself(services),
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty],
-        SdsClassMember: [classMemberMustMatchOverriddenMember(services)],
+        SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
         SdsConstraintList: [constraintListsShouldBeUsedWithCaution, constraintListShouldNotBeEmpty],
         SdsDeclaration: [
             nameMustNotStartWithCodegenPrefix,
