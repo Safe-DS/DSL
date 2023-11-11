@@ -1,10 +1,16 @@
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { isSdsClass, SdsClass } from '../../../src/language/generated/ast.js';
+import {
+    isSdsAttribute,
+    isSdsClass,
+    isSdsFunction,
+    SdsClass,
+    type SdsClassMember,
+} from '../../../src/language/generated/ast.js';
+import { getClassMembers } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
-import { getMatchingClassMembers } from '../../../src/language/helpers/nodeProperties.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const builtinClasses = services.builtins.Classes;
@@ -198,8 +204,240 @@ describe('SafeDsClassHierarchy', async () => {
 
         it.each(testCases)('$testName', async ({ code, index, expected }) => {
             const firstClass = await getNodeOfType(services, code, isSdsClass, index);
-            const anyMembers = getMatchingClassMembers(builtinClasses.Any).map((member) => member.name);
+            const anyMembers = getClassMembers(builtinClasses.Any).map((member) => member.name);
             expect(superclassMemberNames(firstClass)).toStrictEqual(expected.concat(anyMembers));
         });
     });
+
+    describe('getOverriddenMember', () => {
+        const isUndefined = (result: unknown) => result === undefined;
+
+        const testCases: GetOverriddenMemberTest[] = [
+            {
+                testName: 'global function',
+                code: `
+                    fun f()
+                `,
+                memberPredicate: isSdsFunction,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'attribute, no superclass',
+                code: `
+                    class A {
+                        attr a: Int
+                    }
+                `,
+                memberPredicate: isSdsAttribute,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'method, no superclass',
+                code: `
+                    class A {
+                        fun f()
+                    }
+                `,
+                memberPredicate: isSdsFunction,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'attribute, superclass, no match',
+                code: `
+                    class A sub B {
+                        attr a: Int
+                    }
+
+                    class B {
+                        attr b: Int
+                    }
+                `,
+                memberPredicate: isSdsAttribute,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'method, superclass, no match',
+                code: `
+                    class A sub B {
+                        fun f()
+                    }
+
+                    class B {
+                        fun g()
+                    }
+                `,
+                memberPredicate: isSdsFunction,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'static attribute',
+                code: `
+                    class A sub B {
+                        static attr a: Int
+                    }
+
+                    class B {
+                        static attr a: Int
+                    }
+                `,
+                memberPredicate: isSdsAttribute,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'static method',
+                code: `
+                    class A sub B {
+                        static fun f()
+                    }
+
+                    class B {
+                        static fun f()
+                    }
+                `,
+                memberPredicate: isSdsFunction,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'attribute, superclass, match but static',
+                code: `
+                    class A sub B {
+                        attr a: Int
+                    }
+
+                    class B {
+                        static attr a: Int
+                    }
+                `,
+                memberPredicate: isSdsAttribute,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'method, superclass, match but static',
+                code: `
+                    class A sub B {
+                        fun f()
+                    }
+
+                    class B {
+                        static fun f()
+                    }
+                `,
+                memberPredicate: isSdsFunction,
+                index: 0,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'attribute, superclass, match',
+                code: `
+                    class A sub B {
+                        attr a: Int
+                    }
+
+                    class B {
+                        attr a: Int
+                    }
+                `,
+                memberPredicate: isSdsAttribute,
+                index: 0,
+                expectedResultPredicate: isSdsAttribute,
+            },
+            {
+                testName: 'method, superclass, match',
+                code: `
+                    class A sub B {
+                        fun f()
+                    }
+
+                    class B {
+                        fun f()
+                    }
+                `,
+                memberPredicate: isSdsFunction,
+                index: 0,
+                expectedResultPredicate: isSdsFunction,
+            },
+            {
+                testName: 'attribute, previous member with same name',
+                code: `
+                    class A sub B {
+                        attr a: Int
+                        attr a: Int
+                    }
+
+                    class B {
+                        attr a: Int
+                    }
+                `,
+                memberPredicate: isSdsAttribute,
+                index: 1,
+                expectedResultPredicate: isUndefined,
+            },
+            {
+                testName: 'method, previous member with same name',
+                code: `
+                    class A sub B {
+                        fun f()
+                        fun f()
+                    }
+
+                    class B {
+                        fun f()
+                    }
+                `,
+                memberPredicate: isSdsFunction,
+                index: 1,
+                expectedResultPredicate: isUndefined,
+            },
+        ];
+
+        it.each(testCases)(
+            'should return the overridden member or undefined ($testName)',
+            async ({ code, memberPredicate, index, expectedResultPredicate }) => {
+                const member = await getNodeOfType(services, code, memberPredicate, index);
+                expect(classHierarchy.getOverriddenMember(member)).toSatisfy(expectedResultPredicate);
+            },
+        );
+
+        it('should return undefined if passed undefined', () => {
+            expect(classHierarchy.getOverriddenMember(undefined)).toBeUndefined();
+        });
+    });
 });
+
+/**
+ * A test case for {@link ClassHierarchy.getOverriddenMember}.
+ */
+interface GetOverriddenMemberTest {
+    /**
+     * A short description of the test case.
+     */
+    testName: string;
+
+    /**
+     * The code to parse.
+     */
+    code: string;
+
+    /**
+     * A predicate that matches the member that should be used as input.
+     */
+    memberPredicate: (value: unknown) => value is SdsClassMember;
+
+    /**
+     * The index of the member to use as input.
+     */
+    index: number;
+
+    /**
+     * A predicate that matches the expected result.
+     */
+    expectedResultPredicate: (value: unknown) => boolean;
+}
