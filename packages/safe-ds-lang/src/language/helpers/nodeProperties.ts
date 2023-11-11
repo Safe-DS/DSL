@@ -237,6 +237,20 @@ export const getParentTypes = (node: SdsClass | undefined): SdsType[] => {
     return node?.parentTypeList?.parentTypes ?? [];
 };
 
+export const getQualifiedName = (node: SdsDeclaration | undefined): string | undefined => {
+    const segments = [];
+
+    let current: SdsDeclaration | undefined = node;
+    while (current) {
+        if (current.name) {
+            segments.unshift(current.name);
+        }
+        current = getContainerOfType(current.$container, isSdsDeclaration);
+    }
+
+    return segments.join('.');
+};
+
 export const streamPlaceholders = (node: SdsBlock | undefined): Stream<SdsPlaceholder> => {
     return stream(getStatements(node)).filter(isSdsAssignment).flatMap(getAssignees).filter(isSdsPlaceholder);
 };

@@ -1,7 +1,7 @@
-import { expandToStringWithNL, ValidationAcceptor } from 'langium';
+import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
-import { SdsClass, type SdsClassMember } from '../generated/ast.js';
-import { getParentTypes } from '../helpers/nodeProperties.js';
+import { isSdsClass, SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, UnknownType } from '../typing/model.js';
 
@@ -40,6 +40,11 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
                 },
             );
         } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
+            // Prevents the info from showing when editing the builtin files
+            if (isInSafedsLangAnyClass(node)) {
+                return;
+            }
+
             accept('info', 'Overriding member is identical to overridden member and can be removed.', {
                 node,
                 property: 'name',
@@ -47,6 +52,11 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             });
         }
     };
+};
+
+const isInSafedsLangAnyClass = (node: SdsClassMember): boolean => {
+    const containingClass = getContainerOfType(node, isSdsClass);
+    return isSdsClass(containingClass) && getQualifiedName(containingClass) === 'safeds.lang.Any';
 };
 
 export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
