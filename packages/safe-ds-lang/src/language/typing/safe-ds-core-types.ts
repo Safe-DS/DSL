@@ -49,6 +49,10 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Nothing, true);
     }
 
+    get Number(): Type {
+        return this.createCoreType(this.builtinClasses.Number);
+    }
+
     get String(): Type {
         return this.createCoreType(this.builtinClasses.String);
     }
