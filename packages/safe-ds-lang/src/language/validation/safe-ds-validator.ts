@@ -31,6 +31,8 @@ import {
     indexedAccessesShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
     mapsShouldBeUsedWithCaution,
+    typeArgumentListsShouldBeUsedWithCaution,
+    typeParameterListsShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import { classMustNotInheritItself, classMustOnlyInheritASingleClass } from './inheritance.js';
@@ -316,12 +318,13 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentShouldBeUsed(services),
         ],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution],
         SdsTypeParameter: [
             typeParameterMustHaveSufficientContext,
             typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
         ],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
-        SdsTypeParameterList: [typeParameterListShouldNotBeEmpty],
+        SdsTypeParameterList: [typeParameterListsShouldBeUsedWithCaution, typeParameterListShouldNotBeEmpty],
         SdsUnionType: [
             unionTypeMustBeUsedInCorrectContext,
             unionTypeMustHaveTypes,
