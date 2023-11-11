@@ -1,3 +1,5 @@
+import { ValidationAcceptor } from 'langium';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsEnumVariant,
     isSdsWildcard,
@@ -18,12 +20,10 @@ import {
     SdsTypeParameterList,
     SdsUnionType,
 } from '../generated/ast.js';
-import { ValidationAcceptor } from 'langium';
-import { getParameters, getTypeParameters, isRequiredParameter } from '../helpers/nodeProperties.js';
+import { getParameters, getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
+import { NullConstant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { UnknownType } from '../typing/model.js';
-import { NullConstant } from '../partialEvaluation/model.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
@@ -55,7 +55,7 @@ export const annotationCallArgumentListShouldBeNeeded = (node: SdsAnnotationCall
         return;
     }
 
-    const hasRequiredParameters = getParameters(annotation).some(isRequiredParameter);
+    const hasRequiredParameters = getParameters(annotation).some(Parameter.isRequired);
     if (!hasRequiredParameters) {
         accept('info', 'This argument list can be removed.', {
             node: argumentList,

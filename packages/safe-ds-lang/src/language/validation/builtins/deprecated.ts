@@ -1,4 +1,5 @@
 import { ValidationAcceptor } from 'langium';
+import { DiagnosticTag } from 'vscode-languageserver';
 import {
     isSdsParameter,
     isSdsResult,
@@ -10,10 +11,9 @@ import {
     SdsParameter,
     SdsReference,
 } from '../../generated/ast.js';
+import { Parameter } from '../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
-import { isRequiredParameter } from '../../helpers/nodeProperties.js';
 import { parameterCanBeAnnotated } from '../other/declarations/annotationCalls.js';
-import { DiagnosticTag } from 'vscode-languageserver';
 
 export const CODE_DEPRECATED_ASSIGNED_RESULT = 'deprecated/assigned-result';
 export const CODE_DEPRECATED_CALLED_ANNOTATION = 'deprecated/called-annotation';
@@ -108,7 +108,7 @@ export const referenceTargetShouldNotBeDeprecated =
 
 export const requiredParameterMustNotBeDeprecated =
     (services: SafeDsServices) => (node: SdsParameter, accept: ValidationAcceptor) => {
-        if (isRequiredParameter(node) && parameterCanBeAnnotated(node)) {
+        if (Parameter.isRequired(node) && parameterCanBeAnnotated(node)) {
             if (services.builtins.Annotations.isDeprecated(node)) {
                 accept('error', 'A deprecated parameter must be optional.', {
                     node,

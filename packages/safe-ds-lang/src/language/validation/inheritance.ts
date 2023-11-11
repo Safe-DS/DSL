@@ -1,13 +1,46 @@
-import { ValidationAcceptor } from 'langium';
-import { SdsClass } from '../generated/ast.js';
+import { expandToStringWithNL, ValidationAcceptor } from 'langium';
+import { isEmpty } from '../../helpers/collectionUtils.js';
+import { SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, UnknownType } from '../typing/model.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export const CODE_INHERITANCE_CYCLE = 'inheritance/cycle';
 export const CODE_INHERITANCE_MULTIPLE_INHERITANCE = 'inheritance/multiple-inheritance';
+export const CODE_INHERITANCE_MUST_MATCH_OVERRIDDEN_MEMBER = 'inheritance/must-match-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
+
+export const classMemberMustMatchOverriddenMember = (services: SafeDsServices) => {
+    const classHierarchy = services.types.ClassHierarchy;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsClassMember, accept: ValidationAcceptor): void => {
+        const overriddenMember = classHierarchy.getOverriddenMember(node);
+        if (!overriddenMember) {
+            return;
+        }
+
+        const ownMemberType = typeComputer.computeType(node);
+        const overriddenMemberType = typeComputer.computeType(overriddenMember);
+
+        if (!typeChecker.isAssignableTo(ownMemberType, overriddenMemberType)) {
+            accept(
+                'error',
+                expandToStringWithNL`
+                    Overriding member does not match the overridden member:
+                    - Expected type: ${overriddenMemberType}
+                    - Actual type:   ${ownMemberType}
+                `,
+                {
+                    node,
+                    property: 'name',
+                    code: CODE_INHERITANCE_MUST_MATCH_OVERRIDDEN_MEMBER,
+                },
+            );
+        }
+    };
+};
 
 export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
     const typeComputer = services.types.TypeComputer;

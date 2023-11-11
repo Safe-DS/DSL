@@ -1,0 +1,75 @@
+package tests.validation.inheritance.overridingMethodMustMatchOverriddenMethod
+
+class MySuperClass {
+    attr myInstanceAttribute: Int
+    static attr myStaticAttribute: Int
+
+    fun myInstanceMethod(a: Int = 0) -> r: Int
+    static fun myStaticMethod(a: Int = 0) -> r: Int
+}
+
+class MyClass1 sub MySuperClass {
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    attr »myInstanceAttribute«: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static attr »myStaticAttribute«: Int
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    attr »myInstanceAttribute«: String
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static attr »myStaticAttribute«: String
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    attr »myOwnInstanceAttribute«: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static attr »myOwnStaticAttribute«: Int
+
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    fun »myInstanceMethod«(a: Int = 0) -> r: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static fun »myStaticMethod«(a: Int = 0) -> r: Int
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    fun »myInstanceMethod«() -> r: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static fun »myStaticMethod«() -> r: Int
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    fun »myOwnInstanceMethod«(a: Int = 0) -> r: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static fun »myOwnStaticMethod«(a: Int = 0) -> r: Int
+}
+
+class MyClass2 sub MySuperClass {
+    // $TEST$ error r"Overriding member does not match the overridden member:[\s\S]*"
+    attr »myInstanceAttribute«: String
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static attr »myStaticAttribute«: String
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    attr »myInstanceAttribute«: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static attr »myStaticAttribute«: Int
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    attr »myOwnInstanceAttribute«: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static attr »myOwnStaticAttribute«: Int
+
+
+    // $TEST$ error r"Overriding member does not match the overridden member:[\s\S]*"
+    fun »myInstanceMethod«() -> r: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static fun »myStaticMethod«() -> r: Int
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    fun »myInstanceMethod«(a: Int = 0) -> r: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static fun »myStaticMethod«(a: Int = 0) -> r: Int
+
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    fun »myOwnInstanceMethod«(a: Int = 0) -> r: Int
+    // $TEST$ no error r"Overriding member does not match the overridden member:[\s\S]*"
+    static fun »myOwnStaticMethod«(a: Int = 0) -> r: Int
+}

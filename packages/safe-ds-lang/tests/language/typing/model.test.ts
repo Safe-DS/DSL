@@ -21,7 +21,7 @@ import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const code = `
-    fun f1(p) -> r
+    fun f1(p1, p2: Int = 0) -> r
     fun f2(),
 
     class C1
@@ -34,7 +34,8 @@ const code = `
     enum MyEnum2 {}
 `;
 const callable1 = await getNodeOfType(services, code, isSdsFunction, 0);
-const parameter = getParameters(callable1)[0]!;
+const parameter1 = getParameters(callable1)[0]!;
+const parameter2 = getParameters(callable1)[1]!;
 const result = getResults(callable1.resultList)[0]!;
 const callable2 = await getNodeOfType(services, code, isSdsFunction, 1);
 const class1 = await getNodeOfType(services, code, isSdsClass, 0);
@@ -50,7 +51,7 @@ describe('type model', async () => {
             type: () =>
                 new CallableType(
                     callable1,
-                    new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+                    new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                     new NamedTupleType(),
                 ),
             unequalTypeOfSameType: () => new CallableType(callable2, new NamedTupleType(), new NamedTupleType()),
@@ -62,7 +63,7 @@ describe('type model', async () => {
             typeOfOtherType: () => UnknownType,
         },
         {
-            type: () => new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+            type: () => new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
             unequalTypeOfSameType: () => new NamedTupleType(),
             typeOfOtherType: () => UnknownType,
         },
@@ -121,18 +122,26 @@ describe('type model', async () => {
         {
             type: new CallableType(
                 callable1,
-                new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(),
             ),
-            expectedString: '(p: ?) -> ()',
+            expectedString: '(p1: ?) -> ()',
+        },
+        {
+            type: new CallableType(
+                callable1,
+                new NamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
+                new NamedTupleType(),
+            ),
+            expectedString: '(p2?: ?) -> ()',
         },
         {
             type: new LiteralType(new BooleanConstant(true)),
             expectedString: 'literal<true>',
         },
         {
-            type: new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
-            expectedString: '(p: ?)',
+            type: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+            expectedString: '(p1: ?)',
         },
         {
             type: new ClassType(class1, true),
@@ -173,12 +182,12 @@ describe('type model', async () => {
         {
             type: new CallableType(
                 callable1,
-                new NamedTupleType(new NamedTupleEntry(parameter, 'p', new UnionType(UnknownType))),
+                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType))),
                 new NamedTupleType(new NamedTupleEntry(result, 'r', new UnionType(UnknownType))),
             ),
             expectedType: new CallableType(
                 callable1,
-                new NamedTupleType(new NamedTupleEntry(parameter, 'p', UnknownType)),
+                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(new NamedTupleEntry(result, 'r', UnknownType)),
             ),
         },
@@ -192,12 +201,12 @@ describe('type model', async () => {
         },
         {
             type: new NamedTupleType(
-                new NamedTupleEntry(parameter, 'p', new UnionType(UnknownType)),
-                new NamedTupleEntry(parameter, 'p', new UnionType(UnknownType)),
+                new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType)),
+                new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType)),
             ),
             expectedType: new NamedTupleType(
-                new NamedTupleEntry(parameter, 'p', UnknownType),
-                new NamedTupleEntry(parameter, 'p', UnknownType),
+                new NamedTupleEntry(parameter1, 'p1', UnknownType),
+                new NamedTupleEntry(parameter1, 'p1', UnknownType),
             ),
         },
         {
@@ -381,7 +390,7 @@ describe('type model', async () => {
                 {
                     type: new CallableType(
                         callable1,
-                        new NamedTupleType(new NamedTupleEntry(parameter, 'p', new ClassType(class1, false))),
+                        new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
                         new NamedTupleType(),
                     ),
                     index: 0,
@@ -402,7 +411,7 @@ describe('type model', async () => {
                     expectedType: UnknownType,
                 },
                 {
-                    type: new NamedTupleType(new NamedTupleEntry(parameter, 'p', new ClassType(class1, false))),
+                    type: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
                     index: 0,
                     expectedType: new ClassType(class1, false),
                 },

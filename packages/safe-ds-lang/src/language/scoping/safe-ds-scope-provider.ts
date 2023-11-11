@@ -57,10 +57,10 @@ import {
     getAbstractResults,
     getAnnotationCallTarget,
     getAssignees,
+    getClassMembers,
     getEnumVariants,
     getImportedDeclarations,
     getImports,
-    getMatchingClassMembers,
     getPackageName,
     getParameters,
     getResults,
@@ -185,7 +185,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         // Static access
         const declaration = this.getUniqueReferencedDeclarationForExpression(node.receiver);
         if (isSdsClass(declaration)) {
-            const ownStaticMembers = getMatchingClassMembers(declaration, isStatic);
+            const ownStaticMembers = getClassMembers(declaration).filter(isStatic);
             const superclassStaticMembers = this.classHierarchy.streamSuperclassMembers(declaration).filter(isStatic);
 
             return this.createScopeForNodes(ownStaticMembers, this.createScopeForNodes(superclassStaticMembers));
@@ -215,7 +215,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         if (receiverType instanceof ClassType) {
-            const ownInstanceMembers = getMatchingClassMembers(receiverType.declaration, (it) => !isStatic(it));
+            const ownInstanceMembers = getClassMembers(receiverType.declaration).filter((it) => !isStatic(it));
             const superclassInstanceMembers = this.classHierarchy
                 .streamSuperclassMembers(receiverType.declaration)
                 .filter((it) => !isStatic(it));

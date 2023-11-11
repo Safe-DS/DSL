@@ -16,6 +16,7 @@ import {
     isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
+    isSdsParameter,
     isSdsPlaceholder,
     isSdsSegment,
     isSdsTypeParameterList,
@@ -85,28 +86,30 @@ export const isPositionalArgument = (node: SdsArgument): boolean => {
     return !node.parameter;
 };
 
-export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
-    return Boolean(node.typeParameter);
-};
+export namespace Parameter {
+    export const isConstant = (node: SdsParameter | undefined): boolean => {
+        if (!node) {
+            return false;
+        }
 
-export const isConstantParameter = (node: SdsParameter | undefined): boolean => {
-    if (!node) {
-        return false;
-    }
+        const containingCallable = getContainerOfType(node, isSdsCallable);
 
-    const containingCallable = getContainerOfType(node, isSdsCallable);
+        // In those cases, the const modifier is not applicable
+        if (isSdsCallableType(containingCallable) || isSdsLambda(containingCallable)) {
+            return false;
+        }
 
-    // In those cases, the const modifier is not applicable
-    if (isSdsCallableType(containingCallable) || isSdsLambda(containingCallable)) {
-        return false;
-    }
+        return isSdsAnnotation(containingCallable) || node.isConstant;
+    };
 
-    return isSdsAnnotation(containingCallable) || node.isConstant;
-};
+    export const isOptional = (node: SdsParameter | undefined): boolean => {
+        return Boolean(node?.defaultValue);
+    };
 
-export const isRequiredParameter = (node: SdsParameter): boolean => {
-    return !node.defaultValue;
-};
+    export const isRequired = (node: SdsParameter | undefined): boolean => {
+        return isSdsParameter(node) && !node.defaultValue;
+    };
+}
 
 export const isStatic = (node: SdsClassMember): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
@@ -119,6 +122,10 @@ export const isStatic = (node: SdsClassMember): boolean => {
         /* c8 ignore next 2 */
         return false;
     }
+};
+
+export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
+    return Boolean(node.typeParameter);
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -190,11 +197,8 @@ export const streamBlockLambdaResults = (node: SdsBlockLambda | undefined): Stre
         .filter(isSdsBlockLambdaResult);
 };
 
-export const getMatchingClassMembers = (
-    node: SdsClass | undefined,
-    filterFunction: (member: SdsClassMember) => boolean = () => true,
-): SdsClassMember[] => {
-    return node?.body?.members?.filter(filterFunction) ?? [];
+export const getClassMembers = (node: SdsClass | undefined): SdsClassMember[] => {
+    return node?.body?.members ?? [];
 };
 
 export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {

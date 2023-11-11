@@ -1,7 +1,7 @@
 import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import { getParameters } from '../helpers/nodeProperties.js';
+import { getParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
@@ -84,6 +84,11 @@ export class SafeDsTypeChecker {
                     return false;
                 }
 
+                // Optionality must match (all but required to optional is OK)
+                if (Parameter.isRequired(typeEntry.declaration) && Parameter.isOptional(otherEntry.declaration)) {
+                    return false;
+                }
+
                 // Types must be contravariant
                 if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
                     return false;
@@ -93,7 +98,7 @@ export class SafeDsTypeChecker {
             // Additional parameters must be optional
             for (let i = other.inputType.length; i < type.inputType.length; i++) {
                 const typeEntry = type.inputType.entries[i]!;
-                if (!typeEntry.declaration?.defaultValue) {
+                if (!Parameter.isOptional(typeEntry.declaration)) {
                     return false;
                 }
             }

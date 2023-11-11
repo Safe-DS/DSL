@@ -1,12 +1,12 @@
-import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/index.js';
-import { NodeFileSystem } from 'langium/node';
-import { createValidationTests, ExpectedIssue } from './creator.js';
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { AssertionError } from 'assert';
+import { NodeFileSystem } from 'langium/node';
 import { clearDocuments, isRangeEqual } from 'langium/test';
+import { afterEach, beforeEach, describe, it } from 'vitest';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { locationToString } from '../../helpers/location.js';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { createValidationTests, ExpectedIssue } from './creator.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
@@ -94,7 +94,7 @@ const getMatchingActualIssues = (expectedIssue: ExpectedIssue): Diagnostic[] => 
     // Filter by message
     if (expectedIssue.message) {
         if (expectedIssue.messageIsRegex) {
-            const regex = new RegExp(expectedIssue.message, 'gu');
+            const regex = new RegExp(expectedIssue.message, 'u');
             result = result.filter((d) => regex.test(d.message));
         } else {
             result = result.filter((d) => d.message === expectedIssue.message);

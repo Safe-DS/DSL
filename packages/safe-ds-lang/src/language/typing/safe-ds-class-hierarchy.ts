@@ -1,7 +1,7 @@
-import { EMPTY_STREAM, stream, Stream } from 'langium';
+import { EMPTY_STREAM, getContainerOfType, stream, Stream } from 'langium';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsClass, isSdsNamedType, SdsClass, type SdsClassMember } from '../generated/ast.js';
-import { getMatchingClassMembers, getParentTypes } from '../helpers/nodeProperties.js';
+import { getClassMembers, getParentTypes, isStatic } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 
 export class SafeDsClassHierarchy {
@@ -61,7 +61,7 @@ export class SafeDsClassHierarchy {
             return EMPTY_STREAM;
         }
 
-        return this.streamSuperclasses(node).flatMap(getMatchingClassMembers);
+        return this.streamSuperclasses(node).flatMap(getClassMembers);
     }
 
     /**
@@ -78,5 +78,32 @@ export class SafeDsClassHierarchy {
         }
 
         return undefined;
+    }
+
+    /**
+     * Returns the member that is overridden by the given member, or `undefined` if the member does not override
+     * anything.
+     */
+    getOverriddenMember(node: SdsClassMember | undefined): SdsClassMember | undefined {
+        // Static members cannot override anything
+        if (!node || isStatic(node)) {
+            return undefined;
+        }
+
+        // Don't consider members with the same name as a previous member
+        const containingClass = getContainerOfType(node, isSdsClass);
+        if (!containingClass) {
+            return undefined;
+        }
+        const firstMemberWithSameName = getClassMembers(containingClass).find(
+            (it) => !isStatic(it) && it.name === node.name,
+        );
+        if (firstMemberWithSameName !== node) {
+            return undefined;
+        }
+
+        return this.streamSuperclassMembers(containingClass)
+            .filter((it) => !isStatic(it) && it.name === node.name)
+            .head();
     }
 }

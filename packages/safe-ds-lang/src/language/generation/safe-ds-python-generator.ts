@@ -1,4 +1,26 @@
-import { SafeDsServices } from '../safe-ds-module.js';
+import {
+    CompositeGeneratorNode,
+    expandToNode,
+    expandTracedToNode,
+    findRootNode,
+    getContainerOfType,
+    getDocument,
+    joinToNode,
+    joinTracedToNode,
+    LangiumDocument,
+    NL,
+    streamAllContents,
+    toStringAndTrace,
+    TraceRegion,
+    traceToNode,
+    TreeStreamImpl,
+    URI,
+} from 'langium';
+import path from 'path';
+import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { groupBy } from '../../helpers/collectionUtils.js';
+import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAbstractResult,
     isSdsAssignment,
@@ -46,25 +68,7 @@ import {
     SdsStatement,
 } from '../generated/ast.js';
 import { isInStubFile, isStubFile } from '../helpers/fileExtensions.js';
-import path from 'path';
-import {
-    CompositeGeneratorNode,
-    expandToNode,
-    expandTracedToNode,
-    findRootNode,
-    getContainerOfType,
-    getDocument,
-    joinToNode,
-    joinTracedToNode,
-    LangiumDocument,
-    NL,
-    streamAllContents,
-    toStringAndTrace,
-    TraceRegion,
-    traceToNode,
-    TreeStreamImpl,
-    URI,
-} from 'langium';
+import { IdManager } from '../helpers/idManager.js';
 import {
     getAbstractResults,
     getAssignees,
@@ -72,10 +76,10 @@ import {
     getImports,
     getModuleMembers,
     getStatements,
-    isRequiredParameter,
+    Parameter,
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
-import { groupBy } from '../../helpers/collectionUtils.js';
+import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     BooleanConstant,
     FloatConstant,
@@ -83,12 +87,8 @@ import {
     NullConstant,
     StringConstant,
 } from '../partialEvaluation/model.js';
-import { IdManager } from '../helpers/idManager.js';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
-import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
+import { SafeDsServices } from '../safe-ds-module.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -685,7 +685,7 @@ export class SafeDsPythonGenerator {
     private generateArgument(argument: SdsArgument, frame: GenerationInfoFrame): CompositeGeneratorNode {
         const parameter = this.nodeMapper.argumentToParameter(argument);
         return expandTracedToNode(argument)`${
-            parameter !== undefined && !isRequiredParameter(parameter)
+            parameter !== undefined && !Parameter.isRequired(parameter)
                 ? expandToNode`${this.generateParameter(parameter, frame, false)}=`
                 : ''
         }${this.generateExpression(argument.value, frame)}`;
