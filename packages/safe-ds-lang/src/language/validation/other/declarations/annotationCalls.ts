@@ -1,3 +1,5 @@
+import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { isEmpty } from '../../../../helpers/collectionUtils.js';
 import {
     isSdsCallable,
     isSdsCallableType,
@@ -7,16 +9,14 @@ import {
     SdsLambda,
     SdsParameter,
 } from '../../../generated/ast.js';
-import { getContainerOfType, ValidationAcceptor } from 'langium';
 import {
     getAnnotationCalls,
     getArguments,
-    isRequiredParameter,
     getParameters,
     getResults,
+    Parameter,
 } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { isEmpty } from '../../../../helpers/collectionUtils.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
@@ -46,7 +46,7 @@ export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, a
         return;
     }
 
-    const requiredParameters = getParameters(node.annotation?.ref).filter(isRequiredParameter);
+    const requiredParameters = getParameters(node.annotation?.ref).filter(Parameter.isRequired);
     if (!isEmpty(requiredParameters)) {
         accept(
             'error',

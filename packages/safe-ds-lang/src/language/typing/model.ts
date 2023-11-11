@@ -8,6 +8,7 @@ import {
     SdsEnumVariant,
     SdsParameter,
 } from '../generated/ast.js';
+import { Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
 
 /**
@@ -74,7 +75,7 @@ export class CallableType extends Type {
 
     override toString(): string {
         const inputTypeString = this.inputType.entries
-            .map((it) => `${it.name}${it.declaration?.defaultValue ? '?' : ''}: ${it.type}`)
+            .map((it) => `${it.name}${Parameter.isOptional(it.declaration) ? '?' : ''}: ${it.type}`)
             .join(', ');
 
         return `(${inputTypeString}) -> ${this.outputType}`;

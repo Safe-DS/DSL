@@ -1,6 +1,6 @@
-import { isSdsAnnotation, isSdsCallable, SdsParameter } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import { isConstantParameter } from '../../../helpers/nodeProperties.js';
+import { isSdsAnnotation, isSdsCallable, SdsParameter } from '../../../generated/ast.js';
+import { Parameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_PARAMETER_CONSTANT_DEFAULT_VALUE = 'parameter/constant-default-value';
@@ -9,7 +9,7 @@ export const constantParameterMustHaveConstantDefaultValue = (services: SafeDsSe
     const partialEvaluator = services.evaluation.PartialEvaluator;
 
     return (node: SdsParameter, accept: ValidationAcceptor) => {
-        if (!isConstantParameter(node) || !node.defaultValue) return;
+        if (!Parameter.isConstant(node) || !node.defaultValue) return;
 
         const evaluatedDefaultValue = partialEvaluator.evaluate(node.defaultValue);
         if (!evaluatedDefaultValue.isFullyEvaluated) {
