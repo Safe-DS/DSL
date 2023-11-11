@@ -8,6 +8,7 @@ import {
     getDocument,
     ReferenceInfo,
     Scope,
+    WorkspaceCache,
 } from 'langium';
 import {
     isSdsAbstractCall,
@@ -36,6 +37,7 @@ import {
     isSdsTypeArgument,
     isSdsWildcardImport,
     isSdsYield,
+    SdsAnnotation,
     SdsArgument,
     type SdsCallable,
     SdsDeclaration,
@@ -82,6 +84,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
+    private readonly coreDeclarationCache: WorkspaceCache<string, AstNodeDescription[]>;
+
     constructor(services: SafeDsServices) {
         super(services);
 
@@ -90,12 +94,16 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         this.nodeMapper = services.helpers.NodeMapper;
         this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.types.TypeComputer;
+
+        this.coreDeclarationCache = new WorkspaceCache(services.shared);
     }
 
     override getScope(context: ReferenceInfo): Scope {
         const node = context.container;
 
-        if (isSdsArgument(node) && context.property === 'parameter') {
+        if (isSdsAnnotationCall(node) && context.property === 'annotation') {
+            return this.getScopeForAnnotationCallAnnotation(context);
+        } else if (isSdsArgument(node) && context.property === 'parameter') {
             return this.getScopeForArgumentParameter(node);
         } else if (isSdsImportedDeclaration(node) && context.property === 'declaration') {
             return this.getScopeForImportedDeclarationDeclaration(node);
@@ -103,13 +111,13 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             if (isSdsMemberType(node.$container) && node.$containerProperty === 'member') {
                 return this.getScopeForMemberTypeMember(node.$container);
             } else {
-                return super.getScope(context);
+                return this.getScopeForNamedTypeDeclaration(context);
             }
         } else if (isSdsReference(node) && context.property === 'target') {
             if (isSdsMemberAccess(node.$container) && node.$containerProperty === 'member') {
                 return this.getScopeForMemberAccessMember(node.$container);
             } else {
-                return this.getScopeForDirectReferenceTarget(node, context);
+                return this.getScopeForReferenceTarget(node, context);
             }
         } else if (isSdsTypeArgument(node) && context.property === 'typeParameter') {
             return this.getScopeForTypeArgumentTypeParameter(node);
@@ -118,6 +126,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         } else {
             return super.getScope(context);
         }
+    }
+
+    private getScopeForAnnotationCallAnnotation(context: ReferenceInfo) {
+        return this.coreDeclarations(SdsAnnotation, super.getScope(context));
     }
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
@@ -141,7 +153,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         const declarationsInPackage = this.packageManager.getDeclarationsInPackage(containingQualifiedImport.package, {
-            nodeType: 'SdsDeclaration',
+            nodeType: SdsDeclaration,
             hideInternal: containingQualifiedImport.package !== ownPackageName,
         });
         return this.createScope(declarationsInPackage);
@@ -179,6 +191,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         } else {
             return undefined;
         }
+    }
+
+    private getScopeForNamedTypeDeclaration(context: ReferenceInfo): Scope {
+        return this.coreDeclarations(SdsNamedTypeDeclaration, super.getScope(context));
     }
 
     private getScopeForMemberAccessMember(node: SdsMemberAccess): Scope {
@@ -249,9 +265,9 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
     }
 
-    private getScopeForDirectReferenceTarget(node: SdsReference, context: ReferenceInfo): Scope {
+    private getScopeForReferenceTarget(node: SdsReference, context: ReferenceInfo): Scope {
         // Declarations in other files
-        let currentScope = this.getGlobalScope('SdsDeclaration', context);
+        let currentScope = this.getGlobalScope(SdsDeclaration, context);
 
         // Declarations in this file
         currentScope = this.globalDeclarationsInSameFile(node, currentScope);
@@ -260,7 +276,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         currentScope = this.containingDeclarations(node, currentScope);
 
         // Declarations in containing blocks
-        return this.localDeclarations(node, currentScope);
+        currentScope = this.localDeclarations(node, currentScope);
+
+        // Core declarations
+        return this.coreDeclarations(SdsDeclaration, currentScope);
     }
 
     private containingDeclarations(node: AstNode, outerScope: Scope): Scope {
@@ -464,5 +483,15 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         return result;
+    }
+
+    private coreDeclarations(referenceType: string, outerScope: Scope): Scope {
+        const descriptions = this.coreDeclarationCache.get(referenceType, () =>
+            this.packageManager.getDeclarationsInPackage('safeds.lang', {
+                nodeType: referenceType,
+                hideInternal: true,
+            }),
+        );
+        return this.createScope(descriptions, outerScope);
     }
 }
