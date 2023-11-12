@@ -227,12 +227,8 @@ export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcce
 };
 
 export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [...getTypeParameters(node.typeParameterList), ...getParameters(node)];
-    namesMustBeUnique(
-        typeParametersAndParameters,
-        (name) => `A type parameter or parameter with name '${name}' exists already.`,
-        accept,
-    );
+    const parameters = [...getParameters(node)];
+    namesMustBeUnique(parameters, (name) => `A parameter with name '${name}' exists already.`, accept);
 };
 
 export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda, accept: ValidationAcceptor): void => {

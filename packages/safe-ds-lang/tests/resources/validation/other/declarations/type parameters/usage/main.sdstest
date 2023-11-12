@@ -23,7 +23,6 @@ class MyClass<T>(p: »T«) {
 
     enum MyInnerEnum {
         // $TEST$ error "Type parameters cannot be used in nested named type declarations."
-        // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
-        MyEnumVariant<S>(p1: »T«, p2: »S«)
+        MyEnumVariant(p1: »T«)
     }
 }

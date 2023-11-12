@@ -1,10 +1,10 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
-import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
-import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { clearDocuments } from 'langium/test';
+import { afterEach, describe, expect, it } from 'vitest';
 import { isSdsNamedType, isSdsUnionType, SdsTypeArgument } from '../../../../src/language/generated/ast.js';
 import { getTypeArguments } from '../../../../src/language/helpers/nodeProperties.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
+import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
@@ -72,14 +72,12 @@ describe('SafeDsNodeMapper', () => {
 
             it('should return the type parameter at the same index if all prior type arguments are positional', async () => {
                 const code = `
-                    enum E {
-                        V<T1, T2, T3>
-                    }
+                    class C<T1, T2, T3>
 
-                    segment mySegment(p: E.V<C, C, C>) {}
+                    segment mySegment(p: C<C, C, C>) {}
                 `;
 
-                const namedType = await getNodeOfType(services, code, isSdsNamedType, 1);
+                const namedType = await getNodeOfType(services, code, isSdsNamedType, 0);
                 const parameterNames = getTypeArguments(namedType.typeArgumentList).map(typeParameterNameOrNull);
                 expect(parameterNames).toStrictEqual(['T1', 'T2', 'T3']);
             });

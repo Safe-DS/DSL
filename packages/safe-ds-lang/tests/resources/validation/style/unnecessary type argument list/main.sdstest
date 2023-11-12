@@ -4,12 +4,6 @@ class ClassWithoutTypeParameterList
 class ClassWithEmptyTypeParameterList<>
 class ClassWithTypeParameters<T>
 
-enum Enum {
-    EnumVariantWithoutTypeParameterList
-    EnumVariantWithEmptyTypeParameterList<>
-    VariantWithTypeParameters<T>
-}
-
 fun myFunction(
     // $TEST$ info "This type argument list can be removed."
     a1: ClassWithoutTypeParameterList»<>«,
@@ -23,24 +17,6 @@ fun myFunction(
     a5: ClassWithTypeParameters»<>«,
     // $TEST$ no info "This type argument list can be removed."
     a6: ClassWithTypeParameters»<Int>«,
-
-    // $TEST$ info "This type argument list can be removed."
-    b1: Enum.EnumVariantWithoutTypeParameterList»<>«,
-    // $TEST$ no info "This type argument list can be removed."
-    b2: Enum.EnumVariantWithoutTypeParameterList»<Int>«,
-    // $TEST$ info "This type argument list can be removed."
-    b3: Enum.EnumVariantWithEmptyTypeParameterList»<>«,
-    // $TEST$ no info "This type argument list can be removed."
-    b4: Enum.EnumVariantWithEmptyTypeParameterList»<Int>«,
-    // $TEST$ no info "This type argument list can be removed."
-    b5: Enum.VariantWithTypeParameters»<>«,
-    // $TEST$ no info "This type argument list can be removed."
-    b6: Enum.VariantWithTypeParameters»<Int>«,
-
-    // $TEST$ info "This type argument list can be removed."
-    c1: Enum»<>«,
-    // $TEST$ no info "This type argument list can be removed."
-    c2: Enum»<Int>«,
 
     // $TEST$ no info "This type argument list can be removed."
     d1: Unresolved»<>«,

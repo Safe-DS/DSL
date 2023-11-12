@@ -1,7 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
+import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
-import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
     isSdsAbstractResult,
     isSdsAssignment,
@@ -9,7 +8,8 @@ import {
     SdsAssignee,
 } from '../../../../src/language/generated/ast.js';
 import { getAssignees } from '../../../../src/language/helpers/nodeProperties.js';
-import { NodeFileSystem } from 'langium/node';
+import { createSafeDsServices } from '../../../../src/language/index.js';
+import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;

@@ -38,7 +38,7 @@ class »MyClass«<T>(
     // $TEST$ target enum
     enum »MyEnum« {
         // $TEST$ target variant
-        »MyEnumVariant«<T>(
+        »MyEnumVariant«(
             // $TEST$ references outerClass
             p1: »MyClass«,
 

@@ -120,13 +120,11 @@ describe('SafeDsDocumentationProvider', () => {
         {
             testName: 'documented type parameter',
             code: `
-                enum MyEnum {
-                    /**
-                     * @typeParam T
-                     *     ${testDocumentation}
-                     */
-                    MyEnumVariant<T>
-                }
+                /**
+                 * @typeParam T
+                 *     ${testDocumentation}
+                 */
+                class MyClass<T>
             `,
             predicate: isSdsTypeParameter,
             expectedDocumentation: testDocumentation,
@@ -134,13 +132,11 @@ describe('SafeDsDocumentationProvider', () => {
         {
             testName: 'documented type parameter (duplicate)',
             code: `
-                enum MyEnum {
-                    /**
-                     * @typeParam T ${testDocumentation}
-                     * @typeParam T bla
-                     */
-                    MyEnumVariant<T>
-                }
+                /**
+                 * @typeParam T ${testDocumentation}
+                 * @typeParam T bla
+                 */
+                class MyClass<T>
             `,
             predicate: isSdsTypeParameter,
             expectedDocumentation: testDocumentation,
@@ -148,13 +144,11 @@ describe('SafeDsDocumentationProvider', () => {
         {
             testName: 'undocumented type parameter',
             code: `
-                enum MyEnum {
-                    /**
-                     * @typeParam T
-                     *     ${testDocumentation}
-                     */
-                    MyEnumVariant<T2>
-                }
+                /**
+                 * @typeParam T
+                 *     ${testDocumentation}
+                 */
+                class MyClass<T2>
             `,
             predicate: isSdsTypeParameter,
             expectedDocumentation: undefined,

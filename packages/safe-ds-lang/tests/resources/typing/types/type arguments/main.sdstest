@@ -2,20 +2,11 @@ package tests.typing.types.typeArguments
 
 class MyClass<T>
 
-enum MyEnum {
-    MyEnumVariant<T>
-}
-
 fun myFunction(
     // $TEST$ serialization Int
     a: MyClass<»Int«>,
     // $TEST$ serialization Int
     b: MyClass<»T = Int«>,
-
-    // $TEST$ serialization String
-    c: MyEnum.MyEnumVariant<»T = String«>,
-    // $TEST$ serialization String
-    d: MyEnum.MyEnumVariant<»T = String«>,
 
     // $TEST$ serialization Boolean
     e: unresolved<»Boolean«>,
