@@ -5,12 +5,6 @@ class MyClassWithoutTypeParameter
 class MyClassWithOneTypeParameter<T>
 class MyClassWithTwoTypeParameters<K, V>
 
-enum MyEnum {
-    MyEnumVariantWithoutTypeParameter
-    MyEnumVariantWithOneTypeParameter<T>
-    MyEnumVariantWithTwoTypeParameters<K, V>
-}
-
 fun myFunction(
     // $TEST$ no error r"The type parameters? .* must be set here\."
     p1: MyClassWithoutTypeParameter»<>«,
@@ -32,28 +26,6 @@ fun myFunction(
     p8: MyClassWithTwoTypeParameters»<Int>«,
     // $TEST$ error "The type parameters 'K', 'V' must be set here."
     p9: MyClassWithTwoTypeParameters»<T = Int>«,
-
-
-    // $TEST$ no error r"The type parameters? .* must be set here\."
-    q1: MyEnum.MyEnumVariantWithoutTypeParameter»<>«,
-    // $TEST$ no error r"The type parameters? .* must be set here\."
-    q2: MyEnum.MyEnumVariantWithoutTypeParameter»<Int>«,
-    // $TEST$ no error r"The type parameters? .* must be set here\."
-    q3: MyEnum.MyEnumVariantWithoutTypeParameter»<T = Int>«,
-
-    // $TEST$ error "The type parameter 'T' must be set here."
-    q4: MyEnum.MyEnumVariantWithOneTypeParameter»<>«,
-    // $TEST$ no error r"The type parameters? .* must be set here\."
-    q5: MyEnum.MyEnumVariantWithOneTypeParameter»<Int>«,
-    // $TEST$ no error r"The type parameters? .* must be set here\."
-    q6: MyEnum.MyEnumVariantWithOneTypeParameter»<T = Int>«,
-
-    // $TEST$ error "The type parameters 'K', 'V' must be set here."
-    q7: MyEnum.MyEnumVariantWithTwoTypeParameters»<>«,
-    // $TEST$ error "The type parameter 'V' must be set here."
-    q8: MyEnum.MyEnumVariantWithTwoTypeParameters»<Int>«,
-    // $TEST$ error "The type parameters 'K', 'V' must be set here."
-    q9: MyEnum.MyEnumVariantWithTwoTypeParameters»<T = Int>«,
 
 
     // $TEST$ no error r"The type parameters? .* must be set here\."

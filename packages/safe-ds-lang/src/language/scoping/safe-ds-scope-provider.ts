@@ -20,7 +20,6 @@ import {
     isSdsCallable,
     isSdsClass,
     isSdsEnum,
-    isSdsEnumVariant,
     isSdsImportedDeclaration,
     isSdsLambda,
     isSdsMemberAccess,
@@ -396,9 +395,6 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         const namedTypeDeclaration = containingNamedType.declaration?.ref;
         if (isSdsClass(namedTypeDeclaration)) {
-            const typeParameters = getTypeParameters(namedTypeDeclaration.typeParameterList);
-            return this.createScopeForNodes(typeParameters);
-        } else if (isSdsEnumVariant(namedTypeDeclaration)) {
             const typeParameters = getTypeParameters(namedTypeDeclaration.typeParameterList);
             return this.createScopeForNodes(typeParameters);
         } else {

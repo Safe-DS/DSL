@@ -77,7 +77,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
             testName: 'enum variant declaration',
             code: `
                 enum E {
-                    V<T>(p: Int)
+                    V(p: Int)
                 }
             `,
             expectedSymbols: [

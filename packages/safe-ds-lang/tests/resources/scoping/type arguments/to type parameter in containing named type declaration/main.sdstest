@@ -26,19 +26,12 @@ class MyClass<»T«>(
     }
 
     enum MyEnum {
-        // $TEST$ target variant
-        MyEnumVariant<»T«>(
+        MyEnumVariant(
             // $TEST$ references outerClass
-            p1: MyClass<»T« = Int>,
-
-            // $TEST$ references variant
-            p3: MyEnumVariant<»T« = Int>,
+            p: MyClass<»T« = Int>,
         ) where {
             // $TEST$ references outerClass
             T sub MyClass<»T« = Int>,
-
-            // $TEST$ references variant
-            T sub MyEnumVariant<»T« = Int>,
         }
     }
 

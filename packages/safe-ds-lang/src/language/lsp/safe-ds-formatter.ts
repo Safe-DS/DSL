@@ -8,14 +8,14 @@ import {
     FormattingActionOptions,
     isAstNode,
 } from 'langium';
+import { last } from '../../helpers/collectionUtils.js';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
-import { last } from '../../helpers/collectionUtils.js';
-import noSpace = Formatting.noSpace;
+import indent = Formatting.indent;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
+import noSpace = Formatting.noSpace;
 import oneSpace = Formatting.oneSpace;
-import indent = Formatting.indent;
 
 const newLinesWithIndent = function (count: number, options?: FormattingActionOptions): FormattingAction {
     return {
@@ -427,7 +427,6 @@ export class SafeDsFormatter extends AbstractFormatter {
             formatter.property('name').prepend(newLine());
         }
 
-        formatter.property('typeParameterList').prepend(noSpace());
         formatter.property('parameterList').prepend(noSpace());
         formatter.property('constraintList').prepend(oneSpace());
     }

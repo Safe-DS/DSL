@@ -1,53 +1,25 @@
 package tests.scoping.namedTypes.inSameFile.toTypeParameter.inEnumVariantsInNestedEnums
 
-fun myFunction1<BeforeEnum>()
-
 // $TEST$ target container
-class MyClass<»Container«, Overridden> {
+class MyClass<»Container«> {
+    fun myFunction1<BeforeEnum>()
+
     enum MyEnum {
-        MyEnumVariant1<BeforeEnumVariant>
-
-        // $TEST$ target own
-        // $TEST$ target overridden
-        MyEnumVariant2<»Own«, »Overridden«>(
-            // $TEST$ references own
-            a: »Own«,
-
-            // $TEST$ references overridden
-            b: »Overridden«,
-
+        MyEnumVariant(
             // $TEST$ references container
-            c: »Container«,
+            a: »Container«,
 
             // $TEST$ unresolved
-            d: »BeforeEnumVariant«,
+            b: »BeforeEnum«,
 
             // $TEST$ unresolved
-            e: »AfterEnumVariant«,
+            c: »AfterEnum«,
 
             // $TEST$ unresolved
-            f: »BeforeEnum«,
-
-            // $TEST$ unresolved
-            g: »AfterEnum«,
-
-            // $TEST$ unresolved
-            h: »Unresolved«,
+            d: »Unresolved«,
         ) where {
-            // $TEST$ references own
-            Own sub »Own«,
-
-            // $TEST$ references overridden
-            Own sub »Overridden«,
-
             // $TEST$ references container
             Own sub »Container«,
-
-            // $TEST$ unresolved
-            Own sub »BeforeEnumVariant«,
-
-            // $TEST$ unresolved
-            Own sub »AfterEnumVariant«,
 
             // $TEST$ unresolved
             Own sub »BeforeEnum«,
@@ -58,9 +30,7 @@ class MyClass<»Container«, Overridden> {
             // $TEST$ unresolved
             Own sub »Unresolved«,
         }
-
-        MyEnumVariant3<AfterEnumVariant>
     }
-}
 
-fun myFunction2<AfterEnum>()
+    fun myFunction2<AfterEnum>()
+}

@@ -281,14 +281,12 @@ SdsEnumBody returns SdsEnumBody:
 ;
 
 interface SdsEnumVariant extends SdsCallable, SdsNamedTypeDeclaration {
-    typeParameterList?: SdsTypeParameterList
     constraintList?: SdsConstraintList
 }
 
 SdsEnumVariant returns SdsEnumVariant:
     annotationCalls+=SdsAnnotationCall*
     name=ID
-    typeParameterList=SdsTypeParameterList?
     parameterList=SdsParameterList?
     constraintList=SdsConstraintList?
 ;

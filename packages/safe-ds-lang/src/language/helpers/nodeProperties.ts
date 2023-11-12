@@ -11,7 +11,6 @@ import {
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
-    isSdsEnumVariant,
     isSdsFunction,
     isSdsLambda,
     isSdsModule,
@@ -277,8 +276,6 @@ export const getTypeParameters = (
     if (isSdsTypeParameterList(node)) {
         return node.typeParameters;
     } else if (isSdsClass(node)) {
-        return getTypeParameters(node.typeParameterList);
-    } else if (isSdsEnumVariant(node)) {
         return getTypeParameters(node.typeParameterList);
     } /* c8 ignore start */ else {
         return [];

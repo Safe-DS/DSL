@@ -24,12 +24,9 @@ class MyGlobalClass<T1> where {
     }
 
     enum MyNestedEnum {
-        MyEnumVariant<T2> where {
+        MyEnumVariant where {
             // $TEST$ error "The left operand must refer to a type parameter of the declaration with the constraint."
             »T1« sub MyGlobalClass,
-
-            // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
-            »T2« sub MyGlobalClass,
 
             // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
             »Unresolved« sub MyGlobalClass,
@@ -49,10 +46,7 @@ class MyGlobalClass<T1> where {
 }
 
 enum MyGlobalEnum {
-    MyEnumVariant<T1> where {
-        // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
-        »T1« sub MyGlobalClass,
-
+    MyEnumVariant where {
         // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
         »Unresolved« sub MyGlobalClass,
     }
