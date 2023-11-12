@@ -5,6 +5,7 @@ import {
     JSDocComment,
     JSDocDocumentationProvider,
     JSDocRenderOptions,
+    type JSDocTag,
     parseJSDoc,
 } from 'langium';
 import {
@@ -16,6 +17,10 @@ import {
     SdsResult,
     SdsTypeParameter,
 } from '../generated/ast.js';
+
+const PARAM_TAG = 'param';
+const RESULT_TAG = 'result';
+const TYPE_PARAM_TAG = 'typeParam';
 
 export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     override getDocumentation(node: AstNode): string | undefined {
@@ -36,6 +41,16 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
         } else {
             const comment = this.getJSDocComment(node);
             return comment?.toMarkdown(this.createJSDocRenderOptions(node));
+        }
+    }
+
+    protected override documentationTagRenderer(node: AstNode, tag: JSDocTag): string | undefined {
+        if (tag.name === PARAM_TAG || tag.name === RESULT_TAG || tag.name === TYPE_PARAM_TAG) {
+            const contentMd = tag.content.toMarkdown();
+            const [paramName, description] = contentMd.split(/\s(.*)/su);
+            return `**@${tag.name}** *${paramName}* — ${(description ?? '').trim()}`;
+        } else {
+            return super.documentationTagRenderer(node, tag);
         }
     }
 
@@ -70,11 +85,11 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
 
     private getTagName(node: SdsParameter | SdsResult | SdsTypeParameter): string {
         if (isSdsParameter(node)) {
-            return 'param';
+            return PARAM_TAG;
         } else if (isSdsResult(node)) {
-            return 'result';
+            return RESULT_TAG;
         } else {
-            return 'typeParam';
+            return TYPE_PARAM_TAG;
         }
     }
 
@@ -82,6 +97,10 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
         return {
             renderLink: (link, display) => {
                 return this.documentationLinkRenderer(node, link, display);
+            },
+            tag: 'bold',
+            renderTag: (tag: JSDocTag) => {
+                return this.documentationTagRenderer(node, tag);
             },
         };
     }

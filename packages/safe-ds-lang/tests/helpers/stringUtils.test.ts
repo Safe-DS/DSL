@@ -1,5 +1,32 @@
 import { describe, expect, it } from 'vitest';
-import { pluralize } from '../../src/helpers/stringUtils.js';
+import { normalizeLineBreaks, pluralize } from '../../src/helpers/stringUtils.js';
+
+describe('normalizeLineBreaks', () => {
+    it.each([
+        {
+            text: undefined,
+            expected: '',
+        },
+        {
+            text: '',
+            expected: '',
+        },
+        {
+            text: 'foo\nbar',
+            expected: 'foo\nbar',
+        },
+        {
+            text: 'foo\rbar',
+            expected: 'foo\nbar',
+        },
+        {
+            text: 'foo\r\nbar',
+            expected: 'foo\nbar',
+        },
+    ])(`should normalize line breaks (%#)`, ({ text, expected }) => {
+        expect(normalizeLineBreaks(text)).toBe(expected);
+    });
+});
 
 describe('pluralize', () => {
     it.each([
