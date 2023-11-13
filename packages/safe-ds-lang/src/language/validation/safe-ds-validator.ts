@@ -168,6 +168,7 @@ import {
     resultMustHaveTypeHint,
     yieldTypeMustMatchResultType,
 } from './types.js';
+import { impurityReasonParameterNameMustBelongToParameter } from './builtins/impure.js';
 
 /**
  * Register custom validation checks.
@@ -249,6 +250,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
             functionPurityMustBeSpecified(services),
+            impurityReasonParameterNameMustBelongToParameter(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
         ],
