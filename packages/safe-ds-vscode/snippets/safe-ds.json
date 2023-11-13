@@ -34,15 +34,25 @@
         "body": ["enum ${1:MyEnum} {", "    $0", "}"],
         "description": "An enumeration."
     },
-    "Minimal Function": {
-        "prefix": ["minimal-function", "minimal-method"],
-        "body": ["fun ${1:myFunction}($0)"],
-        "description": "A minimal function."
+    "Minimal Pure Function": {
+        "prefix": ["minimal-pure-function"],
+        "body": ["@Pure", "fun ${1:myFunction}($0)"],
+        "description": "A minimal pure function."
     },
     "Function": {
-        "prefix": ["function", "method"],
-        "body": ["${1|static |}fun ${2:myFunction}${3:<$4>}($5) ${6:-> ($7)} ${8:where {$0\\}}"],
+        "prefix": ["function"],
+        "body": ["${1|@Pure,@Impure([])|}", "fun ${2:myFunction}${3:<$4>}($5) ${6:-> ($7)} ${8:where {$0\\}}"],
         "description": "A function."
+    },
+    "Minimal Pure Method": {
+        "prefix": ["minimal-pure-method"],
+        "body": ["@Pure", "${1|static |}fun ${2:myMethod}($0)"],
+        "description": "A minimal pure method."
+    },
+    "Method": {
+        "prefix": ["method"],
+        "body": ["${1|@Pure,@Impure([])|}", "${2|static |}fun ${3:myMethod}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"],
+        "description": "A method."
     },
     "Schema": {
         "prefix": ["schema"],
