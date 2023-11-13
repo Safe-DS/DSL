@@ -1,9 +1,9 @@
 package tests.generator.assignment
 
-fun f1(param: Any?)
-fun f2(param: () -> r: Int?)
+@Pure fun f1(param: Any?)
+@Pure fun f2(param: () -> r: Int?)
 
-fun g() -> (a: Int, b: Int, c: Int)
+@Pure fun g() -> (a: Int, b: Int, c: Int)
 
 pipeline testPipeline {
     _, _ ,_ = g();

@@ -1,7 +1,8 @@
 package tests.generator.reference
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
+@Pure
 @PythonName("explain_model")
 fun explainModel() -> result: Int
 

@@ -1,6 +1,6 @@
 package tests.generator.twoSegments
 
-fun f()
+@Pure fun f()
 
 segment test1(a: Int, b: Int = 0) {
     f();

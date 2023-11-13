@@ -1,6 +1,6 @@
 package tests.generator.pipelineWithPythonName
 
-fun f()
+@Pure fun f()
 
 @PythonName("test_pipeline")
 pipeline testPipeline {

@@ -23,7 +23,7 @@
             "match": "\\b(const|in|internal|out|private|static)\\b"
         },
         {
-            "name": "keyword.operator.safe-ds",
+            "name": "keyword.operator.expression.safe-ds",
             "match": "\\b(and|not|or|sub|super)\\b"
         },
         {

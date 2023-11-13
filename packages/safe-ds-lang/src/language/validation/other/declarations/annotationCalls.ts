@@ -53,6 +53,7 @@ export const annotationCallMustNotLackArgumentList = (node: SdsAnnotationCall, a
             `The annotation '${node.annotation?.$refText}' has required parameters, so an argument list must be added.`,
             {
                 node,
+                property: 'annotation',
                 code: CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST,
             },
         );

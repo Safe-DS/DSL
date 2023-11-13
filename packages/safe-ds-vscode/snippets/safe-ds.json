@@ -51,7 +51,7 @@
     },
     "Pipeline": {
         "prefix": ["pipeline"],
-        "body": ["pipeline ${1:MyPipeline} {", "    $0", "}"],
+        "body": ["pipeline ${1:myPipeline} {", "    $0", "}"],
         "description": "A pipeline."
     },
     "Segment": {

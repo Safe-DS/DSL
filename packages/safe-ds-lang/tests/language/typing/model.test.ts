@@ -18,6 +18,7 @@ import {
     UnknownType,
 } from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const code = `
@@ -48,79 +49,81 @@ const enumVariant2 = await getNodeOfType(services, code, isSdsEnumVariant, 1);
 describe('type model', async () => {
     const equalsTests: EqualsTest<Type>[] = [
         {
-            type: () =>
+            value: () =>
                 new CallableType(
                     callable1,
                     new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                     new NamedTupleType(),
                 ),
-            unequalTypeOfSameType: () => new CallableType(callable2, new NamedTupleType(), new NamedTupleType()),
-            typeOfOtherType: () => UnknownType,
+            unequalValueOfSameType: () => new CallableType(callable2, new NamedTupleType(), new NamedTupleType()),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new LiteralType(new BooleanConstant(true)),
-            unequalTypeOfSameType: () => new LiteralType(new IntConstant(1n)),
-            typeOfOtherType: () => UnknownType,
+            value: () => new LiteralType(new BooleanConstant(true)),
+            unequalValueOfSameType: () => new LiteralType(new IntConstant(1n)),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-            unequalTypeOfSameType: () => new NamedTupleType(),
-            typeOfOtherType: () => UnknownType,
+            value: () => new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+            unequalValueOfSameType: () => new NamedTupleType(),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new ClassType(class1, true),
-            unequalTypeOfSameType: () => new ClassType(class2, true),
-            typeOfOtherType: () => UnknownType,
+            value: () => new ClassType(class1, true),
+            unequalValueOfSameType: () => new ClassType(class2, true),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new EnumType(enum1, true),
-            unequalTypeOfSameType: () => new EnumType(enum2, true),
-            typeOfOtherType: () => UnknownType,
+            value: () => new EnumType(enum1, true),
+            unequalValueOfSameType: () => new EnumType(enum2, true),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new EnumVariantType(enumVariant1, true),
-            unequalTypeOfSameType: () => new EnumVariantType(enumVariant2, true),
-            typeOfOtherType: () => UnknownType,
+            value: () => new EnumVariantType(enumVariant1, true),
+            unequalValueOfSameType: () => new EnumVariantType(enumVariant2, true),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new StaticType(new ClassType(class1, false)),
-            unequalTypeOfSameType: () => new StaticType(new ClassType(class2, false)),
-            typeOfOtherType: () => UnknownType,
+            value: () => new StaticType(new ClassType(class1, false)),
+            unequalValueOfSameType: () => new StaticType(new ClassType(class2, false)),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => new UnionType(UnknownType),
-            unequalTypeOfSameType: () => new UnionType(),
-            typeOfOtherType: () => UnknownType,
+            value: () => new UnionType(UnknownType),
+            unequalValueOfSameType: () => new UnionType(),
+            valueOfOtherType: () => UnknownType,
         },
         {
-            type: () => UnknownType,
-            typeOfOtherType: () => new UnionType(),
+            value: () => UnknownType,
+            valueOfOtherType: () => new UnionType(),
         },
     ];
-    describe.each(equalsTests)('equals', ({ type, unequalTypeOfSameType, typeOfOtherType }) => {
-        it(`should return true if both types are the same instance (${type().constructor.name})`, () => {
-            const typeInstance = type();
+    describe.each(equalsTests)('equals', ({ value, unequalValueOfSameType, valueOfOtherType }) => {
+        it(`should return true if both types are the same instance (${value().constructor.name})`, () => {
+            const typeInstance = value();
             expect(typeInstance.equals(typeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other type is an instance of another class (${type().constructor.name})`, () => {
-            expect(type().equals(typeOfOtherType())).toBeFalsy();
+        it(`should return false if the other type is an instance of another class (${
+            value().constructor.name
+        })`, () => {
+            expect(value().equals(valueOfOtherType())).toBeFalsy();
         });
 
-        it(`should return true if both types have the same values (${type().constructor.name})`, () => {
-            expect(type().equals(type())).toBeTruthy();
+        it(`should return true if both types have the same values (${value().constructor.name})`, () => {
+            expect(value().equals(value())).toBeTruthy();
         });
 
-        if (unequalTypeOfSameType) {
-            it(`should return false if both types have different values (${type().constructor.name})`, () => {
-                expect(type().equals(unequalTypeOfSameType())).toBeFalsy();
+        if (unequalValueOfSameType) {
+            it(`should return false if both types have different values (${value().constructor.name})`, () => {
+                expect(value().equals(unequalValueOfSameType())).toBeFalsy();
             });
         }
     });
 
     const toStringTests: ToStringTest<Type>[] = [
         {
-            type: new CallableType(
+            value: new CallableType(
                 callable1,
                 new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(),
@@ -128,7 +131,7 @@ describe('type model', async () => {
             expectedString: '(p1: ?) -> ()',
         },
         {
-            type: new CallableType(
+            value: new CallableType(
                 callable1,
                 new NamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
                 new NamedTupleType(),
@@ -136,41 +139,41 @@ describe('type model', async () => {
             expectedString: '(p2?: ?) -> ()',
         },
         {
-            type: new LiteralType(new BooleanConstant(true)),
+            value: new LiteralType(new BooleanConstant(true)),
             expectedString: 'literal<true>',
         },
         {
-            type: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+            value: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
             expectedString: '(p1: ?)',
         },
         {
-            type: new ClassType(class1, true),
+            value: new ClassType(class1, true),
             expectedString: 'C1?',
         },
         {
-            type: new EnumType(enum1, true),
+            value: new EnumType(enum1, true),
             expectedString: 'MyEnum1?',
         },
         {
-            type: new EnumVariantType(enumVariant1, true),
+            value: new EnumVariantType(enumVariant1, true),
             expectedString: 'MyEnumVariant1?',
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            value: new StaticType(new ClassType(class1, false)),
             expectedString: '$type<C1>',
         },
         {
-            type: new UnionType(UnknownType),
+            value: new UnionType(UnknownType),
             expectedString: 'union<?>',
         },
         {
-            type: UnknownType,
+            value: UnknownType,
             expectedString: '?',
         },
     ];
-    describe.each(toStringTests)('toString', ({ type, expectedString }) => {
-        it(`should return the expected string representation (${type.constructor.name} -- ${type})`, () => {
-            expect(type.toString()).toStrictEqual(expectedString);
+    describe.each(toStringTests)('toString', ({ value, expectedString }) => {
+        it(`should return the expected string representation (${value.constructor.name} -- ${value})`, () => {
+            expect(value.toString()).toStrictEqual(expectedString);
         });
     });
 
@@ -421,42 +424,6 @@ describe('type model', async () => {
         });
     });
 });
-
-/**
- * Tests for {@link Type.equals}.
- */
-interface EqualsTest<T extends Type> {
-    /**
-     * Produces the first type to compare, which must not be equal to {@link unequalTypeOfSameType}.
-     */
-    type: () => T;
-
-    /**
-     * Produces the second type to compare, which must not be equal to {@link type}. If the type is a singleton, leave
-     * this field undefined.
-     */
-    unequalTypeOfSameType?: () => T;
-
-    /**
-     * Produces a type of a different type.
-     */
-    typeOfOtherType: () => Type;
-}
-
-/**
- * Tests for {@link Type.toString}.
- */
-interface ToStringTest<T extends Type> {
-    /**
-     * The type to convert to a string.
-     */
-    type: T;
-
-    /**
-     * The expected string representation of the type.
-     */
-    expectedString: string;
-}
 
 /**
  * Tests for {@link Type.unwrap}.

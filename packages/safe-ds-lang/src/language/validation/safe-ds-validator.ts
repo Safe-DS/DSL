@@ -132,6 +132,7 @@ import {
     unionTypeMustHaveTypes,
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
+import { functionPurityMustBeSpecified } from './purity.js';
 import {
     annotationCallArgumentListShouldBeNeeded,
     annotationParameterListShouldNotBeEmpty,
@@ -247,6 +248,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsFunction: [
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
+            functionPurityMustBeSpecified(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
         ],
