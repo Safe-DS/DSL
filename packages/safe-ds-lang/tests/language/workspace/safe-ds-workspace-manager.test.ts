@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { getLinkingErrors } from '../../helpers/diagnostics.js';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments } from 'langium/test';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createSafeDsServices } from '../../../src/language/index.js';
+import { getLinkingErrors } from '../../helpers/diagnostics.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
