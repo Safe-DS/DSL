@@ -1,10 +1,10 @@
 package tests.generator.prefixOperation
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
-fun g() -> result: Boolean
+@Pure fun g() -> result: Boolean
 
-fun h() -> result: Int
+@Pure fun h() -> result: Int
 
 pipeline test {
     f(not g());

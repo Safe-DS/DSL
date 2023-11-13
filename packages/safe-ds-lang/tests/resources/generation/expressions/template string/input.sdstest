@@ -1,8 +1,8 @@
 package tests.generator.templateString
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
-fun g() -> result: Int
+@Pure fun g() -> result: Int
 
 pipeline test {
     f("start

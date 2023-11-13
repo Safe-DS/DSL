@@ -8,6 +8,7 @@ class Any {
     /**
      * Returns a string representation of the object.
      */
+    @Pure
     @PythonCall("str($this)")
     fun toString() -> s: String
 }

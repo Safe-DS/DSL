@@ -1,9 +1,9 @@
 package tests.generator.blockLambda
 
-fun f1(param: (a: Int, b: Int) -> r: Int)
-fun f2(param: () -> ())
+@Pure fun f1(param: (a: Int, b: Int) -> r: Int)
+@Pure fun f2(param: () -> ())
 
-fun g() -> a: Int
+@Pure fun g() -> a: Int
 
 pipeline test {
     f1((a: Int, b: Int = 2) {

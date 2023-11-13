@@ -1,6 +1,6 @@
 package tests.generator.imports
 
-fun impureFunction() -> result: Int
+@Pure fun impureFunction() -> result: Int
 
 segment segment1InSamePackage() -> result: Int {
     yield result = impureFunction();

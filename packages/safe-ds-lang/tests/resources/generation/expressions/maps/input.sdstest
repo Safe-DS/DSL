@@ -1,12 +1,12 @@
 package tests.generator.maps
 
-fun g1(param: Map<String, Float>)
+@Pure fun g1(param: Map<String, Float>)
 
-fun g2(param: Map<Float, String>)
+@Pure fun g2(param: Map<Float, String>)
 
-fun h1() -> result: Float
+@Pure fun h1() -> result: Float
 
-fun h2() -> result: String
+@Pure fun h2() -> result: String
 
 pipeline test {
     g1({});

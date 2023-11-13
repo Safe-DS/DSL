@@ -1,8 +1,8 @@
 package tests.generator.expressionStatement
 
-fun f(param: () -> ())
+@Pure fun f(param: () -> ())
 
-fun g() -> result: Int
+@Pure fun g() -> result: Int
 
 pipeline testPipeline {
     g();
