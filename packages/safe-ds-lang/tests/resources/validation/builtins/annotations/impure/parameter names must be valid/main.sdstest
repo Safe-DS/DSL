@@ -1,0 +1,30 @@
+package tests.validation.builtins.annotations.impure.parameterNamesMustBeValid
+
+@Impure([
+    // $TEST$ no error r"The parameter '.*' does not exist\."
+    ImpurityReason.FileReadFromConstantPath(»"text.txt"«),
+    // $TEST$ no error "The parameter 'p' does not exist."
+    ImpurityReason.FileReadFromParameterizedPath(»"p"«),
+    // $TEST$ error "The parameter 'q' does not exist."
+    ImpurityReason.FileReadFromParameterizedPath(»"q"«),
+    // $TEST$ no error r"The parameter '.*' does not exist\."
+    ImpurityReason.FileWriteToConstantPath(»"text.txt"«),
+    // $TEST$ no error "The parameter 'p' does not exist."
+    ImpurityReason.FileWriteToParameterizedPath(»"p"«),
+    // $TEST$ error "The parameter 'q' does not exist."
+    ImpurityReason.FileWriteToParameterizedPath(»"q"«),
+    // $TEST$ no error "The parameter 'p' does not exist."
+    ImpurityReason.PotentiallyImpureParameterCall(»"p"«),
+    // $TEST$ error "The parameter 'q' does not exist."
+    ImpurityReason.PotentiallyImpureParameterCall(»"q"«),
+
+    // $TEST$ no error r"The parameter '.*' does not exist\."
+    ImpurityReason.PotentiallyImpureParameterCall(»1«),
+    // $TEST$ no error "The parameter 'q' does not exist."
+    AnotherEnum.SomeVariant(»"q"«)
+])
+fun f(p: Int)
+
+enum AnotherEnum {
+    SomeVariant(parameterName: String)
+}
