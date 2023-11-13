@@ -51,7 +51,10 @@
     },
     "Method": {
         "prefix": ["method"],
-        "body": ["${1|@Pure,@Impure([])|}", "${2|static |}fun ${3:myMethod}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"],
+        "body": [
+            "${1|@Pure,@Impure([])|}",
+            "${2|static |}fun ${3:myMethod}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"
+        ],
         "description": "A method."
     },
     "Schema": {
