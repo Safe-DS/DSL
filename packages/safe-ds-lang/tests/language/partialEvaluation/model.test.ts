@@ -30,6 +30,7 @@ import {
     UnknownEvaluatedNode,
 } from '../../../src/language/partialEvaluation/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const code = `
@@ -69,190 +70,193 @@ const segment2 = await getNodeOfType(services, code, isSdsSegment, 1);
 describe('partial evaluation model', async () => {
     const equalsTests: EqualsTest<EvaluatedNode>[] = [
         {
-            node: () => new BooleanConstant(true),
-            unequalNodeOfSameType: () => new BooleanConstant(false),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new BooleanConstant(true),
+            unequalValueOfSameType: () => new BooleanConstant(false),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new FloatConstant(1.0),
-            unequalNodeOfSameType: () => new FloatConstant(2.0),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new FloatConstant(1.0),
+            unequalValueOfSameType: () => new FloatConstant(2.0),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new IntConstant(1n),
-            unequalNodeOfSameType: () => new IntConstant(2n),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new IntConstant(1n),
+            unequalValueOfSameType: () => new IntConstant(2n),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => NullConstant,
-            nodeOfOtherType: () => new StringConstant('foo'),
+            value: () => NullConstant,
+            valueOfOtherType: () => new StringConstant('foo'),
         },
         {
-            node: () => new StringConstant('foo'),
-            unequalNodeOfSameType: () => new StringConstant('bar'),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new StringConstant('foo'),
+            unequalValueOfSameType: () => new StringConstant('bar'),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new BlockLambdaClosure(blockLambda1, new Map([[enumVariantParameter, NullConstant]])),
-            unequalNodeOfSameType: () => new BlockLambdaClosure(blockLambda1, new Map()),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new BlockLambdaClosure(blockLambda1, new Map([[enumVariantParameter, NullConstant]])),
+            unequalValueOfSameType: () => new BlockLambdaClosure(blockLambda1, new Map()),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new ExpressionLambdaClosure(expressionLambda1, new Map([[enumVariantParameter, NullConstant]])),
-            unequalNodeOfSameType: () => new ExpressionLambdaClosure(expressionLambda2, new Map()),
-            nodeOfOtherType: () => NullConstant,
+            value: () =>
+                new ExpressionLambdaClosure(expressionLambda1, new Map([[enumVariantParameter, NullConstant]])),
+            unequalValueOfSameType: () => new ExpressionLambdaClosure(expressionLambda2, new Map()),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new NamedCallable(segment1),
-            unequalNodeOfSameType: () => new NamedCallable(segment2),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new NamedCallable(segment1),
+            unequalValueOfSameType: () => new NamedCallable(segment2),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () =>
+            value: () =>
                 new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
-            unequalNodeOfSameType: () => new EvaluatedEnumVariant(enumVariantWithoutParameters, new Map()),
-            nodeOfOtherType: () => NullConstant,
+            unequalValueOfSameType: () => new EvaluatedEnumVariant(enumVariantWithoutParameters, new Map()),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedList([new IntConstant(1n)]),
-            unequalNodeOfSameType: () => new EvaluatedList([new IntConstant(2n)]),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new EvaluatedList([new IntConstant(1n)]),
+            unequalValueOfSameType: () => new EvaluatedList([new IntConstant(2n)]),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
-            unequalNodeOfSameType: () => new EvaluatedMap([new EvaluatedMapEntry(NullConstant, new IntConstant(1n))]),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+            unequalValueOfSameType: () => new EvaluatedMap([new EvaluatedMapEntry(NullConstant, new IntConstant(1n))]),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedMapEntry(NullConstant, NullConstant),
-            unequalNodeOfSameType: () => new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new EvaluatedMapEntry(NullConstant, NullConstant),
+            unequalValueOfSameType: () => new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
-            unequalNodeOfSameType: () => new EvaluatedNamedTuple(new Map()),
-            nodeOfOtherType: () => NullConstant,
+            value: () => new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+            unequalValueOfSameType: () => new EvaluatedNamedTuple(new Map()),
+            valueOfOtherType: () => NullConstant,
         },
         {
-            node: () => UnknownEvaluatedNode,
-            nodeOfOtherType: () => NullConstant,
+            value: () => UnknownEvaluatedNode,
+            valueOfOtherType: () => NullConstant,
         },
     ];
 
-    describe.each(equalsTests)('equals', ({ node, unequalNodeOfSameType, nodeOfOtherType }) => {
-        it(`should return true if both nodes are the same instance (${node().constructor.name})`, () => {
-            const nodeInstance = node();
+    describe.each(equalsTests)('equals', ({ value, unequalValueOfSameType, valueOfOtherType }) => {
+        it(`should return true if both nodes are the same instance (${value().constructor.name})`, () => {
+            const nodeInstance = value();
             expect(nodeInstance.equals(nodeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other node is an instance of another class (${node().constructor.name})`, () => {
-            expect(node().equals(nodeOfOtherType())).toBeFalsy();
+        it(`should return false if the other node is an instance of another class (${
+            value().constructor.name
+        })`, () => {
+            expect(value().equals(valueOfOtherType())).toBeFalsy();
         });
 
-        it(`should return true if both nodes have the same values (${node().constructor.name})`, () => {
-            expect(node().equals(node())).toBeTruthy();
+        it(`should return true if both nodes have the same values (${value().constructor.name})`, () => {
+            expect(value().equals(value())).toBeTruthy();
         });
 
-        if (unequalNodeOfSameType) {
-            it(`should return false if both nodes have different values (${node().constructor.name})`, () => {
-                expect(node().equals(unequalNodeOfSameType())).toBeFalsy();
+        if (unequalValueOfSameType) {
+            it(`should return false if both nodes have different values (${value().constructor.name})`, () => {
+                expect(value().equals(unequalValueOfSameType())).toBeFalsy();
             });
         }
     });
 
     const toStringTests: ToStringTest<EvaluatedNode>[] = [
         {
-            node: new BooleanConstant(true),
+            value: new BooleanConstant(true),
             expectedString: 'true',
         },
         {
-            node: new FloatConstant(1.5),
+            value: new FloatConstant(1.5),
             expectedString: '1.5',
         },
         {
-            node: new IntConstant(1n),
+            value: new IntConstant(1n),
             expectedString: '1',
         },
         {
-            node: NullConstant,
+            value: NullConstant,
             expectedString: 'null',
         },
         {
-            node: new StringConstant('foo'),
+            value: new StringConstant('foo'),
             expectedString: '"foo"',
         },
         {
-            node: new BlockLambdaClosure(blockLambda1, new Map()),
+            value: new BlockLambdaClosure(blockLambda1, new Map()),
             expectedString: '$BlockLambdaClosure',
         },
         {
-            node: new ExpressionLambdaClosure(expressionLambda1, new Map()),
+            value: new ExpressionLambdaClosure(expressionLambda1, new Map()),
             expectedString: '$ExpressionLambdaClosure',
         },
         {
-            node: new NamedCallable(segment1),
+            value: new NamedCallable(segment1),
             expectedString: 'mySegment',
         },
         {
-            node: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
+            value: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
             expectedString: 'MyEnumVariant1',
         },
         {
-            node: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
+            value: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
             expectedString: 'MyEnumVariant2',
         },
         {
-            node: new EvaluatedEnumVariant(
+            value: new EvaluatedEnumVariant(
                 enumVariantWithParameters,
                 new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
             ),
             expectedString: 'MyEnumVariant2(?)',
         },
         {
-            node: new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
+            value: new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
             expectedString: 'MyEnumVariant2(null)',
         },
         {
-            node: new EvaluatedList([]),
+            value: new EvaluatedList([]),
             expectedString: '[]',
         },
         {
-            node: new EvaluatedList([NullConstant]),
+            value: new EvaluatedList([NullConstant]),
             expectedString: '[null]',
         },
         {
-            node: new EvaluatedMap([]),
+            value: new EvaluatedMap([]),
             expectedString: '{}',
         },
         {
-            node: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+            value: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
             expectedString: '{null: null}',
         },
         {
-            node: new EvaluatedMapEntry(NullConstant, NullConstant),
+            value: new EvaluatedMapEntry(NullConstant, NullConstant),
             expectedString: 'null: null',
         },
         {
-            node: new EvaluatedNamedTuple(new Map()),
+            value: new EvaluatedNamedTuple(new Map()),
             expectedString: '()',
         },
         {
-            node: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+            value: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
             expectedString: '(result1 = null)',
         },
         {
-            node: new EvaluatedNamedTuple(new Map([[result1, UnknownEvaluatedNode]])),
+            value: new EvaluatedNamedTuple(new Map([[result1, UnknownEvaluatedNode]])),
             expectedString: '(result1 = ?)',
         },
         {
-            node: UnknownEvaluatedNode,
+            value: UnknownEvaluatedNode,
             expectedString: '?',
         },
     ];
 
-    describe.each(toStringTests)('toString', ({ node, expectedString }) => {
-        it(`should return the expected string representation (${node.constructor.name} -- ${node})`, () => {
-            expect(node.toString()).toStrictEqual(expectedString);
+    describe.each(toStringTests)('toString', ({ value, expectedString }) => {
+        it(`should return the expected string representation (${value.constructor.name} -- ${value})`, () => {
+            expect(value.toString()).toStrictEqual(expectedString);
         });
     });
 
@@ -364,16 +368,16 @@ describe('partial evaluation model', async () => {
     });
 
     const toInterpolationStringTests: ToStringTest<Constant>[] = [
-        { node: new BooleanConstant(true), expectedString: 'true' },
-        { node: new FloatConstant(1.5), expectedString: '1.5' },
-        { node: new IntConstant(1n), expectedString: '1' },
-        { node: NullConstant, expectedString: 'null' },
-        { node: new StringConstant('foo'), expectedString: 'foo' },
+        { value: new BooleanConstant(true), expectedString: 'true' },
+        { value: new FloatConstant(1.5), expectedString: '1.5' },
+        { value: new IntConstant(1n), expectedString: '1' },
+        { value: NullConstant, expectedString: 'null' },
+        { value: new StringConstant('foo'), expectedString: 'foo' },
     ];
 
-    describe.each(toInterpolationStringTests)('toInterpolationString', ({ node, expectedString }) => {
-        it(`should return the expected string representation (${node.constructor.name} -- ${node})`, () => {
-            expect(node.toInterpolationString()).toStrictEqual(expectedString);
+    describe.each(toInterpolationStringTests)('toInterpolationString', ({ value, expectedString }) => {
+        it(`should return the expected string representation (${value.constructor.name} -- ${value})`, () => {
+            expect(value.toInterpolationString()).toStrictEqual(expectedString);
         });
     });
 
@@ -498,40 +502,4 @@ interface IsFullyEvaluatedTest {
      * Whether the node is fully evaluated.
      */
     expectedValue: boolean;
-}
-
-/**
- * Tests for {@link EvaluatedNode.equals}.
- */
-interface EqualsTest<T extends EvaluatedNode> {
-    /**
-     * Produces the first node to compare, which must not be equal to {@link unequalNodeOfSameType}.
-     */
-    node: () => T;
-
-    /**
-     * Produces the second node to compare, which must not be equal to {@link node}. If the type is a singleton, leave
-     * this field undefined.
-     */
-    unequalNodeOfSameType?: () => T;
-
-    /**
-     * Produces a node of a different type.
-     */
-    nodeOfOtherType: () => EvaluatedNode;
-}
-
-/**
- * Tests for {@link EvaluatedNode.toString} and {@link Constant.toInterpolationString}.
- */
-interface ToStringTest<T extends EvaluatedNode> {
-    /**
-     * The node to convert to a string.
-     */
-    node: T;
-
-    /**
-     * The expected string representation of the node.
-     */
-    expectedString: string;
 }
