@@ -10,13 +10,7 @@ import {
     SdsModule,
     SdsParameter,
 } from '../generated/ast.js';
-import {
-    findFirstAnnotationCallOf,
-    getArguments,
-    getEnumVariants,
-    getParameters,
-    hasAnnotationCallOf,
-} from '../helpers/nodeProperties.js';
+import { findFirstAnnotationCallOf, getEnumVariants, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     EvaluatedEnumVariant,
@@ -197,16 +191,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
             return UnknownEvaluatedNode;
         }
 
-        // Parameter is set explicitly
-        const argument = getArguments(annotationCall).find(
-            (it) => this.nodeMapper.argumentToParameter(it)?.name === parameterName,
-        );
-        if (argument) {
-            return this.partialEvaluator.evaluate(argument.value);
-        }
-
-        // Parameter is not set explicitly, so we use the default value
-        const parameter = getParameters(annotation).find((it) => it.name === parameterName);
-        return this.partialEvaluator.evaluate(parameter?.defaultValue);
+        const parameterValue = this.nodeMapper.callToParameterValue(annotationCall, parameterName);
+        return this.partialEvaluator.evaluate(parameterValue);
     }
 }
