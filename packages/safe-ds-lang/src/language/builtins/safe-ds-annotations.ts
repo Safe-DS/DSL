@@ -18,7 +18,13 @@ import {
     hasAnnotationCallOf,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { EvaluatedEnumVariant, EvaluatedList, EvaluatedNode, StringConstant } from '../partialEvaluation/model.js';
+import {
+    EvaluatedEnumVariant,
+    EvaluatedList,
+    EvaluatedNode,
+    StringConstant,
+    UnknownEvaluatedNode,
+} from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsEnums } from './safe-ds-enums.js';
@@ -82,6 +88,27 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     private get Pure(): SdsAnnotation | undefined {
         return this.getAnnotation(PURITY_URI, 'Pure');
+    }
+
+    streamImpurityReasons(node: SdsFunction | undefined): Stream<SdsEnumVariant> {
+        // If allReasons are specified, but we could not evaluate them to a list, no reasons apply
+        const value = this.getArgumentValue(node, this.Impure, 'allReasons');
+        if (!(value instanceof EvaluatedList)) {
+            return EMPTY_STREAM;
+        }
+
+        // Otherwise, filter the elements of the list and keep only variants of the ImpurityReason enum
+        return stream(value.elements)
+            .filter(
+                (it) =>
+                    it instanceof EvaluatedEnumVariant &&
+                    getContainerOfType(it.variant, isSdsEnum) === this.builtinEnums.ImpurityReason,
+            )
+            .map((it) => (<EvaluatedEnumVariant>it).variant);
+    }
+
+    private get Impure(): SdsAnnotation | undefined {
+        return this.getAnnotation(PURITY_URI, 'Impure');
     }
 
     get PythonCall(): SdsAnnotation | undefined {
@@ -162,6 +189,9 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         parameterName: string,
     ): EvaluatedNode {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
+        if (!annotationCall) {
+            return UnknownEvaluatedNode;
+        }
 
         // Parameter is set explicitly
         const argument = getArguments(annotationCall).find(
