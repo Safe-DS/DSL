@@ -9,6 +9,7 @@ import {
     isSdsClass,
     isSdsEnumVariant,
     isSdsNamedType,
+    isSdsParameter,
     isSdsReference,
     isSdsSegment,
     isSdsType,
@@ -48,7 +49,7 @@ export class SafeDsNodeMapper {
     }
 
     /**
-     * Returns the parameter that the argument is assigned to. If there is no matching parameter, returns undefined.
+     * Returns the parameter that the argument is assigned to. If there is no matching parameter, returns `undefined`.
      */
     argumentToParameter(node: SdsArgument | undefined): SdsParameter | undefined {
         if (!node) {
@@ -126,7 +127,7 @@ export class SafeDsNodeMapper {
     }
 
     /**
-     * Returns the callable that is called by the given call. If no callable can be found, returns undefined.
+     * Returns the callable that is called by the given call. If no callable can be found, returns `undefined`.
      */
     callToCallable(node: SdsAbstractCall | undefined): SdsCallable | undefined {
         if (!node) {
@@ -148,6 +149,46 @@ export class SafeDsNodeMapper {
         }
 
         return undefined;
+    }
+
+    /**
+     * Returns the value that is assigned to the given parameter in the given call. This can be either the argument
+     * value, or the parameter's default value if no argument is provided. If no value can be found, returns
+     * `undefined`.
+     *
+     * @param call The call whose parameter value to return.
+     * @param parameter The parameter whose value to return. Can be either a parameter itself or its name.
+     */
+    callToParameterValue(
+        call: SdsAbstractCall | undefined,
+        parameter: SdsParameter | string | undefined,
+    ): SdsExpression | undefined {
+        if (!call || !parameter) {
+            return undefined;
+        }
+
+        // Parameter is set explicitly
+        const argument = getArguments(call).find((it) => {
+            if (isSdsParameter(parameter)) {
+                return this.argumentToParameter(it) === parameter;
+            } else {
+                return this.argumentToParameter(it)?.name === parameter;
+            }
+        });
+        if (argument) {
+            return argument.value;
+        }
+
+        // Parameter is not set but might have a default value
+        // We must ensure the parameter belongs to the called callable, so we cannot directly get the defaultValue
+        const callable = this.callToCallable(call);
+        return getParameters(callable).find((it) => {
+            if (isSdsParameter(parameter)) {
+                return it === parameter;
+            } else {
+                return it.name === parameter;
+            }
+        })?.defaultValue;
     }
 
     /**
@@ -210,7 +251,7 @@ export class SafeDsNodeMapper {
 
     /**
      * Returns the type parameter that the type argument is assigned to. If there is no matching type parameter, returns
-     * undefined.
+     * `undefined`.
      */
     typeArgumentToTypeParameter(node: SdsTypeArgument | undefined): SdsTypeParameter | undefined {
         if (!node) {

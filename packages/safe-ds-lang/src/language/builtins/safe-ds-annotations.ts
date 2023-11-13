@@ -10,13 +10,7 @@ import {
     SdsModule,
     SdsParameter,
 } from '../generated/ast.js';
-import {
-    findFirstAnnotationCallOf,
-    getArguments,
-    getEnumVariants,
-    getParameters,
-    hasAnnotationCallOf,
-} from '../helpers/nodeProperties.js';
+import { findFirstAnnotationCallOf, getEnumVariants, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
     EvaluatedEnumVariant,
@@ -79,7 +73,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     streamImpurityReasons(node: SdsFunction | undefined): Stream<SdsEnumVariant> {
         // If allReasons are specified, but we could not evaluate them to a list, no reasons apply
-        const value = this.getArgumentValue(node, this.Impure, 'allReasons');
+        const value = this.getParameterValue(node, this.Impure, 'allReasons');
         if (!(value instanceof EvaluatedList)) {
             return EMPTY_STREAM;
         }
@@ -107,7 +101,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     getPythonCall(node: SdsFunction | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
+        const value = this.getParameterValue(node, this.PythonCall, 'callSpecification');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -120,7 +114,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     getPythonModule(node: SdsModule | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonModule, 'qualifiedName');
+        const value = this.getParameterValue(node, this.PythonModule, 'qualifiedName');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -133,7 +127,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     getPythonName(node: SdsAnnotatedObject | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonName, 'name');
+        const value = this.getParameterValue(node, this.PythonName, 'name');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -160,7 +154,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
 
         // If targets are specified, but we could not evaluate them to a list, no target is valid
-        const value = this.getArgumentValue(node, this.Target, 'targets');
+        const value = this.getParameterValue(node, this.Target, 'targets');
         if (!(value instanceof EvaluatedList)) {
             return EMPTY_STREAM;
         }
@@ -187,7 +181,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
      * Finds the first call of the given annotation on the given node and returns the value that is assigned to the
      * parameter with the given name.
      */
-    private getArgumentValue(
+    private getParameterValue(
         node: SdsAnnotatedObject | undefined,
         annotation: SdsAnnotation | undefined,
         parameterName: string,
@@ -197,16 +191,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
             return UnknownEvaluatedNode;
         }
 
-        // Parameter is set explicitly
-        const argument = getArguments(annotationCall).find(
-            (it) => this.nodeMapper.argumentToParameter(it)?.name === parameterName,
-        );
-        if (argument) {
-            return this.partialEvaluator.evaluate(argument.value);
-        }
-
-        // Parameter is not set explicitly, so we use the default value
-        const parameter = getParameters(annotation).find((it) => it.name === parameterName);
-        return this.partialEvaluator.evaluate(parameter?.defaultValue);
+        const parameterValue = this.nodeMapper.callToParameterValue(annotationCall, parameterName);
+        return this.partialEvaluator.evaluate(parameterValue);
     }
 }
