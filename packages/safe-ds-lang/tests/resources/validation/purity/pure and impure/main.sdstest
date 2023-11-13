@@ -1,0 +1,17 @@
+package tests.validation.purity.pureAndImpure
+
+// $TEST$ no error "'@Impure' and '@Pure' are mutually exclusive."
+fun »neither«()
+
+// $TEST$ no error "'@Impure' and '@Pure' are mutually exclusive."
+@Impure
+fun »impure«()
+
+// $TEST$ no error "'@Impure' and '@Pure' are mutually exclusive."
+@Pure
+fun »pure«()
+
+// $TEST$ error "'@Impure' and '@Pure' are mutually exclusive."
+@Impure
+@Pure
+fun »both«()

@@ -73,21 +73,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(IDE_INTEGRATION_URI, 'Expert');
     }
 
-    getPythonCall(node: SdsFunction | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
-        if (value instanceof StringConstant) {
-            return value.value;
-        } else {
-            return undefined;
-        }
-    }
-
-    isPure(node: SdsFunction | SdsParameter | undefined): boolean {
-        return hasAnnotationCallOf(node, this.Pure);
-    }
-
-    private get Pure(): SdsAnnotation | undefined {
-        return this.getAnnotation(PURITY_URI, 'Pure');
+    isImpure(node: SdsFunction | undefined): boolean {
+        return hasAnnotationCallOf(node, this.Impure);
     }
 
     streamImpurityReasons(node: SdsFunction | undefined): Stream<SdsEnumVariant> {
@@ -107,8 +94,25 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
             .map((it) => (<EvaluatedEnumVariant>it).variant);
     }
 
-    private get Impure(): SdsAnnotation | undefined {
+    get Impure(): SdsAnnotation | undefined {
         return this.getAnnotation(PURITY_URI, 'Impure');
+    }
+
+    isPure(node: SdsFunction | SdsParameter | undefined): boolean {
+        return hasAnnotationCallOf(node, this.Pure);
+    }
+
+    private get Pure(): SdsAnnotation | undefined {
+        return this.getAnnotation(PURITY_URI, 'Pure');
+    }
+
+    getPythonCall(node: SdsFunction | undefined): string | undefined {
+        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
+        if (value instanceof StringConstant) {
+            return value.value;
+        } else {
+            return undefined;
+        }
     }
 
     get PythonCall(): SdsAnnotation | undefined {

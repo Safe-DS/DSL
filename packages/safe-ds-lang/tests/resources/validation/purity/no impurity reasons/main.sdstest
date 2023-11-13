@@ -1,0 +1,21 @@
+package tests.validation.purity.noImpurityReasons
+
+// $TEST$ error "At least one impurity reason must be specified."
+@»Impure«
+fun f1()
+
+// $TEST$ error "At least one impurity reason must be specified."
+@»Impure«()
+fun f2()
+
+// $TEST$ error "At least one impurity reason must be specified."
+@»Impure«([])
+// $TEST$ no error "At least one impurity reason must be specified."
+@»Impure«([])
+fun f3()
+
+// $TEST$ no error "At least one impurity reason must be specified."
+@»Impure«([ImpurityReason.Other])
+// $TEST$ no error "At least one impurity reason must be specified."
+@»Impure«([ImpurityReason.Other])
+fun f4()
