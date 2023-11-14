@@ -1,0 +1,46 @@
+package tests.validation.purity.mustBeSubsetOfImpurityReasonsOfOverriddenMethod
+
+class Superclass {
+    @Pure
+    fun pureFunction()
+
+    @Impure([])
+    fun impureFunctionWithoutReason()
+
+    @Impure([ImpurityReason.Other])
+    fun impureFunctionWithReasons()
+}
+
+class IdenticalSubclass sub Superclass {
+   /*
+    * We already show another error if the `@Impure` annotation is called multiple times.
+    */
+    @Pure
+    @Impure([ImpurityReason.Other])
+    fun pureFunction()
+
+    @Impure([])
+    fun impureFunctionWithoutReason()
+
+    @Impure([ImpurityReason.Other])
+    fun impureFunctionWithReasons()
+}
+
+class SubsetSubclass sub Superclass {
+    @Pure
+    fun impureFunctionWithoutReason()
+
+    @Impure([])
+    fun impureFunctionWithReasons()
+}
+
+class IllegalSubclass sub Superclass {
+    @Impure([ImpurityReason.Other])
+    fun pureFunction()
+
+    @Impure([ImpurityReason.Other])
+    fun impureFunctionWithoutReason()
+
+    @Impure([ImpurityReason.FileReadFromConstantPath("")])
+    fun impureFunctionWithReasons()
+}
