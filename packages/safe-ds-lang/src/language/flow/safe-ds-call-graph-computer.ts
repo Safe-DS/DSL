@@ -1,4 +1,4 @@
-import { AstNode, type AstNodeLocator, getDocument, streamAllContents, WorkspaceCache } from 'langium';
+import { AstNode, type AstNodeLocator, getDocument, streamAst, WorkspaceCache } from 'langium';
 import { isSdsCall, type SdsCall } from '../generated/ast.js';
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
@@ -21,7 +21,7 @@ export class SafeDsCallGraphComputer {
 
     getCalls(node: AstNode): SdsCall[] {
         const key = this.getNodeId(node);
-        return this.callCache.get(key, () => streamAllContents(node).filter(isSdsCall).toArray());
+        return this.callCache.get(key, () => streamAst(node).filter(isSdsCall).toArray());
     }
 
     private getNodeId(node: AstNode) {

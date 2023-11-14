@@ -1,4 +1,4 @@
-package tests.validation.builtins.pure.pureParameterMustHaveCallableType
+package tests.validation.purity.pureParameterMustHaveCallableType
 
 // $TEST$ error "A pure parameter must have a callable type."
 // $TEST$ error "A pure parameter must have a callable type."
