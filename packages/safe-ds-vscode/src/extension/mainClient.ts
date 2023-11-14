@@ -2,16 +2,20 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
+import { startPythonServer, stopPythonServer } from './pythonServer.js';
 
 let client: LanguageClient;
 
 // This function is called when the extension is activated.
 export const activate = function (context: vscode.ExtensionContext): void {
+    console.log('Starting extension...');
     client = startLanguageClient(context);
+    startPythonServer().then(r => {});
 };
 
 // This function is called when the extension is deactivated.
 export const deactivate = function (): Thenable<void> | undefined {
+    stopPythonServer();
     if (client) {
         return client.stop();
     }
