@@ -1,8 +1,7 @@
-import { EMPTY_STREAM, getContainerOfType, Stream, stream, URI } from 'langium';
+import { EMPTY_STREAM, Stream, stream, URI } from 'langium';
 import { resourceNameToUri } from '../../helpers/resources.js';
 import {
     isSdsAnnotation,
-    isSdsEnum,
     SdsAnnotatedObject,
     SdsAnnotation,
     SdsEnumVariant,
@@ -12,13 +11,7 @@ import {
 } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getEnumVariants, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import {
-    EvaluatedEnumVariant,
-    EvaluatedList,
-    EvaluatedNode,
-    StringConstant,
-    UnknownEvaluatedNode,
-} from '../partialEvaluation/model.js';
+import { EvaluatedList, EvaluatedNode, StringConstant, UnknownEvaluatedNode } from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsEnums } from './safe-ds-enums.js';
@@ -80,12 +73,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
         // Otherwise, filter the elements of the list and keep only variants of the ImpurityReason enum
         return stream(value.elements)
-            .filter(
-                (it) =>
-                    it instanceof EvaluatedEnumVariant &&
-                    getContainerOfType(it.variant, isSdsEnum) === this.builtinEnums.ImpurityReason,
-            )
-            .map((it) => (<EvaluatedEnumVariant>it).variant);
+            .filter(this.builtinEnums.isEvaluatedImpurityReason)
+            .map((it) => it.variant);
     }
 
     get Impure(): SdsAnnotation | undefined {
@@ -161,12 +150,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
         // Otherwise, filter the elements of the list and keep only variants of the AnnotationTarget enum
         return stream(value.elements)
-            .filter(
-                (it) =>
-                    it instanceof EvaluatedEnumVariant &&
-                    getContainerOfType(it.variant, isSdsEnum) === this.builtinEnums.AnnotationTarget,
-            )
-            .map((it) => (<EvaluatedEnumVariant>it).variant);
+            .filter(this.builtinEnums.isEvaluatedAnnotationTarget)
+            .map((it) => it.variant);
     }
 
     get Target(): SdsAnnotation | undefined {

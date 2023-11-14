@@ -1,4 +1,4 @@
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { ValidationAcceptor } from 'langium';
 import {
     isSdsAnnotation,
     isSdsAttribute,
@@ -17,9 +17,8 @@ import {
     SdsAnnotationCall,
     SdsEnumVariant,
 } from '../../generated/ast.js';
-import { SafeDsServices } from '../../safe-ds-module.js';
 import { findFirstAnnotationCallOf, getAnnotationCallTarget } from '../../helpers/nodeProperties.js';
-import { EvaluatedEnumVariant } from '../../partialEvaluation/model.js';
+import { SafeDsServices } from '../../safe-ds-module.js';
 
 export const CODE_TARGET_DUPLICATE_TARGET = 'target/duplicate-target';
 export const CODE_TARGET_WRONG_TARGET = 'target/wrong-target';
@@ -44,10 +43,7 @@ export const targetShouldNotHaveDuplicateEntries = (services: SafeDsServices) =>
         const knownTargets = new Set<SdsEnumVariant>();
         for (const target of targets.elements) {
             const evaluatedTarget = partialEvaluator.evaluate(target);
-            if (
-                !(evaluatedTarget instanceof EvaluatedEnumVariant) ||
-                getContainerOfType(evaluatedTarget.variant, isSdsEnum) !== builtinEnums.AnnotationTarget
-            ) {
+            if (!builtinEnums.isEvaluatedAnnotationTarget(evaluatedTarget)) {
                 continue;
             }
 

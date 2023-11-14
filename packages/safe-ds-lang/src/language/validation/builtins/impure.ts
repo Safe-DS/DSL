@@ -1,8 +1,8 @@
-import { getContainerOfType, stream, ValidationAcceptor } from 'langium';
-import { isSdsCall, isSdsEnum, isSdsList, SdsFunction } from '../../generated/ast.js';
-import type { SafeDsServices } from '../../safe-ds-module.js';
+import { stream, ValidationAcceptor } from 'langium';
+import { isSdsCall, isSdsList, SdsFunction } from '../../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../../helpers/nodeProperties.js';
-import { EvaluatedEnumVariant, StringConstant } from '../../partialEvaluation/model.js';
+import { StringConstant } from '../../partialEvaluation/model.js';
+import type { SafeDsServices } from '../../safe-ds-module.js';
 
 export const CODE_IMPURE_PARAMETER_NAME = 'impure/parameter-name';
 
@@ -38,10 +38,7 @@ export const impurityReasonParameterNameMustBelongToParameter = (services: SafeD
 
             // Check whether the reason is valid
             const evaluatedReason = partialEvaluator.evaluate(reason);
-            if (
-                !(evaluatedReason instanceof EvaluatedEnumVariant) ||
-                getContainerOfType(evaluatedReason.variant, isSdsEnum) !== builtinEnums.ImpurityReason
-            ) {
+            if (!builtinEnums.isEvaluatedImpurityReason(evaluatedReason)) {
                 continue;
             }
 
