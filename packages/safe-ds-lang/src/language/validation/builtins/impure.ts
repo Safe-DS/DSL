@@ -1,9 +1,10 @@
-import { getContainerOfType, stream, ValidationAcceptor } from 'langium';
-import { isSdsCall, isSdsEnum, isSdsList, SdsFunction } from '../../generated/ast.js';
-import type { SafeDsServices } from '../../safe-ds-module.js';
+import { stream, ValidationAcceptor } from 'langium';
+import { isSdsCall, isSdsList, SdsFunction } from '../../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../../helpers/nodeProperties.js';
 import { EvaluatedEnumVariant, StringConstant } from '../../partialEvaluation/model.js';
+import type { SafeDsServices } from '../../safe-ds-module.js';
 
+export const CODE_IMPURE_DUPLICATE_REASON = 'impure/duplicate-reason';
 export const CODE_IMPURE_PARAMETER_NAME = 'impure/parameter-name';
 
 export const impurityReasonParameterNameMustBelongToParameter = (services: SafeDsServices) => {
@@ -38,10 +39,7 @@ export const impurityReasonParameterNameMustBelongToParameter = (services: SafeD
 
             // Check whether the reason is valid
             const evaluatedReason = partialEvaluator.evaluate(reason);
-            if (
-                !(evaluatedReason instanceof EvaluatedEnumVariant) ||
-                getContainerOfType(evaluatedReason.variant, isSdsEnum) !== builtinEnums.ImpurityReason
-            ) {
+            if (!builtinEnums.isEvaluatedImpurityReason(evaluatedReason)) {
                 continue;
             }
 
@@ -66,6 +64,46 @@ export const impurityReasonParameterNameMustBelongToParameter = (services: SafeD
                     node: parameterNameArgument,
                     code: CODE_IMPURE_PARAMETER_NAME,
                 });
+            }
+        }
+    };
+};
+
+export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const builtinEnums = services.builtins.Enums;
+    const nodeMapper = services.helpers.NodeMapper;
+    const partialEvaluator = services.evaluation.PartialEvaluator;
+
+    return (node: SdsFunction, accept: ValidationAcceptor) => {
+        const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
+
+        // Don't further validate if the function is marked as impure and as pure
+        if (!annotationCall || builtinAnnotations.isPure(node)) {
+            return;
+        }
+
+        // Check whether allReasons is valid
+        const allReasons = nodeMapper.callToParameterValue(annotationCall, 'allReasons');
+        if (!isSdsList(allReasons)) {
+            return;
+        }
+
+        const knownReasons: EvaluatedEnumVariant[] = [];
+        for (const reason of allReasons.elements) {
+            // Check whether the reason is valid
+            const evaluatedReason = partialEvaluator.evaluate(reason);
+            if (!builtinEnums.isEvaluatedImpurityReason(evaluatedReason)) {
+                continue;
+            }
+
+            if (knownReasons.some((it) => it.equals(evaluatedReason))) {
+                accept('warning', `The impurity reason '${evaluatedReason}' was set already.`, {
+                    node: reason,
+                    code: CODE_IMPURE_DUPLICATE_REASON,
+                });
+            } else {
+                knownReasons.push(evaluatedReason);
             }
         }
     };

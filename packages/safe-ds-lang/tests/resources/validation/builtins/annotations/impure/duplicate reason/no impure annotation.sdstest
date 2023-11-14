@@ -1,0 +1,5 @@
+package tests.validation.builtins.annotations.impure.duplicateReason
+
+// $TEST$ no warning r"The impurity reason '.*' was set already\."
+
+fun testFunction6()
