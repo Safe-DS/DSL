@@ -1,7 +1,7 @@
 import { stream, type ValidationAcceptor } from 'langium';
 import { isSdsCall, isSdsList, type SdsFunction, type SdsParameter } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../helpers/nodeProperties.js';
-import { EvaluatedEnumVariant, StringConstant } from '../partialEvaluation/model.js';
+import { StringConstant } from '../partialEvaluation/model.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { CallableType } from '../typing/model.js';
 
@@ -126,7 +126,7 @@ export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServic
             return;
         }
 
-        const knownReasons: EvaluatedEnumVariant[] = [];
+        const knownReasons = new Set<string>();
         for (const reason of allReasons.elements) {
             // Check whether the reason is valid
             const evaluatedReason = partialEvaluator.evaluate(reason);
@@ -134,13 +134,14 @@ export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServic
                 continue;
             }
 
-            if (knownReasons.some((it) => it.equals(evaluatedReason))) {
-                accept('warning', `The impurity reason '${evaluatedReason}' was set already.`, {
+            const stringifiedReason = evaluatedReason.toString();
+            if (knownReasons.has(stringifiedReason)) {
+                accept('warning', `The impurity reason '${stringifiedReason}' was set already.`, {
                     node: reason,
                     code: CODE_PURITY_DUPLICATE_IMPURITY_REASON,
                 });
             } else {
-                knownReasons.push(evaluatedReason);
+                knownReasons.add(stringifiedReason);
             }
         }
     };

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { duplicatesBy, groupBy, isEmpty, last, uniqueOrUndefined } from '../../src/helpers/collectionUtils.js';
+import {
+    duplicatesBy,
+    groupBy,
+    isEmpty,
+    isEqualSet,
+    isSubset,
+    last,
+    uniqueOrUndefined,
+} from '../../src/helpers/collectionUtils.js';
 
 describe('duplicatesBy', () => {
     const id = (element: any) => element;
@@ -27,8 +35,28 @@ describe('isEmpty', () => {
         expect(isEmpty([])).toBeTruthy();
     });
 
-    it('should keep false if the iterable has values', () => {
+    it('should return false if the iterable has values', () => {
         expect(isEmpty([1])).toBeFalsy();
+    });
+});
+
+describe('isEqualTest', () => {
+    it('should return true if the sets are equal', () => {
+        expect(isEqualSet(new Set([1, 2]), new Set([1, 2]))).toBeTruthy();
+    });
+
+    it('should return false if the sets are not equal', () => {
+        expect(isEqualSet(new Set([1]), new Set([1, 2]))).toBeFalsy();
+    });
+});
+
+describe('isSubset', () => {
+    it('should return true if the first set is a subset of the second', () => {
+        expect(isSubset(new Set([1]), new Set([1, 2]))).toBeTruthy();
+    });
+
+    it('should return false if the first set is not a subset of the second', () => {
+        expect(isSubset(new Set([3]), new Set([1, 2]))).toBeFalsy();
     });
 });
 

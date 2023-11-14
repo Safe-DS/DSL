@@ -1,6 +1,6 @@
 import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
-import { isEmpty } from '../../helpers/collectionUtils.js';
-import { isSdsClass, SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { isEmpty, isEqualSet } from '../../helpers/collectionUtils.js';
+import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, UnknownType } from '../typing/model.js';
@@ -12,6 +12,7 @@ export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/i
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
     const classHierarchy = services.types.ClassHierarchy;
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
@@ -42,6 +43,24 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
         } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
+                return;
+            }
+
+            // Reasons for impurity must differ
+            if (
+                isSdsFunction(node) &&
+                isSdsFunction(overriddenMember) &&
+                !isEqualSet(
+                    builtinAnnotations
+                        .streamImpurityReasons(node)
+                        .map((it) => it.toString())
+                        .toSet(),
+                    builtinAnnotations
+                        .streamImpurityReasons(overriddenMember)
+                        .map((it) => it.toString())
+                        .toSet(),
+                )
+            ) {
                 return;
             }
 

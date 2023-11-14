@@ -1,46 +1,58 @@
 package tests.validation.purity.mustBeSubsetOfImpurityReasonsOfOverriddenMethod
 
 class Superclass {
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Pure
-    fun pureFunction()
+    fun »pureFunction«()
 
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([])
-    fun impureFunctionWithoutReason()
+    fun »impureFunctionWithoutReason«()
 
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([ImpurityReason.Other])
-    fun impureFunctionWithReasons()
+    fun »impureFunctionWithReasons«()
 }
 
 class IdenticalSubclass sub Superclass {
    /*
     * We already show another error if the `@Impure` annotation is called multiple times.
     */
+
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Pure
     @Impure([ImpurityReason.Other])
-    fun pureFunction()
+    fun »pureFunction«()
 
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([])
-    fun impureFunctionWithoutReason()
+    fun »impureFunctionWithoutReason«()
 
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([ImpurityReason.Other])
-    fun impureFunctionWithReasons()
+    fun »impureFunctionWithReasons«()
 }
 
 class SubsetSubclass sub Superclass {
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Pure
-    fun impureFunctionWithoutReason()
+    fun »impureFunctionWithoutReason«()
 
+    // $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([])
-    fun impureFunctionWithReasons()
+    fun »impureFunctionWithReasons«()
 }
 
 class IllegalSubclass sub Superclass {
+    // $TEST$ error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([ImpurityReason.Other])
-    fun pureFunction()
+    fun »pureFunction«()
 
+    // $TEST$ error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([ImpurityReason.Other])
-    fun impureFunctionWithoutReason()
+    fun »impureFunctionWithoutReason«()
 
+    // $TEST$ error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
     @Impure([ImpurityReason.FileReadFromConstantPath("")])
     fun impureFunctionWithReasons()
 }
