@@ -135,6 +135,7 @@ import {
     functionPurityMustBeSpecified,
     impurityReasonParameterNameMustBelongToParameter,
     impurityReasonShouldNotBeSetMultipleTimes,
+    impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod,
     pureParameterMustHaveCallableType,
 } from './purity.js';
 import {
@@ -253,6 +254,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
             functionPurityMustBeSpecified(services),
+            impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod(services),
             impurityReasonParameterNameMustBelongToParameter(services),
             impurityReasonShouldNotBeSetMultipleTimes(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),

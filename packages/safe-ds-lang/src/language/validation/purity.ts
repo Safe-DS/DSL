@@ -1,5 +1,6 @@
 import { stream, type ValidationAcceptor } from 'langium';
-import { isSdsCall, isSdsList, type SdsFunction, type SdsParameter } from '../generated/ast.js';
+import { isSubset } from '../../helpers/collectionUtils.js';
+import { isSdsCall, isSdsFunction, isSdsList, type SdsFunction, type SdsParameter } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { StringConstant } from '../partialEvaluation/model.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
@@ -7,6 +8,7 @@ import { CallableType } from '../typing/model.js';
 
 export const CODE_PURITY_DUPLICATE_IMPURITY_REASON = 'purity/duplicate-impurity-reason';
 export const CODE_PURITY_IMPURE_AND_PURE = 'purity/impure-and-pure';
+export const CODE_PURITY_IMPURITY_REASONS_OF_OVERRIDING_METHOD = 'purity/impurity-reasons-of-overriding-method';
 export const CODE_PURITY_INVALID_PARAMETER_NAME = 'purity/invalid-parameter-name';
 export const CODE_PURITY_MUST_BE_SPECIFIED = 'purity/must-be-specified';
 export const CODE_PURITY_PURE_PARAMETER_MUST_HAVE_CALLABLE_TYPE = 'purity/pure-parameter-must-have-callable-type';
@@ -40,6 +42,46 @@ export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
                 property: 'annotation',
                 code: CODE_PURITY_MUST_BE_SPECIFIED,
             });
+        }
+    };
+};
+
+export const impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const classHierarchy = services.types.ClassHierarchy;
+
+    return (node: SdsFunction, accept: ValidationAcceptor): void => {
+        const overriddenMember = classHierarchy.getOverriddenMember(node);
+        if (!overriddenMember || !isSdsFunction(overriddenMember)) {
+            return;
+        }
+
+        // Don't further validate if the function is marked as impure and as pure
+        if (builtinAnnotations.isImpure(node) && builtinAnnotations.isPure(node)) {
+            return;
+        }
+
+        if (
+            !isSubset(
+                builtinAnnotations
+                    .streamImpurityReasons(node)
+                    .map((it) => it.toString())
+                    .toSet(),
+                builtinAnnotations
+                    .streamImpurityReasons(overriddenMember)
+                    .map((it) => it.toString())
+                    .toSet(),
+            )
+        ) {
+            accept(
+                'error',
+                'The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function.',
+                {
+                    node,
+                    property: 'name',
+                    code: CODE_PURITY_IMPURITY_REASONS_OF_OVERRIDING_METHOD,
+                },
+            );
         }
     };
 };
