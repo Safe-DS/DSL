@@ -11,7 +11,13 @@ import {
 } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getEnumVariants, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { EvaluatedList, EvaluatedNode, StringConstant, UnknownEvaluatedNode } from '../partialEvaluation/model.js';
+import {
+    EvaluatedEnumVariant,
+    EvaluatedList,
+    EvaluatedNode,
+    StringConstant,
+    UnknownEvaluatedNode,
+} from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsEnums } from './safe-ds-enums.js';
@@ -64,7 +70,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return hasAnnotationCallOf(node, this.Impure);
     }
 
-    streamImpurityReasons(node: SdsFunction | undefined): Stream<SdsEnumVariant> {
+    streamImpurityReasons(node: SdsFunction | undefined): Stream<EvaluatedEnumVariant> {
         // If allReasons are specified, but we could not evaluate them to a list, no reasons apply
         const value = this.getParameterValue(node, this.Impure, 'allReasons');
         if (!(value instanceof EvaluatedList)) {
@@ -72,9 +78,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
 
         // Otherwise, filter the elements of the list and keep only variants of the ImpurityReason enum
-        return stream(value.elements)
-            .filter(this.builtinEnums.isEvaluatedImpurityReason)
-            .map((it) => it.variant);
+        return stream(value.elements).filter(this.builtinEnums.isEvaluatedImpurityReason);
     }
 
     get Impure(): SdsAnnotation | undefined {
