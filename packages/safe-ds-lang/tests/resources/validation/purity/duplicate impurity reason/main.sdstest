@@ -1,4 +1,4 @@
-package tests.validation.builtins.annotations.impure.duplicateReason
+package tests.validation.purity.duplicateImpurityReason
 
 @Impure([
     // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."

@@ -1,10 +1,15 @@
-import { type ValidationAcceptor } from 'langium';
-import type { SdsFunction } from '../generated/ast.js';
-import { findFirstAnnotationCallOf } from '../helpers/nodeProperties.js';
+import { stream, type ValidationAcceptor } from 'langium';
+import { isSdsCall, isSdsList, type SdsFunction, type SdsParameter } from '../generated/ast.js';
+import { findFirstAnnotationCallOf, getArguments, getParameters } from '../helpers/nodeProperties.js';
+import { EvaluatedEnumVariant, StringConstant } from '../partialEvaluation/model.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
+import { CallableType } from '../typing/model.js';
 
-const CODE_PURITY_IMPURE_AND_PURE = 'purity/impure-and-pure';
-const CODE_PURITY_MUST_BE_SPECIFIED = 'purity/must-be-specified';
+export const CODE_PURITY_DUPLICATE_IMPURITY_REASON = 'purity/duplicate-impurity-reason';
+export const CODE_PURITY_IMPURE_AND_PURE = 'purity/impure-and-pure';
+export const CODE_PURITY_INVALID_PARAMETER_NAME = 'purity/invalid-parameter-name';
+export const CODE_PURITY_MUST_BE_SPECIFIED = 'purity/must-be-specified';
+export const CODE_PURITY_PURE_PARAMETER_MUST_HAVE_CALLABLE_TYPE = 'purity/pure-parameter-must-have-callable-type';
 
 export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
     const annotations = services.builtins.Annotations;
@@ -34,6 +39,129 @@ export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
                 node: impureAnnotationCall,
                 property: 'annotation',
                 code: CODE_PURITY_MUST_BE_SPECIFIED,
+            });
+        }
+    };
+};
+
+export const impurityReasonParameterNameMustBelongToParameter = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const builtinEnums = services.builtins.Enums;
+    const nodeMapper = services.helpers.NodeMapper;
+    const partialEvaluator = services.evaluation.PartialEvaluator;
+
+    return (node: SdsFunction, accept: ValidationAcceptor) => {
+        const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
+
+        // Don't further validate if the function is marked as impure and as pure
+        if (!annotationCall || builtinAnnotations.isPure(node)) {
+            return;
+        }
+
+        // Check whether allReasons is valid
+        const allReasons = nodeMapper.callToParameterValue(annotationCall, 'allReasons');
+        if (!isSdsList(allReasons)) {
+            return;
+        }
+
+        const parameterNames = stream(getParameters(node))
+            .map((it) => it.name)
+            .toSet();
+
+        for (const reason of allReasons.elements) {
+            // If it's not a call, no parameter name could've been provided
+            if (!isSdsCall(reason)) {
+                continue;
+            }
+
+            // Check whether the reason is valid
+            const evaluatedReason = partialEvaluator.evaluate(reason);
+            if (!builtinEnums.isEvaluatedImpurityReason(evaluatedReason)) {
+                continue;
+            }
+
+            // Check whether a parameter name was provided
+            const parameterName = nodeMapper.callToParameterValue(reason, 'parameterName');
+            if (!parameterName) {
+                continue;
+            }
+
+            // Check whether parameterName is valid
+            const evaluatedParameterName = partialEvaluator.evaluate(parameterName);
+            if (!(evaluatedParameterName instanceof StringConstant)) {
+                continue;
+            }
+
+            if (!parameterNames.has(evaluatedParameterName.value)) {
+                const parameterNameArgument = getArguments(reason).find(
+                    (it) => nodeMapper.argumentToParameter(it)?.name === 'parameterName',
+                )!;
+
+                accept('error', `The parameter '${evaluatedParameterName.value}' does not exist.`, {
+                    node: parameterNameArgument,
+                    code: CODE_PURITY_INVALID_PARAMETER_NAME,
+                });
+            }
+        }
+    };
+};
+
+export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const builtinEnums = services.builtins.Enums;
+    const nodeMapper = services.helpers.NodeMapper;
+    const partialEvaluator = services.evaluation.PartialEvaluator;
+
+    return (node: SdsFunction, accept: ValidationAcceptor) => {
+        const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
+
+        // Don't further validate if the function is marked as impure and as pure
+        if (!annotationCall || builtinAnnotations.isPure(node)) {
+            return;
+        }
+
+        // Check whether allReasons is valid
+        const allReasons = nodeMapper.callToParameterValue(annotationCall, 'allReasons');
+        if (!isSdsList(allReasons)) {
+            return;
+        }
+
+        const knownReasons: EvaluatedEnumVariant[] = [];
+        for (const reason of allReasons.elements) {
+            // Check whether the reason is valid
+            const evaluatedReason = partialEvaluator.evaluate(reason);
+            if (!builtinEnums.isEvaluatedImpurityReason(evaluatedReason)) {
+                continue;
+            }
+
+            if (knownReasons.some((it) => it.equals(evaluatedReason))) {
+                accept('warning', `The impurity reason '${evaluatedReason}' was set already.`, {
+                    node: reason,
+                    code: CODE_PURITY_DUPLICATE_IMPURITY_REASON,
+                });
+            } else {
+                knownReasons.push(evaluatedReason);
+            }
+        }
+    };
+};
+
+export const pureParameterMustHaveCallableType = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsParameter, accept: ValidationAcceptor) => {
+        // Don't show an error if no type is specified (yet) or if the parameter is not marked as pure
+        if (!node.type || !builtinAnnotations.isPure(node)) {
+            return;
+        }
+
+        const type = typeComputer.computeType(node);
+        if (!(type instanceof CallableType)) {
+            accept('error', 'A pure parameter must have a callable type.', {
+                node,
+                property: 'name',
+                code: CODE_PURITY_PURE_PARAMETER_MUST_HAVE_CALLABLE_TYPE,
             });
         }
     };

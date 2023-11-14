@@ -1,4 +1,4 @@
-package tests.validation.builtins.annotations.impure.parameterNamesMustBeValid
+package tests.validation.purity.parameterNamesMustBeValid
 
 @Impure([
     // $TEST$ no error r"The parameter '.*' does not exist\."

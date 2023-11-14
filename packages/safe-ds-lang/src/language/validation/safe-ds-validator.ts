@@ -17,11 +17,6 @@ import {
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
-import {
-    impurityReasonParameterNameMustBelongToParameter,
-    impurityReasonShouldNotBeSetMultipleTimes,
-} from './builtins/impure.js';
-import { pureParameterMustHaveCallableType } from './builtins/pure.js';
 import { pythonCallMustOnlyContainValidTemplateExpressions } from './builtins/pythonCall.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import {
@@ -136,7 +131,12 @@ import {
     unionTypeMustHaveTypes,
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
-import { functionPurityMustBeSpecified } from './purity.js';
+import {
+    functionPurityMustBeSpecified,
+    impurityReasonParameterNameMustBelongToParameter,
+    impurityReasonShouldNotBeSetMultipleTimes,
+    pureParameterMustHaveCallableType,
+} from './purity.js';
 import {
     annotationCallArgumentListShouldBeNeeded,
     annotationParameterListShouldNotBeEmpty,
