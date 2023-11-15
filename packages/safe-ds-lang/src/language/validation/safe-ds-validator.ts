@@ -135,12 +135,10 @@ import {
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
 import {
-    callableParameterPurityMustBeSpecified,
     functionPurityMustBeSpecified,
     impurityReasonParameterNameMustBelongToParameterOfCorrectType,
     impurityReasonShouldNotBeSetMultipleTimes,
     impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod,
-    pureParameterMustHaveCallableType,
 } from './purity.js';
 import {
     annotationCallArgumentListShouldBeNeeded,
@@ -157,7 +155,6 @@ import {
     importedDeclarationAliasShouldDifferFromDeclarationName,
     memberAccessNullSafetyShouldBeNeeded,
     namedTypeTypeArgumentListShouldBeNeeded,
-    pureAnnotationCallOnParameterShouldBeNeeded,
     segmentResultListShouldNotBeEmpty,
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
@@ -256,14 +253,12 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [
-            callableParameterPurityMustBeSpecified(services),
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
             functionPurityMustBeSpecified(services),
             impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod(services),
             impurityReasonParameterNameMustBelongToParameterOfCorrectType(services),
             impurityReasonShouldNotBeSetMultipleTimes(services),
-            pureAnnotationCallOnParameterShouldBeNeeded(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
         ],
@@ -320,7 +315,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
             parameterDefaultValueTypeMustMatchParameterType(services),
-            pureParameterMustHaveCallableType(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
