@@ -7,16 +7,16 @@ import {
     isSdsEnumVariant,
     isSdsFunction,
     isSdsModule,
-} from '../../../src/language/generated/ast.js';
-import { getModuleMembers } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+} from '../../../../src/language/generated/ast.js';
+import { getModuleMembers } from '../../../../src/language/helpers/nodeProperties.js';
+import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import {
     BooleanConstant,
     FloatConstant,
     IntConstant,
     NullConstant,
     StringConstant,
-} from '../../../src/language/partialEvaluation/model.js';
+} from '../../../../src/language/partialEvaluation/model.js';
 import {
     ClassType,
     EnumType,
@@ -28,8 +28,8 @@ import {
     Type,
     UnionType,
     UnknownType,
-} from '../../../src/language/typing/model.js';
-import { getNodeOfType } from '../../helpers/nodeFinder.js';
+} from '../../../../src/language/typing/model.js';
+import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
