@@ -50,6 +50,35 @@
         }
     ],
     "contributes": {
+        "commands": [
+            {
+              "command": "eda-test01.runEda",
+              "title": "Start",
+              "category": "EDA"
+            },
+            {
+              "command": "eda-test01.runEdaFromTable",
+              "title": "Start EDA from selection",
+              "category": "EDA"
+            },
+            {
+              "command": "eda-test01.refreshWebview",
+              "title": "Refresh Webview",
+              "category": "EDA"
+            },
+            {
+              "command": "eda-test01.runEdaFromContext",
+              "title": "Explore Table",
+              "category": "EDA"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "eda-test01.runEdaFromContext"
+                }
+            ]
+        },
         "languages": [
             {
                 "id": "safe-ds",
