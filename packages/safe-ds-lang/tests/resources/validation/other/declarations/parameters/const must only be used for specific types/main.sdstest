@@ -1,152 +1,24 @@
 package tests.validation.other.declarations.parameters.constMustOnlyBeUsedForSpecificTypes
 
-class MyClass
-
-enum ConstantEnum {
-    Variant1
-    Variant2(const param: Int)
-}
-
-enum NonConstantEnum {
-    Variant1
-    Variant2(param: Int)
-}
-
 annotation MyAnnotation(
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    booleanParam: »Boolean«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableBooleanParam: »Boolean?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    floatParam: »Float«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableFloatParam: »Float?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
+    // $TEST$ error "An annotation parameter cannot have type 'Any'."
+    anyParam: »Any«,
+    // $TEST$ no error r"An annotation parameter cannot have type '.*'\."
     intParam: »Int«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableIntParam: »Int?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    listParam: »List<Int>«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableListParam: »List<Int>?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    mapParam: »Map<Int, Int>«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableMapParam: »Map<Int, Int>?«,
-
-    // TODO: Type arguments must be constant
-
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    stringParam: »String«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableStringParam: »String?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    literalParam: »literal<1, "">«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    constantEnumParam: »ConstantEnum«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableConstantEnumParam: »ConstantEnum?«,
-    // $TEST$ error "The parameter must be a constant but type 'NonConstantEnum' cannot be evaluated to a constant."
-    nonConstantEnumParam: »NonConstantEnum«,
-    // $TEST$ error "The parameter must be a constant but type 'NonConstantEnum?' cannot be evaluated to a constant."
-    nullableNonConstantEnumParam: »NonConstantEnum?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    constantEnumVariantParam: »ConstantEnum.Variant2«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableConstantEnumVariantParam: »ConstantEnum.Variant2?«,
-    // $TEST$ error "The parameter must be a constant but type 'Variant2' cannot be evaluated to a constant."
-    nonConstantEnumVariantParam: »NonConstantEnum.Variant2«,
-    // $TEST$ error "The parameter must be a constant but type 'Variant2?' cannot be evaluated to a constant."
-    nullableNonConstantEnumVariantParam: »NonConstantEnum.Variant2?«,
-    // $TEST$ error "The parameter must be a constant but type 'MyClass' cannot be evaluated to a constant."
-    classParam: »MyClass«,
-    // $TEST$ error "The parameter must be a constant but type 'MyClass?' cannot be evaluated to a constant."
-    nullableClassParam: »MyClass?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    unresolvedParam: »Unresolved«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableUnresolvedParam: »Unresolved?«,
-    // $TEST$ error "The parameter must be a constant but type '() -> ()' cannot be evaluated to a constant."
-    callableParam: »() -> ()«,
 )
 
 @Pure
-fun functionWithConstantParameter(
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const booleanParam: »Boolean«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableBooleanParam: »Boolean?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const floatParam: »Float«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableFloatParam: »Float?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
+fun functionWithConstantParameters(
+    // $TEST$ error "A constant parameter cannot have type 'Any'."
+    const anyParam: »Any«,
+    // $TEST$ no error r"A constant parameter cannot have type '.*'\."
     const intParam: »Int«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableIntParam: »Int?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const listParam: »List<Int>«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableListParam: »List<Int>?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const mapParam: »Map<Int, Int>«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableMapParam: »Map<Int, Int>?«,
-
-    // TODO: Type arguments must be constant
-
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const stringParam: »String«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableStringParam: »String?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const literalParam: »literal<1, "">«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const constantEnumParam: »ConstantEnum«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableConstantEnumParam: »ConstantEnum?«,
-    // $TEST$ error "The parameter must be a constant but type 'NonConstantEnum' cannot be evaluated to a constant."
-    const nonConstantEnumParam: »NonConstantEnum«,
-    // $TEST$ error "The parameter must be a constant but type 'NonConstantEnum?' cannot be evaluated to a constant."
-    const nullableNonConstantEnumParam: »NonConstantEnum?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const constantEnumVariantParam: »ConstantEnum.Variant2«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableConstantEnumVariantParam: »ConstantEnum.Variant2?«,
-    // $TEST$ error "The parameter must be a constant but type 'Variant2' cannot be evaluated to a constant."
-    const nonConstantEnumVariantParam: »NonConstantEnum.Variant2«,
-    // $TEST$ error "The parameter must be a constant but type 'Variant2?' cannot be evaluated to a constant."
-    const nullableNonConstantEnumVariantParam: »NonConstantEnum.Variant2?«,
-    // $TEST$ error "The parameter must be a constant but type 'MyClass' cannot be evaluated to a constant."
-    const classParam: »MyClass«,
-    // $TEST$ error "The parameter must be a constant but type 'MyClass?' cannot be evaluated to a constant."
-    const nullableClassParam: »MyClass?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const unresolvedParam: »Unresolved«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    const nullableUnresolvedParam: »Unresolved?«,
-    // $TEST$ error "The parameter must be a constant but type '() -> ()' cannot be evaluated to a constant."
-    const callableParam: »() -> ()«,
 )
 
 @Pure
-fun functionWithNormalParameter(
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nonConstantEnumParam: »NonConstantEnum«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableNonConstantEnumParam: »NonConstantEnum?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nonConstantEnumVariantParam: »NonConstantEnum.Variant2«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableNonConstantEnumVariantParam: »NonConstantEnum.Variant2?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    classParam: »MyClass«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableClassParam: »MyClass?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    unresolvedParam: »Unresolved«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    nullableUnresolvedParam: »Unresolved?«,
-    // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
-    callableParam: »() -> ()«,
+fun functionWithNormalParameters(
+    // $TEST$ no error r"A constant parameter cannot have type '.*'\."
+    anyParam: »Any«,
+    // $TEST$ no error r"A constant parameter cannot have type '.*'\."
+    intParam: »Int«,
 )
