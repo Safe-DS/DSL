@@ -85,7 +85,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(PURITY_URI, 'Impure');
     }
 
-    callsPure(node: SdsFunction | SdsParameter | undefined): boolean {
+    callsPure(node: SdsFunction | undefined): boolean {
         return hasAnnotationCallOf(node, this.Pure);
     }
 
