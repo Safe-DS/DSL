@@ -2,7 +2,7 @@ import { stream, type ValidationAcceptor } from 'langium';
 import { isSubset } from '../../helpers/collectionUtils.js';
 import { isSdsCall, isSdsFunction, isSdsList, type SdsFunction, type SdsParameter } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../helpers/nodeProperties.js';
-import { StringConstant } from '../partialEvaluation/model.js';
+import { EvaluatedEnumVariant, StringConstant } from '../partialEvaluation/model.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { CallableType } from '../typing/model.js';
 
@@ -13,6 +13,52 @@ export const CODE_PURITY_INVALID_PARAMETER_NAME = 'purity/invalid-parameter-name
 export const CODE_PURITY_MUST_BE_SPECIFIED = 'purity/must-be-specified';
 export const CODE_PURITY_POTENTIALLY_IMPURE_PARAMETER_NOT_CALLABLE = 'purity/potentially-impure-parameter-not-callable';
 export const CODE_PURITY_PURE_PARAMETER_MUST_HAVE_CALLABLE_TYPE = 'purity/pure-parameter-must-have-callable-type';
+
+export const callableParameterPurityMustBeSpecified = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const possibleImpurityReasons = services.builtins.ImpurityReasons;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsFunction, accept: ValidationAcceptor) => {
+        const potentiallyImpureParameterCall = possibleImpurityReasons.PotentiallyImpureParameterCall;
+        if (!potentiallyImpureParameterCall) {
+            return;
+        }
+
+        const parameterNameParameter = getParameters(potentiallyImpureParameterCall).find(
+            (it) => it.name === 'parameterName',
+        )!;
+        const impurityReasons = builtinAnnotations.streamImpurityReasons(node).toArray();
+
+        for (const parameter of getParameters(node)) {
+            if (builtinAnnotations.isPure(parameter)) {
+                continue;
+            }
+
+            const parameterType = typeComputer.computeType(parameter);
+            if (!(parameterType instanceof CallableType)) {
+                continue;
+            }
+
+            const expectedImpurityReason = new EvaluatedEnumVariant(
+                possibleImpurityReasons.PotentiallyImpureParameterCall,
+                new Map([[parameterNameParameter, new StringConstant(parameter.name)]]),
+            );
+
+            if (!impurityReasons.some((it) => it.equals(expectedImpurityReason))) {
+                accept(
+                    'error',
+                    "The purity of a callable parameter must be specified. Call the annotation '@Pure' or add the impurity reason 'PotentiallyImpureParameterCall' to the containing function.",
+                    {
+                        node: parameter,
+                        property: 'name',
+                        code: CODE_PURITY_MUST_BE_SPECIFIED,
+                    },
+                );
+            }
+        }
+    };
+};
 
 export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
     const annotations = services.builtins.Annotations;
@@ -90,6 +136,7 @@ export const impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod = (
 export const impurityReasonParameterNameMustBelongToParameterOfCorrectType = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
     const builtinEnums = services.builtins.Enums;
+    const impurityReasons = services.builtins.ImpurityReasons;
     const nodeMapper = services.helpers.NodeMapper;
     const partialEvaluator = services.evaluation.PartialEvaluator;
     const typeComputer = services.types.TypeComputer;
@@ -151,7 +198,7 @@ export const impurityReasonParameterNameMustBelongToParameterOfCorrectType = (se
             }
 
             // The parameter must have the correct type
-            if (evaluatedReason.variant.name === 'PotentiallyImpureParameterCall') {
+            if (evaluatedReason.variant === impurityReasons.PotentiallyImpureParameterCall) {
                 const parameter = getParameters(node).find((it) => it.name === evaluatedParameterName.value)!;
                 if (!parameter.type) {
                     continue;
