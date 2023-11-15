@@ -55,6 +55,7 @@ export const callableParameterPurityMustBeSpecified = (services: SafeDsServices)
                     },
                 );
             } else if (
+                !builtinAnnotations.isPure(node) &&
                 !builtinAnnotations.isPure(parameter) &&
                 !impurityReasons.some((it) => it.equals(expectedImpurityReason))
             ) {
