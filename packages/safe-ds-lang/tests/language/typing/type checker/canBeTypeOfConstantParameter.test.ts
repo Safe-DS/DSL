@@ -79,6 +79,10 @@ describe('SafeDsTypeChecker', async () => {
             expected: true,
         },
         {
+            type: myClassType,
+            expected: false,
+        },
+        {
             type: constantEnumType,
             expected: true,
         },
