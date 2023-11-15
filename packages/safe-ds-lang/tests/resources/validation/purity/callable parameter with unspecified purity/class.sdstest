@@ -1,0 +1,9 @@
+package tests.validation.purity.callableParameterWithUnspecifiedPurity
+
+// $TEST$ no error "The purity of a callable parameter must be specified. Call the annotation '@Pure' or add the impurity reason 'PotentiallyImpureParameterCall' to the containing function."
+
+class MyClass(
+    p1: Int,
+    @Pure p2: () -> (),
+    »p3«: () -> ()
+)

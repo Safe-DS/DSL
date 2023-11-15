@@ -135,8 +135,9 @@ import {
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
 import {
+    callableParameterPurityMustBeSpecified,
     functionPurityMustBeSpecified,
-    impurityReasonParameterNameMustBelongToParameter,
+    impurityReasonParameterNameMustBelongToParameterOfCorrectType,
     impurityReasonShouldNotBeSetMultipleTimes,
     impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod,
     pureParameterMustHaveCallableType,
@@ -254,11 +255,12 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [
+            callableParameterPurityMustBeSpecified(services),
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
             functionPurityMustBeSpecified(services),
             impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod(services),
-            impurityReasonParameterNameMustBelongToParameter(services),
+            impurityReasonParameterNameMustBelongToParameterOfCorrectType(services),
             impurityReasonShouldNotBeSetMultipleTimes(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),

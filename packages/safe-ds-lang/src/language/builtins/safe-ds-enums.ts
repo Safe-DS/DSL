@@ -1,7 +1,9 @@
 import { getContainerOfType, URI } from 'langium';
 import { resourceNameToUri } from '../../helpers/resources.js';
-import { isSdsEnum, SdsEnum } from '../generated/ast.js';
+import { isSdsEnum, SdsEnum, type SdsEnumVariant } from '../generated/ast.js';
+import { getEnumVariants } from '../helpers/nodeProperties.js';
 import { EvaluatedEnumVariant, EvaluatedNode } from '../partialEvaluation/model.js';
+import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
@@ -24,5 +26,21 @@ export class SafeDsEnums extends SafeDsModuleMembers<SdsEnum> {
 
     private getEnum(uri: URI, name: string): SdsEnum | undefined {
         return this.getModuleMember(uri, name, isSdsEnum);
+    }
+}
+
+export class SafeDsImpurityReasons {
+    private readonly builtinEnums: SafeDsEnums;
+
+    constructor(services: SafeDsServices) {
+        this.builtinEnums = services.builtins.Enums;
+    }
+
+    get PotentiallyImpureParameterCall(): SdsEnumVariant | undefined {
+        return this.getEnumVariant('PotentiallyImpureParameterCall');
+    }
+
+    private getEnumVariant(name: string): SdsEnumVariant | undefined {
+        return getEnumVariants(this.builtinEnums.ImpurityReason).find((variant) => variant.name === name);
     }
 }
