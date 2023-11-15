@@ -42,7 +42,7 @@ export const callableParameterPurityMustBeSpecified = (services: SafeDsServices)
             );
 
             if (
-                builtinAnnotations.isPure(parameter) &&
+                builtinAnnotations.callsPure(parameter) &&
                 impurityReasons.some((it) => it.equals(expectedImpurityReason))
             ) {
                 accept(
@@ -55,8 +55,8 @@ export const callableParameterPurityMustBeSpecified = (services: SafeDsServices)
                     },
                 );
             } else if (
-                !builtinAnnotations.isPure(node) &&
-                !builtinAnnotations.isPure(parameter) &&
+                !builtinAnnotations.callsPure(node) &&
+                !builtinAnnotations.callsPure(parameter) &&
                 !impurityReasons.some((it) => it.equals(expectedImpurityReason))
             ) {
                 accept(
@@ -77,13 +77,13 @@ export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
     const annotations = services.builtins.Annotations;
 
     return (node: SdsFunction, accept: ValidationAcceptor) => {
-        if (annotations.isPure(node) && annotations.isImpure(node)) {
+        if (annotations.callsPure(node) && annotations.callsImpure(node)) {
             return accept('error', "'@Impure' and '@Pure' are mutually exclusive.", {
                 node,
                 property: 'name',
                 code: CODE_PURITY_IMPURE_AND_PURE,
             });
-        } else if (!annotations.isImpure(node) && !annotations.isPure(node)) {
+        } else if (!annotations.callsImpure(node) && !annotations.callsPure(node)) {
             return accept(
                 'error',
                 "The purity of a function must be specified. Call the annotation '@Pure' or '@Impure'.",
@@ -117,7 +117,7 @@ export const impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod = (
         }
 
         // Don't further validate if the function is marked as impure and as pure
-        if (builtinAnnotations.isImpure(node) && builtinAnnotations.isPure(node)) {
+        if (builtinAnnotations.callsImpure(node) && builtinAnnotations.callsPure(node)) {
             return;
         }
 
@@ -158,7 +158,7 @@ export const impurityReasonParameterNameMustBelongToParameterOfCorrectType = (se
         const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
 
         // Don't further validate if the function is marked as impure and as pure
-        if (!annotationCall || builtinAnnotations.isPure(node)) {
+        if (!annotationCall || builtinAnnotations.callsPure(node)) {
             return;
         }
 
@@ -245,7 +245,7 @@ export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServic
         const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
 
         // Don't further validate if the function is marked as impure and as pure
-        if (!annotationCall || builtinAnnotations.isPure(node)) {
+        if (!annotationCall || builtinAnnotations.callsPure(node)) {
             return;
         }
 
@@ -282,7 +282,7 @@ export const pureParameterMustHaveCallableType = (services: SafeDsServices) => {
 
     return (node: SdsParameter, accept: ValidationAcceptor) => {
         // Don't show an error if no type is specified (yet) or if the parameter is not marked as pure
-        if (!node.type || !builtinAnnotations.isPure(node)) {
+        if (!node.type || !builtinAnnotations.callsPure(node)) {
             return;
         }
 

@@ -31,7 +31,7 @@ export class SafeDsNodeInfoProvider {
      * hierarchies.
      */
     getTags(node: AstNode): SymbolTag[] | undefined {
-        if (isSdsAnnotatedObject(node) && this.builtinAnnotations.isDeprecated(node)) {
+        if (isSdsAnnotatedObject(node) && this.builtinAnnotations.callsDeprecated(node)) {
             return [SymbolTag.Deprecated];
         } else {
             return undefined;
