@@ -13,6 +13,10 @@ enum NonConstantEnum {
 }
 
 annotation MyAnnotation(
+    // $TEST$ error "The parameter must be a constant but type 'Any' cannot be evaluated to a constant."
+    anyParam: »Any«,
+    // $TEST$ error "The parameter must be a constant but type 'Any?' cannot be evaluated to a constant."
+    nullableAnyParam: »Any?«,
     // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
     booleanParam: »Boolean«,
     // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
@@ -72,6 +76,10 @@ annotation MyAnnotation(
 
 @Pure
 fun functionWithConstantParameter(
+    // $TEST$ error "The parameter must be a constant but type 'Any' cannot be evaluated to a constant."
+    const anyParam: »Any«,
+    // $TEST$ error "The parameter must be a constant but type 'Any?' cannot be evaluated to a constant."
+    const nullableAnyParam: »Any?«,
     // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
     const booleanParam: »Boolean«,
     // $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."

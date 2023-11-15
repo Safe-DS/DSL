@@ -56,7 +56,15 @@ const isConstantTypeProvider = (services: SafeDsServices) => {
 
     return (type: Type): boolean => {
         if (type instanceof ClassType) {
-            return builtinClasses.isBuiltinClass(type.declaration);
+            return [
+                builtinClasses.Boolean,
+                builtinClasses.Float,
+                builtinClasses.Int,
+                builtinClasses.List,
+                builtinClasses.Map,
+                builtinClasses.Nothing,
+                builtinClasses.String,
+            ].includes(type.declaration);
         } else if (type instanceof EnumType) {
             return Enum.isConstant(type.declaration);
         } else if (type instanceof EnumVariantType) {
