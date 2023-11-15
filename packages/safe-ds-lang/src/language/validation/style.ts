@@ -20,10 +20,10 @@ import {
     SdsTypeParameterList,
     SdsUnionType,
 } from '../generated/ast.js';
-import { getParameters, getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
+import { findFirstAnnotationCallOf, getParameters, getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { NullConstant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { UnknownType } from '../typing/model.js';
+import { CallableType, UnknownType } from '../typing/model.js';
 
 export const CODE_STYLE_UNNECESSARY_ASSIGNMENT = 'style/unnecessary-assignment';
 export const CODE_STYLE_UNNECESSARY_ARGUMENT_LIST = 'style/unnecessary-argument-list';
@@ -33,6 +33,7 @@ export const CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST = 'style/unnecessary-constra
 export const CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR = 'style/unnecessary-elvis-operator';
 export const CODE_STYLE_UNNECESSARY_IMPORT_ALIAS = 'style/unnecessary-import-alias';
 export const CODE_STYLE_UNNECESSARY_PARAMETER_LIST = 'style/unnecessary-parameter-list';
+export const CODE_STYLE_UNNECESSARY_PURE_ANNOTATION_CALL = 'style/unnecessary-pure-annotation-call';
 export const CODE_STYLE_UNNECESSARY_RESULT_LIST = 'style/unnecessary-result-list';
 export const CODE_STYLE_UNNECESSARY_SAFE_ACCESS = 'style/unnecessary-safe-access';
 export const CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST = 'style/unnecessary-type-argument-list';
@@ -249,6 +250,40 @@ export const enumVariantParameterListShouldNotBeEmpty = (node: SdsEnumVariant, a
             code: CODE_STYLE_UNNECESSARY_PARAMETER_LIST,
         });
     }
+};
+
+// -----------------------------------------------------------------------------
+// Unnecessary pure annotation calls
+// -----------------------------------------------------------------------------
+
+export const pureAnnotationCallOnParameterShouldBeNeeded = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsFunction, accept: ValidationAcceptor) => {
+        if (!builtinAnnotations.callsPure(node) || builtinAnnotations.callsImpure(node)) {
+            return;
+        }
+
+        for (const parameter of getParameters(node)) {
+            const parameterType = typeComputer.computeType(parameter);
+            if (!(parameterType instanceof CallableType)) {
+                continue;
+            }
+
+            const pureAnnotationCall = findFirstAnnotationCallOf(parameter, builtinAnnotations.Pure);
+            if (pureAnnotationCall) {
+                accept(
+                    'info',
+                    'Callable parameters of a pure function are always pure, so this annotation call can be removed.',
+                    {
+                        node: pureAnnotationCall,
+                        code: CODE_STYLE_UNNECESSARY_PURE_ANNOTATION_CALL,
+                    },
+                );
+            }
+        }
+    };
 };
 
 // -----------------------------------------------------------------------------
