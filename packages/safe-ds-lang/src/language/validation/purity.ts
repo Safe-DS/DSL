@@ -11,6 +11,7 @@ export const CODE_PURITY_IMPURE_AND_PURE = 'purity/impure-and-pure';
 export const CODE_PURITY_IMPURITY_REASONS_OF_OVERRIDING_METHOD = 'purity/impurity-reasons-of-overriding-method';
 export const CODE_PURITY_INVALID_PARAMETER_NAME = 'purity/invalid-parameter-name';
 export const CODE_PURITY_MUST_BE_SPECIFIED = 'purity/must-be-specified';
+export const CODE_PURITY_POTENTIALLY_IMPURE_PARAMETER_NOT_CALLABLE = 'purity/potentially-impure-parameter-not-callable';
 export const CODE_PURITY_PURE_PARAMETER_MUST_HAVE_CALLABLE_TYPE = 'purity/pure-parameter-must-have-callable-type';
 
 export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
@@ -86,11 +87,12 @@ export const impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod = (
     };
 };
 
-export const impurityReasonParameterNameMustBelongToParameter = (services: SafeDsServices) => {
+export const impurityReasonParameterNameMustBelongToParameterOfCorrectType = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
     const builtinEnums = services.builtins.Enums;
     const nodeMapper = services.helpers.NodeMapper;
     const partialEvaluator = services.evaluation.PartialEvaluator;
+    const typeComputer = services.types.TypeComputer;
 
     return (node: SdsFunction, accept: ValidationAcceptor) => {
         const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
@@ -134,6 +136,7 @@ export const impurityReasonParameterNameMustBelongToParameter = (services: SafeD
                 continue;
             }
 
+            // A parameter with the given name must exist
             if (!parameterNames.has(evaluatedParameterName.value)) {
                 const parameterNameArgument = getArguments(reason).find(
                     (it) => nodeMapper.argumentToParameter(it)?.name === 'parameterName',
@@ -142,6 +145,30 @@ export const impurityReasonParameterNameMustBelongToParameter = (services: SafeD
                 accept('error', `The parameter '${evaluatedParameterName.value}' does not exist.`, {
                     node: parameterNameArgument,
                     code: CODE_PURITY_INVALID_PARAMETER_NAME,
+                });
+
+                continue;
+            }
+
+            // The parameter must have the correct type
+            if (evaluatedReason.variant.name === 'PotentiallyImpureParameterCall') {
+                const parameter = getParameters(node).find((it) => it.name === evaluatedParameterName.value)!;
+                if (!parameter.type) {
+                    continue;
+                }
+
+                const parameterType = typeComputer.computeType(parameter);
+                if (parameterType instanceof CallableType) {
+                    continue;
+                }
+
+                const parameterNameArgument = getArguments(reason).find(
+                    (it) => nodeMapper.argumentToParameter(it)?.name === 'parameterName',
+                )!;
+
+                accept('error', `The parameter '${evaluatedParameterName.value}' must have a callable type.`, {
+                    node: parameterNameArgument,
+                    code: CODE_PURITY_POTENTIALLY_IMPURE_PARAMETER_NOT_CALLABLE,
                 });
             }
         }
