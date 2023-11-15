@@ -10,10 +10,11 @@ export const constantParameterMustHaveConstantDefaultValue = (services: SafeDsSe
     const partialEvaluator = services.evaluation.PartialEvaluator;
 
     return (node: SdsParameter, accept: ValidationAcceptor) => {
-        if (!Parameter.isConstant(node) || !node.defaultValue) return;
+        if (!Parameter.isConstant(node) || !node.defaultValue) {
+            return;
+        }
 
-        const evaluatedDefaultValue = partialEvaluator.evaluate(node.defaultValue);
-        if (!evaluatedDefaultValue.isFullyEvaluated) {
+        if (!partialEvaluator.canBeValueOfConstantParameter(node.defaultValue)) {
             const containingCallable = getContainerOfType(node, isSdsCallable);
             const kind = isSdsAnnotation(containingCallable) ? 'annotation' : 'constant';
 
@@ -37,15 +38,14 @@ export const constantParameterMustHaveTypeThatCanBeEvaluatedToConstant = (servic
 
         const type = typeComputer.computeType(node);
         if (!typeChecker.canBeTypeOfConstantParameter(type)) {
-            accept(
-                'error',
-                `The parameter must be a constant but type '${type.toString()}' cannot be evaluated to a constant.`,
-                {
-                    node,
-                    property: 'type',
-                    code: CODE_PARAMETER_CONSTANT_TYPE,
-                },
-            );
+            const containingCallable = getContainerOfType(node, isSdsCallable);
+            const kind = isSdsAnnotation(containingCallable) ? 'An annotation' : 'A constant';
+
+            accept('error', `${kind} parameter cannot have type '${type.toString()}'.`, {
+                node,
+                property: 'type',
+                code: CODE_PARAMETER_CONSTANT_TYPE,
+            });
         }
     };
 };

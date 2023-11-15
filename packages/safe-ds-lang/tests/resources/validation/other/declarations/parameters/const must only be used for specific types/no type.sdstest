@@ -1,6 +1,6 @@
 package tests.validation.other.declarations.parameters.constMustOnlyBeUsedForSpecificTypes
 
-// $TEST$ no error r"The parameter must be a constant but type '.*' cannot be evaluated to a constant\."
+// $TEST$ no error r"A.* parameter cannot have type '.*'\."
 
 annotation AnnotationMissingType(p)
 

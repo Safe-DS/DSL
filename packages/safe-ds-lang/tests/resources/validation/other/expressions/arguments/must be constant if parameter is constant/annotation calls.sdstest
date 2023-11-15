@@ -1,0 +1,27 @@
+package tests.validation.other.expressions.arguments.mustBeConstantIfParameterIsConstant
+
+@Repeatable
+annotation MyAnnotation1(value: Int)
+
+@Repeatable
+annotation MyAnnotation2(constantParam: MyEnum)
+
+// $TEST$ no error "Values assigned to annotation parameters must be constant."
+@MyAnnotation1(»1«)
+// $TEST$ no error "Values assigned to annotation parameters must be constant."
+@MyAnnotation1(»-2«)
+// $TEST$ error "Values assigned to annotation parameters must be constant."
+@MyAnnotation1(»[1, 2][0]«)
+// $TEST$ error "Values assigned to annotation parameters must be constant."
+@MyAnnotation1(»intFunction()«)
+// $TEST$ error "Values assigned to annotation parameters must be constant."
+@MyAnnotation1(value = »intFunction()«)
+
+// $TEST$ no error "Values assigned to annotation parameters must be constant."
+@MyAnnotation2(»MyEnum.MyConstantVariant(1)«)
+
+// $TEST$ error "Values assigned to annotation parameters must be constant."
+@Unresolved(»intFunction()«)
+// $TEST$ error "Values assigned to annotation parameters must be constant."
+@MyAnnotation1(unresolved = »intFunction()«)
+pipeline testPipeline {}

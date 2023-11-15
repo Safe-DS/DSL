@@ -72,6 +72,10 @@ export class SafeDsPartialEvaluator {
         this.cache = new WorkspaceCache(services.shared);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // evaluate
+    // -----------------------------------------------------------------------------------------------------------------
+
     evaluate(node: AstNode | undefined): EvaluatedNode {
         return this.evaluateWithSubstitutions(node, NO_SUBSTITUTIONS)?.unwrap();
     }
@@ -501,6 +505,46 @@ export class SafeDsPartialEvaluator {
     // else -> undefined
     // }
     // }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // canBeValueOfConstantParameter
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns whether the given expression can be the value of a constant parameter.
+     */
+    canBeValueOfConstantParameter = (node: SdsExpression): boolean => {
+        if (isSdsBoolean(node) || isSdsFloat(node) || isSdsInt(node) || isSdsNull(node) || isSdsString(node)) {
+            return true;
+        } else if (isSdsCall(node)) {
+            // If some arguments are not provided, we already show an error.
+            return (
+                this.canBeValueOfConstantParameter(node.receiver) &&
+                getArguments(node).every((it) => this.canBeValueOfConstantParameter(it.value))
+            );
+        } else if (isSdsList(node)) {
+            return node.elements.every(this.canBeValueOfConstantParameter);
+        } else if (isSdsMap(node)) {
+            return node.entries.every(
+                (it) => this.canBeValueOfConstantParameter(it.key) && this.canBeValueOfConstantParameter(it.value),
+            );
+        } else if (isSdsMemberAccess(node)) {
+            // 1. We cannot allow all member accesses, since we might also access an attribute that has type 'Int', for
+            //    example. Thus, type checking does not always show an error, even though we already restrict the
+            //    possible types of constant parameters.
+            // 2. If the member cannot be resolved, we already show an error.
+            // 3. If the enum variant has parameters that are not provided, we already show an error.
+            const member = node.member?.target?.ref;
+            return !member || isSdsEnumVariant(member);
+        } else if (isSdsPrefixOperation(node)) {
+            return node.operator === '-' && this.canBeValueOfConstantParameter(node.operand);
+        } else if (isSdsReference(node)) {
+            // If the reference cannot be resolved, we already show an error.
+            return !node.target.ref;
+        } else {
+            return false;
+        }
+    };
 }
 
 const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();

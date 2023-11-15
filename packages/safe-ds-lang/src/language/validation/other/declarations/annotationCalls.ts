@@ -16,7 +16,7 @@ import {
     getResults,
     Parameter,
 } from '../../../helpers/nodeProperties.js';
-import { SafeDsServices } from '../../../safe-ds-module.js';
+import type { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
@@ -28,10 +28,8 @@ export const annotationCallArgumentsMustBeConstant = (services: SafeDsServices) 
 
     return (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
         for (const argument of getArguments(node)) {
-            const evaluatedArgumentValue = partialEvaluator.evaluate(argument.value);
-
-            if (!evaluatedArgumentValue.isFullyEvaluated) {
-                accept('error', 'Arguments of annotation calls must be constant.', {
+            if (!partialEvaluator.canBeValueOfConstantParameter(argument.value)) {
+                accept('error', 'Values assigned to annotation parameters must be constant.', {
                     node: argument,
                     property: 'value',
                     code: CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT,
