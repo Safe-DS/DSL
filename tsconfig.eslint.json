@@ -9,6 +9,7 @@
         "**/tests/**/*",
         ".eslintrc.cjs",
         "packages/safe-ds-cli/bin/cli.js",
-        "release.config.cjs"
+        "release.config.cjs",
+        "types/**/*"
     ]
 }

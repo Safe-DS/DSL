@@ -14,6 +14,8 @@ module.exports = {
         'import/extensions': 'off',
         'import/no-extraneous-dependencies': 'off',
         'vitest/prefer-lowercase-title': 'off',
+        'import/no-default-export': 'off',
+        'no-console': 'off',
     },
     overrides: [
         {
