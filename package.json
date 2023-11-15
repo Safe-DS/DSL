@@ -14,6 +14,7 @@
         "build": "tsc -b tsconfig.json && npm run build --workspaces",
         "build:clean": "npm run clean && npm run build",
         "watch": "concurrently -n tsc,cli,lang,vscode -c blue,yellow,red,green \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/cli\" \"npm run watch -w=@safe-ds/lang\" \"npm run watch -w=safe-ds\"",
+        "eda-build:watch": "nodemon",
         "test": "vitest",
         "test-with-coverage": "vitest --coverage",
         "test-ui": "vitest --ui --coverage"
@@ -31,9 +32,15 @@
         "conventional-changelog-conventionalcommits": "^7.0.2",
         "esbuild": "^0.19.5",
         "esbuild-plugin-copy": "^2.1.1",
+        "nodemon": "^3.0.1",
         "semantic-release": "^22.0.6",
         "shx": "^0.3.4",
         "typescript": "^5.2.2",
         "vitest": "^0.34.6"
-    }
+    },
+    "nodemonConfig": {
+        "watch": ["packages/safe-ds-eda/src/"],
+        "ext": "js,ts,svelte,css",
+        "exec": "cd packages/safe-ds-eda && vite build"
+      }
 }
