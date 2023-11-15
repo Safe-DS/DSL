@@ -71,7 +71,10 @@ import {
     lambdaParametersMustNotBeAnnotated,
 } from './other/declarations/annotationCalls.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
-import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
+import {
+    constantParameterMustHaveConstantDefaultValue,
+    constantParameterMustHaveTypeThatCanBeEvaluatedToConstant,
+} from './other/declarations/parameters.js';
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import {
     segmentParameterShouldBeUsed,
@@ -310,6 +313,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),
+            constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
             parameterDefaultValueTypeMustMatchParameterType(services),
             pureParameterMustHaveCallableType(services),
