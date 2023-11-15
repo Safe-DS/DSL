@@ -1,0 +1,45 @@
+package tests.validation.purity.pureAndPotentiallyImpureCallableParameter
+
+fun functionWithUnknownPurity(
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p1«: Int,
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p2«: () -> (),
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    »p3«: () -> ()
+)
+
+
+@Impure([])
+fun impureFunctionWithoutReasons(
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p1«: Int,
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p2«: () -> (),
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    »p3«: () -> ()
+)
+
+@Impure([
+    ImpurityReason.PotentiallyImpureParameterCall("p1"),
+    ImpurityReason.PotentiallyImpureParameterCall("p2"),
+    ImpurityReason.PotentiallyImpureParameterCall("p3")
+])
+fun impureFunctionWithReasons(
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p1«: Int,
+    // $TEST$ error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p2«: () -> (),
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    »p3«: () -> ()
+)
+
+@Pure
+fun pureFunction(
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p1«: Int,
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    @Pure »p2«: () -> (),
+    // $TEST$ no error "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive."
+    »p3«: () -> ()
+)

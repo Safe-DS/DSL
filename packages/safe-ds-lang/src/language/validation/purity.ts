@@ -31,10 +31,6 @@ export const callableParameterPurityMustBeSpecified = (services: SafeDsServices)
         const impurityReasons = builtinAnnotations.streamImpurityReasons(node).toArray();
 
         for (const parameter of getParameters(node)) {
-            if (builtinAnnotations.isPure(parameter)) {
-                continue;
-            }
-
             const parameterType = typeComputer.computeType(parameter);
             if (!(parameterType instanceof CallableType)) {
                 continue;
@@ -45,7 +41,23 @@ export const callableParameterPurityMustBeSpecified = (services: SafeDsServices)
                 new Map([[parameterNameParameter, new StringConstant(parameter.name)]]),
             );
 
-            if (!impurityReasons.some((it) => it.equals(expectedImpurityReason))) {
+            if (
+                builtinAnnotations.isPure(parameter) &&
+                impurityReasons.some((it) => it.equals(expectedImpurityReason))
+            ) {
+                accept(
+                    'error',
+                    "'@Pure' and the impurity reason 'PotentiallyImpureParameterCall' on the containing function are mutually exclusive.",
+                    {
+                        node: parameter,
+                        property: 'name',
+                        code: CODE_PURITY_IMPURE_AND_PURE,
+                    },
+                );
+            } else if (
+                !builtinAnnotations.isPure(parameter) &&
+                !impurityReasons.some((it) => it.equals(expectedImpurityReason))
+            ) {
                 accept(
                     'error',
                     "The purity of a callable parameter must be specified. Call the annotation '@Pure' or add the impurity reason 'PotentiallyImpureParameterCall' to the containing function.",
