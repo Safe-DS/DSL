@@ -17,7 +17,7 @@ module.exports = {
     },
     overrides: [
         {
-            files: ['packages/safe-ds-cli/src/**'],
+            files: ['packages/safe-ds-cli/src/**', 'packages/safe-ds-vscode/src/output.ts'],
             rules: {
                 'no-console': 'off',
             },

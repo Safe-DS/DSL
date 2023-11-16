@@ -96,7 +96,24 @@
                     "default": "python -m runner"
                 }
             }
-        }
+        },
+        "menus": {
+            "editor/title/run": [
+                {
+                    "command": "extension.safe-ds.runPipelineFile",
+                    "when": "resourceLangId == safe-ds",
+                    "group": "navigation@1"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "extension.safe-ds.runPipelineFile",
+                "title": "Run Pipeline",
+                "category": "Safe-DS",
+                "icon": "$(play)"
+            }
+        ]
     },
     "type": "module",
     "main": "dist/extension/mainClient.cjs",
@@ -111,7 +128,8 @@
     },
     "dependencies": {
         "vscode-languageclient": "^9.0.1",
-        "ws": "^8.14.2"
+        "ws": "^8.14.2",
+        "source-map": "^0.7.4"
     },
     "devDependencies": {
         "@types/node": "^18.18.8",

@@ -135,7 +135,7 @@ export class SafeDsPythonGenerator {
             );
         }
         generatedFiles.set(pythonOutputPath, text);
-        for (const pipeline of streamAllContents(node).filter(isSdsPipeline)) {
+        for (const pipeline of getModuleMembers(node).filter(isSdsPipeline)) {
             const entryPointFilename = `${path.join(
                 parentDirectoryPath,
                 `${this.formatGeneratedFileName(name)}_${this.getPythonNameOrDefault(pipeline)}`,

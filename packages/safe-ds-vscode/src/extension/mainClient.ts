@@ -2,15 +2,30 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { startPythonServer, stopPythonServer } from './pythonServer.js';
+import {
+    addMessageCallback,
+    executePipeline,
+    startPythonServer,
+    stopPythonServer,
+    tryMapToSafeDSSource,
+} from './pythonServer.js';
+import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
+import { NodeFileSystem } from 'langium/node';
+import { initializeLog, printOutputMessage } from './output.js';
+import { RuntimeErrorMessage } from './messages.js';
 
 let client: LanguageClient;
+let sdsServices: SafeDsServices;
 
 // This function is called when the extension is activated.
 export const activate = function (context: vscode.ExtensionContext): void {
-    console.log('Starting extension...');
     client = startLanguageClient(context);
-    startPythonServer().then(r => {});
+    initializeLog();
+    startPythonServer().then((r) => {});
+    createSafeDsServicesWithBuiltins(NodeFileSystem).then((services) => {
+        sdsServices = services.SafeDs;
+        acceptRunRequests(context);
+    });
 };
 
 // This function is called when the extension is deactivated.
@@ -59,4 +74,45 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
     // Start the client. This will also launch the server
     result.start();
     return result;
+};
+
+const acceptRunRequests = function (context: vscode.ExtensionContext) {
+    addMessageCallback((message) => {
+        printOutputMessage(`Runner-Progress: ${message.data}`);
+    }, 'progress');
+    addMessageCallback(async (message) => {
+        const readableStacktrace = await Promise.all(
+            (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+                const mappedFrame = await tryMapToSafeDSSource(frame);
+                if (mappedFrame) {
+                    return `\tat ${frame.file} line ${frame.line} (mapped to: ${mappedFrame.file} line ${mappedFrame.line})`;
+                }
+                return `\tat ${frame.file} line ${frame.line}`;
+            }),
+        );
+        printOutputMessage(
+            `Runner-RuntimeError: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktrace.join('\n')}`,
+        );
+    }, 'runtime_error');
+    context.subscriptions.push(
+        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (pipelinePath: vscode.Uri | undefined) => {
+            // Allow execution via command menu
+            if (!pipelinePath && vscode.window.activeTextEditor) {
+                pipelinePath = vscode.window.activeTextEditor.document.uri;
+            }
+            if (
+                pipelinePath &&
+                !SAFE_DS_FILE_EXTENSIONS.some((extension: string) => pipelinePath!.fsPath.endsWith(extension))
+            ) {
+                vscode.window.showErrorMessage(`Could not run ${pipelinePath!.fsPath} as it is not a Safe-DS file`);
+                return;
+            }
+            if (!pipelinePath) {
+                vscode.window.showErrorMessage('Could not run Safe-DS Pipeline, as no pipeline is currently selected.');
+                return;
+            }
+            printOutputMessage(`Launching Pipeline: ${pipelinePath}`);
+            executePipeline(sdsServices, pipelinePath.fsPath);
+        }),
+    );
 };
