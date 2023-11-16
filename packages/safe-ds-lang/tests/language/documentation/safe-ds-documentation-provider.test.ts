@@ -1,8 +1,7 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { AstNode, EmptyFileSystem } from 'langium';
+import { AstNode, EmptyFileSystem, expandToString } from 'langium';
 import { clearDocuments } from 'langium/test';
-import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { afterEach, describe, expect, it } from 'vitest';
+import { normalizeLineBreaks } from '../../../src/helpers/stringUtils.js';
 import {
     isSdsAnnotation,
     isSdsFunction,
@@ -10,6 +9,8 @@ import {
     isSdsResult,
     isSdsTypeParameter,
 } from '../../../src/language/generated/ast.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
+import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const documentationProvider = services.documentation.DocumentationProvider;
@@ -119,13 +120,11 @@ describe('SafeDsDocumentationProvider', () => {
         {
             testName: 'documented type parameter',
             code: `
-                enum MyEnum {
-                    /**
-                     * @typeParam T
-                     *     ${testDocumentation}
-                     */
-                    MyEnumVariant<T>
-                }
+                /**
+                 * @typeParam T
+                 *     ${testDocumentation}
+                 */
+                class MyClass<T>
             `,
             predicate: isSdsTypeParameter,
             expectedDocumentation: testDocumentation,
@@ -133,13 +132,11 @@ describe('SafeDsDocumentationProvider', () => {
         {
             testName: 'documented type parameter (duplicate)',
             code: `
-                enum MyEnum {
-                    /**
-                     * @typeParam T ${testDocumentation}
-                     * @typeParam T bla
-                     */
-                    MyEnumVariant<T>
-                }
+                /**
+                 * @typeParam T ${testDocumentation}
+                 * @typeParam T bla
+                 */
+                class MyClass<T>
             `,
             predicate: isSdsTypeParameter,
             expectedDocumentation: testDocumentation,
@@ -147,13 +144,11 @@ describe('SafeDsDocumentationProvider', () => {
         {
             testName: 'undocumented type parameter',
             code: `
-                enum MyEnum {
-                    /**
-                     * @typeParam T
-                     *     ${testDocumentation}
-                     */
-                    MyEnumVariant<T2>
-                }
+                /**
+                 * @typeParam T
+                 *     ${testDocumentation}
+                 */
+                class MyClass<T2>
             `,
             predicate: isSdsTypeParameter,
             expectedDocumentation: undefined,
@@ -166,11 +161,39 @@ describe('SafeDsDocumentationProvider', () => {
             predicate: isSdsTypeParameter,
             expectedDocumentation: undefined,
         },
+        {
+            testName: 'custom tag rendering',
+            code: `
+                /**
+                 * ${testDocumentation}
+                 *
+                 * @param param ${testDocumentation}
+                 * @result result ${testDocumentation}
+                 * @typeParam T ${testDocumentation}
+                 * @since 1.0.0
+                 */
+                fun myFunction<T>(param: String) -> result: String
+            `,
+            predicate: isSdsFunction,
+            expectedDocumentation: expandToString`
+                Lorem ipsum.
+
+                **@param** *param* — Lorem ipsum.
+
+                **@result** *result* — Lorem ipsum.
+
+                **@typeParam** *T* — Lorem ipsum.
+
+                **@since** — 1.0.0
+            `,
+        },
     ];
 
     it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
         const node = await getNodeOfType(services, code, predicate);
-        expect(documentationProvider.getDocumentation(node)).toStrictEqual(expectedDocumentation);
+        const normalizedActual = normalizeLineBreaks(documentationProvider.getDocumentation(node));
+        const normalizedExpected = normalizeLineBreaks(expectedDocumentation);
+        expect(normalizedActual).toStrictEqual(normalizedExpected);
     });
 
     it('should resolve links', async () => {

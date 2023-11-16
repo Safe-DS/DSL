@@ -1,0 +1,62 @@
+package tests.validation.purity.duplicateImpurityReason
+
+@Impure([
+    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«
+])
+
+/*
+ * We already show another error if the `@Impure` annotation is called multiple times.
+ */
+
+@Impure([
+    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+])
+fun testFunction1()
+
+@Impure([
+    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+])
+fun testFunction2()
+
+@Impure([
+    // $TEST$ no warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileWriteToConstantPath("text.txt")«,
+    // $TEST$ warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileWriteToConstantPath("text.txt")«,
+    // $TEST$ warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileWriteToConstantPath("text.txt")«,
+    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileReadFromConstantPath("text.txt")«,
+])
+fun testFunction3()
+
+/*
+ * We already show another error if an annotation is called with arguments of invalid type.
+ */
+
+@Impure(
+    // $TEST$ no warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileWriteToConstantPath("text.txt")«,
+    // $TEST$ no warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    »ImpurityReason.FileWriteToConstantPath("text.txt")«
+)
+fun testFunction4()
+
+@Impure([
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
+    »1«,
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
+    »1«,
+])
+fun testFunction5()

@@ -1,4 +1,5 @@
 import { ValidationAcceptor } from 'langium';
+import { DiagnosticTag } from 'vscode-languageserver';
 import {
     isSdsParameter,
     isSdsResult,
@@ -10,10 +11,9 @@ import {
     SdsParameter,
     SdsReference,
 } from '../../generated/ast.js';
+import { Parameter } from '../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
-import { isRequiredParameter } from '../../helpers/nodeProperties.js';
 import { parameterCanBeAnnotated } from '../other/declarations/annotationCalls.js';
-import { DiagnosticTag } from 'vscode-languageserver';
 
 export const CODE_DEPRECATED_ASSIGNED_RESULT = 'deprecated/assigned-result';
 export const CODE_DEPRECATED_CALLED_ANNOTATION = 'deprecated/called-annotation';
@@ -32,7 +32,7 @@ export const assigneeAssignedResultShouldNotBeDeprecated =
             return;
         }
 
-        if (services.builtins.Annotations.isDeprecated(assignedObject)) {
+        if (services.builtins.Annotations.callsDeprecated(assignedObject)) {
             accept('warning', `The assigned result '${assignedObject.name}' is deprecated.`, {
                 node,
                 code: CODE_DEPRECATED_ASSIGNED_RESULT,
@@ -48,7 +48,7 @@ export const annotationCallAnnotationShouldNotBeDeprecated =
             return;
         }
 
-        if (services.builtins.Annotations.isDeprecated(annotation)) {
+        if (services.builtins.Annotations.callsDeprecated(annotation)) {
             accept('warning', `The called annotation '${annotation.name}' is deprecated.`, {
                 node,
                 property: 'annotation',
@@ -65,7 +65,7 @@ export const argumentCorrespondingParameterShouldNotBeDeprecated =
             return;
         }
 
-        if (services.builtins.Annotations.isDeprecated(parameter)) {
+        if (services.builtins.Annotations.callsDeprecated(parameter)) {
             accept('warning', `The corresponding parameter '${parameter.name}' is deprecated.`, {
                 node,
                 code: CODE_DEPRECATED_CORRESPONDING_PARAMETER,
@@ -81,7 +81,7 @@ export const namedTypeDeclarationShouldNotBeDeprecated =
             return;
         }
 
-        if (services.builtins.Annotations.isDeprecated(declaration)) {
+        if (services.builtins.Annotations.callsDeprecated(declaration)) {
             accept('warning', `The referenced declaration '${declaration.name}' is deprecated.`, {
                 node,
                 code: CODE_DEPRECATED_REFERENCED_DECLARATION,
@@ -97,7 +97,7 @@ export const referenceTargetShouldNotBeDeprecated =
             return;
         }
 
-        if (services.builtins.Annotations.isDeprecated(target)) {
+        if (services.builtins.Annotations.callsDeprecated(target)) {
             accept('warning', `The referenced declaration '${target.name}' is deprecated.`, {
                 node,
                 code: CODE_DEPRECATED_REFERENCED_DECLARATION,
@@ -108,8 +108,8 @@ export const referenceTargetShouldNotBeDeprecated =
 
 export const requiredParameterMustNotBeDeprecated =
     (services: SafeDsServices) => (node: SdsParameter, accept: ValidationAcceptor) => {
-        if (isRequiredParameter(node) && parameterCanBeAnnotated(node)) {
-            if (services.builtins.Annotations.isDeprecated(node)) {
+        if (Parameter.isRequired(node) && parameterCanBeAnnotated(node)) {
+            if (services.builtins.Annotations.callsDeprecated(node)) {
                 accept('error', 'A deprecated parameter must be optional.', {
                     node,
                     property: 'name',

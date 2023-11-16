@@ -1,5 +1,5 @@
 enum E {
-    A<T> where {
+    A where {
         T sub Any ,
          T super Int ,
      }
@@ -8,7 +8,7 @@ enum E {
 // -----------------------------------------------------------------------------
 
 enum E {
-    A<T> where {
+    A where {
         T sub Any,
         T super Int,
     }

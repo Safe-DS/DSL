@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass  sub  Int ,  Number
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass sub Int, Number
-}

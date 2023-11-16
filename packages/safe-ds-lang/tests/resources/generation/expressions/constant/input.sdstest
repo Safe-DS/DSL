@@ -1,6 +1,6 @@
 package tests.generator.constant
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
 pipeline test {
     f(1 < 2);

@@ -1,4 +1,4 @@
-name: Release to VS Code Marketplace
+name: Release
 
 on:
   workflow_dispatch

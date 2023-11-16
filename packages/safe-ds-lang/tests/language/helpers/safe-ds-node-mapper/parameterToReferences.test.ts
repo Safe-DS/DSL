@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
-import { clearDocuments } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
-import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { clearDocuments } from 'langium/test';
+import { afterEach, describe, expect, it } from 'vitest';
 import { isSdsParameter } from '../../../../src/language/generated/ast.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
+import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;

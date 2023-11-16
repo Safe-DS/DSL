@@ -1,15 +1,8 @@
 import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import { getParameters } from '../helpers/nodeProperties.js';
-import {
-    BooleanConstant,
-    Constant,
-    FloatConstant,
-    IntConstant,
-    NullConstant,
-    StringConstant,
-} from '../partialEvaluation/model.js';
+import { Enum, EnumVariant, getParameters, Parameter } from '../helpers/nodeProperties.js';
+import { Constant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
     CallableType,
@@ -41,10 +34,14 @@ export class SafeDsTypeChecker {
         this.typeComputer = () => services.types.TypeComputer;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // isAssignableTo
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Checks whether {@link type} is assignable {@link other}.
      */
-    isAssignableTo(type: Type, other: Type): boolean {
+    isAssignableTo = (type: Type, other: Type): boolean => {
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (other instanceof UnionType) {
@@ -70,7 +67,7 @@ export class SafeDsTypeChecker {
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
-    }
+    };
 
     private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
         if (other instanceof ClassType) {
@@ -91,6 +88,11 @@ export class SafeDsTypeChecker {
                     return false;
                 }
 
+                // Optionality must match (all but required to optional is OK)
+                if (Parameter.isRequired(typeEntry.declaration) && Parameter.isOptional(otherEntry.declaration)) {
+                    return false;
+                }
+
                 // Types must be contravariant
                 if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
                     return false;
@@ -100,7 +102,7 @@ export class SafeDsTypeChecker {
             // Additional parameters must be optional
             for (let i = other.inputType.length; i < type.inputType.length; i++) {
                 const typeEntry = type.inputType.entries[i]!;
-                if (!typeEntry.declaration?.defaultValue) {
+                if (!Parameter.isOptional(typeEntry.declaration)) {
                     return false;
                 }
             }
@@ -190,21 +192,7 @@ export class SafeDsTypeChecker {
     }
 
     private constantIsAssignableToClassType(constant: Constant, other: ClassType): boolean {
-        let classType: Type;
-        if (constant instanceof BooleanConstant) {
-            classType = this.coreTypes.Boolean;
-        } else if (constant instanceof FloatConstant) {
-            classType = this.coreTypes.Float;
-        } else if (constant instanceof IntConstant) {
-            classType = this.coreTypes.Int;
-        } else if (constant === NullConstant) {
-            classType = this.coreTypes.NothingOrNull;
-        } else if (constant instanceof StringConstant) {
-            classType = this.coreTypes.String;
-        } /* c8 ignore start */ else {
-            throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
-        } /* c8 ignore stop */
-
+        const classType = this.typeComputer().computeClassTypeForConstant(constant);
         return this.isAssignableTo(classType, other);
     }
 
@@ -270,4 +258,31 @@ export class SafeDsTypeChecker {
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
         return type.possibleTypes.every((it) => this.isAssignableTo(it, other));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // canBeTypeOfConstantParameter
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Checks whether {@link type} is allowed as the type of a constant parameter.
+     */
+    canBeTypeOfConstantParameter = (type: Type): boolean => {
+        if (type instanceof ClassType) {
+            return [
+                this.builtinClasses.Boolean,
+                this.builtinClasses.Float,
+                this.builtinClasses.Int,
+                this.builtinClasses.List,
+                this.builtinClasses.Map,
+                this.builtinClasses.Nothing,
+                this.builtinClasses.String,
+            ].includes(type.declaration);
+        } else if (type instanceof EnumType) {
+            return Enum.isConstant(type.declaration);
+        } else if (type instanceof EnumVariantType) {
+            return EnumVariant.isConstant(type.declaration);
+        } else {
+            return type instanceof LiteralType || type === UnknownType;
+        }
+    };
 }

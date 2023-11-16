@@ -1,12 +1,12 @@
 package tests.generator.infixOperation
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
-fun g() -> result: Boolean
+@Pure fun g() -> result: Boolean
 
-fun h() -> result: Int
+@Pure fun h() -> result: Int
 
-fun i() -> result: Int?
+@Pure fun i() -> result: Int?
 
 pipeline test {
     f(g() or g());

@@ -11,19 +11,24 @@ import {
 } from 'langium';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClasses } from './builtins/safe-ds-classes.js';
-import { SafeDsEnums } from './builtins/safe-ds-enums.js';
+import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js';
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
+import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
 import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
+import { SafeDsCallHierarchyProvider } from './lsp/safe-ds-call-hierarchy-provider.js';
 import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
 import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
 import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
+import { SafeDsLanguageServer } from './lsp/safe-ds-language-server.js';
+import { SafeDsNodeInfoProvider } from './lsp/safe-ds-node-info-provider.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
 import { SafeDsSignatureHelpProvider } from './lsp/safe-ds-signature-help-provider.js';
+import { SafeDsTypeHierarchyProvider } from './lsp/safe-ds-type-hierarchy-provider.js';
 import { SafeDsPartialEvaluator } from './partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsScopeComputation } from './scoping/safe-ds-scope-computation.js';
 import { SafeDsScopeProvider } from './scoping/safe-ds-scope-provider.js';
@@ -44,15 +49,23 @@ export type SafeDsAddedServices = {
         Annotations: SafeDsAnnotations;
         Classes: SafeDsClasses;
         Enums: SafeDsEnums;
+        ImpurityReasons: SafeDsImpurityReasons;
     };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
+    };
+    flow: {
+        CallGraphComputer: SafeDsCallGraphComputer;
     };
     generation: {
         PythonGenerator: SafeDsPythonGenerator;
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
+    };
+    lsp: {
+        NodeInfoProvider: SafeDsNodeInfoProvider;
+        TypeHierarchyProvider: SafeDsTypeHierarchyProvider;
     };
     types: {
         ClassHierarchy: SafeDsClassHierarchy;
@@ -81,6 +94,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
         Enums: (services) => new SafeDsEnums(services),
+        ImpurityReasons: (services) => new SafeDsImpurityReasons(services),
     },
     documentation: {
         CommentProvider: (services) => new SafeDsCommentProvider(services),
@@ -89,6 +103,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     evaluation: {
         PartialEvaluator: (services) => new SafeDsPartialEvaluator(services),
     },
+    flow: {
+        CallGraphComputer: (services) => new SafeDsCallGraphComputer(services),
+    },
     generation: {
         PythonGenerator: (services) => new SafeDsPythonGenerator(services),
     },
@@ -96,11 +113,14 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         NodeMapper: (services) => new SafeDsNodeMapper(services),
     },
     lsp: {
+        CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
+        NodeInfoProvider: (services) => new SafeDsNodeInfoProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
         SignatureHelp: (services) => new SafeDsSignatureHelpProvider(services),
+        TypeHierarchyProvider: (services) => new SafeDsTypeHierarchyProvider(services),
     },
     parser: {
         ValueConverter: () => new SafeDsValueConverter(),
@@ -124,6 +144,7 @@ export type SafeDsSharedServices = LangiumSharedServices;
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
     lsp: {
+        LanguageServer: (services) => new SafeDsLanguageServer(services),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
@@ -173,7 +194,6 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
  * @param context Optional module context with the LSP connection.
  * @return An object wrapping the shared services and the language-specific services.
  */
-/* c8 ignore start */
 export const createSafeDsServicesWithBuiltins = async function (context: DefaultSharedModuleContext): Promise<{
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
@@ -182,4 +202,3 @@ export const createSafeDsServicesWithBuiltins = async function (context: Default
     await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     return { shared, SafeDs };
 };
-/* c8 ignore stop */

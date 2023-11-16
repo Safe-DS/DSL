@@ -1,17 +1,30 @@
+import { hasContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsIndexedAccess,
     isSdsMap,
+    isSdsTypeArgumentList,
     isSdsUnionType,
-    SdsIndexedAccess,
-    SdsLiteralType,
-    SdsMap,
-    SdsUnionType,
+    type SdsConstraintList,
+    type SdsIndexedAccess,
+    type SdsLiteralType,
+    type SdsMap,
+    type SdsTypeArgumentList,
+    type SdsTypeParameterList,
+    type SdsUnionType,
 } from '../generated/ast.js';
-import { hasContainerOfType, ValidationAcceptor } from 'langium';
 
 export const CODE_EXPERIMENTAL_LANGUAGE_FEATURE = 'experimental/language-feature';
 
+export const constraintListsShouldBeUsedWithCaution = (node: SdsConstraintList, accept: ValidationAcceptor): void => {
+    accept('warning', 'Constraint lists & constraints are experimental and may change without prior notice.', {
+        node,
+        keyword: 'where',
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
+
 export const indexedAccessesShouldBeUsedWithCaution = (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
     if (hasContainerOfType(node.$container, isSdsIndexedAccess)) {
         return;
     }
@@ -31,6 +44,7 @@ export const literalTypesShouldBeUsedWithCaution = (node: SdsLiteralType, accept
 };
 
 export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
     if (hasContainerOfType(node.$container, isSdsMap)) {
         return;
     }
@@ -41,7 +55,36 @@ export const mapsShouldBeUsedWithCaution = (node: SdsMap, accept: ValidationAcce
     });
 };
 
+export const typeArgumentListsShouldBeUsedWithCaution = (
+    node: SdsTypeArgumentList,
+    accept: ValidationAcceptor,
+): void => {
+    // There's already a warning on the container
+    if (
+        hasContainerOfType(node.$container, isSdsTypeArgumentList) ||
+        hasContainerOfType(node.$container, isSdsUnionType)
+    ) {
+        return;
+    }
+
+    accept('warning', 'Type argument lists & type arguments are experimental and may change without prior notice.', {
+        node,
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
+
+export const typeParameterListsShouldBeUsedWithCaution = (
+    node: SdsTypeParameterList,
+    accept: ValidationAcceptor,
+): void => {
+    accept('warning', 'Type parameter lists & type parameters are experimental and may change without prior notice.', {
+        node,
+        code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    });
+};
+
 export const unionTypesShouldBeUsedWithCaution = (node: SdsUnionType, accept: ValidationAcceptor): void => {
+    // There's already a warning on the container
     if (hasContainerOfType(node.$container, isSdsUnionType)) {
         return;
     }

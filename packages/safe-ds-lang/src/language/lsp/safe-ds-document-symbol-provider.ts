@@ -1,9 +1,7 @@
-import { AstNode, DefaultDocumentSymbolProvider, LangiumDocument } from 'langium';
-import { DocumentSymbol, SymbolTag } from 'vscode-languageserver';
-import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
+import { type AstNode, DefaultDocumentSymbolProvider, type LangiumDocument } from 'langium';
+import type { DocumentSymbol } from 'vscode-languageserver';
+import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
-    isSdsAnnotatedObject,
     isSdsAnnotation,
     isSdsAttribute,
     isSdsClass,
@@ -12,16 +10,20 @@ import {
     isSdsPipeline,
     isSdsSegment,
 } from '../generated/ast.js';
-import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import type { SafeDsServices } from '../safe-ds-module.js';
+import type { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import type { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
 
 export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider {
     private readonly builtinAnnotations: SafeDsAnnotations;
+    private readonly nodeInfoProvider: SafeDsNodeInfoProvider;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         super(services);
 
         this.builtinAnnotations = services.builtins.Annotations;
+        this.nodeInfoProvider = services.lsp.NodeInfoProvider;
         this.typeComputer = services.types.TypeComputer;
     }
 
@@ -34,8 +36,8 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
                 {
                     name: name ?? nameNode.text,
                     kind: this.nodeKindProvider.getSymbolKind(node),
-                    tags: this.getTags(node),
-                    detail: this.getDetails(node),
+                    tags: this.nodeInfoProvider.getTags(node),
+                    detail: this.nodeInfoProvider.getDetails(node),
                     range: cstNode.range,
                     selectionRange: nameNode.range,
                     children: this.getChildSymbols(document, node),
@@ -57,22 +59,6 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
             }
         } else {
             return super.getChildSymbols(document, node);
-        }
-    }
-
-    private getDetails(node: AstNode): string | undefined {
-        if (isSdsFunction(node) || isSdsSegment(node)) {
-            const type = this.typeComputer.computeType(node);
-            return type?.toString();
-        }
-        return undefined;
-    }
-
-    private getTags(node: AstNode): SymbolTag[] | undefined {
-        if (isSdsAnnotatedObject(node) && this.builtinAnnotations.isDeprecated(node)) {
-            return [SymbolTag.Deprecated];
-        } else {
-            return undefined;
         }
     }
 

@@ -14,7 +14,7 @@ pipeline test {
     // $TEST$ serialization MyEnumVariantWithParameters(?, 3)
     »MyEnum.MyEnumVariantWithParameters()«;
 
-        // $TEST$ serialization MyEnumVariantWithParameters(1, 3)
+    // $TEST$ serialization MyEnumVariantWithParameters(1, 3)
     »MyEnum.MyEnumVariantWithParameters(1)«;
 
     // $TEST$ serialization MyEnumVariantWithParameters(1, 2)

@@ -1,9 +1,0 @@
-enum MyEnum {
-    MyEnumVariant < in  T >
-}
-
-// -----------------------------------------------------------------------------
-
-enum MyEnum {
-    MyEnumVariant<in T>
-}

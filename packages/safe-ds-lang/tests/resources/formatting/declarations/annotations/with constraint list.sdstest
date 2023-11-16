@@ -1,0 +1,6 @@
+annotation  MyAnnotation  where  {
+ }
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation where {}

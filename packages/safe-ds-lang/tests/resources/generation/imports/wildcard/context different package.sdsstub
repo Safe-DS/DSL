@@ -1,4 +1,4 @@
 package tests.generator.differentPackageWildcard
 
-fun function1InDifferentPackage() -> result: Int
-fun function2InDifferentPackage() -> result: Int
+@Pure fun function1InDifferentPackage() -> result: Int
+@Pure fun function2InDifferentPackage() -> result: Int

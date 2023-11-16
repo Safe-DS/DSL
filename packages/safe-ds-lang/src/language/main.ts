@@ -1,6 +1,6 @@
-import { startLanguageServer as doStartLanguageServer } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { createConnection, ProposedFeatures } from 'vscode-languageserver/node.js';
+import { startLanguageServer as doStartLanguageServer } from './lsp/safe-ds-language-server.js';
 import { createSafeDsServices } from './safe-ds-module.js';
 
 /* c8 ignore start */

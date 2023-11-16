@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { clearDocuments, parseDocument, textDocumentParams } from 'langium/test';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { DocumentSymbol, SymbolKind, SymbolTag } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
+import { clearDocuments, parseDocument, textDocumentParams } from 'langium/test';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { DocumentSymbol, SymbolKind, SymbolTag } from 'vscode-languageserver';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const symbolProvider = services.lsp.DocumentSymbolProvider!;
@@ -77,7 +77,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
             testName: 'enum variant declaration',
             code: `
                 enum E {
-                    V<T>(p: Int)
+                    V(p: Int)
                 }
             `,
             expectedSymbols: [

@@ -1,3 +1,44 @@
+## [0.3.0](https://github.com/Safe-DS/DSL/compare/v0.2.0...v0.3.0) (2023-11-12)
+
+
+### Features
+
+* annotations for the purity of functions ([#709](https://github.com/Safe-DS/DSL/issues/709)) ([9d342e4](https://github.com/Safe-DS/DSL/commit/9d342e4d261aab5a0f1739dfaa6f8ec52a4a830a)), closes [#559](https://github.com/Safe-DS/DSL/issues/559)
+* call hierarchy provider ([#735](https://github.com/Safe-DS/DSL/issues/735)) ([168d098](https://github.com/Safe-DS/DSL/commit/168d0988dfe2e5fcd9ef8be11d8b181e9a07d62f)), closes [#680](https://github.com/Safe-DS/DSL/issues/680)
+* compute type of elvis operators with nullable left operand ([#715](https://github.com/Safe-DS/DSL/issues/715)) ([376b083](https://github.com/Safe-DS/DSL/commit/376b0831e87c2825b0c59b70f56b88b49815565f)), closes [#541](https://github.com/Safe-DS/DSL/issues/541)
+* customize rendering of `@param`, `@result`, and `@typeParam` tags ([#764](https://github.com/Safe-DS/DSL/issues/764)) ([e049148](https://github.com/Safe-DS/DSL/commit/e0491487076c9e1d14aa749c60540c234b1e2b4a)), closes [#669](https://github.com/Safe-DS/DSL/issues/669)
+* ensure an overriding member matches the overridden one ([#758](https://github.com/Safe-DS/DSL/issues/758)) ([a698a6a](https://github.com/Safe-DS/DSL/commit/a698a6aff42c6344bcf104f452718b2d0237562e)), closes [#639](https://github.com/Safe-DS/DSL/issues/639)
+* error if callable type is used in wrong context ([#763](https://github.com/Safe-DS/DSL/issues/763)) ([9b1522f](https://github.com/Safe-DS/DSL/commit/9b1522f55082cc53eeaa7b48dd56f4c9b75914cc)), closes [#713](https://github.com/Safe-DS/DSL/issues/713)
+* error if type parameter is used in nested named type declaration ([#750](https://github.com/Safe-DS/DSL/issues/750)) ([52374aa](https://github.com/Safe-DS/DSL/commit/52374aa2c0b168ff6b81b53a2d745ebd6303f1b9)), closes [#748](https://github.com/Safe-DS/DSL/issues/748)
+* info if overriding member is not needed ([#759](https://github.com/Safe-DS/DSL/issues/759)) ([23b340e](https://github.com/Safe-DS/DSL/commit/23b340ed3206791b0fabd7950f683c3d554bc2bd)), closes [#25](https://github.com/Safe-DS/DSL/issues/25)
+* mark constraint lists as experimental ([#752](https://github.com/Safe-DS/DSL/issues/752)) ([d48e1e0](https://github.com/Safe-DS/DSL/commit/d48e1e022b855173719273cfa2614cc2fa3277cf)), closes [#18](https://github.com/Safe-DS/DSL/issues/18)
+* mark type parameter lists and type argument lists as experimental ([#755](https://github.com/Safe-DS/DSL/issues/755)) ([f1a052a](https://github.com/Safe-DS/DSL/commit/f1a052a74ed4dccbc4e18cb944adc8c50879c10c)), closes [#753](https://github.com/Safe-DS/DSL/issues/753)
+* mark unused internal/private segments as unnecessary ([#710](https://github.com/Safe-DS/DSL/issues/710)) ([3ba8698](https://github.com/Safe-DS/DSL/commit/3ba8698189058a1b902cd35995c50bb87c260672)), closes [#682](https://github.com/Safe-DS/DSL/issues/682)
+* minor improvements for purity info ([#728](https://github.com/Safe-DS/DSL/issues/728)) ([8d59607](https://github.com/Safe-DS/DSL/commit/8d59607cabfff0a16155735f506a98abaf4aa2a0))
+* partially evaluate lambdas and segments ([#734](https://github.com/Safe-DS/DSL/issues/734)) ([c40347c](https://github.com/Safe-DS/DSL/commit/c40347c7d4729888d32985235d762aa7b3787877)), closes [#603](https://github.com/Safe-DS/DSL/issues/603)
+* scoping for inherited members ([#706](https://github.com/Safe-DS/DSL/issues/706)) ([4518aee](https://github.com/Safe-DS/DSL/commit/4518aee4f2aba1b6a738093a1bac0b70a620dcdd)), closes [#540](https://github.com/Safe-DS/DSL/issues/540)
+* scoping for member access on literals and literal types ([#754](https://github.com/Safe-DS/DSL/issues/754)) ([e60e456](https://github.com/Safe-DS/DSL/commit/e60e4563ad436b50f7585e4ad299f576715dd82d)), closes [#80](https://github.com/Safe-DS/DSL/issues/80)
+* scoping for references to containing declarations ([#708](https://github.com/Safe-DS/DSL/issues/708)) ([3762c36](https://github.com/Safe-DS/DSL/commit/3762c36c310dd7a7cf7176c19f346ace686f6968)), closes [#540](https://github.com/Safe-DS/DSL/issues/540)
+* show an error if a pure parameter does not have a callable type ([#736](https://github.com/Safe-DS/DSL/issues/736)) ([6c52868](https://github.com/Safe-DS/DSL/commit/6c52868762b18a9bf05575aff58bb19bc5af4542)), closes [#729](https://github.com/Safe-DS/DSL/issues/729)
+* show error if own declaration has same name as core one ([#762](https://github.com/Safe-DS/DSL/issues/762)) ([8cb2120](https://github.com/Safe-DS/DSL/commit/8cb2120e157f4dcee6a3afa4737db1fdb27d0fbd)), closes [#760](https://github.com/Safe-DS/DSL/issues/760)
+* signature help ([#724](https://github.com/Safe-DS/DSL/issues/724)) ([ed33676](https://github.com/Safe-DS/DSL/commit/ed33676b13dc0f38a02ba1091a7f6a111c1b8cd7)), closes [#24](https://github.com/Safe-DS/DSL/issues/24)
+* Source Maps for Code Generation ([#714](https://github.com/Safe-DS/DSL/issues/714)) ([64b9e07](https://github.com/Safe-DS/DSL/commit/64b9e07b165292a30680c3ca3c7eb7b2a40b47ff)), closes [#30](https://github.com/Safe-DS/DSL/issues/30)
+* tooltips for inlay hints ([#721](https://github.com/Safe-DS/DSL/issues/721)) ([3e71cad](https://github.com/Safe-DS/DSL/commit/3e71cad499a08e8be0821b530f01635c78f6b293))
+* type checker service ([#722](https://github.com/Safe-DS/DSL/issues/722)) ([daad5c4](https://github.com/Safe-DS/DSL/commit/daad5c43cf1b69a77a32e9b2e0a86c86dc8c1841)), closes [#666](https://github.com/Safe-DS/DSL/issues/666)
+* type checking ([#723](https://github.com/Safe-DS/DSL/issues/723)) ([a9eb3bb](https://github.com/Safe-DS/DSL/commit/a9eb3bb41990a06037b81c38b95b5a1a3a702960)), closes [#666](https://github.com/Safe-DS/DSL/issues/666)
+* type checking for list & map literals ([#751](https://github.com/Safe-DS/DSL/issues/751)) ([dc14223](https://github.com/Safe-DS/DSL/commit/dc14223803696498d44c61d4d1c206da5b53ea79)), closes [#712](https://github.com/Safe-DS/DSL/issues/712)
+* type hierarchy provider ([#737](https://github.com/Safe-DS/DSL/issues/737)) ([9fd5f0c](https://github.com/Safe-DS/DSL/commit/9fd5f0c5257eadc0faeb2d81b4e1718fb9657f05)), closes [#681](https://github.com/Safe-DS/DSL/issues/681)
+* VS Code snippets ([#757](https://github.com/Safe-DS/DSL/issues/757)) ([fd6f432](https://github.com/Safe-DS/DSL/commit/fd6f432e8cfd1c2e0e387d96c1905c3f1d5582d1)), closes [#756](https://github.com/Safe-DS/DSL/issues/756)
+
+
+### Bug Fixes
+
+* assignability of static type to callable type ([#725](https://github.com/Safe-DS/DSL/issues/725)) ([1d17900](https://github.com/Safe-DS/DSL/commit/1d17900c45cc436691681b8f3fcb646b5aaf28fc))
+* NPEs during validation ([#727](https://github.com/Safe-DS/DSL/issues/727)) ([4b8196f](https://github.com/Safe-DS/DSL/commit/4b8196ffca44b8e2fe3e22d5482fa6bac5eac0de))
+* prevent overwriting core declarations ([#761](https://github.com/Safe-DS/DSL/issues/761)) ([36663ca](https://github.com/Safe-DS/DSL/commit/36663ca0c03cbf17e3386abb8d809685b628a7a5))
+* prevent references to following parameters from default values ([#707](https://github.com/Safe-DS/DSL/issues/707)) ([182d64b](https://github.com/Safe-DS/DSL/commit/182d64b1e751adc1a587a0c3b0ea5c2c8c84fe2b)), closes [#540](https://github.com/Safe-DS/DSL/issues/540)
+* setup of CLI ([#698](https://github.com/Safe-DS/DSL/issues/698)) ([0b5d90d](https://github.com/Safe-DS/DSL/commit/0b5d90d4a661338a63b60f759cc6422f86b4d0f9))
+
 ## [0.2.0](https://github.com/Safe-DS/DSL/compare/v0.1.0...v0.2.0) (2023-10-25)
 
 
@@ -16,7 +57,7 @@
 * document symbol provider ([#659](https://github.com/Safe-DS/DSL/issues/659)) ([fe0c8d5](https://github.com/Safe-DS/DSL/commit/fe0c8d51b1761db80b07eb51bc7d22f17d066c5f))
 * documentation provider ([#689](https://github.com/Safe-DS/DSL/issues/689)) ([ff70b07](https://github.com/Safe-DS/DSL/commit/ff70b071c90a28b2d3b86488c38a5a5b3f8e0d75)), closes [#669](https://github.com/Safe-DS/DSL/issues/669)
 * ensure that all assignees get a value ([#630](https://github.com/Safe-DS/DSL/issues/630)) ([e8e2bf6](https://github.com/Safe-DS/DSL/commit/e8e2bf6efba479e9bd422ad704f780492a2bcff1)), closes [#543](https://github.com/Safe-DS/DSL/issues/543)
-* error if @PythonName and @PythonCall are set on a function ([#685](https://github.com/Safe-DS/DSL/issues/685)) ([d22c446](https://github.com/Safe-DS/DSL/commit/d22c4466ff595119dd5fb6d9575538549292d021))
+* error if `@PythonName` and `@PythonCall` are set on a function ([#685](https://github.com/Safe-DS/DSL/issues/685)) ([d22c446](https://github.com/Safe-DS/DSL/commit/d22c4466ff595119dd5fb6d9575538549292d021))
 * error if argument lists are missing ([#642](https://github.com/Safe-DS/DSL/issues/642)) ([f5ee1bd](https://github.com/Safe-DS/DSL/commit/f5ee1bd3bbab5e8e16b02d4a835038ade367051f)), closes [#543](https://github.com/Safe-DS/DSL/issues/543)
 * error if class or enum are statically referenced ([#643](https://github.com/Safe-DS/DSL/issues/643)) ([8b076e7](https://github.com/Safe-DS/DSL/commit/8b076e7d67aef0a622779b166db572b6af3f3025)), closes [#543](https://github.com/Safe-DS/DSL/issues/543)
 * error if divisor is zero ([#644](https://github.com/Safe-DS/DSL/issues/644)) ([9af3b81](https://github.com/Safe-DS/DSL/commit/9af3b81a2590484e9a9f17c023946c66d01cc10e)), closes [#543](https://github.com/Safe-DS/DSL/issues/543)

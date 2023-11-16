@@ -1,6 +1,6 @@
 package tests.generator.indexedAccess
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
 segment test(params: List<Int>) {
     f(params[0]);

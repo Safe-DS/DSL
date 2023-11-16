@@ -5,7 +5,7 @@ enum MyEnum {
     MyVariant1 »where {}«
 
     // $TEST$ no info "This constraint list can be removed."
-    MyVariant2<T>() »where {
+    MyVariant2() »where {
         T sub Int
     }«
 }

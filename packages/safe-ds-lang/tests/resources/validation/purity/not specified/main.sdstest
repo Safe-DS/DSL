@@ -1,0 +1,12 @@
+package tests.validation.purity.notSpecified
+
+// $TEST$ error r"The purity of a function must be specified. Call the annotation '@Pure' or '@Impure'."
+fun »functionWithUnknownPurity«()
+
+// $TEST$ no error r"The purity of a function must be specified. Call the annotation '@Pure' or '@Impure'."
+@Impure([])
+fun »impureFunction«()
+
+// $TEST$ no error r"The purity of a function must be specified. Call the annotation '@Pure' or '@Impure'."
+@Pure
+fun »pureFunction«()

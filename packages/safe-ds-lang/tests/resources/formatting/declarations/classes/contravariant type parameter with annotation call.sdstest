@@ -1,8 +1,0 @@
-class  MyClass < @Annotation  in  T >
-
-// -----------------------------------------------------------------------------
-
-class MyClass<
-    @Annotation
-    in T
->

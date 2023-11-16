@@ -1,9 +1,0 @@
-fun  myFunction ( )  where  {
-     T  sub  Number
- }
-
-// -----------------------------------------------------------------------------
-
-fun myFunction() where {
-    T sub Number
-}

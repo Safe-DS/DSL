@@ -1,0 +1,8 @@
+package tests.validation.other.declarations.parameters.constMustOnlyBeUsedForSpecificTypes
+
+// $TEST$ no error r"A.* parameter cannot have type '.*'\."
+
+annotation AnnotationMissingType(p)
+
+@Pure
+fun functionMissingType(const p)

@@ -1,0 +1,61 @@
+package tests.validation.other.declarations.constraints.typeParameterConstraints.typeParameterOnContainer
+
+annotation MyAnnotation where {
+    // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+    »Unresolved« sub MyGlobalClass,
+}
+
+class MyGlobalClass<T1> where {
+    // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+    »T1« sub MyGlobalClass,
+
+    // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+    »Unresolved« sub MyGlobalClass
+} {
+    class MyNestedClass<T2> where {
+        // $TEST$ error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »T1« sub MyGlobalClass,
+
+        // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »T2« sub MyGlobalClass,
+
+        // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »Unresolved« sub MyGlobalClass,
+    }
+
+    enum MyNestedEnum {
+        MyEnumVariant where {
+            // $TEST$ error "The left operand must refer to a type parameter of the declaration with the constraint."
+            »T1« sub MyGlobalClass,
+
+            // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+            »Unresolved« sub MyGlobalClass,
+        }
+    }
+
+    fun myMethod<T2>() where {
+        // $TEST$ error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »T1« sub MyGlobalClass,
+
+        // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »T2« sub MyGlobalClass,
+
+        // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »Unresolved« sub MyGlobalClass,
+    }
+}
+
+enum MyGlobalEnum {
+    MyEnumVariant where {
+        // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+        »Unresolved« sub MyGlobalClass,
+    }
+}
+
+fun myGlobalFunction<T1>() where {
+    // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+    »T1« sub MyGlobalClass,
+
+    // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the constraint."
+    »Unresolved« sub MyGlobalClass,
+}

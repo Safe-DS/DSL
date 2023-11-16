@@ -1,9 +1,0 @@
-class MyOuterClass {
-    class  MyClass ( a :  Int  =  1 )
-}
-
-// -----------------------------------------------------------------------------
-
-class MyOuterClass {
-    class MyClass(a: Int = 1)
-}

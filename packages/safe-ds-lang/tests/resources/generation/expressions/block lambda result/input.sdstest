@@ -1,8 +1,8 @@
 package tests.generator.blockLambdaResult
 
-fun g() -> a: Int
+@Pure fun g() -> a: Int
 
-fun h(a: Int)
+@Pure fun h(a: Int)
 
 segment f1(l: (a: Int, b: Int) -> d: Int) {
     h(l(1, 2).d);

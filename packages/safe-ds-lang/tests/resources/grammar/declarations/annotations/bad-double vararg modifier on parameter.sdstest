@@ -1,3 +1,0 @@
-// $TEST$ syntax_error
-
-annotation MyAnnotation(vararg vararg a: String)

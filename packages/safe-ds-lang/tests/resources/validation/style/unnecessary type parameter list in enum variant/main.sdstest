@@ -1,9 +1,0 @@
-package tests.validation.style.unnecessaryTypeParameterListInEnumVariant
-
-enum MyEnum {
-    // $TEST$ info "This type parameter list can be removed."
-    MyVariant1»<>«
-
-    // $TEST$ no info "This type parameter list can be removed."
-    MyVariant2»<T>«
-}

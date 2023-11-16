@@ -1,23 +1,26 @@
 package tests.generator.call
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
-fun g(
+@Pure fun g(
     param1: Int,
     param2: Int = 0
 ) -> result: Boolean
 
-fun h(
+@Pure fun h(
     @PythonName("param_1") param1: Int,
     @PythonName("param_2") param2: Int = 0
 ) -> result: Boolean
 
+@Pure
 @PythonCall("$param.i()")
 fun i(param: Any?)
 
+@Pure
 @PythonCall("$param.j($param2)")
 fun j(param: Any?, param2: Any?)
 
+@Pure
 @PythonCall("k($param2, $param)")
 fun k(param: Any?, param2: Any?)
 

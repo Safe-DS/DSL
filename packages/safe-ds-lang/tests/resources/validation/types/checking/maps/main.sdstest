@@ -1,0 +1,19 @@
+package tests.validation.types.checking.maps
+
+fun noResults()
+fun oneResult() -> r: Int
+fun twoResults() -> (r1: Int, r2: Int)
+
+segment mySegment() {
+    {
+        // $TEST$ error "Cannot use a value of type '()' as a map key."
+        // $TEST$ error "Cannot use a value of type '()' as a map value."
+        »noResults()«: »noResults()«,
+        // $TEST$ no error r"Cannot use a value of type '.*' as a map key\."
+        // $TEST$ no error r"Cannot use a value of type '.*' as a map value\."
+        »oneResult()«: »oneResult()«,
+        // $TEST$ error "Cannot use a value of type '(r1: Int, r2: Int)' as a map key."
+        // $TEST$ error "Cannot use a value of type '(r1: Int, r2: Int)' as a map value."
+        »twoResults()«: »twoResults()«
+    };
+}

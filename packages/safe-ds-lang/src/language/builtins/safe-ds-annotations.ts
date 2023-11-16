@@ -1,6 +1,7 @@
+import { EMPTY_STREAM, Stream, stream, URI } from 'langium';
+import { resourceNameToUri } from '../../helpers/resources.js';
 import {
     isSdsAnnotation,
-    isSdsEnum,
     SdsAnnotatedObject,
     SdsAnnotation,
     SdsEnumVariant,
@@ -8,26 +9,25 @@ import {
     SdsModule,
     SdsParameter,
 } from '../generated/ast.js';
-import {
-    findFirstAnnotationCallOf,
-    getArguments,
-    getEnumVariants,
-    getParameters,
-    hasAnnotationCallOf,
-} from '../helpers/nodeProperties.js';
-import { SafeDsModuleMembers } from './safe-ds-module-members.js';
-import { resourceNameToUri } from '../../helpers/resources.js';
-import { EMPTY_STREAM, getContainerOfType, Stream, stream, URI } from 'langium';
-import { SafeDsServices } from '../safe-ds-module.js';
+import { findFirstAnnotationCallOf, getEnumVariants, hasAnnotationCallOf } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
-import { EvaluatedEnumVariant, EvaluatedList, EvaluatedNode, StringConstant } from '../partialEvaluation/model.js';
+import {
+    EvaluatedEnumVariant,
+    EvaluatedList,
+    EvaluatedNode,
+    StringConstant,
+    UnknownEvaluatedNode,
+} from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsEnums } from './safe-ds-enums.js';
+import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
 const CODE_GENERATION_URI = resourceNameToUri('builtins/safeds/lang/codeGeneration.sdsstub');
 const IDE_INTEGRATION_URI = resourceNameToUri('builtins/safeds/lang/ideIntegration.sdsstub');
 const MATURITY_URI = resourceNameToUri('builtins/safeds/lang/maturity.sdsstub');
+const PURITY_URI = resourceNameToUri('builtins/safeds/lang/purity.sdsstub');
 
 export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     private readonly builtinEnums: SafeDsEnums;
@@ -42,7 +42,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
-    isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
+    callsDeprecated(node: SdsAnnotatedObject | undefined): boolean {
         return hasAnnotationCallOf(node, this.Deprecated);
     }
 
@@ -50,7 +50,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(MATURITY_URI, 'Deprecated');
     }
 
-    isExperimental(node: SdsAnnotatedObject | undefined): boolean {
+    callsExperimental(node: SdsAnnotatedObject | undefined): boolean {
         return hasAnnotationCallOf(node, this.Experimental);
     }
 
@@ -58,7 +58,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(MATURITY_URI, 'Experimental');
     }
 
-    isExpert(node: SdsParameter | undefined): boolean {
+    callsExpert(node: SdsParameter | undefined): boolean {
         return hasAnnotationCallOf(node, this.Expert);
     }
 
@@ -66,8 +66,35 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(IDE_INTEGRATION_URI, 'Expert');
     }
 
+    callsImpure(node: SdsFunction | undefined): boolean {
+        return hasAnnotationCallOf(node, this.Impure);
+    }
+
+    streamImpurityReasons(node: SdsFunction | undefined): Stream<EvaluatedEnumVariant> {
+        // If allReasons are specified, but we could not evaluate them to a list, no reasons apply
+        const value = this.getParameterValue(node, this.Impure, 'allReasons');
+        if (!(value instanceof EvaluatedList)) {
+            return EMPTY_STREAM;
+        }
+
+        // Otherwise, filter the elements of the list and keep only variants of the ImpurityReason enum
+        return stream(value.elements).filter(this.builtinEnums.isEvaluatedImpurityReason);
+    }
+
+    get Impure(): SdsAnnotation | undefined {
+        return this.getAnnotation(PURITY_URI, 'Impure');
+    }
+
+    callsPure(node: SdsFunction | undefined): boolean {
+        return hasAnnotationCallOf(node, this.Pure);
+    }
+
+    get Pure(): SdsAnnotation | undefined {
+        return this.getAnnotation(PURITY_URI, 'Pure');
+    }
+
     getPythonCall(node: SdsFunction | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonCall, 'callSpecification');
+        const value = this.getParameterValue(node, this.PythonCall, 'callSpecification');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -80,7 +107,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     getPythonModule(node: SdsModule | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonModule, 'qualifiedName');
+        const value = this.getParameterValue(node, this.PythonModule, 'qualifiedName');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -93,7 +120,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     }
 
     getPythonName(node: SdsAnnotatedObject | undefined): string | undefined {
-        const value = this.getArgumentValue(node, this.PythonName, 'name');
+        const value = this.getParameterValue(node, this.PythonName, 'name');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -105,7 +132,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonName');
     }
 
-    isRepeatable(node: SdsAnnotation | undefined): boolean {
+    callsRepeatable(node: SdsAnnotation | undefined): boolean {
         return hasAnnotationCallOf(node, this.Repeatable);
     }
 
@@ -120,19 +147,15 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
 
         // If targets are specified, but we could not evaluate them to a list, no target is valid
-        const value = this.getArgumentValue(node, this.Target, 'targets');
+        const value = this.getParameterValue(node, this.Target, 'targets');
         if (!(value instanceof EvaluatedList)) {
             return EMPTY_STREAM;
         }
 
         // Otherwise, filter the elements of the list and keep only variants of the AnnotationTarget enum
         return stream(value.elements)
-            .filter(
-                (it) =>
-                    it instanceof EvaluatedEnumVariant &&
-                    getContainerOfType(it.variant, isSdsEnum) === this.builtinEnums.AnnotationTarget,
-            )
-            .map((it) => (<EvaluatedEnumVariant>it).variant);
+            .filter(this.builtinEnums.isEvaluatedAnnotationTarget)
+            .map((it) => it.variant);
     }
 
     get Target(): SdsAnnotation | undefined {
@@ -147,23 +170,17 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
      * Finds the first call of the given annotation on the given node and returns the value that is assigned to the
      * parameter with the given name.
      */
-    private getArgumentValue(
+    private getParameterValue(
         node: SdsAnnotatedObject | undefined,
         annotation: SdsAnnotation | undefined,
         parameterName: string,
     ): EvaluatedNode {
         const annotationCall = findFirstAnnotationCallOf(node, annotation);
-
-        // Parameter is set explicitly
-        const argument = getArguments(annotationCall).find(
-            (it) => this.nodeMapper.argumentToParameter(it)?.name === parameterName,
-        );
-        if (argument) {
-            return this.partialEvaluator.evaluate(argument.value);
+        if (!annotationCall) {
+            return UnknownEvaluatedNode;
         }
 
-        // Parameter is not set explicitly, so we use the default value
-        const parameter = getParameters(annotation).find((it) => it.name === parameterName);
-        return this.partialEvaluator.evaluate(parameter?.defaultValue);
+        const parameterValue = this.nodeMapper.callToParameterValue(annotationCall, parameterName);
+        return this.partialEvaluator.evaluate(parameterValue);
     }
 }

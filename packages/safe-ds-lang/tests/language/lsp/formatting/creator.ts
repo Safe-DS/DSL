@@ -1,10 +1,11 @@
-import { listTestSafeDsFiles, uriToShortenedTestResourceName } from '../../../helpers/testResources.js';
 import fs from 'fs';
-import { Diagnostic } from 'vscode-languageserver';
-import { createSafeDsServices } from '../../../../src/language/safe-ds-module.js';
 import { EmptyFileSystem, URI } from 'langium';
+import { Diagnostic } from 'vscode-languageserver';
+import { normalizeLineBreaks } from '../../../../src/helpers/stringUtils.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 import { getSyntaxErrors } from '../../../helpers/diagnostics.js';
 import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';
+import { listTestSafeDsFiles, uriToShortenedTestResourceName } from '../../../helpers/testResources.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const rootResourceName = 'formatting';
@@ -62,16 +63,6 @@ const invalidTest = (error: TestDescriptionError): FormattingTest => {
         uri: URI.file(''),
         error,
     };
-};
-
-/**
- * Normalizes line breaks to `\n`.
- *
- * @param code The code to normalize.
- * @return The normalized code.
- */
-const normalizeLineBreaks = (code: string): string => {
-    return code.replace(/\r\n?/gu, '\n');
 };
 
 /**

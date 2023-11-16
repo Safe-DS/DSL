@@ -1,5 +1,0 @@
-// $TEST$ syntax_error
-
-class MyClass {
-    fun myFunction(vararg vararg a: String)
-}

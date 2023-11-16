@@ -15,6 +15,11 @@ module.exports = {
                 publishCmd: 'npm run package && npm run deploy',
                 execCwd: 'packages/safe-ds-vscode',
             },
+            // Update the lock file
+            '@semantic-release/exec',
+            {
+                prepareCmd: 'npm install'
+            },
         ],
         [
             '@semantic-release/github',
@@ -30,6 +35,7 @@ module.exports = {
             '@semantic-release/git',
             {
                 assets: [
+                    'package-lock.json',
                     'packages/safe-ds-cli/package.json',
                     'packages/safe-ds-lang/CHANGELOG.md',
                     'packages/safe-ds-lang/package.json',

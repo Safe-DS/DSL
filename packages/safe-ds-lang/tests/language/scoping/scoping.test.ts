@@ -1,15 +1,20 @@
-import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/index.js';
-import { LangiumDocument, Reference, URI } from 'langium';
-import { NodeFileSystem } from 'langium/node';
-import { clearDocuments, isRangeEqual } from 'langium/test';
 import { AssertionError } from 'assert';
-import { isLocationEqual, locationToString } from '../../helpers/location.js';
-import { createScopingTests, ExpectedReference } from './creator.js';
+import { AstNode, DocumentValidator, getDocument, LangiumDocument, Reference, URI } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+import { clearDocuments, isRangeEqual, validationHelper } from 'langium/test';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Location } from 'vscode-languageserver';
+import { createSafeDsServices } from '../../../src/language/index.js';
+import { isLocationEqual, locationToString } from '../../helpers/location.js';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { createScopingTests, ExpectedReference } from './creator.js';
+import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { isSdsAnnotationCall, isSdsNamedType, isSdsReference } from '../../../src/language/generated/ast.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const builtinAnnotations = services.builtins.Annotations;
+const builtinEnums = services.builtins.Enums;
+const builtinClasses = services.builtins.Classes;
 
 describe('scoping', async () => {
     beforeEach(async () => {
@@ -68,6 +73,56 @@ describe('scoping', async () => {
             }
         }
     });
+
+    it('should not replace core declarations (annotation call)', async () => {
+        const code = `
+            annotation PythonName(name: String)
+
+            @PythonName(name: String)
+            segment mySegment() {}
+        `;
+        const annotationCall = await getNodeOfType(services, code, isSdsAnnotationCall);
+        expectSameDocument(annotationCall.annotation?.ref, builtinAnnotations.PythonName);
+    });
+
+    it('should not replace core declarations (named type)', async () => {
+        const code = `
+            class Any
+
+            segment mySegment(p: Any) {}
+        `;
+        const namedType = await getNodeOfType(services, code, isSdsNamedType);
+        expectSameDocument(namedType.declaration?.ref, builtinClasses.Any);
+    });
+
+    it('should not replace core declarations (reference)', async () => {
+        const code = `
+            enum AnnotationTarget
+
+            @Target([AnnotationTarget.Annotation])
+            annotation MyAnnotation
+        `;
+        const reference = await getNodeOfType(services, code, isSdsReference);
+        expectSameDocument(reference.target?.ref, builtinEnums.AnnotationTarget);
+    });
+
+    it('should resolve members on literals', async () => {
+        const code = `
+            pipeline myPipeline {
+                1.toString();
+            }
+        `;
+        await expectNoLinkingErrors(code);
+    });
+
+    it('should resolve members on literal types', async () => {
+        const code = `
+            segment mySegment(p: literal<"">) {
+                p.toString();
+            }
+        `;
+        await expectNoLinkingErrors(code);
+    });
 });
 
 /**
@@ -123,4 +178,29 @@ const findActualReference = (document: LangiumDocument, expectedReference: Expec
         });
     }
     return actualReference;
+};
+
+/**
+ * Both nodes should be defined and in the same document or an `AssertionError` is thrown.
+ */
+const expectSameDocument = (node1: AstNode | undefined, node2: AstNode | undefined): void => {
+    if (!node1) {
+        throw new AssertionError({ message: `node1 is undefined.` });
+    } else if (!node2) {
+        throw new AssertionError({ message: `node2 is undefined.` });
+    }
+
+    const document1 = getDocument(node1);
+    const document2 = getDocument(node2);
+
+    expect(document1.uri.toString()).toStrictEqual(document2.uri.toString());
+};
+
+/**
+ * The given code should have no linking errors or an `AssertionError` is thrown.
+ */
+const expectNoLinkingErrors = async (code: string) => {
+    const { diagnostics } = await validationHelper(services)(code);
+    const linkingError = diagnostics.filter((d) => d.data?.code === DocumentValidator.LinkingError);
+    expect(linkingError).toStrictEqual([]);
 };

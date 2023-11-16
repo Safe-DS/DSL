@@ -1,6 +1,6 @@
 package tests.generator.twoPipelines
 
-fun f()
+@Pure fun f()
 
 pipeline test1 {
     f();

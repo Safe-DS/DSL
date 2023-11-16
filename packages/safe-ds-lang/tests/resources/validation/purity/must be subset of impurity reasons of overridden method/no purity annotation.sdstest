@@ -1,0 +1,11 @@
+package tests.validation.purity.mustBeSubsetOfImpurityReasonsOfOverriddenMethod
+
+// $TEST$ no error "The impurity reasons of an overriding function must be a subset of the impurity reasons of the overridden function."
+
+class A {
+    fun functionWithUnspecifiedPurity()
+}
+
+class B sub A {
+    fun functionWithUnspecifiedPurity()
+}

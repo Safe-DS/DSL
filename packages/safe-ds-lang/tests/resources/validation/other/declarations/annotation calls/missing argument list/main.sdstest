@@ -13,23 +13,23 @@ annotation AnnotationWithoutRequiredParameters(a: Int = 0)
 annotation AnnotationWithRequiredParameters(a: Int)
 
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithoutParameterList«
+@»AnnotationWithoutParameterList«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithoutParameterList()«
+@»AnnotationWithoutParameterList()«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithEmptyParameterList«
+@»AnnotationWithEmptyParameterList«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithEmptyParameterList()«
+@»AnnotationWithEmptyParameterList()«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithoutRequiredParameters«
+@»AnnotationWithoutRequiredParameters«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithoutRequiredParameters()«
+@»AnnotationWithoutRequiredParameters()«
 // $TEST$ error "The annotation 'AnnotationWithRequiredParameters' has required parameters, so an argument list must be added."
-»@AnnotationWithRequiredParameters«
+@»AnnotationWithRequiredParameters«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@AnnotationWithRequiredParameters()«
+@»AnnotationWithRequiredParameters()«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@UnresolvedAnnotation«
+@»UnresolvedAnnotation«
 // $TEST$ no error r"The annotation '\w*' has required parameters, so an argument list must be added\."
-»@UnresolvedAnnotation()«
+@»UnresolvedAnnotation()«
 class MyClass

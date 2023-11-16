@@ -1,6 +1,6 @@
 package tests.generator.literals
 
-fun f(param: Any?)
+@Pure fun f(param: Any?)
 
 pipeline test {
     f(true);

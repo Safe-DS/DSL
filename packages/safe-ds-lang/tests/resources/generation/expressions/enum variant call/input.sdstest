@@ -1,6 +1,6 @@
 package tests.generator.enumVariantCall
 
-fun f(p: Any)
+@Pure fun f(p: Any)
 
 enum MyEnum {
    Variant1

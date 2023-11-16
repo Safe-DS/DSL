@@ -1,5 +1,0 @@
-// $TEST$ syntax_error
-
-class MyOuterClass {
-    class MyClass(const const a: String)
-}

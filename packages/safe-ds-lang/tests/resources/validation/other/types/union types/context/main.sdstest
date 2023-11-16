@@ -14,7 +14,7 @@ class MyClass<T>(
 }
 
 enum MyEnum {
-    MyEnumVariant<T>(
+    MyEnumVariant(
         // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
         p: »union<Int>«,
     )
@@ -55,7 +55,9 @@ segment mySegment2(
 segment mySegment3(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     p1: MyClass<»union<Int>«>,
+) {}
 
+segment mySegment4(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    p2: MyEnum.MyEnumVariant<»union<Int>«>,
+    p1: »union<Int>«.MyClass
 ) {}

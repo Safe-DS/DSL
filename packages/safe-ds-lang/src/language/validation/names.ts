@@ -1,3 +1,7 @@
+import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
+import { duplicatesBy } from '../../helpers/collectionUtils.js';
+import { listBuiltinFiles } from '../builtins/fileFinder.js';
+import { BUILTINS_LANG_PACKAGE, BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 import {
     isSdsQualifiedImport,
     SdsAnnotation,
@@ -21,13 +25,14 @@ import {
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
-import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
+import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
+import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
 import {
+    getClassMembers,
     getColumns,
     getEnumVariants,
     getImportedDeclarations,
     getImports,
-    getMatchingClassMembers,
     getModuleMembers,
     getPackageName,
     getParameters,
@@ -37,15 +42,11 @@ import {
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
-import { duplicatesBy } from '../../helpers/collectionUtils.js';
-import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
-import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { listBuiltinFiles } from '../builtins/fileFinder.js';
-import { BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
-import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
+import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
+export const CODE_NAME_CORE_DECLARATION = 'name/core-declaration';
 export const CODE_NAME_CASING = 'name/casing';
 export const CODE_NAME_DUPLICATE = 'name/duplicate';
 
@@ -66,6 +67,36 @@ export const nameMustNotStartWithCodegenPrefix = (node: SdsDeclaration, accept: 
             },
         );
     }
+};
+
+// -----------------------------------------------------------------------------
+// Core declaration
+// -----------------------------------------------------------------------------
+
+export const nameMustNotOccurOnCoreDeclaration = (services: SafeDsServices) => {
+    const packageManager = services.workspace.PackageManager;
+
+    return (node: SdsDeclaration, accept: ValidationAcceptor) => {
+        if (!node.name) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        // Prevents the error from showing when editing the builtin files
+        const packageName = getPackageName(node);
+        if (packageName === BUILTINS_LANG_PACKAGE) {
+            return;
+        }
+
+        const coreDeclarations = packageManager.getDeclarationsInPackage(BUILTINS_LANG_PACKAGE);
+        if (coreDeclarations.some((it) => it.name === node.name)) {
+            accept('error', 'Names of core declarations must not be used for own declarations.', {
+                node,
+                property: 'name',
+                code: CODE_NAME_CORE_DECLARATION,
+            });
+        }
+    };
 };
 
 // -----------------------------------------------------------------------------
@@ -184,10 +215,10 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
         accept,
     );
 
-    const instanceMembers = getMatchingClassMembers(node, (it) => !isStatic(it));
+    const instanceMembers = getClassMembers(node).filter((it) => !isStatic(it));
     namesMustBeUnique(instanceMembers, (name) => `An instance member with name '${name}' exists already.`, accept);
 
-    const staticMembers = getMatchingClassMembers(node, isStatic);
+    const staticMembers = getClassMembers(node).filter(isStatic);
     namesMustBeUnique(staticMembers, (name) => `A static member with name '${name}' exists already.`, accept);
 };
 
@@ -196,12 +227,8 @@ export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcce
 };
 
 export const enumVariantMustContainUniqueNames = (node: SdsEnumVariant, accept: ValidationAcceptor): void => {
-    const typeParametersAndParameters = [...getTypeParameters(node.typeParameterList), ...getParameters(node)];
-    namesMustBeUnique(
-        typeParametersAndParameters,
-        (name) => `A type parameter or parameter with name '${name}' exists already.`,
-        accept,
-    );
+    const parameters = [...getParameters(node)];
+    namesMustBeUnique(parameters, (name) => `A parameter with name '${name}' exists already.`, accept);
 };
 
 export const expressionLambdaMustContainUniqueNames = (node: SdsExpressionLambda, accept: ValidationAcceptor): void => {

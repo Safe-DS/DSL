@@ -1,17 +1,32 @@
-import { beforeAll, describe, it } from 'vitest';
-import { listBuiltinFiles } from '../../../src/language/builtins/fileFinder.js';
-import { uriToShortenedResourceName } from '../../../src/helpers/resources.js';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { NodeFileSystem } from 'langium/node';
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { URI } from 'langium';
-import { locationToString } from '../../helpers/location.js';
 import { AssertionError } from 'assert';
+import { URI } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+import { beforeAll, describe, it } from 'vitest';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { isEmpty } from '../../../src/helpers/collectionUtils.js';
+import { uriToShortenedResourceName } from '../../../src/helpers/resources.js';
+import { listBuiltinFiles } from '../../../src/language/builtins/fileFinder.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
+import {
+    CODE_EXPERIMENTAL_ASSIGNED_RESULT,
+    CODE_EXPERIMENTAL_CALLED_ANNOTATION,
+    CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
+    CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
+} from '../../../src/language/validation/builtins/experimental.js';
+import { CODE_EXPERIMENTAL_LANGUAGE_FEATURE } from '../../../src/language/validation/experimentalLanguageFeatures.js';
+import { locationToString } from '../../helpers/location.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const builtinFiles = listBuiltinFiles();
+
+const ignoredWarnings: (number | string | undefined)[] = [
+    CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
+    CODE_EXPERIMENTAL_ASSIGNED_RESULT,
+    CODE_EXPERIMENTAL_CALLED_ANNOTATION,
+    CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
+    CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
+];
 
 describe('builtin files', () => {
     beforeAll(async () => {
@@ -22,6 +37,7 @@ describe('builtin files', () => {
         uri,
         shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
     }));
+
     it.each(testCases)('[$shortenedResourceName] should have no errors or warnings', async ({ uri }) => {
         const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
 
@@ -29,7 +45,7 @@ describe('builtin files', () => {
             document.diagnostics?.filter(
                 (diagnostic) =>
                     diagnostic.severity === DiagnosticSeverity.Error ||
-                    diagnostic.severity === DiagnosticSeverity.Warning,
+                    (diagnostic.severity === DiagnosticSeverity.Warning && !ignoredWarnings.includes(diagnostic.code)),
             ) ?? [];
 
         if (!isEmpty(errorsOrWarnings)) {

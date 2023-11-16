@@ -1,9 +1,9 @@
-import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import { SafeDsServices } from '../../safe-ds-module.js';
-import { getArguments, isRequiredParameter, getParameters } from '../../helpers/nodeProperties.js';
 import { duplicatesBy, isEmpty } from '../../../helpers/collectionUtils.js';
 import { pluralize } from '../../../helpers/stringUtils.js';
+import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '../../generated/ast.js';
+import { getArguments, getParameters, Parameter } from '../../helpers/nodeProperties.js';
+import { SafeDsServices } from '../../safe-ds-module.js';
 
 export const CODE_ARGUMENT_LIST_DUPLICATE_PARAMETER = 'argument-list/duplicate-parameter';
 export const CODE_ARGUMENT_LIST_MISSING_REQUIRED_PARAMETER = 'argument-list/missing-required-parameter';
@@ -52,7 +52,7 @@ export const argumentListMustNotHaveTooManyArguments = (services: SafeDsServices
             return;
         }
 
-        const minArgumentCount = parameters.filter((it) => isRequiredParameter(it)).length;
+        const minArgumentCount = parameters.filter(Parameter.isRequired).length;
         const kind = pluralize(Math.max(minArgumentCount, maxArgumentCount), 'argument');
         if (minArgumentCount === maxArgumentCount) {
             accept('error', `Expected exactly ${minArgumentCount} ${kind} but got ${actualArgumentCount}.`, {
@@ -114,7 +114,7 @@ export const argumentListMustSetAllRequiredParameters = (services: SafeDsService
             return;
         }
 
-        const expectedParameters = getParameters(callable).filter((it) => isRequiredParameter(it));
+        const expectedParameters = getParameters(callable).filter(Parameter.isRequired);
         if (isEmpty(expectedParameters)) {
             return;
         }

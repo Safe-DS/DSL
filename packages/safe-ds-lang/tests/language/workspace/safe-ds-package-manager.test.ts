@@ -1,7 +1,7 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/safe-ds-module.js';
-import { clearDocuments, parseHelper } from 'langium/test';
 import { EmptyFileSystem } from 'langium';
+import { clearDocuments, parseHelper } from 'langium/test';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const packageManager = services.workspace.PackageManager;

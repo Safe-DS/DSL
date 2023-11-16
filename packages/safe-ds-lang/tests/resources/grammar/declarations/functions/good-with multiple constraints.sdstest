@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-fun myFunction() where {
-    T sub Number,
-    S super Number
-}

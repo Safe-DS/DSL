@@ -1,11 +1,13 @@
 # Ignore everything
-../../**
 **
+../**
+../../**
 
 # Whitelist
 !dist
 !img
-!syntaxes/safe-ds.tmLanguage.json
+!snippets
+!syntaxes
 !CHANGELOG.md
 !language-configuration.json
 !LICENSE

@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -113,6 +113,12 @@
                 "category": "Safe-DS",
                 "icon": "$(play)"
             }
+        ],
+        "snippets": [
+            {
+                "language": "safe-ds",
+                "path": "./snippets/safe-ds.json"
+            }
         ]
     },
     "type": "module",
@@ -132,7 +138,7 @@
         "source-map": "^0.7.4"
     },
     "devDependencies": {
-        "@types/node": "^18.18.8",
+        "@types/node": "^18.18.9",
         "@types/vscode": "^1.83.2",
         "@types/ws": "^8.5.8",
         "@vscode/vsce": "^2.22.0",

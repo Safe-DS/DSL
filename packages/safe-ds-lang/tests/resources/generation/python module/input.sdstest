@@ -2,7 +2,7 @@
 
 package tests.generator.pythonModule
 
-fun f()
+@Pure fun f()
 
 segment test() {
     f();

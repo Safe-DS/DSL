@@ -1,0 +1,6 @@
+package safeds.lang
+
+class Any {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    fun »toString«() -> s: String
+}

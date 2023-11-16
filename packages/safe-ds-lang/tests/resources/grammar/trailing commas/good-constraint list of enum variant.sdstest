@@ -1,7 +1,7 @@
 // $TEST$ no_syntax_error
 
 enum E {
-    A<T> where {
+    A where {
         T sub Any,
         T super Int,
     }

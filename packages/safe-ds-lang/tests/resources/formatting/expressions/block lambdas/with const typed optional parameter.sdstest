@@ -1,9 +1,0 @@
-pipeline myPipeline {
-    (  const  a :  Int  =  1 )  { };
-}
-
-// -----------------------------------------------------------------------------
-
-pipeline myPipeline {
-    (const a: Int = 1) {};
-}

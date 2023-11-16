@@ -1,0 +1,11 @@
+class MyClass {
+    @MyAnnotation  fun  myFunction ( )
+}
+
+
+// -----------------------------------------------------------------------------
+
+class MyClass {
+    @MyAnnotation
+    fun myFunction()
+}

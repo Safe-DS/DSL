@@ -1,0 +1,28 @@
+package tests.validation.other.declarations.typeParameters.usage
+
+// $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+class MyClass<T>(p: »T«) {
+    // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+    attr a: »T«
+
+    // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+    // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+    // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+    // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+    fun f<S>(p1: »T«, p2: »S«) -> (r1: »T«, r2: »S«)
+
+    // $TEST$ error "Type parameters cannot be used in nested named type declarations."
+    // $TEST$ no error "Type parameters cannot be used in nested named type declarations."
+    class MyInnerClass<S>(p1: »T«, p2: »S«) {
+        // $TEST$ error "Type parameters cannot be used in nested named type declarations."
+        attr a: »T«
+
+        // $TEST$ error "Type parameters cannot be used in nested named type declarations."
+        fun f(p: »T«)
+    }
+
+    enum MyInnerEnum {
+        // $TEST$ error "Type parameters cannot be used in nested named type declarations."
+        MyEnumVariant(p1: »T«)
+    }
+}
