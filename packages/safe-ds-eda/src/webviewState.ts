@@ -1,48 +1,44 @@
 import type { FromExtensionMessage } from "../../../types/shared-eda-vscode/messaging";
 import type { State } from "../../../types/shared-eda-vscode/types";
 import * as extensionApi from "./Apis/extensionApi";
-import { writable, derived, get } from "svelte/store";
+import { writable } from "svelte/store";
 import { GetJsonTable } from "./Apis/pythonApi";
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-let currentState = writable<State>({ selectedText: window.selectedText, randomText: "" });
-let allStates = writable<State[]>([]);
-
-// Derive a store that automatically updates when currentState or allStates change
-let updatedAllStates = derived([currentState, allStates], ([$currentState, $allStates]) =>
-  $allStates.filter((as: State) => as.selectedText !== $currentState?.selectedText).concat([$currentState]),
-);
+let currentState = writable<State>({ tableIdentifier: window.tableIdentifier, randomText: "", defaultState: true });
 
 // Set Global states whenever updatedAllStates changes
-updatedAllStates.subscribe(($updatedAllStates) => {
-  extensionApi.setGlobalState($updatedAllStates);
+currentState.subscribe(($currentState) => {
+  if(!$currentState.defaultState) extensionApi.setCurrentGlobalState($currentState);
 });
 
 // Find current state in allStates
-const findCurrentState = function(selectedText?: string): boolean {
-  let foundState = get(allStates).find((as: State) => as.selectedText === selectedText);
+const findAndSetStates = function(newAllStates: State[], tableIdentifier?: string): void {
+  let foundState = newAllStates.find((as: State) => as.tableIdentifier === tableIdentifier);
+  console.log(foundState ? "found state" : "no state found");
+
   if (foundState) {
     currentState.set(foundState);
+  } else {
+    GetJsonTable(window.tableIdentifier)
+      .then((table) => {
+        currentState.set({ tableIdentifier: window.tableIdentifier, randomText: "", table })
+      })
+      .catch((error) => {
+        extensionApi.createErrorToast(error.message);
+      });
   }
-  return foundState !== undefined;
 }
 
 // This should be fired immediately whenever the panel is created or made visible again
 window.addEventListener("message", (event) => {
   const message = event.data as FromExtensionMessage;
+  console.log(message.command + " called")
   switch (message.command) {
     case "setWebviewState":
-      allStates.set(message.value ?? []);
-      const foundState = findCurrentState(window.selectedText);
-      if (!foundState) {
-        GetJsonTable(window.selectedText)
-          .then((table) => currentState.set({ selectedText: window.selectedText, randomText: "", table }))
-          .catch((error) => {
-            extensionApi.createErrorToast(error.message);
-          });
-      }
+      findAndSetStates(message.value, window.tableIdentifier);
       break;
   }
 });
 
-export { currentState, allStates };
+export { currentState };

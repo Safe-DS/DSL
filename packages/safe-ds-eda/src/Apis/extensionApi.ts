@@ -1,9 +1,15 @@
 import type { State } from "../../../../types/shared-eda-vscode/types";
 
-export const setGlobalState = function(states: State[]) {
+export const setCurrentGlobalState = function(state: State) {
   window.injVscode.postMessage({
-    command: "setGlobalState",
-    value: states,
+    command: "setCurrentGloabalState",
+    value: state,
+  });
+}
+
+export const resetGlobalState = function() {
+  window.injVscode.postMessage({
+    command: "resetGlobalState"
   });
 }
 

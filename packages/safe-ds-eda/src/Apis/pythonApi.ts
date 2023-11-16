@@ -1,17 +1,5 @@
 import type { Table } from "../../../../types/shared-eda-vscode/types";
 
-export const GetHtmlTable = async function(): Promise<string> {
-  try {
-    const response = await fetch("http://127.0.0.1:" + window.pythonServerPort + "/TableAsHtml", { method: "GET" });
-    const responseText = await response.text();
-    if (!response.ok) throw new Error(responseText);
-
-    return responseText;
-  } catch (error) {
-    throw new Error(`Could not get Table`);
-  }
-}
-
 export const GetJsonTable = async function(tableName: string): Promise<Table> {
   try {
     const response = await await fetch(

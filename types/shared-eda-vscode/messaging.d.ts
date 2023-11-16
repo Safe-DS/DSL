@@ -8,8 +8,12 @@ interface ToExtensionCommandMessage {
   value: any;
 }
 interface ToExtensionSetStateMessage extends ToExtensionCommandMessage {
-  command: "setGlobalState";
-  value: defaultTypes.State[];
+  command: "setCurrentGloabalState";
+  value: defaultTypes.State;
+}
+
+interface ToExtensionResetStateMessage extends ToExtensionCommandMessage {
+  command: "resetGlobalState";
 }
 
 // Just example
@@ -23,7 +27,7 @@ interface ToExtensionSetErrorMessage extends ToExtensionCommandMessage {
   value: string;
 }
 
-export type ToExtensionMessage = ToExtensionSetInfoMessage | ToExtensionSetStateMessage | ToExtensionSetErrorMessage;
+export type ToExtensionMessage = ToExtensionSetInfoMessage | ToExtensionSetStateMessage | ToExtensionResetStateMessage | ToExtensionSetErrorMessage;
 
 // From extension
 type FromExtensionCommand = "setWebviewState";

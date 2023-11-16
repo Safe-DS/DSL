@@ -1,7 +1,8 @@
 export interface State {
-  selectedText?: string;
+  tableIdentifier?: string;
   randomText: string;
   table?: Table;
+  defaultState?: boolean;
 }
 
 export interface Table {

@@ -37,14 +37,14 @@ export const activate = function (context: vscode.ExtensionContext): void {
             return;
             }
 
-            const newSelectedText = activeTextEditor.document.getText(activeTextEditor.selection);
+            const newtableIdentifier = activeTextEditor.document.getText(activeTextEditor.selection);
 
-            if (newSelectedText.trim() === "") {
+            if (newtableIdentifier.trim() === "") {
             vscode.window.showErrorMessage("No text selected!");
             return;
             }
 
-            EDAPanel.createOrShow(context.extensionUri, context, newSelectedText, pythonServerPort);
+            EDAPanel.createOrShow(context.extensionUri, context, newtableIdentifier, pythonServerPort);
         }),
     );
 
@@ -55,9 +55,9 @@ export const activate = function (context: vscode.ExtensionContext): void {
             const position = editor.selection.active;
             const range = editor.document.getWordRangeAtPosition(position);
             if (range) {
-                const newSelectedText = editor.document.getText(range);
+                const newtableIdentifier = editor.document.getText(range);
                 // TODO see if word a table
-                EDAPanel.createOrShow(context.extensionUri, context, newSelectedText, pythonServerPort);
+                EDAPanel.createOrShow(context.extensionUri, context, newtableIdentifier, pythonServerPort);
             } else {
                 EDAPanel.createOrShow(context.extensionUri, context, undefined, pythonServerPort);
             }
@@ -71,7 +71,9 @@ export const activate = function (context: vscode.ExtensionContext): void {
     context.subscriptions.push(
         vscode.commands.registerCommand("eda-test01.refreshWebview", () => {
             EDAPanel.kill();
-            EDAPanel.createOrShow(context.extensionUri, context, "newSelectedText", pythonServerPort);
+            setTimeout(() => {
+                EDAPanel.createOrShow(context.extensionUri, context, "newtableIdentifier", pythonServerPort);
+            }, 100);
             setTimeout(() => {
                 vscode.commands.executeCommand("workbench.action.webview.openDeveloperTools");
             }, 100);

@@ -8,7 +8,7 @@ declare global {
       // getState: () => State[];
       // setState: (state: State[]) => void;
     };
-    selectedText: string;
+    tableIdentifier: string;
     pythonServerPort: number;
   }
 }
