@@ -52,10 +52,12 @@ describe('type model', async () => {
             value: () =>
                 new CallableType(
                     callable1,
+                    callable1,
                     new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                     new NamedTupleType(),
                 ),
-            unequalValueOfSameType: () => new CallableType(callable2, new NamedTupleType(), new NamedTupleType()),
+            unequalValueOfSameType: () =>
+                new CallableType(callable2, callable2, new NamedTupleType(), new NamedTupleType()),
             valueOfOtherType: () => UnknownType,
         },
         {
@@ -98,6 +100,7 @@ describe('type model', async () => {
             valueOfOtherType: () => new UnionType(),
         },
     ];
+
     describe.each(equalsTests)('equals', ({ value, unequalValueOfSameType, valueOfOtherType }) => {
         it(`should return true if both types are the same instance (${value().constructor.name})`, () => {
             const typeInstance = value();
@@ -125,6 +128,7 @@ describe('type model', async () => {
         {
             value: new CallableType(
                 callable1,
+                callable1,
                 new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(),
             ),
@@ -132,6 +136,7 @@ describe('type model', async () => {
         },
         {
             value: new CallableType(
+                callable1,
                 callable1,
                 new NamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
                 new NamedTupleType(),
@@ -179,16 +184,18 @@ describe('type model', async () => {
 
     const unwrapTests: UnwrapTest[] = [
         {
-            type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
-            expectedType: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+            type: new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
+            expectedType: new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
         },
         {
             type: new CallableType(
+                callable1,
                 callable1,
                 new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType))),
                 new NamedTupleType(new NamedTupleEntry(result, 'r', new UnionType(UnknownType))),
             ),
             expectedType: new CallableType(
+                callable1,
                 callable1,
                 new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(new NamedTupleEntry(result, 'r', UnknownType)),
@@ -253,17 +260,17 @@ describe('type model', async () => {
 
     const updateNullabilityTest: UpdateNullabilityTest[] = [
         {
-            type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+            type: new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
             isNullable: true,
             expectedType: new UnionType(
-                new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+                new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
                 new LiteralType(NullConstant),
             ),
         },
         {
-            type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+            type: new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
             isNullable: false,
-            expectedType: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+            expectedType: new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
         },
         {
             type: new LiteralType(new BooleanConstant(true)),
@@ -386,12 +393,13 @@ describe('type model', async () => {
         describe('getParameterTypeByIndex', () => {
             it.each([
                 {
-                    type: new CallableType(callable1, new NamedTupleType(), new NamedTupleType()),
+                    type: new CallableType(callable1, callable1, new NamedTupleType(), new NamedTupleType()),
                     index: 0,
                     expectedType: UnknownType,
                 },
                 {
                     type: new CallableType(
+                        callable1,
                         callable1,
                         new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
                         new NamedTupleType(),

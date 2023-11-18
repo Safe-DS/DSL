@@ -1,19 +1,9 @@
-import {
-    AstNode,
-    type AstNodeLocator,
-    getContainerOfType,
-    getDocument,
-    isNamed,
-    stream,
-    streamAst,
-    WorkspaceCache,
-} from 'langium';
+import { AstNode, type AstNodeLocator, getDocument, isNamed, stream, streamAst, WorkspaceCache } from 'langium';
 import {
     isSdsAnnotation,
     isSdsBlockLambda,
     isSdsCall,
     isSdsCallable,
-    isSdsCallableType,
     isSdsClass,
     isSdsEnumVariant,
     isSdsExpressionLambda,
@@ -23,6 +13,7 @@ import {
     SdsCall,
     SdsCallable,
     SdsExpression,
+    SdsParameter,
 } from '../generated/ast.js';
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
@@ -110,6 +101,13 @@ export class SafeDsCallGraphComputer {
         }
 
         const newSubstitutions = this.getNewSubstitutions(node, substitutions);
+        console.log(
+            stream(newSubstitutions.entries())
+                .map(([key, value]) => {
+                    return `${key.name} = ${value.toString()}`;
+                })
+                .toArray(),
+        );
         const newVisited = new Set([...visited, callable]);
         const children = this.getExecutedCalls(callable, newSubstitutions).map((child) =>
             this.getCallGraphWithRecursionCheck(child, newSubstitutions, newVisited),
@@ -119,32 +117,34 @@ export class SafeDsCallGraphComputer {
 
     //TODO
     private getCallable(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions): SdsCallable | undefined {
-        let callable;
+        let callableOrParameter: SdsCallable | SdsParameter | undefined = undefined;
         if (isSdsCallable(node)) {
-            callable = node;
+            callableOrParameter = node;
         } else {
-            callable = this.nodeMapper.callToCallable(node);
+            const receiverType = this.typeComputer.computeType(node.receiver);
+            if (receiverType instanceof CallableType) {
+                callableOrParameter = receiverType.parameter ?? receiverType.callable;
+            } else if (receiverType instanceof StaticType) {
+                const declaration = receiverType.instanceType.declaration;
+                if (isSdsCallable(declaration)) {
+                    callableOrParameter = declaration;
+                }
+            }
         }
 
-        if (!callable || isSdsAnnotation(callable)) {
-            return undefined;
-        } else if (isSdsCallableType(callable)) {
-            // TODO problem: lambdas might not have a manifest callable type on the parameter
-            //  so far the callable type of the parameter the lambda is assigned to is used
-            //  thus, the containment check does not work.
-            const containingParameter = getContainerOfType(callable, isSdsParameter);
-            if (!containingParameter) {
-                return undefined;
-            }
+        console.log(callableOrParameter?.$cstNode?.text?.replaceAll(/\s/gu, ''));
 
-            const substitution = substitutions.get(containingParameter);
+        if (!callableOrParameter || isSdsAnnotation(callableOrParameter)) {
+            return undefined;
+        } else if (isSdsParameter(callableOrParameter)) {
+            const substitution = substitutions.get(callableOrParameter);
             if (!(substitution instanceof EvaluatedCallable)) {
                 return undefined;
             }
 
             return substitution.callable;
         } else {
-            return callable;
+            return callableOrParameter;
         }
     }
 

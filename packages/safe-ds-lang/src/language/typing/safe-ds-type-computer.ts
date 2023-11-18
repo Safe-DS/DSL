@@ -182,7 +182,7 @@ export class SafeDsTypeComputer {
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
-            return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType());
+            return new CallableType(node, undefined, new NamedTupleType(...parameterEntries), new NamedTupleType());
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
@@ -218,13 +218,19 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+        return new CallableType(
+            node,
+            undefined,
+            new NamedTupleType(...parameterEntries),
+            new NamedTupleType(...resultEntries),
+        );
     }
 
     private computeTypeOfParameter(node: SdsParameter): Type {
         // Manifest type
         if (node.type) {
-            return this.computeType(node.type);
+            const type = this.computeType(node.type);
+            return this.rememberParameterInCallableType(node, type);
         }
 
         // Infer type from context
@@ -248,7 +254,8 @@ export class SafeDsTypeComputer {
             }
 
             const parameterPosition = node.$containerIndex ?? -1;
-            return parameterType.getParameterTypeByIndex(parameterPosition);
+            const type = parameterType.getParameterTypeByIndex(parameterPosition);
+            return this.rememberParameterInCallableType(node, type);
         }
 
         // Yielded lambda
@@ -264,10 +271,19 @@ export class SafeDsTypeComputer {
             }
 
             const parameterPosition = node.$containerIndex ?? -1;
-            return resultType.getParameterTypeByIndex(parameterPosition);
+            const type = resultType.getParameterTypeByIndex(parameterPosition);
+            return this.rememberParameterInCallableType(node, type);
         }
 
         return UnknownType;
+    }
+
+    private rememberParameterInCallableType(node: SdsParameter, type: Type) {
+        if (type instanceof CallableType) {
+            return new CallableType(type.callable, node, type.inputType, type.outputType);
+        } else {
+            return type;
+        }
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -365,7 +381,12 @@ export class SafeDsTypeComputer {
             .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
             .toArray();
 
-        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+        return new CallableType(
+            node,
+            undefined,
+            new NamedTupleType(...parameterEntries),
+            new NamedTupleType(...resultEntries),
+        );
     }
 
     private computeTypeOfCall(node: SdsCall): Type {
@@ -393,7 +414,12 @@ export class SafeDsTypeComputer {
             new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
         ];
 
-        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+        return new CallableType(
+            node,
+            undefined,
+            new NamedTupleType(...parameterEntries),
+            new NamedTupleType(...resultEntries),
+        );
     }
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
