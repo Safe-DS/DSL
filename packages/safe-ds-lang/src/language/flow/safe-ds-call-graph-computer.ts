@@ -96,12 +96,14 @@ export class SafeDsCallGraphComputer {
         visited: Set<SdsCallable>,
     ): CallGraph {
         const callable = this.getCallable(node, substitutions);
+        console.log(callable?.$cstNode?.text?.replaceAll(/\s/gu, ''));
         if (!callable || visited.has(callable)) {
             return new CallGraph(callable, []);
         }
 
         const newSubstitutions = this.getNewSubstitutions(node, substitutions);
         console.log(
+            'newSubstitutions ',
             stream(newSubstitutions.entries())
                 .map(([key, value]) => {
                     return `${key.name} = ${value.toString()}`;
@@ -109,19 +111,23 @@ export class SafeDsCallGraphComputer {
                 .toArray(),
         );
         const newVisited = new Set([...visited, callable]);
-        const children = this.getExecutedCalls(callable, newSubstitutions).map((child) =>
-            this.getCallGraphWithRecursionCheck(child, newSubstitutions, newVisited),
-        );
+        const children = this.getExecutedCalls(callable, newSubstitutions).map((child) => {
+            console.log(child.$cstNode?.text?.replaceAll(/\s/gu, ''));
+            return this.getCallGraphWithRecursionCheck(child, newSubstitutions, newVisited);
+        });
         return new CallGraph(callable, children);
     }
 
     //TODO
     private getCallable(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions): SdsCallable | undefined {
+        console.log('getCallableStart ', node.$cstNode?.text?.replaceAll(/\s/gu, ''));
+        console.log(node.$type);
         let callableOrParameter: SdsCallable | SdsParameter | undefined = undefined;
         if (isSdsCallable(node)) {
             callableOrParameter = node;
         } else {
             const receiverType = this.typeComputer.computeType(node.receiver);
+            console.log('receiverType', receiverType.toString(), receiverType.constructor.name);
             if (receiverType instanceof CallableType) {
                 callableOrParameter = receiverType.parameter ?? receiverType.callable;
             } else if (receiverType instanceof StaticType) {
@@ -132,12 +138,21 @@ export class SafeDsCallGraphComputer {
             }
         }
 
-        console.log(callableOrParameter?.$cstNode?.text?.replaceAll(/\s/gu, ''));
+        console.log('getCallableMid ', callableOrParameter?.$cstNode?.text?.replaceAll(/\s/gu, ''));
 
         if (!callableOrParameter || isSdsAnnotation(callableOrParameter)) {
             return undefined;
         } else if (isSdsParameter(callableOrParameter)) {
+            console.log('isParameter');
+            console.log(
+                stream(substitutions.entries())
+                    .map(([key, value]) => {
+                        return `${key.name} = ${value.toString()}`;
+                    })
+                    .toArray(),
+            );
             const substitution = substitutions.get(callableOrParameter);
+            console.log(substitution?.toString());
             if (!(substitution instanceof EvaluatedCallable)) {
                 return undefined;
             }
@@ -157,13 +172,25 @@ export class SafeDsCallGraphComputer {
             return new Map();
         }
 
+        const parameters = getParameters(this.getCallable(node, substitutions));
+
         return new Map(
             getArguments(node).flatMap((it) => {
                 // Ignore arguments that don't get assigned to a parameter
-                const parameter = this.nodeMapper.argumentToParameter(it);
+                const parameterIndex = this.nodeMapper.argumentToParameter(it)?.$containerIndex ?? -1;
+                console.log('Parameter index ', parameterIndex);
+                if (parameterIndex === -1) {
+                    return [];
+                }
+
+                const parameter = parameters[parameterIndex];
                 if (!parameter) {
                     return [];
                 }
+
+                // TODO: argumentToParameter points to parameters of a callable type,
+                //  not parameters of a passed lambda; we need to map the parameters of
+                //  the callable type to the parameters of the lambda
 
                 const value = this.getEvaluatedCallable(it.value, substitutions);
                 return [[parameter, value]];

@@ -275,18 +275,15 @@ describe('SafeDsCallGraphComputer', () => {
                 fun f()
 
                 pipeline myPipeline {
-                    val lambda = (param) {
+                    mySegment((param) {
                         param();
-                    };
-
-                    mySegment(lambda);
+                    });
                 }
 
-                segment mySegment(param: (param: () -> ()) -> ()) {
-                    param(f);
+                segment mySegment(param1: (param: () -> ()) -> ()) {
+                    param1(f);
                 }
             `,
-            callIndex: 1,
             expectedCallables: ['mySegment', '(param){param();}', 'f'],
         },
         // TODO: can we allow the callable in callable types to be the parameter?
