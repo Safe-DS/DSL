@@ -1,13 +1,38 @@
-import { AstNode, type AstNodeLocator, getDocument, streamAst, WorkspaceCache } from 'langium';
-import { isSdsCall, type SdsCall, SdsCallable } from '../generated/ast.js';
+import { AstNode, type AstNodeLocator, getDocument, isNamed, stream, streamAst, WorkspaceCache } from 'langium';
+import {
+    isSdsAnnotation,
+    isSdsBlockLambda,
+    isSdsCall,
+    isSdsCallable,
+    isSdsCallableType,
+    isSdsClass,
+    isSdsEnumVariant,
+    isSdsExpressionLambda,
+    isSdsFunction,
+    SdsCall,
+    SdsCallable,
+    SdsExpression,
+} from '../generated/ast.js';
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
-import { ParameterSubstitutions } from '../partialEvaluation/model.js';
+import {
+    BlockLambdaClosure,
+    EvaluatedCallable,
+    EvaluatedNode,
+    ExpressionLambdaClosure,
+    NamedCallable,
+    ParameterSubstitutions,
+    UnknownEvaluatedNode,
+} from '../partialEvaluation/model.js';
 import { CallGraph } from './model.js';
+import { getArguments, getParameters } from '../helpers/nodeProperties.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { CallableType, StaticType } from '../typing/model.js';
 
 export class SafeDsCallGraphComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly nodeMapper: SafeDsNodeMapper;
+    private readonly typeComputer: SafeDsTypeComputer;
 
     /**
      * Stores the calls inside the node with the given ID.
@@ -17,6 +42,7 @@ export class SafeDsCallGraphComputer {
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
+        this.typeComputer = services.types.TypeComputer;
 
         this.callCache = new WorkspaceCache(services.shared);
     }
@@ -36,8 +62,8 @@ export class SafeDsCallGraphComputer {
         return this.doCheckIsRecursive(callGraph, new Set());
     }
 
-    private doCheckIsRecursive(graph: CallGraph | undefined, visited: Set<SdsCallable>): boolean {
-        if (!graph) {
+    private doCheckIsRecursive(graph: CallGraph, visited: Set<SdsCallable>): boolean {
+        if (!graph.root) {
             return false;
         } else if (visited.has(graph.root)) {
             return true;
@@ -58,45 +84,133 @@ export class SafeDsCallGraphComputer {
      * The parameter substitutions to use. These are **not** the argument of the call, but the values of the parameters
      * of any containing callables, i.e. the context of the call.
      */
-    getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions): CallGraph | undefined {
+    getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions): CallGraph {
         return this.getCallGraphWithRecursionCheck(node, substitutions, new Set());
     }
 
     private getCallGraphWithRecursionCheck(
-        node: SdsCall,
+        node: SdsCall | SdsCallable,
         substitutions: ParameterSubstitutions,
         visited: Set<SdsCallable>,
-    ): CallGraph | undefined {
+    ): CallGraph {
         const callable = this.getCallable(node, substitutions);
-        if (!callable) {
-            return undefined;
-        } else if (visited.has(callable)) {
+        if (!callable || visited.has(callable)) {
             return new CallGraph(callable, []);
         }
 
+        const newSubstitutions = this.getNewSubstitutions(node, substitutions);
         const newVisited = new Set([...visited, callable]);
-        const children = this.getExecutedCallsInCallable(callable, substitutions)
-            .map((child) => this.getCallGraphWithRecursionCheck(child, substitutions, newVisited))
-            .filter((child) => child !== undefined) as CallGraph[];
+        const children = this.getExecutedCalls(callable, newSubstitutions).map((child) =>
+            this.getCallGraphWithRecursionCheck(child, newSubstitutions, newVisited),
+        );
         return new CallGraph(callable, children);
     }
 
-    private getCallable(node: SdsCall, _substitutions: ParameterSubstitutions): SdsCallable | undefined {
-        const callable = this.nodeMapper.callToCallable(node);
-        if (callable === undefined) {
-            return undefined;
+    //TODO
+    private getCallable(node: SdsCall | SdsCallable, _substitutions: ParameterSubstitutions): SdsCallable | undefined {
+        let callable;
+        if (isSdsCallable(node)) {
+            callable = node;
+        } else {
+            callable = this.nodeMapper.callToCallable(node);
         }
 
-        // TODO replace callable types with substitution values
-
-        return callable;
+        if (!callable || isSdsAnnotation(callable)) {
+            return undefined;
+        } else if (isSdsCallableType(callable)) {
+            // TODO replace callable types with substitution values
+            return callable;
+        } else {
+            return callable;
+        }
     }
 
-    private getExecutedCallsInCallable(node: SdsCallable, _substitutions: ParameterSubstitutions): SdsCall[] {
-        // TODO
-        return this.getCalls(node);
+    private getNewSubstitutions(
+        node: SdsCall | SdsCallable,
+        substitutions: ParameterSubstitutions,
+    ): ParameterSubstitutions {
+        // If we get a callable, we assume no arguments are passed in the call
+        if (isSdsCallable(node)) {
+            return new Map();
+        }
+
+        return new Map(
+            getArguments(node).flatMap((it) => {
+                // Ignore arguments that don't get assigned to a parameter
+                const parameter = this.nodeMapper.argumentToParameter(it);
+                if (!parameter) {
+                    return [];
+                }
+
+                const value = this.getEvaluatedCallable(it.value, substitutions);
+                return [[parameter, value]];
+            }),
+        );
     }
 
+    // TODO
+    private getEvaluatedCallable(node: SdsExpression, substitutions: ParameterSubstitutions): EvaluatedNode {
+        const valueType = this.typeComputer.computeType(node);
+        let callable: SdsCallable | undefined = undefined;
+
+        if (valueType instanceof CallableType) {
+            callable = valueType.callable;
+        } else if (valueType instanceof StaticType) {
+            const declaration = valueType.instanceType.declaration;
+            if (isSdsCallable(declaration)) {
+                callable = declaration;
+            }
+        }
+
+        if (!callable) {
+            return UnknownEvaluatedNode;
+        }
+
+        if (isNamed(callable)) {
+            return new NamedCallable(callable);
+        } else if (isSdsBlockLambda(callable)) {
+            return new BlockLambdaClosure(callable, substitutions);
+        } else if (isSdsExpressionLambda(callable)) {
+            return new ExpressionLambdaClosure(callable, substitutions);
+        } else {
+            // TODO callable type?
+            return UnknownEvaluatedNode;
+        }
+    }
+
+    // TODO
+    private getExecutedCalls(node: SdsCallable, substitutions: ParameterSubstitutions): (SdsCall | SdsCallable)[] {
+        const parameters = getParameters(node);
+
+        if (isSdsClass(node) || isSdsEnumVariant(node) || isSdsFunction(node)) {
+            const callsInDefaultValues = parameters.flatMap((it) => {
+                // The default value is only executed if no argument is passed for the parameter
+                if (it.defaultValue && !substitutions.has(it)) {
+                    return this.getCalls(it.defaultValue);
+                } else {
+                    return [];
+                }
+            });
+
+            const callablesInSubstitutions = stream(substitutions.values()).flatMap((it) => {
+                if (!(it instanceof EvaluatedCallable)) {
+                    return [];
+                }
+
+                return [it.callable];
+            });
+
+            return [...callsInDefaultValues, ...callablesInSubstitutions];
+        } else {
+            // TODO - block/expression lambda, segment
+            // TODO - throw if callable type or annotation
+            return this.getCalls(node);
+        }
+    }
+
+    /**
+     * Returns all calls inside the given node. If the node is a call, it is included as well.
+     */
     getCalls(node: AstNode): SdsCall[] {
         const key = this.getNodeId(node);
         return this.callCache.get(key, () => streamAst(node).filter(isSdsCall).toArray());

@@ -3,7 +3,7 @@ import { stream, Stream } from 'langium';
 
 export class CallGraph {
     constructor(
-        readonly root: SdsCallable,
+        readonly root: SdsCallable | undefined,
         readonly children: CallGraph[],
     ) {}
 
@@ -11,11 +11,11 @@ export class CallGraph {
      * Traverses the call graph depth-first in pre-order and returns a stream of all callables that are called directly
      * or indirectly.
      */
-    streamCalledCallables(): Stream<SdsCallable> {
+    streamCalledCallables(): Stream<SdsCallable | undefined> {
         return stream(this.streamCalledCallablesGenerator());
     }
 
-    private *streamCalledCallablesGenerator(): Generator<SdsCallable, void> {
+    private *streamCalledCallablesGenerator(): Generator<SdsCallable | undefined, void> {
         yield this.root;
 
         for (const child of this.children) {

@@ -21,6 +21,10 @@ describe('call graph model', () => {
     describe('streamCalledCallables', () => {
         it.each([
             {
+                graph: new CallGraph(undefined, []),
+                expected: [undefined],
+            },
+            {
                 graph: new CallGraph(f1, []),
                 expected: [f1],
             },
