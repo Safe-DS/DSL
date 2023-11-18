@@ -118,25 +118,31 @@ export class SafeDsCallGraphComputer {
     }
 
     //TODO
-    private getCallable(node: SdsCall | SdsCallable, _substitutions: ParameterSubstitutions): SdsCallable | undefined {
-        console.log(node?.$type);
+    private getCallable(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions): SdsCallable | undefined {
         let callable;
         if (isSdsCallable(node)) {
             callable = node;
         } else {
             callable = this.nodeMapper.callToCallable(node);
         }
+
         if (!callable || isSdsAnnotation(callable)) {
             return undefined;
         } else if (isSdsCallableType(callable)) {
-            // TODO replace callable types with substitution values
+            // TODO problem: lambdas might not have a manifest callable type on the parameter
+            //  so far the callable type of the parameter the lambda is assigned to is used
+            //  thus, the containment check does not work.
             const containingParameter = getContainerOfType(callable, isSdsParameter);
             if (!containingParameter) {
                 return undefined;
             }
 
-            console.log(containingParameter?.name);
-            return callable;
+            const substitution = substitutions.get(containingParameter);
+            if (!(substitution instanceof EvaluatedCallable)) {
+                return undefined;
+            }
+
+            return substitution.callable;
         } else {
             return callable;
         }

@@ -7,7 +7,7 @@ import { createSafeDsServices } from '../../../src/language/index.js';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
-
+// TODO: data driven tests
 describe('SafeDsCallGraphComputer', () => {
     describe('isRecursive', () => {});
 
@@ -267,8 +267,29 @@ describe('SafeDsCallGraphComputer', () => {
                 }
             `,
             callIndex: 1,
-            expectedCallables: ['(param){param();}', 'f'],
+            expectedCallables: ['(param:()->()){param();}', 'f'],
         },
+        {
+            testName: 'block lambda call, passed callable, called in segment',
+            code: `
+                fun f()
+
+                pipeline myPipeline {
+                    val lambda = (param) {
+                        param();
+                    };
+
+                    mySegment(lambda);
+                }
+
+                segment mySegment(param: (param: () -> ()) -> ()) {
+                    param(f);
+                }
+            `,
+            callIndex: 1,
+            expectedCallables: ['mySegment', '(param){param();}', 'f'],
+        },
+        // TODO: can we allow the callable in callable types to be the parameter?
         // TODO: closure
         // TODO: no parameter types on lambda
         {

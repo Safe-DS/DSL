@@ -6,6 +6,7 @@ import {
     isSdsBlock,
     isSdsCall,
     isSdsCallable,
+    isSdsCallableType,
     isSdsClass,
     isSdsEnumVariant,
     isSdsNamedType,
@@ -139,7 +140,13 @@ export class SafeDsNodeMapper {
         } else if (isSdsCall(node)) {
             const receiverType = this.typeComputer().computeType(node.receiver);
             if (receiverType instanceof CallableType) {
-                return receiverType.callable;
+                const callable = receiverType.callable;
+
+                if (isSdsCallableType(callable)) {
+                    console.log(receiverType.callable.$container?.$cstNode?.text);
+                }
+
+                return callable;
             } else if (receiverType instanceof StaticType) {
                 const declaration = receiverType.instanceType.declaration;
                 if (isSdsCallable(declaration)) {
