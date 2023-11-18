@@ -7,14 +7,19 @@ export class CallGraph {
         readonly children: CallGraph[],
     ) {}
 
+    /**
+     * Traverses the call graph depth-first in pre-order and returns a stream of all callables that are called directly
+     * or indirectly.
+     */
     streamCalledCallables(): Stream<SdsCallable> {
-        return stream(this.streamGenerator());
+        return stream(this.streamCalledCallablesGenerator());
     }
 
-    private *streamGenerator(): Generator<SdsCallable, void> {
+    private *streamCalledCallablesGenerator(): Generator<SdsCallable, void> {
         yield this.root;
+
         for (const child of this.children) {
-            yield* child.streamGenerator();
+            yield* child.streamCalledCallablesGenerator();
         }
     }
 }
