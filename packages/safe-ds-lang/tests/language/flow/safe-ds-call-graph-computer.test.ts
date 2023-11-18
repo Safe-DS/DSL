@@ -224,6 +224,85 @@ describe('SafeDsCallGraphComputer', () => {
             `,
             expectedCallables: ['myFunction', 'default'],
         },
+        {
+            testName: 'block lambda call',
+            code: `
+                fun f()
+
+                pipeline myPipeline {
+                    val lambda = () {
+                        f();
+                    };
+
+                    lambda();
+                }
+            `,
+            callIndex: 1,
+            expectedCallables: ['(){f();}', 'f'],
+        },
+        {
+            testName: 'block lambda call, passed callable, not called',
+            code: `
+                fun f()
+
+                pipeline myPipeline {
+                    val lambda = (param) {};
+
+                    lambda(f);
+                }
+            `,
+            expectedCallables: ['(param){}'],
+        },
+        {
+            testName: 'block lambda call, passed callable, called',
+            code: `
+                fun f()
+
+                pipeline myPipeline {
+                    val lambda = (param: () -> ()) {
+                        param();
+                    };
+
+                    lambda(f);
+                }
+            `,
+            callIndex: 1,
+            expectedCallables: ['(param){param();}', 'f'],
+        },
+        // TODO: closure
+        // TODO: no parameter types on lambda
+        {
+            testName: 'expression lambda call',
+            code: `
+                fun f()
+
+                pipeline myPipeline {
+                    val lambda = () -> f();
+
+                    lambda();
+                }
+            `,
+            callIndex: 1,
+            expectedCallables: ['()->f()', 'f'],
+        },
+        // TODO: same as for block lambda
+        {
+            testName: 'segment call',
+            code: `
+                fun f()
+
+                segment mySegment() {
+                    f();
+                }
+
+                pipeline myPipeline {
+                    mySegment();
+                }
+            `,
+            callIndex: 1,
+            expectedCallables: ['mySegment', 'f'],
+        },
+        // TODO: same as for block lambda - closure
     ];
 
     describe.each(getCallGraphTests)('getCallGraph', ({ testName, code, callIndex, expectedCallables }) => {
@@ -269,7 +348,7 @@ const callGraphToStringArray = (graph: CallGraph): string[] => {
             } else if (isNamed(callable)) {
                 return callable.name;
             } else {
-                return callable.$cstNode!.text;
+                return callable.$cstNode!.text.replaceAll(/\s*/gu, '');
             }
         })
         .toArray();

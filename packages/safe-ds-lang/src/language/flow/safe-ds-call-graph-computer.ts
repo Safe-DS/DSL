@@ -1,4 +1,13 @@
-import { AstNode, type AstNodeLocator, getDocument, isNamed, stream, streamAst, WorkspaceCache } from 'langium';
+import {
+    AstNode,
+    type AstNodeLocator,
+    getContainerOfType,
+    getDocument,
+    isNamed,
+    stream,
+    streamAst,
+    WorkspaceCache,
+} from 'langium';
 import {
     isSdsAnnotation,
     isSdsBlockLambda,
@@ -9,6 +18,8 @@ import {
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsFunction,
+    isSdsParameter,
+    isSdsSegment,
     SdsCall,
     SdsCallable,
     SdsExpression,
@@ -108,17 +119,23 @@ export class SafeDsCallGraphComputer {
 
     //TODO
     private getCallable(node: SdsCall | SdsCallable, _substitutions: ParameterSubstitutions): SdsCallable | undefined {
+        console.log(node?.$type);
         let callable;
         if (isSdsCallable(node)) {
             callable = node;
         } else {
             callable = this.nodeMapper.callToCallable(node);
         }
-
         if (!callable || isSdsAnnotation(callable)) {
             return undefined;
         } else if (isSdsCallableType(callable)) {
             // TODO replace callable types with substitution values
+            const containingParameter = getContainerOfType(callable, isSdsParameter);
+            if (!containingParameter) {
+                return undefined;
+            }
+
+            console.log(containingParameter?.name);
             return callable;
         } else {
             return callable;
@@ -201,8 +218,13 @@ export class SafeDsCallGraphComputer {
             });
 
             return [...callsInDefaultValues, ...callablesInSubstitutions];
+        } else if (isSdsBlockLambda(node)) {
+            return this.getCalls(node.body);
+        } else if (isSdsExpressionLambda(node)) {
+            return this.getCalls(node.result);
+        } else if (isSdsSegment(node)) {
+            return this.getCalls(node.body);
         } else {
-            // TODO - block/expression lambda, segment
             // TODO - throw if callable type or annotation
             return this.getCalls(node);
         }
