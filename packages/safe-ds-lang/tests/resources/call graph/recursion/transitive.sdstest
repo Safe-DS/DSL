@@ -1,0 +1,16 @@
+package tests.callGraph.recursion.transitive
+
+segment s1() {
+    // $TEST$ ["s2", "s3", "s1", "s2"]
+    »s2()«;
+}
+
+segment s2() {
+    // $TEST$ ["s3", "s1", "s2", "s3"]
+    »s3()«;
+}
+
+segment s3() {
+    // $TEST$ ["s1", "s2", "s3", "s1"]
+    »s1()«;
+}

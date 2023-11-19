@@ -1,0 +1,15 @@
+package tests.callGraph.recursion.notRecursive
+
+/**
+ * Even though "s2" gets called twice, this does not lead to infinite recursion, since the 2nd time the default, empty
+ * lambda is used for "f".
+ */
+
+segment s1() {
+    // $TEST$ ["s2", "$expressionLambda", "s2", "$blockLambda"]
+    »s2(() -> s2())«;
+}
+
+segment s2(f: () -> () = () {}) {
+    f();
+}
