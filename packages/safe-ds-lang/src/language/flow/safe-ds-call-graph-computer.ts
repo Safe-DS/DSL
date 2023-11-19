@@ -211,7 +211,17 @@ export class SafeDsCallGraphComputer {
             const callsInDefaultValues = parameters.flatMap((it) => {
                 // The default value is only executed if no argument is passed for the parameter
                 if (it.defaultValue && !substitutions.has(it)) {
-                    return this.getCalls(it.defaultValue);
+                    const calls = this.getCalls(it.defaultValue);
+                    if (calls.length > 0) {
+                        return calls;
+                    }
+
+                    const callable = this.getEvaluatedCallable(it.defaultValue, substitutions);
+                    if (callable instanceof EvaluatedCallable) {
+                        return callable.callable;
+                    }
+
+                    return [];
                 } else {
                     return [];
                 }
