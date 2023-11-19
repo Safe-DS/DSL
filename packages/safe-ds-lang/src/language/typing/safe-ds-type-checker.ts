@@ -236,7 +236,7 @@ export class SafeDsTypeChecker {
                 new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
             );
 
-            return new CallableType(declaration, parameterEntries, resultEntries);
+            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
         } else if (instanceType instanceof EnumVariantType) {
             const declaration = instanceType.declaration;
 
@@ -249,7 +249,7 @@ export class SafeDsTypeChecker {
                 new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
             );
 
-            return new CallableType(declaration, parameterEntries, resultEntries);
+            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
         } else {
             return UnknownType;
         }
