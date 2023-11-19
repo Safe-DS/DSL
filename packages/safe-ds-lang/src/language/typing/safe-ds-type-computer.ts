@@ -234,6 +234,17 @@ export class SafeDsTypeComputer {
         }
 
         // Infer type from context
+        const contextType = this.computeTypeOfParameterContext(node);
+        if (!(contextType instanceof CallableType)) {
+            return UnknownType;
+        }
+
+        const parameterPosition = node.$containerIndex ?? -1;
+        const type = contextType.getParameterTypeByIndex(parameterPosition);
+        return this.rememberParameterInCallableType(node, type);
+    }
+
+    private computeTypeOfParameterContext(node: SdsParameter): Type {
         const containingCallable = getContainerOfType(node, isSdsCallable);
         if (!isSdsLambda(containingCallable)) {
             return UnknownType;
@@ -247,15 +258,12 @@ export class SafeDsTypeComputer {
             if (!parameter) {
                 return UnknownType;
             }
+            return this.computeType(parameter?.type);
+        }
 
-            const parameterType = this.computeType(parameter?.type);
-            if (!(parameterType instanceof CallableType)) {
-                return UnknownType;
-            }
-
-            const parameterPosition = node.$containerIndex ?? -1;
-            const type = parameterType.getParameterTypeByIndex(parameterPosition);
-            return this.rememberParameterInCallableType(node, type);
+        // Lambda passed as default value
+        if (isSdsParameter(containerOfLambda)) {
+            return this.computeType(containerOfLambda);
         }
 
         // Yielded lambda
@@ -264,15 +272,7 @@ export class SafeDsTypeComputer {
             if (!isSdsYield(firstAssignee)) {
                 return UnknownType;
             }
-
-            const resultType = this.computeType(firstAssignee.result?.ref);
-            if (!(resultType instanceof CallableType)) {
-                return UnknownType;
-            }
-
-            const parameterPosition = node.$containerIndex ?? -1;
-            const type = resultType.getParameterTypeByIndex(parameterPosition);
-            return this.rememberParameterInCallableType(node, type);
+            return this.computeType(firstAssignee.result?.ref);
         }
 
         return UnknownType;
