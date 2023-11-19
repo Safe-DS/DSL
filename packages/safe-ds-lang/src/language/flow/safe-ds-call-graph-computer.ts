@@ -1,4 +1,13 @@
-import { AstNode, type AstNodeLocator, getDocument, isNamed, stream, streamAst, WorkspaceCache } from 'langium';
+import {
+    AstNode,
+    type AstNodeLocator,
+    getContainerOfType,
+    getDocument,
+    isNamed,
+    stream,
+    streamAst,
+    WorkspaceCache,
+} from 'langium';
 import {
     isSdsAnnotation,
     isSdsBlockLambda,
@@ -237,14 +246,52 @@ export class SafeDsCallGraphComputer {
 
             return [...callsInDefaultValues, ...callablesInSubstitutions];
         } else if (isSdsBlockLambda(node)) {
-            // TODO: only list direct calls, not calls in nested lambdas
-            return this.getCalls(node.body);
+            const callsInDefaultValues = parameters.flatMap((it) => {
+                // The default value is only executed if no argument is passed for the parameter
+                if (it.defaultValue && !substitutions.has(it)) {
+                    return this.getCalls(it.defaultValue).filter(
+                        (call) => getContainerOfType(call, isSdsCallable) === node,
+                    );
+                } else {
+                    return [];
+                }
+            });
+
+            const callsInBody = this.getCalls(node.body).filter((it) => getContainerOfType(it, isSdsCallable) === node);
+
+            return [...callsInDefaultValues, ...callsInBody];
         } else if (isSdsExpressionLambda(node)) {
-            // TODO: only list direct calls, not calls in nested lambdas
-            return this.getCalls(node.result);
+            const callsInDefaultValues = parameters.flatMap((it) => {
+                // The default value is only executed if no argument is passed for the parameter
+                if (it.defaultValue && !substitutions.has(it)) {
+                    return this.getCalls(it.defaultValue).filter(
+                        (call) => getContainerOfType(call, isSdsCallable) === node,
+                    );
+                } else {
+                    return [];
+                }
+            });
+
+            const callsInBody = this.getCalls(node.result).filter(
+                (it) => getContainerOfType(it, isSdsCallable) === node,
+            );
+
+            return [...callsInDefaultValues, ...callsInBody];
         } else if (isSdsSegment(node)) {
-            // TODO: only list direct calls, not calls in nested lambdas
-            return this.getCalls(node.body);
+            const callsInDefaultValues = parameters.flatMap((it) => {
+                // The default value is only executed if no argument is passed for the parameter
+                if (it.defaultValue && !substitutions.has(it)) {
+                    return this.getCalls(it.defaultValue).filter(
+                        (call) => getContainerOfType(call, isSdsCallable) === node,
+                    );
+                } else {
+                    return [];
+                }
+            });
+
+            const callsInBody = this.getCalls(node.body).filter((it) => getContainerOfType(it, isSdsCallable) === node);
+
+            return [...callsInDefaultValues, ...callsInBody];
         } else {
             // TODO - throw if callable type or annotation
             return this.getCalls(node);
