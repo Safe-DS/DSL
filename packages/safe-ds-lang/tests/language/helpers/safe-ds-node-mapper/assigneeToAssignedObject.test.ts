@@ -136,6 +136,18 @@ describe('SafeDsNodeMapper', () => {
                 expected: ['r1', 'r2'],
             },
             {
+                name: 'expression lambda',
+                code: `
+                    segment mySegment() {
+                        val f = () -> 1;
+
+                        val a, val b = f();
+                    };
+                `,
+                expected: ['1', undefined],
+                index: 1,
+            },
+            {
                 name: 'function (one result)',
                 code: `
                     fun f() -> (r1: Int)
@@ -179,10 +191,12 @@ describe('SafeDsNodeMapper', () => {
 
         const abstractResultNameOrNull = (node: SdsAssignee): string | undefined => {
             const assignedObject = nodeMapper.assigneeToAssignedObject(node);
-            if (isSdsAbstractResult(assignedObject)) {
+            if (!assignedObject) {
+                return undefined;
+            } else if (isSdsAbstractResult(assignedObject)) {
                 return assignedObject.name;
             } else {
-                return undefined;
+                return assignedObject.$cstNode?.text;
             }
         };
     });
