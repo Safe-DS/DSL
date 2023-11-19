@@ -1,0 +1,12 @@
+package tests.callGraph.blockLambdaCall.defaultValue.call
+
+@Pure fun default() -> r: Any
+
+pipeline myPipeline {
+    val lambda = (
+        f: Any = default()
+    ) {};
+
+    // $TEST$ ['$blockLambda', 'default']
+    »lambda()«;
+}

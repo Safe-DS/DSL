@@ -1,4 +1,4 @@
-package tests.callGraph.blockLambdaCall.argument.blockLambda
+package tests.callGraph.blockLambdaCall.argument.`segment`
 
 @Pure fun f()
 

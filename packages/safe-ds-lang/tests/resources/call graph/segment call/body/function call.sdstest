@@ -1,0 +1,12 @@
+package tests.callGraph.segmentCall.body.functionCall
+
+@Pure fun f()
+
+segment mySegment() {
+    f();
+}
+
+pipeline myPipeline {
+    // $TEST$ ['mySegment', 'f']
+    »mySegment()«;
+}

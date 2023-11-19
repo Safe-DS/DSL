@@ -1,0 +1,15 @@
+package tests.callGraph.expressionLambdaCall.argument.`segment`
+
+@Pure fun f()
+
+pipeline myPipeline {
+    val lambda = (param1: (param: () -> ()) -> ()) ->
+        param1(f);
+
+    // $TEST$ ['$expressionLambda', 'mySegment', 'f']
+    »lambda(mySegment)«;
+}
+
+segment mySegment(param) {
+    param();
+}

@@ -1,0 +1,13 @@
+package tests.callGraph.expressionLambdaCall.argument.blockLambda
+
+@Pure fun f()
+
+pipeline myPipeline {
+    val lambda = (param1: (param: () -> ()) -> ()) ->
+        param1(f);
+
+    // $TEST$ ['$expressionLambda', '$blockLambda', 'f']
+    »lambda((param) {
+        param();
+    })«;
+}

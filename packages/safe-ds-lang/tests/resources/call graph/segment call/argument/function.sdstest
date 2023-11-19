@@ -1,0 +1,12 @@
+package tests.callGraph.segmentCall.argument.function
+
+@Pure fun f()
+
+segment mySegment(param: () -> ()) {
+    param();
+}
+
+pipeline myPipeline {
+    // $TEST$ ['mySegment', 'f']
+    »mySegment(f)«;
+}

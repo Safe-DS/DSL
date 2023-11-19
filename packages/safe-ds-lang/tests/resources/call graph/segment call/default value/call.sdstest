@@ -1,0 +1,12 @@
+package tests.callGraph.segmentCall.defaultValue.call
+
+@Pure fun default() -> r: Any
+
+segment mySegment(
+    f: Any = default()
+) {}
+
+pipeline myPipeline {
+    // $TEST$ ['mySegment', 'default']
+    »mySegment()«;
+}

@@ -1,0 +1,10 @@
+package tests.callGraph.expressionLambdaCall.argument.callableDoesNotGetCalled
+
+@Pure fun f()
+
+pipeline myPipeline {
+    val lambda = (param: () -> ()) -> 1;
+
+    // $TEST$ ['$expressionLambda']
+    »lambda(f)«;
+}

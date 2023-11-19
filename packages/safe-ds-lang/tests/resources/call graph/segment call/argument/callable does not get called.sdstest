@@ -1,0 +1,10 @@
+package tests.callGraph.segmentCall.argument.callableDoesNotGetCalled
+
+@Pure fun f()
+
+segment mySegment(param: () -> ()) {}
+
+pipeline myPipeline {
+    // $TEST$ ['mySegment']
+    »mySegment(f)«;
+}

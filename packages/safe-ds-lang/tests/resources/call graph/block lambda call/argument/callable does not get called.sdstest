@@ -5,6 +5,6 @@ package tests.callGraph.blockLambdaCall.argument.callableDoesNotGetCalled
 pipeline myPipeline {
     val lambda = (param: () -> ()) {};
 
-    // $TEST$ ['$blockLambda', 'f']
+    // $TEST$ ['$blockLambda']
     »lambda(f)«;
 }

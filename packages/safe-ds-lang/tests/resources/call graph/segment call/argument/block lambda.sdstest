@@ -1,0 +1,14 @@
+package tests.callGraph.segmentCall.argument.blockLambda
+
+@Pure fun f()
+
+segment mySegment(param1: (param: () -> ()) -> ()) {
+    param1(f);
+}
+
+pipeline myPipeline {
+    // $TEST$ ['mySegment', '$blockLambda', 'f']
+    »mySegment((param) {
+        param();
+    })«;
+}
