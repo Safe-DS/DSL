@@ -7,6 +7,6 @@ segment mySegment(param1: (param: () -> ()) -> ()) {
 }
 
 pipeline myPipeline {
-    // $TEST$ ['mySegment', '$expressionLambda', 'f']
+    // $TEST$ ["mySegment", "$expressionLambda", "f"]
     »mySegment((param) -> param())«;
 }

@@ -7,6 +7,6 @@ pipeline myPipeline {
         f: () -> () = default
     ) -> f();
 
-    // $TEST$ ['$expressionLambda', 'default']
+    // $TEST$ ["$expressionLambda", "default"]
     »lambda()«;
 }

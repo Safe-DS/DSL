@@ -8,6 +8,6 @@ pipeline myPipeline {
             () -> param();
     val closure = lambda(f);
 
-    // $TEST$ ['$expressionLambda', 'f']
+    // $TEST$ ["$expressionLambda", "f"]
     »closure()«;
 }

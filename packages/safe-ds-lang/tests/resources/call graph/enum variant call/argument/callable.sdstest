@@ -10,6 +10,6 @@ enum MyEnum {
 }
 
 pipeline myPipeline {
-    // $TEST$ ['MyVariant', 'passed']
+    // $TEST$ ["MyVariant", "passed"]
     »MyEnum.MyVariant(passed)«;
 }

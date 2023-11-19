@@ -6,6 +6,6 @@ pipeline myPipeline {
     val lambda = (param: () -> ()) ->
         param();
 
-    // $TEST$ ['$expressionLambda', 'f']
+    // $TEST$ ["$expressionLambda", "f"]
     »lambda(f)«;
 }

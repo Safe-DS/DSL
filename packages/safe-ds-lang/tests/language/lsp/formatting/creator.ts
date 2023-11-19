@@ -42,7 +42,7 @@ const createFormattingTest = async (uri: URI): Promise<FormattingTest> => {
 
     const shortenedResourceName = uriToShortenedTestResourceName(uri, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be formatted correctly`,
+        testName: `[${shortenedResourceName}]`,
         originalCode,
         expectedFormattedCode,
         uri,

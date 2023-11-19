@@ -75,7 +75,7 @@ const createPartialEvaluationTest = async (parentDirectory: URI, uris: URI[]): P
 
     const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be partially evaluated correctly`,
+        testName: `[${shortenedResourceName}]`,
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,

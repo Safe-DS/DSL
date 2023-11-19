@@ -8,6 +8,6 @@ package tests.callGraph.functionCall.defaultValue.call
 )
 
 pipeline myPipeline {
-    // $TEST$ ['myFunction', 'default']
+    // $TEST$ ["myFunction", "default"]
     »myFunction()«;
 }

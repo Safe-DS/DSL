@@ -9,6 +9,6 @@ pipeline myPipeline {
         f();
     };
 
-    // $TEST$ ['$blockLambda', 'default']
+    // $TEST$ ["$blockLambda", "default"]
     »lambda()«;
 }

@@ -10,6 +10,6 @@ pipeline myPipeline {
     };
     val closure = lambda(f);
 
-    // $TEST$ ['$blockLambda', 'f']
+    // $TEST$ ["$blockLambda", "f"]
     »closure()«;
 }

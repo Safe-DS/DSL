@@ -5,6 +5,6 @@ enum MyEnum {
 }
 
 pipeline myPipeline {
-    // $TEST$ ['MyVariant']
+    // $TEST$ ["MyVariant"]
     »MyEnum.MyVariant()«;
 }

@@ -36,7 +36,7 @@ const createCallGraphTest = async (uri: URI): Promise<CallGraphTest> => {
 
     for (const check of checksResult.value) {
         try {
-            const parseResult = JSON.parse(check.comment.replaceAll("'", '"'));
+            const parseResult = JSON.parse(check.comment);
             if (!Array.isArray(parseResult)) {
                 return invalidTest(new InvalidCommentError(check.comment, uri));
             }
@@ -52,7 +52,7 @@ const createCallGraphTest = async (uri: URI): Promise<CallGraphTest> => {
 
     const shortenedResourceName = uriToShortenedTestResourceName(uri, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be scoped correctly`,
+        testName: `[${shortenedResourceName}]`,
         code,
         expectedCallGraphs,
     };

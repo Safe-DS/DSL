@@ -7,6 +7,6 @@ segment mySegment(
 ) {}
 
 pipeline myPipeline {
-    // $TEST$ ['mySegment', 'default']
+    // $TEST$ ["mySegment", "default"]
     »mySegment()«;
 }

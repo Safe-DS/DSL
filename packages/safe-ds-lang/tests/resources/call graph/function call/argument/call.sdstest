@@ -8,6 +8,6 @@ package tests.callGraph.functionCall.argument.call
 )
 
 pipeline myPipeline {
-    // $TEST$ ['myFunction']
+    // $TEST$ ["myFunction"]
     »myFunction(passed())«;
 }

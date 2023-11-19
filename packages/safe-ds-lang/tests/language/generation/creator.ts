@@ -77,7 +77,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
 
     const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be generated correctly`,
+        testName: `[${shortenedResourceName}]`,
         inputUris,
         actualOutputRoot,
         expectedOutputFiles,

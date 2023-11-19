@@ -3,6 +3,6 @@ package tests.callGraph.segmentCall.basic
 segment mySegment() {}
 
 pipeline myPipeline {
-    // $TEST$ ['mySegment']
+    // $TEST$ ["mySegment"]
     »mySegment()«;
 }

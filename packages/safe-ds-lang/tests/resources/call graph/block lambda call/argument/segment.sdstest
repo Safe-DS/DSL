@@ -7,7 +7,7 @@ pipeline myPipeline {
         param1(f);
     };
 
-    // $TEST$ ['$blockLambda', 'mySegment', 'f']
+    // $TEST$ ["$blockLambda", "mySegment", "f"]
     »lambda(mySegment)«;
 }
 

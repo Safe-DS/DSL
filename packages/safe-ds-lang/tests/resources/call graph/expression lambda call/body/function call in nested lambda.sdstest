@@ -5,6 +5,6 @@ package tests.callGraph.expressionLambdaCall.body.functionCallInNestedLambda
 pipeline myPipeline {
     val lambda = () -> () -> f();
 
-    // $TEST$ ['$expressionLambda']
+    // $TEST$ ["$expressionLambda"]
     »lambda()«;
 }

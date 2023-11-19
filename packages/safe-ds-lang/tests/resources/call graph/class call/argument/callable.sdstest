@@ -8,6 +8,6 @@ class MyClass(
 )
 
 pipeline myPipeline {
-    // $TEST$ ['MyClass', 'Passed']
+    // $TEST$ ["MyClass", "Passed"]
     »MyClass(Passed)«;
 }
