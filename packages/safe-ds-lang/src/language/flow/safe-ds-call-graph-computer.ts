@@ -33,6 +33,7 @@ import {
     ExpressionLambdaClosure,
     NamedCallable,
     ParameterSubstitutions,
+    substitutionsAreEqual,
     UnknownEvaluatedNode,
 } from '../partialEvaluation/model.js';
 import { CallGraph } from './model.js';
@@ -84,24 +85,36 @@ export class SafeDsCallGraphComputer {
      * of any containing callables, i.e. the context of the call.
      */
     getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions = new Map()): CallGraph {
-        return this.getCallGraphWithRecursionCheck(node, substitutions, new Set());
+        const newSubstitutions = this.getNewSubstitutions(node, substitutions);
+        return this.getCallGraphWithRecursionCheck(node, newSubstitutions, []);
     }
 
     private getCallGraphWithRecursionCheck(
         node: SdsCall | SdsCallable,
         substitutions: ParameterSubstitutions,
-        visited: Set<SdsCallable>,
+        visited: { callable: SdsCallable; substitutions: ParameterSubstitutions }[],
     ): CallGraph {
+        console.log(
+            node?.$cstNode?.text,
+            stream(substitutions.entries())
+                .map(([parameter, value]) => {
+                    return `${parameter.name} = ${value.toString()}`;
+                })
+                .toArray(),
+        );
+
         const callable = this.getCallable(node, substitutions);
         if (!callable) {
             return new CallGraph(callable, [], false);
-        } else if (visited.has(callable)) {
+        }
+
+        if (visited.some((it) => it.callable === callable && substitutionsAreEqual(it.substitutions, substitutions))) {
             return new CallGraph(callable, [], true);
         }
+        const newVisited = [...visited, { callable, substitutions }];
 
         // Visit all calls in the callable
         const newSubstitutions = this.getNewSubstitutions(node, substitutions);
-        const newVisited = new Set([...visited, callable]);
         const children = this.getExecutedCallsOrCallables(callable, newSubstitutions).map((child) => {
             return this.getCallGraphWithRecursionCheck(child, newSubstitutions, newVisited);
         });

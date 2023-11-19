@@ -446,7 +446,7 @@ const isFullyEvaluated = (node: EvaluatedNode): boolean => {
     return node.isFullyEvaluated;
 };
 
-const substitutionsAreEqual = (
+export const substitutionsAreEqual = (
     a: Map<SdsDeclaration, EvaluatedNode> | undefined,
     b: Map<SdsDeclaration, EvaluatedNode> | undefined,
 ): boolean => {
