@@ -1,0 +1,17 @@
+package tests.typing.declarations.parameters.ofBlockLambdas.thatArePassedAsDefaultValues
+
+fun higherOrderFunction1(
+    // $TEST$ equivalence_class parameterType1
+    // $TEST$ equivalence_class parameterType1
+    param: (a: »String«) -> () = (»p«) {}
+)
+
+fun higherOrderFunction2(
+    // $TEST$ serialization ?
+    param: () -> () = (»p«) {}
+)
+
+fun normalFunction(
+    // $TEST$ serialization ?
+    param: Int = (»p«) {}
+)
