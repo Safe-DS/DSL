@@ -133,11 +133,24 @@ export class SafeDsCallGraphComputer {
             return undefined;
         } else if (isSdsParameter(callableOrParameter)) {
             const substitution = substitutions.get(callableOrParameter);
-            if (!(substitution instanceof EvaluatedCallable)) {
+            if (substitution) {
+                if (substitution instanceof EvaluatedCallable) {
+                    return substitution.callable;
+                } else {
+                    return undefined;
+                }
+            }
+
+            if (!callableOrParameter.defaultValue) {
                 return undefined;
             }
 
-            return substitution.callable;
+            const defaultValue = this.getEvaluatedCallable(callableOrParameter.defaultValue, substitutions);
+            if (!(defaultValue instanceof EvaluatedCallable)) {
+                return undefined;
+            }
+
+            return defaultValue.callable;
         } else {
             return callableOrParameter;
         }
