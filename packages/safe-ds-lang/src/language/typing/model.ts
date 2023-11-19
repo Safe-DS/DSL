@@ -46,6 +46,7 @@ export class CallableType extends Type {
 
     constructor(
         readonly callable: SdsCallable,
+        readonly parameter: SdsParameter | undefined,
         readonly inputType: NamedTupleType<SdsParameter>,
         readonly outputType: NamedTupleType<SdsAbstractResult>,
     ) {
@@ -68,6 +69,7 @@ export class CallableType extends Type {
 
         return (
             other.callable === this.callable &&
+            other.parameter === this.parameter &&
             other.inputType.equals(this.inputType) &&
             other.outputType.equals(this.outputType)
         );
@@ -84,6 +86,7 @@ export class CallableType extends Type {
     override unwrap(): CallableType {
         return new CallableType(
             this.callable,
+            this.parameter,
             new NamedTupleType(...this.inputType.entries.map((it) => it.unwrap())),
             new NamedTupleType(...this.outputType.entries.map((it) => it.unwrap())),
         );
