@@ -10,6 +10,6 @@ pipeline myPipeline {
     »lambda(mySegment)«;
 }
 
-segment mySegment(param) {
+segment mySegment(param: () -> ()) {
     param();
 }
