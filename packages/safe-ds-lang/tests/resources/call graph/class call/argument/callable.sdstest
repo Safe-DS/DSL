@@ -1,0 +1,13 @@
+package tests.callGraph.classCall.argument.callable
+
+class Default()
+class Passed()
+
+class MyClass(
+    f: () -> () = Default
+)
+
+pipeline myPipeline {
+    // $TEST$ ['MyClass', 'Passed']
+    »MyClass(Passed)«;
+}

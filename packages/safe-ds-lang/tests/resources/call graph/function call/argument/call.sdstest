@@ -1,0 +1,13 @@
+package tests.callGraph.functionCall.argument.call
+
+@Pure fun default() -> r: Any
+@Pure fun passed() -> r: Any
+
+@Pure fun myFunction(
+    f: Any = default()
+)
+
+pipeline myPipeline {
+    // $TEST$ ['myFunction', 'passed']
+    »myFunction(passed())«;
+}

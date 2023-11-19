@@ -59,7 +59,7 @@ export class SafeDsCallGraphComputer {
      * The parameter substitutions to use. These are **not** the argument of the call, but the values of the parameters
      * of any containing callables, i.e. the context of the call.
      */
-    isRecursive(node: SdsCall, substitutions: ParameterSubstitutions): boolean {
+    isRecursive(node: SdsCall, substitutions: ParameterSubstitutions = new Map()): boolean {
         return this.getCallGraph(node, substitutions).isRecursive;
     }
 
@@ -74,7 +74,7 @@ export class SafeDsCallGraphComputer {
      * The parameter substitutions to use. These are **not** the argument of the call, but the values of the parameters
      * of any containing callables, i.e. the context of the call.
      */
-    getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions): CallGraph {
+    getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions = new Map()): CallGraph {
         return this.getCallGraphWithRecursionCheck(node, substitutions, new Set());
     }
 

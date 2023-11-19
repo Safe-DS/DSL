@@ -1,0 +1,13 @@
+package tests.callGraph.closure.expressionLambda
+
+@Pure fun f()
+
+pipeline myPipeline {
+    val lambda =
+        (param: () -> ()) ->
+            () -> param();
+    val closure = lambda(f);
+
+    // $TEST$ ['$expressionLambda', 'f]
+    »closure()«;
+}
