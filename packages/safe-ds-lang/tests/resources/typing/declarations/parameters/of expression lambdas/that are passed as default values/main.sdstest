@@ -3,7 +3,7 @@ package tests.typing.declarations.parameters.ofExpressionLambdas.thatArePassedAs
 fun higherOrderFunction1(
     // $TEST$ equivalence_class parameterType1
     // $TEST$ equivalence_class parameterType1
-    param: (a: »String«) -> r: String = (»p«) -> ""
+    param: (p: »String«) -> r: String = (»p«) -> ""
 )
 
 fun higherOrderFunction2(

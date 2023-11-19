@@ -5,6 +5,7 @@ export class CallGraph {
     constructor(
         readonly root: SdsCallable | undefined,
         readonly children: CallGraph[],
+        readonly isRecursive: boolean = false,
     ) {}
 
     /**
