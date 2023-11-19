@@ -240,6 +240,7 @@ export class SafeDsCallGraphComputer {
         node: SdsCallable,
         substitutions: ParameterSubstitutions,
     ): (SdsCall | SdsCallable)[] {
+        // TODO: Compute the callable and the new substitutions in one go (return synthetic calls)
         const parameters = getParameters(node);
 
         if (isSdsClass(node) || isSdsEnumVariant(node) || isSdsFunction(node)) {
@@ -336,5 +337,16 @@ export class SafeDsCallGraphComputer {
         const documentUri = getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
+    }
+}
+
+class SyntheticCall {
+    constructor(
+        readonly callable: EvaluatedCallable,
+        readonly substitutions: ParameterSubstitutions,
+    ) {}
+
+    equals(other: SyntheticCall): boolean {
+        return this.callable.equals(other.callable) && substitutionsAreEqual(this.substitutions, other.substitutions);
     }
 }
