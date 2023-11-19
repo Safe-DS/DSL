@@ -41,7 +41,7 @@ describe('call graph model', () => {
                 expected: [f1, f2, f3, f1],
             },
         ])('should traverse the call graph depth-first in pre-order #%#', ({ graph, expected }) => {
-            expect(graph.streamCalledCallables().toArray()).toStrictEqual(expected);
+            expect([...graph.streamCalledCallables()]).toStrictEqual(expected);
         });
     });
 });

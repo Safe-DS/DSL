@@ -132,6 +132,7 @@ export class SafeDsCallGraphComputer {
         } else {
             return callableOrParameter;
         }
+        // TODO use evaluatedcallable or remove altogether
     }
 
     // TODO
