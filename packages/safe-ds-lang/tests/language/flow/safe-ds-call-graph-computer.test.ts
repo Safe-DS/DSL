@@ -1,98 +1,66 @@
 import { describe, expect, it } from 'vitest';
-import { CallGraph } from '../../../src/language/flow/model.js';
 import { EmptyFileSystem, isNamed } from 'langium';
-import { getNodeOfType } from '../../helpers/nodeFinder.js';
-import { isSdsCall } from '../../../src/language/generated/ast.js';
+import { isSdsBlockLambda, isSdsExpressionLambda, isSdsModule, SdsCall } from '../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
+import { createCallGraphTests } from './creator.js';
+import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { isRangeEqual } from 'langium/test';
+import { locationToString } from '../../helpers/location.js';
+import { AssertionError } from 'assert';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
-// TODO: data driven tests
+
 describe('SafeDsCallGraphComputer', () => {
     describe('isRecursive', () => {});
 
-    const getCallGraphTests: GetCallGraphTest[] = [
-        // TODO: can we allow the callable in callable types to be the parameter?
-        // TODO: closure
-        // TODO: no parameter types on lambda
-        {
-            testName: 'expression lambda call',
-            code: `
-                fun f()
+    describe('getCallGraph', async () => {
+        it.each(await createCallGraphTests())('$testName', async (test) => {
+            // Test is invalid
+            if (test.error) {
+                throw test.error;
+            }
 
-                pipeline myPipeline {
-                    val lambda = () -> f();
+            const module = await getNodeOfType(services, test.code, isSdsModule);
 
-                    lambda();
-                }
-            `,
-            callIndex: 1,
-            expectedCallables: ['()->f()', 'f'],
-        },
-        // TODO: same as for block lambda
-        {
-            testName: 'segment call',
-            code: `
-                fun f()
-
-                segment mySegment() {
-                    f();
+            for (const { location, expectedCallables } of test.expectedCallGraphs) {
+                const node = callGraphComputer
+                    .getCalls(module)
+                    .find((call) => isRangeEqual(call.$cstNode!.range, location.range));
+                if (!node) {
+                    throw new Error(`Could not find call at ${locationToString(location)}`);
                 }
 
-                pipeline myPipeline {
-                    mySegment();
+                const actualCallables = getActualCallables(node);
+                try {
+                    expect(actualCallables).toStrictEqual(expectedCallables);
+                } catch (e) {
+                    throw new AssertionError({
+                        message: `Got wrong callables at ${locationToString(
+                            location,
+                        )}.\nExpected: [${expectedCallables.join(', ')}]\nActual: [${actualCallables.join(', ')}]`,
+                        expected: expectedCallables,
+                        actual: actualCallables,
+                    });
                 }
-            `,
-            callIndex: 1,
-            expectedCallables: ['mySegment', 'f'],
-        },
-        // TODO: same as for block lambda - closure
-    ];
-
-    describe.each(getCallGraphTests)('getCallGraph', ({ testName, code, callIndex, expectedCallables }) => {
-        it(testName, async () => {
-            const call = await getNodeOfType(services, code, isSdsCall, callIndex);
-            const callGraph = callGraphComputer.getCallGraph(call, new Map());
-            expect(callGraphToStringArray(callGraph)).toStrictEqual(expectedCallables);
+            }
         });
     });
 });
 
-/**
- * A test case for {@link SafeDsCallGraphComputer.getCallGraph}.
- */
-interface GetCallGraphTest {
-    /**
-     * A short description of the test case.
-     */
-    testName: string;
-
-    /**
-     * The code containing the call to test.
-     */
-    code: string;
-
-    /**
-     * The index of the call to test. If `undefined`, the first call in the code is used.
-     */
-    callIndex?: number;
-
-    /**
-     * The names of the callables that are expected to be called.
-     */
-    expectedCallables: string[];
-}
-
-const callGraphToStringArray = (graph: CallGraph): string[] => {
-    return graph
+const getActualCallables = (node: SdsCall): string[] => {
+    return callGraphComputer
+        .getCallGraph(node)
         .streamCalledCallables()
         .map((callable) => {
-            if (!callable) {
-                return 'undefined';
-            } else if (isNamed(callable)) {
+            if (callable && isNamed(callable)) {
                 return callable.name;
+            } else if (isSdsBlockLambda(callable)) {
+                return '$blockLambda';
+            } else if (isSdsExpressionLambda(callable)) {
+                return '$expressionLambda';
             } else {
-                return callable.$cstNode!.text.replaceAll(/\s*/gu, '');
+                return 'undefined';
             }
         })
         .toArray();
