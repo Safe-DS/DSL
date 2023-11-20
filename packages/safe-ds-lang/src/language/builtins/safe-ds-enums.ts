@@ -36,8 +36,28 @@ export class SafeDsImpurityReasons {
         this.builtinEnums = services.builtins.Enums;
     }
 
+    get FileReadFromConstantPath(): SdsEnumVariant | undefined {
+        return this.getEnumVariant('FileReadFromConstantPath');
+    }
+
+    get FileReadFromParameterizedPath(): SdsEnumVariant | undefined {
+        return this.getEnumVariant('FileReadFromParameterizedPath');
+    }
+
+    get FileWriteToConstantPath(): SdsEnumVariant | undefined {
+        return this.getEnumVariant('FileWriteToConstantPath');
+    }
+
+    get FileWriteToParameterizedPath(): SdsEnumVariant | undefined {
+        return this.getEnumVariant('FileWriteToParameterizedPath');
+    }
+
     get PotentiallyImpureParameterCall(): SdsEnumVariant | undefined {
         return this.getEnumVariant('PotentiallyImpureParameterCall');
+    }
+
+    get Other(): SdsEnumVariant | undefined {
+        return this.getEnumVariant('Other');
     }
 
     private getEnumVariant(name: string): SdsEnumVariant | undefined {
