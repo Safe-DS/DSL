@@ -85,19 +85,30 @@ export class SafeDsCallGraphComputer {
     }
 
     /**
-     * Returns a stream of all callables that are called directly or indirectly by the given call. The call graph is
-     * traversed depth-first. If a callable is called recursively, it is only included once again.
+     * **If given a call**: Returns a stream of all callables that are called directly or indirectly by the given call.
+     * The call graph is traversed depth-first. If a callable is called recursively, it is only included once again.
+     *
+     * **If given a callable**: Does the above for all calls that get executed in the callable.
      *
      * @param node
-     * The call to check.
+     * The call/callable to get the call graph for.
      *
      * @param substitutions
      * The parameter substitutions to use. These are **not** the argument of the call, but the values of the parameters
      * of any containing callables, i.e. the context of the call.
      */
-    getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): CallGraph {
-        const call = this.createSyntheticCallForCall(node, substitutions);
-        return this.getCallGraphWithRecursionCheck(call, []);
+    getCallGraph(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): CallGraph {
+        if (isSdsCall(node)) {
+            const call = this.createSyntheticCallForCall(node, substitutions);
+            return this.getCallGraphWithRecursionCheck(call, []);
+        } else {
+            return new CallGraph(
+                node,
+                this.getExecutedCallsInCallable(node, substitutions).map((it) => {
+                    return this.getCallGraphWithRecursionCheck(it, []);
+                }),
+            );
+        }
     }
 
     private getCallGraphWithRecursionCheck(syntheticCall: SyntheticCall, visited: SyntheticCall[]): CallGraph {
@@ -129,9 +140,10 @@ export class SafeDsCallGraphComputer {
             return [];
         }
 
-        const callable = syntheticCall.callable.callable;
-        const substitutions = syntheticCall.substitutions;
+        return this.getExecutedCallsInCallable(syntheticCall.callable.callable, syntheticCall.substitutions);
+    }
 
+    private getExecutedCallsInCallable(callable: SdsCallable, substitutions: ParameterSubstitutions) {
         if (isSdsBlockLambda(callable) || isSdsExpressionLambda(callable) || isSdsSegment(callable)) {
             return this.getExecutedCallsInPipelineCallable(callable, substitutions);
         } else if (isSdsClass(callable) || isSdsEnumVariant(callable) || isSdsFunction(callable)) {

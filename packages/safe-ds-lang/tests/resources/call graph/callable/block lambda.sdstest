@@ -1,0 +1,9 @@
+package tests.callGraph.callable.blockLambda
+
+@Pure fun f() -> r: Any
+@Pure fun g() -> r: Any
+
+// $TEST$ ["$expressionLambda", "f", "g"]
+pipeline myPipeline {
+    »(param: Any = f()) -> g()«;
+}

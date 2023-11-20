@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { EmptyFileSystem, isNamed } from 'langium';
+import { EmptyFileSystem, isNamed, streamAst } from 'langium';
 import {
     isSdsBlockLambda,
     isSdsCall,
+    isSdsCallable,
     isSdsExpressionLambda,
     isSdsModule,
     SdsCall,
+    SdsCallable,
 } from '../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { createCallGraphTests } from './creator.js';
@@ -62,11 +64,9 @@ describe('SafeDsCallGraphComputer', () => {
             const module = await getNodeOfType(services, test.code, isSdsModule);
 
             for (const { location, expectedCallables } of test.expectedCallGraphs) {
-                const node = callGraphComputer
-                    .getCalls(module)
-                    .find((call) => isRangeEqual(call.$cstNode!.range, location.range));
-                if (!node) {
-                    throw new Error(`Could not find call at ${locationToString(location)}`);
+                const node = streamAst(module).find((call) => isRangeEqual(call.$cstNode!.range, location.range));
+                if (!node || (!isSdsCall(node) && !isSdsCallable(node))) {
+                    throw new Error(`Could not find call/callable at ${locationToString(location)}`);
                 }
 
                 const actualCallables = getActualCallables(node);
@@ -86,7 +86,7 @@ describe('SafeDsCallGraphComputer', () => {
     });
 });
 
-const getActualCallables = (node: SdsCall): string[] => {
+const getActualCallables = (node: SdsCall | SdsCallable): string[] => {
     return callGraphComputer
         .getCallGraph(node)
         .streamCalledCallables()
