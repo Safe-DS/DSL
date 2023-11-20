@@ -1,0 +1,37 @@
+package tests.typing.expressions.blockLambdas.thatArePassedAsDefaultValues
+
+fun higherOrderFunction1(
+    // $TEST$ serialization (p: String) -> (r: literal<1>, s: literal<"">)
+    param1: (p: String) -> (r: Int, s: String) = »(p) {
+        yield r = 1;
+        yield s = "";
+    }«,
+    // $TEST$ serialization (p: String) -> (r: literal<1>, s: ?)
+    param2: (p: String) -> (r: Int, s: String) = »(p) {
+        yield r, yield s = 1;
+    }«,
+)
+
+fun higherOrderFunction2(
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: literal<"">)
+    param1: () -> () = »(p) {
+        yield r = 1;
+        yield s = "";
+    }«,
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
+    param2: () -> () = »(p) {
+        yield r, yield s = 1;
+    }«,
+)
+
+fun normalFunction(
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: literal<"">)
+    param1: Int = »(p) {
+        yield r = 1;
+        yield s = "";
+    }«,
+    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
+    param2: Int = »(p) {
+        yield r, yield s = 1;
+    }«,
+)

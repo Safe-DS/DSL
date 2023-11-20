@@ -27,7 +27,7 @@ export const assigneeAssignedResultShouldNotBeExperimental =
             return;
         }
 
-        if (services.builtins.Annotations.isExperimental(assignedObject)) {
+        if (services.builtins.Annotations.callsExperimental(assignedObject)) {
             accept('warning', `The assigned result '${assignedObject.name}' is experimental.`, {
                 node,
                 code: CODE_EXPERIMENTAL_ASSIGNED_RESULT,
@@ -42,7 +42,7 @@ export const annotationCallAnnotationShouldNotBeExperimental =
             return;
         }
 
-        if (services.builtins.Annotations.isExperimental(annotation)) {
+        if (services.builtins.Annotations.callsExperimental(annotation)) {
             accept('warning', `The called annotation '${annotation.name}' is experimental.`, {
                 node,
                 property: 'annotation',
@@ -58,7 +58,7 @@ export const argumentCorrespondingParameterShouldNotBeExperimental =
             return;
         }
 
-        if (services.builtins.Annotations.isExperimental(parameter)) {
+        if (services.builtins.Annotations.callsExperimental(parameter)) {
             accept('warning', `The corresponding parameter '${parameter.name}' is experimental.`, {
                 node,
                 code: CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
@@ -73,7 +73,7 @@ export const namedTypeDeclarationShouldNotBeExperimental =
             return;
         }
 
-        if (services.builtins.Annotations.isExperimental(declaration)) {
+        if (services.builtins.Annotations.callsExperimental(declaration)) {
             accept('warning', `The referenced declaration '${declaration.name}' is experimental.`, {
                 node,
                 code: CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
@@ -88,7 +88,7 @@ export const referenceTargetShouldNotExperimental =
             return;
         }
 
-        if (services.builtins.Annotations.isExperimental(target)) {
+        if (services.builtins.Annotations.callsExperimental(target)) {
             accept('warning', `The referenced declaration '${target.name}' is experimental.`, {
                 node,
                 code: CODE_EXPERIMENTAL_REFERENCED_DECLARATION,

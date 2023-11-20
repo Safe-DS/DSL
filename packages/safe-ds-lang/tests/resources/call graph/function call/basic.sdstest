@@ -1,0 +1,8 @@
+package tests.callGraph.functionCall.basic
+
+@Pure fun myFunction()
+
+pipeline myPipeline {
+    // $TEST$ ["myFunction"]
+    »myFunction()«;
+}

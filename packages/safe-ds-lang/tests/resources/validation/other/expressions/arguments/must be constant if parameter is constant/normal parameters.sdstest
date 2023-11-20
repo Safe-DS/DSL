@@ -1,0 +1,18 @@
+package tests.validation.other.expressions.arguments.mustBeConstantIfParameterIsConstant
+
+@Pure
+fun myFunctionWithNormalParameter(
+    param: Int
+)
+
+pipeline testPipeline {
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+   myFunctionWithNormalParameter(»intFunction()«);
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+   myFunctionWithNormalParameter(param = »intFunction()«);
+
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+   unresolved(»intFunction()«);
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+   myFunctionWithNormalParameter(unresolved = »intFunction()«);
+}

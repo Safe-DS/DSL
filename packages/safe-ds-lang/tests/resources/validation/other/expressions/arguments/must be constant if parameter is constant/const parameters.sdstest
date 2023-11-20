@@ -1,0 +1,27 @@
+package tests.validation.other.expressions.arguments.mustBeConstantIfParameterIsConstant
+
+@Pure
+fun myFunctionWithConstantParameter(
+    const constantParam: Int
+)
+
+@Pure
+fun anotherFunctionWithConstantParameter(
+    const constantParam: MyEnum
+)
+
+pipeline testPipeline {
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»1«);
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»-2«);
+    // $TEST$ error "Values assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»[1, 2][0]«);
+    // $TEST$ error "Values assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(»intFunction()«);
+    // $TEST$ error "Values assigned to constant parameters must be constant."
+    myFunctionWithConstantParameter(constantParam = »intFunction()«);
+
+    // $TEST$ no error "Values assigned to constant parameters must be constant."
+    anotherFunctionWithConstantParameter(»MyEnum.MyConstantVariant(1)«);
+}

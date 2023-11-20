@@ -11,7 +11,7 @@ import {
 } from 'langium';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClasses } from './builtins/safe-ds-classes.js';
-import { SafeDsEnums } from './builtins/safe-ds-enums.js';
+import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js';
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
 import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
@@ -49,6 +49,7 @@ export type SafeDsAddedServices = {
         Annotations: SafeDsAnnotations;
         Classes: SafeDsClasses;
         Enums: SafeDsEnums;
+        ImpurityReasons: SafeDsImpurityReasons;
     };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
@@ -93,6 +94,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
         Enums: (services) => new SafeDsEnums(services),
+        ImpurityReasons: (services) => new SafeDsImpurityReasons(services),
     },
     documentation: {
         CommentProvider: (services) => new SafeDsCommentProvider(services),

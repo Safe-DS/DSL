@@ -63,6 +63,25 @@ export const isEmpty = (iterable: Iterable<unknown>): boolean => {
 };
 
 /**
+ * Returns whether `set1` and `set2` contain the same values.
+ */
+export const isEqualSet = <T>(set1: Set<T>, set2: Set<T>): boolean => {
+    return set1.size === set2.size && isSubset(set1, set2);
+};
+
+/**
+ * Returns whether `set1` is a subset of `set2`.
+ */
+export const isSubset = <T>(set1: Set<T>, set2: Set<T>): boolean => {
+    for (const value of set1) {
+        if (!set2.has(value)) {
+            return false;
+        }
+    }
+    return true;
+};
+
+/**
  * Returns the last element of the array, or `undefined` if the array is empty.
  */
 export const last = <T>(array: T[]): T | undefined => {

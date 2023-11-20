@@ -77,13 +77,27 @@ export const isInternal = (node: SdsDeclaration): boolean => {
     return isSdsSegment(node) && node.visibility === 'internal';
 };
 
-export const isNamedArgument = (node: SdsArgument): boolean => {
-    return Boolean(node.parameter);
-};
+export namespace Argument {
+    export const isNamed = (node: SdsArgument): boolean => {
+        return Boolean(node.parameter);
+    };
 
-export const isPositionalArgument = (node: SdsArgument): boolean => {
-    return !node.parameter;
-};
+    export const isPositional = (node: SdsArgument): boolean => {
+        return !node.parameter;
+    };
+}
+
+export namespace Enum {
+    export const isConstant = (node: SdsEnum): boolean => {
+        return getEnumVariants(node).every((it) => EnumVariant.isConstant(it));
+    };
+}
+
+export namespace EnumVariant {
+    export const isConstant = (node: SdsEnumVariant): boolean => {
+        return getParameters(node).every((it) => Parameter.isConstant(it));
+    };
+}
 
 export namespace Parameter {
     export const isConstant = (node: SdsParameter | undefined): boolean => {
@@ -98,7 +112,7 @@ export namespace Parameter {
             return false;
         }
 
-        return isSdsAnnotation(containingCallable) || node.isConstant;
+        return node.isConstant || isSdsAnnotation(containingCallable);
     };
 
     export const isOptional = (node: SdsParameter | undefined): boolean => {
@@ -123,9 +137,11 @@ export const isStatic = (node: SdsClassMember): boolean => {
     }
 };
 
-export const isNamedTypeArgument = (node: SdsTypeArgument): boolean => {
-    return Boolean(node.typeParameter);
-};
+export namespace TypeArgument {
+    export const isNamed = (node: SdsTypeArgument): boolean => {
+        return Boolean(node.typeParameter);
+    };
+}
 
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements
