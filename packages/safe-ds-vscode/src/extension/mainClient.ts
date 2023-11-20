@@ -11,7 +11,7 @@ import {
 } from './pythonServer.js';
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { getSafeDSOutputChannel, initializeLog, printOutputMessage } from './output.js';
+import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
 import { RuntimeErrorMessage } from './messages.js';
 
 let client: LanguageClient;
@@ -82,17 +82,24 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
         printOutputMessage(`Runner-Progress: ${message.data}`);
     }, 'progress');
     addMessageCallback(async (message) => {
-        const readableStacktrace = await Promise.all(
+        let readableStacktraceSafeDs: string[] = [];
+        const readableStacktracePython = await Promise.all(
             (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
                 const mappedFrame = await tryMapToSafeDSSource(frame);
                 if (mappedFrame) {
-                    return `\tat ${frame.file} line ${frame.line} (mapped to: ${mappedFrame.file} line ${mappedFrame.line})`;
+                    readableStacktraceSafeDs.push(`\tat ${mappedFrame.file} line ${mappedFrame.line}`);
+                    return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
                 }
                 return `\tat ${frame.file} line ${frame.line}`;
             }),
         );
+        logOutput(
+            `Runner-RuntimeError: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktracePython.join(
+                '\n',
+            )}`,
+        );
         printOutputMessage(
-            `Runner-RuntimeError: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktrace.join('\n')}`,
+            `Safe-DS Error: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs.join('\n')}`,
         );
     }, 'runtime_error');
     context.subscriptions.push(

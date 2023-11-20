@@ -107,9 +107,10 @@ export const tryMapToSafeDSSource = async function (
     let sourceMapKey = sourceMapKeys[0]!;
     const sourceMapObject = JSON.parse(lastGeneratedSource!.get(sourceMapKey)!);
     sourceMapObject.sourcesContent = [lastExecutedSource];
+    logOutput(JSON.stringify(sourceMapObject));
     const consumer = await new SourceMapConsumer(sourceMapObject);
     const outputPosition = consumer.originalPositionFor({
-        line: frame.line,
+        line: Number(frame.line),
         column: 0,
         bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
@@ -135,7 +136,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     //
     let mainPipelineName;
     let mainModuleName;
-    let mainPackageName;
+    // TODO let mainPackageName;
     if (!ast.isSdsModule(node)) {
         return;
     }
@@ -147,7 +148,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     mainPipelineName = firstPipeline.name;
     mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('-', '_');
-    mainPackageName = '';
+    // TODO mainPackageName = '';
     //
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
         destination: URI.file(''),
@@ -167,8 +168,8 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
             path.extname(sdsFileName).length > 0
                 ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length /* - 1 */)
                 : sdsFileName;
-        const sdsPackageFilePath = path.dirname(fsPath);
-        const sdsPackage = sdsPackageFilePath.replaceAll('/', '.');
+        // TODO const sdsPackageFilePath = path.dirname(fsPath);
+        // TODO const sdsPackage = sdsPackageFilePath.replaceAll('/', '.');
         if (!codeMap.hasOwnProperty(/*TODO sdsPackage*/ '')) {
             codeMap[/*TODO sdsPackage*/ ''] = {};
         }
@@ -250,14 +251,6 @@ const findFirstFreePort = async function (startPort: number): Promise<number> {
 
         const tryNextPort = function () {
             const server = net.createServer();
-
-            server.listen(port, () => {
-                server.once('close', () => {
-                    resolve(port); // Port is free, resolve with the current port number.
-                });
-                server.close(); // Immediately close the server after it's opened.
-            });
-
             server.on('error', (err: any) => {
                 if (err.code === 'EADDRINUSE') {
                     port++;
@@ -265,6 +258,12 @@ const findFirstFreePort = async function (startPort: number): Promise<number> {
                 } else {
                     reject('Unknown error'); // An unexpected error occurred
                 }
+            });
+            server.listen(port, '127.0.0.1', () => {
+                server.once('close', () => {
+                    resolve(port); // Port is free, resolve with the current port number.
+                });
+                server.close(); // Immediately close the server after it's opened.
             });
         };
         tryNextPort();
