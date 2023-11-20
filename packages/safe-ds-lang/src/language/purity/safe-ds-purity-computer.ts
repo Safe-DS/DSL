@@ -103,6 +103,7 @@ export class SafeDsPurityComputer {
                 case this.builtinImpurityReasons.Other:
                     return OtherImpurityReason;
                 default:
+                    /* c8 ignore next */
                     return EMPTY_STREAM;
             }
         });
