@@ -86,7 +86,7 @@ import {
     typeParameterMustHaveSufficientContext,
     typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
 } from './other/declarations/typeParameters.js';
-import { callArgumentMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
+import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import {
     lambdaMustBeAssignedToTypedParameter,
@@ -223,6 +223,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsCall: [
             callArgumentListShouldBeNeeded(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
+            callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
         ],
         SdsCallableType: [

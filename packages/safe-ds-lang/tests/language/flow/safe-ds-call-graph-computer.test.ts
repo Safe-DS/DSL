@@ -20,40 +20,6 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
 
 describe('SafeDsCallGraphComputer', () => {
-    describe('isRecursive', () => {
-        it('should return true for recursive calls', async () => {
-            const call = await getNodeOfType(
-                services,
-                `
-                    segment a() {
-                        b();
-                    }
-
-                    segment b() {
-                        a();
-                    }
-                `,
-                isSdsCall,
-            );
-            expect(callGraphComputer.isRecursive(call)).toBeTruthy();
-        });
-
-        it('should return false for non-recursive calls', async () => {
-            const call = await getNodeOfType(
-                services,
-                `
-                    segment a() {
-                        b();
-                    }
-
-                    segment b() {}
-                `,
-                isSdsCall,
-            );
-            expect(callGraphComputer.isRecursive(call)).toBeFalsy();
-        });
-    });
-
     describe('getCallGraph', async () => {
         it.each(await createCallGraphTests())('$testName', async (test) => {
             // Test is invalid
