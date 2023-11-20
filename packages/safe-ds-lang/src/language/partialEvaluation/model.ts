@@ -150,7 +150,7 @@ export abstract class EvaluatedCallable<T extends SdsCallable = SdsCallable> ext
     override readonly isFullyEvaluated: boolean = false;
 }
 
-export abstract class Closure<T extends SdsLambda> extends EvaluatedCallable<T> {
+export abstract class Closure<T extends SdsLambda = SdsLambda> extends EvaluatedCallable<T> {
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
 }
 

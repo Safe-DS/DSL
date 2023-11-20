@@ -19,15 +19,22 @@ import {
     isSdsFunction,
     isSdsParameter,
     isSdsSegment,
+    SdsBlockLambda,
     SdsCall,
     SdsCallable,
+    SdsClass,
+    SdsEnumVariant,
     SdsExpression,
+    SdsExpressionLambda,
+    SdsFunction,
     SdsParameter,
+    SdsSegment,
 } from '../generated/ast.js';
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
     BlockLambdaClosure,
+    Closure,
     EvaluatedCallable,
     ExpressionLambdaClosure,
     NamedCallable,
@@ -39,6 +46,7 @@ import { CallGraph } from './model.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { CallableType, StaticType } from '../typing/model.js';
+import { isEmpty } from '../../helpers/collectionUtils.js';
 
 export class SafeDsCallGraphComputer {
     private readonly astNodeLocator: AstNodeLocator;
@@ -84,18 +92,67 @@ export class SafeDsCallGraphComputer {
      * of any containing callables, i.e. the context of the call.
      */
     getCallGraph(node: SdsCall, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): CallGraph {
-        const callable = this.getEvaluatedCallable(node, substitutions);
-        const newSubstitutions = this.getNewSubstitutions(node, substitutions);
-        const call = new SyntheticCall(callable, newSubstitutions);
+        const call = this.createSyntheticCall(node, substitutions);
         return this.getCallGraphWithRecursionCheck(call, []);
     }
 
-    // TODO
-    private getNewSubstitutions(node: SdsCall, substitutions: ParameterSubstitutions): ParameterSubstitutions {
-        const parameters = getParameters(this.getCallable(node, substitutions));
+    private getCallGraphWithRecursionCheck(syntheticCall: SyntheticCall, visited: SyntheticCall[]): CallGraph {
+        console.log(
+            syntheticCall?.callable?.callable?.$cstNode?.text,
+            stream(syntheticCall?.substitutions.entries())
+                .map(([parameter, value]) => {
+                    return `${parameter.name} = ${value.toString()}`;
+                })
+                .toArray(),
+        );
+
+        const evaluatedCallable = syntheticCall.callable;
+
+        // Handle unknown callables & recursive calls
+        if (!evaluatedCallable) {
+            return new CallGraph(undefined, [], false);
+        } else if (visited.some((it) => it.equals(syntheticCall))) {
+            return new CallGraph(evaluatedCallable.callable, [], true);
+        }
+
+        // Visit all calls in the callable
+        const newVisited = [...visited, syntheticCall];
+        const children = this.getExecutedCalls(syntheticCall).map((it) => {
+            console.log(it);
+            return this.getCallGraphWithRecursionCheck(it, newVisited);
+        });
+
+        return new CallGraph(
+            evaluatedCallable.callable,
+            children,
+            children.some((it) => it.isRecursive),
+        );
+    }
+
+    // TODO - start
+    private createSyntheticCall(
+        call: SdsCall | EvaluatedCallable,
+        substitutions: ParameterSubstitutions,
+    ): SyntheticCall {
+        const evaluatedCallable = this.getEvaluatedCallable(call, substitutions);
+        const newSubstitutions = this.getNewSubstitutions(call, substitutions);
+        return new SyntheticCall(evaluatedCallable, newSubstitutions);
+    }
+
+    private getNewSubstitutions(
+        call: SdsCall | Closure | EvaluatedCallable,
+        substitutions: ParameterSubstitutions,
+    ): ParameterSubstitutions {
+        if (call instanceof Closure) {
+            return call.substitutionsOnCreation;
+        } else if (call instanceof EvaluatedCallable) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const parameters = getParameters(this.getEvaluatedCallable(call.receiver, substitutions)?.callable);
 
         return new Map(
-            getArguments(node).flatMap((it) => {
+            getArguments(call).flatMap((it) => {
                 // Ignore arguments that don't get assigned to a parameter
                 const parameterIndex = this.nodeMapper.argumentToParameter(it)?.$containerIndex ?? -1;
                 if (parameterIndex === -1) {
@@ -114,37 +171,6 @@ export class SafeDsCallGraphComputer {
                 const value = this.getEvaluatedCallable(it.value, substitutions) ?? UnknownEvaluatedNode;
                 return [[parameter, value]];
             }),
-        );
-    }
-
-    private getCallGraphWithRecursionCheck(call: SyntheticCall, visited: SyntheticCall[]): CallGraph {
-        console.log(
-            call?.callable?.callable?.$cstNode?.text,
-            stream(call?.substitutions.entries())
-                .map(([parameter, value]) => {
-                    return `${parameter.name} = ${value.toString()}`;
-                })
-                .toArray(),
-        );
-
-        const callable = call.callable;
-
-        if (!callable) {
-            return new CallGraph(undefined, [], false);
-        } else if (visited.some((it) => it.equals(call))) {
-            return new CallGraph(callable.callable, [], true);
-        }
-
-        // Visit all calls in the callable
-        const newVisited = [...visited, call];
-        const children = this.getExecutedCalls(call).map((child) => {
-            return this.getCallGraphWithRecursionCheck(child, newVisited);
-        });
-
-        return new CallGraph(
-            callable.callable,
-            children,
-            children.some((it) => it.isRecursive),
         );
     }
 
@@ -202,9 +228,13 @@ export class SafeDsCallGraphComputer {
 
     // TODO
     private getEvaluatedCallable(
-        node: SdsExpression,
+        node: SdsExpression | EvaluatedCallable,
         substitutions: ParameterSubstitutions,
     ): EvaluatedCallable | undefined {
+        if (node instanceof EvaluatedCallable) {
+            return node;
+        }
+
         const type = this.typeComputer.computeType(node);
         let callable: SdsCallable | undefined = undefined;
 
@@ -233,103 +263,84 @@ export class SafeDsCallGraphComputer {
         }
     }
 
-    // TODO
-    private getExecutedCalls(call: SyntheticCall): SyntheticCall[] {
-        // TODO: Compute the callable and the new substitutions in one go (return synthetic calls)
-        const parameters = getParameters(call.callable?.callable);
-        const callable = call.callable?.callable;
-        const substitutions = call.substitutions;
+    // TODO end
 
-        if (isSdsClass(call) || isSdsEnumVariant(call) || isSdsFunction(call)) {
-            const callsInDefaultValues = parameters.flatMap((it) => {
-                // The default value is only executed if no argument is passed for the parameter
-                if (it.defaultValue && !substitutions.has(it)) {
-                    const calls = this.getCalls(it.defaultValue);
-                    if (calls.length > 0) {
-                        return calls.map(
-                            (node) => new SyntheticCall(this.getEvaluatedCallable(node, substitutions), substitutions),
-                        );
-                    }
-
-                    const callable2 = this.getEvaluatedCallable(it.defaultValue, substitutions);
-                    if (callable2 instanceof EvaluatedCallable) {
-                        return [new SyntheticCall(callable2, substitutions)];
-                    }
-
-                    return [];
-                } else {
-                    return [];
-                }
-            });
-
-            const callablesInSubstitutions = stream(substitutions.values()).flatMap((it) => {
-                if (!(it instanceof EvaluatedCallable)) {
-                    return [];
-                }
-
-                return [it.callable];
-            });
-
-            return [...callsInDefaultValues, ...callablesInSubstitutions];
-        } else if (isSdsBlockLambda(call)) {
-            const callsInDefaultValues = parameters.flatMap((it) => {
-                // The default value is only executed if no argument is passed for the parameter
-                if (it.defaultValue && !substitutions.has(it)) {
-                    return this.getCalls(it.defaultValue).filter(
-                        (node) => getContainerOfType(node, isSdsCallable) === callable,
-                    );
-                } else {
-                    return [];
-                }
-            });
-
-            const callsInBody = this.getCalls(call.body).filter((it) => getContainerOfType(it, isSdsCallable) === call);
-
-            return [...callsInDefaultValues, ...callsInBody].map(
-                (it) => new SyntheticCall(this.getEvaluatedCallable(it, substitutions), substitutions),
-            );
-        } else if (isSdsExpressionLambda(call)) {
-            const callsInDefaultValues = parameters.flatMap((it) => {
-                // The default value is only executed if no argument is passed for the parameter
-                if (it.defaultValue && !substitutions.has(it)) {
-                    return this.getCalls(it.defaultValue).filter(
-                        (node) => getContainerOfType(node, isSdsCallable) === callable,
-                    );
-                } else {
-                    return [];
-                }
-            });
-
-            const callsInBody = this.getCalls(call.result).filter(
-                (it) => getContainerOfType(it, isSdsCallable) === call,
-            );
-
-            return [...callsInDefaultValues, ...callsInBody].map(
-                (it) => new SyntheticCall(this.getEvaluatedCallable(it, substitutions), substitutions),
-            );
-        } else if (isSdsSegment(call)) {
-            const callsInDefaultValues = parameters.flatMap((it) => {
-                // The default value is only executed if no argument is passed for the parameter
-                if (it.defaultValue && !substitutions.has(it)) {
-                    return this.getCalls(it.defaultValue).filter(
-                        (node) => getContainerOfType(node, isSdsCallable) === callable,
-                    );
-                } else {
-                    return [];
-                }
-            });
-
-            const callsInBody = this.getCalls(call.body).filter((it) => getContainerOfType(it, isSdsCallable) === call);
-
-            return [...callsInDefaultValues, ...callsInBody].map(
-                (it) => new SyntheticCall(this.getEvaluatedCallable(it, substitutions), substitutions),
-            );
-        } else {
-            // TODO - throw if callable type or annotation
-            return this.getCalls(call.callable?.callable).map(
-                (it) => new SyntheticCall(this.getEvaluatedCallable(it, substitutions), substitutions),
-            );
+    private getExecutedCalls(syntheticCall: SyntheticCall): SyntheticCall[] {
+        if (!syntheticCall.callable) {
+            return [];
         }
+
+        const callable = syntheticCall.callable.callable;
+        const substitutions = syntheticCall.substitutions;
+
+        if (isSdsBlockLambda(callable) || isSdsExpressionLambda(callable) || isSdsSegment(callable)) {
+            return this.getExecutedCallsInPipelineCallable(callable, substitutions);
+        } else if (isSdsClass(callable) || isSdsEnumVariant(callable) || isSdsFunction(callable)) {
+            return this.getExecutedCallsInStubCallable(callable, substitutions);
+        } else {
+            return [];
+        }
+    }
+
+    private getExecutedCallsInPipelineCallable(
+        callable: SdsBlockLambda | SdsExpressionLambda | SdsSegment,
+        substitutions: ParameterSubstitutions,
+    ): SyntheticCall[] {
+        const callsInDefaultValues = getParameters(callable).flatMap((it) => {
+            // The default value is only executed if no argument is passed for the parameter
+            if (it.defaultValue && !substitutions.has(it)) {
+                return this.getCalls(it.defaultValue);
+            } else {
+                return [];
+            }
+        });
+
+        let callsInBody: SdsCall[];
+        if (isSdsBlockLambda(callable)) {
+            callsInBody = this.getCalls(callable.body);
+        } else if (isSdsExpressionLambda(callable)) {
+            callsInBody = this.getCalls(callable.result);
+        } else {
+            callsInBody = this.getCalls(callable.body);
+        }
+
+        return [...callsInDefaultValues, ...callsInBody]
+            .filter((it) => getContainerOfType(it, isSdsCallable) === callable)
+            .map((it) => this.createSyntheticCall(it, substitutions));
+    }
+
+    private getExecutedCallsInStubCallable(
+        callable: SdsClass | SdsEnumVariant | SdsFunction,
+        substitutions: ParameterSubstitutions,
+    ): SyntheticCall[] {
+        const callsInDefaultValues = getParameters(callable).flatMap((parameter) => {
+            // The default value is only executed if no argument is passed for the parameter
+            if (parameter.defaultValue && !substitutions.has(parameter)) {
+                // We assume all calls in the default value are executed
+                const calls = this.getCalls(parameter.defaultValue);
+                if (!isEmpty(calls)) {
+                    return calls.map((call) => this.createSyntheticCall(call, substitutions));
+                }
+
+                // We assume a single callable as default value is executed
+                const evaluatedCallable = this.getEvaluatedCallable(parameter.defaultValue, substitutions);
+                if (evaluatedCallable) {
+                    return [this.createSyntheticCall(evaluatedCallable, substitutions)];
+                }
+            }
+
+            return [];
+        });
+
+        const callablesInSubstitutions = stream(substitutions.values()).flatMap((it) => {
+            if (it instanceof EvaluatedCallable) {
+                return [this.createSyntheticCall(it, substitutions)];
+            }
+
+            return [];
+        });
+
+        return [...callsInDefaultValues, ...callablesInSubstitutions];
     }
 
     /**
