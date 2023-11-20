@@ -1,48 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { isSdsCall, isSdsCallable } from '../../../src/language/generated/ast.js';
+import { isSdsCallable, isSdsExpression } from '../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const purityComputer = services.purity.PurityComputer;
 
 describe('SafeDsPurityComputer', async () => {
-    describe('isPure', () => {
+    describe('isPureCallable', () => {
         it.each([
             {
-                code: `
-                    package test
-
-                    @Pure
-                    fun f()
-
-                    pipeline myPipeline {
-                        f();
-                    }
-                `,
-                expected: true,
-            },
-            {
-                code: `
-                    package test
-
-                    @Impure([ImpurityReason.Other])
-                    fun f()
-
-                    pipeline myPipeline {
-                        f();
-                    }
-                `,
-                expected: false,
-            },
-        ])('should return whether a call is pure (%#)', async ({ code, expected }) => {
-            const call = await getNodeOfType(services, code, isSdsCall);
-            expect(purityComputer.isPure(call)).toBe(expected);
-        });
-
-        it.each([
-            {
+                testName: 'pure function',
                 code: `
                     package test
 
@@ -52,6 +21,17 @@ describe('SafeDsPurityComputer', async () => {
                 expected: true,
             },
             {
+                testName: 'impure function with reasons',
+                code: `
+                    package test
+
+                    @Impure([])
+                    fun f()
+                `,
+                expected: true,
+            },
+            {
+                testName: 'impure function with reasons',
                 code: `
                     package test
 
@@ -60,93 +40,203 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
-        ])('should return whether a callable is pure (%#)', async ({ code, expected }) => {
+        ])('should return whether a callable is pure (#testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
-            expect(purityComputer.isPure(callable)).toBe(expected);
+            expect(purityComputer.isPureCallable(callable)).toBe(expected);
         });
     });
 
-    describe('hasSideEffects', () => {
+    describe('isPureExpression', () => {
         it.each([
             {
+                testName: 'call of pure function',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Pure
+                    fun f()
+                `,
+                expected: true,
+            },
+            {
+                testName: 'call of impure function without reasons',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([])
+                    fun f()
+                `,
+                expected: true,
+            },
+            {
+                testName: 'call of impure function with reasons',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([ImpurityReason.Other])
+                    fun f()
+                `,
+                expected: false,
+            },
+            {
+                testName: 'lambda',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        () -> f();
+                    }
+
+                    @Impure([ImpurityReason.Other])
+                    fun f()
+                `,
+                expected: true,
+            },
+        ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
+            const expression = await getNodeOfType(services, code, isSdsExpression);
+            expect(purityComputer.isPureExpression(expression)).toBe(expected);
+        });
+    });
+
+    describe('callableHasSideEffects', () => {
+        it.each([
+            {
+                testName: 'pure function',
                 code: `
                     package test
 
                     @Pure
                     fun f()
-
-                    pipeline myPipeline {
-                        f();
-                    }
                 `,
                 expected: false,
             },
             {
+                testName: 'impure function without reasons',
+                code: `
+                    package test
+
+                    @Impure([])
+                    fun f()
+                `,
+                expected: false,
+            },
+            {
+                testName: 'impure function with reasons but no side effects',
                 code: `
                     package test
 
                     @Impure([ImpurityReason.FileReadFromConstantPath("file.txt")])
                     fun f()
-
-                    pipeline myPipeline {
-                        f();
-                    }
                 `,
                 expected: false,
             },
             {
+                testName: 'impure function with reasons and side effects',
                 code: `
                     package test
 
                     @Impure([ImpurityReason.Other])
                     fun f()
+                `,
+                expected: true,
+            },
+        ])('should return whether a callable has side effects (#testName)', async ({ code, expected }) => {
+            const callable = await getNodeOfType(services, code, isSdsCallable);
+            expect(purityComputer.callableHasSideEffects(callable)).toBe(expected);
+        });
+    });
+
+    describe('expressionHasSideEffects', () => {
+        it.each([
+            {
+                testName: 'call of pure function',
+                code: `
+                    package test
 
                     pipeline myPipeline {
                         f();
                     }
+
+                    @Pure
+                    fun f()
+                `,
+                expected: false,
+            },
+            {
+                testName: 'call of impure function without reasons',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([])
+                    fun f()
+                `,
+                expected: false,
+            },
+            {
+                testName: 'call of impure function with reasons but no side effects',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([ImpurityReason.FileReadFromConstantPath("file.txt")])
+                    fun f()
+                `,
+                expected: false,
+            },
+            {
+                testName: 'call of impure function with reasons and side effects',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([ImpurityReason.Other])
+                    fun f()
                 `,
                 expected: true,
+            },
+            {
+                testName: 'lambda',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        () -> f();
+                    }
+
+                    @Impure([ImpurityReason.Other])
+                    fun f()
+                `,
+                expected: false,
             },
         ])('should return whether a call has side effects (%#)', async ({ code, expected }) => {
-            const call = await getNodeOfType(services, code, isSdsCall);
-            expect(purityComputer.hasSideEffects(call)).toBe(expected);
-        });
-
-        it.each([
-            {
-                code: `
-                    package test
-
-                    @Pure
-                    fun f()
-                `,
-                expected: false,
-            },
-            {
-                code: `
-                    package test
-
-                    @Impure([ImpurityReason.FileReadFromConstantPath("file.txt")])
-                    fun f()
-                `,
-                expected: false,
-            },
-            {
-                code: `
-                    package test
-
-                    @Impure([ImpurityReason.Other])
-                    fun f()
-                `,
-                expected: true,
-            },
-        ])('should return whether a callable has side effects (%#)', async ({ code, expected }) => {
-            const callable = await getNodeOfType(services, code, isSdsCallable);
-            expect(purityComputer.hasSideEffects(callable)).toBe(expected);
+            const expression = await getNodeOfType(services, code, isSdsExpression);
+            expect(purityComputer.expressionHasSideEffects(expression)).toBe(expected);
         });
     });
 
-    describe('getImpurityReasons', () => {
+    describe('getImpurityReasonsForCallable', () => {
         it.each([
             {
                 testName: 'pure function',
@@ -240,7 +330,88 @@ describe('SafeDsPurityComputer', async () => {
             },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
-            const actual = purityComputer.getImpurityReasons(callable).map((reason) => reason.toString());
+            const actual = purityComputer.getImpurityReasonsForCallable(callable).map((reason) => reason.toString());
+            expect(actual).toStrictEqual(expected);
+        });
+    });
+
+    describe('getImpurityReasonsForExpression', () => {
+        it.each([
+            {
+                testName: 'call of pure function',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Pure
+                    fun f()
+                `,
+                expected: [],
+            },
+            {
+                testName: 'call of impure function without reasons',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([])
+                    fun f()
+                `,
+                expected: [],
+            },
+            {
+                testName: 'call of impure function with reasons but no side effects',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([ImpurityReason.FileReadFromConstantPath("file.txt")])
+                    fun f()
+                `,
+                expected: ['File read from "file.txt"'],
+            },
+            {
+                testName: 'call of impure function with reasons and side effects',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        f();
+                    }
+
+                    @Impure([ImpurityReason.Other])
+                    fun f()
+                `,
+                expected: ['Other'],
+            },
+            {
+                testName: 'lambda',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        () -> f();
+                    }
+
+                    @Impure([ImpurityReason.Other])
+                    fun f()
+                `,
+                expected: [],
+            },
+        ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
+            const expression = await getNodeOfType(services, code, isSdsExpression);
+            const actual = purityComputer
+                .getImpurityReasonsForExpression(expression)
+                .map((reason) => reason.toString());
             expect(actual).toStrictEqual(expected);
         });
     });
