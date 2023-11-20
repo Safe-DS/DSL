@@ -1,4 +1,4 @@
-package tests.callGraph.closure.blockLambda
+package tests.callGraph.closure.blockLambdaReturned
 
 @Pure fun f()
 

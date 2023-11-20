@@ -1,0 +1,16 @@
+package tests.callGraph.closure.expressionLambdaPassedAsArgument
+
+@Pure fun f()
+
+segment mySegment1(param1: () -> ()) {
+    mySegment2(() -> param1());
+}
+
+segment mySegment2(param2: () -> ()) {
+    param2();
+}
+
+pipeline myPipeline {
+    // $TEST$ ["mySegment1", "mySegment2", "$expressionLambda", "$expressionLambda", "f"]
+    »mySegment1(() -> f())«;
+}

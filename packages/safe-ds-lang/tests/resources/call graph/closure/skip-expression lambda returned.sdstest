@@ -1,4 +1,4 @@
-package tests.callGraph.closure.expressionLambda
+package tests.callGraph.closure.expressionLambdaReturned
 
 @Pure fun f()
 
