@@ -10,7 +10,6 @@ import {
     type SdsEnumVariant,
     type SdsExpression,
     type SdsExpressionLambda,
-    type SdsLambda,
     type SdsParameter,
     type SdsReference,
 } from '../generated/ast.js';
@@ -148,13 +147,10 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 export abstract class EvaluatedCallable<T extends SdsCallable = SdsCallable> extends EvaluatedNode {
     abstract readonly callable: T;
     override readonly isFullyEvaluated: boolean = false;
-}
-
-export abstract class Closure<T extends SdsLambda = SdsLambda> extends EvaluatedCallable<T> {
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
 }
 
-export class BlockLambdaClosure extends Closure<SdsBlockLambda> {
+export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
     readonly results: SdsBlockLambdaResult[];
 
     constructor(
@@ -183,7 +179,7 @@ export class BlockLambdaClosure extends Closure<SdsBlockLambda> {
     }
 }
 
-export class ExpressionLambdaClosure extends Closure<SdsExpressionLambda> {
+export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLambda> {
     readonly result: SdsExpression;
 
     constructor(
@@ -214,6 +210,7 @@ export class ExpressionLambdaClosure extends Closure<SdsExpressionLambda> {
 
 export class NamedCallable<T extends SdsCallable & NamedAstNode> extends EvaluatedCallable<T> {
     override readonly isFullyEvaluated: boolean = false;
+    override readonly substitutionsOnCreation: ParameterSubstitutions = new Map();
 
     constructor(override readonly callable: T) {
         super();
