@@ -381,6 +381,36 @@ describe('partial evaluation model', async () => {
         });
     });
 
+    describe('EvaluatedEnumVariant', () => {
+        describe('getArgumentValueByName', () => {
+            it.each([
+                {
+                    variant: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
+                    name: 'p',
+                    expectedValue: UnknownEvaluatedNode,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(
+                        enumVariantWithParameters,
+                        new Map([[enumVariantParameter, NullConstant]]),
+                    ),
+                    name: 'q',
+                    expectedValue: UnknownEvaluatedNode,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(
+                        enumVariantWithParameters,
+                        new Map([[enumVariantParameter, NullConstant]]),
+                    ),
+                    name: 'p',
+                    expectedValue: NullConstant,
+                },
+            ])('should return the element at the given index (%#)', ({ variant, name, expectedValue }) => {
+                expect(variant.getArgumentValueByName(name)).toStrictEqual(expectedValue);
+            });
+        });
+    });
+
     describe('EvaluatedList', () => {
         describe('getElementByIndex', () => {
             it.each([
