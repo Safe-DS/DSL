@@ -107,7 +107,6 @@ export const tryMapToSafeDSSource = async function (
     let sourceMapKey = sourceMapKeys[0]!;
     const sourceMapObject = JSON.parse(lastGeneratedSource!.get(sourceMapKey)!);
     sourceMapObject.sourcesContent = [lastExecutedSource];
-    logOutput(JSON.stringify(sourceMapObject));
     const consumer = await new SourceMapConsumer(sourceMapObject);
     const outputPosition = consumer.originalPositionFor({
         line: Number(frame.line),
