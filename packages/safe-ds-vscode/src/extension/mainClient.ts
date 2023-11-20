@@ -11,7 +11,7 @@ import {
 } from './pythonServer.js';
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { initializeLog, printOutputMessage } from './output.js';
+import { getSafeDSOutputChannel, initializeLog, printOutputMessage } from './output.js';
 import { RuntimeErrorMessage } from './messages.js';
 
 let client: LanguageClient;
@@ -19,9 +19,9 @@ let sdsServices: SafeDsServices;
 
 // This function is called when the extension is activated.
 export const activate = function (context: vscode.ExtensionContext): void {
-    client = startLanguageClient(context);
     initializeLog();
-    startPythonServer().then((r) => {});
+    client = startLanguageClient(context);
+    startPythonServer();
     createSafeDsServicesWithBuiltins(NodeFileSystem).then((services) => {
         sdsServices = services.SafeDs;
         acceptRunRequests(context);
@@ -66,6 +66,7 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
         },
+        outputChannel: getSafeDSOutputChannel('[LanguageClient] '),
     };
 
     // Create the language client and start the client.
@@ -95,7 +96,8 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
         );
     }, 'runtime_error');
     context.subscriptions.push(
-        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (pipelinePath: vscode.Uri | undefined) => {
+        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (filePath: vscode.Uri | undefined) => {
+            let pipelinePath = filePath;
             // Allow execution via command menu
             if (!pipelinePath && vscode.window.activeTextEditor) {
                 pipelinePath = vscode.window.activeTextEditor.document.uri;
@@ -112,7 +114,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                 return;
             }
             printOutputMessage(`Launching Pipeline: ${pipelinePath}`);
-            executePipeline(sdsServices, pipelinePath.fsPath);
+            executePipeline(sdsServices, pipelinePath.fsPath, 'abc'); // TODO change id
         }),
     );
 };

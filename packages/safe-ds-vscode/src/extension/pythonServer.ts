@@ -106,7 +106,7 @@ export const tryMapToSafeDSSource = async function (
     }
     let sourceMapKey = sourceMapKeys[0]!;
     const sourceMapObject = JSON.parse(lastGeneratedSource!.get(sourceMapKey)!);
-    sourceMapObject['sourcesContent'] = [lastExecutedSource];
+    sourceMapObject.sourcesContent = [lastExecutedSource];
     const consumer = await new SourceMapConsumer(sourceMapObject);
     const outputPosition = consumer.originalPositionFor({
         line: frame.line,
@@ -116,7 +116,7 @@ export const tryMapToSafeDSSource = async function (
     return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
 };
 
-export const executePipeline = async function (services: SafeDsServices, pipelinePath: string) {
+export const executePipeline = async function (services: SafeDsServices, pipelinePath: string, id: string) {
     const documentUri = URI.file(pipelinePath);
     services.shared.workspace.LangiumDocuments.deleteDocument(documentUri);
     let document;
@@ -158,7 +158,8 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     for (const generatedDocument of generatedDocuments) {
         const fsPath = URI.parse(generatedDocument.uri).fsPath;
         lastGeneratedSource.set(fsPath, generatedDocument.getText());
-        if (fsPath.endsWith('.map')) { // exclude sourcemaps
+        if (fsPath.endsWith('.map')) {
+            // exclude sourcemaps
             continue;
         }
         const sdsFileName = path.basename(fsPath);
@@ -176,6 +177,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     sendMessageToPythonServer({
         type: 'program',
+        id,
         data: {
             code: codeMap,
             main: { package: /*TODO mainPackageName*/ '', module: mainModuleName, pipeline: mainPipelineName },
@@ -205,7 +207,7 @@ const connectToWebSocket = async function (): Promise<void> {
     // Attach WS
     return new Promise<void>((resolve, reject) => {
         const tryConnect = function () {
-            pythonServerConnection = new WebSocket(`ws://127.0.0.1:${pythonServerPort}/WSRunProgram`, {
+            pythonServerConnection = new WebSocket(`ws://127.0.0.1:${pythonServerPort}/WSMain`, {
                 handshakeTimeout: 10 * 1000,
             });
             pythonServerConnection.onopen = (event) => {
