@@ -134,12 +134,12 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
 
     private getCallsOf(caller: AstNode, callee: AstNode): SdsCall[] {
         return this.callGraphComputer
-            .getCalls(caller)
+            .getAllContainedCalls(caller)
             .filter((call) => this.nodeMapper.callToCallable(call) === callee);
     }
 
     protected getOutgoingCalls(node: AstNode): CallHierarchyOutgoingCall[] | undefined {
-        const calls = this.callGraphComputer.getCalls(node);
+        const calls = this.callGraphComputer.getAllContainedCalls(node);
         const callsGroupedByCallable = new Map<
             string,
             { callable: SdsCallable; callableNameCstNode: CstNode; callableDocumentUri: string; fromRanges: Range[] }

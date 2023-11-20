@@ -95,7 +95,7 @@ export class SafeDsCallGraphComputer {
      *
      * @param substitutions
      * The parameter substitutions to use. These are **not** the argument of the call, but the values of the parameters
-     * of any containing callables, i.e. the context of the call.
+     * of any containing callables, i.e. the context of the call/callable.
      */
     getCallGraph(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): CallGraph {
         if (isSdsCall(node)) {
@@ -161,7 +161,7 @@ export class SafeDsCallGraphComputer {
         const callsInDefaultValues = getParameters(callable).flatMap((it) => {
             // The default value is only executed if no argument is passed for the parameter
             if (it.defaultValue && !substitutions.has(it)) {
-                return this.getCalls(it.defaultValue);
+                return this.getAllContainedCalls(it.defaultValue);
             } else {
                 return [];
             }
@@ -169,11 +169,11 @@ export class SafeDsCallGraphComputer {
 
         let callsInBody: SdsCall[];
         if (isSdsBlockLambda(callable)) {
-            callsInBody = this.getCalls(callable.body);
+            callsInBody = this.getAllContainedCalls(callable.body);
         } else if (isSdsExpressionLambda(callable)) {
-            callsInBody = this.getCalls(callable.result);
+            callsInBody = this.getAllContainedCalls(callable.result);
         } else {
-            callsInBody = this.getCalls(callable.body);
+            callsInBody = this.getAllContainedCalls(callable.body);
         }
 
         return [...callsInDefaultValues, ...callsInBody]
@@ -189,7 +189,7 @@ export class SafeDsCallGraphComputer {
             // The default value is only executed if no argument is passed for the parameter
             if (parameter.defaultValue && !substitutions.has(parameter)) {
                 // We assume all calls in the default value are executed
-                const calls = this.getCalls(parameter.defaultValue);
+                const calls = this.getAllContainedCalls(parameter.defaultValue);
                 if (!isEmpty(calls)) {
                     return calls.map((call) => this.createSyntheticCallForCall(call, substitutions));
                 }
@@ -330,9 +330,9 @@ export class SafeDsCallGraphComputer {
     }
 
     /**
-     * Returns all calls inside the given node. If the node is a call, it is included as well.
+     * Returns all calls inside the given node. If the given node is a call, it is included as well.
      */
-    getCalls(node: AstNode | undefined): SdsCall[] {
+    getAllContainedCalls(node: AstNode | undefined): SdsCall[] {
         if (!node) {
             /* c8 ignore next 2 */
             return [];
