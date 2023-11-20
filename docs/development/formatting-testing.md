@@ -5,8 +5,8 @@ formatting test.
 
 ## Adding a formatting test
 
-1. Create a new file with extension `.sdstest` in the `tests/resources/formatting` directory or any
-   subdirectory. Give the file a descriptive name, since the file name becomes part of the test name.
+1. Create a new file with the extension `.sdstest` in the `tests/resources/formatting` directory or any subdirectory.
+   Give the file a descriptive name, since the file name becomes part of the test name.
 
     !!! tip "Skipping a test"
 
