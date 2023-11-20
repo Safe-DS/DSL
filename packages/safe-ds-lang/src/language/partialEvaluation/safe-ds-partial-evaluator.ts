@@ -76,8 +76,8 @@ export class SafeDsPartialEvaluator {
     // evaluate
     // -----------------------------------------------------------------------------------------------------------------
 
-    evaluate(node: AstNode | undefined): EvaluatedNode {
-        return this.evaluateWithSubstitutions(node, NO_SUBSTITUTIONS)?.unwrap();
+    evaluate(node: AstNode | undefined, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): EvaluatedNode {
+        return this.evaluateWithSubstitutions(node, substitutions)?.unwrap();
     }
 
     private evaluateWithSubstitutions(node: AstNode | undefined, substitutions: ParameterSubstitutions): EvaluatedNode {

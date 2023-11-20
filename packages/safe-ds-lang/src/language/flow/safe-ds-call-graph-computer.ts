@@ -48,10 +48,12 @@ import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { CallableType, StaticType } from '../typing/model.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
+import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 
 export class SafeDsCallGraphComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly nodeMapper: SafeDsNodeMapper;
+    private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly typeComputer: SafeDsTypeComputer;
 
     /**
@@ -62,6 +64,7 @@ export class SafeDsCallGraphComputer {
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
+        this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.typeComputer = services.types.TypeComputer;
 
         this.callCache = new WorkspaceCache(services.shared);
@@ -98,15 +101,6 @@ export class SafeDsCallGraphComputer {
     }
 
     private getCallGraphWithRecursionCheck(syntheticCall: SyntheticCall, visited: SyntheticCall[]): CallGraph {
-        console.log(
-            syntheticCall?.callable?.callable?.$cstNode?.text,
-            stream(syntheticCall?.substitutions.entries())
-                .map(([parameter, value]) => {
-                    return `${parameter.name} = ${value.toString()}`;
-                })
-                .toArray(),
-        );
-
         const evaluatedCallable = syntheticCall.callable;
 
         // Handle unknown callables & recursive calls
@@ -221,6 +215,14 @@ export class SafeDsCallGraphComputer {
         expression: SdsExpression,
         substitutions: ParameterSubstitutions,
     ): EvaluatedCallable | undefined {
+        // TODO use the partial evaluator here; necessary for closures
+        // const value = this.partialEvaluator.evaluate(expression, substitutions);
+        // if (value instanceof EvaluatedCallable) {
+        //     return value;
+        // }
+        //
+        // return undefined;
+
         let callableOrParameter = this.getCallableOrParameter(expression);
 
         if (!callableOrParameter || isSdsAnnotation(callableOrParameter) || isSdsCallableType(callableOrParameter)) {
