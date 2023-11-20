@@ -1,0 +1,9 @@
+package tests.callGraph.callable.`segment`
+
+@Pure fun f() -> r: Any
+@Pure fun g() -> r: Any
+
+// $TEST$ ["mySegment", "f", "g"]
+»segment mySegment(param: Any = f()) {
+    g();
+}«

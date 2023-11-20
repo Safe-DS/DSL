@@ -243,6 +243,19 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         isEmpty(getParameters(this.variant)) ||
         (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
 
+    getArgumentValueByName(name: string): EvaluatedNode {
+        if (!this.args) {
+            return UnknownEvaluatedNode;
+        }
+
+        const parameter = getParameters(this.variant).find((it) => it.name === name);
+        if (!parameter) {
+            return UnknownEvaluatedNode;
+        }
+
+        return this.args.get(parameter) ?? UnknownEvaluatedNode;
+    }
+
     override equals(other: unknown): boolean {
         if (other === this) {
             return true;
