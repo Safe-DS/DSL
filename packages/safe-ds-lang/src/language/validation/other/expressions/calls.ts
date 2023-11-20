@@ -4,6 +4,7 @@ import { getArguments, Parameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
 export const CODE_CALL_CONSTANT_ARGUMENT = 'call/constant-argument';
+export const CODE_CALL_INFINITE_RECURSION = 'call/infinite-recursion';
 
 export const callArgumentMustBeConstantIfParameterIsConstant = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
@@ -28,6 +29,19 @@ export const callArgumentMustBeConstantIfParameterIsConstant = (services: SafeDs
                     code: CODE_CALL_CONSTANT_ARGUMENT,
                 });
             }
+        }
+    };
+};
+
+export const callMustNotBeRecursive = (services: SafeDsServices) => {
+    const callGraphComputer = services.flow.CallGraphComputer;
+
+    return (node: SdsCall, accept: ValidationAcceptor) => {
+        if (callGraphComputer.isRecursive(node)) {
+            accept('error', 'Call leads to infinite recursion.', {
+                node,
+                code: CODE_CALL_INFINITE_RECURSION,
+            });
         }
     };
 };

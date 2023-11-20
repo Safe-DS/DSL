@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EmptyFileSystem, isNamed } from 'langium';
-import {
-    isSdsBlockLambda,
-    isSdsCall,
-    isSdsExpressionLambda,
-    isSdsModule,
-    SdsCall,
-} from '../../../src/language/generated/ast.js';
+import { isSdsBlockLambda, isSdsExpressionLambda, isSdsModule, SdsCall } from '../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { createCallGraphTests } from './creator.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
@@ -18,40 +12,6 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
 
 describe('SafeDsCallGraphComputer', () => {
-    describe('isRecursive', () => {
-        it('should return true for recursive calls', async () => {
-            const call = await getNodeOfType(
-                services,
-                `
-                    segment a() {
-                        b();
-                    }
-
-                    segment b() {
-                        a();
-                    }
-                `,
-                isSdsCall,
-            );
-            expect(callGraphComputer.isRecursive(call)).toBeTruthy();
-        });
-
-        it('should return false for non-recursive calls', async () => {
-            const call = await getNodeOfType(
-                services,
-                `
-                    segment a() {
-                        b();
-                    }
-
-                    segment b() {}
-                `,
-                isSdsCall,
-            );
-            expect(callGraphComputer.isRecursive(call)).toBeFalsy();
-        });
-    });
-
     describe('getCallGraph', async () => {
         it.each(await createCallGraphTests())('$testName', async (test) => {
             // Test is invalid
