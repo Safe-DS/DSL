@@ -1,0 +1,15 @@
+package tests.callGraph.enumVariantCall.argument.callable
+
+@Pure fun default()
+@Pure fun passed()
+
+enum MyEnum {
+    MyVariant(
+        f: () -> () = default
+    )
+}
+
+pipeline myPipeline {
+    // $TEST$ ["MyVariant", "passed"]
+    »MyEnum.MyVariant(passed)«;
+}

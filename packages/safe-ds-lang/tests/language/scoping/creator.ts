@@ -92,7 +92,7 @@ const createScopingTest = async (parentDirectory: URI, uris: URI[]): Promise<Sco
 
     const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be scoped correctly`,
+        testName: `[${shortenedResourceName}]`,
         uris,
         expectedReferences: references,
     };

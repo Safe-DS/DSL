@@ -3,7 +3,7 @@ package tests.typing.declarations.parameters.ofBlockLambdas.thatArePassedAsDefau
 fun higherOrderFunction1(
     // $TEST$ equivalence_class parameterType1
     // $TEST$ equivalence_class parameterType1
-    param: (a: »String«) -> () = (»p«) {}
+    param: (p: »String«) -> () = (»p«) {}
 )
 
 fun higherOrderFunction2(
