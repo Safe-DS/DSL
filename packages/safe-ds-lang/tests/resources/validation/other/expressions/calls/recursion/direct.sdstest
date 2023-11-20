@@ -1,0 +1,16 @@
+package tests.validation.other.expression.calls.recurcion.direct
+
+segment s1() {
+    // $TEST$ error "Call leads to infinite recursion."
+    »s2()«;
+}
+
+segment s2() {
+    // $TEST$ error "Call leads to infinite recursion."
+    »s3()«;
+}
+
+segment s3() {
+    // $TEST$ error "Call leads to infinite recursion."
+    »s2()«;
+}
