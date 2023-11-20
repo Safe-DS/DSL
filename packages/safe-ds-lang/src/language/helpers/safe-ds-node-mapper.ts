@@ -8,6 +8,7 @@ import {
     isSdsCallable,
     isSdsClass,
     isSdsEnumVariant,
+    isSdsExpressionLambda,
     isSdsNamedType,
     isSdsParameter,
     isSdsReference,
@@ -116,6 +117,15 @@ export class SafeDsNodeMapper {
         if (isSdsClass(callable) || isSdsEnumVariant(callable)) {
             if (assigneePosition === 0) {
                 return expression;
+            } else {
+                return undefined;
+            }
+        }
+
+        // If the RHS calls an expression lambda, the first assignee gets its result
+        if (isSdsExpressionLambda(callable)) {
+            if (assigneePosition === 0) {
+                return callable.result;
             } else {
                 return undefined;
             }
