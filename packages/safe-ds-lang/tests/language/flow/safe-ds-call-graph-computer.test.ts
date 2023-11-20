@@ -33,7 +33,7 @@ describe('SafeDsCallGraphComputer', () => {
                 `,
                 isSdsCall,
             );
-            expect(callGraphComputer.isRecursive(call)).toBe(true);
+            expect(callGraphComputer.isRecursive(call)).toBeTruthy();
         });
 
         it('should return false for non-recursive calls', async () => {
@@ -48,7 +48,7 @@ describe('SafeDsCallGraphComputer', () => {
                 `,
                 isSdsCall,
             );
-            expect(callGraphComputer.isRecursive(call)).toBe(false);
+            expect(callGraphComputer.isRecursive(call)).toBeFalsy();
         });
     });
 
