@@ -1,0 +1,7 @@
+package tests.callGraph.callable.function
+
+@Pure fun f() -> r: Any
+@Pure fun g()
+
+// $TEST$ ["myFunction", "f", "g"]
+@Pure »fun myFunction(param1: Any = f(), param2: () -> () = g)«

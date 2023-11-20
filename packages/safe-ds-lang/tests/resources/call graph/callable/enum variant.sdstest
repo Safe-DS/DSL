@@ -1,0 +1,9 @@
+package tests.callGraph.callable.enumVariant
+
+@Pure fun f() -> r: Any
+@Pure fun g()
+
+// $TEST$ ["MyEnumVariant", "f", "g"]
+enum MyEnum {
+    »MyEnumVariant(param1: Any = f(), param2: () -> () = g)«
+}

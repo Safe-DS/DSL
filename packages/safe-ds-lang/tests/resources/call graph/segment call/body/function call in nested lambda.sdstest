@@ -1,0 +1,12 @@
+package tests.callGraph.segmentCall.body.functionCallInNestedLambda
+
+@Pure fun f()
+
+segment mySegment() {
+    () -> f();
+}
+
+pipeline myPipeline {
+    // $TEST$ ["mySegment"]
+    »mySegment()«;
+}

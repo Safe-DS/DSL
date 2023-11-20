@@ -40,6 +40,7 @@ import { registerValidationChecks } from './validation/safe-ds-validator.js';
 import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
+import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -66,6 +67,9 @@ export type SafeDsAddedServices = {
     lsp: {
         NodeInfoProvider: SafeDsNodeInfoProvider;
         TypeHierarchyProvider: SafeDsTypeHierarchyProvider;
+    };
+    purity: {
+        PurityComputer: SafeDsPurityComputer;
     };
     types: {
         ClassHierarchy: SafeDsClassHierarchy;
@@ -124,6 +128,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     parser: {
         ValueConverter: () => new SafeDsValueConverter(),
+    },
+    purity: {
+        PurityComputer: (services) => new SafeDsPurityComputer(services),
     },
     references: {
         ScopeComputation: (services) => new SafeDsScopeComputation(services),

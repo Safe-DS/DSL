@@ -31,9 +31,9 @@ const myFunction = getModuleMembers(module)[0] as SdsFunction;
 const p1 = getParameters(myFunction)[0]!;
 const p2 = getParameters(myFunction)[1]!;
 const myPipeline = module?.members[1] as SdsPipeline;
-const call1 = callGraphComputer.getCalls(myPipeline)[0]!;
-const call2 = callGraphComputer.getCalls(myPipeline)[1]!;
-const call3 = callGraphComputer.getCalls(myPipeline)[2]!;
+const call1 = callGraphComputer.getAllContainedCalls(myPipeline)[0]!;
+const call2 = callGraphComputer.getAllContainedCalls(myPipeline)[1]!;
+const call3 = callGraphComputer.getAllContainedCalls(myPipeline)[2]!;
 
 describe('SafeDsNodeMapper', () => {
     const testCases: CallToParameterValueTest[] = [

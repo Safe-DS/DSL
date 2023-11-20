@@ -1,0 +1,6 @@
+package tests.callGraph.unresolvedCallable
+
+pipeline myPipeline {
+    // $TEST$ ["undefined"]
+    »unresolved()«;
+}

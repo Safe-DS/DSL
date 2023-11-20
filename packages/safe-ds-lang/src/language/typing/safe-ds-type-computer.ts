@@ -154,7 +154,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsTypeProjection(node)) {
             return this.computeTypeOfType(node.type);
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 
@@ -206,7 +206,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsTypeParameter(node)) {
             return UnknownType;
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 
@@ -369,7 +369,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsReference(node)) {
             return this.computeTypeOfReference(node);
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 
@@ -503,7 +503,7 @@ export class SafeDsTypeComputer {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 

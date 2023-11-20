@@ -75,7 +75,7 @@ const createTypingTest = async (parentDirectory: URI, uris: URI[]): Promise<Typi
 
     const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be typed correctly`,
+        testName: `[${shortenedResourceName}]`,
         uris,
         equivalenceClassAssertions: [...groupIdToLocations.values()].map((locations) => ({ locations })),
         serializationAssertions,
