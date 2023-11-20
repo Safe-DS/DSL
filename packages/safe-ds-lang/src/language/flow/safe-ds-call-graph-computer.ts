@@ -125,6 +125,7 @@ export class SafeDsCallGraphComputer {
 
     private getExecutedCalls(syntheticCall: SyntheticCall): SyntheticCall[] {
         if (!syntheticCall.callable) {
+            /* c8 ignore next 2 */
             return [];
         }
 
@@ -136,6 +137,7 @@ export class SafeDsCallGraphComputer {
         } else if (isSdsClass(callable) || isSdsEnumVariant(callable) || isSdsFunction(callable)) {
             return this.getExecutedCallsInStubCallable(callable, substitutions);
         } else {
+            /* c8 ignore next 2 */
             return [];
         }
     }
@@ -234,6 +236,7 @@ export class SafeDsCallGraphComputer {
                 if (substitution instanceof EvaluatedCallable) {
                     return substitution;
                 } else {
+                    /* c8 ignore next 2 */
                     return undefined;
                 }
             }
@@ -250,6 +253,7 @@ export class SafeDsCallGraphComputer {
         } else if (isSdsExpressionLambda(callableOrParameter)) {
             return new ExpressionLambdaClosure(callableOrParameter, substitutions);
         } else {
+            /* c8 ignore next 2 */
             return undefined;
         }
     }
@@ -288,6 +292,7 @@ export class SafeDsCallGraphComputer {
                 // Ignore arguments that don't get assigned to a parameter
                 const parameterIndex = this.nodeMapper.argumentToParameter(it)?.$containerIndex ?? -1;
                 if (parameterIndex === -1) {
+                    /* c8 ignore next 2 */
                     return [];
                 }
 
@@ -295,6 +300,7 @@ export class SafeDsCallGraphComputer {
                 // actual callable.
                 const parameter = parameters[parameterIndex];
                 if (!parameter) {
+                    /* c8 ignore next 2 */
                     return [];
                 }
 
@@ -316,6 +322,7 @@ export class SafeDsCallGraphComputer {
      */
     getCalls(node: AstNode | undefined): SdsCall[] {
         if (!node) {
+            /* c8 ignore next 2 */
             return [];
         }
 
@@ -338,6 +345,7 @@ class SyntheticCall {
 
     equals(other: SyntheticCall): boolean {
         if (!this.callable) {
+            /* c8 ignore next 2 */
             return !other.callable && substitutionsAreEqual(this.substitutions, other.substitutions);
         }
 
