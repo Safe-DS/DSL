@@ -296,7 +296,6 @@ export class SafeDsCallGraphComputer {
         //     }
     }
 
-    // TODO
     private getNewSubstitutions(
         callable: EvaluatedCallable | undefined,
         args: SdsArgument[],
@@ -306,8 +305,10 @@ export class SafeDsCallGraphComputer {
             return NO_SUBSTITUTIONS;
         }
 
+        // Substitutions on creation
         const substitutionsOnCreation = callable.substitutionsOnCreation;
 
+        // Substitutions on call
         const parameters = getParameters(callable?.callable);
         const substitutionsOnCall = new Map(
             args.flatMap((it) => {
@@ -317,14 +318,12 @@ export class SafeDsCallGraphComputer {
                     return [];
                 }
 
+                // argumentToParameter returns parameters of callable types. We have to remap this to parameter of the
+                // actual callable.
                 const parameter = parameters[parameterIndex];
                 if (!parameter) {
                     return [];
                 }
-
-                // TODO: argumentToParameter points to parameters of a callable type,
-                //  not parameters of a passed lambda; we need to map the parameters of
-                //  the callable type to the parameters of the lambda
 
                 const value = this.getEvaluatedCallable(it.value, substitutions);
                 if (!value) {
