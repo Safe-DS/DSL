@@ -41,6 +41,7 @@ import {
     NamedCallable,
     ParameterSubstitutions,
     substitutionsAreEqual,
+    UnknownEvaluatedNode,
 } from '../partialEvaluation/model.js';
 import { CallGraph } from './model.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
@@ -297,7 +298,8 @@ export class SafeDsCallGraphComputer {
 
                 const value = this.getEvaluatedCallable(it.value, substitutions);
                 if (!value) {
-                    return [];
+                    // We still have to remember that a value was passed, so the default value is not used
+                    return [[parameter, UnknownEvaluatedNode]];
                 }
 
                 return [[parameter, value]];
