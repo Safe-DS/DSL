@@ -144,10 +144,10 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 // Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class EvaluatedCallable<T extends SdsCallable = SdsCallable> extends EvaluatedNode {
+export abstract class EvaluatedCallable<out T extends SdsCallable = SdsCallable> extends EvaluatedNode {
     abstract readonly callable: T;
-    override readonly isFullyEvaluated: boolean = false;
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
+    override readonly isFullyEvaluated: boolean = false;
 }
 
 export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {

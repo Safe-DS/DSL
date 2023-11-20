@@ -229,7 +229,7 @@ export class SafeDsCallGraphComputer {
             const substitution = substitutions.get(callableOrParameter);
             if (substitution) {
                 if (substitution instanceof EvaluatedCallable) {
-                    return substitution.callable;
+                    return substitution;
                 } else {
                     return undefined;
                 }
