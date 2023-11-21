@@ -42,6 +42,7 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import {
     BlockLambdaClosure,
     BooleanConstant,
+    Constant,
     EvaluatedEnumVariant,
     EvaluatedList,
     EvaluatedMap,
@@ -58,16 +59,19 @@ import {
     StringConstant,
     UnknownEvaluatedNode,
 } from './model.js';
+import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 
 export class SafeDsPartialEvaluator {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly nodeMapper: SafeDsNodeMapper;
+    private readonly purityComputer: () => SafeDsPurityComputer;
 
     private readonly cache: WorkspaceCache<string, EvaluatedNode>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
+        this.purityComputer = () => services.purity.PurityComputer;
 
         this.cache = new WorkspaceCache(services.shared);
     }
@@ -169,30 +173,28 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateInfixOperation(node: SdsInfixOperation, substitutions: ParameterSubstitutions): EvaluatedNode {
-        // By design none of the operators are short-circuited
+        // Handle operators that can short-circuit
         const evaluatedLeft = this.evaluateWithSubstitutions(node.leftOperand, substitutions);
         if (evaluatedLeft === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
+        switch (node.operator) {
+            case 'or':
+                return this.evaluateOr(evaluatedLeft, node.rightOperand, substitutions);
+            case 'and':
+                return this.evaluateAnd(evaluatedLeft, node.rightOperand, substitutions);
+            case '?:':
+                return this.evaluateElvisOperator(evaluatedLeft, node.rightOperand, substitutions);
+        }
+
+        // Handle other operators
         const evaluatedRight = this.evaluateWithSubstitutions(node.rightOperand, substitutions);
         if (evaluatedRight === UnknownEvaluatedNode) {
             return UnknownEvaluatedNode;
         }
 
         switch (node.operator) {
-            case 'or':
-                return this.evaluateLogicalOp(
-                    evaluatedLeft,
-                    (leftOperand, rightOperand) => leftOperand || rightOperand,
-                    evaluatedRight,
-                );
-            case 'and':
-                return this.evaluateLogicalOp(
-                    evaluatedLeft,
-                    (leftOperand, rightOperand) => leftOperand && rightOperand,
-                    evaluatedRight,
-                );
             case '==':
             case '===':
                 return new BooleanConstant(evaluatedLeft.equals(evaluatedRight));
@@ -246,7 +248,7 @@ export class SafeDsPartialEvaluator {
                 );
             case '/':
                 // Division by zero
-                if (zeroes.some((it) => it.equals(evaluatedRight))) {
+                if (zeroConstants.some((it) => it.equals(evaluatedRight))) {
                     return UnknownEvaluatedNode;
                 }
 
@@ -256,12 +258,6 @@ export class SafeDsPartialEvaluator {
                     (leftOperand, rightOperand) => leftOperand / rightOperand,
                     evaluatedRight,
                 );
-            case '?:':
-                if (evaluatedLeft === NullConstant) {
-                    return evaluatedRight;
-                } else {
-                    return evaluatedLeft;
-                }
 
             /* c8 ignore next 2 */
             default:
@@ -269,16 +265,73 @@ export class SafeDsPartialEvaluator {
         }
     }
 
-    private evaluateLogicalOp(
-        leftOperand: EvaluatedNode,
-        operation: (leftOperand: boolean, rightOperand: boolean) => boolean,
-        rightOperand: EvaluatedNode,
+    private evaluateOr(
+        evaluatedLeft: EvaluatedNode,
+        rightOperand: SdsExpression,
+        substitutions: ParameterSubstitutions,
     ): EvaluatedNode {
-        if (leftOperand instanceof BooleanConstant && rightOperand instanceof BooleanConstant) {
-            return new BooleanConstant(operation(leftOperand.value, rightOperand.value));
+        // Short-circuit if the left operand is true and the right operand has no side effects
+        if (
+            evaluatedLeft.equals(trueConstant) &&
+            !this.purityComputer().expressionHasSideEffects(rightOperand, substitutions)
+        ) {
+            return trueConstant;
+        }
+
+        // Compute the result if both operands are constant booleans
+        const evaluatedRight = this.evaluateWithSubstitutions(rightOperand, substitutions);
+        if (evaluatedLeft instanceof BooleanConstant && evaluatedRight instanceof BooleanConstant) {
+            return new BooleanConstant(evaluatedLeft.value || evaluatedRight.value);
         }
 
         return UnknownEvaluatedNode;
+    }
+
+    private evaluateAnd(
+        evaluatedLeft: EvaluatedNode,
+        rightOperand: SdsExpression,
+        substitutions: ParameterSubstitutions,
+    ): EvaluatedNode {
+        // Short-circuit if the left operand is true and the right operand has no side effects
+        if (
+            evaluatedLeft.equals(falseConstant) &&
+            !this.purityComputer().expressionHasSideEffects(rightOperand, substitutions)
+        ) {
+            return falseConstant;
+        }
+
+        // Compute the result if both operands are constant booleans
+        const evaluatedRight = this.evaluateWithSubstitutions(rightOperand, substitutions);
+        if (evaluatedLeft instanceof BooleanConstant && evaluatedRight instanceof BooleanConstant) {
+            return new BooleanConstant(evaluatedLeft.value && evaluatedRight.value);
+        }
+
+        return UnknownEvaluatedNode;
+    }
+
+    private evaluateElvisOperator(
+        evaluatedLeft: EvaluatedNode,
+        rightOperand: SdsExpression,
+        substitutions: ParameterSubstitutions,
+    ): EvaluatedNode {
+        // Short-circuit if the left operand is a non-null constant and the right operand has no side effects
+        if (
+            evaluatedLeft instanceof Constant &&
+            !evaluatedLeft.equals(NullConstant) &&
+            !this.purityComputer().expressionHasSideEffects(rightOperand, substitutions)
+        ) {
+            return evaluatedLeft;
+        }
+
+        // Compute the result from both operands
+        const evaluatedRight = this.evaluateWithSubstitutions(rightOperand, substitutions);
+        if (evaluatedLeft.equals(NullConstant)) {
+            return evaluatedRight;
+        } else if (evaluatedRight === UnknownEvaluatedNode) {
+            return UnknownEvaluatedNode;
+        } else {
+            return evaluatedLeft;
+        }
     }
 
     private evaluateComparisonOp(
@@ -548,4 +601,6 @@ export class SafeDsPartialEvaluator {
 }
 
 const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();
-const zeroes = [new IntConstant(0n), new FloatConstant(0.0), new FloatConstant(-0.0)];
+const falseConstant = new BooleanConstant(false);
+const trueConstant = new BooleanConstant(true);
+const zeroConstants = [new IntConstant(0n), new FloatConstant(0.0), new FloatConstant(-0.0)];

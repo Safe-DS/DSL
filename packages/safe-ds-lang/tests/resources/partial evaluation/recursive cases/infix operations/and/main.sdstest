@@ -17,10 +17,10 @@ pipeline test {
     »1 and true«;
 
     // $TEST$ serialization ?
-    »false and 0«;
+    »true and 0«;
 
     // $TEST$ serialization ?
-    »unresolved and false«;
+    »unresolved and true«;
 
     // $TEST$ serialization ?
     »true and unresolved«;
