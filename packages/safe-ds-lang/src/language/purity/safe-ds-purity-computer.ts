@@ -177,6 +177,7 @@ export class SafeDsPurityComputer {
         substitutions = NO_SUBSTITUTIONS,
     ): ImpurityReason[] {
         if (!node) {
+            /* c8 ignore next 2 */
             return [];
         }
 
