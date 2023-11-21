@@ -373,8 +373,7 @@ export class SafeDsPythonGenerator {
             const assignees = getAssignees(statement);
             return (
                 assignees.some((value) => !isSdsWildcard(value)) ||
-                (statement.expression !== undefined &&
-                    this.purityComputer.expressionHasSideEffects(statement.expression))
+                this.purityComputer.expressionHasSideEffects(statement.expression)
             );
         } else if (isSdsExpressionStatement(statement)) {
             return this.purityComputer.expressionHasSideEffects(statement.expression);
