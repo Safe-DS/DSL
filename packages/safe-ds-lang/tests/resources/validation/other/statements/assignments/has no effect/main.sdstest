@@ -1,4 +1,6 @@
-step myFunction() -> a: Int {
+package tests.validation.other.statements.assignments.hasNoEffect
+
+segment mySegment() -> a: Int {
     // $TEST$ warning "This statement does nothing."
     »_ = 1 + 2;«
 

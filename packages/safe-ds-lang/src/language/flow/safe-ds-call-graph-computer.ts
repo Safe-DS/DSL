@@ -61,6 +61,11 @@ export class SafeDsCallGraphComputer {
      */
     private readonly callCache: WorkspaceCache<string, SdsCall[]>;
 
+    /**
+     * Stores the call graph for the callable with the given ID if it is called without substitutions.
+     */
+    private readonly callGraphCache: WorkspaceCache<string, CallGraph>;
+
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
@@ -68,6 +73,7 @@ export class SafeDsCallGraphComputer {
         this.typeComputer = services.types.TypeComputer;
 
         this.callCache = new WorkspaceCache(services.shared);
+        this.callGraphCache = new WorkspaceCache(services.shared);
     }
 
     /**
@@ -98,6 +104,22 @@ export class SafeDsCallGraphComputer {
      * of any containing callables, i.e. the context of the call/callable.
      */
     getCallGraph(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): CallGraph {
+        // Cache the result if no substitutions are given
+        if (isEmpty(substitutions)) {
+            const key = this.getNodeId(node);
+            return this.callGraphCache.get(key, () => {
+                return this.doGetCallGraph(node, substitutions);
+            });
+        } else {
+            /* c8 ignore next 2 */
+            return this.doGetCallGraph(node, substitutions);
+        }
+    }
+
+    private doGetCallGraph(
+        node: SdsCall | SdsCallable,
+        substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS,
+    ): CallGraph {
         if (isSdsCall(node)) {
             const call = this.createSyntheticCallForCall(node, substitutions);
             return this.getCallGraphWithRecursionCheck(call, []);

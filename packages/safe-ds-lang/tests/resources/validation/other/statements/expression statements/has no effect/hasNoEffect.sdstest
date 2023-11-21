@@ -1,30 +1,35 @@
-package tests.validation.statements.expressionStatements.hasNoEffect
+package tests.validation.other.statements.expressionStatements.hasNoEffect
 
+@Impure([ImpurityReason.Other])
 fun impureFunction()
-@Pure fun pureFunction() -> a: Int
+
+@Pure
+fun pureFunction() -> a: Int
 
 class MyClass() {
+    @Impure([ImpurityReason.Other])
     fun impureFunction()
+
     @Pure fun pureFunction()
 }
 
-step pureStep() {
+segment pureSegment() {
     val a = pureFunction();
 }
 
-step impureStep() {
+segment impureSegment() {
     impureFunction();
 }
 
-step recursiveA() {
+segment recursiveA() {
     recursiveB();
 }
 
-step recursiveB() {
+segment recursiveB() {
     recursiveA();
 }
 
-step myStep() {
+segment mySegment() {
     // $TEST$ warning "This statement does nothing."
     »1 + 2;«
     // $TEST$ warning "This statement does nothing."
@@ -52,13 +57,16 @@ step myStep() {
     };
 
     // $TEST$ warning "This statement does nothing."
+    »pureSegment();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »impureSegment();«
+
+    // $TEST$ warning "This statement does nothing."
     »(() {
         pureFunction();
         MyClass().pureFunction();
     })();«
-
-    // $TEST$ warning "This statement does nothing."
-    »pureStep();«
 
     // $TEST$ no warning "This statement does nothing."
     »(() {
@@ -69,9 +77,6 @@ step myStep() {
     »(() {
         MyClass().impureFunction();
     })();«
-
-    // $TEST$ no warning "This statement does nothing."
-    »impureStep();«
 
     // $TEST$ no warning "This statement does nothing."
     »recursiveA();«
