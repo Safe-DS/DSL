@@ -64,7 +64,7 @@ export class SafeDsPurityComputer {
      * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
      * of any containing callables, i.e. the context of the node.
      */
-    isPureCallable(node: SdsCallable, substitutions = NO_SUBSTITUTIONS): boolean {
+    isPureCallable(node: SdsCallable | undefined, substitutions = NO_SUBSTITUTIONS): boolean {
         return isEmpty(this.getImpurityReasonsForCallable(node, substitutions));
     }
 
@@ -78,7 +78,7 @@ export class SafeDsPurityComputer {
      * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
      * of any containing callables, i.e. the context of the node.
      */
-    isPureExpression(node: SdsExpression, substitutions = NO_SUBSTITUTIONS): boolean {
+    isPureExpression(node: SdsExpression | undefined, substitutions = NO_SUBSTITUTIONS): boolean {
         return isEmpty(this.getImpurityReasonsForExpression(node, substitutions));
     }
 
@@ -92,7 +92,7 @@ export class SafeDsPurityComputer {
      * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
      * of any containing callables, i.e. the context of the node.
      */
-    callableHasSideEffects(node: SdsCallable, substitutions = NO_SUBSTITUTIONS): boolean {
+    callableHasSideEffects(node: SdsCallable | undefined, substitutions = NO_SUBSTITUTIONS): boolean {
         return this.getImpurityReasonsForCallable(node, substitutions).some((it) => it.isSideEffect);
     }
 
@@ -106,7 +106,7 @@ export class SafeDsPurityComputer {
      * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
      * of any containing callables, i.e. the context of the node.
      */
-    expressionHasSideEffects(node: SdsExpression, substitutions = NO_SUBSTITUTIONS): boolean {
+    expressionHasSideEffects(node: SdsExpression | undefined, substitutions = NO_SUBSTITUTIONS): boolean {
         return this.getImpurityReasonsForExpression(node, substitutions).some((it) => it.isSideEffect);
     }
 
@@ -120,7 +120,7 @@ export class SafeDsPurityComputer {
      * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
      * of any containing callables, i.e. the context of the node.
      */
-    getImpurityReasonsForCallable(node: SdsCallable, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
+    getImpurityReasonsForCallable(node: SdsCallable | undefined, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
         return this.getImpurityReasons(node, substitutions);
     }
 
@@ -134,11 +134,21 @@ export class SafeDsPurityComputer {
      * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
      * of any containing callables, i.e. the context of the node.
      */
-    getImpurityReasonsForExpression(node: SdsExpression, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
+    getImpurityReasonsForExpression(
+        node: SdsExpression | undefined,
+        substitutions = NO_SUBSTITUTIONS,
+    ): ImpurityReason[] {
         return this.getExecutedCallsInExpression(node).flatMap((it) => this.getImpurityReasons(it, substitutions));
     }
 
-    private getImpurityReasons(node: SdsCall | SdsCallable, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
+    private getImpurityReasons(
+        node: SdsCall | SdsCallable | undefined,
+        substitutions = NO_SUBSTITUTIONS,
+    ): ImpurityReason[] {
+        if (!node) {
+            return [];
+        }
+
         // Cache the result if no substitutions are given
         if (isEmpty(substitutions)) {
             const key = this.getNodeId(node);
@@ -170,7 +180,7 @@ export class SafeDsPurityComputer {
         return [...recursionImpurityReason, ...otherImpurityReasons];
     }
 
-    private getExecutedCallsInExpression(expression: SdsExpression): SdsCall[] {
+    private getExecutedCallsInExpression(expression: SdsExpression | undefined): SdsCall[] {
         return this.callGraphComputer.getAllContainedCalls(expression).filter((it) => {
             // Keep only calls that are not contained in a lambda inside the expression
             const containingLambda = getContainerOfType(it, isSdsLambda);

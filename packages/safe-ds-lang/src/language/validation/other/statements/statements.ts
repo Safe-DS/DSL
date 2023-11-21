@@ -1,10 +1,4 @@
-import {
-    isSdsAssignment,
-    isSdsExpressionStatement,
-    isSdsWildcard,
-    SdsExpression,
-    SdsStatement,
-} from '../../../generated/ast.js';
+import { isSdsAssignment, isSdsExpressionStatement, isSdsWildcard, SdsStatement } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { getAssignees } from '../../../helpers/nodeProperties.js';
@@ -25,33 +19,16 @@ export const statementMustDoSomething = (services: SafeDsServices) => {
 };
 
 const statementDoesSomethingProvider = (services: SafeDsServices) => {
-    const statementExpressionDoesSomething = statementExpressionDoesSomethingProvider(services);
+    const purityComputer = services.purity.PurityComputer;
 
     return (node: SdsStatement): boolean => {
         if (isSdsAssignment(node)) {
-            return !getAssignees(node).every(isSdsWildcard) || statementExpressionDoesSomething(node.expression);
+            return !getAssignees(node).every(isSdsWildcard) || purityComputer.expressionHasSideEffects(node.expression);
         } else if (isSdsExpressionStatement(node)) {
-            return statementExpressionDoesSomething(node.expression);
+            return purityComputer.expressionHasSideEffects(node.expression);
         } else {
             /* c8 ignore next 2 */
             return false;
         }
-    };
-};
-
-const statementExpressionDoesSomethingProvider = (services: SafeDsServices) => {
-    const callGraphComputer = services.flow.CallGraphComputer;
-    const purityComputer = services.purity.PurityComputer;
-
-    return (node: SdsExpression | undefined): boolean => {
-        if (!node) {
-            /* c8 ignore next 2 */
-            return false;
-        }
-
-        return (
-            callGraphComputer.getAllContainedCalls(node).some((it) => callGraphComputer.isRecursive(it)) ||
-            !purityComputer.isPureExpression(node)
-        );
     };
 };
