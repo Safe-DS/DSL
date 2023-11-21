@@ -19,18 +19,22 @@ import {
     PotentiallyImpureParameterCall,
 } from './model.js';
 import {
+    isSdsAssignment,
+    isSdsExpressionStatement,
     isSdsFunction,
     isSdsLambda,
+    isSdsWildcard,
     SdsCall,
     SdsCallable,
     SdsExpression,
     SdsFunction,
     SdsParameter,
+    SdsStatement,
 } from '../generated/ast.js';
 import { EvaluatedEnumVariant, ParameterSubstitutions, StringConstant } from '../partialEvaluation/model.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsImpurityReasons } from '../builtins/safe-ds-enums.js';
-import { getParameters } from '../helpers/nodeProperties.js';
+import { getAssignees, getParameters } from '../helpers/nodeProperties.js';
 import { isContainedInOrEqual } from '../helpers/astUtils.js';
 
 export class SafeDsPurityComputer {
@@ -108,6 +112,33 @@ export class SafeDsPurityComputer {
      */
     expressionHasSideEffects(node: SdsExpression | undefined, substitutions = NO_SUBSTITUTIONS): boolean {
         return this.getImpurityReasonsForExpression(node, substitutions).some((it) => it.isSideEffect);
+    }
+
+    /**
+     * Returns whether the given statement does something. It must either
+     *     - create a placeholder,
+     *     - assign to a result, or
+     *     - call a function that has side effects.
+     *
+     * @param node
+     * The statement to check.
+     *
+     * @param substitutions
+     * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
+     * of any containing callables, i.e. the context of the node.
+     */
+    statementDoesSomething(node: SdsStatement, substitutions = NO_SUBSTITUTIONS): boolean {
+        if (isSdsAssignment(node)) {
+            return (
+                !getAssignees(node).every(isSdsWildcard) ||
+                this.expressionHasSideEffects(node.expression, substitutions)
+            );
+        } else if (isSdsExpressionStatement(node)) {
+            return this.expressionHasSideEffects(node.expression, substitutions);
+        } else {
+            /* c8 ignore next 2 */
+            return false;
+        }
     }
 
     /**

@@ -359,27 +359,13 @@ export class SafeDsPythonGenerator {
     }
 
     private generateBlock(block: SdsBlock, frame: GenerationInfoFrame): CompositeGeneratorNode {
-        let statements = getStatements(block).filter((stmt) => this.hasStatementEffect(stmt));
+        let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
         if (statements.length === 0) {
             return traceToNode(block)('pass');
         }
         return joinTracedToNode(block, 'statements')(statements, (stmt) => this.generateStatement(stmt, frame), {
             separator: NL,
         })!;
-    }
-
-    private hasStatementEffect(statement: SdsStatement): boolean {
-        if (isSdsAssignment(statement)) {
-            const assignees = getAssignees(statement);
-            return (
-                assignees.some((value) => !isSdsWildcard(value)) ||
-                this.purityComputer.expressionHasSideEffects(statement.expression)
-            );
-        } else if (isSdsExpressionStatement(statement)) {
-            return this.purityComputer.expressionHasSideEffects(statement.expression);
-        }
-        /* c8 ignore next */
-        return false;
     }
 
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame): CompositeGeneratorNode {
