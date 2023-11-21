@@ -1,18 +1,13 @@
-import { afterEach, describe, it } from 'vitest';
+import { describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { createGrammarTests } from './creator.js';
-import { clearDocuments } from 'langium/test';
 import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 
 describe('grammar', () => {
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each(createGrammarTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {

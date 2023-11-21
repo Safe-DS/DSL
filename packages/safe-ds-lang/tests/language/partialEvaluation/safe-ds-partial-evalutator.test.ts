@@ -1,7 +1,6 @@
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments } from 'langium/test';
-import { afterEach, describe, it } from 'vitest';
+import { describe, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { locationToString } from '../../helpers/location.js';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
@@ -12,10 +11,6 @@ const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;
 
 describe('partial evaluation', async () => {
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each(await createPartialEvaluationTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {

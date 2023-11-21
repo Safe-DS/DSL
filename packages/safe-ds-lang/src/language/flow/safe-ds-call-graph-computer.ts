@@ -124,11 +124,13 @@ export class SafeDsCallGraphComputer {
             const call = this.createSyntheticCallForCall(node, substitutions);
             return this.getCallGraphWithRecursionCheck(call, []);
         } else {
+            const children = this.getExecutedCallsInCallable(node, substitutions).map((it) => {
+                return this.getCallGraphWithRecursionCheck(it, []);
+            });
             return new CallGraph(
                 node,
-                this.getExecutedCallsInCallable(node, substitutions).map((it) => {
-                    return this.getCallGraphWithRecursionCheck(it, []);
-                }),
+                children,
+                children.some((it) => it.isRecursive),
             );
         }
     }

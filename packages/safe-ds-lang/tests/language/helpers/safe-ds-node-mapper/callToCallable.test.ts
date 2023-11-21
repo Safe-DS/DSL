@@ -1,6 +1,5 @@
 import { EmptyFileSystem } from 'langium';
-import { clearDocuments } from 'langium/test';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { isSdsAbstractCall } from '../../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
@@ -9,10 +8,6 @@ const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     describe('callToCallable', () => {
         it('should return undefined if passed undefined', () => {
             expect(nodeMapper.callToCallable(undefined)).toBeUndefined();

@@ -1,6 +1,5 @@
 import { AstNode, EmptyFileSystem, expandToString } from 'langium';
-import { clearDocuments } from 'langium/test';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { normalizeLineBreaks } from '../../../src/helpers/stringUtils.js';
 import {
     isSdsAnnotation,
@@ -17,10 +16,6 @@ const documentationProvider = services.documentation.DocumentationProvider;
 const testDocumentation = 'Lorem ipsum.';
 
 describe('SafeDsDocumentationProvider', () => {
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     const testCases: DocumentationProviderTest[] = [
         {
             testName: 'module member',

@@ -1,25 +1,15 @@
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments, parseHelper } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { parseHelper } from 'langium/test';
+import { describe, expect, it } from 'vitest';
 import { type CallHierarchyItem } from 'vscode-languageserver';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { findTestRanges } from '../../helpers/testRanges.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const callHierarchyProvider = services.lsp.CallHierarchyProvider!;
-const workspaceManager = services.shared.workspace.WorkspaceManager;
 const parse = parseHelper(services);
 
 describe('SafeDsCallHierarchyProvider', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await workspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     describe('incomingCalls', () => {
         const testCases: IncomingCallTest[] = [
             {
