@@ -1,6 +1,5 @@
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
     isSdsAbstractResult,
     isSdsAssignment,
@@ -8,22 +7,13 @@ import {
     SdsAssignee,
 } from '../../../../src/language/generated/ast.js';
 import { getAssignees } from '../../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServices } from '../../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     describe('assigneeToAssignedObject', () => {
         it('should return undefined if passed undefined', async () => {
             expect(nodeMapper.assigneeToAssignedObject(undefined)?.$type).toBeUndefined();

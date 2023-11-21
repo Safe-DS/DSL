@@ -1,25 +1,15 @@
-import { createSafeDsServices } from '../../../src/language/index.js';
-import { clearDocuments } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { stream } from 'langium';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const pythonGenerator = services.generation.PythonGenerator;
 const generationTests = createGenerationTests();
 
 describe('generation', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each(await generationTests)('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
