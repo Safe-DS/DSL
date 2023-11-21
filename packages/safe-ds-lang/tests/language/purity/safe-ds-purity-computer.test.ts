@@ -40,7 +40,18 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
-        ])('should return whether a callable is pure (#testName)', async ({ code, expected }) => {
+            {
+                testName: 'endless recursion',
+                code: `
+                    package test
+
+                    segment a() {
+                        a();
+                    }
+                `,
+                expected: false,
+            },
+        ])('should return whether a callable is pure ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             expect(purityComputer.isPureCallable(callable)).toBe(expected);
         });
@@ -104,6 +115,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: true,
             },
+            {
+                testName: 'endless recursion',
+                code: `
+                    package test
+
+                    segment a() {
+                        a();
+                    }
+                `,
+                expected: false,
+            },
         ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.isPureExpression(expression)).toBe(expected);
@@ -152,7 +174,18 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: true,
             },
-        ])('should return whether a callable has side effects (#testName)', async ({ code, expected }) => {
+            {
+                testName: 'endless recursion',
+                code: `
+                    package test
+
+                    segment a() {
+                        a();
+                    }
+                `,
+                expected: true,
+            },
+        ])('should return whether a callable has side effects ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             expect(purityComputer.callableHasSideEffects(callable)).toBe(expected);
         });
@@ -230,7 +263,18 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
-        ])('should return whether a call has side effects (%#)', async ({ code, expected }) => {
+            {
+                testName: 'endless recursion',
+                code: `
+                    package test
+
+                    segment a() {
+                        a();
+                    }
+                `,
+                expected: true,
+            },
+        ])('should return whether a call has side effects ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.expressionHasSideEffects(expression)).toBe(expected);
         });
@@ -328,6 +372,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: ['Other', 'File read from "file.txt"'],
             },
+            {
+                testName: 'endless recursion',
+                code: `
+                    package test
+
+                    segment a() {
+                        a();
+                    }
+                `,
+                expected: ['Endless recursion'],
+            },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             const actual = purityComputer.getImpurityReasonsForCallable(callable).map((reason) => reason.toString());
@@ -406,6 +461,17 @@ describe('SafeDsPurityComputer', async () => {
                     fun f()
                 `,
                 expected: [],
+            },
+            {
+                testName: 'endless recursion',
+                code: `
+                    package test
+
+                    segment a() {
+                        a();
+                    }
+                `,
+                expected: ['Endless recursion'],
             },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);

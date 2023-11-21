@@ -11,6 +11,7 @@ import { isEmpty } from '../../helpers/collectionUtils.js';
 import type { SafeDsCallGraphComputer } from '../flow/safe-ds-call-graph-computer.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
+    EndlessRecursion,
     FileRead,
     FileWrite,
     type ImpurityReason,
@@ -138,20 +139,35 @@ export class SafeDsPurityComputer {
     }
 
     private getImpurityReasons(node: SdsCall | SdsCallable, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
-        const key = this.getNodeId(node);
-        return this.reasonsCache.get(key, () => {
-            return this.callGraphComputer
-                .getCallGraph(node, substitutions)
-                .streamCalledCallables()
-                .flatMap((it) => {
-                    if (isSdsFunction(it)) {
-                        return this.getImpurityReasonsForFunction(it);
-                    } else {
-                        return EMPTY_STREAM;
-                    }
-                })
-                .toArray();
+        // Cache the result if no substitutions are given
+        if (isEmpty(substitutions)) {
+            const key = this.getNodeId(node);
+            return this.reasonsCache.get(key, () => {
+                return this.doGetImpurityReasons(node, substitutions);
+            });
+        } else {
+            /* c8 ignore next 2 */
+            return this.doGetImpurityReasons(node, substitutions);
+        }
+    }
+
+    private doGetImpurityReasons(node: SdsCall | SdsCallable, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
+        const callGraph = this.callGraphComputer.getCallGraph(node, substitutions);
+
+        const recursionImpurityReason: ImpurityReason[] = [];
+        if (callGraph.isRecursive) {
+            recursionImpurityReason.push(EndlessRecursion);
+        }
+
+        const otherImpurityReasons = callGraph.streamCalledCallables().flatMap((it) => {
+            if (isSdsFunction(it)) {
+                return this.getImpurityReasonsForFunction(it);
+            } else {
+                return EMPTY_STREAM;
+            }
         });
+
+        return [...recursionImpurityReason, ...otherImpurityReasons];
     }
 
     private getExecutedCallsInExpression(expression: SdsExpression): SdsCall[] {
