@@ -378,6 +378,7 @@ export class SafeDsPythonGenerator {
         } else if (isSdsExpressionStatement(statement)) {
             return this.purityComputer.expressionHasSideEffects(statement.expression);
         }
+        /* c8 ignore next */
         return false;
     }
 
