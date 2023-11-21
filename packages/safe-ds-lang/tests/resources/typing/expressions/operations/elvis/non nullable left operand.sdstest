@@ -1,18 +1,32 @@
-package tests.typing.operations.elvis
+package tests.typing.operations.elvis.nonNullableLeftOperand
 
-fun intOrNull() -> a: Int?
+@Pure fun int() -> a: Int
+@Pure fun intOrNull() -> a: Int?
 
 pipeline elvisWithNonNullableLeftOperand {
-    // $TEST$ equivalence_class leftOperand
+    // $TEST$ equivalence_class leftOperand1
     »1«;
-    // $TEST$ equivalence_class leftOperand
+    // $TEST$ equivalence_class leftOperand1
     »1 ?: intOrNull()«;
-    // $TEST$ equivalence_class leftOperand
+    // $TEST$ equivalence_class leftOperand1
     »1 ?: 1«;
-    // $TEST$ equivalence_class leftOperand
+    // $TEST$ equivalence_class leftOperand1
     »1 ?: 1.0«;
-    // $TEST$ equivalence_class leftOperand
+    // $TEST$ equivalence_class leftOperand1
     »1 ?: ""«;
-    // $TEST$ equivalence_class leftOperand
+    // $TEST$ equivalence_class leftOperand1
     »1 ?: null«;
+
+    // $TEST$ equivalence_class leftOperand2
+    »int()«;
+    // $TEST$ equivalence_class leftOperand2
+    »int() ?: intOrNull()«;
+    // $TEST$ equivalence_class leftOperand2
+    »int() ?: 1«;
+    // $TEST$ equivalence_class leftOperand2
+    »int() ?: 1.0«;
+    // $TEST$ equivalence_class leftOperand2
+    »int() ?: ""«;
+    // $TEST$ equivalence_class leftOperand2
+    »int() ?: null«;
 }

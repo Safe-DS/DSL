@@ -1,7 +1,7 @@
-package tests.typing.operations.elvis
+package tests.typing.operations.elvis.nullableLeftOperand
 
-fun intOrNull() -> a: Int?
-fun stringOrNull() -> s: String?
+@Pure fun intOrNull() -> a: Int?
+@Pure fun stringOrNull() -> s: String?
 
 pipeline elvisWithNullableLeftOperand {
     // $TEST$ serialization Int?
