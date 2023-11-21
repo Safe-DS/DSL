@@ -111,6 +111,7 @@ export class SafeDsCallGraphComputer {
                 return this.doGetCallGraph(node, substitutions);
             });
         } else {
+            /* c8 ignore next 2 */
             return this.doGetCallGraph(node, substitutions);
         }
     }

@@ -32,8 +32,10 @@ const statementDoesSomethingProvider = (services: SafeDsServices) => {
             return !getAssignees(node).every(isSdsWildcard) || statementExpressionDoesSomething(node.expression);
         } else if (isSdsExpressionStatement(node)) {
             return statementExpressionDoesSomething(node.expression);
+        } else {
+            /* c8 ignore next 2 */
+            return false;
         }
-        return false;
     };
 };
 
@@ -43,6 +45,7 @@ const statementExpressionDoesSomethingProvider = (services: SafeDsServices) => {
 
     return (node: SdsExpression | undefined): boolean => {
         if (!node) {
+            /* c8 ignore next 2 */
             return false;
         }
 
