@@ -115,7 +115,10 @@ export class SafeDsCallGraphComputer {
         }
     }
 
-    doGetCallGraph(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS): CallGraph {
+    private doGetCallGraph(
+        node: SdsCall | SdsCallable,
+        substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS,
+    ): CallGraph {
         if (isSdsCall(node)) {
             const call = this.createSyntheticCallForCall(node, substitutions);
             return this.getCallGraphWithRecursionCheck(call, []);
