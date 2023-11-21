@@ -3,7 +3,7 @@ package tests.generator.wildcard
 from tests.generator.differentPackageWildcard import *
 from tests.generator.withPythonModuleWildcard import *
 
-@Pure fun f(param: Any?)
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
 
 pipeline test {
     f(function1InDifferentPackage());

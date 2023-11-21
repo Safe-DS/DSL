@@ -89,6 +89,7 @@ import {
 } from '../partialEvaluation/model.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -104,11 +105,13 @@ export class SafeDsPythonGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
+    private readonly purityComputer: SafeDsPurityComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
+        this.purityComputer = services.purity.PurityComputer;
     }
 
     generate(document: LangiumDocument, generateOptions: GenerateOptions): TextDocument[] {
@@ -356,14 +359,28 @@ export class SafeDsPythonGenerator {
     }
 
     private generateBlock(block: SdsBlock, frame: GenerationInfoFrame): CompositeGeneratorNode {
-        // TODO filter withEffect
-        let statements = getStatements(block);
+        let statements = getStatements(block).filter((stmt) => this.hasStatementEffect(stmt));
         if (statements.length === 0) {
             return traceToNode(block)('pass');
         }
         return joinTracedToNode(block, 'statements')(statements, (stmt) => this.generateStatement(stmt, frame), {
             separator: NL,
         })!;
+    }
+
+    private hasStatementEffect(statement: SdsStatement): boolean {
+        if (isSdsAssignment(statement)) {
+            const assignees = getAssignees(statement);
+            return (
+                assignees.some((value) => !isSdsWildcard(value)) ||
+                (statement.expression !== undefined &&
+                    this.purityComputer.expressionHasSideEffects(statement.expression))
+            );
+        } else if (isSdsExpressionStatement(statement)) {
+            return this.purityComputer.expressionHasSideEffects(statement.expression);
+        }
+        /* c8 ignore next */
+        return false;
     }
 
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame): CompositeGeneratorNode {

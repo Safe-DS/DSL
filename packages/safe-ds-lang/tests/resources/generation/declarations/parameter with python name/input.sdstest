@@ -1,7 +1,7 @@
 package tests.generator.parameterWithPythonName
 
-@Pure fun f1(param: (a: Int, b: Int, c: Int) -> r: Int)
-@Pure fun f2(param: (a: Int, b: Int, c: Int) -> ())
+@Impure([ImpurityReason.Other]) fun f1(param: (a: Int, b: Int, c: Int) -> r: Int)
+@Impure([ImpurityReason.Other]) fun f2(param: (a: Int, b: Int, c: Int) -> ())
 
 segment test(param1: Int, @PythonName("param_2") param2: Int, @PythonName("param_3") param3: Int = 0) {
     f1((a: Int, b: Int, c: Int = 0) -> 1);
