@@ -2,7 +2,7 @@
 
 package tests.generator.pythonModule
 
-@Pure fun f()
+@Impure([ImpurityReason.Other]) fun f()
 
 segment test() {
     f();

@@ -1,6 +1,6 @@
 package tests.generator.literals
 
-@Pure fun f(param: Any?)
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
 
 pipeline test {
     f(true);

@@ -1,7 +1,7 @@
 package tests.generator.blockLambda
 
-@Pure fun f1(param: (a: Int, b: Int) -> r: Int)
-@Pure fun f2(param: () -> ())
+@Impure([ImpurityReason.Other]) fun f1(param: (a: Int, b: Int) -> r: Int)
+@Impure([ImpurityReason.Other]) fun f2(param: () -> ())
 
 @Pure fun g() -> a: Int
 
