@@ -1,5 +1,7 @@
 # Safe-DS
 
-A preview of the language support for the [Safe-DS][safe-ds-docs] DSL.
+Safely develop Data Science programs with a statically checked domain specific language (DSL).
 
-[safe-ds-docs]: https://dsl.safeds.com
+## Documentation
+
+You can find the full documentation [here](https://dsl.safeds.com).
