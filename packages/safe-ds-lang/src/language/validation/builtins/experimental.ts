@@ -13,8 +13,15 @@ import { SafeDsServices } from '../../safe-ds-module.js';
 
 export const CODE_EXPERIMENTAL_LIBRARY_ELEMENT = 'experimental/library-element';
 
-export const assigneeAssignedResultShouldNotBeExperimental =
-    (services: SafeDsServices) => (node: SdsAssignee, accept: ValidationAcceptor) => {
+export const assigneeAssignedResultShouldNotBeExperimental = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+
+    return async (node: SdsAssignee, accept: ValidationAcceptor) => {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         if (isSdsWildcard(node)) {
             return;
         }
@@ -31,9 +38,17 @@ export const assigneeAssignedResultShouldNotBeExperimental =
             });
         }
     };
+};
 
-export const annotationCallAnnotationShouldNotBeExperimental =
-    (services: SafeDsServices) => (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+export const annotationCallAnnotationShouldNotBeExperimental = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+
+    return async (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         const annotation = node.annotation?.ref;
         if (!annotation) {
             return;
@@ -47,9 +62,17 @@ export const annotationCallAnnotationShouldNotBeExperimental =
             });
         }
     };
+};
 
-export const argumentCorrespondingParameterShouldNotBeExperimental =
-    (services: SafeDsServices) => (node: SdsArgument, accept: ValidationAcceptor) => {
+export const argumentCorrespondingParameterShouldNotBeExperimental = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+
+    return async (node: SdsArgument, accept: ValidationAcceptor) => {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         const parameter = services.helpers.NodeMapper.argumentToParameter(node);
         if (!parameter) {
             return;
@@ -62,9 +85,17 @@ export const argumentCorrespondingParameterShouldNotBeExperimental =
             });
         }
     };
+};
 
-export const namedTypeDeclarationShouldNotBeExperimental =
-    (services: SafeDsServices) => (node: SdsNamedType, accept: ValidationAcceptor) => {
+export const namedTypeDeclarationShouldNotBeExperimental = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+
+    return async (node: SdsNamedType, accept: ValidationAcceptor) => {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         const declaration = node.declaration?.ref;
         if (!declaration) {
             return;
@@ -77,9 +108,17 @@ export const namedTypeDeclarationShouldNotBeExperimental =
             });
         }
     };
+};
 
-export const referenceTargetShouldNotExperimental =
-    (services: SafeDsServices) => (node: SdsReference, accept: ValidationAcceptor) => {
+export const referenceTargetShouldNotExperimental = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+
+    return async (node: SdsReference, accept: ValidationAcceptor) => {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         const target = node.target.ref;
         if (!target || isSdsParameter(target)) {
             return;
@@ -92,3 +131,4 @@ export const referenceTargetShouldNotExperimental =
             });
         }
     };
+};
