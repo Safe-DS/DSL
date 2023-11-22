@@ -62,6 +62,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: false,
+            },
         ])('should return whether a callable is pure ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             expect(purityComputer.isPureCallable(callable)).toBe(expected);
@@ -148,6 +159,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: false,
+            },
         ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.isPureExpression(expression)).toBe(expected);
@@ -214,6 +236,17 @@ describe('SafeDsPurityComputer', async () => {
 
                     segment a() {
                         unresolved();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
                     }
                 `,
                 expected: true,
@@ -314,6 +347,17 @@ describe('SafeDsPurityComputer', async () => {
 
                     segment a() {
                         unresolved();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
                     }
                 `,
                 expected: true,
@@ -438,6 +482,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: ['Unknown callable call'],
             },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: ['Potentially impure call of test.mySegment.param'],
+            },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             const actual = purityComputer.getImpurityReasonsForCallable(callable).map((reason) => reason.toString());
@@ -538,6 +593,17 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: ['Unknown callable call'],
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: ['Potentially impure call of test.mySegment.param'],
             },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
