@@ -108,6 +108,7 @@ export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
 
     return async (node: SdsDeclaration, accept: ValidationAcceptor) => {
         if (!(await settingsProvider.shouldValidateNameConvention())) {
+            /* c8 ignore next 2 */
             return;
         }
 
