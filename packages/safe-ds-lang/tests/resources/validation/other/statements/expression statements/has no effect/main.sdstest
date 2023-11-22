@@ -81,3 +81,11 @@ segment mySegment() {
     // $TEST$ no warning "This statement does nothing."
     »recursiveA();«
 }
+
+segment mySegment2(f: () -> (r: Int)) {
+    // $TEST$ no warning "This statement does nothing."
+    »f();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »unresolved();«
+}
