@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { isSdsCallable, isSdsExpression } from '../../../src/language/generated/ast.js';
+import { isSdsCallable, isSdsExpression, isSdsParameter } from '../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
@@ -191,6 +191,103 @@ describe('SafeDsPurityComputer', async () => {
         ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.isPureExpression(expression)).toBe(expected);
+        });
+    });
+
+    describe('isPureExpression', () => {
+        it.each([
+            {
+                testName: 'annotation parameter',
+                code: `
+                    package test
+
+                    annotation MyAnnotation(f: () -> ())
+                `,
+                expected: true,
+            },
+            {
+                testName: 'class parameter',
+                code: `
+                    package test
+
+                    class MyClass(f: () -> ())
+                `,
+                expected: true,
+            },
+            {
+                testName: 'enum variant parameter',
+                code: `
+                    package test
+
+                    enum MyEnum {
+                        MyEnumVariant(f: () -> ())
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'pure function parameter',
+                code: `
+                    package test
+
+                    @Pure
+                    fun myFunction(f: () -> ())
+                `,
+                expected: true,
+            },
+            {
+                testName: 'impure function parameter',
+                code: `
+                    package test
+
+                    @Impure([ImpurityReason.PotentiallyImpureParameterCall("f")])
+                    fun myFunction(f: () -> ())
+                `,
+                expected: false,
+            },
+            {
+                testName: 'callable type parameter',
+                code: `
+                    package test
+
+                    segment mySegment() -> (result: (f: () -> ()) -> ())
+                `,
+                expected: false,
+            },
+            {
+                testName: 'segment parameter',
+                code: `
+                    package test
+
+                    segment mySegment(f: () -> ())
+                `,
+                expected: false,
+            },
+            {
+                testName: 'block lambda parameter',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        (f: () -> ()) {};
+                    }
+                `,
+                expected: false,
+            },
+            {
+                testName: 'expression lambda parameter',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        (f: () -> ()) -> 1;
+                    }
+                `,
+                expected: false,
+            },
+        ])('should return whether a parameter is pure ($testName)', async ({ code, expected }) => {
+            const parameter = await getNodeOfType(services, code, isSdsParameter);
+            expect(purityComputer.isPureParameter(parameter)).toBe(expected);
         });
     });
 

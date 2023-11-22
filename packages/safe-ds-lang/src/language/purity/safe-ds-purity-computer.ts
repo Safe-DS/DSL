@@ -20,6 +20,7 @@ import {
     UnknownCallableCall,
 } from './model.js';
 import {
+    isSdsAnnotation,
     isSdsAssignment,
     isSdsCallable,
     isSdsClass,
@@ -99,7 +100,12 @@ export class SafeDsPurityComputer {
      */
     isPureParameter(node: SdsParameter | undefined): boolean {
         const containingCallable = getContainerOfType(node, isSdsCallable);
-        if (!containingCallable || isSdsClass(containingCallable) || isSdsEnumVariant(containingCallable)) {
+        if (
+            !containingCallable ||
+            isSdsAnnotation(containingCallable) ||
+            isSdsClass(containingCallable) ||
+            isSdsEnumVariant(containingCallable)
+        ) {
             return true;
         } else if (isSdsFunction(containingCallable)) {
             const expectedImpurityReason = new PotentiallyImpureParameterCall(node);
