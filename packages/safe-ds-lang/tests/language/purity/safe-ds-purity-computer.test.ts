@@ -51,6 +51,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: false,
+            },
         ])('should return whether a callable is pure ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             expect(purityComputer.isPureCallable(callable)).toBe(expected);
@@ -126,6 +137,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: false,
+            },
         ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.isPureExpression(expression)).toBe(expected);
@@ -181,6 +203,17 @@ describe('SafeDsPurityComputer', async () => {
 
                     segment a() {
                         a();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
                     }
                 `,
                 expected: true,
@@ -270,6 +303,17 @@ describe('SafeDsPurityComputer', async () => {
 
                     segment a() {
                         a();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
                     }
                 `,
                 expected: true,
@@ -383,6 +427,17 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: ['Endless recursion'],
             },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: ['Unknown callable call'],
+            },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             const actual = purityComputer.getImpurityReasonsForCallable(callable).map((reason) => reason.toString());
@@ -472,6 +527,17 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: ['Endless recursion'],
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: ['Unknown callable call'],
             },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
