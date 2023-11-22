@@ -1,6 +1,6 @@
 package tests.generator.expressionStatement
 
-@Impure([ImpurityReason.Other]) fun f(param: () -> ())
+@Impure([ImpurityReason.PotentiallyImpureParameterCall("param")]) fun f(param: () -> ())
 
 @Impure([ImpurityReason.Other]) fun g() -> result: Int
 
