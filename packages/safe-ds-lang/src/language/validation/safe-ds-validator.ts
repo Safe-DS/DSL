@@ -245,7 +245,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty(services)],
         SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
-        SdsConstraintList: [constraintListsShouldBeUsedWithCaution, constraintListShouldNotBeEmpty(services)],
+        SdsConstraintList: [constraintListsShouldBeUsedWithCaution(services), constraintListShouldNotBeEmpty(services)],
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
             nameMustNotStartWithCodegenPrefix,
@@ -272,7 +272,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsIndexedAccess: [
             indexedAccessIndexMustHaveCorrectType(services),
             indexedAccessReceiverMustBeListOrMap(services),
-            indexedAccessesShouldBeUsedWithCaution,
+            indexedAccessesShouldBeUsedWithCaution(services),
         ],
         SdsInfixOperation: [
             divisionDivisorMustNotBeZero(services),
@@ -289,10 +289,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypeMustHaveLiterals,
             literalTypeMustNotContainListLiteral,
             literalTypeMustNotContainMapLiteral,
-            literalTypesShouldBeUsedWithCaution,
+            literalTypesShouldBeUsedWithCaution(services),
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
-        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution],
+        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
@@ -346,17 +346,20 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution],
+        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution(services)],
         SdsTypeParameter: [
             typeParameterMustHaveSufficientContext,
             typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
         ],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
-        SdsTypeParameterList: [typeParameterListsShouldBeUsedWithCaution, typeParameterListShouldNotBeEmpty(services)],
+        SdsTypeParameterList: [
+            typeParameterListsShouldBeUsedWithCaution(services),
+            typeParameterListShouldNotBeEmpty(services),
+        ],
         SdsUnionType: [
             unionTypeMustBeUsedInCorrectContext,
             unionTypeMustHaveTypes,
-            unionTypesShouldBeUsedWithCaution,
+            unionTypesShouldBeUsedWithCaution(services),
             unionTypeShouldNotHaveDuplicateTypes(services),
             unionTypeShouldNotHaveASingularTypeArgument(services),
         ],
