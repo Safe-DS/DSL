@@ -73,6 +73,15 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: true,
+            },
         ])('should return whether a callable is pure ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             expect(purityComputer.isPureCallable(callable)).toBe(expected);
@@ -170,6 +179,15 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: true,
+            },
         ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.isPureExpression(expression)).toBe(expected);
@@ -250,6 +268,15 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: true,
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: false,
             },
         ])('should return whether a callable has side effects ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
@@ -361,6 +388,15 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: true,
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: false,
             },
         ])('should return whether a call has side effects ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
@@ -493,6 +529,15 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: ['Potentially impure call of test.mySegment.param'],
             },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: [],
+            },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             const actual = purityComputer.getImpurityReasonsForCallable(callable).map((reason) => reason.toString());
@@ -604,6 +649,15 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: ['Potentially impure call of test.mySegment.param'],
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: [],
             },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
