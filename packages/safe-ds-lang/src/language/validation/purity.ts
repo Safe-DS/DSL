@@ -1,6 +1,6 @@
 import { stream, type ValidationAcceptor } from 'langium';
 import { isSubset } from '../../helpers/collectionUtils.js';
-import { isSdsCall, isSdsFunction, isSdsList, type SdsFunction } from '../generated/ast.js';
+import { isSdsCall, isSdsFunction, isSdsList, SdsCall, type SdsFunction, SdsParameter } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { StringConstant } from '../partialEvaluation/model.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
@@ -12,6 +12,7 @@ export const CODE_PURITY_IMPURITY_REASONS_OF_OVERRIDING_METHOD = 'purity/impurit
 export const CODE_PURITY_INVALID_PARAMETER_NAME = 'purity/invalid-parameter-name';
 export const CODE_PURITY_MUST_BE_SPECIFIED = 'purity/must-be-specified';
 export const CODE_PURITY_POTENTIALLY_IMPURE_PARAMETER_NOT_CALLABLE = 'purity/potentially-impure-parameter-not-callable';
+export const CODE_PURITY_PURE_PARAMETER_SET_TO_IMPURE_CALLABLE = 'purity/pure-parameter-set-to-impure-callable';
 
 export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
     const annotations = services.builtins.Annotations;
@@ -211,6 +212,66 @@ export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServic
                 });
             } else {
                 knownReasons.add(stringifiedReason);
+            }
+        }
+    };
+};
+
+export const pureParameterDefaultValueMustBePure = (services: SafeDsServices) => {
+    const purityComputer = services.purity.PurityComputer;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsParameter, accept: ValidationAcceptor) => {
+        if (!node.defaultValue) {
+            return;
+        }
+
+        const parameterType = typeComputer.computeType(node);
+        if (!(parameterType instanceof CallableType) || !purityComputer.isPureParameter(node)) {
+            return;
+        }
+
+        const defaultValueType = typeComputer.computeType(node.defaultValue);
+        if (!(defaultValueType instanceof CallableType)) {
+            return;
+        }
+
+        if (!purityComputer.isPureCallable(defaultValueType.callable)) {
+            accept('error', 'Cannot pass an impure callable to a pure parameter.', {
+                node: node.defaultValue,
+                code: CODE_PURITY_PURE_PARAMETER_SET_TO_IMPURE_CALLABLE,
+            });
+        }
+    };
+};
+
+export const callArgumentAssignedToPureParameterMustBePure = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+    const purityComputer = services.purity.PurityComputer;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsCall, accept: ValidationAcceptor) => {
+        for (const argument of getArguments(node)) {
+            const parameter = nodeMapper.argumentToParameter(argument);
+            if (!parameter) {
+                continue;
+            }
+
+            const parameterType = typeComputer.computeType(parameter);
+            if (!(parameterType instanceof CallableType) || !purityComputer.isPureParameter(parameter)) {
+                continue;
+            }
+
+            const argumentType = typeComputer.computeType(argument);
+            if (!(argumentType instanceof CallableType)) {
+                continue;
+            }
+
+            if (!purityComputer.isPureCallable(argumentType.callable)) {
+                accept('error', 'Cannot pass an impure callable to a pure parameter.', {
+                    node: argument,
+                    code: CODE_PURITY_PURE_PARAMETER_SET_TO_IMPURE_CALLABLE,
+                });
             }
         }
     };
