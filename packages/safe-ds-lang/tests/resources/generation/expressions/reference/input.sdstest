@@ -1,6 +1,6 @@
 package tests.generator.reference
 
-@Pure fun f(param: Any?)
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
 
 @Pure
 @PythonName("explain_model")

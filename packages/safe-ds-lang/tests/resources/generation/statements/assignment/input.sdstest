@@ -1,9 +1,9 @@
 package tests.generator.assignment
 
-@Pure fun f1(param: Any?)
-@Pure fun f2(param: () -> r: Int?)
+@Impure([ImpurityReason.Other]) fun f1(param: Any?)
+@Impure([ImpurityReason.Other]) fun f2(param: () -> r: Int?)
 
-@Pure fun g() -> (a: Int, b: Int, c: Int)
+@Impure([ImpurityReason.Other]) fun g() -> (a: Int, b: Int, c: Int)
 
 pipeline testPipeline {
     _, _ ,_ = g();

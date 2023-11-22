@@ -175,6 +175,7 @@ import {
     resultMustHaveTypeHint,
     yieldTypeMustMatchResultType,
 } from './types.js';
+import { statementMustDoSomething } from './other/statements/statements.js';
 
 /**
  * Register custom validation checks.
@@ -339,6 +340,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentResultListShouldNotBeEmpty,
             segmentShouldBeUsed(services),
         ],
+        SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution],
         SdsTypeParameter: [

@@ -1,25 +1,16 @@
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments, isRangeEqual } from 'langium/test';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { isRangeEqual } from 'langium/test';
+import { describe, it } from 'vitest';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { locationToString } from '../../helpers/location.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { createValidationTests, ExpectedIssue } from './creator.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 
 describe('validation', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each(await createValidationTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {

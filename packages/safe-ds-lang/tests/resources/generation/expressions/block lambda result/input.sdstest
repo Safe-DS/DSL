@@ -2,7 +2,7 @@ package tests.generator.blockLambdaResult
 
 @Pure fun g() -> a: Int
 
-@Pure fun h(a: Int)
+@Impure([ImpurityReason.Other]) fun h(a: Int)
 
 segment f1(l: (a: Int, b: Int) -> d: Int) {
     h(l(1, 2).d);

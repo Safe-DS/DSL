@@ -1,22 +1,13 @@
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments, parseDocument, textDocumentParams } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { parseDocument, textDocumentParams } from 'langium/test';
+import { describe, expect, it } from 'vitest';
 import { DocumentSymbol, SymbolKind, SymbolTag } from 'vscode-languageserver';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const symbolProvider = services.lsp.DocumentSymbolProvider!;
 
 describe('SafeDsSemanticTokenProvider', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     const testCases: DocumentSymbolProviderTest[] = [
         {
             testName: 'annotation declaration',

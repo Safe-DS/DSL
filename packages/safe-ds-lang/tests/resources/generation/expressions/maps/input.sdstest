@@ -1,8 +1,8 @@
 package tests.generator.maps
 
-@Pure fun g1(param: Map<String, Float>)
+@Impure([ImpurityReason.Other]) fun g1(param: Map<String, Float>)
 
-@Pure fun g2(param: Map<Float, String>)
+@Impure([ImpurityReason.Other]) fun g2(param: Map<Float, String>)
 
 @Pure fun h1() -> result: Float
 
