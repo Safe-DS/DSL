@@ -17,12 +17,14 @@ import {
     type ImpurityReason,
     OtherImpurityReason,
     PotentiallyImpureParameterCall,
+    UnknownCallableCall,
 } from './model.js';
 import {
     isSdsAssignment,
     isSdsExpressionStatement,
     isSdsFunction,
     isSdsLambda,
+    isSdsParameter,
     isSdsWildcard,
     SdsCall,
     SdsCallable,
@@ -184,9 +186,7 @@ export class SafeDsPurityComputer {
         // Cache the result if no substitutions are given
         if (isEmpty(substitutions)) {
             const key = this.getNodeId(node);
-            return this.reasonsCache.get(key, () => {
-                return this.doGetImpurityReasons(node, substitutions);
-            });
+            return this.reasonsCache.get(key, () => this.doGetImpurityReasons(node, substitutions));
         } else {
             /* c8 ignore next 2 */
             return this.doGetImpurityReasons(node, substitutions);
@@ -202,8 +202,12 @@ export class SafeDsPurityComputer {
         }
 
         const otherImpurityReasons = callGraph.streamCalledCallables().flatMap((it) => {
-            if (isSdsFunction(it)) {
+            if (!it) {
+                return [UnknownCallableCall];
+            } else if (isSdsFunction(it)) {
                 return this.getImpurityReasonsForFunction(it);
+            } else if (isSdsParameter(it)) {
+                return [new PotentiallyImpureParameterCall(it)];
             } else {
                 return EMPTY_STREAM;
             }
