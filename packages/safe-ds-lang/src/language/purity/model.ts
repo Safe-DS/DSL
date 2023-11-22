@@ -101,6 +101,23 @@ export class PotentiallyImpureParameterCall extends ImpurityReason {
 }
 
 /**
+ * The function calls an unknown callable.
+ */
+class UnknownCallableCallClass extends ImpurityReason {
+    override isSideEffect = true;
+
+    override equals(other: unknown): boolean {
+        return other instanceof UnknownCallableCallClass;
+    }
+
+    override toString(): string {
+        return 'Unknown callable call';
+    }
+}
+
+export const UnknownCallableCall = new UnknownCallableCallClass();
+
+/**
  * A function contains a call that leads to endless recursion.
  */
 class EndlessRecursionClass extends ImpurityReason {
