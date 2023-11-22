@@ -9,13 +9,13 @@ fun impureFunction()
 annotation MyAnnotation(
     // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
     f: () -> () = »pureFunction«,
-    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    // $TEST$ error "Cannot pass an impure callable to a pure parameter."
     g: () -> () = »impureFunction«,
     // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
     other: Int = »impureFunction«,
 )
 
-class MyClass(
+class MyClass1(
     // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
     f: () -> () = »pureFunction«,
     // $TEST$ error "Cannot pass an impure callable to a pure parameter."
@@ -101,3 +101,9 @@ pipeline myPipeline {
         other: Int = »impureFunction«,
     ) -> 1;
 }
+
+// Default value does not have callable type
+class MyClass2(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f: () -> () = »1«,
+)

@@ -135,10 +135,12 @@ import {
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
 import {
+    callArgumentAssignedToPureParameterMustBePure,
     functionPurityMustBeSpecified,
     impurityReasonParameterNameMustBelongToParameterOfCorrectType,
     impurityReasonShouldNotBeSetMultipleTimes,
     impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod,
+    pureParameterDefaultValueMustBePure,
 } from './purity.js';
 import {
     annotationCallArgumentListShouldBeNeeded,
@@ -223,6 +225,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsCall: [
             callArgumentListShouldBeNeeded(services),
+            callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
@@ -317,6 +320,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
             parameterDefaultValueTypeMustMatchParameterType(services),
+            pureParameterDefaultValueMustBePure(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
