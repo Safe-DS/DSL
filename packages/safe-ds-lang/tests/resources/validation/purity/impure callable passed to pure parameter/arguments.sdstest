@@ -1,0 +1,68 @@
+package tests.validation.purity.impureCallablePassedToPureParameter.arguments
+
+@Pure
+fun pureFunction()
+
+@Impure([ImpurityReason.Other])
+fun impureFunction()
+
+annotation MyAnnotation(
+    f: () -> (),
+    other: Int = 1,
+)
+
+class MyClass(
+    f: () -> (),
+    other: Int = 1,
+)
+
+enum MyEnum {
+    MyEnumVariant(
+        f: () -> (),
+        other: Int = 1,
+    )
+}
+
+@Pure
+fun myFunction1(
+    f: () -> (),
+    other: Int = 1,
+)
+
+@Impure([
+    ImpurityReason.PotentiallyImpureParameterCall("f"),
+    ImpurityReason.PotentiallyImpureParameterCall("g"),
+])
+fun myFunction2(
+    f: () -> (),
+    g: () -> (),
+    other: Int = 1,
+)
+
+segment mySegment1(
+    myCallableType: (
+        f: () -> (),
+        other: Int,
+    ) -> ()
+) {
+    mySegment2(pureFunction);
+}
+
+segment mySegment2(
+    f: () -> (),
+    other: Int = 1,
+) {
+    f();
+}
+
+pipeline myPipeline {
+    (
+        f: () -> (),
+        other: Int = 1,
+    ) {};
+
+    (
+        f: () -> (),
+        other: Int = 1,
+    ) -> 1;
+}
