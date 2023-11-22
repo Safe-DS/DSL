@@ -176,6 +176,28 @@ describe('SafeDsSignatureHelpProvider', async () => {
                 },
             ],
         },
+        // https://github.com/Safe-DS/DSL/issues/791
+        {
+            testName: 'optional parameter',
+            code: `
+                fun f(p: Int = 0)
+
+                pipeline myPipeline {
+                    f(»«);
+                }
+            `,
+            expectedSignature: [
+                {
+                    label: 'f(p?: Int) -> ()',
+                    documentation: undefined,
+                    parameters: [
+                        {
+                            label: 'p?: Int',
+                        },
+                    ],
+                },
+            ],
+        },
     ])('should assign the correct signature ($testName)', async ({ code, expectedSignature }) => {
         const actualSignatureHelp = await getActualSignatureHelp(code);
         expect(actualSignatureHelp?.signatures).toStrictEqual(expectedSignature);
