@@ -17,7 +17,7 @@ import type {
 } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { isSdsAbstractCall, SdsCallable, SdsParameter } from '../generated/ast.js';
-import { getParameters } from '../helpers/nodeProperties.js';
+import { getParameters, Parameter } from '../helpers/nodeProperties.js';
 import { type SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { type SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
@@ -108,8 +108,9 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
     };
 
     private getParameterLabel = (parameter: SdsParameter) => {
+        const optionality = Parameter.isOptional(parameter) ? '?' : '';
         const type = this.typeComputer.computeType(parameter);
-        return `${parameter.name}: ${type}`;
+        return `${parameter.name}${optionality}: ${type}`;
     };
 
     /* c8 ignore start */
