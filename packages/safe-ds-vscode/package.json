@@ -86,7 +86,7 @@
                 "safe-ds.validation.codeStyle": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Show an info message if code style can be improved."
+                    "description": "Show an info if code style can be improved."
                 },
                 "safe-ds.validation.experimentalLanguageFeature": {
                     "type": "boolean",
