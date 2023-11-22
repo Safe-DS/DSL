@@ -167,7 +167,7 @@ export class SafeDsCallGraphComputer {
         return this.getExecutedCallsInCallable(syntheticCall.callable.callable, syntheticCall.substitutions);
     }
 
-    private getExecutedCallsInCallable(callable: SdsCallable, substitutions: ParameterSubstitutions) {
+    private getExecutedCallsInCallable(callable: SdsCallable | SdsParameter, substitutions: ParameterSubstitutions) {
         if (isSdsBlockLambda(callable) || isSdsExpressionLambda(callable) || isSdsSegment(callable)) {
             return this.getExecutedCallsInPipelineCallable(callable, substitutions);
         } else if (isSdsClass(callable) || isSdsEnumVariant(callable) || isSdsFunction(callable)) {
@@ -279,7 +279,7 @@ export class SafeDsCallGraphComputer {
 
             // Parameter might have a default value
             if (!callableOrParameter.defaultValue) {
-                return undefined;
+                return new NamedCallable(callableOrParameter);
             }
             return this.getEvaluatedCallable(callableOrParameter.defaultValue, substitutions);
         } else if (isNamed(callableOrParameter)) {
@@ -314,7 +314,7 @@ export class SafeDsCallGraphComputer {
         args: SdsArgument[],
         substitutions: ParameterSubstitutions,
     ): ParameterSubstitutions {
-        if (!callable) {
+        if (!callable || isSdsParameter(callable.callable)) {
             return NO_SUBSTITUTIONS;
         }
 
@@ -322,7 +322,7 @@ export class SafeDsCallGraphComputer {
         const substitutionsOnCreation = callable.substitutionsOnCreation;
 
         // Substitutions on call
-        const parameters = getParameters(callable?.callable);
+        const parameters = getParameters(callable.callable);
         const substitutionsOnCall = new Map(
             args.flatMap((it) => {
                 // Ignore arguments that don't get assigned to a parameter
