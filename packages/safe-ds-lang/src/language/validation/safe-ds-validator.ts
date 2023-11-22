@@ -249,7 +249,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
             nameMustNotStartWithCodegenPrefix,
-            nameShouldHaveCorrectCasing,
+            nameShouldHaveCorrectCasing(services),
             pythonNameShouldDifferFromSafeDsName(services),
             singleUseAnnotationsMustNotBeRepeated(services),
         ],
