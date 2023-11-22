@@ -80,6 +80,31 @@
                 "path": "./syntaxes/safe-ds.tmLanguage.json"
             }
         ],
+        "configuration": {
+            "title": "Safe-DS",
+            "properties": {
+                "safe-ds.validation.codeStyle": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an info message if code style can be improved."
+                },
+                "safe-ds.validation.experimentalLanguageFeature": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Warn if an experimental language feature is used."
+                },
+                "safe-ds.validation.experimentalLibraryElement": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Warn if an experimental library element is used."
+                },
+                "safe-ds.validation.nameConvention": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Warn if a name does not match the Safe-DS name convention."
+                }
+            }
+        },
         "configurationDefaults": {
             "[safe-ds]": {
                 "editor.semanticHighlighting.enabled": true,
