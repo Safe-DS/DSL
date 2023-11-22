@@ -9,6 +9,7 @@ import {
     type ImpurityReason,
     OtherImpurityReason,
     PotentiallyImpureParameterCall,
+    UnknownCallableCall,
 } from '../../../src/language/purity/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { type EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
@@ -32,6 +33,10 @@ describe('purity model', async () => {
             value: () => new PotentiallyImpureParameterCall(undefined),
             unequalValueOfSameType: () => new PotentiallyImpureParameterCall(parameter),
             valueOfOtherType: () => new FileRead('test.txt'),
+        },
+        {
+            value: () => UnknownCallableCall,
+            valueOfOtherType: () => EndlessRecursion,
         },
         {
             value: () => EndlessRecursion,
@@ -98,6 +103,10 @@ describe('purity model', async () => {
         {
             value: new PotentiallyImpureParameterCall(parameter),
             expectedString: 'Potentially impure call of f.p',
+        },
+        {
+            value: UnknownCallableCall,
+            expectedString: 'Unknown callable call',
         },
         {
             value: EndlessRecursion,

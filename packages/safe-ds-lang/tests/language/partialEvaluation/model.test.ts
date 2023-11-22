@@ -187,11 +187,11 @@ describe('partial evaluation model', async () => {
         },
         {
             value: new BlockLambdaClosure(blockLambda1, new Map()),
-            expectedString: '$BlockLambdaClosure',
+            expectedString: '$blockLambdaClosure',
         },
         {
             value: new ExpressionLambdaClosure(expressionLambda1, new Map()),
-            expectedString: '$ExpressionLambdaClosure',
+            expectedString: '$expressionLambdaClosure',
         },
         {
             value: new NamedCallable(segment1),

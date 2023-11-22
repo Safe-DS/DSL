@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { isSdsCallable, isSdsExpression } from '../../../src/language/generated/ast.js';
+import { isSdsCallable, isSdsExpression, isSdsParameter } from '../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
@@ -50,6 +50,37 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: false,
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: false,
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: false,
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: true,
             },
         ])('should return whether a callable is pure ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
@@ -126,9 +157,137 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: false,
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: false,
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: true,
+            },
         ])('should return whether an expression is pure ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.isPureExpression(expression)).toBe(expected);
+        });
+    });
+
+    describe('isPureExpression', () => {
+        it.each([
+            {
+                testName: 'annotation parameter',
+                code: `
+                    package test
+
+                    annotation MyAnnotation(f: () -> ())
+                `,
+                expected: true,
+            },
+            {
+                testName: 'class parameter',
+                code: `
+                    package test
+
+                    class MyClass(f: () -> ())
+                `,
+                expected: true,
+            },
+            {
+                testName: 'enum variant parameter',
+                code: `
+                    package test
+
+                    enum MyEnum {
+                        MyEnumVariant(f: () -> ())
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'pure function parameter',
+                code: `
+                    package test
+
+                    @Pure
+                    fun myFunction(f: () -> ())
+                `,
+                expected: true,
+            },
+            {
+                testName: 'impure function parameter',
+                code: `
+                    package test
+
+                    @Impure([ImpurityReason.PotentiallyImpureParameterCall("f")])
+                    fun myFunction(f: () -> ())
+                `,
+                expected: false,
+            },
+            {
+                testName: 'callable type parameter',
+                code: `
+                    package test
+
+                    segment mySegment() -> (result: (f: () -> ()) -> ())
+                `,
+                expected: false,
+            },
+            {
+                testName: 'segment parameter',
+                code: `
+                    package test
+
+                    segment mySegment(f: () -> ())
+                `,
+                expected: false,
+            },
+            {
+                testName: 'block lambda parameter',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        (f: () -> ()) {};
+                    }
+                `,
+                expected: false,
+            },
+            {
+                testName: 'expression lambda parameter',
+                code: `
+                    package test
+
+                    pipeline myPipeline {
+                        (f: () -> ()) -> 1;
+                    }
+                `,
+                expected: false,
+            },
+        ])('should return whether a parameter is pure ($testName)', async ({ code, expected }) => {
+            const parameter = await getNodeOfType(services, code, isSdsParameter);
+            expect(purityComputer.isPureParameter(parameter)).toBe(expected);
         });
     });
 
@@ -184,6 +343,37 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: true,
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: false,
             },
         ])('should return whether a callable has side effects ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
@@ -273,6 +463,37 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: true,
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: true,
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: false,
             },
         ])('should return whether a call has side effects ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
@@ -383,6 +604,37 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: ['Endless recursion'],
             },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: ['Unknown callable call'],
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: ['Potentially impure call of test.mySegment.param'],
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: [],
+            },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const callable = await getNodeOfType(services, code, isSdsCallable);
             const actual = purityComputer.getImpurityReasonsForCallable(callable).map((reason) => reason.toString());
@@ -472,6 +724,37 @@ describe('SafeDsPurityComputer', async () => {
                     }
                 `,
                 expected: ['Endless recursion'],
+            },
+            {
+                testName: 'unknown callable',
+                code: `
+                    package test
+
+                    segment a() {
+                        unresolved();
+                    }
+                `,
+                expected: ['Unknown callable call'],
+            },
+            {
+                testName: 'potentially impure parameter call',
+                code: `
+                    package test
+
+                    segment mySegment(param: () -> ()) {
+                        param();
+                    }
+                `,
+                expected: ['Potentially impure call of test.mySegment.param'],
+            },
+            {
+                testName: 'pure parameter call',
+                code: `
+                    package test
+
+                    class MyClass(param: () -> (result: Int), value: Int = param())
+                `,
+                expected: [],
             },
         ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
