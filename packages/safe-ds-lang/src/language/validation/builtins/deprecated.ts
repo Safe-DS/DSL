@@ -15,10 +15,7 @@ import { Parameter } from '../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { parameterCanBeAnnotated } from '../other/declarations/annotationCalls.js';
 
-export const CODE_DEPRECATED_ASSIGNED_RESULT = 'deprecated/assigned-result';
-export const CODE_DEPRECATED_CALLED_ANNOTATION = 'deprecated/called-annotation';
-export const CODE_DEPRECATED_CORRESPONDING_PARAMETER = 'deprecated/corresponding-parameter';
-export const CODE_DEPRECATED_REFERENCED_DECLARATION = 'deprecated/referenced-declaration';
+export const CODE_DEPRECATED_LIBRARY_ELEMENT = 'deprecated/library-element';
 export const CODE_DEPRECATED_REQUIRED_PARAMETER = 'deprecated/required-parameter';
 
 export const assigneeAssignedResultShouldNotBeDeprecated =
@@ -35,7 +32,7 @@ export const assigneeAssignedResultShouldNotBeDeprecated =
         if (services.builtins.Annotations.callsDeprecated(assignedObject)) {
             accept('warning', `The assigned result '${assignedObject.name}' is deprecated.`, {
                 node,
-                code: CODE_DEPRECATED_ASSIGNED_RESULT,
+                code: CODE_DEPRECATED_LIBRARY_ELEMENT,
                 tags: [DiagnosticTag.Deprecated],
             });
         }
@@ -52,7 +49,7 @@ export const annotationCallAnnotationShouldNotBeDeprecated =
             accept('warning', `The called annotation '${annotation.name}' is deprecated.`, {
                 node,
                 property: 'annotation',
-                code: CODE_DEPRECATED_CALLED_ANNOTATION,
+                code: CODE_DEPRECATED_LIBRARY_ELEMENT,
                 tags: [DiagnosticTag.Deprecated],
             });
         }
@@ -68,7 +65,7 @@ export const argumentCorrespondingParameterShouldNotBeDeprecated =
         if (services.builtins.Annotations.callsDeprecated(parameter)) {
             accept('warning', `The corresponding parameter '${parameter.name}' is deprecated.`, {
                 node,
-                code: CODE_DEPRECATED_CORRESPONDING_PARAMETER,
+                code: CODE_DEPRECATED_LIBRARY_ELEMENT,
                 tags: [DiagnosticTag.Deprecated],
             });
         }
@@ -84,7 +81,7 @@ export const namedTypeDeclarationShouldNotBeDeprecated =
         if (services.builtins.Annotations.callsDeprecated(declaration)) {
             accept('warning', `The referenced declaration '${declaration.name}' is deprecated.`, {
                 node,
-                code: CODE_DEPRECATED_REFERENCED_DECLARATION,
+                code: CODE_DEPRECATED_LIBRARY_ELEMENT,
                 tags: [DiagnosticTag.Deprecated],
             });
         }
@@ -100,7 +97,7 @@ export const referenceTargetShouldNotBeDeprecated =
         if (services.builtins.Annotations.callsDeprecated(target)) {
             accept('warning', `The referenced declaration '${target.name}' is deprecated.`, {
                 node,
-                code: CODE_DEPRECATED_REFERENCED_DECLARATION,
+                code: CODE_DEPRECATED_LIBRARY_ELEMENT,
                 tags: [DiagnosticTag.Deprecated],
             });
         }

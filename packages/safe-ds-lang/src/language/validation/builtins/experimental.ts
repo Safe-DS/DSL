@@ -11,10 +11,7 @@ import {
 } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 
-export const CODE_EXPERIMENTAL_ASSIGNED_RESULT = 'experimental/assigned-result';
-export const CODE_EXPERIMENTAL_CALLED_ANNOTATION = 'experimental/called-annotation';
-export const CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER = 'experimental/corresponding-parameter';
-export const CODE_EXPERIMENTAL_REFERENCED_DECLARATION = 'experimental/referenced-declaration';
+export const CODE_EXPERIMENTAL_LIBRARY_ELEMENT = 'experimental/library-element';
 
 export const assigneeAssignedResultShouldNotBeExperimental =
     (services: SafeDsServices) => (node: SdsAssignee, accept: ValidationAcceptor) => {
@@ -30,7 +27,7 @@ export const assigneeAssignedResultShouldNotBeExperimental =
         if (services.builtins.Annotations.callsExperimental(assignedObject)) {
             accept('warning', `The assigned result '${assignedObject.name}' is experimental.`, {
                 node,
-                code: CODE_EXPERIMENTAL_ASSIGNED_RESULT,
+                code: CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
             });
         }
     };
@@ -46,7 +43,7 @@ export const annotationCallAnnotationShouldNotBeExperimental =
             accept('warning', `The called annotation '${annotation.name}' is experimental.`, {
                 node,
                 property: 'annotation',
-                code: CODE_EXPERIMENTAL_CALLED_ANNOTATION,
+                code: CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
             });
         }
     };
@@ -61,7 +58,7 @@ export const argumentCorrespondingParameterShouldNotBeExperimental =
         if (services.builtins.Annotations.callsExperimental(parameter)) {
             accept('warning', `The corresponding parameter '${parameter.name}' is experimental.`, {
                 node,
-                code: CODE_EXPERIMENTAL_CORRESPONDING_PARAMETER,
+                code: CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
             });
         }
     };
@@ -76,7 +73,7 @@ export const namedTypeDeclarationShouldNotBeExperimental =
         if (services.builtins.Annotations.callsExperimental(declaration)) {
             accept('warning', `The referenced declaration '${declaration.name}' is experimental.`, {
                 node,
-                code: CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
+                code: CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
             });
         }
     };
@@ -91,7 +88,7 @@ export const referenceTargetShouldNotExperimental =
         if (services.builtins.Annotations.callsExperimental(target)) {
             accept('warning', `The referenced declaration '${target.name}' is experimental.`, {
                 node,
-                code: CODE_EXPERIMENTAL_REFERENCED_DECLARATION,
+                code: CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
             });
         }
     };
