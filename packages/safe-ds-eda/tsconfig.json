@@ -15,8 +15,8 @@
     "allowJs": true,
     "checkJs": true,
     "isolatedModules": true,
-    "typeRoots" : ["./node_modules/@types","./declarations.d.ts","src/globals.d.ts"]
+    "typeRoots" : ["./node_modules/@types","./declarations.d.ts","./globals.d.ts"]
   },
-  "include": ["src/**/*.d.ts","./*.d.ts","src/*.ts","src/**/*.ts", "src/**/*.js", "src/**/*.svelte","./declarations.d.ts","src/globals.d.ts","../../types"],
+  "include": ["src/**/*.d.ts","./*.d.ts","src/*.ts","src/**/*.ts", "src/**/*.js", "src/**/*.svelte","declarations.d.ts","globals.d.ts","../../types","./*.d.ts","*.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

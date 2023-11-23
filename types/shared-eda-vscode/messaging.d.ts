@@ -14,6 +14,7 @@ interface ToExtensionSetStateMessage extends ToExtensionCommandMessage {
 
 interface ToExtensionResetStateMessage extends ToExtensionCommandMessage {
   command: "resetGlobalState";
+  value: null;
 }
 
 // Just example

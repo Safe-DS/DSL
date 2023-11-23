@@ -9,7 +9,8 @@ export const setCurrentGlobalState = function(state: State) {
 
 export const resetGlobalState = function() {
   window.injVscode.postMessage({
-    command: "resetGlobalState"
+    command: "resetGlobalState",
+    value: null,
   });
 }
 
