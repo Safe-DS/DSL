@@ -495,7 +495,7 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: false,
             },
-        ])('should return whether a call has side effects ($testName)', async ({ code, expected }) => {
+        ])('should return whether an expression has side effects ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             expect(purityComputer.expressionHasSideEffects(expression)).toBe(expected);
         });
@@ -756,7 +756,7 @@ describe('SafeDsPurityComputer', async () => {
                 `,
                 expected: [],
             },
-        ])('should return the impurity reasons of a callable ($testName)', async ({ code, expected }) => {
+        ])('should return the impurity reasons of an expression ($testName)', async ({ code, expected }) => {
             const expression = await getNodeOfType(services, code, isSdsExpression);
             const actual = purityComputer
                 .getImpurityReasonsForExpression(expression)
