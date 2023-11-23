@@ -1,7 +1,7 @@
 import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import { getParameters, Parameter } from '../helpers/nodeProperties.js';
+import { Enum, EnumVariant, getParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
@@ -34,10 +34,14 @@ export class SafeDsTypeChecker {
         this.typeComputer = () => services.types.TypeComputer;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // isAssignableTo
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Checks whether {@link type} is assignable {@link other}.
      */
-    isAssignableTo(type: Type, other: Type): boolean {
+    isAssignableTo = (type: Type, other: Type): boolean => {
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (other instanceof UnionType) {
@@ -63,7 +67,7 @@ export class SafeDsTypeChecker {
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
-    }
+    };
 
     private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
         if (other instanceof ClassType) {
@@ -232,7 +236,7 @@ export class SafeDsTypeChecker {
                 new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
             );
 
-            return new CallableType(declaration, parameterEntries, resultEntries);
+            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
         } else if (instanceType instanceof EnumVariantType) {
             const declaration = instanceType.declaration;
 
@@ -245,7 +249,7 @@ export class SafeDsTypeChecker {
                 new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
             );
 
-            return new CallableType(declaration, parameterEntries, resultEntries);
+            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
         } else {
             return UnknownType;
         }
@@ -254,4 +258,31 @@ export class SafeDsTypeChecker {
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
         return type.possibleTypes.every((it) => this.isAssignableTo(it, other));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // canBeTypeOfConstantParameter
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Checks whether {@link type} is allowed as the type of a constant parameter.
+     */
+    canBeTypeOfConstantParameter = (type: Type): boolean => {
+        if (type instanceof ClassType) {
+            return [
+                this.builtinClasses.Boolean,
+                this.builtinClasses.Float,
+                this.builtinClasses.Int,
+                this.builtinClasses.List,
+                this.builtinClasses.Map,
+                this.builtinClasses.Nothing,
+                this.builtinClasses.String,
+            ].includes(type.declaration);
+        } else if (type instanceof EnumType) {
+            return Enum.isConstant(type.declaration);
+        } else if (type instanceof EnumVariantType) {
+            return EnumVariant.isConstant(type.declaration);
+        } else {
+            return type instanceof LiteralType || type === UnknownType;
+        }
+    };
 }

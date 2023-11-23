@@ -1,0 +1,15 @@
+package tests.validation.other.expression.calls.recurcion.notRecursive
+
+/**
+ * Even though "s2" gets called twice, this does not lead to infinite recursion, since the 2nd time the default, empty
+ * lambda is used for "f".
+ */
+
+segment s1() {
+    // $TEST$ no error "Call leads to infinite recursion."
+    »s2(() -> s2())«;
+}
+
+segment s2(f: () -> () = () {}) {
+    f();
+}

@@ -1,0 +1,12 @@
+package tests.callGraph.blockLambdaCall.argument.function
+
+@Pure fun f()
+
+pipeline myPipeline {
+    val lambda = (param: () -> ()) {
+        param();
+    };
+
+    // $TEST$ ["$blockLambda", "f"]
+    »lambda(f)«;
+}

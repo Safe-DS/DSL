@@ -14,7 +14,7 @@ pipeline test {
     »true or true«;
 
     // $TEST$ serialization ?
-    »1 or true«;
+    »1 or false«;
 
     // $TEST$ serialization ?
     »false or 0«;
@@ -23,5 +23,5 @@ pipeline test {
     »unresolved or false«;
 
     // $TEST$ serialization ?
-    »true or unresolved«;
+    »false or unresolved«;
 }

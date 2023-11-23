@@ -1,6 +1,5 @@
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
     isSdsAttribute,
     isSdsClass,
@@ -9,23 +8,14 @@ import {
     type SdsClassMember,
 } from '../../../src/language/generated/ast.js';
 import { getClassMembers } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const builtinClasses = services.builtins.Classes;
 const classHierarchy = services.types.ClassHierarchy;
 
 describe('SafeDsClassHierarchy', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     describe('isEqualToOrSubclassOf', () => {
         const testCases = [
             {

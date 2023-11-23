@@ -1,0 +1,9 @@
+package tests.validation.other.expressions.arguments.mustBeConstantIfParameterIsConstant
+
+enum MyEnum {
+    MyConstantVariant(const constantParam: Int)
+    MyNormalVariant(normalParam: Int)
+}
+
+@Pure
+fun intFunction() -> value: Int

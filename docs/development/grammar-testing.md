@@ -5,7 +5,7 @@ test.
 
 ## Adding a grammar test
 
-1. Create a new file with extension `.sdstest` in the `tests/resources/grammar` directory or any subdirectory. Give
+1. Create a new file with the extension `.sdstest` in the `tests/resources/grammar` directory or any subdirectory. Give
    the file a descriptive name, since the file name becomes part of the test name.
 
     !!! note "Naming convention"

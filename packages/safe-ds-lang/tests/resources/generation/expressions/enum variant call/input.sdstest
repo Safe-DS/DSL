@@ -1,6 +1,6 @@
 package tests.generator.enumVariantCall
 
-@Pure fun f(p: Any)
+@Impure([ImpurityReason.Other]) fun f(p: Any)
 
 enum MyEnum {
    Variant1

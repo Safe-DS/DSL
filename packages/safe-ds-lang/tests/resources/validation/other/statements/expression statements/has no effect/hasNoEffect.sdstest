@@ -1,0 +1,83 @@
+package tests.validation.other.statements.expressionStatements.hasNoEffect
+
+@Impure([ImpurityReason.Other])
+fun impureFunction()
+
+@Pure
+fun pureFunction() -> a: Int
+
+class MyClass() {
+    @Impure([ImpurityReason.Other])
+    fun impureFunction()
+
+    @Pure fun pureFunction()
+}
+
+segment pureSegment() {
+    val a = pureFunction();
+}
+
+segment impureSegment() {
+    impureFunction();
+}
+
+segment recursiveA() {
+    recursiveB();
+}
+
+segment recursiveB() {
+    recursiveA();
+}
+
+segment mySegment() {
+    // $TEST$ warning "This statement does nothing."
+    »1 + 2;«
+    // $TEST$ warning "This statement does nothing."
+    »pureFunction();«
+    // $TEST$ warning "This statement does nothing."
+    »MyClass().pureFunction();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »impureFunction();«
+    // $TEST$ no warning "This statement does nothing."
+    »MyClass().impureFunction();«
+
+    () {
+        // $TEST$ warning "This statement does nothing."
+        »1 + 2;«
+        // $TEST$ warning "This statement does nothing."
+        »pureFunction();«
+        // $TEST$ warning "This statement does nothing."
+        »MyClass().pureFunction();«
+
+        // $TEST$ no warning "This statement does nothing."
+        »impureFunction();«
+        // $TEST$ no warning "This statement does nothing."
+        »MyClass().impureFunction();«
+    };
+
+    // $TEST$ warning "This statement does nothing."
+    »pureSegment();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »impureSegment();«
+
+    // $TEST$ warning "This statement does nothing."
+    »(() {
+        pureFunction();
+        MyClass().pureFunction();
+    })();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »(() {
+        impureFunction();
+    })();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »(() {
+        MyClass().impureFunction();
+    })();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »recursiveA();«
+}

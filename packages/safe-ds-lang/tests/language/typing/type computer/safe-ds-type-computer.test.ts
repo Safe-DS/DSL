@@ -1,26 +1,16 @@
-import { afterEach, beforeEach, describe, it } from 'vitest';
-import { createSafeDsServices } from '../../../../src/language/index.js';
+import { describe, it } from 'vitest';
+import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments } from 'langium/test';
 import { AssertionError } from 'assert';
 import { locationToString } from '../../../helpers/location.js';
 import { createTypingTests } from './creator.js';
 import { getNodeByLocation } from '../../../helpers/nodeFinder.js';
 import { loadDocuments } from '../../../helpers/testResources.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const typeComputer = services.types.TypeComputer;
 
 describe('typing', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each(await createTypingTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isSdsParameter } from '../../../src/language/generated/ast.js';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import {
+    EndlessRecursion,
     FileRead,
     FileWrite,
     type ImpurityReason,
@@ -31,6 +32,10 @@ describe('purity model', async () => {
             value: () => new PotentiallyImpureParameterCall(undefined),
             unequalValueOfSameType: () => new PotentiallyImpureParameterCall(parameter),
             valueOfOtherType: () => new FileRead('test.txt'),
+        },
+        {
+            value: () => EndlessRecursion,
+            valueOfOtherType: () => OtherImpurityReason,
         },
         {
             value: () => OtherImpurityReason,
@@ -93,6 +98,10 @@ describe('purity model', async () => {
         {
             value: new PotentiallyImpureParameterCall(parameter),
             expectedString: 'Potentially impure call of f.p',
+        },
+        {
+            value: EndlessRecursion,
+            expectedString: 'Endless recursion',
         },
         {
             value: OtherImpurityReason,

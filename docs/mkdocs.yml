@@ -40,14 +40,14 @@ nav:
       - stdlib/README.md
       - safeds.lang: stdlib/safeds_lang.md
   - Development:
+      - Call Graph Testing: development/call-graph-testing.md
+      - Formatting Testing: development/formatting-testing.md
+      - Generation Testing: development/generation-testing.md
       - Grammar Testing: development/grammar-testing.md
+      - Partial Evaluation Testing: development/partial-evaluation-testing.md
       - Scoping Testing: development/scoping-testing.md
       - Typing Testing: development/typing-testing.md
-      - Partial Evaluation Testing: development/partial-evaluation-testing.md
       - Validation Testing: development/validation-testing.md
-      - Generation Testing: development/generation-testing.md
-      - Formatting Testing: development/formatting-testing.md
-      - Langium Quickstart: development/langium-quickstart.md
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 

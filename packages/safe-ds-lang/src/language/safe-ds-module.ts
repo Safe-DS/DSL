@@ -11,7 +11,7 @@ import {
 } from 'langium';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClasses } from './builtins/safe-ds-classes.js';
-import { SafeDsEnums } from './builtins/safe-ds-enums.js';
+import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js';
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
 import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
@@ -40,6 +40,7 @@ import { registerValidationChecks } from './validation/safe-ds-validator.js';
 import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
+import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -49,6 +50,7 @@ export type SafeDsAddedServices = {
         Annotations: SafeDsAnnotations;
         Classes: SafeDsClasses;
         Enums: SafeDsEnums;
+        ImpurityReasons: SafeDsImpurityReasons;
     };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
@@ -65,6 +67,9 @@ export type SafeDsAddedServices = {
     lsp: {
         NodeInfoProvider: SafeDsNodeInfoProvider;
         TypeHierarchyProvider: SafeDsTypeHierarchyProvider;
+    };
+    purity: {
+        PurityComputer: SafeDsPurityComputer;
     };
     types: {
         ClassHierarchy: SafeDsClassHierarchy;
@@ -93,6 +98,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Annotations: (services) => new SafeDsAnnotations(services),
         Classes: (services) => new SafeDsClasses(services),
         Enums: (services) => new SafeDsEnums(services),
+        ImpurityReasons: (services) => new SafeDsImpurityReasons(services),
     },
     documentation: {
         CommentProvider: (services) => new SafeDsCommentProvider(services),
@@ -122,6 +128,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     parser: {
         ValueConverter: () => new SafeDsValueConverter(),
+    },
+    purity: {
+        PurityComputer: (services) => new SafeDsPurityComputer(services),
     },
     references: {
         ScopeComputation: (services) => new SafeDsScopeComputation(services),

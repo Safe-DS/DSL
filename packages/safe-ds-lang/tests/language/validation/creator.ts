@@ -73,7 +73,7 @@ const createValidationTest = async (parentDirectory: URI, uris: URI[]): Promise<
 
     const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
     return {
-        testName: `[${shortenedResourceName}] should be validated correctly`,
+        testName: `[${shortenedResourceName}]`,
         uris,
         expectedIssues: issues,
     };

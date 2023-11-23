@@ -1,0 +1,10 @@
+package tests.validation.other.expression.calls.recurcion.transitiveViaFunctionPointerArgument
+
+segment s1() {
+    // $TEST$ error "Call leads to infinite recursion."
+    »s2(s1)«;
+}
+
+segment s2(f: () -> ()) {
+    f();
+}

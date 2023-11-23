@@ -1,6 +1,6 @@
 package tests.generator.twoPipelines
 
-@Pure fun f()
+@Impure([ImpurityReason.Other]) fun f()
 
 pipeline test1 {
     f();

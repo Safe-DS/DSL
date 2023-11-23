@@ -17,7 +17,6 @@ import {
     referenceTargetShouldNotExperimental,
 } from './builtins/experimental.js';
 import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
-import { pureParameterMustHaveCallableType } from './builtins/pure.js';
 import { pythonCallMustOnlyContainValidTemplateExpressions } from './builtins/pythonCall.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import {
@@ -72,7 +71,10 @@ import {
     lambdaParametersMustNotBeAnnotated,
 } from './other/declarations/annotationCalls.js';
 import { parameterListMustNotHaveRequiredParametersAfterOptionalParameters } from './other/declarations/parameterLists.js';
-import { constantParameterMustHaveConstantDefaultValue } from './other/declarations/parameters.js';
+import {
+    constantParameterMustHaveConstantDefaultValue,
+    constantParameterMustHaveTypeThatCanBeEvaluatedToConstant,
+} from './other/declarations/parameters.js';
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
 import {
     segmentParameterShouldBeUsed,
@@ -84,7 +86,7 @@ import {
     typeParameterMustHaveSufficientContext,
     typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
 } from './other/declarations/typeParameters.js';
-import { callArgumentsMustBeConstantIfParameterIsConstant } from './other/expressions/calls.js';
+import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
 import {
     lambdaMustBeAssignedToTypedParameter,
@@ -132,7 +134,12 @@ import {
     unionTypeMustHaveTypes,
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
-import { functionPurityMustBeSpecified } from './purity.js';
+import {
+    functionPurityMustBeSpecified,
+    impurityReasonParameterNameMustBelongToParameterOfCorrectType,
+    impurityReasonShouldNotBeSetMultipleTimes,
+    impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod,
+} from './purity.js';
 import {
     annotationCallArgumentListShouldBeNeeded,
     annotationParameterListShouldNotBeEmpty,
@@ -168,7 +175,7 @@ import {
     resultMustHaveTypeHint,
     yieldTypeMustMatchResultType,
 } from './types.js';
-import { impurityReasonParameterNameMustBelongToParameter } from './builtins/impure.js';
+import { statementMustDoSomething } from './other/statements/statements.js';
 
 /**
  * Register custom validation checks.
@@ -216,7 +223,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsCall: [
             callArgumentListShouldBeNeeded(services),
-            callArgumentsMustBeConstantIfParameterIsConstant(services),
+            callArgumentMustBeConstantIfParameterIsConstant(services),
+            callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
         ],
         SdsCallableType: [
@@ -250,7 +258,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             functionMustContainUniqueNames,
             functionResultListShouldNotBeEmpty,
             functionPurityMustBeSpecified(services),
-            impurityReasonParameterNameMustBelongToParameter(services),
+            impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod(services),
+            impurityReasonParameterNameMustBelongToParameterOfCorrectType(services),
+            impurityReasonShouldNotBeSetMultipleTimes(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
         ],
@@ -304,9 +314,9 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),
+            constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
             parameterDefaultValueTypeMustMatchParameterType(services),
-            pureParameterMustHaveCallableType(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
@@ -330,6 +340,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentResultListShouldNotBeEmpty,
             segmentShouldBeUsed(services),
         ],
+        SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution],
         SdsTypeParameter: [

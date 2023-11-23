@@ -8,6 +8,7 @@ import {
     isSdsCallable,
     isSdsClass,
     isSdsEnumVariant,
+    isSdsExpressionLambda,
     isSdsNamedType,
     isSdsParameter,
     isSdsReference,
@@ -32,13 +33,13 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { CallableType, StaticType } from '../typing/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import {
+    Argument,
     getAbstractResults,
     getArguments,
     getParameters,
     getTypeArguments,
     getTypeParameters,
-    isNamedArgument,
-    isNamedTypeArgument,
+    TypeArgument,
 } from './nodeProperties.js';
 
 export class SafeDsNodeMapper {
@@ -68,7 +69,7 @@ export class SafeDsNodeMapper {
 
         // A prior argument is named
         for (let i = 0; i < argumentPosition; i++) {
-            if (isNamedArgument(args[i]!)) {
+            if (Argument.isNamed(args[i]!)) {
                 return undefined;
             }
         }
@@ -116,6 +117,15 @@ export class SafeDsNodeMapper {
         if (isSdsClass(callable) || isSdsEnumVariant(callable)) {
             if (assigneePosition === 0) {
                 return expression;
+            } else {
+                return undefined;
+            }
+        }
+
+        // If the RHS calls an expression lambda, the first assignee gets its result
+        if (isSdsExpressionLambda(callable)) {
+            if (assigneePosition === 0) {
+                return callable.result;
             } else {
                 return undefined;
             }
@@ -274,7 +284,7 @@ export class SafeDsNodeMapper {
 
         // A prior type argument is named
         for (let i = 0; i < typeArgumentPosition; i++) {
-            if (isNamedTypeArgument(typeArguments[i]!)) {
+            if (TypeArgument.isNamed(typeArguments[i]!)) {
                 return undefined;
             }
         }

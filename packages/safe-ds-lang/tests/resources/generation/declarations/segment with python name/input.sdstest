@@ -1,6 +1,6 @@
 package tests.generator.segmentWithPythonName
 
-@Pure fun f()
+@Impure([ImpurityReason.Other]) fun f()
 
 @PythonName("test_segment")
 segment testSegment() {

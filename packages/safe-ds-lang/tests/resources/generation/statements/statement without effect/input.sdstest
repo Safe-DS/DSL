@@ -1,0 +1,18 @@
+package tests.generator.statementWithoutEffect
+
+@Impure([ImpurityReason.Other]) fun f(param: () -> ())
+
+pipeline testPipeline {
+    1;
+    _ = 1;
+
+    f(() {
+        1;
+        _ = 1;
+    });
+}
+
+segment testSegment() {
+    1;
+    _ = 1;
+}

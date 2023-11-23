@@ -1,6 +1,6 @@
 package tests.generator.prefixOperation
 
-@Pure fun f(param: Any?)
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
 
 @Pure fun g() -> result: Boolean
 

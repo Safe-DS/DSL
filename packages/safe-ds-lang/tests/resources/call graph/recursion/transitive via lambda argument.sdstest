@@ -1,0 +1,10 @@
+package tests.callGraph.recursion.transitiveViaLambdaArgument
+
+segment s1() {
+    // $TEST$ ["s2", "$expressionLambda", "s1", "s2"]
+    »s2(() -> s1())«;
+}
+
+segment s2(f: () -> ()) {
+    f();
+}

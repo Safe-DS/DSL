@@ -10,7 +10,6 @@ import {
     type SdsEnumVariant,
     type SdsExpression,
     type SdsExpressionLambda,
-    type SdsLambda,
     type SdsParameter,
     type SdsReference,
 } from '../generated/ast.js';
@@ -145,16 +144,13 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 // Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class EvaluatedCallable<T extends SdsCallable> extends EvaluatedNode {
+export abstract class EvaluatedCallable<out T extends SdsCallable = SdsCallable> extends EvaluatedNode {
     abstract readonly callable: T;
+    abstract readonly substitutionsOnCreation: ParameterSubstitutions;
     override readonly isFullyEvaluated: boolean = false;
 }
 
-export abstract class Closure<T extends SdsLambda> extends EvaluatedCallable<T> {
-    abstract readonly substitutionsOnCreation: ParameterSubstitutions;
-}
-
-export class BlockLambdaClosure extends Closure<SdsBlockLambda> {
+export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
     readonly results: SdsBlockLambdaResult[];
 
     constructor(
@@ -183,7 +179,7 @@ export class BlockLambdaClosure extends Closure<SdsBlockLambda> {
     }
 }
 
-export class ExpressionLambdaClosure extends Closure<SdsExpressionLambda> {
+export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLambda> {
     readonly result: SdsExpression;
 
     constructor(
@@ -214,6 +210,7 @@ export class ExpressionLambdaClosure extends Closure<SdsExpressionLambda> {
 
 export class NamedCallable<T extends SdsCallable & NamedAstNode> extends EvaluatedCallable<T> {
     override readonly isFullyEvaluated: boolean = false;
+    override readonly substitutionsOnCreation: ParameterSubstitutions = new Map();
 
     constructor(override readonly callable: T) {
         super();
@@ -245,6 +242,19 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
     override readonly isFullyEvaluated: boolean =
         isEmpty(getParameters(this.variant)) ||
         (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
+
+    getArgumentValueByName(name: string): EvaluatedNode {
+        if (!this.args) {
+            return UnknownEvaluatedNode;
+        }
+
+        const parameter = getParameters(this.variant).find((it) => it.name === name);
+        if (!parameter) {
+            return UnknownEvaluatedNode;
+        }
+
+        return this.args.get(parameter) ?? UnknownEvaluatedNode;
+    }
 
     override equals(other: unknown): boolean {
         if (other === this) {
@@ -446,7 +456,7 @@ const isFullyEvaluated = (node: EvaluatedNode): boolean => {
     return node.isFullyEvaluated;
 };
 
-const substitutionsAreEqual = (
+export const substitutionsAreEqual = (
     a: Map<SdsDeclaration, EvaluatedNode> | undefined,
     b: Map<SdsDeclaration, EvaluatedNode> | undefined,
 ): boolean => {

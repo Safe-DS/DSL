@@ -1,7 +1,6 @@
 import { AssertionError } from 'assert';
 import { AstNode, EmptyFileSystem } from 'langium';
-import { clearDocuments } from 'langium/test';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
     isSdsAnnotation,
     isSdsAttribute,
@@ -21,10 +20,6 @@ const commentProvider = services.documentation.CommentProvider;
 const testComment = '/* test */';
 
 describe('SafeDsCommentProvider', () => {
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     const testCases: CommentProviderTest[] = [
         {
             testName: 'commented module member (without annotations)',

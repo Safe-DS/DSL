@@ -1,8 +1,7 @@
-import { EMPTY_STREAM, getContainerOfType, Stream, stream, URI } from 'langium';
+import { EMPTY_STREAM, Stream, stream, URI } from 'langium';
 import { resourceNameToUri } from '../../helpers/resources.js';
 import {
     isSdsAnnotation,
-    isSdsEnum,
     SdsAnnotatedObject,
     SdsAnnotation,
     SdsEnumVariant,
@@ -43,7 +42,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
-    isDeprecated(node: SdsAnnotatedObject | undefined): boolean {
+    callsDeprecated(node: SdsAnnotatedObject | undefined): boolean {
         return hasAnnotationCallOf(node, this.Deprecated);
     }
 
@@ -51,7 +50,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(MATURITY_URI, 'Deprecated');
     }
 
-    isExperimental(node: SdsAnnotatedObject | undefined): boolean {
+    callsExperimental(node: SdsAnnotatedObject | undefined): boolean {
         return hasAnnotationCallOf(node, this.Experimental);
     }
 
@@ -59,7 +58,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(MATURITY_URI, 'Experimental');
     }
 
-    isExpert(node: SdsParameter | undefined): boolean {
+    callsExpert(node: SdsParameter | undefined): boolean {
         return hasAnnotationCallOf(node, this.Expert);
     }
 
@@ -67,11 +66,11 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(IDE_INTEGRATION_URI, 'Expert');
     }
 
-    isImpure(node: SdsFunction | undefined): boolean {
+    callsImpure(node: SdsFunction | undefined): boolean {
         return hasAnnotationCallOf(node, this.Impure);
     }
 
-    streamImpurityReasons(node: SdsFunction | undefined): Stream<SdsEnumVariant> {
+    streamImpurityReasons(node: SdsFunction | undefined): Stream<EvaluatedEnumVariant> {
         // If allReasons are specified, but we could not evaluate them to a list, no reasons apply
         const value = this.getParameterValue(node, this.Impure, 'allReasons');
         if (!(value instanceof EvaluatedList)) {
@@ -79,24 +78,18 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
 
         // Otherwise, filter the elements of the list and keep only variants of the ImpurityReason enum
-        return stream(value.elements)
-            .filter(
-                (it) =>
-                    it instanceof EvaluatedEnumVariant &&
-                    getContainerOfType(it.variant, isSdsEnum) === this.builtinEnums.ImpurityReason,
-            )
-            .map((it) => (<EvaluatedEnumVariant>it).variant);
+        return stream(value.elements).filter(this.builtinEnums.isEvaluatedImpurityReason);
     }
 
     get Impure(): SdsAnnotation | undefined {
         return this.getAnnotation(PURITY_URI, 'Impure');
     }
 
-    isPure(node: SdsFunction | SdsParameter | undefined): boolean {
+    callsPure(node: SdsFunction | undefined): boolean {
         return hasAnnotationCallOf(node, this.Pure);
     }
 
-    private get Pure(): SdsAnnotation | undefined {
+    get Pure(): SdsAnnotation | undefined {
         return this.getAnnotation(PURITY_URI, 'Pure');
     }
 
@@ -139,7 +132,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonName');
     }
 
-    isRepeatable(node: SdsAnnotation | undefined): boolean {
+    callsRepeatable(node: SdsAnnotation | undefined): boolean {
         return hasAnnotationCallOf(node, this.Repeatable);
     }
 
@@ -161,12 +154,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
         // Otherwise, filter the elements of the list and keep only variants of the AnnotationTarget enum
         return stream(value.elements)
-            .filter(
-                (it) =>
-                    it instanceof EvaluatedEnumVariant &&
-                    getContainerOfType(it.variant, isSdsEnum) === this.builtinEnums.AnnotationTarget,
-            )
-            .map((it) => (<EvaluatedEnumVariant>it).variant);
+            .filter(this.builtinEnums.isEvaluatedAnnotationTarget)
+            .map((it) => it.variant);
     }
 
     get Target(): SdsAnnotation | undefined {

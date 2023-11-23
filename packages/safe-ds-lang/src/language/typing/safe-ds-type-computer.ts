@@ -154,7 +154,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsTypeProjection(node)) {
             return this.computeTypeOfType(node.type);
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 
@@ -182,7 +182,7 @@ export class SafeDsTypeComputer {
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
-            return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType());
+            return new CallableType(node, undefined, new NamedTupleType(...parameterEntries), new NamedTupleType());
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
@@ -206,7 +206,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsTypeParameter(node)) {
             return UnknownType;
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 
@@ -218,16 +218,33 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+        return new CallableType(
+            node,
+            undefined,
+            new NamedTupleType(...parameterEntries),
+            new NamedTupleType(...resultEntries),
+        );
     }
 
     private computeTypeOfParameter(node: SdsParameter): Type {
         // Manifest type
         if (node.type) {
-            return this.computeType(node.type);
+            const type = this.computeType(node.type);
+            return this.rememberParameterInCallableType(node, type);
         }
 
         // Infer type from context
+        const contextType = this.computeTypeOfParameterContext(node);
+        if (!(contextType instanceof CallableType)) {
+            return UnknownType;
+        }
+
+        const parameterPosition = node.$containerIndex ?? -1;
+        const type = contextType.getParameterTypeByIndex(parameterPosition);
+        return this.rememberParameterInCallableType(node, type);
+    }
+
+    private computeTypeOfParameterContext(node: SdsParameter): Type {
         const containingCallable = getContainerOfType(node, isSdsCallable);
         if (!isSdsLambda(containingCallable)) {
             return UnknownType;
@@ -241,14 +258,12 @@ export class SafeDsTypeComputer {
             if (!parameter) {
                 return UnknownType;
             }
+            return this.computeType(parameter?.type);
+        }
 
-            const parameterType = this.computeType(parameter?.type);
-            if (!(parameterType instanceof CallableType)) {
-                return UnknownType;
-            }
-
-            const parameterPosition = node.$containerIndex ?? -1;
-            return parameterType.getParameterTypeByIndex(parameterPosition);
+        // Lambda passed as default value
+        if (isSdsParameter(containerOfLambda)) {
+            return this.computeType(containerOfLambda);
         }
 
         // Yielded lambda
@@ -257,17 +272,18 @@ export class SafeDsTypeComputer {
             if (!isSdsYield(firstAssignee)) {
                 return UnknownType;
             }
-
-            const resultType = this.computeType(firstAssignee.result?.ref);
-            if (!(resultType instanceof CallableType)) {
-                return UnknownType;
-            }
-
-            const parameterPosition = node.$containerIndex ?? -1;
-            return resultType.getParameterTypeByIndex(parameterPosition);
+            return this.computeType(firstAssignee.result?.ref);
         }
 
         return UnknownType;
+    }
+
+    private rememberParameterInCallableType(node: SdsParameter, type: Type) {
+        if (type instanceof CallableType) {
+            return new CallableType(type.callable, node, type.inputType, type.outputType);
+        } else {
+            return type;
+        }
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
@@ -353,7 +369,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsReference(node)) {
             return this.computeTypeOfReference(node);
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 
@@ -365,7 +381,12 @@ export class SafeDsTypeComputer {
             .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
             .toArray();
 
-        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+        return new CallableType(
+            node,
+            undefined,
+            new NamedTupleType(...parameterEntries),
+            new NamedTupleType(...resultEntries),
+        );
     }
 
     private computeTypeOfCall(node: SdsCall): Type {
@@ -393,7 +414,12 @@ export class SafeDsTypeComputer {
             new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
         ];
 
-        return new CallableType(node, new NamedTupleType(...parameterEntries), new NamedTupleType(...resultEntries));
+        return new CallableType(
+            node,
+            undefined,
+            new NamedTupleType(...parameterEntries),
+            new NamedTupleType(...resultEntries),
+        );
     }
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
@@ -477,7 +503,7 @@ export class SafeDsTypeComputer {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
         } /* c8 ignore start */ else {
-            throw new Error(`Unexpected node type: ${node.$type}`);
+            return UnknownType;
         } /* c8 ignore stop */
     }
 

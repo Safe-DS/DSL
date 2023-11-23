@@ -1,26 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { clearDocuments, parseHelper } from 'langium/test';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { describe, expect, it } from 'vitest';
+import { parseHelper } from 'langium/test';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { InlayHint, Position } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { URI } from 'langium';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const inlayHintProvider = services.lsp.InlayHintProvider!;
-const workspaceManager = services.shared.workspace.WorkspaceManager;
 const parse = parseHelper(services);
 
 describe('SafeDsInlayHintProvider', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await workspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     const testCases: InlayHintProviderTest[] = [
         {
             testName: 'resolved positional argument',

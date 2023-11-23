@@ -1,0 +1,24 @@
+package tests.validation.other.declarations.parameters.constMustOnlyBeUsedForSpecificTypes
+
+annotation MyAnnotation(
+    // $TEST$ error "An annotation parameter cannot have type 'Any'."
+    anyParam: »Any«,
+    // $TEST$ no error r"An annotation parameter cannot have type '.*'\."
+    intParam: »Int«,
+)
+
+@Pure
+fun functionWithConstantParameters(
+    // $TEST$ error "A constant parameter cannot have type 'Any'."
+    const anyParam: »Any«,
+    // $TEST$ no error r"A constant parameter cannot have type '.*'\."
+    const intParam: »Int«,
+)
+
+@Pure
+fun functionWithNormalParameters(
+    // $TEST$ no error r"A constant parameter cannot have type '.*'\."
+    anyParam: »Any«,
+    // $TEST$ no error r"A constant parameter cannot have type '.*'\."
+    intParam: »Int«,
+)
