@@ -9,7 +9,7 @@ interface ToExtensionCommandMessage {
 }
 interface ToExtensionSetStateMessage extends ToExtensionCommandMessage {
   command: "setCurrentGloabalState";
-  value: defaultTypes.State;
+  value: defaultTypes.SerializableState;
 }
 
 interface ToExtensionResetStateMessage extends ToExtensionCommandMessage {
@@ -39,7 +39,7 @@ interface FromExtensionCommandMessage {
 }
 interface FromExtensionSetStateMessage extends FromExtensionCommandMessage {
   command: "setWebviewState";
-  value: defaultTypes.State[];
+  value: defaultTypes.SerializableState[];
 }
 
 export type FromExtensionMessage = FromExtensionSetStateMessage;

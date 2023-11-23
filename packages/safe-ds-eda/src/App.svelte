@@ -5,7 +5,7 @@
 
 <main>
     <!-- <Debugger /> -->
-    <hr />
+    <!-- <hr /> -->
     <TableView />
 </main>
 

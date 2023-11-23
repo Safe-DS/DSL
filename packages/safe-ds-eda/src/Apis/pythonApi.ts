@@ -1,4 +1,4 @@
-import type { Table } from "../../../../types/shared-eda-vscode/types";
+import type { Column, Table } from "../../../../types/shared-eda-vscode/types";
 
 export const GetJsonTable = async function(tableName: string): Promise<Table> {
   try {
@@ -11,11 +11,18 @@ export const GetJsonTable = async function(tableName: string): Promise<Table> {
     const responseText = await response.text();
     if (!response.ok) throw new Error(responseText);
 
-    let table: Table = { columns: [] };
+    let table: Table = { name: tableName, columns: new Map<number, Column>(), visibleRows: 0, totalRows: 0, appliedFilters: [] };
+    let index = 0;
     for (const column of Object.entries(JSON.parse(responseText))) {
-      table.columns.push({
+      table.columns.set(index++, {
         name: column[0],
         values: Object.values(column[1] as string),
+        hidden: false,
+        highlighted: false,
+        type: "categorical",
+        appliedSort: null,
+        appliedFilters: [],
+        profiling: { top: [], bottom: [] },
       });
     }
     return table;

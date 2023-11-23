@@ -1,6 +1,6 @@
-import type { State } from "../../../../types/shared-eda-vscode/types";
+import type { SerializableState } from "../../../../types/shared-eda-vscode/types";
 
-export const setCurrentGlobalState = function(state: State) {
+export const setCurrentGlobalState = function(state: SerializableState) {
   window.injVscode.postMessage({
     command: "setCurrentGloabalState",
     value: state,

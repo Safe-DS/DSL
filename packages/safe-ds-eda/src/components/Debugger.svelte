@@ -1,21 +1,16 @@
 <script lang="ts">
+    import type { HistoryEntry } from '../../../../types/shared-eda-vscode/types';
     import { resetGlobalState } from '../Apis/extensionApi';
     import { currentState } from '../webviewState';
 
     function resetAllState() {
-        currentState.set({ tableIdentifier: undefined, randomText: '' });
+        currentState.set({ tableIdentifier: undefined, history: new Map<number, HistoryEntry>() });
         resetGlobalState();
     }
 </script>
 
 <main>
     <h1>{$currentState.tableIdentifier ?? 'Select Table'}</h1>
-    <button
-        on:click={() => {
-            $currentState.randomText = Math.ceil(Math.random() * 100).toString();
-        }}>rdm state</button
-    >
-    <h1>{$currentState.randomText}</h1>
     <p>
         {JSON.stringify($currentState)}
     </p>
