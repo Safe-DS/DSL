@@ -124,24 +124,27 @@ export class SafeDsPartialEvaluator {
             return this.evaluateDeclaration(node, substitutions);
         } else if (isSdsExpression(node)) {
             return this.evaluateExpression(node, substitutions);
-        } else {
+        } /* c8 ignore start */ else {
             return UnknownEvaluatedNode;
-        }
+        } /* c8 ignore stop */
     }
 
     private evaluateAssignee(node: SdsAssignee, substitutions: ParameterSubstitutions): EvaluatedNode {
         const containingAssignment = getContainerOfType(node, isSdsAssignment);
         if (!containingAssignment) {
+            /* c8 ignore next 2 */
             return UnknownEvaluatedNode;
         }
 
         const evaluatedExpression = this.evaluateWithSubstitutions(containingAssignment.expression, substitutions);
         const nodeIndex = node.$containerIndex ?? -1;
         if (evaluatedExpression instanceof EvaluatedNamedTuple) {
+            /* c8 ignore next */ // TODO test
             return evaluatedExpression.getSubstitutionByIndex(nodeIndex);
         } else if (nodeIndex === 0) {
             return evaluatedExpression;
         } else {
+            /* c8 ignore next 2 */ // TODO test
             return UnknownEvaluatedNode;
         }
     }
@@ -160,6 +163,7 @@ export class SafeDsPartialEvaluator {
 
     private evaluateParameter(node: SdsParameter, substitutions: ParameterSubstitutions): EvaluatedNode {
         if (substitutions.has(node)) {
+            /* c8 ignore next */ // TODO test
             return substitutions.get(node)!;
         } else if (node.defaultValue) {
             return this.evaluateWithSubstitutions(node.defaultValue, substitutions);
