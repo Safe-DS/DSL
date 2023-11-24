@@ -165,6 +165,8 @@ export class SafeDsPartialEvaluator {
         if (substitutions.has(node)) {
             /* c8 ignore next */ // TODO test
             return substitutions.get(node)!;
+            // TODO: must not get default value if substitutions are empty because it's the entry point in the
+            //  evaluation
         } else if (node.defaultValue) {
             return this.evaluateWithSubstitutions(node.defaultValue, substitutions);
         } else {
