@@ -297,6 +297,13 @@ export class EvaluatedList extends EvaluatedNode {
         return this.elements[index] ?? UnknownEvaluatedNode;
     }
 
+    /**
+     * Returns the size of the list.
+     */
+    get size(): number {
+        return this.elements.length;
+    }
+
     override equals(other: unknown): boolean {
         if (other === this) {
             return true;
@@ -329,6 +336,15 @@ export class EvaluatedMap extends EvaluatedNode {
      */
     getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
         return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
+    }
+
+    /**
+     * Returns whether the map contains the given key.
+     *
+     * @param key The key to look for.
+     */
+    has(key: EvaluatedNode): boolean {
+        return this.entries.some((it) => it.key.equals(key));
     }
 
     override equals(other: unknown): boolean {
