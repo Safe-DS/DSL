@@ -4,7 +4,8 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
     addMessageCallback,
-    executePipeline, getExecutionContext,
+    executePipeline,
+    getExecutionContext,
     startPythonServer,
     stopPythonServer,
     tryMapToSafeDSSource,
@@ -14,7 +15,7 @@ import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
 import { RuntimeErrorMessage } from './messages.js';
 import crypto from 'crypto';
-import {URI} from "langium";
+import { URI } from 'langium';
 
 let client: LanguageClient;
 let sdsServices: SafeDsServices;
@@ -90,19 +91,25 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
                 const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
                 if (mappedFrame) {
-                    readableStacktraceSafeDs.push(`\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${mappedFrame.line})`);
+                    readableStacktraceSafeDs.push(
+                        `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
+                            mappedFrame.line
+                        })`,
+                    );
                     return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
                 }
                 return `\tat ${frame.file} line ${frame.line}`;
             }),
         );
         logOutput(
-            `Runner-RuntimeError (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktracePython.join(
-                '\n',
-            )}`,
+            `Runner-RuntimeError (${message.id}): ${
+                (<RuntimeErrorMessage>message).data.message
+            } \n${readableStacktracePython.join('\n')}`,
         );
         printOutputMessage(
-            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs.reverse().join('\n')}`,
+            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                .reverse()
+                .join('\n')}`,
         );
     }, 'runtime_error');
     context.subscriptions.push(
