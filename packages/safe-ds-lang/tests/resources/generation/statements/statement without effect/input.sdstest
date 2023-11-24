@@ -1,6 +1,6 @@
 package tests.generator.statementWithoutEffect
 
-fun f(param: () -> ())
+@Impure([ImpurityReason.Other]) fun f(param: () -> ())
 
 pipeline testPipeline {
     1;

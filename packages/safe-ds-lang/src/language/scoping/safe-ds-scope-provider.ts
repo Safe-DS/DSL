@@ -53,7 +53,7 @@ import {
     SdsTypeArgument,
     SdsYield,
 } from '../generated/ast.js';
-import { isContainedIn } from '../helpers/astUtils.js';
+import { isContainedInOrEqual } from '../helpers/astUtils.js';
 import {
     getAbstractResults,
     getAnnotationCallTarget,
@@ -336,7 +336,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         const containingStatement = getContainerOfType(node.$container, isSdsStatement);
 
         let placeholders: Iterable<SdsPlaceholder>;
-        if (!containingCallable || isContainedIn(containingStatement, containingCallable)) {
+        if (!containingCallable || isContainedInOrEqual(containingStatement, containingCallable)) {
             placeholders = this.placeholdersUpToStatement(containingStatement);
         } else {
             // Placeholders are further away than the parameters

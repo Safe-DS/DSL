@@ -1,6 +1,6 @@
 package tests.generator.pipelineWithPythonName
 
-@Pure fun f()
+@Impure([ImpurityReason.Other]) fun f()
 
 @PythonName("test_pipeline")
 pipeline testPipeline {

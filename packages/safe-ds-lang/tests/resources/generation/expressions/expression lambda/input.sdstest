@@ -1,6 +1,6 @@
 package tests.generator.expressionLambda
 
-@Pure fun f(param: (a: Int, b: Int) -> r: Int)
+@Impure([ImpurityReason.Other]) fun f(param: (a: Int, b: Int) -> r: Int)
 
 pipeline test {
     f((a, b = 2) -> 1);

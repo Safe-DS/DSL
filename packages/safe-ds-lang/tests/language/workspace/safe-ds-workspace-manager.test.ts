@@ -1,20 +1,11 @@
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments } from 'langium/test';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { describe, expect, it } from 'vitest';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { getLinkingErrors } from '../../helpers/diagnostics.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 
 describe('SafeDsWorkspaceManager', () => {
-    beforeAll(async () => {
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterAll(async () => {
-        await clearDocuments(services);
-    });
-
     describe('loadAdditionalDocuments', () => {
         it.each(['Any', 'Boolean', 'Float', 'Int', 'Nothing', 'Number', 'String'])(
             'should be possible to refer to %s',

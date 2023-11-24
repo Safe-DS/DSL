@@ -1,6 +1,6 @@
 package tests.generator.lists
 
-@Pure fun f(param: List<Int>)
+@Impure([ImpurityReason.Other]) fun f(param: List<Int>)
 
 @Pure fun h() -> result: Int
 

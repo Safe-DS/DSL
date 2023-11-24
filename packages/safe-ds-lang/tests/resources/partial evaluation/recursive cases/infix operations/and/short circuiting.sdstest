@@ -1,0 +1,30 @@
+package tests.partialValidation.recursiveCases.infixOperations.`and`
+
+@Pure
+fun pureFunction() -> result: Boolean
+
+@Impure([ImpurityReason.FileReadFromConstantPath("test.txt")])
+fun functionWithoutSideEffects() -> result: Boolean
+
+@Impure([ImpurityReason.FileWriteToConstantPath("test.txt")])
+fun functionWithSideEffects() -> result: Boolean
+
+pipeline test {
+    // $TEST$ serialization false
+    »false and pureFunction()«;
+
+    // $TEST$ serialization false
+    »false and functionWithoutSideEffects()«;
+
+    // $TEST$ serialization ?
+    »false and functionWithSideEffects()«;
+
+    // $TEST$ serialization ?
+    »true and pureFunction()«;
+
+    // $TEST$ serialization ?
+    »true and functionWithoutSideEffects()«;
+
+    // $TEST$ serialization ?
+    »true and functionWithSideEffects()«;
+}

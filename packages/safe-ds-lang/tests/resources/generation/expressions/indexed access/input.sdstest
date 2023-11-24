@@ -1,6 +1,6 @@
 package tests.generator.indexedAccess
 
-@Pure fun f(param: Any?)
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
 
 segment test(params: List<Int>) {
     f(params[0]);

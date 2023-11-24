@@ -101,6 +101,23 @@ export class PotentiallyImpureParameterCall extends ImpurityReason {
 }
 
 /**
+ * A function contains a call that leads to endless recursion.
+ */
+class EndlessRecursionClass extends ImpurityReason {
+    override isSideEffect = true;
+
+    override equals(other: unknown): boolean {
+        return other instanceof EndlessRecursionClass;
+    }
+
+    override toString(): string {
+        return 'Endless recursion';
+    }
+}
+
+export const EndlessRecursion = new EndlessRecursionClass();
+
+/**
  * A function is impure due to some reason that is not covered by the other impurity reasons.
  */
 class OtherImpurityReasonClass extends ImpurityReason {

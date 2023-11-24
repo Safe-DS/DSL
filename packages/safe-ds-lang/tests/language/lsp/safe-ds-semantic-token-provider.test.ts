@@ -1,22 +1,13 @@
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
-import { clearDocuments, highlightHelper } from 'langium/test';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { highlightHelper } from 'langium/test';
+import { describe, it } from 'vitest';
 import { SemanticTokenTypes } from 'vscode-languageserver';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 
 describe('SafeDsSemanticTokenProvider', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each([
         {
             testName: 'annotation call',
