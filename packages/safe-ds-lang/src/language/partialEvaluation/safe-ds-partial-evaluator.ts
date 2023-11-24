@@ -1,10 +1,13 @@
-import { AstNode, AstNodeLocator, getDocument, WorkspaceCache } from 'langium';
+import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     isSdsArgument,
+    isSdsAssignee,
+    isSdsAssignment,
     isSdsBlockLambda,
     isSdsBoolean,
     isSdsCall,
+    isSdsDeclaration,
     isSdsEnumVariant,
     isSdsExpression,
     isSdsExpressionLambda,
@@ -16,6 +19,7 @@ import {
     isSdsMap,
     isSdsMemberAccess,
     isSdsNull,
+    isSdsParameter,
     isSdsParenthesizedExpression,
     isSdsPrefixOperation,
     isSdsReference,
@@ -25,15 +29,17 @@ import {
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
+    SdsAssignee,
     SdsCall,
+    SdsDeclaration,
     SdsExpression,
     SdsIndexedAccess,
     SdsInfixOperation,
     SdsList,
     SdsMap,
     SdsMemberAccess,
+    SdsParameter,
     SdsPrefixOperation,
-    SdsReference,
     SdsTemplateString,
 } from '../generated/ast.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
@@ -47,6 +53,7 @@ import {
     EvaluatedList,
     EvaluatedMap,
     EvaluatedMapEntry,
+    EvaluatedNamedTuple,
     EvaluatedNode,
     ExpressionLambdaClosure,
     FloatConstant,
@@ -111,10 +118,51 @@ export class SafeDsPartialEvaluator {
         node: AstNode | undefined,
         substitutions: ParameterSubstitutions,
     ): EvaluatedNode {
-        if (isSdsExpression(node)) {
+        if (isSdsAssignee(node)) {
+            return this.evaluateAssignee(node, substitutions);
+        } else if (isSdsDeclaration(node)) {
+            return this.evaluateDeclaration(node, substitutions);
+        } else if (isSdsExpression(node)) {
             return this.evaluateExpression(node, substitutions);
+        } else {
+            return UnknownEvaluatedNode;
+        }
+    }
+
+    private evaluateAssignee(node: SdsAssignee, substitutions: ParameterSubstitutions): EvaluatedNode {
+        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        if (!containingAssignment) {
+            return UnknownEvaluatedNode;
+        }
+
+        const evaluatedExpression = this.evaluateWithSubstitutions(containingAssignment.expression, substitutions);
+        const nodeIndex = node.$containerIndex ?? -1;
+        if (evaluatedExpression instanceof EvaluatedNamedTuple) {
+            return evaluatedExpression.getSubstitutionByIndex(nodeIndex);
+        } else if (nodeIndex === 0) {
+            return evaluatedExpression;
+        } else {
+            return UnknownEvaluatedNode;
+        }
+    }
+
+    private evaluateDeclaration(node: SdsDeclaration, substitutions: ParameterSubstitutions): EvaluatedNode {
+        if (isSdsEnumVariant(node)) {
+            return new EvaluatedEnumVariant(node, undefined);
+        } else if (isSdsParameter(node)) {
+            return this.evaluateParameter(node, substitutions);
         } else if (isSdsSegment(node)) {
             return new NamedCallable(node);
+        } else {
+            return UnknownEvaluatedNode;
+        }
+    }
+
+    private evaluateParameter(node: SdsParameter, substitutions: ParameterSubstitutions): EvaluatedNode {
+        if (substitutions.has(node)) {
+            return substitutions.get(node)!;
+        } else if (node.defaultValue) {
+            return this.evaluateWithSubstitutions(node.defaultValue, substitutions);
         } else {
             return UnknownEvaluatedNode;
         }
@@ -164,7 +212,7 @@ export class SafeDsPartialEvaluator {
         } else if (isSdsPrefixOperation(node)) {
             return this.evaluatePrefixOperation(node, substitutions);
         } else if (isSdsReference(node)) {
-            return this.evaluateReference(node, substitutions);
+            return this.evaluateWithSubstitutions(node.target.ref, substitutions);
         } else if (isSdsTemplateString(node)) {
             return this.evaluateTemplateString(node, substitutions);
         } /* c8 ignore start */ else {
@@ -508,10 +556,10 @@ export class SafeDsPartialEvaluator {
         return UnknownEvaluatedNode;
     }
 
-    private evaluateMemberAccess(node: SdsMemberAccess, _substitutions: ParameterSubstitutions): EvaluatedNode {
+    private evaluateMemberAccess(node: SdsMemberAccess, substitutions: ParameterSubstitutions): EvaluatedNode {
         const member = node.member?.target?.ref;
         if (isSdsEnumVariant(member)) {
-            return new EvaluatedEnumVariant(member, undefined);
+            return this.evaluateWithSubstitutions(member, substitutions);
         }
 
         // return when (val simpleReceiver = receiver.evaluate(substitutions)) {
@@ -524,40 +572,6 @@ export class SafeDsPartialEvaluator {
         // }
         return UnknownEvaluatedNode;
     }
-
-    private evaluateReference(_node: SdsReference, _substitutions: ParameterSubstitutions): EvaluatedNode {
-        // TODO: always call evaluateWithSubstitutions so caching works
-        // const target = node.target.ref;
-
-        //     is SdsPlaceholder -> declaration.evaluateAssignee(substitutions)
-        //     is SdsParameter -> declaration.evaluateParameter(substitutions)
-        // else -> undefined
-        // }
-        return UnknownEvaluatedNode;
-    }
-
-    // private fun SdsAbstractAssignee.evaluateAssignee(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
-    //     val simpleFullAssignedExpression = closestAncestorOrNull<SdsAssignment>()
-    //         ?.expression
-    //         ?.evaluate(substitutions)
-    //         ?: return undefined
-    //
-    //     return when (simpleFullAssignedExpression) {
-    //     is SdsIntermediateRecord -> simpleFullAssignedExpression.getSubstitutionByIndexOrNull(indexOrNull())
-    //     else -> when {
-    //     indexOrNull() == 0 -> simpleFullAssignedExpression
-    // else -> undefined
-    // }
-    // }
-    // }
-    //
-    // private fun SdsParameter.evaluateParameter(substitutions: ParameterSubstitutions): SdsSimplifiedExpression? {
-    //     return when {
-    //     this in substitutions -> substitutions[this]
-    //     isOptional() -> defaultValue?.evaluate(substitutions)
-    // else -> undefined
-    // }
-    // }
 
     // -----------------------------------------------------------------------------------------------------------------
     // canBeValueOfConstantParameter

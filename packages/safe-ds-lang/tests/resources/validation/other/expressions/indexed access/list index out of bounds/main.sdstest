@@ -1,0 +1,40 @@
+package tests.validation.other.indexedAccess.listIndexOutOfBounds
+
+@Pure
+fun myFunction() -> resultList: List<Int>
+
+segment mySegment(parameterList: List<Int>, parameterIndex: Int) {
+    val placeholderList = [1];
+
+    // $TEST$ error "List index '-1' is out of bounds."
+    myFunction()[»-1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    myFunction()[»0«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    myFunction()[»1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    myFunction()[»parameterIndex«];
+
+    // $TEST$ error "List index '-1' is out of bounds."
+    parameterList[»-1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    parameterList[»0«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    parameterList[»1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    parameterList[»parameterIndex«];
+
+    // $TEST$ error "List index '-1' is out of bounds."
+    placeholderList[»-1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    placeholderList[»0«];
+    // $TEST$ error "List index '1' is out of bounds."
+    placeholderList[»1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    placeholderList[»parameterIndex«];
+
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    unresolved[»-1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    placeholderList[»unresolved«];
+}

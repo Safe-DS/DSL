@@ -178,6 +178,7 @@ import {
     yieldTypeMustMatchResultType,
 } from './types.js';
 import { statementMustDoSomething } from './other/statements/statements.js';
+import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 
 /**
  * Register custom validation checks.
@@ -270,6 +271,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName(services)],
         SdsIndexedAccess: [
+            indexedAccessIndexMustBeValid(services),
             indexedAccessIndexMustHaveCorrectType(services),
             indexedAccessReceiverMustBeListOrMap(services),
             indexedAccessesShouldBeUsedWithCaution(services),
