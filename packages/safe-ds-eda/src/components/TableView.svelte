@@ -12,8 +12,8 @@
         if ($currentState.table) {
             numRows = 0;
             $currentState.table.columns.forEach((column) => {
-                if (column.values.length > numRows) {
-                    numRows = column.values.length;
+                if (column[1].values.length > numRows) {
+                    numRows = column[1].values.length;
                 }
                 minTableWidth += 100;
             });
@@ -21,42 +21,73 @@
         }
     }
 
-    function getColumnWidth(column: string) {
-        const baseWidth = 20; // Minimum width in rem
-        const scale = 50; // Adjust this scale factor to suit your layout
+    function getColumnWidth(columnName: string) {
+        const baseWidth = 35; // Minimum width
+        const scale = 55; // Adjust this scale factor to suit your layout
 
         // Use the logarithm of the character count, and scale it
-        const width = baseWidth + Math.log(column.length + 1) * scale;
+        const width = baseWidth + Math.log(columnName.length + 1) * scale;
 
         return `${width}px`;
     }
 
-    let isDragging = false;
+    // --- Column resizing ---
+    let isResizeDragging = false;
     let startWidth: number;
     let startX: number;
     let targetColumn: HTMLElement;
 
-    function startDrag(event: MouseEvent, columnIndex: number): void {
+    function startResizeDrag(event: MouseEvent, columnIndex: number): void {
+        event.stopPropagation();
         const columnElement = headerElements[columnIndex];
-        isDragging = true;
+        isResizeDragging = true;
         startX = event.clientX;
         startWidth = columnElement.offsetWidth;
         targetColumn = columnElement;
-        document.addEventListener('mousemove', doDrag);
-        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('mousemove', doResizeDrag);
+        document.addEventListener('mouseup', stopResizeDrag);
     }
 
-    function doDrag(event: MouseEvent): void {
-        if (isDragging && targetColumn) {
+    function doResizeDrag(event: MouseEvent): void {
+        if (isResizeDragging && targetColumn) {
             const currentWidth = startWidth + event.clientX - startX;
             targetColumn.style.width = `${currentWidth}px`;
         }
     }
 
-    function stopDrag(): void {
-        isDragging = false;
-        document.removeEventListener('mousemove', doDrag);
-        document.removeEventListener('mouseup', stopDrag);
+    function stopResizeDrag(): void {
+        isResizeDragging = false;
+        document.removeEventListener('mousemove', doResizeDrag);
+        document.removeEventListener('mouseup', stopResizeDrag);
+    }
+
+    // --- Column reordering ---
+    let isReorderDragging = false;
+    let dragStartIndex: number | null = null;
+    let dragCurrentIndex: number | null = null;
+
+    function handleReorderDragStart(event: MouseEvent, columnIndex: number): void {
+        document.addEventListener('mouseup', handleReorderDragEnd);
+        isReorderDragging = true;
+        dragStartIndex = columnIndex;
+    }
+
+    function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
+        if (isReorderDragging && dragStartIndex !== null) {
+            // Logic to provide visual feedback and determine the target column
+            dragCurrentIndex = columnIndex;
+            console.log('Dragging column', dragStartIndex, 'to', dragCurrentIndex);
+        }
+    }
+
+    function handleReorderDragEnd(): void {
+        if (isReorderDragging && dragStartIndex !== null) {
+            console.log('Finished dragging column', dragStartIndex);
+            // Logic to update $currentState
+            document.addEventListener('mouseup', handleReorderDragEnd);
+            isReorderDragging = false;
+            dragStartIndex = null;
+        }
     }
 </script>
 
@@ -69,10 +100,16 @@
                 <tr>
                     <th class="firstColumn"></th>
                     {#each $currentState.table.columns as column, index}
-                        <th bind:this={headerElements[index]} style="width: {getColumnWidth(column[1].name)}"
+                        <th
+                            bind:this={headerElements[index]}
+                            class:reorderHighlighted={isReorderDragging && dragCurrentIndex === index}
+                            style="width: {getColumnWidth(column[1].name)}"
+                            on:mousedown={(event) => handleReorderDragStart(event, index)}
+                            on:mousemove={(event) => handleReorderDragOver(event, index)}
+                            on:mouseup={handleReorderDragEnd}
                             >{column[1].name}
                             <!-- svelte-ignore a11y-no-static-element-interactions -->
-                            <div class="resize-handle" on:mousedown={(event) => startDrag(event, index)}></div>
+                            <div class="resize-handle" on:mousedown={(event) => startResizeDrag(event, index)}></div>
                         </th>
                     {/each}
                 </tr>
@@ -82,7 +119,7 @@
                 {#each $currentState.table.columns as column}
                     <td class="profiling" class:expanded={showProfiling}>
                         <div class="content" class:expanded={showProfiling}>
-                            Heyyyyyyyyyyy <br /> Hey
+                            Heyyyyyyyyyyy <br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey
                         </div>
                     </td>
                 {/each}
@@ -91,7 +128,7 @@
                 <td
                     class="profilingBanner"
                     on:click={() => (showProfiling = !showProfiling)}
-                    colspan={$currentState.table.columns.size + 1}
+                    colspan={$currentState.table.columns.length + 1}
                 >
                     <div>
                         <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
@@ -124,7 +161,10 @@
         background-color: transparent;
     }
     th {
+        border-left: 3px solid var(--bg-bright);
         border-right: 2px solid var(--bg-bright);
+        border-bottom: 3px solid var(--bg-bright);
+        border-top: 3px solid var(--bg-bright);
         background-color: var(--primary-color);
         color: var(--bg-bright);
         font-weight: 500;
@@ -133,6 +173,8 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        user-select: none;
+        cursor: pointer;
     }
 
     th,
@@ -143,6 +185,18 @@
     }
     tbody {
         border-left: 3px solid var(--bg-bright);
+    }
+    table tr {
+        border-bottom: 2px solid var(--bg-dark);
+    }
+    table tr:nth-child(even) {
+        background-color: var(--bg-bright);
+    }
+    table tr:nth-child(odd) {
+        background-color: var(--bg-bright);
+    }
+    table tr:hover {
+        background-color: var(--primary-color-desaturated);
     }
     .no-hover:hover {
         background-color: var(--bg-dark) !important;
@@ -163,11 +217,10 @@
 
     .firstColumn {
         padding: 5px 5px 5px 5px;
-        width: 50px;
+        width: 45px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        border-right: 2px solid var(--bg-bright);
         font-size: 0.8rem;
     }
 
@@ -176,7 +229,7 @@
         width: 100%;
         background-color: var(--bg-dark);
         font-size: 1.1rem;
-        border-top: 3px solid var(--bg-bright);
+        border-top: 2px solid var(--bg-bright);
         border-left: 3px solid var(--bg-bright);
         border-bottom: 3px solid var(--bg-bright);
         user-select: none;
@@ -201,6 +254,7 @@
     .profiling {
         padding: 0;
         border-right: 2px solid var(--bg-bright);
+        border-left: 3px solid var(--bg-bright);
         background-color: var(--bg-dark) !important;
     }
 
@@ -216,10 +270,16 @@
     }
 
     .profiling .content.expanded {
-        max-height: 100px; /* Adjust this value based on the actual content size */
+        overflow-y: scroll;
+        max-height: 200px; /* Adjust this value based on the actual content size */
         opacity: 1;
         transition:
-            max-height 0.9s ease,
+            max-height 0.7s ease,
             opacity 0.5s ease;
+    }
+
+    .reorderHighlighted {
+        border-left: 3px solid rgb(75, 75, 75) !important;
+        border-bottom: 3px solid var(--bg-bright) !important;
     }
 </style>

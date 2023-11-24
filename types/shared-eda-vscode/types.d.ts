@@ -1,27 +1,10 @@
 export interface State {
   tableIdentifier?: string;
   table?: Table;
-  tabs?: Map<number, Tab>;
-  defaultState?: boolean;
-  history: Map<number, HistoryEntry>;
-  settings?: UserSettings;
-}
-
-export interface SerializableState {
-  tableIdentifier?: string;
-  table?: SerializableTable;
-  tabs?: [number, Tab][];
+  tabs?: Tab[];
   defaultState?: boolean;
   history: HistoryEntry[];
   settings?: UserSettings;
-}
-
-export interface SerializableTable {
-  columns: [number, Column][];
-  visibleRows: number;
-  totalRows: number;
-  name: string;
-  appliedFilters: TableFilter[];
 }
 
 export interface HistoryEntry {
@@ -79,7 +62,7 @@ export type Tab = LinePlotTab | BarPlotTab | HeatmapTab | ScatterPlotTab | InfoP
 
 // ------------------ Types for the Table ------------------
 export interface Table {
-  columns: Map<number, Column>;
+  columns: [number, Column][];
   visibleRows: number;
   totalRows: number;
   name: string;

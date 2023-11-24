@@ -4,7 +4,7 @@
     import { currentState } from '../webviewState';
 
     function resetAllState() {
-        currentState.set({ tableIdentifier: undefined, history: new Map<number, HistoryEntry>() });
+        currentState.set({ tableIdentifier: undefined, history: [] });
         resetGlobalState();
     }
 </script>

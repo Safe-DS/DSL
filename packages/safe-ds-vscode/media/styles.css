@@ -1,5 +1,6 @@
 :root {
     --primary-color: #036ED1;
+    --primary-color-desaturated:rgba(3, 109, 209, 0.048);
     --bg-bright: white;
     --bg-dark: #F2F2F2;
     --bg-medium: #F9F9F9;
