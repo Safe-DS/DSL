@@ -4,7 +4,7 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
     addMessageCallback,
-    executePipeline,
+    executePipeline, getExecutionContext,
     startPythonServer,
     stopPythonServer,
     tryMapToSafeDSSource,
@@ -13,6 +13,8 @@ import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServic
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
 import { RuntimeErrorMessage } from './messages.js';
+import crypto from 'crypto';
+import {URI} from "langium";
 
 let client: LanguageClient;
 let sdsServices: SafeDsServices;
@@ -79,27 +81,28 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 
 const acceptRunRequests = function (context: vscode.ExtensionContext) {
     addMessageCallback((message) => {
-        printOutputMessage(`Runner-Progress: ${message.data}`);
+        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
     }, 'progress');
     addMessageCallback(async (message) => {
         let readableStacktraceSafeDs: string[] = [];
+        const execInfo = getExecutionContext(message.id)!;
         const readableStacktracePython = await Promise.all(
             (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-                const mappedFrame = await tryMapToSafeDSSource(frame);
+                const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
                 if (mappedFrame) {
-                    readableStacktraceSafeDs.push(`\tat ${mappedFrame.file} line ${mappedFrame.line}`);
+                    readableStacktraceSafeDs.push(`\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${mappedFrame.line})`);
                     return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
                 }
                 return `\tat ${frame.file} line ${frame.line}`;
             }),
         );
         logOutput(
-            `Runner-RuntimeError: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktracePython.join(
+            `Runner-RuntimeError (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktracePython.join(
                 '\n',
             )}`,
         );
         printOutputMessage(
-            `Safe-DS Error: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs.join('\n')}`,
+            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs.reverse().join('\n')}`,
         );
     }, 'runtime_error');
     context.subscriptions.push(
@@ -120,8 +123,9 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                 vscode.window.showErrorMessage('Could not run Safe-DS Pipeline, as no pipeline is currently selected.');
                 return;
             }
-            printOutputMessage(`Launching Pipeline: ${pipelinePath}`);
-            executePipeline(sdsServices, pipelinePath.fsPath, 'abc'); // TODO change id
+            const pipelineId = crypto.randomUUID();
+            printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
+            executePipeline(sdsServices, pipelinePath.fsPath, pipelineId);
         }),
     );
 };

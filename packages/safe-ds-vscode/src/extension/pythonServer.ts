@@ -18,6 +18,10 @@ let pythonServerMessageCallbacks: Map<string, ((message: PythonServerMessage) =>
     ((message: PythonServerMessage) => void)[]
 >();
 
+/**
+ * Start the python server on the next usable port, starting at 5000.
+ * Uses the 'safe-ds.runner.command' setting to execute the process.
+ */
 export const startPythonServer = async function (): Promise<void> {
     pythonServerAcceptsConnections = false;
     const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
@@ -32,33 +36,27 @@ export const startPythonServer = async function (): Promise<void> {
     manageSubprocessOutputIO(pythonServer);
     await connectToWebSocket();
     logOutput('Started python server successfully');
-    /*sendMessageToPythonServer({
-        type: 'program',
-        data: {
-            code: {
-                '': {
-                    gen_b: "import logging\nimport safeds_runner.codegen\n\ndef c():\n\ta1 = 1\n\ta2 = safeds_runner.codegen.eager_or(True, False)\n\tlogging.debug('test')\n\tprint('print test')\n\tlogging.debug('dynamic pipeline output')\n\treturn a1 + a2\n",
-                    gen_b_c: "from gen_b import c\n\nif __name__ == '__main__':\n\tc()",
-                },
-            },
-            main: {
-                package: 'a.test',
-                module: 'b',
-                pipeline: 'c',
-            },
-        },
-    });*/
 };
 
 export const stopPythonServer = function (): void {
     pythonServer?.kill();
+    // TODO maybe tree-kill sync process? Does not seem to always be reaped, and may remain as a zombie
     pythonServer = undefined;
 };
 
+/**
+ * @return True if the python server was started and the websocket connection was established, false otherwise.
+ */
 export const isPythonServerAvailable = function (): boolean {
     return pythonServerAcceptsConnections;
 };
 
+/**
+ * Register a callback to execute when a message from the python server arrives.
+ *
+ * @param callback Callback to execute
+ * @param messageTypes Message types to register the callback for.
+ */
 export const addMessageCallback = function (
     callback: (message: PythonServerMessage) => void,
     ...messageTypes: string[]
@@ -89,25 +87,60 @@ const importPipeline = async function (services: SafeDsServices, documentUri: UR
     return document;
 };
 
-let lastExecutedSource: string | undefined = undefined;
-let lastGeneratedSource: Map<string, string> | undefined = undefined;
+/**
+ * Context containing information about the execution of a pipeline.
+ */
+interface ExecutionInformation {
+    source: string;
+    generatedSource: Map<string, string>;
+    path: string;
+}
 
+/**
+ * Map that contains information about an execution keyed by the execution id.
+ */
+let executionInformation: Map<string, ExecutionInformation> = new Map<string, ExecutionInformation>();
+
+/**
+ * Get information about a pipeline execution.
+ *
+ * @param id Unique id that identifies a pipeline execution
+ * @return Execution context assigned to the provided id.
+ */
+export const getExecutionContext = function (id: string): ExecutionInformation | undefined {
+    return executionInformation.get(id);
+};
+
+/**
+ * Map a stack frame from python to Safe-DS.
+ * Uses generated sourcemaps to do this.
+ * If such a mapping does not exist, this function returns undefined.
+ *
+ * @param executionId Id that uniquely identifies the execution that produced this stack frame
+ * @param frame Stack frame from the python execution
+ */
 export const tryMapToSafeDSSource = async function (
+    executionId: string,
     frame: RuntimeErrorBacktraceFrame | undefined,
 ): Promise<RuntimeErrorBacktraceFrame | undefined> {
     if (!frame) {
         return undefined;
     }
-    let sourceMapKeys = Array.from(lastGeneratedSource?.keys() || []).filter((value) =>
+    if (!executionInformation.has(executionId)) {
+        return undefined;
+    }
+    const execInfo = executionInformation.get(executionId)!;
+    let sourceMapKeys = Array.from(execInfo.generatedSource.keys() || []).filter((value) =>
         value.endsWith(`${frame.file}.py.map`),
     );
     if (sourceMapKeys.length === 0) {
         return undefined;
     }
     let sourceMapKey = sourceMapKeys[0]!;
-    const sourceMapObject = JSON.parse(lastGeneratedSource!.get(sourceMapKey)!);
-    sourceMapObject.sourcesContent = [lastExecutedSource];
+    const sourceMapObject = JSON.parse(execInfo.generatedSource.get(sourceMapKey)!);
+    sourceMapObject.sourcesContent = [execInfo.source];
     const consumer = await new SourceMapConsumer(sourceMapObject);
+    // TODO cache in execInfo??
     const outputPosition = consumer.originalPositionFor({
         line: Number(frame.line),
         column: 0,
@@ -116,6 +149,13 @@ export const tryMapToSafeDSSource = async function (
     return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
 };
 
+/**
+ * Execute a Safe-DS pipeline on the python runner.
+ *
+ * @param services SafeDsServices object, used to import the pipeline file.
+ * @param pipelinePath Path to a Safe-DS pipeline file to execute.
+ * @param id A unique id that is used in further communication with this pipeline.
+ */
 export const executePipeline = async function (services: SafeDsServices, pipelinePath: string, id: string) {
     const documentUri = URI.file(pipelinePath);
     services.shared.workspace.LangiumDocuments.deleteDocument(documentUri);
@@ -129,7 +169,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         }
         return;
     }
-    lastExecutedSource = document.textDocument.getText();
+    const lastExecutedSource = document.textDocument.getText();
 
     const node = document.parseResult.value;
     //
@@ -153,7 +193,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         destination: URI.file(''),
         createSourceMaps: true,
     });
-    lastGeneratedSource = new Map<string, string>(); // TODO better solution?
+    const lastGeneratedSource = new Map<string, string>();
     let codeMap: ProgramCodeMap = {};
     for (const generatedDocument of generatedDocuments) {
         const fsPath = URI.parse(generatedDocument.uri).fsPath;
@@ -175,6 +215,11 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         const content = generatedDocument.getText();
         codeMap[/*TODO sdsPackage*/ '']![sdsNoExtFilename] = content;
     }
+    executionInformation.set(id, {
+        generatedSource: lastGeneratedSource,
+        path: pipelinePath,
+        source: lastExecutedSource,
+    });
     sendMessageToPythonServer({
         type: 'program',
         id,
@@ -185,6 +230,11 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     });
 };
 
+/**
+ * Send a message to the python server using the websocket connection.
+ *
+ * @param message Message to be sent to the python server. This message should be serializable to JSON.
+ */
 export const sendMessageToPythonServer = function (message: PythonServerMessage): void {
     const messageString = JSON.stringify(message);
     logOutput(`Sending message to python server: ${messageString}`);
