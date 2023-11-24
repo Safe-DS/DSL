@@ -1,0 +1,34 @@
+package tests.validation.other.indexedAccess.mapKeyDoesNotExist
+
+@Pure
+fun myFunction() -> resultMap: Map<String, Int>
+
+segment mySegment(parameterMap: Map<String, Int>, parameterKey: String) {
+    val placeholderMap = {"key": 1};
+
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    myFunction()[»"unknown"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    myFunction()[»"key"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    myFunction()[»parameterKey«];
+
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    parameterMap[»"unknown"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    parameterMap[»"key"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    parameterMap[»parameterKey«];
+
+    // $TEST$ error "Map key '"unknown"' does not exist."
+    placeholderMap[»"unknown"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    placeholderMap[»"key"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    placeholderMap[»parameterKey«];
+
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    unresolved[»"unknown"«];
+    // $TEST$ no error r"Map key '.*' does not exist\."
+    placeholderMap[»unresolved«];
+}

@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -94,6 +94,26 @@
                     "description": "Command to start the Safe-DS runner",
                     "type": "string",
                     "default": "python -m runner"
+                },
+                "safe-ds.validation.codeStyle": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an info if code style can be improved."
+                },
+                "safe-ds.validation.experimentalLanguageFeature": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Warn if an experimental language feature is used."
+                },
+                "safe-ds.validation.experimentalLibraryElement": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Warn if an experimental library element is used."
+                },
+                "safe-ds.validation.nameConvention": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Warn if a name does not match the Safe-DS name convention."
                 }
             }
         },
@@ -138,13 +158,14 @@
         "source-map": "^0.7.4"
     },
     "devDependencies": {
-        "@types/node": "^18.18.9",
-        "@types/vscode": "^1.83.2",
+        "@types/node": "^18.18.12",
+        "@types/vscode": "^1.84.2",
         "@types/ws": "^8.5.8",
         "@vscode/vsce": "^2.22.0",
-        "esbuild": "^0.19.5"
+        "esbuild": "^0.19.7",
+        "esbuild-plugin-copy": "^2.1.1"
     },
     "engines": {
-        "vscode": "^1.83.0"
+        "vscode": "^1.84.0"
     }
 }

@@ -41,6 +41,7 @@ import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
+import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -79,6 +80,7 @@ export type SafeDsAddedServices = {
     };
     workspace: {
         PackageManager: SafeDsPackageManager;
+        SettingsProvider: SafeDsSettingsProvider;
     };
 };
 
@@ -144,6 +146,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     workspace: {
         PackageManager: (services) => new SafeDsPackageManager(services),
+        SettingsProvider: (services) => new SafeDsSettingsProvider(services),
     },
 };
 

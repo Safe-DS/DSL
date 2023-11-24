@@ -144,7 +144,9 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 // Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class EvaluatedCallable<out T extends SdsCallable = SdsCallable> extends EvaluatedNode {
+export abstract class EvaluatedCallable<
+    out T extends SdsCallable | SdsParameter = SdsCallable | SdsParameter,
+> extends EvaluatedNode {
     abstract readonly callable: T;
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
     override readonly isFullyEvaluated: boolean = false;
@@ -175,7 +177,7 @@ export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
     }
 
     override toString(): string {
-        return `$BlockLambdaClosure`;
+        return `$blockLambdaClosure`;
     }
 }
 
@@ -204,11 +206,11 @@ export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLamb
     }
 
     override toString(): string {
-        return '$ExpressionLambdaClosure';
+        return '$expressionLambdaClosure';
     }
 }
 
-export class NamedCallable<T extends SdsCallable & NamedAstNode> extends EvaluatedCallable<T> {
+export class NamedCallable<T extends (SdsCallable & NamedAstNode) | SdsParameter> extends EvaluatedCallable<T> {
     override readonly isFullyEvaluated: boolean = false;
     override readonly substitutionsOnCreation: ParameterSubstitutions = new Map();
 
@@ -295,6 +297,13 @@ export class EvaluatedList extends EvaluatedNode {
         return this.elements[index] ?? UnknownEvaluatedNode;
     }
 
+    /**
+     * Returns the size of the list.
+     */
+    get size(): number {
+        return this.elements.length;
+    }
+
     override equals(other: unknown): boolean {
         if (other === this) {
             return true;
@@ -327,6 +336,15 @@ export class EvaluatedMap extends EvaluatedNode {
      */
     getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
         return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
+    }
+
+    /**
+     * Returns whether the map contains the given key.
+     *
+     * @param key The key to look for.
+     */
+    has(key: EvaluatedNode): boolean {
+        return this.entries.some((it) => it.key.equals(key));
     }
 
     override equals(other: unknown): boolean {

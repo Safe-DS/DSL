@@ -17,12 +17,18 @@ import {
     type ImpurityReason,
     OtherImpurityReason,
     PotentiallyImpureParameterCall,
+    UnknownCallableCall,
 } from './model.js';
 import {
+    isSdsAnnotation,
     isSdsAssignment,
+    isSdsCallable,
+    isSdsClass,
+    isSdsEnumVariant,
     isSdsExpressionStatement,
     isSdsFunction,
     isSdsLambda,
+    isSdsParameter,
     isSdsWildcard,
     SdsCall,
     SdsCallable,
@@ -84,6 +90,29 @@ export class SafeDsPurityComputer {
      */
     isPureExpression(node: SdsExpression | undefined, substitutions = NO_SUBSTITUTIONS): boolean {
         return isEmpty(this.getImpurityReasonsForExpression(node, substitutions));
+    }
+
+    /**
+     * Returns whether the given parameter is pure, i.e. only accepts pure callables.
+     *
+     * @param node
+     * The parameter to check.
+     */
+    isPureParameter(node: SdsParameter | undefined): boolean {
+        const containingCallable = getContainerOfType(node, isSdsCallable);
+        if (
+            !containingCallable ||
+            isSdsAnnotation(containingCallable) ||
+            isSdsClass(containingCallable) ||
+            isSdsEnumVariant(containingCallable)
+        ) {
+            return true;
+        } else if (isSdsFunction(containingCallable)) {
+            const expectedImpurityReason = new PotentiallyImpureParameterCall(node);
+            return !this.getImpurityReasons(containingCallable).some((it) => it.equals(expectedImpurityReason));
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -184,9 +213,7 @@ export class SafeDsPurityComputer {
         // Cache the result if no substitutions are given
         if (isEmpty(substitutions)) {
             const key = this.getNodeId(node);
-            return this.reasonsCache.get(key, () => {
-                return this.doGetImpurityReasons(node, substitutions);
-            });
+            return this.reasonsCache.get(key, () => this.doGetImpurityReasons(node, substitutions));
         } else {
             /* c8 ignore next 2 */
             return this.doGetImpurityReasons(node, substitutions);
@@ -202,8 +229,12 @@ export class SafeDsPurityComputer {
         }
 
         const otherImpurityReasons = callGraph.streamCalledCallables().flatMap((it) => {
-            if (isSdsFunction(it)) {
+            if (!it) {
+                return [UnknownCallableCall];
+            } else if (isSdsFunction(it)) {
                 return this.getImpurityReasonsForFunction(it);
+            } else if (isSdsParameter(it) && !this.isPureParameter(it)) {
+                return [new PotentiallyImpureParameterCall(it)];
             } else {
                 return EMPTY_STREAM;
             }

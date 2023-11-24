@@ -1,6 +1,6 @@
 package tests.partialValidation.baseCases.blockLambdas
 
 pipeline test {
-    // $TEST$ serialization $BlockLambdaClosure
+    // $TEST$ serialization $blockLambdaClosure
     »() {}«;
 }

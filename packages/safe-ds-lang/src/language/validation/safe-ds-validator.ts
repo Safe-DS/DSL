@@ -135,10 +135,12 @@ import {
     unionTypeShouldNotHaveDuplicateTypes,
 } from './other/types/unionTypes.js';
 import {
+    callArgumentAssignedToPureParameterMustBePure,
     functionPurityMustBeSpecified,
     impurityReasonParameterNameMustBelongToParameterOfCorrectType,
     impurityReasonShouldNotBeSetMultipleTimes,
     impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod,
+    pureParameterDefaultValueMustBePure,
 } from './purity.js';
 import {
     annotationCallArgumentListShouldBeNeeded,
@@ -176,6 +178,7 @@ import {
     yieldTypeMustMatchResultType,
 } from './types.js';
 import { statementMustDoSomething } from './other/statements/statements.js';
+import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 
 /**
  * Register custom validation checks.
@@ -190,7 +193,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsAssignment: [
             assignmentAssigneeMustGetValue(services),
             assignmentShouldNotImplicitlyIgnoreResult(services),
-            assignmentShouldHaveMoreThanWildcardsAsAssignees,
+            assignmentShouldHaveMoreThanWildcardsAsAssignees(services),
         ],
         SdsAbstractCall: [
             argumentListMustNotHaveTooManyArguments(services),
@@ -198,14 +201,14 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
-            annotationParameterListShouldNotBeEmpty,
-            annotationParameterShouldNotHaveConstModifier,
+            annotationParameterListShouldNotBeEmpty(services),
+            annotationParameterShouldNotHaveConstModifier(services),
             targetShouldNotHaveDuplicateEntries(services),
         ],
         SdsAnnotationCall: [
             annotationCallAnnotationShouldNotBeDeprecated(services),
             annotationCallAnnotationShouldNotBeExperimental(services),
-            annotationCallArgumentListShouldBeNeeded,
+            annotationCallArgumentListShouldBeNeeded(services),
             annotationCallArgumentsMustBeConstant(services),
             annotationCallMustHaveCorrectTarget(services),
             annotationCallMustNotLackArgumentList,
@@ -223,6 +226,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],
         SdsCall: [
             callArgumentListShouldBeNeeded(services),
+            callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
@@ -240,23 +244,23 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             classMustOnlyInheritASingleClass(services),
             classMustNotInheritItself(services),
         ],
-        SdsClassBody: [classBodyShouldNotBeEmpty],
+        SdsClassBody: [classBodyShouldNotBeEmpty(services)],
         SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
-        SdsConstraintList: [constraintListsShouldBeUsedWithCaution, constraintListShouldNotBeEmpty],
+        SdsConstraintList: [constraintListsShouldBeUsedWithCaution(services), constraintListShouldNotBeEmpty(services)],
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
             nameMustNotStartWithCodegenPrefix,
-            nameShouldHaveCorrectCasing,
+            nameShouldHaveCorrectCasing(services),
             pythonNameShouldDifferFromSafeDsName(services),
             singleUseAnnotationsMustNotBeRepeated(services),
         ],
         SdsEnum: [enumMustContainUniqueNames],
-        SdsEnumBody: [enumBodyShouldNotBeEmpty],
-        SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty],
+        SdsEnumBody: [enumBodyShouldNotBeEmpty(services)],
+        SdsEnumVariant: [enumVariantMustContainUniqueNames, enumVariantParameterListShouldNotBeEmpty(services)],
         SdsExpressionLambda: [expressionLambdaMustContainUniqueNames],
         SdsFunction: [
             functionMustContainUniqueNames,
-            functionResultListShouldNotBeEmpty,
+            functionResultListShouldNotBeEmpty(services),
             functionPurityMustBeSpecified(services),
             impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod(services),
             impurityReasonParameterNameMustBelongToParameterOfCorrectType(services),
@@ -265,11 +269,12 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
-        SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName],
+        SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName(services)],
         SdsIndexedAccess: [
+            indexedAccessIndexMustBeValid(services),
             indexedAccessIndexMustHaveCorrectType(services),
             indexedAccessReceiverMustBeListOrMap(services),
-            indexedAccessesShouldBeUsedWithCaution,
+            indexedAccessesShouldBeUsedWithCaution(services),
         ],
         SdsInfixOperation: [
             divisionDivisorMustNotBeZero(services),
@@ -286,10 +291,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypeMustHaveLiterals,
             literalTypeMustNotContainListLiteral,
             literalTypeMustNotContainMapLiteral,
-            literalTypesShouldBeUsedWithCaution,
+            literalTypesShouldBeUsedWithCaution(services),
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
-        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution],
+        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
         SdsMemberAccess: [
             memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
@@ -309,7 +314,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeMustNotHaveTooManyTypeArguments,
             namedTypeMustNotSetTypeParameterMultipleTimes(services),
             namedTypeMustSetAllTypeParameters(services),
-            namedTypeTypeArgumentListShouldBeNeeded,
+            namedTypeTypeArgumentListShouldBeNeeded(services),
             namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
         ],
         SdsParameter: [
@@ -317,6 +322,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
             parameterDefaultValueTypeMustMatchParameterType(services),
+            pureParameterDefaultValueMustBePure(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
@@ -337,24 +343,27 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),
             segmentResultMustBeAssignedExactlyOnce(services),
-            segmentResultListShouldNotBeEmpty,
+            segmentResultListShouldNotBeEmpty(services),
             segmentShouldBeUsed(services),
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution],
+        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution(services)],
         SdsTypeParameter: [
             typeParameterMustHaveSufficientContext,
             typeParameterMustNotBeUsedInNestedNamedTypeDeclarations,
         ],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
-        SdsTypeParameterList: [typeParameterListsShouldBeUsedWithCaution, typeParameterListShouldNotBeEmpty],
+        SdsTypeParameterList: [
+            typeParameterListsShouldBeUsedWithCaution(services),
+            typeParameterListShouldNotBeEmpty(services),
+        ],
         SdsUnionType: [
             unionTypeMustBeUsedInCorrectContext,
             unionTypeMustHaveTypes,
-            unionTypesShouldBeUsedWithCaution,
+            unionTypesShouldBeUsedWithCaution(services),
             unionTypeShouldNotHaveDuplicateTypes(services),
-            unionTypeShouldNotHaveASingularTypeArgument,
+            unionTypeShouldNotHaveASingularTypeArgument(services),
         ],
         SdsYield: [yieldMustNotBeUsedInPipeline, yieldTypeMustMatchResultType(services)],
     };
