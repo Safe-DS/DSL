@@ -1,4 +1,4 @@
-import { type NamedAstNode, stream } from 'langium';
+import { stream } from 'langium';
 import {
     type SdsAbstractResult,
     type SdsBlockLambda,
@@ -205,7 +205,7 @@ export class ExpressionLambdaClosure extends EvaluatedCallable {
     }
 }
 
-export class NamedCallable<T extends (SdsCallable & NamedAstNode) | SdsParameter> extends EvaluatedCallable {
+export class NamedCallable<T extends (SdsCallable & SdsDeclaration) | SdsParameter> extends EvaluatedCallable {
     override readonly isFullyEvaluated: boolean = false;
     override readonly substitutionsOnCreation: ParameterSubstitutions = new Map();
 

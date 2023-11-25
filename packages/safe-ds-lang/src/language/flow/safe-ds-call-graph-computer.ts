@@ -268,18 +268,17 @@ export class SafeDsCallGraphComputer {
         }
 
         // Fall back to getting the called parameter via the type computer
-        const calledParameter = this.getCalledParameter(expression);
-        if (isSdsParameter(calledParameter)) {
-            return new NamedCallable(calledParameter);
+        const type = this.typeComputer.computeType(expression);
+        if (!(type instanceof CallableType)) {
+            return undefined;
         }
 
-        return undefined;
-    }
-
-    private getCalledParameter(expression: SdsExpression): SdsParameter | undefined {
-        const type = this.typeComputer.computeType(expression);
-        if (type instanceof CallableType) {
-            return type.parameter;
+        const parameterOrCallable = type.parameter ?? type.callable;
+        if (isSdsParameter(parameterOrCallable)) {
+            return new NamedCallable(parameterOrCallable);
+        } else if (isSdsFunction(parameterOrCallable)) {
+            // Needed for instance methods
+            return new NamedCallable(parameterOrCallable);
         }
 
         return undefined;
