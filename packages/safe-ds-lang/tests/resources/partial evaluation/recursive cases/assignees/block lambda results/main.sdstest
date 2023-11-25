@@ -1,0 +1,17 @@
+package tests.partialyieldidation.recursiveCases.assignees.blockLambda
+
+segment mySegment() -> r: Int {
+    yield r = 2;
+}
+
+pipeline test {
+    () {
+        // $TEST$ serialization 1
+        // $TEST$ serialization ?
+        »yield a«, »yield b« = 1;
+
+        // $TEST$ serialization 2
+        // $TEST$ serialization ?
+        »yield c«, »yield d« = mySegment();
+    };
+}

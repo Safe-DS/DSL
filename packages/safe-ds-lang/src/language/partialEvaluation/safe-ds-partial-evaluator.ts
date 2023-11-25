@@ -145,12 +145,10 @@ export class SafeDsPartialEvaluator {
         const evaluatedExpression = this.evaluateWithSubstitutions(containingAssignment.expression, substitutions);
         const nodeIndex = node.$containerIndex ?? -1;
         if (evaluatedExpression instanceof EvaluatedNamedTuple) {
-            /* c8 ignore next */ // TODO test
             return evaluatedExpression.getResultValueByIndex(nodeIndex);
         } else if (nodeIndex === 0) {
             return evaluatedExpression;
         } else {
-            /* c8 ignore next 2 */ // TODO test
             return UnknownEvaluatedNode;
         }
     }
