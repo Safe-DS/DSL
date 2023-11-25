@@ -1,6 +1,6 @@
 package tests.partialValidation.recursiveCases.arguments
 
-fun f(p: Any?)
+@Pure fun f(p: Any?)
 
 pipeline test {
     // $TEST$ serialization 1

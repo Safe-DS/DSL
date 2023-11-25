@@ -5,8 +5,6 @@ enum MyEnum {
     MyEnumVariantWithParameters(p: Int, q: Int = 3)
 }
 
-fun f() -> r: Int
-
 pipeline test {
     // $TEST$ serialization MyEnumVariantWithoutParameters()
     »MyEnum.MyEnumVariantWithoutParameters()«;
