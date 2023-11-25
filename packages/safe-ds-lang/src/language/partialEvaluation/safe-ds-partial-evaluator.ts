@@ -525,25 +525,25 @@ export class SafeDsPartialEvaluator {
         const parameters = getParameters(callable);
         const argumentsByParameter = this.nodeMapper.parametersToArguments(parameters, args);
 
-        let result: [SdsParameter, EvaluatedNode][] = [...substitutionsOnCreation];
+        let result = substitutionsOnCreation;
 
         for (const parameter of parameters) {
             if (argumentsByParameter.has(parameter)) {
                 // Substitutions on call via arguments
                 const value = this.evaluateWithSubstitutions(argumentsByParameter.get(parameter), substitutionsOnCall);
                 if (value !== UnknownEvaluatedNode) {
-                    result = [...result, [parameter, value]];
+                    result = new Map([...result, [parameter, value]]);
                 }
             } else if (parameter.defaultValue) {
                 // Substitutions on call via default values
-                const value = this.evaluateWithSubstitutions(parameter.defaultValue, substitutionsOnCall);
+                const value = this.evaluateWithSubstitutions(parameter.defaultValue, result);
                 if (value !== UnknownEvaluatedNode) {
-                    result = [...result, [parameter, value]];
+                    result = new Map([...result, [parameter, value]]);
                 }
             }
         }
 
-        return new Map(result);
+        return result;
     }
 
     private evaluateIndexedAccess(node: SdsIndexedAccess, substitutions: ParameterSubstitutions): EvaluatedNode {

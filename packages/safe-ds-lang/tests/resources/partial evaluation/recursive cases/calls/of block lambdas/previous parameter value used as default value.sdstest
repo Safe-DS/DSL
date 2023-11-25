@@ -1,0 +1,10 @@
+package tests.partialValidation.recursiveCases.calls.ofBlockLambdas.previousParameterValueUsedAsDefaultValue
+
+pipeline test {
+    val blockLambda = (p1: Int, p2: Int = p1) {
+        yield r = p2;
+    };
+
+    // $TEST$ serialization 1
+    »blockLambda(1)«;
+}
