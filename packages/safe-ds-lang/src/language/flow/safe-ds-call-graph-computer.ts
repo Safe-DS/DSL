@@ -116,10 +116,7 @@ export class SafeDsCallGraphComputer {
         }
     }
 
-    private doGetCallGraph(
-        node: SdsCall | SdsCallable,
-        substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS,
-    ): CallGraph {
+    private doGetCallGraph(node: SdsCall | SdsCallable, substitutions: ParameterSubstitutions): CallGraph {
         if (isSdsCall(node)) {
             const call = this.createSyntheticCallForCall(node, substitutions);
             return this.getCallGraphWithRecursionCheck(call, []);
@@ -268,7 +265,7 @@ export class SafeDsCallGraphComputer {
         if (!callableOrParameter || isSdsAnnotation(callableOrParameter) || isSdsCallableType(callableOrParameter)) {
             return undefined;
         } else if (isSdsParameter(callableOrParameter)) {
-            // Parameter is set explicitly
+            // Parameter is set
             const substitution = substitutions.get(callableOrParameter);
             if (substitution) {
                 if (substitution instanceof EvaluatedCallable) {
@@ -279,11 +276,8 @@ export class SafeDsCallGraphComputer {
                 }
             }
 
-            // Parameter might have a default value
-            if (!callableOrParameter.defaultValue) {
-                return new NamedCallable(callableOrParameter);
-            }
-            return this.getEvaluatedCallable(callableOrParameter.defaultValue, substitutions);
+            // Parameter is not set
+            return new NamedCallable(callableOrParameter);
         } else if (isNamed(callableOrParameter)) {
             return new NamedCallable(callableOrParameter);
         } else if (isSdsBlockLambda(callableOrParameter)) {
@@ -316,6 +310,8 @@ export class SafeDsCallGraphComputer {
         args: SdsArgument[],
         substitutions: ParameterSubstitutions,
     ): ParameterSubstitutions {
+        // TODO: Use this in the partial evaluator too. Here (maybe) filter and keep only the substitutions that are
+        //  callables.
         if (!callable || isSdsParameter(callable.callable)) {
             return NO_SUBSTITUTIONS;
         }
@@ -323,7 +319,7 @@ export class SafeDsCallGraphComputer {
         // Substitutions on creation
         const substitutionsOnCreation = callable.substitutionsOnCreation;
 
-        // Substitutions on call
+        // Substitutions on call via arguments
         const parameters = getParameters(callable.callable);
         const substitutionsOnCall = new Map(
             args.flatMap((it) => {
@@ -352,7 +348,19 @@ export class SafeDsCallGraphComputer {
             }),
         );
 
-        return new Map([...substitutionsOnCreation, ...substitutionsOnCall]);
+        // Substitutions on call via default values
+        let result = new Map([...substitutionsOnCreation, ...substitutionsOnCall]);
+        for (const parameter of parameters) {
+            if (!result.has(parameter) && parameter.defaultValue) {
+                // Default values may depend on the values of previous parameters, so we have to evaluate them in order
+                const value = this.getEvaluatedCallable(parameter.defaultValue, result);
+                if (value) {
+                    result = new Map([...result, [parameter, value]]);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
