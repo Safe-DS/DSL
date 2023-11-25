@@ -8,11 +8,13 @@ import {
     isSdsBoolean,
     isSdsCall,
     isSdsCallable,
+    isSdsClass,
     isSdsDeclaration,
     isSdsEnumVariant,
     isSdsExpression,
     isSdsExpressionLambda,
     isSdsFloat,
+    isSdsFunction,
     isSdsIndexedAccess,
     isSdsInfixOperation,
     isSdsInt,
@@ -31,20 +33,20 @@ import {
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
-    SdsArgument,
-    SdsAssignee,
-    SdsCall,
-    SdsCallable,
-    SdsDeclaration,
-    SdsExpression,
-    SdsIndexedAccess,
-    SdsInfixOperation,
-    SdsList,
-    SdsMap,
-    SdsMemberAccess,
-    SdsParameter,
-    SdsPrefixOperation,
-    SdsTemplateString,
+    type SdsArgument,
+    type SdsAssignee,
+    type SdsCall,
+    type SdsCallable,
+    type SdsDeclaration,
+    type SdsExpression,
+    type SdsIndexedAccess,
+    type SdsInfixOperation,
+    type SdsList,
+    type SdsMap,
+    type SdsMemberAccess,
+    type SdsParameter,
+    type SdsPrefixOperation,
+    type SdsTemplateString,
 } from '../generated/ast.js';
 import { getAbstractResults, getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
@@ -153,10 +155,15 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateDeclaration(node: SdsDeclaration, substitutions: ParameterSubstitutions): EvaluatedNode {
-        if (isSdsEnumVariant(node)) {
-            return new EvaluatedEnumVariant(node, undefined);
-        } else if (isSdsParameter(node)) {
+        if (isSdsClass(node)) {
             // TODO test
+            return new NamedCallable(node);
+        } else if (isSdsEnumVariant(node)) {
+            return new EvaluatedEnumVariant(node, undefined);
+        } else if (isSdsFunction(node)) {
+            // TODO test
+            return new NamedCallable(node);
+        } else if (isSdsParameter(node)) {
             return substitutions.get(node) ?? UnknownEvaluatedNode;
         } else if (isSdsResult(node)) {
             return this.evaluateWithSubstitutions(this.nodeMapper.resultToYields(node).head(), substitutions);
@@ -501,7 +508,9 @@ export class SafeDsPartialEvaluator {
             substitutionsOnCall,
         );
 
-        if (isSdsExpressionLambda(callable)) {
+        if (isSdsClass(callable) || isSdsFunction(callable)) {
+            return UnknownEvaluatedNode;
+        } else if (isSdsExpressionLambda(callable)) {
             return this.evaluateWithSubstitutions(callable.result, parameterSubstitutionsAfterCall);
         } else {
             return new EvaluatedNamedTuple(
@@ -518,8 +527,8 @@ export class SafeDsPartialEvaluator {
     getParameterSubstitutionsAfterCall(
         callable: SdsCallable | SdsParameter | undefined,
         args: SdsArgument[],
-        substitutionsOnCreation: ParameterSubstitutions,
-        substitutionsOnCall: ParameterSubstitutions,
+        substitutionsOnCreation: ParameterSubstitutions = NO_SUBSTITUTIONS,
+        substitutionsOnCall: ParameterSubstitutions = NO_SUBSTITUTIONS,
     ): ParameterSubstitutions {
         if (!callable || isSdsParameter(callable)) {
             return NO_SUBSTITUTIONS;
