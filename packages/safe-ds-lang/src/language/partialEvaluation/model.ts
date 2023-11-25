@@ -141,15 +141,13 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 // Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class EvaluatedCallable<
-    out T extends SdsCallable | SdsParameter = SdsCallable | SdsParameter,
-> extends EvaluatedNode {
-    abstract readonly callable: T;
+export abstract class EvaluatedCallable extends EvaluatedNode {
+    abstract readonly callable: SdsCallable | SdsParameter;
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
     override readonly isFullyEvaluated: boolean = false;
 }
 
-export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
+export class BlockLambdaClosure extends EvaluatedCallable {
     readonly results: SdsBlockLambdaResult[];
 
     constructor(
@@ -178,7 +176,7 @@ export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
     }
 }
 
-export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLambda> {
+export class ExpressionLambdaClosure extends EvaluatedCallable {
     readonly result: SdsExpression;
 
     constructor(
@@ -207,7 +205,7 @@ export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLamb
     }
 }
 
-export class NamedCallable<T extends (SdsCallable & NamedAstNode) | SdsParameter> extends EvaluatedCallable<T> {
+export class NamedCallable<T extends (SdsCallable & NamedAstNode) | SdsParameter> extends EvaluatedCallable {
     override readonly isFullyEvaluated: boolean = false;
     override readonly substitutionsOnCreation: ParameterSubstitutions = new Map();
 

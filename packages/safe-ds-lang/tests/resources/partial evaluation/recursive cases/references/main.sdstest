@@ -1,4 +1,4 @@
-package tests.partialyieldidation.recursiveCases.assignees.references
+package tests.partialEvaluation.recursiveCases.assignees.references
 
 pipeline myPipeline {
     val a = 1;

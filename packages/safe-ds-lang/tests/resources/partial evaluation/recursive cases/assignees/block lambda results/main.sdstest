@@ -1,4 +1,4 @@
-package tests.partialyieldidation.recursiveCases.assignees.blockLambda
+package tests.partialEvaluation.recursiveCases.assignees.blockLambda
 
 segment mySegment() -> r: Int {
     yield r = 2;

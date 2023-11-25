@@ -1,4 +1,4 @@
-package tests.partialyieldidation.recursiveCases.assignees.yields
+package tests.partialEvaluation.recursiveCases.assignees.yields
 
 segment mySegment() -> r: Int {
     yield r = 2;

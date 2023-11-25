@@ -1,4 +1,4 @@
-package tests.partialyieldidation.recursiveCases.assignees.results
+package tests.partialEvaluation.recursiveCases.assignees.results
 
 // $TEST$ serialization ?
 // $TEST$ serialization 1
