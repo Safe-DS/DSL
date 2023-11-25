@@ -1,0 +1,10 @@
+package tests.partialyieldidation.recursiveCases.assignees.references
+
+pipeline myPipeline {
+    val a = 1;
+
+    // $TEST$ serialization 1
+    »a«;
+    // $TEST$ serialization ?
+    »unresolved«;
+}
