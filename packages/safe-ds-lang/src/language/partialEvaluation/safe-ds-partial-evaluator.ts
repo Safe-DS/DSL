@@ -534,7 +534,7 @@ export class SafeDsPartialEvaluator {
 
         // Compute which parameters are set via arguments
         const parameters = getParameters(callable);
-        const argumentsByParameter = this.mapParametersToArguments(parameters, args);
+        const argumentsByParameter = this.nodeMapper.parametersToArguments(parameters, args);
 
         let result: [SdsParameter, EvaluatedNode][] = [...substitutionsOnCreation];
 
@@ -555,34 +555,6 @@ export class SafeDsPartialEvaluator {
         }
 
         return new Map(result);
-    }
-
-    private mapParametersToArguments(parameters: SdsParameter[], args: SdsArgument[]): Map<SdsParameter, SdsArgument> {
-        const result = new Map<SdsParameter, SdsArgument>();
-
-        for (const argument of args) {
-            const parameterIndex = this.nodeMapper.argumentToParameter(argument)?.$containerIndex ?? -1;
-            if (parameterIndex === -1) {
-                // TODO: test (unresolved argument)
-                continue;
-            }
-
-            // argumentToParameter returns parameters of callable types. We have to remap this to parameter of the
-            // actual callable.
-            const parameter = parameters[parameterIndex];
-            if (!parameter) {
-                // TODO: test (callable type has more parameters than the actual callable)
-                continue;
-            }
-
-            // The first occurrence wins
-            // TODO: test (pass multiple arguments for the same parameter)
-            if (!result.has(parameter)) {
-                result.set(parameter, argument);
-            }
-        }
-
-        return result;
     }
 
     private evaluateIndexedAccess(node: SdsIndexedAccess, substitutions: ParameterSubstitutions): EvaluatedNode {
