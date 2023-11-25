@@ -1,3 +1,11 @@
+## [0.5.1](https://github.com/Safe-DS/DSL/compare/v0.5.0...v0.5.1) (2023-11-25)
+
+
+### Bug Fixes
+
+* potential stack overflow when computing impurity reasons ([#801](https://github.com/Safe-DS/DSL/issues/801)) ([1d4abb3](https://github.com/Safe-DS/DSL/commit/1d4abb367b0016aed8b2c027675832e831588687))
+* stack overflow when evaluating recursive calls ([#800](https://github.com/Safe-DS/DSL/issues/800)) ([e19c817](https://github.com/Safe-DS/DSL/commit/e19c8171b967d0cc4b57b580e76773830bd49476))
+
 ## [0.5.0](https://github.com/Safe-DS/DSL/compare/v0.4.0...v0.5.0) (2023-11-25)
 
 
