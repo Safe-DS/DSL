@@ -234,19 +234,19 @@ export class NamedCallable<T extends (SdsCallable & NamedAstNode) | SdsParameter
 export class EvaluatedEnumVariant extends EvaluatedNode {
     constructor(
         readonly variant: SdsEnumVariant,
-        readonly args: ParameterSubstitutions | undefined,
+        readonly substitutions: ParameterSubstitutions | undefined,
     ) {
         super();
     }
 
-    readonly hasBeenInstantiated = this.args !== undefined;
+    readonly hasBeenInstantiated = this.substitutions !== undefined;
 
     override readonly isFullyEvaluated: boolean =
         isEmpty(getParameters(this.variant)) ||
-        (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
+        (this.substitutions !== undefined && stream(this.substitutions.values()).every(isFullyEvaluated));
 
-    getArgumentValueByName(name: string): EvaluatedNode {
-        if (!this.args) {
+    getParameterValueByName(name: string): EvaluatedNode {
+        if (!this.substitutions) {
             return UnknownEvaluatedNode;
         }
 
@@ -255,7 +255,7 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
             return UnknownEvaluatedNode;
         }
 
-        return this.args.get(parameter) ?? UnknownEvaluatedNode;
+        return this.substitutions.get(parameter) ?? UnknownEvaluatedNode;
     }
 
     override equals(other: unknown): boolean {
@@ -268,15 +268,17 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         return (
             this.variant === other.variant &&
             this.hasBeenInstantiated === other.hasBeenInstantiated &&
-            substitutionsAreEqual(this.args, other.args)
+            substitutionsAreEqual(this.substitutions, other.substitutions)
         );
     }
 
     override toString(): string {
-        if (!this.args) {
+        if (!this.substitutions) {
             return this.variant.name;
         } else {
-            return `${this.variant.name}(${Array.from(this.args.values()).join(', ')})`;
+            return `${this.variant.name}(${Array.from(this.substitutions.entries())
+                .map(([parameter, value]) => `${parameter.name} = ${value}`)
+                .join(', ')})`;
         }
     }
 }

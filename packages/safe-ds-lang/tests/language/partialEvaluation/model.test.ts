@@ -210,11 +210,11 @@ describe('partial evaluation model', async () => {
                 enumVariantWithParameters,
                 new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
             ),
-            expectedString: 'MyEnumVariant2(?)',
+            expectedString: 'MyEnumVariant2(p = ?)',
         },
         {
             value: new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
-            expectedString: 'MyEnumVariant2(null)',
+            expectedString: 'MyEnumVariant2(p = null)',
         },
         {
             value: new EvaluatedList([]),
@@ -406,7 +406,7 @@ describe('partial evaluation model', async () => {
                     expectedValue: NullConstant,
                 },
             ])('should return the element at the given index (%#)', ({ variant, name, expectedValue }) => {
-                expect(variant.getArgumentValueByName(name)).toStrictEqual(expectedValue);
+                expect(variant.getParameterValueByName(name)).toStrictEqual(expectedValue);
             });
         });
     });
