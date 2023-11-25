@@ -1,0 +1,16 @@
+package tests.partialValidation.recursiveCases.memberAccesses.ofEnumVariantParameter
+
+enum MyEnum {
+    MyEnumVariantWithParameters(p: Int, q: Int = 2)
+}
+
+pipeline test {
+    // $TEST$ serialization 1
+    »MyEnum.MyEnumVariantWithParameters(1).p«;
+
+    // $TEST$ serialization 2
+    »MyEnum.MyEnumVariantWithParameters(1).q«;
+
+    // $TEST$ serialization ?
+    »MyEnum.MyEnumVariantWithParameters(1).unresolved«;
+}

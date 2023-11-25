@@ -202,6 +202,41 @@ export class SafeDsNodeMapper {
     }
 
     /**
+     * Create a mapping from parameters to arguments. Parameters that are not mapped to an argument are not included in
+     * the result. Neither are arguments that are not mapped to a parameter. If multiple arguments are mapped to the
+     * same parameter, the first one wins.
+     *
+     * @param parameters The parameters to map to arguments.
+     * @param args The arguments.
+     */
+    parametersToArguments(parameters: SdsParameter[], args: SdsArgument[]): Map<SdsParameter, SdsArgument> {
+        const result = new Map<SdsParameter, SdsArgument>();
+
+        for (const argument of args) {
+            const parameterIndex = this.argumentToParameter(argument)?.$containerIndex ?? -1;
+            if (parameterIndex === -1) {
+                continue;
+            }
+
+            /*
+             * argumentToParameter returns parameters of callable types. We have to remap this to parameter of the
+             * actual callable.
+             */
+            const parameter = parameters[parameterIndex];
+            if (!parameter) {
+                continue;
+            }
+
+            // The first occurrence wins
+            if (!result.has(parameter)) {
+                result.set(parameter, argument);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Returns all references that target the given parameter.
      */
     parameterToReferences(node: SdsParameter | undefined): Stream<SdsReference> {

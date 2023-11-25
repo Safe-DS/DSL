@@ -274,7 +274,7 @@ export class SafeDsPurityComputer {
     }
 
     private getPath(variant: EvaluatedEnumVariant): string | undefined {
-        const path = variant.getArgumentValueByName('path');
+        const path = variant.getParameterValueByName('path');
         if (path instanceof StringConstant) {
             return path.value;
         } else {
@@ -283,7 +283,7 @@ export class SafeDsPurityComputer {
     }
 
     private getParameter(node: SdsFunction, variant: EvaluatedEnumVariant): SdsParameter | undefined {
-        const parameterName = variant.getArgumentValueByName('parameterName');
+        const parameterName = variant.getParameterValueByName('parameterName');
         if (!(parameterName instanceof StringConstant)) {
             return undefined;
         }

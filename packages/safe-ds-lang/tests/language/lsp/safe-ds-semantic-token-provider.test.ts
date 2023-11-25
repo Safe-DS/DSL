@@ -159,6 +159,15 @@ describe('SafeDsSemanticTokenProvider', async () => {
             `,
             expectedTokenTypes: [SemanticTokenTypes.typeParameter],
         },
+        {
+            testName: 'yield',
+            code: `
+                segment mySegment() -> result: Int {
+                    yield <|result|> = 1;
+                }
+            `,
+            expectedTokenTypes: [SemanticTokenTypes.parameter],
+        },
     ])('should assign the correct token types ($testName)', async ({ code, expectedTokenTypes }) => {
         await checkSemanticTokens(code, expectedTokenTypes);
     });

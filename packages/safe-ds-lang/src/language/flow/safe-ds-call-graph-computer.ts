@@ -3,17 +3,14 @@ import {
     type AstNodeLocator,
     getContainerOfType,
     getDocument,
-    isNamed,
     stream,
     streamAst,
     WorkspaceCache,
 } from 'langium';
 import {
-    isSdsAnnotation,
     isSdsBlockLambda,
     isSdsCall,
     isSdsCallable,
-    isSdsCallableType,
     isSdsClass,
     isSdsEnumVariant,
     isSdsExpressionLambda,
@@ -35,9 +32,8 @@ import {
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
-    BlockLambdaClosure,
     EvaluatedCallable,
-    ExpressionLambdaClosure,
+    EvaluatedEnumVariant,
     NamedCallable,
     ParameterSubstitutions,
     substitutionsAreEqual,
@@ -46,7 +42,7 @@ import {
 import { CallGraph } from './model.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { CallableType, StaticType } from '../typing/model.js';
+import { CallableType } from '../typing/model.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 
@@ -238,7 +234,11 @@ export class SafeDsCallGraphComputer {
 
     private createSyntheticCallForCall(call: SdsCall, substitutions: ParameterSubstitutions): SyntheticCall {
         const evaluatedCallable = this.getEvaluatedCallable(call.receiver, substitutions);
-        const newSubstitutions = this.getNewSubstitutions(evaluatedCallable, getArguments(call), substitutions);
+        const newSubstitutions = this.getParameterSubstitutionsAfterCall(
+            evaluatedCallable,
+            getArguments(call),
+            substitutions,
+        );
         return new SyntheticCall(evaluatedCallable, newSubstitutions);
     }
 
@@ -247,110 +247,69 @@ export class SafeDsCallGraphComputer {
     }
 
     private getEvaluatedCallable(
-        expression: SdsExpression,
+        expression: SdsExpression | undefined,
         substitutions: ParameterSubstitutions,
     ): EvaluatedCallable | undefined {
-        // TODO use the partial evaluator here; necessary for closures
-        // const value = this.partialEvaluator.evaluate(expression, substitutions);
-        // if (value instanceof EvaluatedCallable) {
-        //     return value;
-        // }
-        //
-        // return undefined;
-
-        let callableOrParameter = this.getCallableOrParameter(expression);
-
-        if (!callableOrParameter || isSdsAnnotation(callableOrParameter) || isSdsCallableType(callableOrParameter)) {
-            return undefined;
-        } else if (isSdsParameter(callableOrParameter)) {
-            // Parameter is set
-            const substitution = substitutions.get(callableOrParameter);
-            if (substitution) {
-                if (substitution instanceof EvaluatedCallable) {
-                    return substitution;
-                } else {
-                    /* c8 ignore next 2 */
-                    return undefined;
-                }
-            }
-
-            // Parameter is not set
-            return new NamedCallable(callableOrParameter);
-        } else if (isNamed(callableOrParameter)) {
-            return new NamedCallable(callableOrParameter);
-        } else if (isSdsBlockLambda(callableOrParameter)) {
-            return new BlockLambdaClosure(callableOrParameter, substitutions);
-        } else if (isSdsExpressionLambda(callableOrParameter)) {
-            return new ExpressionLambdaClosure(callableOrParameter, substitutions);
-        } else {
+        if (!expression) {
             /* c8 ignore next 2 */
             return undefined;
         }
-    }
 
-    private getCallableOrParameter(expression: SdsExpression): SdsCallable | SdsParameter | undefined {
-        const type = this.typeComputer.computeType(expression);
-
-        if (type instanceof CallableType) {
-            return type.parameter ?? type.callable;
-        } else if (type instanceof StaticType) {
-            const declaration = type.instanceType.declaration;
-            if (isSdsCallable(declaration)) {
-                return declaration;
+        // First try to get the callable via the partial evaluator
+        const value = this.partialEvaluator.evaluate(expression, substitutions);
+        if (value instanceof EvaluatedCallable) {
+            return value;
+        } else if (value instanceof EvaluatedEnumVariant) {
+            if (!value.hasBeenInstantiated) {
+                return new NamedCallable(value.variant);
             }
+
+            return undefined;
+        }
+
+        // Fall back to getting the called parameter via the type computer
+        const type = this.typeComputer.computeType(expression);
+        if (!(type instanceof CallableType)) {
+            return undefined;
+        }
+
+        const parameterOrCallable = type.parameter ?? type.callable;
+        if (isSdsParameter(parameterOrCallable)) {
+            return new NamedCallable(parameterOrCallable);
+        } else if (isSdsFunction(parameterOrCallable)) {
+            // Needed for instance methods
+            return new NamedCallable(parameterOrCallable);
         }
 
         return undefined;
     }
 
-    private getNewSubstitutions(
+    private getParameterSubstitutionsAfterCall(
         callable: EvaluatedCallable | undefined,
         args: SdsArgument[],
         substitutions: ParameterSubstitutions,
     ): ParameterSubstitutions {
-        // TODO: Use this in the partial evaluator too. Here (maybe) filter and keep only the substitutions that are
-        //  callables.
         if (!callable || isSdsParameter(callable.callable)) {
             return NO_SUBSTITUTIONS;
         }
 
-        // Substitutions on creation
-        const substitutionsOnCreation = callable.substitutionsOnCreation;
-
-        // Substitutions on call via arguments
+        // Compute which parameters are set via arguments
         const parameters = getParameters(callable.callable);
-        const substitutionsOnCall = new Map(
-            args.flatMap((it) => {
-                // Ignore arguments that don't get assigned to a parameter
-                const parameterIndex = this.nodeMapper.argumentToParameter(it)?.$containerIndex ?? -1;
-                if (parameterIndex === -1) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
+        const argumentsByParameter = this.nodeMapper.parametersToArguments(parameters, args);
 
-                // argumentToParameter returns parameters of callable types. We have to remap this to parameter of the
-                // actual callable.
-                const parameter = parameters[parameterIndex];
-                if (!parameter) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
+        let result = callable.substitutionsOnCreation;
 
-                const value = this.getEvaluatedCallable(it.value, substitutions);
-                if (!value) {
-                    // We still have to remember that a value was passed, so the default value is not used
-                    return [[parameter, UnknownEvaluatedNode]];
-                }
-
-                return [[parameter, value]];
-            }),
-        );
-
-        // Substitutions on call via default values
-        let result = new Map([...substitutionsOnCreation, ...substitutionsOnCall]);
         for (const parameter of parameters) {
-            if (!result.has(parameter) && parameter.defaultValue) {
-                // Default values may depend on the values of previous parameters, so we have to evaluate them in order
+            if (argumentsByParameter.has(parameter)) {
+                // Substitutions on call via arguments
+                const value =
+                    this.getEvaluatedCallable(argumentsByParameter.get(parameter), substitutions) ??
+                    UnknownEvaluatedNode;
+
+                // Remember that a value was passed, so calls/callables in default values are not considered later
+                result = new Map([...result, [parameter, value]]);
+            } else if (parameter.defaultValue) {
+                // Substitutions on call via default values
                 const value = this.getEvaluatedCallable(parameter.defaultValue, result);
                 if (value) {
                     result = new Map([...result, [parameter, value]]);

@@ -1,0 +1,4 @@
+package tests.partialValidation.baseCases.classes
+
+// $TEST$ serialization C
+»class C«
