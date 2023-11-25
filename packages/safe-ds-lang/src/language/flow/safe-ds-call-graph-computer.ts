@@ -252,13 +252,10 @@ export class SafeDsCallGraphComputer {
         expression: SdsExpression,
         substitutions: ParameterSubstitutions,
     ): EvaluatedCallable | undefined {
-        // TODO use the partial evaluator here; necessary for closures
-        // const value = this.partialEvaluator.evaluate(expression, substitutions);
-        // if (value instanceof EvaluatedCallable) {
-        //     return value;
-        // }
-        //
-        // return undefined;
+        const value = this.partialEvaluator.evaluate(expression, substitutions);
+        if (value instanceof EvaluatedCallable) {
+            return value;
+        }
 
         let callableOrParameter = this.getCallableOrParameter(expression);
 
