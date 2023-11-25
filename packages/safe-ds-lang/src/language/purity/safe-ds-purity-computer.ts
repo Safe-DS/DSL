@@ -233,7 +233,13 @@ export class SafeDsPurityComputer {
                 return [UnknownCallableCall];
             } else if (isSdsFunction(it)) {
                 return this.getImpurityReasonsForFunction(it);
-            } else if (isSdsParameter(it) && !this.isPureParameter(it)) {
+            } else if (
+                isSdsParameter(it) &&
+                // Leads to endless recursion if we don't check this
+                // (see test case "should return the impurity reasons of a parameter call in a function")
+                !isSdsFunction(getContainerOfType(it, isSdsCallable)) &&
+                !this.isPureParameter(it)
+            ) {
                 return [new PotentiallyImpureParameterCall(it)];
             } else {
                 return EMPTY_STREAM;
