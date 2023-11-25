@@ -234,7 +234,11 @@ export class SafeDsCallGraphComputer {
 
     private createSyntheticCallForCall(call: SdsCall, substitutions: ParameterSubstitutions): SyntheticCall {
         const evaluatedCallable = this.getEvaluatedCallable(call.receiver, substitutions);
-        const newSubstitutions = this.getNewSubstitutions(evaluatedCallable, getArguments(call), substitutions);
+        const newSubstitutions = this.getParameterSubstitutionsAfterCall(
+            evaluatedCallable,
+            getArguments(call),
+            substitutions,
+        );
         return new SyntheticCall(evaluatedCallable, newSubstitutions);
     }
 
@@ -281,54 +285,32 @@ export class SafeDsCallGraphComputer {
         return undefined;
     }
 
-    private getNewSubstitutions(
+    private getParameterSubstitutionsAfterCall(
         callable: EvaluatedCallable | undefined,
         args: SdsArgument[],
         substitutions: ParameterSubstitutions,
     ): ParameterSubstitutions {
-        // TODO: Use this in the partial evaluator too. Here (maybe) filter and keep only the substitutions that are
-        //  callables.
         if (!callable || isSdsParameter(callable.callable)) {
             return NO_SUBSTITUTIONS;
         }
 
-        // Substitutions on creation
-        const substitutionsOnCreation = callable.substitutionsOnCreation;
-
-        // Substitutions on call via arguments
+        // Compute which parameters are set via arguments
         const parameters = getParameters(callable.callable);
-        const substitutionsOnCall = new Map(
-            args.flatMap((it) => {
-                // Ignore arguments that don't get assigned to a parameter
-                const parameterIndex = this.nodeMapper.argumentToParameter(it)?.$containerIndex ?? -1;
-                if (parameterIndex === -1) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
+        const argumentsByParameter = this.nodeMapper.parametersToArguments(parameters, args);
 
-                // argumentToParameter returns parameters of callable types. We have to remap this to parameter of the
-                // actual callable.
-                const parameter = parameters[parameterIndex];
-                if (!parameter) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
+        let result = callable.substitutionsOnCreation;
 
-                const value = this.getEvaluatedCallable(it.value, substitutions);
-                if (!value) {
-                    // We still have to remember that a value was passed, so the default value is not used
-                    return [[parameter, UnknownEvaluatedNode]];
-                }
-
-                return [[parameter, value]];
-            }),
-        );
-
-        // Substitutions on call via default values
-        let result = new Map([...substitutionsOnCreation, ...substitutionsOnCall]);
         for (const parameter of parameters) {
-            if (!result.has(parameter) && parameter.defaultValue) {
-                // Default values may depend on the values of previous parameters, so we have to evaluate them in order
+            if (argumentsByParameter.has(parameter)) {
+                // Substitutions on call via arguments
+                const value =
+                    this.getEvaluatedCallable(argumentsByParameter.get(parameter), substitutions) ??
+                    UnknownEvaluatedNode;
+
+                // Remember that a value was passed, so calls/callables in default values are not considered later
+                result = new Map([...result, [parameter, value]]);
+            } else if (parameter.defaultValue) {
+                // Substitutions on call via default values
                 const value = this.getEvaluatedCallable(parameter.defaultValue, result);
                 if (value) {
                     result = new Map([...result, [parameter, value]]);
