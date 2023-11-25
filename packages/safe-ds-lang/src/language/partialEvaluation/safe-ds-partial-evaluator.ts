@@ -24,6 +24,7 @@ import {
     isSdsParenthesizedExpression,
     isSdsPrefixOperation,
     isSdsReference,
+    isSdsResult,
     isSdsSegment,
     isSdsString,
     isSdsTemplateString,
@@ -107,10 +108,10 @@ export class SafeDsPartialEvaluator {
         );
         if (resultWithoutSubstitutions.isFullyEvaluated || isEmpty(substitutions)) {
             return resultWithoutSubstitutions;
-        } /* c8 ignore start */ else {
+        } else {
             // Try again with parameter substitutions but don't cache the result
             return this.doEvaluateWithSubstitutions(node, substitutions);
-        } /* c8 ignore stop */
+        }
     }
 
     private getNodeId(node: AstNode) {
@@ -159,8 +160,9 @@ export class SafeDsPartialEvaluator {
             return new EvaluatedEnumVariant(node, undefined);
         } else if (isSdsParameter(node)) {
             // TODO test
-            printParameterSubstitutions(substitutions);
             return substitutions.get(node) ?? UnknownEvaluatedNode;
+        } else if (isSdsResult(node)) {
+            return this.evaluateWithSubstitutions(this.nodeMapper.resultToYields(node).head(), substitutions);
         } else if (isSdsSegment(node)) {
             return new NamedCallable(node);
         } else {
@@ -598,11 +600,7 @@ export class SafeDsPartialEvaluator {
         }
 
         const receiver = this.evaluateWithSubstitutions(node.receiver, substitutions);
-        if (receiver === NullConstant) {
-            if (node.isNullSafe) {
-                return NullConstant;
-            }
-        } else if (receiver instanceof EvaluatedEnumVariant) {
+        if (receiver instanceof EvaluatedEnumVariant) {
             return receiver.getParameterValueByName(member.name);
         } else if (receiver instanceof EvaluatedNamedTuple) {
             return receiver.getResultValueByName(member.name);
@@ -656,7 +654,3 @@ const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();
 const falseConstant = new BooleanConstant(false);
 const trueConstant = new BooleanConstant(true);
 const zeroConstants = [new IntConstant(0n), new FloatConstant(0.0), new FloatConstant(-0.0)];
-
-const printParameterSubstitutions = (substitutions: ParameterSubstitutions) => {
-    console.log([...substitutions.entries()].map(([parameter, value]) => `${parameter.name} = ${value}`).join(', '));
-};
