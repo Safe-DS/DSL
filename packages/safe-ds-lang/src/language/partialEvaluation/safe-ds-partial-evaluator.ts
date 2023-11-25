@@ -7,6 +7,7 @@ import {
     isSdsBlockLambda,
     isSdsBoolean,
     isSdsCall,
+    isSdsCallable,
     isSdsDeclaration,
     isSdsEnumVariant,
     isSdsExpression,
@@ -29,8 +30,11 @@ import {
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
+    SdsAbstractResult,
+    SdsArgument,
     SdsAssignee,
     SdsCall,
+    SdsCallable,
     SdsDeclaration,
     SdsExpression,
     SdsIndexedAccess,
@@ -42,13 +46,14 @@ import {
     SdsPrefixOperation,
     SdsTemplateString,
 } from '../generated/ast.js';
-import { getArguments, getParameters } from '../helpers/nodeProperties.js';
+import { getAbstractResults, getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
     BlockLambdaClosure,
     BooleanConstant,
     Constant,
+    EvaluatedCallable,
     EvaluatedEnumVariant,
     EvaluatedList,
     EvaluatedMap,
@@ -140,7 +145,7 @@ export class SafeDsPartialEvaluator {
         const nodeIndex = node.$containerIndex ?? -1;
         if (evaluatedExpression instanceof EvaluatedNamedTuple) {
             /* c8 ignore next */ // TODO test
-            return evaluatedExpression.getSubstitutionByIndex(nodeIndex);
+            return evaluatedExpression.getResultValueByIndex(nodeIndex);
         } else if (nodeIndex === 0) {
             return evaluatedExpression;
         } else {
@@ -153,27 +158,15 @@ export class SafeDsPartialEvaluator {
         if (isSdsEnumVariant(node)) {
             return new EvaluatedEnumVariant(node, undefined);
         } else if (isSdsParameter(node)) {
-            return this.evaluateParameter(node, substitutions);
+            // TODO test
+            printParameterSubstitutions(substitutions);
+            return substitutions.get(node) ?? UnknownEvaluatedNode;
         } else if (isSdsSegment(node)) {
             return new NamedCallable(node);
         } else {
             return UnknownEvaluatedNode;
         }
     }
-
-    private evaluateParameter(node: SdsParameter, substitutions: ParameterSubstitutions): EvaluatedNode {
-        if (substitutions.has(node)) {
-            /* c8 ignore next */ // TODO test
-            return substitutions.get(node)!;
-            // TODO: must not get default value if substitutions are empty because it's the entry point in the
-            //  evaluation
-        } else if (node.defaultValue) {
-            return this.evaluateWithSubstitutions(node.defaultValue, substitutions);
-        } else {
-            return UnknownEvaluatedNode;
-        }
-    }
-
     private evaluateExpression(node: SdsExpression, substitutions: ParameterSubstitutions): EvaluatedNode {
         // Base cases
         if (isSdsBoolean(node)) {
@@ -416,12 +409,10 @@ export class SafeDsPartialEvaluator {
     }
 
     private evaluateList(node: SdsList, substitutions: ParameterSubstitutions): EvaluatedNode {
-        // TODO: if any entry has side effects, return UnknownEvaluatedNode
         return new EvaluatedList(node.elements.map((it) => this.evaluateWithSubstitutions(it, substitutions)));
     }
 
     private evaluateMap(node: SdsMap, substitutions: ParameterSubstitutions): EvaluatedNode {
-        // TODO: if any entry has side effects, return UnknownEvaluatedNode
         return new EvaluatedMap(
             node.entries.map((it) => {
                 const key = this.evaluateWithSubstitutions(it.key, substitutions);
@@ -465,86 +456,122 @@ export class SafeDsPartialEvaluator {
         const receiver = this.evaluateWithSubstitutions(node.receiver, substitutions).unwrap();
 
         if (receiver instanceof EvaluatedEnumVariant) {
-            // The enum variant has already been instantiated
-            if (receiver.hasBeenInstantiated) {
-                return UnknownEvaluatedNode;
-            }
-
-            // Store default values for all parameters
-            const args = new Map(
-                getParameters(receiver.variant).map((it) => {
-                    // TODO We may refer to other parameters in the default value, so we must pass substitutions
-                    return [it, this.evaluateWithSubstitutions(it.defaultValue, NO_SUBSTITUTIONS)];
-                }),
-            );
-
-            // Override default values with the actual arguments
-            // TODO: If any argument has side effects, return UnknownEvaluatedNode
-            getArguments(node).forEach((it) => {
-                const parameter = this.nodeMapper.argumentToParameter(it);
-                if (parameter && args.has(parameter)) {
-                    args.set(parameter, this.evaluateWithSubstitutions(it.value, substitutions));
-                }
-            });
-
-            return new EvaluatedEnumVariant(receiver.variant, args);
+            return this.evaluateEnumVariantCall(receiver, node, substitutions);
+        } else if (receiver instanceof EvaluatedCallable) {
+            return this.evaluateCallableCall(receiver, node, substitutions);
         }
 
-        //     val simpleReceiver = evaluateReceiver(substitutions) ?: return undefined
-        //     val newSubstitutions = buildNewSubstitutions(simpleReceiver, substitutions)
-        //     // TODO Also check whether the callable has side effects
-        //     return when (simpleReceiver) {
-        //     is SdsIntermediateBlockLambda -> {
-        //         SdsIntermediateRecord(
-        //             simpleReceiver.results.map {
-        //             it to it.evaluateAssignee(newSubstitutions)
-        //         }
-        //     )
-        //     }
-        //     is SdsIntermediateExpressionLambda -> simpleReceiver.result.evaluate(newSubstitutions)
-        //     is SdsIntermediateStep -> {
-        //         SdsIntermediateRecord(
-        //             simpleReceiver.results.map {
-        //             it to it.uniqueYieldOrNull()?.evaluateAssignee(newSubstitutions)
-        //         }
-        //     )
-        //     }
-        // }
         return UnknownEvaluatedNode;
     }
 
-    // private fun SdsCall.buildNewSubstitutions(
-    //     simpleReceiver: SdsIntermediateCallable,
-    //     oldSubstitutions: ParameterSubstitutions
-    // ): ParameterSubstitutions {
-    //
-    //     val substitutionsOnCreation = when (simpleReceiver) {
-    //         is SdsIntermediateBlockLambda -> simpleReceiver.substitutionsOnCreation
-    //         is SdsIntermediateExpressionLambda -> simpleReceiver.substitutionsOnCreation
-    //     else -> emptyMap()
-    //     }
-    //
-    //     val substitutionsOnCall = argumentsOrEmpty()
-    //         .groupBy { it.parameterOrNull() }
-    // .mapValues { (parameter, arguments) ->
-    //         when {
-    //         parameter == undefined -> undefined
-    //         parameter.isVariadic -> SdsIntermediateVariadicArguments(
-    //             arguments.map { it.evaluate(oldSubstitutions) }
-    //     )
-    //     else -> arguments.uniqueOrNull()?.evaluate(oldSubstitutions)
-    //     }
-    //     }
-    //
-    //     return buildMap {
-    //         putAll(substitutionsOnCreation)
-    //         substitutionsOnCall.entries.forEach { (parameter, argument) ->
-    //             if (parameter != undefined) {
-    //                 put(parameter, argument)
-    //             }
-    //         }
-    //     }
-    // }
+    private evaluateEnumVariantCall(
+        receiver: EvaluatedEnumVariant,
+        call: SdsCall,
+        substitutions: Map<SdsParameter, EvaluatedNode>,
+    ) {
+        // The enum variant has already been instantiated
+        if (receiver.hasBeenInstantiated) {
+            return UnknownEvaluatedNode;
+        }
+
+        const parameterSubstitutionsAfterCall = this.getParameterSubstitutionsAfterCall(
+            receiver.variant,
+            getArguments(call),
+            NO_SUBSTITUTIONS,
+            substitutions,
+        );
+
+        return new EvaluatedEnumVariant(receiver.variant, parameterSubstitutionsAfterCall);
+    }
+
+    private evaluateCallableCall(
+        receiver: EvaluatedCallable,
+        node: SdsCall,
+        substitutions: Map<SdsParameter, EvaluatedNode>,
+    ) {
+        // TODO
+        const callable = receiver.callable;
+        if (!isSdsCallable(callable)) {
+            return UnknownEvaluatedNode;
+        }
+
+        const parameterSubstitutionsAfterCall = this.getParameterSubstitutionsAfterCall(
+            callable,
+            getArguments(node),
+            receiver.substitutionsOnCreation,
+            substitutions,
+        );
+
+        const resultSubstitutions: [SdsAbstractResult, EvaluatedNode][] = getAbstractResults(callable).map((it) => [
+            it,
+            this.evaluateWithSubstitutions(it, parameterSubstitutionsAfterCall),
+        ]);
+
+        return new EvaluatedNamedTuple(new Map(resultSubstitutions));
+    }
+
+    getParameterSubstitutionsAfterCall(
+        callable: SdsCallable | SdsParameter | undefined,
+        args: SdsArgument[],
+        substitutionsOnCreation: ParameterSubstitutions,
+        substitutionsOnCall: ParameterSubstitutions,
+    ): ParameterSubstitutions {
+        if (!callable || isSdsParameter(callable)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        // Compute which parameters are set via arguments
+        const parameters = getParameters(callable);
+        const argumentsByParameter = this.mapParametersToArguments(parameters, args);
+
+        let result: [SdsParameter, EvaluatedNode][] = [...substitutionsOnCreation];
+
+        for (const parameter of parameters) {
+            if (argumentsByParameter.has(parameter)) {
+                // Substitutions on call via arguments
+                const value = this.evaluateWithSubstitutions(argumentsByParameter.get(parameter), substitutionsOnCall);
+                if (value !== UnknownEvaluatedNode) {
+                    result = [...result, [parameter, value]];
+                }
+            } else if (parameter.defaultValue) {
+                // Substitutions on call via default values
+                const value = this.evaluateWithSubstitutions(parameter.defaultValue, substitutionsOnCall);
+                if (value !== UnknownEvaluatedNode) {
+                    result = [...result, [parameter, value]];
+                }
+            }
+        }
+
+        return new Map(result);
+    }
+
+    private mapParametersToArguments(parameters: SdsParameter[], args: SdsArgument[]): Map<SdsParameter, SdsArgument> {
+        const result = new Map<SdsParameter, SdsArgument>();
+
+        for (const argument of args) {
+            const parameterIndex = this.nodeMapper.argumentToParameter(argument)?.$containerIndex ?? -1;
+            if (parameterIndex === -1) {
+                // TODO: test (unresolved argument)
+                continue;
+            }
+
+            // argumentToParameter returns parameters of callable types. We have to remap this to parameter of the
+            // actual callable.
+            const parameter = parameters[parameterIndex];
+            if (!parameter) {
+                // TODO: test (callable type has more parameters than the actual callable)
+                continue;
+            }
+
+            // The first occurrence wins
+            // TODO: test (pass multiple arguments for the same parameter)
+            if (!result.has(parameter)) {
+                result.set(parameter, argument);
+            }
+        }
+
+        return result;
+    }
 
     private evaluateIndexedAccess(node: SdsIndexedAccess, substitutions: ParameterSubstitutions): EvaluatedNode {
         const receiver = this.evaluateWithSubstitutions(node.receiver, substitutions).unwrap();
@@ -564,18 +591,23 @@ export class SafeDsPartialEvaluator {
 
     private evaluateMemberAccess(node: SdsMemberAccess, substitutions: ParameterSubstitutions): EvaluatedNode {
         const member = node.member?.target?.ref;
-        if (isSdsEnumVariant(member)) {
+        if (!member) {
+            return UnknownEvaluatedNode;
+        } else if (isSdsEnumVariant(member)) {
             return this.evaluateWithSubstitutions(member, substitutions);
         }
 
-        // return when (val simpleReceiver = receiver.evaluate(substitutions)) {
-        //     SdsConstantNull -> when {
-        //         isNullSafe -> SdsConstantNull
-        //     else -> undefined
-        //     }
-        //     is SdsIntermediateRecord -> simpleReceiver.getSubstitutionByReferenceOrNull(member)
-        // else -> undefined
-        // }
+        const receiver = this.evaluateWithSubstitutions(node.receiver, substitutions);
+        if (receiver === NullConstant) {
+            if (node.isNullSafe) {
+                return NullConstant;
+            }
+        } else if (receiver instanceof EvaluatedEnumVariant) {
+            return receiver.getParameterValueByName(member.name);
+        } else if (receiver instanceof EvaluatedNamedTuple) {
+            return receiver.getResultValueByName(member.name);
+        }
+
         return UnknownEvaluatedNode;
     }
 
@@ -624,3 +656,7 @@ const NO_SUBSTITUTIONS: ParameterSubstitutions = new Map();
 const falseConstant = new BooleanConstant(false);
 const trueConstant = new BooleanConstant(true);
 const zeroConstants = [new IntConstant(0n), new FloatConstant(0.0), new FloatConstant(-0.0)];
+
+const printParameterSubstitutions = (substitutions: ParameterSubstitutions) => {
+    console.log([...substitutions.entries()].map(([parameter, value]) => `${parameter.name} = ${value}`).join(', '));
+};
