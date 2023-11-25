@@ -156,12 +156,10 @@ export class SafeDsPartialEvaluator {
 
     private evaluateDeclaration(node: SdsDeclaration, substitutions: ParameterSubstitutions): EvaluatedNode {
         if (isSdsClass(node)) {
-            // TODO test
             return new NamedCallable(node);
         } else if (isSdsEnumVariant(node)) {
             return new EvaluatedEnumVariant(node, undefined);
         } else if (isSdsFunction(node)) {
-            // TODO test
             return new NamedCallable(node);
         } else if (isSdsParameter(node)) {
             return substitutions.get(node) ?? UnknownEvaluatedNode;
@@ -524,7 +522,7 @@ export class SafeDsPartialEvaluator {
         }
     }
 
-    getParameterSubstitutionsAfterCall(
+    private getParameterSubstitutionsAfterCall(
         callable: SdsCallable | SdsParameter | undefined,
         args: SdsArgument[],
         substitutionsOnCreation: ParameterSubstitutions = NO_SUBSTITUTIONS,
