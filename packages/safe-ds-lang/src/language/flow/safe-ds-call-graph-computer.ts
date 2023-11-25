@@ -121,8 +121,6 @@ export class SafeDsCallGraphComputer {
             const call = this.createSyntheticCallForCall(node, substitutions);
             return this.getCallGraphWithRecursionCheck(call, []);
         } else {
-            // TODO if a callable is passed and no substitutions are , we must not use its default values, since we
-            //  don't know whether parameters are given in a call or not.
             const children = this.getExecutedCallsInCallable(node, substitutions).map((it) => {
                 return this.getCallGraphWithRecursionCheck(it, []);
             });
