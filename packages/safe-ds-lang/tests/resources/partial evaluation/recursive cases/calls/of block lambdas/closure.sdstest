@@ -1,0 +1,12 @@
+package tests.partialValidation.recursiveCases.calls.ofBlockLambdas.closures
+
+segment mySegment(p: Int) -> (closure: () -> (r: Int)) {
+    yield closure = () {
+        yield r = p;
+    };
+}
+
+pipeline test {
+    // $TEST$ serialization 1
+    »mySegment(1)()«;
+}

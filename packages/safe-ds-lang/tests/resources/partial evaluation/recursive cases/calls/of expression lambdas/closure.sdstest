@@ -1,0 +1,10 @@
+package tests.partialValidation.recursiveCases.calls.ofExpressionLambdas.closures
+
+segment mySegment(p: Int) -> (closure: () -> (r: Int)) {
+    yield closure = () -> p;
+}
+
+pipeline test {
+    // $TEST$ serialization 1
+    »mySegment(1)()«;
+}
