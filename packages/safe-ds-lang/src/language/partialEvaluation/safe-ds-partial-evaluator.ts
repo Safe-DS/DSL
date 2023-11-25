@@ -483,6 +483,7 @@ export class SafeDsPartialEvaluator {
         substitutionsOnCall: ParameterSubstitutions,
     ) {
         if (!isSdsCallable(callable)) {
+            /* c8 ignore next 2 */
             return UnknownEvaluatedNode;
         }
 
@@ -516,6 +517,7 @@ export class SafeDsPartialEvaluator {
         substitutionsOnCall: ParameterSubstitutions = NO_SUBSTITUTIONS,
     ): ParameterSubstitutions {
         if (!callable || isSdsParameter(callable)) {
+            /* c8 ignore next 2 */
             return NO_SUBSTITUTIONS;
         }
 

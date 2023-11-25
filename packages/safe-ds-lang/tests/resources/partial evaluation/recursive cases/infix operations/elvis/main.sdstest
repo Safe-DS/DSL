@@ -11,6 +11,9 @@ pipeline test {
     »(() -> 1) ?: false«;
 
     // $TEST$ serialization ?
+    »(() -> 1) ?: unresolved«;
+
+    // $TEST$ serialization ?
     »unresolved ?: null«;
 
     // $TEST$ serialization ?
