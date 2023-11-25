@@ -73,19 +73,16 @@ import {
     StringConstant,
     UnknownEvaluatedNode,
 } from './model.js';
-import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 
 export class SafeDsPartialEvaluator {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly nodeMapper: SafeDsNodeMapper;
-    private readonly purityComputer: () => SafeDsPurityComputer;
 
     private readonly cache: WorkspaceCache<string, EvaluatedNode>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
-        this.purityComputer = () => services.purity.PurityComputer;
 
         this.cache = new WorkspaceCache(services.shared);
     }
@@ -321,11 +318,8 @@ export class SafeDsPartialEvaluator {
         rightOperand: SdsExpression,
         substitutions: ParameterSubstitutions,
     ): EvaluatedNode {
-        // Short-circuit if the left operand is true and the right operand has no side effects
-        if (
-            evaluatedLeft.equals(trueConstant) &&
-            !this.purityComputer().expressionHasSideEffects(rightOperand, substitutions)
-        ) {
+        // Short-circuit
+        if (evaluatedLeft.equals(trueConstant)) {
             return trueConstant;
         }
 
@@ -343,11 +337,8 @@ export class SafeDsPartialEvaluator {
         rightOperand: SdsExpression,
         substitutions: ParameterSubstitutions,
     ): EvaluatedNode {
-        // Short-circuit if the left operand is true and the right operand has no side effects
-        if (
-            evaluatedLeft.equals(falseConstant) &&
-            !this.purityComputer().expressionHasSideEffects(rightOperand, substitutions)
-        ) {
+        // Short-circuit
+        if (evaluatedLeft.equals(falseConstant)) {
             return falseConstant;
         }
 
@@ -365,12 +356,8 @@ export class SafeDsPartialEvaluator {
         rightOperand: SdsExpression,
         substitutions: ParameterSubstitutions,
     ): EvaluatedNode {
-        // Short-circuit if the left operand is a non-null constant and the right operand has no side effects
-        if (
-            evaluatedLeft instanceof Constant &&
-            !evaluatedLeft.equals(NullConstant) &&
-            !this.purityComputer().expressionHasSideEffects(rightOperand, substitutions)
-        ) {
+        // Short-circuit
+        if (evaluatedLeft instanceof Constant && !evaluatedLeft.equals(NullConstant)) {
             return evaluatedLeft;
         }
 
@@ -506,11 +493,9 @@ export class SafeDsPartialEvaluator {
             substitutionsOnCall,
         );
 
-        if (isSdsClass(callable) || isSdsFunction(callable)) {
-            return UnknownEvaluatedNode;
-        } else if (isSdsExpressionLambda(callable)) {
+        if (isSdsExpressionLambda(callable)) {
             return this.evaluateWithSubstitutions(callable.result, parameterSubstitutionsAfterCall);
-        } else {
+        } else if (isSdsBlockLambda(callable) || isSdsSegment(callable)) {
             return new EvaluatedNamedTuple(
                 new Map(
                     getAbstractResults(callable).map((it) => [
@@ -519,6 +504,8 @@ export class SafeDsPartialEvaluator {
                     ]),
                 ),
             );
+        } else {
+            return UnknownEvaluatedNode;
         }
     }
 
