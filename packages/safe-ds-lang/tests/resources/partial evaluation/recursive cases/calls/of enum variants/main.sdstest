@@ -11,7 +11,7 @@ pipeline test {
     // $TEST$ serialization MyEnumVariantWithoutParameters()
     »MyEnum.MyEnumVariantWithoutParameters()«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters(q = 3)
+    // $TEST$ serialization MyEnumVariantWithParameters(p = ?, q = 3)
     »MyEnum.MyEnumVariantWithParameters()«;
 
     // $TEST$ serialization MyEnumVariantWithParameters(p = 1, q = 3)
@@ -23,13 +23,13 @@ pipeline test {
     // $TEST$ serialization MyEnumVariantWithParameters(p = 1, q = 2)
     »MyEnum.MyEnumVariantWithParameters(q = 2, p = 1)«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters(p = 1)
+    // $TEST$ serialization MyEnumVariantWithParameters(p = 1, q = ?)
     »MyEnum.MyEnumVariantWithParameters(1, f())«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters(p = 1)
+    // $TEST$ serialization MyEnumVariantWithParameters(p = 1, q = ?)
     »MyEnum.MyEnumVariantWithParameters(1, f(), 3)«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters(p = 1)
+    // $TEST$ serialization MyEnumVariantWithParameters(p = 1, q = ?)
     »MyEnum.MyEnumVariantWithParameters(1, f(), r = 3)«;
 
     // $TEST$ serialization ?

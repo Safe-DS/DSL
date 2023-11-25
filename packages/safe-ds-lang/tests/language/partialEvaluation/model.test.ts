@@ -378,6 +378,35 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedEnumVariant', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    variant: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
+                    expectedValue: true,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
+                    expectedValue: false,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(
+                        enumVariantWithParameters,
+                        new Map([[enumVariantParameter, NullConstant]]),
+                    ),
+                    expectedValue: true,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(
+                        enumVariantWithParameters,
+                        new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
+                    ),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ variant, expectedValue }) => {
+                expect(variant.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
         describe('getParameterValueByName', () => {
             it.each([
                 {
@@ -408,6 +437,25 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedList', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    list: new EvaluatedList([]),
+                    expectedValue: true,
+                },
+                {
+                    list: new EvaluatedList([NullConstant]),
+                    expectedValue: true,
+                },
+                {
+                    list: new EvaluatedList([UnknownEvaluatedNode]),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ list, expectedValue }) => {
+                expect(list.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
         describe('getElementByIndex', () => {
             it.each([
                 {
@@ -427,6 +475,29 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedMap', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    map: new EvaluatedMap([]),
+                    expectedValue: true,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+                    expectedValue: true,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant)]),
+                    expectedValue: false,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, UnknownEvaluatedNode)]),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ map, expectedValue }) => {
+                expect(map.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
         describe('getLastValueForKey', () => {
             it.each([
                 {
@@ -454,6 +525,25 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedNamedTuple', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    tuple: new EvaluatedNamedTuple(new Map()),
+                    expectedValue: true,
+                },
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+                    expectedValue: true,
+                },
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[result1, UnknownEvaluatedNode]])),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ tuple, expectedValue }) => {
+                expect(tuple.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
         describe('getResultValueByName', () => {
             it.each([
                 {

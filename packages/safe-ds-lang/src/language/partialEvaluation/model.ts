@@ -1,5 +1,4 @@
 import { type NamedAstNode, stream } from 'langium';
-import { isEmpty } from '../../helpers/collectionUtils.js';
 import {
     type SdsAbstractResult,
     type SdsBlockLambda,
@@ -239,9 +238,9 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
 
     readonly hasBeenInstantiated = this.substitutions !== undefined;
 
-    override readonly isFullyEvaluated: boolean =
-        isEmpty(getParameters(this.variant)) ||
-        (this.substitutions !== undefined && stream(this.substitutions.values()).every(isFullyEvaluated));
+    override readonly isFullyEvaluated: boolean = getParameters(this.variant).every(
+        (it) => this.substitutions?.get(it)?.isFullyEvaluated ?? false,
+    );
 
     /**
      * Returns the substitution for the parameter with the given name. If the parameter is not specified,
@@ -280,9 +279,11 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         if (!this.substitutions) {
             return this.variant.name;
         } else {
-            return `${this.variant.name}(${Array.from(this.substitutions.entries())
-                .map(([parameter, value]) => `${parameter.name} = ${value}`)
-                .join(', ')})`;
+            const parameterValues = getParameters(this.variant)
+                .map((it) => `${it.name} = ${this.substitutions?.get(it) ?? UnknownEvaluatedNode}`)
+                .join(', ');
+
+            return `${this.variant.name}(${parameterValues})`;
         }
     }
 }
