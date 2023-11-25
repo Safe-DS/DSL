@@ -778,6 +778,7 @@ describe('SafeDsPurityComputer', async () => {
                 services,
                 `
                 package test
+
                 @Pure fun default() -> result: Any
 
                 @Pure fun myFunction(
