@@ -4,12 +4,11 @@ import {
     isSdsBlockLambda,
     isSdsEnumVariant,
     isSdsExpressionLambda,
-    isSdsReference,
     isSdsResult,
     isSdsSegment,
     type SdsBlockLambdaResult,
 } from '../../../src/language/generated/ast.js';
-import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
+import { getAbstractResults, getParameters } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import {
     BlockLambdaClosure,
@@ -58,11 +57,8 @@ const result2 = await getNodeOfType(services, code, isSdsResult, 0);
 const expressionLambda1 = await getNodeOfType(services, code, isSdsExpressionLambda, 0);
 const expressionLambda2 = await getNodeOfType(services, code, isSdsExpressionLambda, 1);
 
-const reference1 = await getNodeOfType(services, code, isSdsReference, 0);
-const reference2 = await getNodeOfType(services, code, isSdsReference, 1);
-
 const blockLambda1 = await getNodeOfType(services, code, isSdsBlockLambda, 0);
-const blockLambdaResult1 = reference1.target.ref as SdsBlockLambdaResult;
+const blockLambdaResult1 = getAbstractResults(blockLambda1)[0]! as SdsBlockLambdaResult;
 
 const segment1 = await getNodeOfType(services, code, isSdsSegment, 0);
 const segment2 = await getNodeOfType(services, code, isSdsSegment, 1);
@@ -382,7 +378,7 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedEnumVariant', () => {
-        describe('getArgumentValueByName', () => {
+        describe('getParameterValueByName', () => {
             it.each([
                 {
                     variant: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
@@ -458,27 +454,27 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedNamedTuple', () => {
-        describe('getSubstitutionByReference', () => {
+        describe('getResultValueByName', () => {
             it.each([
                 {
                     tuple: new EvaluatedNamedTuple(new Map([[blockLambdaResult1, NullConstant]])),
-                    reference: reference1,
+                    name: 'a',
                     expectedValue: NullConstant,
                 },
                 {
                     tuple: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
-                    reference: reference2,
+                    name: 'b',
                     expectedValue: UnknownEvaluatedNode,
                 },
             ])(
                 'should return the substitution for the target of the given reference',
-                ({ tuple, reference, expectedValue }) => {
-                    expect(tuple.getSubstitutionByReference(reference)).toStrictEqual(expectedValue);
+                ({ tuple, name, expectedValue }) => {
+                    expect(tuple.getResultValueByName(name)).toStrictEqual(expectedValue);
                 },
             );
         });
 
-        describe('getSubstitutionByIndex', () => {
+        describe('getResultValueByIndex', () => {
             it.each([
                 {
                     tuple: new EvaluatedNamedTuple(new Map()),
@@ -491,7 +487,7 @@ describe('partial evaluation model', async () => {
                     expectedValue: NullConstant,
                 },
             ])('should return the substitution at the given index', ({ tuple, index, expectedValue }) => {
-                expect(tuple.getSubstitutionByIndex(index)).toStrictEqual(expectedValue);
+                expect(tuple.getResultValueByIndex(index)).toStrictEqual(expectedValue);
             });
         });
 
