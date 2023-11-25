@@ -3,17 +3,14 @@ import {
     type AstNodeLocator,
     getContainerOfType,
     getDocument,
-    isNamed,
     stream,
     streamAst,
     WorkspaceCache,
 } from 'langium';
 import {
-    isSdsAnnotation,
     isSdsBlockLambda,
     isSdsCall,
     isSdsCallable,
-    isSdsCallableType,
     isSdsClass,
     isSdsEnumVariant,
     isSdsExpressionLambda,
@@ -35,9 +32,8 @@ import {
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {
-    BlockLambdaClosure,
     EvaluatedCallable,
-    ExpressionLambdaClosure,
+    EvaluatedEnumVariant,
     NamedCallable,
     ParameterSubstitutions,
     substitutionsAreEqual,
@@ -46,7 +42,7 @@ import {
 import { CallGraph } from './model.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { CallableType, StaticType } from '../typing/model.js';
+import { CallableType } from '../typing/model.js';
 import { isEmpty } from '../../helpers/collectionUtils.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 
@@ -247,54 +243,39 @@ export class SafeDsCallGraphComputer {
     }
 
     private getEvaluatedCallable(
-        expression: SdsExpression,
+        expression: SdsExpression | undefined,
         substitutions: ParameterSubstitutions,
     ): EvaluatedCallable | undefined {
-        const value = this.partialEvaluator.evaluate(expression, substitutions);
-        if (value instanceof EvaluatedCallable) {
-            return value;
-        }
-
-        let callableOrParameter = this.getCallableOrParameter(expression);
-
-        if (!callableOrParameter || isSdsAnnotation(callableOrParameter) || isSdsCallableType(callableOrParameter)) {
-            return undefined;
-        } else if (isSdsParameter(callableOrParameter)) {
-            // Parameter is set
-            const substitution = substitutions.get(callableOrParameter);
-            if (substitution) {
-                if (substitution instanceof EvaluatedCallable) {
-                    return substitution;
-                } else {
-                    /* c8 ignore next 2 */
-                    return undefined;
-                }
-            }
-
-            // Parameter is not set
-            return new NamedCallable(callableOrParameter);
-        } else if (isNamed(callableOrParameter)) {
-            return new NamedCallable(callableOrParameter);
-        } else if (isSdsBlockLambda(callableOrParameter)) {
-            return new BlockLambdaClosure(callableOrParameter, substitutions);
-        } else if (isSdsExpressionLambda(callableOrParameter)) {
-            return new ExpressionLambdaClosure(callableOrParameter, substitutions);
-        } else {
+        if (!expression) {
             /* c8 ignore next 2 */
             return undefined;
         }
+
+        // First try to get the callable via the partial evaluator
+        const value = this.partialEvaluator.evaluate(expression, substitutions);
+        if (value instanceof EvaluatedCallable) {
+            return value;
+        } else if (value instanceof EvaluatedEnumVariant) {
+            if (!value.hasBeenInstantiated) {
+                return new NamedCallable(value.variant);
+            }
+
+            return undefined;
+        }
+
+        // Fall back to getting the called parameter via the type computer
+        const calledParameter = this.getCalledParameter(expression);
+        if (isSdsParameter(calledParameter)) {
+            return new NamedCallable(calledParameter);
+        }
+
+        return undefined;
     }
 
-    private getCallableOrParameter(expression: SdsExpression): SdsCallable | SdsParameter | undefined {
+    private getCalledParameter(expression: SdsExpression): SdsParameter | undefined {
         const type = this.typeComputer.computeType(expression);
-
         if (type instanceof CallableType) {
-            return type.parameter ?? type.callable;
-        } else if (type instanceof StaticType) {
-            const declaration = type.instanceType.declaration;
-            if (isSdsCallable(declaration)) {
-                return declaration;
-            }
+            return type.parameter;
         }
 
         return undefined;
