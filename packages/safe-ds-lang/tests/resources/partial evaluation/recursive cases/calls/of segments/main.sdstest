@@ -1,0 +1,10 @@
+package tests.partialValidation.recursiveCases.calls.ofSegments
+
+segment mySegment() -> (r: Int, s: Int) {
+    yield r = 1;
+}
+
+pipeline test {
+    // $TEST$ serialization (r = 1, s = ?)
+    »mySegment()«;
+}

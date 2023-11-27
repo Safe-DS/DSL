@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { isSdsCallable, isSdsExpression, isSdsParameter } from '../../../src/language/generated/ast.js';
+import { isSdsCall, isSdsCallable, isSdsExpression, isSdsParameter } from '../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
@@ -762,6 +762,34 @@ describe('SafeDsPurityComputer', async () => {
                 .getImpurityReasonsForExpression(expression)
                 .map((reason) => reason.toString());
             expect(actual).toStrictEqual(expected);
+        });
+
+        /*
+         * This code caused a stack overflow error in a prior implementation of the purity computer:
+         * 1. "f()" calls the parameter "f".
+         * 2. For called parameters, we check whether they must be pure. Otherwise, we add an impurity reason.
+         * 3. This requires the computation of the impurity reasons of the containing callable "myFunction".
+         * 4. This requires visiting all calls inside "myFunction".
+         * 5. This includes the call of "f()".
+         * 6. We compute the impurity reasons of "f()" and are back at the start.
+         */
+        it('should return the impurity reasons of a parameter call in a function', async () => {
+            const call = await getNodeOfType(
+                services,
+                `
+                package test
+
+                @Pure fun default() -> result: Any
+
+                @Pure fun myFunction(
+                    f: () -> (result: Any) = default,
+                    g: Any = f()
+                )
+            `,
+                isSdsCall,
+            );
+
+            expect(() => purityComputer.getImpurityReasonsForExpression(call)).not.toThrow();
         });
     });
 });

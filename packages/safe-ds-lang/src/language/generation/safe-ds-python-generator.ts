@@ -471,22 +471,24 @@ export class SafeDsPythonGenerator {
             }
         }
 
-        const partiallyEvaluatedNode = this.partialEvaluator.evaluate(expression);
-        if (partiallyEvaluatedNode instanceof BooleanConstant) {
-            return traceToNode(expression)(partiallyEvaluatedNode.value ? 'True' : 'False');
-        } else if (partiallyEvaluatedNode instanceof IntConstant) {
-            return traceToNode(expression)(String(partiallyEvaluatedNode.value));
-        } else if (partiallyEvaluatedNode instanceof FloatConstant) {
-            const floatValue = partiallyEvaluatedNode.value;
-            return traceToNode(expression)(Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue));
-        } else if (partiallyEvaluatedNode === NullConstant) {
-            return traceToNode(expression)('None');
-        } else if (partiallyEvaluatedNode instanceof StringConstant) {
-            return expandTracedToNode(expression)`'${this.formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
+        if (!this.purityComputer.expressionHasSideEffects(expression)) {
+            const partiallyEvaluatedNode = this.partialEvaluator.evaluate(expression);
+            if (partiallyEvaluatedNode instanceof BooleanConstant) {
+                return traceToNode(expression)(partiallyEvaluatedNode.value ? 'True' : 'False');
+            } else if (partiallyEvaluatedNode instanceof IntConstant) {
+                return traceToNode(expression)(String(partiallyEvaluatedNode.value));
+            } else if (partiallyEvaluatedNode instanceof FloatConstant) {
+                const floatValue = partiallyEvaluatedNode.value;
+                return traceToNode(expression)(Number.isInteger(floatValue) ? `${floatValue}.0` : String(floatValue));
+            } else if (partiallyEvaluatedNode === NullConstant) {
+                return traceToNode(expression)('None');
+            } else if (partiallyEvaluatedNode instanceof StringConstant) {
+                return expandTracedToNode(expression)`'${this.formatStringSingleLine(partiallyEvaluatedNode.value)}'`;
+            }
         }
 
         // Handled after constant expressions: EnumVariant, List, Map
-        else if (isSdsTemplateString(expression)) {
+        if (isSdsTemplateString(expression)) {
             return expandTracedToNode(expression)`f'${joinTracedToNode(expression, 'expressions')(
                 expression.expressions,
                 (expr) => this.generateExpression(expr, frame),

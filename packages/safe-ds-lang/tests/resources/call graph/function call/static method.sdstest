@@ -1,0 +1,10 @@
+package tests.callGraph.functionCall.staticMethod
+
+class MyClass {
+    @Pure static fun myFunction()
+}
+
+pipeline myPipeline {
+    // $TEST$ ["myFunction"]
+    »MyClass.myFunction()«;
+}

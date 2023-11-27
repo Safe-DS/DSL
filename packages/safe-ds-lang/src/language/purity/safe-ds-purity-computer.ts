@@ -233,7 +233,13 @@ export class SafeDsPurityComputer {
                 return [UnknownCallableCall];
             } else if (isSdsFunction(it)) {
                 return this.getImpurityReasonsForFunction(it);
-            } else if (isSdsParameter(it) && !this.isPureParameter(it)) {
+            } else if (
+                isSdsParameter(it) &&
+                // Leads to endless recursion if we don't check this
+                // (see test case "should return the impurity reasons of a parameter call in a function")
+                !isSdsFunction(getContainerOfType(it, isSdsCallable)) &&
+                !this.isPureParameter(it)
+            ) {
                 return [new PotentiallyImpureParameterCall(it)];
             } else {
                 return EMPTY_STREAM;
@@ -274,7 +280,7 @@ export class SafeDsPurityComputer {
     }
 
     private getPath(variant: EvaluatedEnumVariant): string | undefined {
-        const path = variant.getArgumentValueByName('path');
+        const path = variant.getParameterValueByName('path');
         if (path instanceof StringConstant) {
             return path.value;
         } else {
@@ -283,7 +289,7 @@ export class SafeDsPurityComputer {
     }
 
     private getParameter(node: SdsFunction, variant: EvaluatedEnumVariant): SdsParameter | undefined {
-        const parameterName = variant.getArgumentValueByName('parameterName');
+        const parameterName = variant.getParameterValueByName('parameterName');
         if (!(parameterName instanceof StringConstant)) {
             return undefined;
         }

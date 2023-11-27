@@ -187,6 +187,10 @@ export const findFirstAnnotationCallOf = (
     node: SdsAnnotatedObject | undefined,
     expected: SdsAnnotation | undefined,
 ): SdsAnnotationCall | undefined => {
+    if (!node || !expected) {
+        return undefined;
+    }
+
     return getAnnotationCalls(node).find((it) => {
         const actual = it.annotation?.ref;
         return actual === expected;

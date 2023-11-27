@@ -1,0 +1,12 @@
+package tests.callGraph.defaultValueHandlingInEntryPoint
+
+/*
+ * We must **not** assume that the default value is used just because no substitution is given for a parameter.
+ */
+
+@Pure fun default() -> r: Any
+
+segment mySegment(param: () -> () = default) {
+    // $TEST$ ["param"]
+    »param()«;
+}

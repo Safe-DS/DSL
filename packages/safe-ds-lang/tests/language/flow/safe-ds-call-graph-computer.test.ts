@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EmptyFileSystem, isNamed, streamAst } from 'langium';
+import { isNamed, streamAst } from 'langium';
 import {
     isSdsBlockLambda,
     isSdsCall,
@@ -9,14 +9,15 @@ import {
     SdsCall,
     SdsCallable,
 } from '../../../src/language/generated/ast.js';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { createCallGraphTests } from './creator.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { isRangeEqual } from 'langium/test';
 import { locationToString } from '../../helpers/location.js';
 import { AssertionError } from 'assert';
+import { NodeFileSystem } from 'langium/node';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
 
 describe('SafeDsCallGraphComputer', () => {

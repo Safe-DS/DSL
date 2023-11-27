@@ -1,0 +1,10 @@
+package tests.callGraph.functionCall.instanceMethod
+
+class MyClass {
+    @Pure fun myFunction()
+}
+
+pipeline myPipeline {
+    // $TEST$ ["myFunction"]
+    »MyClass().myFunction()«;
+}
