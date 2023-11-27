@@ -11,6 +11,10 @@ pipeline testPipeline {
     val x = g();
     f1(a);
     f1(x);
+    val l, val m, val n = g();
+    f1(l);
+    f1(m);
+    f1(n);
 
     f2(() {
         _, _ ,_ = g();
