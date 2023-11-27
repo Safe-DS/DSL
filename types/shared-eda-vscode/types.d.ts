@@ -63,7 +63,7 @@ export type Tab = LinePlotTab | BarPlotTab | HeatmapTab | ScatterPlotTab | InfoP
 // ------------------ Types for the Table ------------------
 export interface Table {
   columns: [number, Column][];
-  visibleRows: number;
+  visibleRows?: number;
   totalRows: number;
   name: string;
   appliedFilters: TableFilter[];

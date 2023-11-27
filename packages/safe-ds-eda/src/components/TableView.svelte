@@ -3,12 +3,13 @@
     import CaretIcon from '../icons/caret.svelte';
 
     let showProfiling = false;
-    let minTableWidth = 0;
     let minTableWidthString = '0px';
     let headerElements: HTMLElement[] = [];
+    let savedColumnWidths: Map<string, number> = new Map();
 
     let numRows = 0;
     $: {
+        let minTableWidth = 0;
         if ($currentState.table) {
             numRows = 0;
             $currentState.table.columns.forEach((column) => {
@@ -22,11 +23,19 @@
     }
 
     function getColumnWidth(columnName: string) {
+        if (savedColumnWidths.has(columnName)) {
+            console.log('Using saved width for', columnName);
+            return `${savedColumnWidths.get(columnName)}px`;
+        }
         const baseWidth = 35; // Minimum width
         const scale = 55; // Adjust this scale factor to suit your layout
 
         // Use the logarithm of the character count, and scale it
         const width = baseWidth + Math.log(columnName.length + 1) * scale;
+
+        // Save the width for future use
+        savedColumnWidths.set(columnName, width);
+        console.log('Saving width for', columnName);
 
         return `${width}px`;
     }
@@ -52,6 +61,7 @@
         if (isResizeDragging && targetColumn) {
             const currentWidth = startWidth + event.clientX - startX;
             targetColumn.style.width = `${currentWidth}px`;
+            savedColumnWidths.set(targetColumn.innerText, currentWidth);
         }
     }
 
@@ -65,26 +75,61 @@
     let isReorderDragging = false;
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
+    let draggedColumn: HTMLElement | null = null;
+    let offsetX = 0;
+    let offsetY = 0;
 
     function handleReorderDragStart(event: MouseEvent, columnIndex: number): void {
         document.addEventListener('mouseup', handleReorderDragEnd);
         isReorderDragging = true;
         dragStartIndex = columnIndex;
+        dragCurrentIndex = columnIndex;
+        draggedColumn = headerElements[columnIndex];
+        draggedColumn.classList.add('dragging');
+        const rect = draggedColumn.getBoundingClientRect();
+        offsetX = event.clientX - rect.left;
+        offsetY = event.clientY - rect.top;
+
+        // Lower the z-index of all other headers
+        headerElements.forEach((header, index) => {
+            if (index !== columnIndex) {
+                header.style.zIndex = '0'; // Or any value lower than the dragging header
+            }
+        });
     }
 
     function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
-        if (isReorderDragging && dragStartIndex !== null) {
+        if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
             // Logic to provide visual feedback and determine the target column
             dragCurrentIndex = columnIndex;
-            console.log('Dragging column', dragStartIndex, 'to', dragCurrentIndex);
+            const containerRect = draggedColumn.parentElement!.getBoundingClientRect();
+            draggedColumn.style.left = event.clientX - containerRect.left - offsetX + 'px';
+            draggedColumn.style.top = event.clientY - containerRect.top - offsetY + 'px';
         }
     }
 
     function handleReorderDragEnd(): void {
-        if (isReorderDragging && dragStartIndex !== null) {
-            console.log('Finished dragging column', dragStartIndex);
-            // Logic to update $currentState
-            document.addEventListener('mouseup', handleReorderDragEnd);
+        if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex) {
+            if (draggedColumn) {
+                draggedColumn.style.left = '';
+                draggedColumn.style.top = '';
+                draggedColumn.classList.remove('dragging');
+                draggedColumn = null;
+            }
+            // Reset the z-index of all headers
+            headerElements.forEach((header) => {
+                header.style.zIndex = ''; // Reset to default
+            });
+            if (dragCurrentIndex > dragStartIndex) {
+                dragCurrentIndex -= 1;
+            }
+            currentState.update(($currentState) => {
+                const newColumns = [...$currentState.table!.columns];
+                const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
+                newColumns.splice(dragCurrentIndex!, 0, movedItem);
+                return { ...$currentState, table: { ...$currentState.table!, columns: newColumns } };
+            });
+            document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
             dragStartIndex = null;
         }
@@ -116,8 +161,12 @@
             </thead>
             <tr class="hiddenProfilingWrapper no-hover">
                 <td class="firstColumn border-right profiling"></td>
-                {#each $currentState.table.columns as column}
-                    <td class="profiling" class:expanded={showProfiling}>
+                {#each $currentState.table.columns as column, index}
+                    <td
+                        class="profiling"
+                        class:expanded={showProfiling}
+                        on:mousemove={(event) => handleReorderDragOver(event, index)}
+                    >
                         <div class="content" class:expanded={showProfiling}>
                             Heyyyyyyyyyyy <br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey
                         </div>
@@ -142,13 +191,18 @@
                 {#each Array(numRows) as _, i}
                     <tr>
                         <td class="firstColumn">{i}</td>
-                        {#each $currentState.table.columns as column}
-                            <td>{column[1].values[i] || ''}</td>
+                        {#each $currentState.table.columns as column, index}
+                            <td on:mousemove={(event) => handleReorderDragOver(event, index)}
+                                >{column[1].values[i] || ''}</td
+                            >
                         {/each}
                     </tr>
                 {/each}
             </tbody>
         </table>
+    {/if}
+    {#if numRows === -1}
+        <span class="dragging">No data</span>
     {/if}
 </div>
 
@@ -281,5 +335,12 @@
     .reorderHighlighted {
         border-left: 3px solid rgb(75, 75, 75) !important;
         border-bottom: 3px solid var(--bg-bright) !important;
+    }
+
+    .dragging {
+        position: absolute;
+        pointer-events: none; /* Make it non-interactive */
+        z-index: 1000; /* Ensure it's on top */
+        border: 3px solid var(--bg-dark);
     }
 </style>

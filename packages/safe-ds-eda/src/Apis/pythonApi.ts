@@ -11,7 +11,14 @@ export const GetJsonTable = async function(tableName: string): Promise<Table> {
     const responseText = await response.text();
     if (!response.ok) throw new Error(responseText);
 
-    let table: Table = { name: tableName, columns: [], visibleRows: 0, totalRows: 0, appliedFilters: [] };
+    let numRows = 0;
+    Object.entries(JSON.parse(responseText)).forEach((column) => {
+        if (Object.values(column[1] as string).length > numRows) {
+            numRows = Object.values(column[1] as string).length;
+        }
+    });
+
+    let table: Table = { name: tableName, columns: [], visibleRows: 0, totalRows: numRows, appliedFilters: [] };
     let index = 0;
     for (const column of Object.entries(JSON.parse(responseText))) {
       table.columns.push([index++, {
