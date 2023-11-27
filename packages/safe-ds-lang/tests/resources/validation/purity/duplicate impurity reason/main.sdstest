@@ -1,7 +1,7 @@
 package tests.validation.purity.duplicateImpurityReason
 
 @Impure([
-    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«
 ])
 
@@ -10,33 +10,33 @@ package tests.validation.purity.duplicateImpurityReason
  */
 
 @Impure([
-    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
-    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
 ])
 fun testFunction1()
 
 @Impure([
-    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
-    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath(path = "text.txt")' was set already."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
 ])
 fun testFunction2()
 
 @Impure([
-    // $TEST$ no warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileWriteToConstantPath("text.txt")«,
-    // $TEST$ warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    // $TEST$ warning "The impurity reason 'FileWriteToConstantPath(path = "text.txt")' was set already."
     »ImpurityReason.FileWriteToConstantPath("text.txt")«,
-    // $TEST$ warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    // $TEST$ warning "The impurity reason 'FileWriteToConstantPath(path = "text.txt")' was set already."
     »ImpurityReason.FileWriteToConstantPath("text.txt")«,
-    // $TEST$ no warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
-    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath(path = "text.txt")' was set already."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
-    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath("text.txt")' was set already."
+    // $TEST$ warning "The impurity reason 'FileReadFromConstantPath(path = "text.txt")' was set already."
     »ImpurityReason.FileReadFromConstantPath("text.txt")«,
 ])
 fun testFunction3()
@@ -46,9 +46,9 @@ fun testFunction3()
  */
 
 @Impure(
-    // $TEST$ no warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileWriteToConstantPath("text.txt")«,
-    // $TEST$ no warning "The impurity reason 'FileWriteToConstantPath("text.txt")' was set already."
+    // $TEST$ no warning r"The impurity reason '.*' was set already\."
     »ImpurityReason.FileWriteToConstantPath("text.txt")«
 )
 fun testFunction4()

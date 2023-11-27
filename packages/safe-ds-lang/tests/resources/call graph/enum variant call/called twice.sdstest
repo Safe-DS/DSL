@@ -1,0 +1,10 @@
+package tests.callGraph.enumVariantCall.calledTwice
+
+enum MyEnum {
+    MyVariant
+}
+
+pipeline myPipeline {
+    // $TEST$ ["undefined"]
+    »MyEnum.MyVariant()()«;
+}

@@ -1,0 +1,6 @@
+package tests.partialValidation.baseCases.enumVariants
+
+enum MyEnum {
+    // $TEST$ serialization MyVariant
+    »MyVariant«
+}

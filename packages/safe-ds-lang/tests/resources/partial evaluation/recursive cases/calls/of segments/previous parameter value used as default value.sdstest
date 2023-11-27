@@ -1,0 +1,10 @@
+package tests.partialValidation.recursiveCases.calls.ofSegment.previousParameterValueUsedAsDefaultValue
+
+segment mySegment(p1: Int, p2: Int = p1) -> r: Int {
+    yield r = p2;
+}
+
+pipeline test {
+    // $TEST$ serialization 1
+    »mySegment(1)«;
+}

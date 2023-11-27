@@ -1,0 +1,6 @@
+package tests.partialValidation.recursiveCases.calls.ofUnknownParameter
+
+segment mySegment(p: () -> ()) {
+    // $TEST$ serialization ?
+    »p()«;
+}

@@ -1,0 +1,13 @@
+package tests.callGraph.functionCall.defaultValue.previousParameter
+
+@Pure fun default() -> result: Any
+
+@Pure fun myFunction(
+    f: () -> (result: Any) = default,
+    g: Any = f()
+)
+
+pipeline myPipeline {
+    // $TEST$ ["myFunction", "default", "default"]
+    »myFunction()«;
+}

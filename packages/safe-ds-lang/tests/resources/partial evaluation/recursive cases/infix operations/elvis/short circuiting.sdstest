@@ -16,7 +16,7 @@ pipeline test {
     // $TEST$ serialization 1
     »1 ?: functionWithoutSideEffects()«;
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization 1
     »1 ?: functionWithSideEffects()«;
 
     // $TEST$ serialization ?

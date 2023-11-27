@@ -1,3 +1,25 @@
+## [0.5.1](https://github.com/Safe-DS/DSL/compare/v0.5.0...v0.5.1) (2023-11-25)
+
+
+### Bug Fixes
+
+* potential stack overflow when computing impurity reasons ([#801](https://github.com/Safe-DS/DSL/issues/801)) ([1d4abb3](https://github.com/Safe-DS/DSL/commit/1d4abb367b0016aed8b2c027675832e831588687))
+* stack overflow when evaluating recursive calls ([#800](https://github.com/Safe-DS/DSL/issues/800)) ([e19c817](https://github.com/Safe-DS/DSL/commit/e19c8171b967d0cc4b57b580e76773830bd49476))
+
+## [0.5.0](https://github.com/Safe-DS/DSL/compare/v0.4.0...v0.5.0) (2023-11-25)
+
+
+### Features
+
+* error if index of indexed access is invalid ([#796](https://github.com/Safe-DS/DSL/issues/796)) ([5017759](https://github.com/Safe-DS/DSL/commit/5017759d7c03acdf854b451e7aa87509595cbe3b)), closes [#16](https://github.com/Safe-DS/DSL/issues/16)
+* full implementation of partial evaluator ([#798](https://github.com/Safe-DS/DSL/issues/798)) ([7643794](https://github.com/Safe-DS/DSL/commit/76437945448305fe3dafce9aa433dce4f80ae1ce)), closes [#603](https://github.com/Safe-DS/DSL/issues/603)
+* settings to hide selected warnings/infos ([#795](https://github.com/Safe-DS/DSL/issues/795)) ([ff7c23a](https://github.com/Safe-DS/DSL/commit/ff7c23a9b238886050ac896d7f6dd874eabcfbf1)), closes [#35](https://github.com/Safe-DS/DSL/issues/35)
+
+
+### Bug Fixes
+
+* handling of default values in entry point of call graph computation ([#797](https://github.com/Safe-DS/DSL/issues/797)) ([a5db23c](https://github.com/Safe-DS/DSL/commit/a5db23c74a5b1edb08e1ce8f19cbda01e39ba01a))
+
 ## [0.4.0](https://github.com/Safe-DS/DSL/compare/v0.3.0...v0.4.0) (2023-11-22)
 
 

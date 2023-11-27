@@ -4,12 +4,11 @@ import {
     isSdsBlockLambda,
     isSdsEnumVariant,
     isSdsExpressionLambda,
-    isSdsReference,
     isSdsResult,
     isSdsSegment,
     type SdsBlockLambdaResult,
 } from '../../../src/language/generated/ast.js';
-import { getParameters } from '../../../src/language/helpers/nodeProperties.js';
+import { getAbstractResults, getParameters } from '../../../src/language/helpers/nodeProperties.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import {
     BlockLambdaClosure,
@@ -58,11 +57,8 @@ const result2 = await getNodeOfType(services, code, isSdsResult, 0);
 const expressionLambda1 = await getNodeOfType(services, code, isSdsExpressionLambda, 0);
 const expressionLambda2 = await getNodeOfType(services, code, isSdsExpressionLambda, 1);
 
-const reference1 = await getNodeOfType(services, code, isSdsReference, 0);
-const reference2 = await getNodeOfType(services, code, isSdsReference, 1);
-
 const blockLambda1 = await getNodeOfType(services, code, isSdsBlockLambda, 0);
-const blockLambdaResult1 = reference1.target.ref as SdsBlockLambdaResult;
+const blockLambdaResult1 = getAbstractResults(blockLambda1)[0]! as SdsBlockLambdaResult;
 
 const segment1 = await getNodeOfType(services, code, isSdsSegment, 0);
 const segment2 = await getNodeOfType(services, code, isSdsSegment, 1);
@@ -210,11 +206,11 @@ describe('partial evaluation model', async () => {
                 enumVariantWithParameters,
                 new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
             ),
-            expectedString: 'MyEnumVariant2(?)',
+            expectedString: 'MyEnumVariant2(p = ?)',
         },
         {
             value: new EvaluatedEnumVariant(enumVariantWithParameters, new Map([[enumVariantParameter, NullConstant]])),
-            expectedString: 'MyEnumVariant2(null)',
+            expectedString: 'MyEnumVariant2(p = null)',
         },
         {
             value: new EvaluatedList([]),
@@ -382,7 +378,36 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedEnumVariant', () => {
-        describe('getArgumentValueByName', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    variant: new EvaluatedEnumVariant(enumVariantWithoutParameters, undefined),
+                    expectedValue: true,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
+                    expectedValue: false,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(
+                        enumVariantWithParameters,
+                        new Map([[enumVariantParameter, NullConstant]]),
+                    ),
+                    expectedValue: true,
+                },
+                {
+                    variant: new EvaluatedEnumVariant(
+                        enumVariantWithParameters,
+                        new Map([[enumVariantParameter, UnknownEvaluatedNode]]),
+                    ),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ variant, expectedValue }) => {
+                expect(variant.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
+        describe('getParameterValueByName', () => {
             it.each([
                 {
                     variant: new EvaluatedEnumVariant(enumVariantWithParameters, undefined),
@@ -406,12 +431,31 @@ describe('partial evaluation model', async () => {
                     expectedValue: NullConstant,
                 },
             ])('should return the element at the given index (%#)', ({ variant, name, expectedValue }) => {
-                expect(variant.getArgumentValueByName(name)).toStrictEqual(expectedValue);
+                expect(variant.getParameterValueByName(name)).toStrictEqual(expectedValue);
             });
         });
     });
 
     describe('EvaluatedList', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    list: new EvaluatedList([]),
+                    expectedValue: true,
+                },
+                {
+                    list: new EvaluatedList([NullConstant]),
+                    expectedValue: true,
+                },
+                {
+                    list: new EvaluatedList([UnknownEvaluatedNode]),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ list, expectedValue }) => {
+                expect(list.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
         describe('getElementByIndex', () => {
             it.each([
                 {
@@ -431,6 +475,29 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedMap', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    map: new EvaluatedMap([]),
+                    expectedValue: true,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, NullConstant)]),
+                    expectedValue: true,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(UnknownEvaluatedNode, NullConstant)]),
+                    expectedValue: false,
+                },
+                {
+                    map: new EvaluatedMap([new EvaluatedMapEntry(NullConstant, UnknownEvaluatedNode)]),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ map, expectedValue }) => {
+                expect(map.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
         describe('getLastValueForKey', () => {
             it.each([
                 {
@@ -458,27 +525,46 @@ describe('partial evaluation model', async () => {
     });
 
     describe('EvaluatedNamedTuple', () => {
-        describe('getSubstitutionByReference', () => {
+        describe('isFullyEvaluated', () => {
+            it.each([
+                {
+                    tuple: new EvaluatedNamedTuple(new Map()),
+                    expectedValue: true,
+                },
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
+                    expectedValue: true,
+                },
+                {
+                    tuple: new EvaluatedNamedTuple(new Map([[result1, UnknownEvaluatedNode]])),
+                    expectedValue: false,
+                },
+            ])('should return the expected value (%#)', ({ tuple, expectedValue }) => {
+                expect(tuple.isFullyEvaluated).toStrictEqual(expectedValue);
+            });
+        });
+
+        describe('getResultValueByName', () => {
             it.each([
                 {
                     tuple: new EvaluatedNamedTuple(new Map([[blockLambdaResult1, NullConstant]])),
-                    reference: reference1,
+                    name: 'a',
                     expectedValue: NullConstant,
                 },
                 {
                     tuple: new EvaluatedNamedTuple(new Map([[result1, NullConstant]])),
-                    reference: reference2,
+                    name: 'b',
                     expectedValue: UnknownEvaluatedNode,
                 },
             ])(
                 'should return the substitution for the target of the given reference',
-                ({ tuple, reference, expectedValue }) => {
-                    expect(tuple.getSubstitutionByReference(reference)).toStrictEqual(expectedValue);
+                ({ tuple, name, expectedValue }) => {
+                    expect(tuple.getResultValueByName(name)).toStrictEqual(expectedValue);
                 },
             );
         });
 
-        describe('getSubstitutionByIndex', () => {
+        describe('getResultValueByIndex', () => {
             it.each([
                 {
                     tuple: new EvaluatedNamedTuple(new Map()),
@@ -491,7 +577,7 @@ describe('partial evaluation model', async () => {
                     expectedValue: NullConstant,
                 },
             ])('should return the substitution at the given index', ({ tuple, index, expectedValue }) => {
-                expect(tuple.getSubstitutionByIndex(index)).toStrictEqual(expectedValue);
+                expect(tuple.getResultValueByIndex(index)).toStrictEqual(expectedValue);
             });
         });
 

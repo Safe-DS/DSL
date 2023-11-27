@@ -1,0 +1,16 @@
+package tests.generator.sideEffects
+
+@Impure([ImpurityReason.Other]) fun f()
+
+segment mySegment(param: Any?) -> result: Any? {
+    f();
+    yield result = param;
+}
+
+pipeline test {
+    mySegment(1 < 2);
+    mySegment(1.0 - 1.0);
+    mySegment(1 + 1);
+    mySegment(null);
+    mySegment("person: {{ "me" }}");
+}
