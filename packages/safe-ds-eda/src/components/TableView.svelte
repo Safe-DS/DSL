@@ -24,7 +24,6 @@
 
     function getColumnWidth(columnName: string) {
         if (savedColumnWidths.has(columnName)) {
-            console.log('Using saved width for', columnName);
             return `${savedColumnWidths.get(columnName)}px`;
         }
         const baseWidth = 35; // Minimum width
@@ -35,7 +34,6 @@
 
         // Save the width for future use
         savedColumnWidths.set(columnName, width);
-        console.log('Saving width for', columnName);
 
         return `${width}px`;
     }
@@ -109,7 +107,7 @@
     }
 
     function handleReorderDragEnd(): void {
-        if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex) {
+        if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
             if (draggedColumn) {
                 draggedColumn.style.left = '';
                 draggedColumn.style.top = '';
@@ -143,7 +141,7 @@
         <table style="min-width: {minTableWidthString};">
             <thead>
                 <tr>
-                    <th class="firstColumn"></th>
+                    <th class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}></th>
                     {#each $currentState.table.columns as column, index}
                         <th
                             bind:this={headerElements[index]}
@@ -151,7 +149,6 @@
                             style="width: {getColumnWidth(column[1].name)}"
                             on:mousedown={(event) => handleReorderDragStart(event, index)}
                             on:mousemove={(event) => handleReorderDragOver(event, index)}
-                            on:mouseup={handleReorderDragEnd}
                             >{column[1].name}
                             <!-- svelte-ignore a11y-no-static-element-interactions -->
                             <div class="resize-handle" on:mousedown={(event) => startResizeDrag(event, index)}></div>
@@ -160,7 +157,8 @@
                 </tr>
             </thead>
             <tr class="hiddenProfilingWrapper no-hover">
-                <td class="firstColumn border-right profiling"></td>
+                <td class="firstColumn border-right profiling" on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                ></td>
                 {#each $currentState.table.columns as column, index}
                     <td
                         class="profiling"
@@ -173,11 +171,16 @@
                     </td>
                 {/each}
             </tr>
-            <tr>
+            <tr class="profilingBannerRow">
+                <td
+                    class="firstColumn border-right profilingBanner"
+                    on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                ></td>
                 <td
                     class="profilingBanner"
                     on:click={() => (showProfiling = !showProfiling)}
-                    colspan={$currentState.table.columns.length + 1}
+                    on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                    on:mouseup={handleReorderDragEnd}
                 >
                     <div>
                         <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
@@ -186,11 +189,19 @@
                         </div>
                     </div>
                 </td>
+                {#each Array(numRows - 1) as _, i}
+                    <td
+                        class="profilingBanner"
+                        on:click={() => (showProfiling = !showProfiling)}
+                        on:mousemove={(event) => handleReorderDragOver(event, i + 1)}
+                    >
+                    </td>
+                {/each}
             </tr>
             <tbody>
                 {#each Array(numRows) as _, i}
                     <tr>
-                        <td class="firstColumn">{i}</td>
+                        <td class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}>{i}</td>
                         {#each $currentState.table.columns as column, index}
                             <td on:mousemove={(event) => handleReorderDragOver(event, index)}
                                 >{column[1].values[i] || ''}</td
@@ -202,6 +213,7 @@
         </table>
     {/if}
     {#if numRows === -1}
+        <!-- Just so this class gets compiled -->
         <span class="dragging">No data</span>
     {/if}
 </div>
@@ -278,6 +290,12 @@
         font-size: 0.8rem;
     }
 
+    .profilingBannerRow * {
+        border-left: none !important;
+        border-right: none !important;
+        overflow: visible;
+    }
+
     .profilingBanner {
         height: 35px;
         width: 100%;
@@ -287,7 +305,7 @@
         border-left: 3px solid var(--bg-bright);
         border-bottom: 3px solid var(--bg-bright);
         user-select: none;
-        padding-left: 50px;
+        padding-left: 0px;
     }
     .profilingBanner:hover {
         cursor: pointer;
