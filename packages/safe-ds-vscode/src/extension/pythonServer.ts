@@ -5,18 +5,16 @@ import WebSocket from 'ws';
 import { ast, SafeDsServices } from '@safe-ds/lang';
 import { LangiumDocument, URI } from 'langium';
 import path from 'path';
-import { ProgramCodeMap, PythonServerMessage, RuntimeErrorBacktraceFrame } from './messages.js';
+import { createProgramMessage, ProgramCodeMap, PythonServerMessage, RuntimeErrorBacktraceFrame } from './messages.js';
 import { logError, logOutput } from './output.js';
-import { SourceMapConsumer } from 'source-map';
+import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
 
 let pythonServer: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
 let pythonServerPort: number | undefined = undefined;
 let pythonServerAcceptsConnections: boolean = false;
 let pythonServerConnection: WebSocket | undefined = undefined;
-let pythonServerMessageCallbacks: Map<string, ((message: PythonServerMessage) => void)[]> = new Map<
-    string,
-    ((message: PythonServerMessage) => void)[]
->();
+let pythonServerMessageCallbacks: Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]> =
+    new Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]>();
 
 /**
  * Start the python server on the next usable port, starting at 5000.
@@ -55,18 +53,16 @@ export const isPythonServerAvailable = function (): boolean {
  * Register a callback to execute when a message from the python server arrives.
  *
  * @param callback Callback to execute
- * @param messageTypes Message types to register the callback for.
+ * @param messageType Message type to register the callback for.
  */
-export const addMessageCallback = function (
-    callback: (message: PythonServerMessage) => void,
-    ...messageTypes: string[]
+export const addMessageCallback = function <M extends PythonServerMessage['type']>(
+    callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
+    messageType: M,
 ): void {
-    for (const messageType of messageTypes) {
-        if (!pythonServerMessageCallbacks.has(messageType)) {
-            pythonServerMessageCallbacks.set(messageType, []);
-        }
-        pythonServerMessageCallbacks.get(messageType)!.push(callback);
+    if (!pythonServerMessageCallbacks.has(messageType)) {
+        pythonServerMessageCallbacks.set(messageType, []);
     }
+    pythonServerMessageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
 };
 
 const importPipeline = async function (services: SafeDsServices, documentUri: URI): Promise<LangiumDocument> {
@@ -93,7 +89,12 @@ const importPipeline = async function (services: SafeDsServices, documentUri: UR
 interface ExecutionInformation {
     source: string;
     generatedSource: Map<string, string>;
+    sourceMappings: Map<string, BasicSourceMapConsumer>;
     path: string;
+    /**
+     * Maps placeholder name to placeholder type
+     */
+    calculatedPlaceholders: Map<string, string>;
 }
 
 /**
@@ -137,11 +138,13 @@ export const tryMapToSafeDSSource = async function (
         return undefined;
     }
     let sourceMapKey = sourceMapKeys[0]!;
-    const sourceMapObject = JSON.parse(execInfo.generatedSource.get(sourceMapKey)!);
-    sourceMapObject.sourcesContent = [execInfo.source];
-    const consumer = await new SourceMapConsumer(sourceMapObject);
-    // TODO cache in execInfo??
-    const outputPosition = consumer.originalPositionFor({
+    if (!execInfo.sourceMappings.has(sourceMapKey)) {
+        const sourceMapObject = JSON.parse(execInfo.generatedSource.get(sourceMapKey)!);
+        sourceMapObject.sourcesContent = [execInfo.source];
+        const consumer = await new SourceMapConsumer(sourceMapObject);
+        execInfo.sourceMappings.set(sourceMapKey, consumer);
+    }
+    const outputPosition = execInfo.sourceMappings.get(sourceMapKey)!.originalPositionFor({
         line: Number(frame.line),
         column: 0,
         bias: SourceMapConsumer.LEAST_UPPER_BOUND,
@@ -157,7 +160,9 @@ export const tryMapToSafeDSSource = async function (
  * @param id A unique id that is used in further communication with this pipeline.
  */
 export const executePipeline = async function (services: SafeDsServices, pipelinePath: string, id: string) {
+    // TODO include all relevant files from workspace
     const documentUri = URI.file(pipelinePath);
+    const workspaceRoot = path.dirname(documentUri.fsPath); // TODO get actual workspace root
     services.shared.workspace.LangiumDocuments.deleteDocument(documentUri);
     let document;
     try {
@@ -175,10 +180,11 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     //
     let mainPipelineName;
     let mainModuleName;
-    // TODO let mainPackageName;
     if (!ast.isSdsModule(node)) {
         return;
     }
+    const mainPythonModuleName = services.builtins.Annotations.getPythonModule(node);
+    const mainPackage = mainPythonModuleName === undefined ? node?.name.split('.') : [mainPythonModuleName];
     const pipelines = (node?.members?.filter(ast.isSdsModuleMember) ?? []).filter(ast.isSdsPipeline);
     const firstPipeline = pipelines[0];
     if (firstPipeline === undefined) {
@@ -187,10 +193,9 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     mainPipelineName = firstPipeline.name;
     mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('-', '_');
-    // TODO mainPackageName = '';
     //
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
-        destination: URI.file(''),
+        destination: URI.file(path.dirname(documentUri.fsPath)), // actual directory of main module file
         createSourceMaps: true,
     });
     const lastGeneratedSource = new Map<string, string>();
@@ -207,27 +212,36 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
             path.extname(sdsFileName).length > 0
                 ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length /* - 1 */)
                 : sdsFileName;
-        // TODO const sdsPackageFilePath = path.dirname(fsPath);
-        // TODO const sdsPackage = sdsPackageFilePath.replaceAll('/', '.');
-        if (!codeMap.hasOwnProperty(/*TODO sdsPackage*/ '')) {
-            codeMap[/*TODO sdsPackage*/ ''] = {};
+        const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
+        let modulePath = workspaceRelativeFilePath.replaceAll('/', '.');
+        // Special handling for main module
+        if (modulePath === mainPackage.join(".")) {
+            modulePath = "";
+        }
+        //
+        if (!codeMap.hasOwnProperty(modulePath)) {
+            codeMap[modulePath] = {};
         }
         const content = generatedDocument.getText();
-        codeMap[/*TODO sdsPackage*/ '']![sdsNoExtFilename] = content;
+        codeMap[modulePath]![sdsNoExtFilename] = content;
     }
     executionInformation.set(id, {
         generatedSource: lastGeneratedSource,
+        sourceMappings: new Map<string, BasicSourceMapConsumer>(),
         path: pipelinePath,
         source: lastExecutedSource,
+        calculatedPlaceholders: new Map<string, string>(),
     });
-    sendMessageToPythonServer({
-        type: 'program',
-        id,
-        data: {
+    sendMessageToPythonServer(
+        createProgramMessage(id, {
             code: codeMap,
-            main: { package: /*TODO mainPackageName*/ '', module: mainModuleName, pipeline: mainPipelineName },
-        },
-    });
+            main: {
+                modulepath: "", // TODO maybe change generator: path.relative(workspaceRoot, path.dirname(documentUri.fsPath)).replaceAll('/', '.').split(".").concat(mainPackage).filter(str => str.length !== 0).join("."),
+                module: mainModuleName,
+                pipeline: mainPipelineName,
+            },
+        }),
+    );
 };
 
 /**

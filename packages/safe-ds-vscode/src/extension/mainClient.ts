@@ -6,6 +6,7 @@ import {
     addMessageCallback,
     executePipeline,
     getExecutionContext,
+    sendMessageToPythonServer,
     startPythonServer,
     stopPythonServer,
     tryMapToSafeDSSource,
@@ -13,7 +14,7 @@ import {
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
-import { RuntimeErrorMessage } from './messages.js';
+import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import crypto from 'crypto';
 import { URI } from 'langium';
 
@@ -82,8 +83,21 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 
 const acceptRunRequests = function (context: vscode.ExtensionContext) {
     addMessageCallback((message) => {
+        printOutputMessage(
+            `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
+        );
+    }, "placeholder_value");
+    addMessageCallback((message) => {
+        printOutputMessage(
+            `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+        );
+        const execInfo = getExecutionContext(message.id)!;
+        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+        sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
+    }, 'placeholder_type');
+    addMessageCallback((message) => {
         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
-    }, 'progress');
+    }, 'runtime_progress');
     addMessageCallback(async (message) => {
         let readableStacktraceSafeDs: string[] = [];
         const execInfo = getExecutionContext(message.id)!;

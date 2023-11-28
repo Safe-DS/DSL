@@ -9,7 +9,7 @@
 export type PythonServerMessage =
     | ProgramMessage
     | PlaceholderQueryMessage
-    | PlaceholderMessage
+    | PlaceholderTypeMessage
     | PlaceholderValueMessage
     | RuntimeErrorMessage
     | RuntimeProgressMessage;
@@ -50,10 +50,12 @@ export interface ProgramModuleMap {
 
 /**
  * Contains execution information about a pipeline.
- * Field module contains the module name, field pipeline contains the pipeline name.
+ * Field modulepath contains the path to the current module.
+ * Field module contains the current module name.
+ * Field pipeline contains the pipeline name.
  */
 export interface ProgramMainInformation {
-    package: string;
+    modulepath: string;
     module: string;
     pipeline: string;
 }
@@ -72,8 +74,8 @@ export interface PlaceholderQueryMessage {
 /**
  * Message that contains information about a calculated placeholder.
  */
-export interface PlaceholderMessage {
-    type: 'placeholder';
+export interface PlaceholderTypeMessage {
+    type: 'placeholder_type';
     id: string;
     data: PlaceholderDescription;
 }
@@ -147,4 +149,8 @@ export interface RuntimeProgressMessage {
 
 export const createProgramMessage = function (id: string, data: ProgramPackageMap): PythonServerMessage {
     return { type: 'program', id, data };
+};
+
+export const createPlaceholderQueryMessage = function (id: string, placeholderName: string): PythonServerMessage {
+    return { type: 'placeholder_query', id, data: placeholderName };
 };
