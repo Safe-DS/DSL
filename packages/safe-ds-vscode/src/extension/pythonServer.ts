@@ -215,8 +215,8 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
         let modulePath = workspaceRelativeFilePath.replaceAll('/', '.');
         // Special handling for main module
-        if (modulePath === mainPackage.join(".")) {
-            modulePath = "";
+        if (modulePath === mainPackage.join('.')) {
+            modulePath = '';
         }
         //
         if (!codeMap.hasOwnProperty(modulePath)) {
@@ -236,7 +236,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         createProgramMessage(id, {
             code: codeMap,
             main: {
-                modulepath: "", // TODO maybe change generator: path.relative(workspaceRoot, path.dirname(documentUri.fsPath)).replaceAll('/', '.').split(".").concat(mainPackage).filter(str => str.length !== 0).join("."),
+                modulepath: '', // TODO maybe change generator: path.relative(workspaceRoot, path.dirname(documentUri.fsPath)).replaceAll('/', '.').split(".").concat(mainPackage).filter(str => str.length !== 0).join("."),
                 module: mainModuleName,
                 pipeline: mainPipelineName,
             },

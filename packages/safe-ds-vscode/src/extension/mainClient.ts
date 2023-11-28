@@ -86,7 +86,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
         printOutputMessage(
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
         );
-    }, "placeholder_value");
+    }, 'placeholder_value');
     addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
