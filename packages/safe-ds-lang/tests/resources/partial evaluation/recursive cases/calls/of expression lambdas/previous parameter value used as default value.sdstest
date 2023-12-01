@@ -1,0 +1,8 @@
+package tests.partialValidation.recursiveCases.calls.ofExpressionLambdas.previousParameterValueUsedAsDefaultValue
+
+pipeline test {
+    val expressionLambda = (p1: Int, p2: Int = p1) -> p2;
+
+    // $TEST$ serialization 1
+    »expressionLambda(1)«;
+}

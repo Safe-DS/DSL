@@ -1,0 +1,109 @@
+package tests.validation.purity.impureCallablePassedToPureParameter.defaultValues
+
+@Pure
+fun pureFunction()
+
+@Impure([ImpurityReason.Other])
+fun impureFunction()
+
+annotation MyAnnotation(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f: () -> () = »pureFunction«,
+    // $TEST$ error "Cannot pass an impure callable to a pure parameter."
+    g: () -> () = »impureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    other: Int = »impureFunction«,
+)
+
+class MyClass1(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f: () -> () = »pureFunction«,
+    // $TEST$ error "Cannot pass an impure callable to a pure parameter."
+    g: () -> () = »impureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    other: Int = »impureFunction«,
+)
+
+enum MyEnum {
+    MyEnumVariant(
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        f: () -> () = »pureFunction«,
+        // $TEST$ error "Cannot pass an impure callable to a pure parameter."
+        g: () -> () = »impureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        other: Int = »impureFunction«,
+    )
+}
+
+@Pure
+fun myFunction1(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f: () -> () = »pureFunction«,
+    // $TEST$ error "Cannot pass an impure callable to a pure parameter."
+    g: () -> () = »impureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    other: Int = »impureFunction«,
+)
+
+@Impure([
+    ImpurityReason.PotentiallyImpureParameterCall("f1"),
+    ImpurityReason.PotentiallyImpureParameterCall("g1"),
+])
+fun myFunction2(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f1: () -> () = »pureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    g1: () -> () = »impureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f2: () -> () = »pureFunction«,
+    // $TEST$ error "Cannot pass an impure callable to a pure parameter."
+    g2: () -> () = »impureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    other: Int = »impureFunction«,
+)
+
+segment mySegment1(
+    myCallableType: (
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        f: () -> () = »pureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        g: () -> () = »impureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        other: Int = »impureFunction«,
+    ) -> ()
+) {}
+
+segment mySegment2(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f: () -> () = »pureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    g: () -> () = »impureFunction«,
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    other: Int = »impureFunction«,
+) {}
+
+pipeline myPipeline {
+    (
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        f: () -> () = »pureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        g: () -> () = »impureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        other: Int = »impureFunction«,
+    ) {};
+
+    (
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        f: () -> () = »pureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        g: () -> () = »impureFunction«,
+        // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+        other: Int = »impureFunction«,
+    ) -> 1;
+}
+
+// Default value does not have callable type
+class MyClass2(
+    // $TEST$ no error "Cannot pass an impure callable to a pure parameter."
+    f: () -> () = »1«,
+)

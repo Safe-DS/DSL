@@ -5,6 +5,8 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
     addMessageCallback,
     executePipeline,
+    getExecutionContext,
+    sendMessageToPythonServer,
     startPythonServer,
     stopPythonServer,
     tryMapToSafeDSSource,
@@ -14,8 +16,10 @@ import {
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
-import { RuntimeErrorMessage } from './messages.js';
+import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import { EDAPanel } from './EDAPanel.ts';
+import crypto from 'crypto';
+import { URI } from 'langium';
 
 let client: LanguageClient;
 let sdsServices: SafeDsServices;
@@ -150,27 +154,47 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 
 const acceptRunRequests = function (context: vscode.ExtensionContext) {
     addMessageCallback((message) => {
-        printOutputMessage(`Runner-Progress: ${message.data}`);
-    }, 'progress');
+        printOutputMessage(
+            `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
+        );
+    }, 'placeholder_value');
+    addMessageCallback((message) => {
+        printOutputMessage(
+            `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+        );
+        const execInfo = getExecutionContext(message.id)!;
+        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+        sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
+    }, 'placeholder_type');
+    addMessageCallback((message) => {
+        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
+    }, 'runtime_progress');
     addMessageCallback(async (message) => {
         let readableStacktraceSafeDs: string[] = [];
+        const execInfo = getExecutionContext(message.id)!;
         const readableStacktracePython = await Promise.all(
             (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-                const mappedFrame = await tryMapToSafeDSSource(frame);
+                const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
                 if (mappedFrame) {
-                    readableStacktraceSafeDs.push(`\tat ${mappedFrame.file} line ${mappedFrame.line}`);
+                    readableStacktraceSafeDs.push(
+                        `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
+                            mappedFrame.line
+                        })`,
+                    );
                     return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
                 }
                 return `\tat ${frame.file} line ${frame.line}`;
             }),
         );
         logOutput(
-            `Runner-RuntimeError: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktracePython.join(
-                '\n',
-            )}`,
+            `Runner-RuntimeError (${message.id}): ${
+                (<RuntimeErrorMessage>message).data.message
+            } \n${readableStacktracePython.join('\n')}`,
         );
         printOutputMessage(
-            `Safe-DS Error: ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs.join('\n')}`,
+            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                .reverse()
+                .join('\n')}`,
         );
     }, 'runtime_error');
     context.subscriptions.push(
@@ -191,8 +215,9 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                 vscode.window.showErrorMessage('Could not run Safe-DS Pipeline, as no pipeline is currently selected.');
                 return;
             }
-            printOutputMessage(`Launching Pipeline: ${pipelinePath}`);
-            executePipeline(sdsServices, pipelinePath.fsPath, 'abc'); // TODO change id
+            const pipelineId = crypto.randomUUID();
+            printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
+            executePipeline(sdsServices, pipelinePath.fsPath, pipelineId);
         }),
     );
 };

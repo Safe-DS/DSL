@@ -1,3 +1,60 @@
+## [0.5.1](https://github.com/Safe-DS/DSL/compare/v0.5.0...v0.5.1) (2023-11-25)
+
+
+### Bug Fixes
+
+* potential stack overflow when computing impurity reasons ([#801](https://github.com/Safe-DS/DSL/issues/801)) ([1d4abb3](https://github.com/Safe-DS/DSL/commit/1d4abb367b0016aed8b2c027675832e831588687))
+* stack overflow when evaluating recursive calls ([#800](https://github.com/Safe-DS/DSL/issues/800)) ([e19c817](https://github.com/Safe-DS/DSL/commit/e19c8171b967d0cc4b57b580e76773830bd49476))
+
+## [0.5.0](https://github.com/Safe-DS/DSL/compare/v0.4.0...v0.5.0) (2023-11-25)
+
+
+### Features
+
+* error if index of indexed access is invalid ([#796](https://github.com/Safe-DS/DSL/issues/796)) ([5017759](https://github.com/Safe-DS/DSL/commit/5017759d7c03acdf854b451e7aa87509595cbe3b)), closes [#16](https://github.com/Safe-DS/DSL/issues/16)
+* full implementation of partial evaluator ([#798](https://github.com/Safe-DS/DSL/issues/798)) ([7643794](https://github.com/Safe-DS/DSL/commit/76437945448305fe3dafce9aa433dce4f80ae1ce)), closes [#603](https://github.com/Safe-DS/DSL/issues/603)
+* settings to hide selected warnings/infos ([#795](https://github.com/Safe-DS/DSL/issues/795)) ([ff7c23a](https://github.com/Safe-DS/DSL/commit/ff7c23a9b238886050ac896d7f6dd874eabcfbf1)), closes [#35](https://github.com/Safe-DS/DSL/issues/35)
+
+
+### Bug Fixes
+
+* handling of default values in entry point of call graph computation ([#797](https://github.com/Safe-DS/DSL/issues/797)) ([a5db23c](https://github.com/Safe-DS/DSL/commit/a5db23c74a5b1edb08e1ce8f19cbda01e39ba01a))
+
+## [0.4.0](https://github.com/Safe-DS/DSL/compare/v0.3.0...v0.4.0) (2023-11-22)
+
+
+### Features
+
+* add endless recursion as an impurity reason ([#788](https://github.com/Safe-DS/DSL/issues/788)) ([98acdde](https://github.com/Safe-DS/DSL/commit/98acddeb1c541fa5137d29517c47fd87183e4e02))
+* call graph computer (without closures) ([#782](https://github.com/Safe-DS/DSL/issues/782)) ([34bf182](https://github.com/Safe-DS/DSL/commit/34bf182f72847eafbe25dd6a24895e6f8423e0dc))
+* check types of constant parameters ([#775](https://github.com/Safe-DS/DSL/issues/775)) ([0a02850](https://github.com/Safe-DS/DSL/commit/0a02850a23045d239cffec305be069aae573655f)), closes [#668](https://github.com/Safe-DS/DSL/issues/668)
+* check whether purity of callable parameters of functions is set properly ([#777](https://github.com/Safe-DS/DSL/issues/777)) ([f8fd907](https://github.com/Safe-DS/DSL/commit/f8fd907d527e20daa9e6773f6ad4df0e60e971c5)), closes [#732](https://github.com/Safe-DS/DSL/issues/732)
+* compute purity/side effects for expressions ([#785](https://github.com/Safe-DS/DSL/issues/785)) ([9ed1c08](https://github.com/Safe-DS/DSL/commit/9ed1c0817fdb6cc89b678c2f35d2968f82a63cb9)), closes [#15](https://github.com/Safe-DS/DSL/issues/15)
+* compute types of parameters of lambdas that are passed as default value ([#780](https://github.com/Safe-DS/DSL/issues/780)) ([01a5c03](https://github.com/Safe-DS/DSL/commit/01a5c035dd133ee8cb5079a628dceefab69c95ac))
+* error if call leads to infinite recursion ([#783](https://github.com/Safe-DS/DSL/issues/783)) ([f7eabd8](https://github.com/Safe-DS/DSL/commit/f7eabd86f9dd765c9c2b3afb6a13e2ff4336e171)), closes [#667](https://github.com/Safe-DS/DSL/issues/667)
+* error if impure callable is passed to pure parameter ([#792](https://github.com/Safe-DS/DSL/issues/792)) ([5536a4a](https://github.com/Safe-DS/DSL/commit/5536a4a5feda272e913b63c911bf1ff3ea64cc9b)), closes [#730](https://github.com/Safe-DS/DSL/issues/730)
+* error if parameter name in impurity reason is invalid ([#772](https://github.com/Safe-DS/DSL/issues/772)) ([faa2012](https://github.com/Safe-DS/DSL/commit/faa2012fa6cb3fdabc4c9067067fc4e17c35570e)), closes [#741](https://github.com/Safe-DS/DSL/issues/741)
+* error if purity of functions is not specified ([#768](https://github.com/Safe-DS/DSL/issues/768)) ([a15b0af](https://github.com/Safe-DS/DSL/commit/a15b0afa535c4c8ca91ef8656fe1f71a01cbc9e9)), closes [#731](https://github.com/Safe-DS/DSL/issues/731)
+* filter statements without effect for code generation ([#786](https://github.com/Safe-DS/DSL/issues/786)) ([cd4f2c1](https://github.com/Safe-DS/DSL/commit/cd4f2c1e53bb9ccd8a1a02798f9bc67ea34af94b)), closes [#542](https://github.com/Safe-DS/DSL/issues/542)
+* improve location of warning about duplicate annotation target ([#771](https://github.com/Safe-DS/DSL/issues/771)) ([87d2a48](https://github.com/Safe-DS/DSL/commit/87d2a48f1c0fe89bc34b3eeacdfb313cde0bf047))
+* info if `@Pure` annotation is called on parameter of pure function ([#778](https://github.com/Safe-DS/DSL/issues/778)) ([c15c70e](https://github.com/Safe-DS/DSL/commit/c15c70ebb883c6dc742a490e7a36405a51f593a4))
+* purity computer ([#784](https://github.com/Safe-DS/DSL/issues/784)) ([b09bb3a](https://github.com/Safe-DS/DSL/commit/b09bb3aa0cee2f39b2b593be871c46a3092c6970))
+* remove type parameters from enum variants ([#767](https://github.com/Safe-DS/DSL/issues/767)) ([cb6556a](https://github.com/Safe-DS/DSL/commit/cb6556ab825c7be3fba0d972659c7d2afa021b40)), closes [#766](https://github.com/Safe-DS/DSL/issues/766)
+* short-circuit `and`, `or`, and `?:` if RHS has no side effects ([#789](https://github.com/Safe-DS/DSL/issues/789)) ([9d9f4b7](https://github.com/Safe-DS/DSL/commit/9d9f4b7f13da7c0637dfdda30645e6450b0c2bec)), closes [#15](https://github.com/Safe-DS/DSL/issues/15)
+* streamline purity information ([#779](https://github.com/Safe-DS/DSL/issues/779)) ([75a9e5b](https://github.com/Safe-DS/DSL/commit/75a9e5b7534cde8a5b1316d11f52b282af900a5b))
+* stricter definition of `const` parameters ([#776](https://github.com/Safe-DS/DSL/issues/776)) ([73a0d4e](https://github.com/Safe-DS/DSL/commit/73a0d4ea7d3fedded8c4e6ecdd4026eada889843))
+* update snippets for functions and methods ([#769](https://github.com/Safe-DS/DSL/issues/769)) ([061d3b1](https://github.com/Safe-DS/DSL/commit/061d3b1a90a459427bd85b18822fe29749b5f675))
+* validate impurity reasons of overriding methods ([#774](https://github.com/Safe-DS/DSL/issues/774)) ([71fc5bd](https://github.com/Safe-DS/DSL/commit/71fc5bdc944941ce9278113578437efd574e4fe6)), closes [#665](https://github.com/Safe-DS/DSL/issues/665)
+* warn about duplicate impurity reasons ([#773](https://github.com/Safe-DS/DSL/issues/773)) ([8344356](https://github.com/Safe-DS/DSL/commit/834435685ef9194f0f6ade960d25b4905e327101)), closes [#733](https://github.com/Safe-DS/DSL/issues/733)
+* warn if statement has no effect ([#787](https://github.com/Safe-DS/DSL/issues/787)) ([6f45dc4](https://github.com/Safe-DS/DSL/commit/6f45dc43433fb96d65b4ed0bb1741cb324fbecf6)), closes [#664](https://github.com/Safe-DS/DSL/issues/664)
+
+
+### Bug Fixes
+
+* signature help for optional parameters ([#793](https://github.com/Safe-DS/DSL/issues/793)) ([fd88ce8](https://github.com/Safe-DS/DSL/commit/fd88ce8955cc915b609dc9aa2ceb059eff05b2ee)), closes [#791](https://github.com/Safe-DS/DSL/issues/791)
+* wrong detection of useless statements that call parameters/unknown callables ([#790](https://github.com/Safe-DS/DSL/issues/790)) ([a49b4b3](https://github.com/Safe-DS/DSL/commit/a49b4b38c5ff16916a0a4467a480291653ed54d0))
+* wrong`"assignment/nothing-assigned"` error if RHS calls expression lambda ([#781](https://github.com/Safe-DS/DSL/issues/781)) ([b909cb8](https://github.com/Safe-DS/DSL/commit/b909cb8155d953b59f1ec6a2f7f180e77d642c01))
+
 ## [0.3.0](https://github.com/Safe-DS/DSL/compare/v0.2.0...v0.3.0) (2023-11-12)
 
 

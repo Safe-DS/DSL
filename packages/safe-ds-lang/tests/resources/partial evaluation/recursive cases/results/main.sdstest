@@ -1,0 +1,12 @@
+package tests.partialEvaluation.recursiveCases.assignees.results
+
+// $TEST$ serialization ?
+// $TEST$ serialization 1
+// $TEST$ serialization 2
+segment mySegment() -> (»a: Int«, »b: Int«, »c: Int«) {
+    yield b = 1;
+
+    // Use the first yield if the same result is set multiple times
+    yield c = 2;
+    yield c = 3;
+}

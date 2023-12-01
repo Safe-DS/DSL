@@ -1,7 +1,7 @@
 package tests.generator.assignment
 
 @Impure([ImpurityReason.Other]) fun f1(param: Any?)
-@Impure([ImpurityReason.Other]) fun f2(param: () -> r: Int?)
+@Impure([ImpurityReason.PotentiallyImpureParameterCall("param")]) fun f2(param: () -> r: Int?)
 
 @Impure([ImpurityReason.Other]) fun g() -> (a: Int, b: Int, c: Int)
 
@@ -11,6 +11,10 @@ pipeline testPipeline {
     val x = g();
     f1(a);
     f1(x);
+    val l, val m, val n = g();
+    f1(l);
+    f1(m);
+    f1(n);
 
     f2(() {
         _, _ ,_ = g();

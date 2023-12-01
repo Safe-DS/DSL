@@ -1,0 +1,15 @@
+package tests.partialEvaluation.recursiveCases.assignees.yields
+
+segment mySegment() -> r: Int {
+    yield r = 2;
+}
+
+segment mySegment2() -> (a: Int, b: Int, c: Int, d: Int) {
+    // $TEST$ serialization 1
+    // $TEST$ serialization ?
+    »yield a«, »yield b« = 1;
+
+    // $TEST$ serialization 2
+    // $TEST$ serialization ?
+    »yield c«, »yield d« = mySegment();
+}

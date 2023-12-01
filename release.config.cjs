@@ -15,10 +15,12 @@ module.exports = {
                 publishCmd: 'npm run package && npm run deploy',
                 execCwd: 'packages/safe-ds-vscode',
             },
+        ],
+        [
             // Update the lock file
             '@semantic-release/exec',
             {
-                prepareCmd: 'npm install'
+                prepareCmd: 'npm install',
             },
         ],
         [

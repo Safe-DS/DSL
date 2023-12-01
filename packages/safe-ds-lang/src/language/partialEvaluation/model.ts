@@ -1,7 +1,5 @@
-import { type NamedAstNode, stream } from 'langium';
-import { isEmpty } from '../../helpers/collectionUtils.js';
+import { stream } from 'langium';
 import {
-    isSdsAbstractResult,
     type SdsAbstractResult,
     type SdsBlockLambda,
     type SdsBlockLambdaResult,
@@ -11,7 +9,6 @@ import {
     type SdsExpression,
     type SdsExpressionLambda,
     type SdsParameter,
-    type SdsReference,
 } from '../generated/ast.js';
 import { getParameters, streamBlockLambdaResults } from '../helpers/nodeProperties.js';
 
@@ -144,13 +141,13 @@ export const isConstant = (node: EvaluatedNode): node is Constant => {
 // Callables
 // -------------------------------------------------------------------------------------------------
 
-export abstract class EvaluatedCallable<out T extends SdsCallable = SdsCallable> extends EvaluatedNode {
-    abstract readonly callable: T;
+export abstract class EvaluatedCallable extends EvaluatedNode {
+    abstract readonly callable: SdsCallable | SdsParameter;
     abstract readonly substitutionsOnCreation: ParameterSubstitutions;
     override readonly isFullyEvaluated: boolean = false;
 }
 
-export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
+export class BlockLambdaClosure extends EvaluatedCallable {
     readonly results: SdsBlockLambdaResult[];
 
     constructor(
@@ -175,11 +172,11 @@ export class BlockLambdaClosure extends EvaluatedCallable<SdsBlockLambda> {
     }
 
     override toString(): string {
-        return `$BlockLambdaClosure`;
+        return `$blockLambdaClosure`;
     }
 }
 
-export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLambda> {
+export class ExpressionLambdaClosure extends EvaluatedCallable {
     readonly result: SdsExpression;
 
     constructor(
@@ -204,11 +201,11 @@ export class ExpressionLambdaClosure extends EvaluatedCallable<SdsExpressionLamb
     }
 
     override toString(): string {
-        return '$ExpressionLambdaClosure';
+        return '$expressionLambdaClosure';
     }
 }
 
-export class NamedCallable<T extends SdsCallable & NamedAstNode> extends EvaluatedCallable<T> {
+export class NamedCallable<T extends (SdsCallable & SdsDeclaration) | SdsParameter> extends EvaluatedCallable {
     override readonly isFullyEvaluated: boolean = false;
     override readonly substitutionsOnCreation: ParameterSubstitutions = new Map();
 
@@ -232,19 +229,25 @@ export class NamedCallable<T extends SdsCallable & NamedAstNode> extends Evaluat
 export class EvaluatedEnumVariant extends EvaluatedNode {
     constructor(
         readonly variant: SdsEnumVariant,
-        readonly args: ParameterSubstitutions | undefined,
+        private readonly substitutions: ParameterSubstitutions | undefined,
     ) {
         super();
     }
 
-    readonly hasBeenInstantiated = this.args !== undefined;
+    readonly hasBeenInstantiated = this.substitutions !== undefined;
 
-    override readonly isFullyEvaluated: boolean =
-        isEmpty(getParameters(this.variant)) ||
-        (this.args !== undefined && stream(this.args.values()).every(isFullyEvaluated));
+    override readonly isFullyEvaluated: boolean = getParameters(this.variant).every(
+        (it) => this.substitutions?.get(it)?.isFullyEvaluated ?? false,
+    );
 
-    getArgumentValueByName(name: string): EvaluatedNode {
-        if (!this.args) {
+    /**
+     * Returns the substitution for the parameter with the given name. If the parameter is not specified,
+     * `UnknownEvaluatedNode` is returned.
+     *
+     * @param name The name of the parameter to look for.
+     */
+    getParameterValueByName(name: string): EvaluatedNode {
+        if (!this.substitutions) {
             return UnknownEvaluatedNode;
         }
 
@@ -253,7 +256,7 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
             return UnknownEvaluatedNode;
         }
 
-        return this.args.get(parameter) ?? UnknownEvaluatedNode;
+        return this.substitutions.get(parameter) ?? UnknownEvaluatedNode;
     }
 
     override equals(other: unknown): boolean {
@@ -266,15 +269,19 @@ export class EvaluatedEnumVariant extends EvaluatedNode {
         return (
             this.variant === other.variant &&
             this.hasBeenInstantiated === other.hasBeenInstantiated &&
-            substitutionsAreEqual(this.args, other.args)
+            substitutionsAreEqual(this.substitutions, other.substitutions)
         );
     }
 
     override toString(): string {
-        if (!this.args) {
+        if (!this.substitutions) {
             return this.variant.name;
         } else {
-            return `${this.variant.name}(${Array.from(this.args.values()).join(', ')})`;
+            const parameterValues = getParameters(this.variant)
+                .map((it) => `${it.name} = ${this.substitutions?.get(it) ?? UnknownEvaluatedNode}`)
+                .join(', ');
+
+            return `${this.variant.name}(${parameterValues})`;
         }
     }
 }
@@ -295,6 +302,13 @@ export class EvaluatedList extends EvaluatedNode {
         return this.elements[index] ?? UnknownEvaluatedNode;
     }
 
+    /**
+     * Returns the size of the list.
+     */
+    get size(): number {
+        return this.elements.length;
+    }
+
     override equals(other: unknown): boolean {
         if (other === this) {
             return true;
@@ -302,9 +316,7 @@ export class EvaluatedList extends EvaluatedNode {
             return false;
         }
 
-        return (
-            this.elements.length === other.elements.length && this.elements.every((e, i) => e.equals(other.elements[i]))
-        );
+        return this.size === other.size && this.elements.every((e, i) => e.equals(other.elements[i]));
     }
 
     override toString(): string {
@@ -313,7 +325,7 @@ export class EvaluatedList extends EvaluatedNode {
 }
 
 export class EvaluatedMap extends EvaluatedNode {
-    constructor(readonly entries: EvaluatedMapEntry[]) {
+    constructor(private readonly entries: EvaluatedMapEntry[]) {
         super();
     }
 
@@ -327,6 +339,15 @@ export class EvaluatedMap extends EvaluatedNode {
      */
     getLastValueForKey(key: EvaluatedNode): EvaluatedNode {
         return this.entries.findLast((it) => it.key.equals(key))?.value ?? UnknownEvaluatedNode;
+    }
+
+    /**
+     * Returns whether the map contains the given key.
+     *
+     * @param key The key to look for.
+     */
+    has(key: EvaluatedNode): boolean {
+        return this.entries.some((it) => it.key.equals(key));
     }
 
     override equals(other: unknown): boolean {
@@ -377,33 +398,34 @@ export class EvaluatedMapEntry extends EvaluatedNode {
  * the result of a call to a block lambda or a segment.
  */
 export class EvaluatedNamedTuple extends EvaluatedNode {
-    constructor(readonly entries: ResultSubstitutions) {
+    constructor(private readonly entries: ResultSubstitutions) {
         super();
     }
 
     override readonly isFullyEvaluated: boolean = stream(this.entries.values()).every(isFullyEvaluated);
 
     /**
-     * Returns the substitution for the target of the given reference. If the target of the reference does not occur in
-     * the map, `UnknownEvaluatedNode` is returned.
+     * Returns the value of the result with the given name. If the result does not occur in the record,
+     * `UnknownEvaluatedNode` is returned.
      *
-     * @param reference A reference to the result to look for.
+     * @param name The name of the result to look for.
      */
-    getSubstitutionByReference(reference: SdsReference): EvaluatedNode {
-        const referencedDeclaration = reference.target.ref;
-        if (!isSdsAbstractResult(referencedDeclaration)) {
+    getResultValueByName(name: string): EvaluatedNode {
+        const result = stream(this.entries.keys()).find((it) => it.name === name);
+        if (!result) {
             return UnknownEvaluatedNode;
         }
 
-        return this.entries.get(referencedDeclaration) ?? UnknownEvaluatedNode;
+        return this.entries.get(result) ?? UnknownEvaluatedNode;
     }
 
     /**
-     * Returns the substitution at the given index. If the index is out of bounds, `UnknownEvaluatedNode` is returned.
+     * Returns the value of the result at the given index. If the index is out of bounds, `UnknownEvaluatedNode` is
+     * returned.
      *
-     * @param index The index of the substitution to look for.
+     * @param index The index of the result to look for.
      */
-    getSubstitutionByIndex(index: number): EvaluatedNode {
+    getResultValueByIndex(index: number): EvaluatedNode {
         return Array.from(this.entries.values())[index] ?? UnknownEvaluatedNode;
     }
 

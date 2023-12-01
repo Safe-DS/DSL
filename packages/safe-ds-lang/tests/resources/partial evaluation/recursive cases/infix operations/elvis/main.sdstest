@@ -7,8 +7,11 @@ pipeline test {
     // $TEST$ serialization false
     »null ?: false«;
 
-    // $TEST$ serialization $ExpressionLambdaClosure
+    // $TEST$ serialization $expressionLambdaClosure
     »(() -> 1) ?: false«;
+
+    // $TEST$ serialization ?
+    »(() -> 1) ?: unresolved«;
 
     // $TEST$ serialization ?
     »unresolved ?: null«;

@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/Safe-DS/DSL/branch/main/graph/badge.svg?token=ma0ytglhO1)](https://codecov.io/gh/Safe-DS/DSL)
 [![Documentation Status](https://readthedocs.org/projects/safe-ds-dsl/badge/?version=stable)](https://dsl.safeds.com)
 
-Safely develop Data Science programs with a statically checked.
+Safely develop Data Science programs with a statically checked domain specific language (DSL).
 
 ## Installation
 

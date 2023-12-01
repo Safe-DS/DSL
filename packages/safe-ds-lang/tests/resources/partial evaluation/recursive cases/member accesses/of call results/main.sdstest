@@ -1,0 +1,31 @@
+package tests.partialValidation.recursiveCases.memberAccesses.ofCallResults
+
+segment mySegment(p: Int, q: Int = 2) -> (r: Int, s: Int) {
+    yield r = p;
+    yield s = q;
+}
+
+pipeline test {
+    val blockLambda = (p: Int, q: Int = 2) {
+        yield r = p;
+        yield s = q;
+    };
+
+    // $TEST$ serialization 1
+    »mySegment(1).r«;
+
+    // $TEST$ serialization 2
+    »mySegment(1).s«;
+
+    // $TEST$ serialization ?
+    »mySegment(1).unresolved«;
+
+    // $TEST$ serialization 1
+    »blockLambda(1).r«;
+
+    // $TEST$ serialization 2
+    »blockLambda(1).s«;
+
+    // $TEST$ serialization ?
+    »blockLambda(1).unresolved«;
+}

@@ -19,3 +19,11 @@ segment mySegment() -> a: Int {
         »yield a = 1;«
     };
 }
+
+segment mySegment2(f: () -> (r: Int)) {
+    // $TEST$ no warning "This statement does nothing."
+    »_ = f();«
+
+    // $TEST$ no warning "This statement does nothing."
+    »_ = unresolved();«
+}

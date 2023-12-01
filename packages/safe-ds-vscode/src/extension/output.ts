@@ -2,6 +2,9 @@ import vscode, { LogLevel, ViewColumn } from 'vscode';
 
 let logOutputChannel: vscode.LogOutputChannel | undefined = undefined;
 
+/**
+ * An output channel, that prints a specific prefix before printing the actual message.
+ */
 class PrefixedOutputChannel implements vscode.LogOutputChannel {
     readonly delegate: vscode.LogOutputChannel;
     readonly prefix: string;
@@ -76,25 +79,49 @@ class PrefixedOutputChannel implements vscode.LogOutputChannel {
     }
 }
 
+/**
+ * Initialize the logging system once for the extension.
+ */
 export const initializeLog = function () {
     logOutputChannel = vscode.window.createOutputChannel('Safe-DS', { log: true });
     logOutputChannel.show();
 };
 
+/**
+ * Creates a new prefixed output channel based on the global output channel for this extension.
+ *
+ * @param prefix Prefix to display, or undefined to not display any prefix
+ */
 export const getSafeDSOutputChannel = function (prefix: string | undefined = undefined): vscode.LogOutputChannel {
     return new PrefixedOutputChannel(logOutputChannel!, !prefix ? '' : prefix);
 };
 
+/**
+ * Log a string to the output channel and the extension debugger.
+ *
+ * @param value Log Message
+ */
 export const logOutput = function (value: string) {
     logOutputChannel!.info(value);
     console.log(value);
 };
 
+/**
+ * Log a string as an error to the output channel and the extension debugger.
+ *
+ * @param value Error Message
+ */
 export const logError = function (value: string) {
     logOutputChannel!.error(value);
     console.error(value);
 };
 
+/**
+ * Print a friendly string to the output channel and open the output channel.
+ * This function differs from logOutput, as it should be used to show useful information (like progress) to the user.
+ *
+ * @param value Message
+ */
 export const printOutputMessage = function (value: string) {
     logOutputChannel!.appendLine(value);
     logOutputChannel!.show();
