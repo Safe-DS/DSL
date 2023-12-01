@@ -5,24 +5,20 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
     addMessageCallback,
     executePipeline,
-    getExecutionContext,
-    sendMessageToPythonServer,
     startPythonServer,
     stopPythonServer,
-    tryMapToSafeDSSource,
     isPythonServerAvailable,
-    pythonServerPort
+    pythonServerPort,
 } from './pythonServer.js';
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
-import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
+import { getSafeDSOutputChannel, initializeLog, printOutputMessage } from './output.js';
 import { EDAPanel } from './EDAPanel.ts';
 import crypto from 'crypto';
-import { URI } from 'langium';
 
 let client: LanguageClient;
 let sdsServices: SafeDsServices;
+let lastFinishedPipelineId: string | undefined;
 
 // This function is called when the extension is activated.
 export const activate = function (context: vscode.ExtensionContext): void {
@@ -45,7 +41,7 @@ export const activate = function (context: vscode.ExtensionContext): void {
     
     context.subscriptions.push(
         registerCommandWithCheck("eda-test01.runEda", () => {
-            EDAPanel.createOrShow(context.extensionUri, context, undefined, pythonServerPort);
+            EDAPanel.createOrShow(context.extensionUri, context, "", undefined, pythonServerPort);
         }),
     );
 
@@ -65,7 +61,7 @@ export const activate = function (context: vscode.ExtensionContext): void {
             return;
             }
 
-            EDAPanel.createOrShow(context.extensionUri, context, newtableIdentifier, pythonServerPort);
+            EDAPanel.createOrShow(context.extensionUri, context, "", newtableIdentifier, pythonServerPort);
         }),
     );
 
@@ -73,15 +69,54 @@ export const activate = function (context: vscode.ExtensionContext): void {
         registerCommandWithCheck("eda-test01.runEdaFromContext", () => {
             const editor = vscode.window.activeTextEditor;
             if (editor) {
-            const position = editor.selection.active;
-            const range = editor.document.getWordRangeAtPosition(position);
-            if (range) {
-                const newtableIdentifier = editor.document.getText(range);
-                // TODO see if word a table
-                EDAPanel.createOrShow(context.extensionUri, context, newtableIdentifier, pythonServerPort);
-            } else {
-                EDAPanel.createOrShow(context.extensionUri, context, undefined, pythonServerPort);
-            }
+                const position = editor.selection.active;
+                const range = editor.document.getWordRangeAtPosition(position);
+                if (range) {
+                    const requestedPlaceholderName = editor.document.getText(range);
+                    // Check if file ends with .sdspipe
+                    if (!editor.document.fileName.endsWith(".sdspipe")) {
+                        vscode.window.showErrorMessage("No .sdspipe file selected!");
+                        return;
+                    }
+                    // gen custom id for pipeline
+                    const pipelineId = crypto.randomUUID();
+                    addMessageCallback((message) => {
+                        console.log("tes3t")
+                        printOutputMessage(
+                            `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+                        );
+                        if(message.id === pipelineId && message.data.type === "Table" && message.data.name === requestedPlaceholderName) {
+                            lastFinishedPipelineId = pipelineId;
+                            EDAPanel.createOrShow(context.extensionUri, context, pipelineId, message.data.name, pythonServerPort);
+                            // TODO detach callbacks
+                        } else if(message.id === pipelineId && message.data.name !== requestedPlaceholderName) {
+                            return;
+                        } else if(message.id === pipelineId) {
+                            lastFinishedPipelineId = pipelineId;
+                            vscode.window.showErrorMessage(`Selected placeholder is not of type 'Table'.`);
+                            // TODO detach callbacks
+                        }
+                    }, 'placeholder_type');
+                    addMessageCallback((message) => {
+                        console.log("tes3t")
+                        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);                
+                        if(message.id === pipelineId && message.data === "done" && lastFinishedPipelineId !== pipelineId) {
+                            lastFinishedPipelineId = pipelineId;
+                            vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
+                            // TODO detach callbacks
+                        }
+                    }, 'runtime_progress');
+                    addMessageCallback((message) => {
+                        if(message.id === pipelineId && lastFinishedPipelineId !== pipelineId) {
+                            lastFinishedPipelineId = pipelineId;
+                            vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
+                            // TODO detach callbacks
+                        }
+                    }, 'runtime_error');
+                    executePipeline(sdsServices, editor.document.uri.fsPath, pipelineId);
+                } else {
+                    EDAPanel.createOrShow(context.extensionUri, context, "", undefined, pythonServerPort);
+                }
             } else {
                 vscode.window.showErrorMessage("No ative text editor!");
                 return;
@@ -93,7 +128,7 @@ export const activate = function (context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand("eda-test01.refreshWebview", () => {
             EDAPanel.kill();
             setTimeout(() => {
-                EDAPanel.createOrShow(context.extensionUri, context, "newtableIdentifier", pythonServerPort);
+                EDAPanel.createOrShow(context.extensionUri, context, "", "newtableIdentifier", pythonServerPort);
             }, 100);
             setTimeout(() => {
                 vscode.commands.executeCommand("workbench.action.webview.openDeveloperTools");
@@ -158,45 +193,42 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
         );
     }, 'placeholder_value');
-    addMessageCallback((message) => {
-        printOutputMessage(
-            `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
-        );
-        const execInfo = getExecutionContext(message.id)!;
-        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
-        sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
-    }, 'placeholder_type');
-    addMessageCallback((message) => {
-        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
-    }, 'runtime_progress');
-    addMessageCallback(async (message) => {
-        let readableStacktraceSafeDs: string[] = [];
-        const execInfo = getExecutionContext(message.id)!;
-        const readableStacktracePython = await Promise.all(
-            (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-                const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
-                if (mappedFrame) {
-                    readableStacktraceSafeDs.push(
-                        `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
-                            mappedFrame.line
-                        })`,
-                    );
-                    return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
-                }
-                return `\tat ${frame.file} line ${frame.line}`;
-            }),
-        );
-        logOutput(
-            `Runner-RuntimeError (${message.id}): ${
-                (<RuntimeErrorMessage>message).data.message
-            } \n${readableStacktracePython.join('\n')}`,
-        );
-        printOutputMessage(
-            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
-                .reverse()
-                .join('\n')}`,
-        );
-    }, 'runtime_error');
+    // addMessageCallback((message) => {
+    //     printOutputMessage(
+    //         `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+    //     );
+    // }, 'placeholder_type');
+    // addMessageCallback((message) => {
+    //     printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
+    // }, 'runtime_progress');
+    // addMessageCallback(async (message) => {
+    //     let readableStacktraceSafeDs: string[] = [];
+    //     const execInfo = getExecutionContext(message.id)!;
+    //     const readableStacktracePython = await Promise.all(
+    //         (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+    //             const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
+    //             if (mappedFrame) {
+    //                 readableStacktraceSafeDs.push(
+    //                     `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
+    //                         mappedFrame.line
+    //                     })`,
+    //                 );
+    //                 return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
+    //             }
+    //             return `\tat ${frame.file} line ${frame.line}`;
+    //         }),
+    //     );
+    //     logOutput(
+    //         `Runner-RuntimeError (${message.id}): ${
+    //             (<RuntimeErrorMessage>message).data.message
+    //         } \n${readableStacktracePython.join('\n')}`,
+    //     );
+    //     printOutputMessage(
+    //         `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+    //             .reverse()
+    //             .join('\n')}`,
+    //     );
+    // }, 'runtime_error');
     context.subscriptions.push(
         vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (filePath: vscode.Uri | undefined) => {
             let pipelinePath = filePath;

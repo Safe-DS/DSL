@@ -17,15 +17,17 @@ export class EDAPanel {
   private _disposables: vscode.Disposable[] = [];
   private _tableIdentifier: string | undefined;
   private _pythonServerPort: number = 5000;
+  private _startPipelineId: string = "";
   private _column: vscode.ViewColumn | undefined;
   private _webviewListener: vscode.Disposable | undefined;
   private _viewStateChangeListener: vscode.Disposable | undefined;
 
-  private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, tableIdentifier?: string, pythonServerPort = 5000) {
+  private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, startPipeLineId: string, tableIdentifier?: string, pythonServerPort = 5000) {
     this._panel = panel;
     this._extensionUri = extensionUri;
     this._tableIdentifier = tableIdentifier;
     this._pythonServerPort = pythonServerPort;
+    this._startPipelineId = startPipeLineId;
 
     // Set the webview's initial html content
     this._update();
@@ -89,7 +91,7 @@ export class EDAPanel {
     this._disposables.push(this._webviewListener);
   }
 
-  public static createOrShow(extensionUri: vscode.Uri, context: vscode.ExtensionContext, tableIdentifier?: string, pythonServerPort = 5000) {
+  public static createOrShow(extensionUri: vscode.Uri, context: vscode.ExtensionContext, startPipelineId: string, tableIdentifier?: string, pythonServerPort = 5000) {
     EDAPanel.context = context;
     
     // Set column to the active editor if it exists
@@ -100,6 +102,7 @@ export class EDAPanel {
       EDAPanel.currentPanel._panel.reveal(EDAPanel.currentPanel._column);
       EDAPanel.currentPanel._tableIdentifier = tableIdentifier;
       EDAPanel.currentPanel._pythonServerPort = pythonServerPort;
+      EDAPanel.currentPanel._startPipelineId = startPipelineId;
       EDAPanel.currentPanel._update();
       // Otherwise fired in 'onDidChangeViewState' listener
       if (EDAPanel.currentPanel._panel.visible) {
@@ -120,7 +123,7 @@ export class EDAPanel {
         ],
       });
   
-      EDAPanel.currentPanel = new EDAPanel(panel, extensionUri, tableIdentifier, pythonServerPort);
+      EDAPanel.currentPanel = new EDAPanel(panel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
       EDAPanel.currentPanel._column = column;
       webviewApi.postMessage(panel.webview, {
         command: "setWebviewState",
@@ -136,7 +139,7 @@ export class EDAPanel {
   }
 
   public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-    EDAPanel.currentPanel = new EDAPanel(panel, extensionUri);
+    EDAPanel.currentPanel = new EDAPanel(panel, extensionUri, EDAPanel.currentPanel?._startPipelineId ?? "");
   }
 
   public dispose() {
@@ -190,6 +193,7 @@ export class EDAPanel {
         window.injVscode = acquireVsCodeApi();
         window.tableIdentifier = "${this._tableIdentifier}" === "undefined" ? undefined : "${this._tableIdentifier}";
         window.pythonServerPort = ${this._pythonServerPort};
+        window.startPipelineId = ${this._startPipelineId};
       </script>
     </head>
     <body>
