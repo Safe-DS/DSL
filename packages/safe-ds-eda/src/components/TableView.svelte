@@ -74,8 +74,6 @@
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumn: HTMLElement | null = null;
-    let offsetX = 0;
-    let offsetY = 0;
 
     function handleReorderDragStart(event: MouseEvent, columnIndex: number): void {
         document.addEventListener('mouseup', handleReorderDragEnd);
@@ -84,9 +82,6 @@
         dragCurrentIndex = columnIndex;
         draggedColumn = headerElements[columnIndex];
         draggedColumn.classList.add('dragging');
-        const rect = draggedColumn.getBoundingClientRect();
-        offsetX = event.clientX - rect.left;
-        offsetY = event.clientY - rect.top;
 
         // Lower the z-index of all other headers
         headerElements.forEach((header, index) => {
@@ -101,8 +96,8 @@
             // Logic to provide visual feedback and determine the target column
             dragCurrentIndex = columnIndex;
             const containerRect = draggedColumn.parentElement!.getBoundingClientRect();
-            draggedColumn.style.left = event.clientX - containerRect.left - offsetX + 'px';
-            draggedColumn.style.top = event.clientY - containerRect.top - offsetY + 'px';
+            draggedColumn.style.left = event.clientX + 'px';
+            draggedColumn.style.top = event.clientY + 'px';
         }
     }
 
@@ -125,6 +120,10 @@
                 const newColumns = [...$currentState.table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
+                // In newColumns also set the number of each column array to their new index
+                newColumns.forEach((column, index) => {
+                    column[0] = index;
+                });
                 return { ...$currentState, table: { ...$currentState.table!, columns: newColumns } };
             });
             document.removeEventListener('mouseup', handleReorderDragEnd);
@@ -281,6 +280,12 @@
         border-right: 2px solid var(--bg-bright);
     }
 
+    .profilingBannerRow * {
+        border-left: none !important;
+        border-right: none !important;
+        overflow: visible;
+    }
+
     .firstColumn {
         padding: 5px 5px 5px 5px;
         width: 45px;
@@ -288,12 +293,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: 0.8rem;
-    }
-
-    .profilingBannerRow * {
-        border-left: none !important;
-        border-right: none !important;
-        overflow: visible;
+        border-left: 3px solid var(--bg-bright) !important;
     }
 
     .profilingBanner {

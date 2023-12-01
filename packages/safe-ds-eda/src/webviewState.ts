@@ -4,8 +4,10 @@ import * as extensionApi from "./Apis/extensionApi";
 import { writable } from "svelte/store";
 import { GetJsonTable } from "./Apis/pythonApi";
 
+let currentTabIndex = writable<number>(0);
+
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-let currentState = writable<State>({ tableIdentifier: window.tableIdentifier, history: [], defaultState: true });
+let currentState = writable<State>({ tableIdentifier: window.tableIdentifier, history: [], defaultState: true});
 
 // Set Global states whenever updatedAllStates changes
 currentState.subscribe(($currentState) => {
@@ -24,7 +26,7 @@ const findAndSetStates = function(newAllStates: State[], tableIdentifier?: strin
   } else {
     GetJsonTable(window.tableIdentifier)
       .then((table) => {
-        currentState.set({ tableIdentifier: window.tableIdentifier, table, history: [] })
+        currentState.set({ tableIdentifier: window.tableIdentifier, table, history: [], tabs: [{ type: 'linePlot', content: { outdated: false, encodedImage: 'test', xAxis: 'Survived', yAxis: 'sex' }, tabComment: 'survived x sex'}]  })
       })
       .catch((error) => {
         extensionApi.createErrorToast(error.message);
@@ -43,4 +45,4 @@ window.addEventListener("message", (event) => {
   }
 });
 
-export { currentState };
+export { currentState, currentTabIndex };
