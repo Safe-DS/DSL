@@ -82,6 +82,25 @@ export const addMessageCallback = function <M extends PythonServerMessage['type'
     pythonServerMessageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
 };
 
+/**
+ * Remove a previously registered callback from being called when a message from the python server arrives.
+ *
+ * @param callback Callback to remove
+ * @param messageType Message type the callback was registered for.
+ */
+export const removeMessageCallback = function <M extends PythonServerMessage['type']>(
+    callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
+    messageType: M,
+): void {
+    if (!pythonServerMessageCallbacks.has(messageType)) {
+        return;
+    }
+    pythonServerMessageCallbacks.set(
+        messageType,
+        pythonServerMessageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
+    );
+};
+
 const importPipeline = async function (
     services: SafeDsServices,
     documentUri: URI,
