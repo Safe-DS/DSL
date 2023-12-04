@@ -159,7 +159,9 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             if (!isPythonServerAvailable()) {
                 startPythonServer();
             } else {
-                logOutput('As the Safe-DS Runner is currently successfully running, no attempt to start it will be made');
+                logOutput(
+                    'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',
+                );
             }
         }
     });
