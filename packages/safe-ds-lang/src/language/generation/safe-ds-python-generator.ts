@@ -428,7 +428,7 @@ export class SafeDsPythonGenerator {
                     )} = ${this.generateExpression(assignment.expression!, frame)}`,
                 );
             }
-            if (frame.isInsidePipeline() && !generateLambda) {
+            if (frame.isInsidePipeline && !generateLambda) {
                 for (const savableAssignment of assignees.filter(isSdsPlaceholder)) {
                     // should always be SdsPlaceholder
                     frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
@@ -807,12 +807,12 @@ interface ImportData {
 class GenerationInfoFrame {
     private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
     private readonly importSet: Map<String, ImportData>;
-    private readonly insidePipeline: boolean;
+    public readonly isInsidePipeline: boolean;
 
     constructor(importSet: Map<String, ImportData> = new Map<String, ImportData>(), insidePipeline: boolean = false) {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
-        this.insidePipeline = insidePipeline;
+        this.isInsidePipeline = insidePipeline;
     }
 
     addImport(importData: ImportData | undefined) {
@@ -826,10 +826,6 @@ class GenerationInfoFrame {
 
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
         return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
-    }
-
-    isInsidePipeline(): boolean {
-        return this.insidePipeline;
     }
 }
 

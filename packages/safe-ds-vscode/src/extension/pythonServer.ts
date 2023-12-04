@@ -2,7 +2,7 @@ import child_process from 'child_process';
 import vscode from 'vscode';
 import net from 'net';
 import WebSocket from 'ws';
-import { ast, SafeDsServices } from '@safe-ds/lang';
+import { ast, getModuleMembers, SafeDsServices } from '@safe-ds/lang';
 import { LangiumDocument, URI } from 'langium';
 import path from 'path';
 import { createProgramMessage, ProgramCodeMap, PythonServerMessage, RuntimeErrorBacktraceFrame } from './messages.js';
@@ -23,16 +23,32 @@ let pythonServerMessageCallbacks: Map<PythonServerMessage['type'], ((message: Py
 export const startPythonServer = async function (): Promise<void> {
     pythonServerAcceptsConnections = false;
     const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
+    const runnerCommandParts = runnerCommandSetting.split(/\s/u);
+    const runnerCommand = runnerCommandParts.shift()!; // After shift, only the actual args are left
+    // Test if the python server can actually be started
+    try {
+        const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
+        const versionString = await getPythonServerVersion(pythonServerTest);
+        logOutput(`Using safe-ds-runner version: ${versionString}`);
+    } catch (error) {
+        logError(`Could not start runner: ${error}`);
+        vscode.window.showErrorMessage('The runner process could not be started.');
+        return;
+    }
+    // Start the runner at the specified port
     pythonServerPort = await findFirstFreePort(5000);
     logOutput(`Trying to use port ${pythonServerPort} to start python server...`);
     logOutput(`Using command '${runnerCommandSetting}' to start python server...`);
-    const runnerCommandParts = runnerCommandSetting.split(/\s/u);
-    const runnerCommand = runnerCommandParts.shift()!;
+
     const runnerArgs = [...runnerCommandParts, '--port', String(pythonServerPort)];
     logOutput(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
     pythonServer = child_process.spawn(runnerCommand, runnerArgs);
     manageSubprocessOutputIO(pythonServer);
-    await connectToWebSocket();
+    try {
+        await connectToWebSocket();
+    } catch (error) {
+        stopPythonServer();
+    }
     logOutput('Started python server successfully');
 };
 
@@ -40,6 +56,7 @@ export const stopPythonServer = function (): void {
     pythonServer?.kill();
     // TODO maybe tree-kill sync process? Does not seem to always be reaped, and may remain as a zombie
     pythonServer = undefined;
+    pythonServerAcceptsConnections = false;
 };
 
 /**
@@ -65,20 +82,25 @@ export const addMessageCallback = function <M extends PythonServerMessage['type'
     pythonServerMessageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
 };
 
-const importPipeline = async function (services: SafeDsServices, documentUri: URI): Promise<LangiumDocument> {
+const importPipeline = async function (
+    services: SafeDsServices,
+    documentUri: URI,
+): Promise<LangiumDocument | undefined> {
     const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(documentUri);
     await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
 
     const errors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
 
     if (errors.length > 0) {
-        let errorString = `The document ${documentUri.fsPath} has errors:`;
+        logError(`The file ${documentUri.toString()} has errors and cannot be run.`);
         for (const validationError of errors) {
-            errorString += `\nline ${validationError.range.start.line + 1}: ${
-                validationError.message
-            } [${document.textDocument.getText(validationError.range)}]`;
+            logError(
+                `\tat line ${validationError.range.start.line + 1}: ${
+                    validationError.message
+                } [${document.textDocument.getText(validationError.range)}]`,
+            );
         }
-        throw new Error(errorString);
+        return undefined;
     }
     return document;
 };
@@ -160,18 +182,20 @@ export const tryMapToSafeDSSource = async function (
  * @param id A unique id that is used in further communication with this pipeline.
  */
 export const executePipeline = async function (services: SafeDsServices, pipelinePath: string, id: string) {
+    if (!isPythonServerAvailable()) {
+        await startPythonServer();
+        // just fail silently, startPythonServer should already display an error
+        if (!isPythonServerAvailable()) {
+            return;
+        }
+    }
     // TODO include all relevant files from workspace
     const documentUri = URI.file(pipelinePath);
     const workspaceRoot = path.dirname(documentUri.fsPath); // TODO get actual workspace root
     services.shared.workspace.LangiumDocuments.deleteDocument(documentUri);
-    let document;
-    try {
-        document = await importPipeline(services, documentUri);
-    } catch (e) {
-        if (e instanceof Error) {
-            logError(e.message);
-            vscode.window.showErrorMessage(e.message);
-        }
+    let document = await importPipeline(services, documentUri);
+    if (!document) {
+        vscode.window.showErrorMessage(`The file ${documentUri.fsPath} has errors and cannot be run.`);
         return;
     }
     const lastExecutedSource = document.textDocument.getText();
@@ -185,10 +209,10 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     const mainPythonModuleName = services.builtins.Annotations.getPythonModule(node);
     const mainPackage = mainPythonModuleName === undefined ? node?.name.split('.') : [mainPythonModuleName];
-    const pipelines = (node?.members?.filter(ast.isSdsModuleMember) ?? []).filter(ast.isSdsPipeline);
-    const firstPipeline = pipelines[0];
+    const firstPipeline = getModuleMembers(node).find(ast.isSdsPipeline);
     if (firstPipeline === undefined) {
-        logOutput('Cannot execute: no pipeline found');
+        logError('Cannot execute: no pipeline found');
+        vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
         return;
     }
     mainPipelineName = firstPipeline.name;
@@ -210,13 +234,13 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         const sdsFileName = path.basename(fsPath);
         const sdsNoExtFilename =
             path.extname(sdsFileName).length > 0
-                ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length /* - 1 */)
+                ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
                 : sdsFileName;
         const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
         let modulePath = workspaceRelativeFilePath.replaceAll('/', '.');
         // Special handling for main module
-        if (modulePath === mainPackage.join(".")) {
-            modulePath = "";
+        if (modulePath === mainPackage.join('.')) {
+            modulePath = '';
         }
         //
         if (!codeMap.hasOwnProperty(modulePath)) {
@@ -236,7 +260,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         createProgramMessage(id, {
             code: codeMap,
             main: {
-                modulepath: "", // TODO maybe change generator: path.relative(workspaceRoot, path.dirname(documentUri.fsPath)).replaceAll('/', '.').split(".").concat(mainPackage).filter(str => str.length !== 0).join("."),
+                modulepath: '', // TODO maybe change generator: path.relative(workspaceRoot, path.dirname(documentUri.fsPath)).replaceAll('/', '.').split(".").concat(mainPackage).filter(str => str.length !== 0).join("."),
                 module: mainModuleName,
                 pipeline: mainPipelineName,
             },
@@ -255,6 +279,23 @@ export const sendMessageToPythonServer = function (message: PythonServerMessage)
     pythonServerConnection!.send(messageString);
 };
 
+const getPythonServerVersion = async function (process: child_process.ChildProcessWithoutNullStreams) {
+    process.stderr.on('data', (data: Buffer) => {
+        logOutput(`[Runner-Err] ${data.toString().trim()}`);
+    });
+    return new Promise<string>((resolve, reject) => {
+        process.stdout.on('data', (data: Buffer) => {
+            const version = data.toString().trim().split(/\s/u)[1];
+            if (version !== undefined) {
+                resolve(version);
+            }
+        });
+        process.on('close', (code) => {
+            reject(new Error(`The subprocess shut down: ${code}`));
+        });
+    });
+};
+
 const manageSubprocessOutputIO = function (process: child_process.ChildProcessWithoutNullStreams) {
     process.stdout.on('data', (data: Buffer) => {
         logOutput(`[Runner-Out] ${data.toString().trim()}`);
@@ -264,10 +305,15 @@ const manageSubprocessOutputIO = function (process: child_process.ChildProcessWi
     });
     process.on('close', (code) => {
         logOutput(`[Runner] Exited: ${code}`);
+        // when the server shuts down, no connections will be accepted
+        pythonServerAcceptsConnections = false;
     });
 };
 
 const connectToWebSocket = async function (): Promise<void> {
+    const timeoutMs = 200;
+    const maxConnectionTries = 5;
+    let currentTry = 0;
     // Attach WS
     return new Promise<void>((resolve, reject) => {
         const tryConnect = function () {
@@ -280,10 +326,15 @@ const connectToWebSocket = async function (): Promise<void> {
                 resolve();
             };
             pythonServerConnection.onerror = (event) => {
+                currentTry += 1;
                 if (event.message.includes('ECONNREFUSED')) {
-                    logOutput(`[Runner] Server is not yet up. Retrying...`);
-                    setTimeout(tryConnect, 50);
-                    return;
+                    if (currentTry > maxConnectionTries) {
+                        logError('[Runner] Max retries reached. No further attempt at connecting is made.');
+                    } else {
+                        logOutput(`[Runner] Server is not yet up. Retrying...`);
+                        setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
+                        return;
+                    }
                 }
                 logError(`[Runner] An error occurred: ${event.message} (${event.type}) {${event.error}}`);
                 reject();

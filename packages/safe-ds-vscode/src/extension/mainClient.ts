@@ -6,6 +6,7 @@ import {
     addMessageCallback,
     executePipeline,
     getExecutionContext,
+    isPythonServerAvailable,
     sendMessageToPythonServer,
     startPythonServer,
     stopPythonServer,
@@ -82,11 +83,12 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 };
 
 const acceptRunRequests = function (context: vscode.ExtensionContext) {
+    // Register logging message callbacks
     addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
         );
-    }, "placeholder_value");
+    }, 'placeholder_value');
     addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
@@ -126,6 +128,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                 .join('\n')}`,
         );
     }, 'runtime_error');
+    // Register VS Code Entry Points
     context.subscriptions.push(
         vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (filePath: vscode.Uri | undefined) => {
             let pipelinePath = filePath;
@@ -149,4 +152,15 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             executePipeline(sdsServices, pipelinePath.fsPath, pipelineId);
         }),
     );
+    vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration('safe-ds.runner.command')) {
+            // Try starting runner
+            logOutput('Safe-DS Runner Command was updated');
+            if (!isPythonServerAvailable()) {
+                startPythonServer();
+            } else {
+                logOutput('As the Safe-DS Runner is currently successfully running, no attempt to start it will be made');
+            }
+        }
+    });
 };
