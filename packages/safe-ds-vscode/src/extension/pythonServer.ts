@@ -77,7 +77,7 @@ export const stopPythonServer = async function (): Promise<void> {
             await new Promise<void>((resolve, _reject) => {
                 treeKill(pid, (error) => {
                     resolve();
-                    if (error !== undefined && error !== null) {
+                    if (error) {
                         logError(`Error while killing runner process tree: ${error}`);
                     }
                 });
