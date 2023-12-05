@@ -34,12 +34,12 @@ export const activate = function (context: vscode.ExtensionContext): void {
 };
 
 // This function is called when the extension is deactivated.
-export const deactivate = function (): Thenable<void> | undefined {
-    stopPythonServer();
+export const deactivate = async function (): Promise<void> {
+    await stopPythonServer();
     if (client) {
-        return client.stop();
+        await client.stop();
     }
-    return undefined;
+    return;
 };
 
 const startLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {

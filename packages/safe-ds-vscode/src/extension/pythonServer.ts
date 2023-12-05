@@ -2,12 +2,19 @@ import child_process from 'child_process';
 import vscode from 'vscode';
 import net from 'net';
 import WebSocket from 'ws';
-import { ast, getModuleMembers, SafeDsServices } from '@safe-ds/lang';
-import { LangiumDocument, URI } from 'langium';
+import {ast, getModuleMembers, SafeDsServices} from '@safe-ds/lang';
+import {LangiumDocument, URI} from 'langium';
 import path from 'path';
-import { createProgramMessage, ProgramCodeMap, PythonServerMessage, RuntimeErrorBacktraceFrame } from './messages.js';
-import { logError, logOutput } from './output.js';
-import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
+import {
+    createProgramMessage,
+    createShutdownMessage,
+    ProgramCodeMap,
+    PythonServerMessage,
+    RuntimeErrorBacktraceFrame
+} from './messages.js';
+import {logError, logOutput} from './output.js';
+import {BasicSourceMapConsumer, SourceMapConsumer} from 'source-map';
+import treeKill from "tree-kill";
 
 let pythonServer: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
 let pythonServerPort: number | undefined = undefined;
@@ -40,24 +47,42 @@ export const startPythonServer = async function (): Promise<void> {
     logOutput(`Trying to use port ${pythonServerPort} to start python server...`);
     logOutput(`Using command '${runnerCommandSetting}' to start python server...`);
 
-    const runnerArgs = [...runnerCommandParts, '--port', String(pythonServerPort)];
+    const runnerArgs = [...runnerCommandParts, 'start', '--port', String(pythonServerPort)];
     logOutput(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
     pythonServer = child_process.spawn(runnerCommand, runnerArgs);
-    manageSubprocessOutputIO(pythonServer);
+    manageRunnerSubprocessOutputIO();
     try {
         await connectToWebSocket();
     } catch (error) {
         stopPythonServer();
+        return;
     }
     logOutput('Started python server successfully');
 };
 
-export const stopPythonServer = function (): void {
-    pythonServer?.kill();
-    // TODO maybe tree-kill sync process? Does not seem to always be reaped, and may remain as a zombie
+export const stopPythonServer = async function (): Promise<void> {
+    if(pythonServer !== undefined) {
+        if ((pythonServerAcceptsConnections && !await requestGracefulShutdown(2500)) || !pythonServerAcceptsConnections) {
+            treeKill(pythonServer.pid!);
+        }
+    }
     pythonServer = undefined;
     pythonServerAcceptsConnections = false;
 };
+
+const requestGracefulShutdown = async function (maxTimeoutMs: number): Promise<boolean> {
+    sendMessageToPythonServer(createShutdownMessage());
+    return new Promise((resolve, _reject) => {
+        pythonServer?.on('close', () => resolve(true));
+        setTimeout(() => {
+            if (pythonServer === undefined) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        }, maxTimeoutMs);
+    });
+}
 
 /**
  * @return True if the python server was started and the websocket connection was established, false otherwise.
@@ -106,7 +131,7 @@ const importPipeline = async function (
     documentUri: URI,
 ): Promise<LangiumDocument | undefined> {
     const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(documentUri);
-    await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
+    await services.shared.workspace.DocumentBuilder.build([document], {validation: true});
 
     const errors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
 
@@ -190,7 +215,7 @@ export const tryMapToSafeDSSource = async function (
         column: 0,
         bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
-    return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
+    return {file: outputPosition.source || '<unknown>', line: outputPosition.line || 0};
 };
 
 /**
@@ -202,6 +227,7 @@ export const tryMapToSafeDSSource = async function (
  */
 export const executePipeline = async function (services: SafeDsServices, pipelinePath: string, id: string) {
     if (!isPythonServerAvailable()) {
+        await stopPythonServer();
         await startPythonServer();
         // just fail silently, startPythonServer should already display an error
         if (!isPythonServerAvailable()) {
@@ -315,17 +341,21 @@ const getPythonServerVersion = async function (process: child_process.ChildProce
     });
 };
 
-const manageSubprocessOutputIO = function (process: child_process.ChildProcessWithoutNullStreams) {
-    process.stdout.on('data', (data: Buffer) => {
+const manageRunnerSubprocessOutputIO = function () {
+    if (!pythonServer) {
+        return;
+    }
+    pythonServer.stdout.on('data', (data: Buffer) => {
         logOutput(`[Runner-Out] ${data.toString().trim()}`);
     });
-    process.stderr.on('data', (data: Buffer) => {
+    pythonServer.stderr.on('data', (data: Buffer) => {
         logOutput(`[Runner-Err] ${data.toString().trim()}`);
     });
-    process.on('close', (code) => {
+    pythonServer.on('close', (code) => {
         logOutput(`[Runner] Exited: ${code}`);
         // when the server shuts down, no connections will be accepted
         pythonServerAcceptsConnections = false;
+        pythonServer = undefined;
     });
 };
 
@@ -372,6 +402,10 @@ const connectToWebSocket = async function (): Promise<void> {
                 for (const callback of pythonServerMessageCallbacks.get(pythonServerMessage.type)!) {
                     callback(pythonServerMessage);
                 }
+            };
+            pythonServerConnection.onclose = (_event) => {
+                // The connection was interrupted
+                pythonServerAcceptsConnections = false;
             };
         };
         tryConnect();
