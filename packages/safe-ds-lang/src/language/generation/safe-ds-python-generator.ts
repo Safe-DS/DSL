@@ -97,6 +97,7 @@ const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
 const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
+const RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE = 'safeds_runner.server.pipeline_manager';
 const PYTHON_INDENT = '    ';
 
 const NLNL = new CompositeGeneratorNode(NL, NL);
@@ -138,12 +139,12 @@ export class SafeDsPythonGenerator {
             );
         }
         generatedFiles.set(pythonOutputPath, text);
-        for (const pipeline of streamAllContents(node).filter(isSdsPipeline)) {
+        for (const pipeline of getModuleMembers(node).filter(isSdsPipeline)) {
             const entryPointFilename = `${path.join(
                 parentDirectoryPath,
                 `${this.formatGeneratedFileName(name)}_${this.getPythonNameOrDefault(pipeline)}`,
             )}.py`;
-            const entryPointContent = expandTracedToNode(pipeline)`from ${this.formatGeneratedFileName(
+            const entryPointContent = expandTracedToNode(pipeline)`from .${this.formatGeneratedFileName(
                 name,
             )} import ${this.getPythonNameOrDefault(
                 pipeline,
@@ -313,7 +314,7 @@ export class SafeDsPythonGenerator {
     }
 
     private generatePipeline(pipeline: SdsPipeline, importSet: Map<String, ImportData>): CompositeGeneratorNode {
-        const infoFrame = new GenerationInfoFrame(importSet);
+        const infoFrame = new GenerationInfoFrame(importSet, true);
         return expandTracedToNode(pipeline)`def ${traceToNode(
             pipeline,
             'name',
@@ -358,19 +359,31 @@ export class SafeDsPythonGenerator {
         }
     }
 
-    private generateBlock(block: SdsBlock, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateBlock(
+        block: SdsBlock,
+        frame: GenerationInfoFrame,
+        generateLambda: boolean = false,
+    ): CompositeGeneratorNode {
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
         if (statements.length === 0) {
             return traceToNode(block)('pass');
         }
-        return joinTracedToNode(block, 'statements')(statements, (stmt) => this.generateStatement(stmt, frame), {
-            separator: NL,
-        })!;
+        return joinTracedToNode(block, 'statements')(
+            statements,
+            (stmt) => this.generateStatement(stmt, frame, generateLambda),
+            {
+                separator: NL,
+            },
+        )!;
     }
 
-    private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateStatement(
+        statement: SdsStatement,
+        frame: GenerationInfoFrame,
+        generateLambda: boolean,
+    ): CompositeGeneratorNode {
         if (isSdsAssignment(statement)) {
-            return traceToNode(statement)(this.generateAssignment(statement, frame));
+            return traceToNode(statement)(this.generateAssignment(statement, frame, generateLambda));
         } else if (isSdsExpressionStatement(statement)) {
             const blockLambdaCode: CompositeGeneratorNode[] = [];
             for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
@@ -386,7 +399,11 @@ export class SafeDsPythonGenerator {
         throw new Error(`Unknown SdsStatement: ${statement}`);
     }
 
-    private generateAssignment(assignment: SdsAssignment, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateAssignment(
+        assignment: SdsAssignment,
+        frame: GenerationInfoFrame,
+        generateLambda: boolean,
+    ): CompositeGeneratorNode {
         const requiredAssignees = isSdsCall(assignment.expression)
             ? getAbstractResults(this.nodeMapper.callToCallable(assignment.expression)).length
             : /* c8 ignore next */
@@ -394,20 +411,37 @@ export class SafeDsPythonGenerator {
         const assignees = getAssignees(assignment);
         if (assignees.some((value) => !isSdsWildcard(value))) {
             const actualAssignees = assignees.map(this.generateAssignee);
+            let assignmentStatements = [];
             if (requiredAssignees === actualAssignees.length) {
-                return expandTracedToNode(assignment)`${joinToNode(
-                    actualAssignees,
-                    (actualAssignee) => actualAssignee,
-                    { separator: ', ' },
-                )} = ${this.generateExpression(assignment.expression!, frame)}`;
+                assignmentStatements.push(
+                    expandTracedToNode(assignment)`${joinToNode(actualAssignees, (actualAssignee) => actualAssignee, {
+                        separator: ', ',
+                    })} = ${this.generateExpression(assignment.expression!, frame)}`,
+                );
             } else {
                 // Add wildcards to match given results
-                return expandTracedToNode(assignment)`${joinToNode(
-                    actualAssignees.concat(Array(requiredAssignees - actualAssignees.length).fill('_')),
-                    (actualAssignee) => actualAssignee,
-                    { separator: ', ' },
-                )} = ${this.generateExpression(assignment.expression!, frame)}`;
+                assignmentStatements.push(
+                    expandTracedToNode(assignment)`${joinToNode(
+                        actualAssignees.concat(Array(requiredAssignees - actualAssignees.length).fill('_')),
+                        (actualAssignee) => actualAssignee,
+                        { separator: ', ' },
+                    )} = ${this.generateExpression(assignment.expression!, frame)}`,
+                );
             }
+            if (frame.isInsidePipeline && !generateLambda) {
+                for (const savableAssignment of assignees.filter(isSdsPlaceholder)) {
+                    // should always be SdsPlaceholder
+                    frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
+                    assignmentStatements.push(
+                        expandTracedToNode(
+                            savableAssignment,
+                        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_save_placeholder('${savableAssignment.name}', ${savableAssignment.name})`,
+                    );
+                }
+            }
+            return joinTracedToNode(assignment)(assignmentStatements, (stmt) => stmt, {
+                separator: NL,
+            })!;
         } else {
             return traceToNode(assignment)(this.generateExpression(assignment.expression!, frame));
         }
@@ -435,7 +469,7 @@ export class SafeDsPythonGenerator {
 
     private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): CompositeGeneratorNode {
         const results = streamBlockLambdaResults(blockLambda).toArray();
-        let lambdaBlock = this.generateBlock(blockLambda.body, frame);
+        let lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
         if (results.length !== 0) {
             lambdaBlock.appendNewLine();
             lambdaBlock.append(
@@ -773,10 +807,12 @@ interface ImportData {
 class GenerationInfoFrame {
     private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
     private readonly importSet: Map<String, ImportData>;
+    public readonly isInsidePipeline: boolean;
 
-    constructor(importSet: Map<String, ImportData> = new Map<String, ImportData>()) {
+    constructor(importSet: Map<String, ImportData> = new Map<String, ImportData>(), insidePipeline: boolean = false) {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
+        this.isInsidePipeline = insidePipeline;
     }
 
     addImport(importData: ImportData | undefined) {

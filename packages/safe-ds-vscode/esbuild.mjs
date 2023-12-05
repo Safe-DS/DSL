@@ -33,6 +33,13 @@ const plugins = [
         },
         watch,
     }),
+    copy({
+            assets: {
+                from: ['../../node_modules/source-map/lib/mappings.wasm'],
+                to: ['./extension']
+            }
+        }
+    ),
     {
         name: 'watch-plugin',
         setup(build) {

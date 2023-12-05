@@ -83,6 +83,11 @@
         "configuration": {
             "title": "Safe-DS",
             "properties": {
+                "safe-ds.runner.command": {
+                    "description": "Command to start the Safe-DS runner",
+                    "type": "string",
+                    "default": "safe-ds-runner"
+                },
                 "safe-ds.validation.codeStyle": {
                     "type": "boolean",
                     "default": true,
@@ -112,6 +117,23 @@
                 "files.trimTrailingWhitespace": true
             }
         },
+        "menus": {
+            "editor/title/run": [
+                {
+                    "command": "extension.safe-ds.runPipelineFile",
+                    "when": "resourceLangId == safe-ds",
+                    "group": "navigation@1"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "extension.safe-ds.runPipelineFile",
+                "title": "Run Pipeline",
+                "category": "Safe-DS",
+                "icon": "$(play)"
+            }
+        ],
         "snippets": [
             {
                 "language": "safe-ds",
@@ -131,11 +153,15 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
-        "vscode-languageclient": "^9.0.1"
+        "source-map": "^0.7.4",
+        "tree-kill": "^1.2.2",
+        "vscode-languageclient": "^9.0.1",
+        "ws": "^8.14.2"
     },
     "devDependencies": {
         "@types/node": "^18.18.12",
         "@types/vscode": "^1.84.2",
+        "@types/ws": "^8.5.8",
         "@vscode/vsce": "^2.22.0",
         "esbuild": "^0.19.8",
         "esbuild-plugin-copy": "^2.1.1"
