@@ -144,7 +144,7 @@ export class SafeDsPythonGenerator {
                 parentDirectoryPath,
                 `${this.formatGeneratedFileName(name)}_${this.getPythonNameOrDefault(pipeline)}`,
             )}.py`;
-            const entryPointContent = expandTracedToNode(pipeline)`from ${this.formatGeneratedFileName(
+            const entryPointContent = expandTracedToNode(pipeline)`from .${this.formatGeneratedFileName(
                 name,
             )} import ${this.getPythonNameOrDefault(
                 pipeline,

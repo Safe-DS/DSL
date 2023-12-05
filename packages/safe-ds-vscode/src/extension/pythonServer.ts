@@ -2,19 +2,19 @@ import child_process from 'child_process';
 import vscode from 'vscode';
 import net from 'net';
 import WebSocket from 'ws';
-import {ast, getModuleMembers, SafeDsServices} from '@safe-ds/lang';
-import {LangiumDocument, URI} from 'langium';
+import { ast, getModuleMembers, SafeDsServices } from '@safe-ds/lang';
+import { LangiumDocument, URI } from 'langium';
 import path from 'path';
 import {
     createProgramMessage,
     createShutdownMessage,
     ProgramCodeMap,
     PythonServerMessage,
-    RuntimeErrorBacktraceFrame
+    RuntimeErrorBacktraceFrame,
 } from './messages.js';
-import {logError, logOutput} from './output.js';
-import {BasicSourceMapConsumer, SourceMapConsumer} from 'source-map';
-import treeKill from "tree-kill";
+import { logError, logOutput } from './output.js';
+import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
+import treeKill from 'tree-kill';
 
 let pythonServer: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
 let pythonServerPort: number | undefined = undefined;
@@ -61,8 +61,11 @@ export const startPythonServer = async function (): Promise<void> {
 };
 
 export const stopPythonServer = async function (): Promise<void> {
-    if(pythonServer !== undefined) {
-        if ((pythonServerAcceptsConnections && !await requestGracefulShutdown(2500)) || !pythonServerAcceptsConnections) {
+    if (pythonServer !== undefined) {
+        if (
+            (pythonServerAcceptsConnections && !(await requestGracefulShutdown(2500))) ||
+            !pythonServerAcceptsConnections
+        ) {
             treeKill(pythonServer.pid!);
         }
     }
@@ -82,7 +85,7 @@ const requestGracefulShutdown = async function (maxTimeoutMs: number): Promise<b
             }
         }, maxTimeoutMs);
     });
-}
+};
 
 /**
  * @return True if the python server was started and the websocket connection was established, false otherwise.
@@ -131,7 +134,7 @@ const importPipeline = async function (
     documentUri: URI,
 ): Promise<LangiumDocument | undefined> {
     const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(documentUri);
-    await services.shared.workspace.DocumentBuilder.build([document], {validation: true});
+    await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
 
     const errors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
 
@@ -215,7 +218,7 @@ export const tryMapToSafeDSSource = async function (
         column: 0,
         bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
-    return {file: outputPosition.source || '<unknown>', line: outputPosition.line || 0};
+    return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
 };
 
 /**
@@ -260,8 +263,14 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
         return;
     }
-    mainPipelineName = firstPipeline.name;
-    mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('-', '_');
+    mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
+    if (pipelinePath.endsWith('.sdspipe')) {
+        mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('-', '_');
+    } else if (pipelinePath.endsWith('.sdstest')) {
+        mainModuleName = path.basename(pipelinePath, '.sdstest').replaceAll('-', '_');
+    } else {
+        mainModuleName = path.basename(pipelinePath).replaceAll('-', '_');
+    }
     //
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
         destination: URI.file(path.dirname(documentUri.fsPath)), // actual directory of main module file
@@ -282,12 +291,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
                 ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
                 : sdsFileName;
         const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
-        let modulePath = workspaceRelativeFilePath.replaceAll('/', '.');
-        // Special handling for main module
-        if (modulePath === mainPackage.join('.')) {
-            modulePath = '';
-        }
-        //
+        let modulePath = workspaceRelativeFilePath.replaceAll('/', '.').replaceAll('\\', '.');
         if (!codeMap.hasOwnProperty(modulePath)) {
             codeMap[modulePath] = {};
         }
@@ -305,7 +309,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
         createProgramMessage(id, {
             code: codeMap,
             main: {
-                modulepath: '', // TODO maybe change generator: path.relative(workspaceRoot, path.dirname(documentUri.fsPath)).replaceAll('/', '.').split(".").concat(mainPackage).filter(str => str.length !== 0).join("."),
+                modulepath: mainPackage.join('.'),
                 module: mainModuleName,
                 pipeline: mainPipelineName,
             },
