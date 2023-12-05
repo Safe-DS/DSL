@@ -54,7 +54,7 @@ export const startPythonServer = async function (): Promise<void> {
     try {
         await connectToWebSocket();
     } catch (error) {
-        stopPythonServer();
+        await stopPythonServer();
         return;
     }
     logOutput('Started python server successfully');
