@@ -60,6 +60,10 @@ export const startPythonServer = async function (): Promise<void> {
     logOutput('Started python server successfully');
 };
 
+/**
+ * Stop the python server process, if any currently exist. This will first try a graceful shutdown.
+ * If that fails, the whole process tree (starting at the child process spawned by startPythonServer) will get killed.
+ */
 export const stopPythonServer = async function (): Promise<void> {
     logOutput('Stopping python server...');
     if (pythonServer !== undefined) {
