@@ -61,12 +61,24 @@ export const startPythonServer = async function (): Promise<void> {
 };
 
 export const stopPythonServer = async function (): Promise<void> {
+    logOutput('Stopping python server...');
     if (pythonServer !== undefined) {
         if (
             (pythonServerAcceptsConnections && !(await requestGracefulShutdown(2500))) ||
             !pythonServerAcceptsConnections
         ) {
-            treeKill(pythonServer.pid!);
+            logOutput(`Tree-killing python server process ${pythonServer.pid}...`);
+            const pid = pythonServer.pid!;
+            // Wait for tree-kill to finish killing the tree
+            await new Promise<void>((resolve, _reject) => {
+                treeKill(pid, (error) => {
+                    resolve();
+                    if (error !== undefined && error !== null) {
+                        logError(`Error while killing runner process tree: ${error}`);
+                    }
+                });
+            });
+            // If tree-kill did not work, we don't have any more options
         }
     }
     pythonServer = undefined;
@@ -74,6 +86,7 @@ export const stopPythonServer = async function (): Promise<void> {
 };
 
 const requestGracefulShutdown = async function (maxTimeoutMs: number): Promise<boolean> {
+    logOutput('Trying graceful shutdown...');
     sendMessageToPythonServer(createShutdownMessage());
     return new Promise((resolve, _reject) => {
         pythonServer?.on('close', () => resolve(true));
@@ -390,6 +403,9 @@ const connectToWebSocket = async function (): Promise<void> {
                     }
                 }
                 logError(`[Runner] An error occurred: ${event.message} (${event.type}) {${event.error}}`);
+                if (isPythonServerAvailable()) {
+                    return;
+                }
                 reject();
             };
             pythonServerConnection.onmessage = (event) => {
@@ -408,8 +424,11 @@ const connectToWebSocket = async function (): Promise<void> {
                 }
             };
             pythonServerConnection.onclose = (_event) => {
-                // The connection was interrupted
-                pythonServerAcceptsConnections = false;
+                if (isPythonServerAvailable()) {
+                    // The connection was interrupted
+                    pythonServerAcceptsConnections = false;
+                    logError('[Runner] Connection was unexpectedly closed');
+                }
             };
         };
         tryConnect();
