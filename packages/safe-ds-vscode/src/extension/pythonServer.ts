@@ -2,7 +2,7 @@ import child_process from 'child_process';
 import vscode from 'vscode';
 import net from 'net';
 import WebSocket from 'ws';
-import { ast, SafeDsServices } from '@safe-ds/lang';
+import { ast, getModuleMembers, SafeDsServices } from '@safe-ds/lang';
 import { LangiumDocument, URI } from 'langium';
 import path from 'path';
 import {
@@ -274,7 +274,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     const mainPythonModuleName = services.builtins.Annotations.getPythonModule(node);
     const mainPackage = mainPythonModuleName === undefined ? node?.name.split('.') : [mainPythonModuleName];
-    const firstPipeline = ast.getModuleMembers(node).find(ast.isSdsPipeline);
+    const firstPipeline = getModuleMembers(node).find(ast.isSdsPipeline);
     if (firstPipeline === undefined) {
         logError('Cannot execute: no pipeline found');
         vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');

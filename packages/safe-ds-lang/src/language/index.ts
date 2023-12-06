@@ -9,10 +9,8 @@ export { startLanguageServer } from './main.js';
 export { SafeDsLanguageMetaData } from './generated/module.js';
 
 // AST
-import * as generatedAst from './generated/ast.js';
-import * as nodeProperties from './helpers/nodeProperties.js';
-
-export const ast = { ...generatedAst, ...nodeProperties };
+export * as ast from './generated/ast.js';
+export * from './helpers/nodeProperties.js';
 
 // Location
 export { locationToString, positionToString, rangeToString } from '../helpers/locations.js';
