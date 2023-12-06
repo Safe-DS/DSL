@@ -1,6 +1,6 @@
 import { AstNode, EmptyFileSystem, expandToString } from 'langium';
 import { describe, expect, it } from 'vitest';
-import { normalizeLineBreaks } from '../../../src/helpers/stringUtils.js';
+import { normalizeLineBreaks } from '../../../src/helpers/strings.js';
 import {
     isSdsAnnotation,
     isSdsFunction,

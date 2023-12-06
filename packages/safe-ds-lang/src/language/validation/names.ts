@@ -1,5 +1,5 @@
 import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
-import { duplicatesBy } from '../../helpers/collectionUtils.js';
+import { duplicatesBy } from '../../helpers/collections.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
 import { BUILTINS_LANG_PACKAGE, BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 import {

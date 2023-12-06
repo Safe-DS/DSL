@@ -43,7 +43,7 @@ import { CallGraph } from './model.js';
 import { getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { CallableType } from '../typing/model.js';
-import { isEmpty } from '../../helpers/collectionUtils.js';
+import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 
 export class SafeDsCallGraphComputer {

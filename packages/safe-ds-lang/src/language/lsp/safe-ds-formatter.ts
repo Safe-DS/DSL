@@ -8,7 +8,7 @@ import {
     FormattingActionOptions,
     isAstNode,
 } from 'langium';
-import { last } from '../../helpers/collectionUtils.js';
+import { last } from '../../helpers/collections.js';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
 import indent = Formatting.indent;

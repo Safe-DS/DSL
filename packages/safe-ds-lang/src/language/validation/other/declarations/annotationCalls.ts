@@ -1,5 +1,5 @@
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import { isEmpty } from '../../../../helpers/collectionUtils.js';
+import { isEmpty } from '../../../../helpers/collections.js';
 import {
     isSdsCallable,
     isSdsCallableType,
