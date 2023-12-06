@@ -1,18 +1,63 @@
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { LangiumDocument } from 'langium';
+import { LangiumDocument, URI } from 'langium';
 import chalk from 'chalk';
 import { ExitCodes } from '../cli/exitCodes.js';
-import path from 'node:path';
 import { positionToString } from '@safe-ds/lang';
+import { uriToRelativePath } from './files.js';
 
-export const diagnosticToString = (document: LangiumDocument, diagnostic: Diagnostic): string => {
-    const message = `${locationToString(document, diagnostic)}: ${diagnostic.message} (${codeToString(diagnostic)})`;
+/**
+ * Converts the given diagnostic to a string.
+ */
+export const diagnosticToString = (
+    uri: URI,
+    diagnostic: Diagnostic,
+    options: DiagnosticToStringOptions = {},
+): string => {
+    const message = `${locationToString(uri, diagnostic)}: [${severityToString(diagnostic)}] ${
+        diagnostic.message
+    } (${codeToString(diagnostic)})`;
+    return colorizeBySeverity(diagnostic, message, options);
+};
 
+interface DiagnosticToStringOptions {
+    strict?: boolean;
+}
+
+const locationToString = (uri: URI, diagnostic: Diagnostic): string => {
+    const relativePath = uriToRelativePath(uri);
+    const position = positionToString(diagnostic.range.start);
+    return `${relativePath}:${position}`;
+};
+
+const severityToString = (diagnostic: Diagnostic): string => {
+    switch (diagnostic.severity) {
+        case DiagnosticSeverity.Error:
+            return 'error';
+        case DiagnosticSeverity.Warning:
+            return 'warning';
+        case DiagnosticSeverity.Information:
+            return 'info';
+        case DiagnosticSeverity.Hint:
+            return 'hint';
+        default:
+            return '';
+    }
+};
+
+const codeToString = (diagnostic: Diagnostic): string => {
+    return String(diagnostic.code ?? diagnostic.data?.code ?? '');
+};
+
+const colorizeBySeverity = (diagnostic: Diagnostic, message: string, options: DiagnosticToStringOptions): string => {
     switch (diagnostic.severity) {
         case DiagnosticSeverity.Error:
             return chalk.red(message);
         case DiagnosticSeverity.Warning:
-            return chalk.yellow(message);
+            if (options.strict) {
+                return chalk.red(message);
+            } else {
+                return chalk.yellow(message);
+            }
         case DiagnosticSeverity.Information:
             return chalk.blue(message);
         case DiagnosticSeverity.Hint:
@@ -22,30 +67,24 @@ export const diagnosticToString = (document: LangiumDocument, diagnostic: Diagno
     }
 };
 
-const locationToString = (document: LangiumDocument, diagnostic: Diagnostic): string => {
-    const relativePath = path.relative(process.cwd(), document.uri.fsPath);
-    const position = positionToString(diagnostic.range.start);
-    return `${relativePath}:${position})`;
-};
-
-const codeToString = (diagnostic: Diagnostic): string => {
-    return String(diagnostic.code ?? diagnostic.data?.code ?? '');
-};
-
-export const exitOnDiagnosticError = function (document: LangiumDocument): void {
-    const diagnostics = document.diagnostics ?? [];
-    const errors = diagnostics.filter((it) => it.severity === DiagnosticSeverity.Error);
+/**
+ * Exits the process if the given document has errors.
+ */
+export const exitIfDocumentHasErrors = function (document: LangiumDocument): void {
+    const errors = getErrors(document);
     if (errors.length > 0) {
-        console.error(chalk.red(`The document ${document.uri} has errors:`));
-        for (const validationError of errors) {
-            console.error(
-                chalk.red(
-                    `line ${validationError.range.start.line + 1}: ${
-                        validationError.message
-                    } [${document.textDocument.getText(validationError.range)}]`,
-                ),
-            );
+        console.error(chalk.red(`The file '${uriToRelativePath(document.uri)}' has errors:`));
+        for (const error of errors) {
+            console.error(diagnosticToString(document.uri, error));
         }
-        process.exit(ExitCodes.FileWithErrors);
+        process.exit(ExitCodes.FileHasErrors);
     }
+};
+
+const getErrors = (document: LangiumDocument): Diagnostic[] => {
+    return getDiagnostics(document).filter((it) => it.severity === DiagnosticSeverity.Error);
+};
+
+export const getDiagnostics = (document: LangiumDocument): Diagnostic[] => {
+    return document.diagnostics ?? [];
 };

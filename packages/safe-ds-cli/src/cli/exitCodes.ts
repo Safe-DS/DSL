@@ -25,5 +25,5 @@ export enum ExitCodes {
     /**
      * The given file has errors.
      */
-    FileWithErrors,
+    FileHasErrors,
 }

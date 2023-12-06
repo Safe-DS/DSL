@@ -12,34 +12,22 @@ export const extractDocuments = async function (
     services: LangiumServices,
     fsPaths: string[],
 ): Promise<LangiumDocument[]> {
-    return [];
-    // // Access services
-    // const extensions = services.LanguageMetaData.fileExtensions;
-    // const langiumDocuments = services.shared.workspace.LangiumDocuments;
-    // const documentBuilder = services.shared.workspace.DocumentBuilder;
-    //
+    // Access services
+    const langiumDocuments = services.shared.workspace.LangiumDocuments;
+    const documentBuilder = services.shared.workspace.DocumentBuilder;
 
-    //
-    // const stat = fs.lstatSync(paths);
-    // if (stat.isDirectory()) {
-    //     console.error(chalk.red(`Path ${paths} is a directory.`));
-    //     process.exit(ExitCodes.NotAFileOrDirectory);
-    // } else if (!stat.isFile()) {
-    //     console.error(chalk.red(`Path ${paths} is not a file.`));
-    //     process.exit(ExitCodes.NotAFileOrDirectory);
-    // }
-    //
-
-    //
-    // // Build document
-    // const document = langiumDocuments.getOrCreateDocument(URI.file(path.resolve(paths)));
-    // await documentBuilder.build([document], { validation: true });
-    // return [document];
+    // Build documents
+    const uris = processPaths(services, fsPaths);
+    const documents = uris.map((uri) => langiumDocuments.getOrCreateDocument(uri));
+    await documentBuilder.build(documents, { validation: true });
+    return documents;
 };
 
 /**
  * Processes the given paths and returns the corresponding URIs. Files must have a Safe-DS extension. Directories are
  * traversed recursively.
+ *
+ * @returns The URIs of the matched files.
  */
 export const processPaths = (services: LangiumServices, fsPaths: string[]): URI[] => {
     // Safe-DS file extensions
@@ -65,9 +53,8 @@ export const processPaths = (services: LangiumServices, fsPaths: string[]): URI[
 
             return URI.file(path.resolve(fsPath));
         } else if (stat.isDirectory()) {
-            return globSync(pattern, { cwd: path.resolve(fsPath), nodir: true }).map((it) =>
-                URI.file(path.resolve(it)),
-            );
+            const cwd = path.resolve(fsPath);
+            return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.resolve(cwd, it)));
         } else {
             console.error(chalk.red(`Path '${fsPath}' is neither a file nor a directory.`));
             process.exit(ExitCodes.NotAFileOrDirectory);
