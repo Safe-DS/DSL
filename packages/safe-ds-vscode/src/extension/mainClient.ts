@@ -4,6 +4,9 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
     addMessageCallback,
+    getExecutionContext,
+    sendMessageToPythonServer,
+    tryMapToSafeDSSource,
     executePipeline,
     startPythonServer,
     stopPythonServer,
@@ -12,9 +15,11 @@ import {
 } from './pythonServer.js';
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { getSafeDSOutputChannel, initializeLog, printOutputMessage } from './output.js';
-import { EDAPanel } from './EDAPanel.ts';
+import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
+import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import crypto from 'crypto';
+import { URI } from 'langium';
+import { EDAPanel } from './EDAPanel.ts';
 
 let client: LanguageClient;
 let sdsServices: SafeDsServices;
@@ -138,13 +143,12 @@ export const activate = function (context: vscode.ExtensionContext): void {
 };
 
 // This function is called when the extension is deactivated.
-export const deactivate = function (): Thenable<void> | undefined {
-    console.log('Stopping extension...')
-    stopPythonServer();
+export const deactivate = async function (): Promise<void> {
+    await stopPythonServer();
     if (client) {
-        return client.stop();
+        await client.stop();
     }
-    return undefined;
+    return;
 };
 
 const startLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
@@ -188,47 +192,52 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 };
 
 const acceptRunRequests = function (context: vscode.ExtensionContext) {
+    // Register logging message callbacks
     addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
         );
     }, 'placeholder_value');
-    // addMessageCallback((message) => {
-    //     printOutputMessage(
-    //         `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
-    //     );
-    // }, 'placeholder_type');
-    // addMessageCallback((message) => {
-    //     printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
-    // }, 'runtime_progress');
-    // addMessageCallback(async (message) => {
-    //     let readableStacktraceSafeDs: string[] = [];
-    //     const execInfo = getExecutionContext(message.id)!;
-    //     const readableStacktracePython = await Promise.all(
-    //         (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-    //             const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
-    //             if (mappedFrame) {
-    //                 readableStacktraceSafeDs.push(
-    //                     `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
-    //                         mappedFrame.line
-    //                     })`,
-    //                 );
-    //                 return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
-    //             }
-    //             return `\tat ${frame.file} line ${frame.line}`;
-    //         }),
-    //     );
-    //     logOutput(
-    //         `Runner-RuntimeError (${message.id}): ${
-    //             (<RuntimeErrorMessage>message).data.message
-    //         } \n${readableStacktracePython.join('\n')}`,
-    //     );
-    //     printOutputMessage(
-    //         `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
-    //             .reverse()
-    //             .join('\n')}`,
-    //     );
-    // }, 'runtime_error');
+    addMessageCallback((message) => {
+        printOutputMessage(
+            `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+        );
+        const execInfo = getExecutionContext(message.id)!;
+        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+        sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
+    }, 'placeholder_type');
+    addMessageCallback((message) => {
+        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
+    }, 'runtime_progress');
+    addMessageCallback(async (message) => {
+        let readableStacktraceSafeDs: string[] = [];
+        const execInfo = getExecutionContext(message.id)!;
+        const readableStacktracePython = await Promise.all(
+            (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+                const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
+                if (mappedFrame) {
+                    readableStacktraceSafeDs.push(
+                        `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
+                            mappedFrame.line
+                        })`,
+                    );
+                    return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
+                }
+                return `\tat ${frame.file} line ${frame.line}`;
+            }),
+        );
+        logOutput(
+            `Runner-RuntimeError (${message.id}): ${
+                (<RuntimeErrorMessage>message).data.message
+            } \n${readableStacktracePython.join('\n')}`,
+        );
+        printOutputMessage(
+            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                .reverse()
+                .join('\n')}`,
+        );
+    }, 'runtime_error');
+    // Register VS Code Entry Points
     context.subscriptions.push(
         vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (filePath: vscode.Uri | undefined) => {
             let pipelinePath = filePath;
@@ -252,4 +261,17 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             executePipeline(sdsServices, pipelinePath.fsPath, pipelineId);
         }),
     );
+    vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration('safe-ds.runner.command')) {
+            // Try starting runner
+            logOutput('Safe-DS Runner Command was updated');
+            if (!isPythonServerAvailable()) {
+                startPythonServer();
+            } else {
+                logOutput(
+                    'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',
+                );
+            }
+        }
+    });
 };

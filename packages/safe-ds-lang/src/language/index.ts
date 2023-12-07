@@ -4,3 +4,4 @@ export { SafeDsLanguageMetaData } from './generated/module.js';
 export { startLanguageServer } from './main.js';
 export { createSafeDsServices, createSafeDsServicesWithBuiltins } from './safe-ds-module.js';
 export { SAFE_DS_FILE_EXTENSIONS } from './helpers/fileExtensions.js';
+export { getModuleMembers } from './helpers/nodeProperties.js';

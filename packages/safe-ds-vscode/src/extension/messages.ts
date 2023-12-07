@@ -12,7 +12,8 @@ export type PythonServerMessage =
     | PlaceholderTypeMessage
     | PlaceholderValueMessage
     | RuntimeErrorMessage
-    | RuntimeProgressMessage;
+    | RuntimeProgressMessage
+    | ShutdownMessage;
 
 export type RuntimeProgress = 'done';
 
@@ -153,4 +154,20 @@ export const createProgramMessage = function (id: string, data: ProgramPackageMa
 
 export const createPlaceholderQueryMessage = function (id: string, placeholderName: string): PythonServerMessage {
     return { type: 'placeholder_query', id, data: placeholderName };
+};
+
+// Extension to Python Server
+/**
+ * Message that instructs the python server to shut itself down as soon as possible.
+ *
+ * There will be no response to this message, data and id fields are therefore empty.
+ */
+export interface ShutdownMessage {
+    type: 'shutdown';
+    id: '';
+    data: '';
+}
+
+export const createShutdownMessage = function (): PythonServerMessage {
+    return { type: 'shutdown', id: '', data: '' };
 };

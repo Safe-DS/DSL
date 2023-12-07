@@ -93,7 +93,7 @@
                 "safe-ds.runner.command": {
                     "description": "Command to start the Safe-DS runner",
                     "type": "string",
-                    "default": "python -m runner"
+                    "default": "safe-ds-runner"
                 },
                 "safe-ds.validation.codeStyle": {
                     "type": "boolean",
@@ -178,9 +178,10 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
+        "source-map": "^0.7.4",
+        "tree-kill": "^1.2.2",
         "vscode-languageclient": "^9.0.1",
-        "ws": "^8.14.2",
-        "source-map": "^0.7.4"
+        "ws": "^8.14.2"
     },
     "devDependencies": {
         "@types/node": "^18.18.12",
