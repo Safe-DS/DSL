@@ -25,8 +25,8 @@ const findAndSetStates = function(newAllStates: State[], tableIdentifier?: strin
     currentState.set(foundState);
   } else {
     GetJsonTable(window.tableIdentifier)
-      .then((table) => {
-        currentState.set({ tableIdentifier: window.tableIdentifier, table, history: [], tabs: [{ type: 'linePlot', content: { outdated: false, encodedImage: 'test', xAxis: 'Survived', yAxis: 'sex' }, tabComment: 'survived x sex'}]  })
+      .then(() => {
+        // currentState.set({ tableIdentifier: window.tableIdentifier, table, history: [], tabs: [{ type: 'linePlot', content: { outdated: false, encodedImage: 'test', xAxis: 'Survived', yAxis: 'sex' }, tabComment: 'survived x sex'}]  })
       })
       .catch((error) => {
         extensionApi.createErrorToast(error.message);
