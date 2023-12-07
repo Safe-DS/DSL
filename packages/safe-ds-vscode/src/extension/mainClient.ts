@@ -12,11 +12,12 @@ import {
     stopPythonServer,
     isPythonServerAvailable,
     pythonServerPort,
+    removeMessageCallback,
 } from './pythonServer.js';
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
-import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
+import { createPlaceholderQueryMessage, PlaceholderTypeMessage, RuntimeErrorMessage, RuntimeProgressMessage } from './messages.js';
 import crypto from 'crypto';
 import { URI } from 'langium';
 import { EDAPanel } from './EDAPanel.ts';
@@ -85,39 +86,69 @@ export const activate = function (context: vscode.ExtensionContext): void {
                     }
                     // gen custom id for pipeline
                     const pipelineId = crypto.randomUUID();
-                    addMessageCallback((message) => {
-                        console.log("tes3t")
+
+                    let loadingInProgress = true;  // Flag to track loading status
+                    // Show progress indicator
+                    vscode.window.withProgress({
+                        location: vscode.ProgressLocation.Notification,
+                        title: "Loading Table ..."
+                    }, (progress, _) => {
+                        progress.report({ increment: 0 });
+                        return new Promise<void>((resolve) => {
+                            // Resolve the promise when loading is no longer in progress
+                            const checkInterval = setInterval(() => {
+                                if (!loadingInProgress) {
+                                    clearInterval(checkInterval);
+                                    resolve();
+                                }
+                            }, 1000); // Check every second
+                        });
+                    });
+                    const cleanupLoadingIndication = () => {
+                        loadingInProgress = false;
+                    };
+
+                    const placeHolderTypeCallback = function(message: PlaceholderTypeMessage) {
                         printOutputMessage(
                             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
                         );
                         if(message.id === pipelineId && message.data.type === "Table" && message.data.name === requestedPlaceholderName) {
                             lastFinishedPipelineId = pipelineId;
                             EDAPanel.createOrShow(context.extensionUri, context, pipelineId, message.data.name, pythonServerPort);
-                            // TODO detach callbacks
+                            removeMessageCallback(placeHolderTypeCallback, 'placeholder_type');
+                            cleanupLoadingIndication();
                         } else if(message.id === pipelineId && message.data.name !== requestedPlaceholderName) {
                             return;
                         } else if(message.id === pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Selected placeholder is not of type 'Table'.`);
-                            // TODO detach callbacks
+                            removeMessageCallback(placeHolderTypeCallback, 'placeholder_type');
+                            cleanupLoadingIndication();
                         }
-                    }, 'placeholder_type');
-                    addMessageCallback((message) => {
-                        console.log("tes3t")
+                    }
+                    addMessageCallback(placeHolderTypeCallback, 'placeholder_type');
+
+                    const runtimeProgressCallback = function(message: RuntimeProgressMessage) {
                         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);                
                         if(message.id === pipelineId && message.data === "done" && lastFinishedPipelineId !== pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                            // TODO detach callbacks
+                            removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
+                            cleanupLoadingIndication();
                         }
-                    }, 'runtime_progress');
-                    addMessageCallback((message) => {
+                    }
+                    addMessageCallback(runtimeProgressCallback, 'runtime_progress');
+
+                    const runtimeErrorCallback = function(message: RuntimeErrorMessage) {
                         if(message.id === pipelineId && lastFinishedPipelineId !== pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                            // TODO detach callbacks
+                            removeMessageCallback(runtimeErrorCallback, 'runtime_error');
+                            cleanupLoadingIndication();
                         }
-                    }, 'runtime_error');
+                    }
+                    addMessageCallback(runtimeErrorCallback, 'runtime_error');
+
                     executePipeline(sdsServices, editor.document.uri.fsPath, pipelineId);
                 } else {
                     EDAPanel.createOrShow(context.extensionUri, context, "", undefined, pythonServerPort);
