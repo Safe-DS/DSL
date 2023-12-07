@@ -17,7 +17,7 @@ import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
 import treeKill from 'tree-kill';
 
 let pythonServer: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
-let pythonServerPort: number | undefined = undefined;
+export let pythonServerPort: number | undefined = undefined;
 let pythonServerAcceptsConnections: boolean = false;
 let pythonServerConnection: WebSocket | undefined = undefined;
 let pythonServerMessageCallbacks: Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]> =
