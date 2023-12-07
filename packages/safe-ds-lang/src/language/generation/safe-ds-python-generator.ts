@@ -827,10 +827,6 @@ class GenerationInfoFrame {
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
         return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
     }
-
-    isInsidePipeline(): boolean {
-        return this.insidePipeline;
-    }
 }
 
 export interface GenerateOptions {
