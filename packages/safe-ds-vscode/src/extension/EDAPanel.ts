@@ -193,7 +193,7 @@ export class EDAPanel {
         window.injVscode = acquireVsCodeApi();
         window.tableIdentifier = "${this._tableIdentifier}" === "undefined" ? undefined : "${this._tableIdentifier}";
         window.pythonServerPort = ${this._pythonServerPort};
-        window.startPipelineId = ${this._startPipelineId};
+        window.startPipelineId = '${this._startPipelineId}';
       </script>
     </head>
     <body>
