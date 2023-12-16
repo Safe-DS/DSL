@@ -282,23 +282,11 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
     if (pipelinePath.endsWith('.sdspipe')) {
-        mainModuleName = path
-            .basename(pipelinePath, '.sdspipe')
-            .replaceAll('%2520', '_')
-            .replaceAll(/[ .-]/gu, '_')
-            .replaceAll(/\\W/gu, '');
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath, '.sdspipe'));
     } else if (pipelinePath.endsWith('.sdstest')) {
-        mainModuleName = path
-            .basename(pipelinePath, '.sdstest')
-            .replaceAll('%2520', '_')
-            .replaceAll(/[ .-]/gu, '_')
-            .replaceAll(/\\W/gu, '');
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath, '.sdstest'));
     } else {
-        mainModuleName = path
-            .basename(pipelinePath)
-            .replaceAll('%2520', '_')
-            .replaceAll(/[ .-]/gu, '_')
-            .replaceAll(/\\W/gu, '');
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath));
     }
     //
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
@@ -320,6 +308,8 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
             path.join(workspaceRelativeFilePath, sdsFileName).replaceAll('\\', '/'),
             generatedDocument.getText(),
         );
+        // Check for sourcemaps after they are already added to the pipeline context
+        // This needs to happen after lastGeneratedSource.set, as errors would not get mapped otherwise
         if (fsPath.endsWith('.map')) {
             // exclude sourcemaps from sending to runner
             continue;
