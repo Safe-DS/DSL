@@ -282,9 +282,13 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
     if (pipelinePath.endsWith('.sdspipe')) {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath, '.sdspipe'));
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
+            path.basename(pipelinePath, '.sdspipe'),
+        );
     } else if (pipelinePath.endsWith('.sdstest')) {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath, '.sdstest'));
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
+            path.basename(pipelinePath, '.sdstest'),
+        );
     } else {
         mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath));
     }
