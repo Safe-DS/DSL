@@ -282,11 +282,23 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
     if (pipelinePath.endsWith('.sdspipe')) {
-        mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
+        mainModuleName = path
+            .basename(pipelinePath, '.sdspipe')
+            .replaceAll('%2520', '_')
+            .replaceAll(/[ .-]/gu, '_')
+            .replaceAll(/\\W/gu, '');
     } else if (pipelinePath.endsWith('.sdstest')) {
-        mainModuleName = path.basename(pipelinePath, '.sdstest').replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
+        mainModuleName = path
+            .basename(pipelinePath, '.sdstest')
+            .replaceAll('%2520', '_')
+            .replaceAll(/[ .-]/gu, '_')
+            .replaceAll(/\\W/gu, '');
     } else {
-        mainModuleName = path.basename(pipelinePath).replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
+        mainModuleName = path
+            .basename(pipelinePath)
+            .replaceAll('%2520', '_')
+            .replaceAll(/[ .-]/gu, '_')
+            .replaceAll(/\\W/gu, '');
     }
     //
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
@@ -304,7 +316,10 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
                 ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
                 : sdsFileName;
 
-        lastGeneratedSource.set(path.join(workspaceRelativeFilePath, sdsFileName).replaceAll("\\", "/"), generatedDocument.getText());
+        lastGeneratedSource.set(
+            path.join(workspaceRelativeFilePath, sdsFileName).replaceAll('\\', '/'),
+            generatedDocument.getText(),
+        );
         if (fsPath.endsWith('.map')) {
             // exclude sourcemaps from sending to runner
             continue;
