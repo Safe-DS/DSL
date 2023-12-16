@@ -282,11 +282,11 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     }
     mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
     if (pipelinePath.endsWith('.sdspipe')) {
-        mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('-', '_');
+        mainModuleName = path.basename(pipelinePath, '.sdspipe').replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     } else if (pipelinePath.endsWith('.sdstest')) {
-        mainModuleName = path.basename(pipelinePath, '.sdstest').replaceAll('-', '_');
+        mainModuleName = path.basename(pipelinePath, '.sdstest').replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     } else {
-        mainModuleName = path.basename(pipelinePath).replaceAll('-', '_');
+        mainModuleName = path.basename(pipelinePath).replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     }
     //
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
@@ -297,17 +297,18 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     let codeMap: ProgramCodeMap = {};
     for (const generatedDocument of generatedDocuments) {
         const fsPath = URI.parse(generatedDocument.uri).fsPath;
-        lastGeneratedSource.set(fsPath, generatedDocument.getText());
-        if (fsPath.endsWith('.map')) {
-            // exclude sourcemaps
-            continue;
-        }
+        const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
         const sdsFileName = path.basename(fsPath);
         const sdsNoExtFilename =
             path.extname(sdsFileName).length > 0
                 ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
                 : sdsFileName;
-        const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
+
+        lastGeneratedSource.set(path.join(workspaceRelativeFilePath, sdsFileName).replaceAll("\\", "/"), generatedDocument.getText());
+        if (fsPath.endsWith('.map')) {
+            // exclude sourcemaps from sending to runner
+            continue;
+        }
         let modulePath = workspaceRelativeFilePath.replaceAll('/', '.').replaceAll('\\', '.');
         if (!codeMap.hasOwnProperty(modulePath)) {
             codeMap[modulePath] = {};
