@@ -2,7 +2,6 @@ import type { FromExtensionMessage } from "../../../types/shared-eda-vscode/mess
 import type { State } from "../../../types/shared-eda-vscode/types";
 import * as extensionApi from "./Apis/extensionApi";
 import { writable } from "svelte/store";
-import { GetJsonTable } from "./Apis/pythonApi";
 
 let currentTabIndex = writable<number>(0);
 
@@ -16,31 +15,13 @@ currentState.subscribe(($currentState) => {
   }
 });
 
-// Find current state in allStates
-const findAndSetStates = function(newAllStates: State[], tableIdentifier?: string): void {
-  let foundState = newAllStates.find((as: State) => as.tableIdentifier === tableIdentifier);
-  console.log(foundState ? "found state" : "no state found");
-
-  if (foundState) {
-    currentState.set(foundState);
-  } else {
-    GetJsonTable(window.tableIdentifier)
-      .then(() => {
-        // currentState.set({ tableIdentifier: window.tableIdentifier, table, history: [], tabs: [{ type: 'linePlot', content: { outdated: false, encodedImage: 'test', xAxis: 'Survived', yAxis: 'sex' }, tabComment: 'survived x sex'}]  })
-      })
-      .catch((error) => {
-        extensionApi.createErrorToast(error.message);
-      });
-  }
-}
-
-// This should be fired immediately whenever the panel is created or made visible again
 window.addEventListener("message", (event) => {
   const message = event.data as FromExtensionMessage;
-  console.log(message.command + " called")
+  console.log(Date.now() + ": " + message.command + " called")
   switch (message.command) {
     case "setWebviewState":
-      findAndSetStates(message.value, window.tableIdentifier);
+      // This should be fired immediately whenever the panel is created or made visible again
+      currentState.set(message.value);
       break;
   }
 });

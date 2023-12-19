@@ -19,6 +19,7 @@
                 minTableWidth += 100;
             });
             minTableWidthString = `${minTableWidth}px`;
+            if (numRows > 1000) numRows = 1000;
         }
     }
 
@@ -27,7 +28,7 @@
             return `${savedColumnWidths.get(columnName)}px`;
         }
         const baseWidth = 35; // Minimum width
-        const scale = 55; // Adjust this scale factor to suit your layout
+        const scale = 55;
 
         // Use the logarithm of the character count, and scale it
         const width = baseWidth + Math.log(columnName.length + 1) * scale;

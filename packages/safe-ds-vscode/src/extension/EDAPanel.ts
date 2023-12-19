@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 import { ToExtensionMessage } from "../../../../types/shared-eda-vscode/messaging.js";
 import * as webviewApi from "./Apis/webviewApi.ts";
-import { State } from "../../../../types/shared-eda-vscode/types.js";
+import { Column, State, Table } from "../../../../types/shared-eda-vscode/types.js";
+import { addMessageCallback, removeMessageCallback, sendMessageToPythonServer } from "./pythonServer.ts";
+import { PlaceholderValueMessage, createPlaceholderQueryMessage } from "./messages.ts";
+import { printOutputMessage } from "./output.ts";
 
 export class EDAPanel {
   /**
@@ -37,13 +40,13 @@ export class EDAPanel {
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
     // Handle view state changes
-    this._viewStateChangeListener = this._panel.onDidChangeViewState((e) => {
+    this._viewStateChangeListener = this._panel.onDidChangeViewState(async (e) => {
       const updatedPanel = e.webviewPanel; 
       if (updatedPanel.visible) {
         this._column = updatedPanel.viewColumn;
         webviewApi.postMessage(updatedPanel.webview, {
           command: "setWebviewState",
-          value: EDAPanel.context.globalState.get("webviewState") as State[],
+          value: await this.constructCurrentState(),
         });
       }
     });
@@ -106,9 +109,11 @@ export class EDAPanel {
       EDAPanel.currentPanel._update();
       // Otherwise fired in 'onDidChangeViewState' listener
       if (EDAPanel.currentPanel._panel.visible) {
-        webviewApi.postMessage(EDAPanel.currentPanel._panel.webview, {
-          command: "setWebviewState",
-          value: EDAPanel.context.globalState.get("webviewState") as State[],
+        EDAPanel.currentPanel.constructCurrentState().then((state) => {
+          webviewApi.postMessage(EDAPanel.currentPanel!._panel.webview, {
+            command: "setWebviewState",
+            value: state,
+          });
         });
       }
       return;
@@ -125,9 +130,11 @@ export class EDAPanel {
   
       EDAPanel.currentPanel = new EDAPanel(panel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
       EDAPanel.currentPanel._column = column;
-      webviewApi.postMessage(panel.webview, {
-        command: "setWebviewState",
-        value: EDAPanel.context.globalState.get("webviewState") as State[],
+      EDAPanel.currentPanel.constructCurrentState().then((state) => {
+        webviewApi.postMessage(EDAPanel.currentPanel!._panel.webview, {
+          command: "setWebviewState",
+          value: state,
+        });
       });
     }
   }
@@ -163,6 +170,79 @@ export class EDAPanel {
     this._panel.webview.html = this._getHtmlForWebview(webview);
   }  
 
+  private findCurrentState(): State | undefined {
+    const existingStates = EDAPanel.context.globalState.get("webviewState") as State[];
+    return existingStates.find(s => s.tableIdentifier === this._tableIdentifier);
+  }
+
+  private constructCurrentState(): Promise<State> {
+    return new Promise((resolve, reject) => {
+      const existingCurrentState = this.findCurrentState();
+      if (existingCurrentState) {
+        printOutputMessage("Found current State.");
+        resolve(existingCurrentState);
+        return;
+      }
+  
+      if (!this._tableIdentifier) {
+        resolve({ tableIdentifier: undefined, history: [], defaultState: true });
+        return;
+      }
+  
+      const placeholderValueCallback = (message: PlaceholderValueMessage) => {
+        if (message.id !== this._startPipelineId || message.data.name !== this._tableIdentifier) {
+          return;
+        }
+        removeMessageCallback(placeholderValueCallback, "placeholder_value");
+
+        const pythonTableColumns = message.data.value;
+        const table: Table = { 
+          totalRows: 0, 
+          name: this._tableIdentifier, 
+          columns: [] as Table["columns"], 
+          appliedFilters: [] as Table["appliedFilters"]
+        };
+
+        let i = 0;
+        let currentMax = 0;
+        for (const [columnName, columnValues] of Object.entries(pythonTableColumns)) {
+          if (!Array.isArray(columnValues)) {
+            continue;
+          }
+          if(currentMax < columnValues.length) {
+            currentMax = columnValues.length;
+          }
+
+          const isNumerical = typeof columnValues[0] === 'number';
+          const columnType = isNumerical ? "numerical" : "categorical";
+
+          const column: Column = {
+              name: columnName,
+              values: columnValues,
+              type: columnType,
+              hidden: false,
+              highlighted: false,
+              appliedFilters: [],
+              appliedSort: null,
+              profiling: { top: [], bottom: [] },
+              coloredHighLow: false,
+          };
+          table.columns.push([i++, column]);
+        }
+        table.totalRows = currentMax;
+        table.visibleRows = currentMax;
+        printOutputMessage("Got placeholder from Runner!");
+        resolve({ tableIdentifier: this._tableIdentifier, history: [], defaultState: false, table });
+      };
+  
+      addMessageCallback(placeholderValueCallback, "placeholder_value");
+      printOutputMessage("Getting placeholder from Runner ...");
+      sendMessageToPythonServer(createPlaceholderQueryMessage(this._startPipelineId, this._tableIdentifier));
+  
+      setTimeout(() => reject(new Error("Timeout waiting for placeholder value")), 30000);
+    });
+  }
+
   private _getHtmlForWebview(webview: vscode.Webview) {
     // // And the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "..", "safe-ds-eda", "dist", "main.js"));
@@ -193,7 +273,6 @@ export class EDAPanel {
         window.injVscode = acquireVsCodeApi();
         window.tableIdentifier = "${this._tableIdentifier}" === "undefined" ? undefined : "${this._tableIdentifier}";
         window.pythonServerPort = ${this._pythonServerPort};
-        window.startPipelineId = '${this._startPipelineId}';
       </script>
     </head>
     <body>

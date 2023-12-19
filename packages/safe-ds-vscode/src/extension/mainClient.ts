@@ -5,7 +5,6 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
     addMessageCallback,
     getExecutionContext,
-    sendMessageToPythonServer,
     tryMapToSafeDSSource,
     executePipeline,
     startPythonServer,
@@ -17,7 +16,7 @@ import {
 import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
-import { createPlaceholderQueryMessage, PlaceholderTypeMessage, RuntimeErrorMessage, RuntimeProgressMessage } from './messages.js';
+import { PlaceholderTypeMessage, RuntimeErrorMessage, RuntimeProgressMessage } from './messages.js';
 import crypto from 'crypto';
 import { URI } from 'langium';
 import { EDAPanel } from './EDAPanel.ts';
@@ -25,6 +24,7 @@ import { EDAPanel } from './EDAPanel.ts';
 let client: LanguageClient;
 let sdsServices: SafeDsServices;
 let lastFinishedPipelineId: string | undefined;
+let lastSuccessfulPlaceholderName: string | undefined;
 
 // This function is called when the extension is activated.
 export const activate = function (context: vscode.ExtensionContext): void {
@@ -114,6 +114,7 @@ export const activate = function (context: vscode.ExtensionContext): void {
                         );
                         if(message.id === pipelineId && message.data.type === "Table" && message.data.name === requestedPlaceholderName) {
                             lastFinishedPipelineId = pipelineId;
+                            lastSuccessfulPlaceholderName = requestedPlaceholderName;
                             EDAPanel.createOrShow(context.extensionUri, context, pipelineId, message.data.name, pythonServerPort);
                             removeMessageCallback(placeHolderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
@@ -164,7 +165,7 @@ export const activate = function (context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand("eda-test01.refreshWebview", () => {
             EDAPanel.kill();
             setTimeout(() => {
-                EDAPanel.createOrShow(context.extensionUri, context, "", "newtableIdentifier", pythonServerPort);
+                EDAPanel.createOrShow(context.extensionUri, context, "",lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : "newtableIdentifier", pythonServerPort);
             }, 100);
             setTimeout(() => {
                 vscode.commands.executeCommand("workbench.action.webview.openDeveloperTools");
@@ -233,9 +234,9 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
         printOutputMessage(
             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
         );
-        const execInfo = getExecutionContext(message.id)!;
-        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
-        sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
+        // const execInfo = getExecutionContext(message.id)!;
+        // execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+        // sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
     }, 'placeholder_type');
     addMessageCallback((message) => {
         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);

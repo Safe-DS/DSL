@@ -1,4 +1,4 @@
-import * as defaultTypes from "./types";
+import * as defaultTypes from "./types.d.ts";
 
 // To extension
 type ToExtensionCommand = "setGlobalState" | "setInfo" | "setError";
@@ -9,7 +9,7 @@ interface ToExtensionCommandMessage {
 }
 interface ToExtensionSetStateMessage extends ToExtensionCommandMessage {
   command: "setCurrentGloabalState";
-  value: defaultTypes.SerializableState;
+  value: defaultTypes.State;
 }
 
 interface ToExtensionResetStateMessage extends ToExtensionCommandMessage {
@@ -39,7 +39,8 @@ interface FromExtensionCommandMessage {
 }
 interface FromExtensionSetStateMessage extends FromExtensionCommandMessage {
   command: "setWebviewState";
-  value: defaultTypes.SerializableState[];
+  value: defaultTypes.State;
 }
+
 
 export type FromExtensionMessage = FromExtensionSetStateMessage;

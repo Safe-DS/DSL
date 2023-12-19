@@ -1,166 +1,140 @@
-// import type { Table } from "../../../../types/shared-eda-vscode/types";
-import type { PythonServerMessage } from "../../../safe-ds-vscode/src/extension/messages";
+// // import type { Table } from "../../../../types/shared-eda-vscode/types";
+// import type { PythonServerMessage } from "../../../safe-ds-vscode/src/extension/messages";
 
-let pythonServerAcceptsConnections: boolean = false;
-let pythonServerConnection: WebSocket | undefined = undefined;
-let pythonServerMessageCallbacks: Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]> =
-    new Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]>();
+// export class PythonServerAPI {
+//   private static instance: PythonServerAPI;
+//   private pythonServerConnection: WebSocket | undefined;
+//   private pythonServerAcceptsConnections: boolean = false;
+//   private pythonServerMessageCallbacks: Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]> = new Map();
+//   private initTableSet: boolean = false;
 
-let initTableSet = false;
+//   private constructor() {
+//       this.connectToWebSocket().then(() => {
+//           console.log("[PythonServerAPI] WebSocket connection established");
+//       }).catch(err => {
+//           console.error("[PythonServerAPI] Error establishing WebSocket connection:", err);
+//       });
+//   }
 
-const connectToWebSocket = async function (): Promise<void> {
-  const timeoutMs = 200;
-  const maxConnectionTries = 5;
-  let currentTry = 0;
-  // Attach WS
-  return new Promise<void>((resolve, reject) => {
-      const tryConnect = function () {
-          pythonServerConnection = new WebSocket(`ws://127.0.0.1:${window.pythonServerPort}/WSMain`);
-          pythonServerConnection.onopen = (event) => {
-              pythonServerAcceptsConnections = true;
-              console.log(`[Runner] Now accepting connections: ${event.type}`);
-              resolve();
-          };
-          pythonServerConnection.onerror = (event) => {
-              currentTry += 1;
-              console.log(event)
-              if (currentTry > maxConnectionTries) {
-                console.error('[Runner] Max retries reached. No further attempt at connecting is made.');
-            } else {
-                console.log(`[Runner] Server is not yet up. Retrying...`);
-                setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
-                return;
-            }
-              // if (event.message.includes('ECONNREFUSED')) {
-              //     if (currentTry > maxConnectionTries) {
-              //         console.error('[Runner] Max retries reached. No further attempt at connecting is made.');
-              //     } else {
-              //         console.log(`[Runner] Server is not yet up. Retrying...`);
-              //         setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
-              //         return;
-              //     }
-              // }
-              // console.error(`[Runner] An error occurred: ${event.message} (${event.type}) {${event.error}}`);
-              reject();
-          };
-          pythonServerConnection.onmessage = (event) => {
-              if (typeof event.data !== 'string') {
-                  console.log(`[Runner] Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
-                  return;
-              }
-              console.log(`[Runner] Message received: '${event.data}'`);
-              const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
-              if (!pythonServerMessageCallbacks.has(pythonServerMessage.type)) {
-                  console.log(`[Runner] Message type '${pythonServerMessage.type}' is not handled`);
-                  return;
-              }
-              for (const callback of pythonServerMessageCallbacks.get(pythonServerMessage.type)!) {
-                  callback(pythonServerMessage);
-              }
-          };
-          pythonServerConnection.onclose = (_event) => {
-              // The connection was interrupted
-              pythonServerAcceptsConnections = false;
-              console.error('[Runner] Connection was unexpectedly closed');
-          };
-      };
-      tryConnect();
-  });
-};
+//   public static getInstance(): PythonServerAPI {
+//       if (!PythonServerAPI.instance) {
+//           PythonServerAPI.instance = new PythonServerAPI();
+//       }
+//       return PythonServerAPI.instance;
+//   }
 
-const sendMessageToPythonServer = function (message: PythonServerMessage): void {
-  const messageString = JSON.stringify(message);
-  console.log(`Sending message to python server: ${messageString}`);
-  pythonServerConnection!.send(messageString);
-};
+//   private async connectToWebSocket(): Promise<void> {
+//       const timeoutMs = 200;
+//       const maxConnectionTries = 5;
+//       let currentTry = 0;
 
-/**
- * Register a callback to execute when a message from the python server arrives.
- *
- * @param callback Callback to execute
- * @param messageType Message type to register the callback for.
- */
-export const addMessageCallback = function <M extends PythonServerMessage['type']>(
-  callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
-  messageType: M,
-): void {
-  if (!pythonServerMessageCallbacks.has(messageType)) {
-      pythonServerMessageCallbacks.set(messageType, []);
-  }
-  pythonServerMessageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
-};
+//       return new Promise<void>((resolve, reject) => {
+//           const tryConnect = () => {
+//               this.pythonServerConnection = new WebSocket(`ws://127.0.0.1:${window.pythonServerPort}/WSMain`);
+//               console.log('[PythonServerAPI] Connecting to python server...');
+              
+//               this.pythonServerConnection.onopen = (event) => {
+//                   this.pythonServerAcceptsConnections = true;
+//                   console.log(`[PythonServerAPI] Now accepting connections: ${event.type}`);
+//                   resolve();
+//               };
 
-/**
-* Remove a previously registered callback from being called when a message from the python server arrives.
-*
-* @param callback Callback to remove
-* @param messageType Message type the callback was registered for.
-*/
-export const removeMessageCallback = function <M extends PythonServerMessage['type']>(
-  callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
-  messageType: M,
-): void {
-  if (!pythonServerMessageCallbacks.has(messageType)) {
-      return;
-  }
-  pythonServerMessageCallbacks.set(
-      messageType,
-      pythonServerMessageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
-  );
-};
+//               this.pythonServerConnection.onerror = (event) => {
+//                   currentTry += 1;
+//                   console.log(event);
+//                   if (currentTry > maxConnectionTries) {
+//                       console.log('[PythonServerAPI] Max retries reached. No further attempt at connecting is made.');
+//                       reject();
+//                   } else {
+//                       console.log('[PythonServerAPI] Server is not yet up. Retrying...');
+//                       setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1));
+//                   }
 
-// export const GetJsonTable = async function(tableName: string): Promise<Table> {
-//   try {
-//     const response = await await fetch(
-//       "http://127.0.0.1:" + window.pythonServerPort + "/TableAsJson?" + new URLSearchParams({ tableName }),
-//       {
-//         method: "GET",
-//       },
-//     );
-//     const responseText = await response.text();
-//     if (!response.ok) throw new Error(responseText);
+//                   // if (event.message.includes('ECONNREFUSED')) {
+//                   //     if (currentTry > maxConnectionTries) {
+//                   //         console.error('[Webview] Max retries reached. No further attempt at connecting is made.');
+//                   //     } else {
+//                   //         console.log(`[Webview] Server is not yet up. Retrying...`);
+//                   //         setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
+//                   //         return;
+//                   //     }
+//                   // }
+//                   // console.error(`[Webview] An error occurred: ${event.message} (${event.type}) {${event.error}}`);
+//               };
 
-//     let numRows = 0;
-//     let table: Table = { name: tableName, columns: [], visibleRows: 0, totalRows: numRows, appliedFilters: [] };
-//     let index = 0;
-//     for (const column of Object.entries(JSON.parse(responseText))) {
-//       console.log(Object.values(column[1] as string).length)
-//       if (Object.values(column[1] as string).length > numRows) {
-//           numRows = Object.values(column[1] as string).length;
+//               this.pythonServerConnection.onmessage = (event) => {
+//                   if (typeof event.data !== 'string') {
+//                       console.log(`[PythonServerAPI] Non-string message received: (${event.type}, ${typeof event.data})`);
+//                       return;
+//                   }
+//                   console.log(`[PythonServerAPI] Message received: '${event.data}'`);
+//                   const pythonServerMessage: PythonServerMessage = JSON.parse(event.data);
+//                   if (!this.pythonServerMessageCallbacks.has(pythonServerMessage.type)) {
+//                       console.log(`[PythonServerAPI] Unhandled message type '${pythonServerMessage.type}'`);
+//                       return;
+//                   }
+//                   for (const callback of this.pythonServerMessageCallbacks.get(pythonServerMessage.type)!) {
+//                       callback(pythonServerMessage);
+//                   }
+//               };
+
+//               this.pythonServerConnection.onclose = (_event) => {
+//                   this.pythonServerAcceptsConnections = false;
+//                   console.log('[PythonServerAPI] Connection was unexpectedly closed');
+//               };
+//           };
+//           tryConnect();
+//       });
+//   }
+
+//   private sendMessageToPythonServer(message: PythonServerMessage): void {
+//       if (!this.pythonServerConnection || !this.pythonServerAcceptsConnections) {
+//           console.error('[PythonServerAPI] Cannot send message. No active connection.');
+//           return;
+//       }
+//       const messageString = JSON.stringify(message);
+//       console.log(`[PythonServerAPI] Sending message to python server: ${messageString}`);
+//       this.pythonServerConnection.send(messageString);
+//   }
+
+//   private addMessageCallback<M extends PythonServerMessage['type']>(callback: (message: Extract<PythonServerMessage, { type: M }>) => void, messageType: M): void {
+//       if (!this.pythonServerMessageCallbacks.has(messageType)) {
+//           this.pythonServerMessageCallbacks.set(messageType, []);
+//       }
+//       this.pythonServerMessageCallbacks.get(messageType)!.push(callback as (message: PythonServerMessage) => void);
+//   }
+
+//   private removeMessageCallback<M extends PythonServerMessage['type']>(callback: (message: Extract<PythonServerMessage, { type: M }>) => void, messageType: M): void {
+//       if (!this.pythonServerMessageCallbacks.has(messageType)) {
+//           return;
+//       }
+//       this.pythonServerMessageCallbacks.set(
+//           messageType,
+//           this.pythonServerMessageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
+//       );
+//   }
+
+//   private async delay(ms: number): Promise<void> {
+//       return new Promise(resolve => {setTimeout(resolve, ms)});
+//   }
+
+//   public async GetJsonTable(tableIdentifier: string): Promise<void> {
+//       while (!this.pythonServerConnection || !this.pythonServerAcceptsConnections || this.initTableSet) {
+//           await this.delay(100);
 //       }
 
-//       table.columns.push([index++, {
-//         name: column[0],
-//         values: Object.values(column[1] as string),
-//         hidden: false,
-//         highlighted: false,
-//         type: "categorical",
-//         appliedSort: null,
-//         appliedFilters: [],
-//         profiling: { top: [], bottom: [] },
-//       }]);
-//     }
-//     table.totalRows = numRows;
-//     return table;
-//   } catch (error) {
-//     throw new Error(`Could not get Table "${tableName}"`);
+//       console.log(`[PythonServerAPI] Preparing to get JSON table with identifier: ${tableIdentifier}`);
+
+//       const callback = (message: PythonServerMessage) => {
+//           if (message.type !== 'placeholder_value' || message.id !== window.startPipelineId) {
+//               return;
+//           }
+//           console.log(`[PythonServerAPI] Received data: ${JSON.stringify(message.data)}`);
+//           this.initTableSet = true;
+//           this.removeMessageCallback(callback, 'placeholder_value')
+//       };
+
+//       this.addMessageCallback(callback, 'placeholder_value');
+//       this.sendMessageToPythonServer({ type: 'placeholder_query', id: window.startPipelineId, data: tableIdentifier });
 //   }
 // }
-
-export const GetJsonTable = async function(tableIdentifier: string): Promise<void> {
-  if(!pythonServerConnection || pythonServerAcceptsConnections || initTableSet) {
-    await connectToWebSocket();
-  }
-
-  const callback = (message: PythonServerMessage) => {
-    if (message.type !== 'placeholder_value' || message.id !== window.startPipelineId) {
-      return;
-    }
-    console.log(message.data);
-    initTableSet = true;
-    removeMessageCallback(callback, 'placeholder_value');
-  };
-  addMessageCallback(callback, 'placeholder_value');
-
-  sendMessageToPythonServer({ type: 'placeholder_query', id: window.startPipelineId, data: tableIdentifier})
-}

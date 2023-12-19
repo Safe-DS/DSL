@@ -8,7 +8,6 @@ declare global {
             // setState: (state: State[]) => void;
         };
         tableIdentifier: string;
-        startPipelineId: string;
         pythonServerPort: number;
     }
 }
