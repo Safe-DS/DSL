@@ -4,14 +4,19 @@
 
     export let tabOject: LinePlotTab;
     export let active: boolean;
+    export let width: number;
 </script>
 
 <div class="wrapper" class:activeWrapper={active}>
     <div class="main">
         <span class="icon"><LinePlotIcon /></span>
-        <span class="title">Line Plot</span>
+        <span class="title"
+            >{#if width > 109}Line Plot{/if}</span
+        >
     </div>
-    <span class="comment">{tabOject.tabComment}</span>
+    <span class="comment"
+        >{#if width > 300}{tabOject.tabComment}{/if}</span
+    >
 </div>
 
 <style>
