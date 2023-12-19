@@ -224,7 +224,11 @@ export class SafeDsPythonGenerator {
     }
 
     private formatGeneratedFileName(baseName: string): string {
-        return `gen_${baseName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '')}`;
+        return `gen_${this.sanitizeModuleNameForPython(baseName)}`;
+    }
+
+    sanitizeModuleNameForPython(moduleName: string): string {
+        return moduleName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     }
 
     private generateModule(module: SdsModule): CompositeGeneratorNode {
