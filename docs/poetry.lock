@@ -321,13 +321,13 @@ min-versions = ["babel (==2.9.0)", "click (==7.0)", "colorama (==0.4)", "ghp-imp
 
 [[package]]
 name = "mkdocs-glightbox"
-version = "0.3.5"
+version = "0.3.6"
 description = "MkDocs plugin supports image lightbox with GLightbox."
 optional = false
 python-versions = "*"
 files = [
-    {file = "mkdocs-glightbox-0.3.5.tar.gz", hash = "sha256:f572256cca17c912da50a045129026566a79b8c6477e1170258ccc0ac5b162da"},
-    {file = "mkdocs_glightbox-0.3.5-py3-none-any.whl", hash = "sha256:096c2753cf4f46f548b02070a2ff5dd8b823a431ce17873a62dcef304cf3364c"},
+    {file = "mkdocs-glightbox-0.3.6.tar.gz", hash = "sha256:f46c675e20793d11c9fc29c9420dfb160ee1d8cfbf4782e82d006f953e19a14c"},
+    {file = "mkdocs_glightbox-0.3.6-py3-none-any.whl", hash = "sha256:15310edfa1cf25cf483068932588f87ceb875148994431df1ee2c5aa03632db1"},
 ]
 
 [[package]]
@@ -739,4 +739,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c693ff7b254a532561bc161a716a101f15c2ab6569074bfdb8dee2e8ec23f8d9"
+content-hash = "f26fa77db167787aedd8e23836c40acd46f2d3eed3222ddcc0636441d176baf1"
