@@ -163,7 +163,7 @@
         "@types/vscode": "^1.84.2",
         "@types/ws": "^8.5.10",
         "@vscode/vsce": "^2.22.0",
-        "esbuild": "^0.19.8",
+        "esbuild": "^0.19.11",
         "esbuild-plugin-copy": "^2.1.1"
     },
     "engines": {
