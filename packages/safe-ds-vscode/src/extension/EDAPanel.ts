@@ -22,7 +22,7 @@ export class EDAPanel {
   private _column: vscode.ViewColumn | undefined;
   private _webviewListener: vscode.Disposable | undefined;
   private _viewStateChangeListener: vscode.Disposable | undefined;
-  private _lastVisibleState: boolean = true;
+  // private _lastVisibleState: boolean = true;
 
   private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, startPipeLineId: string, tableIdentifier?: string, pythonServerPort = 5000) {
     this._panel = panel;
@@ -43,14 +43,15 @@ export class EDAPanel {
       const updatedPanel = e.webviewPanel; 
       if (updatedPanel.visible) {
         this._column = updatedPanel.viewColumn;
-        if(!this._lastVisibleState) { // State only has to be updated if it left the visible state and thus lost it's state
-          webviewApi.postMessage(updatedPanel.webview, {
-            command: "setWebviewState",
-            value: await this.constructCurrentState(),
-          });
-        }
+        // Not needed as retainContextWhenHidden is true for panel
+        // if(!this._lastVisibleState) { // State only has to be updated if it left the visible state and thus lost it's state
+        //   webviewApi.postMessage(updatedPanel.webview, {
+        //     command: "setWebviewState",
+        //     value: await this.constructCurrentState(),
+        //   });
+        // }
       }
-      this._lastVisibleState = e.webviewPanel.visible;
+      // this._lastVisibleState = e.webviewPanel.visible;
     });
     this._disposables.push(this._viewStateChangeListener);
 
@@ -130,11 +131,16 @@ export class EDAPanel {
           vscode.Uri.joinPath(extensionUri, "media"),
           vscode.Uri.joinPath(extensionUri, "..", "safe-ds-eda", "dist"),
         ],
+        retainContextWhenHidden: true,
       });
   
       const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
       EDAPanel.panelsMap.set(tableIdentifier ?? 'undefinedPanelIdentifier', edaPanel);
       edaPanel._column = column;
+      edaPanel._panel.iconPath = {
+        light: vscode.Uri.joinPath(edaPanel._extensionUri, "resources", "binoculars-solid.png"),
+        dark: vscode.Uri.joinPath(edaPanel._extensionUri, "resources", "binoculars-solid.png")
+      };
       console.log('here')
       edaPanel.constructCurrentState().then((state) => {
         webviewApi.postMessage(edaPanel!._panel.webview, {
