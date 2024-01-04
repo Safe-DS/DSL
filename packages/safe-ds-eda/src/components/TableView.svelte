@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { currentState } from '../webviewState';
     import CaretIcon from '../icons/caret.svelte';
 
@@ -19,7 +20,6 @@
                 minTableWidth += 100;
             });
             minTableWidthString = `${minTableWidth}px`;
-            if (numRows > 1000) numRows = 1000;
         }
     }
 
@@ -97,7 +97,7 @@
             // Logic to provide visual feedback and determine the target column
             dragCurrentIndex = columnIndex;
             const containerRect = draggedColumn.parentElement!.getBoundingClientRect();
-            draggedColumn.style.left = event.clientX + 'px';
+            draggedColumn.style.left = event.clientX - containerRect.x + 'px';
             draggedColumn.style.top = event.clientY + 'px';
         }
     }
@@ -132,85 +132,115 @@
             dragStartIndex = null;
         }
     }
+
+    // --- Scroll loading ---
+    let tableContainer: HTMLElement; // Reference to the table container
+    const rowHeight = 33; // Adjust based on your row height
+    const buffer = 50; // Number of rows to render outside the viewport
+    let visibleStart = 0;
+    let visibleEnd = 0;
+
+    onMount(() => {
+        updateVisibleRows();
+        tableContainer.addEventListener('scroll', updateVisibleRows);
+    });
+
+    function updateVisibleRows(): void {
+        const scrollTop = tableContainer.scrollTop;
+        const visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + 2 * buffer;
+        visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
+        visibleEnd = visibleStart + visibleRowCount;
+
+        console.log(visibleStart, visibleEnd, numRows);
+    }
 </script>
 
-<div>
+<div bind:this={tableContainer} class="table-container">
     {#if !$currentState.table}
         <span>Loading ...</span>
     {:else}
-        <table style="min-width: {minTableWidthString};">
-            <thead>
-                <tr>
-                    <th class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}></th>
+        <div class="content-wrapper" style="height: {numRows * rowHeight}px;">
+            <table style="min-width: {minTableWidthString};">
+                <thead>
+                    <tr>
+                        <th class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}></th>
+                        {#each $currentState.table.columns as column, index}
+                            <th
+                                bind:this={headerElements[index]}
+                                class:reorderHighlighted={isReorderDragging && dragCurrentIndex === index}
+                                style="width: {getColumnWidth(column[1].name)}"
+                                on:mousedown={(event) => handleReorderDragStart(event, index)}
+                                on:mousemove={(event) => handleReorderDragOver(event, index)}
+                                >{column[1].name}
+                                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                                <div
+                                    class="resize-handle"
+                                    on:mousedown={(event) => startResizeDrag(event, index)}
+                                ></div>
+                            </th>
+                        {/each}
+                    </tr>
+                </thead>
+                <tr class="hiddenProfilingWrapper no-hover">
+                    <td
+                        class="firstColumn border-right profiling"
+                        on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                    ></td>
                     {#each $currentState.table.columns as column, index}
-                        <th
-                            bind:this={headerElements[index]}
-                            class:reorderHighlighted={isReorderDragging && dragCurrentIndex === index}
-                            style="width: {getColumnWidth(column[1].name)}"
-                            on:mousedown={(event) => handleReorderDragStart(event, index)}
+                        <td
+                            class="profiling"
+                            class:expanded={showProfiling}
                             on:mousemove={(event) => handleReorderDragOver(event, index)}
-                            >{column[1].name}
-                            <!-- svelte-ignore a11y-no-static-element-interactions -->
-                            <div class="resize-handle" on:mousedown={(event) => startResizeDrag(event, index)}></div>
-                        </th>
+                        >
+                            <div class="content" class:expanded={showProfiling}>
+                                Heyyyyyyyyyyy <br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey
+                            </div>
+                        </td>
                     {/each}
                 </tr>
-            </thead>
-            <tr class="hiddenProfilingWrapper no-hover">
-                <td class="firstColumn border-right profiling" on:mousemove={(event) => handleReorderDragOver(event, 0)}
-                ></td>
-                {#each $currentState.table.columns as column, index}
+                <tr class="profilingBannerRow">
                     <td
-                        class="profiling"
-                        class:expanded={showProfiling}
-                        on:mousemove={(event) => handleReorderDragOver(event, index)}
-                    >
-                        <div class="content" class:expanded={showProfiling}>
-                            Heyyyyyyyyyyy <br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey
-                        </div>
-                    </td>
-                {/each}
-            </tr>
-            <tr class="profilingBannerRow">
-                <td
-                    class="firstColumn border-right profilingBanner"
-                    on:mousemove={(event) => handleReorderDragOver(event, 0)}
-                ></td>
-                <td
-                    class="profilingBanner"
-                    on:click={() => (showProfiling = !showProfiling)}
-                    on:mousemove={(event) => handleReorderDragOver(event, 0)}
-                    on:mouseup={handleReorderDragEnd}
-                >
-                    <div>
-                        <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                        <div class="iconWrapper" class:rotate={!showProfiling}>
-                            <CaretIcon />
-                        </div>
-                    </div>
-                </td>
-                {#each Array(numRows - 1) as _, i}
+                        class="firstColumn border-right profilingBanner"
+                        on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                    ></td>
                     <td
                         class="profilingBanner"
                         on:click={() => (showProfiling = !showProfiling)}
-                        on:mousemove={(event) => handleReorderDragOver(event, i + 1)}
+                        on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                        on:mouseup={handleReorderDragEnd}
                     >
+                        <div>
+                            <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
+                            <div class="iconWrapper" class:rotate={!showProfiling}>
+                                <CaretIcon />
+                            </div>
+                        </div>
                     </td>
-                {/each}
-            </tr>
-            <tbody>
-                {#each Array(numRows) as _, i}
-                    <tr>
-                        <td class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}>{i}</td>
-                        {#each $currentState.table.columns as column, index}
-                            <td on:mousemove={(event) => handleReorderDragOver(event, index)}
-                                >{column[1].values[i] || ''}</td
+                    {#each Array(numRows - 1) as _, i}
+                        <td
+                            class="profilingBanner"
+                            on:click={() => (showProfiling = !showProfiling)}
+                            on:mousemove={(event) => handleReorderDragOver(event, i + 1)}
+                        >
+                        </td>
+                    {/each}
+                </tr>
+                <tbody style="position: relative; top: {visibleStart * rowHeight}px;">
+                    {#each Array(Math.min(visibleEnd, numRows) - visibleStart) as _, i}
+                        <tr style="height: {rowHeight}px;">
+                            <td class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                                >{visibleStart + i}</td
                             >
-                        {/each}
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
+                            {#each $currentState.table.columns as column, index}
+                                <td on:mousemove={(event) => handleReorderDragOver(event, index)}
+                                    >{column[1].values[visibleStart + i] || ''}</td
+                                >
+                            {/each}
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
     {/if}
     {#if numRows === -1}
         <!-- Just so this class gets compiled -->
@@ -219,6 +249,18 @@
 </div>
 
 <style>
+    .table-container {
+        overflow-y: auto;
+        height: 100%; /* Adjust based on your layout */
+        position: relative; /* Needed for absolute positioning inside */
+    }
+    .content-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
     table {
         table-layout: fixed;
         width: 100%;
