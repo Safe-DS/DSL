@@ -163,9 +163,9 @@ export const activate = function (context: vscode.ExtensionContext): void {
 
     context.subscriptions.push(
         vscode.commands.registerCommand("eda-test01.refreshWebview", () => {
-            EDAPanel.kill();
+            EDAPanel.kill(lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : "undefinedPanelIdentifier");
             setTimeout(() => {
-                EDAPanel.createOrShow(context.extensionUri, context, "",lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : "newtableIdentifier", pythonServerPort);
+                EDAPanel.createOrShow(context.extensionUri, context, "",lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : "undefinedPanelIdentifier", pythonServerPort);
             }, 100);
             setTimeout(() => {
                 vscode.commands.executeCommand("workbench.action.webview.openDeveloperTools");

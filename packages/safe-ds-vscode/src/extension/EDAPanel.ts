@@ -7,10 +7,8 @@ import { PlaceholderValueMessage, createPlaceholderQueryMessage } from "./messag
 import { printOutputMessage } from "./output.ts";
 
 export class EDAPanel {
-  /**
-   * Track the currently panel. Only allow a single panel to exist at a time.
-   */
-  public static currentPanel: EDAPanel | undefined;
+  // Map to track multiple panels
+  public static panelsMap: Map<string, EDAPanel> = new Map();
   public static context: vscode.ExtensionContext;
 
   public static readonly viewType = "eda";
@@ -24,6 +22,7 @@ export class EDAPanel {
   private _column: vscode.ViewColumn | undefined;
   private _webviewListener: vscode.Disposable | undefined;
   private _viewStateChangeListener: vscode.Disposable | undefined;
+  private _lastVisibleState: boolean = true;
 
   private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, startPipeLineId: string, tableIdentifier?: string, pythonServerPort = 5000) {
     this._panel = panel;
@@ -44,11 +43,14 @@ export class EDAPanel {
       const updatedPanel = e.webviewPanel; 
       if (updatedPanel.visible) {
         this._column = updatedPanel.viewColumn;
-        webviewApi.postMessage(updatedPanel.webview, {
-          command: "setWebviewState",
-          value: await this.constructCurrentState(),
-        });
+        if(!this._lastVisibleState) { // State only has to be updated if it left the visible state and thus lost it's state
+          webviewApi.postMessage(updatedPanel.webview, {
+            command: "setWebviewState",
+            value: await this.constructCurrentState(),
+          });
+        }
       }
+      this._lastVisibleState = e.webviewPanel.visible;
     });
     this._disposables.push(this._viewStateChangeListener);
 
@@ -99,18 +101,20 @@ export class EDAPanel {
     
     // Set column to the active editor if it exists
     const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
+    console.log(column)
 
     // If we already have a panel, show it.
-    if (EDAPanel.currentPanel) {
-      EDAPanel.currentPanel._panel.reveal(EDAPanel.currentPanel._column);
-      EDAPanel.currentPanel._tableIdentifier = tableIdentifier;
-      EDAPanel.currentPanel._pythonServerPort = pythonServerPort;
-      EDAPanel.currentPanel._startPipelineId = startPipelineId;
-      EDAPanel.currentPanel._update();
+    let panel = EDAPanel.panelsMap.get(tableIdentifier ?? 'undefinedPanelIdentifier');
+    if (panel) {
+      panel._panel.reveal(panel._column);
+      panel._tableIdentifier = tableIdentifier;
+      panel._pythonServerPort = pythonServerPort;
+      panel._startPipelineId = startPipelineId;
+      panel._update();
       // Otherwise fired in 'onDidChangeViewState' listener
-      if (EDAPanel.currentPanel._panel.visible) {
-        EDAPanel.currentPanel.constructCurrentState().then((state) => {
-          webviewApi.postMessage(EDAPanel.currentPanel!._panel.webview, {
+      if (panel._panel.visible) {
+        panel.constructCurrentState().then((state) => {
+          webviewApi.postMessage(panel!._panel.webview, {
             command: "setWebviewState",
             value: state,
           });
@@ -119,7 +123,7 @@ export class EDAPanel {
       return;
     } else {
       // Otherwise, create a new panel.
-      const panel = vscode.window.createWebviewPanel(EDAPanel.viewType, "EDA Tool", column || vscode.ViewColumn.One, {
+      const newPanel = vscode.window.createWebviewPanel(EDAPanel.viewType, tableIdentifier ? tableIdentifier + ' Exploration' : 'EDA', column || vscode.ViewColumn.One, {
         // Enable javascript in the webview
         enableScripts: true,
         localResourceRoots: [
@@ -128,10 +132,12 @@ export class EDAPanel {
         ],
       });
   
-      EDAPanel.currentPanel = new EDAPanel(panel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
-      EDAPanel.currentPanel._column = column;
-      EDAPanel.currentPanel.constructCurrentState().then((state) => {
-        webviewApi.postMessage(EDAPanel.currentPanel!._panel.webview, {
+      const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
+      EDAPanel.panelsMap.set(tableIdentifier ?? 'undefinedPanelIdentifier', edaPanel);
+      edaPanel._column = column;
+      console.log('here')
+      edaPanel.constructCurrentState().then((state) => {
+        webviewApi.postMessage(edaPanel!._panel.webview, {
           command: "setWebviewState",
           value: state,
         });
@@ -139,19 +145,27 @@ export class EDAPanel {
     }
   }
 
-  public static kill() {
-    console.log("kill panel");
-    EDAPanel.currentPanel?.dispose();
-    EDAPanel.currentPanel = undefined;
+  public static kill(tableIdentifier: string) {
+    console.log('kill ' + tableIdentifier)
+    let panel = EDAPanel.panelsMap.get(tableIdentifier);
+    if (panel) {
+      panel.dispose();
+      EDAPanel.panelsMap.delete(tableIdentifier);
+    }
   }
 
-  public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-    EDAPanel.currentPanel = new EDAPanel(panel, extensionUri, EDAPanel.currentPanel?._startPipelineId ?? "");
+  public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, tableIdentifier: string) {
+    const existingPanel = EDAPanel.panelsMap.get(tableIdentifier);
+    if (existingPanel) {
+      existingPanel.dispose();
+    }
+    const revivedPanel = new EDAPanel(panel, extensionUri, existingPanel?._startPipelineId ?? "", tableIdentifier);
+    EDAPanel.panelsMap.set(tableIdentifier, revivedPanel);
   }
 
   public dispose() {
     console.log("dispose");
-    EDAPanel.currentPanel = undefined;
+    EDAPanel.panelsMap.delete(this._tableIdentifier ?? 'undefinedPanelIdentifier');
 
     // Clean up our panel
     this._panel.dispose();
