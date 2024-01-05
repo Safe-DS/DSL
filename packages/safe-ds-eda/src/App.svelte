@@ -3,14 +3,13 @@
     import Debugger from './components/Debugger.svelte';
     import TableView from './components/TableView.svelte';
     import Sidebar from './components/Sidebar.svelte';
+    import { throttle } from 'lodash';
 
     let sidebarWidth = 307; // Initial width of the sidebar in pixels
 
     // Function to handle the dragging
     function handleDrag(e: MouseEvent) {
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-        document.addEventListener('mousemove', clearTextSelection);
+        const throttledOnMouseMove = throttle(onMouseMove, 30);
 
         let prevX = e.clientX;
 
@@ -25,10 +24,14 @@
         }
 
         function onMouseUp() {
-            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mousemove', throttledOnMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
             document.removeEventListener('mousemove', clearTextSelection);
         }
+
+        document.addEventListener('mousemove', throttledOnMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('mousemove', clearTextSelection);
     }
 
     function clearTextSelection() {
@@ -44,7 +47,7 @@
         <div class="resizer" on:mousedown={handleDrag}></div>
     </div>
     <div class="tableWrapper">
-        <TableView />
+        <TableView {sidebarWidth} />
     </div>
 </main>
 
