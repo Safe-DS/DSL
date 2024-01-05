@@ -111,6 +111,8 @@ export class EDAPanel {
       panel._tableIdentifier = tableIdentifier;
       panel._pythonServerPort = pythonServerPort;
       panel._startPipelineId = startPipelineId;
+
+      // Have to update and construct state as table placeholder could've changed in code
       panel._update();
       panel.constructCurrentState().then((state) => {
         webviewApi.postMessage(panel!._panel.webview, {

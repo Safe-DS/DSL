@@ -80,6 +80,7 @@
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumn: HTMLElement | null = null;
+    let containerRect: DOMRect | null = null;
 
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
@@ -102,9 +103,9 @@
     function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
         if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
             dragCurrentIndex = columnIndex;
-            const containerRect = draggedColumn.parentElement!.getBoundingClientRect();
+            if (!containerRect) containerRect = draggedColumn.parentElement!.getBoundingClientRect();
             requestAnimationFrame(() => {
-                draggedColumn!.style.left = event.clientX - containerRect.x + 'px';
+                draggedColumn!.style.left = event.clientX - containerRect!.x + 'px';
                 draggedColumn!.style.top = event.clientY + 'px';
             });
         }
@@ -144,22 +145,35 @@
     // --- Scroll loading ---
     let tableContainer: HTMLElement; // Reference to the table container
     const rowHeight = 33; // Adjust based on your row height
-    const buffer = 50; // Number of rows to render outside the viewport
+    const buffer = 25; // Number of rows to render outside the viewport
     let visibleStart = 0;
     let visibleEnd = 0;
+    let visibleRowCount = 10;
 
     onMount(() => {
+        recalculateVisibleRowCount();
         updateVisibleRows();
-        tableContainer.addEventListener('scroll', updateVisibleRows);
+        tableContainer.addEventListener('scroll', throttledUpdateVisibleRows);
+        window.addEventListener('resize', throttledRecalculateVisibleRowCount);
+
+        return () => {
+            tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
+            window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
+        };
     });
+
+    const throttledUpdateVisibleRows = throttle(updateVisibleRows, 20);
 
     function updateVisibleRows(): void {
         const scrollTop = tableContainer.scrollTop;
-        const visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + buffer;
         visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
         visibleEnd = visibleStart + visibleRowCount;
+    }
 
-        console.log(visibleStart, visibleEnd, numRows);
+    const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
+
+    function recalculateVisibleRowCount(): void {
+        visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + buffer;
     }
 </script>
 
@@ -224,7 +238,7 @@
                             </div>
                         </div>
                     </td>
-                    {#each Array(numRows - 1) as _, i}
+                    {#each $currentState.table.columns as column, i}
                         <td
                             class="profilingBanner"
                             on:click={() => (showProfiling = !showProfiling)}
