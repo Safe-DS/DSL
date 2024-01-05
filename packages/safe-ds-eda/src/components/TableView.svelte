@@ -149,31 +149,46 @@
     let visibleStart = 0;
     let visibleEnd = 0;
     let visibleRowCount = 10;
+    let scrollTop = 0;
+    let intervalId: number;
 
     onMount(() => {
+        updateScrollTop();
         recalculateVisibleRowCount();
-        updateVisibleRows();
         tableContainer.addEventListener('scroll', throttledUpdateVisibleRows);
+        tableContainer.addEventListener('scroll', updateScrollTop);
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
+        intervalId = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
 
         return () => {
             tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
+            tableContainer.addEventListener('scroll', updateScrollTop);
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
+            clearInterval(intervalId);
         };
     });
 
-    const throttledUpdateVisibleRows = throttle(updateVisibleRows, 20);
+    const throttledUpdateVisibleRows = throttle(updateVisibleRows, 40);
 
     function updateVisibleRows(): void {
-        const scrollTop = tableContainer.scrollTop;
         visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
         visibleEnd = visibleStart + visibleRowCount;
+    }
+
+    function updateScrollTop(): void {
+        scrollTop = tableContainer.scrollTop;
+        console.log(scrollTop + window.innerHeight);
+        console.log(numRows * rowHeight);
+        if (scrollTop + window.innerHeight >= numRows * rowHeight) {
+            updateVisibleRows();
+        }
     }
 
     const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
 
     function recalculateVisibleRowCount(): void {
         visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + buffer;
+        updateVisibleRows();
     }
 </script>
 
@@ -182,9 +197,9 @@
         <span>Loading ...</span>
     {:else}
         <div class="content-wrapper" style="height: {numRows * rowHeight}px;">
-            <table style="min-width: {minTableWidthString};">
-                <thead>
-                    <tr>
+            <table>
+                <thead style="min-width: {minTableWidthString}; position: relative; top: {scrollTop}px;">
+                    <tr class="headerRow" style="height: {rowHeight}px;">
                         <th class="firstColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}></th>
                         {#each $currentState.table.columns as column, index}
                             <th
@@ -203,7 +218,7 @@
                         {/each}
                     </tr>
                 </thead>
-                <tr class="hiddenProfilingWrapper no-hover">
+                <tr class="hiddenProfilingWrapper no-hover" style="top: {scrollTop}px;">
                     <td
                         class="firstColumn border-right profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -220,7 +235,7 @@
                         </td>
                     {/each}
                 </tr>
-                <tr class="profilingBannerRow">
+                <tr class="profilingBannerRow" style="height: {rowHeight}px; top: {scrollTop}px;">
                     <td
                         class="firstColumn border-right profilingBanner"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -287,6 +302,12 @@
         table-layout: fixed;
         width: 100%;
     }
+
+    .headerRow {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
     thead tr:hover {
         background-color: transparent;
     }
@@ -299,7 +320,6 @@
         color: var(--bg-bright);
         font-weight: 500;
         font-size: 1.1rem;
-        position: relative;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -345,6 +365,17 @@
         border-right: 2px solid var(--bg-bright);
     }
 
+    .hiddenProfilingWrapper {
+        position: relative !important;
+        z-index: 10;
+    }
+
+    .profilingBannerRow {
+        position: relative;
+        z-index: 10;
+        border-top: 2px solid var(--bg-bright);
+    }
+
     .profilingBannerRow * {
         border-left: none !important;
         border-right: none !important;
@@ -371,6 +402,7 @@
         border-bottom: 3px solid var(--bg-bright);
         user-select: none;
         padding-left: 0px;
+        z-index: 10;
     }
     .profilingBanner:hover {
         cursor: pointer;
