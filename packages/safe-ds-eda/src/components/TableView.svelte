@@ -4,6 +4,8 @@
     import { currentState } from '../webviewState';
     import CaretIcon from '../icons/caret.svelte';
 
+    export let sidebarWidth: number;
+
     let showProfiling = false;
     let minTableWidthString = '0px';
     let headerElements: HTMLElement[] = [];
@@ -80,7 +82,6 @@
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumn: HTMLElement | null = null;
-    let containerRect: DOMRect | null = null;
 
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
@@ -103,9 +104,13 @@
     function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
         if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
             dragCurrentIndex = columnIndex;
-            if (!containerRect) containerRect = draggedColumn.parentElement!.getBoundingClientRect();
             requestAnimationFrame(() => {
-                draggedColumn!.style.left = event.clientX - containerRect!.x + 'px';
+                draggedColumn!.style.left =
+                    event.clientX +
+                    draggedColumn!.parentElement!.parentElement!.parentElement!.parentElement!.parentElement!
+                        .scrollLeft -
+                    sidebarWidth +
+                    'px';
                 draggedColumn!.style.top = event.clientY + 'px';
             });
         }
@@ -177,11 +182,6 @@
 
     function updateScrollTop(): void {
         scrollTop = tableContainer.scrollTop;
-        console.log(scrollTop + window.innerHeight);
-        console.log(numRows * rowHeight);
-        if (scrollTop + window.innerHeight >= numRows * rowHeight) {
-            updateVisibleRows();
-        }
     }
 
     const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
@@ -204,7 +204,11 @@
                         {#each $currentState.table.columns as column, index}
                             <th
                                 bind:this={headerElements[index]}
-                                class:reorderHighlighted={isReorderDragging && dragCurrentIndex === index}
+                                class:reorderHighlightedRight={isReorderDragging && dragCurrentIndex === index}
+                                class:reorderHighlightedLeft={isReorderDragging &&
+                                    dragStartIndex !== index &&
+                                    (dragCurrentIndex === index + 1 ||
+                                        (dragStartIndex === index + 1 && dragCurrentIndex === index + 2))}
                                 style="width: {getColumnWidth(column[1].name)}"
                                 on:mousedown={(event) => handleReorderDragStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
@@ -304,9 +308,9 @@
     }
 
     .headerRow {
-        position: sticky;
+        position: relative;
         top: 0;
-        z-index: 10;
+        z-index: 1000;
     }
     thead tr:hover {
         background-color: transparent;
@@ -447,9 +451,12 @@
             opacity 0.5s ease;
     }
 
-    .reorderHighlighted {
-        border-left: 3px solid rgb(75, 75, 75) !important;
-        border-bottom: 3px solid var(--bg-bright) !important;
+    .reorderHighlightedLeft {
+        background: linear-gradient(to right, #036ed1 0%, #036ed1 calc(100% - 2px), white calc(100% - 2px), white 100%);
+    }
+
+    .reorderHighlightedRight {
+        background: linear-gradient(to left, #036ed1 0%, #036ed1 calc(100% - 2px), white calc(100% - 2px), white 100%);
     }
 
     .dragging {
