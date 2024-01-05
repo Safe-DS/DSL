@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { throttle } from 'lodash';
     import { currentState } from '../webviewState';
     import CaretIcon from '../icons/caret.svelte';
 
@@ -45,6 +46,8 @@
     let startX: number;
     let targetColumn: HTMLElement;
 
+    const throttledDoResizeDrag = throttle(doResizeDrag, 30);
+
     function startResizeDrag(event: MouseEvent, columnIndex: number): void {
         event.stopPropagation();
         const columnElement = headerElements[columnIndex];
@@ -52,21 +55,23 @@
         startX = event.clientX;
         startWidth = columnElement.offsetWidth;
         targetColumn = columnElement;
-        document.addEventListener('mousemove', doResizeDrag);
+        document.addEventListener('mousemove', throttledDoResizeDrag);
         document.addEventListener('mouseup', stopResizeDrag);
     }
 
     function doResizeDrag(event: MouseEvent): void {
         if (isResizeDragging && targetColumn) {
             const currentWidth = startWidth + event.clientX - startX;
-            targetColumn.style.width = `${currentWidth}px`;
-            savedColumnWidths.set(targetColumn.innerText, currentWidth);
+            requestAnimationFrame(() => {
+                targetColumn.style.width = `${currentWidth}px`;
+                savedColumnWidths.set(targetColumn.innerText, currentWidth);
+            });
         }
     }
 
     function stopResizeDrag(): void {
         isResizeDragging = false;
-        document.removeEventListener('mousemove', doResizeDrag);
+        document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
     }
 
@@ -75,6 +80,8 @@
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumn: HTMLElement | null = null;
+
+    const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
     function handleReorderDragStart(event: MouseEvent, columnIndex: number): void {
         document.addEventListener('mouseup', handleReorderDragEnd);
@@ -94,11 +101,12 @@
 
     function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
         if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
-            // Logic to provide visual feedback and determine the target column
             dragCurrentIndex = columnIndex;
             const containerRect = draggedColumn.parentElement!.getBoundingClientRect();
-            draggedColumn.style.left = event.clientX - containerRect.x + 'px';
-            draggedColumn.style.top = event.clientY + 'px';
+            requestAnimationFrame(() => {
+                draggedColumn!.style.left = event.clientX - containerRect.x + 'px';
+                draggedColumn!.style.top = event.clientY + 'px';
+            });
         }
     }
 
@@ -147,7 +155,7 @@
 
     function updateVisibleRows(): void {
         const scrollTop = tableContainer.scrollTop;
-        const visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + 2 * buffer;
+        const visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + buffer;
         visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
         visibleEnd = visibleStart + visibleRowCount;
 
@@ -163,14 +171,14 @@
             <table style="min-width: {minTableWidthString};">
                 <thead>
                     <tr>
-                        <th class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}></th>
+                        <th class="firstColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}></th>
                         {#each $currentState.table.columns as column, index}
                             <th
                                 bind:this={headerElements[index]}
                                 class:reorderHighlighted={isReorderDragging && dragCurrentIndex === index}
                                 style="width: {getColumnWidth(column[1].name)}"
                                 on:mousedown={(event) => handleReorderDragStart(event, index)}
-                                on:mousemove={(event) => handleReorderDragOver(event, index)}
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
                                 <!-- svelte-ignore a11y-no-static-element-interactions -->
                                 <div
@@ -184,13 +192,13 @@
                 <tr class="hiddenProfilingWrapper no-hover">
                     <td
                         class="firstColumn border-right profiling"
-                        on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     {#each $currentState.table.columns as column, index}
                         <td
                             class="profiling"
                             class:expanded={showProfiling}
-                            on:mousemove={(event) => handleReorderDragOver(event, index)}
+                            on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                         >
                             <div class="content" class:expanded={showProfiling}>
                                 Heyyyyyyyyyyy <br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey
@@ -201,12 +209,12 @@
                 <tr class="profilingBannerRow">
                     <td
                         class="firstColumn border-right profilingBanner"
-                        on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     <td
                         class="profilingBanner"
                         on:click={() => (showProfiling = !showProfiling)}
-                        on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
@@ -220,7 +228,7 @@
                         <td
                             class="profilingBanner"
                             on:click={() => (showProfiling = !showProfiling)}
-                            on:mousemove={(event) => handleReorderDragOver(event, i + 1)}
+                            on:mousemove={(event) => throttledHandleReorderDragOver(event, i + 1)}
                         >
                         </td>
                     {/each}
@@ -228,11 +236,11 @@
                 <tbody style="position: relative; top: {visibleStart * rowHeight}px;">
                     {#each Array(Math.min(visibleEnd, numRows) - visibleStart) as _, i}
                         <tr style="height: {rowHeight}px;">
-                            <td class="firstColumn" on:mousemove={(event) => handleReorderDragOver(event, 0)}
+                            <td class="firstColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                                 >{visibleStart + i}</td
                             >
                             {#each $currentState.table.columns as column, index}
-                                <td on:mousemove={(event) => handleReorderDragOver(event, index)}
+                                <td on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     >{column[1].values[visibleStart + i] || ''}</td
                                 >
                             {/each}
