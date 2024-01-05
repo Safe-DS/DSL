@@ -209,7 +209,7 @@
                                     dragStartIndex !== index &&
                                     (dragCurrentIndex === index + 1 ||
                                         (dragStartIndex === index + 1 && dragCurrentIndex === index + 2))}
-                                style="width: {getColumnWidth(column[1].name)}"
+                                style="width: {getColumnWidth(column[1].name)}; position: relative;"
                                 on:mousedown={(event) => handleReorderDragStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
@@ -460,7 +460,7 @@
     }
 
     .dragging {
-        position: absolute;
+        position: absolute !important;
         pointer-events: none; /* Make it non-interactive */
         z-index: 1000; /* Ensure it's on top */
         border: 3px solid var(--bg-dark);
