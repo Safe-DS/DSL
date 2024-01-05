@@ -112,15 +112,12 @@ export class EDAPanel {
       panel._pythonServerPort = pythonServerPort;
       panel._startPipelineId = startPipelineId;
       panel._update();
-      // Otherwise fired in 'onDidChangeViewState' listener
-      if (panel._panel.visible) {
-        panel.constructCurrentState().then((state) => {
-          webviewApi.postMessage(panel!._panel.webview, {
-            command: "setWebviewState",
-            value: state,
-          });
+      panel.constructCurrentState().then((state) => {
+        webviewApi.postMessage(panel!._panel.webview, {
+          command: "setWebviewState",
+          value: state,
         });
-      }
+      });
       return;
     } else {
       // Otherwise, create a new panel.
