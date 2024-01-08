@@ -1,7 +1,7 @@
 /**
  * Exit codes for the CLI.
  */
-export enum ExitCodes {
+export enum ExitCode {
     /**
      * Everything went well.
      */

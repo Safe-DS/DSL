@@ -1,7 +1,7 @@
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { LangiumDocument, URI } from 'langium';
 import chalk from 'chalk';
-import { ExitCodes } from '../cli/exitCodes.js';
+import { ExitCode } from '../cli/exitCode.js';
 import { positionToString } from '@safe-ds/lang';
 import { uriToRelativePath } from './files.js';
 
@@ -89,7 +89,7 @@ export const exitIfDocumentHasErrors = function (document: LangiumDocument): voi
         for (const error of errors) {
             console.error(diagnosticToString(document.uri, error));
         }
-        process.exit(ExitCodes.FileHasErrors);
+        process.exit(ExitCode.FileHasErrors);
     }
 };
 

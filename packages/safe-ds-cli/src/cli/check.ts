@@ -4,7 +4,7 @@ import { extractDocuments } from '../helpers/documents.js';
 import { diagnosticToString, getDiagnostics } from '../helpers/diagnostics.js';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import chalk from 'chalk';
-import { ExitCodes } from './exitCodes.js';
+import { ExitCode } from './exitCode.js';
 
 export const check = async (fsPaths: string[], options: CheckOptions): Promise<void> => {
     const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
@@ -23,7 +23,7 @@ export const check = async (fsPaths: string[], options: CheckOptions): Promise<v
 
     if (errorCount > 0) {
         console.error(chalk.red(`Found ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}.`));
-        process.exit(ExitCodes.FileHasErrors);
+        process.exit(ExitCode.FileHasErrors);
     } else {
         console.log(chalk.green(`No errors found.`));
     }

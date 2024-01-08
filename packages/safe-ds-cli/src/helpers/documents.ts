@@ -1,9 +1,10 @@
-import chalk from 'chalk';
-import { LangiumDocument, LangiumServices, URI } from 'langium';
+import { LangiumDocument, LangiumServices, stream, URI } from 'langium';
 import fs from 'node:fs';
 import path from 'node:path';
-import { ExitCodes } from '../cli/exitCodes.js';
+import { ExitCode } from '../cli/exitCode.js';
 import { globSync } from 'glob';
+import { Result } from 'true-myth';
+import chalk from 'chalk';
 
 /**
  * Extracts a document from a file name.
@@ -18,7 +19,12 @@ export const extractDocuments = async function (
 
     // Build documents
     const uris = processPaths(services, fsPaths);
-    const documents = uris.map((uri) => langiumDocuments.getOrCreateDocument(uri));
+    if (uris.isErr) {
+        console.error(chalk.red(uris.error.message));
+        process.exit(uris.error.code);
+    }
+
+    const documents = uris.value.map((uri) => langiumDocuments.getOrCreateDocument(uri));
     await documentBuilder.build(documents, { validation: true });
     return documents;
 };
@@ -29,17 +35,20 @@ export const extractDocuments = async function (
  *
  * @returns The URIs of the matched files.
  */
-export const processPaths = (services: LangiumServices, fsPaths: string[]): URI[] => {
+export const processPaths = (services: LangiumServices, fsPaths: string[]): Result<URI[], ProcessPathsError> => {
     // Safe-DS file extensions
     const extensions = services.LanguageMetaData.fileExtensions;
     const pattern = `**/*{${extensions.join(',')}}`;
 
-    // eslint-disable-next-line array-callback-return
-    return fsPaths.flatMap((fsPath) => {
+    const absolutePaths: string[] = [];
+
+    for (const fsPath of fsPaths) {
         // Path must exist
         if (!fs.existsSync(fsPath)) {
-            console.error(chalk.red(`Path '${fsPath}' does not exist.`));
-            process.exit(ExitCodes.MissingPath);
+            return Result.err({
+                message: `Path '${fsPath}' does not exist.`,
+                code: ExitCode.MissingPath,
+            });
         }
 
         // Path must be a file or directory
@@ -47,17 +56,45 @@ export const processPaths = (services: LangiumServices, fsPaths: string[]): URI[
         if (stat.isFile()) {
             // File must have a Safe-DS extension
             if (!extensions.includes(path.extname(fsPath))) {
-                console.error(chalk.red(`File '${fsPath}' does not have a Safe-DS extension.`));
-                process.exit(ExitCodes.FileWithoutSafeDsExtension);
+                return Result.err({
+                    message: `File '${fsPath}' does not have a Safe-DS extension.`,
+                    code: ExitCode.FileWithoutSafeDsExtension,
+                });
             }
 
-            return URI.file(path.resolve(fsPath));
+            absolutePaths.push(path.resolve(fsPath));
         } else if (stat.isDirectory()) {
             const cwd = path.resolve(fsPath);
-            return globSync(pattern, { cwd, nodir: true }).map((it) => URI.file(path.resolve(cwd, it)));
+            const uris = globSync(pattern, { cwd, nodir: true }).map((it) => path.resolve(cwd, it));
+            absolutePaths.push(...uris);
         } else {
-            console.error(chalk.red(`Path '${fsPath}' is neither a file nor a directory.`));
-            process.exit(ExitCodes.NotAFileOrDirectory);
+            return Result.err({
+                message: `Path '${fsPath}' is neither a file nor a directory.`,
+                code: ExitCode.NotAFileOrDirectory,
+            });
         }
-    });
+    }
+
+    // Remove duplicates and sort. Has to be done before creating URI objects.
+    const result = stream(absolutePaths)
+        .distinct()
+        .toArray()
+        .sort()
+        .map((it) => URI.file(it));
+    return Result.ok(result);
 };
+
+/**
+ * An error that occurred while processing paths.
+ */
+export interface ProcessPathsError {
+    /**
+     * The message of the error.
+     */
+    message: string;
+
+    /**
+     * The exit code that should be used when terminating the process.
+     */
+    code: ExitCode;
+}

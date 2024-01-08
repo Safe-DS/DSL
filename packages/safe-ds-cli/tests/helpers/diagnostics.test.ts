@@ -79,7 +79,7 @@ describe('diagnosticToString', () => {
         },
     ];
 
-    it.each(tests)('should return the correct string for $testName', ({ diagnostic, options, expected }) => {
+    it.each(tests)('$testName', ({ diagnostic, options, expected }) => {
         const uri = URI.file(path.join(process.cwd(), 'test.sdstest'));
         const actual = diagnosticToString(uri, diagnostic, options);
         expect(actual).toBe(expected);
