@@ -58,7 +58,7 @@ describe('safe-ds', () => {
 
         it('should show errors in wrong files', () => {
             const process = spawnCheckProcess([], ['.']);
-            expect(process.stderr.toString()).toMatch(/Found \d+ errors?\./);
+            expect(process.stderr.toString()).toMatch(/Found \d+ errors?\./u);
             expect(process.status).toBe(ExitCode.FileHasErrors);
         });
 
@@ -86,7 +86,7 @@ describe('safe-ds', () => {
             expect(process.status).toBe(ExitCode.MissingPath);
         });
 
-        it('should show an error if the file has the wrong extension', () => {
+        it('should show an error if a file has the wrong extension', () => {
             const process = spawnCheckProcess([], ['not safe-ds.txt']);
             expect(process.stderr.toString()).toContain('does not have a Safe-DS extension');
             expect(process.status).toBe(ExitCode.FileWithoutSafeDsExtension);
@@ -142,8 +142,8 @@ describe('safe-ds', () => {
             expect(process.status).toBe(ExitCode.FileWithoutSafeDsExtension);
         });
 
-        it('should show an error if the Safe-DS file has errors', () => {
-            const process = spawnGenerateProcess([], ['contains errors.sdstest']);
+        it('should show an error if a Safe-DS file has errors', () => {
+            const process = spawnGenerateProcess([], ['.']);
             expect(process.stderr.toString()).toContain(
                 "Could not resolve reference to SdsNamedTypeDeclaration named 'Unresolved'",
             );
