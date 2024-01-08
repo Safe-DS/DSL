@@ -26,7 +26,13 @@ export const diagnosticToString = (
     return colorizeBySeverity(diagnostic, message, options);
 };
 
+/**
+ * Options for the `diagnosticToString` function.
+ */
 export interface DiagnosticToStringOptions {
+    /**
+     * If true, warnings are treated as errors.
+     */
     strict?: boolean;
 }
 

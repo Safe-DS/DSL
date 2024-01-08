@@ -22,8 +22,8 @@ program
 // Generate command
 program
     .command('generate')
-    .argument('<file>', `file to generate Python code for`)
-    .option('-o, --out <dir>', 'destination directory of generation')
+    .argument('<paths...>', `list of files or directories to generate Python code for`)
+    .option('-o, --out <dir>', 'destination directory for generation', 'generated')
     .option('-s, --sourcemaps', 'whether source maps should be generated', false)
     .description('generate Python code')
     .action(generate);

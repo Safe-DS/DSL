@@ -5,25 +5,25 @@ export enum ExitCode {
     /**
      * Everything went well.
      */
-    Success,
+    Success = 0,
 
     /**
      * The given path does not exist.
      */
-    MissingPath,
+    MissingPath = 100,
 
     /**
      * The given path is not a file or directory.
      */
-    NotAFileOrDirectory,
+    NotAFileOrDirectory = 101,
 
     /**
      * The given file does not have a Safe-DS extension.
      */
-    FileWithoutSafeDsExtension,
+    FileWithoutSafeDsExtension = 102,
 
     /**
      * The given file has errors.
      */
-    FileHasErrors,
+    FileHasErrors = 103,
 }

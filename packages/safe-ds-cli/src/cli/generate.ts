@@ -8,20 +8,27 @@ import { extractDocuments } from '../helpers/documents.js';
 import { makeParentDirectoriesSync } from '../helpers/files.js';
 import { exitIfDocumentHasErrors } from '../helpers/diagnostics.js';
 
-export const generate = async (fileName: string, options: GenerateOptions): Promise<void> => {
+export const generate = async (fsPaths: string[], options: GenerateOptions): Promise<void> => {
     const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
-    const document = (await extractDocuments(services, [fileName]))[0]!;
-    exitIfDocumentHasErrors(document);
-    const destination = options.out ?? path.join(path.dirname(fileName), 'generated');
-    const generatedFiles = services.generation.PythonGenerator.generate(document, {
-        destination: URI.file(path.resolve(destination)),
-        createSourceMaps: options.sourcemaps,
-    });
+    const documents = await extractDocuments(services, fsPaths);
 
-    for (const file of generatedFiles) {
-        const fsPath = URI.parse(file.uri).fsPath;
-        makeParentDirectoriesSync(fsPath);
-        fs.writeFileSync(fsPath, file.getText());
+    // Exit if any document has errors before generating code
+    for (const document of documents) {
+        exitIfDocumentHasErrors(document);
+    }
+
+    // Generate code
+    for (const document of documents) {
+        const generatedFiles = services.generation.PythonGenerator.generate(document, {
+            destination: URI.file(path.resolve(options.out)),
+            createSourceMaps: options.sourcemaps,
+        });
+
+        for (const file of generatedFiles) {
+            const fsPath = URI.parse(file.uri).fsPath;
+            makeParentDirectoriesSync(fsPath);
+            fs.writeFileSync(fsPath, file.getText());
+        }
     }
 
     console.log(chalk.green(`Python code generated successfully.`));
@@ -31,6 +38,6 @@ export const generate = async (fileName: string, options: GenerateOptions): Prom
  * Command line options for the `generate` command.
  */
 export interface GenerateOptions {
-    out?: string;
+    out: string;
     sourcemaps: boolean;
 }
