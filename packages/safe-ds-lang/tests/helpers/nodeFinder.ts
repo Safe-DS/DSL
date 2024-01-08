@@ -1,10 +1,10 @@
 import { Location, Range } from 'vscode-languageserver';
 import { isRangeEqual, parseHelper } from 'langium/test';
-import { SafeDsServices } from '../../src/language/safe-ds-module.js';
+import { SafeDsServices } from '../../src/language/index.js';
 import { AstNode, streamAllContents, streamAst, URI } from 'langium';
 import { SdsModule } from '../../src/language/generated/ast.js';
 import { AssertionError } from 'assert';
-import { locationToString } from './location.js';
+import { locationToString } from '../../src/helpers/locations.js';
 
 /**
  * Find the AstNode at the given location. It must either fill the entire range or have a name node that does.

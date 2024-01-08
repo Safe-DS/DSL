@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from 'langium';
-import { duplicatesBy } from '../../../helpers/collectionUtils.js';
+import { duplicatesBy } from '../../../helpers/collections.js';
 import { SdsDeclaration } from '../../generated/ast.js';
 import { getAnnotationCalls } from '../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../safe-ds-module.js';

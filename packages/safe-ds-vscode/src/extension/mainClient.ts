@@ -12,7 +12,7 @@ import {
     stopPythonServer,
     tryMapToSafeDSSource,
 } from './pythonServer.js';
-import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
+import { createSafeDsServicesWithBuiltins, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
 import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
@@ -20,17 +20,15 @@ import crypto from 'crypto';
 import { URI } from 'langium';
 
 let client: LanguageClient;
-let sdsServices: SafeDsServices;
+let services: SafeDsServices;
 
 // This function is called when the extension is activated.
-export const activate = function (context: vscode.ExtensionContext): void {
+export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
-    startPythonServer();
-    createSafeDsServicesWithBuiltins(NodeFileSystem).then((services) => {
-        sdsServices = services.SafeDs;
-        acceptRunRequests(context);
-    });
+    await startPythonServer();
+    services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    acceptRunRequests(context);
 };
 
 // This function is called when the extension is deactivated.
@@ -138,7 +136,9 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             }
             if (
                 pipelinePath &&
-                !SAFE_DS_FILE_EXTENSIONS.some((extension: string) => pipelinePath!.fsPath.endsWith(extension))
+                !services.LanguageMetaData.fileExtensions.some((extension: string) =>
+                    pipelinePath!.fsPath.endsWith(extension),
+                )
             ) {
                 vscode.window.showErrorMessage(`Could not run ${pipelinePath!.fsPath} as it is not a Safe-DS file`);
                 return;
@@ -149,7 +149,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             }
             const pipelineId = crypto.randomUUID();
             printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
-            executePipeline(sdsServices, pipelinePath.fsPath, pipelineId);
+            executePipeline(services, pipelinePath.fsPath, pipelineId);
         }),
     );
     vscode.workspace.onDidChangeConfiguration((event) => {

@@ -4,7 +4,7 @@ import { isRangeEqual } from 'langium/test';
 import { describe, it } from 'vitest';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../../src/helpers/locations.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { createValidationTests, ExpectedIssue } from './creator.js';
 

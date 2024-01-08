@@ -2,7 +2,7 @@ import { hasContainerOfType, ValidationAcceptor } from 'langium';
 import { isSdsClass, SdsFunction } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { findFirstAnnotationCallOf, getParameters } from '../../helpers/nodeProperties.js';
-import { pluralize } from '../../../helpers/stringUtils.js';
+import { pluralize } from '../../../helpers/strings.js';
 
 export const CODE_PYTHON_CALL_INVALID_TEMPLATE_EXPRESSION = 'python-call/invalid-template-expression';
 

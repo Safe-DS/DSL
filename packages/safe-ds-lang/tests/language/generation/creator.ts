@@ -12,7 +12,7 @@ import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
-import { locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../../src/helpers/locations.js';
 import { URI } from 'langium';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;

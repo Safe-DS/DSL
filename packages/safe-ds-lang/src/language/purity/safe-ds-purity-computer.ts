@@ -7,7 +7,7 @@ import {
     Stream,
     WorkspaceCache,
 } from 'langium';
-import { isEmpty } from '../../helpers/collectionUtils.js';
+import { isEmpty } from '../../helpers/collections.js';
 import type { SafeDsCallGraphComputer } from '../flow/safe-ds-call-graph-computer.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import {

@@ -1,5 +1,5 @@
 import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
-import { isEmpty, isEqualSet } from '../../helpers/collectionUtils.js';
+import { isEmpty, isEqualSet } from '../../helpers/collections.js';
 import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';

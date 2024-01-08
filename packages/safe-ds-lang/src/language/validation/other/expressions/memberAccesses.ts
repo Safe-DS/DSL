@@ -3,7 +3,7 @@ import { isSdsCall, isSdsEnumVariant, SdsMemberAccess } from '../../../generated
 import { ValidationAcceptor } from 'langium';
 import { UnknownType } from '../../../typing/model.js';
 import { getParameters } from '../../../helpers/nodeProperties.js';
-import { isEmpty } from '../../../../helpers/collectionUtils.js';
+import { isEmpty } from '../../../../helpers/collections.js';
 
 export const CODE_MEMBER_ACCESS_MISSING_ENUM_VARIANT_INSTANTIATION = 'member-access/missing-enum-variant-instantiation';
 export const CODE_MEMBER_ACCESS_MISSING_NULL_SAFETY = 'member-access/missing-null-safety';

@@ -1,5 +1,5 @@
 import { stream, type ValidationAcceptor } from 'langium';
-import { isSubset } from '../../helpers/collectionUtils.js';
+import { isSubset } from '../../helpers/collections.js';
 import { isSdsCall, isSdsFunction, isSdsList, SdsCall, type SdsFunction, SdsParameter } from '../generated/ast.js';
 import { findFirstAnnotationCallOf, getArguments, getParameters } from '../helpers/nodeProperties.js';
 import { StringConstant } from '../partialEvaluation/model.js';
