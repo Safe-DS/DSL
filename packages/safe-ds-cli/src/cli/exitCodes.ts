@@ -3,7 +3,7 @@
  */
 export enum ExitCodes {
     /**
-     * Everything went fine.
+     * Everything went well.
      */
     Success,
 

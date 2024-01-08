@@ -2,7 +2,7 @@ import { createSafeDsServicesWithBuiltins } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { extractDocuments } from '../helpers/documents.js';
 import { diagnosticToString, getDiagnostics } from '../helpers/diagnostics.js';
-import { DiagnosticSeverity } from 'vscode-languageserver';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import chalk from 'chalk';
 import { ExitCodes } from './exitCodes.js';
 
@@ -15,10 +15,7 @@ export const check = async (fsPaths: string[], options: CheckOptions): Promise<v
         for (const diagnostic of getDiagnostics(document)) {
             console.log(diagnosticToString(document.uri, diagnostic, options));
 
-            if (
-                diagnostic.severity === DiagnosticSeverity.Error ||
-                (diagnostic.severity === DiagnosticSeverity.Warning && options.strict)
-            ) {
+            if (isError(diagnostic, options)) {
                 errorCount++;
             }
         }
@@ -35,9 +32,16 @@ export const check = async (fsPaths: string[], options: CheckOptions): Promise<v
 /**
  * Command line options for the `check` command.
  */
-interface CheckOptions {
+export interface CheckOptions {
     /**
      * Whether the program should fail on warnings.
      */
     strict: boolean;
 }
+
+const isError = (diagnostic: Diagnostic, options: CheckOptions) => {
+    return (
+        diagnostic.severity === DiagnosticSeverity.Error ||
+        (diagnostic.severity === DiagnosticSeverity.Warning && options.strict)
+    );
+};

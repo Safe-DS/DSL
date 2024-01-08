@@ -6,6 +6,13 @@ import { positionToString } from '@safe-ds/lang';
 import { uriToRelativePath } from './files.js';
 
 /**
+ * Returns the diagnostics of the given document.
+ */
+export const getDiagnostics = (document: LangiumDocument): Diagnostic[] => {
+    return document.diagnostics ?? [];
+};
+
+/**
  * Converts the given diagnostic to a string.
  */
 export const diagnosticToString = (
@@ -15,11 +22,11 @@ export const diagnosticToString = (
 ): string => {
     const message = `${locationToString(uri, diagnostic)}: [${severityToString(diagnostic)}] ${
         diagnostic.message
-    } (${codeToString(diagnostic)})`;
+    }${codeToString(diagnostic)}`;
     return colorizeBySeverity(diagnostic, message, options);
 };
 
-interface DiagnosticToStringOptions {
+export interface DiagnosticToStringOptions {
     strict?: boolean;
 }
 
@@ -45,7 +52,12 @@ const severityToString = (diagnostic: Diagnostic): string => {
 };
 
 const codeToString = (diagnostic: Diagnostic): string => {
-    return String(diagnostic.code ?? diagnostic.data?.code ?? '');
+    const code = diagnostic.code ?? diagnostic.data?.code;
+    if (code) {
+        return ` (${code})`;
+    } else {
+        return '';
+    }
 };
 
 const colorizeBySeverity = (diagnostic: Diagnostic, message: string, options: DiagnosticToStringOptions): string => {
@@ -83,8 +95,4 @@ export const exitIfDocumentHasErrors = function (document: LangiumDocument): voi
 
 const getErrors = (document: LangiumDocument): Diagnostic[] => {
     return getDiagnostics(document).filter((it) => it.severity === DiagnosticSeverity.Error);
-};
-
-export const getDiagnostics = (document: LangiumDocument): Diagnostic[] => {
-    return document.diagnostics ?? [];
 };

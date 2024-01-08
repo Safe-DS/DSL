@@ -27,7 +27,10 @@ export const generate = async (fileName: string, options: GenerateOptions): Prom
     console.log(chalk.green(`Python code generated successfully.`));
 };
 
-interface GenerateOptions {
+/**
+ * Command line options for the `generate` command.
+ */
+export interface GenerateOptions {
     out?: string;
     sourcemaps: boolean;
 }
