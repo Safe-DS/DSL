@@ -20,7 +20,7 @@ import {
 import path from 'path';
 import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { groupBy } from '../../helpers/collectionUtils.js';
+import { groupBy } from '../../helpers/collections.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAbstractResult,

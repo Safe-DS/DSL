@@ -13,7 +13,7 @@ import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js
 import { createCallGraphTests } from './creator.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { isRangeEqual } from 'langium/test';
-import { locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../../src/helpers/locations.js';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 

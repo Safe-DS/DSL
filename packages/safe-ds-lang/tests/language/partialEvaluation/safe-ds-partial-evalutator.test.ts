@@ -2,7 +2,7 @@ import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { describe, it } from 'vitest';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
-import { locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../../src/helpers/locations.js';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { createPartialEvaluationTests } from './creator.js';

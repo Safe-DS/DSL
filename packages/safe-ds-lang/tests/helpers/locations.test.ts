@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isLocationEqual, locationToString, positionToString, rangeToString } from './location.js';
+import { isLocationEqual, locationToString, positionToString, rangeToString } from '../../src/helpers/locations.js';
 
 describe('positionToString', () => {
     it.each([

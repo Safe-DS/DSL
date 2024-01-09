@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeLineBreaks, pluralize } from '../../src/helpers/stringUtils.js';
+import { normalizeLineBreaks, pluralize } from '../../src/helpers/strings.js';
 
 describe('normalizeLineBreaks', () => {
     it.each([

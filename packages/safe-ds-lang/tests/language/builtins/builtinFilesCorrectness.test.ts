@@ -3,13 +3,13 @@ import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { beforeAll, describe, it } from 'vitest';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { isEmpty } from '../../../src/helpers/collectionUtils.js';
+import { isEmpty } from '../../../src/helpers/collections.js';
 import { uriToShortenedResourceName } from '../../../src/helpers/resources.js';
 import { listBuiltinFiles } from '../../../src/language/builtins/fileFinder.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { CODE_EXPERIMENTAL_LIBRARY_ELEMENT } from '../../../src/language/validation/builtins/experimental.js';
 import { CODE_EXPERIMENTAL_LANGUAGE_FEATURE } from '../../../src/language/validation/experimentalLanguageFeatures.js';
-import { locationToString } from '../../helpers/location.js';
+import { locationToString } from '../../../src/helpers/locations.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
