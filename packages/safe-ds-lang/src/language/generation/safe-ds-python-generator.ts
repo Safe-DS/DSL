@@ -1,4 +1,5 @@
 import {
+    AstNode,
     CompositeGeneratorNode,
     expandToNode,
     expandTracedToNode,
@@ -64,6 +65,7 @@ import {
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
+    SdsPlaceholder,
     SdsSegment,
     SdsStatement,
 } from '../generated/ast.js';
@@ -78,6 +80,7 @@ import {
     getStatements,
     Parameter,
     streamBlockLambdaResults,
+    streamPlaceholders,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
@@ -90,6 +93,7 @@ import {
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
+import { EndlessRecursion, FileRead, FileWrite, ImpurityReason } from '../purity/model.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -129,7 +133,7 @@ export class SafeDsPythonGenerator {
         const parentDirectoryPath = path.join(generateOptions.destination!.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
-        const generatedModule = this.generateModule(node);
+        const generatedModule = this.generateModule(node, generateOptions.targetPlaceholder);
         const { text, trace } = toStringAndTrace(generatedModule);
         const pythonOutputPath = `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`;
         if (generateOptions.createSourceMaps) {
@@ -231,14 +235,14 @@ export class SafeDsPythonGenerator {
         return moduleName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     }
 
-    private generateModule(module: SdsModule): CompositeGeneratorNode {
+    private generateModule(module: SdsModule, targetPlaceholder: string | undefined): CompositeGeneratorNode {
         const importSet = new Map<String, ImportData>();
         const segments = getModuleMembers(module)
             .filter(isSdsSegment)
             .map((segment) => this.generateSegment(segment, importSet));
         const pipelines = getModuleMembers(module)
             .filter(isSdsPipeline)
-            .map((pipeline) => this.generatePipeline(pipeline, importSet));
+            .map((pipeline) => this.generatePipeline(pipeline, importSet, targetPlaceholder));
         const imports = this.generateImports(Array.from(importSet.values()));
         const output = new CompositeGeneratorNode();
         output.trace(module);
@@ -317,8 +321,12 @@ export class SafeDsPythonGenerator {
         }`;
     }
 
-    private generatePipeline(pipeline: SdsPipeline, importSet: Map<String, ImportData>): CompositeGeneratorNode {
-        const infoFrame = new GenerationInfoFrame(importSet, true);
+    private generatePipeline(
+        pipeline: SdsPipeline,
+        importSet: Map<String, ImportData>,
+        targetPlaceholder: string | undefined,
+    ): CompositeGeneratorNode {
+        const infoFrame = new GenerationInfoFrame(importSet, true, targetPlaceholder);
         return expandTracedToNode(pipeline)`def ${traceToNode(
             pipeline,
             'name',
@@ -363,12 +371,232 @@ export class SafeDsPythonGenerator {
         }
     }
 
+    private getPlaceholderByName(block: SdsBlock, name: string): SdsPlaceholder | undefined {
+        return streamPlaceholders(block).find((placeholder) => placeholder.name === name);
+    }
+
+    private isNodeInsideBlockLambda(node: AstNode): boolean {
+        let nodePotentialBlockLambda: AstNode | undefined = node;
+        while (nodePotentialBlockLambda && !isSdsBlockLambda(nodePotentialBlockLambda)) {
+            nodePotentialBlockLambda = nodePotentialBlockLambda.$container;
+        }
+        return isSdsBlockLambda(nodePotentialBlockLambda);
+    }
+
+    private getAssignmentForPlaceholder(placeholder: SdsPlaceholder): SdsAssignment | undefined {
+        let assignment = placeholder.$container;
+        while (assignment !== undefined && !isSdsAssignment(assignment)) {
+            assignment = assignment.$container;
+        }
+        if (!assignment || !assignment.expression || !isSdsAssignment(assignment)) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+        return assignment;
+    }
+
+    private getAllPlaceholdersAndStatementsRelevantForPlaceholder(
+        targetPlaceholder: SdsPlaceholder,
+        allStatements: SdsStatement[],
+        neededPlaceholders: Set<string>,
+        neededStatements: Set<SdsStatement>,
+    ) {
+        // If placeholder is inside a lambda, do not continue; Only placeholders inside the pipeline are collected
+        if (this.isNodeInsideBlockLambda(targetPlaceholder)) {
+            return;
+        }
+        // Find assignment of placeholder, to search used placeholders and impure dependencies
+        let assignment = this.getAssignmentForPlaceholder(targetPlaceholder);
+        if (!assignment) {
+            /* c8 ignore next 2 */
+            return;
+        }
+        // If placeholder is already found, do not continue; It has been handled before
+        if (neededPlaceholders.has(targetPlaceholder.name) && neededStatements.has(assignment)) {
+            return;
+        }
+        neededPlaceholders.add(targetPlaceholder.name);
+        neededStatements.add(assignment);
+        // Get referenced placeholders of current placeholder. An expression in the assignment will always exist here
+        let placeholders = streamAllContents(assignment.expression!)
+            .filter(isSdsReference)
+            .filter((reference) => isSdsPlaceholder(reference.target.ref))
+            .map((reference) => <SdsPlaceholder>reference.target.ref!)
+            .toArray();
+        for (const referencedPlaceholder of placeholders) {
+            this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
+                referencedPlaceholder,
+                allStatements,
+                neededPlaceholders,
+                neededStatements,
+            );
+        }
+        // Get impure dependencies and follow them
+        let impureDependencies = this.getImpureDependenciesForStatement(assignment, allStatements);
+        for (const referencedStatement of impureDependencies) {
+            this.getAllPlaceholdersAndStatementsRelevantForStatement(
+                referencedStatement,
+                allStatements,
+                neededPlaceholders,
+                neededStatements,
+            );
+        }
+    }
+
+    private getAllPlaceholdersAndStatementsRelevantForStatement(
+        targetStatement: SdsStatement,
+        allStatements: SdsStatement[],
+        neededPlaceholders: Set<string>,
+        neededStatements: Set<SdsStatement>,
+    ) {
+        // If statement is inside a lambda, do not continue; Only statements inside the pipeline are collected
+        if (this.isNodeInsideBlockLambda(targetStatement)) {
+            /* c8 ignore next 2 */
+            return;
+        }
+        // If statement is already handled, do not continue
+        if (neededStatements.has(targetStatement)) {
+            return;
+        }
+        neededStatements.add(targetStatement);
+        // Find referenced placeholders
+        if (isSdsAssignment(targetStatement)) {
+            const placeholders = getAssignees(targetStatement).filter(isSdsPlaceholder);
+            for (const placeholder of placeholders) {
+                this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
+                    placeholder,
+                    allStatements,
+                    neededPlaceholders,
+                    neededStatements,
+                );
+            }
+        }
+        // Find impure dependencies and follow them
+        let impureDependencies = this.getImpureDependenciesForStatement(targetStatement, allStatements);
+        for (const referencedStatement of impureDependencies) {
+            this.getAllPlaceholdersAndStatementsRelevantForStatement(
+                referencedStatement,
+                allStatements,
+                neededPlaceholders,
+                neededStatements,
+            );
+        }
+    }
+
+    private getImpureDependenciesForStatement(
+        subject: SdsStatement,
+        statementsWithEffect: SdsStatement[],
+    ): Set<SdsStatement> {
+        // Get impurity reasons for subject statement
+        let impurityReasons = [];
+        if (isSdsAssignment(subject)) {
+            impurityReasons = this.purityComputer.getImpurityReasonsForExpression(subject.expression);
+        } else if (isSdsExpressionStatement(subject)) {
+            impurityReasons = this.purityComputer.getImpurityReasonsForExpression(subject.expression);
+        } else {
+            /* c8 ignore next 2 */
+            return new Set<SdsStatement>();
+        }
+        // If subject is pure, do not continue
+        if (impurityReasons.length === 0) {
+            return new Set<SdsStatement>();
+        }
+        // Find dependencies matching on impurity information
+        const dependencies = new Set<SdsStatement>();
+        for (const statement of statementsWithEffect) {
+            // Only statements before the current assignment can affect the current assignment
+            if (statement.$containerIndex! < subject.$containerIndex!) {
+                let pastImpurityReasons = [];
+                if (isSdsAssignment(statement)) {
+                    pastImpurityReasons = this.purityComputer.getImpurityReasonsForExpression(statement.expression);
+                } else if (isSdsExpressionStatement(statement)) {
+                    pastImpurityReasons = this.purityComputer.getImpurityReasonsForExpression(statement.expression);
+                } else {
+                    /* c8 ignore next 2 */
+                    continue;
+                }
+                for (const futureImpurityReason of impurityReasons) {
+                    for (const pastImpurityReason of pastImpurityReasons) {
+                        if (this.hasImpurityReasonEffectOnFuture(pastImpurityReason, futureImpurityReason)) {
+                            dependencies.add(statement);
+                        }
+                    }
+                }
+            }
+        }
+        return dependencies;
+    }
+
+    private hasImpurityReasonEffectOnFuture(reasonPast: ImpurityReason, reasonFuture: ImpurityReason) {
+        // Writes have an effect on reads, if the file is the same
+        if (reasonPast instanceof FileWrite && reasonFuture instanceof FileRead) {
+            return reasonPast.path === reasonFuture.path;
+        }
+        // Writes have an effect on other writes, if the file is the same
+        if (reasonPast instanceof FileWrite && reasonFuture instanceof FileWrite) {
+            return reasonPast.path === reasonFuture.path;
+        }
+        // Write only have effects on reads and writes
+        if (reasonPast instanceof FileWrite && !(reasonFuture instanceof FileRead) && !(reasonFuture instanceof FileWrite)) {
+            return false;
+        }
+        // Reads are only affected by writes
+        if (!(reasonPast instanceof FileWrite) && reasonFuture instanceof FileRead) {
+            return false;
+        }
+        // Other reasons can't affect writes
+        if (reasonFuture instanceof FileWrite) {
+            return false;
+        }
+        // Reads can't affect other reasons
+        if (reasonPast instanceof FileRead) {
+            return false;
+        }
+        // Endless recursions don't have any effect on others
+        if (reasonPast === EndlessRecursion || reasonFuture === EndlessRecursion) {
+            /* c8 ignore next 2 */
+            return false;
+        }
+        // For OtherImpurityReason, PotentiallyImpureParameterCall, UnknownCallableCall we can't say.
+        // So it might have an effect on other impure functions
+        return true;
+    }
+
+    private getStatementsNeededForPartialExecution(
+        targetPlaceholder: SdsPlaceholder,
+        statementsWithEffect: SdsStatement[],
+    ): SdsStatement[] {
+        const neededPlaceholders = new Set<string>();
+        const neededStatements = new Set<SdsStatement>();
+        this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
+            targetPlaceholder,
+            statementsWithEffect,
+            neededPlaceholders,
+            neededStatements,
+        );
+        //const statementsPartialExecution = statementsWithEffect.filter(isSdsAssignment).filter((stmt) =>
+        //    getAssignees(stmt)
+        //        .filter(isSdsPlaceholder)
+        //       .some((assignee) => neededPlaceholders.has(assignee.name)),
+        //);
+        //const impureDependencies = this.getImpureDependenciesForStatement();
+        //return statementsPartialExecution;
+        // Get all statements in sorted order
+        return Array.from(neededStatements.values()).sort((a, b) => a.$containerIndex! - b.$containerIndex!);
+    }
+
     private generateBlock(
         block: SdsBlock,
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
+        let targetPlaceholder = frame.targetPlaceholder
+            ? this.getPlaceholderByName(block, frame.targetPlaceholder)
+            : undefined;
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
+        if (targetPlaceholder) {
+            statements = this.getStatementsNeededForPartialExecution(targetPlaceholder, statements);
+        }
         if (statements.length === 0) {
             return traceToNode(block)('pass');
         }
@@ -386,15 +614,22 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean,
     ): CompositeGeneratorNode {
+        const blockLambdaCode: CompositeGeneratorNode[] = [];
         if (isSdsAssignment(statement)) {
-            return traceToNode(statement)(this.generateAssignment(statement, frame, generateLambda));
+            if (statement.expression) {
+                for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
+                    blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
+                }
+            }
+            blockLambdaCode.push(this.generateAssignment(statement, frame, generateLambda));
+            return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
+                separator: NL,
+            })!;
         } else if (isSdsExpressionStatement(statement)) {
-            const blockLambdaCode: CompositeGeneratorNode[] = [];
             for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
                 blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
             }
             blockLambdaCode.push(this.generateExpression(statement.expression, frame));
-
             return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
                 separator: NL,
             })!;
@@ -812,11 +1047,17 @@ class GenerationInfoFrame {
     private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
     private readonly importSet: Map<String, ImportData>;
     public readonly isInsidePipeline: boolean;
+    public readonly targetPlaceholder: string | undefined;
 
-    constructor(importSet: Map<String, ImportData> = new Map<String, ImportData>(), insidePipeline: boolean = false) {
+    constructor(
+        importSet: Map<String, ImportData> = new Map<String, ImportData>(),
+        insidePipeline: boolean = false,
+        targetPlaceholder: string | undefined = undefined,
+    ) {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
         this.isInsidePipeline = insidePipeline;
+        this.targetPlaceholder = targetPlaceholder;
     }
 
     addImport(importData: ImportData | undefined) {
@@ -836,4 +1077,5 @@ class GenerationInfoFrame {
 export interface GenerateOptions {
     destination: URI;
     createSourceMaps: boolean;
+    targetPlaceholder: string | undefined;
 }

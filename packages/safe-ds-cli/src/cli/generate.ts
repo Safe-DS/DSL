@@ -13,6 +13,7 @@ export const generate = async (fileName: string, opts: CliGenerateOptions): Prom
     const generatedFiles = services.generation.PythonGenerator.generate(document, {
         destination: URI.file(path.resolve(destination)),
         createSourceMaps: opts.sourcemaps,
+        targetPlaceholder: undefined
     });
 
     for (const file of generatedFiles) {

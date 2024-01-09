@@ -19,12 +19,24 @@ describe('generation', async () => {
         // Load all documents
         const documents = await loadDocuments(services, test.inputUris);
 
+        // Get target placeholder name for "run until"
+        let runUntilPlaceholderName: string | undefined = undefined;
+
+        if (test.runUntil) {
+            for (const document of documents) {
+                if (document.uri.toString() === test.runUntil.uri) {
+                    runUntilPlaceholderName = document.textDocument.getText(test.runUntil.range);
+                }
+            }
+        }
+
         // Generate code for all documents
         const actualOutputs = stream(documents)
             .flatMap((document) =>
                 pythonGenerator.generate(document, {
                     destination: test.actualOutputRoot,
                     createSourceMaps: true,
+                    targetPlaceholder: runUntilPlaceholderName
                 }),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])
