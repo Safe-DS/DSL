@@ -36,7 +36,7 @@ describe('generation', async () => {
                 pythonGenerator.generate(document, {
                     destination: test.actualOutputRoot,
                     createSourceMaps: true,
-                    targetPlaceholder: runUntilPlaceholderName
+                    targetPlaceholder: runUntilPlaceholderName,
                 }),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])
