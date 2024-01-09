@@ -76,11 +76,10 @@ import {
     getAssignees,
     getImportedDeclarations,
     getImports,
-    getModuleMembers,
+    getModuleMembers, getPlaceholderByName,
     getStatements,
     Parameter,
     streamBlockLambdaResults,
-    streamPlaceholders,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
@@ -93,7 +92,6 @@ import {
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
-import { EndlessRecursion, FileRead, FileWrite, ImpurityReason } from '../purity/model.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -377,7 +375,7 @@ export class SafeDsPythonGenerator {
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
         let targetPlaceholder = frame.targetPlaceholder
-            ? this.getPlaceholderByName(block, frame.targetPlaceholder)
+            ? getPlaceholderByName(block, frame.targetPlaceholder)
             : undefined;
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
         if (targetPlaceholder) {
@@ -393,10 +391,6 @@ export class SafeDsPythonGenerator {
                 separator: NL,
             },
         )!;
-    }
-
-    private getPlaceholderByName(block: SdsBlock, name: string): SdsPlaceholder | undefined {
-        return streamPlaceholders(block).find((placeholder) => placeholder.name === name);
     }
 
     private getStatementsNeededForPartialExecution(
@@ -426,8 +420,9 @@ export class SafeDsPythonGenerator {
             return;
         }
         // Find assignment of placeholder, to search used placeholders and impure dependencies
-        let assignment = this.getAssignmentForPlaceholder(targetPlaceholder);
-        if (!assignment) {
+
+        let assignment = getContainerOfType(targetPlaceholder, isSdsAssignment);
+        if (!assignment || !assignment.expression) {
             /* c8 ignore next 2 */
             return;
         }
@@ -464,23 +459,7 @@ export class SafeDsPythonGenerator {
     }
 
     private isNodeInsideBlockLambda(node: AstNode): boolean {
-        let nodePotentialBlockLambda: AstNode | undefined = node;
-        while (nodePotentialBlockLambda && !isSdsBlockLambda(nodePotentialBlockLambda)) {
-            nodePotentialBlockLambda = nodePotentialBlockLambda.$container;
-        }
-        return isSdsBlockLambda(nodePotentialBlockLambda);
-    }
-
-    private getAssignmentForPlaceholder(placeholder: SdsPlaceholder): SdsAssignment | undefined {
-        let assignment = placeholder.$container;
-        while (assignment !== undefined && !isSdsAssignment(assignment)) {
-            assignment = assignment.$container;
-        }
-        if (!assignment || !assignment.expression || !isSdsAssignment(assignment)) {
-            /* c8 ignore next 2 */
-            return undefined;
-        }
-        return assignment;
+        return Boolean(getContainerOfType(node, isSdsBlockLambda));
     }
 
     private getAllPlaceholdersAndStatementsRelevantForStatement(
@@ -557,7 +536,7 @@ export class SafeDsPythonGenerator {
                 }
                 for (const futureImpurityReason of impurityReasons) {
                     for (const pastImpurityReason of pastImpurityReasons) {
-                        if (this.hasImpurityReasonEffectOnFuture(pastImpurityReason, futureImpurityReason)) {
+                        if (pastImpurityReason.canAffectFutureImpurityReason(futureImpurityReason)) {
                             dependencies.add(statement);
                         }
                     }
@@ -565,45 +544,6 @@ export class SafeDsPythonGenerator {
             }
         }
         return dependencies;
-    }
-
-    private hasImpurityReasonEffectOnFuture(reasonPast: ImpurityReason, reasonFuture: ImpurityReason) {
-        // Writes have an effect on reads, if the file is the same
-        if (reasonPast instanceof FileWrite && reasonFuture instanceof FileRead) {
-            return reasonPast.path === reasonFuture.path;
-        }
-        // Writes have an effect on other writes, if the file is the same
-        if (reasonPast instanceof FileWrite && reasonFuture instanceof FileWrite) {
-            return reasonPast.path === reasonFuture.path;
-        }
-        // Write only have effects on reads and writes
-        if (
-            reasonPast instanceof FileWrite &&
-            !(reasonFuture instanceof FileRead) &&
-            !(reasonFuture instanceof FileWrite)
-        ) {
-            return false;
-        }
-        // Reads are only affected by writes
-        if (!(reasonPast instanceof FileWrite) && reasonFuture instanceof FileRead) {
-            return false;
-        }
-        // Other reasons can't affect writes
-        if (reasonFuture instanceof FileWrite) {
-            return false;
-        }
-        // Reads can't affect other reasons
-        if (reasonPast instanceof FileRead) {
-            return false;
-        }
-        // Endless recursions don't have any effect on others
-        if (reasonPast === EndlessRecursion || reasonFuture === EndlessRecursion) {
-            /* c8 ignore next 2 */
-            return false;
-        }
-        // For OtherImpurityReason, PotentiallyImpureParameterCall, UnknownCallableCall we can't say.
-        // So it might have an effect on other impure functions
-        return true;
     }
 
     private generateStatement(

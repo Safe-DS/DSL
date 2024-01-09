@@ -19,6 +19,16 @@ export abstract class ImpurityReason {
      * Returns a string representation of this impurity reason.
      */
     abstract toString(): string;
+
+    /**
+     * Returns whether this impurity reason can affect a future impurity reason.
+     * @param future Future Impurity reason to test, if this reason may have an effect on it.
+     */
+    canAffectFutureImpurityReason(future: ImpurityReason): boolean {
+        // Other reasons can't affect writes; Reads are only affected by writes; Nothing can affect endless recursions
+        // For other reasons this is unknown. They might have an effect on other impure functions. By default, this is assumed.
+        return !(future instanceof FileWrite || future instanceof FileRead || future === EndlessRecursion);
+    }
 }
 
 /**
@@ -46,6 +56,11 @@ export class FileRead extends ImpurityReason {
             return 'File read from ?';
         }
     }
+
+    override canAffectFutureImpurityReason(_future: ImpurityReason): boolean {
+        // Reads can't affect other reasons
+        return false;
+    }
 }
 
 /**
@@ -72,6 +87,11 @@ export class FileWrite extends ImpurityReason {
         } else {
             return 'File write to ?';
         }
+    }
+
+    override canAffectFutureImpurityReason(future: ImpurityReason): boolean {
+        // Writes only have an effect on other reads and writes, if the file is the same
+        return (future instanceof FileRead && this.path === future.path) || this.equals(future);
     }
 }
 
@@ -129,6 +149,11 @@ class EndlessRecursionClass extends ImpurityReason {
 
     override toString(): string {
         return 'Endless recursion';
+    }
+
+    override canAffectFutureImpurityReason(_future: ImpurityReason): boolean {
+        // Endless recursions don't have any effect on others
+        return false;
     }
 }
 

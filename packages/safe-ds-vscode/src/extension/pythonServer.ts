@@ -240,11 +240,12 @@ export const tryMapToSafeDSSource = async function (
 
 /**
  * Execute a Safe-DS pipeline on the python runner.
+ * If a valid target placeholder is provided, the pipeline is only executed partially, to calculate the result of the placeholder.
  *
  * @param services SafeDsServices object, used to import the pipeline file.
  * @param pipelinePath Path to a Safe-DS pipeline file to execute.
  * @param id A unique id that is used in further communication with this pipeline.
- * @param targetPlaceholder The name of the target placeholder, used to do partial execution.
+ * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
  */
 export const executePipeline = async function (
     services: SafeDsServices,
