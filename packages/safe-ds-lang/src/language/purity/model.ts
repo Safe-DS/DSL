@@ -152,6 +152,7 @@ class EndlessRecursionClass extends ImpurityReason {
     }
 
     override canAffectFutureImpurityReason(_future: ImpurityReason): boolean {
+        /* c8 ignore next 3 */
         // Endless recursions don't have any effect on others
         return false;
     }
