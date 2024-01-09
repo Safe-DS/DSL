@@ -371,28 +371,48 @@ export class SafeDsPythonGenerator {
         }
     }
 
+    private generateBlock(
+        block: SdsBlock,
+        frame: GenerationInfoFrame,
+        generateLambda: boolean = false,
+    ): CompositeGeneratorNode {
+        let targetPlaceholder = frame.targetPlaceholder
+            ? this.getPlaceholderByName(block, frame.targetPlaceholder)
+            : undefined;
+        let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
+        if (targetPlaceholder) {
+            statements = this.getStatementsNeededForPartialExecution(targetPlaceholder, statements);
+        }
+        if (statements.length === 0) {
+            return traceToNode(block)('pass');
+        }
+        return joinTracedToNode(block, 'statements')(
+            statements,
+            (stmt) => this.generateStatement(stmt, frame, generateLambda),
+            {
+                separator: NL,
+            },
+        )!;
+    }
+
     private getPlaceholderByName(block: SdsBlock, name: string): SdsPlaceholder | undefined {
         return streamPlaceholders(block).find((placeholder) => placeholder.name === name);
     }
 
-    private isNodeInsideBlockLambda(node: AstNode): boolean {
-        let nodePotentialBlockLambda: AstNode | undefined = node;
-        while (nodePotentialBlockLambda && !isSdsBlockLambda(nodePotentialBlockLambda)) {
-            nodePotentialBlockLambda = nodePotentialBlockLambda.$container;
-        }
-        return isSdsBlockLambda(nodePotentialBlockLambda);
-    }
-
-    private getAssignmentForPlaceholder(placeholder: SdsPlaceholder): SdsAssignment | undefined {
-        let assignment = placeholder.$container;
-        while (assignment !== undefined && !isSdsAssignment(assignment)) {
-            assignment = assignment.$container;
-        }
-        if (!assignment || !assignment.expression || !isSdsAssignment(assignment)) {
-            /* c8 ignore next 2 */
-            return undefined;
-        }
-        return assignment;
+    private getStatementsNeededForPartialExecution(
+        targetPlaceholder: SdsPlaceholder,
+        statementsWithEffect: SdsStatement[],
+    ): SdsStatement[] {
+        const neededPlaceholders = new Set<string>();
+        const neededStatements = new Set<SdsStatement>();
+        this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
+            targetPlaceholder,
+            statementsWithEffect,
+            neededPlaceholders,
+            neededStatements,
+        );
+        // Get all statements in sorted order
+        return Array.from(neededStatements.values()).sort((a, b) => a.$containerIndex! - b.$containerIndex!);
     }
 
     private getAllPlaceholdersAndStatementsRelevantForPlaceholder(
@@ -441,6 +461,26 @@ export class SafeDsPythonGenerator {
                 neededStatements,
             );
         }
+    }
+
+    private isNodeInsideBlockLambda(node: AstNode): boolean {
+        let nodePotentialBlockLambda: AstNode | undefined = node;
+        while (nodePotentialBlockLambda && !isSdsBlockLambda(nodePotentialBlockLambda)) {
+            nodePotentialBlockLambda = nodePotentialBlockLambda.$container;
+        }
+        return isSdsBlockLambda(nodePotentialBlockLambda);
+    }
+
+    private getAssignmentForPlaceholder(placeholder: SdsPlaceholder): SdsAssignment | undefined {
+        let assignment = placeholder.$container;
+        while (assignment !== undefined && !isSdsAssignment(assignment)) {
+            assignment = assignment.$container;
+        }
+        if (!assignment || !assignment.expression || !isSdsAssignment(assignment)) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+        return assignment;
     }
 
     private getAllPlaceholdersAndStatementsRelevantForStatement(
@@ -537,7 +577,11 @@ export class SafeDsPythonGenerator {
             return reasonPast.path === reasonFuture.path;
         }
         // Write only have effects on reads and writes
-        if (reasonPast instanceof FileWrite && !(reasonFuture instanceof FileRead) && !(reasonFuture instanceof FileWrite)) {
+        if (
+            reasonPast instanceof FileWrite &&
+            !(reasonFuture instanceof FileRead) &&
+            !(reasonFuture instanceof FileWrite)
+        ) {
             return false;
         }
         // Reads are only affected by writes
@@ -560,53 +604,6 @@ export class SafeDsPythonGenerator {
         // For OtherImpurityReason, PotentiallyImpureParameterCall, UnknownCallableCall we can't say.
         // So it might have an effect on other impure functions
         return true;
-    }
-
-    private getStatementsNeededForPartialExecution(
-        targetPlaceholder: SdsPlaceholder,
-        statementsWithEffect: SdsStatement[],
-    ): SdsStatement[] {
-        const neededPlaceholders = new Set<string>();
-        const neededStatements = new Set<SdsStatement>();
-        this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
-            targetPlaceholder,
-            statementsWithEffect,
-            neededPlaceholders,
-            neededStatements,
-        );
-        //const statementsPartialExecution = statementsWithEffect.filter(isSdsAssignment).filter((stmt) =>
-        //    getAssignees(stmt)
-        //        .filter(isSdsPlaceholder)
-        //       .some((assignee) => neededPlaceholders.has(assignee.name)),
-        //);
-        //const impureDependencies = this.getImpureDependenciesForStatement();
-        //return statementsPartialExecution;
-        // Get all statements in sorted order
-        return Array.from(neededStatements.values()).sort((a, b) => a.$containerIndex! - b.$containerIndex!);
-    }
-
-    private generateBlock(
-        block: SdsBlock,
-        frame: GenerationInfoFrame,
-        generateLambda: boolean = false,
-    ): CompositeGeneratorNode {
-        let targetPlaceholder = frame.targetPlaceholder
-            ? this.getPlaceholderByName(block, frame.targetPlaceholder)
-            : undefined;
-        let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
-        if (targetPlaceholder) {
-            statements = this.getStatementsNeededForPartialExecution(targetPlaceholder, statements);
-        }
-        if (statements.length === 0) {
-            return traceToNode(block)('pass');
-        }
-        return joinTracedToNode(block, 'statements')(
-            statements,
-            (stmt) => this.generateStatement(stmt, frame, generateLambda),
-            {
-                separator: NL,
-            },
-        )!;
     }
 
     private generateStatement(
