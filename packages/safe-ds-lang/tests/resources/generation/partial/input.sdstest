@@ -91,13 +91,16 @@ line";
     val impureFileWrite2 = iFileWrite();
     val impureFileReadAgain = iFileRead();
 
+    val pureValueForImpure2 = noPartialEvalInt(2);
+    val pureValueForImpure3 = 3;
+
     fp(() {
         i1(1);
         yield r = 1;
     });
     i1(1);
-    val impureA1 = i1(2);
-    val impureA2 = i1(3);
+    val impureA1 = i1(pureValueForImpure2);
+    val impureA2 = i1(noPartialEvalInt(pureValueForImpure3));
     i1(4); // Should not be generated - impure can not have effects on future statements as they are pure
 
     val other = -o + 1 + value2; // Should not be generated
