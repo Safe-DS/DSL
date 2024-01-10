@@ -23,7 +23,9 @@ describe('generation', async () => {
         let runUntilPlaceholderName: string | undefined = undefined;
 
         if (test.runUntil) {
-            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.parse(test.runUntil.uri));
+            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
+                URI.parse(test.runUntil.uri),
+            );
             runUntilPlaceholderName = document.textDocument.getText(test.runUntil.range);
         }
 
