@@ -38,12 +38,16 @@ export class FileRead extends ImpurityReason {
     }
 
     override toString(): string {
+        return `File read from ${this.getPath() || '?'}`;
+    }
+
+    getPath(): string | undefined {
         if (isSdsParameter(this.path)) {
-            return `File read from ${getQualifiedName(this.path)}`;
+            return getQualifiedName(this.path);
         } else if (typeof this.path === 'string') {
-            return `File read from "${this.path}"`;
+            return this.path;
         } else {
-            return 'File read from ?';
+            return undefined;
         }
     }
 }

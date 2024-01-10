@@ -58,6 +58,7 @@ import {
     SdsAssignment,
     SdsBlock,
     SdsBlockLambda,
+    SdsCall,
     SdsDeclaration,
     SdsExpression,
     SdsModule,
@@ -74,7 +75,7 @@ import {
     getAssignees,
     getImportedDeclarations,
     getImports,
-    getModuleMembers,
+    getModuleMembers, getParameters,
     getStatements,
     Parameter,
     streamBlockLambdaResults,
@@ -90,6 +91,7 @@ import {
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
+import { FileRead } from '../purity/model.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -555,6 +557,7 @@ export class SafeDsPythonGenerator {
             return traceToNode(expression)(frame.getUniqueLambdaBlockName(expression));
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
+            const sortedArgs = this.sortArguments(expression.argumentList.arguments);
             if (isSdsFunction(callable)) {
                 const pythonCall = this.builtinAnnotations.getPythonCall(callable);
                 if (pythonCall) {
@@ -563,19 +566,12 @@ export class SafeDsPythonGenerator {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
                     const argumentsMap = this.getArgumentsMap(expression.argumentList.arguments, frame);
-                    return this.generatePythonCall(expression, pythonCall, argumentsMap, thisParam);
+                    return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
+                } else if (this.isCallMemoizable(expression)) {
+                    return this.generateMemoizedCall(expression, sortedArgs, frame);
                 }
             }
-
-            const sortedArgs = this.sortArguments(expression.argumentList.arguments);
-            return expandTracedToNode(expression)`${this.generateExpression(
-                expression.receiver,
-                frame,
-            )}(${joinTracedToNode(expression.argumentList, 'arguments')(
-                sortedArgs,
-                (arg) => this.generateArgument(arg, frame),
-                { separator: ', ' },
-            )})`;
+            return this.generatePlainCall(expression, sortedArgs, frame);
         } else if (isSdsExpressionLambda(expression)) {
             return expandTracedToNode(expression)`lambda ${this.generateParameters(
                 expression.parameterList,
@@ -674,10 +670,22 @@ export class SafeDsPythonGenerator {
         throw new Error(`Unknown expression type: ${expression.$type}`);
     }
 
+    private generatePlainCall(expression: SdsCall, sortedArgs: SdsArgument[], frame: GenerationInfoFrame): CompositeGeneratorNode {
+        return expandTracedToNode(expression)`${this.generateExpression(
+            expression.receiver,
+            frame,
+        )}(${joinTracedToNode(expression.argumentList, 'arguments')(
+            sortedArgs,
+            (arg) => this.generateArgument(arg, frame),
+            {separator: ', '},
+        )})`;
+    }
+
     private generatePythonCall(
-        expression: SdsExpression,
+        expression: SdsCall,
         pythonCall: string,
         argumentsMap: Map<string, CompositeGeneratorNode>,
+        frame: GenerationInfoFrame,
         thisParam: CompositeGeneratorNode | undefined = undefined,
     ): CompositeGeneratorNode {
         if (thisParam) {
@@ -685,7 +693,7 @@ export class SafeDsPythonGenerator {
         }
         const splitRegex = /(\$[_a-zA-Z][_a-zA-Z0-9]*)/gu;
         const splitPythonCallDefinition = pythonCall.split(splitRegex);
-        return joinTracedToNode(expression)(
+        const generatedPythonCall = joinTracedToNode(expression)(
             splitPythonCallDefinition,
             (part) => {
                 if (splitRegex.test(part)) {
@@ -696,6 +704,110 @@ export class SafeDsPythonGenerator {
             },
             { separator: '' },
         )!;
+        if (!this.isCallMemoizable(expression)) {
+            return generatedPythonCall;
+        }
+        frame.addImport({importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE});
+        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
+        const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(parameter => this.nodeMapper.callToParameterValue(expression, parameter)!);
+        return expandTracedToNode(
+            expression,
+        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
+            expression,
+            frame,
+        )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
+            memoizedArgs,
+            (arg) => this.generateExpression(arg, frame),
+            {separator: ', '},
+        )}], [${hiddenParameters.join(', ')}])`;
+    }
+
+    private isCallMemoizable(expression: SdsCall): boolean {
+        const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
+        let memoizable = true;
+        for (const reason of impurityReasons) {
+            if (!(reason instanceof FileRead)) {
+                memoizable &&= false;
+            }
+        }
+        return memoizable;
+    }
+
+    private generateMemoizedCall(
+        expression: SdsCall,
+        sortedArgs: SdsArgument[],
+        frame: GenerationInfoFrame,
+    ): CompositeGeneratorNode {
+        frame.addImport({importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE});
+        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
+        const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(parameter => this.nodeMapper.callToParameterValue(expression, parameter)!);
+        const containsOptionalArgs = sortedArgs.map(arg => this.nodeMapper.argumentToParameter(arg)).filter(param => param).find(param => !Parameter.isRequired(param)) !== undefined;
+        return expandTracedToNode(
+            expression,
+        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
+            expression,
+            frame,
+        )}", ${containsOptionalArgs ? "lambda *_ : " : ""}${containsOptionalArgs ? this.generatePlainCall(expression, sortedArgs, frame) : this.generateExpression(expression.receiver, frame)}, [${joinTracedToNode(
+            expression.argumentList,
+            'arguments',
+        )(memoizedArgs, (arg) => this.generateExpression(arg, frame), {
+            separator: ', ',
+        })}], [${hiddenParameters.join(', ')}])`;
+    }
+
+    private getMemoizedCallHiddenParameters(expression: SdsCall): string[] {
+        const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
+        const hiddenParameters: string[] = [];
+        for (const reason of impurityReasons) {
+            if (reason instanceof FileRead) {
+                hiddenParameters.push(`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime("${reason.path}")`);
+            }
+        }
+        return hiddenParameters;
+    }
+
+    private getFullyQualifiedReferenceName(expression: SdsExpression, declaration: SdsDeclaration): string | undefined {
+        // Root Node is always a module.
+        const currentModule = <SdsModule>findRootNode(expression);
+        const targetModule = <SdsModule>findRootNode(declaration);
+        if (currentModule === targetModule) {
+            return `${this.builtinAnnotations.getPythonModule(targetModule) || currentModule.name}.${declaration.name}`;
+        }
+        for (const value of getImports(currentModule)) {
+            // Verify same package
+            if (value.package !== targetModule.name) {
+                continue;
+            }
+            if (isSdsQualifiedImport(value)) {
+                const importedDeclarations = getImportedDeclarations(value);
+                for (const importedDeclaration of importedDeclarations) {
+                    if (declaration === importedDeclaration.declaration?.ref) {
+                        return `${
+                            this.builtinAnnotations.getPythonModule(targetModule) || value.package
+                        }.${importedDeclaration.declaration?.ref?.name}`;
+                    }
+                }
+            }
+            if (isSdsWildcardImport(value)) {
+                return `${this.builtinAnnotations.getPythonModule(targetModule) || value.package}.${declaration.name}`;
+            }
+        }
+        return undefined;
+    }
+
+    private generateFullyQualifiedFunctionName(
+        expression: SdsCall,
+        frame: GenerationInfoFrame,
+    ): CompositeGeneratorNode {
+        const reference = expression.receiver;
+        if (isSdsReference(reference)) {
+            const declaration = reference.target.ref!;
+            const fullyQualifiedReferenceName = this.getFullyQualifiedReferenceName(reference, declaration);
+            if (fullyQualifiedReferenceName) {
+                return expandTracedToNode(reference)`${fullyQualifiedReferenceName}`;
+            }
+        }
+        return this.generateExpression(reference, frame);
     }
 
     private getArgumentsMap(
@@ -724,10 +836,14 @@ export class SafeDsPythonGenerator {
             .map((value) => value.arg);
     }
 
-    private generateArgument(argument: SdsArgument, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateArgument(
+        argument: SdsArgument,
+        frame: GenerationInfoFrame,
+        generateOptionalParameterName: boolean = true,
+    ): CompositeGeneratorNode {
         const parameter = this.nodeMapper.argumentToParameter(argument);
         return expandTracedToNode(argument)`${
-            parameter !== undefined && !Parameter.isRequired(parameter)
+            parameter !== undefined && !Parameter.isRequired(parameter) && generateOptionalParameterName
                 ? expandToNode`${this.generateParameter(parameter, frame, false)}=`
                 : ''
         }${this.generateExpression(argument.value, frame)}`;

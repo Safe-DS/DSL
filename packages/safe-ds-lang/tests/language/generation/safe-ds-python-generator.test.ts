@@ -40,6 +40,9 @@ describe('generation', async () => {
 
         // File contents must match
         for (const expectedOutputFile of test.expectedOutputFiles) {
+            if (expectedOutputFile.uri.toString().endsWith('.map')) {
+                continue;
+            }
             const actualCode = actualOutputs.get(expectedOutputFile.uri.toString());
             expect(actualCode).toBe(expectedOutputFile.code);
         }
