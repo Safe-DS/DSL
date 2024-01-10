@@ -185,6 +185,27 @@ export class SafeDsPurityComputer {
     }
 
     /**
+     * Returns the reasons why the given statement is impure.
+     *
+     * @param node
+     * The statement to check.
+     *
+     * @param substitutions
+     * The parameter substitutions to use. These are **not** the argument of a call, but the values of the parameters
+     * of any containing callables, i.e. the context of the node.
+     */
+    getImpurityReasonsForStatement(node: SdsStatement | undefined, substitutions = NO_SUBSTITUTIONS): ImpurityReason[] {
+        if (isSdsAssignment(node)) {
+            return this.getImpurityReasonsForExpression(node.expression, substitutions);
+        } else if (isSdsExpressionStatement(node)) {
+            return this.getImpurityReasonsForExpression(node.expression, substitutions);
+        } else {
+            /* c8 ignore next 2 */
+            return [];
+        }
+    }
+
+    /**
      * Returns the reasons why the given expression is impure.
      *
      * @param node

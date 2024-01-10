@@ -240,12 +240,19 @@ export const tryMapToSafeDSSource = async function (
 
 /**
  * Execute a Safe-DS pipeline on the python runner.
+ * If a valid target placeholder is provided, the pipeline is only executed partially, to calculate the result of the placeholder.
  *
  * @param services SafeDsServices object, used to import the pipeline file.
  * @param pipelinePath Path to a Safe-DS pipeline file to execute.
  * @param id A unique id that is used in further communication with this pipeline.
+ * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
  */
-export const executePipeline = async function (services: SafeDsServices, pipelinePath: string, id: string) {
+export const executePipeline = async function (
+    services: SafeDsServices,
+    pipelinePath: string,
+    id: string,
+    targetPlaceholder: string | undefined = undefined,
+) {
     if (!isPythonServerAvailable()) {
         await stopPythonServer();
         await startPythonServer();
@@ -296,6 +303,7 @@ export const executePipeline = async function (services: SafeDsServices, pipelin
     const generatedDocuments = services.generation.PythonGenerator.generate(document, {
         destination: URI.file(path.dirname(documentUri.fsPath)), // actual directory of main module file
         createSourceMaps: true,
+        targetPlaceholder,
     });
     const lastGeneratedSource = new Map<string, string>();
     let codeMap: ProgramCodeMap = {};

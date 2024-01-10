@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
 import { loadDocuments } from '../../helpers/testResources.js';
-import { stream } from 'langium';
+import { stream, URI } from 'langium';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const pythonGenerator = services.generation.PythonGenerator;
@@ -19,12 +19,23 @@ describe('generation', async () => {
         // Load all documents
         const documents = await loadDocuments(services, test.inputUris);
 
+        // Get target placeholder name for "run until"
+        let runUntilPlaceholderName: string | undefined = undefined;
+
+        if (test.runUntil) {
+            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
+                URI.parse(test.runUntil.uri),
+            );
+            runUntilPlaceholderName = document.textDocument.getText(test.runUntil.range);
+        }
+
         // Generate code for all documents
         const actualOutputs = stream(documents)
             .flatMap((document) =>
                 pythonGenerator.generate(document, {
                     destination: test.actualOutputRoot,
                     createSourceMaps: true,
+                    targetPlaceholder: runUntilPlaceholderName,
                 }),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])

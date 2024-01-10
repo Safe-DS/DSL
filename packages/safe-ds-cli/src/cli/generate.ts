@@ -22,6 +22,7 @@ export const generate = async (fsPaths: string[], options: GenerateOptions): Pro
         const generatedFiles = services.generation.PythonGenerator.generate(document, {
             destination: URI.file(path.resolve(options.out)),
             createSourceMaps: options.sourcemaps,
+            targetPlaceholder: undefined,
         });
 
         for (const file of generatedFiles) {

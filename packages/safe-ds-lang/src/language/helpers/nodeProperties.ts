@@ -274,6 +274,10 @@ export const streamPlaceholders = (node: SdsBlock | undefined): Stream<SdsPlaceh
     return stream(getStatements(node)).filter(isSdsAssignment).flatMap(getAssignees).filter(isSdsPlaceholder);
 };
 
+export const getPlaceholderByName = (block: SdsBlock, name: string | undefined): SdsPlaceholder | undefined => {
+    return name ? streamPlaceholders(block).find((placeholder) => placeholder.name === name) : undefined;
+};
+
 export const getResults = (node: SdsResultList | undefined): SdsResult[] => {
     return node?.results ?? [];
 };
