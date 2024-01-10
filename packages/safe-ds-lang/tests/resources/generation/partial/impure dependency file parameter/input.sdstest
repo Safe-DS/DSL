@@ -1,0 +1,15 @@
+package tests.generator.partialImpureDependencyFileParameter
+
+@Impure([ImpurityReason.FileReadFromParameterizedPath("path")]) fun iFileRead(path: String) -> q: Int
+
+@Impure([ImpurityReason.FileWriteToParameterizedPath("path")]) fun iFileWrite(path: String) -> q: Int
+
+pipeline testPipeline {
+    val impureFileRead = iFileRead("a.txt"); // Should not be generated - cannot affect result
+    val impureFileWrite = iFileWrite("b.txt");
+    val impureFileWrite2 = iFileWrite("c.txt");
+    val impureFileReadAgain = iFileRead("d.txt");
+
+    // $TEST$ run_until
+    val »result« = impureFileReadAgain + 2;
+}
