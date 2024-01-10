@@ -86,16 +86,13 @@ export class FileWrite extends ImpurityReason {
     }
 
     override canAffectFutureImpurityReason(future: ImpurityReason): boolean {
-        if (future === EndlessRecursion) {
-            return false;
-        }
         if (future instanceof FileWrite || future instanceof FileRead) {
             if (typeof this.path === 'string' && typeof future.path === 'string') {
                 // Writes only have an effect on other reads and writes, if the files is known and is the same
                 return this.path === future.path;
             }
         }
-        return true;
+        return future !== EndlessRecursion;
     }
 }
 
@@ -143,6 +140,7 @@ class UnknownCallableCallClass extends ImpurityReason {
     }
 
     canAffectFutureImpurityReason(future: ImpurityReason): boolean {
+        /* c8 ignore next 2 */
         return future !== EndlessRecursion;
     }
 }

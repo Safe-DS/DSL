@@ -200,6 +200,7 @@ export class SafeDsPurityComputer {
         } else if (isSdsExpressionStatement(node)) {
             return this.getImpurityReasonsForExpression(node.expression, substitutions);
         } else {
+            /* c8 ignore next 2 */
             return [];
         }
     }
