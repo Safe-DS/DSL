@@ -5,7 +5,6 @@ import {
     findRootNode,
     getContainerOfType,
     getDocument,
-    hasContainerOfType,
     joinToNode,
     joinTracedToNode,
     LangiumDocument,
@@ -93,7 +92,7 @@ import {
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
-import {ImpurityReason} from "../purity/model.js";
+import { ImpurityReason } from '../purity/model.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -376,7 +375,7 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
-        const targetPlaceholder = getPlaceholderByName(block, frame.targetPlaceholder)
+        const targetPlaceholder = getPlaceholderByName(block, frame.targetPlaceholder);
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
         if (targetPlaceholder) {
             statements = this.getStatementsNeededForPartialExecution(targetPlaceholder, statements);
@@ -397,139 +396,61 @@ export class SafeDsPythonGenerator {
         targetPlaceholder: SdsPlaceholder,
         statementsWithEffect: SdsStatement[],
     ): SdsStatement[] {
-        const neededStatements = new Set<SdsStatement>();
-        this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
-            targetPlaceholder,
-            statementsWithEffect,
-            neededStatements,
-        );
-        // Get all statements in sorted order
-        return Array.from(neededStatements.values()).sort((a, b) => a.$containerIndex! - b.$containerIndex!);
-    }
-
-    private getAllPlaceholdersAndStatementsRelevantForPlaceholder(
-        targetPlaceholder: SdsPlaceholder,
-        allStatements: SdsStatement[],
-        neededStatements: Set<SdsStatement>,
-    ) {
-        // If placeholder is inside a lambda, do not continue; Only placeholders inside the pipeline are collected
-        if (hasContainerOfType(targetPlaceholder, isSdsBlockLambda)) {
-            return;
-        }
         // Find assignment of placeholder, to search used placeholders and impure dependencies
         const assignment = getContainerOfType(targetPlaceholder, isSdsAssignment);
         if (!assignment || !assignment.expression) {
             /* c8 ignore next 2 */
-            return;
+            throw new Error(`No assignment for placeholder: ${targetPlaceholder.name}`);
         }
-        // If placeholder is already found, do not continue; It has been handled before
-        if (neededStatements.has(assignment)) {
-            return;
-        }
-        neededStatements.add(assignment);
-        // Get referenced placeholders of current placeholder. An expression in the assignment will always exist here
-        const referencedPlaceholders = streamAllContents(assignment.expression!)
-            .filter(isSdsReference)
-            .filter((reference) => isSdsPlaceholder(reference.target.ref))
-            .map((reference) => <SdsPlaceholder>reference.target.ref!)
-            .toArray();
-        for (const referencedPlaceholder of referencedPlaceholders) {
-            this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
-                referencedPlaceholder,
-                allStatements,
-                neededStatements,
-            );
-        }
-        // Get impure dependencies and follow them
-        const impureDependencies = this.getImpureDependenciesForStatement(assignment, allStatements);
-        for (const referencedStatement of impureDependencies) {
-            this.getAllPlaceholdersAndStatementsRelevantForStatement(
-                referencedStatement,
-                allStatements,
-                neededStatements,
-            );
-        }
-    }
-
-    private getAllPlaceholdersAndStatementsRelevantForStatement(
-        targetStatement: SdsStatement,
-        allStatements: SdsStatement[],
-        neededStatements: Set<SdsStatement>,
-    ) {
-        // If statement is inside a lambda, do not continue; Only statements inside the pipeline are collected
-        if (hasContainerOfType(targetStatement, isSdsBlockLambda)) {
-            /* c8 ignore next 2 */
-            return;
-        }
-        // If statement is already handled, do not continue
-        if (neededStatements.has(targetStatement)) {
-            return;
-        }
-        neededStatements.add(targetStatement);
-        // Find referenced placeholders
-        if (isSdsAssignment(targetStatement)) {
-            const placeholders = getAssignees(targetStatement).filter(isSdsPlaceholder);
-            for (const placeholder of placeholders) {
-                this.getAllPlaceholdersAndStatementsRelevantForPlaceholder(
-                    placeholder,
-                    allStatements,
-                    neededStatements,
-                );
+        // All collected referenced placeholders that are needed for calculating the target placeholder. An expression in the assignment will always exist here
+        const referencedPlaceholders = new Set<SdsPlaceholder>(
+            streamAllContents(assignment.expression!)
+                .filter(isSdsReference)
+                .filter((reference) => isSdsPlaceholder(reference.target.ref))
+                .map((reference) => <SdsPlaceholder>reference.target.ref!)
+                .toArray(),
+        );
+        const impurityReasons = new Set<ImpurityReason>(this.purityComputer.getImpurityReasonsForStatement(assignment));
+        const collectedStatements: SdsStatement[] = [assignment];
+        for (const prevStatement of statementsWithEffect.reverse()) {
+            // Statements after the target assignment can always be skipped
+            if (prevStatement.$containerIndex! >= assignment.$containerIndex!) {
+                continue;
+            }
+            const prevStmtImpurityReasons: ImpurityReason[] =
+                this.purityComputer.getImpurityReasonsForStatement(prevStatement);
+            if (
+                // Placeholder is relevant
+                (isSdsAssignment(prevStatement) &&
+                    getAssignees(prevStatement)
+                        .filter(isSdsPlaceholder)
+                        .some((prevPlaceholder) => referencedPlaceholders.has(prevPlaceholder))) ||
+                // Impurity is relevant
+                prevStmtImpurityReasons.some((pastReason) =>
+                    Array.from(impurityReasons).some((futureReason) =>
+                        pastReason.canAffectFutureImpurityReason(futureReason),
+                    ),
+                )
+            ) {
+                collectedStatements.push(prevStatement);
+                // Collect all referenced placeholders
+                if (isSdsExpressionStatement(prevStatement) || isSdsAssignment(prevStatement)) {
+                    streamAllContents(prevStatement.expression!)
+                        .filter(isSdsReference)
+                        .filter((reference) => isSdsPlaceholder(reference.target.ref))
+                        .map((reference) => <SdsPlaceholder>reference.target.ref!)
+                        .forEach((prevPlaceholder) => {
+                            referencedPlaceholders.add(prevPlaceholder);
+                        });
+                }
+                // Collect impurity reasons
+                prevStmtImpurityReasons.forEach((prevReason) => {
+                    impurityReasons.add(prevReason);
+                });
             }
         }
-        // Find impure dependencies and follow them
-        const impureDependencies = this.getImpureDependenciesForStatement(targetStatement, allStatements);
-        for (const referencedStatement of impureDependencies) {
-            this.getAllPlaceholdersAndStatementsRelevantForStatement(
-                referencedStatement,
-                allStatements,
-                neededStatements,
-            );
-        }
-    }
-
-    private getImpureDependenciesForStatement(
-        subject: SdsStatement,
-        statementsWithEffect: SdsStatement[],
-    ): Set<SdsStatement> {
-        // Get impurity reasons for subject statement
-        let impurityReasons: ImpurityReason[] = [];
-        if (isSdsAssignment(subject)) {
-            impurityReasons = this.purityComputer.getImpurityReasonsForExpression(subject.expression);
-        } else if (isSdsExpressionStatement(subject)) {
-            impurityReasons = this.purityComputer.getImpurityReasonsForExpression(subject.expression);
-        } else {
-            /* c8 ignore next 2 */
-            return new Set<SdsStatement>();
-        }
-        // If subject is pure, do not continue
-        if (impurityReasons.length === 0) {
-            return new Set<SdsStatement>();
-        }
-        // Find dependencies matching on impurity information
-        const dependencies = new Set<SdsStatement>();
-        for (const statement of statementsWithEffect) {
-            // Only statements before the current assignment can affect the current assignment
-            if (statement.$containerIndex! < subject.$containerIndex!) {
-                let pastImpurityReasons: ImpurityReason[] = [];
-                if (isSdsAssignment(statement)) {
-                    pastImpurityReasons = this.purityComputer.getImpurityReasonsForExpression(statement.expression);
-                } else if (isSdsExpressionStatement(statement)) {
-                    pastImpurityReasons = this.purityComputer.getImpurityReasonsForExpression(statement.expression);
-                } else {
-                    /* c8 ignore next 2 */
-                    continue;
-                }
-                for (const futureImpurityReason of impurityReasons) {
-                    for (const pastImpurityReason of pastImpurityReasons) {
-                        if (pastImpurityReason.canAffectFutureImpurityReason(futureImpurityReason)) {
-                            dependencies.add(statement);
-                        }
-                    }
-                }
-            }
-        }
-        return dependencies;
+        // Get all statements in sorted order
+        return collectedStatements.reverse();
     }
 
     private generateStatement(
