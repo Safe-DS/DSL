@@ -24,11 +24,7 @@ export abstract class ImpurityReason {
      * Returns whether this impurity reason can affect a future impurity reason.
      * @param future Future Impurity reason to test, if this reason may have an effect on it.
      */
-    canAffectFutureImpurityReason(future: ImpurityReason): boolean {
-        // Other reasons can't affect writes; Reads are only affected by writes; Nothing can affect endless recursions
-        // For other reasons this is unknown. They might have an effect on other impure functions. By default, this is assumed.
-        return !(future instanceof FileWrite || future instanceof FileRead || future === EndlessRecursion);
-    }
+    abstract canAffectFutureImpurityReason(future: ImpurityReason): boolean;
 }
 
 /**
@@ -90,8 +86,16 @@ export class FileWrite extends ImpurityReason {
     }
 
     override canAffectFutureImpurityReason(future: ImpurityReason): boolean {
-        // Writes only have an effect on other reads and writes, if the file is the same
-        return (future instanceof FileRead && this.path === future.path) || this.equals(future);
+        if (future === EndlessRecursion) {
+            return false;
+        }
+        if (future instanceof FileWrite || future instanceof FileRead) {
+            if (typeof this.path === 'string' && typeof future.path === 'string') {
+                // Writes only have an effect on other reads and writes, if the files is known and is the same
+                return this.path === future.path;
+            }
+        }
+        return true;
     }
 }
 
@@ -118,6 +122,10 @@ export class PotentiallyImpureParameterCall extends ImpurityReason {
             return 'Potentially impure call of ?';
         }
     }
+
+    override canAffectFutureImpurityReason(future: ImpurityReason): boolean {
+        return future !== EndlessRecursion;
+    }
 }
 
 /**
@@ -132,6 +140,10 @@ class UnknownCallableCallClass extends ImpurityReason {
 
     override toString(): string {
         return 'Unknown callable call';
+    }
+
+    canAffectFutureImpurityReason(future: ImpurityReason): boolean {
+        return future !== EndlessRecursion;
     }
 }
 
@@ -172,6 +184,10 @@ class OtherImpurityReasonClass extends ImpurityReason {
 
     override toString(): string {
         return 'Other';
+    }
+
+    canAffectFutureImpurityReason(future: ImpurityReason): boolean {
+        return future !== EndlessRecursion;
     }
 }
 
