@@ -264,7 +264,9 @@ export const executePipeline = async function (
             path.basename(pipelineDocument.uri.fsPath, '.sdstest'),
         );
     } else {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath));
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
+            path.basename(pipelineDocument.uri.fsPath),
+        );
     }
     // Code generation
     const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
