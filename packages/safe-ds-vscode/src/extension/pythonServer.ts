@@ -406,7 +406,11 @@ const connectToWebSocket = async function (): Promise<void> {
                     logOutput(`[Runner] Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
                     return;
                 }
-                logOutput(`[Runner] Message received: '${event.data.length > 128 ? event.data.substring(0, 128) + "<truncated>" : event.data}'`);
+                logOutput(
+                    `[Runner] Message received: '${
+                        event.data.length > 128 ? event.data.substring(0, 128) + '<truncated>' : event.data
+                    }'`,
+                );
                 const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
                 if (!pythonServerMessageCallbacks.has(pythonServerMessage.type)) {
                     logOutput(`[Runner] Message type '${pythonServerMessage.type}' is not handled`);
