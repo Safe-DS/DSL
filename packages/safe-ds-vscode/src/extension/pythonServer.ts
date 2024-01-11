@@ -2,8 +2,8 @@ import child_process from 'child_process';
 import vscode from 'vscode';
 import net from 'net';
 import WebSocket from 'ws';
-import {ast, getModuleMembers, SafeDsServices} from '@safe-ds/lang';
-import {LangiumDocument, URI} from 'langium';
+import { ast, getModuleMembers, SafeDsServices } from '@safe-ds/lang';
+import { LangiumDocument, URI } from 'langium';
 import path from 'path';
 import {
     createProgramMessage,
@@ -12,8 +12,8 @@ import {
     PythonServerMessage,
     RuntimeErrorBacktraceFrame,
 } from './messages.js';
-import {logError, logOutput} from './output.js';
-import {BasicSourceMapConsumer, SourceMapConsumer} from 'source-map';
+import { logError, logOutput } from './output.js';
+import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
 import treeKill from 'tree-kill';
 
 let pythonServer: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
@@ -212,7 +212,7 @@ export const tryMapToSafeDSSource = async function (
         column: 0,
         bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
-    return {file: outputPosition.source || '<unknown>', line: outputPosition.line || 0};
+    return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
 };
 
 /**
@@ -276,8 +276,11 @@ export const executePipeline = async function (
     );
 };
 
-const generateCodeForRunner = function (services: SafeDsServices, pipelineDocument: LangiumDocument, targetPlaceholder: string | undefined): [ProgramCodeMap, Map<string, string>]
-{
+const generateCodeForRunner = function (
+    services: SafeDsServices,
+    pipelineDocument: LangiumDocument,
+    targetPlaceholder: string | undefined,
+): [ProgramCodeMap, Map<string, string>] {
     const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
     const generatedDocuments = services.generation.PythonGenerator.generate(pipelineDocument, {
         destination: URI.file(rootGenerationDir), // actual directory of main module file
@@ -313,7 +316,7 @@ const generateCodeForRunner = function (services: SafeDsServices, pipelineDocume
         codeMap[modulePath]![sdsNoExtFilename] = generatedDocument.getText();
     }
     return [codeMap, lastGeneratedSources];
-}
+};
 
 const getMainModuleName = function (services: SafeDsServices, pipelineDocument: LangiumDocument): string {
     if (pipelineDocument.uri.fsPath.endsWith('.sdspipe')) {
