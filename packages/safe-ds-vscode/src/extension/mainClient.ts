@@ -170,7 +170,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                     services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
                 );
                 // Validate them
-                const validationErrorMessage = await validateDocument(services, unvalidatedSdsDocuments);
+                const validationErrorMessage = await validateDocuments(services, unvalidatedSdsDocuments);
                 if (validationErrorMessage) {
                     vscode.window.showErrorMessage(validationErrorMessage);
                     return;
@@ -181,7 +181,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                 let mainDocument;
                 if (!services.shared.workspace.LangiumDocuments.hasDocument(URI.parse(pipelinePath.toString()))) {
                     mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
-                    const mainDocumentValidationErrorMessage = await validateDocument(services, [mainDocument]);
+                    const mainDocumentValidationErrorMessage = await validateDocuments(services, [mainDocument]);
                     if (mainDocumentValidationErrorMessage) {
                         vscode.window.showErrorMessage(mainDocumentValidationErrorMessage);
                         return;
@@ -208,7 +208,7 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
     });
 };
 
-const validateDocument = async function (
+const validateDocuments = async function (
     sdsServices: SafeDsServices,
     documents: LangiumDocument[],
 ): Promise<undefined | string> {
