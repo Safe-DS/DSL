@@ -146,29 +146,6 @@ export const removeMessageCallback = function <M extends PythonServerMessage['ty
     );
 };
 
-const importPipeline = async function (
-    services: SafeDsServices,
-    documentUri: URI,
-): Promise<LangiumDocument | undefined> {
-    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(documentUri);
-    await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
-
-    const errors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
-
-    if (errors.length > 0) {
-        logError(`The file ${documentUri.toString()} has errors and cannot be run.`);
-        for (const validationError of errors) {
-            logError(
-                `\tat line ${validationError.range.start.line + 1}: ${
-                    validationError.message
-                } [${document.textDocument.getText(validationError.range)}]`,
-            );
-        }
-        return undefined;
-    }
-    return document;
-};
-
 /**
  * Context containing information about the execution of a pipeline.
  */
@@ -243,13 +220,13 @@ export const tryMapToSafeDSSource = async function (
  * If a valid target placeholder is provided, the pipeline is only executed partially, to calculate the result of the placeholder.
  *
  * @param services SafeDsServices object, used to import the pipeline file.
- * @param pipelinePath Path to a Safe-DS pipeline file to execute.
+ * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
  * @param id A unique id that is used in further communication with this pipeline.
  * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
  */
 export const executePipeline = async function (
     services: SafeDsServices,
-    pipelinePath: string,
+    pipelineDocument: LangiumDocument,
     id: string,
     targetPlaceholder: string | undefined = undefined,
 ) {
@@ -261,19 +238,9 @@ export const executePipeline = async function (
             return;
         }
     }
-    // TODO include all relevant files from workspace
-    const documentUri = URI.file(pipelinePath);
-    const workspaceRoot = path.dirname(documentUri.fsPath); // TODO get actual workspace root
-    services.shared.workspace.LangiumDocuments.deleteDocument(documentUri);
-    let document = await importPipeline(services, documentUri);
-    if (!document) {
-        vscode.window.showErrorMessage(`The file ${documentUri.fsPath} has errors and cannot be run.`);
-        return;
-    }
-    const lastExecutedSource = document.textDocument.getText();
-
-    const node = document.parseResult.value;
-    //
+    const lastExecutedSource = pipelineDocument.textDocument.getText();
+    const node = pipelineDocument.parseResult.value;
+    // Pipeline / Module name handling
     let mainPipelineName;
     let mainModuleName;
     if (!ast.isSdsModule(node)) {
@@ -288,20 +255,21 @@ export const executePipeline = async function (
         return;
     }
     mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
-    if (pipelinePath.endsWith('.sdspipe')) {
+    if (pipelineDocument.uri.fsPath.endsWith('.sdspipe')) {
         mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
-            path.basename(pipelinePath, '.sdspipe'),
+            path.basename(pipelineDocument.uri.fsPath, '.sdspipe'),
         );
-    } else if (pipelinePath.endsWith('.sdstest')) {
+    } else if (pipelineDocument.uri.fsPath.endsWith('.sdstest')) {
         mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
-            path.basename(pipelinePath, '.sdstest'),
+            path.basename(pipelineDocument.uri.fsPath, '.sdstest'),
         );
     } else {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelinePath));
+        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath));
     }
-    //
-    const generatedDocuments = services.generation.PythonGenerator.generate(document, {
-        destination: URI.file(path.dirname(documentUri.fsPath)), // actual directory of main module file
+    // Code generation
+    const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
+    const generatedDocuments = services.generation.PythonGenerator.generate(pipelineDocument, {
+        destination: URI.file(rootGenerationDir), // actual directory of main module file
         createSourceMaps: true,
         targetPlaceholder,
     });
@@ -309,7 +277,7 @@ export const executePipeline = async function (
     let codeMap: ProgramCodeMap = {};
     for (const generatedDocument of generatedDocuments) {
         const fsPath = URI.parse(generatedDocument.uri).fsPath;
-        const workspaceRelativeFilePath = path.relative(workspaceRoot, path.dirname(fsPath));
+        const workspaceRelativeFilePath = path.relative(rootGenerationDir, path.dirname(fsPath));
         const sdsFileName = path.basename(fsPath);
         const sdsNoExtFilename =
             path.extname(sdsFileName).length > 0
@@ -333,10 +301,11 @@ export const executePipeline = async function (
         const content = generatedDocument.getText();
         codeMap[modulePath]![sdsNoExtFilename] = content;
     }
+    // Code execution
     executionInformation.set(id, {
         generatedSource: lastGeneratedSource,
         sourceMappings: new Map<string, BasicSourceMapConsumer>(),
-        path: pipelinePath,
+        path: pipelineDocument.uri.fsPath,
         source: lastExecutedSource,
         calculatedPlaceholders: new Map<string, string>(),
     });

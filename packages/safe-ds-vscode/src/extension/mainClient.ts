@@ -12,12 +12,12 @@ import {
     stopPythonServer,
     tryMapToSafeDSSource,
 } from './pythonServer.js';
-import { createSafeDsServicesWithBuiltins, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServicesWithBuiltins, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
+import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import crypto from 'crypto';
-import { URI } from 'langium';
+import { LangiumDocument, URI } from 'langium';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -128,29 +128,70 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
     }, 'runtime_error');
     // Register VS Code Entry Points
     context.subscriptions.push(
-        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (filePath: vscode.Uri | undefined) => {
-            let pipelinePath = filePath;
-            // Allow execution via command menu
-            if (!pipelinePath && vscode.window.activeTextEditor) {
-                pipelinePath = vscode.window.activeTextEditor.document.uri;
-            }
-            if (
-                pipelinePath &&
-                !services.LanguageMetaData.fileExtensions.some((extension: string) =>
-                    pipelinePath!.fsPath.endsWith(extension),
-                )
-            ) {
-                vscode.window.showErrorMessage(`Could not run ${pipelinePath!.fsPath} as it is not a Safe-DS file`);
-                return;
-            }
-            if (!pipelinePath) {
-                vscode.window.showErrorMessage('Could not run Safe-DS Pipeline, as no pipeline is currently selected.');
-                return;
-            }
-            const pipelineId = crypto.randomUUID();
-            printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
-            executePipeline(services, pipelinePath.fsPath, pipelineId);
-        }),
+        vscode.commands.registerCommand(
+            'extension.safe-ds.runPipelineFile',
+            async (filePath: vscode.Uri | undefined) => {
+                let pipelinePath = filePath;
+                // Allow execution via command menu
+                if (!pipelinePath && vscode.window.activeTextEditor) {
+                    pipelinePath = vscode.window.activeTextEditor.document.uri;
+                }
+                if (
+                    pipelinePath &&
+                    !services.LanguageMetaData.fileExtensions.some((extension: string) =>
+                        pipelinePath!.fsPath.endsWith(extension),
+                    )
+                ) {
+                    vscode.window.showErrorMessage(`Could not run ${pipelinePath!.fsPath} as it is not a Safe-DS file`);
+                    return;
+                }
+                if (!pipelinePath) {
+                    vscode.window.showErrorMessage(
+                        'Could not run Safe-DS Pipeline, as no pipeline is currently selected.',
+                    );
+                    return;
+                }
+                // Refresh workspace
+                // Do not delete builtins
+                services.shared.workspace.LangiumDocuments.all
+                    .filter(
+                        (document) =>
+                            !(
+                                ast.isSdsModule(document.parseResult.value) &&
+                                (<ast.SdsModule>document.parseResult.value).name === 'safeds.lang'
+                            ),
+                    )
+                    .forEach((oldDocument) => {
+                        services.shared.workspace.LangiumDocuments.deleteDocument(oldDocument.uri);
+                    });
+                const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sdspipe,sdsstub,sdstest}');
+                // Load all documents
+                const unvalidatedSdsDocuments = workspaceSdsFiles.map((newDocumentUri) =>
+                    services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
+                );
+                // Validate them
+                const validationErrorMessage = await validateDocument(services, unvalidatedSdsDocuments);
+                if (validationErrorMessage) {
+                    vscode.window.showErrorMessage(validationErrorMessage);
+                    return;
+                }
+                // Run it
+                const pipelineId = crypto.randomUUID();
+                printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
+                let mainDocument;
+                if (!services.shared.workspace.LangiumDocuments.hasDocument(URI.parse(pipelinePath.toString()))) {
+                    mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
+                    const mainDocumentValidationErrorMessage = await validateDocument(services, [mainDocument]);
+                    if (mainDocumentValidationErrorMessage) {
+                        vscode.window.showErrorMessage(mainDocumentValidationErrorMessage);
+                        return;
+                    }
+                } else {
+                    mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
+                }
+                await executePipeline(services, mainDocument, pipelineId);
+            },
+        ),
     );
     vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('safe-ds.runner.command')) {
@@ -165,4 +206,37 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
             }
         }
     });
+};
+
+const validateDocument = async function (
+    sdsServices: SafeDsServices,
+    documents: LangiumDocument[],
+): Promise<undefined | string> {
+    await sdsServices.shared.workspace.DocumentBuilder.build(documents, { validation: true });
+
+    const errors = documents
+        .map((validatedDocument) => {
+            return {
+                validatedDocument,
+                diagnostics: (validatedDocument.diagnostics ?? []).filter((e) => e.severity === 1),
+            };
+        })
+        .filter((validationInfo) => validationInfo.diagnostics.length > 0);
+
+    if (errors.length > 0) {
+        for (const validationInfo of errors) {
+            logError(`File ${validationInfo.validatedDocument.uri.toString()} has errors:`);
+            for (const validationError of validationInfo.diagnostics) {
+                logError(
+                    `\tat line ${validationError.range.start.line + 1}: ${
+                        validationError.message
+                    } [${validationInfo.validatedDocument.textDocument.getText(validationError.range)}]`,
+                );
+            }
+        }
+        return `As file(s) ${errors
+            .map((validationInfo) => validationInfo.validatedDocument.uri.toString())
+            .join(', ')} has errors, the main pipeline cannot be run.`;
+    }
+    return undefined;
 };
