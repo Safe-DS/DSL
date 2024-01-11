@@ -2,8 +2,8 @@ import child_process from 'child_process';
 import vscode from 'vscode';
 import net from 'net';
 import WebSocket from 'ws';
-import { ast, getModuleMembers, SafeDsServices } from '@safe-ds/lang';
-import { LangiumDocument, URI } from 'langium';
+import {ast, getModuleMembers, SafeDsServices} from '@safe-ds/lang';
+import {LangiumDocument, URI} from 'langium';
 import path from 'path';
 import {
     createProgramMessage,
@@ -12,8 +12,8 @@ import {
     PythonServerMessage,
     RuntimeErrorBacktraceFrame,
 } from './messages.js';
-import { logError, logOutput } from './output.js';
-import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
+import {logError, logOutput} from './output.js';
+import {BasicSourceMapConsumer, SourceMapConsumer} from 'source-map';
 import treeKill from 'tree-kill';
 
 let pythonServer: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
@@ -212,7 +212,7 @@ export const tryMapToSafeDSSource = async function (
         column: 0,
         bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
-    return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
+    return {file: outputPosition.source || '<unknown>', line: outputPosition.line || 0};
 };
 
 /**
@@ -238,79 +238,32 @@ export const executePipeline = async function (
             return;
         }
     }
-    const lastExecutedSource = pipelineDocument.textDocument.getText();
     const node = pipelineDocument.parseResult.value;
-    // Pipeline / Module name handling
-    let mainPipelineName;
-    let mainModuleName;
     if (!ast.isSdsModule(node)) {
         return;
     }
+    // Pipeline / Module name handling
     const mainPythonModuleName = services.builtins.Annotations.getPythonModule(node);
-    const mainPackage = mainPythonModuleName === undefined ? node?.name.split('.') : [mainPythonModuleName];
+    const mainPackage = mainPythonModuleName === undefined ? node.name.split('.') : [mainPythonModuleName];
     const firstPipeline = getModuleMembers(node).find(ast.isSdsPipeline);
     if (firstPipeline === undefined) {
         logError('Cannot execute: no pipeline found');
         vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
         return;
     }
-    mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
-    if (pipelineDocument.uri.fsPath.endsWith('.sdspipe')) {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
-            path.basename(pipelineDocument.uri.fsPath, '.sdspipe'),
-        );
-    } else if (pipelineDocument.uri.fsPath.endsWith('.sdstest')) {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
-            path.basename(pipelineDocument.uri.fsPath, '.sdstest'),
-        );
-    } else {
-        mainModuleName = services.generation.PythonGenerator.sanitizeModuleNameForPython(
-            path.basename(pipelineDocument.uri.fsPath),
-        );
-    }
+    const mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
+    const mainModuleName = getMainModuleName(services, pipelineDocument);
     // Code generation
-    const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
-    const generatedDocuments = services.generation.PythonGenerator.generate(pipelineDocument, {
-        destination: URI.file(rootGenerationDir), // actual directory of main module file
-        createSourceMaps: true,
-        targetPlaceholder,
-    });
-    const lastGeneratedSource = new Map<string, string>();
-    let codeMap: ProgramCodeMap = {};
-    for (const generatedDocument of generatedDocuments) {
-        const fsPath = URI.parse(generatedDocument.uri).fsPath;
-        const workspaceRelativeFilePath = path.relative(rootGenerationDir, path.dirname(fsPath));
-        const sdsFileName = path.basename(fsPath);
-        const sdsNoExtFilename =
-            path.extname(sdsFileName).length > 0
-                ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
-                : sdsFileName;
-
-        lastGeneratedSource.set(
-            path.join(workspaceRelativeFilePath, sdsFileName).replaceAll('\\', '/'),
-            generatedDocument.getText(),
-        );
-        // Check for sourcemaps after they are already added to the pipeline context
-        // This needs to happen after lastGeneratedSource.set, as errors would not get mapped otherwise
-        if (fsPath.endsWith('.map')) {
-            // exclude sourcemaps from sending to runner
-            continue;
-        }
-        let modulePath = workspaceRelativeFilePath.replaceAll('/', '.').replaceAll('\\', '.');
-        if (!codeMap.hasOwnProperty(modulePath)) {
-            codeMap[modulePath] = {};
-        }
-        const content = generatedDocument.getText();
-        codeMap[modulePath]![sdsNoExtFilename] = content;
-    }
-    // Code execution
+    const [codeMap, lastGeneratedSources] = generateCodeForRunner(services, pipelineDocument, targetPlaceholder);
+    // Store information about the run
     executionInformation.set(id, {
-        generatedSource: lastGeneratedSource,
+        generatedSource: lastGeneratedSources,
         sourceMappings: new Map<string, BasicSourceMapConsumer>(),
         path: pipelineDocument.uri.fsPath,
-        source: lastExecutedSource,
+        source: pipelineDocument.textDocument.getText(),
         calculatedPlaceholders: new Map<string, string>(),
     });
+    // Code execution
     sendMessageToPythonServer(
         createProgramMessage(id, {
             code: codeMap,
@@ -321,6 +274,61 @@ export const executePipeline = async function (
             },
         }),
     );
+};
+
+const generateCodeForRunner = function (services: SafeDsServices, pipelineDocument: LangiumDocument, targetPlaceholder: string | undefined): [ProgramCodeMap, Map<string, string>]
+{
+    const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
+    const generatedDocuments = services.generation.PythonGenerator.generate(pipelineDocument, {
+        destination: URI.file(rootGenerationDir), // actual directory of main module file
+        createSourceMaps: true,
+        targetPlaceholder,
+    });
+    const lastGeneratedSources = new Map<string, string>();
+    let codeMap: ProgramCodeMap = {};
+    for (const generatedDocument of generatedDocuments) {
+        const fsPath = URI.parse(generatedDocument.uri).fsPath;
+        const workspaceRelativeFilePath = path.relative(rootGenerationDir, path.dirname(fsPath));
+        const sdsFileName = path.basename(fsPath);
+        const sdsNoExtFilename =
+            path.extname(sdsFileName).length > 0
+                ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
+                : sdsFileName;
+        // Put code in map for further use in the extension (e.g. to remap errors)
+        lastGeneratedSources.set(
+            path.join(workspaceRelativeFilePath, sdsFileName).replaceAll('\\', '/'),
+            generatedDocument.getText(),
+        );
+        // Check for sourcemaps after they are already added to the pipeline context
+        // This needs to happen after lastGeneratedSources.set, as errors would not get mapped otherwise
+        if (fsPath.endsWith('.map')) {
+            // exclude sourcemaps from sending to runner
+            continue;
+        }
+        let modulePath = workspaceRelativeFilePath.replaceAll('/', '.').replaceAll('\\', '.');
+        if (!codeMap.hasOwnProperty(modulePath)) {
+            codeMap[modulePath] = {};
+        }
+        // Put code in object for runner
+        codeMap[modulePath]![sdsNoExtFilename] = generatedDocument.getText();
+    }
+    return [codeMap, lastGeneratedSources];
+}
+
+const getMainModuleName = function (services: SafeDsServices, pipelineDocument: LangiumDocument): string {
+    if (pipelineDocument.uri.fsPath.endsWith('.sdspipe')) {
+        return services.generation.PythonGenerator.sanitizeModuleNameForPython(
+            path.basename(pipelineDocument.uri.fsPath, '.sdspipe'),
+        );
+    } else if (pipelineDocument.uri.fsPath.endsWith('.sdstest')) {
+        return services.generation.PythonGenerator.sanitizeModuleNameForPython(
+            path.basename(pipelineDocument.uri.fsPath, '.sdstest'),
+        );
+    } else {
+        return services.generation.PythonGenerator.sanitizeModuleNameForPython(
+            path.basename(pipelineDocument.uri.fsPath),
+        );
+    }
 };
 
 /**
@@ -406,7 +414,11 @@ const connectToWebSocket = async function (): Promise<void> {
                     logOutput(`[Runner] Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
                     return;
                 }
-                logOutput(`[Runner] Message received: '${event.data.length > 128 ? event.data.substring(0, 128) + "<truncated>" : event.data}'`);
+                logOutput(
+                    `[Runner] Message received: '${
+                        event.data.length > 128 ? event.data.substring(0, 128) + '<truncated>' : event.data
+                    }'`,
+                );
                 const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
                 if (!pythonServerMessageCallbacks.has(pythonServerMessage.type)) {
                     logOutput(`[Runner] Message type '${pythonServerMessage.type}' is not handled`);
