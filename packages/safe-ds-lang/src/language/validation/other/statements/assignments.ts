@@ -2,7 +2,7 @@ import { isSdsCall, isSdsPipeline, SdsAssignment, SdsYield } from '../../../gene
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { getAbstractResults, getAssignees } from '../../../helpers/nodeProperties.js';
-import { pluralize } from '../../../../helpers/stringUtils.js';
+import { pluralize } from '../../../../helpers/strings.js';
 
 export const CODE_ASSIGNMENT_IMPLICITLY_IGNORED_RESULT = 'assignment/implicitly-ignored-result';
 export const CODE_ASSIGMENT_NOTHING_ASSIGNED = 'assignment/nothing-assigned';

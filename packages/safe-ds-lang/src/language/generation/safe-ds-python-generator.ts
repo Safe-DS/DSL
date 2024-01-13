@@ -19,7 +19,7 @@ import {
 import path from 'path';
 import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { groupBy } from '../../helpers/collectionUtils.js';
+import { groupBy } from '../../helpers/collections.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAbstractResult,
@@ -65,6 +65,7 @@ import {
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
+    SdsPlaceholder,
     SdsSegment,
     SdsStatement,
 } from '../generated/ast.js';
@@ -76,6 +77,7 @@ import {
     getImportedDeclarations,
     getImports,
     getModuleMembers, getParameters,
+    getPlaceholderByName,
     getStatements,
     Parameter,
     streamBlockLambdaResults,
@@ -91,7 +93,7 @@ import {
 import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
-import { FileRead } from '../purity/model.js';
+import { FileRead, ImpurityReason } from '../purity/model.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -131,7 +133,7 @@ export class SafeDsPythonGenerator {
         const parentDirectoryPath = path.join(generateOptions.destination!.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
-        const generatedModule = this.generateModule(node);
+        const generatedModule = this.generateModule(node, generateOptions.targetPlaceholder);
         const { text, trace } = toStringAndTrace(generatedModule);
         const pythonOutputPath = `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`;
         if (generateOptions.createSourceMaps) {
@@ -233,14 +235,14 @@ export class SafeDsPythonGenerator {
         return moduleName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     }
 
-    private generateModule(module: SdsModule): CompositeGeneratorNode {
+    private generateModule(module: SdsModule, targetPlaceholder: string | undefined): CompositeGeneratorNode {
         const importSet = new Map<String, ImportData>();
         const segments = getModuleMembers(module)
             .filter(isSdsSegment)
             .map((segment) => this.generateSegment(segment, importSet));
         const pipelines = getModuleMembers(module)
             .filter(isSdsPipeline)
-            .map((pipeline) => this.generatePipeline(pipeline, importSet));
+            .map((pipeline) => this.generatePipeline(pipeline, importSet, targetPlaceholder));
         const imports = this.generateImports(Array.from(importSet.values()));
         const output = new CompositeGeneratorNode();
         output.trace(module);
@@ -273,7 +275,7 @@ export class SafeDsPythonGenerator {
     private generateSegment(segment: SdsSegment, importSet: Map<String, ImportData>): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(importSet);
         const segmentResult = segment.resultList?.results || [];
-        let segmentBlock = this.generateBlock(segment.body, infoFrame);
+        const segmentBlock = this.generateBlock(segment.body, infoFrame);
         if (segmentResult.length !== 0) {
             segmentBlock.appendNewLine();
             segmentBlock.append(
@@ -319,8 +321,12 @@ export class SafeDsPythonGenerator {
         }`;
     }
 
-    private generatePipeline(pipeline: SdsPipeline, importSet: Map<String, ImportData>): CompositeGeneratorNode {
-        const infoFrame = new GenerationInfoFrame(importSet, true);
+    private generatePipeline(
+        pipeline: SdsPipeline,
+        importSet: Map<String, ImportData>,
+        targetPlaceholder: string | undefined,
+    ): CompositeGeneratorNode {
+        const infoFrame = new GenerationInfoFrame(importSet, true, targetPlaceholder);
         return expandTracedToNode(pipeline)`def ${traceToNode(
             pipeline,
             'name',
@@ -370,7 +376,11 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
+        const targetPlaceholder = getPlaceholderByName(block, frame.targetPlaceholder);
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
+        if (targetPlaceholder) {
+            statements = this.getStatementsNeededForPartialExecution(targetPlaceholder, statements);
+        }
         if (statements.length === 0) {
             return traceToNode(block)('pass');
         }
@@ -383,20 +393,88 @@ export class SafeDsPythonGenerator {
         )!;
     }
 
+    private getStatementsNeededForPartialExecution(
+        targetPlaceholder: SdsPlaceholder,
+        statementsWithEffect: SdsStatement[],
+    ): SdsStatement[] {
+        // Find assignment of placeholder, to search used placeholders and impure dependencies
+        const assignment = getContainerOfType(targetPlaceholder, isSdsAssignment);
+        if (!assignment || !assignment.expression) {
+            /* c8 ignore next 2 */
+            throw new Error(`No assignment for placeholder: ${targetPlaceholder.name}`);
+        }
+        // All collected referenced placeholders that are needed for calculating the target placeholder. An expression in the assignment will always exist here
+        const referencedPlaceholders = new Set<SdsPlaceholder>(
+            streamAllContents(assignment.expression!)
+                .filter(isSdsReference)
+                .filter((reference) => isSdsPlaceholder(reference.target.ref))
+                .map((reference) => <SdsPlaceholder>reference.target.ref!)
+                .toArray(),
+        );
+        const impurityReasons = new Set<ImpurityReason>(this.purityComputer.getImpurityReasonsForStatement(assignment));
+        const collectedStatements: SdsStatement[] = [assignment];
+        for (const prevStatement of statementsWithEffect.reverse()) {
+            // Statements after the target assignment can always be skipped
+            if (prevStatement.$containerIndex! >= assignment.$containerIndex!) {
+                continue;
+            }
+            const prevStmtImpurityReasons: ImpurityReason[] =
+                this.purityComputer.getImpurityReasonsForStatement(prevStatement);
+            if (
+                // Placeholder is relevant
+                (isSdsAssignment(prevStatement) &&
+                    getAssignees(prevStatement)
+                        .filter(isSdsPlaceholder)
+                        .some((prevPlaceholder) => referencedPlaceholders.has(prevPlaceholder))) ||
+                // Impurity is relevant
+                prevStmtImpurityReasons.some((pastReason) =>
+                    Array.from(impurityReasons).some((futureReason) =>
+                        pastReason.canAffectFutureImpurityReason(futureReason),
+                    ),
+                )
+            ) {
+                collectedStatements.push(prevStatement);
+                // Collect all referenced placeholders
+                if (isSdsExpressionStatement(prevStatement) || isSdsAssignment(prevStatement)) {
+                    streamAllContents(prevStatement.expression!)
+                        .filter(isSdsReference)
+                        .filter((reference) => isSdsPlaceholder(reference.target.ref))
+                        .map((reference) => <SdsPlaceholder>reference.target.ref!)
+                        .forEach((prevPlaceholder) => {
+                            referencedPlaceholders.add(prevPlaceholder);
+                        });
+                }
+                // Collect impurity reasons
+                prevStmtImpurityReasons.forEach((prevReason) => {
+                    impurityReasons.add(prevReason);
+                });
+            }
+        }
+        // Get all statements in sorted order
+        return collectedStatements.reverse();
+    }
+
     private generateStatement(
         statement: SdsStatement,
         frame: GenerationInfoFrame,
         generateLambda: boolean,
     ): CompositeGeneratorNode {
+        const blockLambdaCode: CompositeGeneratorNode[] = [];
         if (isSdsAssignment(statement)) {
-            return traceToNode(statement)(this.generateAssignment(statement, frame, generateLambda));
+            if (statement.expression) {
+                for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
+                    blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
+                }
+            }
+            blockLambdaCode.push(this.generateAssignment(statement, frame, generateLambda));
+            return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
+                separator: NL,
+            })!;
         } else if (isSdsExpressionStatement(statement)) {
-            const blockLambdaCode: CompositeGeneratorNode[] = [];
             for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
                 blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
             }
             blockLambdaCode.push(this.generateExpression(statement.expression, frame));
-
             return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
                 separator: NL,
             })!;
@@ -417,7 +495,7 @@ export class SafeDsPythonGenerator {
         const assignees = getAssignees(assignment);
         if (assignees.some((value) => !isSdsWildcard(value))) {
             const actualAssignees = assignees.map(this.generateAssignee);
-            let assignmentStatements = [];
+            const assignmentStatements = [];
             if (requiredAssignees === actualAssignees.length) {
                 assignmentStatements.push(
                     expandTracedToNode(assignment)`${joinToNode(actualAssignees, (actualAssignee) => actualAssignee, {
@@ -475,7 +553,7 @@ export class SafeDsPythonGenerator {
 
     private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): CompositeGeneratorNode {
         const results = streamBlockLambdaResults(blockLambda).toArray();
-        let lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
+        const lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
         if (results.length !== 0) {
             lambdaBlock.appendNewLine();
             lambdaBlock.append(
@@ -928,11 +1006,17 @@ class GenerationInfoFrame {
     private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
     private readonly importSet: Map<String, ImportData>;
     public readonly isInsidePipeline: boolean;
+    public readonly targetPlaceholder: string | undefined;
 
-    constructor(importSet: Map<String, ImportData> = new Map<String, ImportData>(), insidePipeline: boolean = false) {
+    constructor(
+        importSet: Map<String, ImportData> = new Map<String, ImportData>(),
+        insidePipeline: boolean = false,
+        targetPlaceholder: string | undefined = undefined,
+    ) {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
         this.isInsidePipeline = insidePipeline;
+        this.targetPlaceholder = targetPlaceholder;
     }
 
     addImport(importData: ImportData | undefined) {
@@ -952,4 +1036,5 @@ class GenerationInfoFrame {
 export interface GenerateOptions {
     destination: URI;
     createSourceMaps: boolean;
+    targetPlaceholder: string | undefined;
 }

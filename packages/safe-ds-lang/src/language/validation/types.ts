@@ -1,6 +1,6 @@
 import { AstNode, getContainerOfType, ValidationAcceptor } from 'langium';
-import { isEmpty } from '../../helpers/collectionUtils.js';
-import { pluralize } from '../../helpers/stringUtils.js';
+import { isEmpty } from '../../helpers/collections.js';
+import { pluralize } from '../../helpers/strings.js';
 import {
     isSdsAnnotation,
     isSdsCallable,

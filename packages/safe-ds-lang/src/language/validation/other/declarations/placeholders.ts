@@ -11,7 +11,7 @@ import { getContainerOfType, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { getStatements } from '../../../helpers/nodeProperties.js';
 import { DiagnosticTag } from 'vscode-languageserver';
-import { last } from '../../../../helpers/collectionUtils.js';
+import { last } from '../../../../helpers/collections.js';
 
 export const CODE_PLACEHOLDER_ALIAS = 'placeholder/alias';
 export const CODE_PLACEHOLDER_UNUSED = 'placeholder/unused';

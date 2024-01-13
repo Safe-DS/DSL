@@ -1,0 +1,39 @@
+package tests.generator.partialImpureDependency
+
+@Impure([
+    ImpurityReason.PotentiallyImpureParameterCall("param"),
+])
+fun fp(param: () -> r: Int) -> q: Int
+
+@Pure fun noPartialEvalInt(param: Int) -> q: Int
+
+@Impure([ImpurityReason.Other]) fun i1(param: Any?) -> q: Int
+
+@Impure([ImpurityReason.FileReadFromConstantPath("a.txt")]) fun iFileRead() -> q: Int
+
+@Impure([ImpurityReason.FileWriteToConstantPath("a.txt")]) fun iFileWrite() -> q: Int
+
+pipeline testPipeline {
+    i1(1);
+
+    val impureFileRead = iFileRead(); // Should not be generated - cannot affect result
+    val impureFileWrite = iFileWrite();
+    val impureFileWrite2 = iFileWrite();
+
+    val pureValueForImpure2 = noPartialEvalInt(2);
+    val pureValueForImpure3 = 3;
+
+    fp(() {
+        i1(1);
+        yield r = 1;
+    });
+    i1(1);
+    val impureA1 = i1(pureValueForImpure2);
+    val impureA2 = i1(noPartialEvalInt(pureValueForImpure3));
+    i1(4);
+
+    // $TEST$ run_until
+    val »result« = i1(impureA2);
+    i1(4); // Should not be generated - impure cannot affect result after result is already calculated
+    val someImpureValue = i1(4); // Should not be generated - impure cannot affect result after result is already calculated
+}

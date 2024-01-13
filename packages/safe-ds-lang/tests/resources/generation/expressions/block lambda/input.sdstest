@@ -2,8 +2,10 @@ package tests.generator.blockLambda
 
 @Impure([ImpurityReason.Other]) fun f1(param: (a: Int, b: Int) -> r: Int)
 @Impure([ImpurityReason.Other]) fun f2(param: () -> ())
+@Pure fun f3(param: (a: Int, b: Int) -> r: Int) -> a: Int
 
 @Pure fun g() -> a: Int
+@Impure([ImpurityReason.Other]) fun g2(param: Int)
 
 pipeline test {
     f1((a: Int, b: Int = 2) {
@@ -13,4 +15,11 @@ pipeline test {
         yield d = g();
     });
     f2(() {});
+    g2(f3((a: Int, b: Int = 2) {
+        yield d = g();
+    }));
+    val c = f3((a: Int, b: Int = 2) {
+        yield d = g();
+    });
+    g2(c);
 }
