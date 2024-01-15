@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { generate } from './generate.js';
 import { check } from './check.js';
+import { format } from './format.js';
 
 const program = new Command();
 
@@ -18,6 +19,13 @@ program
     .option('-s, --strict', 'whether the program should fail on warnings', false)
     .description('check Safe-DS code')
     .action(check);
+
+// Format command
+program
+    .command('format')
+    .argument('<paths...>', `list of files or directories to format`)
+    .description('format Safe-DS code')
+    .action(format);
 
 // Generate command
 program

@@ -93,6 +93,52 @@ describe('safe-ds', () => {
         });
     });
 
+    describe('format', () => {
+        const testResourcesRoot = new URL('../resources/format/', import.meta.url);
+        const spawnFormatProcess = (additionalArguments: string[], paths: string[]) => {
+            const fsPaths = paths.map((p) => fileURLToPath(new URL(p, testResourcesRoot)));
+            return spawnSync('node', ['./bin/cli', 'format', ...additionalArguments, ...fsPaths], {
+                cwd: projectRoot,
+            });
+        };
+
+        it('should show an error if no paths are passed', () => {
+            const process = spawnFormatProcess([], []);
+            expect(process.stderr.toString()).toContain("error: missing required argument 'paths'");
+            expect(process.status).not.toBe(ExitCode.Success);
+        });
+
+        it('should show usage on stdout if -h flag is passed', () => {
+            const process = spawnFormatProcess(['-h'], []);
+            expect(process.stdout.toString()).toContain('Usage: cli format');
+            expect(process.status).toBe(ExitCode.Success);
+        });
+
+        it('should show errors in wrong files', () => {
+            const process = spawnFormatProcess([], ['.']);
+            expect(process.stderr.toString()).toContain('has syntax errors');
+            expect(process.status).toBe(ExitCode.FileHasErrors);
+        });
+
+        it('should show not show errors in correct files', () => {
+            const process = spawnFormatProcess([], ['correct.sdstest']);
+            expect(process.stdout.toString()).toContain('Safe-DS code formatted successfully.');
+            expect(process.status).toBe(ExitCode.Success);
+        });
+
+        it('should show an error if the file does not exist', () => {
+            const process = spawnFormatProcess([], ['missing.sdstest']);
+            expect(process.stderr.toString()).toMatch(/Path .* does not exist\./u);
+            expect(process.status).toBe(ExitCode.MissingPath);
+        });
+
+        it('should show an error if a file has the wrong extension', () => {
+            const process = spawnFormatProcess([], ['not safe-ds.txt']);
+            expect(process.stderr.toString()).toContain('does not have a Safe-DS extension');
+            expect(process.status).toBe(ExitCode.FileWithoutSafeDsExtension);
+        });
+    });
+
     describe('generate', () => {
         const testResourcesRoot = new URL('../resources/generate/', import.meta.url);
         const spawnGenerateProcess = (additionalArguments: string[], paths: string[]) => {

@@ -99,6 +99,24 @@ export const exitIfDocumentHasErrors = function (document: LangiumDocument): voi
     }
 };
 
+/**
+ * Exits the process if the given document has syntax errors.
+ */
+export const exitIfDocumentHasSyntaxErrors = function (document: LangiumDocument): void {
+    const errors = getSyntaxErrors(document);
+    if (errors.length > 0) {
+        console.error(chalk.red(`The file '${uriToRelativePath(document.uri)}' has syntax errors:`));
+        for (const error of errors) {
+            console.error(diagnosticToString(document.uri, error));
+        }
+        process.exit(ExitCode.FileHasErrors);
+    }
+};
+
 const getErrors = (document: LangiumDocument): Diagnostic[] => {
     return getDiagnostics(document).filter((it) => it.severity === DiagnosticSeverity.Error);
+};
+
+const getSyntaxErrors = (document: LangiumDocument): Diagnostic[] => {
+    return getErrors(document).filter((d) => d.data?.code === 'lexing-error' || d.data?.code === 'parsing-error');
 };
