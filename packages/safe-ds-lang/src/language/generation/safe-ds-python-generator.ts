@@ -782,18 +782,20 @@ export class SafeDsPythonGenerator {
             },
             { separator: '' },
         )!;
-        if (!this.isCallMemoizable(expression)) {
+        // Member Accesses are not memoized
+        if (!this.isCallMemoizable(expression) || thisParam) {
             return generatedPythonCall;
         }
         frame.addImport({importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE});
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
-        const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(parameter => this.nodeMapper.callToParameterValue(expression, parameter)!);
+        const callable = this.nodeMapper.callToCallable(expression);
+        const memoizedArgs = getParameters(callable).map(parameter => this.nodeMapper.callToParameterValue(expression, parameter)!);
         return expandTracedToNode(
             expression,
         )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
             expression,
             frame,
-        )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
+        )}", lambda ${joinToNode(getParameters(callable), param => this.generateParameter(param, frame, false))} : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             {separator: ', '},
@@ -849,7 +851,7 @@ export class SafeDsPythonGenerator {
         const currentModule = <SdsModule>findRootNode(expression);
         const targetModule = <SdsModule>findRootNode(declaration);
         if (currentModule === targetModule) {
-            return `${this.builtinAnnotations.getPythonModule(targetModule) || currentModule.name}.${declaration.name}`;
+            return `${this.builtinAnnotations.getPythonModule(targetModule) || currentModule.name}.${this.getPythonNameOrDefault(declaration)}`;
         }
         for (const value of getImports(currentModule)) {
             // Verify same package
@@ -862,12 +864,12 @@ export class SafeDsPythonGenerator {
                     if (declaration === importedDeclaration.declaration?.ref) {
                         return `${
                             this.builtinAnnotations.getPythonModule(targetModule) || value.package
-                        }.${importedDeclaration.declaration?.ref?.name}`;
+                        }.${this.getPythonNameOrDefault(declaration)}`;
                     }
                 }
             }
             if (isSdsWildcardImport(value)) {
-                return `${this.builtinAnnotations.getPythonModule(targetModule) || value.package}.${declaration.name}`;
+                return `${this.builtinAnnotations.getPythonModule(targetModule) || value.package}.${this.getPythonNameOrDefault(declaration)}`;
             }
         }
         return undefined;
