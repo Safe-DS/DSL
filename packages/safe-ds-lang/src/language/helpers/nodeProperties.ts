@@ -17,6 +17,7 @@ import {
     isSdsModuleMember,
     isSdsParameter,
     isSdsPlaceholder,
+    isSdsQualifiedImport,
     isSdsSegment,
     isSdsTypeParameterList,
     SdsAbstractCall,
@@ -232,8 +233,18 @@ export const getImports = (node: SdsModule | undefined): SdsImport[] => {
     return node?.imports ?? [];
 };
 
-export const getImportedDeclarations = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
-    return node?.importedDeclarationList?.importedDeclarations ?? [];
+export const getImportedDeclarations = (node: SdsModule | SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
+    if (isSdsModule(node)) {
+        return getImports(node).flatMap((imp) => {
+            if (isSdsQualifiedImport(imp)) {
+                return getImportedDeclarations(imp);
+            } else {
+                return [];
+            }
+        });
+    } else {
+        return node?.importedDeclarationList?.importedDeclarations ?? [];
+    }
 };
 
 export const getLiterals = (node: SdsLiteralType | undefined): SdsLiteral[] => {
