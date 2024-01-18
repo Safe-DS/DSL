@@ -77,8 +77,8 @@ export interface PlaceholderQueryMessage {
  */
 export interface PlaceholderQuery {
     name: string;
-    window_begin: number | undefined;
-    window_size: number | undefined;
+    window_begin?: number;
+    window_size?: number;
 }
 
 // Python Server to Extension
@@ -115,10 +115,10 @@ export interface PlaceholderValue {
     name: string;
     type: string;
     value: string;
-    windowed: boolean | undefined;
-    window_begin: number | undefined;
-    window_size: number | undefined;
-    window_max: number | undefined;
+    windowed?: boolean;
+    window_begin?: number;
+    window_size?: number;
+    window_max?: number;
 }
 
 // Python Server to Extension
