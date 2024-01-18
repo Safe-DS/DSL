@@ -68,7 +68,17 @@ export interface ProgramMainInformation {
 export interface PlaceholderQueryMessage {
     type: 'placeholder_query';
     id: string;
-    data: string;
+    data: PlaceholderQuery;
+}
+
+/**
+ * Contains the query for a placeholder value.
+ * Field name contains the name of the requested placeholder, field window_begin may contain an offset of and window_size may contain the size of a subset of the requested data.
+ */
+export interface PlaceholderQuery {
+    name: string;
+    window_begin: number | undefined;
+    window_size: number | undefined;
 }
 
 // Python Server to Extension
@@ -105,6 +115,10 @@ export interface PlaceholderValue {
     name: string;
     type: string;
     value: string;
+    windowed: boolean | undefined;
+    window_begin: number | undefined;
+    window_size: number | undefined;
+    window_max: number | undefined;
 }
 
 // Python Server to Extension
@@ -152,8 +166,21 @@ export const createProgramMessage = function (id: string, data: ProgramPackageMa
     return { type: 'program', id, data };
 };
 
-export const createPlaceholderQueryMessage = function (id: string, placeholderName: string): PythonServerMessage {
-    return { type: 'placeholder_query', id, data: placeholderName };
+export const createPlaceholderQueryMessage = function (
+    id: string,
+    placeholderName: string,
+    windowBegin: number | undefined = undefined,
+    windowSize: number | undefined = undefined,
+): PythonServerMessage {
+    return {
+        type: 'placeholder_query',
+        id,
+        data: {
+            name: placeholderName,
+            window_begin: !windowBegin ? undefined : Math.round(windowBegin),
+            window_size: !windowSize ? undefined : Math.round(windowSize),
+        },
+    };
 };
 
 // Extension to Python Server
