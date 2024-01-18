@@ -76,7 +76,8 @@ import {
     getAssignees,
     getImportedDeclarations,
     getImports,
-    getModuleMembers, getParameters,
+    getModuleMembers,
+    getParameters,
     getPlaceholderByName,
     getStatements,
     Parameter,
@@ -748,15 +749,15 @@ export class SafeDsPythonGenerator {
         throw new Error(`Unknown expression type: ${expression.$type}`);
     }
 
-    private generatePlainCall(expression: SdsCall, sortedArgs: SdsArgument[], frame: GenerationInfoFrame): CompositeGeneratorNode {
-        return expandTracedToNode(expression)`${this.generateExpression(
-            expression.receiver,
-            frame,
-        )}(${joinTracedToNode(expression.argumentList, 'arguments')(
-            sortedArgs,
-            (arg) => this.generateArgument(arg, frame),
-            {separator: ', '},
-        )})`;
+    private generatePlainCall(
+        expression: SdsCall,
+        sortedArgs: SdsArgument[],
+        frame: GenerationInfoFrame,
+    ): CompositeGeneratorNode {
+        return expandTracedToNode(expression)`${this.generateExpression(expression.receiver, frame)}(${joinTracedToNode(
+            expression.argumentList,
+            'arguments',
+        )(sortedArgs, (arg) => this.generateArgument(arg, frame), { separator: ', ' })})`;
     }
 
     private generatePythonCall(
@@ -786,10 +787,12 @@ export class SafeDsPythonGenerator {
         if (!this.isCallMemoizable(expression) || thisParam) {
             return generatedPythonCall;
         }
-        frame.addImport({importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE});
+        frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
         const callable = this.nodeMapper.callToCallable(expression);
-        const memoizedArgs = getParameters(callable).map(parameter => this.nodeMapper.callToParameterValue(expression, parameter)!);
+        const memoizedArgs = getParameters(callable).map(
+            (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
+        );
         return expandTracedToNode(
             expression,
         )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
@@ -798,7 +801,7 @@ export class SafeDsPythonGenerator {
         )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
-            {separator: ', '},
+            { separator: ', ' },
         )}], [${hiddenParameters.join(', ')}])`;
     }
 
@@ -818,21 +821,32 @@ export class SafeDsPythonGenerator {
         sortedArgs: SdsArgument[],
         frame: GenerationInfoFrame,
     ): CompositeGeneratorNode {
-        frame.addImport({importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE});
+        frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
-        const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(parameter => this.nodeMapper.callToParameterValue(expression, parameter)!);
-        const containsOptionalArgs = sortedArgs.map(arg => this.nodeMapper.argumentToParameter(arg)).filter(param => param).find(param => !Parameter.isRequired(param)) !== undefined;
+        const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(
+            (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
+        );
+        const containsOptionalArgs =
+            sortedArgs
+                .map((arg) => this.nodeMapper.argumentToParameter(arg))
+                .filter((param) => param)
+                .find((param) => !Parameter.isRequired(param)) !== undefined;
         return expandTracedToNode(
             expression,
         )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
             expression,
             frame,
-        )}", ${containsOptionalArgs ? "lambda *_ : " : ""}${containsOptionalArgs ? this.generatePlainCall(expression, sortedArgs, frame) : this.generateExpression(expression.receiver, frame)}, [${joinTracedToNode(
-            expression.argumentList,
-            'arguments',
-        )(memoizedArgs, (arg) => this.generateExpression(arg, frame), {
-            separator: ', ',
-        })}], [${hiddenParameters.join(', ')}])`;
+        )}", ${containsOptionalArgs ? 'lambda *_ : ' : ''}${
+            containsOptionalArgs
+                ? this.generatePlainCall(expression, sortedArgs, frame)
+                : this.generateExpression(expression.receiver, frame)
+        }, [${joinTracedToNode(expression.argumentList, 'arguments')(
+            memoizedArgs,
+            (arg) => this.generateExpression(arg, frame),
+            {
+                separator: ', ',
+            },
+        )}], [${hiddenParameters.join(', ')}])`;
     }
 
     private getMemoizedCallHiddenParameters(expression: SdsCall): string[] {
@@ -851,7 +865,9 @@ export class SafeDsPythonGenerator {
         const currentModule = <SdsModule>findRootNode(expression);
         const targetModule = <SdsModule>findRootNode(declaration);
         if (currentModule === targetModule) {
-            return `${this.builtinAnnotations.getPythonModule(targetModule) || currentModule.name}.${this.getPythonNameOrDefault(declaration)}`;
+            return `${
+                this.builtinAnnotations.getPythonModule(targetModule) || currentModule.name
+            }.${this.getPythonNameOrDefault(declaration)}`;
         }
         for (const value of getImports(currentModule)) {
             // Verify same package
@@ -869,7 +885,9 @@ export class SafeDsPythonGenerator {
                 }
             }
             if (isSdsWildcardImport(value)) {
-                return `${this.builtinAnnotations.getPythonModule(targetModule) || value.package}.${this.getPythonNameOrDefault(declaration)}`;
+                return `${
+                    this.builtinAnnotations.getPythonModule(targetModule) || value.package
+                }.${this.getPythonNameOrDefault(declaration)}`;
             }
         }
         return undefined;
