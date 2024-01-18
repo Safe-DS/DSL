@@ -795,7 +795,7 @@ export class SafeDsPythonGenerator {
         )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
             expression,
             frame,
-        )}", lambda ${joinToNode(getParameters(callable), param => this.generateParameter(param, frame, false))} : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
+        )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             {separator: ', '},
