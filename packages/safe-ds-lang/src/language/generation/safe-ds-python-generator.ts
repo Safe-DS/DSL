@@ -27,7 +27,7 @@ import {
     isSdsBlockLambda,
     isSdsBlockLambdaResult,
     isSdsCall,
-    isSdsCallable,
+    isSdsCallable, isSdsClass,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
@@ -38,6 +38,7 @@ import {
     isSdsMap,
     isSdsMemberAccess,
     isSdsModule,
+    isSdsParameter,
     isSdsParenthesizedExpression,
     isSdsPipeline,
     isSdsPlaceholder,
@@ -637,17 +638,25 @@ export class SafeDsPythonGenerator {
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             const sortedArgs = this.sortArguments(expression.argumentList.arguments);
-            if (isSdsFunction(callable)) {
-                const pythonCall = this.builtinAnnotations.getPythonCall(callable);
-                if (pythonCall) {
+            // Memoize constructor or function call
+            if (isSdsFunction(callable) || isSdsClass(callable)) {
+                if (isSdsFunction(callable)) {
+                    const pythonCall = this.builtinAnnotations.getPythonCall(callable);
+                    if (pythonCall) {
+                        let thisParam: CompositeGeneratorNode | undefined = undefined;
+                        if (isSdsMemberAccess(expression.receiver)) {
+                            thisParam = this.generateExpression(expression.receiver.receiver, frame);
+                        }
+                        const argumentsMap = this.getArgumentsMap(expression.argumentList.arguments, frame);
+                        return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
+                    }
+                }
+                if (this.isCallMemoizable(expression)) {
                     let thisParam: CompositeGeneratorNode | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
-                    const argumentsMap = this.getArgumentsMap(expression.argumentList.arguments, frame);
-                    return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
-                } else if (this.isCallMemoizable(expression)) {
-                    return this.generateMemoizedCall(expression, sortedArgs, frame);
+                    return this.generateMemoizedCall(expression, sortedArgs, frame, thisParam);
                 }
             }
             return this.generatePlainCall(expression, sortedArgs, frame);
@@ -783,12 +792,12 @@ export class SafeDsPythonGenerator {
             },
             { separator: '' },
         )!;
-        // Member Accesses are not memoized
-        if (!this.isCallMemoizable(expression) || thisParam) {
+        // Non-memoizable calls can be directly generated
+        if (!this.isCallMemoizable(expression)) {
             return generatedPythonCall;
         }
         frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
-        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
+        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
         const memoizedArgs = getParameters(callable).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
@@ -802,14 +811,15 @@ export class SafeDsPythonGenerator {
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             { separator: ', ' },
-        )}], [${hiddenParameters.join(', ')}])`;
+        )}], [${joinToNode(hiddenParameters, (param => param), { separator: ', ' })}])`;
     }
 
     private isCallMemoizable(expression: SdsCall): boolean {
         const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
         let memoizable = true;
         for (const reason of impurityReasons) {
-            if (!(reason instanceof FileRead)) {
+            // If the file is not known, the call is not memoizable
+            if (!(reason instanceof FileRead) || reason.path === undefined) {
                 memoizable &&= false;
             }
         }
@@ -820,9 +830,10 @@ export class SafeDsPythonGenerator {
         expression: SdsCall,
         sortedArgs: SdsArgument[],
         frame: GenerationInfoFrame,
+        thisParam: CompositeGeneratorNode | undefined = undefined
     ): CompositeGeneratorNode {
         frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
-        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression);
+        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
@@ -831,30 +842,48 @@ export class SafeDsPythonGenerator {
                 .map((arg) => this.nodeMapper.argumentToParameter(arg))
                 .filter((param) => param)
                 .find((param) => !Parameter.isRequired(param)) !== undefined;
-        return expandTracedToNode(
-            expression,
-        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
+        const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(
             expression,
             frame,
-        )}", ${containsOptionalArgs ? 'lambda *_ : ' : ''}${
+        );
+        return expandTracedToNode(
+            expression,
+        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${fullyQualifiedTargetName}", ${containsOptionalArgs ? 'lambda *_ : ' : ''}${
             containsOptionalArgs
                 ? this.generatePlainCall(expression, sortedArgs, frame)
-                : this.generateExpression(expression.receiver, frame)
-        }, [${joinTracedToNode(expression.argumentList, 'arguments')(
+                : (isSdsMemberAccess(expression.receiver) && isSdsCall(expression.receiver.receiver) ? expandTracedToNode(expression.receiver)`${this.generateExpression(expression.receiver.receiver.receiver, frame)}.${this.generateExpression(expression.receiver.member!, frame)}` : this.generateExpression(expression.receiver, frame))
+        }, [${thisParam ? thisParam.append(", ") : ""}${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             {
                 separator: ', ',
             },
-        )}], [${hiddenParameters.join(', ')}])`;
+        )}], [${joinToNode(hiddenParameters, (param => param), { separator: ', ' })}])`;
     }
 
-    private getMemoizedCallHiddenParameters(expression: SdsCall): string[] {
+    private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
         const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
-        const hiddenParameters: string[] = [];
+        const hiddenParameters: CompositeGeneratorNode[] = [];
         for (const reason of impurityReasons) {
             if (reason instanceof FileRead) {
-                hiddenParameters.push(`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime("${reason.path}")`);
+                if (typeof reason.path === 'string') {
+                    hiddenParameters.push(
+                        expandTracedToNode(expression)`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime('${reason.path}')`,
+                    );
+                } else if (isSdsParameter(reason.path)) {
+                    const argument = this.nodeMapper
+                        .parametersToArguments([reason.path], expression.argumentList.arguments)
+                        .get(reason.path);
+                    if (!argument) {
+                        /* c8 ignore next 4 */
+                        throw new Error(
+                            'File Read impurity with dependency on parameter is present on call, but no argument has been provided.',
+                        );
+                    }
+                    hiddenParameters.push(
+                        expandTracedToNode(argument)`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime(${this.generateArgument(argument, frame)})`,
+                    );
+                }
             }
         }
         return hiddenParameters;
@@ -890,6 +919,7 @@ export class SafeDsPythonGenerator {
                 }.${this.getPythonNameOrDefault(declaration)}`;
             }
         }
+        /* c8 ignore next */
         return undefined;
     }
 
@@ -898,6 +928,9 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
     ): CompositeGeneratorNode {
         const reference = expression.receiver;
+        if (isSdsMemberAccess(reference) && isSdsCall(reference.receiver)) {
+            return expandTracedToNode(reference)`${this.generateFullyQualifiedFunctionName(reference.receiver, frame)}.${this.getPythonNameOrDefault(reference.member?.target.ref!)}`;
+        }
         if (isSdsReference(reference)) {
             const declaration = reference.target.ref!;
             const fullyQualifiedReferenceName = this.getFullyQualifiedReferenceName(reference, declaration);
@@ -905,6 +938,7 @@ export class SafeDsPythonGenerator {
                 return expandTracedToNode(reference)`${fullyQualifiedReferenceName}`;
             }
         }
+        /* c8 ignore next */
         return this.generateExpression(reference, frame);
     }
 
