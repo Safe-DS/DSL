@@ -44,7 +44,7 @@ export class FileRead extends ImpurityReason {
     }
 
     override toString(): string {
-        return `File read from ${this.getPath() || '?'}`;
+        return `File read from "${this.getPath() || '?'}"`;
     }
 
     getPath(): string | undefined {
