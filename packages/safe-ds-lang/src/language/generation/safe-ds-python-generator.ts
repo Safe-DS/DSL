@@ -27,7 +27,8 @@ import {
     isSdsBlockLambda,
     isSdsBlockLambdaResult,
     isSdsCall,
-    isSdsCallable, isSdsClass,
+    isSdsCallable,
+    isSdsClass,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
@@ -811,7 +812,7 @@ export class SafeDsPythonGenerator {
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             { separator: ', ' },
-        )}], [${joinToNode(hiddenParameters, (param => param), { separator: ', ' })}])`;
+        )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
     }
 
     private isCallMemoizable(expression: SdsCall): boolean {
@@ -830,7 +831,7 @@ export class SafeDsPythonGenerator {
         expression: SdsCall,
         sortedArgs: SdsArgument[],
         frame: GenerationInfoFrame,
-        thisParam: CompositeGeneratorNode | undefined = undefined
+        thisParam: CompositeGeneratorNode | undefined = undefined,
     ): CompositeGeneratorNode {
         frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
@@ -842,23 +843,27 @@ export class SafeDsPythonGenerator {
                 .map((arg) => this.nodeMapper.argumentToParameter(arg))
                 .filter((param) => param)
                 .find((param) => !Parameter.isRequired(param)) !== undefined;
-        const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(
-            expression,
-            frame,
-        );
+        const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression, frame);
         return expandTracedToNode(
             expression,
-        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${fullyQualifiedTargetName}", ${containsOptionalArgs ? 'lambda *_ : ' : ''}${
+        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${fullyQualifiedTargetName}", ${
+            containsOptionalArgs ? 'lambda *_ : ' : ''
+        }${
             containsOptionalArgs
                 ? this.generatePlainCall(expression, sortedArgs, frame)
-                : (isSdsMemberAccess(expression.receiver) && isSdsCall(expression.receiver.receiver) ? expandTracedToNode(expression.receiver)`${this.generateExpression(expression.receiver.receiver.receiver, frame)}.${this.generateExpression(expression.receiver.member!, frame)}` : this.generateExpression(expression.receiver, frame))
-        }, [${thisParam ? thisParam.append(", ") : ""}${joinTracedToNode(expression.argumentList, 'arguments')(
+                : isSdsMemberAccess(expression.receiver) && isSdsCall(expression.receiver.receiver)
+                  ? expandTracedToNode(expression.receiver)`${this.generateExpression(
+                        expression.receiver.receiver.receiver,
+                        frame,
+                    )}.${this.generateExpression(expression.receiver.member!, frame)}`
+                  : this.generateExpression(expression.receiver, frame)
+        }, [${thisParam ? thisParam.append(', ') : ''}${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             {
                 separator: ', ',
             },
-        )}], [${joinToNode(hiddenParameters, (param => param), { separator: ', ' })}])`;
+        )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
     }
 
     private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
@@ -868,7 +873,9 @@ export class SafeDsPythonGenerator {
             if (reason instanceof FileRead) {
                 if (typeof reason.path === 'string') {
                     hiddenParameters.push(
-                        expandTracedToNode(expression)`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime('${reason.path}')`,
+                        expandTracedToNode(
+                            expression,
+                        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime('${reason.path}')`,
                     );
                 } else if (isSdsParameter(reason.path)) {
                     const argument = this.nodeMapper
@@ -881,7 +888,12 @@ export class SafeDsPythonGenerator {
                         );
                     }
                     hiddenParameters.push(
-                        expandTracedToNode(argument)`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime(${this.generateArgument(argument, frame)})`,
+                        expandTracedToNode(
+                            argument,
+                        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime(${this.generateArgument(
+                            argument,
+                            frame,
+                        )})`,
                     );
                 }
             }
@@ -929,7 +941,10 @@ export class SafeDsPythonGenerator {
     ): CompositeGeneratorNode {
         const reference = expression.receiver;
         if (isSdsMemberAccess(reference) && isSdsCall(reference.receiver)) {
-            return expandTracedToNode(reference)`${this.generateFullyQualifiedFunctionName(reference.receiver, frame)}.${this.getPythonNameOrDefault(reference.member?.target.ref!)}`;
+            return expandTracedToNode(reference)`${this.generateFullyQualifiedFunctionName(
+                reference.receiver,
+                frame,
+            )}.${this.getPythonNameOrDefault(reference.member?.target.ref!)}`;
         }
         if (isSdsReference(reference)) {
             const declaration = reference.target.ref!;
