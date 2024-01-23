@@ -1,7 +1,7 @@
 import { SdsNamedType } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { getTypeArguments, getTypeParameters } from '../../../helpers/nodeProperties.js';
+import { getTypeArguments, getTypeParameters, TypeParameter } from '../../../helpers/nodeProperties.js';
 import { duplicatesBy } from '../../../../helpers/collections.js';
 import { pluralize } from '../../../../helpers/strings.js';
 
@@ -50,6 +50,13 @@ export const namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedAr
 };
 
 export const namedTypeMustNotHaveTooManyTypeArguments = (node: SdsNamedType, accept: ValidationAcceptor): void => {
+    const actualTypeArgumentCount = getTypeArguments(node).length;
+
+    // We can never have too many arguments in this case
+    if (actualTypeArgumentCount === 0) {
+        return;
+    }
+
     // If the declaration is unresolved, we already show another error
     const namedTypeDeclaration = node.declaration?.ref;
     if (!namedTypeDeclaration) {
@@ -57,14 +64,30 @@ export const namedTypeMustNotHaveTooManyTypeArguments = (node: SdsNamedType, acc
     }
 
     const typeParameters = getTypeParameters(namedTypeDeclaration);
-    const typeArguments = getTypeArguments(node.typeArgumentList);
+    const maxTypeArgumentCount = typeParameters.length;
 
-    if (typeArguments.length > typeParameters.length) {
-        const kind = pluralize(typeParameters.length, 'type argument');
-        accept('error', `Expected ${typeParameters.length} ${kind} but got ${typeArguments.length}.`, {
+    // All is good
+    if (actualTypeArgumentCount <= maxTypeArgumentCount) {
+        return;
+    }
+
+    const minTypeArgumentCount = typeParameters.filter(TypeParameter.isRequired).length;
+    const kind = pluralize(Math.max(minTypeArgumentCount, maxTypeArgumentCount), 'type argument');
+    if (minTypeArgumentCount === maxTypeArgumentCount) {
+        accept('error', `Expected exactly ${minTypeArgumentCount} ${kind} but got ${actualTypeArgumentCount}.`, {
             node,
             property: 'typeArgumentList',
             code: CODE_NAMED_TYPE_TOO_MANY_TYPE_ARGUMENTS,
         });
+    } else {
+        accept(
+            'error',
+            `Expected between ${minTypeArgumentCount} and ${maxTypeArgumentCount} ${kind} but got ${actualTypeArgumentCount}.`,
+            {
+                node,
+                property: 'typeArgumentList',
+                code: CODE_NAMED_TYPE_TOO_MANY_TYPE_ARGUMENTS,
+            },
+        );
     }
 };

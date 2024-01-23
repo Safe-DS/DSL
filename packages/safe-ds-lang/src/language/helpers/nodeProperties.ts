@@ -15,10 +15,12 @@ import {
     isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
+    isSdsNamedType,
     isSdsParameter,
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsSegment,
+    isSdsTypeArgumentList,
     isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsAbstractCall,
@@ -46,6 +48,7 @@ import {
     SdsLiteralType,
     SdsModule,
     SdsModuleMember,
+    SdsNamedType,
     SdsNamedTypeDeclaration,
     SdsParameter,
     SdsPlaceholder,
@@ -308,8 +311,18 @@ export const getStatements = (node: SdsBlock | undefined): SdsStatement[] => {
     return node?.statements ?? [];
 };
 
-export const getTypeArguments = (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] => {
-    return node?.typeArguments ?? [];
+export const getTypeArguments = (node: SdsTypeArgumentList | SdsNamedType | undefined): SdsTypeArgument[] => {
+    if (!node) {
+        return [];
+    }
+
+    if (isSdsTypeArgumentList(node)) {
+        return node.typeArguments;
+    } else if (isSdsNamedType(node)) {
+        return getTypeArguments(node.typeArgumentList);
+    } /* c8 ignore start */ else {
+        return [];
+    } /* c8 ignore stop */
 };
 
 export const getTypeParameters = (
