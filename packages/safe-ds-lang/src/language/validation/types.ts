@@ -23,7 +23,7 @@ import {
     SdsResult,
     SdsYield,
 } from '../generated/ast.js';
-import { getTypeArguments, getTypeParameters } from '../helpers/nodeProperties.js';
+import { getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { NamedTupleType } from '../typing/model.js';
 
@@ -326,7 +326,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
 export const namedTypeMustSetAllTypeParameters =
     (services: SafeDsServices) =>
     (node: SdsNamedType, accept: ValidationAcceptor): void => {
-        const expectedTypeParameters = getTypeParameters(node.declaration?.ref);
+        const expectedTypeParameters = getTypeParameters(node.declaration?.ref).filter(TypeParameter.isRequired);
         if (isEmpty(expectedTypeParameters)) {
             return;
         }
@@ -350,7 +350,7 @@ export const namedTypeMustSetAllTypeParameters =
         } else {
             accept(
                 'error',
-                `The type '${node.declaration?.$refText}' is parameterized, so a type argument list must be added.`,
+                `The type '${node.declaration?.$refText}' has required type parameters, so a type argument list must be added.`,
                 {
                     node,
                     code: CODE_TYPE_MISSING_TYPE_ARGUMENTS,
