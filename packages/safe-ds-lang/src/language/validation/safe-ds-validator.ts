@@ -179,6 +179,7 @@ import {
 } from './types.js';
 import { statementMustDoSomething } from './other/statements/statements.js';
 import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
+import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
 
 /**
  * Register custom validation checks.
@@ -355,6 +356,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [
+            typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
             typeParameterListsShouldBeUsedWithCaution(services),
             typeParameterListShouldNotBeEmpty(services),
         ],

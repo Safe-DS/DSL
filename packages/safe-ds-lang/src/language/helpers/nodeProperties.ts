@@ -19,6 +19,7 @@ import {
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsSegment,
+    isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsAbstractCall,
     SdsAbstractResult,
@@ -141,6 +142,16 @@ export const isStatic = (node: SdsClassMember): boolean => {
 export namespace TypeArgument {
     export const isNamed = (node: SdsTypeArgument): boolean => {
         return Boolean(node.typeParameter);
+    };
+}
+
+export namespace TypeParameter {
+    export const isOptional = (node: SdsTypeParameter | undefined): boolean => {
+        return Boolean(node?.defaultValue);
+    };
+
+    export const isRequired = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && !node.defaultValue;
     };
 }
 
