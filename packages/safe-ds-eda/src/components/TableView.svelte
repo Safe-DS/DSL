@@ -290,7 +290,8 @@
             <table>
                 <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
                     <tr class="headerRow" style="height: {rowHeight}px;">
-                        <th class="firstColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}></th>
+                        <th class="borderColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
+                        ></th>
                         {#each $currentState.table.columns as column, index}
                             <th
                                 bind:this={headerElements[index]}
@@ -310,11 +311,16 @@
                                 ></div>
                             </th>
                         {/each}
+                        <th
+                            class="borderColumn"
+                            on:mousemove={(event) =>
+                                throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                        ></th>
                     </tr>
                 </thead>
                 <tr class="hiddenProfilingWrapper no-hover" style="top: {scrollTop}px;">
                     <td
-                        class="firstColumn border-right profiling"
+                        class="borderColumn border-right profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     {#each $currentState.table.columns as column, index}
@@ -328,10 +334,15 @@
                             </div>
                         </td>
                     {/each}
+                    <td
+                        class="borderColumn profiling"
+                        on:mousemove={(event) =>
+                            throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                    ></td>
                 </tr>
                 <tr class="profilingBannerRow" style="height: {rowHeight}px; top: {scrollTop}px;">
                     <td
-                        class="firstColumn border-right profilingBanner"
+                        class="borderColumn border-right profilingBanner"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     <td
@@ -355,11 +366,16 @@
                         >
                         </td>
                     {/each}
+                    <td
+                        class="borderColumn profilingBanner"
+                        on:mousemove={(event) =>
+                            throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                    ></td>
                 </tr>
                 <tbody style="position: relative; top: {visibleStart * rowHeight}px;">
                     {#each Array(Math.min(visibleEnd, numRows) - visibleStart) as _, i}
                         <tr style="height: {rowHeight}px;">
-                            <td class="firstColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
+                            <td class="borderColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                                 >{visibleStart + i}</td
                             >
                             {#each $currentState.table.columns as column, index}
@@ -367,6 +383,12 @@
                                     >{column[1].values[visibleStart + i] || ''}</td
                                 >
                             {/each}
+                            <td
+                                class="borderColumn borderColumnEndIndex"
+                                on:mousemove={(event) =>
+                                    throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                                >{visibleStart + i}</td
+                            >
                         </tr>
                     {/each}
                 </tbody>
@@ -458,7 +480,6 @@
     .border-right {
         border-right: 2px solid var(--bg-bright);
     }
-
     .hiddenProfilingWrapper {
         position: relative !important;
         z-index: 10;
@@ -476,7 +497,7 @@
         overflow: visible;
     }
 
-    .firstColumn {
+    .borderColumn {
         padding: 5px 5px 5px 5px;
         width: 45px;
         overflow: hidden;
@@ -484,6 +505,11 @@
         white-space: nowrap;
         font-size: 0.8rem;
         border-left: 3px solid var(--bg-bright) !important;
+    }
+
+    .borderColumnEndIndex {
+        border-left: 2px solid var(--bg-dark) !important;
+        text-align: right;
     }
 
     .profilingBanner {
