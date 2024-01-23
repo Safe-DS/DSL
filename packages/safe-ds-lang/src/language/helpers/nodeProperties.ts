@@ -15,9 +15,13 @@ import {
     isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
+    isSdsNamedType,
     isSdsParameter,
     isSdsPlaceholder,
+    isSdsQualifiedImport,
     isSdsSegment,
+    isSdsTypeArgumentList,
+    isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsAbstractCall,
     SdsAbstractResult,
@@ -44,6 +48,7 @@ import {
     SdsLiteralType,
     SdsModule,
     SdsModuleMember,
+    SdsNamedType,
     SdsNamedTypeDeclaration,
     SdsParameter,
     SdsPlaceholder,
@@ -143,6 +148,16 @@ export namespace TypeArgument {
     };
 }
 
+export namespace TypeParameter {
+    export const isOptional = (node: SdsTypeParameter | undefined): boolean => {
+        return Boolean(node?.defaultValue);
+    };
+
+    export const isRequired = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && !node.defaultValue;
+    };
+}
+
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements
 // -------------------------------------------------------------------------------------------------
@@ -232,8 +247,18 @@ export const getImports = (node: SdsModule | undefined): SdsImport[] => {
     return node?.imports ?? [];
 };
 
-export const getImportedDeclarations = (node: SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
-    return node?.importedDeclarationList?.importedDeclarations ?? [];
+export const getImportedDeclarations = (node: SdsModule | SdsQualifiedImport | undefined): SdsImportedDeclaration[] => {
+    if (isSdsModule(node)) {
+        return getImports(node).flatMap((imp) => {
+            if (isSdsQualifiedImport(imp)) {
+                return getImportedDeclarations(imp);
+            } else {
+                return [];
+            }
+        });
+    } else {
+        return node?.importedDeclarationList?.importedDeclarations ?? [];
+    }
 };
 
 export const getLiterals = (node: SdsLiteralType | undefined): SdsLiteral[] => {
@@ -274,6 +299,10 @@ export const streamPlaceholders = (node: SdsBlock | undefined): Stream<SdsPlaceh
     return stream(getStatements(node)).filter(isSdsAssignment).flatMap(getAssignees).filter(isSdsPlaceholder);
 };
 
+export const getPlaceholderByName = (block: SdsBlock, name: string | undefined): SdsPlaceholder | undefined => {
+    return name ? streamPlaceholders(block).find((placeholder) => placeholder.name === name) : undefined;
+};
+
 export const getResults = (node: SdsResultList | undefined): SdsResult[] => {
     return node?.results ?? [];
 };
@@ -282,8 +311,18 @@ export const getStatements = (node: SdsBlock | undefined): SdsStatement[] => {
     return node?.statements ?? [];
 };
 
-export const getTypeArguments = (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] => {
-    return node?.typeArguments ?? [];
+export const getTypeArguments = (node: SdsTypeArgumentList | SdsNamedType | undefined): SdsTypeArgument[] => {
+    if (!node) {
+        return [];
+    }
+
+    if (isSdsTypeArgumentList(node)) {
+        return node.typeArguments;
+    } else if (isSdsNamedType(node)) {
+        return getTypeArguments(node.typeArgumentList);
+    } /* c8 ignore start */ else {
+        return [];
+    } /* c8 ignore stop */
 };
 
 export const getTypeParameters = (

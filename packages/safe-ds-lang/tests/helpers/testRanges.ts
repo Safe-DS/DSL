@@ -1,7 +1,7 @@
 import { Result } from 'true-myth';
 import { Position, Range } from 'vscode-languageserver';
 import { CLOSE, OPEN } from './testMarker.js';
-import { positionToString } from './location.js';
+import { positionToString } from '../../src/helpers/locations.js';
 import { TestDescriptionError } from './testDescription.js';
 import { URI } from 'langium';
 

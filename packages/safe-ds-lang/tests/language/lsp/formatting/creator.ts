@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { EmptyFileSystem, URI } from 'langium';
 import { Diagnostic } from 'vscode-languageserver';
-import { normalizeLineBreaks } from '../../../../src/helpers/stringUtils.js';
+import { normalizeLineBreaks } from '../../../../src/helpers/strings.js';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 import { getSyntaxErrors } from '../../../helpers/diagnostics.js';
 import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';

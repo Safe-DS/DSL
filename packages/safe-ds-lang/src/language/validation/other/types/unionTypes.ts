@@ -11,7 +11,7 @@ import { getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'lang
 import { getTypeArguments } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { Type } from '../../../typing/model.js';
-import { isEmpty } from '../../../../helpers/collectionUtils.js';
+import { isEmpty } from '../../../../helpers/collections.js';
 
 export const CODE_UNION_TYPE_CONTEXT = 'union-type/context';
 export const CODE_UNION_TYPE_DUPLICATE_TYPE = 'union-type/duplicate-type';

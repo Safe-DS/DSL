@@ -1,0 +1,38 @@
+package tests.generator.partialRedundantImpurity
+
+@Impure([
+    ImpurityReason.PotentiallyImpureParameterCall("param"),
+])
+fun fp(param: () -> r: Int) -> q: Int
+
+@Pure fun noPartialEvalInt(param: Int) -> q: Int
+
+@Impure([ImpurityReason.Other]) fun i1(param: Any?) -> q: Int
+
+@Impure([ImpurityReason.FileReadFromConstantPath("a.txt")]) fun iFileRead() -> q: Int
+
+@Impure([ImpurityReason.FileWriteToConstantPath("a.txt")]) fun iFileWrite() -> q: Int
+
+pipeline testPipeline {
+    val impureFileRead = iFileRead(); // Should not be generated - cannot affect result
+    val impureFileWrite = iFileWrite(); // Should not be generated - cannot affect result
+    val impureFileWrite2 = iFileWrite(); // Should not be generated - cannot affect result
+    val impureFileReadAgain = iFileRead(); // Should not be generated - cannot affect result
+
+    val pureValue = noPartialEvalInt(2);
+    val pureValueForImpure3 = 3; // Should not be generated - cannot affect result
+
+    fp(() {
+        i1(1);
+        yield r = 1;
+    }); // Should not be generated - cannot affect result
+    i1(1); // Should not be generated - cannot affect result
+    val impureA1 = i1(pureValue); // Should not be generated - cannot affect result
+    val impureA2 = i1(noPartialEvalInt(pureValueForImpure3)); // Should not be generated - cannot affect result
+    i1(4); // Should not be generated - impure can not have effects on future statements as they are pure
+
+    // $TEST$ run_until
+    val »result« = pureValue - 1;
+    i1(4); // Should not be generated - impure cannot affect result after result is already calculated
+    val someImpureValue = i1(4); // Should not be generated - impure cannot affect result after result is already calculated
+}

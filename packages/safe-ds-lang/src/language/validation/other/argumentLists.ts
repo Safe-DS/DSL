@@ -1,6 +1,6 @@
 import { getContainerOfType, ValidationAcceptor } from 'langium';
-import { duplicatesBy, isEmpty } from '../../../helpers/collectionUtils.js';
-import { pluralize } from '../../../helpers/stringUtils.js';
+import { duplicatesBy, isEmpty } from '../../../helpers/collections.js';
+import { pluralize } from '../../../helpers/strings.js';
 import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '../../generated/ast.js';
 import { getArguments, getParameters, Parameter } from '../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../safe-ds-module.js';

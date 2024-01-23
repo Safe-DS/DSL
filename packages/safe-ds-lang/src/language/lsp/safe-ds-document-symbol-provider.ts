@@ -1,6 +1,5 @@
 import { type AstNode, DefaultDocumentSymbolProvider, type LangiumDocument } from 'langium';
 import type { DocumentSymbol } from 'vscode-languageserver';
-import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAnnotation,
     isSdsAttribute,
@@ -11,20 +10,15 @@ import {
     isSdsSegment,
 } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
-import type { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import type { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
 
 export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider {
-    private readonly builtinAnnotations: SafeDsAnnotations;
     private readonly nodeInfoProvider: SafeDsNodeInfoProvider;
-    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         super(services);
 
-        this.builtinAnnotations = services.builtins.Annotations;
         this.nodeInfoProvider = services.lsp.NodeInfoProvider;
-        this.typeComputer = services.types.TypeComputer;
     }
 
     protected override getSymbol(document: LangiumDocument, node: AstNode): DocumentSymbol[] {

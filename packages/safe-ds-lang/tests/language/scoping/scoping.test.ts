@@ -5,7 +5,7 @@ import { clearDocuments, isRangeEqual, validationHelper } from 'langium/test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Location } from 'vscode-languageserver';
 import { createSafeDsServices } from '../../../src/language/index.js';
-import { isLocationEqual, locationToString } from '../../helpers/location.js';
+import { isLocationEqual, locationToString } from '../../../src/helpers/locations.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { createScopingTests, ExpectedReference } from './creator.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';

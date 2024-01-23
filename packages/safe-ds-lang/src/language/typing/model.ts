@@ -1,4 +1,4 @@
-import { isEmpty } from '../../helpers/collectionUtils.js';
+import { isEmpty } from '../../helpers/collections.js';
 import {
     SdsAbstractResult,
     SdsCallable,

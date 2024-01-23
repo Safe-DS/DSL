@@ -51,13 +51,21 @@ export interface ProgramModuleMap {
 
 /**
  * Contains execution information about a pipeline.
- * Field modulepath contains the path to the current module.
- * Field module contains the current module name.
- * Field pipeline contains the pipeline name.
  */
 export interface ProgramMainInformation {
+    /**
+     * The path to the current module.
+     */
     modulepath: string;
+
+    /**
+     * The current module name.
+     */
     module: string;
+
+    /**
+     * The pipeline name.
+     */
     pipeline: string;
 }
 
@@ -68,7 +76,37 @@ export interface ProgramMainInformation {
 export interface PlaceholderQueryMessage {
     type: 'placeholder_query';
     id: string;
-    data: string;
+    data: PlaceholderQuery;
+}
+
+/**
+ * A query on a placeholder value.
+ */
+export interface PlaceholderQuery {
+    /**
+     * The name of the requested placeholder.
+     */
+    name: string;
+
+    /**
+     * Optional windowing information to request a subset of the available data.
+     */
+    window: PlaceholderQueryWindow;
+}
+
+/**
+ * Windowing information for the placeholder query.
+ */
+export interface PlaceholderQueryWindow {
+    /**
+     * The offset of the requested data.
+     */
+    begin?: number;
+
+    /**
+     * The size of the requested data.
+     */
+    size?: number;
 }
 
 // Python Server to Extension
@@ -82,10 +120,17 @@ export interface PlaceholderTypeMessage {
 }
 
 /**
- * Contains the name and the type of a calculated placeholder.
+ * Contains the description of a calculated placeholder.
  */
 export interface PlaceholderDescription {
+    /**
+     * Name of the calculated placeholder.
+     */
     name: string;
+
+    /**
+     * Type of the calculated placeholder
+     */
     type: string;
 }
 
@@ -99,12 +144,48 @@ export interface PlaceholderValueMessage {
 }
 
 /**
- * Contains the name, type and the actual value of a calculated placeholder.
+ * Contains the description and the value of a calculated placeholder.
  */
 export interface PlaceholderValue {
+    /**
+     * Name of the calculated placeholder.
+     */
     name: string;
+
+    /**
+     * Type of the calculated placeholder.
+     */
     type: string;
+
+    /**
+     * Actual value of the calculated placeholder.
+     */
     value: string;
+
+    /**
+     * Optional windowing information when only a subset of the data was requested. This may be different from the requested bounds.
+     */
+    window?: PlaceholderValueWindow;
+}
+
+/**
+ * Windowing information for a placeholder value response.
+ */
+export interface PlaceholderValueWindow {
+    /**
+     * Index offset of the requested data subset.
+     */
+    begin: number;
+
+    /**
+     * Size of the requested data subset.
+     */
+    size: number;
+
+    /**
+     * Max. amount of elements available.
+     */
+    max: number;
 }
 
 // Python Server to Extension
@@ -118,20 +199,32 @@ export interface RuntimeErrorMessage {
 }
 
 /**
- * Field message contains the error message.
- * Field backtrace contains an array of stackframes present at the moment of raising the error
+ * Error description for runtime errors.
  */
 export interface RuntimeErrorDescription {
+    /**
+     * Error Message
+     */
     message: string;
+
+    /**
+     * Array of stackframes at the moment of raising the error.
+     */
     backtrace: RuntimeErrorBacktraceFrame[];
 }
 
 /**
  * Contains debugging information about a stackframe.
- * Field file contains the python module name (or file name), field line contains the line number where the error occurred.
  */
 export interface RuntimeErrorBacktraceFrame {
+    /**
+     * Python module name (or file name).
+     */
     file: string;
+
+    /**
+     * Line number where the error occurred.
+     */
     line: number;
 }
 
@@ -152,8 +245,23 @@ export const createProgramMessage = function (id: string, data: ProgramPackageMa
     return { type: 'program', id, data };
 };
 
-export const createPlaceholderQueryMessage = function (id: string, placeholderName: string): PythonServerMessage {
-    return { type: 'placeholder_query', id, data: placeholderName };
+export const createPlaceholderQueryMessage = function (
+    id: string,
+    placeholderName: string,
+    windowBegin: number | undefined = undefined,
+    windowSize: number | undefined = undefined,
+): PythonServerMessage {
+    return {
+        type: 'placeholder_query',
+        id,
+        data: {
+            name: placeholderName,
+            window: {
+                begin: !windowBegin ? undefined : Math.round(windowBegin),
+                size: !windowSize ? undefined : Math.round(windowSize),
+            },
+        },
+    };
 };
 
 // Extension to Python Server

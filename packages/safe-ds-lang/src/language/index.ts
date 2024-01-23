@@ -1,7 +1,16 @@
+// Services
 export type { SafeDsServices } from './safe-ds-module.js';
-export * as ast from './generated/ast.js';
-export { SafeDsLanguageMetaData } from './generated/module.js';
-export { startLanguageServer } from './main.js';
 export { createSafeDsServices, createSafeDsServicesWithBuiltins } from './safe-ds-module.js';
-export { SAFE_DS_FILE_EXTENSIONS } from './helpers/fileExtensions.js';
-export { getModuleMembers } from './helpers/nodeProperties.js';
+
+// Language Server
+export { startLanguageServer } from './main.js';
+
+// Language Metadata
+export { SafeDsLanguageMetaData } from './generated/module.js';
+
+// AST
+export * as ast from './generated/ast.js';
+export * from './helpers/nodeProperties.js';
+
+// Location
+export { locationToString, positionToString, rangeToString } from '../helpers/locations.js';

@@ -7,7 +7,7 @@ import {
     isSubset,
     last,
     uniqueOrUndefined,
-} from '../../src/helpers/collectionUtils.js';
+} from '../../src/helpers/collections.js';
 
 describe('duplicatesBy', () => {
     const id = (element: any) => element;

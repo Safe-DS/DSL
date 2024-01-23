@@ -13,28 +13,27 @@ import {
     pythonServerPort,
     removeMessageCallback,
 } from './pythonServer.js';
-import { createSafeDsServicesWithBuiltins, SAFE_DS_FILE_EXTENSIONS, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServicesWithBuiltins, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { getSafeDSOutputChannel, initializeLog, logOutput, printOutputMessage } from './output.js';
+import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
+import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import { PlaceholderTypeMessage, RuntimeErrorMessage, RuntimeProgressMessage } from './messages.js';
 import crypto from 'crypto';
-import { URI } from 'langium';
+import { LangiumDocument, URI } from 'langium';
 import { EDAPanel } from './EDAPanel.ts';
 
 let client: LanguageClient;
-let sdsServices: SafeDsServices;
+let services: SafeDsServices;
 let lastFinishedPipelineId: string | undefined;
 let lastSuccessfulPlaceholderName: string | undefined;
 
 // This function is called when the extension is activated.
-export const activate = function (context: vscode.ExtensionContext): void {
+export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
-    startPythonServer();
-    createSafeDsServicesWithBuiltins(NodeFileSystem).then((services) => {
-        sdsServices = services.SafeDs;
-        acceptRunRequests(context);
-    });
+    await startPythonServer();
+    services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    acceptRunRequests(context);
     const registerCommandWithCheck = (commandId: string, callback: (...args: any[]) => any) => {
         return vscode.commands.registerCommand(commandId, (...args: any[]) => {
             if (!isPythonServerAvailable()) {
@@ -225,6 +224,14 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 
 const acceptRunRequests = function (context: vscode.ExtensionContext) {
     // Register logging message callbacks
+    registerMessageLoggingCallbacks();
+    // Register VS Code Entry Points
+    registerVSCodeCommands(context);
+    // Register watchers
+    registerVSCodeWatchers();
+};
+
+const registerMessageLoggingCallbacks = function () {
     addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
@@ -269,30 +276,105 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
                 .join('\n')}`,
         );
     }, 'runtime_error');
-    // Register VS Code Entry Points
+};
+
+const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', (filePath: vscode.Uri | undefined) => {
-            let pipelinePath = filePath;
-            // Allow execution via command menu
-            if (!pipelinePath && vscode.window.activeTextEditor) {
-                pipelinePath = vscode.window.activeTextEditor.document.uri;
-            }
-            if (
-                pipelinePath &&
-                !SAFE_DS_FILE_EXTENSIONS.some((extension: string) => pipelinePath!.fsPath.endsWith(extension))
-            ) {
-                vscode.window.showErrorMessage(`Could not run ${pipelinePath!.fsPath} as it is not a Safe-DS file`);
-                return;
-            }
-            if (!pipelinePath) {
-                vscode.window.showErrorMessage('Could not run Safe-DS Pipeline, as no pipeline is currently selected.');
-                return;
-            }
-            const pipelineId = crypto.randomUUID();
-            printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
-            executePipeline(sdsServices, pipelinePath.fsPath, pipelineId);
-        }),
+        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', commandRunPipelineFile),
     );
+};
+
+const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
+    let pipelinePath = filePath;
+    // Allow execution via command menu
+    if (!pipelinePath && vscode.window.activeTextEditor) {
+        pipelinePath = vscode.window.activeTextEditor.document.uri;
+    }
+    if (
+        pipelinePath &&
+        !services.LanguageMetaData.fileExtensions.some((extension: string) => pipelinePath!.fsPath.endsWith(extension))
+    ) {
+        vscode.window.showErrorMessage(`Could not run ${pipelinePath!.fsPath} as it is not a Safe-DS file`);
+        return;
+    }
+    if (!pipelinePath) {
+        vscode.window.showErrorMessage('Could not run Safe-DS Pipeline, as no pipeline is currently selected.');
+        return;
+    }
+    // Refresh workspace
+    // Do not delete builtins
+    services.shared.workspace.LangiumDocuments.all
+        .filter(
+            (document) =>
+                !(
+                    ast.isSdsModule(document.parseResult.value) &&
+                    (<ast.SdsModule>document.parseResult.value).name === 'safeds.lang'
+                ),
+        )
+        .forEach((oldDocument) => {
+            services.shared.workspace.LangiumDocuments.deleteDocument(oldDocument.uri);
+        });
+    const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sdspipe,sdsstub,sdstest}');
+    // Load all documents
+    const unvalidatedSdsDocuments = workspaceSdsFiles.map((newDocumentUri) =>
+        services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
+    );
+    // Validate them
+    const validationErrorMessage = await validateDocuments(services, unvalidatedSdsDocuments);
+    if (validationErrorMessage) {
+        vscode.window.showErrorMessage(validationErrorMessage);
+        return;
+    }
+    // Run it
+    const pipelineId = crypto.randomUUID();
+    printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
+    let mainDocument;
+    if (!services.shared.workspace.LangiumDocuments.hasDocument(pipelinePath)) {
+        mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
+        const mainDocumentValidationErrorMessage = await validateDocuments(services, [mainDocument]);
+        if (mainDocumentValidationErrorMessage) {
+            vscode.window.showErrorMessage(mainDocumentValidationErrorMessage);
+            return;
+        }
+    } else {
+        mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
+    }
+    await executePipeline(services, mainDocument, pipelineId);
+};
+
+const validateDocuments = async function (
+    sdsServices: SafeDsServices,
+    documents: LangiumDocument[],
+): Promise<undefined | string> {
+    await sdsServices.shared.workspace.DocumentBuilder.build(documents, { validation: true });
+
+    const errors = documents.flatMap((validatedDocument) => {
+        const validationInfo = {
+            validatedDocument,
+            diagnostics: (validatedDocument.diagnostics ?? []).filter((e) => e.severity === 1),
+        };
+        return validationInfo.diagnostics.length > 0 ? [validationInfo] : [];
+    });
+
+    if (errors.length > 0) {
+        for (const validationInfo of errors) {
+            logError(`File ${validationInfo.validatedDocument.uri.toString()} has errors:`);
+            for (const validationError of validationInfo.diagnostics) {
+                logError(
+                    `\tat line ${validationError.range.start.line + 1}: ${
+                        validationError.message
+                    } [${validationInfo.validatedDocument.textDocument.getText(validationError.range)}]`,
+                );
+            }
+        }
+        return `As file(s) ${errors
+            .map((validationInfo) => validationInfo.validatedDocument.uri.toString())
+            .join(', ')} has errors, the main pipeline cannot be run.`;
+    }
+    return undefined;
+};
+
+const registerVSCodeWatchers = function () {
     vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('safe-ds.runner.command')) {
             // Try starting runner

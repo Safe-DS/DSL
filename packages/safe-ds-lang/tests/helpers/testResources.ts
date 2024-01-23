@@ -2,8 +2,8 @@ import path from 'path';
 import { globSync } from 'glob';
 import { SAFE_DS_FILE_EXTENSIONS } from '../../src/language/helpers/fileExtensions.js';
 import { BuildOptions, LangiumDocument, URI } from 'langium';
-import { SafeDsServices } from '../../src/language/safe-ds-module.js';
-import { groupBy } from '../../src/helpers/collectionUtils.js';
+import { SafeDsServices } from '../../src/language/index.js';
+import { groupBy } from '../../src/helpers/collections.js';
 import { fileURLToPath } from 'url';
 
 const TEST_RESOURCES_PATH = fileURLToPath(new URL('../resources', import.meta.url));
