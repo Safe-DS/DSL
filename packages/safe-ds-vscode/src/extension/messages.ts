@@ -72,12 +72,22 @@ export interface PlaceholderQueryMessage {
 }
 
 /**
- * Contains the query for a placeholder value.
- * Field name contains the name of the requested placeholder, field window_begin may contain an offset of and window_size may contain the size of a subset of the requested data.
+ * A query on a placeholder value.
  */
 export interface PlaceholderQuery {
+    /**
+     * The name of the requested placeholder.
+     */
     name: string;
+
+    /**
+     * The offset of the requested data.
+     */
     window_begin?: number;
+
+    /**
+     * The size of the requested data.
+     */
     window_size?: number;
 }
 
