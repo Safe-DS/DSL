@@ -190,7 +190,7 @@ export class EDAPanel {
   }  
 
   private findCurrentState(): State | undefined {
-    const existingStates = EDAPanel.context.globalState.get("webviewState") as State[];
+    const existingStates = (EDAPanel.context.globalState.get("webviewState") ?? []) as State[];
     return existingStates.find(s => s.tableIdentifier === this._tableIdentifier);
   }
 
