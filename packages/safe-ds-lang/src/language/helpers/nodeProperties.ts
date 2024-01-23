@@ -15,10 +15,13 @@ import {
     isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
+    isSdsNamedType,
     isSdsParameter,
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsSegment,
+    isSdsTypeArgumentList,
+    isSdsTypeParameter,
     isSdsTypeParameterList,
     SdsAbstractCall,
     SdsAbstractResult,
@@ -45,6 +48,7 @@ import {
     SdsLiteralType,
     SdsModule,
     SdsModuleMember,
+    SdsNamedType,
     SdsNamedTypeDeclaration,
     SdsParameter,
     SdsPlaceholder,
@@ -141,6 +145,16 @@ export const isStatic = (node: SdsClassMember): boolean => {
 export namespace TypeArgument {
     export const isNamed = (node: SdsTypeArgument): boolean => {
         return Boolean(node.typeParameter);
+    };
+}
+
+export namespace TypeParameter {
+    export const isOptional = (node: SdsTypeParameter | undefined): boolean => {
+        return Boolean(node?.defaultValue);
+    };
+
+    export const isRequired = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && !node.defaultValue;
     };
 }
 
@@ -297,8 +311,18 @@ export const getStatements = (node: SdsBlock | undefined): SdsStatement[] => {
     return node?.statements ?? [];
 };
 
-export const getTypeArguments = (node: SdsTypeArgumentList | undefined): SdsTypeArgument[] => {
-    return node?.typeArguments ?? [];
+export const getTypeArguments = (node: SdsTypeArgumentList | SdsNamedType | undefined): SdsTypeArgument[] => {
+    if (!node) {
+        return [];
+    }
+
+    if (isSdsTypeArgumentList(node)) {
+        return node.typeArguments;
+    } else if (isSdsNamedType(node)) {
+        return getTypeArguments(node.typeArgumentList);
+    } /* c8 ignore start */ else {
+        return [];
+    } /* c8 ignore stop */
 };
 
 export const getTypeParameters = (

@@ -1,0 +1,28 @@
+package tests.validation.other.declarations.typeParameterLists.mustNotHaveRequiredAfterOptional
+
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+class MyClass1<»A«, »B« = Int, »C«, »D« = String>
+
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+class MyClass2<»A«, »B« = Int>
+
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+class MyClass3<»A«>
+
+
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+fun myFunction1<»A«, »B« = Int, »C«, »D« = String>()
+
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+fun myFunction2<»A«, »B« = Int>()
+
+// $TEST$ no error "After the first optional type parameter all type parameters must be optional."
+fun myFunction3<»A«>()
