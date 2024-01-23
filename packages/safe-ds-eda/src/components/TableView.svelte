@@ -7,7 +7,7 @@
     export let sidebarWidth: number;
 
     let showProfiling = false;
-    let minTableWidthString = '0px';
+    let minTableWidth = 0;
     let headerElements: HTMLElement[] = [];
     let savedColumnWidths: Map<string, number> = new Map();
 
@@ -22,13 +22,13 @@
                 }
                 minTableWidth += 100;
             });
-            minTableWidthString = `${minTableWidth}px`;
+            minTableWidth = minTableWidth;
         }
     }
 
-    function getColumnWidth(columnName: string) {
+    function getColumnWidth(columnName: string): number {
         if (savedColumnWidths.has(columnName)) {
-            return `${savedColumnWidths.get(columnName)}px`;
+            return savedColumnWidths.get(columnName)!;
         }
         const baseWidth = 35; // Minimum width
         const scale = 55;
@@ -39,7 +39,17 @@
         // Save the width for future use
         savedColumnWidths.set(columnName, width);
 
-        return `${width}px`;
+        return width;
+    }
+
+    function getColumnWidthFreshNumber(columnName: string): number {
+        const baseWidth = 35; // Minimum width
+        const scale = 55;
+
+        // Use the logarithm of the character count, and scale it
+        const width = baseWidth + Math.log(columnName.length + 1) * scale;
+
+        return width;
     }
 
     // --- Column resizing ---
@@ -47,6 +57,7 @@
     let startWidth: number;
     let startX: number;
     let targetColumn: HTMLElement;
+    let resizeWidthMap: Map<string, number> = new Map();
 
     const throttledDoResizeDrag = throttle(doResizeDrag, 30);
 
@@ -68,6 +79,8 @@
                 targetColumn.style.width = `${currentWidth}px`;
                 savedColumnWidths.set(targetColumn.innerText, currentWidth);
             });
+            resizeWidthMap.set(targetColumn.innerText, currentWidth);
+            updateTableSpace();
         }
     }
 
@@ -82,23 +95,30 @@
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumn: HTMLElement | null = null;
+    let savedColumnWidthBeforeReorder = 0;
+    let preventResizeTableSpaceUpdate = false;
 
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
     function handleReorderDragStart(event: MouseEvent, columnIndex: number): void {
         document.addEventListener('mouseup', handleReorderDragEnd);
+        savedColumnWidthBeforeReorder = savedColumnWidths.get(headerElements[columnIndex].innerText)!;
+        preventResizeTableSpaceUpdate = true; // To not add the new space to current dragged column
         isReorderDragging = true;
         dragStartIndex = columnIndex;
         dragCurrentIndex = columnIndex;
         draggedColumn = headerElements[columnIndex];
         draggedColumn.classList.add('dragging');
+        savedColumnWidths.set(draggedColumn.innerText, 0);
+        updateTableSpace();
 
-        // Lower the z-index of all other headers
-        headerElements.forEach((header, index) => {
-            if (index !== columnIndex) {
-                header.style.zIndex = '0'; // Or any value lower than the dragging header
-            }
-        });
+        // Not needed anymore apparently
+        // // Lower the z-index of all other headers
+        // headerElements.forEach((header, index) => {
+        //     if (index !== columnIndex) {
+        //         header.style.zIndex = '0'; // Or any value lower than the dragging header
+        //     }
+        // });
     }
 
     function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
@@ -118,7 +138,9 @@
 
     function handleReorderDragEnd(): void {
         if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
+            preventResizeTableSpaceUpdate = false;
             if (draggedColumn) {
+                savedColumnWidths.set(draggedColumn.innerText, savedColumnWidthBeforeReorder);
                 draggedColumn.style.left = '';
                 draggedColumn.style.top = '';
                 draggedColumn.classList.remove('dragging');
@@ -144,6 +166,7 @@
             document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
             dragStartIndex = null;
+            dragCurrentIndex = null;
         }
     }
 
@@ -156,6 +179,7 @@
     let visibleRowCount = 10;
     let scrollTop = 0;
     let intervalId: number;
+    let lastHeight = 0;
 
     onMount(() => {
         updateScrollTop();
@@ -163,12 +187,14 @@
         tableContainer.addEventListener('scroll', throttledUpdateVisibleRows);
         tableContainer.addEventListener('scroll', updateScrollTop);
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
+        window.addEventListener('resize', throttledUpdateTableSpace);
         intervalId = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
 
         return () => {
             tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
             tableContainer.addEventListener('scroll', updateScrollTop);
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
+            window.removeEventListener('resize', throttledUpdateTableSpace);
             clearInterval(intervalId);
         };
     });
@@ -187,8 +213,72 @@
     const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
 
     function recalculateVisibleRowCount(): void {
+        if (lastHeight === tableContainer.clientHeight) {
+            // Not recalculating if height didn't change
+            return;
+        }
+        lastHeight = tableContainer.clientHeight;
         visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + buffer;
         updateVisibleRows();
+    }
+
+    // --- Min Table with ---
+    const throttledUpdateTableSpace = throttle(() => {
+        if (!preventResizeTableSpaceUpdate) {
+            updateTableSpace();
+        }
+    }, 100);
+
+    function updateTableSpace(): void {
+        console.log('Updating table space');
+        const newPossibleSpace = tableContainer.offsetWidth;
+
+        let beforeWidth = 0;
+        for (const width of savedColumnWidths.values()) {
+            beforeWidth += width;
+        }
+
+        if (newPossibleSpace > beforeWidth) {
+            // Extend all column widths proportionally with new space
+            for (const column of headerElements) {
+                const newWidth = column.clientWidth + (newPossibleSpace - beforeWidth) / headerElements.length;
+                column.style.width = newWidth + 'px';
+                savedColumnWidths.set(column.innerText, newWidth);
+            }
+        } else {
+            // Shrink all column widths proportionally with new space if not below minimum width dedicated by a: width by header text or b: with by manual resize
+            for (const column of headerElements) {
+                const newWidth = column.clientWidth - (beforeWidth - newPossibleSpace) / headerElements.length;
+                if (resizeWidthMap.has(column.innerText)) {
+                    // User resized manually, so don't shrink below that
+                    if (resizeWidthMap.get(column.innerText)! <= newWidth) {
+                        column.style.width = newWidth + 'px';
+                        savedColumnWidths.set(column.innerText, newWidth);
+                    } else if (column.clientWidth !== resizeWidthMap.get(column.innerText)!) {
+                        // To update even on fast resize
+                        column.style.width = resizeWidthMap.get(column.innerText)! + 'px';
+                        savedColumnWidths.set(column.innerText, resizeWidthMap.get(column.innerText)!);
+                    }
+                } else {
+                    // Use the minimum width dedicated by the header text
+                    const minWidth = getColumnWidthFreshNumber(column.innerText);
+                    if (minWidth <= newWidth) {
+                        column.style.width = newWidth + 'px';
+                        savedColumnWidths.set(column.innerText, newWidth);
+                    } else if (column.clientWidth !== minWidth) {
+                        // To update even on fast resize
+                        column.style.width = minWidth + 'px';
+                        savedColumnWidths.set(column.innerText, minWidth);
+                    }
+                }
+            }
+        }
+    }
+
+    $: if (headerElements.length > 0) {
+        console.log('Updating table space');
+        lastHeight = tableContainer.clientHeight;
+        updateTableSpace();
     }
 </script>
 
@@ -198,7 +288,7 @@
     {:else}
         <div class="content-wrapper" style="height: {numRows * rowHeight}px;">
             <table>
-                <thead style="min-width: {minTableWidthString}; position: relative; top: {scrollTop}px;">
+                <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
                     <tr class="headerRow" style="height: {rowHeight}px;">
                         <th class="firstColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}></th>
                         {#each $currentState.table.columns as column, index}
@@ -209,7 +299,7 @@
                                     dragStartIndex !== index &&
                                     (dragCurrentIndex === index + 1 ||
                                         (dragStartIndex === index + 1 && dragCurrentIndex === index + 2))}
-                                style="width: {getColumnWidth(column[1].name)}; position: relative;"
+                                style="width: {getColumnWidth(column[1].name)}px; position: relative;"
                                 on:mousedown={(event) => handleReorderDragStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
