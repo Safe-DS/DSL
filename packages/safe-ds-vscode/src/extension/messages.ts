@@ -72,19 +72,32 @@ export interface PlaceholderQueryMessage {
 }
 
 /**
- * Contains the query for a placeholder value.
- * Field name contains the name of the requested placeholder, field window may contain information to request a subset of the data available.
+ * A query on a placeholder value.
  */
 export interface PlaceholderQuery {
+    /**
+     * The name of the requested placeholder.
+     */
     name: string;
+
+    /**
+     * Optional windowing information to request a subset of the available data.
+     */
     window: PlaceholderQueryWindow;
 }
 
 /**
- * Contains the index offset of the requested data subset (begin), the size of the requested data subset and the max. amount of available elements.
+ * Windowing information for the placeholder query.
  */
 export interface PlaceholderQueryWindow {
+    /**
+     * The offset of the requested data.
+     */
     begin?: number;
+
+    /**
+     * The size of the requested data.
+     */
     size?: number;
 }
 
@@ -126,7 +139,7 @@ export interface PlaceholderValue {
 }
 
 /**
- * Contains the index offset of the requested data subset (begin), the size of the requested data subset and the max. amount of available elements.
+ * Contains the index offset of the requested data subset (begin), the size of the requested data subset and the max. amount of elements available.
  */
 export interface PlaceholderValueWindow {
     begin: number;
