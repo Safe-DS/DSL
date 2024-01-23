@@ -905,6 +905,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
 
         formatter.property('variance').append(oneSpace());
+        formatter.keyword('=').surround(oneSpace());
     }
 
     private formatSdsTypeArgumentList(node: ast.SdsTypeArgumentList): void {
