@@ -178,7 +178,7 @@
     let visibleEnd = 0;
     let visibleRowCount = 10;
     let scrollTop = 0;
-    let intervalId: number;
+    let interval: NodeJS.Timeout;
     let lastHeight = 0;
 
     onMount(() => {
@@ -188,14 +188,14 @@
         tableContainer.addEventListener('scroll', updateScrollTop);
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
         window.addEventListener('resize', throttledUpdateTableSpace);
-        intervalId = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
+        interval = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
 
         return () => {
             tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
             tableContainer.addEventListener('scroll', updateScrollTop);
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
             window.removeEventListener('resize', throttledUpdateTableSpace);
-            clearInterval(intervalId);
+            clearInterval(interval);
         };
     });
 
