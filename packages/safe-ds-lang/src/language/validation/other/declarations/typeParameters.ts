@@ -1,13 +1,16 @@
-import { findLocalReferences, getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'langium';
+import { AstNode, findLocalReferences, getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'langium';
 import {
     isSdsCallable,
     isSdsClass,
+    isSdsClassMember,
     isSdsDeclaration,
     isSdsNamedTypeDeclaration,
     isSdsParameterList,
     isSdsUnionType,
+    SdsClass,
     SdsTypeParameter,
 } from '../../../generated/ast.js';
+import { isStatic } from '../../../helpers/nodeProperties.js';
 
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
 export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
@@ -49,10 +52,7 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     }
 };
 
-export const typeParameterMustNotBeUsedInNestedNamedTypeDeclarations = (
-    node: SdsTypeParameter,
-    accept: ValidationAcceptor,
-) => {
+export const typeParameterMustBeUsedInCorrectContext = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
     // Only classes can have nested named type declarations
     const declarationWithTypeParameter = getContainerOfType(node.$container, isSdsDeclaration);
     if (!isSdsClass(declarationWithTypeParameter)) {
@@ -61,16 +61,29 @@ export const typeParameterMustNotBeUsedInNestedNamedTypeDeclarations = (
 
     findLocalReferences(node).forEach((it) => {
         const reference = it.$refNode?.astNode;
-        const containingNamedTypeDeclaration = getContainerOfType(reference, isSdsNamedTypeDeclaration);
-        if (
-            reference &&
-            containingNamedTypeDeclaration &&
-            containingNamedTypeDeclaration !== declarationWithTypeParameter
-        ) {
-            accept('error', 'Type parameters cannot be used in nested named type declarations.', {
+        if (reference && !classTypeParameterIsUsedInCorrectContext(declarationWithTypeParameter, reference)) {
+            accept('error', 'This type parameter of a containing class cannot be used here.', {
                 node: reference,
                 code: CODE_TYPE_PARAMETER_USAGE,
             });
         }
     });
+};
+
+const classTypeParameterIsUsedInCorrectContext = (classWithTypeParameter: SdsClass, reference: AstNode) => {
+    const containingClassMember = getContainerOfType(reference, isSdsClassMember);
+
+    // Handle usage in constructor
+    if (!containingClassMember || containingClassMember === classWithTypeParameter) {
+        return true;
+    }
+
+    // Handle usage in static context
+    if (isStatic(containingClassMember)) {
+        return false;
+    }
+
+    // Handle usage inside nested enums and classes (could be an instance attribute/function)
+    const containingNamedTypeDeclaration = getContainerOfType(reference, isSdsNamedTypeDeclaration);
+    return !containingNamedTypeDeclaration || containingNamedTypeDeclaration === classWithTypeParameter;
 };

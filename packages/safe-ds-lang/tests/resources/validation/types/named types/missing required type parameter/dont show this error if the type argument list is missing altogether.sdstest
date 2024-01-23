@@ -1,0 +1,9 @@
+package tests.validation.other.namedTypes.missingRequiredTypeParameter
+
+// $TEST$ no error r"The type parameters? .* must be set here\."
+
+class MyClass<T>
+
+fun myFunction2(
+    myCallableType: MyClass
+)

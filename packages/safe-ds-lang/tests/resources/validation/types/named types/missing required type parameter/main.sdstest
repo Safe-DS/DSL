@@ -1,0 +1,32 @@
+
+package tests.validation.types.namedTypes.missingRequiredTypeParameter
+
+class MyClassWithoutTypeParameter
+class MyClassWithTypeParameters<T1, T2, T3 = Int>
+
+fun myFunction1(
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    a1: MyClassWithoutTypeParameter»<>«,
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    a2: MyClassWithoutTypeParameter»<Int>«,
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    a3: MyClassWithoutTypeParameter»<T = Int>«,
+
+    // $TEST$ error "The type parameters 'T1', 'T2' must be set here."
+    b1: MyClassWithTypeParameters»<>«,
+    // $TEST$ error "The type parameter 'T2' must be set here."
+    b2: MyClassWithTypeParameters»<Int>«,
+    // $TEST$ error "The type parameter 'T1' must be set here."
+    b3: MyClassWithTypeParameters»<T2 = Int>«,
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    b4: MyClassWithTypeParameters»<Int, T2 = Int>«,
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    b5: MyClassWithTypeParameters»<Int, Int, Int>«,
+
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    d1: Unresolved»<>«,
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    d2: Unresolved»<Int>«,
+    // $TEST$ no error r"The type parameters? .* must be set here\."
+    d3: Unresolved»<T = Int>«,
+)

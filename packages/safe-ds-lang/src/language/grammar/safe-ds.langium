@@ -979,12 +979,14 @@ SdsTypeParameterList returns SdsTypeParameterList:
 
 interface SdsTypeParameter extends SdsNamedTypeDeclaration {
     variance?: string
+    defaultValue?: SdsType
 }
 
 SdsTypeParameter returns SdsTypeParameter:
     annotationCalls+=SdsAnnotationCall*
     variance=SdsTypeParameterVariance?
     name=ID
+    ('=' defaultValue=SdsType)?
 ;
 
 SdsTypeParameterVariance returns string:
