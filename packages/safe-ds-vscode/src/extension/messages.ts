@@ -73,12 +73,19 @@ export interface PlaceholderQueryMessage {
 
 /**
  * Contains the query for a placeholder value.
- * Field name contains the name of the requested placeholder, field window_begin may contain an offset of and window_size may contain the size of a subset of the requested data.
+ * Field name contains the name of the requested placeholder, field window may contain information to request a subset of the data available.
  */
 export interface PlaceholderQuery {
     name: string;
-    window_begin?: number;
-    window_size?: number;
+    window: PlaceholderQueryWindow;
+}
+
+/**
+ * Contains the index offset of the requested data subset (begin), the size of the requested data subset and the max. amount of available elements.
+ */
+export interface PlaceholderQueryWindow {
+    begin?: number;
+    size?: number;
 }
 
 // Python Server to Extension
@@ -109,16 +116,22 @@ export interface PlaceholderValueMessage {
 }
 
 /**
- * Contains the name, type and the actual value of a calculated placeholder.
+ * Contains the name, type, the actual value of a calculated placeholder and optional windowing information when requesting a subset of data.
  */
 export interface PlaceholderValue {
     name: string;
     type: string;
     value: string;
-    windowed?: boolean;
-    window_begin?: number;
-    window_size?: number;
-    window_max?: number;
+    window?: PlaceholderValueWindow;
+}
+
+/**
+ * Contains the index offset of the requested data subset (begin), the size of the requested data subset and the max. amount of available elements.
+ */
+export interface PlaceholderValueWindow {
+    begin: number;
+    size: number;
+    max: number;
 }
 
 // Python Server to Extension
@@ -177,8 +190,10 @@ export const createPlaceholderQueryMessage = function (
         id,
         data: {
             name: placeholderName,
-            window_begin: !windowBegin ? undefined : Math.round(windowBegin),
-            window_size: !windowSize ? undefined : Math.round(windowSize),
+            window: {
+                begin: !windowBegin ? undefined : Math.round(windowBegin),
+                size: !windowSize ? undefined : Math.round(windowSize),
+            },
         },
     };
 };
