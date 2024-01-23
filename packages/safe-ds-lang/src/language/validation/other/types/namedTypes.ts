@@ -11,14 +11,14 @@ export const CODE_NAMED_TYPE_TOO_MANY_TYPE_ARGUMENTS = 'named-type/too-many-type
 
 export const namedTypeMustNotSetTypeParameterMultipleTimes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
-    const typeArgumentToTypeParameterOrUndefined = nodeMapper.typeArgumentToTypeParameter.bind(nodeMapper);
+    const typeArgumentToTypeParameter = nodeMapper.typeArgumentToTypeParameter.bind(nodeMapper);
 
     return (node: SdsNamedType, accept: ValidationAcceptor): void => {
         const typeArguments = getTypeArguments(node.typeArgumentList);
-        const duplicates = duplicatesBy(typeArguments, typeArgumentToTypeParameterOrUndefined);
+        const duplicates = duplicatesBy(typeArguments, typeArgumentToTypeParameter);
 
         for (const duplicate of duplicates) {
-            const correspondingTypeParameter = typeArgumentToTypeParameterOrUndefined(duplicate)!;
+            const correspondingTypeParameter = typeArgumentToTypeParameter(duplicate)!;
             accept('error', `The type parameter '${correspondingTypeParameter.name}' is already set.`, {
                 node: duplicate,
                 code: CODE_NAMED_TYPE_DUPLICATE_TYPE_PARAMETER,
