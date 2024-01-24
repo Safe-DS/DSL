@@ -6,6 +6,10 @@
 
     export let sidebarWidth: number;
 
+    $: if (sidebarWidth && tableContainer) {
+        updateTableSpace();
+    }
+
     let showProfiling = false;
     let minTableWidth = 0;
     let headerElements: HTMLElement[] = [];
@@ -63,6 +67,7 @@
 
     function startResizeDrag(event: MouseEvent, columnIndex: number): void {
         event.stopPropagation();
+        clickOnColumn = true;
         const columnElement = headerElements[columnIndex];
         isResizeDragging = true;
         startX = event.clientX;
@@ -97,28 +102,59 @@
     let draggedColumn: HTMLElement | null = null;
     let savedColumnWidthBeforeReorder = 0;
     let preventResizeTableSpaceUpdate = false;
+    let holdTimeout: NodeJS.Timeout;
+    let isClick = true; // Flag to distinguish between click and hold
+    let clickOnColumn = false; // For global window click clear of selection
+
+    let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
 
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
-    function handleReorderDragStart(event: MouseEvent, columnIndex: number): void {
-        document.addEventListener('mouseup', handleReorderDragEnd);
-        savedColumnWidthBeforeReorder = savedColumnWidths.get(headerElements[columnIndex].innerText)!;
-        preventResizeTableSpaceUpdate = true; // To not add the new space to current dragged column
-        isReorderDragging = true;
-        dragStartIndex = columnIndex;
-        dragCurrentIndex = columnIndex;
-        draggedColumn = headerElements[columnIndex];
-        draggedColumn.classList.add('dragging');
-        savedColumnWidths.set(draggedColumn.innerText, 0);
-        updateTableSpace();
+    function handleColumnInteractionStart(event: MouseEvent, columnIndex: number): void {
+        // Check if the left mouse button was pressed
+        if (event.button !== 0) return;
+        clickOnColumn = true; // For global window click clear of selection
+        isClick = true; // Assume it's a click initially
 
-        // Not needed anymore apparently
-        // // Lower the z-index of all other headers
-        // headerElements.forEach((header, index) => {
-        //     if (index !== columnIndex) {
-        //         header.style.zIndex = '0'; // Or any value lower than the dragging header
-        //     }
-        // });
+        holdTimeout = setTimeout(() => {
+            isClick = false; // If timeout completes, it's a hold
+            document.addEventListener('mouseup', handleReorderDragEnd);
+            savedColumnWidthBeforeReorder = savedColumnWidths.get(headerElements[columnIndex].innerText)!;
+            preventResizeTableSpaceUpdate = true; // To not add the new space to current dragged column
+            isReorderDragging = true;
+            dragStartIndex = columnIndex;
+            dragCurrentIndex = columnIndex;
+            draggedColumn = headerElements[columnIndex];
+            draggedColumn.classList.add('dragging');
+            savedColumnWidths.set(draggedColumn.innerText, 0);
+            updateTableSpace();
+
+            // Not needed anymore apparently
+            // // Lower the z-index of all other headers
+            // headerElements.forEach((header, index) => {
+            //     if (index !== columnIndex) {
+            //         header.style.zIndex = '0'; // Or any value lower than the dragging header
+            //     }
+            // });
+            selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
+        }, 300); // milliseconds delay for hold detection
+
+        // Define the handler function
+        currentMouseUpHandler = (event: MouseEvent) => {
+            handleColumnMouseUp(event, columnIndex);
+        };
+
+        // Add mouseup listener to clear the timeout if the button is released
+        document.addEventListener('mouseup', currentMouseUpHandler);
+    }
+
+    function handleColumnMouseUp(event: MouseEvent, columnIndex: number): void {
+        clearTimeout(holdTimeout);
+        if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
+
+        if (isClick) {
+            handleColumnClickAction(event, columnIndex);
+        }
     }
 
     function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
@@ -170,6 +206,68 @@
         }
     }
 
+    // --- Column selecting ---
+    let selectedColumnIndexes: number[] = [];
+
+    function handleColumnClickAction(event: MouseEvent, columnIndex: number): void {
+        // Logic for what happens when a header is clicked
+
+        // Check if Ctrl (or Cmd on Mac) is held down
+        if (event.ctrlKey || event.metaKey) {
+            // Toggle the selected state of the column
+            const index = selectedColumnIndexes.indexOf(columnIndex);
+            if (index > -1) {
+                // Already selected, so remove from the selection
+                // Remove the index and create a new array to trigger reactivity
+                selectedColumnIndexes = [
+                    ...selectedColumnIndexes.slice(0, index),
+                    ...selectedColumnIndexes.slice(index + 1),
+                ];
+            } else {
+                // Not selected, add to the selection
+                // Add the index and create a new array to trigger reactivity
+                selectedColumnIndexes = [...selectedColumnIndexes, columnIndex];
+            }
+        } else {
+            // Replace the current selection
+            // Replace the current selection with a new array to trigger reactivity
+            selectedColumnIndexes = [columnIndex];
+        }
+
+        console.log('Selected column indexes:', selectedColumnIndexes);
+    }
+
+    // --- Row selecting ---
+    let selectedRowIndexes: number[] = [];
+    let clickOnRow = false;
+
+    function handleRowClick(event: MouseEvent, rowIndex: number): void {
+        // Logic for what happens when a row is clicked
+
+        clickOnRow = true; // For global window click clear of selection
+
+        // Check if Ctrl (or Cmd on Mac) is held down
+        if (event.ctrlKey || event.metaKey) {
+            // Toggle the selected state of the row
+            const index = selectedRowIndexes.indexOf(rowIndex);
+            if (index > -1) {
+                // Already selected, so remove from the selection
+                // Remove the index and create a new array to trigger reactivity
+                selectedRowIndexes = [...selectedRowIndexes.slice(0, index), ...selectedRowIndexes.slice(index + 1)];
+            } else {
+                // Not selected, add to the selection
+                // Add the index and create a new array to trigger reactivity
+                selectedRowIndexes = [...selectedRowIndexes, rowIndex];
+            }
+        } else {
+            // Replace the current selection
+            // Replace the current selection with a new array to trigger reactivity
+            selectedRowIndexes = [rowIndex];
+        }
+
+        console.log('Selected row indexes:', selectedRowIndexes);
+    }
+
     // --- Scroll loading ---
     let tableContainer: HTMLElement; // Reference to the table container
     const rowHeight = 33; // Adjust based on your row height
@@ -180,24 +278,6 @@
     let scrollTop = 0;
     let interval: NodeJS.Timeout;
     let lastHeight = 0;
-
-    onMount(() => {
-        updateScrollTop();
-        recalculateVisibleRowCount();
-        tableContainer.addEventListener('scroll', throttledUpdateVisibleRows);
-        tableContainer.addEventListener('scroll', updateScrollTop);
-        window.addEventListener('resize', throttledRecalculateVisibleRowCount);
-        window.addEventListener('resize', throttledUpdateTableSpace);
-        interval = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
-
-        return () => {
-            tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
-            tableContainer.addEventListener('scroll', updateScrollTop);
-            window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
-            window.removeEventListener('resize', throttledUpdateTableSpace);
-            clearInterval(interval);
-        };
-    });
 
     const throttledUpdateVisibleRows = throttle(updateVisibleRows, 40);
 
@@ -280,6 +360,44 @@
         lastHeight = tableContainer.clientHeight;
         updateTableSpace();
     }
+
+    // --- Lifecycle ---
+    onMount(() => {
+        updateScrollTop();
+        recalculateVisibleRowCount();
+        tableContainer.addEventListener('scroll', throttledUpdateVisibleRows);
+        tableContainer.addEventListener('scroll', updateScrollTop);
+        window.addEventListener('resize', throttledRecalculateVisibleRowCount);
+        window.addEventListener('resize', throttledUpdateTableSpace);
+        const clearColumnSelection = async () => {
+            setTimeout(() => {
+                if (!clickOnColumn) {
+                    selectedColumnIndexes = [];
+                }
+                clickOnColumn = false;
+            }, 100);
+        };
+        const clearRowSelection = async () => {
+            setTimeout(() => {
+                if (!clickOnRow) {
+                    selectedRowIndexes = [];
+                }
+                clickOnRow = false;
+            }, 100);
+        };
+        window.addEventListener('click', clearColumnSelection);
+        window.addEventListener('click', clearRowSelection);
+        interval = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
+
+        return () => {
+            tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
+            tableContainer.addEventListener('scroll', updateScrollTop);
+            window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
+            window.removeEventListener('resize', throttledUpdateTableSpace);
+            window.removeEventListener('click', clearColumnSelection);
+            clearInterval(interval);
+        };
+    });
 </script>
 
 <div bind:this={tableContainer} class="table-container">
@@ -301,7 +419,7 @@
                                     (dragCurrentIndex === index + 1 ||
                                         (dragStartIndex === index + 1 && dragCurrentIndex === index + 2))}
                                 style="width: {getColumnWidth(column[1].name)}px; position: relative;"
-                                on:mousedown={(event) => handleReorderDragStart(event, index)}
+                                on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
                                 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -318,7 +436,7 @@
                         ></th>
                     </tr>
                 </thead>
-                <tr class="hiddenProfilingWrapper no-hover" style="top: {scrollTop}px;">
+                <tr class="hiddenProfilingWrapper noHover" style="top: {scrollTop}px;">
                     <td
                         class="borderColumn border-right profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -375,18 +493,27 @@
                 <tbody style="position: relative; top: {visibleStart * rowHeight}px;">
                     {#each Array(Math.min(visibleEnd, numRows) - visibleStart) as _, i}
                         <tr style="height: {rowHeight}px;">
-                            <td class="borderColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
+                            <td
+                                class="borderColumn cursorPointer"
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
+                                on:mousedown={(event) => handleRowClick(event, visibleStart + i)}
+                                class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
                             >
                             {#each $currentState.table.columns as column, index}
-                                <td on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                <td
+                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                    class:selectedColumn={selectedColumnIndexes.includes(index) ||
+                                        selectedRowIndexes.includes(visibleStart + i)}
                                     >{column[1].values[visibleStart + i] || ''}</td
                                 >
                             {/each}
                             <td
-                                class="borderColumn borderColumnEndIndex"
+                                class="borderColumn borderColumnEndIndex cursorPointer"
                                 on:mousemove={(event) =>
                                     throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                                on:mousedown={(event) => handleRowClick(event, visibleStart + i)}
+                                class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
                             >
                         </tr>
@@ -397,7 +524,7 @@
     {/if}
     {#if numRows === -1}
         <!-- Just so this class gets compiled -->
-        <span class="dragging">No data</span>
+        <span class="dragging selectedColumn">No data</span>
     {/if}
 </div>
 
@@ -464,7 +591,12 @@
     table tr:hover {
         background-color: var(--primary-color-desaturated);
     }
-    .no-hover:hover {
+
+    .selectedColumn {
+        background-color: var(--primary-color-desaturated);
+    }
+
+    .noHover:hover {
         background-color: var(--bg-dark) !important;
     }
 
