@@ -28,7 +28,8 @@ import {
     isSdsBlockLambdaResult,
     isSdsCall,
     isSdsCallable,
-    isSdsClass, isSdsDeclaration,
+    isSdsClass,
+    isSdsDeclaration,
     isSdsEnumVariant,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
@@ -74,7 +75,8 @@ import {
 import { isInStubFile, isStubFile } from '../helpers/fileExtensions.js';
 import { IdManager } from '../helpers/idManager.js';
 import {
-    getAbstractResults, getArguments,
+    getAbstractResults,
+    getArguments,
     getAssignees,
     getImportedDeclarations,
     getImports,
@@ -239,7 +241,9 @@ export class SafeDsPythonGenerator {
 
         let current: SdsDeclaration | undefined = node;
         while (current) {
-            const currentName = isSdsModule(current) ? this.getPythonModuleOrDefault(current) : this.getPythonNameOrDefault(current);
+            const currentName = isSdsModule(current)
+                ? this.getPythonModuleOrDefault(current)
+                : this.getPythonNameOrDefault(current);
             if (currentName) {
                 segments.unshift(currentName);
             }
@@ -247,7 +251,7 @@ export class SafeDsPythonGenerator {
         }
 
         return segments.join('.');
-    };
+    }
 
     private formatGeneratedFileName(baseName: string): string {
         return `gen_${this.sanitizeModuleNameForPython(baseName)}`;
@@ -836,7 +840,7 @@ export class SafeDsPythonGenerator {
     private isMemoizableCall(expression: SdsCall): boolean {
         const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
         // If the file is not known, the call is not memoizable
-        return !impurityReasons.some(reason => !(reason instanceof FileRead) || reason.path === undefined);
+        return !impurityReasons.some((reason) => !(reason instanceof FileRead) || reason.path === undefined);
     }
 
     private generateMemoizedCall(
@@ -850,11 +854,10 @@ export class SafeDsPythonGenerator {
         const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
-        const containsOptionalArgs =
-            sortedArgs
-                .map((arg) => this.nodeMapper.argumentToParameter(arg))
-                .filter((param) => param)
-                .some((param) => Parameter.isOptional(param));
+        const containsOptionalArgs = sortedArgs
+            .map((arg) => this.nodeMapper.argumentToParameter(arg))
+            .filter((param) => param)
+            .some((param) => Parameter.isOptional(param));
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         return expandTracedToNode(
             expression,
@@ -913,9 +916,7 @@ export class SafeDsPythonGenerator {
         return hiddenParameters;
     }
 
-    private generateFullyQualifiedFunctionName(
-        expression: SdsCall,
-    ): string {
+    private generateFullyQualifiedFunctionName(expression: SdsCall): string {
         const callable = this.nodeMapper.callToCallable(expression);
         if (isSdsDeclaration(callable)) {
             const fullyQualifiedReferenceName = this.getQualifiedNamePythonCompatible(callable);
@@ -924,7 +925,7 @@ export class SafeDsPythonGenerator {
             }
         }
         /* c8 ignore next */
-        throw new Error("Callable of provided call does not exist or is not a declaration.");
+        throw new Error('Callable of provided call does not exist or is not a declaration.');
     }
 
     private getArgumentsMap(
@@ -1016,9 +1017,9 @@ export class SafeDsPythonGenerator {
         const targetModule = <SdsModule>findRootNode(declaration);
         if (currentModule !== targetModule && !isInStubFile(targetModule)) {
             return {
-                importPath: `${
-                    this.getPythonModuleOrDefault(targetModule)
-                }.${this.formatGeneratedFileName(this.getModuleFileBaseName(targetModule))}`,
+                importPath: `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
+                    this.getModuleFileBaseName(targetModule),
+                )}`,
                 declarationName: this.getPythonNameOrDefault(declaration),
             };
         }
