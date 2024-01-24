@@ -915,12 +915,12 @@ export class SafeDsPythonGenerator {
 
     private generateFullyQualifiedFunctionName(
         expression: SdsCall,
-    ): CompositeGeneratorNode {
+    ): string {
         const callable = this.nodeMapper.callToCallable(expression);
         if (isSdsDeclaration(callable)) {
             const fullyQualifiedReferenceName = this.getQualifiedNamePythonCompatible(callable);
             if (fullyQualifiedReferenceName) {
-                return expandTracedToNode(callable)`${fullyQualifiedReferenceName}`;
+                return fullyQualifiedReferenceName;
             }
         }
         /* c8 ignore next */
