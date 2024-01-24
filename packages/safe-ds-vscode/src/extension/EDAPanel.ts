@@ -294,7 +294,7 @@ export class EDAPanel {
         window.pythonServerPort = ${this._pythonServerPort};
       </script>
     </head>
-    <body>
+    <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>
     </body>
       <script nonce="${nonce}" src="${scriptUri}"></script>
     </html>`;

@@ -111,9 +111,17 @@
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
     function handleColumnInteractionStart(event: MouseEvent, columnIndex: number): void {
-        // Check if the left mouse button was pressed
-        if (event.button !== 0) return;
+        // Check if the left or right mouse button was pressed
+        if (event.button !== 0 && event.button !== 2) return;
+
         clickOnColumn = true; // For global window click clear of selection
+
+        if (event.button === 2) {
+            // Right click
+            handleColumnRightClick(event, columnIndex);
+            return;
+        }
+
         isClick = true; // Assume it's a click initially
 
         holdTimeout = setTimeout(() => {
@@ -153,7 +161,7 @@
         if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
 
         if (isClick) {
-            handleColumnClickAction(event, columnIndex);
+            handleColumnClick(event, columnIndex);
         }
     }
 
@@ -161,12 +169,7 @@
         if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
             dragCurrentIndex = columnIndex;
             requestAnimationFrame(() => {
-                draggedColumn!.style.left =
-                    event.clientX +
-                    draggedColumn!.parentElement!.parentElement!.parentElement!.parentElement!.parentElement!
-                        .scrollLeft -
-                    sidebarWidth +
-                    'px';
+                draggedColumn!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
                 draggedColumn!.style.top = event.clientY + 'px';
             });
         }
@@ -209,7 +212,7 @@
     // --- Column selecting ---
     let selectedColumnIndexes: number[] = [];
 
-    function handleColumnClickAction(event: MouseEvent, columnIndex: number): void {
+    function handleColumnClick(event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is clicked
 
         // Check if Ctrl (or Cmd on Mac) is held down
@@ -218,23 +221,39 @@
             const index = selectedColumnIndexes.indexOf(columnIndex);
             if (index > -1) {
                 // Already selected, so remove from the selection
-                // Remove the index and create a new array to trigger reactivity
-                selectedColumnIndexes = [
-                    ...selectedColumnIndexes.slice(0, index),
-                    ...selectedColumnIndexes.slice(index + 1),
-                ];
+                removeColumnFromSelection(columnIndex, index);
             } else {
                 // Not selected, add to the selection
                 // Add the index and create a new array to trigger reactivity
-                selectedColumnIndexes = [...selectedColumnIndexes, columnIndex];
+                addColumnToSelection(columnIndex);
             }
         } else {
             // Replace the current selection
             // Replace the current selection with a new array to trigger reactivity
-            selectedColumnIndexes = [columnIndex];
+            setSelectionToColumn(columnIndex);
         }
 
         console.log('Selected column indexes:', selectedColumnIndexes);
+    }
+
+    function addColumnToSelection(columnIndex: number): void {
+        // Add the index and create a new array to trigger reactivity
+        selectedColumnIndexes = [...selectedColumnIndexes, columnIndex];
+    }
+
+    function removeColumnFromSelection(columnIndex: number, selectedColumnIndexesIndex?: number): void {
+        // Remove the index and create a new array to trigger reactivity
+        selectedColumnIndexes = [
+            ...selectedColumnIndexes.slice(0, selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex)),
+            ...selectedColumnIndexes.slice(
+                selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex) + 1,
+            ),
+        ];
+    }
+
+    function setSelectionToColumn(columnIndex: number): void {
+        // Replace the current selection with a new array to trigger reactivity
+        selectedColumnIndexes = [columnIndex];
     }
 
     // --- Row selecting ---
@@ -287,6 +306,9 @@
     }
 
     function updateScrollTop(): void {
+        if (currentContextMenu) {
+            currentContextMenu.style.top = currentContextMenu.offsetTop - scrollTop + tableContainer.scrollTop + 'px';
+        }
         scrollTop = tableContainer.scrollTop;
     }
 
@@ -361,6 +383,37 @@
         updateTableSpace();
     }
 
+    // --- Right clicks ---
+    let showingColumnHeaderRightClickMenu = false;
+    let rightClickedColumnIndex = -1;
+    let rightClickClumnMenuElement: HTMLElement;
+    let currentContextMenu: HTMLElement | null = null;
+
+    function handleColumnRightClick(event: MouseEvent, columnIndex: number): void {
+        // Logic for what happens when a header is right clicked
+        showingColumnHeaderRightClickMenu = true;
+        rightClickedColumnIndex = columnIndex;
+
+        requestAnimationFrame(() => {
+            currentContextMenu = rightClickClumnMenuElement; // So scrolling can edit the position
+            rightClickClumnMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            rightClickClumnMenuElement!.style.top = event.clientY + scrollTop + 'px';
+        });
+
+        // Click anywhere else to close the menu, context menu selection has to prevent propagation
+        window.addEventListener('click', handleRightClickEnd);
+    }
+
+    function handleRightClickEnd(): void {
+        // Code specific to each menu
+        showingColumnHeaderRightClickMenu = false;
+        rightClickedColumnIndex = -1;
+        // ----
+
+        currentContextMenu = null;
+        window.removeEventListener('click', handleRightClickEnd);
+    }
+
     // --- Lifecycle ---
     onMount(() => {
         updateScrollTop();
@@ -370,20 +423,18 @@
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
         window.addEventListener('resize', throttledUpdateTableSpace);
         const clearColumnSelection = async () => {
-            setTimeout(() => {
-                if (!clickOnColumn) {
-                    selectedColumnIndexes = [];
-                }
-                clickOnColumn = false;
-            }, 100);
+            if (!clickOnColumn) {
+                selectedColumnIndexes = [];
+            }
+            clickOnColumn = false;
+            console.log('Clearing column selection');
         };
         const clearRowSelection = async () => {
-            setTimeout(() => {
-                if (!clickOnRow) {
-                    selectedRowIndexes = [];
-                }
-                clickOnRow = false;
-            }, 100);
+            if (!clickOnRow) {
+                selectedRowIndexes = [];
+            }
+            console.log('Clearing row selection');
+            clickOnRow = false;
         };
         window.addEventListener('click', clearColumnSelection);
         window.addEventListener('click', clearRowSelection);
@@ -395,6 +446,7 @@
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
             window.removeEventListener('resize', throttledUpdateTableSpace);
             window.removeEventListener('click', clearColumnSelection);
+            window.removeEventListener('click', clearRowSelection);
             clearInterval(interval);
         };
     });
@@ -523,8 +575,20 @@
         </div>
     {/if}
     {#if numRows === -1}
-        <!-- Just so this class gets compiled -->
+        <!-- Just so these classes get compiled -->
         <span class="dragging selectedColumn">No data</span>
+    {/if}
+    {#if showingColumnHeaderRightClickMenu}
+        <div class="contextMenu" bind:this={rightClickClumnMenuElement}>
+            {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
+                <span on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</span>
+            {:else}
+                {#if selectedColumnIndexes.length >= 1}
+                    <span on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</span>
+                {/if}
+                <span on:click={() => setSelectionToColumn(rightClickedColumnIndex)}>Select Column</span>
+            {/if}
+        </div>
     {/if}
 </div>
 
@@ -712,5 +776,26 @@
         pointer-events: none; /* Make it non-interactive */
         z-index: 1000; /* Ensure it's on top */
         border: 3px solid var(--bg-dark);
+    }
+
+    .contextMenu {
+        position: absolute;
+        border: 2px solid var(--bg-dark);
+        background-color: var(--bg-bright);
+        z-index: 1000;
+        padding: 0px;
+        color: var(--font-dark);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .contextMenu span {
+        padding: 5px 15px;
+        cursor: pointer;
+    }
+
+    .contextMenu span:hover {
+        background-color: var(--primary-color);
+        color: var(--font-bright);
     }
 </style>
