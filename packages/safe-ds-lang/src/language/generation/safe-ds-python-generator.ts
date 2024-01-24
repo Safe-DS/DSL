@@ -74,7 +74,7 @@ import {
 import { isInStubFile, isStubFile } from '../helpers/fileExtensions.js';
 import { IdManager } from '../helpers/idManager.js';
 import {
-    getAbstractResults,
+    getAbstractResults, getArguments,
     getAssignees,
     getImportedDeclarations,
     getImports,
@@ -224,6 +224,10 @@ export class SafeDsPythonGenerator {
             }
         });
         return mapper.toString();
+    }
+
+    private getPythonModuleOrDefault(object: SdsModule) {
+        return this.builtinAnnotations.getPythonModule(object) || object.name;
     }
 
     private getPythonNameOrDefault(object: SdsDeclaration) {
@@ -638,7 +642,7 @@ export class SafeDsPythonGenerator {
             return traceToNode(expression)(frame.getUniqueLambdaBlockName(expression));
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
-            const sortedArgs = this.sortArguments(expression.argumentList.arguments);
+            const sortedArgs = this.sortArguments(getArguments(expression));
             // Memoize constructor or function call
             if (isSdsFunction(callable) || isSdsClass(callable)) {
                 if (isSdsFunction(callable)) {
@@ -648,11 +652,11 @@ export class SafeDsPythonGenerator {
                         if (isSdsMemberAccess(expression.receiver)) {
                             thisParam = this.generateExpression(expression.receiver.receiver, frame);
                         }
-                        const argumentsMap = this.getArgumentsMap(expression.argumentList.arguments, frame);
+                        const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
                         return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
                     }
                 }
-                if (this.isCallMemoizable(expression)) {
+                if (this.isMemoizableCall(expression)) {
                     let thisParam: CompositeGeneratorNode | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
@@ -794,7 +798,7 @@ export class SafeDsPythonGenerator {
             { separator: '' },
         )!;
         // Non-memoizable calls can be directly generated
-        if (!this.isCallMemoizable(expression)) {
+        if (!this.isMemoizableCall(expression)) {
             return generatedPythonCall;
         }
         frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
@@ -815,16 +819,10 @@ export class SafeDsPythonGenerator {
         )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
     }
 
-    private isCallMemoizable(expression: SdsCall): boolean {
+    private isMemoizableCall(expression: SdsCall): boolean {
         const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
-        let memoizable = true;
-        for (const reason of impurityReasons) {
-            // If the file is not known, the call is not memoizable
-            if (!(reason instanceof FileRead) || reason.path === undefined) {
-                memoizable &&= false;
-            }
-        }
-        return memoizable;
+        // If the file is not known, the call is not memoizable
+        return !impurityReasons.some(reason => !(reason instanceof FileRead) || reason.path === undefined);
     }
 
     private generateMemoizedCall(
@@ -842,7 +840,7 @@ export class SafeDsPythonGenerator {
             sortedArgs
                 .map((arg) => this.nodeMapper.argumentToParameter(arg))
                 .filter((param) => param)
-                .find((param) => !Parameter.isRequired(param)) !== undefined;
+                .some((param) => Parameter.isOptional(param));
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression, frame);
         return expandTracedToNode(
             expression,
@@ -879,7 +877,7 @@ export class SafeDsPythonGenerator {
                     );
                 } else if (isSdsParameter(reason.path)) {
                     const argument = this.nodeMapper
-                        .parametersToArguments([reason.path], expression.argumentList.arguments)
+                        .parametersToArguments([reason.path], getArguments(expression))
                         .get(reason.path);
                     if (!argument) {
                         /* c8 ignore next 4 */
