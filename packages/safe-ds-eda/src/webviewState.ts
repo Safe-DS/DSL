@@ -5,6 +5,8 @@ import { writable } from "svelte/store";
 
 let currentTabIndex = writable<number>(0);
 
+let preventClicks = writable<boolean>(false);
+
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
 let currentState = writable<State>({ tableIdentifier: window.tableIdentifier, history: [], defaultState: true});
 
@@ -26,4 +28,4 @@ window.addEventListener("message", (event) => {
   }
 });
 
-export { currentState, currentTabIndex };
+export { currentState, currentTabIndex, preventClicks };

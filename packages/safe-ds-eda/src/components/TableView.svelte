@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { currentState } from '../webviewState';
+    import { currentState, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/caret.svelte';
 
     export let sidebarWidth: number;
@@ -9,8 +9,6 @@
     $: if (sidebarWidth && tableContainer) {
         updateTableSpace();
     }
-
-    let preventOtherClicks = false;
 
     let showProfiling = false;
     let minTableWidth = 0;
@@ -125,7 +123,7 @@
         }
 
         // Right click still allowed to happen
-        if (preventOtherClicks) {
+        if ($preventClicks) {
             return;
         }
 
@@ -221,7 +219,7 @@
 
     function handleColumnClick(event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is clicked
-        if (preventOtherClicks) {
+        if ($preventClicks) {
             return;
         }
 
@@ -272,7 +270,7 @@
 
     function handleRowClick(event: MouseEvent, rowIndex: number): void {
         // Logic for what happens when a row is clicked
-        if (preventOtherClicks) {
+        if ($preventClicks) {
             return;
         }
 
@@ -419,7 +417,7 @@
     }
 
     function doDefaultContextMenuSetup(): void {
-        preventOtherClicks = true;
+        preventClicks.set(true);
         disableNonContextMenuEffects();
     }
 
@@ -430,12 +428,11 @@
         // ----
 
         restoreNonContextMenuEffects();
-        preventOtherClicks = false;
+        preventClicks.set(false);
         currentContextMenu = null;
         window.removeEventListener('click', handleRightClickEnd);
     }
 
-    // --- Utils ---
     const originalHoverStyles = new Map<CSSStyleRule, string>();
     const originalCursorStyles = new Map<CSSStyleRule, string>();
 
@@ -482,6 +479,11 @@
             rule.style.cssText = style;
         });
         originalCursorStyles.clear();
+    }
+
+    // --- Profiling ---
+    function toggleProfiling(): void {
+        if (!$preventClicks) showProfiling = !showProfiling;
     }
 
     // --- Lifecycle ---
@@ -587,7 +589,7 @@
                     ></td>
                     <td
                         class="profilingBanner"
-                        on:click={() => (showProfiling = !showProfiling)}
+                        on:click={toggleProfiling}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                         on:mouseup={handleReorderDragEnd}
                     >
