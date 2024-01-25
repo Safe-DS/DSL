@@ -10,6 +10,8 @@
         updateTableSpace();
     }
 
+    let preventOtherClicks = false;
+
     let showProfiling = false;
     let minTableWidth = 0;
     let headerElements: HTMLElement[] = [];
@@ -122,6 +124,11 @@
             return;
         }
 
+        // Right click still allowed to happen
+        if (preventOtherClicks) {
+            return;
+        }
+
         isClick = true; // Assume it's a click initially
 
         holdTimeout = setTimeout(() => {
@@ -214,6 +221,9 @@
 
     function handleColumnClick(event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is clicked
+        if (preventOtherClicks) {
+            return;
+        }
 
         // Check if Ctrl (or Cmd on Mac) is held down
         if (event.ctrlKey || event.metaKey) {
@@ -262,6 +272,9 @@
 
     function handleRowClick(event: MouseEvent, rowIndex: number): void {
         // Logic for what happens when a row is clicked
+        if (preventOtherClicks) {
+            return;
+        }
 
         clickOnRow = true; // For global window click clear of selection
 
@@ -391,6 +404,7 @@
 
     function handleColumnRightClick(event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is right clicked
+        doDefaultContextMenuSetup();
         showingColumnHeaderRightClickMenu = true;
         rightClickedColumnIndex = columnIndex;
 
@@ -404,14 +418,70 @@
         window.addEventListener('click', handleRightClickEnd);
     }
 
+    function doDefaultContextMenuSetup(): void {
+        preventOtherClicks = true;
+        disableNonContextMenuEffects();
+    }
+
     function handleRightClickEnd(): void {
         // Code specific to each menu
         showingColumnHeaderRightClickMenu = false;
         rightClickedColumnIndex = -1;
         // ----
 
+        restoreNonContextMenuEffects();
+        preventOtherClicks = false;
         currentContextMenu = null;
         window.removeEventListener('click', handleRightClickEnd);
+    }
+
+    // --- Utils ---
+    const originalHoverStyles = new Map<CSSStyleRule, string>();
+    const originalCursorStyles = new Map<CSSStyleRule, string>();
+
+    function disableNonContextMenuEffects() {
+        const stylesheets = document.styleSheets;
+
+        for (let i = 0; i < stylesheets.length; i++) {
+            const rules = stylesheets[i].cssRules;
+            const ownerNode = stylesheets[i].ownerNode;
+            if (
+                !(ownerNode instanceof Element) ||
+                (ownerNode instanceof Element && ownerNode.id && !ownerNode.id.includes('svelte'))
+            ) {
+                // We only care for stylesheets that are svlete generated
+                continue;
+            }
+
+            for (let j = 0; j < rules.length; j++) {
+                // Remove all hover styles and cursor pointer styles from non context menu elements
+                const rule = rules[j] as CSSStyleRule;
+                if (rule.selectorText?.includes(':hover') && !rule.selectorText?.includes('contextMenu')) {
+                    // Store the original hover style
+                    originalHoverStyles.set(rule, rule.style.cssText);
+                    // Disable the hover style
+                    rule.style.cssText = '';
+                }
+                if (rule.style?.cursor === 'pointer' && !rule.selectorText?.includes('contextMenu')) {
+                    // Store the original pointer style
+                    originalCursorStyles.set(rule, rule.style.cssText);
+                    // Disable the cursor pointer
+                    rule.style.cursor = 'auto';
+                }
+            }
+        }
+    }
+
+    function restoreNonContextMenuEffects() {
+        originalHoverStyles.forEach((style, rule) => {
+            rule.style.cssText = style;
+        });
+        originalHoverStyles.clear();
+
+        originalCursorStyles.forEach((style, rule) => {
+            rule.style.cssText = style;
+        });
+        originalCursorStyles.clear();
     }
 
     // --- Lifecycle ---
@@ -548,7 +618,7 @@
                             <td
                                 class="borderColumn cursorPointer"
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
-                                on:mousedown={(event) => handleRowClick(event, visibleStart + i)}
+                                on:click={(event) => handleRowClick(event, visibleStart + i)}
                                 class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
                             >
@@ -564,7 +634,7 @@
                                 class="borderColumn borderColumnEndIndex cursorPointer"
                                 on:mousemove={(event) =>
                                     throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
-                                on:mousedown={(event) => handleRowClick(event, visibleStart + i)}
+                                on:click={(event) => handleRowClick(event, visibleStart + i)}
                                 class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
                             >
@@ -604,6 +674,7 @@
         height: 100%; /* Adjust based on your layout */
         position: relative; /* Needed for absolute positioning inside */
     }
+
     .content-wrapper {
         position: absolute;
         top: 0;
