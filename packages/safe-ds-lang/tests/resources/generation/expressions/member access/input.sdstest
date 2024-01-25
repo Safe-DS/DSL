@@ -13,6 +13,12 @@ class C() {
     @Pure
     @PythonCall("$param.i($this)")
     fun i(param: Any?) -> result: Boolean
+
+    @Pure
+    fun j(param: Any?) -> result: Boolean
+
+    @Pure
+    @PythonName("k2") fun k(param: Any?) -> result: Boolean
 }
 
 @Pure fun factory() -> instance: C?
@@ -26,4 +32,6 @@ pipeline test {
     f(factory()?.a);
     f(factory()?.b);
     f(C().i(1));
+    f(C().j(123));
+    f(C().k("abc"));
 }
