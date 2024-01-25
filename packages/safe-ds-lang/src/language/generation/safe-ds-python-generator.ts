@@ -851,10 +851,7 @@ export class SafeDsPythonGenerator {
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
         const containsOptionalArgs =
-            sortedArgs
-                .map((arg) => this.nodeMapper.argumentToParameter(arg))
-                .filter((param) => param)
-                .some((param) => Parameter.isOptional(param));
+            sortedArgs.some(arg => Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)));
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         return expandTracedToNode(
             expression,
