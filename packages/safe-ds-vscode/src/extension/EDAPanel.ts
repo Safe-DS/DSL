@@ -4,7 +4,7 @@ import * as webviewApi from "./Apis/webviewApi.ts";
 import { Column, State, Table } from "../../../../types/shared-eda-vscode/types.js";
 import { addMessageCallback, removeMessageCallback, sendMessageToPythonServer } from "./pythonServer.ts";
 import { PlaceholderValueMessage, createPlaceholderQueryMessage } from "./messages.ts";
-import { printOutputMessage } from "./output.ts";
+import { logOutput, printOutputMessage } from "./output.ts";
 
 export class EDAPanel {
   // Map to track multiple panels
@@ -187,7 +187,7 @@ export class EDAPanel {
 
   private async _update() {
     const webview = this._panel.webview;
-    this._panel.webview.html = this._getHtmlForWebview(webview);
+    this._panel.webview.html = await this._getHtmlForWebview(webview);
   }  
 
   private findCurrentState(): State | undefined {
@@ -263,10 +263,21 @@ export class EDAPanel {
     });
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
-    // // And the uri we use to load this script in the webview
-    // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "dist", "eda-webview", "main.js"));
-    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "..", "safe-ds-eda", "dist", "main.js"));
+  private async _getHtmlForWebview(webview: vscode.Webview) {
+    // The uri we use to load this script in the webview
+    let scriptUri;
+    // First look in the eda package, so the watch build works and updates the webview on changes
+    let scriptPath = vscode.Uri.joinPath(this._extensionUri, "..", "safe-ds-eda", "dist", "main.js")
+    scriptUri = webview.asWebviewUri(scriptPath);
+    try {
+      await vscode.workspace.fs.stat(scriptPath);
+      logOutput("Using EDA build from EDA package.")
+    } catch (error) {
+      // If not use the static one from the dist folder here
+      console.log(error)
+      logOutput("Using EDA build from local dist.")
+      scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "dist", "eda-webview", "main.js"));
+    }
 
     // Uri to load styles into webview
     const stylesResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "media", "reset.css"));
