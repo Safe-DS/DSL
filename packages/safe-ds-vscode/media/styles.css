@@ -21,3 +21,7 @@
 .cursorPointer {
     cursor: pointer;
 }
+
+* {
+    color: var(--font-dark);
+}
