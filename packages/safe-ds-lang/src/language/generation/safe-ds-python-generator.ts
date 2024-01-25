@@ -856,7 +856,7 @@ export class SafeDsPythonGenerator {
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
         // For a static function, the thisParam would be the class containing the function. We do not need to generate it in this case
-        const generateThisParam = !isSdsFunction(callable) || !callable.isStatic && thisParam;
+        const generateThisParam = !isSdsFunction(callable) || (!callable.isStatic && thisParam);
         const containsOptionalArgs = sortedArgs.some((arg) =>
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
@@ -874,7 +874,9 @@ export class SafeDsPythonGenerator {
                         frame,
                     )}.${this.generateExpression(expression.receiver.member!, frame)}`
                   : this.generateExpression(expression.receiver, frame)
-        }, [${generateThisParam ? thisParam : ""}${generateThisParam && memoizedArgs.length > 0 ? ", " : ""}${joinTracedToNode(expression.argumentList, 'arguments')(
+        }, [${generateThisParam ? thisParam : ''}${
+            generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
+        }${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             {
