@@ -34,6 +34,13 @@ const plugins = [
         watch,
     }),
     copy({
+        assets: {
+            from: ['../safe-ds-eda/dist/main.js'],
+            to: ['./eda-webview'],
+        },
+        watch,
+    }),
+    copy({
             assets: {
                 from: ['../../node_modules/source-map/lib/mappings.wasm'],
                 to: ['./extension']
