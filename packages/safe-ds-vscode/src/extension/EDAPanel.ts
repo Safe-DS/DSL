@@ -128,6 +128,7 @@ export class EDAPanel {
         enableScripts: true,
         localResourceRoots: [
           vscode.Uri.joinPath(extensionUri, "media"),
+          vscode.Uri.joinPath(extensionUri, "dist", "eda-webview"),
           vscode.Uri.joinPath(extensionUri, "..", "safe-ds-eda", "dist"),
         ],
         retainContextWhenHidden: true,
@@ -264,6 +265,7 @@ export class EDAPanel {
 
   private _getHtmlForWebview(webview: vscode.Webview) {
     // // And the uri we use to load this script in the webview
+    // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "dist", "eda-webview", "main.js"));
     const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "..", "safe-ds-eda", "dist", "main.js"));
 
     // Uri to load styles into webview

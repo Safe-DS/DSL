@@ -33,15 +33,15 @@ export const startPythonServer = async function (): Promise<void> {
     const runnerCommandParts = runnerCommandSetting.split(/\s/u);
     const runnerCommand = runnerCommandParts.shift()!; // After shift, only the actual args are left
     // Test if the python server can actually be started
-    // try {
-    //     const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
-    //     const versionString = await getPythonServerVersion(pythonServerTest);
-    //     logOutput(`Using safe-ds-runner version: ${versionString}`);
-    // } catch (error) {
-    //     logError(`Could not start runner: ${error}`);
-    //     vscode.window.showErrorMessage('The runner process could not be started.');
-    //     return;
-    // }
+    try {
+        const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
+        const versionString = await getPythonServerVersion(pythonServerTest);
+        logOutput(`Using safe-ds-runner version: ${versionString}`);
+    } catch (error) {
+        logError(`Could not start runner: ${error}`);
+        vscode.window.showErrorMessage('The runner process could not be started.');
+        return;
+    }
     // Start the runner at the specified port
     pythonServerPort = await findFirstFreePort(5000);
     logOutput(`Trying to use port ${pythonServerPort} to start python server...`);
@@ -345,22 +345,22 @@ export const sendMessageToPythonServer = function (message: PythonServerMessage)
     pythonServerConnection!.send(messageString);
 };
 
-// const getPythonServerVersion = async function (process: child_process.ChildProcessWithoutNullStreams) {
-//     process.stderr.on('data', (data: Buffer) => {
-//         logOutput(`[Runner-Err] ${data.toString().trim()}`);
-//     });
-//     return new Promise<string>((resolve, reject) => {
-//         process.stdout.on('data', (data: Buffer) => {
-//             const version = data.toString().trim().split(/\s/u)[1];
-//             if (version !== undefined) {
-//                 resolve(version);
-//             }
-//         });
-//         process.on('close', (code) => {
-//             reject(new Error(`The subprocess shut down: ${code}`));
-//         });
-//     });
-// };
+const getPythonServerVersion = async function (process: child_process.ChildProcessWithoutNullStreams) {
+    process.stderr.on('data', (data: Buffer) => {
+        logOutput(`[Runner-Err] ${data.toString().trim()}`);
+    });
+    return new Promise<string>((resolve, reject) => {
+        process.stdout.on('data', (data: Buffer) => {
+            const version = data.toString().trim().split(/\s/u)[1];
+            if (version !== undefined) {
+                resolve(version);
+            }
+        });
+        process.on('close', (code) => {
+            reject(new Error(`The subprocess shut down: ${code}`));
+        });
+    });
+};
 
 const manageRunnerSubprocessOutputIO = function () {
     if (!pythonServer) {

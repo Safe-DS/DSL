@@ -246,7 +246,7 @@
         selectedColumnIndexes = [
             ...selectedColumnIndexes.slice(0, selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex)),
             ...selectedColumnIndexes.slice(
-                selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex) + 1,
+                (selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex)) + 1,
             ),
         ];
     }
@@ -581,12 +581,18 @@
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickClumnMenuElement}>
             {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
-                <span on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</span>
+                <button type="button" on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}
+                    >Deselect Column</button
+                >
             {:else}
                 {#if selectedColumnIndexes.length >= 1}
-                    <span on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</span>
+                    <button type="button" on:click={() => addColumnToSelection(rightClickedColumnIndex)}
+                        >Add To Selection</button
+                    >
                 {/if}
-                <span on:click={() => setSelectionToColumn(rightClickedColumnIndex)}>Select Column</span>
+                <button type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
+                    >Select Column</button
+                >
             {/if}
         </div>
     {/if}
@@ -789,12 +795,15 @@
         flex-direction: column;
     }
 
-    .contextMenu span {
+    .contextMenu button {
         padding: 5px 15px;
         cursor: pointer;
+        background-color: var(--bg-bright);
+        color: var(--font-dark);
+        text-align: left;
     }
 
-    .contextMenu span:hover {
+    .contextMenu button:hover {
         background-color: var(--primary-color);
         color: var(--font-bright);
     }
