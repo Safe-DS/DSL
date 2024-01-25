@@ -854,8 +854,9 @@ export class SafeDsPythonGenerator {
         const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
-        const containsOptionalArgs =
-            sortedArgs.some(arg => Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)));
+        const containsOptionalArgs = sortedArgs.some((arg) =>
+            Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
+        );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         return expandTracedToNode(
             expression,
