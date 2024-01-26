@@ -19,6 +19,9 @@ class C() {
 
     @Pure
     @PythonName("k2") fun k(param: Any?) -> result: Boolean
+
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("name")])
+    static fun from_csv_file(name: String) -> c: C
 }
 
 @Pure fun factory() -> instance: C?
@@ -34,4 +37,5 @@ pipeline test {
     f(C().i(1));
     f(C().j(123));
     f(C().k("abc"));
+    f(C.from_csv_file("abc.csv"));
 }

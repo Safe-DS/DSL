@@ -851,9 +851,12 @@ export class SafeDsPythonGenerator {
     ): CompositeGeneratorNode {
         frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
-        const memoizedArgs = getParameters(this.nodeMapper.callToCallable(expression)).map(
+        const callable = this.nodeMapper.callToCallable(expression);
+        const memoizedArgs = getParameters(callable).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
+        // For a static function, the thisParam would be the class containing the function. We do not need to generate it in this case
+        const generateThisParam = !isSdsFunction(callable) || (!callable.isStatic && thisParam);
         const containsOptionalArgs = sortedArgs.some((arg) =>
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
@@ -871,7 +874,9 @@ export class SafeDsPythonGenerator {
                         frame,
                     )}.${this.generateExpression(expression.receiver.member!, frame)}`
                   : this.generateExpression(expression.receiver, frame)
-        }, [${thisParam ? thisParam.append(', ') : ''}${joinTracedToNode(expression.argumentList, 'arguments')(
+        }, [${generateThisParam ? thisParam : ''}${
+            generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
+        }${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
             (arg) => this.generateExpression(arg, frame),
             {
