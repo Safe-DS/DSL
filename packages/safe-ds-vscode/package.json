@@ -138,16 +138,6 @@
                 "category": "Safe-DS",
                 "icon": "$(play)"
             },
-            {
-                "command": "eda-test01.runEda",
-                "title": "Start",
-                "category": "EDA"
-              },
-              {
-                "command": "eda-test01.runEdaFromTable",
-                "title": "Start EDA from selection",
-                "category": "EDA"
-              },
               {
                 "command": "eda-test01.refreshWebview",
                 "title": "Refresh Webview",

@@ -155,31 +155,32 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', commandRunPipelineFile),
     );
     
-    context.subscriptions.push(
-        registerCommandWithCheck("eda-test01.runEda", () => {
-            EDAPanel.createOrShow(context.extensionUri, context, "", undefined, pythonServerPort);
-        }),
-    );
+    // Not used right now
+    // context.subscriptions.push(
+    //     registerCommandWithCheck("eda-test01.runEda", () => {
+    //         EDAPanel.createOrShow(context.extensionUri, context, "", undefined, pythonServerPort);
+    //     }),
+    // );
 
-    context.subscriptions.push(
-        registerCommandWithCheck("eda-test01.runEdaFromTable", () => {
-            const { activeTextEditor } = vscode.window;
+    // context.subscriptions.push(
+    //     registerCommandWithCheck("eda-test01.runEdaFromTable", () => {
+    //         const { activeTextEditor } = vscode.window;
 
-            if (!activeTextEditor) {
-            vscode.window.showErrorMessage("No ative text editor!");
-            return;
-            }
+    //         if (!activeTextEditor) {
+    //         vscode.window.showErrorMessage("No ative text editor!");
+    //         return;
+    //         }
 
-            const newtableIdentifier = activeTextEditor.document.getText(activeTextEditor.selection);
+    //         const newtableIdentifier = activeTextEditor.document.getText(activeTextEditor.selection);
 
-            if (newtableIdentifier.trim() === "") {
-            vscode.window.showErrorMessage("No text selected!");
-            return;
-            }
+    //         if (newtableIdentifier.trim() === "") {
+    //         vscode.window.showErrorMessage("No text selected!");
+    //         return;
+    //         }
 
-            EDAPanel.createOrShow(context.extensionUri, context, "", newtableIdentifier, pythonServerPort);
-        }),
-    );
+    //         EDAPanel.createOrShow(context.extensionUri, context, "", newtableIdentifier, pythonServerPort);
+    //     }),
+    // );
 
     context.subscriptions.push(
         registerCommandWithCheck("eda-test01.runEdaFromContext", () => {
