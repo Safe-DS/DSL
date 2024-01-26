@@ -30,16 +30,8 @@
         "concurrently": "^8.2.2",
         "conventional-changelog-conventionalcommits": "^7.0.2",
         "semantic-release": "^22.0.8",
-        "esbuild": "^0.19.5",
-        "esbuild-plugin-copy": "^2.1.1",
-        "nodemon": "^3.0.1",
         "shx": "^0.3.4",
         "typescript": "^5.3.3",
         "vitest": "^0.34.6"
-    },
-    "nodemonConfig": {
-        "watch": ["packages/safe-ds-eda/src/"],
-        "ext": "js,ts,svelte,css",
-        "exec": "cd packages/safe-ds-eda && vite build"
-      }
+    }
 }
