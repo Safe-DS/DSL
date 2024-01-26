@@ -306,7 +306,6 @@
     let visibleEnd = 0;
     let visibleRowCount = 10;
     let scrollTop = 0;
-    let interval: NodeJS.Timeout;
     let lastHeight = 0;
 
     const throttledUpdateVisibleRows = throttle(updateVisibleRows, 40);
@@ -487,6 +486,46 @@
     }
 
     // --- Lifecycle ---
+    let interval: NodeJS.Timeout;
+
+    function clearSelections(event: MouseEvent): void {
+        // Clears selections if last click was not on a column or row and currrent click is not on a context menu item if context menu is open
+        // WARN/TODO: Does not yet work for subemnus in context menus or menus with non possible closing clicks, those will need yet another class to be detected and handled
+        // This also prepares selection clearing for next iteration if click was on column or row
+
+        // Clear column selection if approriate
+        if (
+            !clickOnColumn &&
+            !(
+                currentContextMenu &&
+                event.target instanceof HTMLElement &&
+                !(event.target as HTMLElement).classList.contains('contextItem')
+            )
+        ) {
+            // Clear if click last item clicked was not on a column or if current click is on a context menu item if context menu is open,
+            // which should just close the context menu and not clear selection
+            selectedColumnIndexes = [];
+            console.log('Clearing column selection');
+        }
+        clickOnColumn = false; // meaning if next click is not on a column, selection will be cleared in next iteration
+
+        // Clear row selection if approriate
+        if (
+            !clickOnRow &&
+            !(
+                currentContextMenu &&
+                event.target instanceof HTMLElement &&
+                !(event.target as HTMLElement).classList.contains('contextItem')
+            )
+        ) {
+            // Clear if click last item clicked was not on a row or if current click is on a context menu item if context menu is open,
+            // which should just close the context menu and not clear selection
+            selectedRowIndexes = [];
+            console.log('Clearing row selection');
+        }
+        clickOnRow = false; // meaning if next click is not on a row, selection will be cleared in next iteration
+    }
+
     onMount(() => {
         updateScrollTop();
         recalculateVisibleRowCount();
@@ -494,22 +533,7 @@
         tableContainer.addEventListener('scroll', updateScrollTop);
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
         window.addEventListener('resize', throttledUpdateTableSpace);
-        const clearColumnSelection = async () => {
-            if (!clickOnColumn) {
-                selectedColumnIndexes = [];
-            }
-            clickOnColumn = false;
-            console.log('Clearing column selection');
-        };
-        const clearRowSelection = async () => {
-            if (!clickOnRow) {
-                selectedRowIndexes = [];
-            }
-            console.log('Clearing row selection');
-            clickOnRow = false;
-        };
-        window.addEventListener('click', clearColumnSelection);
-        window.addEventListener('click', clearRowSelection);
+        window.addEventListener('click', clearSelections);
         interval = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
 
         return () => {
@@ -517,8 +541,7 @@
             tableContainer.addEventListener('scroll', updateScrollTop);
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
             window.removeEventListener('resize', throttledUpdateTableSpace);
-            window.removeEventListener('click', clearColumnSelection);
-            window.removeEventListener('click', clearRowSelection);
+            window.removeEventListener('click', clearSelections);
             clearInterval(interval);
         };
     });
@@ -603,7 +626,7 @@
                     {#each $currentState.table.columns as column, i}
                         <td
                             class="profilingBanner"
-                            on:click={() => (showProfiling = !showProfiling)}
+                            on:click={toggleProfiling}
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, i + 1)}
                         >
                         </td>
@@ -653,16 +676,20 @@
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickClumnMenuElement}>
             {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
-                <button type="button" on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}
-                    >Deselect Column</button
+                <button
+                    class="contextItem"
+                    type="button"
+                    on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
                 >
             {:else}
                 {#if selectedColumnIndexes.length >= 1}
-                    <button type="button" on:click={() => addColumnToSelection(rightClickedColumnIndex)}
-                        >Add To Selection</button
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
                     >
                 {/if}
-                <button type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
+                <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
                     >Select Column</button
                 >
             {/if}
