@@ -12,6 +12,7 @@
 
     let showProfiling = false;
     let minTableWidth = 0;
+    const borderColumnWidth = 45; // Set in CSS, change here if changes in css
     let headerElements: HTMLElement[] = [];
     let savedColumnWidths: Map<string, number> = new Map();
 
@@ -350,17 +351,23 @@
             beforeWidth += width;
         }
 
+        const utilitySpace = 2 * borderColumnWidth - 22; // 2 border columns minus 22, found 22 through testing, no idea why
+
         if (newPossibleSpace > beforeWidth) {
             // Extend all column widths proportionally with new space
             for (const column of headerElements) {
-                const newWidth = column.clientWidth + (newPossibleSpace - beforeWidth) / headerElements.length;
+                const newWidth =
+                    column.clientWidth + (newPossibleSpace - beforeWidth - utilitySpace) / headerElements.length;
                 column.style.width = newWidth + 'px';
                 savedColumnWidths.set(column.innerText, newWidth);
+                console.log(column.innerText, newWidth);
             }
         } else {
             // Shrink all column widths proportionally with new space if not below minimum width dedicated by a: width by header text or b: with by manual resize
             for (const column of headerElements) {
-                const newWidth = column.clientWidth - (beforeWidth - newPossibleSpace) / headerElements.length;
+                const newWidth =
+                    column.clientWidth - (beforeWidth - (newPossibleSpace - utilitySpace)) / headerElements.length;
+                console.log(column.innerText, newWidth);
                 if (resizeWidthMap.has(column.innerText)) {
                     // User resized manually, so don't shrink below that
                     if (resizeWidthMap.get(column.innerText)! <= newWidth) {
@@ -406,7 +413,7 @@
         rightClickedColumnIndex = columnIndex;
 
         requestAnimationFrame(() => {
-            currentContextMenu = rightClickClumnMenuElement; // So scrolling can edit the position
+            currentContextMenu = rightClickClumnMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
             rightClickClumnMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
             rightClickClumnMenuElement!.style.top = event.clientY + scrollTop + 'px';
         });
@@ -669,10 +676,12 @@
             </table>
         </div>
     {/if}
+    <!-- Main part over -->
     {#if numRows === -1}
         <!-- Just so these classes get compiled -->
         <span class="dragging selectedColumn">No data</span>
     {/if}
+    <!-- Context menus -->
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickClumnMenuElement}>
             {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
