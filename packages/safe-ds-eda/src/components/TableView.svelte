@@ -212,6 +212,8 @@
             isReorderDragging = false;
             dragStartIndex = null;
             dragCurrentIndex = null;
+            updateTableSpace();
+            updateTableSpace(); // Have to somehow call twice, first time it thinks the window is around 10px bigger than it is
         }
     }
 
@@ -241,8 +243,6 @@
             // Replace the current selection with a new array to trigger reactivity
             setSelectionToColumn(columnIndex);
         }
-
-        console.log('Selected column indexes:', selectedColumnIndexes);
     }
 
     function addColumnToSelection(columnIndex: number): void {
@@ -295,8 +295,6 @@
             // Replace the current selection with a new array to trigger reactivity
             selectedRowIndexes = [rowIndex];
         }
-
-        console.log('Selected row indexes:', selectedRowIndexes);
     }
 
     // --- Scroll loading ---
@@ -343,12 +341,13 @@
     }, 100);
 
     function updateTableSpace(): void {
-        console.log('Updating table space');
         const newPossibleSpace = tableContainer.clientWidth;
 
         const utilitySpace = borderColumnWidth * 2; // 2 border columns
         let beforeWidth = utilitySpace;
         for (const width of savedColumnWidths.values()) {
+            if (width === 0) {
+            }
             beforeWidth += width;
         }
 
@@ -390,7 +389,7 @@
     }
 
     $: if (headerElements.length > 0) {
-        console.log('Updating table space');
+        // Is svelte reactive but so far only runs once which is what we want, consideration to have loop in onMount that waits until headerElements is filled and then runs this code once
         lastHeight = tableContainer.clientHeight;
         updateTableSpace();
     }
@@ -507,7 +506,6 @@
             // Clear if click last item clicked was not on a column or if current click is on a context menu item if context menu is open,
             // which should just close the context menu and not clear selection
             selectedColumnIndexes = [];
-            console.log('Clearing column selection');
         }
         clickOnColumn = false; // meaning if next click is not on a column, selection will be cleared in next iteration
 
@@ -523,7 +521,6 @@
             // Clear if click last item clicked was not on a row or if current click is on a context menu item if context menu is open,
             // which should just close the context menu and not clear selection
             selectedRowIndexes = [];
-            console.log('Clearing row selection');
         }
         clickOnRow = false; // meaning if next click is not on a row, selection will be cleared in next iteration
     }
