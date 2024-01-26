@@ -103,8 +103,8 @@ const registerMessageLoggingCallbacks = function () {
         printOutputMessage(
             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
         );
-        // const execInfo = getExecutionContext(message.id)!;
-        // execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+        const execInfo = getExecutionContext(message.id)!;
+        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
         // sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
     }, 'placeholder_type');
     addMessageCallback((message) => {
