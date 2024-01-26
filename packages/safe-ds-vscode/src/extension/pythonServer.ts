@@ -382,7 +382,7 @@ const manageRunnerSubprocessOutputIO = function () {
 
 const connectToWebSocket = async function (): Promise<void> {
     const timeoutMs = 200;
-    const maxConnectionTries = 5;
+    const maxConnectionTries = 8;
     let currentTry = 0;
     // Attach WS
     return new Promise<void>((resolve, reject) => {

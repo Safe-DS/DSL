@@ -17,7 +17,7 @@ def testPipeline():
     safeds_runner.server.pipeline_manager.runner_save_placeholder('lStrMulti', lStrMulti)
     boolean1 = True
     safeds_runner.server.pipeline_manager.runner_save_placeholder('boolean1', boolean1)
-    value1 = g(True, -1.0, 1, None, 'multi\nline')
+    value1 = safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.g", g, [True, -1.0, 1, None, 'multi\nline'], [])
     safeds_runner.server.pipeline_manager.runner_save_placeholder('value1', value1)
     def __gen_block_lambda_0():
         i = 1
@@ -26,17 +26,17 @@ def testPipeline():
         j2 = 4
         __gen_block_lambda_result_z = 7
         return __gen_block_lambda_result_z
-    o = (f(__gen_block_lambda_0)) + (f(lambda : 2))
+    o = (safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.f", f, [__gen_block_lambda_0], [])) + (safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.f", f, [lambda : 2], []))
     safeds_runner.server.pipeline_manager.runner_save_placeholder('o', o)
     mapKey = 'key'
     safeds_runner.server.pipeline_manager.runner_save_placeholder('mapKey', mapKey)
     mapValue = 'value'
     safeds_runner.server.pipeline_manager.runner_save_placeholder('mapValue', mapValue)
-    mapResult = g2({'key': 'value'})
+    mapResult = safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.g2", g2, [{'key': 'value'}], [])
     safeds_runner.server.pipeline_manager.runner_save_placeholder('mapResult', mapResult)
     listV1 = 1
     safeds_runner.server.pipeline_manager.runner_save_placeholder('listV1', listV1)
-    listV3 = noPartialEvalInt(1)
+    listV3 = safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.noPartialEvalInt", noPartialEvalInt, [1], [])
     safeds_runner.server.pipeline_manager.runner_save_placeholder('listV3', listV3)
     list = [1]
     safeds_runner.server.pipeline_manager.runner_save_placeholder('list', list)
@@ -44,7 +44,7 @@ def testPipeline():
     safeds_runner.server.pipeline_manager.runner_save_placeholder('list3', list3)
     listValue = list3[0]
     safeds_runner.server.pipeline_manager.runner_save_placeholder('listValue', listValue)
-    listResult = g3(list)
+    listResult = safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.g3", g3, [list], [])
     safeds_runner.server.pipeline_manager.runner_save_placeholder('listResult', listResult)
-    result = (((-(o)) + (1)) + (value1)) + (((mapResult) * (listResult)) / (g4(listValue)))
+    result = (((-(o)) + (1)) + (value1)) + (((mapResult) * (listResult)) / (safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialPureDependency.g4", g4, [listValue], [])))
     safeds_runner.server.pipeline_manager.runner_save_placeholder('result', result)

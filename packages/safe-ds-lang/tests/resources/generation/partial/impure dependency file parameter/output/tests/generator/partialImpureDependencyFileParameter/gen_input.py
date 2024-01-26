@@ -9,7 +9,7 @@ def testPipeline():
     safeds_runner.server.pipeline_manager.runner_save_placeholder('impureFileWrite', impureFileWrite)
     impureFileWrite2 = iFileWrite('c.txt')
     safeds_runner.server.pipeline_manager.runner_save_placeholder('impureFileWrite2', impureFileWrite2)
-    impureFileReadAgain = iFileRead('d.txt')
+    impureFileReadAgain = safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.partialImpureDependencyFileParameter.iFileRead", iFileRead, ['d.txt'], [safeds_runner.server.pipeline_manager.runner_filemtime('d.txt')])
     safeds_runner.server.pipeline_manager.runner_save_placeholder('impureFileReadAgain', impureFileReadAgain)
     result = (impureFileReadAgain) + (2)
     safeds_runner.server.pipeline_manager.runner_save_placeholder('result', result)
