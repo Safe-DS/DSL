@@ -344,36 +344,31 @@
 
     function updateTableSpace(): void {
         console.log('Updating table space');
-        const newPossibleSpace = tableContainer.offsetWidth;
+        const newPossibleSpace = tableContainer.clientWidth;
 
-        let beforeWidth = 0;
+        const utilitySpace = borderColumnWidth * 2; // 2 border columns
+        let beforeWidth = utilitySpace;
         for (const width of savedColumnWidths.values()) {
             beforeWidth += width;
         }
 
-        const utilitySpace = 2 * borderColumnWidth - 22; // 2 border columns minus 22, found 22 through testing, no idea why
-
         if (newPossibleSpace > beforeWidth) {
             // Extend all column widths proportionally with new space
             for (const column of headerElements) {
-                const newWidth =
-                    column.clientWidth + (newPossibleSpace - beforeWidth - utilitySpace) / headerElements.length;
+                const newWidth = column.offsetWidth + (newPossibleSpace - beforeWidth) / headerElements.length;
                 column.style.width = newWidth + 'px';
                 savedColumnWidths.set(column.innerText, newWidth);
-                console.log(column.innerText, newWidth);
             }
         } else {
             // Shrink all column widths proportionally with new space if not below minimum width dedicated by a: width by header text or b: with by manual resize
             for (const column of headerElements) {
-                const newWidth =
-                    column.clientWidth - (beforeWidth - (newPossibleSpace - utilitySpace)) / headerElements.length;
-                console.log(column.innerText, newWidth);
+                const newWidth = column.offsetWidth - (beforeWidth - newPossibleSpace) / headerElements.length;
                 if (resizeWidthMap.has(column.innerText)) {
                     // User resized manually, so don't shrink below that
                     if (resizeWidthMap.get(column.innerText)! <= newWidth) {
                         column.style.width = newWidth + 'px';
                         savedColumnWidths.set(column.innerText, newWidth);
-                    } else if (column.clientWidth !== resizeWidthMap.get(column.innerText)!) {
+                    } else if (column.offsetWidth !== resizeWidthMap.get(column.innerText)!) {
                         // To update even on fast resize
                         column.style.width = resizeWidthMap.get(column.innerText)! + 'px';
                         savedColumnWidths.set(column.innerText, resizeWidthMap.get(column.innerText)!);
@@ -562,8 +557,10 @@
             <table>
                 <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
                     <tr class="headerRow" style="height: {rowHeight}px;">
-                        <th class="borderColumn" on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
-                        ></th>
+                        <th
+                            class="borderColumn borderColumnHeader"
+                            on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}>#</th
+                        >
                         {#each $currentState.table.columns as column, index}
                             <th
                                 bind:this={headerElements[index]}
@@ -584,10 +581,10 @@
                             </th>
                         {/each}
                         <th
-                            class="borderColumn"
+                            class="borderColumn borderColumnHeader"
                             on:mousemove={(event) =>
-                                throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
-                        ></th>
+                                throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}>#</th
+                        >
                     </tr>
                 </thead>
                 <tr class="hiddenProfilingWrapper noHover" style="top: {scrollTop}px;">
@@ -821,6 +818,12 @@
     .borderColumnEndIndex {
         border-left: 2px solid var(--bg-dark) !important;
         text-align: right;
+    }
+
+    .borderColumnHeader {
+        font-size: 1.3rem;
+        text-align: center;
+        vertical-align: middle;
     }
 
     .profilingBanner {
