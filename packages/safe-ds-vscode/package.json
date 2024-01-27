@@ -117,6 +117,18 @@
                 "files.trimTrailingWhitespace": true
             }
         },
+        "customEditors": [
+            {
+                "viewType": "safeds.visualEditor",
+                "displayName": "Safe DS",
+                "selector": [
+                    {
+                        "filenamePattern": "*.sdspipe"
+                    }
+                ],
+                "priority": "option"
+            }
+        ],
         "menus": {
             "editor/title/run": [
                 {
