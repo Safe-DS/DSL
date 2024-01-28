@@ -140,7 +140,7 @@
             "editor/title": [
                 {
                     "command": "safe-ds.custom-editor.open",
-                    "when": "resourceLangId == safe-ds",
+                    "when": "resourceLangId == safe-ds && activeCustomEditorId != 'safe-ds.custom-editor'",
                     "group": "navigation"
                 }
             ]
@@ -154,9 +154,9 @@
             },
             {
                 "command": "safe-ds.custom-editor.open",
-                "title": "Open in Diagram",
-                "icon": "$(symbol-structure)",
-                "category": "Safe-DS"
+                "title": "Open in Custom Editor",
+                "category": "Safe-DS",
+                "icon": "$(symbol-structure)"
             }
         ],
         "snippets": [

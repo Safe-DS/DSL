@@ -107,6 +107,16 @@ export const logOutput = function (value: string) {
 };
 
 /**
+ * Log a anything to the output channel and the extension debugger.
+ *
+ * @param value Log Message
+ */
+export const logAny = function (value: any) {
+    logOutputChannel!.info(value);
+    console.log(value);
+};
+
+/**
  * Log a string as an error to the output channel and the extension debugger.
  *
  * @param value Error Message

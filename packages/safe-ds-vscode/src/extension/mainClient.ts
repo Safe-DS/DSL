@@ -27,12 +27,11 @@ let services: SafeDsServices;
 export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
-    await startPythonServer();
+    //await startPythonServer();
     services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     acceptRunRequests(context);
 
     // Setup for Custom Visual Editor
-    printOutputMessage("This is a Test from Gideon")
     context.subscriptions.push(SafeDSCustomTextEditorProvider.registerProvider(context))
     context.subscriptions.push(...SafeDSCustomTextEditorProvider.registerCommands(context))
 };

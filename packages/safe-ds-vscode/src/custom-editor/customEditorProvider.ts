@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
-import { logError, logOutput } from '../extension/output.js';
+import { logOutput } from '../extension/output.js';
 
 /**
  * Provider for the Safe-DS custom visual editor.
  */
 export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorProvider {
-
     private static readonly viewType = 'safe-ds.custom-editor';
-    private static readonly options =  {
+    private static readonly options = {
         webviewOptions: {
             enableFindWidget: false,
             retainContextWhenHidden: true,
@@ -15,91 +14,108 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         supportsMultipleEditorsPerDocument: false,
     };
 
-	constructor(private readonly context: vscode.ExtensionContext) { }
+    constructor(private readonly context: vscode.ExtensionContext) {}
 
-	public static registerProvider(context: vscode.ExtensionContext): vscode.Disposable {
-		const provider = new SafeDSCustomTextEditorProvider(context);
-		const providerRegistration = vscode.window.registerCustomEditorProvider(
+    public static registerProvider(context: vscode.ExtensionContext): vscode.Disposable {
+        const provider = new SafeDSCustomTextEditorProvider(context);
+        const providerRegistration = vscode.window.registerCustomEditorProvider(
             SafeDSCustomTextEditorProvider.viewType,
             provider,
-            SafeDSCustomTextEditorProvider.options);
-		return providerRegistration;
-	}
+            SafeDSCustomTextEditorProvider.options,
+        );
+        return providerRegistration;
+    }
 
     public static registerCommands(_context: vscode.ExtensionContext): vscode.Disposable[] {
-        if (!vscode.window.activeTextEditor) {
-            logError("Unable to register commands for custom editor - missing active text editor");
-        } 
-        
-        const documentURI: vscode.Uri = vscode.window.activeTextEditor!.document.uri
-
         const commands = [
             {
                 name: 'open',
-                callback: async (..._args: any[]) => SafeDSCustomTextEditorProvider.openDiagram(documentURI),
-            }
+                callback(...args: any[]) {
+                    let documentURI: vscode.Uri | undefined = undefined;
+
+                    if (args.length > 0 && args[0] instanceof vscode.Uri) {
+                        documentURI = args[0];
+                    } else if (vscode.window.activeTextEditor) {
+                        documentURI = vscode.window.activeTextEditor.document.uri;
+                    }
+
+                    if (documentURI) {
+                        SafeDSCustomTextEditorProvider.openDiagram(documentURI);
+                    }
+                },
+            },
         ];
 
-        let disposalbes: vscode.Disposable[] = []
-        commands.forEach(command => {
-            disposalbes.push(vscode.commands.registerCommand(`${SafeDSCustomTextEditorProvider.viewType}.${command.name}`, command.callback));
-			logOutput(`Registered ${command.name} | Full Command: ${SafeDSCustomTextEditorProvider.viewType}.${command.name}`)
-        })
-		return disposalbes;
+        let disposalbes: vscode.Disposable[] = [];
+        commands.forEach((command) => {
+            disposalbes.push(
+                vscode.commands.registerCommand(
+                    `${SafeDSCustomTextEditorProvider.viewType}.${command.name}`,
+                    command.callback,
+                ),
+            );
+            logOutput(
+                `Registered ${command.name} | Full Command: ${SafeDSCustomTextEditorProvider.viewType}.${command.name}`,
+            );
+        });
+        return disposalbes;
     }
 
-	/**
-	 * Called when the custom editor is opened
-	 */
-	public async resolveCustomTextEditor(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel, _token: vscode.CancellationToken): Promise<void> {
-        // Initialize the webview
-		webviewPanel.webview.options = {
-			enableScripts: true,
-		};
-		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
+    /**
+     * Called when the custom editor is opened
+     */
+    public async resolveCustomTextEditor(
+        document: vscode.TextDocument,
+        webviewPanel: vscode.WebviewPanel,
+        _token: vscode.CancellationToken,
+    ): Promise<void> {
+        webviewPanel.webview.options = {
+            enableScripts: true,
+        };
+        webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 
-		// Create event handlers for sending messages to and receiving messages from the webview
         const updateWebview = () => {
             webviewPanel.webview.postMessage({
                 type: 'update',
                 text: document.getText(), // TODO: This should pull the AST information from the language sever, instead of transmitting the document text
             });
         };
-        const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(event => {
-			if (event.document.uri.toString() === document.uri.toString()) {
-				updateWebview();
-			}
-		});
-		webviewPanel.onDidDispose(() => {
-			changeDocumentSubscription.dispose();
-		});
+        const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((event) => {
+            if (event.document.uri.toString() === document.uri.toString()) {
+                updateWebview();
+            }
+        });
+        webviewPanel.onDidDispose(() => {
+            changeDocumentSubscription.dispose();
+        });
 
-		// Receive message from the webview
+        // Receive message from the webview
         // TODO: Build a proper Message System - Use what Bela did as inspiration
-		webviewPanel.webview.onDidReceiveMessage(event => {
-			switch (event.type) {
-				case 'add':
-					return;
+        webviewPanel.webview.onDidReceiveMessage((event) => {
+            switch (event.type) {
+                case 'add':
+                    return;
 
-				case 'delete':
-					return;
-			}
-		});
+                case 'delete':
+                    return;
+            }
+        });
 
-		updateWebview();
-	}
+        updateWebview();
+    }
 
-	/**
-	 * Get the static html used for the editor webviews.
-	 */
-	private getHtmlForWebview(webview: vscode.Webview, filename: string): string {
-		const title = `Diagram - ${filename}`;
+    /**
+     * Get the static html used for the editor webviews.
+     */
+    private getHtmlForWebview(webview: vscode.Webview, filename: string): string {
+        const title = `Diagram - ${filename}`;
 
         // Local path to script and css for the webview
-		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'dist', 'custom-editor.js'));
+        const scriptUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'custom-editor.js'),
+        );
 
-		// Use a nonce to whitelist which scripts can be run
+        // Use a nonce to whitelist which scripts can be run
         const getNonce = () => {
             let text = '';
             const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -107,10 +123,10 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
             }
             return text;
-        }
+        };
         const nonce = getNonce();
 
-		return /* html */`
+        return /* html */ `
 			<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -138,7 +154,7 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 				<!--<script nonce="${nonce}" src="${scriptUri}"></script>-->
 			</body>
 			</html>`;
-	}
+    }
 
     /**
      * Open the custom editor for the given URI.
