@@ -119,7 +119,7 @@
         },
         "customEditors": [
             {
-                "viewType": "safeds.visualEditor",
+                "viewType": "safe-ds.custom-editor",
                 "displayName": "Safe DS",
                 "selector": [
                     {
@@ -136,6 +136,13 @@
                     "when": "resourceLangId == safe-ds",
                     "group": "navigation@1"
                 }
+            ],
+            "editor/title": [
+                {
+                    "command": "safe-ds.custom-editor.open",
+                    "when": "resourceLangId == safe-ds",
+                    "group": "navigation"
+                }
             ]
         },
         "commands": [
@@ -144,6 +151,12 @@
                 "title": "Run Pipeline",
                 "category": "Safe-DS",
                 "icon": "$(play)"
+            },
+            {
+                "command": "safe-ds.custom-editor.open",
+                "title": "Open in Diagram",
+                "icon": "$(symbol-structure)",
+                "category": "Safe-DS"
             }
         ],
         "snippets": [

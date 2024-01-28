@@ -18,6 +18,7 @@ import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutput
 import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import crypto from 'crypto';
 import { LangiumDocument, URI } from 'langium';
+import { SafeDSCustomTextEditorProvider } from '../custom-editor/customEditorProvider.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -29,6 +30,11 @@ export const activate = async function (context: vscode.ExtensionContext) {
     await startPythonServer();
     services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     acceptRunRequests(context);
+
+    // Setup for Custom Visual Editor
+    printOutputMessage("This is a Test from Gideon")
+    context.subscriptions.push(SafeDSCustomTextEditorProvider.registerProvider(context))
+    context.subscriptions.push(...SafeDSCustomTextEditorProvider.registerCommands(context))
 };
 
 // This function is called when the extension is deactivated.
