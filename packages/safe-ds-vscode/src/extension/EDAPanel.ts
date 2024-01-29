@@ -78,7 +78,7 @@ export class EDAPanel {
           if (!data.value) {
             return;
           }
-          const existingStates = EDAPanel.context.globalState.get("webviewState") as State[];
+          const existingStates = (EDAPanel.context.globalState.get("webviewState") ?? []) as State[];
           const stateExists = existingStates.some(s => s.tableIdentifier === data.value.tableIdentifier);
 
           const newWebviewState = stateExists

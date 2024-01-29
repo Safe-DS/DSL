@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { HistoryEntry } from '../../../../types/shared-eda-vscode/types';
     import { resetGlobalState } from '../Apis/extensionApi';
     import { currentState } from '../webviewState';
 

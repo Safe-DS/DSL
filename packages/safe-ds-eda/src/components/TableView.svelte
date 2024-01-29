@@ -546,11 +546,11 @@
     });
 </script>
 
-<div bind:this={tableContainer} class="table-container">
+<div bind:this={tableContainer} class="tableContainer">
     {#if !$currentState.table}
         <span>Loading ...</span>
     {:else}
-        <div class="content-wrapper" style="height: {numRows * rowHeight}px;">
+        <div class="contentWrapper" style="height: {numRows * rowHeight}px;">
             <table>
                 <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
                     <tr class="headerRow" style="height: {rowHeight}px;">
@@ -701,22 +701,24 @@
 </div>
 
 <style>
-    .table-container {
+    .tableContainer {
         overflow-y: auto;
         height: 100%; /* Adjust based on your layout */
         position: relative; /* Needed for absolute positioning inside */
     }
 
-    .content-wrapper {
+    .contentWrapper {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
+        background-color: var(--bg-dark);
     }
 
     table {
         table-layout: fixed;
         width: 100%;
+        background-color: var(--bg-dark);
     }
 
     .headerRow {
@@ -754,11 +756,6 @@
     }
     table tr {
         border-bottom: 2px solid var(--bg-dark);
-    }
-    table tr:nth-child(even) {
-        background-color: var(--bg-bright);
-    }
-    table tr:nth-child(odd) {
         background-color: var(--bg-bright);
     }
     table tr:hover {

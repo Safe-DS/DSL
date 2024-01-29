@@ -1,6 +1,6 @@
 :root {
     --primary-color: #036ED1;
-    --primary-color-desaturated:rgba(3, 109, 209, 0.048);
+    --primary-color-desaturated:rgba(3, 109, 209, 0.164);
     --bg-bright: white;
     --bg-dark: #F2F2F2;
     --bg-medium: #F9F9F9;
@@ -10,12 +10,7 @@
 }
 
 .noSelect {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+    user-select: none;
 }
 
 .cursorPointer {
@@ -24,4 +19,11 @@
 
 * {
     color: var(--font-dark);
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--bg-dark);
+}
+::-webkit-scrollbar-corner {
+    background-color: var(--bg-dark);
 }

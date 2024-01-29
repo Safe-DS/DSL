@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import Debugger from './components/Debugger.svelte';
     import TableView from './components/TableView.svelte';
     import Sidebar from './components/Sidebar.svelte';
@@ -64,6 +63,7 @@
         flex-shrink: 0;
         overflow: hidden;
         position: relative;
+        background-color: var(--bg-bright);
     }
 
     .white-bg {

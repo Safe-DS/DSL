@@ -191,8 +191,8 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                 if (range) {
                     const requestedPlaceholderName = editor.document.getText(range);
                     // Check if file ends with .sdspipe
-                    if (!editor.document.fileName.endsWith(".sdspipe")) {
-                        vscode.window.showErrorMessage("No .sdspipe file selected!");
+                    if (!editor.document.fileName.endsWith(".sdspipe") && !editor.document.fileName.endsWith(".sdstest")) {
+                        vscode.window.showErrorMessage("No .sdspipe or .sdstest file selected!");
                         return;
                     }
                     // gen custom id for pipeline
