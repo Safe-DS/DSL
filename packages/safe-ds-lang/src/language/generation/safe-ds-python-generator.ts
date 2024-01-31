@@ -738,7 +738,9 @@ export class SafeDsPythonGenerator {
                         return expandTracedToNode(expression)`(${traceToNode(
                             expression,
                             'operator',
-                        )(`(lambda ${CODEGEN_PREFIX}a, ${CODEGEN_PREFIX}b: ${CODEGEN_PREFIX}a if ${CODEGEN_PREFIX}a is not None else ${CODEGEN_PREFIX}b)`)}(${leftOperand}, ${rightOperand}))`;
+                        )(
+                            `(lambda ${CODEGEN_PREFIX}a, ${CODEGEN_PREFIX}b: ${CODEGEN_PREFIX}a if ${CODEGEN_PREFIX}a is not None else ${CODEGEN_PREFIX}b)`,
+                        )}(${leftOperand}, ${rightOperand}))`;
                     } else {
                         frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
                         return expandTracedToNode(expression)`${traceToNode(
@@ -786,11 +788,13 @@ export class SafeDsPythonGenerator {
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
-                    if(frame.disableRunnerIntegration) {
+                    if (frame.disableRunnerIntegration) {
                         return expandTracedToNode(expression)`${traceToNode(
                             expression,
                             'isNullSafe',
-                        )(`(lambda ${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name: getattr(${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name) if ${CODEGEN_PREFIX}receiver is not None else None)`)}(${receiver}, '${memberExpression}')`;
+                        )(
+                            `(lambda ${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name: getattr(${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name) if ${CODEGEN_PREFIX}receiver is not None else None)`,
+                        )}(${receiver}, '${memberExpression}')`;
                     } else {
                         frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
                         return expandTracedToNode(expression)`${traceToNode(

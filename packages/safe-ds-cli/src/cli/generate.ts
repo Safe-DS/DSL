@@ -23,7 +23,7 @@ export const generate = async (fsPaths: string[], options: GenerateOptions): Pro
             destination: URI.file(path.resolve(options.out)),
             createSourceMaps: options.sourcemaps,
             targetPlaceholder: undefined,
-            disableRunnerIntegration: false
+            disableRunnerIntegration: false,
         });
 
         for (const file of generatedFiles) {
