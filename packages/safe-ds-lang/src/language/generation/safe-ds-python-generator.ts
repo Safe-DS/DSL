@@ -138,7 +138,7 @@ export class SafeDsPythonGenerator {
         const parentDirectoryPath = path.join(generateOptions.destination!.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
-        const generatedModule = this.generateModule(node, generateOptions.targetPlaceholder);
+        const generatedModule = this.generateModule(node, generateOptions);
         const { text, trace } = toStringAndTrace(generatedModule);
         const pythonOutputPath = `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`;
         if (generateOptions.createSourceMaps) {
@@ -261,14 +261,14 @@ export class SafeDsPythonGenerator {
         return moduleName.replaceAll('%2520', '_').replaceAll(/[ .-]/gu, '_').replaceAll(/\\W/gu, '');
     }
 
-    private generateModule(module: SdsModule, targetPlaceholder: string | undefined): CompositeGeneratorNode {
+    private generateModule(module: SdsModule, generateOptions: GenerateOptions): CompositeGeneratorNode {
         const importSet = new Map<String, ImportData>();
         const segments = getModuleMembers(module)
             .filter(isSdsSegment)
-            .map((segment) => this.generateSegment(segment, importSet));
+            .map((segment) => this.generateSegment(segment, importSet, generateOptions));
         const pipelines = getModuleMembers(module)
             .filter(isSdsPipeline)
-            .map((pipeline) => this.generatePipeline(pipeline, importSet, targetPlaceholder));
+            .map((pipeline) => this.generatePipeline(pipeline, importSet, generateOptions));
         const imports = this.generateImports(Array.from(importSet.values()));
         const output = new CompositeGeneratorNode();
         output.trace(module);
@@ -298,8 +298,17 @@ export class SafeDsPythonGenerator {
         return output;
     }
 
-    private generateSegment(segment: SdsSegment, importSet: Map<String, ImportData>): CompositeGeneratorNode {
-        const infoFrame = new GenerationInfoFrame(importSet);
+    private generateSegment(
+        segment: SdsSegment,
+        importSet: Map<String, ImportData>,
+        generateOptions: GenerateOptions,
+    ): CompositeGeneratorNode {
+        const infoFrame = new GenerationInfoFrame(
+            importSet,
+            false,
+            undefined,
+            generateOptions.disableRunnerIntegration,
+        );
         const segmentResult = segment.resultList?.results || [];
         const segmentBlock = this.generateBlock(segment.body, infoFrame);
         if (segmentResult.length !== 0) {
@@ -350,9 +359,14 @@ export class SafeDsPythonGenerator {
     private generatePipeline(
         pipeline: SdsPipeline,
         importSet: Map<String, ImportData>,
-        targetPlaceholder: string | undefined,
+        generateOptions: GenerateOptions,
     ): CompositeGeneratorNode {
-        const infoFrame = new GenerationInfoFrame(importSet, true, targetPlaceholder);
+        const infoFrame = new GenerationInfoFrame(
+            importSet,
+            true,
+            generateOptions.targetPlaceholder,
+            generateOptions.disableRunnerIntegration,
+        );
         return expandTracedToNode(pipeline)`def ${traceToNode(
             pipeline,
             'name',
@@ -538,7 +552,7 @@ export class SafeDsPythonGenerator {
                     )} = ${this.generateExpression(assignment.expression!, frame)}`,
                 );
             }
-            if (frame.isInsidePipeline && !generateLambda) {
+            if (frame.isInsidePipeline && !generateLambda && !frame.disableRunnerIntegration) {
                 for (const savableAssignment of assignees.filter(isSdsPlaceholder)) {
                     // should always be SdsPlaceholder
                     frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
@@ -675,7 +689,7 @@ export class SafeDsPythonGenerator {
                         return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
                     }
                 }
-                if (this.isMemoizableCall(expression)) {
+                if (this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
                     let thisParam: CompositeGeneratorNode | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
@@ -694,23 +708,44 @@ export class SafeDsPythonGenerator {
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
             switch (expression.operator) {
                 case 'or':
-                    frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(`${RUNNER_CODEGEN_PACKAGE}.eager_or`)}(${leftOperand}, ${rightOperand})`;
+                    if (frame.disableRunnerIntegration) {
+                        return expandTracedToNode(expression)`(${leftOperand} ${traceToNode(
+                            expression,
+                            'operator',
+                        )('or')} ${rightOperand})`;
+                    } else {
+                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(`${RUNNER_CODEGEN_PACKAGE}.eager_or`)}(${leftOperand}, ${rightOperand})`;
+                    }
                 case 'and':
-                    frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(`${RUNNER_CODEGEN_PACKAGE}.eager_and`)}(${leftOperand}, ${rightOperand})`;
+                    if (frame.disableRunnerIntegration) {
+                        return expandTracedToNode(expression)`(${leftOperand} ${traceToNode(
+                            expression,
+                            'operator',
+                        )('and')} ${rightOperand})`;
+                    } else {
+                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(`${RUNNER_CODEGEN_PACKAGE}.eager_and`)}(${leftOperand}, ${rightOperand})`;
+                    }
                 case '?:':
-                    frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(`${RUNNER_CODEGEN_PACKAGE}.eager_elvis`)}(${leftOperand}, ${rightOperand})`;
+                    if (frame.disableRunnerIntegration) {
+                        return expandTracedToNode(expression)`(${traceToNode(
+                            expression,
+                            'operator',
+                        )(`(lambda ${CODEGEN_PREFIX}a, ${CODEGEN_PREFIX}b: ${CODEGEN_PREFIX}a if ${CODEGEN_PREFIX}a is not None else ${CODEGEN_PREFIX}b)`)}(${leftOperand}, ${rightOperand}))`;
+                    } else {
+                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(`${RUNNER_CODEGEN_PACKAGE}.eager_elvis`)}(${leftOperand}, ${rightOperand})`;
+                    }
                 case '===':
                     return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
                         expression,
@@ -751,11 +786,18 @@ export class SafeDsPythonGenerator {
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
-                    frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'isNullSafe',
-                    )(`${RUNNER_CODEGEN_PACKAGE}.safe_access`)}(${receiver}, '${memberExpression}')`;
+                    if(frame.disableRunnerIntegration) {
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'isNullSafe',
+                        )(`(lambda ${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name: getattr(${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name) if ${CODEGEN_PREFIX}receiver is not None else None)`)}(${receiver}, '${memberExpression}')`;
+                    } else {
+                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'isNullSafe',
+                        )(`${RUNNER_CODEGEN_PACKAGE}.safe_access`)}(${receiver}, '${memberExpression}')`;
+                    }
                 } else {
                     return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }
@@ -817,7 +859,7 @@ export class SafeDsPythonGenerator {
             { separator: '' },
         )!;
         // Non-memoizable calls can be directly generated
-        if (!this.isMemoizableCall(expression)) {
+        if (!this.isMemoizableCall(expression) || frame.disableRunnerIntegration) {
             return generatedPythonCall;
         }
         frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
@@ -1051,16 +1093,19 @@ class GenerationInfoFrame {
     private readonly importSet: Map<String, ImportData>;
     public readonly isInsidePipeline: boolean;
     public readonly targetPlaceholder: string | undefined;
+    public readonly disableRunnerIntegration: boolean;
 
     constructor(
         importSet: Map<String, ImportData> = new Map<String, ImportData>(),
         insidePipeline: boolean = false,
         targetPlaceholder: string | undefined = undefined,
+        disableRunnerIntegration: boolean = false,
     ) {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
         this.isInsidePipeline = insidePipeline;
         this.targetPlaceholder = targetPlaceholder;
+        this.disableRunnerIntegration = disableRunnerIntegration;
     }
 
     addImport(importData: ImportData | undefined) {
@@ -1081,4 +1126,5 @@ export interface GenerateOptions {
     destination: URI;
     createSourceMaps: boolean;
     targetPlaceholder: string | undefined;
+    disableRunnerIntegration: boolean;
 }

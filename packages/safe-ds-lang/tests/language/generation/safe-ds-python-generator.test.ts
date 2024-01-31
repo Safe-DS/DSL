@@ -36,6 +36,7 @@ describe('generation', async () => {
                     destination: test.actualOutputRoot,
                     createSourceMaps: true,
                     targetPlaceholder: runUntilPlaceholderName,
+                    disableRunnerIntegration: test.testName.startsWith("[eject") // Tests in the "eject" suite are tested with disabled runner integration
                 }),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])

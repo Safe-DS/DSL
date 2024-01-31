@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.sdstest"],"names":["test","f","g","or","and","factory","a","b","i"],"mappings":"AAAA;;AAeA,IAASA,IAAI;IACTC,CAAC,CAAC,CAAAC,CAAC,GAAGC,EAAE,CAACD,CAAC;IACVD,CAAC,CAAC,CAAAC,CAAC,GAAGE,GAAG,CAACF,CAAC;IAEXD,CAAC,CAAU,+HAATI,OAAO,KAAIC,CAAC;IACdL,CAAC,CAAU,+HAATI,OAAO,KAAIE,CAAC;IAEdN,CAAC,CAAC,CAAI,uEAAJO,CAAC,IAAMA,CAAC","file":"gen_input.py"}
