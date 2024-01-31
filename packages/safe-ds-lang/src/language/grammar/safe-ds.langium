@@ -657,11 +657,25 @@ SdsMultiplicativeOperator returns string:
 ;
 
 SdsElvisExpression returns SdsExpression:
-    SdsUnaryOperation
+    SdsTypeCast
     (
         {SdsInfixOperation.leftOperand=current}
         operator='?:'
-        rightOperand=SdsUnaryOperation
+        rightOperand=SdsTypeCast
+    )*
+;
+
+interface SdsTypeCast extends SdsExpression {
+    expression: SdsExpression
+    ^type: SdsType
+}
+
+SdsTypeCast returns SdsExpression:
+    SdsUnaryOperation
+    (
+        {SdsTypeCast.expression=current}
+        'as'
+        ^type=SdsType
     )*
 ;
 
