@@ -115,15 +115,15 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
             vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'custom-editor.js'),
         );
 
+        const styleResetUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'reset.css'),
+        );
+
+        const styleVSCodeUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vscode.css'),
+        );
+
         // Use a nonce to whitelist which scripts can be run
-        const getNonce = () => {
-            let text = '';
-            const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            for (let i = 0; i < 32; i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-            return text;
-        };
         const nonce = getNonce();
 
         return /* html */ `
@@ -140,7 +140,8 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-				<!--<link href="${nonce}" rel="stylesheet" />-->
+                <link href="${styleResetUri}" rel="stylesheet" />
+                <link href="${styleVSCodeUri}" rel="stylesheet" />
 
 				<title>"${title}"</title>
 			</head>
@@ -164,3 +165,12 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         return;
     }
 }
+
+const getNonce = () => {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+};
