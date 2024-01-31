@@ -11,6 +11,18 @@ Safely develop Data Science programs with a statically checked domain specific l
 
 Get the latest extension for [Visual Studio Code](https://code.visualstudio.com/) from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=safe-ds.safe-ds).
 
+To use this extension, the [Runner](https://github.com/Safe-DS/Runner) component needs to be installed.
+The runner executes pipeline code and provides further runtime information to the extension.
+
+To install the latest runner version from pypi, run `pip install safe-ds-runner`.
+
+After the runner has been successfully installed, the configuration for the extension may need to be adjusted.
+If the `safe-ds-runner` is visible in the default path (`$PATH` on Unix systems, `%PATH%` on Windows systems),
+nothing needs to be adjusted. In case it is not visible, the Safe-DS runner command (`safe-ds.runner.command`)
+needs to be set to the absolute path of the runner, as seen in the image below.
+
+![vscode-settings-safeds-runner-path.png](vscode-settings-safeds-runner-path.png)
+
 ## Documentation
 
 You can find the full documentation [here](https://dsl.safeds.com).
