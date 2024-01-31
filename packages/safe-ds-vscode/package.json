@@ -138,16 +138,16 @@
                 "category": "Safe-DS",
                 "icon": "$(play)"
             },
-              {
+            {
                 "command": "eda-test01.refreshWebview",
                 "title": "Refresh Webview",
                 "category": "EDA"
-              },
-              {
+            },
+            {
                 "command": "eda-test01.runEdaFromContext",
                 "title": "Explore Table",
                 "category": "EDA"
-              }
+            }
         ],
         "snippets": [
             {

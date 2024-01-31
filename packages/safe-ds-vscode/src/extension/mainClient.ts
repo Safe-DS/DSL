@@ -144,8 +144,8 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     const registerCommandWithCheck = (commandId: string, callback: (...args: any[]) => any) => {
         return vscode.commands.registerCommand(commandId, (...args: any[]) => {
             if (!isPythonServerAvailable()) {
-            vscode.window.showErrorMessage("Extension not fully started yet.");
-            return;
+                vscode.window.showErrorMessage('Extension not fully started yet.');
+                return;
             }
             return callback(...args);
         });
@@ -154,7 +154,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', commandRunPipelineFile),
     );
-    
+
     // Not used right now
     // context.subscriptions.push(
     //     registerCommandWithCheck("eda-test01.runEda", () => {
@@ -183,7 +183,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     // );
 
     context.subscriptions.push(
-        registerCommandWithCheck("eda-test01.runEdaFromContext", () => {
+        registerCommandWithCheck('eda-test01.runEdaFromContext', () => {
             const editor = vscode.window.activeTextEditor;
             if (editor) {
                 const position = editor.selection.active;
@@ -191,95 +191,121 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                 if (range) {
                     const requestedPlaceholderName = editor.document.getText(range);
                     // Check if file ends with .sdspipe
-                    if (!editor.document.fileName.endsWith(".sdspipe") && !editor.document.fileName.endsWith(".sdstest")) {
-                        vscode.window.showErrorMessage("No .sdspipe or .sdstest file selected!");
+                    if (
+                        !editor.document.fileName.endsWith('.sdspipe') &&
+                        !editor.document.fileName.endsWith('.sdstest')
+                    ) {
+                        vscode.window.showErrorMessage('No .sdspipe or .sdstest file selected!');
                         return;
                     }
                     // gen custom id for pipeline
                     const pipelineId = crypto.randomUUID();
 
-                    let loadingInProgress = true;  // Flag to track loading status
+                    let loadingInProgress = true; // Flag to track loading status
                     // Show progress indicator
-                    vscode.window.withProgress({
-                        location: vscode.ProgressLocation.Notification,
-                        title: "Loading Table ..."
-                    }, (progress, _) => {
-                        progress.report({ increment: 0 });
-                        return new Promise<void>((resolve) => {
-                            // Resolve the promise when loading is no longer in progress
-                            const checkInterval = setInterval(() => {
-                                if (!loadingInProgress) {
-                                    clearInterval(checkInterval);
-                                    resolve();
-                                }
-                            }, 1000); // Check every second
-                        });
-                    });
+                    vscode.window.withProgress(
+                        {
+                            location: vscode.ProgressLocation.Notification,
+                            title: 'Loading Table ...',
+                        },
+                        (progress, _) => {
+                            progress.report({ increment: 0 });
+                            return new Promise<void>((resolve) => {
+                                // Resolve the promise when loading is no longer in progress
+                                const checkInterval = setInterval(() => {
+                                    if (!loadingInProgress) {
+                                        clearInterval(checkInterval);
+                                        resolve();
+                                    }
+                                }, 1000); // Check every second
+                            });
+                        },
+                    );
                     const cleanupLoadingIndication = () => {
                         loadingInProgress = false;
                     };
 
-                    const placeHolderTypeCallback = function(message: PlaceholderTypeMessage) {
+                    const placeHolderTypeCallback = function (message: PlaceholderTypeMessage) {
                         printOutputMessage(
                             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
                         );
-                        if(message.id === pipelineId && message.data.type === "Table" && message.data.name === requestedPlaceholderName) {
+                        if (
+                            message.id === pipelineId &&
+                            message.data.type === 'Table' &&
+                            message.data.name === requestedPlaceholderName
+                        ) {
                             lastFinishedPipelineId = pipelineId;
                             lastSuccessfulPlaceholderName = requestedPlaceholderName;
-                            EDAPanel.createOrShow(context.extensionUri, context, pipelineId, message.data.name, pythonServerPort);
+                            EDAPanel.createOrShow(
+                                context.extensionUri,
+                                context,
+                                pipelineId,
+                                message.data.name,
+                                pythonServerPort,
+                            );
                             removeMessageCallback(placeHolderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
-                        } else if(message.id === pipelineId && message.data.name !== requestedPlaceholderName) {
+                        } else if (message.id === pipelineId && message.data.name !== requestedPlaceholderName) {
                             return;
-                        } else if(message.id === pipelineId) {
+                        } else if (message.id === pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Selected placeholder is not of type 'Table'.`);
                             removeMessageCallback(placeHolderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
                         }
-                    }
+                    };
                     addMessageCallback(placeHolderTypeCallback, 'placeholder_type');
 
-                    const runtimeProgressCallback = function(message: RuntimeProgressMessage) {
-                        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);                
-                        if(message.id === pipelineId && message.data === "done" && lastFinishedPipelineId !== pipelineId) {
+                    const runtimeProgressCallback = function (message: RuntimeProgressMessage) {
+                        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
+                        if (
+                            message.id === pipelineId &&
+                            message.data === 'done' &&
+                            lastFinishedPipelineId !== pipelineId
+                        ) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
                             removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
                             cleanupLoadingIndication();
                         }
-                    }
+                    };
                     addMessageCallback(runtimeProgressCallback, 'runtime_progress');
 
-                    const runtimeErrorCallback = function(message: RuntimeErrorMessage) {
-                        if(message.id === pipelineId && lastFinishedPipelineId !== pipelineId) {
+                    const runtimeErrorCallback = function (message: RuntimeErrorMessage) {
+                        if (message.id === pipelineId && lastFinishedPipelineId !== pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
                             removeMessageCallback(runtimeErrorCallback, 'runtime_error');
                             cleanupLoadingIndication();
                         }
-                    }
+                    };
                     addMessageCallback(runtimeErrorCallback, 'runtime_error');
 
                     runPipelineFile(editor.document.uri, pipelineId);
                 } else {
-                    EDAPanel.createOrShow(context.extensionUri, context, "", undefined, pythonServerPort);
+                    EDAPanel.createOrShow(context.extensionUri, context, '', undefined, pythonServerPort);
                 }
             } else {
-                vscode.window.showErrorMessage("No ative text editor!");
+                vscode.window.showErrorMessage('No ative text editor!');
                 return;
             }
         }),
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("eda-test01.refreshWebview", () => {
-            EDAPanel.kill(lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : "undefinedPanelIdentifier");
+        vscode.commands.registerCommand('eda-test01.refreshWebview', () => {
+            EDAPanel.kill(lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : 'undefinedPanelIdentifier');
             setTimeout(() => {
-                EDAPanel.createOrShow(context.extensionUri, context, "",lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : "undefinedPanelIdentifier", pythonServerPort);
+                EDAPanel.createOrShow(
+                    context.extensionUri,
+                    context,
+                    '',
+                    lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : 'undefinedPanelIdentifier',
+                    pythonServerPort,
+                );
             }, 100);
             setTimeout(() => {
-                vscode.commands.executeCommand("workbench.action.webview.openDeveloperTools");
+                vscode.commands.executeCommand('workbench.action.webview.openDeveloperTools');
             }, 100);
         }),
     );
@@ -340,7 +366,7 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
         mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
     await executePipeline(services, mainDocument, pipelineId);
-}
+};
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
     await runPipelineFile(filePath, crypto.randomUUID());
