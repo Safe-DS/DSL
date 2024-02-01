@@ -7,3 +7,8 @@
 
 # Configuration
 /vitest.config.ts
+/packages/safe-ds-editor/svelte.config.js
+/packages/safe-ds-editor/vite.config.js
+/packages/safe-ds-editor/tailwind.config.js
+/packages/safe-ds-editor/postcss.config.js
+/packages/safe-ds-editor/**/*.d.ts

@@ -22,5 +22,11 @@ module.exports = {
                 'no-console': 'off',
             },
         },
+        {
+            files: ['packages/safe-ds-editor/src/**'],
+            rules: {
+                'import/no-default-export': 'off',
+            },
+        },
     ],
 };

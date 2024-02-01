@@ -112,15 +112,15 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 
         // Local path to script and css for the webview
         const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'custom-editor.js'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'webview', 'custom-editor.js'),
         );
 
         const styleResetUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'reset.css'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'webview', 'media', 'reset.css'),
         );
 
         const styleVSCodeUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vscode.css'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'webview', 'media', 'vscode.css'),
         );
 
         // Use a nonce to whitelist which scripts can be run
@@ -152,7 +152,7 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
                     </div>
                 </div>
 
-				<!--<script nonce="${nonce}" src="${scriptUri}"></script>-->
+				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
     }

@@ -5,6 +5,8 @@
 # VSCode
 .vscode/**/*
 !.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/settings.json
 
 # Compilation/build outputs
 build/
