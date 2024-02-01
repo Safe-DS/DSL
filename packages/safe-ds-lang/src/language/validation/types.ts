@@ -21,11 +21,12 @@ import {
     SdsParameter,
     SdsPrefixOperation,
     SdsResult,
+    SdsTypeCast,
     SdsYield,
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { NamedTupleType } from '../typing/model.js';
+import { NamedTupleType, UnknownType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -292,6 +293,21 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
                     );
                 }
                 return;
+        }
+    };
+};
+
+export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsTypeCast, accept: ValidationAcceptor): void => {
+        const expressionType = typeComputer.computeType(node.expression);
+        if (node.expression && expressionType !== UnknownType) {
+            accept('error', 'Type casts can only be applied to expressions of unknown type.', {
+                // Using property: "expression" does not work here, probably due to eclipse-langium/langium#1218
+                node: node.expression,
+                code: CODE_TYPE_MISMATCH,
+            });
         }
     };
 };

@@ -33,6 +33,7 @@ import {
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
+    isSdsTypeCast,
     type SdsArgument,
     type SdsAssignee,
     type SdsCall,
@@ -240,6 +241,8 @@ export class SafeDsPartialEvaluator {
             return this.evaluateWithRecursionCheck(node.target.ref, substitutions, visited);
         } else if (isSdsTemplateString(node)) {
             return this.evaluateTemplateString(node, substitutions, visited);
+        } else if (isSdsTypeCast(node)) {
+            return this.evaluateWithRecursionCheck(node.expression, substitutions, visited);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected expression type: ${node.$type}`);
         } /* c8 ignore stop */

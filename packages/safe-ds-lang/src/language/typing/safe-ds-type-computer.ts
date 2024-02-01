@@ -38,6 +38,7 @@ import {
     isSdsTemplateString,
     isSdsType,
     isSdsTypeArgument,
+    isSdsTypeCast,
     isSdsTypeParameter,
     isSdsTypeProjection,
     isSdsUnionType,
@@ -287,6 +288,11 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
+        // Type cast
+        if (isSdsTypeCast(node)) {
+            return this.computeType(node.type);
+        }
+
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {

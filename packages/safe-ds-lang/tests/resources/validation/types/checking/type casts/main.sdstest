@@ -1,0 +1,9 @@
+package tests.validation.types.checking.typeCasts
+
+pipeline test {
+    // $TEST$ no error "Type casts can only be applied to expressions of unknown type."
+    »unresolved« as Int;
+
+    // $TEST$ error "Type casts can only be applied to expressions of unknown type."
+    »1« as Int;
+}
