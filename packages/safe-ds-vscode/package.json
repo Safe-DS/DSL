@@ -160,7 +160,7 @@
     },
     "devDependencies": {
         "@types/node": "^18.18.12",
-        "@types/vscode": "^1.84.2",
+        "@types/vscode": "^1.85.0",
         "@types/ws": "^8.5.10",
         "@vscode/vsce": "^2.22.0",
         "esbuild": "^0.19.11",
