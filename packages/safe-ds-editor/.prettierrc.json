@@ -1,0 +1,27 @@
+{
+    "printWidth": 80,
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "arrowParens": "always",
+    "requirePragma": false,
+    "insertPragma": false,
+    "proseWrap": "preserve",
+    "htmlWhitespaceSensitivity": "css",
+    "vueIndentScriptAndStyle": true,
+    "endOfLine": "lf",
+    "embeddedLanguageFormatting": "auto",
+
+    "overrides": [
+        {
+            "files": ["*.yaml", "*.yml"],
+            "options": { "tabWidth": 2 }
+        }
+    ]
+}
