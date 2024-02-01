@@ -541,6 +541,24 @@ At the moment, lambdas can only be used if the context determines the type of it
 - As the value that is [assigned to a result of a segment][assignments-to-segment-results].
     In other cases, declare a segment instead and use a [reference](#references) to this segment where you would write the lambda.
 
+## Type Casts
+
+The compiler can _infer_ the [type][types] of an expression in almost all cases. However, sometimes its [type][types]
+has to be specified explicitly. This is called a _type cast_. Here is an example:
+
+```sds
+dataset.getColumn("age") as Column<Int>
+```
+
+A type cast is written as follows:
+
+- The expression to cast.
+- The keyword `#!sds as`.
+- The [type][types] to cast to.
+
+Type casts are only allowed if the type of the expression is unknown. They cannot be used to override the inferred type
+of an expression.
+
 ## Precedence
 
 We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason is that the `#!sds *` operator has a higher precedence than the `#!sds +` operator and is, therefore, evaluated first. These precedence rules are necessary for all types of expressions listed above and shown in the following list. The higher up an expression is in the list, the higher its precedence and the earlier it is evaluated. Expressions listed beside each other have the same precedence and are evaluated from left to right:
@@ -550,6 +568,7 @@ We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason 
 - `#!sds 1` ([integer literals](#int-literals)), `#!sds 1.0` ([float literals](#float-literals)), `#!sds "a"` ([string literals](#string-literals)), `#!sds true`/`false` ([boolean literals](#boolean-literals)), `#!sds null` ([null literal](#null-literal)), `#!sds someName` ([references](#references)), `#!sds "age: {{ age }}"` ([template strings](#template-strings))
 - `#!sds ()` ([calls](#calls)), `#!sds .` ([member accesses](#member-accesses)), `#!sds ?.` ([null-safe member accesses](#null-safe-member-access)), `#!sds []` ([indexed accesses](#indexed-accesses))
 - `#!sds -` (unary, [arithmetic negations](#operations-on-numbers))
+- `#!sds as` ([type casts](#type-casts))
 - `#!sds ?:` ([Elvis operators](#elvis-operator))
 - `#!sds *`, `#!sds /` ([multiplicative operators](#operations-on-numbers))
 - `#!sds +`, `#!sds -` (binary, [additive operators](#operations-on-numbers))
