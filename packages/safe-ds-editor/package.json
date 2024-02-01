@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "vite build && node devtools/copyToExtension.js",
         "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist devtools/copyToExtension.js\"",
         "preview": "vite preview",
         "check": "svelte-check --tsconfig ./tsconfig.json",

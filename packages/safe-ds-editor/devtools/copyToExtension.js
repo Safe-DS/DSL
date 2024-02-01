@@ -7,19 +7,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const sourceDir = path.join(__dirname, '..', 'dist');
-const targetDir = path.join(
-    __dirname,
-    '..',
-    '..',
-    'safe-ds-vscode',
-    'src',
-    'custom-editor',
-    'webview',
-);
-const assetsDir = path.join(targetDir, 'assets');
+const distDir = path.join(__dirname, '..', '..', 'safe-ds-vscode', 'dist');
+const targetDir = path.join(distDir, 'custom-editor');
 
-console.log(`Removing old assets from <safe-ds-vscode>...`);
-fs.remove(assetsDir);
+console.log(`Removing old files from <safe-ds-vscode>...`);
+fs.ensureDirSync(distDir);
+fs.emptyDirSync(targetDir);
 
 /* Adding a delay ensures, that the build process is finished before we start copying
  * Currently 300 ms seems to be enough (build takes abouit 150 ms)

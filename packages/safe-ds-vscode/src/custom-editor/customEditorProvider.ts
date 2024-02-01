@@ -113,20 +113,20 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         const title = `Diagram - ${filename}`;
 
         // Local path to static page elements
-        const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'webview', 'custom-editor.js'),
-        );
-
         const styleResetUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'webview', 'media', 'reset.css'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'media', 'reset.css'),
         );
 
         const styleVSCodeUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'webview', 'media', 'vscode.css'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'media', 'vscode.css'),
+        );
+
+        const scriptUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'custom-editor', 'custom-editor.js'),
         );
 
         // Generate paths do dynamic page content
-        const assetsPath = path.join(this.context.extensionUri.fsPath, 'src', 'custom-editor', 'webview', 'assets');
+        const assetsPath = path.join(this.context.extensionUri.fsPath, 'dist', 'custom-editor', 'assets');
         const cssFiles = fs
             .readdirSync(assetsPath)
             .filter((file) => file.endsWith('.css'))
@@ -136,7 +136,6 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 
         // Use a nonce to whitelist which scripts can be run
         const nonce = getNonce();
-        logOutput(cssFiles[0]?.toString() as string);
 
         return /* html */ `
 			<!DOCTYPE html>
@@ -148,11 +147,15 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 				Use a content security policy to only allow loading images from https or from our extension directory,
 				and only allow scripts that have a specific nonce.
 				-->
+
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${
                     webview.cspSource
                 }; script-src 'nonce-${nonce}';">
 
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <script nonce="${nonce}">
+                    window.injVscode = acquireVsCodeApi();
+                </script>
+
 
                 ${cssFiles.map((cssUri) => {
                     return `<link href="${cssUri}" rel="stylesheet" />`;
