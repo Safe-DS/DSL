@@ -162,7 +162,7 @@
         "@types/node": "^18.18.12",
         "@types/vscode": "^1.86.0",
         "@types/ws": "^8.5.10",
-        "@vscode/vsce": "^2.22.0",
+        "@vscode/vsce": "^2.23.0",
         "esbuild": "^0.20.0",
         "esbuild-plugin-copy": "^2.1.1"
     },
