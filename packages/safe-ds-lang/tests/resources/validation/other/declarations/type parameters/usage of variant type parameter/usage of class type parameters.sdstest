@@ -1,0 +1,34 @@
+package tests.validation.other.declarations.typeParameters.usageOfVariantTypeParameters
+
+// We already show other errors in those cases.
+
+class MyClass4<in Contra, out Co>() {
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    static attr a: »Contra«
+
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    static fun f(p1: »Co«) -> (r1: »Contra«)
+
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    class MyInnerClass(p1: »Co«) {
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        attr a: »Contra«
+
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        static attr a: »Contra«
+
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        fun f(p1: »Co«) -> (r1: »Contra«)
+
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        static fun f(p1: »Co«) -> (r1: »Contra«)
+    }
+
+    enum MyInnerEnum {
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        MyEnumVariant(p1: »Co«)
+    }
+}

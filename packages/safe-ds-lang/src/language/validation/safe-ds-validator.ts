@@ -83,7 +83,7 @@ import {
 } from './other/declarations/segments.js';
 import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import {
-    typeParameterMustBeUsedInCorrectContext,
+    typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
@@ -352,7 +352,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution(services)],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
-        SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectContext],
+        SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectPosition(services)],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
