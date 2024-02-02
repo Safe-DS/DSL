@@ -1,8 +1,30 @@
+# Imports ----------------------------------------------------------------------
+
+from typing import Any, TypeVar
+
+# Utils ------------------------------------------------------------------------
+
+def __gen_eager_or(left_operand: bool, right_operand: bool) -> bool:
+    return left_operand or right_operand
+
+def __gen_eager_and(left_operand: bool, right_operand: bool) -> bool:
+    return left_operand and right_operand
+
+__gen_S = TypeVar("__gen_S")
+
+def __gen_safe_access(receiver: Any, member_name: str) -> __gen_S | None:
+    return getattr(receiver, member_name) if receiver is not None else None
+
+__gen_T = TypeVar("__gen_T")
+
+def __gen_eager_elvis(left_operand: __gen_T, right_operand: __gen_T) -> __gen_T:
+    return left_operand if left_operand is not None else right_operand
+
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    f((g() or g()))
-    f((g() and g()))
-    f((lambda __gen_receiver, __gen_member_name: getattr(__gen_receiver, __gen_member_name) if __gen_receiver is not None else None)(factory(), 'a'))
-    f((lambda __gen_receiver, __gen_member_name: getattr(__gen_receiver, __gen_member_name) if __gen_receiver is not None else None)(factory(), 'c'))
-    f(((lambda __gen_a, __gen_b: __gen_a if __gen_a is not None else __gen_b)(i(), i())))
+    f(__gen_eager_or(g(), g()))
+    f(__gen_eager_and(g(), g()))
+    f(__gen_safe_access(factory(), 'a'))
+    f(__gen_safe_access(factory(), 'c'))
+    f(__gen_eager_elvis(i(), i()))

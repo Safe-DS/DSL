@@ -105,11 +105,59 @@ const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
-const RUNNER_CODEGEN_PACKAGE = 'safeds_runner.codegen';
 const RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE = 'safeds_runner.server.pipeline_manager';
 const PYTHON_INDENT = '    ';
 
 const NLNL = new CompositeGeneratorNode(NL, NL);
+
+const UTILITY_EAGER_OR: UtilityFunction = {
+    code: expandToNode`def ${CODEGEN_PREFIX}eager_or(left_operand: bool, right_operand: bool) -> bool:`
+        .appendNewLine()
+        .indent({ indentedChildren: ['return left_operand or right_operand'], indentation: PYTHON_INDENT }),
+    name: `${CODEGEN_PREFIX}eager_or`,
+    imports: [],
+};
+
+const UTILITY_EAGER_AND: UtilityFunction = {
+    code: expandToNode`def ${CODEGEN_PREFIX}eager_and(left_operand: bool, right_operand: bool) -> bool:`
+        .appendNewLine()
+        .indent({ indentedChildren: ['return left_operand and right_operand'], indentation: PYTHON_INDENT }),
+    name: `${CODEGEN_PREFIX}eager_and`,
+    imports: [],
+};
+
+const UTILITY_EAGER_ELVIS: UtilityFunction = {
+    code: expandToNode`${CODEGEN_PREFIX}T = TypeVar("${CODEGEN_PREFIX}T")`
+        .appendNewLine()
+        .appendNewLine()
+        .append(
+            `def ${CODEGEN_PREFIX}eager_elvis(left_operand: ${CODEGEN_PREFIX}T, right_operand: ${CODEGEN_PREFIX}T) -> ${CODEGEN_PREFIX}T:`,
+        )
+        .appendNewLine()
+        .indent({
+            indentedChildren: ['return left_operand if left_operand is not None else right_operand'],
+            indentation: PYTHON_INDENT,
+        }),
+    name: `${CODEGEN_PREFIX}eager_elvis`,
+    imports: [{ importPath: 'typing', declarationName: 'TypeVar' }],
+};
+
+const UTILITY_SAFE_ACCESS: UtilityFunction = {
+    code: expandToNode`${CODEGEN_PREFIX}S = TypeVar("${CODEGEN_PREFIX}S")`
+        .appendNewLine()
+        .appendNewLine()
+        .append(`def ${CODEGEN_PREFIX}safe_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}S | None:`)
+        .appendNewLine()
+        .indent({
+            indentedChildren: ['return getattr(receiver, member_name) if receiver is not None else None'],
+            indentation: PYTHON_INDENT,
+        }),
+    name: `${CODEGEN_PREFIX}safe_access`,
+    imports: [
+        { importPath: 'typing', declarationName: 'TypeVar' },
+        { importPath: 'typing', declarationName: 'Any' },
+    ],
+};
 
 export class SafeDsPythonGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
@@ -263,12 +311,13 @@ export class SafeDsPythonGenerator {
 
     private generateModule(module: SdsModule, generateOptions: GenerateOptions): CompositeGeneratorNode {
         const importSet = new Map<String, ImportData>();
+        const utilitySet = new Set<UtilityFunction>();
         const segments = getModuleMembers(module)
             .filter(isSdsSegment)
-            .map((segment) => this.generateSegment(segment, importSet, generateOptions));
+            .map((segment) => this.generateSegment(segment, importSet, utilitySet, generateOptions));
         const pipelines = getModuleMembers(module)
             .filter(isSdsPipeline)
-            .map((pipeline) => this.generatePipeline(pipeline, importSet, generateOptions));
+            .map((pipeline) => this.generatePipeline(pipeline, importSet, utilitySet, generateOptions));
         const imports = this.generateImports(Array.from(importSet.values()));
         const output = new CompositeGeneratorNode();
         output.trace(module);
@@ -279,8 +328,16 @@ export class SafeDsPythonGenerator {
             output.append(joinToNode(imports, (importDecl) => importDecl, { separator: NL }));
             output.appendNewLine();
         }
-        if (segments.length > 0) {
+        if (utilitySet.size > 0) {
             output.appendNewLineIf(imports.length > 0);
+            output.append('# Utils ------------------------------------------------------------------------');
+            output.appendNewLine();
+            output.appendNewLine();
+            output.append(joinToNode(utilitySet, (importDecl) => importDecl.code, { separator: NLNL }));
+            output.appendNewLine();
+        }
+        if (segments.length > 0) {
+            output.appendNewLineIf(imports.length > 0 || utilitySet.size > 0);
             output.append('# Segments ---------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
@@ -288,7 +345,7 @@ export class SafeDsPythonGenerator {
             output.appendNewLine();
         }
         if (pipelines.length > 0) {
-            output.appendNewLineIf(imports.length > 0 || segments.length > 0);
+            output.appendNewLineIf(imports.length > 0 || utilitySet.size > 0 || segments.length > 0);
             output.append('# Pipelines --------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
@@ -301,10 +358,12 @@ export class SafeDsPythonGenerator {
     private generateSegment(
         segment: SdsSegment,
         importSet: Map<String, ImportData>,
+        utilitySet: Set<UtilityFunction>,
         generateOptions: GenerateOptions,
     ): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(
             importSet,
+            utilitySet,
             false,
             undefined,
             generateOptions.disableRunnerIntegration,
@@ -359,10 +418,12 @@ export class SafeDsPythonGenerator {
     private generatePipeline(
         pipeline: SdsPipeline,
         importSet: Map<String, ImportData>,
+        utilitySet: Set<UtilityFunction>,
         generateOptions: GenerateOptions,
     ): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(
             importSet,
+            utilitySet,
             true,
             generateOptions.targetPlaceholder,
             generateOptions.disableRunnerIntegration,
@@ -708,46 +769,23 @@ export class SafeDsPythonGenerator {
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
             switch (expression.operator) {
                 case 'or':
-                    if (frame.disableRunnerIntegration) {
-                        return expandTracedToNode(expression)`(${leftOperand} ${traceToNode(
-                            expression,
-                            'operator',
-                        )('or')} ${rightOperand})`;
-                    } else {
-                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                        return expandTracedToNode(expression)`${traceToNode(
-                            expression,
-                            'operator',
-                        )(`${RUNNER_CODEGEN_PACKAGE}.eager_or`)}(${leftOperand}, ${rightOperand})`;
-                    }
+                    frame.addUtility(UTILITY_EAGER_OR);
+                    return expandTracedToNode(expression)`${traceToNode(
+                        expression,
+                        'operator',
+                    )(UTILITY_EAGER_OR.name)}(${leftOperand}, ${rightOperand})`;
                 case 'and':
-                    if (frame.disableRunnerIntegration) {
-                        return expandTracedToNode(expression)`(${leftOperand} ${traceToNode(
-                            expression,
-                            'operator',
-                        )('and')} ${rightOperand})`;
-                    } else {
-                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                        return expandTracedToNode(expression)`${traceToNode(
-                            expression,
-                            'operator',
-                        )(`${RUNNER_CODEGEN_PACKAGE}.eager_and`)}(${leftOperand}, ${rightOperand})`;
-                    }
+                    frame.addUtility(UTILITY_EAGER_AND);
+                    return expandTracedToNode(expression)`${traceToNode(
+                        expression,
+                        'operator',
+                    )(UTILITY_EAGER_AND.name)}(${leftOperand}, ${rightOperand})`;
                 case '?:':
-                    if (frame.disableRunnerIntegration) {
-                        return expandTracedToNode(expression)`(${traceToNode(
-                            expression,
-                            'operator',
-                        )(
-                            `(lambda ${CODEGEN_PREFIX}a, ${CODEGEN_PREFIX}b: ${CODEGEN_PREFIX}a if ${CODEGEN_PREFIX}a is not None else ${CODEGEN_PREFIX}b)`,
-                        )}(${leftOperand}, ${rightOperand}))`;
-                    } else {
-                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                        return expandTracedToNode(expression)`${traceToNode(
-                            expression,
-                            'operator',
-                        )(`${RUNNER_CODEGEN_PACKAGE}.eager_elvis`)}(${leftOperand}, ${rightOperand})`;
-                    }
+                    frame.addUtility(UTILITY_EAGER_ELVIS);
+                    return expandTracedToNode(expression)`${traceToNode(
+                        expression,
+                        'operator',
+                    )(UTILITY_EAGER_ELVIS.name)}(${leftOperand}, ${rightOperand})`;
                 case '===':
                     return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
                         expression,
@@ -788,20 +826,11 @@ export class SafeDsPythonGenerator {
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
-                    if (frame.disableRunnerIntegration) {
-                        return expandTracedToNode(expression)`${traceToNode(
-                            expression,
-                            'isNullSafe',
-                        )(
-                            `(lambda ${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name: getattr(${CODEGEN_PREFIX}receiver, ${CODEGEN_PREFIX}member_name) if ${CODEGEN_PREFIX}receiver is not None else None)`,
-                        )}(${receiver}, '${memberExpression}')`;
-                    } else {
-                        frame.addImport({ importPath: RUNNER_CODEGEN_PACKAGE });
-                        return expandTracedToNode(expression)`${traceToNode(
-                            expression,
-                            'isNullSafe',
-                        )(`${RUNNER_CODEGEN_PACKAGE}.safe_access`)}(${receiver}, '${memberExpression}')`;
-                    }
+                    frame.addUtility(UTILITY_SAFE_ACCESS);
+                    return expandTracedToNode(expression)`${traceToNode(
+                        expression,
+                        'isNullSafe',
+                    )(UTILITY_SAFE_ACCESS.name)}(${receiver}, '${memberExpression}')`;
                 } else {
                     return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }
@@ -1086,6 +1115,12 @@ export class SafeDsPythonGenerator {
     }
 }
 
+interface UtilityFunction {
+    readonly code: CompositeGeneratorNode;
+    readonly name: string;
+    readonly imports: ImportData[];
+}
+
 interface ImportData {
     readonly importPath: string;
     readonly declarationName?: string;
@@ -1095,18 +1130,21 @@ interface ImportData {
 class GenerationInfoFrame {
     private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
     private readonly importSet: Map<String, ImportData>;
+    private readonly utilitySet: Set<UtilityFunction>;
     public readonly isInsidePipeline: boolean;
     public readonly targetPlaceholder: string | undefined;
     public readonly disableRunnerIntegration: boolean;
 
     constructor(
         importSet: Map<String, ImportData> = new Map<String, ImportData>(),
+        utilitySet: Set<UtilityFunction> = new Set<UtilityFunction>(),
         insidePipeline: boolean = false,
         targetPlaceholder: string | undefined = undefined,
         disableRunnerIntegration: boolean = false,
     ) {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
+        this.utilitySet = utilitySet;
         this.isInsidePipeline = insidePipeline;
         this.targetPlaceholder = targetPlaceholder;
         this.disableRunnerIntegration = disableRunnerIntegration;
@@ -1118,6 +1156,13 @@ class GenerationInfoFrame {
             if (!this.importSet.has(hashKey)) {
                 this.importSet.set(hashKey, importData);
             }
+        }
+    }
+
+    addUtility(utilityFunction: UtilityFunction) {
+        this.utilitySet.add(utilityFunction);
+        for (const importData of utilityFunction.imports) {
+            this.addImport(importData);
         }
     }
 
