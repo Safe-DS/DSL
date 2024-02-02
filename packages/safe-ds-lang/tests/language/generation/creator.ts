@@ -116,6 +116,7 @@ const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): Gene
         actualOutputRoot: URI.file(''),
         expectedOutputFiles: [],
         error,
+        disableRunnerIntegration: false,
     };
 };
 
