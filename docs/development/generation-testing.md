@@ -12,6 +12,10 @@ generation test.
 
         If you want to skip a test, add the prefix `skip-` to the folder name.
 
+    !!! tip "Tests without runner integration"
+
+        If you want to create a test without runner integration (memoization and placeholder saving), put it in the eject folder or use eject as a preix for a new top level folder.
+
 2. Add files with the extension `.sdstest`, `.sdspipe`, or `.sdsstub` **directly inside the folder**. All files in a
    folder will be loaded into the same workspace, so they can reference each other. Files in different folders are
    loaded into different workspaces, so they cannot reference each other. Generation will be triggered for all files in
