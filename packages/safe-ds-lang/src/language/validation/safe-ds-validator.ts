@@ -175,6 +175,7 @@ import {
     parameterMustHaveTypeHint,
     prefixOperationOperandMustHaveCorrectType,
     resultMustHaveTypeHint,
+    typeCastExpressionMustHaveUnknownType,
     yieldTypeMustMatchResultType,
 } from './types.js';
 import { statementMustDoSomething } from './other/statements/statements.js';
@@ -350,6 +351,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution(services)],
+        SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectContext],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [
