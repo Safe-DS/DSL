@@ -21,7 +21,7 @@ If the `safe-ds-runner` is visible in the default path (`$PATH` on Unix systems,
 nothing needs to be adjusted. In case it is not visible, the Safe-DS runner command (`safe-ds.runner.command`)
 needs to be set to the absolute path of the runner, as seen in the image below.
 
-![vscode-settings-safeds-runner-path.png](vscode-settings-safeds-runner-path.png)
+![vscode-settings-safeds-runner-path.png](./img/vscode-settings-safeds-runner-path.png)
 
 ## Documentation
 
