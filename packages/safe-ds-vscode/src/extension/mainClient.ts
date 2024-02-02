@@ -2,12 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import {
-    ast,
-    createSafeDsServicesWithBuiltins,
-    SafeDsServices,
-    messages,
-} from '@safe-ds/lang';
+import { ast, createSafeDsServicesWithBuiltins, SafeDsServices, messages } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
@@ -26,11 +21,13 @@ export const activate = async function (context: vscode.ExtensionContext) {
     services.runtime.Runner.updateRunnerLogging({
         displayError(value: string): void {
             vscode.window.showErrorMessage(value);
-        }, outputError(value: string): void {
+        },
+        outputError(value: string): void {
             logError(value);
-        }, outputInfo(value: string): void {
+        },
+        outputInfo(value: string): void {
             logOutput(value);
-        }
+        },
     });
     await services.runtime.Runner.startPythonServer();
     acceptRunRequests(context);
@@ -106,7 +103,9 @@ const registerMessageLoggingCallbacks = function () {
         );
         const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
         execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
-        services.runtime.Runner.sendMessageToPythonServer(messages.createPlaceholderQueryMessage(message.id, message.data.name));
+        services.runtime.Runner.sendMessageToPythonServer(
+            messages.createPlaceholderQueryMessage(message.id, message.data.name),
+        );
     }, 'placeholder_type');
     services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);

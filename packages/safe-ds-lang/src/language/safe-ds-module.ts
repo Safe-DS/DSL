@@ -86,7 +86,7 @@ export type SafeDsAddedServices = {
     };
     runtime: {
         Runner: SafeDsRunner;
-    }
+    };
 };
 
 /**
@@ -155,8 +155,8 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         SettingsProvider: (services) => new SafeDsSettingsProvider(services),
     },
     runtime: {
-        Runner: (services) => new SafeDsRunner(services)
-    }
+        Runner: (services) => new SafeDsRunner(services),
+    },
 };
 
 export type SafeDsSharedServices = LangiumSharedServices;
