@@ -1,0 +1,5 @@
+package tests.validation.other.declarations.typeParameters.usageOfVariantTypeParameters
+
+class Producer<out T>
+class Middleware<T>
+class Consumer<in T>

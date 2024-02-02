@@ -156,6 +156,18 @@ export namespace TypeParameter {
     export const isRequired = (node: SdsTypeParameter | undefined): boolean => {
         return isSdsTypeParameter(node) && !node.defaultValue;
     };
+
+    export const isContravariant = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && node.variance === 'in';
+    };
+
+    export const isCovariant = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && node.variance === 'out';
+    };
+
+    export const isInvariant = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && !node.variance;
+    };
 }
 
 // -------------------------------------------------------------------------------------------------
