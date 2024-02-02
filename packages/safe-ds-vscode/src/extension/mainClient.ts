@@ -3,19 +3,13 @@ import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import {
-    addMessageCallback,
-    executePipeline,
-    getExecutionContext,
-    isPythonServerAvailable,
-    sendMessageToPythonServer,
-    startPythonServer,
-    stopPythonServer,
-    tryMapToSafeDSSource,
-} from './pythonServer.js';
-import { ast, createSafeDsServicesWithBuiltins, SafeDsServices } from '@safe-ds/lang';
+    ast,
+    createSafeDsServicesWithBuiltins,
+    SafeDsServices,
+    messages,
+} from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
-import { createPlaceholderQueryMessage, RuntimeErrorMessage } from './messages.js';
 import crypto from 'crypto';
 import { LangiumDocument, URI } from 'langium';
 
@@ -26,14 +20,25 @@ let services: SafeDsServices;
 export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
-    await startPythonServer();
     services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
+    services.runtime.Runner.updateRunnerCommand(runnerCommandSetting);
+    services.runtime.Runner.updateRunnerLogging({
+        displayError(value: string): void {
+            vscode.window.showErrorMessage(value);
+        }, outputError(value: string): void {
+            logError(value);
+        }, outputInfo(value: string): void {
+            logOutput(value);
+        }
+    });
+    await services.runtime.Runner.startPythonServer();
     acceptRunRequests(context);
 };
 
 // This function is called when the extension is deactivated.
 export const deactivate = async function (): Promise<void> {
-    await stopPythonServer();
+    await services.runtime.Runner.stopPythonServer();
     if (client) {
         await client.stop();
     }
@@ -90,28 +95,28 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
 };
 
 const registerMessageLoggingCallbacks = function () {
-    addMessageCallback((message) => {
+    services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
         );
     }, 'placeholder_value');
-    addMessageCallback((message) => {
+    services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
         );
-        const execInfo = getExecutionContext(message.id)!;
+        const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
         execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
-        sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
+        services.runtime.Runner.sendMessageToPythonServer(messages.createPlaceholderQueryMessage(message.id, message.data.name));
     }, 'placeholder_type');
-    addMessageCallback((message) => {
+    services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
     }, 'runtime_progress');
-    addMessageCallback(async (message) => {
+    services.runtime.Runner.addMessageCallback(async (message) => {
         let readableStacktraceSafeDs: string[] = [];
-        const execInfo = getExecutionContext(message.id)!;
+        const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
         const readableStacktracePython = await Promise.all(
-            (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-                const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
+            (<messages.RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+                const mappedFrame = await services.runtime.Runner.tryMapToSafeDSSource(message.id, frame);
                 if (mappedFrame) {
                     readableStacktraceSafeDs.push(
                         `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
@@ -125,11 +130,11 @@ const registerMessageLoggingCallbacks = function () {
         );
         logOutput(
             `Runner-RuntimeError (${message.id}): ${
-                (<RuntimeErrorMessage>message).data.message
+                (<messages.RuntimeErrorMessage>message).data.message
             } \n${readableStacktracePython.join('\n')}`,
         );
         printOutputMessage(
-            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+            `Safe-DS Error (${message.id}): ${(<messages.RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
                 .reverse()
                 .join('\n')}`,
         );
@@ -197,7 +202,7 @@ const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined)
     } else {
         mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
-    await executePipeline(services, mainDocument, pipelineId);
+    await services.runtime.Runner.executePipeline(mainDocument, pipelineId);
 };
 
 const validateDocuments = async function (
@@ -237,8 +242,8 @@ const registerVSCodeWatchers = function () {
         if (event.affectsConfiguration('safe-ds.runner.command')) {
             // Try starting runner
             logOutput('Safe-DS Runner Command was updated');
-            if (!isPythonServerAvailable()) {
-                startPythonServer();
+            if (!services.runtime.Runner.isPythonServerAvailable()) {
+                services.runtime.Runner.startPythonServer();
             } else {
                 logOutput(
                     'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',

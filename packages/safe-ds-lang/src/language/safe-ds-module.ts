@@ -43,6 +43,7 @@ import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
 import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
+import { SafeDsRunner } from './runner/safe-ds-runner.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -83,6 +84,9 @@ export type SafeDsAddedServices = {
         PackageManager: SafeDsPackageManager;
         SettingsProvider: SafeDsSettingsProvider;
     };
+    runtime: {
+        Runner: SafeDsRunner;
+    }
 };
 
 /**
@@ -150,6 +154,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         PackageManager: (services) => new SafeDsPackageManager(services),
         SettingsProvider: (services) => new SafeDsSettingsProvider(services),
     },
+    runtime: {
+        Runner: (services) => new SafeDsRunner(services)
+    }
 };
 
 export type SafeDsSharedServices = LangiumSharedServices;
