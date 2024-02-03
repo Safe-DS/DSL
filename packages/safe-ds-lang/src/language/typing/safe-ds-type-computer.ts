@@ -708,6 +708,9 @@ export class SafeDsTypeComputer {
         for (const candidateClass of candidateClasses) {
             // TODO: handle type parameters
             const candidateType = new ClassType(candidateClass, NO_SUBSTITUTIONS, isNullable);
+            // TODO: We need to check first without type parameters
+            //  Then check with type parameters and whether we can find a common supertype for them, respecting variance
+            //  If we can't, try the next candidate
             if (this.isCommonSupertype(candidateType, other)) {
                 return candidateType;
             }
