@@ -48,6 +48,7 @@ import {
     type SdsBlockLambda,
     SdsCall,
     SdsCallableType,
+    SdsClass,
     SdsDeclaration,
     SdsExpression,
     type SdsExpressionLambda,
@@ -56,11 +57,14 @@ import {
     SdsInfixOperation,
     SdsLiteralType,
     SdsMemberAccess,
+    SdsNamedType,
     SdsParameter,
     SdsPrefixOperation,
     SdsReference,
     SdsSegment,
     SdsType,
+    SdsTypeArgument,
+    SdsTypeParameter,
 } from '../generated/ast.js';
 import {
     getAssignees,
@@ -68,6 +72,7 @@ import {
     getParameters,
     getResults,
     getTypeArguments,
+    getTypeParameters,
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
@@ -93,6 +98,7 @@ import {
     NamedType,
     StaticType,
     Type,
+    TypeParameterSubstitutions,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -187,7 +193,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
-            return new ClassType(node, false);
+            return new ClassType(node, NO_SUBSTITUTIONS, false);
         } else if (isSdsEnum(node)) {
             return new EnumType(node, false);
         } else if (isSdsEnumVariant(node)) {
@@ -301,8 +307,10 @@ export class SafeDsTypeComputer {
 
         // Terminal cases
         if (isSdsList(node)) {
+            // TODO: compute type parameter
             return this.coreTypes.List;
         } else if (isSdsMap(node)) {
+            // TODO: compute type parameter
             return this.coreTypes.Map;
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
@@ -504,7 +512,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
-            return this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
+            return this.computeTypeOfNamedType(node);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
@@ -520,6 +528,43 @@ export class SafeDsTypeComputer {
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
+    }
+
+    private computeTypeOfNamedType(node: SdsNamedType) {
+        const unparameterizedType = this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
+        if (!(unparameterizedType instanceof ClassType)) {
+            return unparameterizedType;
+        }
+
+        const substitutions = this.getTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
+        return new ClassType(unparameterizedType.declaration, substitutions, node.isNullable);
+    }
+
+    private getTypeParameterSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
+        const typeParameters = getTypeParameters(clazz);
+        if (isEmpty(typeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        // Map type parameters to the first type argument that sets it
+        const typeArgumentsByTypeParameters = new Map<SdsTypeParameter, SdsTypeArgument>();
+        for (const typeArgument of getTypeArguments(node)) {
+            const typeParameter = this.nodeMapper.typeArgumentToTypeParameter(typeArgument);
+            if (typeParameter && !typeArgumentsByTypeParameters.has(typeParameter)) {
+                typeArgumentsByTypeParameters.set(typeParameter, typeArgument);
+            }
+        }
+
+        // Compute substitutions (ordered by the position of the type parameters)
+        const result = new Map<SdsTypeParameter, Type>();
+
+        for (const typeParameter of typeParameters) {
+            const typeArgument = typeArgumentsByTypeParameters.get(typeParameter);
+            const type = this.computeType(typeArgument?.value ?? typeParameter.defaultValue);
+            result.set(typeParameter, type);
+        }
+
+        return result;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -661,7 +706,8 @@ export class SafeDsTypeComputer {
         const other = [...classTypes.slice(1), literalType];
 
         for (const candidateClass of candidateClasses) {
-            const candidateType = new ClassType(candidateClass, isNullable);
+            // TODO: handle type parameters
+            const candidateType = new ClassType(candidateClass, NO_SUBSTITUTIONS, isNullable);
             if (this.isCommonSupertype(candidateType, other)) {
                 return candidateType;
             }
@@ -717,3 +763,5 @@ interface GroupTypesResult {
     enumVariantTypes: EnumVariantType[];
     hasTypeWithUnknownSupertype: boolean;
 }
+
+const NO_SUBSTITUTIONS: TypeParameterSubstitutions = new Map();

@@ -1,8 +1,12 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsEnumVariant, isSdsFunction } from '../../../src/language/generated/ast.js';
-import { getParameters, getResults } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import {
+    createSafeDsServicesWithBuiltins,
+    getParameters,
+    getResults,
+    getTypeParameters,
+} from '../../../src/language/index.js';
 import { BooleanConstant, IntConstant, NullConstant } from '../../../src/language/partialEvaluation/model.js';
 import {
     CallableType,
@@ -26,7 +30,7 @@ const code = `
     fun f2(),
 
     class C1
-    class C2
+    class C2<T>
 
     enum MyEnum1 {
         MyEnumVariant1
@@ -41,6 +45,7 @@ const result = getResults(callable1.resultList)[0]!;
 const callable2 = await getNodeOfType(services, code, isSdsFunction, 1);
 const class1 = await getNodeOfType(services, code, isSdsClass, 0);
 const class2 = await getNodeOfType(services, code, isSdsClass, 1);
+const typeParameter1 = getTypeParameters(class2)[0]!;
 const enum1 = await getNodeOfType(services, code, isSdsEnum, 0);
 const enum2 = await getNodeOfType(services, code, isSdsEnum, 1);
 const enumVariant1 = await getNodeOfType(services, code, isSdsEnumVariant, 0);
@@ -71,8 +76,8 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new ClassType(class1, true),
-            unequalValueOfSameType: () => new ClassType(class2, true),
+            value: () => new ClassType(class1, new Map(), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map(), true),
             valueOfOtherType: () => UnknownType,
         },
         {
@@ -86,8 +91,8 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new StaticType(new ClassType(class1, false)),
-            unequalValueOfSameType: () => new StaticType(new ClassType(class2, false)),
+            value: () => new StaticType(new ClassType(class1, new Map(), false)),
+            unequalValueOfSameType: () => new StaticType(new ClassType(class2, new Map(), false)),
             valueOfOtherType: () => UnknownType,
         },
         {
@@ -151,8 +156,16 @@ describe('type model', async () => {
             expectedString: '(p1: $unknown)',
         },
         {
-            value: new ClassType(class1, true),
+            value: new ClassType(class1, new Map(), false),
+            expectedString: 'C1',
+        },
+        {
+            value: new ClassType(class1, new Map(), true),
             expectedString: 'C1?',
+        },
+        {
+            value: new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), true),
+            expectedString: 'C2<union<>>?',
         },
         {
             value: new EnumType(enum1, true),
@@ -163,7 +176,7 @@ describe('type model', async () => {
             expectedString: 'MyEnumVariant1?',
         },
         {
-            value: new StaticType(new ClassType(class1, false)),
+            value: new StaticType(new ClassType(class1, new Map(), false)),
             expectedString: '$type<C1>',
         },
         {
@@ -219,8 +232,8 @@ describe('type model', async () => {
             ),
         },
         {
-            type: new ClassType(class1, false),
-            expectedType: new ClassType(class1, false),
+            type: new ClassType(class1, new Map(), false),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: new EnumType(enum1, false),
@@ -231,20 +244,20 @@ describe('type model', async () => {
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
-            expectedType: new StaticType(new ClassType(class1, false)),
+            type: new StaticType(new ClassType(class1, new Map(), false)),
+            expectedType: new StaticType(new ClassType(class1, new Map(), false)),
         },
         {
             type: new UnionType(),
             expectedType: new UnionType(),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
-            expectedType: new ClassType(class1, false),
+            type: new UnionType(new ClassType(class1, new Map(), false)),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
-            type: new UnionType(new UnionType(new ClassType(class1, false))),
-            expectedType: new ClassType(class1, false),
+            type: new UnionType(new UnionType(new ClassType(class1, new Map(), false))),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: UnknownType,
@@ -302,14 +315,14 @@ describe('type model', async () => {
             expectedType: new NamedTupleType(),
         },
         {
-            type: new ClassType(class1, false),
+            type: new ClassType(class1, new Map(), false),
             isNullable: true,
-            expectedType: new ClassType(class1, true),
+            expectedType: new ClassType(class1, new Map(), true),
         },
         {
-            type: new ClassType(class1, true),
+            type: new ClassType(class1, new Map(), true),
             isNullable: false,
-            expectedType: new ClassType(class1, false),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: new EnumType(enum1, false),
@@ -332,14 +345,17 @@ describe('type model', async () => {
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            type: new StaticType(new ClassType(class1, new Map(), false)),
             isNullable: true,
-            expectedType: new UnionType(new StaticType(new ClassType(class1, false)), new LiteralType(NullConstant)),
+            expectedType: new UnionType(
+                new StaticType(new ClassType(class1, new Map(), false)),
+                new LiteralType(NullConstant),
+            ),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            type: new StaticType(new ClassType(class1, new Map(), false)),
             isNullable: false,
-            expectedType: new StaticType(new ClassType(class1, false)),
+            expectedType: new StaticType(new ClassType(class1, new Map(), false)),
         },
         {
             type: new UnionType(),
@@ -352,24 +368,24 @@ describe('type model', async () => {
             expectedType: new UnionType(),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
+            type: new UnionType(new ClassType(class1, new Map(), false)),
             isNullable: true,
-            expectedType: new UnionType(new ClassType(class1, true)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), true)),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
+            type: new UnionType(new ClassType(class1, new Map(), false)),
             isNullable: false,
-            expectedType: new UnionType(new ClassType(class1, false)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), false)),
         },
         {
-            type: new UnionType(new ClassType(class1, true)),
+            type: new UnionType(new ClassType(class1, new Map(), true)),
             isNullable: true,
-            expectedType: new UnionType(new ClassType(class1, true)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), true)),
         },
         {
-            type: new UnionType(new ClassType(class1, true)),
+            type: new UnionType(new ClassType(class1, new Map(), true)),
             isNullable: false,
-            expectedType: new UnionType(new ClassType(class1, false)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), false)),
         },
         {
             type: UnknownType,
@@ -400,11 +416,13 @@ describe('type model', async () => {
                     type: new CallableType(
                         callable1,
                         undefined,
-                        new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
+                        new NamedTupleType(
+                            new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, new Map(), false)),
+                        ),
                         new NamedTupleType(),
                     ),
                     index: 0,
-                    expectedType: new ClassType(class1, false),
+                    expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
                 expect(type.getParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
@@ -421,9 +439,11 @@ describe('type model', async () => {
                     expectedType: UnknownType,
                 },
                 {
-                    type: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
+                    type: new NamedTupleType(
+                        new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, new Map(), false)),
+                    ),
                     index: 0,
-                    expectedType: new ClassType(class1, false),
+                    expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the entry at the given index (%#)', ({ type, index, expectedType }) => {
                 expect(type.getTypeOfEntryByIndex(index).equals(expectedType)).toBeTruthy();

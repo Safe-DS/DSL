@@ -8,8 +8,8 @@ import {
     isSdsFunction,
     isSdsModule,
 } from '../../../../src/language/generated/ast.js';
-import { getModuleMembers } from '../../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins, getModuleMembers } from '../../../../src/language/index.js';
+
 import {
     BooleanConstant,
     FloatConstant,

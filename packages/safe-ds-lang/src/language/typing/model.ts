@@ -7,9 +7,12 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsParameter,
+    SdsTypeParameter,
 } from '../generated/ast.js';
 import { Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
+
+export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 
 /**
  * The type of an AST node.
@@ -256,6 +259,7 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
 export class ClassType extends NamedType<SdsClass> {
     constructor(
         declaration: SdsClass,
+        readonly substitutions: TypeParameterSubstitutions,
         override readonly isNullable: boolean,
     ) {
         super(declaration);
@@ -268,11 +272,30 @@ export class ClassType extends NamedType<SdsClass> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return (
+            other.declaration === this.declaration && other.isNullable === this.isNullable
+            // TODO && substitutionsAreEqual(other.substitutions, this.substitutions)
+        );
+    }
+
+    override toString(): string {
+        let result = this.declaration.name;
+
+        if (this.substitutions.size > 0) {
+            result += `<${Array.from(this.substitutions.values())
+                .map((value) => value.toString())
+                .join(', ')}>`;
+        }
+
+        if (this.isNullable) {
+            result += '?';
+        }
+
+        return result;
     }
 
     override updateNullability(isNullable: boolean): ClassType {
-        return new ClassType(this.declaration, isNullable);
+        return new ClassType(this.declaration, this.substitutions, isNullable);
     }
 }
 
@@ -431,3 +454,24 @@ class UnknownTypeClass extends Type {
 }
 
 export const UnknownType = new UnknownTypeClass();
+
+// -------------------------------------------------------------------------------------------------
+// Helpers
+// -------------------------------------------------------------------------------------------------
+
+const substitutionsAreEqual = (
+    a: Map<SdsDeclaration, Type> | undefined,
+    b: Map<SdsDeclaration, Type> | undefined,
+): boolean => {
+    if (a?.size !== b?.size) {
+        return false;
+    }
+
+    const aEntries = Array.from(a?.entries() ?? []);
+    const bEntries = Array.from(b?.entries() ?? []);
+
+    return aEntries.every(([aEntry, aValue], i) => {
+        const [bEntry, bValue] = bEntries[i]!;
+        return aEntry === bEntry && aValue.equals(bValue);
+    });
+};

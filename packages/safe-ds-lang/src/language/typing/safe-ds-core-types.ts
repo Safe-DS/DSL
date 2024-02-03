@@ -65,6 +65,6 @@ export class SafeDsCoreTypes {
         /* c8 ignore stop */
 
         const key = `${coreClass.name}~${isNullable}`;
-        return this.cache.get(key, () => new ClassType(coreClass, isNullable));
+        return this.cache.get(key, () => new ClassType(coreClass, new Map(), isNullable));
     }
 }
