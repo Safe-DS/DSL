@@ -12,5 +12,5 @@ fun »myFunction3«(p1: Int, p2: String)
 // $TEST$ serialization (p1: Int, p2: String) -> (r1: Int, r2: String)
 fun »myFunction4«(p1: Int, p2: String) -> (r1: Int, r2: String)
 
-// $TEST$ serialization (p1: ?) -> (r1: ?)
+// $TEST$ serialization (p1: $unknown) -> (r1: $unknown)
 fun »myFunction5«(p1) -> (r1)

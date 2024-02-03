@@ -131,7 +131,7 @@ describe('type model', async () => {
                 new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(),
             ),
-            expectedString: '(p1: ?) -> ()',
+            expectedString: '(p1: $unknown) -> ()',
         },
         {
             value: new CallableType(
@@ -140,7 +140,7 @@ describe('type model', async () => {
                 new NamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
                 new NamedTupleType(),
             ),
-            expectedString: '(p2?: ?) -> ()',
+            expectedString: '(p2?: $unknown) -> ()',
         },
         {
             value: new LiteralType(new BooleanConstant(true)),
@@ -148,7 +148,7 @@ describe('type model', async () => {
         },
         {
             value: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-            expectedString: '(p1: ?)',
+            expectedString: '(p1: $unknown)',
         },
         {
             value: new ClassType(class1, true),
@@ -168,11 +168,11 @@ describe('type model', async () => {
         },
         {
             value: new UnionType(UnknownType),
-            expectedString: 'union<?>',
+            expectedString: 'union<$unknown>',
         },
         {
             value: UnknownType,
-            expectedString: '?',
+            expectedString: '$unknown',
         },
     ];
     describe.each(toStringTests)('toString', ({ value, expectedString }) => {

@@ -1,14 +1,14 @@
 package tests.typing.declarations.attributes
 
 class C {
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     attr »a«
 
     // $TEST$ equivalence_class instanceAttribute
     // $TEST$ equivalence_class instanceAttribute
     attr »b«: »Int«
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     static attr »c«
 
     // $TEST$ equivalence_class staticAttribute

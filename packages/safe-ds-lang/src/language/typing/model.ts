@@ -418,7 +418,7 @@ class UnknownTypeClass extends Type {
     }
 
     override toString(): string {
-        return '?';
+        return '$unknown';
     }
 
     override unwrap(): Type {
