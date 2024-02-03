@@ -286,6 +286,7 @@ const generateCodeForRunner = function (
         destination: URI.file(rootGenerationDir), // actual directory of main module file
         createSourceMaps: true,
         targetPlaceholder,
+        disableRunnerIntegration: false,
     });
     const lastGeneratedSources = new Map<string, string>();
     let codeMap: ProgramCodeMap = {};

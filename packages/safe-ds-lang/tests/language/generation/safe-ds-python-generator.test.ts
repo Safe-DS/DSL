@@ -36,6 +36,7 @@ describe('generation', async () => {
                     destination: test.actualOutputRoot,
                     createSourceMaps: true,
                     targetPlaceholder: runUntilPlaceholderName,
+                    disableRunnerIntegration: test.disableRunnerIntegration,
                 }),
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])
