@@ -263,7 +263,7 @@ export class SafeDsTypeChecker {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // canBeTypeOfConstantParameter
+    // Other
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
@@ -288,6 +288,22 @@ export class SafeDsTypeChecker {
             return type instanceof LiteralType || type === UnknownType;
         }
     };
+
+    /**
+     * Checks whether {@link type} some kind of list (with any element type).
+     */
+    isList(type: Type): type is ClassType {
+        return this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true });
+    }
+
+    /**
+     * Checks whether {@link type} some kind of map (with any key/value types).
+     */
+    isMap(type: Type): type is ClassType {
+        return this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
+            ignoreTypeParameters: true,
+        });
+    }
 }
 
 interface IsAssignableToOptions {
