@@ -125,9 +125,17 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
                     code: CODE_TYPE_MISMATCH,
                 });
             }
+        } else if (typeChecker.isMap(receiverType)) {
+            const keyType = receiverType.getTypeParameterTypeByIndex(0);
+            const indexType = typeComputer.computeType(node.index);
+            if (!typeChecker.isAssignableTo(indexType, keyType)) {
+                accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
+                    node,
+                    property: 'index',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
         }
-
-        // TODO type checking for map
     };
 };
 

@@ -310,7 +310,16 @@ export class SafeDsTypeComputer {
             const elementType = this.lowestCommonSupertype(...node.elements.map((it) => this.computeType(it)));
             return this.coreTypes.List(elementType);
         } else if (isSdsMap(node)) {
-            const keyType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.key)));
+            let keyType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.key)));
+
+            // Keeping literal types for keys is too strict: We would otherwise infer the key type of `{"a": 1, "b": 2}`
+            // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
+            // access. Where possible, we already validate the existence of keys in indexed accesses using the partial
+            // evaluator.
+            if (keyType instanceof LiteralType) {
+                keyType = this.computeClassTypeForLiteralType(keyType);
+            }
+
             const valueType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.value)));
             return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsTemplateString(node)) {

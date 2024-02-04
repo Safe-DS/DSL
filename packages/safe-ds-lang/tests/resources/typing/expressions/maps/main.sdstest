@@ -8,7 +8,7 @@ pipeline myPipeline {
     // $TEST$ serialization Map<Nothing, Nothing>
     »{}«;
 
-    // $TEST$ serialization Map<literal<1, 2, 3>, literal<1, 2, 3>>
+    // $TEST$ serialization Map<Int, literal<1, 2, 3>>
     »{1: 1, 2: 2, 3: 3}«;
 
     // $TEST$ serialization Map<Number, Number>
