@@ -1,6 +1,6 @@
 package tests.validation.other.declarations.typeParameters.usageOfVariantTypeParameters
 
-// $TEST$ error "A covariant type parameter cannot be used in contravariant position."
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
 class MyClass2<out Covariant>(p1: »Covariant«) {
     // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
     attr a1: »Covariant«
