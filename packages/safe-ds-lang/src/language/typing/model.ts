@@ -9,7 +9,7 @@ import {
     SdsParameter,
     SdsTypeParameter,
 } from '../generated/ast.js';
-import { Parameter } from '../helpers/nodeProperties.js';
+import { getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
 
 export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
@@ -263,6 +263,15 @@ export class ClassType extends NamedType<SdsClass> {
         override readonly isNullable: boolean,
     ) {
         super(declaration);
+    }
+
+    getTypeParameterTypeByIndex(index: number): Type {
+        const typeParameter = getTypeParameters(this.declaration)[index];
+        if (!typeParameter) {
+            return UnknownType;
+        }
+
+        return this.substitutions.get(typeParameter) ?? UnknownType;
     }
 
     override equals(other: unknown): boolean {

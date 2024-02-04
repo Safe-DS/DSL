@@ -430,6 +430,25 @@ describe('type model', async () => {
         });
     });
 
+    describe('ClassType', () => {
+        describe('getTypeParameterTypeByIndex', () => {
+            it.each([
+                {
+                    type: new ClassType(class1, new Map(), false),
+                    index: 0,
+                    expectedType: UnknownType,
+                },
+                {
+                    type: new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), false),
+                    index: 0,
+                    expectedType: new UnionType(),
+                },
+            ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
+                expect(type.getTypeParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
+            });
+        });
+    });
+
     describe('NamedTupleType', () => {
         describe('getTypeOfEntryByIndex', () => {
             it.each([
