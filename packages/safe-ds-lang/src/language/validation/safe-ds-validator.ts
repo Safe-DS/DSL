@@ -27,7 +27,6 @@ import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js'
 import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
 import {
     constraintListsShouldBeUsedWithCaution,
-    indexedAccessesShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
     mapsShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
@@ -274,7 +273,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             indexedAccessIndexMustBeValid(services),
             indexedAccessIndexMustHaveCorrectType(services),
             indexedAccessReceiverMustBeListOrMap(services),
-            indexedAccessesShouldBeUsedWithCaution(services),
         ],
         SdsInfixOperation: [
             divisionDivisorMustNotBeZero(services),

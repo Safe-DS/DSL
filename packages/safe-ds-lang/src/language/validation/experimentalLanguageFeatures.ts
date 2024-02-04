@@ -1,10 +1,8 @@
 import { hasContainerOfType, ValidationAcceptor } from 'langium';
 import {
-    isSdsIndexedAccess,
     isSdsMap,
     isSdsUnionType,
     type SdsConstraintList,
-    type SdsIndexedAccess,
     type SdsLiteralType,
     type SdsMap,
     type SdsUnionType,
@@ -25,27 +23,6 @@ export const constraintListsShouldBeUsedWithCaution = (services: SafeDsServices)
         accept('warning', 'Constraint lists & constraints are experimental and may change without prior notice.', {
             node,
             keyword: 'where',
-            code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
-        });
-    };
-};
-
-export const indexedAccessesShouldBeUsedWithCaution = (services: SafeDsServices) => {
-    const settingsProvider = services.workspace.SettingsProvider;
-
-    return async (node: SdsIndexedAccess, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeature())) {
-            /* c8 ignore next 2 */
-            return;
-        }
-
-        // There's already a warning on the container
-        if (hasContainerOfType(node.$container, isSdsIndexedAccess)) {
-            return;
-        }
-
-        accept('warning', 'Indexed accesses are experimental and may change without prior notice.', {
-            node,
             code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
         });
     };
