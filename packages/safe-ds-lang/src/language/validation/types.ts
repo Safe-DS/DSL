@@ -95,14 +95,13 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
 };
 
 export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
         if (node.receiver && !typeChecker.isList(receiverType) && !typeChecker.isMap(receiverType)) {
-            accept('error', `Expected type '${coreTypes.List}' or '${coreTypes.Map}' but got '${receiverType}'.`, {
+            accept('error', `Expected type 'List' or 'Map' but got '${receiverType}'.`, {
                 node: node.receiver,
                 code: CODE_TYPE_MISMATCH,
             });
