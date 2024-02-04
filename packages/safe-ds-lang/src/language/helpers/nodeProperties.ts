@@ -1,6 +1,7 @@
 import { AstNode, getContainerOfType, Stream, stream } from 'langium';
 import {
     isSdsAnnotation,
+    isSdsArgument,
     isSdsArgumentList,
     isSdsAssignment,
     isSdsAttribute,
@@ -78,29 +79,29 @@ export const hasAnnotationCallOf = (
     });
 };
 
-export const isInternal = (node: SdsDeclaration): boolean => {
+export const isInternal = (node: SdsDeclaration | undefined): boolean => {
     return isSdsSegment(node) && node.visibility === 'internal';
 };
 
 export namespace Argument {
-    export const isNamed = (node: SdsArgument): boolean => {
-        return Boolean(node.parameter);
+    export const isNamed = (node: SdsArgument | undefined): boolean => {
+        return Boolean(node?.parameter);
     };
 
-    export const isPositional = (node: SdsArgument): boolean => {
-        return !node.parameter;
+    export const isPositional = (node: SdsArgument | undefined): boolean => {
+        return isSdsArgument(node) && !node.parameter;
     };
 }
 
 export namespace Enum {
-    export const isConstant = (node: SdsEnum): boolean => {
-        return getEnumVariants(node).every((it) => EnumVariant.isConstant(it));
+    export const isConstant = (node: SdsEnum | undefined): boolean => {
+        return Boolean(node) && getEnumVariants(node).every((it) => EnumVariant.isConstant(it));
     };
 }
 
 export namespace EnumVariant {
-    export const isConstant = (node: SdsEnumVariant): boolean => {
-        return getParameters(node).every((it) => Parameter.isConstant(it));
+    export const isConstant = (node: SdsEnumVariant | undefined): boolean => {
+        return Boolean(node) && getParameters(node).every((it) => Parameter.isConstant(it));
     };
 }
 
@@ -129,7 +130,7 @@ export namespace Parameter {
     };
 }
 
-export const isStatic = (node: SdsClassMember): boolean => {
+export const isStatic = (node: SdsClassMember | undefined): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
         return true;
     } else if (isSdsAttribute(node)) {
@@ -143,8 +144,8 @@ export const isStatic = (node: SdsClassMember): boolean => {
 };
 
 export namespace TypeArgument {
-    export const isNamed = (node: SdsTypeArgument): boolean => {
-        return Boolean(node.typeParameter);
+    export const isNamed = (node: SdsTypeArgument | undefined): boolean => {
+        return Boolean(node?.typeParameter);
     };
 }
 
