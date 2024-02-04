@@ -310,8 +310,9 @@ export class SafeDsTypeComputer {
             const elementType = this.lowestCommonSupertype(...node.elements.map((it) => this.computeType(it)));
             return this.coreTypes.List(elementType);
         } else if (isSdsMap(node)) {
-            // TODO: compute type parameter
-            return this.coreTypes.Map(UnknownType, UnknownType);
+            const keyType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.key)));
+            const valueType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.value)));
+            return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
         }
