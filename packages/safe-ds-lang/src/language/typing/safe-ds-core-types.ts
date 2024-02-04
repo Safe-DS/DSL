@@ -2,7 +2,8 @@ import { WorkspaceCache } from 'langium';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { SdsClass } from '../generated/ast.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType, Type, UnknownType } from './model.js';
+import { ClassType, Type, TypeParameterSubstitutions, UnknownType } from './model.js';
+import { getTypeParameters } from '../helpers/nodeProperties.js';
 
 export class SafeDsCoreTypes {
     private readonly builtinClasses: SafeDsClasses;
@@ -33,12 +34,34 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Int);
     }
 
-    get List(): Type {
-        return this.createCoreType(this.builtinClasses.List);
+    List(elementType: Type): Type {
+        const list = this.builtinClasses.List;
+        const elementTypeParameter = getTypeParameters(list)[0];
+
+        if (!list || !elementTypeParameter) {
+            /* c8 ignore next 2 */
+            return UnknownType;
+        }
+
+        let substitutions = new Map([[elementTypeParameter, elementType]]);
+        return new ClassType(list, substitutions, false);
     }
 
-    get Map(): Type {
-        return this.createCoreType(this.builtinClasses.Map);
+    Map(keyType: Type, valueType: Type): Type {
+        const map = this.builtinClasses.Map;
+        const keyTypeParameter = getTypeParameters(map)[0];
+        const valueTypeParameter = getTypeParameters(map)[1];
+
+        if (!map || !keyTypeParameter || !valueTypeParameter) {
+            /* c8 ignore next 2 */
+            return UnknownType;
+        }
+
+        const substitutions = new Map([
+            [keyTypeParameter, keyType],
+            [valueTypeParameter, valueType],
+        ]);
+        return new ClassType(map, substitutions, false);
     }
 
     get Nothing(): Type {
@@ -58,13 +81,14 @@ export class SafeDsCoreTypes {
     }
 
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
-        /* c8 ignore start */
         if (!coreClass) {
+            /* c8 ignore next 2 */
             return UnknownType;
         }
-        /* c8 ignore stop */
 
         const key = `${coreClass.name}~${isNullable}`;
-        return this.cache.get(key, () => new ClassType(coreClass, new Map(), isNullable));
+        return this.cache.get(key, () => new ClassType(coreClass, NO_SUBSTITUTIONS, isNullable));
     }
 }
+
+const NO_SUBSTITUTIONS: TypeParameterSubstitutions = new Map();

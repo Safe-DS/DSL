@@ -41,7 +41,9 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is assignable {@link other}.
      */
-    isAssignableTo = (type: Type, other: Type): boolean => {
+    isAssignableTo = (type: Type, other: Type, options?: IsAssignableToOptions): boolean => {
+        const ignoreTypeParameters = options?.ignoreTypeParameters ?? false;
+
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (other instanceof UnionType) {
@@ -51,7 +53,7 @@ export class SafeDsTypeChecker {
         if (type instanceof CallableType) {
             return this.callableTypeIsAssignableTo(type, other);
         } else if (type instanceof ClassType) {
-            return this.classTypeIsAssignableTo(type, other);
+            return this.classTypeIsAssignableTo(type, other, ignoreTypeParameters);
         } else if (type instanceof EnumType) {
             return this.enumTypeIsAssignableTo(type, other);
         } else if (type instanceof EnumVariantType) {
@@ -128,7 +130,8 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private classTypeIsAssignableTo(type: ClassType, other: Type): boolean {
+    private classTypeIsAssignableTo(type: ClassType, other: Type, _ignoreTypeParameters: boolean): boolean {
+        // TODO: handle type parameters (or don't based on the ignoreTypeParameters flag)
         if (type.isNullable && !other.isNullable) {
             return false;
         }
@@ -285,4 +288,8 @@ export class SafeDsTypeChecker {
             return type instanceof LiteralType || type === UnknownType;
         }
     };
+}
+
+interface IsAssignableToOptions {
+    ignoreTypeParameters?: boolean;
 }

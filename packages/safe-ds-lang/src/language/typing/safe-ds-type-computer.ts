@@ -307,11 +307,11 @@ export class SafeDsTypeComputer {
 
         // Terminal cases
         if (isSdsList(node)) {
-            // TODO: compute type parameter
-            return this.coreTypes.List;
+            const elementType = this.lowestCommonSupertype(...node.elements.map((it) => this.computeType(it)));
+            return this.coreTypes.List(elementType);
         } else if (isSdsMap(node)) {
             // TODO: compute type parameter
-            return this.coreTypes.Map;
+            return this.coreTypes.Map(UnknownType, UnknownType);
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
         }

@@ -103,8 +103,10 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
         const receiverType = typeComputer.computeType(node.receiver);
         if (
             node.receiver &&
-            !typeChecker.isAssignableTo(receiverType, coreTypes.List) &&
-            !typeChecker.isAssignableTo(receiverType, coreTypes.Map)
+            !typeChecker.isAssignableTo(receiverType, coreTypes.List(UnknownType), { ignoreTypeParameters: true }) &&
+            !typeChecker.isAssignableTo(receiverType, coreTypes.Map(UnknownType, UnknownType), {
+                ignoreTypeParameters: true,
+            })
         ) {
             accept('error', `Expected type '${coreTypes.List}' or '${coreTypes.Map}' but got '${receiverType}'.`, {
                 node: node.receiver,
@@ -121,7 +123,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
-        if (typeChecker.isAssignableTo(receiverType, coreTypes.List)) {
+        if (typeChecker.isAssignableTo(receiverType, coreTypes.List(UnknownType), { ignoreTypeParameters: true })) {
             const indexType = typeComputer.computeType(node.index);
             if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
@@ -131,6 +133,8 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
                 });
             }
         }
+
+        // TODO type checking for map
     };
 };
 
