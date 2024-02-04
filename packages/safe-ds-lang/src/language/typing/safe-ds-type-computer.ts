@@ -627,7 +627,7 @@ export class SafeDsTypeComputer {
         // Class-based types
         if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
             if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
-                return this.getAny(isNullable);
+                return this.Any(isNullable);
             } else {
                 return this.lowestCommonSupertypeForClassBasedTypes(
                     groupedTypes.classTypes,
@@ -671,7 +671,11 @@ export class SafeDsTypeComputer {
         };
 
         for (const type of types) {
-            if (type instanceof ClassType) {
+            if (type.equals(this.coreTypes.Nothing)) {
+                // Do nothing
+            } else if (type.equals(this.coreTypes.NothingOrNull)) {
+                result.constants.push(NullConstant);
+            } else if (type instanceof ClassType) {
                 result.classTypes.push(type);
             } else if (type instanceof EnumType) {
                 result.enumTypes.push(type);
@@ -718,7 +722,7 @@ export class SafeDsTypeComputer {
             }
         }
         /* c8 ignore next */
-        return this.getAny(isNullable);
+        return this.Any(isNullable);
     }
 
     private lowestCommonSupertypeForEnumBasedTypes(
@@ -749,14 +753,14 @@ export class SafeDsTypeComputer {
             }
         }
 
-        return this.getAny(isNullable);
+        return this.Any(isNullable);
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
     }
 
-    private getAny(isNullable: boolean): Type {
+    private Any(isNullable: boolean): Type {
         return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
     }
 }

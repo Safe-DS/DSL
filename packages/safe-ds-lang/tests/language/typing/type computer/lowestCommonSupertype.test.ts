@@ -204,6 +204,14 @@ const tests: LowestCommonSupertypeTest[] = [
         types: [coreTypes.String, new LiteralType(new IntConstant(1n), NullConstant)],
         expected: coreTypes.AnyOrNull,
     },
+    {
+        types: [coreTypes.Nothing, new LiteralType(new IntConstant(1n))],
+        expected: new LiteralType(new IntConstant(1n)),
+    },
+    {
+        types: [coreTypes.NothingOrNull, new LiteralType(new IntConstant(1n))],
+        expected: new LiteralType(NullConstant, new IntConstant(1n)),
+    },
     // Enum type & enum type
     {
         types: [enumType1, enumType1],
