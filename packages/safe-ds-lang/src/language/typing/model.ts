@@ -282,8 +282,9 @@ export class ClassType extends NamedType<SdsClass> {
         }
 
         return (
-            other.declaration === this.declaration && other.isNullable === this.isNullable
-            // TODO && substitutionsAreEqual(other.substitutions, this.substitutions)
+            other.declaration === this.declaration &&
+            other.isNullable === this.isNullable &&
+            substitutionsAreEqual(other.substitutions, this.substitutions)
         );
     }
 

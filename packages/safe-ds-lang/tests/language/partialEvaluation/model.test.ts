@@ -143,12 +143,6 @@ describe('partial evaluation model', async () => {
             expect(nodeInstance.equals(nodeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other node is an instance of another class (${
-            value().constructor.name
-        })`, () => {
-            expect(value().equals(valueOfOtherType())).toBeFalsy();
-        });
-
         it(`should return true if both nodes have the same values (${value().constructor.name})`, () => {
             expect(value().equals(value())).toBeTruthy();
         });
@@ -156,6 +150,14 @@ describe('partial evaluation model', async () => {
         if (unequalValueOfSameType) {
             it(`should return false if both nodes have different values (${value().constructor.name})`, () => {
                 expect(value().equals(unequalValueOfSameType())).toBeFalsy();
+            });
+        }
+
+        if (valueOfOtherType) {
+            it(`should return false if the other node is an instance of another class (${
+                value().constructor.name
+            })`, () => {
+                expect(value().equals(valueOfOtherType())).toBeFalsy();
             });
         }
     });

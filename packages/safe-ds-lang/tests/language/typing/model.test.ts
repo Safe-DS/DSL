@@ -81,6 +81,18 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
+            value: () => new ClassType(class1, new Map(), false),
+            unequalValueOfSameType: () => new ClassType(class1, new Map(), true),
+        },
+        {
+            value: () => new ClassType(class2, new Map([[typeParameter1, UnknownType]]), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), true),
+        },
+        {
+            value: () => new ClassType(class2, new Map(), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), true),
+        },
+        {
             value: () => new EnumType(enum1, true),
             unequalValueOfSameType: () => new EnumType(enum2, true),
             valueOfOtherType: () => UnknownType,
@@ -111,12 +123,6 @@ describe('type model', async () => {
             expect(typeInstance.equals(typeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other type is an instance of another class (${
-            value().constructor.name
-        })`, () => {
-            expect(value().equals(valueOfOtherType())).toBeFalsy();
-        });
-
         it(`should return true if both types have the same values (${value().constructor.name})`, () => {
             expect(value().equals(value())).toBeTruthy();
         });
@@ -124,6 +130,14 @@ describe('type model', async () => {
         if (unequalValueOfSameType) {
             it(`should return false if both types have different values (${value().constructor.name})`, () => {
                 expect(value().equals(unequalValueOfSameType())).toBeFalsy();
+            });
+        }
+
+        if (valueOfOtherType) {
+            it(`should return false if the other type is an instance of another class (${
+                value().constructor.name
+            })`, () => {
+                expect(value().equals(valueOfOtherType())).toBeFalsy();
             });
         }
     });
