@@ -1,4 +1,13 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, stream, WorkspaceCache } from 'langium';
+import {
+    AstNode,
+    AstNodeLocator,
+    EMPTY_STREAM,
+    getContainerOfType,
+    getDocument,
+    Stream,
+    stream,
+    WorkspaceCache,
+} from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
     isSdsAnnotation,
@@ -70,6 +79,7 @@ import {
     getAssignees,
     getLiterals,
     getParameters,
+    getParentTypes,
     getResults,
     getTypeArguments,
     getTypeParameters,
@@ -774,6 +784,57 @@ export class SafeDsTypeComputer {
 
     private Any(isNullable: boolean): Type {
         return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Stream supertypes
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns a stream of all declared super types of the given type. Direct ancestors are returned first, followed by
+     * their ancestors and so on. The given type is never included in the stream.
+     *
+     * Compared to `ClassHierarchy.streamSuperTypes`, this method cannot be used to detect cycles in the inheritance
+     * hierarchy. However, it can handle type parameters on parent types and substitute them accordingly.
+     */
+    streamSupertypes(type: ClassType | undefined): Stream<ClassType> {
+        if (!type) {
+            return EMPTY_STREAM;
+        }
+
+        return stream(this.supertypesGenerator(type));
+    }
+
+    private *supertypesGenerator(type: ClassType): Generator<ClassType, void> {
+        // Compared to `ClassHierarchy.superclassesGenerator`, we already include the given type in the list of visited
+        // elements, since this method here is not used to detect cycles.
+        const visited = new Set<SdsClass>([type.declaration]);
+        let current = this.parentClassType(type);
+        while (current && !visited.has(current.declaration)) {
+            yield current;
+            visited.add(current.declaration);
+            current = this.parentClassType(current);
+        }
+
+        const Any = this.coreTypes.Any;
+        if (Any instanceof ClassType && !visited.has(Any.declaration)) {
+            yield Any;
+        }
+    }
+
+    /**
+     * Tries to evaluate the first parent type of the class to a `ClassType` and returns it if successful. Type
+     * parameters get substituted. If there is no parent type or the parent type is not a class, `undefined` is
+     * returned.
+     */
+    private parentClassType(type: ClassType | undefined): ClassType | undefined {
+        const [firstParentTypeNode] = getParentTypes(type?.declaration);
+        const firstParentType = this.computeType(firstParentTypeNode, type?.substitutions);
+
+        if (firstParentType instanceof ClassType) {
+            return firstParentType;
+        }
+        return undefined;
     }
 }
 
