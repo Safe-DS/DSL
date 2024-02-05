@@ -5,7 +5,7 @@ import {
     createProgramMessage,
     createShutdownMessage,
     PythonServerMessage,
-} from '../../../lib/language/runner/messages.js';
+} from '../../../src/language/runner/messages.js';
 
 describe('runner messages', async () => {
     const toStringTests: ToStringTest<() => PythonServerMessage>[] = [
