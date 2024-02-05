@@ -1,15 +1,27 @@
 package tests.validation.types.checking.indexedAccessOnList
 
+@Pure fun list() -> list: List<Int>
+@Pure fun index() -> index: Int
+
 pipeline myPipeline {
-    // $TEST$ no error r"Expected type 'Int' but got .*\."
-    [1][»0«];
+    // $TEST$ no error r"Expected type .* but got .*\."
+    [0][»0«];
 
     // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
     [0][»""«];
 
-    // $TEST$ no error r"Expected type 'Int' but got .*\."
-    {"": ""}[»""«];
+    // $TEST$ no error r"Expected type .* but got .*\."
+    [0][»index()«];
 
-    // $TEST$ no error r"Expected type 'Int' but got .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
+    list()[»0«];
+
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+    list()[»""«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    list()[»index()«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
     unresolved[»""«];
 }

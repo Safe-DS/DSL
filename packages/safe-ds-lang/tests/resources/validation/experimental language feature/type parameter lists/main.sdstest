@@ -1,8 +1,0 @@
-
-package tests.validation.experimentalLanguageFeature.typeParameterLists
-
-// $TEST$ warning "Type parameter lists & type parameters are experimental and may change without prior notice."
-class MyClass»<>«
-
-// $TEST$ warning "Type parameter lists & type parameters are experimental and may change without prior notice."
-fun myFunction»<>«()

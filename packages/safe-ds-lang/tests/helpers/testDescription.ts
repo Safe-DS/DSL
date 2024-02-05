@@ -49,7 +49,7 @@ export interface EqualsTest<T> {
     /**
      * Produces a value of a different type.
      */
-    valueOfOtherType: () => T;
+    valueOfOtherType?: () => T;
 }
 
 /**

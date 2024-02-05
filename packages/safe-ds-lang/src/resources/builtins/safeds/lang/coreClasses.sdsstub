@@ -41,12 +41,12 @@ class Float sub Number
 /**
  * A list of elements.
  */
-class List<E>
+class List<out E>
 
 /**
  * A map of keys to values.
  */
-class Map<K, V>
+class Map<K, out V>
 
 /**
  * Some text.

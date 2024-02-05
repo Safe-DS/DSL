@@ -102,3 +102,41 @@ pipeline nonConstantOperands {
     // $TEST$ serialization Float
     val negationFloat = »-anyFloat()«;
 }
+
+pipeline mixedOperands {
+    // $TEST$ serialization Int
+    val additionIntInt = »10 + anyInt()«;
+    // $TEST$ serialization Int
+    val subtractionIntInt = »10 - anyInt()«;
+    // $TEST$ serialization Int
+    val multiplicationIntInt = »10 * anyInt()«;
+    // $TEST$ serialization Int
+    val divisionIntInt = »10 / anyInt()«;
+
+    // $TEST$ serialization Float
+    val additionIntFloat = »10 + anyFloat()«;
+    // $TEST$ serialization Float
+    val subtractionIntFloat = »10 - anyFloat()«;
+    // $TEST$ serialization Float
+    val multiplicationIntFloat = »10 * anyFloat()«;
+    // $TEST$ serialization Float
+    val divisionIntFloat = »10 / anyFloat()«;
+
+    // $TEST$ serialization Float
+    val additionFloatInt = »1.5 + anyInt()«;
+    // $TEST$ serialization Float
+    val subtractionFloatInt = »1.5 - anyInt()«;
+    // $TEST$ serialization Float
+    val multiplicationFloatInt = »1.5 * anyInt()«;
+    // $TEST$ serialization Float
+    val divisionFloatInt = »1.5 / anyInt()«;
+
+    // $TEST$ serialization Float
+    val additionFloatFloat = »1.5 + anyFloat()«;
+    // $TEST$ serialization Float
+    val subtractionFloatFloat = »1.5 - anyFloat()«;
+    // $TEST$ serialization Float
+    val multiplicationFloatFloat = »1.5 * anyFloat()«;
+    // $TEST$ serialization Float
+    val divisionFloatFloat = »1.5 / anyFloat()«;
+}

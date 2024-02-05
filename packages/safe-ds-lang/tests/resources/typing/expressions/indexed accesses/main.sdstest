@@ -1,23 +1,27 @@
 package tests.typing.expressions.indexedAccesses
 
-// TODO: Improve once type parameters are supported
 segment mySegment1(param: List<Int>) {
-    // $TEST$ serialization Any?
+    // $TEST$ serialization Int
     »param[0]«;
+
+    // $TEST$ serialization Int
+    »param[unresolved]«;
 }
 
-// TODO: Improve once type parameters are supported
 segment mySegment2(param: Map<String, Int>) {
-    // $TEST$ serialization Any?
+    // $TEST$ serialization Int
     »param[""]«;
+
+    // $TEST$ serialization Int
+    »param[unresolved]«;
 }
 
 segment mySegment3(param: String) {
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     »param[0]«;
 }
 
 segment mySegment4() {
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     »unresolved[0]«;
 }

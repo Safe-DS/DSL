@@ -41,13 +41,13 @@ export class SafeDsClassHierarchy {
         return stream(this.superclassesGenerator(node));
     }
 
-    private *superclassesGenerator(node: SdsClass | undefined): Generator<SdsClass, void> {
+    private *superclassesGenerator(node: SdsClass): Generator<SdsClass, void> {
         const visited = new Set<SdsClass>();
-        let current = this.parentClassOrUndefined(node);
+        let current = this.parentClass(node);
         while (current && !visited.has(current)) {
             yield current;
             visited.add(current);
-            current = this.parentClassOrUndefined(current);
+            current = this.parentClass(current);
         }
 
         const anyClass = this.builtinClasses.Any;
@@ -68,7 +68,7 @@ export class SafeDsClassHierarchy {
      * Returns the parent class of the given class, or undefined if there is no parent class. Only the first parent
      * type is considered, i.e. multiple inheritance is not supported.
      */
-    private parentClassOrUndefined(node: SdsClass | undefined): SdsClass | undefined {
+    private parentClass(node: SdsClass | undefined): SdsClass | undefined {
         const [firstParentType] = getParentTypes(node);
         if (isSdsNamedType(firstParentType)) {
             const declaration = firstParentType.declaration?.ref;
