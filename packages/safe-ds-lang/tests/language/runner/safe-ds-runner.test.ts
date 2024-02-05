@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import net from 'net';
-import {URI} from "langium";
+import { URI } from 'langium';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const runner = services.runtime.Runner;
@@ -29,23 +29,28 @@ describe('SafeDsRunner', async () => {
         expect(foundPort).toStrictEqual(portNumber);
     });
     it('getMainModuleName-sdspipe', async () => {
-        const document = services.shared.workspace.LangiumDocumentFactory.fromString("", URI.file("/a-b c.sdspipe"));
+        const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdspipe'));
         const mainModuleName = runner.getMainModuleName(document);
-        expect(mainModuleName).toStrictEqual("a_b_c");
+        expect(mainModuleName).toStrictEqual('a_b_c');
     });
     it('getMainModuleName-sdstest', async () => {
-        const document = services.shared.workspace.LangiumDocumentFactory.fromString("", URI.file("/a-b c.sdstest"));
+        const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdstest'));
         const mainModuleName = runner.getMainModuleName(document);
-        expect(mainModuleName).toStrictEqual("a_b_c");
+        expect(mainModuleName).toStrictEqual('a_b_c');
     });
     it('getMainModuleName-other', async () => {
-        const document = services.shared.workspace.LangiumDocumentFactory.fromString("", URI.file("/a-b c.sdstest2"));
+        const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdstest2'));
         const mainModuleName = runner.getMainModuleName(document);
-        expect(mainModuleName).toStrictEqual("a_b_c_sdstest2");
+        expect(mainModuleName).toStrictEqual('a_b_c_sdstest2');
     });
     it('generateCodeForRunner', async () => {
-        const document = services.shared.workspace.LangiumDocumentFactory.fromString("package a\n\npipeline mainpipeline {}", URI.file("/b.sdstest"));
+        const document = services.shared.workspace.LangiumDocumentFactory.fromString(
+            'package a\n\npipeline mainpipeline {}',
+            URI.file('/b.sdstest'),
+        );
         const [programCodeMap] = runner.generateCodeForRunner(document, undefined);
-        expect(JSON.stringify(programCodeMap).replaceAll("\\r\\n", "\\n")).toStrictEqual("{\"a\":{\"gen_b\":\"# Pipelines --------------------------------------------------------------------\\n\\ndef mainpipeline():\\n    pass\\n\",\"gen_b_mainpipeline\":\"from .gen_b import mainpipeline\\n\\nif __name__ == '__main__':\\n    mainpipeline()\\n\"}}");
+        expect(JSON.stringify(programCodeMap).replaceAll('\\r\\n', '\\n')).toStrictEqual(
+            '{"a":{"gen_b":"# Pipelines --------------------------------------------------------------------\\n\\ndef mainpipeline():\\n    pass\\n","gen_b_mainpipeline":"from .gen_b import mainpipeline\\n\\nif __name__ == \'__main__\':\\n    mainpipeline()\\n"}}',
+        );
     });
 });
