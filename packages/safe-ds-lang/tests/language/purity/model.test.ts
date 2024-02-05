@@ -54,12 +54,6 @@ describe('purity model', async () => {
             expect(typeInstance.equals(typeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other type is an instance of another class (${
-            value().constructor.name
-        })`, () => {
-            expect(value().equals(valueOfOtherType())).toBeFalsy();
-        });
-
         it(`should return true if both types have the same values (${value().constructor.name})`, () => {
             expect(value().equals(value())).toBeTruthy();
         });
@@ -67,6 +61,14 @@ describe('purity model', async () => {
         if (unequalValueOfSameType) {
             it(`should return false if both types have different values (${value().constructor.name})`, () => {
                 expect(value().equals(unequalValueOfSameType())).toBeFalsy();
+            });
+        }
+
+        if (valueOfOtherType) {
+            it(`should return false if the other type is an instance of another class (${
+                value().constructor.name
+            })`, () => {
+                expect(value().equals(valueOfOtherType())).toBeFalsy();
             });
         }
     });
