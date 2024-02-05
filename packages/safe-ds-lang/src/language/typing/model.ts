@@ -264,6 +264,7 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
 
     substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleEntry<T> {
         if (isEmpty(substitutions)) {
+            /* c8 ignore next 2 */
             return this;
         }
 

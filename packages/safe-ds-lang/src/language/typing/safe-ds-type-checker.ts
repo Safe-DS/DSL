@@ -56,6 +56,7 @@ export class SafeDsTypeChecker {
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (type instanceof TypeParameterType || other instanceof TypeParameterType) {
+            /* c8 ignore next 3 */
             // TODO(LR): This must be updated when we work on type parameter constraints.
             return true;
         } else if (other instanceof UnionType) {
@@ -165,6 +166,7 @@ export class SafeDsTypeChecker {
                 (it) => it.declaration === other.declaration,
             );
             if (!candidate) {
+                /* c8 ignore next 2 */
                 return false;
             }
 

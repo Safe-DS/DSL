@@ -20,12 +20,7 @@ export class SafeDsNodeInfoProvider {
      */
     getDetails(node: AstNode): string | undefined {
         if (isSdsAttribute(node)) {
-            const type = this.typeComputer.computeType(node)?.toString();
-            if (!type) {
-                return undefined;
-            }
-
-            return `: ${type}`;
+            return `: ${this.typeComputer.computeType(node)}`;
         } else if (isSdsFunction(node) || isSdsSegment(node)) {
             return this.typeComputer.computeType(node)?.toString();
         } else {
