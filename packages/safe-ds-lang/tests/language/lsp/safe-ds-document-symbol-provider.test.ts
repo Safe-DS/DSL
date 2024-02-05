@@ -35,10 +35,12 @@ describe('SafeDsSemanticTokenProvider', async () => {
                         {
                             name: 'a',
                             kind: SymbolKind.Property,
+                            detail: ': Int',
                         },
                         {
                             name: 'b',
                             kind: SymbolKind.Property,
+                            detail: ': (p: Int) -> (r: Int)',
                         },
                     ],
                 },
