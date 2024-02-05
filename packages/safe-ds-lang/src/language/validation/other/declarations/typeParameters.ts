@@ -87,10 +87,17 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
                     node: reference,
                     code: CODE_TYPE_PARAMETER_USAGE,
                 });
+                return; // Don't show other errors for this reference
+            }
+
+            // Usages in the **own constructor** are always correct. This check must come after the previous one, since
+            // that one filters out usages in **constructors of nested classes**.
+            if (isInConstructor(reference)) {
+                return;
             }
 
             // Check usage of variant type parameters
-            else if (TypeParameter.isContravariant(node)) {
+            if (TypeParameter.isContravariant(node)) {
                 const position = getTypePosition(nodeMapper, declarationWithTypeParameter, reference);
 
                 if (position !== 'contravariant') {
@@ -113,6 +120,11 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
     };
 };
 
+const isInConstructor = (node: AstNode) => {
+    const parameterList = getContainerOfType(node, isSdsParameterList);
+    return isSdsClass(parameterList?.$container);
+};
+
 const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsClass, reference: AstNode) => {
     const containingClassMember = getContainerOfType(reference, isSdsClassMember);
 
@@ -121,7 +133,7 @@ const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsCl
         return true;
     }
 
-    // Handle usage in static context
+    // Handle usage in static member
     if (isStatic(containingClassMember)) {
         return false;
     }

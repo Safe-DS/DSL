@@ -82,6 +82,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         actualOutputRoot,
         expectedOutputFiles,
         runUntil,
+        disableRunnerIntegration: shortenedResourceName.startsWith('eject'), // Tests in the "eject" top level folder are tested with disabled runner integration
     };
 };
 
@@ -115,6 +116,7 @@ const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): Gene
         actualOutputRoot: URI.file(''),
         expectedOutputFiles: [],
         error,
+        disableRunnerIntegration: false,
     };
 };
 
@@ -141,6 +143,11 @@ interface GenerationTest extends TestDescription {
      * Location after which execution should be stopped.
      */
     runUntil?: Location;
+
+    /**
+     * Whether the test should run with runner integration (memoization & placeholder saving) disabled
+     */
+    disableRunnerIntegration: boolean;
 }
 
 /**
