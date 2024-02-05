@@ -359,8 +359,8 @@ export class SafeDsRunner {
             const sdsNoExtFilename =
                 path.extname(sdsFileName).length > 0
                     ? sdsFileName.substring(0, sdsFileName.length - path.extname(sdsFileName).length)
-                    /* c8 ignore next */
-                    : sdsFileName;
+                    : /* c8 ignore next */
+                      sdsFileName;
             // Put code in map for further use in the extension (e.g. to remap errors)
             lastGeneratedSources.set(
                 path.join(workspaceRelativeFilePath, sdsFileName).replaceAll('\\', '/'),
