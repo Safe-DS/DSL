@@ -18,6 +18,7 @@ import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js
 import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
 import { getModuleMembers } from '../helpers/nodeProperties.js';
 
+// Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 export class SafeDsRunner {
     private readonly annotations: SafeDsAnnotations;
     private readonly generator: SafeDsPythonGenerator;
@@ -60,24 +61,20 @@ export class SafeDsRunner {
     public updateRunnerCommand(command: string): void {
         this.runnerCommand = command;
     }
-    /* c8 ignore stop */
 
     /**
      * Change the output functions for runner logging and error information to those provided.
      *
      * @param logging New Runner output functions.
      */
-    /* c8 ignore start */
     public updateRunnerLogging(logging: RunnerLoggingOutput): void {
         this.logging = logging;
     }
-    /* c8 ignore stop */
 
     /**
      * Start the python server on the next usable port, starting at 5000.
      * Uses the 'safe-ds.runner.command' setting to execute the process.
      */
-    /* c8 ignore start */
     public async startPythonServer(): Promise<void> {
         this.acceptsConnections = false;
         const runnerCommandParts = this.runnerCommand.split(/\s/u);
@@ -109,13 +106,11 @@ export class SafeDsRunner {
         }
         this.logging.outputInfo('Started python server successfully');
     }
-    /* c8 ignore stop */
 
     /**
      * Stop the python server process, if any currently exist. This will first try a graceful shutdown.
      * If that fails, the whole process tree (starting at the child process spawned by startPythonServer) will get killed.
      */
-    /* c8 ignore start */
     async stopPythonServer(): Promise<void> {
         this.logging.outputInfo('Stopping python server...');
         if (this.runnerProcess !== undefined) {
@@ -137,9 +132,7 @@ export class SafeDsRunner {
         this.runnerProcess = undefined;
         this.acceptsConnections = false;
     }
-    /* c8 ignore stop */
 
-    /* c8 ignore start */
     private async requestGracefulShutdown(maxTimeoutMs: number): Promise<boolean> {
         this.logging.outputInfo('Trying graceful shutdown...');
         this.sendMessageToPythonServer(createShutdownMessage());
@@ -154,16 +147,13 @@ export class SafeDsRunner {
             }, maxTimeoutMs);
         });
     }
-    /* c8 ignore stop */
 
     /**
      * @return True if the python server was started and the websocket connection was established, false otherwise.
      */
-    /* c8 ignore start */
     public isPythonServerAvailable(): boolean {
         return this.acceptsConnections;
     }
-    /* c8 ignore stop */
 
     /**
      * Register a callback to execute when a message from the python server arrives.
@@ -171,7 +161,6 @@ export class SafeDsRunner {
      * @param callback Callback to execute
      * @param messageType Message type to register the callback for.
      */
-    /* c8 ignore start */
     public addMessageCallback<M extends PythonServerMessage['type']>(
         callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
@@ -181,7 +170,6 @@ export class SafeDsRunner {
         }
         this.messageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
     }
-    /* c8 ignore stop */
 
     /**
      * Remove a previously registered callback from being called when a message from the python server arrives.
@@ -189,7 +177,6 @@ export class SafeDsRunner {
      * @param callback Callback to remove
      * @param messageType Message type the callback was registered for.
      */
-    /* c8 ignore start */
     public removeMessageCallback<M extends PythonServerMessage['type']>(
         callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
@@ -202,7 +189,6 @@ export class SafeDsRunner {
             this.messageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
         );
     }
-    /* c8 ignore stop */
 
     /**
      * Get information about a pipeline execution.
@@ -210,31 +196,25 @@ export class SafeDsRunner {
      * @param pipelineId Unique id that identifies a pipeline execution
      * @return Execution context assigned to the provided id.
      */
-    /* c8 ignore start */
     public getExecutionContext(pipelineId: string): PipelineExecutionInformation | undefined {
         return this.executionInformation.get(pipelineId);
     }
-    /* c8 ignore stop */
 
     /**
      * Remove information from a pipeline execution, when it is no longer needed.
      *
      * @param pipelineId Unique id that identifies a pipeline execution
      */
-    /* c8 ignore start */
     public dropPipelineExecutionContext(pipelineId: string) {
         this.executionInformation.delete(pipelineId);
     }
-    /* c8 ignore stop */
 
     /**
      * Remove information from all previous pipeline executions.
      */
-    /* c8 ignore start */
     public dropAllPipelineExecutionContexts() {
         this.executionInformation.clear();
     }
-    /* c8 ignore stop */
 
     /**
      * Map a stack frame from python to Safe-DS.
@@ -244,7 +224,6 @@ export class SafeDsRunner {
      * @param executionId Id that uniquely identifies the execution that produced this stack frame
      * @param frame Stack frame from the python execution
      */
-    /* c8 ignore start */
     public async tryMapToSafeDSSource(
         executionId: string,
         frame: RuntimeErrorBacktraceFrame | undefined,
@@ -276,7 +255,6 @@ export class SafeDsRunner {
         });
         return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
     }
-    /* c8 ignore stop */
 
     /**
      * Execute a Safe-DS pipeline on the python runner.
@@ -286,7 +264,6 @@ export class SafeDsRunner {
      * @param id A unique id that is used in further communication with this pipeline.
      * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
      */
-    /* c8 ignore start */
     public async executePipeline(
         pipelineDocument: LangiumDocument,
         id: string,
@@ -403,9 +380,7 @@ export class SafeDsRunner {
         this.logging.outputInfo(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
     }
-    /* c8 ignore stop */
 
-    /* c8 ignore start */
     private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
         process.stderr.on('data', (data: Buffer) => {
             this.logging.outputInfo(`[Runner-Err] ${data.toString().trim()}`);
@@ -422,9 +397,7 @@ export class SafeDsRunner {
             });
         });
     }
-    /* c8 ignore stop */
 
-    /* c8 ignore start */
     private manageRunnerSubprocessOutputIO() {
         if (!this.runnerProcess) {
             return;
@@ -442,9 +415,7 @@ export class SafeDsRunner {
             this.runnerProcess = undefined;
         });
     }
-    /* c8 ignore stop */
 
-    /* c8 ignore start */
     private async connectToWebSocket(): Promise<void> {
         const timeoutMs = 200;
         const maxConnectionTries = 8;
