@@ -1,6 +1,6 @@
 import type { FromExtensionMessage } from '../../../types/shared-eda-vscode/messaging';
-import type { State } from '../../../types/shared-eda-vscode/types';
-import * as extensionApi from './Apis/extensionApi';
+import type { State } from '../../../types/shared-eda-vscode/state';
+import * as extensionApi from './apis/extensionApi';
 import { writable } from 'svelte/store';
 
 let currentTabIndex = writable<number>(0);
@@ -19,6 +19,7 @@ currentState.subscribe(($currentState) => {
 
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
+    // eslint-disable-next-line no-console
     console.log(Date.now() + ': ' + message.command + ' called');
     switch (message.command) {
         case 'setWebviewState':

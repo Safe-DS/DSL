@@ -80,13 +80,6 @@
                 "path": "./syntaxes/safe-ds.tmLanguage.json"
             }
         ],
-        "configurationDefaults": {
-            "[safe-ds]": {
-                "editor.semanticHighlighting.enabled": true,
-                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
-                "files.trimTrailingWhitespace": true
-            }
-        },
         "configuration": {
             "title": "Safe-DS",
             "properties": {
@@ -117,6 +110,13 @@
                 }
             }
         },
+        "configurationDefaults": {
+            "[safe-ds]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
+            }
+        },
         "menus": {
             "editor/title/run": [
                 {
@@ -127,7 +127,7 @@
             ],
             "editor/context": [
                 {
-                    "command": "eda-test01.runEdaFromContext"
+                    "command": "safe-ds.runEdaFromContext"
                 }
             ]
         },
@@ -139,12 +139,12 @@
                 "icon": "$(play)"
             },
             {
-                "command": "eda-test01.refreshWebview",
+                "command": "safe-ds.refreshWebview",
                 "title": "Refresh Webview",
                 "category": "EDA"
             },
             {
-                "command": "eda-test01.runEdaFromContext",
+                "command": "safe-ds.runEdaFromContext",
                 "title": "Explore Table",
                 "category": "EDA"
             }

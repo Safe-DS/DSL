@@ -1,10 +1,10 @@
 <script lang="ts">
     import { currentState, currentTabIndex } from '../webviewState';
-    import CaretIcon from '../icons/caret.svelte';
-    import HistoryIcon from '../icons/history.svelte';
-    import UndoIcon from '../icons/undo.svelte';
-    import TableIcon from '../icons/table.svelte';
-    import LinePlotTab from './Tabs/LinePlotTab.svelte';
+    import CaretIcon from '../icons/Caret.svelte';
+    import HistoryIcon from '../icons/History.svelte';
+    import UndoIcon from '../icons/Undo.svelte';
+    import TableIcon from '../icons/Table.svelte';
+    import LinePlotTab from './tabs/LinePlotTab.svelte';
 
     export let width: number;
 </script>

@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
     import { currentState, preventClicks } from '../webviewState';
-    import CaretIcon from '../icons/caret.svelte';
+    import CaretIcon from '../icons/Caret.svelte';
 
     export let sidebarWidth: number;
 
@@ -13,8 +13,8 @@
     let showProfiling = false;
     let minTableWidth = 0;
     const borderColumnWidth = 45; // Set in CSS, change here if changes in css
-    let headerElements: HTMLElement[] = [];
-    let savedColumnWidths: Map<string, number> = new Map();
+    const headerElements: HTMLElement[] = [];
+    const savedColumnWidths: Map<string, number> = new Map();
 
     let numRows = 0;
     $: {
@@ -62,7 +62,7 @@
     let startWidth: number;
     let startX: number;
     let targetColumn: HTMLElement;
-    let resizeWidthMap: Map<string, number> = new Map();
+    const resizeWidthMap: Map<string, number> = new Map();
 
     const throttledDoResizeDrag = throttle(doResizeDrag, 30);
 
@@ -142,14 +142,6 @@
             draggedColumn.classList.add('dragging');
             savedColumnWidths.set(draggedColumn.innerText, 0);
             updateTableSpace();
-
-            // Not needed anymore apparently
-            // // Lower the z-index of all other headers
-            // headerElements.forEach((header, index) => {
-            //     if (index !== columnIndex) {
-            //         header.style.zIndex = '0'; // Or any value lower than the dragging header
-            //     }
-            // });
             selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
         }, 300); // milliseconds delay for hold detection
 
@@ -397,7 +389,7 @@
     // --- Right clicks ---
     let showingColumnHeaderRightClickMenu = false;
     let rightClickedColumnIndex = -1;
-    let rightClickClumnMenuElement: HTMLElement;
+    let rightClickColumnMenuElement: HTMLElement;
     let currentContextMenu: HTMLElement | null = null;
 
     function handleColumnRightClick(event: MouseEvent, columnIndex: number): void {
@@ -407,9 +399,9 @@
         rightClickedColumnIndex = columnIndex;
 
         requestAnimationFrame(() => {
-            currentContextMenu = rightClickClumnMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
-            rightClickClumnMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
-            rightClickClumnMenuElement!.style.top = event.clientY + scrollTop + 'px';
+            currentContextMenu = rightClickColumnMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
+            rightClickColumnMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            rightClickColumnMenuElement!.style.top = event.clientY + scrollTop + 'px';
         });
 
         // Click anywhere else to close the menu, context menu selection has to prevent propagation
@@ -677,7 +669,7 @@
     {/if}
     <!-- Context menus -->
     {#if showingColumnHeaderRightClickMenu}
-        <div class="contextMenu" bind:this={rightClickClumnMenuElement}>
+        <div class="contextMenu" bind:this={rightClickColumnMenuElement}>
             {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
                 <button
                     class="contextItem"

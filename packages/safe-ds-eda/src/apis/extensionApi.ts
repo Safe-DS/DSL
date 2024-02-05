@@ -1,4 +1,4 @@
-import type { State } from '../../../../types/shared-eda-vscode/types';
+import type { State } from '../../../../types/shared-eda-vscode/state';
 
 export const setCurrentGlobalState = function (state: State) {
     window.injVscode.postMessage({

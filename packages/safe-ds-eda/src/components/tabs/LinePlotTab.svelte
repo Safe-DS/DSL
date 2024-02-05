@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { LinePlotTab } from '../../../../../types/shared-eda-vscode/types';
-    import LinePlotIcon from '../../icons/line-plot.svelte';
+    import type { LinePlotTab } from '../../../../../types/shared-eda-vscode/state';
+    import LinePlotIcon from '../../icons/LinePlot.svelte';
 
     export let tabOject: LinePlotTab;
     export let active: boolean;

@@ -9,7 +9,7 @@
         "allowJs": true,
         "checkJs": true,
         "isolatedModules": true,
-        "typeRoots": ["./node_modules/@types", "./declarations.d.ts", "./globals.d.ts"]
+        "typeRoots": ["./node_modules/@types", "types/declarations.d.ts", "types/globals.d.ts"]
     },
     "include": [
         "src/**/*.d.ts",
@@ -18,8 +18,8 @@
         "src/**/*.ts",
         "src/**/*.js",
         "src/**/*.svelte",
-        "declarations.d.ts",
-        "globals.d.ts",
+        "types/declarations.d.ts",
+        "types/globals.d.ts",
         "../../types",
         "./*.d.ts",
         "*.d.ts"

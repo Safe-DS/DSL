@@ -1,12 +1,10 @@
 <script lang="ts">
-    import Debugger from './components/Debugger.svelte';
     import TableView from './components/TableView.svelte';
     import Sidebar from './components/Sidebar.svelte';
     import { throttle } from 'lodash';
 
     let sidebarWidth = 307; // Initial width of the sidebar in pixels
 
-    // Function to handle the dragging
     function handleDrag(e: MouseEvent) {
         const throttledOnMouseMove = throttle(onMouseMove, 30);
 
@@ -40,7 +38,6 @@
 </script>
 
 <main>
-    <!-- <Debugger /> -->
     <div class="sidebarWrapper" style="width: {sidebarWidth}px;" class:white-bg={sidebarWidth < 100}>
         <Sidebar width={sidebarWidth} />
         <div class="resizer" on:mousedown={handleDrag}></div>

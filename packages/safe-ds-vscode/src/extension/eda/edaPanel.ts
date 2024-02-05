@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
-import { ToExtensionMessage } from '../../../../types/shared-eda-vscode/messaging.js';
-import * as webviewApi from './Apis/webviewApi.ts';
-import { Column, State, Table } from '../../../../types/shared-eda-vscode/types.js';
-import { addMessageCallback, removeMessageCallback, sendMessageToPythonServer } from './pythonServer.ts';
-import { PlaceholderValueMessage, createPlaceholderQueryMessage } from './messages.ts';
-import { logOutput, printOutputMessage } from './output.ts';
+import { ToExtensionMessage } from '../../../../../types/shared-eda-vscode/messaging.js';
+import * as webviewApi from './apis/webviewApi.ts';
+import { Column, State, Table } from '../../../../../types/shared-eda-vscode/state.js';
+import { addMessageCallback, removeMessageCallback, sendMessageToPythonServer } from '../pythonServer.ts';
+import { PlaceholderValueMessage, createPlaceholderQueryMessage } from '../messages.ts';
+import { logOutput, printOutputMessage } from '../output.ts';
+
+export const undefinedPanelIdentifier = 'undefinedPanelIdentifier';
 
 export class EDAPanel {
     // Map to track multiple panels
@@ -13,15 +15,15 @@ export class EDAPanel {
 
     public static readonly viewType = 'eda';
 
-    private readonly _panel: vscode.WebviewPanel;
-    private readonly _extensionUri: vscode.Uri;
-    private _disposables: vscode.Disposable[] = [];
-    private _tableIdentifier: string | undefined;
-    private _pythonServerPort: number = 5000;
-    private _startPipelineId: string = '';
-    private _column: vscode.ViewColumn | undefined;
-    private _webviewListener: vscode.Disposable | undefined;
-    private _viewStateChangeListener: vscode.Disposable | undefined;
+    private readonly panel: vscode.WebviewPanel;
+    private readonly extensionUri: vscode.Uri;
+    private disposables: vscode.Disposable[] = [];
+    private tableIdentifier: string | undefined;
+    private pythonServerPort: number = 5000;
+    private startPipelineId: string = '';
+    private column: vscode.ViewColumn | undefined;
+    private webviewListener: vscode.Disposable | undefined;
+    private viewStateChangeListener: vscode.Disposable | undefined;
     // private _lastVisibleState: boolean = true;
 
     private constructor(
@@ -31,40 +33,32 @@ export class EDAPanel {
         tableIdentifier?: string,
         pythonServerPort = 5000,
     ) {
-        this._panel = panel;
-        this._extensionUri = extensionUri;
-        this._tableIdentifier = tableIdentifier;
-        this._pythonServerPort = pythonServerPort;
-        this._startPipelineId = startPipeLineId;
+        this.panel = panel;
+        this.extensionUri = extensionUri;
+        this.tableIdentifier = tableIdentifier;
+        this.pythonServerPort = pythonServerPort;
+        this.startPipelineId = startPipeLineId;
 
         // Set the webview's initial html content
         this._update();
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
-        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
         // Handle view state changes
-        this._viewStateChangeListener = this._panel.onDidChangeViewState(async (e) => {
+        this.viewStateChangeListener = this.panel.onDidChangeViewState(async (e) => {
             const updatedPanel = e.webviewPanel;
             if (updatedPanel.visible) {
-                this._column = updatedPanel.viewColumn;
-                // Not needed as retainContextWhenHidden is true for panel
-                // if(!this._lastVisibleState) { // State only has to be updated if it left the visible state and thus lost it's state
-                //   webviewApi.postMessage(updatedPanel.webview, {
-                //     command: "setWebviewState",
-                //     value: await this.constructCurrentState(),
-                //   });
-                // }
+                this.column = updatedPanel.viewColumn;
             }
-            // this._lastVisibleState = e.webviewPanel.visible;
         });
-        this._disposables.push(this._viewStateChangeListener);
+        this.disposables.push(this.viewStateChangeListener);
 
         // Handle messages from the webview
-        const webview = this._panel.webview;
-        this._webviewListener = webview.onDidReceiveMessage(async (data: ToExtensionMessage) => {
-            console.log(data.command + ' called');
+        const webview = this.panel.webview;
+        this.webviewListener = webview.onDidReceiveMessage(async (data: ToExtensionMessage) => {
+            printOutputMessage(data.command + ' called');
             switch (data.command) {
                 case 'setInfo': {
                     if (!data.value) {
@@ -102,7 +96,7 @@ export class EDAPanel {
                 }
             }
         });
-        this._disposables.push(this._webviewListener);
+        this.disposables.push(this.webviewListener);
     }
 
     public static createOrShow(
@@ -116,20 +110,19 @@ export class EDAPanel {
 
         // Set column to the active editor if it exists
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
-        console.log(column);
 
         // If we already have a panel, show it.
-        let panel = EDAPanel.panelsMap.get(tableIdentifier ?? 'undefinedPanelIdentifier');
+        let panel = EDAPanel.panelsMap.get(tableIdentifier ?? undefinedPanelIdentifier);
         if (panel) {
-            panel._panel.reveal(panel._column);
-            panel._tableIdentifier = tableIdentifier;
-            panel._pythonServerPort = pythonServerPort;
-            panel._startPipelineId = startPipelineId;
+            panel.panel.reveal(panel.column);
+            panel.tableIdentifier = tableIdentifier;
+            panel.pythonServerPort = pythonServerPort;
+            panel.startPipelineId = startPipelineId;
 
             // Have to update and construct state as table placeholder could've changed in code
             panel._update();
             panel.constructCurrentState().then((state) => {
-                webviewApi.postMessage(panel!._panel.webview, {
+                webviewApi.postMessage(panel!.panel.webview, {
                     command: 'setWebviewState',
                     value: state,
                 });
@@ -154,15 +147,14 @@ export class EDAPanel {
             );
 
             const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
-            EDAPanel.panelsMap.set(tableIdentifier ?? 'undefinedPanelIdentifier', edaPanel);
-            edaPanel._column = column;
-            edaPanel._panel.iconPath = {
-                light: vscode.Uri.joinPath(edaPanel._extensionUri, 'resources', 'binoculars-solid.png'),
-                dark: vscode.Uri.joinPath(edaPanel._extensionUri, 'resources', 'binoculars-solid.png'),
+            EDAPanel.panelsMap.set(tableIdentifier ?? undefinedPanelIdentifier, edaPanel);
+            edaPanel.column = column;
+            edaPanel.panel.iconPath = {
+                light: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
+                dark: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
             };
-            console.log('here');
             edaPanel.constructCurrentState().then((state) => {
-                webviewApi.postMessage(edaPanel!._panel.webview, {
+                webviewApi.postMessage(edaPanel!.panel.webview, {
                     command: 'setWebviewState',
                     value: state,
                 });
@@ -171,7 +163,7 @@ export class EDAPanel {
     }
 
     public static kill(tableIdentifier: string) {
-        console.log('kill ' + tableIdentifier);
+        printOutputMessage('kill ' + tableIdentifier);
         let panel = EDAPanel.panelsMap.get(tableIdentifier);
         if (panel) {
             panel.dispose();
@@ -184,20 +176,19 @@ export class EDAPanel {
         if (existingPanel) {
             existingPanel.dispose();
         }
-        const revivedPanel = new EDAPanel(panel, extensionUri, existingPanel?._startPipelineId ?? '', tableIdentifier);
+        const revivedPanel = new EDAPanel(panel, extensionUri, existingPanel?.startPipelineId ?? '', tableIdentifier);
         EDAPanel.panelsMap.set(tableIdentifier, revivedPanel);
     }
 
     public dispose() {
-        console.log('dispose');
-        EDAPanel.panelsMap.delete(this._tableIdentifier ?? 'undefinedPanelIdentifier');
+        EDAPanel.panelsMap.delete(this.tableIdentifier ?? undefinedPanelIdentifier);
 
         // Clean up our panel
-        this._panel.dispose();
+        this.panel.dispose();
 
         // Cleans up all disposables like listeners
-        while (this._disposables.length) {
-            const x = this._disposables.pop();
+        while (this.disposables.length) {
+            const x = this.disposables.pop();
             if (x) {
                 x.dispose();
             }
@@ -205,13 +196,13 @@ export class EDAPanel {
     }
 
     private async _update() {
-        const webview = this._panel.webview;
-        this._panel.webview.html = await this._getHtmlForWebview(webview);
+        const webview = this.panel.webview;
+        this.panel.webview.html = await this._getHtmlForWebview(webview);
     }
 
     private findCurrentState(): State | undefined {
         const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
-        return existingStates.find((s) => s.tableIdentifier === this._tableIdentifier);
+        return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
     }
 
     private constructCurrentState(): Promise<State> {
@@ -223,13 +214,13 @@ export class EDAPanel {
                 return;
             }
 
-            if (!this._tableIdentifier) {
+            if (!this.tableIdentifier) {
                 resolve({ tableIdentifier: undefined, history: [], defaultState: true });
                 return;
             }
 
             const placeholderValueCallback = (message: PlaceholderValueMessage) => {
-                if (message.id !== this._startPipelineId || message.data.name !== this._tableIdentifier) {
+                if (message.id !== this.startPipelineId || message.data.name !== this.tableIdentifier) {
                     return;
                 }
                 removeMessageCallback(placeholderValueCallback, 'placeholder_value');
@@ -237,7 +228,7 @@ export class EDAPanel {
                 const pythonTableColumns = message.data.value;
                 const table: Table = {
                     totalRows: 0,
-                    name: this._tableIdentifier,
+                    name: this.tableIdentifier,
                     columns: [] as Table['columns'],
                     appliedFilters: [] as Table['appliedFilters'],
                 };
@@ -271,12 +262,12 @@ export class EDAPanel {
                 table.totalRows = currentMax;
                 table.visibleRows = currentMax;
                 printOutputMessage('Got placeholder from Runner!');
-                resolve({ tableIdentifier: this._tableIdentifier, history: [], defaultState: false, table });
+                resolve({ tableIdentifier: this.tableIdentifier, history: [], defaultState: false, table });
             };
 
             addMessageCallback(placeholderValueCallback, 'placeholder_value');
             printOutputMessage('Getting placeholder from Runner ...');
-            sendMessageToPythonServer(createPlaceholderQueryMessage(this._startPipelineId, this._tableIdentifier));
+            sendMessageToPythonServer(createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier));
 
             setTimeout(() => reject(new Error('Timeout waiting for placeholder value')), 30000);
         });
@@ -286,22 +277,21 @@ export class EDAPanel {
         // The uri we use to load this script in the webview
         let scriptUri;
         // First look in the eda package, so the watch build works and updates the webview on changes
-        let scriptPath = vscode.Uri.joinPath(this._extensionUri, '..', 'safe-ds-eda', 'dist', 'main.js');
+        let scriptPath = vscode.Uri.joinPath(this.extensionUri, '..', 'safe-ds-eda', 'dist', 'main.js');
         scriptUri = webview.asWebviewUri(scriptPath);
         try {
             await vscode.workspace.fs.stat(scriptPath);
             logOutput('Using EDA build from EDA package.');
         } catch (error) {
             // If not use the static one from the dist folder here
-            console.log(error);
             logOutput('Using EDA build from local dist.');
-            scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'eda-webview', 'main.js'));
+            scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'dist', 'eda-webview', 'main.js'));
         }
 
         // Uri to load styles into webview
-        const stylesResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
-        const stylesVscodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
-        const stylesMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'styles.css'));
+        const stylesResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'media', 'reset.css'));
+        const stylesVscodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'media', 'vscode.css'));
+        const stylesMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'media', 'styles.css'));
 
         // Use a nonce to only allow specific scripts to be run
         const nonce = this.getNonce();
@@ -322,8 +312,8 @@ export class EDAPanel {
       <link href="${stylesMainUri}" rel="stylesheet">
       <script nonce="${nonce}">
         window.injVscode = acquireVsCodeApi();
-        window.tableIdentifier = "${this._tableIdentifier}" === "undefined" ? undefined : "${this._tableIdentifier}";
-        window.pythonServerPort = ${this._pythonServerPort};
+        window.tableIdentifier = "${this.tableIdentifier}" === "undefined" ? undefined : "${this.tableIdentifier}";
+        window.pythonServerPort = ${this.pythonServerPort};
       </script>
     </head>
     <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>
