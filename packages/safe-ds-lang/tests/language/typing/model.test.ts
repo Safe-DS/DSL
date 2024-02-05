@@ -1,8 +1,12 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsEnumVariant, isSdsFunction } from '../../../src/language/generated/ast.js';
-import { getParameters, getResults } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import {
+    createSafeDsServicesWithBuiltins,
+    getParameters,
+    getResults,
+    getTypeParameters,
+} from '../../../src/language/index.js';
 import { BooleanConstant, IntConstant, NullConstant } from '../../../src/language/partialEvaluation/model.js';
 import {
     CallableType,
@@ -14,6 +18,8 @@ import {
     NamedTupleType,
     StaticType,
     Type,
+    TypeParameterSubstitutions,
+    TypeParameterType,
     UnionType,
     UnknownType,
 } from '../../../src/language/typing/model.js';
@@ -26,7 +32,7 @@ const code = `
     fun f2(),
 
     class C1
-    class C2
+    class C2<K, V>
 
     enum MyEnum1 {
         MyEnumVariant1
@@ -41,6 +47,8 @@ const result = getResults(callable1.resultList)[0]!;
 const callable2 = await getNodeOfType(services, code, isSdsFunction, 1);
 const class1 = await getNodeOfType(services, code, isSdsClass, 0);
 const class2 = await getNodeOfType(services, code, isSdsClass, 1);
+const typeParameter1 = getTypeParameters(class2)[0]!;
+const typeParameter2 = getTypeParameters(class2)[1]!;
 const enum1 = await getNodeOfType(services, code, isSdsEnum, 0);
 const enum2 = await getNodeOfType(services, code, isSdsEnum, 1);
 const enumVariant1 = await getNodeOfType(services, code, isSdsEnumVariant, 0);
@@ -71,9 +79,21 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new ClassType(class1, true),
-            unequalValueOfSameType: () => new ClassType(class2, true),
+            value: () => new ClassType(class1, new Map(), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map(), true),
             valueOfOtherType: () => UnknownType,
+        },
+        {
+            value: () => new ClassType(class1, new Map(), false),
+            unequalValueOfSameType: () => new ClassType(class1, new Map(), true),
+        },
+        {
+            value: () => new ClassType(class2, new Map([[typeParameter1, UnknownType]]), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), true),
+        },
+        {
+            value: () => new ClassType(class2, new Map(), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), true),
         },
         {
             value: () => new EnumType(enum1, true),
@@ -86,8 +106,13 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new StaticType(new ClassType(class1, false)),
-            unequalValueOfSameType: () => new StaticType(new ClassType(class2, false)),
+            value: () => new TypeParameterType(typeParameter1, true),
+            unequalValueOfSameType: () => new TypeParameterType(typeParameter2, true),
+            valueOfOtherType: () => UnknownType,
+        },
+        {
+            value: () => new StaticType(new ClassType(class1, new Map(), false)),
+            unequalValueOfSameType: () => new StaticType(new ClassType(class2, new Map(), false)),
             valueOfOtherType: () => UnknownType,
         },
         {
@@ -106,12 +131,6 @@ describe('type model', async () => {
             expect(typeInstance.equals(typeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other type is an instance of another class (${
-            value().constructor.name
-        })`, () => {
-            expect(value().equals(valueOfOtherType())).toBeFalsy();
-        });
-
         it(`should return true if both types have the same values (${value().constructor.name})`, () => {
             expect(value().equals(value())).toBeTruthy();
         });
@@ -119,6 +138,14 @@ describe('type model', async () => {
         if (unequalValueOfSameType) {
             it(`should return false if both types have different values (${value().constructor.name})`, () => {
                 expect(value().equals(unequalValueOfSameType())).toBeFalsy();
+            });
+        }
+
+        if (valueOfOtherType) {
+            it(`should return false if the other type is an instance of another class (${
+                value().constructor.name
+            })`, () => {
+                expect(value().equals(valueOfOtherType())).toBeFalsy();
             });
         }
     });
@@ -131,7 +158,7 @@ describe('type model', async () => {
                 new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 new NamedTupleType(),
             ),
-            expectedString: '(p1: ?) -> ()',
+            expectedString: '(p1: $unknown) -> ()',
         },
         {
             value: new CallableType(
@@ -140,7 +167,7 @@ describe('type model', async () => {
                 new NamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
                 new NamedTupleType(),
             ),
-            expectedString: '(p2?: ?) -> ()',
+            expectedString: '(p2?: $unknown) -> ()',
         },
         {
             value: new LiteralType(new BooleanConstant(true)),
@@ -148,36 +175,158 @@ describe('type model', async () => {
         },
         {
             value: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-            expectedString: '(p1: ?)',
+            expectedString: '(p1: $unknown)',
         },
         {
-            value: new ClassType(class1, true),
+            value: new ClassType(class1, new Map(), false),
+            expectedString: 'C1',
+        },
+        {
+            value: new ClassType(class1, new Map(), true),
             expectedString: 'C1?',
+        },
+        {
+            value: new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), true),
+            expectedString: 'C2<union<>>?',
+        },
+        {
+            value: new EnumType(enum1, false),
+            expectedString: 'MyEnum1',
         },
         {
             value: new EnumType(enum1, true),
             expectedString: 'MyEnum1?',
         },
         {
+            value: new EnumVariantType(enumVariant1, false),
+            expectedString: 'MyEnumVariant1',
+        },
+        {
             value: new EnumVariantType(enumVariant1, true),
             expectedString: 'MyEnumVariant1?',
         },
         {
-            value: new StaticType(new ClassType(class1, false)),
+            value: new TypeParameterType(typeParameter1, false),
+            expectedString: 'K',
+        },
+        {
+            value: new TypeParameterType(typeParameter1, true),
+            expectedString: 'K?',
+        },
+        {
+            value: new StaticType(new ClassType(class1, new Map(), false)),
             expectedString: '$type<C1>',
         },
         {
             value: new UnionType(UnknownType),
-            expectedString: 'union<?>',
+            expectedString: 'union<$unknown>',
         },
         {
             value: UnknownType,
-            expectedString: '?',
+            expectedString: '$unknown',
         },
     ];
     describe.each(toStringTests)('toString', ({ value, expectedString }) => {
         it(`should return the expected string representation (${value.constructor.name} -- ${value})`, () => {
             expect(value.toString()).toStrictEqual(expectedString);
+        });
+    });
+
+    const substitutions1 = new Map([[typeParameter1, new LiteralType(new IntConstant(1n))]]);
+    const substituteTypeParametersTest: SubstituteTypeParametersTest[] = [
+        {
+            type: new CallableType(
+                callable1,
+                undefined,
+                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new TypeParameterType(typeParameter1, false))),
+                new NamedTupleType(new NamedTupleEntry(result, 'r', new TypeParameterType(typeParameter1, false))),
+            ),
+            substitutions: substitutions1,
+            expectedType: new CallableType(
+                callable1,
+                undefined,
+                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new LiteralType(new IntConstant(1n)))),
+                new NamedTupleType(new NamedTupleEntry(result, 'r', new LiteralType(new IntConstant(1n)))),
+            ),
+        },
+        {
+            type: new LiteralType(new BooleanConstant(true)),
+            substitutions: substitutions1,
+            expectedType: new LiteralType(new BooleanConstant(true)),
+        },
+        {
+            type: new NamedTupleType(
+                new NamedTupleEntry(parameter1, 'p1', new TypeParameterType(typeParameter1, false)),
+            ),
+            substitutions: substitutions1,
+            expectedType: new NamedTupleType(
+                new NamedTupleEntry(parameter1, 'p1', new LiteralType(new IntConstant(1n))),
+            ),
+        },
+        {
+            type: new ClassType(
+                class1,
+                new Map([[typeParameter2, new TypeParameterType(typeParameter1, false)]]),
+                false,
+            ),
+            substitutions: substitutions1,
+            expectedType: new ClassType(
+                class1,
+                new Map([[typeParameter2, new LiteralType(new IntConstant(1n))]]),
+                false,
+            ),
+        },
+        {
+            type: new EnumType(enum1, false),
+            substitutions: substitutions1,
+            expectedType: new EnumType(enum1, false),
+        },
+        {
+            type: new EnumVariantType(enumVariant1, false),
+            substitutions: substitutions1,
+            expectedType: new EnumVariantType(enumVariant1, false),
+        },
+        {
+            type: new TypeParameterType(typeParameter1, false),
+            substitutions: substitutions1,
+            expectedType: new LiteralType(new IntConstant(1n)),
+        },
+        {
+            type: new TypeParameterType(typeParameter2, false),
+            substitutions: substitutions1,
+            expectedType: new TypeParameterType(typeParameter2, false),
+        },
+        {
+            type: new StaticType(
+                new ClassType(class1, new Map([[typeParameter1, new TypeParameterType(typeParameter2, false)]]), false),
+            ),
+            substitutions: substitutions1,
+            expectedType: new StaticType(
+                new ClassType(class1, new Map([[typeParameter1, new TypeParameterType(typeParameter2, false)]]), false),
+            ),
+        },
+        {
+            type: new UnionType(
+                new ClassType(class1, new Map([[typeParameter2, new TypeParameterType(typeParameter1, false)]]), false),
+            ),
+            substitutions: substitutions1,
+            expectedType: new UnionType(
+                new ClassType(class1, new Map([[typeParameter2, new LiteralType(new IntConstant(1n))]]), false),
+            ),
+        },
+        {
+            type: UnknownType,
+            substitutions: substitutions1,
+            expectedType: UnknownType,
+        },
+    ];
+    describe.each(substituteTypeParametersTest)('substituteTypeParameters', ({ type, substitutions, expectedType }) => {
+        it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
+            expect(type.substituteTypeParameters(substitutions).equals(expectedType)).toBeTruthy();
+        });
+
+        it(`should not change if no substitutions are passed (${type.constructor.name} -- ${type})`, () => {
+            expect(type.substituteTypeParameters(new Map()).equals(type)).toBeTruthy();
         });
     });
 
@@ -219,8 +368,8 @@ describe('type model', async () => {
             ),
         },
         {
-            type: new ClassType(class1, false),
-            expectedType: new ClassType(class1, false),
+            type: new ClassType(class1, new Map(), false),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: new EnumType(enum1, false),
@@ -231,20 +380,24 @@ describe('type model', async () => {
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
-            expectedType: new StaticType(new ClassType(class1, false)),
+            type: new TypeParameterType(typeParameter1, false),
+            expectedType: new TypeParameterType(typeParameter1, false),
+        },
+        {
+            type: new StaticType(new ClassType(class1, new Map(), false)),
+            expectedType: new StaticType(new ClassType(class1, new Map(), false)),
         },
         {
             type: new UnionType(),
             expectedType: new UnionType(),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
-            expectedType: new ClassType(class1, false),
+            type: new UnionType(new ClassType(class1, new Map(), false)),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
-            type: new UnionType(new UnionType(new ClassType(class1, false))),
-            expectedType: new ClassType(class1, false),
+            type: new UnionType(new UnionType(new ClassType(class1, new Map(), false))),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: UnknownType,
@@ -257,7 +410,7 @@ describe('type model', async () => {
         });
     });
 
-    const updateNullabilityTest: UpdateNullabilityTest[] = [
+    const updateNullabilityTests: UpdateNullabilityTest[] = [
         {
             type: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
             isNullable: true,
@@ -302,14 +455,14 @@ describe('type model', async () => {
             expectedType: new NamedTupleType(),
         },
         {
-            type: new ClassType(class1, false),
+            type: new ClassType(class1, new Map(), false),
             isNullable: true,
-            expectedType: new ClassType(class1, true),
+            expectedType: new ClassType(class1, new Map(), true),
         },
         {
-            type: new ClassType(class1, true),
+            type: new ClassType(class1, new Map(), true),
             isNullable: false,
-            expectedType: new ClassType(class1, false),
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: new EnumType(enum1, false),
@@ -332,14 +485,27 @@ describe('type model', async () => {
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            type: new StaticType(new ClassType(class1, new Map(), false)),
             isNullable: true,
-            expectedType: new UnionType(new StaticType(new ClassType(class1, false)), new LiteralType(NullConstant)),
+            expectedType: new UnionType(
+                new StaticType(new ClassType(class1, new Map(), false)),
+                new LiteralType(NullConstant),
+            ),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            type: new StaticType(new ClassType(class1, new Map(), false)),
             isNullable: false,
-            expectedType: new StaticType(new ClassType(class1, false)),
+            expectedType: new StaticType(new ClassType(class1, new Map(), false)),
+        },
+        {
+            type: new TypeParameterType(typeParameter1, false),
+            isNullable: true,
+            expectedType: new TypeParameterType(typeParameter1, true),
+        },
+        {
+            type: new TypeParameterType(typeParameter1, true),
+            isNullable: false,
+            expectedType: new TypeParameterType(typeParameter1, false),
         },
         {
             type: new UnionType(),
@@ -352,24 +518,24 @@ describe('type model', async () => {
             expectedType: new UnionType(),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
+            type: new UnionType(new ClassType(class1, new Map(), false)),
             isNullable: true,
-            expectedType: new UnionType(new ClassType(class1, true)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), true)),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
+            type: new UnionType(new ClassType(class1, new Map(), false)),
             isNullable: false,
-            expectedType: new UnionType(new ClassType(class1, false)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), false)),
         },
         {
-            type: new UnionType(new ClassType(class1, true)),
+            type: new UnionType(new ClassType(class1, new Map(), true)),
             isNullable: true,
-            expectedType: new UnionType(new ClassType(class1, true)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), true)),
         },
         {
-            type: new UnionType(new ClassType(class1, true)),
+            type: new UnionType(new ClassType(class1, new Map(), true)),
             isNullable: false,
-            expectedType: new UnionType(new ClassType(class1, false)),
+            expectedType: new UnionType(new ClassType(class1, new Map(), false)),
         },
         {
             type: UnknownType,
@@ -382,7 +548,7 @@ describe('type model', async () => {
             expectedType: UnknownType,
         },
     ];
-    describe.each(updateNullabilityTest)('updateNullability', ({ type, isNullable, expectedType }) => {
+    describe.each(updateNullabilityTests)('updateNullability', ({ type, isNullable, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
             expect(type.updateNullability(isNullable).equals(expectedType)).toBeTruthy();
         });
@@ -400,14 +566,35 @@ describe('type model', async () => {
                     type: new CallableType(
                         callable1,
                         undefined,
-                        new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
+                        new NamedTupleType(
+                            new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, new Map(), false)),
+                        ),
                         new NamedTupleType(),
                     ),
                     index: 0,
-                    expectedType: new ClassType(class1, false),
+                    expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
                 expect(type.getParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
+            });
+        });
+    });
+
+    describe('ClassType', () => {
+        describe('getTypeParameterTypeByIndex', () => {
+            it.each([
+                {
+                    type: new ClassType(class1, new Map(), false),
+                    index: 0,
+                    expectedType: UnknownType,
+                },
+                {
+                    type: new ClassType(class2, new Map([[typeParameter1, new UnionType()]]), false),
+                    index: 0,
+                    expectedType: new UnionType(),
+                },
+            ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
+                expect(type.getTypeParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
             });
         });
     });
@@ -421,9 +608,11 @@ describe('type model', async () => {
                     expectedType: UnknownType,
                 },
                 {
-                    type: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
+                    type: new NamedTupleType(
+                        new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, new Map(), false)),
+                    ),
                     index: 0,
-                    expectedType: new ClassType(class1, false),
+                    expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the entry at the given index (%#)', ({ type, index, expectedType }) => {
                 expect(type.getTypeOfEntryByIndex(index).equals(expectedType)).toBeTruthy();
@@ -431,6 +620,26 @@ describe('type model', async () => {
         });
     });
 });
+
+/**
+ * Tests for {@link Type.substituteTypeParameters}.
+ */
+interface SubstituteTypeParametersTest {
+    /**
+     * The type to test.
+     */
+    type: Type;
+
+    /**
+     * The type parameter substitutions to apply.
+     */
+    substitutions: TypeParameterSubstitutions;
+
+    /**
+     * The expected result.
+     */
+    expectedType: Type;
+}
 
 /**
  * Tests for {@link Type.unwrap}.

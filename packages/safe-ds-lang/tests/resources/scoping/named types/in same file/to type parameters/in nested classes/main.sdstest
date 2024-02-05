@@ -32,7 +32,12 @@ class MyClass1<»Container«, Overridden> {
 
         // $TEST$ unresolved
         h: »Unresolved«,
-    ) where {
+    )
+    // $TEST$ references own
+    // $TEST$ references overridden
+    // $TEST$ references container
+    sub »Own«, »Overridden«, »Container«
+    where {
         // $TEST$ references own
         Own sub »Own«,
 

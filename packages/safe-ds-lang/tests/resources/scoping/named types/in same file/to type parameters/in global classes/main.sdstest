@@ -15,7 +15,10 @@ class MyClass<»Own«>(
 
     // $TEST$ unresolved
     d: »Unresolved«,
-) where {
+)
+// $TEST$ references own
+sub »Own«
+where {
     // $TEST$ references own
     Own sub »Own«,
 

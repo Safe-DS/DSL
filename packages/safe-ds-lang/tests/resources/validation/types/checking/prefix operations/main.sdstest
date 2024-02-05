@@ -6,7 +6,7 @@ segment mySegment() {
     not »true«;
     // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
     not »0«;
-    // $TEST$ error "Expected type 'Boolean' but got '?'."
+    // $TEST$ error "Expected type 'Boolean' but got '$unknown'."
     not »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -15,6 +15,6 @@ segment mySegment() {
     -»0«;
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     -»""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '?'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
     -»unresolved«;
 }

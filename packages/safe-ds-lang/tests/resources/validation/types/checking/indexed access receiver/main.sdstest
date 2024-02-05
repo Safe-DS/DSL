@@ -10,6 +10,6 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'List' or 'Map' but got 'literal<1>'."
     »1«[0];
 
-    // $TEST$ error "Expected type 'List' or 'Map' but got '?'."
+    // $TEST$ error "Expected type 'List' or 'Map' but got '$unknown'."
     »unresolved«[0];
 }

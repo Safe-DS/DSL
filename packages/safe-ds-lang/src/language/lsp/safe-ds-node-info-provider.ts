@@ -1,7 +1,7 @@
 import { AstNode } from 'langium';
 import { SymbolTag } from 'vscode-languageserver';
 import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import { isSdsAnnotatedObject, isSdsFunction, isSdsSegment } from '../generated/ast.js';
+import { isSdsAnnotatedObject, isSdsAttribute, isSdsFunction, isSdsSegment } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
@@ -19,11 +19,13 @@ export class SafeDsNodeInfoProvider {
      * hierarchies.
      */
     getDetails(node: AstNode): string | undefined {
-        if (isSdsFunction(node) || isSdsSegment(node)) {
-            const type = this.typeComputer.computeType(node);
-            return type?.toString();
+        if (isSdsAttribute(node)) {
+            return `: ${this.typeComputer.computeType(node)}`;
+        } else if (isSdsFunction(node) || isSdsSegment(node)) {
+            return this.typeComputer.computeType(node)?.toString();
+        } else {
+            return undefined;
         }
-        return undefined;
     }
 
     /**

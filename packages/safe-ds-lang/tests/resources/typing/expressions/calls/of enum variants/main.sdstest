@@ -10,7 +10,7 @@ pipeline myPipeline {
     // $TEST$ serialization MyEnumVariantWithoutParameterList
     »MyEnum.MyEnumVariantWithoutParameterList()«;
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     val alias1 = MyEnum.MyEnumVariantWithoutParameterList;
     »alias1()«;
 
@@ -18,14 +18,14 @@ pipeline myPipeline {
     // $TEST$ serialization MyEnumVariantWithoutParameters
     »MyEnum.MyEnumVariantWithoutParameters()«;
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     val alias2 = MyEnum.MyEnumVariantWithoutParameters;
     »alias2()«;
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     »MyEnum.MyEnumVariantWithoutParameters()()«;
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     val alias3 = MyEnum.MyEnumVariantWithoutParameters();
     »alias3()«;
 
@@ -38,10 +38,10 @@ pipeline myPipeline {
     »alias4(1)«;
 
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     »MyEnum.MyEnumVariantWithParameters(1)()«;
 
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     val alias5 = MyEnum.MyEnumVariantWithParameters(1);
     »alias5()«;
 }

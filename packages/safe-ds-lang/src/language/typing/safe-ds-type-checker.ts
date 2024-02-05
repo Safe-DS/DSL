@@ -1,7 +1,14 @@
-import { getContainerOfType } from 'langium';
+import { getContainerOfType, stream } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import { Enum, EnumVariant, getParameters, Parameter } from '../helpers/nodeProperties.js';
+import {
+    Enum,
+    EnumVariant,
+    getParameters,
+    getTypeParameters,
+    Parameter,
+    TypeParameter,
+} from '../helpers/nodeProperties.js';
 import { Constant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
@@ -14,12 +21,14 @@ import {
     NamedTupleType,
     StaticType,
     Type,
+    TypeParameterType,
     UnionType,
     UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
+import { isEmpty } from '../../helpers/collections.js';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
@@ -41,9 +50,15 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is assignable {@link other}.
      */
-    isAssignableTo = (type: Type, other: Type): boolean => {
+    isAssignableTo = (type: Type, other: Type, options?: IsAssignableToOptions): boolean => {
+        const ignoreTypeParameters = options?.ignoreTypeParameters ?? false;
+
         if (type === UnknownType || other === UnknownType) {
             return false;
+        } else if (type instanceof TypeParameterType || other instanceof TypeParameterType) {
+            /* c8 ignore next 3 */
+            // TODO(LR): This must be updated when we work on type parameter constraints.
+            return true;
         } else if (other instanceof UnionType) {
             return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         }
@@ -51,7 +66,7 @@ export class SafeDsTypeChecker {
         if (type instanceof CallableType) {
             return this.callableTypeIsAssignableTo(type, other);
         } else if (type instanceof ClassType) {
-            return this.classTypeIsAssignableTo(type, other);
+            return this.classTypeIsAssignableTo(type, other, ignoreTypeParameters);
         } else if (type instanceof EnumType) {
             return this.enumTypeIsAssignableTo(type, other);
         } else if (type instanceof EnumVariantType) {
@@ -128,13 +143,46 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private classTypeIsAssignableTo(type: ClassType, other: Type): boolean {
+    private classTypeIsAssignableTo(type: ClassType, other: Type, ignoreTypeParameters: boolean): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         }
 
         if (other instanceof ClassType) {
-            return this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration);
+            if (type.declaration === this.builtinClasses.Nothing) {
+                return true;
+            } else if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
+                return false;
+            }
+
+            // We are done already if we ignore type parameters or if the other type has no type parameters
+            const typeParameters = getTypeParameters(other.declaration);
+            if (ignoreTypeParameters || isEmpty(typeParameters)) {
+                return true;
+            }
+
+            // Get the parent type that refers to the same class as `other`
+            const candidate = stream([type], this.typeComputer().streamSupertypes(type)).find(
+                (it) => it.declaration === other.declaration,
+            );
+            if (!candidate) {
+                /* c8 ignore next 2 */
+                return false;
+            }
+
+            // Check type parameters
+            return typeParameters.every((it) => {
+                const candidateType = candidate.substitutions.get(it) ?? UnknownType;
+                const otherType = other.substitutions.get(it) ?? UnknownType;
+
+                if (TypeParameter.isInvariant(it)) {
+                    return candidateType !== UnknownType && candidateType.equals(otherType);
+                } else if (TypeParameter.isCovariant(it)) {
+                    return this.isAssignableTo(candidateType, otherType);
+                } else {
+                    return this.isAssignableTo(otherType, candidateType);
+                }
+            });
         } else {
             return false;
         }
@@ -260,7 +308,7 @@ export class SafeDsTypeChecker {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // canBeTypeOfConstantParameter
+    // Other
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
@@ -285,4 +333,24 @@ export class SafeDsTypeChecker {
             return type instanceof LiteralType || type === UnknownType;
         }
     };
+
+    /**
+     * Checks whether {@link type} some kind of list (with any element type).
+     */
+    isList(type: Type): type is ClassType {
+        return this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true });
+    }
+
+    /**
+     * Checks whether {@link type} some kind of map (with any key/value types).
+     */
+    isMap(type: Type): type is ClassType {
+        return this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
+            ignoreTypeParameters: true,
+        });
+    }
+}
+
+interface IsAssignableToOptions {
+    ignoreTypeParameters?: boolean;
 }

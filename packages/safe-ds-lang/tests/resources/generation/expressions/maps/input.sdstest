@@ -1,8 +1,10 @@
 package tests.generator.maps
 
-@Impure([ImpurityReason.Other]) fun g1(param: Map<String, Float>)
+@Impure([ImpurityReason.Other]) fun g1(param: Map<Nothing, Float>)
 
-@Impure([ImpurityReason.Other]) fun g2(param: Map<Float, String>)
+@Impure([ImpurityReason.Other]) fun g2(param: Map<String, Float>)
+
+@Impure([ImpurityReason.Other]) fun g3(param: Map<Float, String>)
 
 @Pure fun h1() -> result: Float
 
@@ -10,8 +12,8 @@ package tests.generator.maps
 
 pipeline test {
     g1({});
-    g1({"a": 1.2, "b": 1.0});
-    g1({h2(): -0.5, "b": h1()});
-    g2({1.2: "a", 1.0: "b"});
-    g2({5.6: "c", h1(): h2()});
+    g2({"a": 1.2, "b": 1.0});
+    g2({h2(): -0.5, "b": h1()});
+    g3({1.2: "a", 1.0: "b"});
+    g3({5.6: "c", h1(): h2()});
 }

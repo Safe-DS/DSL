@@ -27,11 +27,8 @@ import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js'
 import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
 import {
     constraintListsShouldBeUsedWithCaution,
-    indexedAccessesShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
     mapsShouldBeUsedWithCaution,
-    typeArgumentListsShouldBeUsedWithCaution,
-    typeParameterListsShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import {
@@ -276,7 +273,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             indexedAccessIndexMustBeValid(services),
             indexedAccessIndexMustHaveCorrectType(services),
             indexedAccessReceiverMustBeListOrMap(services),
-            indexedAccessesShouldBeUsedWithCaution(services),
         ],
         SdsInfixOperation: [
             divisionDivisorMustNotBeZero(services),
@@ -350,13 +346,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution(services)],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectPosition(services)],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
-            typeParameterListsShouldBeUsedWithCaution(services),
             typeParameterListShouldNotBeEmpty(services),
         ],
         SdsUnionType: [
