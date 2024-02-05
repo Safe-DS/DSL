@@ -11,6 +11,7 @@ import {
 } from '../generated/ast.js';
 import { getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
+import { stream } from 'langium';
 
 export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 
@@ -32,6 +33,11 @@ export abstract class Type {
      * Returns a string representation of this type.
      */
     abstract toString(): string;
+
+    /**
+     * Returns a copy of this type with the given type parameters substituted.
+     */
+    abstract substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type;
 
     /**
      * Removes any unnecessary containers from the type.
@@ -86,6 +92,19 @@ export class CallableType extends Type {
         return `(${inputTypeString}) -> ${this.outputType}`;
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): CallableType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return new CallableType(
+            this.callable,
+            this.parameter,
+            this.inputType.substituteTypeParameters(substitutions),
+            this.outputType.substituteTypeParameters(substitutions),
+        );
+    }
+
     override unwrap(): CallableType {
         return new CallableType(
             this.callable,
@@ -130,6 +149,10 @@ export class LiteralType extends Type {
 
     override toString(): string {
         return `literal<${this.constants.join(', ')}>`;
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
     }
 
     override unwrap(): LiteralType {
@@ -188,6 +211,14 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
         return `(${this.entries.join(', ')})`;
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleType<T> {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return new NamedTupleType(...this.entries.map((it) => it.substituteTypeParameters(substitutions)));
+    }
+
     /**
      * If this only has one entry, returns its type. Otherwise, returns this.
      */
@@ -229,6 +260,14 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
 
     toString(): string {
         return `${this.name}: ${this.type}`;
+    }
+
+    substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleEntry<T> {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return new NamedTupleEntry(this.declaration, this.name, this.type.substituteTypeParameters(substitutions));
     }
 
     unwrap(): NamedTupleEntry<T> {
@@ -304,6 +343,18 @@ export class ClassType extends NamedType<SdsClass> {
         return result;
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): ClassType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        const newSubstitutions = new Map(
+            stream(this.substitutions).map(([key, value]) => [key, value.substituteTypeParameters(substitutions)]),
+        );
+
+        return new ClassType(this.declaration, newSubstitutions, this.isNullable);
+    }
+
     override updateNullability(isNullable: boolean): ClassType {
         return new ClassType(this.declaration, this.substitutions, isNullable);
     }
@@ -325,6 +376,10 @@ export class EnumType extends NamedType<SdsEnum> {
         }
 
         return other.declaration === this.declaration && other.isNullable === this.isNullable;
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
     }
 
     override updateNullability(isNullable: boolean): EnumType {
@@ -350,6 +405,10 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
         return other.declaration === this.declaration && other.isNullable === this.isNullable;
     }
 
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
+    }
+
     override updateNullability(isNullable: boolean): EnumVariantType {
         return new EnumVariantType(this.declaration, isNullable);
     }
@@ -371,6 +430,10 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
         }
 
         return other.declaration === this.declaration && other.isNullable === this.isNullable;
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type {
+        return substitutions.get(this.declaration) ?? this;
     }
 
     override updateNullability(isNullable: boolean): TypeParameterType {
@@ -400,6 +463,12 @@ export class StaticType extends Type {
 
     override toString(): string {
         return `$type<${this.instanceType}>`;
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): StaticType {
+        // The substitutions are only meaningful for instances of a declaration, not for the declaration itself. Hence,
+        // we don't substitute anything here.
+        return this;
     }
 
     override unwrap(): Type {
@@ -443,6 +512,14 @@ export class UnionType extends Type {
         return `union<${this.possibleTypes.join(', ')}>`;
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return new UnionType(...this.possibleTypes.map((it) => it.substituteTypeParameters(substitutions)));
+    }
+
     override unwrap(): Type {
         if (this.possibleTypes.length === 1) {
             return this.possibleTypes[0]!.unwrap();
@@ -475,6 +552,10 @@ class UnknownTypeClass extends Type {
 
     override toString(): string {
         return '$unknown';
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
     }
 
     override unwrap(): Type {

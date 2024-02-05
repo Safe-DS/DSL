@@ -135,11 +135,13 @@ export class SafeDsTypeComputer {
     /**
      * Computes the type of the given node.
      */
-    computeType(node: AstNode | undefined): Type {
+    computeType(node: AstNode | undefined, substitutions: TypeParameterSubstitutions = NO_SUBSTITUTIONS): Type {
         if (!node) {
             return UnknownType;
         }
-        return this.nodeTypeCache.get(this.getNodeId(node), () => this.doComputeType(node).unwrap());
+
+        const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () => this.doComputeType(node).unwrap());
+        return unsubstitutedType.substituteTypeParameters(substitutions);
     }
 
     private getNodeId(node: AstNode) {
