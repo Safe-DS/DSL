@@ -63,6 +63,7 @@ export class SafeDsRunner {
      * Start the python server on the next usable port, starting at 5000.
      * Uses the 'safe-ds.runner.command' setting to execute the process.
      */
+    /* c8 ignore start */
     public async startPythonServer(): Promise<void> {
         this.acceptsConnections = false;
         const runnerCommandParts = this.runnerCommand.split(/\s/u);
@@ -94,11 +95,13 @@ export class SafeDsRunner {
         }
         this.logging.outputInfo('Started python server successfully');
     }
+    /* c8 ignore stop */
 
     /**
      * Stop the python server process, if any currently exist. This will first try a graceful shutdown.
      * If that fails, the whole process tree (starting at the child process spawned by startPythonServer) will get killed.
      */
+    /* c8 ignore start */
     async stopPythonServer(): Promise<void> {
         this.logging.outputInfo('Stopping python server...');
         if (this.runnerProcess !== undefined) {
@@ -120,7 +123,9 @@ export class SafeDsRunner {
         this.runnerProcess = undefined;
         this.acceptsConnections = false;
     }
+    /* c8 ignore stop */
 
+    /* c8 ignore start */
     private async requestGracefulShutdown(maxTimeoutMs: number): Promise<boolean> {
         this.logging.outputInfo('Trying graceful shutdown...');
         this.sendMessageToPythonServer(createShutdownMessage());
@@ -135,13 +140,16 @@ export class SafeDsRunner {
             }, maxTimeoutMs);
         });
     }
+    /* c8 ignore stop */
 
     /**
      * @return True if the python server was started and the websocket connection was established, false otherwise.
      */
+    /* c8 ignore start */
     public isPythonServerAvailable(): boolean {
         return this.acceptsConnections;
     }
+    /* c8 ignore stop */
 
     /**
      * Register a callback to execute when a message from the python server arrives.
@@ -252,6 +260,7 @@ export class SafeDsRunner {
      * @param id A unique id that is used in further communication with this pipeline.
      * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
      */
+    /* c8 ignore start */
     public async executePipeline(
         pipelineDocument: LangiumDocument,
         id: string,
@@ -302,6 +311,7 @@ export class SafeDsRunner {
             }),
         );
     }
+    /* c8 ignore stop */
 
     private generateCodeForRunner(
         pipelineDocument: LangiumDocument,
@@ -360,12 +370,15 @@ export class SafeDsRunner {
      *
      * @param message Message to be sent to the python server. This message should be serializable to JSON.
      */
+    /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         const messageString = JSON.stringify(message);
         this.logging.outputInfo(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
     }
+    /* c8 ignore stop */
 
+    /* c8 ignore start */
     private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
         process.stderr.on('data', (data: Buffer) => {
             this.logging.outputInfo(`[Runner-Err] ${data.toString().trim()}`);
@@ -382,7 +395,9 @@ export class SafeDsRunner {
             });
         });
     }
+    /* c8 ignore stop */
 
+    /* c8 ignore start */
     private manageRunnerSubprocessOutputIO() {
         if (!this.runnerProcess) {
             return;
@@ -400,7 +415,9 @@ export class SafeDsRunner {
             this.runnerProcess = undefined;
         });
     }
+    /* c8 ignore stop */
 
+    /* c8 ignore start */
     private async connectToWebSocket(): Promise<void> {
         const timeoutMs = 200;
         const maxConnectionTries = 8;
@@ -469,6 +486,7 @@ export class SafeDsRunner {
             tryConnect();
         });
     }
+    /* c8 ignore stop */
 
     private async findFirstFreePort(startPort: number): Promise<number> {
         return new Promise((resolve, reject) => {
