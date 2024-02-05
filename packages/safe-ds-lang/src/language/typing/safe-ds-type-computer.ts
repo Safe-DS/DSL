@@ -474,7 +474,10 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         const rightOperandType = this.computeType(node.rightOperand);
 
-        if (leftOperandType.equals(this.coreTypes.Int) && rightOperandType.equals(this.coreTypes.Int)) {
+        if (
+            this.typeChecker.isAssignableTo(leftOperandType, this.coreTypes.Int) &&
+            this.typeChecker.isAssignableTo(rightOperandType, this.coreTypes.Int)
+        ) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -508,9 +511,9 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
-        const leftOperandType = this.computeType(node.operand);
+        const operandType = this.computeType(node.operand);
 
-        if (leftOperandType.equals(this.coreTypes.Int)) {
+        if (this.typeChecker.isAssignableTo(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
