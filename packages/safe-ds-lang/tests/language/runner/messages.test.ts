@@ -10,15 +10,16 @@ import {
 describe('runner messages', async () => {
     const toStringTests: ToStringTest<() => PythonServerMessage>[] = [
         {
-            value: () => createProgramMessage('abcdefgh', {
-                code: {
-                    a: {
-                        gen_test_a: 'def pipe():\n\tpass\n',
-                        gen_test_a_pipe: "from gen_test_a import pipe\n\nif __name__ == '__main__':\n\tpipe()",
+            value: () =>
+                createProgramMessage('abcdefgh', {
+                    code: {
+                        a: {
+                            gen_test_a: 'def pipe():\n\tpass\n',
+                            gen_test_a_pipe: "from gen_test_a import pipe\n\nif __name__ == '__main__':\n\tpipe()",
+                        },
                     },
-                },
-                main: { modulepath: 'a', module: 'test_a', pipeline: 'pipe' },
-            }),
+                    main: { modulepath: 'a', module: 'test_a', pipeline: 'pipe' },
+                }),
             expectedString:
                 '{"type":"program","id":"abcdefgh","data":{"code":{"a":{"gen_test_a":"def pipe():\\n\\tpass\\n","gen_test_a_pipe":"from gen_test_a import pipe\\n\\nif __name__ == \'__main__\':\\n\\tpipe()"}},"main":{"modulepath":"a","module":"test_a","pipeline":"pipe"}}}',
         },
