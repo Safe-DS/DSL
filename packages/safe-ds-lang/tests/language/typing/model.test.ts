@@ -18,6 +18,7 @@ import {
     NamedTupleType,
     StaticType,
     Type,
+    TypeParameterType,
     UnionType,
     UnknownType,
 } from '../../../src/language/typing/model.js';
@@ -30,7 +31,7 @@ const code = `
     fun f2(),
 
     class C1
-    class C2<T>
+    class C2<K, V>
 
     enum MyEnum1 {
         MyEnumVariant1
@@ -46,6 +47,7 @@ const callable2 = await getNodeOfType(services, code, isSdsFunction, 1);
 const class1 = await getNodeOfType(services, code, isSdsClass, 0);
 const class2 = await getNodeOfType(services, code, isSdsClass, 1);
 const typeParameter1 = getTypeParameters(class2)[0]!;
+const typeParameter2 = getTypeParameters(class2)[1]!;
 const enum1 = await getNodeOfType(services, code, isSdsEnum, 0);
 const enum2 = await getNodeOfType(services, code, isSdsEnum, 1);
 const enumVariant1 = await getNodeOfType(services, code, isSdsEnumVariant, 0);
@@ -105,6 +107,11 @@ describe('type model', async () => {
         {
             value: () => new StaticType(new ClassType(class1, new Map(), false)),
             unequalValueOfSameType: () => new StaticType(new ClassType(class2, new Map(), false)),
+            valueOfOtherType: () => UnknownType,
+        },
+        {
+            value: () => new TypeParameterType(typeParameter1, true),
+            unequalValueOfSameType: () => new TypeParameterType(typeParameter2, true),
             valueOfOtherType: () => UnknownType,
         },
         {
@@ -182,8 +189,16 @@ describe('type model', async () => {
             expectedString: 'C2<union<>>?',
         },
         {
+            value: new EnumType(enum1, false),
+            expectedString: 'MyEnum1',
+        },
+        {
             value: new EnumType(enum1, true),
             expectedString: 'MyEnum1?',
+        },
+        {
+            value: new EnumVariantType(enumVariant1, false),
+            expectedString: 'MyEnumVariant1',
         },
         {
             value: new EnumVariantType(enumVariant1, true),
@@ -192,6 +207,14 @@ describe('type model', async () => {
         {
             value: new StaticType(new ClassType(class1, new Map(), false)),
             expectedString: '$type<C1>',
+        },
+        {
+            value: new TypeParameterType(typeParameter1, false),
+            expectedString: 'K',
+        },
+        {
+            value: new TypeParameterType(typeParameter1, true),
+            expectedString: 'K?',
         },
         {
             value: new UnionType(UnknownType),
@@ -260,6 +283,10 @@ describe('type model', async () => {
         {
             type: new StaticType(new ClassType(class1, new Map(), false)),
             expectedType: new StaticType(new ClassType(class1, new Map(), false)),
+        },
+        {
+            type: new TypeParameterType(typeParameter1, false),
+            expectedType: new TypeParameterType(typeParameter1, false),
         },
         {
             type: new UnionType(),
@@ -370,6 +397,16 @@ describe('type model', async () => {
             type: new StaticType(new ClassType(class1, new Map(), false)),
             isNullable: false,
             expectedType: new StaticType(new ClassType(class1, new Map(), false)),
+        },
+        {
+            type: new TypeParameterType(typeParameter1, false),
+            isNullable: true,
+            expectedType: new TypeParameterType(typeParameter1, true),
+        },
+        {
+            type: new TypeParameterType(typeParameter1, true),
+            isNullable: false,
+            expectedType: new TypeParameterType(typeParameter1, false),
         },
         {
             type: new UnionType(),

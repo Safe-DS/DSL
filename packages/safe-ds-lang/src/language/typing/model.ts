@@ -355,6 +355,29 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
     }
 }
 
+export class TypeParameterType extends NamedType<SdsTypeParameter> {
+    constructor(
+        declaration: SdsTypeParameter,
+        override readonly isNullable: boolean,
+    ) {
+        super(declaration);
+    }
+
+    override equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof TypeParameterType)) {
+            return false;
+        }
+
+        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+    }
+
+    override updateNullability(isNullable: boolean): TypeParameterType {
+        return new TypeParameterType(this.declaration, isNullable);
+    }
+}
+
 /**
  * A type that represents an actual class, enum, or enum variant instead of an instance of it.
  */

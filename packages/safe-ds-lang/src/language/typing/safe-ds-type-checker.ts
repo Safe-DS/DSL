@@ -14,6 +14,7 @@ import {
     NamedTupleType,
     StaticType,
     Type,
+    TypeParameterType,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -46,6 +47,9 @@ export class SafeDsTypeChecker {
 
         if (type === UnknownType || other === UnknownType) {
             return false;
+        } else if (type instanceof TypeParameterType || other instanceof TypeParameterType) {
+            // TODO(LR): This must be updated when we work on type parameter constraints.
+            return true;
         } else if (other instanceof UnionType) {
             return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         }

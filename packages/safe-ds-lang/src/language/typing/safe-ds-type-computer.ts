@@ -99,6 +99,7 @@ import {
     StaticType,
     Type,
     TypeParameterSubstitutions,
+    TypeParameterType,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -211,7 +212,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsTypeParameter(node)) {
-            return UnknownType;
+            return new TypeParameterType(node, false);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
