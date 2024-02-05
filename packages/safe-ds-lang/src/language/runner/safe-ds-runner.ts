@@ -51,13 +51,27 @@ export class SafeDsRunner {
         };
     }
 
+    /**
+     * Change the command to start the runner process. This will not cause the runner process to restart, if it is already running.
+     *
+     * @param command New Runner Command.
+     */
+    /* c8 ignore start */
     public updateRunnerCommand(command: string): void {
         this.runnerCommand = command;
     }
+    /* c8 ignore stop */
 
+    /**
+     * Change the output functions for runner logging and error information to those provided.
+     *
+     * @param logging New Runner output functions.
+     */
+    /* c8 ignore start */
     public updateRunnerLogging(logging: RunnerLoggingOutput): void {
         this.logging = logging;
     }
+    /* c8 ignore stop */
 
     /**
      * Start the python server on the next usable port, starting at 5000.
@@ -157,6 +171,7 @@ export class SafeDsRunner {
      * @param callback Callback to execute
      * @param messageType Message type to register the callback for.
      */
+    /* c8 ignore start */
     public addMessageCallback<M extends PythonServerMessage['type']>(
         callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
@@ -166,6 +181,7 @@ export class SafeDsRunner {
         }
         this.messageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
     }
+    /* c8 ignore stop */
 
     /**
      * Remove a previously registered callback from being called when a message from the python server arrives.
@@ -173,6 +189,7 @@ export class SafeDsRunner {
      * @param callback Callback to remove
      * @param messageType Message type the callback was registered for.
      */
+    /* c8 ignore start */
     public removeMessageCallback<M extends PythonServerMessage['type']>(
         callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
@@ -185,6 +202,7 @@ export class SafeDsRunner {
             this.messageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
         );
     }
+    /* c8 ignore stop */
 
     /**
      * Get information about a pipeline execution.
@@ -192,25 +210,31 @@ export class SafeDsRunner {
      * @param pipelineId Unique id that identifies a pipeline execution
      * @return Execution context assigned to the provided id.
      */
+    /* c8 ignore start */
     public getExecutionContext(pipelineId: string): PipelineExecutionInformation | undefined {
         return this.executionInformation.get(pipelineId);
     }
+    /* c8 ignore stop */
 
     /**
      * Remove information from a pipeline execution, when it is no longer needed.
      *
      * @param pipelineId Unique id that identifies a pipeline execution
      */
+    /* c8 ignore start */
     public dropPipelineExecutionContext(pipelineId: string) {
         this.executionInformation.delete(pipelineId);
     }
+    /* c8 ignore stop */
 
     /**
      * Remove information from all previous pipeline executions.
      */
+    /* c8 ignore start */
     public dropAllPipelineExecutionContexts() {
         this.executionInformation.clear();
     }
+    /* c8 ignore stop */
 
     /**
      * Map a stack frame from python to Safe-DS.
@@ -220,6 +244,7 @@ export class SafeDsRunner {
      * @param executionId Id that uniquely identifies the execution that produced this stack frame
      * @param frame Stack frame from the python execution
      */
+    /* c8 ignore start */
     public async tryMapToSafeDSSource(
         executionId: string,
         frame: RuntimeErrorBacktraceFrame | undefined,
@@ -251,6 +276,7 @@ export class SafeDsRunner {
         });
         return { file: outputPosition.source || '<unknown>', line: outputPosition.line || 0 };
     }
+    /* c8 ignore stop */
 
     /**
      * Execute a Safe-DS pipeline on the python runner.
@@ -313,7 +339,7 @@ export class SafeDsRunner {
     }
     /* c8 ignore stop */
 
-    private generateCodeForRunner(
+    public generateCodeForRunner(
         pipelineDocument: LangiumDocument,
         targetPlaceholder: string | undefined,
     ): [ProgramCodeMap, Map<string, string>] {
@@ -355,7 +381,7 @@ export class SafeDsRunner {
         return [codeMap, lastGeneratedSources];
     }
 
-    private getMainModuleName(pipelineDocument: LangiumDocument): string {
+    public getMainModuleName(pipelineDocument: LangiumDocument): string {
         if (pipelineDocument.uri.fsPath.endsWith('.sdspipe')) {
             return this.generator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath, '.sdspipe'));
         } else if (pipelineDocument.uri.fsPath.endsWith('.sdstest')) {
@@ -488,7 +514,7 @@ export class SafeDsRunner {
     }
     /* c8 ignore stop */
 
-    private async findFirstFreePort(startPort: number): Promise<number> {
+    public async findFirstFreePort(startPort: number): Promise<number> {
         return new Promise((resolve, reject) => {
             let port = startPort;
 
@@ -499,6 +525,7 @@ export class SafeDsRunner {
                         port++;
                         tryNextPort(); // Port is occupied, try the next one.
                     } else {
+                        /* c8 ignore next 2 */
                         reject('Unknown error'); // An unexpected error occurred
                     }
                 });
