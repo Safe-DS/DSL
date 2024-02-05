@@ -969,7 +969,7 @@ describe('SafeDsTypeChecker', async () => {
 
 const computeTypeOfDeclarationWithName = <T extends SdsDeclaration>(declarations: T[]) => {
     return (name: string): Type => {
-        const result = declarations.find((it) => it.name === name);
+        const result = declarations.find((declaration) => declaration.name === name);
         return typeComputer.computeType(result);
     };
 };
