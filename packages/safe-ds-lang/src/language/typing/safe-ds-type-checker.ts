@@ -1,7 +1,14 @@
-import { getContainerOfType } from 'langium';
+import { getContainerOfType, stream } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import { Enum, EnumVariant, getParameters, Parameter } from '../helpers/nodeProperties.js';
+import {
+    Enum,
+    EnumVariant,
+    getParameters,
+    getTypeParameters,
+    Parameter,
+    TypeParameter,
+} from '../helpers/nodeProperties.js';
 import { Constant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
@@ -21,6 +28,7 @@ import {
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
+import { isEmpty } from '../../helpers/collections.js';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
@@ -134,14 +142,45 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private classTypeIsAssignableTo(type: ClassType, other: Type, _ignoreTypeParameters: boolean): boolean {
-        // TODO: handle type parameters (or don't based on the ignoreTypeParameters flag)
+    private classTypeIsAssignableTo(type: ClassType, other: Type, ignoreTypeParameters: boolean): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         }
 
         if (other instanceof ClassType) {
-            return this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration);
+            if (type.declaration === this.builtinClasses.Nothing) {
+                return true;
+            } else if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
+                return false;
+            }
+
+            // We are done already if we ignore type parameters or if the other type has no type parameters
+            const typeParameters = getTypeParameters(other.declaration);
+            if (ignoreTypeParameters || isEmpty(typeParameters)) {
+                return true;
+            }
+
+            // Get the parent type that refers to the same class as `other`
+            const candidate = stream([type], this.typeComputer().streamSupertypes(type)).find(
+                (it) => it.declaration === other.declaration,
+            );
+            if (!candidate) {
+                return false;
+            }
+
+            // Check type parameters
+            return typeParameters.every((it) => {
+                const candidateType = candidate.substitutions.get(it) ?? UnknownType;
+                const otherType = other.substitutions.get(it) ?? UnknownType;
+
+                if (TypeParameter.isInvariant(it)) {
+                    return candidateType !== UnknownType && candidateType.equals(otherType);
+                } else if (TypeParameter.isCovariant(it)) {
+                    return this.isAssignableTo(candidateType, otherType);
+                } else {
+                    return this.isAssignableTo(otherType, candidateType);
+                }
+            });
         } else {
             return false;
         }
