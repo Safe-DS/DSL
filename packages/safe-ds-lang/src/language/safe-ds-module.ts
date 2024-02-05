@@ -188,7 +188,10 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
  * @param runnerCommand Optional command to start the runner, if available.
  * @return An object wrapping the shared services and the language-specific services.
  */
-export const createSafeDsServices = function (context: DefaultSharedModuleContext, runnerCommand: string | undefined = undefined): {
+export const createSafeDsServices = function (
+    context: DefaultSharedModuleContext,
+    runnerCommand: string | undefined = undefined,
+): {
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 } {
@@ -216,7 +219,10 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
  * @param runnerCommand Optional command to start the runner, if available.
  * @return An object wrapping the shared services and the language-specific services.
  */
-export const createSafeDsServicesWithBuiltins = async function (context: DefaultSharedModuleContext, runnerCommand: string | undefined = undefined): Promise<{
+export const createSafeDsServicesWithBuiltins = async function (
+    context: DefaultSharedModuleContext,
+    runnerCommand: string | undefined = undefined,
+): Promise<{
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 }> {
