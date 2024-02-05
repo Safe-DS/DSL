@@ -58,8 +58,10 @@ export class SafeDsRunner {
      * @param command New Runner Command.
      */
     /* c8 ignore start */
-    public updateRunnerCommand(command: string): void {
-        this.runnerCommand = command;
+    public updateRunnerCommand(command: string | undefined): void {
+        if (command) {
+            this.runnerCommand = command;
+        }
     }
 
     /**
