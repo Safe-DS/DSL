@@ -43,6 +43,7 @@ import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
 import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
+import { SafeDsRunner } from './runner/safe-ds-runner.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -82,6 +83,9 @@ export type SafeDsAddedServices = {
     workspace: {
         PackageManager: SafeDsPackageManager;
         SettingsProvider: SafeDsSettingsProvider;
+    };
+    runtime: {
+        Runner: SafeDsRunner;
     };
 };
 
@@ -150,6 +154,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         PackageManager: (services) => new SafeDsPackageManager(services),
         SettingsProvider: (services) => new SafeDsSettingsProvider(services),
     },
+    runtime: {
+        Runner: (services) => new SafeDsRunner(services),
+    },
 };
 
 export type SafeDsSharedServices = LangiumSharedServices;
@@ -178,9 +185,13 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
  *  - Services specified in this file
  *
  * @param context Optional module context with the LSP connection.
+ * @param options Further options to configure the Safe-DS module.
  * @return An object wrapping the shared services and the language-specific services.
  */
-export const createSafeDsServices = function (context: DefaultSharedModuleContext): {
+export const createSafeDsServices = function (
+    context: DefaultSharedModuleContext,
+    options?: ModuleOptions,
+): {
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 } {
@@ -188,6 +199,7 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
     const SafeDs = inject(createDefaultModule({ shared }), SafeDsGeneratedModule, SafeDsModule);
     shared.ServiceRegistry.register(SafeDs);
     registerValidationChecks(SafeDs);
+    SafeDs.runtime.Runner.updateRunnerCommand(options?.runnerCommand);
     return { shared, SafeDs };
 };
 
@@ -204,13 +216,27 @@ export const createSafeDsServices = function (context: DefaultSharedModuleContex
  *  - Services specified in this file
  *
  * @param context Optional module context with the LSP connection.
+ * @param options Further options to configure the Safe-DS module.
  * @return An object wrapping the shared services and the language-specific services.
  */
-export const createSafeDsServicesWithBuiltins = async function (context: DefaultSharedModuleContext): Promise<{
+export const createSafeDsServicesWithBuiltins = async function (
+    context: DefaultSharedModuleContext,
+    options?: ModuleOptions,
+): Promise<{
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 }> {
-    const { shared, SafeDs } = createSafeDsServices(context);
+    const { shared, SafeDs } = createSafeDsServices(context, options);
     await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     return { shared, SafeDs };
 };
+
+/**
+ * Options to pass to the creation of Safe-DS services.
+ */
+export interface ModuleOptions {
+    /**
+     * Optional command to start the runner, if available.
+     */
+    runnerCommand?: string;
+}

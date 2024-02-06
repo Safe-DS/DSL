@@ -1,5 +1,5 @@
 /**
- * Any message that can be sent or received by the python server.
+ * Any message that can be sent or received by the runner.
  *
  * The type field identifies the type of the message.
  *
@@ -17,7 +17,7 @@ export type PythonServerMessage =
 
 export type RuntimeProgress = 'done';
 
-// Extension to Python Server
+// Extension to Runner
 /**
  * Message that contains a fully executable compiled Safe-DS pipeline.
  */
@@ -69,7 +69,7 @@ export interface ProgramMainInformation {
     pipeline: string;
 }
 
-// Extension to Python Server
+// Extension to Runner
 /**
  * Message that contains a request to send back the value of a specified placeholder
  */
@@ -109,7 +109,7 @@ export interface PlaceholderQueryWindow {
     size?: number;
 }
 
-// Python Server to Extension
+// Runner to Extension
 /**
  * Message that contains information about a calculated placeholder.
  */
@@ -188,7 +188,7 @@ export interface PlaceholderValueWindow {
     max: number;
 }
 
-// Python Server to Extension
+// Runner to Extension
 /**
  * Message that contains information about a runtime error that occurred during execution.
  */
@@ -228,7 +228,7 @@ export interface RuntimeErrorBacktraceFrame {
     line: number;
 }
 
-// Python Server to Extension
+// Runner to Extension
 /**
  * Message that contains information about the current execution progress.
  * Field data currently supports on of the following: 'done'
@@ -264,9 +264,9 @@ export const createPlaceholderQueryMessage = function (
     };
 };
 
-// Extension to Python Server
+// Extension to Runner
 /**
- * Message that instructs the python server to shut itself down as soon as possible.
+ * Message that instructs the runner to shut itself down as soon as possible.
  *
  * There will be no response to this message, data and id fields are therefore empty.
  */
