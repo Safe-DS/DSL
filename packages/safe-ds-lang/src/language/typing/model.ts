@@ -434,7 +434,15 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type {
-        return substitutions.get(this.declaration) ?? this;
+        const substitution = substitutions.get(this.declaration);
+
+        if (!substitution) {
+            return this;
+        } else if (this.isNullable) {
+            return substitution.updateNullability(true);
+        } else {
+            return substitution;
+        }
     }
 
     override updateNullability(isNullable: boolean): TypeParameterType {

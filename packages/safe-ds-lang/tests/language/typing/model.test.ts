@@ -292,6 +292,11 @@ describe('type model', async () => {
             expectedType: new LiteralType(new IntConstant(1n)),
         },
         {
+            type: new TypeParameterType(typeParameter1, true),
+            substitutions: substitutions1,
+            expectedType: new LiteralType(new IntConstant(1n), NullConstant),
+        },
+        {
             type: new TypeParameterType(typeParameter2, false),
             substitutions: substitutions1,
             expectedType: new TypeParameterType(typeParameter2, false),
