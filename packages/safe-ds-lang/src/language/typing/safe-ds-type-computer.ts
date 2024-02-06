@@ -507,7 +507,16 @@ export class SafeDsTypeComputer {
         }
 
         const receiverType = this.computeType(node.receiver);
-        return memberType.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
+        const unsubstitutedResult = memberType.updateNullability(
+            (receiverType.isNullable && node.isNullSafe) || memberType.isNullable,
+        );
+
+        // Substitute type parameters
+        if (receiverType instanceof ClassType) {
+            return unsubstitutedResult.substituteTypeParameters(receiverType.substitutions);
+        } else {
+            return unsubstitutedResult;
+        }
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
