@@ -32,22 +32,31 @@ describe('SafeDsRunner', async () => {
     });
     describe('getMainModuleName', async () => {
         it('sdspipe', async () => {
-            const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdspipe'));
+            const document = services.shared.workspace.LangiumDocumentFactory.fromString(
+                '',
+                URI.file('/a-b c.sdspipe'),
+            );
             const mainModuleName = runner.getMainModuleName(document);
             expect(mainModuleName).toStrictEqual('a_b_c');
         });
         it('sdstest', async () => {
-            const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdstest'));
+            const document = services.shared.workspace.LangiumDocumentFactory.fromString(
+                '',
+                URI.file('/a-b c.sdstest'),
+            );
             const mainModuleName = runner.getMainModuleName(document);
             expect(mainModuleName).toStrictEqual('a_b_c');
         });
         it('other', async () => {
-            const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdstest2'));
+            const document = services.shared.workspace.LangiumDocumentFactory.fromString(
+                '',
+                URI.file('/a-b c.sdstest2'),
+            );
             const mainModuleName = runner.getMainModuleName(document);
             expect(mainModuleName).toStrictEqual('a_b_c_sdstest2');
         });
     });
-    describe('generateCodeForRunner', async() => {
+    describe('generateCodeForRunner', async () => {
         it('generateCodeForRunner', async () => {
             const document = services.shared.workspace.LangiumDocumentFactory.fromString(
                 'package a\n\npipeline mainpipeline {}',

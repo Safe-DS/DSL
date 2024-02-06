@@ -238,5 +238,5 @@ export interface ModuleOptions {
     /**
      * Optional command to start the runner, if available.
      */
-    runnerCommand?: string
+    runnerCommand?: string;
 }
