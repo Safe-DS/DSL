@@ -405,6 +405,18 @@ describe('type model', async () => {
             expectedType: new ClassType(class1, new Map(), false),
         },
         {
+            type: new UnionType(
+                new UnionType(new ClassType(class1, new Map(), false), new ClassType(class2, new Map(), false)),
+                new UnionType(new EnumType(enum1, false), new EnumVariantType(enumVariant1, false)),
+            ),
+            expectedType: new UnionType(
+                new ClassType(class1, new Map(), false),
+                new ClassType(class2, new Map(), false),
+                new EnumType(enum1, false),
+                new EnumVariantType(enumVariant1, false),
+            ),
+        },
+        {
             type: UnknownType,
             expectedType: UnknownType,
         },

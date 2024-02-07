@@ -546,12 +546,22 @@ export class UnionType extends Type {
     }
 
     override unwrap(): Type {
-        if (this.possibleTypes.length === 1) {
-            return this.possibleTypes[0]!.unwrap();
+        // Flatten nested unions
+        const newPossibleTypes = this.possibleTypes.flatMap((type) => {
+            const unwrappedType = type.unwrap();
+            if (unwrappedType instanceof UnionType) {
+                return unwrappedType.possibleTypes;
+            } else {
+                return unwrappedType;
+            }
+        });
+
+        // Remove the outer union if there's only one type left
+        if (newPossibleTypes.length === 1) {
+            return newPossibleTypes[0]!;
         }
 
-        // TODO: flatten nested unions
-        return new UnionType(...this.possibleTypes.map((it) => it.unwrap()));
+        return new UnionType(...newPossibleTypes);
     }
 
     override updateNullability(isNullable: boolean): Type {
