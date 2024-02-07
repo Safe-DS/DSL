@@ -506,6 +506,21 @@ describe('SafeDsTypeChecker', async () => {
                 expected: true,
             },
             {
+                type1: new LiteralType(NullConstant),
+                type2: enumType1,
+                expected: false,
+            },
+            {
+                type1: new LiteralType(NullConstant),
+                type2: enumType1.updateNullability(true),
+                expected: true,
+            },
+            {
+                type1: new LiteralType(NullConstant, NullConstant),
+                type2: enumType1.updateNullability(true),
+                expected: true,
+            },
+            {
                 type1: new LiteralType(new IntConstant(1n)),
                 type2: enumType1,
                 expected: false,
