@@ -620,17 +620,27 @@ export class SafeDsTypeComputer {
 
         if (unwrappedType instanceof LiteralType) {
             return this.simplifyLiteralType(unwrappedType);
+        } else if (unwrappedType instanceof UnionType) {
+            return this.simplifyUnionType(unwrappedType);
+        } else {
+            return unwrappedType;
         }
-
-        return unwrappedType;
     }
 
     private simplifyLiteralType(type: LiteralType): Type {
         if (isEmpty(type.constants)) {
             return this.coreTypes.Nothing;
+        } else {
+            return type;
         }
+    }
 
-        return type;
+    private simplifyUnionType(type: UnionType): Type {
+        if (isEmpty(type.possibleTypes)) {
+            return this.coreTypes.Nothing;
+        } else {
+            return type;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
