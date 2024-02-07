@@ -1,14 +1,14 @@
 package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod
 
-class MySuperClass {
+class MySuperClass1 {
     attr myInstanceAttribute: Number
     static attr myStaticAttribute: Number
 
-    fun myInstanceMethod(a: Number = 0) -> r: Number
-    static fun myStaticMethod(a: Number = 0) -> r: Number
+    @Pure fun myInstanceMethod(a: Number = 0) -> r: Number
+    @Pure static fun myStaticMethod(a: Number = 0) -> r: Number
 }
 
-class MyClass1 sub MySuperClass {
+class MyClass1 sub MySuperClass1 {
     // $TEST$ info "Overriding member is identical to overridden member and can be removed."
     attr »myInstanceAttribute«: Number
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
@@ -26,22 +26,22 @@ class MyClass1 sub MySuperClass {
 
 
     // $TEST$ info "Overriding member is identical to overridden member and can be removed."
-    fun »myInstanceMethod«(a: Number = 0) -> r: Number
+    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Number
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    static fun »myStaticMethod«(a: Number = 0) -> r: Number
+    @Pure static fun »myStaticMethod«(a: Number = 0) -> r: Number
 
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    fun »myInstanceMethod«() -> r: Number
+    @Pure fun »myInstanceMethod«() -> r: Number
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    static fun »myStaticMethod«() -> r: Number
+    @Pure static fun »myStaticMethod«() -> r: Number
 
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    fun »myOwnInstanceMethod«(a: Number = 0) -> r: Number
+    @Pure fun »myOwnInstanceMethod«(a: Number = 0) -> r: Number
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    static fun »myOwnStaticMethod«(a: Number = 0) -> r: Number
+    @Pure static fun »myOwnStaticMethod«(a: Number = 0) -> r: Number
 }
 
-class MyClass2 sub MySuperClass {
+class MyClass2 sub MySuperClass1 {
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
     attr »myInstanceAttribute«: Int
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
@@ -49,7 +49,7 @@ class MyClass2 sub MySuperClass {
 
 
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    fun »myInstanceMethod«(a: Number = 0) -> r: Int
+    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Int
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    static fun »myStaticMethod«(a: Number = 0) -> r: Int
+    @Pure static fun »myStaticMethod«(a: Number = 0) -> r: Int
 }
