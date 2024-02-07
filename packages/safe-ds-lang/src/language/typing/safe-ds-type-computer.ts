@@ -628,8 +628,29 @@ export class SafeDsTypeComputer {
     }
 
     private simplifyLiteralType(type: LiteralType): Type {
+        // Handle empty literal types
         if (isEmpty(type.constants)) {
             return this.coreTypes.Nothing;
+        }
+
+        // Remove duplicate constants
+        const uniqueConstants: Constant[] = [];
+        const knownConstants = new Set<String>();
+
+        for (const constant of type.constants) {
+            let key = constant.toString();
+
+            if (!knownConstants.has(key)) {
+                uniqueConstants.push(constant);
+                knownConstants.add(key);
+            }
+        }
+
+        // Apply other simplifications
+        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
+            return this.coreTypes.NothingOrNull;
+        } else if (uniqueConstants.length < type.constants.length) {
+            return new LiteralType(...uniqueConstants);
         } else {
             return type;
         }
