@@ -150,7 +150,9 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
-        const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () => this.doComputeType(node).unwrap());
+        const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
+            this.simplifyType(this.doComputeType(node)),
+        );
         return unsubstitutedType.substituteTypeParameters(substitutions);
     }
 
@@ -607,6 +609,14 @@ export class SafeDsTypeComputer {
         }
 
         return result;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Simplify type
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private simplifyType(type: Type): Type {
+        return type.unwrap();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,6 @@
+package tests.typing.simplification.unwrap
+
+class C(
+    // $TEST$ serialization union<String, Int, Boolean>
+    p1: »union<union<String, Int>, Boolean>«
+)
