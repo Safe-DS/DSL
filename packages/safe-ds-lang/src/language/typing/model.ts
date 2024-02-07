@@ -357,6 +357,10 @@ export class ClassType extends NamedType<SdsClass> {
     }
 
     override updateNullability(isNullable: boolean): ClassType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
         return new ClassType(this.declaration, this.substitutions, isNullable);
     }
 }
@@ -384,6 +388,10 @@ export class EnumType extends NamedType<SdsEnum> {
     }
 
     override updateNullability(isNullable: boolean): EnumType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
         return new EnumType(this.declaration, isNullable);
     }
 }
@@ -411,6 +419,10 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
     }
 
     override updateNullability(isNullable: boolean): EnumVariantType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
         return new EnumVariantType(this.declaration, isNullable);
     }
 }
@@ -446,6 +458,10 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
     }
 
     override updateNullability(isNullable: boolean): TypeParameterType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
         return new TypeParameterType(this.declaration, isNullable);
     }
 }
@@ -534,6 +550,7 @@ export class UnionType extends Type {
             return this.possibleTypes[0]!.unwrap();
         }
 
+        // TODO: flatten nested unions
         return new UnionType(...this.possibleTypes.map((it) => it.unwrap()));
     }
 
