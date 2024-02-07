@@ -1,0 +1,20 @@
+package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod
+
+class MySuperClass3<T> {
+    attr myInstanceAttribute: T
+    @Pure fun myInstanceMethod(a: T = 0) -> r: T
+}
+
+class MyClass5 sub MySuperClass3<Number> {
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    attr »myInstanceAttribute«: Number
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Number
+}
+
+class MyClass6 sub MySuperClass3<Number> {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    attr »myInstanceAttribute«: Int
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Int
+}
