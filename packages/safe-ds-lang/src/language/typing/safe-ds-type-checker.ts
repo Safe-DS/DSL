@@ -222,6 +222,9 @@ export class SafeDsTypeChecker {
     private literalTypeIsAssignableTo(type: LiteralType, other: Type): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
+        } else if (type.constants.length === 0) {
+            // Empty literal types are equivalent to `Nothing` and, thus, assignable to any type
+            return true;
         }
 
         if (other instanceof ClassType) {

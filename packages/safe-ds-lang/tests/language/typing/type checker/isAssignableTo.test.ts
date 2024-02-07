@@ -501,6 +501,11 @@ describe('SafeDsTypeChecker', async () => {
             },
             // Literal type to other
             {
+                type1: new LiteralType(), // Empty literal type
+                type2: enumType1,
+                expected: true,
+            },
+            {
                 type1: new LiteralType(new IntConstant(1n)),
                 type2: enumType1,
                 expected: false,
