@@ -1,0 +1,12 @@
+package tests.typing.simplification.removeDuplicateConstantsFromLiteralTypes
+
+class C(
+    // $TEST$ serialization literal<1>
+    p1: »literal<1, 1>«,
+
+    // $TEST$ serialization literal<1, 2>
+    p2: »literal<1, 2>«,
+
+    // $TEST$ serialization literal<1, 1.0>
+    p3: »literal<1, 1.0>«,
+)

@@ -150,7 +150,9 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
-        const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () => this.doComputeType(node).unwrap());
+        const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
+            this.simplifyType(this.doComputeType(node)),
+        );
         return unsubstitutedType.substituteTypeParameters(substitutions);
     }
 
@@ -607,6 +609,88 @@ export class SafeDsTypeComputer {
         }
 
         return result;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Simplify type
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private simplifyType(type: Type): Type {
+        const unwrappedType = type.unwrap();
+
+        if (unwrappedType instanceof LiteralType) {
+            return this.simplifyLiteralType(unwrappedType);
+        } else if (unwrappedType instanceof UnionType) {
+            return this.simplifyUnionType(unwrappedType);
+        } else {
+            return unwrappedType;
+        }
+    }
+
+    private simplifyLiteralType(type: LiteralType): Type {
+        // Handle empty literal types
+        if (isEmpty(type.constants)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Remove duplicate constants
+        const uniqueConstants: Constant[] = [];
+        const knownConstants = new Set<String>();
+
+        for (const constant of type.constants) {
+            let key = constant.toString();
+
+            if (!knownConstants.has(key)) {
+                uniqueConstants.push(constant);
+                knownConstants.add(key);
+            }
+        }
+
+        // Apply other simplifications
+        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
+            return this.coreTypes.NothingOrNull;
+        } else if (uniqueConstants.length < type.constants.length) {
+            return new LiteralType(...uniqueConstants);
+        } else {
+            return type;
+        }
+    }
+
+    private simplifyUnionType(type: UnionType): Type {
+        // Handle empty union types
+        if (isEmpty(type.possibleTypes)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Simplify possible types
+        const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
+
+        // Remove types that are subtypes of others. We do this back-to-front to keep the first occurrence of duplicate
+        // types. It's also makes splicing easier.
+        for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
+            const currentType = newPossibleTypes[i]!;
+
+            for (let j = 0; j < newPossibleTypes.length; j++) {
+                if (i === j) {
+                    continue;
+                }
+
+                let otherType = newPossibleTypes[j]!;
+                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
+
+                if (this.typeChecker.isAssignableTo(currentType, otherType)) {
+                    newPossibleTypes.splice(j, 1, otherType); // Update nullability
+                    newPossibleTypes.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        if (newPossibleTypes.length === 1) {
+            return newPossibleTypes[0]!;
+        } else {
+            return new UnionType(...newPossibleTypes);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------

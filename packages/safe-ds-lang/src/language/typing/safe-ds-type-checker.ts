@@ -9,7 +9,7 @@ import {
     Parameter,
     TypeParameter,
 } from '../helpers/nodeProperties.js';
-import { Constant } from '../partialEvaluation/model.js';
+import { Constant, NullConstant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
     CallableType,
@@ -222,10 +222,16 @@ export class SafeDsTypeChecker {
     private literalTypeIsAssignableTo(type: LiteralType, other: Type): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
+        } else if (type.constants.length === 0) {
+            // Empty literal types are equivalent to `Nothing` and assignable to any type
+            return true;
+        } else if (type.constants.every((it) => it === NullConstant)) {
+            // Literal types containing only `null` are equivalent to `Nothing?` and assignable to any nullable type
+            return other.isNullable;
         }
 
         if (other instanceof ClassType) {
-            if (other.equals(this.coreTypes.AnyOrNull)) {
+            if (other.equals(this.coreTypes.Any.updateNullability(type.isNullable))) {
                 return true;
             }
 
