@@ -507,16 +507,22 @@ export class SafeDsTypeComputer {
         }
 
         const receiverType = this.computeType(node.receiver);
-        const unsubstitutedResult = memberType.updateNullability(
-            (receiverType.isNullable && node.isNullSafe) || memberType.isNullable,
-        );
+        let result: Type = memberType;
 
-        // Substitute type parameters
+        // Substitute type parameters (must also work for inherited members)
         if (receiverType instanceof ClassType) {
-            return unsubstitutedResult.substituteTypeParameters(receiverType.substitutions);
-        } else {
-            return unsubstitutedResult;
+            const classContainingMember = getContainerOfType(node.member?.target.ref, isSdsClass);
+            const typeContainingMember = stream([receiverType], this.streamSupertypes(receiverType)).find(
+                (it) => it.declaration === classContainingMember,
+            );
+
+            if (typeContainingMember) {
+                result = result.substituteTypeParameters(typeContainingMember.substitutions);
+            }
         }
+
+        // Update nullability
+        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
