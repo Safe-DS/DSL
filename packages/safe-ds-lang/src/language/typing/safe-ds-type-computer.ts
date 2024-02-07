@@ -616,7 +616,21 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     private simplifyType(type: Type): Type {
-        return type.unwrap();
+        const unwrappedType = type.unwrap();
+
+        if (unwrappedType instanceof LiteralType) {
+            return this.simplifyLiteralType(unwrappedType);
+        }
+
+        return unwrappedType;
+    }
+
+    private simplifyLiteralType(type: LiteralType): Type {
+        if (isEmpty(type.constants)) {
+            return this.coreTypes.Nothing;
+        }
+
+        return type;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
