@@ -40,6 +40,6 @@ pipeline myPipeline {
     »nullableC()?.nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
     »nullableC()?.nullableMember«;
-    // $TEST$ serialization union<() -> (r: Int), literal<null>>
+    // $TEST$ serialization union<() -> (r: Int), Nothing?>
     »nullableC()?.method«;
 }

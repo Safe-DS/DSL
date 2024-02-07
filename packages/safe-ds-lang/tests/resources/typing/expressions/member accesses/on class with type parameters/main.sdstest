@@ -39,7 +39,7 @@ segment mySegment1(p: C<Int>) {
     »nullableC()?.nonNullableMember«;
     // $TEST$ serialization Int?
     »nullableC()?.nullableMember«;
-    // $TEST$ serialization union<() -> (r: Int), literal<null>>
+    // $TEST$ serialization union<() -> (r: Int), Nothing?>
     »nullableC()?.method«;
 }
 
@@ -71,6 +71,6 @@ segment mySegment2(p: D) {
     »nullableD()?.nonNullableMember«;
     // $TEST$ serialization Int?
     »nullableD()?.nullableMember«;
-    // $TEST$ serialization union<() -> (r: Int), literal<null>>
+    // $TEST$ serialization union<() -> (r: Int), Nothing?>
     »nullableD()?.method«;
 }

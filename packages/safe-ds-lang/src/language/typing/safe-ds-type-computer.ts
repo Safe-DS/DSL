@@ -657,10 +657,39 @@ export class SafeDsTypeComputer {
     }
 
     private simplifyUnionType(type: UnionType): Type {
+        // Handle empty union types
         if (isEmpty(type.possibleTypes)) {
             return this.coreTypes.Nothing;
+        }
+
+        // Simplify possible types
+        const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
+
+        // Remove types that are subtypes of others. We do this back-to-front to keep the first occurrence of duplicate
+        // types. It's also makes splicing easier.
+        for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
+            const currentType = newPossibleTypes[i]!;
+
+            for (let j = 0; j < newPossibleTypes.length; j++) {
+                if (i === j) {
+                    continue;
+                }
+
+                let otherType = newPossibleTypes[j]!;
+                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
+
+                if (this.typeChecker.isAssignableTo(currentType, otherType)) {
+                    newPossibleTypes.splice(j, 1, otherType); // Update nullability
+                    newPossibleTypes.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        if (newPossibleTypes.length === 1) {
+            return newPossibleTypes[0]!;
         } else {
-            return type;
+            return new UnionType(...newPossibleTypes);
         }
     }
 

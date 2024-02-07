@@ -1,0 +1,53 @@
+package tests.typing.simplification.removeUnneededEntriesFromUnionTypes
+
+class C(
+    // $TEST$ serialization Int
+    p1: »union<Int, Int>«,
+
+    // $TEST$ serialization union<Int, String>
+    p2: »union<Int, String, Int>«,
+
+
+    // $TEST$ serialization Number
+    p3: »union<Int, Number>«,
+
+    // $TEST$ serialization Number
+    p4: »union<Number, Int>«,
+
+    // $TEST$ serialization Number?
+    p5: »union<Number, Int?>«,
+
+    // $TEST$ serialization Any
+    p6: »union<Int, Number, Any>«,
+
+    // $TEST$ serialization Any
+    p7: »union<Any, Number, Int>«,
+
+    // $TEST$ serialization Any?
+    p8: »union<Int, Number?, Any>«,
+
+
+    // $TEST$ serialization union<Int, String>
+    p9: »union<Int, String>«,
+
+    // $TEST$ serialization union<Int, String?>
+    p10: »union<Int, String?>«,
+
+    // $TEST$ serialization union<Number, String>
+    p11: »union<Int, Number, String>«,
+
+    // $TEST$ serialization union<Number, String>
+    p12: »union<Number, Int, String>«,
+
+    // $TEST$ serialization Any
+    p13: »union<Int, String, Any>«,
+
+    // $TEST$ serialization Any?
+    p14: »union<Int, String?, Any>«,
+
+    // $TEST$ serialization Any
+    p15: »union<Any, String, Int>«,
+
+    // $TEST$ serialization Any?
+    p16: »union<Any, String?, Int>«,
+)
