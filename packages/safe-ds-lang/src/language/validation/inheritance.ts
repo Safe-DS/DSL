@@ -1,4 +1,4 @@
-import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
+import { expandToStringWithNL, getContainerOfType, stream, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
 import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
@@ -18,13 +18,32 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsClassMember, accept: ValidationAcceptor): void => {
+        // Check whether the member overrides something
         const overriddenMember = classHierarchy.getOverriddenMember(node);
         if (!overriddenMember) {
             return;
         }
 
+        // Compute basic types (might contain type parameters)
         const ownMemberType = typeComputer.computeType(node);
-        const overriddenMemberType = typeComputer.computeType(overriddenMember);
+        let overriddenMemberType = typeComputer.computeType(overriddenMember);
+
+        // Substitute type parameters on overriddenMemberType
+        const classContainingOwnMember = getContainerOfType(node, isSdsClass);
+        const typeContainingOwnMember = typeComputer.computeType(classContainingOwnMember);
+
+        if (typeContainingOwnMember instanceof ClassType) {
+            const classContainingOverriddenMember = getContainerOfType(overriddenMember, isSdsClass);
+            const typeContainingOverriddenMember = stream(typeComputer.streamSupertypes(typeContainingOwnMember)).find(
+                (it) => it.declaration === classContainingOverriddenMember,
+            );
+
+            if (typeContainingOverriddenMember) {
+                overriddenMemberType = overriddenMemberType.substituteTypeParameters(
+                    typeContainingOverriddenMember.substitutions,
+                );
+            }
+        }
 
         if (!typeChecker.isAssignableTo(ownMemberType, overriddenMemberType)) {
             accept(
