@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { testMessage } from './messaging/messages';
+
+    testMessage('Hello from Svelte via message');
 </script>
 
 <main class="text-center">

@@ -11,3 +11,5 @@ declare global {
         pythonServerPort: number;
     }
 }
+
+export {}; // otherwise this file is not treated as a module and ignored for some reason
