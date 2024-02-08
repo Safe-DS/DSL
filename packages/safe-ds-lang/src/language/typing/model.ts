@@ -7,9 +7,13 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsParameter,
+    SdsTypeParameter,
 } from '../generated/ast.js';
-import { Parameter } from '../helpers/nodeProperties.js';
+import { getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
+import { stream } from 'langium';
+
+export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 
 /**
  * The type of an AST node.
@@ -29,6 +33,11 @@ export abstract class Type {
      * Returns a string representation of this type.
      */
     abstract toString(): string;
+
+    /**
+     * Returns a copy of this type with the given type parameters substituted.
+     */
+    abstract substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type;
 
     /**
      * Removes any unnecessary containers from the type.
@@ -83,6 +92,19 @@ export class CallableType extends Type {
         return `(${inputTypeString}) -> ${this.outputType}`;
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): CallableType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return new CallableType(
+            this.callable,
+            this.parameter,
+            this.inputType.substituteTypeParameters(substitutions),
+            this.outputType.substituteTypeParameters(substitutions),
+        );
+    }
+
     override unwrap(): CallableType {
         return new CallableType(
             this.callable,
@@ -127,6 +149,10 @@ export class LiteralType extends Type {
 
     override toString(): string {
         return `literal<${this.constants.join(', ')}>`;
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
     }
 
     override unwrap(): LiteralType {
@@ -185,6 +211,14 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
         return `(${this.entries.join(', ')})`;
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleType<T> {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return new NamedTupleType(...this.entries.map((it) => it.substituteTypeParameters(substitutions)));
+    }
+
     /**
      * If this only has one entry, returns its type. Otherwise, returns this.
      */
@@ -228,6 +262,15 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
         return `${this.name}: ${this.type}`;
     }
 
+    substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleEntry<T> {
+        if (isEmpty(substitutions)) {
+            /* c8 ignore next 2 */
+            return this;
+        }
+
+        return new NamedTupleEntry(this.declaration, this.name, this.type.substituteTypeParameters(substitutions));
+    }
+
     unwrap(): NamedTupleEntry<T> {
         return new NamedTupleEntry(this.declaration, this.name, this.type.unwrap());
     }
@@ -256,9 +299,19 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
 export class ClassType extends NamedType<SdsClass> {
     constructor(
         declaration: SdsClass,
+        readonly substitutions: TypeParameterSubstitutions,
         override readonly isNullable: boolean,
     ) {
         super(declaration);
+    }
+
+    getTypeParameterTypeByIndex(index: number): Type {
+        const typeParameter = getTypeParameters(this.declaration)[index];
+        if (!typeParameter) {
+            return UnknownType;
+        }
+
+        return this.substitutions.get(typeParameter) ?? UnknownType;
     }
 
     override equals(other: unknown): boolean {
@@ -268,11 +321,47 @@ export class ClassType extends NamedType<SdsClass> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return (
+            other.declaration === this.declaration &&
+            other.isNullable === this.isNullable &&
+            substitutionsAreEqual(other.substitutions, this.substitutions)
+        );
+    }
+
+    override toString(): string {
+        let result = this.declaration.name;
+
+        if (this.substitutions.size > 0) {
+            result += `<${Array.from(this.substitutions.values())
+                .map((value) => value.toString())
+                .join(', ')}>`;
+        }
+
+        if (this.isNullable) {
+            result += '?';
+        }
+
+        return result;
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): ClassType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        const newSubstitutions = new Map(
+            stream(this.substitutions).map(([key, value]) => [key, value.substituteTypeParameters(substitutions)]),
+        );
+
+        return new ClassType(this.declaration, newSubstitutions, this.isNullable);
     }
 
     override updateNullability(isNullable: boolean): ClassType {
-        return new ClassType(this.declaration, isNullable);
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
+        return new ClassType(this.declaration, this.substitutions, isNullable);
     }
 }
 
@@ -294,7 +383,15 @@ export class EnumType extends NamedType<SdsEnum> {
         return other.declaration === this.declaration && other.isNullable === this.isNullable;
     }
 
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
+    }
+
     override updateNullability(isNullable: boolean): EnumType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
         return new EnumType(this.declaration, isNullable);
     }
 }
@@ -317,8 +414,55 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
         return other.declaration === this.declaration && other.isNullable === this.isNullable;
     }
 
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
+    }
+
     override updateNullability(isNullable: boolean): EnumVariantType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
         return new EnumVariantType(this.declaration, isNullable);
+    }
+}
+
+export class TypeParameterType extends NamedType<SdsTypeParameter> {
+    constructor(
+        declaration: SdsTypeParameter,
+        override readonly isNullable: boolean,
+    ) {
+        super(declaration);
+    }
+
+    override equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof TypeParameterType)) {
+            return false;
+        }
+
+        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type {
+        const substitution = substitutions.get(this.declaration);
+
+        if (!substitution) {
+            return this;
+        } else if (this.isNullable) {
+            return substitution.updateNullability(true);
+        } else {
+            return substitution;
+        }
+    }
+
+    override updateNullability(isNullable: boolean): TypeParameterType {
+        if (this.isNullable === isNullable) {
+            return this;
+        }
+
+        return new TypeParameterType(this.declaration, isNullable);
     }
 }
 
@@ -344,6 +488,12 @@ export class StaticType extends Type {
 
     override toString(): string {
         return `$type<${this.instanceType}>`;
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): StaticType {
+        // The substitutions are only meaningful for instances of a declaration, not for the declaration itself. Hence,
+        // we don't substitute anything here.
+        return this;
     }
 
     override unwrap(): Type {
@@ -387,12 +537,31 @@ export class UnionType extends Type {
         return `union<${this.possibleTypes.join(', ')}>`;
     }
 
-    override unwrap(): Type {
-        if (this.possibleTypes.length === 1) {
-            return this.possibleTypes[0]!.unwrap();
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
+        if (isEmpty(substitutions)) {
+            return this;
         }
 
-        return new UnionType(...this.possibleTypes.map((it) => it.unwrap()));
+        return new UnionType(...this.possibleTypes.map((it) => it.substituteTypeParameters(substitutions)));
+    }
+
+    override unwrap(): Type {
+        // Flatten nested unions
+        const newPossibleTypes = this.possibleTypes.flatMap((type) => {
+            const unwrappedType = type.unwrap();
+            if (unwrappedType instanceof UnionType) {
+                return unwrappedType.possibleTypes;
+            } else {
+                return unwrappedType;
+            }
+        });
+
+        // Remove the outer union if there's only one type left
+        if (newPossibleTypes.length === 1) {
+            return newPossibleTypes[0]!;
+        }
+
+        return new UnionType(...newPossibleTypes);
     }
 
     override updateNullability(isNullable: boolean): Type {
@@ -418,7 +587,11 @@ class UnknownTypeClass extends Type {
     }
 
     override toString(): string {
-        return '?';
+        return '$unknown';
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
     }
 
     override unwrap(): Type {
@@ -431,3 +604,24 @@ class UnknownTypeClass extends Type {
 }
 
 export const UnknownType = new UnknownTypeClass();
+
+// -------------------------------------------------------------------------------------------------
+// Helpers
+// -------------------------------------------------------------------------------------------------
+
+const substitutionsAreEqual = (
+    a: Map<SdsDeclaration, Type> | undefined,
+    b: Map<SdsDeclaration, Type> | undefined,
+): boolean => {
+    if (a?.size !== b?.size) {
+        return false;
+    }
+
+    const aEntries = Array.from(a?.entries() ?? []);
+    const bEntries = Array.from(b?.entries() ?? []);
+
+    return aEntries.every(([aEntry, aValue], i) => {
+        const [bEntry, bValue] = bEntries[i]!;
+        return aEntry === bEntry && aValue.equals(bValue);
+    });
+};

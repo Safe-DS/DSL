@@ -1,4 +1,13 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, stream, WorkspaceCache } from 'langium';
+import {
+    AstNode,
+    AstNodeLocator,
+    EMPTY_STREAM,
+    getContainerOfType,
+    getDocument,
+    Stream,
+    stream,
+    WorkspaceCache,
+} from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
     isSdsAnnotation,
@@ -38,6 +47,7 @@ import {
     isSdsTemplateString,
     isSdsType,
     isSdsTypeArgument,
+    isSdsTypeCast,
     isSdsTypeParameter,
     isSdsTypeProjection,
     isSdsUnionType,
@@ -47,6 +57,7 @@ import {
     type SdsBlockLambda,
     SdsCall,
     SdsCallableType,
+    SdsClass,
     SdsDeclaration,
     SdsExpression,
     type SdsExpressionLambda,
@@ -55,18 +66,23 @@ import {
     SdsInfixOperation,
     SdsLiteralType,
     SdsMemberAccess,
+    SdsNamedType,
     SdsParameter,
     SdsPrefixOperation,
     SdsReference,
     SdsSegment,
     SdsType,
+    SdsTypeArgument,
+    SdsTypeParameter,
 } from '../generated/ast.js';
 import {
     getAssignees,
     getLiterals,
     getParameters,
+    getParentTypes,
     getResults,
     getTypeArguments,
+    getTypeParameters,
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
@@ -92,6 +108,8 @@ import {
     NamedType,
     StaticType,
     Type,
+    TypeParameterSubstitutions,
+    TypeParameterType,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -127,11 +145,15 @@ export class SafeDsTypeComputer {
     /**
      * Computes the type of the given node.
      */
-    computeType(node: AstNode | undefined): Type {
+    computeType(node: AstNode | undefined, substitutions: TypeParameterSubstitutions = NO_SUBSTITUTIONS): Type {
         if (!node) {
             return UnknownType;
         }
-        return this.nodeTypeCache.get(this.getNodeId(node), () => this.doComputeType(node).unwrap());
+
+        const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
+            this.simplifyType(this.doComputeType(node)),
+        );
+        return unsubstitutedType.substituteTypeParameters(substitutions);
     }
 
     private getNodeId(node: AstNode) {
@@ -186,7 +208,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
-            return new ClassType(node, false);
+            return new ClassType(node, NO_SUBSTITUTIONS, false);
         } else if (isSdsEnum(node)) {
             return new EnumType(node, false);
         } else if (isSdsEnumVariant(node)) {
@@ -204,7 +226,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsTypeParameter(node)) {
-            return UnknownType;
+            return new TypeParameterType(node, false);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -287,6 +309,11 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfExpression(node: SdsExpression): Type {
+        // Type cast
+        if (isSdsTypeCast(node)) {
+            return this.computeType(node.type);
+        }
+
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
@@ -295,9 +322,21 @@ export class SafeDsTypeComputer {
 
         // Terminal cases
         if (isSdsList(node)) {
-            return this.coreTypes.List;
+            const elementType = this.lowestCommonSupertype(...node.elements.map((it) => this.computeType(it)));
+            return this.coreTypes.List(elementType);
         } else if (isSdsMap(node)) {
-            return this.coreTypes.Map;
+            let keyType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.key)));
+
+            // Keeping literal types for keys is too strict: We would otherwise infer the key type of `{"a": 1, "b": 2}`
+            // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
+            // access. Where possible, we already validate the existence of keys in indexed accesses using the partial
+            // evaluator.
+            if (keyType instanceof LiteralType) {
+                keyType = this.computeClassTypeForLiteralType(keyType);
+            }
+
+            const valueType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.value)));
+            return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
         }
@@ -424,9 +463,10 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        if (receiverType.equals(this.coreTypes.List) || receiverType.equals(this.coreTypes.Map)) {
-            // TODO: access type arguments
-            return this.coreTypes.AnyOrNull;
+        if (this.typeChecker.isList(receiverType)) {
+            return receiverType.getTypeParameterTypeByIndex(0);
+        } else if (this.typeChecker.isMap(receiverType)) {
+            return receiverType.getTypeParameterTypeByIndex(1);
         } else {
             return UnknownType;
         }
@@ -436,7 +476,10 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         const rightOperandType = this.computeType(node.rightOperand);
 
-        if (leftOperandType.equals(this.coreTypes.Int) && rightOperandType.equals(this.coreTypes.Int)) {
+        if (
+            this.typeChecker.isAssignableTo(leftOperandType, this.coreTypes.Int) &&
+            this.typeChecker.isAssignableTo(rightOperandType, this.coreTypes.Int)
+        ) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -466,13 +509,28 @@ export class SafeDsTypeComputer {
         }
 
         const receiverType = this.computeType(node.receiver);
-        return memberType.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
+        let result: Type = memberType;
+
+        // Substitute type parameters (must also work for inherited members)
+        if (receiverType instanceof ClassType) {
+            const classContainingMember = getContainerOfType(node.member?.target.ref, isSdsClass);
+            const typeContainingMember = stream([receiverType], this.streamSupertypes(receiverType)).find(
+                (it) => it.declaration === classContainingMember,
+            );
+
+            if (typeContainingMember) {
+                result = result.substituteTypeParameters(typeContainingMember.substitutions);
+            }
+        }
+
+        // Update nullability
+        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
-        const leftOperandType = this.computeType(node.operand);
+        const operandType = this.computeType(node.operand);
 
-        if (leftOperandType.equals(this.coreTypes.Int)) {
+        if (this.typeChecker.isAssignableTo(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -498,7 +556,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsMemberType(node)) {
             return this.computeType(node.member);
         } else if (isSdsNamedType(node)) {
-            return this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
+            return this.computeTypeOfNamedType(node);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
@@ -514,6 +572,125 @@ export class SafeDsTypeComputer {
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
+    }
+
+    private computeTypeOfNamedType(node: SdsNamedType) {
+        const unparameterizedType = this.computeType(node.declaration?.ref).updateNullability(node.isNullable);
+        if (!(unparameterizedType instanceof ClassType)) {
+            return unparameterizedType;
+        }
+
+        const substitutions = this.getTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
+        return new ClassType(unparameterizedType.declaration, substitutions, node.isNullable);
+    }
+
+    private getTypeParameterSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
+        const typeParameters = getTypeParameters(clazz);
+        if (isEmpty(typeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        // Map type parameters to the first type argument that sets it
+        const typeArgumentsByTypeParameters = new Map<SdsTypeParameter, SdsTypeArgument>();
+        for (const typeArgument of getTypeArguments(node)) {
+            const typeParameter = this.nodeMapper.typeArgumentToTypeParameter(typeArgument);
+            if (typeParameter && !typeArgumentsByTypeParameters.has(typeParameter)) {
+                typeArgumentsByTypeParameters.set(typeParameter, typeArgument);
+            }
+        }
+
+        // Compute substitutions (ordered by the position of the type parameters)
+        const result = new Map<SdsTypeParameter, Type>();
+
+        for (const typeParameter of typeParameters) {
+            const typeArgument = typeArgumentsByTypeParameters.get(typeParameter);
+            const type = this.computeType(typeArgument?.value ?? typeParameter.defaultValue);
+            result.set(typeParameter, type);
+        }
+
+        return result;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Simplify type
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private simplifyType(type: Type): Type {
+        const unwrappedType = type.unwrap();
+
+        if (unwrappedType instanceof LiteralType) {
+            return this.simplifyLiteralType(unwrappedType);
+        } else if (unwrappedType instanceof UnionType) {
+            return this.simplifyUnionType(unwrappedType);
+        } else {
+            return unwrappedType;
+        }
+    }
+
+    private simplifyLiteralType(type: LiteralType): Type {
+        // Handle empty literal types
+        if (isEmpty(type.constants)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Remove duplicate constants
+        const uniqueConstants: Constant[] = [];
+        const knownConstants = new Set<String>();
+
+        for (const constant of type.constants) {
+            let key = constant.toString();
+
+            if (!knownConstants.has(key)) {
+                uniqueConstants.push(constant);
+                knownConstants.add(key);
+            }
+        }
+
+        // Apply other simplifications
+        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
+            return this.coreTypes.NothingOrNull;
+        } else if (uniqueConstants.length < type.constants.length) {
+            return new LiteralType(...uniqueConstants);
+        } else {
+            return type;
+        }
+    }
+
+    private simplifyUnionType(type: UnionType): Type {
+        // Handle empty union types
+        if (isEmpty(type.possibleTypes)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Simplify possible types
+        const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
+
+        // Remove types that are subtypes of others. We do this back-to-front to keep the first occurrence of duplicate
+        // types. It's also makes splicing easier.
+        for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
+            const currentType = newPossibleTypes[i]!;
+
+            for (let j = 0; j < newPossibleTypes.length; j++) {
+                if (i === j) {
+                    continue;
+                }
+
+                let otherType = newPossibleTypes[j]!;
+                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
+
+                if (this.typeChecker.isAssignableTo(currentType, otherType)) {
+                    newPossibleTypes.splice(j, 1, otherType); // Update nullability
+                    newPossibleTypes.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        if (newPossibleTypes.length === 1) {
+            return newPossibleTypes[0]!;
+        } else {
+            return new UnionType(...newPossibleTypes);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -574,7 +751,7 @@ export class SafeDsTypeComputer {
         // Class-based types
         if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
             if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
-                return this.getAny(isNullable);
+                return this.Any(isNullable);
             } else {
                 return this.lowestCommonSupertypeForClassBasedTypes(
                     groupedTypes.classTypes,
@@ -618,7 +795,11 @@ export class SafeDsTypeComputer {
         };
 
         for (const type of types) {
-            if (type instanceof ClassType) {
+            if (type.equals(this.coreTypes.Nothing)) {
+                // Do nothing
+            } else if (type.equals(this.coreTypes.NothingOrNull)) {
+                result.constants.push(NullConstant);
+            } else if (type instanceof ClassType) {
                 result.classTypes.push(type);
             } else if (type instanceof EnumType) {
                 result.enumTypes.push(type);
@@ -655,13 +836,17 @@ export class SafeDsTypeComputer {
         const other = [...classTypes.slice(1), literalType];
 
         for (const candidateClass of candidateClasses) {
-            const candidateType = new ClassType(candidateClass, isNullable);
+            // TODO: handle type parameters
+            const candidateType = new ClassType(candidateClass, NO_SUBSTITUTIONS, isNullable);
+            // TODO: We need to check first without type parameters
+            //  Then check with type parameters and whether we can find a common supertype for them, respecting variance
+            //  If we can't, try the next candidate
             if (this.isCommonSupertype(candidateType, other)) {
                 return candidateType;
             }
         }
         /* c8 ignore next */
-        return this.getAny(isNullable);
+        return this.Any(isNullable);
     }
 
     private lowestCommonSupertypeForEnumBasedTypes(
@@ -692,15 +877,66 @@ export class SafeDsTypeComputer {
             }
         }
 
-        return this.getAny(isNullable);
+        return this.Any(isNullable);
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
     }
 
-    private getAny(isNullable: boolean): Type {
+    private Any(isNullable: boolean): Type {
         return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Stream supertypes
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns a stream of all declared super types of the given type. Direct ancestors are returned first, followed by
+     * their ancestors and so on. The given type is never included in the stream.
+     *
+     * Compared to `ClassHierarchy.streamSuperTypes`, this method cannot be used to detect cycles in the inheritance
+     * hierarchy. However, it can handle type parameters on parent types and substitute them accordingly.
+     */
+    streamSupertypes(type: ClassType | undefined): Stream<ClassType> {
+        if (!type) {
+            return EMPTY_STREAM;
+        }
+
+        return stream(this.supertypesGenerator(type));
+    }
+
+    private *supertypesGenerator(type: ClassType): Generator<ClassType, void> {
+        // Compared to `ClassHierarchy.superclassesGenerator`, we already include the given type in the list of visited
+        // elements, since this method here is not used to detect cycles.
+        const visited = new Set<SdsClass>([type.declaration]);
+        let current = this.parentClassType(type);
+        while (current && !visited.has(current.declaration)) {
+            yield current;
+            visited.add(current.declaration);
+            current = this.parentClassType(current);
+        }
+
+        const Any = this.coreTypes.Any;
+        if (Any instanceof ClassType && !visited.has(Any.declaration)) {
+            yield Any;
+        }
+    }
+
+    /**
+     * Tries to evaluate the first parent type of the class to a `ClassType` and returns it if successful. Type
+     * parameters get substituted. If there is no parent type or the parent type is not a class, `undefined` is
+     * returned.
+     */
+    private parentClassType(type: ClassType | undefined): ClassType | undefined {
+        const [firstParentTypeNode] = getParentTypes(type?.declaration);
+        const firstParentType = this.computeType(firstParentTypeNode, type?.substitutions);
+
+        if (firstParentType instanceof ClassType) {
+            return firstParentType;
+        }
+        return undefined;
     }
 }
 
@@ -711,3 +947,5 @@ interface GroupTypesResult {
     enumVariantTypes: EnumVariantType[];
     hasTypeWithUnknownSupertype: boolean;
 }
+
+const NO_SUBSTITUTIONS: TypeParameterSubstitutions = new Map();

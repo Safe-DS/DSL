@@ -33,6 +33,7 @@ const plugins = [
         },
         watch,
     }),
+    // Needed to resolve source-maps in the extension
     copy({
         assets: {
             from: ['../safe-ds-eda/dist/main.js'],

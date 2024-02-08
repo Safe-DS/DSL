@@ -2,21 +2,9 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import {
-    addMessageCallback,
-    getExecutionContext,
-    tryMapToSafeDSSource,
-    executePipeline,
-    startPythonServer,
-    stopPythonServer,
-    isPythonServerAvailable,
-    pythonServerPort,
-    removeMessageCallback,
-} from './pythonServer.js';
-import { ast, createSafeDsServicesWithBuiltins, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServicesWithBuiltins, SafeDsServices, messages } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
-import { PlaceholderTypeMessage, RuntimeErrorMessage, RuntimeProgressMessage } from './messages.js';
 import crypto from 'crypto';
 import { LangiumDocument, URI } from 'langium';
 import { EDAPanel, undefinedPanelIdentifier } from './eda/edaPanel.ts';
@@ -30,14 +18,26 @@ let lastSuccessfulPlaceholderName: string | undefined;
 export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
-    await startPythonServer();
-    services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
+    services = (await createSafeDsServicesWithBuiltins(NodeFileSystem, { runnerCommand: runnerCommandSetting })).SafeDs;
+    services.runtime.Runner.updateRunnerLogging({
+        displayError(value: string): void {
+            vscode.window.showErrorMessage(value);
+        },
+        outputError(value: string): void {
+            logError(value);
+        },
+        outputInfo(value: string): void {
+            logOutput(value);
+        },
+    });
+    await services.runtime.Runner.startPythonServer();
     acceptRunRequests(context);
 };
 
 // This function is called when the extension is deactivated.
 export const deactivate = async function (): Promise<void> {
-    await stopPythonServer();
+    await services.runtime.Runner.stopPythonServer();
     if (client) {
         await client.stop();
     }
@@ -94,28 +94,30 @@ const acceptRunRequests = function (context: vscode.ExtensionContext) {
 };
 
 const registerMessageLoggingCallbacks = function () {
-    addMessageCallback((message) => {
+    services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
         );
     }, 'placeholder_value');
-    addMessageCallback((message) => {
+    services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(
             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
         );
-        const execInfo = getExecutionContext(message.id)!;
+        const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
         execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
-        // sendMessageToPythonServer(createPlaceholderQueryMessage(message.id, message.data.name));
+        // services.runtime.Runner.sendMessageToPythonServer(
+        //    messages.createPlaceholderQueryMessage(message.id, message.data.name),
+        //);
     }, 'placeholder_type');
-    addMessageCallback((message) => {
+    services.runtime.Runner.addMessageCallback((message) => {
         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
     }, 'runtime_progress');
-    addMessageCallback(async (message) => {
+    services.runtime.Runner.addMessageCallback(async (message) => {
         let readableStacktraceSafeDs: string[] = [];
-        const execInfo = getExecutionContext(message.id)!;
+        const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
         const readableStacktracePython = await Promise.all(
-            (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-                const mappedFrame = await tryMapToSafeDSSource(message.id, frame);
+            (<messages.RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+                const mappedFrame = await services.runtime.Runner.tryMapToSafeDSSource(message.id, frame);
                 if (mappedFrame) {
                     readableStacktraceSafeDs.push(
                         `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
@@ -129,11 +131,11 @@ const registerMessageLoggingCallbacks = function () {
         );
         logOutput(
             `Runner-RuntimeError (${message.id}): ${
-                (<RuntimeErrorMessage>message).data.message
+                (<messages.RuntimeErrorMessage>message).data.message
             } \n${readableStacktracePython.join('\n')}`,
         );
         printOutputMessage(
-            `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+            `Safe-DS Error (${message.id}): ${(<messages.RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
                 .reverse()
                 .join('\n')}`,
         );
@@ -143,7 +145,7 @@ const registerMessageLoggingCallbacks = function () {
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     const registerCommandWithCheck = (commandId: string, callback: (...args: any[]) => any) => {
         return vscode.commands.registerCommand(commandId, (...args: any[]) => {
-            if (!isPythonServerAvailable()) {
+            if (!services.runtime.Runner.isPythonServerAvailable()) {
                 vscode.window.showErrorMessage('Extension not fully started yet.');
                 return;
             }
@@ -198,7 +200,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                         loadingInProgress = false;
                     };
 
-                    const placeholderTypeCallback = function (message: PlaceholderTypeMessage) {
+                    const placeholderTypeCallback = function (message: messages.PlaceholderTypeMessage) {
                         printOutputMessage(
                             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
                         );
@@ -213,23 +215,23 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                                 context.extensionUri,
                                 context,
                                 pipelineId,
-                                message.data.name,
-                                pythonServerPort,
+                                services,
+                                message.data.name
                             );
-                            removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
+                            services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
                         } else if (message.id === pipelineId && message.data.name !== requestedPlaceholderName) {
                             return;
                         } else if (message.id === pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Selected placeholder is not of type 'Table'.`);
-                            removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
+                            services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
                         }
                     };
-                    addMessageCallback(placeholderTypeCallback, 'placeholder_type');
+                    services.runtime.Runner.addMessageCallback(placeholderTypeCallback, 'placeholder_type')
 
-                    const runtimeProgressCallback = function (message: RuntimeProgressMessage) {
+                    const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
                         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
                         if (
                             message.id === pipelineId &&
@@ -238,25 +240,25 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                         ) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                            removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
+                            services.runtime.Runner.removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
                             cleanupLoadingIndication();
                         }
                     };
-                    addMessageCallback(runtimeProgressCallback, 'runtime_progress');
+                    services.runtime.Runner.addMessageCallback(runtimeProgressCallback, 'runtime_progress');
 
-                    const runtimeErrorCallback = function (message: RuntimeErrorMessage) {
+                    const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
                         if (message.id === pipelineId && lastFinishedPipelineId !== pipelineId) {
                             lastFinishedPipelineId = pipelineId;
                             vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                            removeMessageCallback(runtimeErrorCallback, 'runtime_error');
+                            services.runtime.Runner.removeMessageCallback(runtimeErrorCallback, 'runtime_error');
                             cleanupLoadingIndication();
                         }
                     };
-                    addMessageCallback(runtimeErrorCallback, 'runtime_error');
+                    services.runtime.Runner.addMessageCallback(runtimeErrorCallback, 'runtime_error');
 
                     runPipelineFile(editor.document.uri, pipelineId);
                 } else {
-                    EDAPanel.createOrShow(context.extensionUri, context, '', undefined, pythonServerPort);
+                    EDAPanel.createOrShow(context.extensionUri, context, '', services, undefined);
                 }
             } else {
                 vscode.window.showErrorMessage('No ative text editor!');
@@ -273,8 +275,8 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                     context.extensionUri,
                     context,
                     '',
+                    services,
                     lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : undefinedPanelIdentifier,
-                    pythonServerPort,
                 );
             }, 100);
             setTimeout(() => {
@@ -338,7 +340,7 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
     } else {
         mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
-    await executePipeline(services, mainDocument, pipelineId);
+    await services.runtime.Runner.executePipeline(mainDocument, pipelineId);
 };
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
@@ -382,8 +384,8 @@ const registerVSCodeWatchers = function () {
         if (event.affectsConfiguration('safe-ds.runner.command')) {
             // Try starting runner
             logOutput('Safe-DS Runner Command was updated');
-            if (!isPythonServerAvailable()) {
-                startPythonServer();
+            if (!services.runtime.Runner.isPythonServerAvailable()) {
+                services.runtime.Runner.startPythonServer();
             } else {
                 logOutput(
                     'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',

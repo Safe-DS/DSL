@@ -6,6 +6,9 @@ class C() {
 
     // $TEST$ equivalence_class nullableMember
     attr »nullableMember«: Any?
+
+    // $TEST$ equivalence_class method
+    @Pure fun »method«() -> r: Int
 }
 
 fun nullableC() -> result: C?
@@ -15,20 +18,28 @@ pipeline myPipeline {
     »C().nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
     »C().nullableMember«;
+    // $TEST$ equivalence_class method
+    »C().method«;
 
     // $TEST$ equivalence_class nonNullableMember
     »C()?.nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
     »C()?.nullableMember«;
+    // $TEST$ equivalence_class method
+    »C()?.method«;
 
 
     // $TEST$ equivalence_class nonNullableMember
     »nullableC().nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
     »nullableC().nullableMember«;
+    // $TEST$ equivalence_class method
+    »nullableC().method«;
 
     // $TEST$ serialization Int?
     »nullableC()?.nonNullableMember«;
     // $TEST$ equivalence_class nullableMember
     »nullableC()?.nullableMember«;
+    // $TEST$ serialization union<() -> (r: Int), Nothing?>
+    »nullableC()?.method«;
 }

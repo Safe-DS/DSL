@@ -1,8 +1,22 @@
 package tests.typing.expressions.lists
 
-// TODO: Improve once type parameters are supported
+@Pure fun float() -> r: Float
+@Pure fun string() -> r: String
+
 pipeline myPipeline {
 
-    // $TEST$ serialization List
+    // $TEST$ serialization List<Nothing>
     »[]«;
+
+    // $TEST$ serialization List<literal<1, 2, 3>>
+    »[1, 2, 3]«;
+
+    // $TEST$ serialization List<Number>
+    »[1, float(), 3]«;
+
+    // $TEST$ serialization List<Any>
+    »[1, string(), 3]«;
+
+    // $TEST$ serialization List<Any?>
+    »[1, string(), null]«;
 }

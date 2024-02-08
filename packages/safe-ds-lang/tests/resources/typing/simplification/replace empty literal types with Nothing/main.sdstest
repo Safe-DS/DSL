@@ -1,0 +1,6 @@
+package tests.typing.simplification.replaceEmptyLiteralTypesWithNothing
+
+class C(
+    // $TEST$ serialization Nothing
+    p1: »literal<>«
+)

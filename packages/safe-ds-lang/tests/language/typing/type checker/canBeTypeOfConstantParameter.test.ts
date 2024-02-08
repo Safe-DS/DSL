@@ -1,8 +1,7 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsModule } from '../../../../src/language/generated/ast.js';
-import { getEnumVariants, getModuleMembers } from '../../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins, getEnumVariants, getModuleMembers } from '../../../../src/language/index.js';
 import {
     ClassType,
     EnumType,
@@ -63,11 +62,11 @@ describe('SafeDsTypeChecker', async () => {
             expected: true,
         },
         {
-            type: coreTypes.List,
+            type: coreTypes.List(coreTypes.Int),
             expected: true,
         },
         {
-            type: coreTypes.Map,
+            type: coreTypes.Map(coreTypes.String, coreTypes.Int),
             expected: true,
         },
         {

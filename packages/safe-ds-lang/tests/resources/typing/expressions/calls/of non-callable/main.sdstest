@@ -3,6 +3,6 @@ package tests.typing.expressions.calls.ofNonCallables
 enum MyEnum
 
 pipeline myPipeline {
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     »MyEnum()«;
 }

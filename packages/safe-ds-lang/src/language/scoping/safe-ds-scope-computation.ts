@@ -122,6 +122,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
 
         if (isSdsClass(containingDeclaration)) {
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.parameterList, description);
+            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.parentTypeList, description);
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.constraintList, description);
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.body, description);
         } else if (isSdsFunction(containingDeclaration)) {

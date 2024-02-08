@@ -1,14 +1,14 @@
 package tests.validation.inheritance.overridingMethodMustMatchOverriddenMethod
 
-class MySuperClass {
+class MySuperClass1 {
     attr myInstanceAttribute: Number
     static attr myStaticAttribute: Number
 
-    fun myInstanceMethod(a: Number = 0) -> r: Number
-    static fun myStaticMethod(a: Number = 0) -> r: Number
+    @Pure fun myInstanceMethod(a: Number = 0) -> r: Number
+    @Pure static fun myStaticMethod(a: Number = 0) -> r: Number
 }
 
-class MyClass1 sub MySuperClass {
+class MyClass1 sub MySuperClass1 {
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
     attr »myInstanceAttribute«: Int
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
@@ -26,22 +26,22 @@ class MyClass1 sub MySuperClass {
 
 
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    fun »myInstanceMethod«(a: Any = 0) -> r: Int
+    @Pure fun »myInstanceMethod«(a: Any = 0) -> r: Int
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    static fun »myStaticMethod«(a: Any = 0) -> r: Int
+    @Pure static fun »myStaticMethod«(a: Any = 0) -> r: Int
 
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    fun »myInstanceMethod«() -> r: Int
+    @Pure fun »myInstanceMethod«() -> r: Int
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    static fun »myStaticMethod«() -> r: Int
+    @Pure static fun »myStaticMethod«() -> r: Int
 
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    fun »myOwnInstanceMethod«(a: Any = 0) -> r: Int
+    @Pure fun »myOwnInstanceMethod«(a: Any = 0) -> r: Int
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    static fun »myOwnStaticMethod«(a: Any = 0) -> r: Int
+    @Pure static fun »myOwnStaticMethod«(a: Any = 0) -> r: Int
 }
 
-class MyClass2 sub MySuperClass {
+class MyClass2 sub MySuperClass1 {
     // $TEST$ error r"Overriding member does not match the overridden member:.*"
     attr »myInstanceAttribute«: Any
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
@@ -49,7 +49,7 @@ class MyClass2 sub MySuperClass {
 
 
     // $TEST$ error r"Overriding member does not match the overridden member:.*"
-    fun »myInstanceMethod«(a: Number = 0) -> r: Any
+    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Any
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    static fun »myStaticMethod«(a: Number = 0) -> r: Any
+    @Pure static fun »myStaticMethod«(a: Number = 0) -> r: Any
 }

@@ -9,7 +9,7 @@ fun nonNullableNamedTypes(
     a: »MyClass«,
     // $TEST$ serialization MyEnum
     b: »MyEnum«,
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     c: »unresolved«,
 )
 
@@ -18,6 +18,6 @@ fun nullableNamedTypes(
     a: »MyClass?«,
     // $TEST$ serialization MyEnum?
     b: »MyEnum?«,
-    // $TEST$ serialization ?
+    // $TEST$ serialization $unknown
     c: »unresolved?«,
 )

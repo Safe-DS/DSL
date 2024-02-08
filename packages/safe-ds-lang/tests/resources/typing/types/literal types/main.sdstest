@@ -1,6 +1,6 @@
 package tests.typing.types.literalTypes
 
-// $TEST$ serialization literal<>
+// $TEST$ serialization Nothing
 fun myFunction1(f: »literal<>«)
 
 // $TEST$ serialization literal<1, 2>

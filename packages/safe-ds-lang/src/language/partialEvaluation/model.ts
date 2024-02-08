@@ -85,7 +85,13 @@ export class FloatConstant extends NumberConstant {
     }
 
     override toString(): string {
-        return this.value.toString();
+        const string = this.value.toString();
+
+        if (!string.includes('.')) {
+            return `${string}.0`;
+        } else {
+            return string;
+        }
     }
 }
 

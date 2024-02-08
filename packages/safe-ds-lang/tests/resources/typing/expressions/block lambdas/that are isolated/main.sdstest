@@ -3,12 +3,12 @@ package tests.typing.expressions.blockLambdas.thatAreIsolated
 fun g() -> r: Int
 
 segment mySegment() {
-    // $TEST$ serialization (p: ?) -> (r: literal<1>, s: ?)
+    // $TEST$ serialization (p: $unknown) -> (r: literal<1>, s: $unknown)
     »(p) {
         yield r, yield s = 1;
     }«;
 
-    // $TEST$ serialization (p: ?) -> (r: Int, s: ?)
+    // $TEST$ serialization (p: $unknown) -> (r: Int, s: $unknown)
     val f = »(p) {
         yield r, yield s = g();
     }«;

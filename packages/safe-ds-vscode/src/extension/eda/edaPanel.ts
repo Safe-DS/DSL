@@ -2,16 +2,16 @@ import * as vscode from 'vscode';
 import { ToExtensionMessage } from '../../../../../types/shared-eda-vscode/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
 import { Column, State, Table } from '../../../../../types/shared-eda-vscode/state.js';
-import { addMessageCallback, removeMessageCallback, sendMessageToPythonServer } from '../pythonServer.ts';
-import { PlaceholderValueMessage, createPlaceholderQueryMessage } from '../messages.ts';
 import { logOutput, printOutputMessage } from '../output.ts';
+import { SafeDsServices, messages } from '@safe-ds/lang';
 
 export const undefinedPanelIdentifier = 'undefinedPanelIdentifier';
 
 export class EDAPanel {
     // Map to track multiple panels
-    public static panelsMap: Map<string, EDAPanel> = new Map();
-    public static context: vscode.ExtensionContext;
+    private static panelsMap: Map<string, EDAPanel> = new Map();
+    private static context: vscode.ExtensionContext;
+    private static services: SafeDsServices;
 
     public static readonly viewType = 'eda';
 
@@ -19,7 +19,6 @@ export class EDAPanel {
     private readonly extensionUri: vscode.Uri;
     private disposables: vscode.Disposable[] = [];
     private tableIdentifier: string | undefined;
-    private pythonServerPort: number = 5000;
     private startPipelineId: string = '';
     private column: vscode.ViewColumn | undefined;
     private webviewListener: vscode.Disposable | undefined;
@@ -31,12 +30,10 @@ export class EDAPanel {
         extensionUri: vscode.Uri,
         startPipeLineId: string,
         tableIdentifier?: string,
-        pythonServerPort = 5000,
     ) {
         this.panel = panel;
         this.extensionUri = extensionUri;
         this.tableIdentifier = tableIdentifier;
-        this.pythonServerPort = pythonServerPort;
         this.startPipelineId = startPipeLineId;
 
         // Set the webview's initial html content
@@ -103,10 +100,11 @@ export class EDAPanel {
         extensionUri: vscode.Uri,
         context: vscode.ExtensionContext,
         startPipelineId: string,
+        servicess: SafeDsServices,
         tableIdentifier?: string,
-        pythonServerPort = 5000,
     ) {
         EDAPanel.context = context;
+        EDAPanel.services = servicess;
 
         // Set column to the active editor if it exists
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
@@ -116,7 +114,6 @@ export class EDAPanel {
         if (panel) {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
-            panel.pythonServerPort = pythonServerPort;
             panel.startPipelineId = startPipelineId;
 
             // Have to update and construct state as table placeholder could've changed in code
@@ -146,7 +143,7 @@ export class EDAPanel {
                 },
             );
 
-            const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier, pythonServerPort);
+            const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier);
             EDAPanel.panelsMap.set(tableIdentifier ?? undefinedPanelIdentifier, edaPanel);
             edaPanel.column = column;
             edaPanel.panel.iconPath = {
@@ -219,11 +216,11 @@ export class EDAPanel {
                 return;
             }
 
-            const placeholderValueCallback = (message: PlaceholderValueMessage) => {
+            const placeholderValueCallback = (message: messages.PlaceholderValueMessage) => {
                 if (message.id !== this.startPipelineId || message.data.name !== this.tableIdentifier) {
                     return;
                 }
-                removeMessageCallback(placeholderValueCallback, 'placeholder_value');
+                EDAPanel.services.runtime.Runner.removeMessageCallback(placeholderValueCallback, 'placeholder_value');
 
                 const pythonTableColumns = message.data.value;
                 const table: Table = {
@@ -265,9 +262,9 @@ export class EDAPanel {
                 resolve({ tableIdentifier: this.tableIdentifier, history: [], defaultState: false, table });
             };
 
-            addMessageCallback(placeholderValueCallback, 'placeholder_value');
+            EDAPanel.services.runtime.Runner.addMessageCallback(placeholderValueCallback, 'placeholder_value');
             printOutputMessage('Getting placeholder from Runner ...');
-            sendMessageToPythonServer(createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier));
+            EDAPanel.services.runtime.Runner.sendMessageToPythonServer(messages.createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier));
 
             setTimeout(() => reject(new Error('Timeout waiting for placeholder value')), 30000);
         });
@@ -313,7 +310,6 @@ export class EDAPanel {
       <script nonce="${nonce}">
         window.injVscode = acquireVsCodeApi();
         window.tableIdentifier = "${this.tableIdentifier}" === "undefined" ? undefined : "${this.tableIdentifier}";
-        window.pythonServerPort = ${this.pythonServerPort};
       </script>
     </head>
     <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>

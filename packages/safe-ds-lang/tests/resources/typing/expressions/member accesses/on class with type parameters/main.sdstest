@@ -1,0 +1,76 @@
+package tests.typing.expressions.memberAccesses.onClassWithTypeParameters
+
+class C<T> {
+    attr nonNullableMember: T
+    attr nullableMember: T?
+    @Pure fun method() -> r: T
+}
+
+class D sub C<Int>
+
+@Pure fun nullableC() -> result: C<Int>?
+@Pure fun nullableD() -> result: D?
+
+// Accessing own members
+segment mySegment1(p: C<Int>) {
+    // $TEST$ serialization Int
+    »p.nonNullableMember«;
+    // $TEST$ serialization Int?
+    »p.nullableMember«;
+    // $TEST$ serialization () -> (r: Int)
+    »p.method«;
+
+    // $TEST$ serialization Int
+    »p?.nonNullableMember«;
+    // $TEST$ serialization Int?
+    »p?.nullableMember«;
+    // $TEST$ serialization () -> (r: Int)
+    »p?.method«;
+
+
+    // $TEST$ serialization Int
+    »nullableC().nonNullableMember«;
+    // $TEST$ serialization Int?
+    »nullableC().nullableMember«;
+    // $TEST$ serialization () -> (r: Int)
+    »nullableC().method«;
+
+    // $TEST$ serialization Int?
+    »nullableC()?.nonNullableMember«;
+    // $TEST$ serialization Int?
+    »nullableC()?.nullableMember«;
+    // $TEST$ serialization union<() -> (r: Int), Nothing?>
+    »nullableC()?.method«;
+}
+
+// Accessing inherited members
+segment mySegment2(p: D) {
+    // $TEST$ serialization Int
+    »p.nonNullableMember«;
+    // $TEST$ serialization Int?
+    »p.nullableMember«;
+    // $TEST$ serialization () -> (r: Int)
+    »p.method«;
+
+    // $TEST$ serialization Int
+    »p?.nonNullableMember«;
+    // $TEST$ serialization Int?
+    »p?.nullableMember«;
+    // $TEST$ serialization () -> (r: Int)
+    »p?.method«;
+
+
+    // $TEST$ serialization Int
+    »nullableD().nonNullableMember«;
+    // $TEST$ serialization Int?
+    »nullableD().nullableMember«;
+    // $TEST$ serialization () -> (r: Int)
+    »nullableD().method«;
+
+    // $TEST$ serialization Int?
+    »nullableD()?.nonNullableMember«;
+    // $TEST$ serialization Int?
+    »nullableD()?.nullableMember«;
+    // $TEST$ serialization union<() -> (r: Int), Nothing?>
+    »nullableD()?.method«;
+}

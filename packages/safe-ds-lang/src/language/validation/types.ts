@@ -21,11 +21,12 @@ import {
     SdsParameter,
     SdsPrefixOperation,
     SdsResult,
+    SdsTypeCast,
     SdsYield,
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { NamedTupleType } from '../typing/model.js';
+import { NamedTupleType, UnknownType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -94,18 +95,13 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
 };
 
 export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
-        if (
-            node.receiver &&
-            !typeChecker.isAssignableTo(receiverType, coreTypes.List) &&
-            !typeChecker.isAssignableTo(receiverType, coreTypes.Map)
-        ) {
-            accept('error', `Expected type '${coreTypes.List}' or '${coreTypes.Map}' but got '${receiverType}'.`, {
+        if (node.receiver && !typeChecker.isList(receiverType) && !typeChecker.isMap(receiverType)) {
+            accept('error', `Expected type 'List' or 'Map' but got '${receiverType}'.`, {
                 node: node.receiver,
                 code: CODE_TYPE_MISMATCH,
             });
@@ -120,10 +116,20 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
-        if (typeChecker.isAssignableTo(receiverType, coreTypes.List)) {
+        if (typeChecker.isList(receiverType)) {
             const indexType = typeComputer.computeType(node.index);
             if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
+                    node,
+                    property: 'index',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+        } else if (typeChecker.isMap(receiverType)) {
+            const keyType = receiverType.getTypeParameterTypeByIndex(0);
+            const indexType = typeComputer.computeType(node.index);
+            if (!typeChecker.isAssignableTo(indexType, keyType)) {
+                accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
                     node,
                     property: 'index',
                     code: CODE_TYPE_MISMATCH,
@@ -292,6 +298,21 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
                     );
                 }
                 return;
+        }
+    };
+};
+
+export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsTypeCast, accept: ValidationAcceptor): void => {
+        const expressionType = typeComputer.computeType(node.expression);
+        if (node.expression && expressionType !== UnknownType) {
+            accept('error', 'Type casts can only be applied to expressions of unknown type.', {
+                // Using property: "expression" does not work here, probably due to eclipse-langium/langium#1218
+                node: node.expression,
+                code: CODE_TYPE_MISMATCH,
+            });
         }
     };
 };
