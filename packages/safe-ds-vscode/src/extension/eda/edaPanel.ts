@@ -23,7 +23,6 @@ export class EDAPanel {
     private column: vscode.ViewColumn | undefined;
     private webviewListener: vscode.Disposable | undefined;
     private viewStateChangeListener: vscode.Disposable | undefined;
-    // private _lastVisibleState: boolean = true;
 
     private constructor(
         panel: vscode.WebviewPanel,
