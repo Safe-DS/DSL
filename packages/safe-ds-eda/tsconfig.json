@@ -9,7 +9,7 @@
         "allowJs": true,
         "checkJs": true,
         "isolatedModules": true,
-        "typeRoots": ["./node_modules/@types", "types/declarations.d.ts", "types/globals.d.ts"]
+        "typeRoots": ["./node_modules/@types", "types/declarations.d.ts", "types/globals.d.ts"],
     },
     "include": [
         "src/**/*.d.ts",
@@ -22,7 +22,7 @@
         "types/globals.d.ts",
         "../../types",
         "./*.d.ts",
-        "*.d.ts"
+        "*.d.ts",
     ],
-    "references": [{ "path": "./tsconfig.node.json" }]
+    "references": [{ "path": "./tsconfig.node.json" }],
 }

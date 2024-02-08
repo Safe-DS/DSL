@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "noEmit": true
+        "noEmit": true,
     },
     "files": [],
     "references": [
@@ -10,6 +10,6 @@
         { "path": "./packages/safe-ds-eda/tsconfig.json" },
         { "path": "./packages/safe-ds-lang/tsconfig.src.json" },
         { "path": "./packages/safe-ds-lang/tsconfig.test.json" },
-        { "path": "./packages/safe-ds-vscode/tsconfig.json" }
-    ]
+        { "path": "./packages/safe-ds-vscode/tsconfig.json" },
+    ],
 }
