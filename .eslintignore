@@ -12,4 +12,4 @@
 /packages/safe-ds-editor/tailwind.config.js
 /packages/safe-ds-editor/postcss.config.js
 /packages/safe-ds-editor/**/*.d.ts
-/packages/safe-ds-editor/devtools/**
+/packages/safe-ds-editor/migrationTools/**

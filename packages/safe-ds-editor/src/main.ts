@@ -1,5 +1,5 @@
 import App from './App.svelte';
-import './tailwind.css';
+import './global.css';
 
 let targetElement = document.getElementById('root');
 

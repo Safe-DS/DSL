@@ -15,6 +15,7 @@ dist/
 dist-ssr/
 generated/
 lib/
+!packages/safe-ds-editor/src/lib/
 out/
 *.tsbuildinfo
 *.vsix

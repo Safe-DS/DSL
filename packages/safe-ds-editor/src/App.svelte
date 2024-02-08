@@ -1,9 +1,7 @@
 <script lang="ts">
-    import logo from './assets/svelte.png';
 </script>
 
 <main class="text-center">
-    <img class="mx-auto" src={logo} alt="Svelte Logo" />
     <h1 class="p-3 text-xl font-bold">Hello Typescript!</h1>
 
     <p class="p-2 mt-10 text-sm text-red-300">

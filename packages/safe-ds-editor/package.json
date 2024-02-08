@@ -5,13 +5,13 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build && node devtools/copyToExtension.js",
-        "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist devtools/copyToExtension.js\"",
+        "build": "vite build && node migrationTools/copyToExtension.js",
+        "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist migrationTools/copyToExtension.js\"",
         "preview": "vite preview",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "clean": "shx rm -rf dist",
         "build:clean": "npm run clean && npm run build",
-        "copyToExtension": "node devtools/copyToExtension.js"
+        "copyToExtension": "node migrationTools/copyToExtension.js"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -28,6 +28,11 @@
         "tailwindcss": "^3.4.1",
         "tslib": "^2.6.2",
         "typescript": "^5.3.3",
-        "vite": "^5.0.12"
-    }
+        "vite": "^5.0.12",
+        "clsx": "^2.1.0",
+        "radix-icons-svelte": "^1.2.1",
+        "tailwind-merge": "^2.2.1",
+        "tailwind-variants": "^0.1.20"
+    },
+    "dependencies": {}
 }
