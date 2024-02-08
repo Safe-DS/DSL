@@ -51,3 +51,23 @@ class C(
     // $TEST$ serialization Any?
     p16: »union<Any, String?, Int>«,
 )
+
+class TestsInvolvingNothing(
+    // $TEST$ serialization Any
+    p1: »union<Any, Nothing>«,
+
+    // $TEST$ serialization Any?
+    p2: »union<Any, Nothing?>«,
+
+    // $TEST$ serialization literal<1>
+    p3: »union<literal<1>, Nothing>«,
+
+    // $TEST$ serialization literal<1, null>
+    p4: »union<literal<1>, Nothing?>«,
+
+    // $TEST$ serialization () -> ()
+    p5: »union<() -> (), Nothing>«,
+
+    // $TEST$ serialization union<() -> (), Nothing?>
+    p6: »union<() -> (), Nothing?>«,
+)

@@ -1,4 +1,4 @@
-package tests.typing.simplification.replaceLiteralTypesThatAllowOnlyNullWithNothingNullable
+package tests.typing.simplification.replaceLiteralTypesThatAllowOnlyNullWithNothingOrNull
 
 class C(
     // $TEST$ serialization Nothing?
