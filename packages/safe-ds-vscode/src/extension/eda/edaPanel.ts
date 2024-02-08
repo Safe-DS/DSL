@@ -263,9 +263,7 @@ export class EDAPanel {
 
             EDAPanel.services.runtime.Runner.addMessageCallback(placeholderValueCallback, 'placeholder_value');
             printOutputMessage('Getting placeholder from Runner ...');
-            EDAPanel.services.runtime.Runner.sendMessageToPythonServer(
-                messages.createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier),
-            );
+            EDAPanel.services.runtime.Runner.sendMessageToPythonServer(messages.createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier));
 
             setTimeout(() => reject(new Error('Timeout waiting for placeholder value')), 30000);
         });

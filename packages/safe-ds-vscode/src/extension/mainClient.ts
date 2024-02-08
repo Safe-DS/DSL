@@ -216,7 +216,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                                 context,
                                 pipelineId,
                                 services,
-                                message.data.name,
+                                message.data.name
                             );
                             services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
@@ -229,7 +229,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                             cleanupLoadingIndication();
                         }
                     };
-                    services.runtime.Runner.addMessageCallback(placeholderTypeCallback, 'placeholder_type');
+                    services.runtime.Runner.addMessageCallback(placeholderTypeCallback, 'placeholder_type')
 
                     const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
                         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
