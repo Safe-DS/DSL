@@ -535,9 +535,7 @@ export class SafeDsTypeComputer {
         // Substitute type parameters (must also work for inherited members)
         if (receiverType instanceof ClassType) {
             const classContainingMember = getContainerOfType(node.member?.target.ref, isSdsClass);
-            const typeContainingMember = stream([receiverType], this.streamSupertypes(receiverType)).find(
-                (it) => it.declaration === classContainingMember,
-            );
+            const typeContainingMember = this.computeSupertypeOfClass(receiverType, classContainingMember);
 
             if (typeContainingMember) {
                 result = result.substituteTypeParameters(typeContainingMember.substitutions);
@@ -940,7 +938,7 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Group the given types by their kind.
+     * Group the given types by their kind. This functions assumes that union types have been removed.
      */
     private groupTypes(types: Type[]): GroupTypesResult {
         const result: GroupTypesResult = {
@@ -974,6 +972,10 @@ export class SafeDsTypeComputer {
         return result;
     }
 
+    /**
+     * Returns the lowest common supertype for the given class-based types. This function assumes that either the array
+     * of class types or the array of constants is not empty.
+     */
     private lowestCommonSupertypeForClassBasedTypes(
         classTypes: ClassType[],
         constants: Constant[],
@@ -1006,6 +1008,10 @@ export class SafeDsTypeComputer {
         return this.Any(isNullable);
     }
 
+    /**
+     * Returns the lowest common supertype for the given enum-based types. This function assumes that either the array
+     * of enum types or the array of enum variant types is not empty.
+     */
     private lowestCommonSupertypeForEnumBasedTypes(
         enumTypes: EnumType[],
         enumVariantTypes: EnumVariantType[],
@@ -1046,11 +1052,23 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Stream supertypes
+    // Supertypes
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns a stream of all declared super types of the given type. Direct ancestors are returned first, followed by
+     * Returns the supertype of the given `type` that is declared by the given `clazz`. If no such supertype exists,
+     * `undefined` is returned. Type parameters on parent types get substituted.
+     */
+    computeSupertypeOfClass(type: ClassType | undefined, clazz: SdsClass | undefined): ClassType | undefined {
+        if (!type || !clazz) {
+            return undefined;
+        }
+
+        return stream([type], this.streamSupertypes(type)).find((it) => it.declaration === clazz);
+    }
+
+    /**
+     * Returns a stream of all declared supertypes of the given type. Direct ancestors are returned first, followed by
      * their ancestors and so on. The given type is never included in the stream.
      *
      * Compared to `ClassHierarchy.streamSuperTypes`, this method cannot be used to detect cycles in the inheritance

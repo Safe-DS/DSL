@@ -1,4 +1,4 @@
-import { expandToStringWithNL, getContainerOfType, stream, ValidationAcceptor } from 'langium';
+import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
 import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
@@ -34,8 +34,9 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
 
         if (typeContainingOwnMember instanceof ClassType) {
             const classContainingOverriddenMember = getContainerOfType(overriddenMember, isSdsClass);
-            const typeContainingOverriddenMember = stream(typeComputer.streamSupertypes(typeContainingOwnMember)).find(
-                (it) => it.declaration === classContainingOverriddenMember,
+            const typeContainingOverriddenMember = typeComputer.computeSupertypeOfClass(
+                typeContainingOwnMember,
+                classContainingOverriddenMember,
             );
 
             if (typeContainingOverriddenMember) {

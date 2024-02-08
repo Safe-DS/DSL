@@ -1,4 +1,4 @@
-import { getContainerOfType, stream } from 'langium';
+import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsCallable, isSdsClass, isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
 import {
@@ -175,9 +175,7 @@ export class SafeDsTypeChecker {
             }
 
             // Get the parent type that refers to the same class as `other`
-            const candidate = stream([type], this.typeComputer().streamSupertypes(type)).find(
-                (it) => it.declaration === other.declaration,
-            );
+            const candidate = this.typeComputer().computeSupertypeOfClass(type, other.declaration);
             if (!candidate) {
                 /* c8 ignore next 2 */
                 return false;
