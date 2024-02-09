@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { testMessage } from './messaging/messages';
+    import MessageHandler from './messaging/messageHandler';
 
-    testMessage('Hello from Svelte via message');
+    MessageHandler.sendMessageTest('Test from the Svelte component');
 </script>
 
 <main class="text-center">

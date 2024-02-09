@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import fs from 'fs';
 import { logOutput } from '../extension/output.js';
+import { MessageHandler } from './messaging/messageHandler.js';
 
 /**
  * Provider for the Safe-DS custom visual editor.
@@ -18,17 +19,18 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 
     constructor(private readonly context: vscode.ExtensionContext) {}
 
-    public static registerProvider(context: vscode.ExtensionContext): vscode.Disposable {
+    public static registerProvider(context: vscode.ExtensionContext): void {
         const provider = new SafeDSCustomTextEditorProvider(context);
-        const providerRegistration = vscode.window.registerCustomEditorProvider(
-            SafeDSCustomTextEditorProvider.viewType,
-            provider,
-            SafeDSCustomTextEditorProvider.options,
+        context.subscriptions.push(
+            vscode.window.registerCustomEditorProvider(
+                SafeDSCustomTextEditorProvider.viewType,
+                provider,
+                SafeDSCustomTextEditorProvider.options,
+            ),
         );
-        return providerRegistration;
     }
 
-    public static registerCommands(_context: vscode.ExtensionContext): vscode.Disposable[] {
+    public static registerCommands(context: vscode.ExtensionContext): void {
         const commands = [
             {
                 name: 'open',
@@ -48,9 +50,8 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
             },
         ];
 
-        let disposalbes: vscode.Disposable[] = [];
         commands.forEach((command) => {
-            disposalbes.push(
+            context.subscriptions.push(
                 vscode.commands.registerCommand(
                     `${SafeDSCustomTextEditorProvider.viewType}.${command.name}`,
                     command.callback,
@@ -60,7 +61,6 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
                 `Registered ${command.name} | Full Command: ${SafeDSCustomTextEditorProvider.viewType}.${command.name}`,
             );
         });
-        return disposalbes;
     }
 
     /**
@@ -74,36 +74,11 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         webviewPanel.webview.options = {
             enableScripts: true,
         };
+        const messageHandler = MessageHandler.getInstance(webviewPanel.webview);
+        this.context.subscriptions.push(messageHandler.listenToMessages());
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 
-        const updateWebview = () => {
-            webviewPanel.webview.postMessage({
-                type: 'update',
-                text: document.getText(), // TODO: This should pull the AST information from the language sever, instead of transmitting the document text
-            });
-        };
-        const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((event) => {
-            if (event.document.uri.toString() === document.uri.toString()) {
-                updateWebview();
-            }
-        });
-        webviewPanel.onDidDispose(() => {
-            changeDocumentSubscription.dispose();
-        });
-
-        // Receive message from the webview
-        // TODO: Build a proper Message System - Use what Bela did as inspiration
-        webviewPanel.webview.onDidReceiveMessage((event) => {
-            switch (event.type) {
-                case 'add':
-                    return;
-
-                case 'delete':
-                    return;
-            }
-        });
-
-        updateWebview();
+        messageHandler.sendMessageTest('Hi from Extension');
     }
 
     /**

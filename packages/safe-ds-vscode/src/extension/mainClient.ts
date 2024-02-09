@@ -31,9 +31,9 @@ export const activate = async function (context: vscode.ExtensionContext) {
     services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
     acceptRunRequests(context);
 
-    // Setup for Custom Visual Editor
-    context.subscriptions.push(SafeDSCustomTextEditorProvider.registerProvider(context))
-    context.subscriptions.push(...SafeDSCustomTextEditorProvider.registerCommands(context))
+    // Setup for Custom Editor
+    SafeDSCustomTextEditorProvider.registerProvider(context);
+    SafeDSCustomTextEditorProvider.registerCommands(context);
 };
 
 // This function is called when the extension is deactivated.
