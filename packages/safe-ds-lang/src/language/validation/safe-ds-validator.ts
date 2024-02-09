@@ -82,6 +82,7 @@ import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './othe
 import {
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
+    typeParameterMustOnlyBeVariantOnClass,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
@@ -347,7 +348,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
-        SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectPosition(services)],
+        SdsTypeParameter: [
+            typeParameterMustHaveSufficientContext,
+            typeParameterMustBeUsedInCorrectPosition(services),
+            typeParameterMustOnlyBeVariantOnClass,
+        ],
         SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,

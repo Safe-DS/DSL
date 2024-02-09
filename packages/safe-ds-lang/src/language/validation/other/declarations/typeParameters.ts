@@ -19,6 +19,7 @@ import { SafeDsNodeMapper } from '../../../helpers/safe-ds-node-mapper.js';
 
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
 export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
+export const CODE_TYPE_PARAMETER_VARIANCE = 'type-parameter/variance';
 
 export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
     const containingCallable = getContainerOfType(node, isSdsCallable);
@@ -194,5 +195,20 @@ const nextTypePosition = (aggregator: TypePosition, step: TypePosition): TypePos
     } else {
         // Both are contravariant
         return 'covariant';
+    }
+};
+
+export const typeParameterMustOnlyBeVariantOnClass = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
+    if (TypeParameter.isInvariant(node)) {
+        return;
+    }
+
+    const declarationWithTypeParameter = getContainerOfType(node.$container, isSdsDeclaration);
+    if (declarationWithTypeParameter && !isSdsClass(declarationWithTypeParameter)) {
+        accept('error', 'Only type parameters of classes can be variant.', {
+            node,
+            property: 'variance',
+            code: CODE_TYPE_PARAMETER_VARIANCE,
+        });
     }
 };
