@@ -1,7 +1,11 @@
 package tests.validation.other.declarations.typeParameters.usageOfVariantTypeParameters
 
 // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
-class MyClass3<Invariant>(p1: »Invariant«) {
+class MyClass3<Invariant>(p1: »Invariant«)
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+sub Producer<»Invariant«>, Middleware<»Invariant«>, Consumer<»Invariant«> {
     // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
     attr a1: »Invariant«
     // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."

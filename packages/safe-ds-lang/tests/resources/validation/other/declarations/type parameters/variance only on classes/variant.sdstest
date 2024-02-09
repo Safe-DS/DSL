@@ -1,0 +1,11 @@
+package tests.validation.other.declarations.typeParameters.varianceOnlyOnClasses
+
+// $TEST$ no error "Only type parameters of classes can be variant."
+class C2<»in« T>
+// $TEST$ no error "Only type parameters of classes can be variant."
+class C3<»out« T>
+
+// $TEST$ error "Only type parameters of classes can be variant."
+fun f2<»in« T>()
+// $TEST$ error "Only type parameters of classes can be variant."
+fun f3<»out« T>()
