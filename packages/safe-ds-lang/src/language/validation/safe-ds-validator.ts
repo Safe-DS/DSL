@@ -352,7 +352,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTypeParameter: [
             typeParameterMustHaveSufficientContext,
             typeParameterMustBeUsedInCorrectPosition(services),
-            typeParameterMustNotHaveMultipleBounds,
+            typeParameterMustNotHaveMultipleBounds(services),
             typeParameterMustOnlyBeVariantOnClass,
         ],
         SdsTypeParameterBound: [typeParameterBoundLeftOperandMustBeOwnTypeParameter],
