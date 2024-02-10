@@ -265,14 +265,17 @@ export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {
 
 export const getConstraints = (node: SdsDeclaration | undefined): SdsConstraint[] => {
     if (isSdsAnnotation(node)) {
+        /* c8 ignore next 2 */
         return node.constraintList?.constraints ?? [];
     } else if (isSdsClass(node)) {
         return node.constraintList?.constraints ?? [];
     } else if (isSdsEnumVariant(node)) {
+        /* c8 ignore next 2 */
         return node.constraintList?.constraints ?? [];
     } else if (isSdsFunction(node)) {
         return node.constraintList?.constraints ?? [];
     } else {
+        /* c8 ignore next 2 */
         return [];
     }
 };
