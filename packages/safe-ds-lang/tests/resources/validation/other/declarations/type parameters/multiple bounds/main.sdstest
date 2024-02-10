@@ -1,0 +1,94 @@
+package tests.validation.other.typeParameters.multipleBounds
+
+class MyGlobalClass<T1, T2> where {
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »T1 sub Int«,
+    // $TEST$ error "A type parameter can only have a single upper bound."
+    »T1 sub Number«,
+    // $TEST$ no error "A type parameter can only have a single lower bound."
+    »T1 super Int«,
+    // $TEST$ error "A type parameter can only have a single lower bound."
+    »T1 super Number«,
+
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »T2 sub Int«,
+    // $TEST$ error "A type parameter can only have a single upper bound."
+    »T2 sub Number«,
+    // $TEST$ no error "A type parameter can only have a single lower bound."
+    »T2 super Int«,
+    // $TEST$ error "A type parameter can only have a single lower bound."
+    »T2 super Number«,
+
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved sub Int«,
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved sub Number«,
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved super Int«,
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved super Number«,
+} {
+    class MyNestedClass where {
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 sub Int«,
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 sub Number«,
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 super Int«,
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 super Number«,
+    }
+
+    enum MyNestedEnum {
+        MyNestedEnumVariant where {
+            // $TEST$ no error "A type parameter can only have a single upper bound."
+            »T1 sub Int«,
+            // $TEST$ no error "A type parameter can only have a single upper bound."
+            »T1 sub Number«,
+            // $TEST$ no error "A type parameter can only have a single upper bound."
+            »T1 super Int«,
+            // $TEST$ no error "A type parameter can only have a single upper bound."
+            »T1 super Number«,
+        }
+    }
+
+    @Pure fun myMethod() where {
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 sub Int«,
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 sub Number«,
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 super Int«,
+        // $TEST$ no error "A type parameter can only have a single upper bound."
+        »T1 super Number«,
+    }
+}
+
+@Pure fun myGlobalFunction<T1, T2>() where {
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »T1 sub Int«,
+    // $TEST$ error "A type parameter can only have a single upper bound."
+    »T1 sub Number«,
+    // $TEST$ no error "A type parameter can only have a single lower bound."
+    »T1 super Int«,
+    // $TEST$ error "A type parameter can only have a single lower bound."
+    »T1 super Number«,
+
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »T2 sub Int«,
+    // $TEST$ error "A type parameter can only have a single upper bound."
+    »T2 sub Number«,
+    // $TEST$ no error "A type parameter can only have a single lower bound."
+    »T2 super Int«,
+    // $TEST$ error "A type parameter can only have a single lower bound."
+    »T2 super Number«,
+
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved sub Int«,
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved sub Number«,
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved super Int«,
+    // $TEST$ no error "A type parameter can only have a single upper bound."
+    »Unresolved super Number«,
+}
