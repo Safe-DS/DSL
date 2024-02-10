@@ -1,15 +1,30 @@
 package tests.validation.types.checking.indexedAccessReceiver
 
-pipeline myPipeline {
-    // $TEST$ no error r"Expected type 'List' or 'Map' but got .*\."
+segment mySegment(
+    listOrNull: List<Int>?,
+    mapOrNull: Map<String, Int>?,
+    intOrNull: Int?,
+) {
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
     »[1]«[0];
 
-    // $TEST$ no error r"Expected type 'List' or 'Map' but got .*\."
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
     »{0: 1}«[0];
 
-    // $TEST$ error "Expected type 'List' or 'Map' but got 'literal<1>'."
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'literal<1>'."
     »1«[0];
 
-    // $TEST$ error "Expected type 'List' or 'Map' but got '$unknown'."
+
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »listOrNull«[0];
+
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »mapOrNull«[""];
+
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'Int?'."
+    »intOrNull«[0];
+
+
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got '$unknown'."
     »unresolved«[0];
 }

@@ -99,9 +99,14 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
+        if (!node.receiver) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         const receiverType = typeComputer.computeType(node.receiver);
-        if (node.receiver && !typeChecker.isList(receiverType) && !typeChecker.isMap(receiverType)) {
-            accept('error', `Expected type 'List' or 'Map' but got '${receiverType}'.`, {
+        if (!typeChecker.canBeAccessedByIndex(receiverType)) {
+            accept('error', `Expected type 'List<T>' or 'Map<K, V>' but got '${receiverType}'.`, {
                 node: node.receiver,
                 code: CODE_TYPE_MISMATCH,
             });
