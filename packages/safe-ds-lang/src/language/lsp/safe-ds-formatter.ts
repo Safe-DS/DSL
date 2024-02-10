@@ -699,6 +699,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsCall(node: ast.SdsCall) {
         const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword('?').surround(noSpace());
         formatter.property('argumentList').prepend(noSpace());
     }
 
@@ -731,6 +732,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsIndexedAccess(node: ast.SdsIndexedAccess) {
         const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword('?').surround(noSpace());
         formatter.keyword('[').surround(noSpace());
         formatter.keyword(']').prepend(noSpace());
     }
