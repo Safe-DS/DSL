@@ -1,4 +1,4 @@
-package tests.scoping.typeParameterConstraints.inNestedClass
+package tests.scoping.typeParameterBounds.inMethod
 
 fun myFunction1<BeforeGlobal>()
 
@@ -8,7 +8,7 @@ class MyClass1<»Container«, Overridden> {
 
     // $TEST$ target own
     // $TEST$ target overridden
-    class MyClass2<»Own«, »Overridden«> where {
+    fun myFunction3<»Own«, »Overridden«>() where {
         // $TEST$ references own
         »Own« sub Int,
 
@@ -37,9 +37,9 @@ class MyClass1<»Container«, Overridden> {
         »Unresolved« sub Int
     }
 
-    fun myFunction3<AfterMember>()
+    fun myFunction5<AfterMember>()
 }
 
-fun myFunction4<AfterGlobal>()
+fun myFunction5<AfterGlobal>()
 
 class NotATypeParameter

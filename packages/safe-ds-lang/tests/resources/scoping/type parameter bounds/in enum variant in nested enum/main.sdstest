@@ -1,4 +1,4 @@
-package tests.scoping.typeParameterConstraints.inEnumVariantInNestedEnum
+package tests.scoping.typeParameterBounds.inEnumVariantInNestedEnum
 
 // $TEST$ target container
 class MyClass<»Container«> {

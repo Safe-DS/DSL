@@ -18,6 +18,7 @@ import { SafeDsServices } from '../../../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../../../helpers/safe-ds-node-mapper.js';
 
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
+export const CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS = 'type-parameter/multiple-bounds';
 export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
 export const CODE_TYPE_PARAMETER_VARIANCE = 'type-parameter/variance';
 
@@ -55,6 +56,35 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
             node,
             code: CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT,
         });
+    }
+};
+
+export const typeParameterMustNotHaveMultipleBounds = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
+    const bounds = TypeParameter.getBounds(node);
+
+    let foundLowerBound = false;
+    let foundUpperBound = false;
+
+    for (const bound of bounds) {
+        if (bound.operator === 'super') {
+            if (foundLowerBound) {
+                accept('error', 'A type parameter can only have a single lower bound.', {
+                    node: bound,
+                    code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+                });
+            }
+
+            foundLowerBound = true;
+        } else if (bound.operator === 'sub') {
+            if (foundUpperBound) {
+                accept('error', 'A type parameter can only have a single upper bound.', {
+                    node: bound,
+                    code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+                });
+            }
+
+            foundUpperBound = true;
+        }
     }
 };
 

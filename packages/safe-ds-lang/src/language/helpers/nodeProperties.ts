@@ -12,6 +12,7 @@ import {
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
+    isSdsEnumVariant,
     isSdsFunction,
     isSdsLambda,
     isSdsModule,
@@ -23,6 +24,7 @@ import {
     isSdsSegment,
     isSdsTypeArgumentList,
     isSdsTypeParameter,
+    isSdsTypeParameterBound,
     isSdsTypeParameterList,
     SdsAbstractCall,
     SdsAbstractResult,
@@ -40,6 +42,7 @@ import {
     SdsClass,
     SdsClassMember,
     SdsColumn,
+    SdsConstraint,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
@@ -62,6 +65,7 @@ import {
     SdsTypeArgument,
     SdsTypeArgumentList,
     SdsTypeParameter,
+    SdsTypeParameterBound,
     SdsTypeParameterList,
 } from '../generated/ast.js';
 
@@ -169,6 +173,13 @@ export namespace TypeParameter {
     export const isInvariant = (node: SdsTypeParameter | undefined): boolean => {
         return isSdsTypeParameter(node) && !node.variance;
     };
+
+    export const getBounds = (node: SdsTypeParameter | undefined): SdsTypeParameterBound[] => {
+        const declarationContainingTypeParameter = getContainerOfType(node?.$container, isSdsDeclaration);
+        return getConstraints(declarationContainingTypeParameter).filter(
+            (it) => isSdsTypeParameterBound(it) && it.leftOperand?.ref === node,
+        ) as SdsTypeParameterBound[];
+    };
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -250,6 +261,23 @@ export const getClassMembers = (node: SdsClass | undefined): SdsClassMember[] =>
 
 export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {
     return node?.columnList?.columns ?? [];
+};
+
+export const getConstraints = (node: SdsDeclaration | undefined): SdsConstraint[] => {
+    if (isSdsAnnotation(node)) {
+        /* c8 ignore next 2 */
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsClass(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsEnumVariant(node)) {
+        /* c8 ignore next 2 */
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsFunction(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else {
+        /* c8 ignore next 2 */
+        return [];
+    }
 };
 
 export const getEnumVariants = (node: SdsEnum | undefined): SdsEnumVariant[] => {

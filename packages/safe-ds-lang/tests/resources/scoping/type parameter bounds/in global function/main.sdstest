@@ -1,8 +1,12 @@
-package tests.scoping.typeParameterConstraints.inAnnotation
+package tests.scoping.typeParameterBounds.inGlobalFunction
 
 fun myFunction1<Before>()
 
-annotation MyAnnotation where {
+// $TEST$ target own
+fun myFunction2<»Own«>() where {
+    // $TEST$ references own
+    »Own« sub Int,
+
     // $TEST$ unresolved
     »Before« sub Int,
 
@@ -16,6 +20,6 @@ annotation MyAnnotation where {
     »Unresolved« sub Int
 }
 
-fun myFunction2<After>()
+fun myFunction3<After>()
 
 class NotATypeParameter
