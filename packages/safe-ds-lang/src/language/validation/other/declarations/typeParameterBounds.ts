@@ -1,10 +1,10 @@
-import { isSdsDeclaration, SdsTypeParameterConstraint } from '../../../generated/ast.js';
+import { isSdsDeclaration, SdsTypeParameterBound } from '../../../generated/ast.js';
 import { getContainerOfType, ValidationAcceptor } from 'langium';
 
-export const CODE_TYPE_PARAMETER_CONSTRAINT_LEFT_OPERAND = 'type-parameter-constraint/left-operand';
+export const CODE_TYPE_PARAMETER_BOUND_LEFT_OPERAND = 'type-parameter-bound/left-operand';
 
-export const typeParameterConstraintLeftOperandMustBeOwnTypeParameter = (
-    node: SdsTypeParameterConstraint,
+export const typeParameterBoundLeftOperandMustBeOwnTypeParameter = (
+    node: SdsTypeParameterBound,
     accept: ValidationAcceptor,
 ) => {
     const typeParameter = node.leftOperand?.ref;
@@ -16,10 +16,10 @@ export const typeParameterConstraintLeftOperandMustBeOwnTypeParameter = (
     const declarationWithTypeParameters = getContainerOfType(typeParameter.$container, isSdsDeclaration);
 
     if (declarationWithConstraint !== declarationWithTypeParameters) {
-        accept('error', 'The left operand must refer to a type parameter of the declaration with the constraint.', {
+        accept('error', 'The left operand must refer to a type parameter of the declaration with the bound.', {
             node,
             property: 'leftOperand',
-            code: CODE_TYPE_PARAMETER_CONSTRAINT_LEFT_OPERAND,
+            code: CODE_TYPE_PARAMETER_BOUND_LEFT_OPERAND,
         });
     }
 };

@@ -378,22 +378,22 @@ SdsConstraintList returns SdsConstraintList:
 interface SdsConstraint extends SdsObject {}
 
 SdsConstraint returns SdsConstraint:
-    SdsTypeParameterConstraint
+    SdsTypeParameterBound
 ;
 
-interface SdsTypeParameterConstraint extends SdsConstraint {
+interface SdsTypeParameterBound extends SdsConstraint {
     leftOperand?: @SdsTypeParameter
     operator: string
     rightOperand: SdsType
 }
 
-SdsTypeParameterConstraint returns SdsTypeParameterConstraint:
+SdsTypeParameterBound returns SdsTypeParameterBound:
     leftOperand=[SdsTypeParameter:ID]
-    operator=SdsTypeParameterConstraintOperator
+    operator=SdsTypeParameterBoundOperator
     rightOperand=SdsType
 ;
 
-SdsTypeParameterConstraintOperator returns string:
+SdsTypeParameterBoundOperator returns string:
     'sub' | 'super'
 ;
 
