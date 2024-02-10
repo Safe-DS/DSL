@@ -356,6 +356,11 @@ export class ClassType extends NamedType<SdsClass> {
         return new ClassType(this.declaration, newSubstitutions, this.isNullable);
     }
 
+    override unwrap(): ClassType {
+        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.unwrap()]));
+        return new ClassType(this.declaration, newSubstitutions, this.isNullable);
+    }
+
     override updateNullability(isNullable: boolean): ClassType {
         if (this.isNullable === isNullable) {
             return this;

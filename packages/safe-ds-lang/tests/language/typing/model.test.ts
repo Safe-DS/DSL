@@ -377,6 +377,10 @@ describe('type model', async () => {
             expectedType: new ClassType(class1, new Map(), false),
         },
         {
+            type: new ClassType(class1, new Map([[typeParameter1, new UnionType(UnknownType)]]), false),
+            expectedType: new ClassType(class1, new Map([[typeParameter1, UnknownType]]), false),
+        },
+        {
             type: new EnumType(enum1, false),
             expectedType: new EnumType(enum1, false),
         },
