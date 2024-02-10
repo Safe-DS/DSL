@@ -147,11 +147,16 @@ export class SafeDsNodeMapper {
         if (isSdsAnnotationCall(node)) {
             return node.annotation?.ref;
         } else if (isSdsCall(node)) {
+            // We ignore nullability, since calls can be made null-safe. For scoping, for instance, we still want to
+            // link the arguments of the call properly, even if the user forgot to make the call null-safe. In this
+            // case, an error is being shown anyway.
             const receiverType = this.typeComputer().computeType(node.receiver);
-            if (receiverType instanceof CallableType) {
-                return receiverType.callable;
-            } else if (receiverType instanceof StaticType) {
-                const declaration = receiverType.instanceType.declaration;
+            const nonNullableReceiverType = this.typeComputer().simplifyType(receiverType.updateNullability(false));
+
+            if (nonNullableReceiverType instanceof CallableType) {
+                return nonNullableReceiverType.callable;
+            } else if (nonNullableReceiverType instanceof StaticType) {
+                const declaration = nonNullableReceiverType.instanceType.declaration;
                 if (isSdsCallable(declaration)) {
                     return declaration;
                 }
