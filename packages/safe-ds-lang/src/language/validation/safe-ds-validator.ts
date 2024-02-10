@@ -144,6 +144,7 @@ import {
     annotationParameterShouldNotHaveConstModifier,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
     callArgumentListShouldBeNeeded,
+    chainedExpressionNullSafetyShouldBeNeeded,
     classBodyShouldNotBeEmpty,
     constraintListShouldNotBeEmpty,
     elvisOperatorShouldBeNeeded,
@@ -151,7 +152,6 @@ import {
     enumVariantParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty,
     importedDeclarationAliasShouldDifferFromDeclarationName,
-    memberAccessNullSafetyShouldBeNeeded,
     namedTypeTypeArgumentListShouldBeNeeded,
     segmentResultListShouldNotBeEmpty,
     typeParameterListShouldNotBeEmpty,
@@ -238,7 +238,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callableTypeParameterMustNotHaveConstModifier,
             callableTypeResultsMustNotBeAnnotated,
         ],
-        SdsChainedExpression: [chainedExpressionsMustBeNullSafeIfReceiverIsNullable(services)],
+        SdsChainedExpression: [
+            chainedExpressionsMustBeNullSafeIfReceiverIsNullable(services),
+            chainedExpressionNullSafetyShouldBeNeeded(services),
+        ],
         SdsClass: [
             classMustContainUniqueNames,
             classMustOnlyInheritASingleClass(services),
@@ -294,10 +297,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
         SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
-        SdsMemberAccess: [
-            memberAccessNullSafetyShouldBeNeeded(services),
-            memberAccessOfEnumVariantMustNotLackInstantiation,
-        ],
+        SdsMemberAccess: [memberAccessOfEnumVariantMustNotLackInstantiation],
         SdsModule: [
             moduleDeclarationsMustMatchFileKind,
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
