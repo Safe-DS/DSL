@@ -1,0 +1,34 @@
+package tests.scoping.arguments.ofCalls.withNullableReceiver
+
+class MyClass {
+    fun myFunction(
+        // $TEST$ target a
+        »a«: Int,
+        // $TEST$ target b
+        »b«: Int = 0,
+        // $TEST$ target c
+        »c«: Int
+    )
+}
+
+segment mySegment(
+    myClassOrNull: MyClass?
+) {
+    myClassOrNull?.myFunction(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+
+    myClassOrNull?.myFunction?(
+        // $TEST$ references c
+        »c« = 0,
+        // $TEST$ references a
+        »a« = 0,
+        // $TEST$ references b
+        »b« = 0
+    );
+}
