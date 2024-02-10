@@ -143,17 +143,27 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Computes the type of the given node.
+     * Computes the type of the given node and applies the given substitutions for type parameters. The result gets
+     * simplified as much as possible.
      */
     computeType(node: AstNode | undefined, substitutions: TypeParameterSubstitutions = NO_SUBSTITUTIONS): Type {
         if (!node) {
             return UnknownType;
         }
 
+        // Ignore type parameter substitutions for caching
         const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
             this.simplifyType(this.doComputeType(node)),
         );
-        return unsubstitutedType.substituteTypeParameters(substitutions);
+        if (isEmpty(substitutions)) {
+            return unsubstitutedType;
+        }
+
+        // Substitute type parameters
+        const simplifiedSubstitutions = new Map(
+            [...substitutions].map(([typeParameter, type]) => [typeParameter, this.simplifyType(type)]),
+        );
+        return unsubstitutedType.substituteTypeParameters(simplifiedSubstitutions);
     }
 
     private getNodeId(node: AstNode) {
@@ -615,7 +625,11 @@ export class SafeDsTypeComputer {
     // Simplify type
     // -----------------------------------------------------------------------------------------------------------------
 
-    private simplifyType(type: Type): Type {
+    /**
+     * Returns an equivalent type that is simplified as much as possible. Types computed by {@link computeType} are
+     * already simplified, so this method is mainly useful for types that are constructed or modified manually.
+     */
+    simplifyType(type: Type): Type {
         const unwrappedType = type.unwrap();
 
         if (unwrappedType instanceof LiteralType) {
