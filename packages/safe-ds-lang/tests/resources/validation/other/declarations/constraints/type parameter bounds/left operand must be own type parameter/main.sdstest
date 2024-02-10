@@ -1,4 +1,4 @@
-package tests.validation.other.declarations.constraints.typeParameterBounds.typeParameterOnContainer
+package tests.validation.other.declarations.constraints.typeParameterBounds.leftOperandMustBeOwnTypeParameter
 
 annotation MyAnnotation where {
     // $TEST$ no error "The left operand must refer to a type parameter of the declaration with the bound."

@@ -12,12 +12,16 @@ import {
     SdsClass,
     SdsDeclaration,
     SdsTypeParameter,
+    SdsTypeParameterBound,
 } from '../../../generated/ast.js';
 import { isStatic, TypeParameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../../../helpers/safe-ds-node-mapper.js';
+import { NamedType, UnknownType } from '../../../typing/model.js';
+import { SafeDsTypeComputer } from '../../../typing/safe-ds-type-computer.js';
 
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
+export const CODE_TYPE_PARAMETER_INVALID_BOUND = 'type-parameter/invalid-bound';
 export const CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS = 'type-parameter/multiple-bounds';
 export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
 export const CODE_TYPE_PARAMETER_VARIANCE = 'type-parameter/variance';
@@ -59,32 +63,54 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     }
 };
 
-export const typeParameterMustNotHaveMultipleBounds = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-    const bounds = TypeParameter.getBounds(node);
+export const typeParameterMustNotHaveMultipleBounds = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
 
-    let foundLowerBound = false;
-    let foundUpperBound = false;
+    return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
+        const bounds = TypeParameter.getBounds(node);
 
-    for (const bound of bounds) {
-        if (bound.operator === 'super') {
-            if (foundLowerBound) {
-                accept('error', 'A type parameter can only have a single lower bound.', {
-                    node: bound,
-                    code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
-                });
+        let foundLowerBound = false;
+        let foundUpperBound = false;
+
+        for (const bound of bounds) {
+            if (bound.operator === 'super') {
+                if (foundLowerBound) {
+                    accept('error', 'A type parameter can only have a single lower bound.', {
+                        node: bound,
+                        code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+                    });
+                } else {
+                    checkIfBoundIsValid(bound, typeComputer, accept);
+                    foundLowerBound = true;
+                }
+            } else if (bound.operator === 'sub') {
+                if (foundUpperBound) {
+                    accept('error', 'A type parameter can only have a single upper bound.', {
+                        node: bound,
+                        code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+                    });
+                } else {
+                    checkIfBoundIsValid(bound, typeComputer, accept);
+                    foundUpperBound = true;
+                }
             }
-
-            foundLowerBound = true;
-        } else if (bound.operator === 'sub') {
-            if (foundUpperBound) {
-                accept('error', 'A type parameter can only have a single upper bound.', {
-                    node: bound,
-                    code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
-                });
-            }
-
-            foundUpperBound = true;
         }
+    };
+};
+
+const checkIfBoundIsValid = (
+    node: SdsTypeParameterBound,
+    typeComputer: SafeDsTypeComputer,
+    accept: ValidationAcceptor,
+) => {
+    const boundType = typeComputer.computeType(node.rightOperand);
+
+    if (boundType !== UnknownType && !(boundType instanceof NamedType)) {
+        accept('error', 'Bounds of type parameters must be named types.', {
+            node,
+            property: 'rightOperand',
+            code: CODE_TYPE_PARAMETER_INVALID_BOUND,
+        });
     }
 };
 

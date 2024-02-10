@@ -1,0 +1,102 @@
+package tests.validation.other.declarations.typeParameters.boundMustBeNamedType
+
+class C
+enum E {
+    V
+}
+
+class MyClass1<T> where {
+    // $TEST$ error "Bounds of type parameters must be named types."
+    T sub »() -> ()«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »() -> ()«,
+
+    // $TEST$ error "Bounds of type parameters must be named types."
+    T super »() -> ()«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »() -> ()«,
+}
+
+class MyClass2<T> where {
+    // $TEST$ error "Bounds of type parameters must be named types."
+    T sub »literal<1>«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »literal<1>«,
+
+    // $TEST$ error "Bounds of type parameters must be named types."
+    T super »literal<1>«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »literal<1>«,
+}
+
+class MyClass3<T> where {
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »C«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »C«,
+
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »C«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »C«,
+}
+
+class MyClass4<T> where {
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »E«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »E«,
+
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »E«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »E«,
+}
+
+class MyClass5<T> where {
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »E.V«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »E.V«,
+
+     // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »E.V«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »E.V«,
+}
+
+class MyClass6<T1, T2> where {
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T1 sub »T2«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T1 sub »T2«,
+
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T1 super »T2«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T1 super »T2«,
+}
+
+class MyClass7<T> where {
+    // $TEST$ error "Bounds of type parameters must be named types."
+    T sub »union<C, E>«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »union<C, E>«,
+
+    // $TEST$ error "Bounds of type parameters must be named types."
+    T super »union<C, E>«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »union<C, E>«,
+}
+
+class MyClass8<T> where {
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »Unresolved«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T sub »Unresolved«,
+
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »Unresolved«,
+    // $TEST$ no error "Bounds of type parameters must be named types."
+    T super »Unresolved«,
+}
