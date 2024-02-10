@@ -91,10 +91,7 @@ import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
-import {
-    memberAccessMustBeNullSafeIfReceiverIsNullable,
-    memberAccessOfEnumVariantMustNotLackInstantiation,
-} from './other/expressions/memberAccesses.js';
+import { memberAccessOfEnumVariantMustNotLackInstantiation } from './other/expressions/memberAccesses.js';
 import {
     referenceMustNotBeFunctionPointer,
     referenceMustNotBeStaticClassOrEnumReference,
@@ -180,6 +177,7 @@ import {
 import { statementMustDoSomething } from './other/statements/statements.js';
 import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
+import { chainedExpressionsMustBeNullSafeIfReceiverIsNullable } from './other/expressions/chainedExpressions.js';
 
 /**
  * Register custom validation checks.
@@ -240,6 +238,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callableTypeParameterMustNotHaveConstModifier,
             callableTypeResultsMustNotBeAnnotated,
         ],
+        SdsChainedExpression: [chainedExpressionsMustBeNullSafeIfReceiverIsNullable(services)],
         SdsClass: [
             classMustContainUniqueNames,
             classMustOnlyInheritASingleClass(services),
@@ -296,7 +295,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
         SdsMemberAccess: [
-            memberAccessMustBeNullSafeIfReceiverIsNullable(services),
             memberAccessNullSafetyShouldBeNeeded(services),
             memberAccessOfEnumVariantMustNotLackInstantiation,
         ],
