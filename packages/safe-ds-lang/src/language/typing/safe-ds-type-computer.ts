@@ -665,19 +665,41 @@ export class SafeDsTypeComputer {
         // Simplify possible types
         const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
 
-        // Remove types that are subtypes of others. We do this back-to-front to keep the first occurrence of duplicate
-        // types. It's also makes splicing easier.
+        // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
+        // occurrence of duplicate types. It's also makes splicing easier.
         for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
             const currentType = newPossibleTypes[i]!;
 
-            for (let j = 0; j < newPossibleTypes.length; j++) {
+            for (let j = newPossibleTypes.length - 1; j >= 0; j--) {
                 if (i === j) {
                     continue;
                 }
 
                 let otherType = newPossibleTypes[j]!;
-                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
 
+                // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
+                // create another union type.
+                if (
+                    currentType.equals(this.coreTypes.NothingOrNull) &&
+                    (otherType instanceof CallableType ||
+                        otherType instanceof NamedTupleType ||
+                        otherType instanceof StaticType)
+                ) {
+                    continue;
+                }
+
+                // Merge literal types
+                if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
+                    // Other type always occurs before current type
+                    const newConstants = [...otherType.constants, ...currentType.constants];
+                    const newLiteralType = this.simplifyType(new LiteralType(...newConstants));
+                    newPossibleTypes.splice(j, 1, newLiteralType);
+                    newPossibleTypes.splice(i, 1);
+                    break;
+                }
+
+                // Remove subtypes of other types
+                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
                 if (this.typeChecker.isAssignableTo(currentType, otherType)) {
                     newPossibleTypes.splice(j, 1, otherType); // Update nullability
                     newPossibleTypes.splice(i, 1);

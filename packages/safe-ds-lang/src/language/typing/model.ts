@@ -125,13 +125,20 @@ export class CallableType extends Type {
 
 export class LiteralType extends Type {
     readonly constants: Constant[];
-    override readonly isNullable: boolean;
+    private _isNullable: boolean | undefined;
 
     constructor(...constants: Constant[]) {
         super();
 
         this.constants = constants;
-        this.isNullable = constants.some((it) => it === NullConstant);
+    }
+
+    override get isNullable(): boolean {
+        if (this._isNullable === undefined) {
+            this._isNullable = this.constants.some((it) => it === NullConstant);
+        }
+
+        return this._isNullable;
     }
 
     override equals(other: unknown): boolean {
@@ -356,6 +363,11 @@ export class ClassType extends NamedType<SdsClass> {
         return new ClassType(this.declaration, newSubstitutions, this.isNullable);
     }
 
+    override unwrap(): ClassType {
+        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.unwrap()]));
+        return new ClassType(this.declaration, newSubstitutions, this.isNullable);
+    }
+
     override updateNullability(isNullable: boolean): ClassType {
         if (this.isNullable === isNullable) {
             return this;
@@ -511,13 +523,20 @@ export class StaticType extends Type {
 
 export class UnionType extends Type {
     readonly possibleTypes: Type[];
-    override readonly isNullable: boolean;
+    private _isNullable: boolean | undefined;
 
     constructor(...possibleTypes: Type[]) {
         super();
 
         this.possibleTypes = possibleTypes;
-        this.isNullable = possibleTypes.some((it) => it.isNullable);
+    }
+
+    override get isNullable(): boolean {
+        if (this._isNullable === undefined) {
+            this._isNullable = this.possibleTypes.some((it) => it.isNullable);
+        }
+
+        return this._isNullable;
     }
 
     override equals(other: unknown): boolean {

@@ -146,12 +146,12 @@ export class SafeDsTypeChecker {
     private classTypeIsAssignableTo(type: ClassType, other: Type, ignoreTypeParameters: boolean): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
+        } else if (type.declaration === this.builtinClasses.Nothing) {
+            return true;
         }
 
         if (other instanceof ClassType) {
-            if (type.declaration === this.builtinClasses.Nothing) {
-                return true;
-            } else if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
+            if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
                 return false;
             }
 
