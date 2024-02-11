@@ -1,4 +1,4 @@
-package tests.partialValidation.recursiveCases.memberAccesses.ofOtherReceivers
+package tests.partialValidation.recursiveCases.memberAccesses.onOtherReceivers
 
 @Pure fun f() -> result: Int
 

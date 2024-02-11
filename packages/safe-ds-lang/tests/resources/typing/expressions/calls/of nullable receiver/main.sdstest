@@ -1,0 +1,20 @@
+package tests.typing.expressions.calls.ofNullableReceiver
+
+class MyClass {
+    attr a: () -> r: Int
+    @Pure fun f() -> r: Int
+}
+
+segment mySegment(
+    myClassOrNull: MyClass?
+) {
+    // $TEST$ serialization Int
+    »myClassOrNull?.a()«;
+    // $TEST$ serialization Int
+    »myClassOrNull?.f()«;
+
+    // $TEST$ serialization Int?
+    »myClassOrNull?.f?()«;
+    // $TEST$ serialization Int?
+    »myClassOrNull?.f?()«;
+}

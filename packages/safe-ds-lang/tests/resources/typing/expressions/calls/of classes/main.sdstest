@@ -8,4 +8,10 @@ pipeline myPipeline {
 
     // $TEST$ serialization $unknown
     »C()()«;
+
+    // $TEST$ serialization C
+    »C?()«;
+
+    // $TEST$ serialization $unknown
+    »C?()?()«;
 }

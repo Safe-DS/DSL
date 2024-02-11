@@ -9,4 +9,10 @@ segment mySegment(
 
     // $TEST$ serialization (r: String, s: Int)
     »p2()«;
+
+    // $TEST$ serialization String
+    »p1?()«;
+
+    // $TEST$ serialization (r: String, s: Int)
+    »p2?()«;
 }

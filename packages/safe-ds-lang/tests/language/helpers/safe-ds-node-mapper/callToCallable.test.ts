@@ -1,10 +1,10 @@
-import { EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
 import { isSdsAbstractCall } from '../../../../src/language/generated/ast.js';
-import { createSafeDsServices } from '../../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { NodeFileSystem } from 'langium/node';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {
@@ -270,6 +270,74 @@ describe('SafeDsNodeMapper', () => {
 
                 const call = await getNodeOfType(services, code, isSdsAbstractCall);
                 expect(nodeMapper.callToCallable(call)?.$type).toBe('SdsSegment');
+            });
+
+            it('should ignore nullability (callable attribute, normal call)', async () => {
+                const code = `
+                    class MyClass {
+                        attr myAttr: () -> ()
+                    }
+
+                    segment mySegment(
+                        myClassOrNull: MyClass?
+                    ) {
+                        myClassOrNull?.myAttr();
+                    }
+                `;
+
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallable(call)?.$type).toBe('SdsCallableType');
+            });
+
+            it('should ignore nullability (method, normal call)', async () => {
+                const code = `
+                    class MyClass {
+                        fun myFunction()
+                    }
+
+                    segment mySegment(
+                        myClassOrNull: MyClass?
+                    ) {
+                        myClassOrNull?.myFunction();
+                    }
+                `;
+
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallable(call)?.$type).toBe('SdsFunction');
+            });
+
+            it('should ignore nullability (callable attribute, null-safe call)', async () => {
+                const code = `
+                    class MyClass {
+                        attr myAttr: () -> ()
+                    }
+
+                    segment mySegment(
+                        myClassOrNull: MyClass?
+                    ) {
+                        myClassOrNull?.myAttr?();
+                    }
+                `;
+
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallable(call)?.$type).toBe('SdsCallableType');
+            });
+
+            it('should ignore nullability (method, null-safe call)', async () => {
+                const code = `
+                    class MyClass {
+                        fun myFunction()
+                    }
+
+                    segment mySegment(
+                        myClassOrNull: MyClass?
+                    ) {
+                        myClassOrNull?.myFunction?();
+                    }
+                `;
+
+                const call = await getNodeOfType(services, code, isSdsAbstractCall);
+                expect(nodeMapper.callToCallable(call)?.$type).toBe('SdsFunction');
             });
         });
     });

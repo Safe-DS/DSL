@@ -12,4 +12,10 @@ pipeline myPipeline {
 
     // $TEST$ serialization (r: String, s: Int)
     »s2()«;
+
+    // $TEST$ serialization String
+    »s1?()«;
+
+    // $TEST$ serialization (r: String, s: Int)
+    »s2?()«;
 }

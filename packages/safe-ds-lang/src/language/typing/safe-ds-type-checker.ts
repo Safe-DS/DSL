@@ -1,6 +1,6 @@
 import { getContainerOfType, stream } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
+import { isSdsCallable, isSdsClass, isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
 import {
     Enum,
     EnumVariant,
@@ -318,6 +318,37 @@ export class SafeDsTypeChecker {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
+     * Checks whether {@link type} is allowed as the type of the receiver of an indexed access.
+     */
+    canBeAccessedByIndex = (type: Type): boolean => {
+        // We must create the non-nullable version since indexed accesses can be null-safe
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
+        return this.isList(nonNullableReceiverType) || this.isMap(nonNullableReceiverType);
+    };
+
+    /**
+     * Checks whether {@link type} is allowed as the type of the receiver of a call.
+     */
+    canBeCalled = (type: Type): boolean => {
+        // We must create the non-nullable version since calls can be null-safe
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
+
+        if (nonNullableReceiverType instanceof CallableType) {
+            return true;
+        } else if (nonNullableReceiverType instanceof StaticType) {
+            const declaration = nonNullableReceiverType.instanceType.declaration;
+            if (isSdsClass(declaration)) {
+                // Must have a constructor
+                return declaration.parameterList !== undefined;
+            } else {
+                return isSdsCallable(declaration);
+            }
+        } else {
+            return false;
+        }
+    };
+
+    /**
      * Checks whether {@link type} is allowed as the type of a constant parameter.
      */
     canBeTypeOfConstantParameter = (type: Type): boolean => {
@@ -341,19 +372,25 @@ export class SafeDsTypeChecker {
     };
 
     /**
-     * Checks whether {@link type} some kind of list (with any element type).
+     * Checks whether {@link type} is some kind of list (with any element type).
      */
     isList(type: Type): type is ClassType {
-        return this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true });
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
+        );
     }
 
     /**
-     * Checks whether {@link type} some kind of map (with any key/value types).
+     * Checks whether {@link type} is some kind of map (with any key/value types).
      */
     isMap(type: Type): type is ClassType {
-        return this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
-            ignoreTypeParameters: true,
-        });
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
+                ignoreTypeParameters: true,
+            })
+        );
     }
 }
 

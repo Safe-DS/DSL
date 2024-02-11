@@ -686,6 +686,7 @@ SdsUnaryOperation returns SdsExpression:
 
 interface SdsChainedExpression extends SdsExpression {
     receiver: SdsExpression
+    isNullSafe: boolean
 }
 
 interface SdsCall extends SdsAbstractCall, SdsChainedExpression {}
@@ -695,7 +696,6 @@ interface SdsIndexedAccess extends SdsChainedExpression {
 }
 
 interface SdsMemberAccess extends SdsChainedExpression {
-    isNullSafe: boolean
     member?: SdsReference
 }
 
@@ -703,9 +703,11 @@ SdsChainedExpression returns SdsExpression:
     SdsPrimaryExpression
     (
         {SdsCall.receiver=current}
+        (isNullSafe?='?')?
         argumentList=SdsCallArgumentList
 
     |   {SdsIndexedAccess.receiver=current}
+        (isNullSafe?='?')?
         '[' index=SdsExpression ']'
 
     |   {SdsMemberAccess.receiver=current}

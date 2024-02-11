@@ -7,4 +7,7 @@ class MyClass {
 pipeline myPipeline {
     // $TEST$ serialization $type<MyNestedEnum>
     »MyClass.MyNestedEnum«;
+
+    // $TEST$ serialization $type<MyNestedEnum>
+    »MyClass?.MyNestedEnum«;
 }

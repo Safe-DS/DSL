@@ -1,0 +1,130 @@
+package validation.other.expressions.chainedExpression.missingNullSafety
+
+class MyClass() {
+    attr a: Int
+    attr l: List<Int>
+    @Pure fun f()
+}
+
+segment call(
+    myClass: MyClass,
+    myClassOrNull: MyClass?,
+) {
+    val myFunction = myClass.f;
+    val myFunctionOrNull = myClassOrNull?.f;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »(() {})()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »1()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »null()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »myFunction()«;
+
+    // $TEST$ error "The receiver can be null so a null-safe call must be used."
+    »myFunctionOrNull()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »unresolved()«;
+
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »(() {})?()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »1?()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »null?()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »myFunction?()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »myFunctionOrNull?()«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe call must be used."
+    »unresolved?()«;
+}
+
+segment indexedAccess(
+    myClass: MyClass,
+    myClassOrNull: MyClass?,
+) {
+    val myList = myClass.l;
+    val myListOrNull = myClassOrNull?.l;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »[1][0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »1[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »null[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »myList[0]«;
+
+    // $TEST$ error "The receiver can be null so a null-safe indexed access must be used."
+    »myListOrNull[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »unresolved[0]«;
+
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »1?[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »null?[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »myList?[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »myListOrNull?[0]«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    »unresolved?[0]«;
+}
+
+segment memberAccess(
+    myClass: MyClass,
+    myClassOrNull: MyClass?,
+) {
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »1.a«;
+
+    // $TEST$ error "The receiver can be null so a null-safe member access must be used."
+    »null.a«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »myClass.a«;
+
+    // $TEST$ error "The receiver can be null so a null-safe member access must be used."
+    »myClassOrNull.a«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »unresolved.a«;
+
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »1?.a«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »null?.a«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »myClass?.a«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »myClassOrNull?.a«;
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    »unresolved?.a«;
+}

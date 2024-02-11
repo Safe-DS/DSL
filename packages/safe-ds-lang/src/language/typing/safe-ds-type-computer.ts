@@ -440,19 +440,22 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfCall(node: SdsCall): Type {
         const receiverType = this.computeType(node.receiver);
+        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
+        let result: Type = UnknownType;
 
-        if (receiverType instanceof CallableType) {
-            if (!isSdsAnnotation(receiverType.callable)) {
-                return receiverType.outputType;
+        if (nonNullableReceiverType instanceof CallableType) {
+            if (!isSdsAnnotation(nonNullableReceiverType.callable)) {
+                result = nonNullableReceiverType.outputType;
             }
-        } else if (receiverType instanceof StaticType) {
-            const instanceType = receiverType.instanceType;
+        } else if (nonNullableReceiverType instanceof StaticType) {
+            const instanceType = nonNullableReceiverType.instanceType;
             if (isSdsCallable(instanceType.declaration)) {
-                return instanceType;
+                result = instanceType;
             }
         }
 
-        return UnknownType;
+        // Update nullability
+        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
     }
 
     private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
@@ -473,13 +476,19 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        if (this.typeChecker.isList(receiverType)) {
-            return receiverType.getTypeParameterTypeByIndex(0);
-        } else if (this.typeChecker.isMap(receiverType)) {
-            return receiverType.getTypeParameterTypeByIndex(1);
+        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
+        let result: Type = UnknownType;
+
+        if (this.typeChecker.isList(nonNullableReceiverType)) {
+            result = nonNullableReceiverType.getTypeParameterTypeByIndex(0);
+        } else if (this.typeChecker.isMap(nonNullableReceiverType)) {
+            result = nonNullableReceiverType.getTypeParameterTypeByIndex(1);
         } else {
             return UnknownType;
         }
+
+        // Update nullability
+        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -534,7 +543,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
+        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || result.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
@@ -730,13 +739,26 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Compute class types for literal types and their constants
+    // Various type conversions
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Returns the non-nullable type for the given type. The result is simplified as much as possible.
+     */
+    computeNonNullableType(type: Type): Type {
+        return this.simplifyType(type.updateNullability(false));
+    }
+
+    /**
+     * Returns the lowest class type for the given literal type.
+     */
     computeClassTypeForLiteralType(literalType: LiteralType): Type {
         return this.lowestCommonSupertype(...literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
     }
 
+    /**
+     * Returns the lowest class type for the given constant.
+     */
     computeClassTypeForConstant(constant: Constant): Type {
         if (constant instanceof BooleanConstant) {
             return this.coreTypes.Boolean;

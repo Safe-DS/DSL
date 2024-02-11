@@ -250,6 +250,16 @@ to their computed values.
 
 If the result record only has a single entry, its value can be accessed directly. Otherwise, the result record must be _deconstructed_ either by an [assignment][assignment-multiple-assignees] (can access multiple results) or by a [member access](#member-access-of-results) (can access a single result).
 
+### Null-Safe Calls
+
+If an expression can be `#!sds null`, it cannot be used as the callee of a normal call. Instead, a null-safe call must be used. A null-safe call evaluates to `#!sds null` if its callee is `#!sds null`. Otherwise, it works just like a normal call. This is particularly useful for [chaining](#chaining).
+
+The syntax is identical to a normal call except that we replace the `#!sds ()` with `#!sds ?()`:
+
+```sds
+nullableCallee?()
+```
+
 ## Member Accesses
 
 A member access is used to refer to members of a complex data structure such as
@@ -313,16 +323,6 @@ We now take apart the syntax again:
 - The name of the instance member (here `#!sds maxDepth`).
 
 Note that instance members cannot be accessed from the class itself, but only from its instances.
-
-##### Null-Safe Member Access
-
-If an expression could be `#!sds null` it cannot be used as the receiver of a regular member access, since `#!sds null` does not have members. Instead a null-safe member access must be used. A null-safe member access evaluates to `#!sds null` if its receiver is `#!sds null`. Otherwise, it evaluates to the accessed member, just like a normal member access.
-
-The syntax is identical to a normal member access except that we replace the dot with the operator `#!sds ?.`:
-
-```sds
-nullableExpression?.member
-```
 
 ### Member Access of Enum Variants
 
@@ -401,9 +401,19 @@ If you want the result instead, simply omit the member access:
 createValueWrapper()
 ```
 
+### Null-Safe Member Accesses
+
+If an expression can be `#!sds null`, it cannot be used as the receiver of a regular member access, since `#!sds null` does not have members. Instead, a null-safe member access must be used. A null-safe member access evaluates to `#!sds null` if its receiver is `#!sds null`. Otherwise, it evaluates to the accessed member, just like a normal member access.
+
+The syntax is identical to a normal member access except that we replace the dot with the operator `#!sds ?.`:
+
+```sds
+nullableExpression?.member
+```
+
 ## Indexed Accesses
 
-An indexed access is currently only used to access elements of a list or values of a map by their key. In the following example, we use an index access to retrieve the first element of the `#!sds values` list:
+An indexed access is used to access elements of a list by index or values of a map by key. In the following example, we use an index access to retrieve the first element of the `#!sds values` list:
 
 ```sds
 segment printFirst(values: List<Int>) {
@@ -419,6 +429,16 @@ These are the elements of the syntax:
 - A closing square bracket.
 
 Note that accessing a value at an index outside the bounds of the value list currently only raises an error at runtime.
+
+### Null-Safe Indexed Accesses
+
+If an expression can be `#!sds null`, it cannot be used as the receiver of a regular indexed access. Instead, a null-safe indexed access must be used. A null-safe indexed access evaluates to `#!sds null` if its receiver is `#!sds null`. Otherwise, it works just like a normal indexed access. This is particularly useful for [chaining](#chaining).
+
+The syntax is identical to a normal indexed access except that we replace the `#!sds []` with `#!sds ?[]`:
+
+```sds
+nullableList?[0]
+```
 
 ## Chaining
 
@@ -566,7 +586,7 @@ We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason 
 - **HIGHER PRECEDENCE**
 - `#!sds ()` (parentheses around an expression)
 - `#!sds 1` ([integer literals](#int-literals)), `#!sds 1.0` ([float literals](#float-literals)), `#!sds "a"` ([string literals](#string-literals)), `#!sds true`/`false` ([boolean literals](#boolean-literals)), `#!sds null` ([null literal](#null-literal)), `#!sds someName` ([references](#references)), `#!sds "age: {{ age }}"` ([template strings](#template-strings))
-- `#!sds ()` ([calls](#calls)), `#!sds .` ([member accesses](#member-accesses)), `#!sds ?.` ([null-safe member accesses](#null-safe-member-access)), `#!sds []` ([indexed accesses](#indexed-accesses))
+- `#!sds ()` ([calls](#calls)), `#!sds ?()` ([null-safe calls](#null-safe-calls)), `#!sds .` ([member accesses](#member-accesses)), `#!sds ?.` ([null-safe member accesses](#null-safe-member-accesses)), `#!sds []` ([indexed accesses](#indexed-accesses)), `#!sds ?[]` ([null-safe indexed accesses](#null-safe-indexed-accesses))
 - `#!sds -` (unary, [arithmetic negations](#operations-on-numbers))
 - `#!sds as` ([type casts](#type-casts))
 - `#!sds ?:` ([Elvis operators](#elvis-operator))
