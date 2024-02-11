@@ -108,7 +108,7 @@ const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 const RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE = 'safeds_runner.server.pipeline_manager';
 const PYTHON_INDENT = '    ';
 
-const NLNL = new CompositeGeneratorNode(NL, NL);
+const SPACING = new CompositeGeneratorNode(NL, NL);
 
 const UTILITY_EAGER_OR: UtilityFunction = {
     code: expandToNode`def ${CODEGEN_PREFIX}eager_or(left_operand: bool, right_operand: bool) -> bool:`
@@ -142,17 +142,19 @@ const UTILITY_EAGER_ELVIS: UtilityFunction = {
     imports: [{ importPath: 'typing', declarationName: 'TypeVar' }],
 };
 
-const UTILITY_SAFE_ACCESS: UtilityFunction = {
+const UTILITY_NULL_SAFE_MEMBER_ACCESS: UtilityFunction = {
     code: expandToNode`${CODEGEN_PREFIX}S = TypeVar("${CODEGEN_PREFIX}S")`
         .appendNewLine()
         .appendNewLine()
-        .append(`def ${CODEGEN_PREFIX}safe_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}S | None:`)
+        .append(
+            `def ${CODEGEN_PREFIX}null_safe_member_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}S | None:`,
+        )
         .appendNewLine()
         .indent({
             indentedChildren: ['return getattr(receiver, member_name) if receiver is not None else None'],
             indentation: PYTHON_INDENT,
         }),
-    name: `${CODEGEN_PREFIX}safe_access`,
+    name: `${CODEGEN_PREFIX}null_safe_member_access`,
     imports: [
         { importPath: 'typing', declarationName: 'TypeVar' },
         { importPath: 'typing', declarationName: 'Any' },
@@ -333,7 +335,7 @@ export class SafeDsPythonGenerator {
             output.append('# Utils ------------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
-            output.append(joinToNode(utilitySet, (importDecl) => importDecl.code, { separator: NLNL }));
+            output.append(joinToNode(utilitySet, (importDecl) => importDecl.code, { separator: SPACING }));
             output.appendNewLine();
         }
         if (segments.length > 0) {
@@ -341,7 +343,7 @@ export class SafeDsPythonGenerator {
             output.append('# Segments ---------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
-            output.append(joinToNode(segments, (segment) => segment, { separator: NLNL }));
+            output.append(joinToNode(segments, (segment) => segment, { separator: SPACING }));
             output.appendNewLine();
         }
         if (pipelines.length > 0) {
@@ -349,7 +351,7 @@ export class SafeDsPythonGenerator {
             output.append('# Pipelines --------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
-            output.append(joinToNode(pipelines, (pipeline) => pipeline, { separator: NLNL }));
+            output.append(joinToNode(pipelines, (pipeline) => pipeline, { separator: SPACING }));
             output.appendNewLine();
         }
         return output;
@@ -826,11 +828,11 @@ export class SafeDsPythonGenerator {
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
-                    frame.addUtility(UTILITY_SAFE_ACCESS);
+                    frame.addUtility(UTILITY_NULL_SAFE_MEMBER_ACCESS);
                     return expandTracedToNode(expression)`${traceToNode(
                         expression,
                         'isNullSafe',
-                    )(UTILITY_SAFE_ACCESS.name)}(${receiver}, '${memberExpression}')`;
+                    )(UTILITY_NULL_SAFE_MEMBER_ACCESS.name)}(${receiver}, '${memberExpression}')`;
                 } else {
                     return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }

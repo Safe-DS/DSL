@@ -12,7 +12,7 @@ def __gen_eager_and(left_operand: bool, right_operand: bool) -> bool:
 
 __gen_S = TypeVar("__gen_S")
 
-def __gen_safe_access(receiver: Any, member_name: str) -> __gen_S | None:
+def __gen_null_safe_member_access(receiver: Any, member_name: str) -> __gen_S | None:
     return getattr(receiver, member_name) if receiver is not None else None
 
 __gen_T = TypeVar("__gen_T")
@@ -25,6 +25,6 @@ def __gen_eager_elvis(left_operand: __gen_T, right_operand: __gen_T) -> __gen_T:
 def test():
     f(__gen_eager_or(g(), g()))
     f(__gen_eager_and(g(), g()))
-    f(__gen_safe_access(factory(), 'a'))
-    f(__gen_safe_access(factory(), 'c'))
+    f(__gen_null_safe_member_access(factory(), 'a'))
+    f(__gen_null_safe_member_access(factory(), 'c'))
     f(__gen_eager_elvis(i(), i()))
