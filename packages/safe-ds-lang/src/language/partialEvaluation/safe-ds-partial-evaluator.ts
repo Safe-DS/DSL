@@ -502,6 +502,8 @@ export class SafeDsPartialEvaluator {
                 substitutions,
                 visited,
             );
+        } else if (receiver.equals(NullConstant) && node.isNullSafe) {
+            return NullConstant;
         }
 
         return UnknownEvaluatedNode;
