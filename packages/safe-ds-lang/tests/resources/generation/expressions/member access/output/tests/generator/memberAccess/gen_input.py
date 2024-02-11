@@ -3,11 +3,13 @@
 import safeds_runner.server.pipeline_manager
 from typing import Any, TypeVar
 
+# Type variables ---------------------------------------------------------------
+
+__gen_T = TypeVar("__gen_T")
+
 # Utils ------------------------------------------------------------------------
 
-__gen_S = TypeVar("__gen_S")
-
-def __gen_null_safe_member_access(receiver: Any, member_name: str) -> __gen_S | None:
+def __gen_null_safe_member_access(receiver: Any, member_name: str) -> __gen_T | None:
     return getattr(receiver, member_name) if receiver is not None else None
 
 # Pipelines --------------------------------------------------------------------
