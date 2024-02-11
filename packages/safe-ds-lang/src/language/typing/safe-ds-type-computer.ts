@@ -476,13 +476,19 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        if (this.typeChecker.isList(receiverType)) {
-            return receiverType.getTypeParameterTypeByIndex(0);
-        } else if (this.typeChecker.isMap(receiverType)) {
-            return receiverType.getTypeParameterTypeByIndex(1);
+        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
+        let result: Type = UnknownType;
+
+        if (this.typeChecker.isList(nonNullableReceiverType)) {
+            result = nonNullableReceiverType.getTypeParameterTypeByIndex(0);
+        } else if (this.typeChecker.isMap(nonNullableReceiverType)) {
+            result = nonNullableReceiverType.getTypeParameterTypeByIndex(1);
         } else {
             return UnknownType;
         }
+
+        // Update nullability
+        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
