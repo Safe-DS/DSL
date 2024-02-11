@@ -33,4 +33,13 @@ pipeline test {
     i("abc");
     j("abc", 123);
     k(1.23, 456);
+
+    f?((g(1, 2)));
+    f?((g(param2 = 1, param1 = 2)));
+    f?((h(1, 2)));
+    f?((h(param2 = 1, param1 = 2)));
+    f?((h(param1 = 2)));
+    i?("abc");
+    j?("abc", 123);
+    k?(1.23, 456);
 }

@@ -769,6 +769,9 @@ export class SafeDsPythonGenerator {
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             const sortedArgs = this.sortArguments(getArguments(expression));
+            const receiver = this.generateExpression(expression.receiver, frame);
+            let call: CompositeGeneratorNode | undefined = undefined;
+
             // Memoize constructor or function call
             if (isSdsFunction(callable) || isSdsClass(callable)) {
                 if (isSdsFunction(callable)) {
@@ -779,18 +782,31 @@ export class SafeDsPythonGenerator {
                             thisParam = this.generateExpression(expression.receiver.receiver, frame);
                         }
                         const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
-                        return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
+                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
                     }
                 }
-                if (this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
+                if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
                     let thisParam: CompositeGeneratorNode | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
-                    return this.generateMemoizedCall(expression, sortedArgs, frame, thisParam);
+                    call = this.generateMemoizedCall(expression, sortedArgs, frame, thisParam);
                 }
             }
-            return this.generatePlainCall(expression, sortedArgs, frame);
+
+            if (!call) {
+                call = this.generatePlainCall(expression, sortedArgs, frame);
+            }
+
+            if (expression.isNullSafe) {
+                frame.addUtility(UTILITY_NULL_SAFE_CALL);
+                return expandTracedToNode(expression)`${traceToNode(
+                    expression,
+                    'isNullSafe',
+                )(UTILITY_NULL_SAFE_CALL.name)}(${receiver}, lambda: ${call})`;
+            } else {
+                return call;
+            }
         } else if (isSdsExpressionLambda(expression)) {
             return expandTracedToNode(expression)`lambda ${this.generateParameters(
                 expression.parameterList,
