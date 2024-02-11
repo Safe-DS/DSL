@@ -142,6 +142,25 @@ const UTILITY_EAGER_ELVIS: UtilityFunction = {
     imports: [{ importPath: 'typing', declarationName: 'TypeVar' }],
 };
 
+const UTILITY_NULL_SAFE_INDEXED_ACCESS: UtilityFunction = {
+    code: expandToNode`${CODEGEN_PREFIX}S = TypeVar("${CODEGEN_PREFIX}S")`
+        .appendNewLine()
+        .appendNewLine()
+        .append(
+            `def ${CODEGEN_PREFIX}null_safe_indexed_access(receiver: Any, index: Any) -> ${CODEGEN_PREFIX}S | None:`,
+        )
+        .appendNewLine()
+        .indent({
+            indentedChildren: ['return receiver[index] if receiver is not None else None'],
+            indentation: PYTHON_INDENT,
+        }),
+    name: `${CODEGEN_PREFIX}null_safe_indexed_access`,
+    imports: [
+        { importPath: 'typing', declarationName: 'TypeVar' },
+        { importPath: 'typing', declarationName: 'Any' },
+    ],
+};
+
 const UTILITY_NULL_SAFE_MEMBER_ACCESS: UtilityFunction = {
     code: expandToNode`${CODEGEN_PREFIX}S = TypeVar("${CODEGEN_PREFIX}S")`
         .appendNewLine()
