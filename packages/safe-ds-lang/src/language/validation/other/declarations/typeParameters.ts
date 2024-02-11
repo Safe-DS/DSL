@@ -67,34 +67,27 @@ export const typeParameterMustNotHaveMultipleBounds = (services: SafeDsServices)
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-        const bounds = TypeParameter.getBounds(node);
-
-        let foundLowerBound = false;
-        let foundUpperBound = false;
-
-        for (const bound of bounds) {
-            if (bound.operator === 'super') {
-                if (foundLowerBound) {
-                    accept('error', 'A type parameter can only have a single lower bound.', {
-                        node: bound,
-                        code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
-                    });
-                } else {
-                    checkIfBoundIsValid(bound, typeComputer, accept);
-                    foundLowerBound = true;
-                }
-            } else if (bound.operator === 'sub') {
-                if (foundUpperBound) {
-                    accept('error', 'A type parameter can only have a single upper bound.', {
-                        node: bound,
-                        code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
-                    });
-                } else {
-                    checkIfBoundIsValid(bound, typeComputer, accept);
-                    foundUpperBound = true;
-                }
+        TypeParameter.getLowerBounds(node).forEach((it, index) => {
+            if (index === 0) {
+                checkIfBoundIsValid(it, typeComputer, accept);
+            } else {
+                accept('error', `The type parameter '${node.name}' can only have a single lower bound.`, {
+                    node: it,
+                    code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+                });
             }
-        }
+        });
+
+        TypeParameter.getUpperBounds(node).forEach((it, index) => {
+            if (index === 0) {
+                checkIfBoundIsValid(it, typeComputer, accept);
+            } else {
+                accept('error', `The type parameter '${node.name}' can only have a single upper bound.`, {
+                    node: it,
+                    code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+                });
+            }
+        });
     };
 };
 
