@@ -534,7 +534,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
+        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || result.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {

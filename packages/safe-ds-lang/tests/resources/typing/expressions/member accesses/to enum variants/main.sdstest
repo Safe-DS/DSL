@@ -15,4 +15,14 @@ pipeline myPipeline {
 
     // $TEST$ serialization $type<MyEnumVariantWithParameters>
     »MyEnum.MyEnumVariantWithParameters«;
+
+
+    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    »MyEnum?.MyEnumVariantWithoutParameterList«;
+
+    // $TEST$ serialization MyEnumVariantWithoutParameters
+    »MyEnum?.MyEnumVariantWithoutParameters«;
+
+    // $TEST$ serialization $type<MyEnumVariantWithParameters>
+    »MyEnum?.MyEnumVariantWithParameters«;
 }
