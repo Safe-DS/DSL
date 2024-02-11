@@ -85,6 +85,24 @@ describe('SafeDsCallHierarchyProvider', async () => {
                 ],
             },
             {
+                testName: 'null-safe',
+                code: `
+                    class C {
+                        fun »«f()
+                    }
+
+                    segment s(cOrNull: C?) {
+                        cOrNull?.f?();
+                    }
+                `,
+                expectedIncomingCalls: [
+                    {
+                        fromName: 's',
+                        fromRangesLength: 1,
+                    },
+                ],
+            },
+            {
                 testName: 'only referenced',
                 code: `
                     class »«C()
@@ -168,7 +186,25 @@ describe('SafeDsCallHierarchyProvider', async () => {
                 ],
             },
             {
-                testName: 'only references',
+                testName: 'null-safe',
+                code: `
+                    class C {
+                        fun f()
+                    }
+
+                    segment »«s(cOrNull: C?) {
+                        cOrNull?.f?();
+                    }
+                `,
+                expectedOutgoingCalls: [
+                    {
+                        fromRangesLength: 1,
+                        toName: 'f',
+                    },
+                ],
+            },
+            {
+                testName: 'only referenced',
                 code: `
                     fun f()
 
