@@ -6,3 +6,8 @@ segment test(param1: List<Int>, param2: List<Int>?) {
     f(param1[0]);
     f(param2?[0]);
 }
+
+class C<T1, T2> where {
+    T1 sub Int,
+    T2 super T1
+}
