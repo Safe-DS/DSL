@@ -643,6 +643,8 @@ export class SafeDsPartialEvaluator {
             return receiver.getParameterValueByName(member.name);
         } else if (receiver instanceof EvaluatedNamedTuple) {
             return receiver.getResultValueByName(member.name);
+        } else if (receiver.equals(NullConstant) && node.isNullSafe) {
+            return NullConstant;
         }
 
         return UnknownEvaluatedNode;
