@@ -1,0 +1,10 @@
+package tests.callGraph.enumVariantCall.nullSafe
+
+enum MyEnum {
+    MyVariant
+}
+
+pipeline myPipeline {
+    // $TEST$ ["MyVariant"]
+    »MyEnum.MyVariant?()«;
+}

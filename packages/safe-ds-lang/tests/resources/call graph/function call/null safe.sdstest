@@ -1,0 +1,25 @@
+package tests.callGraph.functionCall.nullSafe
+
+@Pure fun myFunction()
+
+class MyClass {
+    @Pure static fun myStaticMethod()
+    @Pure fun myInstanceMethod()
+}
+
+segment mySegment(
+    myClass: MyClass,
+    myClassOrNull: MyClass?
+) {
+    // $TEST$ ["myFunction"]
+    »myFunction?()«;
+
+    // $TEST$ ["myStaticMethod"]
+    »MyClass.myStaticMethod?()«;
+
+    // $TEST$ ["myInstanceMethod"]
+    »myClass.myInstanceMethod?()«;
+
+    // $TEST$ ["myInstanceMethod"]
+    »myClassOrNull?.myInstanceMethod?()«;
+}

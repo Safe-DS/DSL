@@ -160,7 +160,10 @@ export class SafeDsCallGraphComputer {
         return this.getExecutedCallsInCallable(syntheticCall.callable.callable, syntheticCall.substitutions);
     }
 
-    private getExecutedCallsInCallable(callable: SdsCallable | SdsParameter, substitutions: ParameterSubstitutions) {
+    private getExecutedCallsInCallable(
+        callable: SdsCallable | SdsParameter,
+        substitutions: ParameterSubstitutions,
+    ): SyntheticCall[] {
         if (isSdsBlockLambda(callable) || isSdsExpressionLambda(callable) || isSdsSegment(callable)) {
             return this.getExecutedCallsInPipelineCallable(callable, substitutions);
         } else if (isSdsClass(callable) || isSdsEnumVariant(callable) || isSdsFunction(callable)) {
@@ -269,11 +272,12 @@ export class SafeDsCallGraphComputer {
 
         // Fall back to getting the called parameter via the type computer
         const type = this.typeComputer.computeType(expression);
-        if (!(type instanceof CallableType)) {
+        const nonNullType = this.typeComputer.computeNonNullableType(type);
+        if (!(nonNullType instanceof CallableType)) {
             return undefined;
         }
 
-        const parameterOrCallable = type.parameter ?? type.callable;
+        const parameterOrCallable = nonNullType.parameter ?? nonNullType.callable;
         if (isSdsParameter(parameterOrCallable)) {
             return new NamedCallable(parameterOrCallable);
         } else if (isSdsFunction(parameterOrCallable)) {
