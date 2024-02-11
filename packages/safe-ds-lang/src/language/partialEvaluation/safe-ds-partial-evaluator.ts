@@ -621,6 +621,8 @@ export class SafeDsPartialEvaluator {
         } else if (receiver instanceof EvaluatedMap) {
             const key = this.evaluateWithRecursionCheck(node.index, substitutions, visited).unwrap();
             return receiver.getLastValueForKey(key);
+        } else if (receiver.equals(NullConstant) && node.isNullSafe) {
+            return NullConstant;
         }
 
         return UnknownEvaluatedNode;
