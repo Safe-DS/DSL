@@ -440,19 +440,22 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfCall(node: SdsCall): Type {
         const receiverType = this.computeType(node.receiver);
+        const nonNullableReceiverType = this.simplifyType(receiverType.updateNullability(false));
+        let result: Type = UnknownType;
 
-        if (receiverType instanceof CallableType) {
-            if (!isSdsAnnotation(receiverType.callable)) {
-                return receiverType.outputType;
+        if (nonNullableReceiverType instanceof CallableType) {
+            if (!isSdsAnnotation(nonNullableReceiverType.callable)) {
+                result = nonNullableReceiverType.outputType;
             }
-        } else if (receiverType instanceof StaticType) {
-            const instanceType = receiverType.instanceType;
+        } else if (nonNullableReceiverType instanceof StaticType) {
+            const instanceType = nonNullableReceiverType.instanceType;
             if (isSdsCallable(instanceType.declaration)) {
-                return instanceType;
+                result = instanceType;
             }
         }
 
-        return UnknownType;
+        // Update nullability
+        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
     }
 
     private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {

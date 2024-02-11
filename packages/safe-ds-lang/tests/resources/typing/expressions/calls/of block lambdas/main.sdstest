@@ -11,4 +11,15 @@ pipeline myPipeline {
         yield r = "";
         yield s = 1;
     })()«;
+
+    // $TEST$ serialization literal<"">
+    »(() {
+        yield r = "";
+    })?()«;
+
+    // $TEST$ serialization (r: literal<"">, s: literal<1>)
+    »(() {
+        yield r = "";
+        yield s = 1;
+    })?()«;
 }
