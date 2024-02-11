@@ -93,12 +93,21 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
  * @param actualOutputRoot Where the actual output files supposed to be located.
  */
 const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI): ExpectedOutputFile[] => {
-    return listTestFilesWithExtensions(uriToShortenedTestResourceName(expectedOutputRoot), ['py', 'map']).map((uri) => {
-        return {
-            uri: URI.file(path.join(actualOutputRoot.fsPath, path.relative(expectedOutputRoot.fsPath, uri.fsPath))),
-            code: fs.readFileSync(uri.fsPath).toString(),
-        };
-    });
+    return listTestFilesWithExtensions(uriToShortenedTestResourceName(expectedOutputRoot), ['py', 'map'])
+        .sort((a, b) => {
+            // List .py files first
+            if (a.fsPath.endsWith('.map') && b.fsPath.endsWith('.py')) {
+                return 1;
+            }
+
+            return -1;
+        })
+        .map((uri) => {
+            return {
+                uri: URI.file(path.join(actualOutputRoot.fsPath, path.relative(expectedOutputRoot.fsPath, uri.fsPath))),
+                code: fs.readFileSync(uri.fsPath).toString(),
+            };
+        });
 };
 
 /**
