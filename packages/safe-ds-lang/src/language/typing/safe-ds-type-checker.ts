@@ -322,7 +322,7 @@ export class SafeDsTypeChecker {
      */
     canBeAccessedByIndex = (type: Type): boolean => {
         // We must create the non-nullable version since indexed accesses can be null-safe
-        const nonNullableReceiverType = this.typeComputer().simplifyType(type.updateNullability(false));
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
         return this.isList(nonNullableReceiverType) || this.isMap(nonNullableReceiverType);
     };
 
@@ -331,7 +331,7 @@ export class SafeDsTypeChecker {
      */
     canBeCalled = (type: Type): boolean => {
         // We must create the non-nullable version since calls can be null-safe
-        const nonNullableReceiverType = this.typeComputer().simplifyType(type.updateNullability(false));
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
 
         if (nonNullableReceiverType instanceof CallableType) {
             return true;

@@ -440,7 +440,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfCall(node: SdsCall): Type {
         const receiverType = this.computeType(node.receiver);
-        const nonNullableReceiverType = this.simplifyType(receiverType.updateNullability(false));
+        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
         let result: Type = UnknownType;
 
         if (nonNullableReceiverType instanceof CallableType) {
@@ -733,13 +733,26 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Compute class types for literal types and their constants
+    // Various type conversions
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Returns the non-nullable type for the given type. The result is simplified as much as possible.
+     */
+    computeNonNullableType(type: Type): Type {
+        return this.simplifyType(type.updateNullability(false));
+    }
+
+    /**
+     * Returns the lowest class type for the given literal type.
+     */
     computeClassTypeForLiteralType(literalType: LiteralType): Type {
         return this.lowestCommonSupertype(...literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
     }
 
+    /**
+     * Returns the lowest class type for the given constant.
+     */
     computeClassTypeForConstant(constant: Constant): Type {
         if (constant instanceof BooleanConstant) {
             return this.coreTypes.Boolean;

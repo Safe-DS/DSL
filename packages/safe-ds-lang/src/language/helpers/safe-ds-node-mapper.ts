@@ -151,7 +151,7 @@ export class SafeDsNodeMapper {
             // link the arguments of the call properly, even if the user forgot to make the call null-safe. In this
             // case, an error is being shown anyway.
             const receiverType = this.typeComputer().computeType(node.receiver);
-            const nonNullableReceiverType = this.typeComputer().simplifyType(receiverType.updateNullability(false));
+            const nonNullableReceiverType = this.typeComputer().computeNonNullableType(receiverType);
 
             if (nonNullableReceiverType instanceof CallableType) {
                 return nonNullableReceiverType.callable;
