@@ -174,11 +174,49 @@ export namespace TypeParameter {
         return isSdsTypeParameter(node) && !node.variance;
     };
 
-    export const getBounds = (node: SdsTypeParameter | undefined): SdsTypeParameterBound[] => {
+    export const getLowerBounds = (node: SdsTypeParameter | undefined): SdsTypeParameterBound[] => {
+        return getBounds(node).filter((it) => {
+            if (it.operator === 'super') {
+                // Type parameter is the left operand
+                return it.leftOperand?.ref === node;
+            } else if (it.operator === 'sub') {
+                // Type parameter is the right operand
+                return isSdsNamedType(it.rightOperand) && it.rightOperand.declaration?.ref === node;
+            } else {
+                /* c8 ignore next 2 */
+                return false;
+            }
+        });
+    };
+
+    export const getUpperBounds = (node: SdsTypeParameter | undefined): SdsTypeParameterBound[] => {
+        return getBounds(node).filter((it) => {
+            if (it.operator === 'sub') {
+                // Type parameter is the left operand
+                return it.leftOperand?.ref === node;
+            } else if (it.operator === 'super') {
+                // Type parameter is the right operand
+                return isSdsNamedType(it.rightOperand) && it.rightOperand.declaration?.ref === node;
+            } else {
+                /* c8 ignore next 2 */
+                return false;
+            }
+        });
+    };
+
+    const getBounds = (node: SdsTypeParameter | undefined): SdsTypeParameterBound[] => {
         const declarationContainingTypeParameter = getContainerOfType(node?.$container, isSdsDeclaration);
-        return getConstraints(declarationContainingTypeParameter).filter(
-            (it) => isSdsTypeParameterBound(it) && it.leftOperand?.ref === node,
-        ) as SdsTypeParameterBound[];
+        return getConstraints(declarationContainingTypeParameter).filter((it) => {
+            if (!isSdsTypeParameterBound(it)) {
+                /* c8 ignore next 2 */
+                return false;
+            }
+
+            return (
+                it.leftOperand?.ref === node ||
+                (isSdsNamedType(it.rightOperand) && it.rightOperand.declaration?.ref === node)
+            );
+        }) as SdsTypeParameterBound[];
     };
 }
 

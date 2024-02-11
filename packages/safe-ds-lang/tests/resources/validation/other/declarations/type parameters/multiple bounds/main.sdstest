@@ -1,94 +1,138 @@
 package tests.validation.other.typeParameters.multipleBounds
 
-class MyGlobalClass<T1, T2> where {
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+class MyGlobalClass<T1, T2, T3, T4, T5, T6, T7, T8> where {
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T1 sub Int«,
-    // $TEST$ error "A type parameter can only have a single upper bound."
+    // $TEST$ error "The type parameter 'T1' can only have a single upper bound."
     »T1 sub Number«,
-    // $TEST$ no error "A type parameter can only have a single lower bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T1 super Int«,
-    // $TEST$ error "A type parameter can only have a single lower bound."
+    // $TEST$ error "The type parameter 'T1' can only have a single lower bound."
     »T1 super Number«,
 
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T2 sub Int«,
-    // $TEST$ error "A type parameter can only have a single upper bound."
+    // $TEST$ error "The type parameter 'T2' can only have a single upper bound."
     »T2 sub Number«,
-    // $TEST$ no error "A type parameter can only have a single lower bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T2 super Int«,
-    // $TEST$ error "A type parameter can only have a single lower bound."
+    // $TEST$ error "The type parameter 'T2' can only have a single lower bound."
     »T2 super Number«,
 
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T3 sub Int«,
+    // $TEST$ error "The type parameter 'T3' can only have a single upper bound."
+    »T4 super T3«,
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T5 super Int«,
+    // $TEST$ error "The type parameter 'T5' can only have a single lower bound."
+    »T6 sub T5«,
+
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T7 sub Int«,
+    // $TEST$ error "The type parameter 'T7' can only have a single upper bound."
+    »T7 sub T7«,
+    // $TEST$ error "The type parameter 'T7' can only have a single upper bound."
+    »T7 super T7«,
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T8 super Int«,
+    // $TEST$ error "The type parameter 'T8' can only have a single lower bound."
+    »T8 super T8«,
+    // $TEST$ error "The type parameter 'T8' can only have a single lower bound."
+    »T8 sub T8«,
+
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved sub Int«,
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved sub Number«,
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved super Int«,
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved super Number«,
 } {
     class MyNestedClass where {
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 sub Int«,
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 sub Number«,
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 super Int«,
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 super Number«,
     }
 
     enum MyNestedEnum {
         MyNestedEnumVariant where {
-            // $TEST$ no error "A type parameter can only have a single upper bound."
+            // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
             »T1 sub Int«,
-            // $TEST$ no error "A type parameter can only have a single upper bound."
+            // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
             »T1 sub Number«,
-            // $TEST$ no error "A type parameter can only have a single upper bound."
+            // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
             »T1 super Int«,
-            // $TEST$ no error "A type parameter can only have a single upper bound."
+            // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
             »T1 super Number«,
         }
     }
 
     @Pure fun myMethod() where {
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 sub Int«,
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 sub Number«,
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 super Int«,
-        // $TEST$ no error "A type parameter can only have a single upper bound."
+        // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
         »T1 super Number«,
     }
 }
 
-@Pure fun myGlobalFunction<T1, T2>() where {
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+@Pure fun myGlobalFunction<T1, T2, T3, T4, T5, T6, T7, T8>() where {
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T1 sub Int«,
-    // $TEST$ error "A type parameter can only have a single upper bound."
+    // $TEST$ error "The type parameter 'T1' can only have a single upper bound."
     »T1 sub Number«,
-    // $TEST$ no error "A type parameter can only have a single lower bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T1 super Int«,
-    // $TEST$ error "A type parameter can only have a single lower bound."
+    // $TEST$ error "The type parameter 'T1' can only have a single lower bound."
     »T1 super Number«,
 
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T2 sub Int«,
-    // $TEST$ error "A type parameter can only have a single upper bound."
+    // $TEST$ error "The type parameter 'T2' can only have a single upper bound."
     »T2 sub Number«,
-    // $TEST$ no error "A type parameter can only have a single lower bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »T2 super Int«,
-    // $TEST$ error "A type parameter can only have a single lower bound."
+    // $TEST$ error "The type parameter 'T2' can only have a single lower bound."
     »T2 super Number«,
 
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T3 sub Int«,
+    // $TEST$ error "The type parameter 'T3' can only have a single upper bound."
+    »T4 super T3«,
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T5 super Int«,
+    // $TEST$ error "The type parameter 'T5' can only have a single lower bound."
+    »T6 sub T5«,
+
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T7 sub Int«,
+    // $TEST$ error "The type parameter 'T7' can only have a single upper bound."
+    »T7 sub T7«,
+    // $TEST$ error "The type parameter 'T7' can only have a single upper bound."
+    »T7 super T7«,
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
+    »T8 super Int«,
+    // $TEST$ error "The type parameter 'T8' can only have a single lower bound."
+    »T8 super T8«,
+    // $TEST$ error "The type parameter 'T8' can only have a single lower bound."
+    »T8 sub T8«,
+
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved sub Int«,
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved sub Number«,
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved super Int«,
-    // $TEST$ no error "A type parameter can only have a single upper bound."
+    // $TEST$ no error r"The type parameter .* can only have a single .* bound\."
     »Unresolved super Number«,
 }
