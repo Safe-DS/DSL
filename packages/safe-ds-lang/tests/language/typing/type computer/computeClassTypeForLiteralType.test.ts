@@ -1,5 +1,5 @@
 import { NodeFileSystem } from 'langium/node';
-import { describe, expect, it } from 'vitest';
+import { describe, it } from 'vitest';
 import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import {
     BooleanConstant,
@@ -9,6 +9,7 @@ import {
     StringConstant,
 } from '../../../../src/language/partialEvaluation/model.js';
 import { LiteralType, Type } from '../../../../src/language/typing/model.js';
+import { expectEqualTypes } from '../../../helpers/testAssertions.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
@@ -86,9 +87,8 @@ const tests: ComputeClassTypeForLiteralTypeTest[] = [
 
 describe.each(tests)('computeClassTypeForLiteralType', ({ literalType, expected }) => {
     it(`should return the class type for a literal type (${literalType})`, () => {
-        expect(typeComputer.computeClassTypeForLiteralType(literalType)).toSatisfy((actual: Type) =>
-            actual.equals(expected),
-        );
+        const actual = typeComputer.computeClassTypeForLiteralType(literalType);
+        expectEqualTypes(actual, expected);
     });
 });
 

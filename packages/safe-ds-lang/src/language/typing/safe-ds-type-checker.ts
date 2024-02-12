@@ -1,6 +1,6 @@
 import { getContainerOfType, stream } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
+import { isSdsCallable, isSdsClass, isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
 import {
     Enum,
     EnumVariant,
@@ -55,10 +55,21 @@ export class SafeDsTypeChecker {
 
         if (type === UnknownType || other === UnknownType) {
             return false;
-        } else if (type instanceof TypeParameterType || other instanceof TypeParameterType) {
-            /* c8 ignore next 3 */
-            // TODO(LR): This must be updated when we work on type parameter constraints.
-            return true;
+        } else if (other instanceof TypeParameterType) {
+            const otherLowerBound = this.typeComputer().computeLowerBound(other);
+            const otherUpperBound = this.typeComputer().computeUpperBound(other);
+
+            if (!(type instanceof TypeParameterType)) {
+                return this.isAssignableTo(otherLowerBound, type) && this.isAssignableTo(type, otherUpperBound);
+            }
+
+            const typeLowerBound = this.typeComputer().computeLowerBound(type);
+            const typeUpperBound = this.typeComputer().computeUpperBound(type);
+
+            return (
+                this.isAssignableTo(otherLowerBound, typeLowerBound) &&
+                this.isAssignableTo(typeUpperBound, otherUpperBound)
+            );
         } else if (other instanceof UnionType) {
             return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         }
@@ -77,6 +88,8 @@ export class SafeDsTypeChecker {
             return this.namedTupleTypeIsAssignableTo(type, other);
         } else if (type instanceof StaticType) {
             return this.staticTypeIsAssignableTo(type, other);
+        } else if (type instanceof TypeParameterType) {
+            return this.typeParameterTypeIsAssignableTo(type, other);
         } else if (type instanceof UnionType) {
             return this.unionTypeIsAssignableTo(type, other);
         } /* c8 ignore start */ else {
@@ -146,12 +159,12 @@ export class SafeDsTypeChecker {
     private classTypeIsAssignableTo(type: ClassType, other: Type, ignoreTypeParameters: boolean): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
+        } else if (type.declaration === this.builtinClasses.Nothing) {
+            return true;
         }
 
         if (other instanceof ClassType) {
-            if (type.declaration === this.builtinClasses.Nothing) {
-                return true;
-            } else if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
+            if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
                 return false;
             }
 
@@ -309,6 +322,11 @@ export class SafeDsTypeChecker {
         }
     }
 
+    private typeParameterTypeIsAssignableTo(type: TypeParameterType, other: Type): boolean {
+        const upperBound = this.typeComputer().computeUpperBound(type);
+        return this.isAssignableTo(upperBound, other);
+    }
+
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
         return type.possibleTypes.every((it) => this.isAssignableTo(it, other));
     }
@@ -316,6 +334,37 @@ export class SafeDsTypeChecker {
     // -----------------------------------------------------------------------------------------------------------------
     // Other
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Checks whether {@link type} is allowed as the type of the receiver of an indexed access.
+     */
+    canBeAccessedByIndex = (type: Type): boolean => {
+        // We must create the non-nullable version since indexed accesses can be null-safe
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
+        return this.isList(nonNullableReceiverType) || this.isMap(nonNullableReceiverType);
+    };
+
+    /**
+     * Checks whether {@link type} is allowed as the type of the receiver of a call.
+     */
+    canBeCalled = (type: Type): boolean => {
+        // We must create the non-nullable version since calls can be null-safe
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
+
+        if (nonNullableReceiverType instanceof CallableType) {
+            return true;
+        } else if (nonNullableReceiverType instanceof StaticType) {
+            const declaration = nonNullableReceiverType.instanceType.declaration;
+            if (isSdsClass(declaration)) {
+                // Must have a constructor
+                return declaration.parameterList !== undefined;
+            } else {
+                return isSdsCallable(declaration);
+            }
+        } else {
+            return false;
+        }
+    };
 
     /**
      * Checks whether {@link type} is allowed as the type of a constant parameter.
@@ -341,19 +390,25 @@ export class SafeDsTypeChecker {
     };
 
     /**
-     * Checks whether {@link type} some kind of list (with any element type).
+     * Checks whether {@link type} is some kind of list (with any element type).
      */
     isList(type: Type): type is ClassType {
-        return this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true });
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
+        );
     }
 
     /**
-     * Checks whether {@link type} some kind of map (with any key/value types).
+     * Checks whether {@link type} is some kind of map (with any key/value types).
      */
     isMap(type: Type): type is ClassType {
-        return this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
-            ignoreTypeParameters: true,
-        });
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
+                ignoreTypeParameters: true,
+            })
+        );
     }
 }
 

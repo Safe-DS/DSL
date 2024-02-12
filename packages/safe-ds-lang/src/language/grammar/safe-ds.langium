@@ -378,22 +378,22 @@ SdsConstraintList returns SdsConstraintList:
 interface SdsConstraint extends SdsObject {}
 
 SdsConstraint returns SdsConstraint:
-    SdsTypeParameterConstraint
+    SdsTypeParameterBound
 ;
 
-interface SdsTypeParameterConstraint extends SdsConstraint {
+interface SdsTypeParameterBound extends SdsConstraint {
     leftOperand?: @SdsTypeParameter
     operator: string
     rightOperand: SdsType
 }
 
-SdsTypeParameterConstraint returns SdsTypeParameterConstraint:
+SdsTypeParameterBound returns SdsTypeParameterBound:
     leftOperand=[SdsTypeParameter:ID]
-    operator=SdsTypeParameterConstraintOperator
+    operator=SdsTypeParameterBoundOperator
     rightOperand=SdsType
 ;
 
-SdsTypeParameterConstraintOperator returns string:
+SdsTypeParameterBoundOperator returns string:
     'sub' | 'super'
 ;
 
@@ -686,6 +686,7 @@ SdsUnaryOperation returns SdsExpression:
 
 interface SdsChainedExpression extends SdsExpression {
     receiver: SdsExpression
+    isNullSafe: boolean
 }
 
 interface SdsCall extends SdsAbstractCall, SdsChainedExpression {}
@@ -695,7 +696,6 @@ interface SdsIndexedAccess extends SdsChainedExpression {
 }
 
 interface SdsMemberAccess extends SdsChainedExpression {
-    isNullSafe: boolean
     member?: SdsReference
 }
 
@@ -703,9 +703,11 @@ SdsChainedExpression returns SdsExpression:
     SdsPrimaryExpression
     (
         {SdsCall.receiver=current}
+        (isNullSafe?='?')?
         argumentList=SdsCallArgumentList
 
     |   {SdsIndexedAccess.receiver=current}
+        (isNullSafe?='?')?
         '[' index=SdsExpression ']'
 
     |   {SdsMemberAccess.receiver=current}

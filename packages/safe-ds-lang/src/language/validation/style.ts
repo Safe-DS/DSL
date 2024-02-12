@@ -1,12 +1,16 @@
 import { ValidationAcceptor } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
+    isSdsCall,
     isSdsEnumVariant,
+    isSdsIndexedAccess,
+    isSdsMemberAccess,
     isSdsWildcard,
     SdsAnnotation,
     SdsAnnotationCall,
     SdsAssignment,
     SdsCall,
+    SdsChainedExpression,
     SdsClassBody,
     SdsConstraintList,
     SdsEnumBody,
@@ -14,7 +18,6 @@ import {
     SdsFunction,
     SdsImportedDeclaration,
     SdsInfixOperation,
-    SdsMemberAccess,
     SdsNamedType,
     SdsSegment,
     SdsTypeParameterList,
@@ -32,9 +35,9 @@ export const CODE_STYLE_UNNECESSARY_CONST_MODIFIER = 'style/unnecessary-const-mo
 export const CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST = 'style/unnecessary-constraint-list';
 export const CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR = 'style/unnecessary-elvis-operator';
 export const CODE_STYLE_UNNECESSARY_IMPORT_ALIAS = 'style/unnecessary-import-alias';
+export const CODE_STYLE_UNNECESSARY_NULL_SAFETY = 'style/unnecessary-null-safety';
 export const CODE_STYLE_UNNECESSARY_PARAMETER_LIST = 'style/unnecessary-parameter-list';
 export const CODE_STYLE_UNNECESSARY_RESULT_LIST = 'style/unnecessary-result-list';
-export const CODE_STYLE_UNNECESSARY_SAFE_ACCESS = 'style/unnecessary-safe-access';
 export const CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST = 'style/unnecessary-type-argument-list';
 export const CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST = 'style/unnecessary-type-parameter-list';
 export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
@@ -300,6 +303,43 @@ export const importedDeclarationAliasShouldDifferFromDeclarationName = (services
 };
 
 // -----------------------------------------------------------------------------
+// Unnecessary null safety
+// -----------------------------------------------------------------------------
+
+export const chainedExpressionNullSafetyShouldBeNeeded = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return async (node: SdsChainedExpression, accept: ValidationAcceptor) => {
+        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        if (!node.isNullSafe) {
+            return;
+        }
+
+        const receiverType = typeComputer.computeType(node.receiver);
+        if (receiverType === UnknownType) {
+            return;
+        }
+
+        if (
+            (isSdsCall(node) && !receiverType.isNullable && typeChecker.canBeCalled(receiverType)) ||
+            (isSdsIndexedAccess(node) && !receiverType.isNullable && typeChecker.canBeAccessedByIndex(receiverType)) ||
+            (isSdsMemberAccess(node) && !receiverType.isNullable)
+        ) {
+            accept('info', 'The receiver is never null, so null-safety is unnecessary.', {
+                node,
+                code: CODE_STYLE_UNNECESSARY_NULL_SAFETY,
+            });
+        }
+    };
+};
+
+// -----------------------------------------------------------------------------
 // Unnecessary parameter lists
 // -----------------------------------------------------------------------------
 
@@ -378,37 +418,6 @@ export const segmentResultListShouldNotBeEmpty = (services: SafeDsServices) => {
                 node,
                 property: 'resultList',
                 code: CODE_STYLE_UNNECESSARY_RESULT_LIST,
-            });
-        }
-    };
-};
-
-// -----------------------------------------------------------------------------
-// Unnecessary safe access
-// -----------------------------------------------------------------------------
-
-export const memberAccessNullSafetyShouldBeNeeded = (services: SafeDsServices) => {
-    const settingsProvider = services.workspace.SettingsProvider;
-
-    return async (node: SdsMemberAccess, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
-            /* c8 ignore next 2 */
-            return;
-        }
-
-        if (!node.isNullSafe) {
-            return;
-        }
-
-        const receiverType = services.types.TypeComputer.computeType(node.receiver);
-        if (receiverType === UnknownType) {
-            return;
-        }
-
-        if (!receiverType.isNullable) {
-            accept('info', 'The receiver is never null, so the safe access is unnecessary.', {
-                node,
-                code: CODE_STYLE_UNNECESSARY_SAFE_ACCESS,
             });
         }
     };

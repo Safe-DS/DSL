@@ -1,8 +1,0 @@
-package tests.partialValidation.recursiveCases.memberAccesses.ofOtherReceivers
-
-@Pure fun f() -> result: Int
-
-pipeline test {
-    // $TEST$ serialization ?
-    »f().result«;
-}

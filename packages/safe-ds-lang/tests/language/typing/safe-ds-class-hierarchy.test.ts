@@ -7,8 +7,7 @@ import {
     SdsClass,
     type SdsClassMember,
 } from '../../../src/language/generated/ast.js';
-import { getClassMembers } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins, getClassMembers } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;

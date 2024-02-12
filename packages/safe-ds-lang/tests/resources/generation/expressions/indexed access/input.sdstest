@@ -2,6 +2,7 @@ package tests.generator.indexedAccess
 
 @Impure([ImpurityReason.Other]) fun f(param: Any?)
 
-segment test(params: List<Int>) {
-    f(params[0]);
+segment test(param1: List<Int>, param2: List<Int>?) {
+    f(param1[0]);
+    f(param2?[0]);
 }

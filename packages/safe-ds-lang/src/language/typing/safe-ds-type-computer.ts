@@ -74,6 +74,7 @@ import {
     SdsType,
     SdsTypeArgument,
     SdsTypeParameter,
+    SdsTypeParameterBound,
 } from '../generated/ast.js';
 import {
     getAssignees,
@@ -84,6 +85,7 @@ import {
     getTypeArguments,
     getTypeParameters,
     streamBlockLambdaResults,
+    TypeParameter,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
@@ -143,17 +145,27 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Computes the type of the given node.
+     * Computes the type of the given node and applies the given substitutions for type parameters. The result gets
+     * simplified as much as possible.
      */
     computeType(node: AstNode | undefined, substitutions: TypeParameterSubstitutions = NO_SUBSTITUTIONS): Type {
         if (!node) {
             return UnknownType;
         }
 
+        // Ignore type parameter substitutions for caching
         const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
             this.simplifyType(this.doComputeType(node)),
         );
-        return unsubstitutedType.substituteTypeParameters(substitutions);
+        if (isEmpty(substitutions)) {
+            return unsubstitutedType;
+        }
+
+        // Substitute type parameters
+        const simplifiedSubstitutions = new Map(
+            [...substitutions].map(([typeParameter, type]) => [typeParameter, this.simplifyType(type)]),
+        );
+        return unsubstitutedType.substituteTypeParameters(simplifiedSubstitutions);
     }
 
     private getNodeId(node: AstNode) {
@@ -430,19 +442,22 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfCall(node: SdsCall): Type {
         const receiverType = this.computeType(node.receiver);
+        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
+        let result: Type = UnknownType;
 
-        if (receiverType instanceof CallableType) {
-            if (!isSdsAnnotation(receiverType.callable)) {
-                return receiverType.outputType;
+        if (nonNullableReceiverType instanceof CallableType) {
+            if (!isSdsAnnotation(nonNullableReceiverType.callable)) {
+                result = nonNullableReceiverType.outputType;
             }
-        } else if (receiverType instanceof StaticType) {
-            const instanceType = receiverType.instanceType;
+        } else if (nonNullableReceiverType instanceof StaticType) {
+            const instanceType = nonNullableReceiverType.instanceType;
             if (isSdsCallable(instanceType.declaration)) {
-                return instanceType;
+                result = instanceType;
             }
         }
 
-        return UnknownType;
+        // Update nullability
+        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
     }
 
     private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
@@ -463,13 +478,19 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        if (this.typeChecker.isList(receiverType)) {
-            return receiverType.getTypeParameterTypeByIndex(0);
-        } else if (this.typeChecker.isMap(receiverType)) {
-            return receiverType.getTypeParameterTypeByIndex(1);
+        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
+        let result: Type = UnknownType;
+
+        if (this.typeChecker.isList(nonNullableReceiverType)) {
+            result = nonNullableReceiverType.getTypeParameterTypeByIndex(0);
+        } else if (this.typeChecker.isMap(nonNullableReceiverType)) {
+            result = nonNullableReceiverType.getTypeParameterTypeByIndex(1);
         } else {
             return UnknownType;
         }
+
+        // Update nullability
+        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -524,7 +545,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || memberType.isNullable);
+        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || result.isNullable);
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
@@ -615,7 +636,11 @@ export class SafeDsTypeComputer {
     // Simplify type
     // -----------------------------------------------------------------------------------------------------------------
 
-    private simplifyType(type: Type): Type {
+    /**
+     * Returns an equivalent type that is simplified as much as possible. Types computed by {@link computeType} are
+     * already simplified, so this method is mainly useful for types that are constructed or modified manually.
+     */
+    simplifyType(type: Type): Type {
         const unwrappedType = type.unwrap();
 
         if (unwrappedType instanceof LiteralType) {
@@ -665,19 +690,41 @@ export class SafeDsTypeComputer {
         // Simplify possible types
         const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
 
-        // Remove types that are subtypes of others. We do this back-to-front to keep the first occurrence of duplicate
-        // types. It's also makes splicing easier.
+        // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
+        // occurrence of duplicate types. It's also makes splicing easier.
         for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
             const currentType = newPossibleTypes[i]!;
 
-            for (let j = 0; j < newPossibleTypes.length; j++) {
+            for (let j = newPossibleTypes.length - 1; j >= 0; j--) {
                 if (i === j) {
                     continue;
                 }
 
                 let otherType = newPossibleTypes[j]!;
-                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
 
+                // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
+                // create another union type.
+                if (
+                    currentType.equals(this.coreTypes.NothingOrNull) &&
+                    (otherType instanceof CallableType ||
+                        otherType instanceof NamedTupleType ||
+                        otherType instanceof StaticType)
+                ) {
+                    continue;
+                }
+
+                // Merge literal types
+                if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
+                    // Other type always occurs before current type
+                    const newConstants = [...otherType.constants, ...currentType.constants];
+                    const newLiteralType = this.simplifyType(new LiteralType(...newConstants));
+                    newPossibleTypes.splice(j, 1, newLiteralType);
+                    newPossibleTypes.splice(i, 1);
+                    break;
+                }
+
+                // Remove subtypes of other types
+                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
                 if (this.typeChecker.isAssignableTo(currentType, otherType)) {
                     newPossibleTypes.splice(j, 1, otherType); // Update nullability
                     newPossibleTypes.splice(i, 1);
@@ -694,13 +741,26 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Compute class types for literal types and their constants
+    // Various type conversions
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Returns the non-nullable type for the given type. The result is simplified as much as possible.
+     */
+    computeNonNullableType(type: Type): Type {
+        return this.simplifyType(type.updateNullability(false));
+    }
+
+    /**
+     * Returns the lowest class type for the given literal type.
+     */
     computeClassTypeForLiteralType(literalType: LiteralType): Type {
         return this.lowestCommonSupertype(...literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
     }
 
+    /**
+     * Returns the lowest class type for the given constant.
+     */
     computeClassTypeForConstant(constant: Constant): Type {
         if (constant instanceof BooleanConstant) {
             return this.coreTypes.Boolean;
@@ -715,6 +775,103 @@ export class SafeDsTypeComputer {
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
         } /* c8 ignore stop */
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Type parameter bounds
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the lower bound for the given input. If no lower bound is specified explicitly, the result is `Nothing`.
+     * If invalid lower bounds are specified (e.g. because of an unresolved reference or a cycle), `$unknown` is
+     * returned. The result is simplified as much as possible.
+     */
+    computeLowerBound(nodeOrType: SdsTypeParameter | TypeParameterType): Type {
+        let type: TypeParameterType;
+        if (nodeOrType instanceof TypeParameterType) {
+            type = nodeOrType;
+        } else {
+            type = this.computeType(nodeOrType) as TypeParameterType;
+        }
+
+        return this.doComputeLowerBound(type, new Set());
+    }
+
+    private doComputeLowerBound(type: TypeParameterType, visited: Set<SdsTypeParameter>): Type {
+        // Check for cycles
+        if (visited.has(type.declaration)) {
+            return UnknownType;
+        }
+        visited.add(type.declaration);
+
+        const lowerBounds = TypeParameter.getLowerBounds(type.declaration);
+        if (isEmpty(lowerBounds)) {
+            return this.coreTypes.Nothing;
+        }
+
+        const boundType = this.computeLowerBoundType(lowerBounds[0]!);
+        if (!(boundType instanceof NamedType)) {
+            return UnknownType;
+        } else if (!(boundType instanceof TypeParameterType)) {
+            return boundType;
+        } else {
+            return this.doComputeLowerBound(boundType, visited);
+        }
+    }
+
+    private computeLowerBoundType(node: SdsTypeParameterBound): Type {
+        if (node.operator === 'super') {
+            return this.computeType(node.rightOperand);
+        } else {
+            return this.computeType(node.leftOperand?.ref);
+        }
+    }
+
+    /**
+     * Returns the upper bound for the given input. If no upper bound is specified explicitly, the result is `Any?`. If
+     * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
+     * `$unknown` is returned. The result is simplified as much as possible.
+     */
+    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType): Type {
+        let type: TypeParameterType;
+        if (nodeOrType instanceof TypeParameterType) {
+            type = nodeOrType;
+        } else {
+            type = this.computeType(nodeOrType) as TypeParameterType;
+        }
+
+        const result = this.doComputeUpperBound(type, new Set());
+        return result.updateNullability(result.isNullable || type.isNullable);
+    }
+
+    private doComputeUpperBound(type: TypeParameterType, visited: Set<SdsTypeParameter>): Type {
+        // Check for cycles
+        if (visited.has(type.declaration)) {
+            return UnknownType;
+        }
+        visited.add(type.declaration);
+
+        const upperBounds = TypeParameter.getUpperBounds(type.declaration);
+        if (isEmpty(upperBounds)) {
+            return this.coreTypes.AnyOrNull;
+        }
+
+        const boundType = this.computeUpperBoundType(upperBounds[0]!);
+        if (!(boundType instanceof NamedType)) {
+            return UnknownType;
+        } else if (!(boundType instanceof TypeParameterType)) {
+            return boundType;
+        } else {
+            return this.doComputeUpperBound(boundType, visited);
+        }
+    }
+
+    private computeUpperBoundType(node: SdsTypeParameterBound): Type {
+        if (node.operator === 'sub') {
+            return this.computeType(node.rightOperand);
+        } else {
+            return this.computeType(node.leftOperand?.ref);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------

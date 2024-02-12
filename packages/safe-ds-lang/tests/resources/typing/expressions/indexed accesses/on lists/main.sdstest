@@ -1,0 +1,28 @@
+package tests.typing.expressions.indexedAccesses.onLists
+
+segment mySegment(param1: List<Int>, param2: List<Int>?) {
+    // $TEST$ serialization Int
+    »param1[0]«;
+
+    // $TEST$ serialization Int
+    »param1[unresolved]«;
+
+    // $TEST$ serialization Int
+    »param2[0]«;
+
+    // $TEST$ serialization Int
+    »param2[unresolved]«;
+
+
+    // $TEST$ serialization Int
+    »param1?[0]«;
+
+    // $TEST$ serialization Int
+    »param1?[unresolved]«;
+
+    // $TEST$ serialization Int?
+    »param2?[0]«;
+
+    // $TEST$ serialization Int?
+    »param2?[unresolved]«;
+}

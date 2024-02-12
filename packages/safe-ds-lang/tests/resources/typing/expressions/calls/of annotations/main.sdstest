@@ -5,4 +5,7 @@ annotation MyAnnotation
 pipeline myPipeline {
     // $TEST$ serialization $unknown
     »MyAnnotation()«;
+
+    // $TEST$ serialization $unknown
+    »MyAnnotation?()«;
 }

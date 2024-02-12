@@ -1,0 +1,8 @@
+package tests.callGraph.expressionLambdaCall.nullSafe
+
+pipeline myPipeline {
+    val lambda = () -> 1;
+
+    // $TEST$ ["$expressionLambda"]
+    »lambda?()«;
+}

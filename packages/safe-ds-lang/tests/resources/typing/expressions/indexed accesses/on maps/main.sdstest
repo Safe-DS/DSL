@@ -1,0 +1,28 @@
+package tests.typing.expressions.indexedAccesses.onMaps
+
+segment mySegment(param1: Map<String, Int>, param2: Map<String, Int>?) {
+    // $TEST$ serialization Int
+    »param1[""]«;
+
+    // $TEST$ serialization Int
+    »param1[unresolved]«;
+
+    // $TEST$ serialization Int
+    »param2[""]«;
+
+    // $TEST$ serialization Int
+    »param2[unresolved]«;
+
+
+    // $TEST$ serialization Int
+    »param1?[""]«;
+
+    // $TEST$ serialization Int
+    »param1?[unresolved]«;
+
+    // $TEST$ serialization Int?
+    »param2?[""]«;
+
+    // $TEST$ serialization Int?
+    »param2?[unresolved]«;
+}

@@ -19,7 +19,7 @@ import {
 import path from 'path';
 import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { groupBy } from '../../helpers/collections.js';
+import { groupBy, isEmpty } from '../../helpers/collections.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
     isSdsAbstractResult,
@@ -108,55 +108,70 @@ const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 const RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE = 'safeds_runner.server.pipeline_manager';
 const PYTHON_INDENT = '    ';
 
-const NLNL = new CompositeGeneratorNode(NL, NL);
+const SPACING = new CompositeGeneratorNode(NL, NL);
 
 const UTILITY_EAGER_OR: UtilityFunction = {
+    name: `${CODEGEN_PREFIX}eager_or`,
     code: expandToNode`def ${CODEGEN_PREFIX}eager_or(left_operand: bool, right_operand: bool) -> bool:`
         .appendNewLine()
         .indent({ indentedChildren: ['return left_operand or right_operand'], indentation: PYTHON_INDENT }),
-    name: `${CODEGEN_PREFIX}eager_or`,
-    imports: [],
 };
 
 const UTILITY_EAGER_AND: UtilityFunction = {
+    name: `${CODEGEN_PREFIX}eager_and`,
     code: expandToNode`def ${CODEGEN_PREFIX}eager_and(left_operand: bool, right_operand: bool) -> bool:`
         .appendNewLine()
         .indent({ indentedChildren: ['return left_operand and right_operand'], indentation: PYTHON_INDENT }),
-    name: `${CODEGEN_PREFIX}eager_and`,
-    imports: [],
 };
 
 const UTILITY_EAGER_ELVIS: UtilityFunction = {
-    code: expandToNode`${CODEGEN_PREFIX}T = TypeVar("${CODEGEN_PREFIX}T")`
-        .appendNewLine()
-        .appendNewLine()
-        .append(
-            `def ${CODEGEN_PREFIX}eager_elvis(left_operand: ${CODEGEN_PREFIX}T, right_operand: ${CODEGEN_PREFIX}T) -> ${CODEGEN_PREFIX}T:`,
-        )
+    name: `${CODEGEN_PREFIX}eager_elvis`,
+    code: expandToNode`def ${CODEGEN_PREFIX}eager_elvis(left_operand: ${CODEGEN_PREFIX}T, right_operand: ${CODEGEN_PREFIX}T) -> ${CODEGEN_PREFIX}T:`
         .appendNewLine()
         .indent({
             indentedChildren: ['return left_operand if left_operand is not None else right_operand'],
             indentation: PYTHON_INDENT,
         }),
-    name: `${CODEGEN_PREFIX}eager_elvis`,
-    imports: [{ importPath: 'typing', declarationName: 'TypeVar' }],
+    typeVariables: [`${CODEGEN_PREFIX}T`],
 };
 
-const UTILITY_SAFE_ACCESS: UtilityFunction = {
-    code: expandToNode`${CODEGEN_PREFIX}S = TypeVar("${CODEGEN_PREFIX}S")`
+const UTILITY_NULL_SAFE_CALL: UtilityFunction = {
+    name: `${CODEGEN_PREFIX}null_safe_call`,
+    code: expandToNode`def ${CODEGEN_PREFIX}null_safe_call(receiver: Any, callable: Callable[[], ${CODEGEN_PREFIX}T]) -> ${CODEGEN_PREFIX}T | None:`
         .appendNewLine()
+        .indent({
+            indentedChildren: ['return callable() if receiver is not None else None'],
+            indentation: PYTHON_INDENT,
+        }),
+    imports: [
+        { importPath: 'typing', declarationName: 'Any' },
+        { importPath: 'typing', declarationName: 'Callable' },
+    ],
+    typeVariables: [`${CODEGEN_PREFIX}T`],
+};
+
+const UTILITY_NULL_SAFE_INDEXED_ACCESS: UtilityFunction = {
+    name: `${CODEGEN_PREFIX}null_safe_indexed_access`,
+    code: expandToNode`def ${CODEGEN_PREFIX}null_safe_indexed_access(receiver: Any, index: Any) -> ${CODEGEN_PREFIX}T | None:`
         .appendNewLine()
-        .append(`def ${CODEGEN_PREFIX}safe_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}S | None:`)
+        .indent({
+            indentedChildren: ['return receiver[index] if receiver is not None else None'],
+            indentation: PYTHON_INDENT,
+        }),
+    imports: [{ importPath: 'typing', declarationName: 'Any' }],
+    typeVariables: [`${CODEGEN_PREFIX}T`],
+};
+
+const UTILITY_NULL_SAFE_MEMBER_ACCESS: UtilityFunction = {
+    name: `${CODEGEN_PREFIX}null_safe_member_access`,
+    code: expandToNode`def ${CODEGEN_PREFIX}null_safe_member_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}T | None:`
         .appendNewLine()
         .indent({
             indentedChildren: ['return getattr(receiver, member_name) if receiver is not None else None'],
             indentation: PYTHON_INDENT,
         }),
-    name: `${CODEGEN_PREFIX}safe_access`,
-    imports: [
-        { importPath: 'typing', declarationName: 'TypeVar' },
-        { importPath: 'typing', declarationName: 'Any' },
-    ],
+    imports: [{ importPath: 'typing', declarationName: 'Any' }],
+    typeVariables: [`${CODEGEN_PREFIX}T`],
 };
 
 export class SafeDsPythonGenerator {
@@ -312,12 +327,15 @@ export class SafeDsPythonGenerator {
     private generateModule(module: SdsModule, generateOptions: GenerateOptions): CompositeGeneratorNode {
         const importSet = new Map<String, ImportData>();
         const utilitySet = new Set<UtilityFunction>();
+        const typeVariableSet = new Set<string>();
         const segments = getModuleMembers(module)
             .filter(isSdsSegment)
-            .map((segment) => this.generateSegment(segment, importSet, utilitySet, generateOptions));
+            .map((segment) => this.generateSegment(segment, importSet, utilitySet, typeVariableSet, generateOptions));
         const pipelines = getModuleMembers(module)
             .filter(isSdsPipeline)
-            .map((pipeline) => this.generatePipeline(pipeline, importSet, utilitySet, generateOptions));
+            .map((pipeline) =>
+                this.generatePipeline(pipeline, importSet, utilitySet, typeVariableSet, generateOptions),
+            );
         const imports = this.generateImports(Array.from(importSet.values()));
         const output = new CompositeGeneratorNode();
         output.trace(module);
@@ -328,28 +346,38 @@ export class SafeDsPythonGenerator {
             output.append(joinToNode(imports, (importDecl) => importDecl, { separator: NL }));
             output.appendNewLine();
         }
-        if (utilitySet.size > 0) {
+        if (typeVariableSet.size > 0) {
             output.appendNewLineIf(imports.length > 0);
+            output.append('# Type variables ---------------------------------------------------------------');
+            output.appendNewLine();
+            output.appendNewLine();
+            output.append(joinToNode(typeVariableSet, (typeVar) => `${typeVar} = TypeVar("${typeVar}")`));
+            output.appendNewLine();
+        }
+        if (utilitySet.size > 0) {
+            output.appendNewLineIf(imports.length > 0 || typeVariableSet.size > 0);
             output.append('# Utils ------------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
-            output.append(joinToNode(utilitySet, (importDecl) => importDecl.code, { separator: NLNL }));
+            output.append(joinToNode(utilitySet, (importDecl) => importDecl.code, { separator: SPACING }));
             output.appendNewLine();
         }
         if (segments.length > 0) {
-            output.appendNewLineIf(imports.length > 0 || utilitySet.size > 0);
+            output.appendNewLineIf(imports.length > 0 || typeVariableSet.size > 0 || utilitySet.size > 0);
             output.append('# Segments ---------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
-            output.append(joinToNode(segments, (segment) => segment, { separator: NLNL }));
+            output.append(joinToNode(segments, (segment) => segment, { separator: SPACING }));
             output.appendNewLine();
         }
         if (pipelines.length > 0) {
-            output.appendNewLineIf(imports.length > 0 || utilitySet.size > 0 || segments.length > 0);
+            output.appendNewLineIf(
+                imports.length > 0 || typeVariableSet.size > 0 || utilitySet.size > 0 || segments.length > 0,
+            );
             output.append('# Pipelines --------------------------------------------------------------------');
             output.appendNewLine();
             output.appendNewLine();
-            output.append(joinToNode(pipelines, (pipeline) => pipeline, { separator: NLNL }));
+            output.append(joinToNode(pipelines, (pipeline) => pipeline, { separator: SPACING }));
             output.appendNewLine();
         }
         return output;
@@ -359,11 +387,13 @@ export class SafeDsPythonGenerator {
         segment: SdsSegment,
         importSet: Map<String, ImportData>,
         utilitySet: Set<UtilityFunction>,
+        typeVariableSet: Set<string>,
         generateOptions: GenerateOptions,
     ): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(
             importSet,
             utilitySet,
+            typeVariableSet,
             false,
             undefined,
             generateOptions.disableRunnerIntegration,
@@ -419,11 +449,13 @@ export class SafeDsPythonGenerator {
         pipeline: SdsPipeline,
         importSet: Map<String, ImportData>,
         utilitySet: Set<UtilityFunction>,
+        typeVariableSet: Set<string>,
         generateOptions: GenerateOptions,
     ): CompositeGeneratorNode {
         const infoFrame = new GenerationInfoFrame(
             importSet,
             utilitySet,
+            typeVariableSet,
             true,
             generateOptions.targetPlaceholder,
             generateOptions.disableRunnerIntegration,
@@ -737,6 +769,9 @@ export class SafeDsPythonGenerator {
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             const sortedArgs = this.sortArguments(getArguments(expression));
+            const receiver = this.generateExpression(expression.receiver, frame);
+            let call: CompositeGeneratorNode | undefined = undefined;
+
             // Memoize constructor or function call
             if (isSdsFunction(callable) || isSdsClass(callable)) {
                 if (isSdsFunction(callable)) {
@@ -747,18 +782,31 @@ export class SafeDsPythonGenerator {
                             thisParam = this.generateExpression(expression.receiver.receiver, frame);
                         }
                         const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
-                        return this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
+                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
                     }
                 }
-                if (this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
+                if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
                     let thisParam: CompositeGeneratorNode | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
-                    return this.generateMemoizedCall(expression, sortedArgs, frame, thisParam);
+                    call = this.generateMemoizedCall(expression, sortedArgs, frame, thisParam);
                 }
             }
-            return this.generatePlainCall(expression, sortedArgs, frame);
+
+            if (!call) {
+                call = this.generatePlainCall(expression, sortedArgs, frame);
+            }
+
+            if (expression.isNullSafe) {
+                frame.addUtility(UTILITY_NULL_SAFE_CALL);
+                return expandTracedToNode(expression)`${traceToNode(
+                    expression,
+                    'isNullSafe',
+                )(UTILITY_NULL_SAFE_CALL.name)}(${receiver}, lambda: ${call})`;
+            } else {
+                return call;
+            }
         } else if (isSdsExpressionLambda(expression)) {
             return expandTracedToNode(expression)`lambda ${this.generateParameters(
                 expression.parameterList,
@@ -803,10 +851,21 @@ export class SafeDsPythonGenerator {
                     )(expression.operator)} (${rightOperand})`;
             }
         } else if (isSdsIndexedAccess(expression)) {
-            return expandTracedToNode(expression)`${this.generateExpression(
-                expression.receiver,
-                frame,
-            )}[${this.generateExpression(expression.index, frame)}]`;
+            if (expression.isNullSafe) {
+                frame.addUtility(UTILITY_NULL_SAFE_INDEXED_ACCESS);
+                return expandTracedToNode(expression)`${traceToNode(
+                    expression,
+                    'isNullSafe',
+                )(UTILITY_NULL_SAFE_INDEXED_ACCESS.name)}(${this.generateExpression(
+                    expression.receiver,
+                    frame,
+                )}, ${this.generateExpression(expression.index, frame)})`;
+            } else {
+                return expandTracedToNode(expression)`${this.generateExpression(
+                    expression.receiver,
+                    frame,
+                )}[${this.generateExpression(expression.index, frame)}]`;
+            }
         } else if (isSdsMemberAccess(expression)) {
             const member = expression.member?.target.ref!;
             const receiver = this.generateExpression(expression.receiver, frame);
@@ -826,11 +885,11 @@ export class SafeDsPythonGenerator {
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
-                    frame.addUtility(UTILITY_SAFE_ACCESS);
+                    frame.addUtility(UTILITY_NULL_SAFE_MEMBER_ACCESS);
                     return expandTracedToNode(expression)`${traceToNode(
                         expression,
                         'isNullSafe',
-                    )(UTILITY_SAFE_ACCESS.name)}(${receiver}, '${memberExpression}')`;
+                    )(UTILITY_NULL_SAFE_MEMBER_ACCESS.name)}(${receiver}, '${memberExpression}')`;
                 } else {
                     return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }
@@ -1116,9 +1175,10 @@ export class SafeDsPythonGenerator {
 }
 
 interface UtilityFunction {
-    readonly code: CompositeGeneratorNode;
     readonly name: string;
-    readonly imports: ImportData[];
+    readonly code: CompositeGeneratorNode;
+    readonly imports?: ImportData[];
+    readonly typeVariables?: string[];
 }
 
 interface ImportData {
@@ -1131,6 +1191,7 @@ class GenerationInfoFrame {
     private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
     private readonly importSet: Map<String, ImportData>;
     private readonly utilitySet: Set<UtilityFunction>;
+    private readonly typeVariableSet: Set<string>;
     public readonly isInsidePipeline: boolean;
     public readonly targetPlaceholder: string | undefined;
     public readonly disableRunnerIntegration: boolean;
@@ -1138,6 +1199,7 @@ class GenerationInfoFrame {
     constructor(
         importSet: Map<String, ImportData> = new Map<String, ImportData>(),
         utilitySet: Set<UtilityFunction> = new Set<UtilityFunction>(),
+        typeVariableSet: Set<string> = new Set<string>(),
         insidePipeline: boolean = false,
         targetPlaceholder: string | undefined = undefined,
         disableRunnerIntegration: boolean = false,
@@ -1145,6 +1207,7 @@ class GenerationInfoFrame {
         this.blockLambdaManager = new IdManager<SdsBlockLambda>();
         this.importSet = importSet;
         this.utilitySet = utilitySet;
+        this.typeVariableSet = typeVariableSet;
         this.isInsidePipeline = insidePipeline;
         this.targetPlaceholder = targetPlaceholder;
         this.disableRunnerIntegration = disableRunnerIntegration;
@@ -1160,9 +1223,20 @@ class GenerationInfoFrame {
     }
 
     addUtility(utilityFunction: UtilityFunction) {
+        const imports = utilityFunction.imports || [];
+        const typeVariables = utilityFunction.typeVariables || [];
+
         this.utilitySet.add(utilityFunction);
-        for (const importData of utilityFunction.imports) {
+        for (const importData of imports) {
             this.addImport(importData);
+        }
+
+        if (!isEmpty(typeVariables)) {
+            this.addImport({ importPath: 'typing', declarationName: 'TypeVar' });
+        }
+
+        for (const typeVariable of typeVariables) {
+            this.typeVariableSet.add(typeVariable);
         }
     }
 

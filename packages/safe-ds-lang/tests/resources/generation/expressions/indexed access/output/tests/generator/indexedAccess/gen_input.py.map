@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdstest"],"names":["test","params","f"],"mappings":"AAAA;;AAIA,IAAQA,IAAI,CAACC,MAAM;IACfC,CAAC,CAACD,MAAM,CAAC,CAAC","file":"gen_input.py"}
+{"version":3,"sources":["input.sdstest"],"names":["test","param1","param2","f"],"mappings":"AAAA;;;;;;;;;;;;;;;AAIA,IAAQA,IAAI,CAACC,MAAM,EAAaC,MAAM;IAClCC,CAAC,CAACF,MAAM,CAAC,CAAC;IACVE,CAAC,CAAO,8BAAC,CAAPD,MAAM,EAAE,CAAC","file":"gen_input.py"}

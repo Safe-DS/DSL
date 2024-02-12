@@ -5,4 +5,7 @@ enum MyEnum
 pipeline myPipeline {
     // $TEST$ serialization $unknown
     »MyEnum()«;
+
+    // $TEST$ serialization $unknown
+    »MyEnum?()«;
 }

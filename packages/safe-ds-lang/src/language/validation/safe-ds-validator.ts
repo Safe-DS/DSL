@@ -78,10 +78,17 @@ import {
     segmentResultMustBeAssignedExactlyOnce,
     segmentShouldBeUsed,
 } from './other/declarations/segments.js';
-import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import {
+    typeParameterBoundLeftOperandMustBeOwnTypeParameter,
+    typeParameterBoundRightOperandMustBeNamedType,
+} from './other/declarations/typeParameterBounds.js';
+import {
+    typeParameterBoundMustBeAcyclic,
+    typeParameterBoundsMustBeCompatible,
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
+    typeParameterMustNotHaveMultipleBounds,
+    typeParameterMustOnlyBeVariantOnClass,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
@@ -89,10 +96,7 @@ import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
-import {
-    memberAccessMustBeNullSafeIfReceiverIsNullable,
-    memberAccessOfEnumVariantMustNotLackInstantiation,
-} from './other/expressions/memberAccesses.js';
+import { memberAccessOfEnumVariantMustNotLackInstantiation } from './other/expressions/memberAccesses.js';
 import {
     referenceMustNotBeFunctionPointer,
     referenceMustNotBeStaticClassOrEnumReference,
@@ -145,6 +149,7 @@ import {
     annotationParameterShouldNotHaveConstModifier,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
     callArgumentListShouldBeNeeded,
+    chainedExpressionNullSafetyShouldBeNeeded,
     classBodyShouldNotBeEmpty,
     constraintListShouldNotBeEmpty,
     elvisOperatorShouldBeNeeded,
@@ -152,7 +157,6 @@ import {
     enumVariantParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty,
     importedDeclarationAliasShouldDifferFromDeclarationName,
-    memberAccessNullSafetyShouldBeNeeded,
     namedTypeTypeArgumentListShouldBeNeeded,
     segmentResultListShouldNotBeEmpty,
     typeParameterListShouldNotBeEmpty,
@@ -178,6 +182,7 @@ import {
 import { statementMustDoSomething } from './other/statements/statements.js';
 import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
+import { chainedExpressionsMustBeNullSafeIfReceiverIsNullable } from './other/expressions/chainedExpressions.js';
 
 /**
  * Register custom validation checks.
@@ -238,6 +243,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callableTypeParameterMustNotHaveConstModifier,
             callableTypeResultsMustNotBeAnnotated,
         ],
+        SdsChainedExpression: [
+            chainedExpressionsMustBeNullSafeIfReceiverIsNullable(services),
+            chainedExpressionNullSafetyShouldBeNeeded(services),
+        ],
         SdsClass: [
             classMustContainUniqueNames,
             classMustOnlyInheritASingleClass(services),
@@ -293,11 +302,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
         SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
-        SdsMemberAccess: [
-            memberAccessMustBeNullSafeIfReceiverIsNullable(services),
-            memberAccessNullSafetyShouldBeNeeded(services),
-            memberAccessOfEnumVariantMustNotLackInstantiation,
-        ],
+        SdsMemberAccess: [memberAccessOfEnumVariantMustNotLackInstantiation],
         SdsModule: [
             moduleDeclarationsMustMatchFileKind,
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
@@ -347,8 +352,18 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
-        SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectPosition(services)],
-        SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
+        SdsTypeParameter: [
+            typeParameterBoundMustBeAcyclic,
+            typeParameterBoundsMustBeCompatible(services),
+            typeParameterMustBeUsedInCorrectPosition(services),
+            typeParameterMustHaveSufficientContext,
+            typeParameterMustNotHaveMultipleBounds,
+            typeParameterMustOnlyBeVariantOnClass,
+        ],
+        SdsTypeParameterBound: [
+            typeParameterBoundLeftOperandMustBeOwnTypeParameter,
+            typeParameterBoundRightOperandMustBeNamedType(services),
+        ],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
             typeParameterListShouldNotBeEmpty(services),
