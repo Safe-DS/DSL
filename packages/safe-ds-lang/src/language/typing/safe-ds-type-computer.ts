@@ -74,6 +74,7 @@ import {
     SdsType,
     SdsTypeArgument,
     SdsTypeParameter,
+    SdsTypeParameterBound,
 } from '../generated/ast.js';
 import {
     getAssignees,
@@ -84,6 +85,7 @@ import {
     getTypeArguments,
     getTypeParameters,
     streamBlockLambdaResults,
+    TypeParameter,
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import {
@@ -773,6 +775,89 @@ export class SafeDsTypeComputer {
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected constant type: ${constant.constructor.name}`);
         } /* c8 ignore stop */
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Type parameter bounds
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the lower bound for the given type parameter type. If no lower bound is specified explicitly, the result
+     * is `Nothing`. If invalid lower bounds are specified (e.g. because of an unresolved reference or a cycle),
+     * `$unknown` is returned. The result is simplified as much as possible.
+     */
+    computeLowerBound(type: TypeParameterType): Type {
+        return this.doComputeLowerBound(type, new Set());
+    }
+
+    private doComputeLowerBound(type: TypeParameterType, visited: Set<SdsTypeParameter>): Type {
+        // Check for cycles
+        if (visited.has(type.declaration)) {
+            return UnknownType;
+        }
+        visited.add(type.declaration);
+
+        const lowerBounds = TypeParameter.getLowerBounds(type.declaration);
+        if (isEmpty(lowerBounds)) {
+            return this.coreTypes.Nothing;
+        }
+
+        const boundType = this.computeLowerBoundType(lowerBounds[0]!);
+        if (!(boundType instanceof NamedType)) {
+            return UnknownType;
+        } else if (!(boundType instanceof TypeParameterType)) {
+            return boundType;
+        } else {
+            return this.doComputeLowerBound(boundType, visited);
+        }
+    }
+
+    private computeLowerBoundType(node: SdsTypeParameterBound): Type {
+        if (node.operator === 'super') {
+            return this.computeType(node.rightOperand);
+        } else {
+            return this.computeType(node.leftOperand?.ref);
+        }
+    }
+
+    /**
+     * Returns the upper bound for the given type parameter type. If no upper bound is specified explicitly, the result
+     * is `Any?`. If invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a
+     * cycle), `$unknown` is returned. The result is simplified as much as possible.
+     */
+    computeUpperBound(type: TypeParameterType): Type {
+        const result = this.doComputeUpperBound(type, new Set());
+        return result.updateNullability(result.isNullable || type.isNullable);
+    }
+
+    private doComputeUpperBound(type: TypeParameterType, visited: Set<SdsTypeParameter>): Type {
+        // Check for cycles
+        if (visited.has(type.declaration)) {
+            return UnknownType;
+        }
+        visited.add(type.declaration);
+
+        const upperBounds = TypeParameter.getUpperBounds(type.declaration);
+        if (isEmpty(upperBounds)) {
+            return this.coreTypes.AnyOrNull;
+        }
+
+        const boundType = this.computeUpperBoundType(upperBounds[0]!);
+        if (!(boundType instanceof NamedType)) {
+            return UnknownType;
+        } else if (!(boundType instanceof TypeParameterType)) {
+            return boundType;
+        } else {
+            return this.doComputeUpperBound(boundType, visited);
+        }
+    }
+
+    private computeUpperBoundType(node: SdsTypeParameterBound): Type {
+        if (node.operator === 'sub') {
+            return this.computeType(node.rightOperand);
+        } else {
+            return this.computeType(node.leftOperand?.ref);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
