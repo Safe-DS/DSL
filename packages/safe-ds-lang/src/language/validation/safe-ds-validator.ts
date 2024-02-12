@@ -83,6 +83,7 @@ import {
     typeParameterBoundRightOperandMustBeNamedType,
 } from './other/declarations/typeParameterBounds.js';
 import {
+    typeParameterBoundMustBeAcyclic,
     typeParameterBoundsMustBeCompatible,
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
@@ -352,6 +353,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [
+            typeParameterBoundMustBeAcyclic,
             typeParameterBoundsMustBeCompatible(services),
             typeParameterMustBeUsedInCorrectPosition(services),
             typeParameterMustHaveSufficientContext,
