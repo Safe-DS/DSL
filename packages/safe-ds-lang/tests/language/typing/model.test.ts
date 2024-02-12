@@ -25,6 +25,7 @@ import {
 } from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
+import { expectEqualTypes } from '../../helpers/testAssertions.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const code = `
@@ -327,11 +328,13 @@ describe('type model', async () => {
     ];
     describe.each(substituteTypeParametersTest)('substituteTypeParameters', ({ type, substitutions, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
-            expect(type.substituteTypeParameters(substitutions).equals(expectedType)).toBeTruthy();
+            const actual = type.substituteTypeParameters(substitutions);
+            expectEqualTypes(actual, expectedType);
         });
 
         it(`should not change if no substitutions are passed (${type.constructor.name} -- ${type})`, () => {
-            expect(type.substituteTypeParameters(new Map()).equals(type)).toBeTruthy();
+            const actual = type.substituteTypeParameters(new Map());
+            expectEqualTypes(actual, type);
         });
     });
 
@@ -427,7 +430,8 @@ describe('type model', async () => {
     ];
     describe.each(unwrapTests)('unwrap', ({ type, expectedType }) => {
         it(`should remove any unnecessary containers (${type.constructor.name} -- ${type})`, () => {
-            expect(type.unwrap()).toSatisfy((actualType: Type) => actualType.equals(expectedType));
+            const actual = type.unwrap();
+            expectEqualTypes(actual, expectedType);
         });
     });
 
@@ -571,7 +575,8 @@ describe('type model', async () => {
     ];
     describe.each(updateNullabilityTests)('updateNullability', ({ type, isNullable, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
-            expect(type.updateNullability(isNullable).equals(expectedType)).toBeTruthy();
+            const actual = type.updateNullability(isNullable);
+            expectEqualTypes(actual, expectedType);
         });
     });
 
@@ -596,7 +601,8 @@ describe('type model', async () => {
                     expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
-                expect(type.getParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
+                const actual = type.getParameterTypeByIndex(index);
+                expectEqualTypes(actual, expectedType);
             });
         });
     });
@@ -615,7 +621,8 @@ describe('type model', async () => {
                     expectedType: new UnionType(),
                 },
             ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
-                expect(type.getTypeParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
+                const actual = type.getTypeParameterTypeByIndex(index);
+                expectEqualTypes(actual, expectedType);
             });
         });
     });
@@ -636,7 +643,8 @@ describe('type model', async () => {
                     expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the entry at the given index (%#)', ({ type, index, expectedType }) => {
-                expect(type.getTypeOfEntryByIndex(index).equals(expectedType)).toBeTruthy();
+                const actual = type.getTypeOfEntryByIndex(index);
+                expectEqualTypes(actual, expectedType);
             });
         });
     });

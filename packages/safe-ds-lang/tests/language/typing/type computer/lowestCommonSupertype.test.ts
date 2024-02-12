@@ -1,6 +1,6 @@
 import { streamAllContents } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import { describe, expect, it } from 'vitest';
+import { describe, it } from 'vitest';
 import {
     isSdsClass,
     isSdsEnum,
@@ -20,6 +20,7 @@ import {
     UnknownType,
 } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { expectEqualTypes } from '../../../helpers/testAssertions.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
@@ -317,7 +318,8 @@ const tests: LowestCommonSupertypeTest[] = [
 
 describe.each(tests)('lowestCommonSupertype', ({ types, expected }) => {
     it(`should return the lowest common supertype [${types}]`, () => {
-        expect(typeComputer.lowestCommonSupertype(...types)).toSatisfy((actual: Type) => actual.equals(expected));
+        const actual = typeComputer.lowestCommonSupertype(...types);
+        expectEqualTypes(actual, expected);
     });
 });
 
