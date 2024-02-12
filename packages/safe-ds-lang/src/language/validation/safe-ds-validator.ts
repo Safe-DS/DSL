@@ -80,9 +80,10 @@ import {
 } from './other/declarations/segments.js';
 import { typeParameterBoundLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterBounds.js';
 import {
+    typeParameterBoundsMustBeCompatible,
     typeParameterMustBeUsedInCorrectPosition,
+    typeParameterMustHaveOneValidLowerAndUpperBound,
     typeParameterMustHaveSufficientContext,
-    typeParameterMustNotHaveMultipleBounds,
     typeParameterMustOnlyBeVariantOnClass,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
@@ -348,9 +349,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [
-            typeParameterMustHaveSufficientContext,
+            typeParameterBoundsMustBeCompatible(services),
             typeParameterMustBeUsedInCorrectPosition(services),
-            typeParameterMustNotHaveMultipleBounds(services),
+            typeParameterMustHaveSufficientContext,
+            typeParameterMustHaveOneValidLowerAndUpperBound(services),
             typeParameterMustOnlyBeVariantOnClass,
         ],
         SdsTypeParameterBound: [typeParameterBoundLeftOperandMustBeOwnTypeParameter],

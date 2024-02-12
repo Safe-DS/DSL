@@ -782,11 +782,18 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns the lower bound for the given type parameter type. If no lower bound is specified explicitly, the result
-     * is `Nothing`. If invalid lower bounds are specified (e.g. because of an unresolved reference or a cycle),
-     * `$unknown` is returned. The result is simplified as much as possible.
+     * Returns the lower bound for the given input. If no lower bound is specified explicitly, the result is `Nothing`.
+     * If invalid lower bounds are specified (e.g. because of an unresolved reference or a cycle), `$unknown` is
+     * returned. The result is simplified as much as possible.
      */
-    computeLowerBound(type: TypeParameterType): Type {
+    computeLowerBound(nodeOrType: SdsTypeParameter | TypeParameterType): Type {
+        let type: TypeParameterType;
+        if (nodeOrType instanceof TypeParameterType) {
+            type = nodeOrType;
+        } else {
+            type = this.computeType(nodeOrType) as TypeParameterType;
+        }
+
         return this.doComputeLowerBound(type, new Set());
     }
 
@@ -821,11 +828,18 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Returns the upper bound for the given type parameter type. If no upper bound is specified explicitly, the result
-     * is `Any?`. If invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a
-     * cycle), `$unknown` is returned. The result is simplified as much as possible.
+     * Returns the upper bound for the given input. If no upper bound is specified explicitly, the result is `Any?`. If
+     * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
+     * `$unknown` is returned. The result is simplified as much as possible.
      */
-    computeUpperBound(type: TypeParameterType): Type {
+    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType): Type {
+        let type: TypeParameterType;
+        if (nodeOrType instanceof TypeParameterType) {
+            type = nodeOrType;
+        } else {
+            type = this.computeType(nodeOrType) as TypeParameterType;
+        }
+
         const result = this.doComputeUpperBound(type, new Set());
         return result.updateNullability(result.isNullable || type.isNullable);
     }
