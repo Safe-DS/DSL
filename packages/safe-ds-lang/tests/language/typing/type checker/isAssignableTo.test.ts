@@ -10,7 +10,12 @@ import {
     isSdsModule,
     SdsDeclaration,
 } from '../../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins, getClassMembers, getModuleMembers } from '../../../../src/language/index.js';
+import {
+    createSafeDsServicesWithBuiltins,
+    getClassMembers,
+    getModuleMembers,
+    getTypeParameters,
+} from '../../../../src/language/index.js';
 
 import {
     BooleanConstant,
@@ -976,6 +981,350 @@ describe('SafeDsTypeChecker', async () => {
                 type1: subclassFixedContravariant,
                 type2: baseClassContravariantInt,
                 expected: true,
+            },
+        ];
+
+        describe.each(testCases)('isAssignableTo', ({ type1, type2, expected }) => {
+            it(`should check whether ${type1} is assignable to ${type2}`, () => {
+                expect(typeChecker.isAssignableTo(type1, type2)).toBe(expected);
+            });
+        });
+    });
+
+    describe('type parameter types', async () => {
+        const code = `
+            class TestClass<
+                Unbounded,
+                LowerBound,
+                UpperBound,
+                BothBounds,
+
+                IndirectLowerBound,
+                IndirectUpperBound,
+                Cyclic,
+            > where {
+                LowerBound super Number,
+                UpperBound sub Number,
+                BothBounds super Int,
+                BothBounds sub Number,
+
+                IndirectLowerBound super LowerBound,
+                IndirectUpperBound sub UpperBound,
+                Cyclic sub Cyclic,
+            }
+        `;
+        const module = await getNodeOfType(services, code, isSdsModule);
+        const classes = getModuleMembers(module).filter(isSdsClass);
+        const typeParameters = getTypeParameters(classes[0]);
+
+        const computeTypeOfTypeParameterWithName = computeTypeOfDeclarationWithName(typeParameters);
+
+        const unbounded = computeTypeOfTypeParameterWithName('Unbounded');
+        const lowerBound = computeTypeOfTypeParameterWithName('LowerBound');
+        const upperBound = computeTypeOfTypeParameterWithName('UpperBound');
+        const bothBounds = computeTypeOfTypeParameterWithName('BothBounds');
+        const indirectLowerBound = computeTypeOfTypeParameterWithName('IndirectLowerBound');
+        const indirectUpperBound = computeTypeOfTypeParameterWithName('IndirectUpperBound');
+        const cyclic = computeTypeOfTypeParameterWithName('Cyclic');
+
+        const testCases: IsAssignableToTest[] = [
+            // Compare to Unbounded
+            {
+                type1: unbounded,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: lowerBound,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: upperBound,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: bothBounds,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: indirectLowerBound,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: indirectUpperBound,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: cyclic,
+                type2: unbounded,
+                expected: false,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: unbounded,
+                expected: true,
+            },
+            {
+                type1: coreTypes.NothingOrNull,
+                type2: unbounded,
+                expected: true,
+            },
+
+            // Compare to LowerBound
+            {
+                type1: unbounded,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
+                type1: lowerBound,
+                type2: lowerBound,
+                expected: true,
+            },
+            {
+                type1: upperBound,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
+                type1: bothBounds,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
+                type1: indirectLowerBound,
+                type2: lowerBound,
+                expected: true,
+            },
+            {
+                type1: indirectUpperBound,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
+                type1: cyclic,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: lowerBound,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Number,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Number.updateNullability(true),
+                type2: lowerBound,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: lowerBound,
+                expected: false,
+            },
+
+            // Compare to UpperBound
+            {
+                type1: unbounded,
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: lowerBound,
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: upperBound,
+                type2: upperBound,
+                expected: true,
+            },
+            {
+                type1: bothBounds,
+                type2: upperBound,
+                expected: true,
+            },
+            {
+                type1: indirectLowerBound,
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: indirectUpperBound,
+                type2: upperBound,
+                expected: true,
+            },
+            {
+                type1: cyclic,
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Number,
+                type2: upperBound,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Number.updateNullability(true),
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Number.updateNullability(true),
+                type2: upperBound.updateNullability(true),
+                expected: true,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: upperBound,
+                expected: true,
+            },
+
+            // Compare to BothBounds
+            {
+                type1: unbounded,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: lowerBound,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: upperBound,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: bothBounds,
+                type2: bothBounds,
+                expected: true,
+            },
+            {
+                type1: indirectLowerBound,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: indirectUpperBound,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: cyclic,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Number,
+                type2: bothBounds,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Number.updateNullability(true),
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Number.updateNullability(true),
+                type2: bothBounds.updateNullability(true),
+                expected: true,
+            },
+            {
+                type1: coreTypes.Int,
+                type2: bothBounds,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Int.updateNullability(true),
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Int.updateNullability(true),
+                type2: bothBounds.updateNullability(true),
+                expected: true,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: bothBounds,
+                expected: false,
+            },
+
+            // Compare to IndirectLowerBound
+            {
+                type1: indirectLowerBound,
+                type2: indirectLowerBound,
+                expected: true,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: indirectLowerBound,
+                expected: true,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: indirectLowerBound,
+                expected: false,
+            },
+
+            // Compare to IndirectUpperBound
+            {
+                type1: indirectUpperBound,
+                type2: indirectUpperBound,
+                expected: true,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: indirectUpperBound,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: indirectUpperBound,
+                expected: true,
+            },
+
+            // Compare to Cyclic
+            {
+                type1: cyclic,
+                type2: cyclic,
+                expected: false,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: cyclic,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: cyclic,
+                expected: false,
             },
         ];
 
