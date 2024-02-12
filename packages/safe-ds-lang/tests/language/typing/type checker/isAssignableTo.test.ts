@@ -1002,6 +1002,7 @@ describe('SafeDsTypeChecker', async () => {
                 IndirectLowerBound,
                 IndirectUpperBound,
                 Cyclic,
+                Unresolved,
             > where {
                 LowerBound super Number,
                 UpperBound sub Number,
@@ -1011,6 +1012,8 @@ describe('SafeDsTypeChecker', async () => {
                 IndirectLowerBound super LowerBound,
                 IndirectUpperBound sub UpperBound,
                 Cyclic sub Cyclic,
+                Unresolved super Unknown,
+                Unresolved sub Unknown,
             }
         `;
         const module = await getNodeOfType(services, code, isSdsModule);
@@ -1026,6 +1029,7 @@ describe('SafeDsTypeChecker', async () => {
         const indirectLowerBound = computeTypeOfTypeParameterWithName('IndirectLowerBound');
         const indirectUpperBound = computeTypeOfTypeParameterWithName('IndirectUpperBound');
         const cyclic = computeTypeOfTypeParameterWithName('Cyclic');
+        const unresolved = computeTypeOfTypeParameterWithName('Unresolved');
 
         const testCases: IsAssignableToTest[] = [
             // Compare to Unbounded
@@ -1061,6 +1065,11 @@ describe('SafeDsTypeChecker', async () => {
             },
             {
                 type1: cyclic,
+                type2: unbounded,
+                expected: false,
+            },
+            {
+                type1: unresolved,
                 type2: unbounded,
                 expected: false,
             },
@@ -1117,6 +1126,11 @@ describe('SafeDsTypeChecker', async () => {
                 expected: false,
             },
             {
+                type1: unresolved,
+                type2: lowerBound,
+                expected: false,
+            },
+            {
                 type1: coreTypes.AnyOrNull,
                 type2: lowerBound,
                 expected: true,
@@ -1124,7 +1138,7 @@ describe('SafeDsTypeChecker', async () => {
             {
                 type1: coreTypes.Number,
                 type2: lowerBound,
-                expected: false,
+                expected: true,
             },
             {
                 type1: coreTypes.Number.updateNullability(true),
@@ -1170,6 +1184,11 @@ describe('SafeDsTypeChecker', async () => {
             },
             {
                 type1: cyclic,
+                type2: upperBound,
+                expected: false,
+            },
+            {
+                type1: unresolved,
                 type2: upperBound,
                 expected: false,
             },
@@ -1232,6 +1251,11 @@ describe('SafeDsTypeChecker', async () => {
             },
             {
                 type1: cyclic,
+                type2: bothBounds,
+                expected: false,
+            },
+            {
+                type1: unresolved,
                 type2: bothBounds,
                 expected: false,
             },
@@ -1324,6 +1348,125 @@ describe('SafeDsTypeChecker', async () => {
             {
                 type1: coreTypes.Nothing,
                 type2: cyclic,
+                expected: false,
+            },
+
+            // Compare to Unresolved
+            {
+                type1: cyclic,
+                type2: unresolved,
+                expected: false,
+            },
+            {
+                type1: coreTypes.AnyOrNull,
+                type2: unresolved,
+                expected: false,
+            },
+            {
+                type1: coreTypes.Nothing,
+                type2: unresolved,
+                expected: false,
+            },
+
+            // Compare to some other type
+            {
+                type1: unbounded,
+                type2: coreTypes.Any,
+                expected: false,
+            },
+            {
+                type1: unbounded,
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: unbounded.updateNullability(true),
+                type2: coreTypes.Any,
+                expected: false,
+            },
+            {
+                type1: unbounded.updateNullability(true),
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: lowerBound,
+                type2: coreTypes.Any,
+                expected: false,
+            },
+            {
+                type1: lowerBound,
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: lowerBound.updateNullability(true),
+                type2: coreTypes.Any,
+                expected: false,
+            },
+            {
+                type1: lowerBound.updateNullability(true),
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: upperBound,
+                type2: coreTypes.Any,
+                expected: true,
+            },
+            {
+                type1: upperBound.updateNullability(true),
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: upperBound,
+                type2: coreTypes.Number,
+                expected: true,
+            },
+            {
+                type1: upperBound.updateNullability(true),
+                type2: coreTypes.Any,
+                expected: false,
+            },
+            {
+                type1: upperBound.updateNullability(true),
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: upperBound.updateNullability(true),
+                type2: coreTypes.Number,
+                expected: false,
+            },
+            {
+                type1: bothBounds,
+                type2: coreTypes.Any,
+                expected: true,
+            },
+            {
+                type1: bothBounds.updateNullability(true),
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: bothBounds,
+                type2: coreTypes.Number,
+                expected: true,
+            },
+            {
+                type1: bothBounds.updateNullability(true),
+                type2: coreTypes.Any,
+                expected: false,
+            },
+            {
+                type1: bothBounds.updateNullability(true),
+                type2: coreTypes.AnyOrNull,
+                expected: true,
+            },
+            {
+                type1: bothBounds.updateNullability(true),
+                type2: coreTypes.Number,
                 expected: false,
             },
         ];

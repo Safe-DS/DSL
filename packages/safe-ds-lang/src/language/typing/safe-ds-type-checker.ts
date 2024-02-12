@@ -55,10 +55,21 @@ export class SafeDsTypeChecker {
 
         if (type === UnknownType || other === UnknownType) {
             return false;
-        } else if (type instanceof TypeParameterType || other instanceof TypeParameterType) {
-            /* c8 ignore next 3 */
-            // TODO(LR): This must be updated when we work on type parameter constraints.
-            return true;
+        } else if (other instanceof TypeParameterType) {
+            const otherLowerBound = this.typeComputer().computeLowerBound(other);
+            const otherUpperBound = this.typeComputer().computeUpperBound(other);
+
+            if (!(type instanceof TypeParameterType)) {
+                return this.isAssignableTo(otherLowerBound, type) && this.isAssignableTo(type, otherUpperBound);
+            }
+
+            const typeLowerBound = this.typeComputer().computeLowerBound(type);
+            const typeUpperBound = this.typeComputer().computeUpperBound(type);
+
+            return (
+                this.isAssignableTo(otherLowerBound, typeLowerBound) &&
+                this.isAssignableTo(typeUpperBound, otherUpperBound)
+            );
         } else if (other instanceof UnionType) {
             return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         }
@@ -77,6 +88,8 @@ export class SafeDsTypeChecker {
             return this.namedTupleTypeIsAssignableTo(type, other);
         } else if (type instanceof StaticType) {
             return this.staticTypeIsAssignableTo(type, other);
+        } else if (type instanceof TypeParameterType) {
+            return this.typeParameterTypeIsAssignableTo(type, other);
         } else if (type instanceof UnionType) {
             return this.unionTypeIsAssignableTo(type, other);
         } /* c8 ignore start */ else {
@@ -307,6 +320,11 @@ export class SafeDsTypeChecker {
         } else {
             return UnknownType;
         }
+    }
+
+    private typeParameterTypeIsAssignableTo(type: TypeParameterType, other: Type): boolean {
+        const upperBound = this.typeComputer().computeUpperBound(type);
+        return this.isAssignableTo(upperBound, other);
     }
 
     private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
