@@ -78,12 +78,16 @@ import {
     segmentResultMustBeAssignedExactlyOnce,
     segmentShouldBeUsed,
 } from './other/declarations/segments.js';
-import { typeParameterBoundLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterBounds.js';
 import {
+    typeParameterBoundLeftOperandMustBeOwnTypeParameter,
+    typeParameterBoundRightOperandMustBeNamedType,
+} from './other/declarations/typeParameterBounds.js';
+import {
+    typeParameterBoundMustBeAcyclic,
     typeParameterBoundsMustBeCompatible,
     typeParameterMustBeUsedInCorrectPosition,
-    typeParameterMustHaveOneValidLowerAndUpperBound,
     typeParameterMustHaveSufficientContext,
+    typeParameterMustNotHaveMultipleBounds,
     typeParameterMustOnlyBeVariantOnClass,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
@@ -349,13 +353,17 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [
+            typeParameterBoundMustBeAcyclic,
             typeParameterBoundsMustBeCompatible(services),
             typeParameterMustBeUsedInCorrectPosition(services),
             typeParameterMustHaveSufficientContext,
-            typeParameterMustHaveOneValidLowerAndUpperBound(services),
+            typeParameterMustNotHaveMultipleBounds,
             typeParameterMustOnlyBeVariantOnClass,
         ],
-        SdsTypeParameterBound: [typeParameterBoundLeftOperandMustBeOwnTypeParameter],
+        SdsTypeParameterBound: [
+            typeParameterBoundLeftOperandMustBeOwnTypeParameter,
+            typeParameterBoundRightOperandMustBeNamedType(services),
+        ],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
             typeParameterListShouldNotBeEmpty(services),

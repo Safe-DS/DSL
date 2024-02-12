@@ -1,4 +1,4 @@
-package tests.validation.other.declarations.typeParameters.boundMustBeNamedType
+package tests.validation.other.declarations.typeParameters.rightOperandMustBeNamedType
 
 class C
 enum E {
@@ -8,24 +8,24 @@ enum E {
 class MyClass1<T> where {
     // $TEST$ error "Bounds of type parameters must be named types."
     T sub »() -> ()«,
-    // $TEST$ no error "Bounds of type parameters must be named types."
+    // $TEST$ error "Bounds of type parameters must be named types."
     T sub »() -> ()«,
 
     // $TEST$ error "Bounds of type parameters must be named types."
     T super »() -> ()«,
-    // $TEST$ no error "Bounds of type parameters must be named types."
+    // $TEST$ error "Bounds of type parameters must be named types."
     T super »() -> ()«,
 }
 
 class MyClass2<T> where {
     // $TEST$ error "Bounds of type parameters must be named types."
     T sub »literal<1>«,
-    // $TEST$ no error "Bounds of type parameters must be named types."
+    // $TEST$ error "Bounds of type parameters must be named types."
     T sub »literal<1>«,
 
     // $TEST$ error "Bounds of type parameters must be named types."
     T super »literal<1>«,
-    // $TEST$ no error "Bounds of type parameters must be named types."
+    // $TEST$ error "Bounds of type parameters must be named types."
     T super »literal<1>«,
 }
 
@@ -80,12 +80,12 @@ class MyClass6<T1, T2> where {
 class MyClass7<T> where {
     // $TEST$ error "Bounds of type parameters must be named types."
     T sub »union<C, E>«,
-    // $TEST$ no error "Bounds of type parameters must be named types."
+    // $TEST$ error "Bounds of type parameters must be named types."
     T sub »union<C, E>«,
 
     // $TEST$ error "Bounds of type parameters must be named types."
     T super »union<C, E>«,
-    // $TEST$ no error "Bounds of type parameters must be named types."
+    // $TEST$ error "Bounds of type parameters must be named types."
     T super »union<C, E>«,
 }
 
