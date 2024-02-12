@@ -20,11 +20,36 @@ import { SafeDsNodeMapper } from '../../../helpers/safe-ds-node-mapper.js';
 import { NamedType, UnknownType } from '../../../typing/model.js';
 import { SafeDsTypeComputer } from '../../../typing/safe-ds-type-computer.js';
 
+export const CODE_TYPE_PARAMETER_INCOMPATIBLE_BOUNDS = 'type-parameter/incompatible-bounds';
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
 export const CODE_TYPE_PARAMETER_INVALID_BOUND = 'type-parameter/invalid-bound';
 export const CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS = 'type-parameter/multiple-bounds';
 export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
 export const CODE_TYPE_PARAMETER_VARIANCE = 'type-parameter/variance';
+
+export const typeParameterBoundsMustBeCompatible = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
+        const lowerBound = typeComputer.computeLowerBound(node);
+        if (lowerBound === UnknownType) {
+            return;
+        }
+
+        const upperBound = typeComputer.computeUpperBound(node);
+        if (upperBound === UnknownType) {
+            return;
+        }
+
+        if (!typeChecker.isAssignableTo(lowerBound, upperBound)) {
+            accept('error', `The lower bound '${lowerBound}' is not assignable to the upper bound '${upperBound}'.`, {
+                node,
+                code: CODE_TYPE_PARAMETER_INCOMPATIBLE_BOUNDS,
+            });
+        }
+    };
+};
 
 export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
     const containingCallable = getContainerOfType(node, isSdsCallable);
@@ -63,7 +88,7 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     }
 };
 
-export const typeParameterMustNotHaveMultipleBounds = (services: SafeDsServices) => {
+export const typeParameterMustHaveOneValidLowerAndUpperBound = (services: SafeDsServices) => {
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
