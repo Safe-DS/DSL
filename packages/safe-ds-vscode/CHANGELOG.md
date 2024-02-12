@@ -1,3 +1,38 @@
+## [0.7.0](https://github.com/Safe-DS/DSL/compare/v0.6.0...v0.7.0) (2024-02-12)
+
+
+### Features
+
+* apply type parameter substitutions of receiver type for member accesses ([#859](https://github.com/Safe-DS/DSL/issues/859)) ([5780ed7](https://github.com/Safe-DS/DSL/commit/5780ed7e900dfb235122d924ac0a3acc6c67e9f4)), closes [#23](https://github.com/Safe-DS/DSL/issues/23)
+* check position of usages of variant type parameters ([#852](https://github.com/Safe-DS/DSL/issues/852)) ([a2672d7](https://github.com/Safe-DS/DSL/commit/a2672d7e465ba00b9e17e5318e559a301b13fc6c)), closes [#743](https://github.com/Safe-DS/DSL/issues/743)
+* check whether lower and upper bounds of a type parameter are compatible ([#885](https://github.com/Safe-DS/DSL/issues/885)) ([2fc7fe6](https://github.com/Safe-DS/DSL/commit/2fc7fe6e43a606a3e76cf3a5eeebf48c68c13e47)), closes [#875](https://github.com/Safe-DS/DSL/issues/875)
+* check whether type parameter bounds are acyclic ([#886](https://github.com/Safe-DS/DSL/issues/886)) ([bcf1a4b](https://github.com/Safe-DS/DSL/commit/bcf1a4b8fc2cd8119ca1f13b3afd3c7208f5a879)), closes [#874](https://github.com/Safe-DS/DSL/issues/874)
+* check whether type parameter bounds are named types ([#878](https://github.com/Safe-DS/DSL/issues/878)) ([d8b4168](https://github.com/Safe-DS/DSL/commit/d8b4168fddba7f56e4a66cae8cab0e11b4e4e16b)), closes [#876](https://github.com/Safe-DS/DSL/issues/876)
+* error if type parameter has multiple lower/upper bounds ([#870](https://github.com/Safe-DS/DSL/issues/870)) ([6035b76](https://github.com/Safe-DS/DSL/commit/6035b76f842913f3ade7caa7730116013c4b7a4c)), closes [#867](https://github.com/Safe-DS/DSL/issues/867)
+* error if type parameter of class is used in static context ([#830](https://github.com/Safe-DS/DSL/issues/830)) ([d5cf420](https://github.com/Safe-DS/DSL/commit/d5cf4203d0a75596f506ec2a20582c72f3d7af38)), closes [#809](https://github.com/Safe-DS/DSL/issues/809)
+* error if type parameters of functions are variant ([#869](https://github.com/Safe-DS/DSL/issues/869)) ([9bf5fec](https://github.com/Safe-DS/DSL/commit/9bf5fec9c49b8d038cd4f7dd2d727db2cb941feb))
+* handle type parameter types in type checker ([#884](https://github.com/Safe-DS/DSL/issues/884)) ([6b6f738](https://github.com/Safe-DS/DSL/commit/6b6f73824a7e7fd174402427af39f247baa4fafa)), closes [#877](https://github.com/Safe-DS/DSL/issues/877)
+* handle type parameters (part 1) ([#856](https://github.com/Safe-DS/DSL/issues/856)) ([8a35558](https://github.com/Safe-DS/DSL/commit/8a35558ac9db8aac181ac3f9b80966d59656f805)), closes [#23](https://github.com/Safe-DS/DSL/issues/23)
+* improve type simplification ([#871](https://github.com/Safe-DS/DSL/issues/871)) ([0daafb9](https://github.com/Safe-DS/DSL/commit/0daafb994d220f702149337941dd67f2ca1636c8))
+* Memoization ([#827](https://github.com/Safe-DS/DSL/issues/827)) ([d0a6c71](https://github.com/Safe-DS/DSL/commit/d0a6c716bfbc0e14d75f2994b5645fda7ddfc758))
+* null-safe call & indexed access ([#872](https://github.com/Safe-DS/DSL/issues/872)) ([f1420a2](https://github.com/Safe-DS/DSL/commit/f1420a25c60d30b101bbbd3ba6b6d8b12fc7bcae)), closes [#857](https://github.com/Safe-DS/DSL/issues/857) [#858](https://github.com/Safe-DS/DSL/issues/858)
+* optional type parameters ([#829](https://github.com/Safe-DS/DSL/issues/829)) ([0e9f67a](https://github.com/Safe-DS/DSL/commit/0e9f67a67c4ee9540525b9d43eefbc99d26eafb8)), closes [#739](https://github.com/Safe-DS/DSL/issues/739)
+* optionally generate code without runner integration ([#836](https://github.com/Safe-DS/DSL/issues/836)) ([0ed9d6e](https://github.com/Safe-DS/DSL/commit/0ed9d6e95bbd0d64ceef207ce06134a62f706a89)), closes [#831](https://github.com/Safe-DS/DSL/issues/831)
+* pre-load all relevant workspace files before executing pipeline ([#822](https://github.com/Safe-DS/DSL/issues/822)) ([67ab766](https://github.com/Safe-DS/DSL/commit/67ab7665689b706c742f501b3a776012de6a19e9))
+* simplify computed types ([#866](https://github.com/Safe-DS/DSL/issues/866)) ([bde3274](https://github.com/Safe-DS/DSL/commit/bde3274c4eee97c94a85c5b289c076471a425437))
+* simplify substitutions passed to `computeType` ([#873](https://github.com/Safe-DS/DSL/issues/873)) ([aa444d4](https://github.com/Safe-DS/DSL/commit/aa444d45f9c368a39c08cc13ab706506d20b4fc4))
+* substitute type parameters when checking assignability of overriding members ([#865](https://github.com/Safe-DS/DSL/issues/865)) ([a1f24e0](https://github.com/Safe-DS/DSL/commit/a1f24e02185b7371831ec9895be4db69a5c51ed0)), closes [#862](https://github.com/Safe-DS/DSL/issues/862)
+* substitute type parameters when computing type of inherited members ([#864](https://github.com/Safe-DS/DSL/issues/864)) ([33de1e8](https://github.com/Safe-DS/DSL/commit/33de1e8543aa507550b6e213ebe7eacf1282bad4)), closes [#863](https://github.com/Safe-DS/DSL/issues/863)
+* support placeholder queries that only request a subset of data ([#826](https://github.com/Safe-DS/DSL/issues/826)) ([1e39300](https://github.com/Safe-DS/DSL/commit/1e393006a307ce475bc7ca3d2e449e186d197855))
+* type casts ([#838](https://github.com/Safe-DS/DSL/issues/838)) ([66c3666](https://github.com/Safe-DS/DSL/commit/66c3666fffe4dd042c521abb58c81158efa51950)), closes [#835](https://github.com/Safe-DS/DSL/issues/835)
+
+
+### Bug Fixes
+
+* allow usage of covariant type parameters in own constructor ([#854](https://github.com/Safe-DS/DSL/issues/854)) ([4ebae94](https://github.com/Safe-DS/DSL/commit/4ebae94ebcf1a6df69ee9e01f38601d6db4b095f))
+* check for duplicate bounds if type parameters occur as right operand ([#882](https://github.com/Safe-DS/DSL/issues/882)) ([8776ce0](https://github.com/Safe-DS/DSL/commit/8776ce07ec7f5da72ba192d85bf769350546a371)), closes [#881](https://github.com/Safe-DS/DSL/issues/881)
+* generation of static class functions ([#832](https://github.com/Safe-DS/DSL/issues/832)) ([57eac45](https://github.com/Safe-DS/DSL/commit/57eac45ed34fb96b9379c308718b7f2db2da0169))
+
 ## [0.6.0](https://github.com/Safe-DS/DSL/compare/v0.5.1...v0.6.0) (2024-01-15)
 
 
