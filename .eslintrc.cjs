@@ -4,12 +4,8 @@ module.exports = {
         tsconfigRootDir: __dirname,
         project: 'tsconfig.eslint.json',
     },
-    settings: {
-        jest: {
-            version: 28,
-        },
-    },
-    extends: '@lars-reimann',
+
+    extends: '@lars-reimann/svelte',
     rules: {
         'import/extensions': 'off',
         'import/no-extraneous-dependencies': 'off',

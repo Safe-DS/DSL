@@ -18,7 +18,7 @@
         "test-ui": "vitest --ui --coverage"
     },
     "devDependencies": {
-        "@lars-reimann/eslint-config": "^5.2.1",
+        "@lars-reimann/eslint-config-svelte": "^6.0.0",
         "@lars-reimann/prettier-config-svelte": "^5.2.1",
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/exec": "^6.0.3",

@@ -17,4 +17,4 @@ JSON_PRETTIER_FILE_EXTENSIONS:
 
 # Commands
 PRE_COMMANDS:
-  - command: npm install @lars-reimann/eslint-config @lars-reimann/prettier-config-svelte
+  - command: npm i @lars-reimann/eslint-config-svelte @lars-reimann/prettier-config-svelte
