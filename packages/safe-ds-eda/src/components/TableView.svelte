@@ -101,7 +101,7 @@
     let draggedColumn: HTMLElement | null = null;
     let savedColumnWidthBeforeReorder = 0;
     let preventResizeTableSpaceUpdate = false;
-    let holdTimeout: number;
+    let holdTimeout: NodeJS.Timeout;
     let isClick = true; // Flag to distinguish between click and hold
     let clickOnColumn = false; // For global window click clear of selection
 
@@ -477,7 +477,7 @@
     };
 
     // --- Lifecycle ---
-    let interval: number;
+    let interval: NodeJS.Timeout;
 
     const clearSelections = function (event: MouseEvent): void {
         // Clears selections if last click was not on a column or row and currrent click is not on a context menu item if context menu is open
