@@ -18,5 +18,12 @@ module.exports = {
                 'no-console': 'off',
             },
         },
+        {
+            files: ['*.svelte'],
+            rules: {
+                // Leads to false positives when running ESLint in CI with the MegaLinter
+                'import/no-unresolved': 'off',
+            },
+        },
     ],
 };
