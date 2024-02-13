@@ -76,8 +76,8 @@ export interface Profiling {
 }
 
 export interface ProfilingDetailBase {
-    name: string;
     type: 'numerical' | 'image' | 'name';
+    name: string;
 }
 
 export interface ProfilingDetailStatistical extends ProfilingDetailBase {
@@ -103,11 +103,11 @@ export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage 
 
 // ------------ Types for the Columns -----------
 export interface ColumnBase {
+    type: 'numerical' | 'categorical';
     name: string;
     values: any;
     hidden: boolean;
     highlighted: boolean;
-    type: 'numerical' | 'categorical';
     appliedSort: 'asc' | 'desc' | null;
     profiling: Profiling;
 }
@@ -131,8 +131,8 @@ export interface FilterBase {
 }
 
 export interface ColumnFilterBase extends FilterBase {
-    columnName: string;
     type: 'valueRange' | 'specificValue' | 'searchString';
+    columnName: string;
 }
 
 export interface SearchStringFilter extends ColumnFilterBase {
