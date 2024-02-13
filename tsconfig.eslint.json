@@ -5,11 +5,11 @@
     },
     "include": [
         "docs/javascript/**/*",
+        "packages/safe-ds-cli/bin/cli.js",
+        ".eslintrc.cjs",
+        "release.config.cjs",
         "**/src/**/*",
         "**/tests/**/*",
-        ".eslintrc.cjs",
-        "packages/safe-ds-cli/bin/cli.js",
-        "release.config.cjs",
-        "types/**/*"
+        "**/types/**/*"
     ]
 }

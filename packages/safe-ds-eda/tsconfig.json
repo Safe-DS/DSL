@@ -1,28 +1,8 @@
 {
-    "extends": "@tsconfig/svelte/tsconfig.json",
+    "extends": "../../tsconfig.base-svelte.json",
     "compilerOptions": {
-        "target": "ESNext",
-        "useDefineForClassFields": true,
-        "module": "ESNext",
-        "resolveJsonModule": true,
-        "outDir": "./lib",
-        "allowJs": true,
-        "checkJs": true,
-        "isolatedModules": true,
-        "typeRoots": ["./node_modules/@types", "types/declarations.d.ts", "types/globals.d.ts"]
+        "rootDir": ".",
+        "noEmit": true
     },
-    "include": [
-        "src/**/*.d.ts",
-        "./*.d.ts",
-        "src/*.ts",
-        "src/**/*.ts",
-        "src/**/*.js",
-        "src/**/*.svelte",
-        "types/declarations.d.ts",
-        "types/globals.d.ts",
-        "../../types",
-        "./*.d.ts",
-        "*.d.ts"
-    ],
-    "references": [{ "path": "./tsconfig.node.json" }]
+    "include": ["src/**/*", "types/**/*"]
 }
