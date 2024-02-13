@@ -8,7 +8,7 @@ interface ToExtensionCommandMessage {
     value: any;
 }
 interface ToExtensionSetStateMessage extends ToExtensionCommandMessage {
-    command: 'setCurrentGloabalState';
+    command: 'setCurrentGlobalState';
     value: defaultTypes.State;
 }
 

@@ -70,7 +70,7 @@ export class EDAPanel {
                     vscode.window.showErrorMessage(data.value);
                     break;
                 }
-                case 'setCurrentGloabalState': {
+                case 'setCurrentGlobalState': {
                     if (!data.value) {
                         return;
                     }

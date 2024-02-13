@@ -2,7 +2,7 @@ import type { State } from '../../types/state';
 
 export const setCurrentGlobalState = function (state: State) {
     window.injVscode.postMessage({
-        command: 'setCurrentGloabalState',
+        command: 'setCurrentGlobalState',
         value: state,
     });
 };
