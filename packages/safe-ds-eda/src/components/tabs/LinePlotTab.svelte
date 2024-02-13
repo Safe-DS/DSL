@@ -2,7 +2,7 @@
     import type {LinePlotTab} from '../../../types/state';
     import LinePlotIcon from '../../icons/LinePlot.svelte';
 
-    export let tabOject: LinePlotTab;
+    export let tabObject: LinePlotTab;
     export let active: boolean;
     export let width: number;
 </script>
@@ -15,7 +15,7 @@
         >
     </div>
     <span class="comment"
-        >{#if width > 300}{tabOject.tabComment}{/if}</span
+        >{#if width > 300}{tabObject.tabComment}{/if}</span
     >
 </div>
 

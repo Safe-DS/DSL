@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { currentState, currentTabIndex } from '../webviewState';
+    import {currentState, currentTabIndex} from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
@@ -45,7 +45,7 @@
                 {#each $currentState.tabs as tab, index}
                     {#if tab.type === 'linePlot'}
                         <nav on:click={() => currentTabIndex.update((cs) => index + 1)}>
-                            <LinePlotTab tabOject={tab} active={$currentTabIndex === index + 1} {width} />
+                            <LinePlotTab tabObject={tab} active={$currentTabIndex === index + 1} {width} />
                         </nav>
                     {/if}
                 {/each}
