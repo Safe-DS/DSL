@@ -6,6 +6,7 @@
 # Whitelist
 !dist
 !img
+!media
 !snippets
 !syntaxes
 !CHANGELOG.md
