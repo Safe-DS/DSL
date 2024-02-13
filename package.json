@@ -25,12 +25,16 @@
         "@semantic-release/exec": "^6.0.3",
         "@semantic-release/git": "^10.0.1",
         "@semantic-release/npm": "^11.0.2",
+        "@tsconfig/svelte": "^5.0.2",
         "@vitest/coverage-v8": "^1.2.2",
         "@vitest/ui": "^1.2.2",
         "concurrently": "^8.2.2",
         "conventional-changelog-conventionalcommits": "^7.0.2",
+        "eslint-plugin-svelte": "^2.35.1",
+        "prettier-plugin-svelte": "^3.1.2",
         "semantic-release": "^23.0.0",
         "shx": "^0.3.4",
+        "svelte": "^4.2.10",
         "typescript": "^5.3.3",
         "vitest": "^1.2.2"
     }
