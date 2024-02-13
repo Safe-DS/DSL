@@ -5,36 +5,35 @@
 
     let sidebarWidth = 307; // Initial width of the sidebar in pixels
 
-    function handleDrag(e: MouseEvent) {
-        const throttledOnMouseMove = throttle(onMouseMove, 30);
-
-        let prevX = e.clientX;
-
-        function onMouseMove(e: MouseEvent) {
-            const dx = e.clientX - prevX;
-            prevX = e.clientX;
+    const handleDrag = function (e: MouseEvent) {
+        const onMouseMove = function (mouseMoveEvent: MouseEvent) {
+            const dx = mouseMoveEvent.clientX - prevX;
+            prevX = mouseMoveEvent.clientX;
             if (sidebarWidth + dx < 10) {
                 sidebarWidth = 10;
             } else {
                 sidebarWidth += dx;
             }
-        }
+        };
+        const throttledOnMouseMove = throttle(onMouseMove, 30);
 
-        function onMouseUp() {
+        let prevX = e.clientX;
+
+        const onMouseUp = function () {
             document.removeEventListener('mousemove', throttledOnMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
             document.removeEventListener('mousemove', clearTextSelection);
-        }
+        };
 
         document.addEventListener('mousemove', throttledOnMouseMove);
         document.addEventListener('mouseup', onMouseUp);
         document.addEventListener('mousemove', clearTextSelection);
-    }
+    };
 
-    function clearTextSelection() {
+    const clearTextSelection = function () {
         const selection = window.getSelection();
         if (selection) selection.removeAllRanges();
-    }
+    };
 </script>
 
 <main>

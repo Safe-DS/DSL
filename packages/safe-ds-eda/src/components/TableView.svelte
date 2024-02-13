@@ -31,7 +31,7 @@
         }
     }
 
-    function getColumnWidth(columnName: string): number {
+    const getColumnWidth = function (columnName: string): number {
         if (savedColumnWidths.has(columnName)) {
             return savedColumnWidths.get(columnName)!;
         }
@@ -45,17 +45,15 @@
         savedColumnWidths.set(columnName, width);
 
         return width;
-    }
+    };
 
-    function getColumnWidthFreshNumber(columnName: string): number {
+    const getColumnWidthFreshNumber = function (columnName: string): number {
         const baseWidth = 35; // Minimum width
         const scale = 55;
 
         // Use the logarithm of the character count, and scale it
-        const width = baseWidth + Math.log(columnName.length + 1) * scale;
-
-        return width;
-    }
+        return baseWidth + Math.log(columnName.length + 1) * scale;
+    };
 
     // --- Column resizing ---
     let isResizeDragging = false;
@@ -64,21 +62,7 @@
     let targetColumn: HTMLElement;
     const resizeWidthMap: Map<string, number> = new Map();
 
-    const throttledDoResizeDrag = throttle(doResizeDrag, 30);
-
-    function startResizeDrag(event: MouseEvent, columnIndex: number): void {
-        event.stopPropagation();
-        clickOnColumn = true;
-        const columnElement = headerElements[columnIndex];
-        isResizeDragging = true;
-        startX = event.clientX;
-        startWidth = columnElement.offsetWidth;
-        targetColumn = columnElement;
-        document.addEventListener('mousemove', throttledDoResizeDrag);
-        document.addEventListener('mouseup', stopResizeDrag);
-    }
-
-    function doResizeDrag(event: MouseEvent): void {
+    const doResizeDrag = function (event: MouseEvent): void {
         if (isResizeDragging && targetColumn) {
             const currentWidth = startWidth + event.clientX - startX;
             requestAnimationFrame(() => {
@@ -88,13 +72,27 @@
             resizeWidthMap.set(targetColumn.innerText, currentWidth);
             updateTableSpace();
         }
-    }
+    };
 
-    function stopResizeDrag(): void {
+    const throttledDoResizeDrag = throttle(doResizeDrag, 30);
+
+    const startResizeDrag = function (event: MouseEvent, columnIndex: number): void {
+        event.stopPropagation();
+        clickOnColumn = true;
+        const columnElement = headerElements[columnIndex];
+        isResizeDragging = true;
+        startX = event.clientX;
+        startWidth = columnElement.offsetWidth;
+        targetColumn = columnElement;
+        document.addEventListener('mousemove', throttledDoResizeDrag);
+        document.addEventListener('mouseup', stopResizeDrag);
+    };
+
+    const stopResizeDrag = function (): void {
         isResizeDragging = false;
         document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
-    }
+    };
 
     // --- Column reordering ---
     let isReorderDragging = false;
@@ -109,9 +107,19 @@
 
     let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
 
+    const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
+        if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
+            dragCurrentIndex = columnIndex;
+            requestAnimationFrame(() => {
+                draggedColumn!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+                draggedColumn!.style.top = event.clientY + 'px';
+            });
+        }
+    };
+
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
 
-    function handleColumnInteractionStart(event: MouseEvent, columnIndex: number): void {
+    const handleColumnInteractionStart = function (event: MouseEvent, columnIndex: number): void {
         // Check if the left or right mouse button was pressed
         if (event.button !== 0 && event.button !== 2) return;
 
@@ -146,34 +154,24 @@
         }, 300); // milliseconds delay for hold detection
 
         // Define the handler function
-        currentMouseUpHandler = (event: MouseEvent) => {
-            handleColumnMouseUp(event, columnIndex);
+        currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
+            handleColumnMouseUp(mouseUpEvent, columnIndex);
         };
 
         // Add mouseup listener to clear the timeout if the button is released
         document.addEventListener('mouseup', currentMouseUpHandler);
-    }
+    };
 
-    function handleColumnMouseUp(event: MouseEvent, columnIndex: number): void {
+    const handleColumnMouseUp = function (event: MouseEvent, columnIndex: number): void {
         clearTimeout(holdTimeout);
         if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
 
         if (isClick) {
             handleColumnClick(event, columnIndex);
         }
-    }
+    };
 
-    function handleReorderDragOver(event: MouseEvent, columnIndex: number): void {
-        if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
-            dragCurrentIndex = columnIndex;
-            requestAnimationFrame(() => {
-                draggedColumn!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
-                draggedColumn!.style.top = event.clientY + 'px';
-            });
-        }
-    }
-
-    function handleReorderDragEnd(): void {
+    const handleReorderDragEnd = function (): void {
         if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
             preventResizeTableSpaceUpdate = false;
             if (draggedColumn) {
@@ -207,12 +205,12 @@
             updateTableSpace();
             updateTableSpace(); // Have to somehow call twice, first time it thinks the window is around 10px bigger than it is
         }
-    }
+    };
 
     // --- Column selecting ---
     let selectedColumnIndexes: number[] = [];
 
-    function handleColumnClick(event: MouseEvent, columnIndex: number): void {
+    const handleColumnClick = function (event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is clicked
         if ($preventClicks) {
             return;
@@ -235,14 +233,14 @@
             // Replace the current selection with a new array to trigger reactivity
             setSelectionToColumn(columnIndex);
         }
-    }
+    };
 
-    function addColumnToSelection(columnIndex: number): void {
+    const addColumnToSelection = function (columnIndex: number): void {
         // Add the index and create a new array to trigger reactivity
         selectedColumnIndexes = [...selectedColumnIndexes, columnIndex];
-    }
+    };
 
-    function removeColumnFromSelection(columnIndex: number, selectedColumnIndexesIndex?: number): void {
+    const removeColumnFromSelection = function (columnIndex: number, selectedColumnIndexesIndex?: number): void {
         // Remove the index and create a new array to trigger reactivity
         selectedColumnIndexes = [
             ...selectedColumnIndexes.slice(0, selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex)),
@@ -250,18 +248,18 @@
                 (selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex)) + 1,
             ),
         ];
-    }
+    };
 
-    function setSelectionToColumn(columnIndex: number): void {
+    const setSelectionToColumn = function (columnIndex: number): void {
         // Replace the current selection with a new array to trigger reactivity
         selectedColumnIndexes = [columnIndex];
-    }
+    };
 
     // --- Row selecting ---
     let selectedRowIndexes: number[] = [];
     let clickOnRow = false;
 
-    function handleRowClick(event: MouseEvent, rowIndex: number): void {
+    const handleRowClick = function (event: MouseEvent, rowIndex: number): void {
         // Logic for what happens when a row is clicked
         if ($preventClicks) {
             return;
@@ -287,7 +285,7 @@
             // Replace the current selection with a new array to trigger reactivity
             selectedRowIndexes = [rowIndex];
         }
-    }
+    };
 
     // --- Scroll loading ---
     let tableContainer: HTMLElement; // Reference to the table container
@@ -299,23 +297,21 @@
     let scrollTop = 0;
     let lastHeight = 0;
 
-    const throttledUpdateVisibleRows = throttle(updateVisibleRows, 40);
-
-    function updateVisibleRows(): void {
+    const updateVisibleRows = function (): void {
         visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
         visibleEnd = visibleStart + visibleRowCount;
-    }
+    };
 
-    function updateScrollTop(): void {
+    const throttledUpdateVisibleRows = throttle(updateVisibleRows, 40);
+
+    const updateScrollTop = function (): void {
         if (currentContextMenu) {
             currentContextMenu.style.top = currentContextMenu.offsetTop - scrollTop + tableContainer.scrollTop + 'px';
         }
         scrollTop = tableContainer.scrollTop;
-    }
+    };
 
-    const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
-
-    function recalculateVisibleRowCount(): void {
+    const recalculateVisibleRowCount = function (): void {
         if (lastHeight === tableContainer.clientHeight) {
             // Not recalculating if height didn't change
             return;
@@ -323,7 +319,9 @@
         lastHeight = tableContainer.clientHeight;
         visibleRowCount = Math.ceil(tableContainer.clientHeight / rowHeight) + buffer;
         updateVisibleRows();
-    }
+    };
+
+    const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
 
     // --- Min Table with ---
     const throttledUpdateTableSpace = throttle(() => {
@@ -332,7 +330,7 @@
         }
     }, 100);
 
-    function updateTableSpace(): void {
+    const updateTableSpace = function (): void {
         const newPossibleSpace = tableContainer.clientWidth;
 
         const utilitySpace = borderColumnWidth * 2; // 2 border columns
@@ -378,7 +376,7 @@
                 }
             }
         }
-    }
+    };
 
     $: if (headerElements.length > 0) {
         // Is svelte reactive but so far only runs once which is what we want, consideration to have loop in onMount that waits until headerElements is filled and then runs this code once
@@ -392,7 +390,7 @@
     let rightClickColumnMenuElement: HTMLElement;
     let currentContextMenu: HTMLElement | null = null;
 
-    function handleColumnRightClick(event: MouseEvent, columnIndex: number): void {
+    const handleColumnRightClick = function (event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is right clicked
         doDefaultContextMenuSetup();
         showingColumnHeaderRightClickMenu = true;
@@ -406,14 +404,14 @@
 
         // Click anywhere else to close the menu, context menu selection has to prevent propagation
         window.addEventListener('click', handleRightClickEnd);
-    }
+    };
 
-    function doDefaultContextMenuSetup(): void {
+    const doDefaultContextMenuSetup = function (): void {
         preventClicks.set(true);
         disableNonContextMenuEffects();
-    }
+    };
 
-    function handleRightClickEnd(): void {
+    const handleRightClickEnd = function (): void {
         // Code specific to each menu
         showingColumnHeaderRightClickMenu = false;
         rightClickedColumnIndex = -1;
@@ -423,12 +421,12 @@
         preventClicks.set(false);
         currentContextMenu = null;
         window.removeEventListener('click', handleRightClickEnd);
-    }
+    };
 
     const originalHoverStyles = new Map<CSSStyleRule, string>();
     const originalCursorStyles = new Map<CSSStyleRule, string>();
 
-    function disableNonContextMenuEffects() {
+    const disableNonContextMenuEffects = function () {
         const stylesheets = document.styleSheets;
 
         for (let i = 0; i < stylesheets.length; i++) {
@@ -459,9 +457,9 @@
                 }
             }
         }
-    }
+    };
 
-    function restoreNonContextMenuEffects() {
+    const restoreNonContextMenuEffects = function () {
         originalHoverStyles.forEach((style, rule) => {
             rule.style.cssText = style;
         });
@@ -471,17 +469,17 @@
             rule.style.cssText = style;
         });
         originalCursorStyles.clear();
-    }
+    };
 
     // --- Profiling ---
-    function toggleProfiling(): void {
+    const toggleProfiling = function (): void {
         if (!$preventClicks) showProfiling = !showProfiling;
-    }
+    };
 
     // --- Lifecycle ---
     let interval: number;
 
-    function clearSelections(event: MouseEvent): void {
+    const clearSelections = function (event: MouseEvent): void {
         // Clears selections if last click was not on a column or row and currrent click is not on a context menu item if context menu is open
         // WARN/TODO: Does not yet work for subemnus in context menus or menus with non possible closing clicks, those will need yet another class to be detected and handled
         // This also prepares selection clearing for next iteration if click was on column or row
@@ -515,7 +513,7 @@
             selectedRowIndexes = [];
         }
         clickOnRow = false; // meaning if next click is not on a row, selection will be cleared in next iteration
-    }
+    };
 
     onMount(() => {
         updateScrollTop();
@@ -581,7 +579,7 @@
                         class="borderColumn border-right profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
-                    {#each $currentState.table.columns as column, index}
+                    {#each $currentState.table.columns as _column, index}
                         <td
                             class="profiling"
                             class:expanded={showProfiling}
@@ -616,7 +614,7 @@
                             </div>
                         </div>
                     </td>
-                    {#each $currentState.table.columns as column, i}
+                    {#each $currentState.table.columns as _column, i}
                         <td
                             class="profilingBanner"
                             on:click={toggleProfiling}
@@ -821,7 +819,7 @@
         border-left: 3px solid var(--bg-bright);
         border-bottom: 3px solid var(--bg-bright);
         user-select: none;
-        padding-left: 0px;
+        padding-left: 0;
         z-index: 10;
     }
     .profilingBanner:hover {
@@ -887,7 +885,7 @@
         border: 2px solid var(--bg-dark);
         background-color: var(--bg-bright);
         z-index: 1000;
-        padding: 0px;
+        padding: 0;
         color: var(--font-dark);
         display: flex;
         flex-direction: column;

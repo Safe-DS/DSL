@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { currentState, currentTabIndex } from '../webviewState';
+    import {currentState, currentTabIndex} from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
@@ -37,14 +37,14 @@
             <nav
                 class="tab"
                 class:tabActive={$currentTabIndex === 0}
-                on:click={() => currentTabIndex.update((cs) => 0)}
+                on:click={() => currentTabIndex.update((_cs) => 0)}
             >
                 <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
             </nav>
             {#if $currentState.tabs}
                 {#each $currentState.tabs as tab, index}
                     {#if tab.type === 'linePlot'}
-                        <nav on:click={() => currentTabIndex.update((cs) => index + 1)}>
+                        <nav on:click={() => currentTabIndex.update((_cs) => index + 1)}>
                             <LinePlotTab tabObject={tab} active={$currentTabIndex === index + 1} {width} />
                         </nav>
                     {/if}
@@ -66,7 +66,7 @@
         align-items: flex-end;
         justify-content: space-between;
         height: 63px;
-        padding: 0px 20px 0px 20px;
+        padding: 0 20px 0 20px;
         margin-bottom: 10px;
     }
 
@@ -87,7 +87,7 @@
     .historyBar {
         font-size: 1.3rem;
         background-color: var(--bg-bright);
-        padding: 19.5px 20px 0px 20px;
+        padding: 19.5px 20px 0 20px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -97,7 +97,7 @@
     }
 
     .no-borders {
-        border: 0px;
+        border: 0;
     }
 
     .historyItem {
@@ -109,7 +109,7 @@
         margin-bottom: 20px;
     }
     .historyItem:last-of-type {
-        margin-right: 0px;
+        margin-right: 0;
     }
     .icon {
         margin-right: 7px;
