@@ -10,7 +10,6 @@ module.exports = {
         'import/extensions': 'off',
         'import/no-extraneous-dependencies': 'off',
         'svelte/valid-compile': 'off',
-        'vitest/prefer-lowercase-title': 'off',
     },
     overrides: [
         {

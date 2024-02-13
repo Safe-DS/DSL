@@ -37,7 +37,7 @@ describe('SafeDsRunner', async () => {
                 URI.file('/a-b c.sdspipe'),
             );
             const mainModuleName = runner.getMainModuleName(document);
-            expect(mainModuleName).toStrictEqual('a_b_c');
+            expect(mainModuleName).toBe('a_b_c');
         });
         it('sdstest', async () => {
             const document = services.shared.workspace.LangiumDocumentFactory.fromString(
@@ -45,7 +45,7 @@ describe('SafeDsRunner', async () => {
                 URI.file('/a-b c.sdstest'),
             );
             const mainModuleName = runner.getMainModuleName(document);
-            expect(mainModuleName).toStrictEqual('a_b_c');
+            expect(mainModuleName).toBe('a_b_c');
         });
         it('other', async () => {
             const document = services.shared.workspace.LangiumDocumentFactory.fromString(
@@ -53,7 +53,7 @@ describe('SafeDsRunner', async () => {
                 URI.file('/a-b c.sdstest2'),
             );
             const mainModuleName = runner.getMainModuleName(document);
-            expect(mainModuleName).toStrictEqual('a_b_c_sdstest2');
+            expect(mainModuleName).toBe('a_b_c_sdstest2');
         });
     });
     describe('generateCodeForRunner', async () => {
@@ -63,7 +63,7 @@ describe('SafeDsRunner', async () => {
                 URI.file('/b.sdstest'),
             );
             const [programCodeMap] = runner.generateCodeForRunner(document, undefined);
-            expect(JSON.stringify(programCodeMap).replaceAll('\\r\\n', '\\n')).toStrictEqual(
+            expect(JSON.stringify(programCodeMap).replaceAll('\\r\\n', '\\n')).toBe(
                 '{"a":{"gen_b":"# Pipelines --------------------------------------------------------------------\\n\\ndef mainpipeline():\\n    pass\\n","gen_b_mainpipeline":"from .gen_b import mainpipeline\\n\\nif __name__ == \'__main__\':\\n    mainpipeline()\\n"}}',
             );
         });
