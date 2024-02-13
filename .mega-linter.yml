@@ -13,8 +13,8 @@ JSON_PRETTIER_FILE_EXTENSIONS:
   - .scss
   - .htm
   - .html
-#  - .md
+  - .svelte
 
 # Commands
 PRE_COMMANDS:
-  - command: npm i @lars-reimann/eslint-config @lars-reimann/prettier-config
+  - command: npm install @lars-reimann/eslint-config @lars-reimann/prettier-config-svelte
