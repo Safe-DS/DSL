@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { ToExtensionMessage } from '../../../../../types/shared-eda-vscode/messaging.js';
+import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
-import { Column, State, Table } from '../../../../../types/shared-eda-vscode/state.js';
+import { Column, State, Table } from '@safe-ds/eda/types/state.js';
 import { logOutput, printOutputMessage } from '../output.ts';
-import { SafeDsServices, messages } from '@safe-ds/lang';
+import { messages, SafeDsServices } from '@safe-ds/lang';
 
 export const undefinedPanelIdentifier = 'undefinedPanelIdentifier';
 
@@ -302,7 +302,7 @@ export class EDAPanel {
         Use a content security policy to only allow loading images from https or from our extension directory,
         and only allow scripts that have a specific nonce.
       -->
-      <meta http-equiv="Content-Security-Policy" content="img-src https: data:; 
+      <meta http-equiv="Content-Security-Policy" content="img-src https: data:;
         style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link href="${stylesResetUri}" rel="stylesheet">

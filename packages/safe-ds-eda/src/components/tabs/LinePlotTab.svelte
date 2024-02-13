@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { LinePlotTab } from '../../../../../types/shared-eda-vscode/state';
+    import type {LinePlotTab} from '../../../types/state';
     import LinePlotIcon from '../../icons/LinePlot.svelte';
 
     export let tabOject: LinePlotTab;

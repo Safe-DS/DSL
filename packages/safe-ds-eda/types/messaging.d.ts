@@ -1,4 +1,4 @@
-import * as defaultTypes from './state.js';
+import * as defaultTypes from './state';
 
 // To extension
 type ToExtensionCommand = 'setGlobalState' | 'setInfo' | 'setError';

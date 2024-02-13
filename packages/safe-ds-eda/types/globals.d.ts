@@ -1,4 +1,4 @@
-import type { ToExtensionMessage } from '../../../types/shared-eda-vscode/messaging.js';
+import type { ToExtensionMessage } from './messaging.js';
 
 declare global {
     interface Window {

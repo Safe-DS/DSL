@@ -1,5 +1,5 @@
-import type { FromExtensionMessage } from '../../../types/shared-eda-vscode/messaging';
-import type { State } from '../../../types/shared-eda-vscode/state';
+import type { FromExtensionMessage } from '../types/messaging';
+import type { State } from '../types/state';
 import * as extensionApi from './apis/extensionApi';
 import { writable } from 'svelte/store';
 
