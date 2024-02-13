@@ -2,7 +2,6 @@
     "name": "safe-ds",
     "version": "0.0.0",
     "private": true,
-    "prettier": "@lars-reimann/prettier-config",
     "type": "module",
     "workspaces": [
         "packages/*"
@@ -13,25 +12,28 @@
         "langium:watch": "npm run langium:watch -w=@safe-ds/lang",
         "build": "tsc -b tsconfig.json && npm run build --workspaces",
         "build:clean": "npm run clean && npm run build",
-        "watch": "concurrently -n tsc,cli,lang,vscode -c blue,yellow,red,green \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/cli\" \"npm run watch -w=@safe-ds/lang\" \"npm run watch -w=safe-ds\"",
+        "watch": "concurrently -n tsc,cli,lang,vscode,eda -c blue,yellow,red,green \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/cli\" \"npm run watch -w=@safe-ds/lang\" \"npm run watch -w=safe-ds\" \"npm run watch -w=@safe-ds/eda\"",
         "test": "vitest",
         "test-with-coverage": "vitest --coverage",
         "test-ui": "vitest --ui --coverage"
     },
     "devDependencies": {
-        "@lars-reimann/eslint-config": "^5.2.1",
-        "@lars-reimann/prettier-config": "^5.1.0",
+        "@lars-reimann/eslint-config-svelte": "^6.1.0",
+        "@lars-reimann/prettier-config-svelte": "^5.2.1",
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/exec": "^6.0.3",
         "@semantic-release/git": "^10.0.1",
         "@semantic-release/npm": "^11.0.2",
+        "@tsconfig/svelte": "^5.0.2",
         "@vitest/coverage-v8": "^1.2.2",
         "@vitest/ui": "^1.2.2",
         "concurrently": "^8.2.2",
         "conventional-changelog-conventionalcommits": "^7.0.2",
         "semantic-release": "^23.0.0",
         "shx": "^0.3.4",
+        "svelte": "^4.2.10",
         "typescript": "^5.3.3",
         "vitest": "^1.2.2"
-    }
+    },
+    "prettier": "@lars-reimann/prettier-config-svelte"
 }

@@ -2,8 +2,12 @@
 **/node_modules/
 
 # Compilation/build outputs
+**/coverage/
 **/dist/
 **/lib/
 
 # Configuration
 /vitest.config.ts
+/packages/safe-ds-eda/svelte.config.js
+/packages/safe-ds-eda/vite.config.ts
+/packages/safe-ds-eda/types/*.d.ts

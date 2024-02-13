@@ -4,22 +4,25 @@ module.exports = {
         tsconfigRootDir: __dirname,
         project: 'tsconfig.eslint.json',
     },
-    settings: {
-        jest: {
-            version: 28,
-        },
-    },
-    extends: '@lars-reimann',
+
+    extends: '@lars-reimann/svelte',
     rules: {
         'import/extensions': 'off',
         'import/no-extraneous-dependencies': 'off',
-        'vitest/prefer-lowercase-title': 'off',
+        'svelte/valid-compile': 'off',
     },
     overrides: [
         {
             files: ['packages/safe-ds-cli/src/**', 'packages/safe-ds-vscode/src/extension/output.ts'],
             rules: {
                 'no-console': 'off',
+            },
+        },
+        {
+            files: ['*.svelte'],
+            rules: {
+                // Leads to false positives when running ESLint in CI with the MegaLinter
+                'import/no-unresolved': 'off',
             },
         },
     ],

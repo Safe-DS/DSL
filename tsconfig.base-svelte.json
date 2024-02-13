@@ -1,0 +1,21 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "skipLibCheck": true,
+        "strict": true,
+        "composite": true,
+        "noImplicitReturns": true,
+        "noImplicitOverride": true,
+        "strictNullChecks": true,
+        "forceConsistentCasingInFileNames": true,
+        "useDefineForClassFields": true,
+        "resolveJsonModule": true,
+        "outDir": "./lib",
+        "allowJs": true,
+        "checkJs": true,
+        "isolatedModules": true
+    }
+}

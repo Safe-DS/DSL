@@ -33,14 +33,20 @@ const plugins = [
         },
         watch,
     }),
+    copy({
+        assets: {
+            from: ['../safe-ds-eda/dist/main.js'],
+            to: ['./eda-webview'],
+        },
+        watch,
+    }),
     // Needed to resolve source-maps in the extension
     copy({
-            assets: {
-                from: ['../../node_modules/source-map/lib/mappings.wasm'],
-                to: ['./extension']
-            }
-        }
-    ),
+        assets: {
+            from: ['../../node_modules/source-map/lib/mappings.wasm'],
+            to: ['./extension'],
+        },
+    }),
     {
         name: 'watch-plugin',
         setup(build) {

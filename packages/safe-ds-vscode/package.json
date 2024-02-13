@@ -124,6 +124,11 @@
                     "when": "resourceLangId == safe-ds",
                     "group": "navigation@1"
                 }
+            ],
+            "editor/context": [
+                {
+                    "command": "safe-ds.runEdaFromContext"
+                }
             ]
         },
         "commands": [
@@ -132,6 +137,16 @@
                 "title": "Run Pipeline",
                 "category": "Safe-DS",
                 "icon": "$(play)"
+            },
+            {
+                "command": "safe-ds.refreshWebview",
+                "title": "Refresh Webview",
+                "category": "EDA"
+            },
+            {
+                "command": "safe-ds.runEdaFromContext",
+                "title": "Explore Table",
+                "category": "EDA"
             }
         ],
         "snippets": [

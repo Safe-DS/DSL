@@ -1,0 +1,30 @@
+:root {
+    --primary-color: #036ed1;
+    --primary-color-desaturated: rgb(3 109 209 / 16.4%);
+    --bg-bright: white;
+    --bg-dark: #f2f2f2;
+    --bg-medium: #f9f9f9;
+    --font-dark: #292929;
+    --font-light: #6d6d6d;
+    --font-bright: #fff;
+}
+
+.noSelect {
+    user-select: none;
+}
+
+.cursorPointer {
+    cursor: pointer;
+}
+
+* {
+    color: var(--font-dark);
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--bg-dark);
+}
+
+::-webkit-scrollbar-corner {
+    background-color: var(--bg-dark);
+}
