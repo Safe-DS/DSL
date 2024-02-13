@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {LinePlotTab} from '../../../types/state';
+    import type { LinePlotTab } from '../../../types/state';
     import LinePlotIcon from '../../icons/LinePlot.svelte';
 
     export let tabObject: LinePlotTab;
