@@ -12,14 +12,14 @@
 
     let showProfiling = false;
     let minTableWidth = 0;
+    let numRows = 0;
     const borderColumnWidth = 45; // Set in CSS, change here if changes in css
     const headerElements: HTMLElement[] = [];
     const savedColumnWidths: Map<string, number> = new Map();
 
-    let numRows = 0;
     $: {
-        let minTableWidth = 0;
         if ($currentState.table) {
+            minTableWidth = 0;
             numRows = 0;
             $currentState.table.columns.forEach((column) => {
                 if (column[1].values.length > numRows) {
@@ -27,7 +27,6 @@
                 }
                 minTableWidth += 100;
             });
-            minTableWidth = minTableWidth;
         }
     }
 
