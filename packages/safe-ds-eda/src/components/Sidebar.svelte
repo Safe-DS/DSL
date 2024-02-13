@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {currentState, currentTabIndex} from '../webviewState';
+    import { currentState, currentTabIndex } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
