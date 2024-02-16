@@ -90,8 +90,12 @@ export class SafeDsRunner {
             const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
             const versionString = await this.getPythonServerVersion(pythonServerTest);
             if (!semver.satisfies(versionString, SUPPORTED_VERSION_RANGE)) {
-                this.logging.outputError(`Installed runner version ${versionString} does not meet requirements: ${SUPPORTED_VERSION_RANGE}`);
-                this.logging.displayError(`The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${SUPPORTED_VERSION_RANGE}. Please update to a matching version.`);
+                this.logging.outputError(
+                    `Installed runner version ${versionString} does not meet requirements: ${SUPPORTED_VERSION_RANGE}`,
+                );
+                this.logging.displayError(
+                    `The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${SUPPORTED_VERSION_RANGE}. Please update to a matching version.`,
+                );
                 return;
             } else {
                 this.logging.outputInfo(`Using safe-ds-runner version: ${versionString}`);
