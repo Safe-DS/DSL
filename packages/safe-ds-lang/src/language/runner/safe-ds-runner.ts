@@ -17,8 +17,12 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
 import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
 import { getModuleMembers } from '../helpers/nodeProperties.js';
+import semver from 'semver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
+
+const SUPPORTED_VERSION_RANGE = '>=0.6.0 <0.7.0';
+
 export class SafeDsRunner {
     private readonly annotations: SafeDsAnnotations;
     private readonly generator: SafeDsPythonGenerator;
@@ -85,7 +89,13 @@ export class SafeDsRunner {
         try {
             const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
             const versionString = await this.getPythonServerVersion(pythonServerTest);
-            this.logging.outputInfo(`Using safe-ds-runner version: ${versionString}`);
+            if (!semver.satisfies(versionString, SUPPORTED_VERSION_RANGE)) {
+                this.logging.outputError(`Installed runner version ${versionString} does not meet requirements: ${SUPPORTED_VERSION_RANGE}`);
+                this.logging.displayError(`The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${SUPPORTED_VERSION_RANGE}. Please update to a matching version.`);
+                return;
+            } else {
+                this.logging.outputInfo(`Using safe-ds-runner version: ${versionString}`);
+            }
         } catch (error) {
             this.logging.outputError(`Could not start runner: ${error}`);
             this.logging.displayError('The runner process could not be started.');
