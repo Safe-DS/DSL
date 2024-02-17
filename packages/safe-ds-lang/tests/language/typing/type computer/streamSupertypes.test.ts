@@ -106,7 +106,7 @@ describe('streamProperSupertypes', async () => {
             expected: ['B', 'Any'],
         },
         {
-            testName: 'should consider the nullability of the parent type',
+            testName: 'should disregard the nullability of the parent type',
             code: `
                     class Test {
                         attr a: A
@@ -115,7 +115,7 @@ describe('streamProperSupertypes', async () => {
                     class A sub B?
                     class B
             `,
-            expected: ['B?', 'Any?'],
+            expected: ['B', 'Any'],
         },
         {
             testName: 'should consider the nullability of the start type',

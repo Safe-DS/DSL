@@ -1110,17 +1110,15 @@ export class SafeDsTypeComputer {
         // Compared to `ClassHierarchy.properSuperclassesGenerator`, we already include the given type in the list of
         // visited elements, since this method here is not used to detect cycles.
         const visited = new Set<SdsClass>([type.declaration]);
-        let isNullable = type.isNullable;
         let current = this.parentClassType(type);
 
         while (current && !visited.has(current.declaration)) {
             yield current;
             visited.add(current.declaration);
-            isNullable ||= current.isNullable;
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any.updateNullability(isNullable);
+        const Any = this.coreTypes.Any.updateNullability(type.isNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1136,7 +1134,7 @@ export class SafeDsTypeComputer {
         const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
 
         if (firstParentType instanceof ClassType) {
-            return firstParentType.updateNullability(type.isNullable || firstParentType.isNullable);
+            return firstParentType.updateNullability(type.isNullable);
         }
         return undefined;
     }
