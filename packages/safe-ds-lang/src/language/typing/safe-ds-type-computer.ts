@@ -1074,15 +1074,15 @@ export class SafeDsTypeComputer {
      * Compared to `ClassHierarchy.streamSuperTypes`, this method cannot be used to detect cycles in the inheritance
      * hierarchy. However, it can handle type parameters on parent types and substitute them accordingly.
      */
-    streamSupertypes(type: ClassType | undefined): Stream<ClassType> {
+    streamProperSupertypes(type: ClassType | undefined): Stream<ClassType> {
         if (!type) {
             return EMPTY_STREAM;
         }
 
-        return stream(this.supertypesGenerator(type));
+        return stream(this.properSupertypesGenerator(type));
     }
 
-    private *supertypesGenerator(type: ClassType): Generator<ClassType, void> {
+    private *properSupertypesGenerator(type: ClassType): Generator<ClassType, void> {
         // Compared to `ClassHierarchy.superclassesGenerator`, we already include the given type in the list of visited
         // elements, since this method here is not used to detect cycles.
         const visited = new Set<SdsClass>([type.declaration]);
