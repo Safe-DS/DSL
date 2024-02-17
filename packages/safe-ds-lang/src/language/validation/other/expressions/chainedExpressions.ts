@@ -15,25 +15,21 @@ export const chainedExpressionsMustBeNullSafeIfReceiverIsNullable = (services: S
         }
 
         const receiverType = typeComputer.computeType(node.receiver);
-        if (receiverType === UnknownType) {
+        if (receiverType === UnknownType || !typeChecker.canBeNull(receiverType)) {
             return;
         }
 
-        if (isSdsCall(node) && receiverType.isNullable && typeChecker.canBeCalled(receiverType)) {
+        if (isSdsCall(node) && typeChecker.canBeCalled(receiverType)) {
             accept('error', 'The receiver can be null so a null-safe call must be used.', {
                 node,
                 code: CODE_CHAINED_EXPRESSION_MISSING_NULL_SAFETY,
             });
-        } else if (
-            isSdsIndexedAccess(node) &&
-            receiverType.isNullable &&
-            typeChecker.canBeAccessedByIndex(receiverType)
-        ) {
+        } else if (isSdsIndexedAccess(node) && typeChecker.canBeAccessedByIndex(receiverType)) {
             accept('error', 'The receiver can be null so a null-safe indexed access must be used.', {
                 node,
                 code: CODE_CHAINED_EXPRESSION_MISSING_NULL_SAFETY,
             });
-        } else if (isSdsMemberAccess(node) && receiverType.isNullable) {
+        } else if (isSdsMemberAccess(node)) {
             accept('error', 'The receiver can be null so a null-safe member access must be used.', {
                 node,
                 code: CODE_CHAINED_EXPRESSION_MISSING_NULL_SAFETY,

@@ -93,6 +93,24 @@ segment indexedAccess(
     »unresolved?[0]«;
 }
 
+class IndexedAccess<Nullable, NonNullable>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ error "The receiver can be null so a null-safe indexed access must be used."
+    p1: Any? = »nullable[0]«,
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    p2: Any? = »nonNullable[0]«,
+
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    p3: Any? = »nullable?[0]«,
+    // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
+    p4: Any? = »nonNullable?[0]«,
+) where {
+    Nullable sub List<Int>?,
+    NonNullable sub List<Int>
+}
+
 segment memberAccess(
     myClass: MyClass,
     myClassOrNull: MyClass?,
@@ -127,4 +145,22 @@ segment memberAccess(
 
     // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
     »unresolved?.a«;
+}
+
+class MemberAccess<Nullable, NonNullable>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ error "The receiver can be null so a null-safe member access must be used."
+    p1: Any? = »nullable.a«,
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    p2: Any? = »nonNullable.a«,
+
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    p3: Any? = »nullable?.a«,
+    // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
+    p4: Any? = »nonNullable?.a«,
+) where {
+    Nullable sub MyClass?,
+    NonNullable sub MyClass
 }
