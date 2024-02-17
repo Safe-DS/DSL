@@ -350,9 +350,7 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is allowed as the type of the receiver of an indexed access.
      */
     canBeAccessedByIndex = (type: Type): boolean => {
-        // We must create the non-nullable version since indexed accesses can be null-safe
-        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
-        return this.isList(nonNullableReceiverType) || this.isMap(nonNullableReceiverType);
+        return this.isList(type) || this.isMap(type);
     };
 
     /**
@@ -404,9 +402,14 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is some kind of list (with any element type).
      */
     isList(type: Type): type is ClassType | TypeParameterType {
+        const listOrNull = this.coreTypes.List(UnknownType).updateNullability(true);
+
         return (
             !type.equals(this.coreTypes.Nothing) &&
-            this.isSubtypeOf(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, listOrNull, {
+                ignoreTypeParameters: true,
+            })
         );
     }
 
@@ -414,9 +417,12 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is some kind of map (with any key/value types).
      */
     isMap(type: Type): type is ClassType | TypeParameterType {
+        const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).updateNullability(true);
+
         return (
             !type.equals(this.coreTypes.Nothing) &&
-            this.isSubtypeOf(type, this.coreTypes.Map(UnknownType, UnknownType), {
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, mapOrNull, {
                 ignoreTypeParameters: true,
             })
         );
