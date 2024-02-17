@@ -1,6 +1,6 @@
 package validation.style.unnecessaryElvisOperator
 
-fun f() -> result: Any?
+@Pure fun f() -> result: Any?
 
 pipeline test {
 
@@ -39,4 +39,20 @@ pipeline test {
     »null ?: 2«;
     // $TEST$ info "Both operands are always null, so the elvis operator is unnecessary (replace it with null)."
     »null ?: null«;
+}
+
+class TestsForTypeParameters<Nullable, NonNullable>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ no info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p1: Any? = »nullable ?: 2«,
+    // $TEST$ no info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p2: Any? = »nullable ?: null«,
+    // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p3: Any? = »nonNullable ?: 2«,
+    // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p4: Any? = »nonNullable ?: null«,
+) where {
+    NonNullable sub Any
 }

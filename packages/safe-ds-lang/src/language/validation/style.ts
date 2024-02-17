@@ -222,6 +222,7 @@ export const constraintListShouldNotBeEmpty = (services: SafeDsServices) => {
 export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
     const partialEvaluator = services.evaluation.PartialEvaluator;
     const settingsProvider = services.workspace.SettingsProvider;
+    const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
 
     return async (node: SdsInfixOperation, accept: ValidationAcceptor) => {
@@ -235,7 +236,7 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
         }
 
         const leftType = typeComputer.computeType(node.leftOperand);
-        if (!leftType.isNullable) {
+        if (!typeChecker.canBeNull(leftType)) {
             accept(
                 'info',
                 'The left operand is never null, so the elvis operator is unnecessary (keep the left operand).',
