@@ -1455,9 +1455,9 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     ];
 };
 
-const testCases = [...(await basic()), ...(await classTypesWithTypeParameters()), ...(await typeParameterTypes())];
-
 describe('SafeDsTypeChecker', async () => {
+    const testCases = (await Promise.all([basic(), classTypesWithTypeParameters(), typeParameterTypes()])).flat();
+
     describe.each(testCases)('isSubtypeOf', ({ type1, type2, expected }) => {
         it(`should check whether ${type1} a subtype of ${type2}`, () => {
             expect(typeChecker.isSubtypeOf(type1, type2)).toBe(expected);
@@ -1465,8 +1465,8 @@ describe('SafeDsTypeChecker', async () => {
     });
 
     describe.each(testCases)('isSupertypeOf', ({ type2, type1, expected }) => {
-        it(`should check whether ${type2} a supertype of ${type2}`, () => {
-            expect(typeChecker.isSupertypeOf(type1, type1)).toBe(expected);
+        it(`should check whether ${type2} a supertype of ${type1}`, () => {
+            expect(typeChecker.isSupertypeOf(type2, type1)).toBe(expected);
         });
     });
 });
