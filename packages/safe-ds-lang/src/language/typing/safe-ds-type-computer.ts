@@ -481,25 +481,23 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
-        let result: Type = UnknownType;
-
-        if (this.typeChecker.isList(nonNullableReceiverType)) {
-            const listType = this.computeMatchingSupertype(nonNullableReceiverType, this.coreClasses.List);
-            if (listType) {
-                result = listType.getTypeParameterTypeByIndex(0);
-            }
-        } else if (this.typeChecker.isMap(nonNullableReceiverType)) {
-            const mapType = this.computeMatchingSupertype(nonNullableReceiverType, this.coreClasses.Map);
-            if (mapType) {
-                result = mapType.getTypeParameterTypeByIndex(1);
-            }
-        } else {
+        if (!(receiverType instanceof ClassType) && !(receiverType instanceof TypeParameterType)) {
             return UnknownType;
         }
 
-        // Update nullability
-        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
+        // Receiver is a list
+        const listType = this.computeMatchingSupertype(receiverType, this.coreClasses.List);
+        if (listType) {
+            return listType.getTypeParameterTypeByIndex(0).updateNullability(listType.isNullable && node.isNullSafe);
+        }
+
+        // Receiver is a map
+        const mapType = this.computeMatchingSupertype(receiverType, this.coreClasses.Map);
+        if (mapType) {
+            return mapType.getTypeParameterTypeByIndex(1).updateNullability(mapType.isNullable && node.isNullSafe);
+        }
+
+        return UnknownType;
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -1135,7 +1133,6 @@ export class SafeDsTypeComputer {
     private parentClassType(type: ClassType): ClassType | undefined {
         const [firstParentTypeNode] = getParentTypes(type.declaration);
         const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
-        console.log(firstParentType.toString());
 
         if (firstParentType instanceof ClassType) {
             return firstParentType.updateNullability(type.isNullable || firstParentType.isNullable);
