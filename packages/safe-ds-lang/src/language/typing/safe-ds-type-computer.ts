@@ -891,36 +891,27 @@ export class SafeDsTypeComputer {
     // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
-    lowestCommonSupertype(...types: Type[]): Type {
-        // No types given
-        const flattenedAndUnwrappedTypes = [...this.flattenUnionTypesAndUnwrap(types)];
-        if (isEmpty(flattenedAndUnwrappedTypes)) {
-            return this.coreTypes.Nothing;
+    private lowestCommonSupertype(...types: Type[]): Type {
+        // Simplify types
+        const simplifiedTypes = this.simplifyTypes(types);
+
+        // A single type is its own lowest common supertype
+        if (simplifiedTypes.length === 1) {
+            return simplifiedTypes[0]!;
         }
 
         // Includes type with unknown supertype
-        const groupedTypes = this.groupTypes(flattenedAndUnwrappedTypes);
+        const groupedTypes = this.groupTypes(simplifiedTypes);
         if (groupedTypes.hasTypeWithUnknownSupertype) {
             return UnknownType;
         }
 
-        // Some shortcuts to avoid unnecessary computation
-        if (
-            isEmpty(groupedTypes.classTypes) &&
-            isEmpty(groupedTypes.constants) &&
-            isEmpty(groupedTypes.enumTypes) &&
-            isEmpty(groupedTypes.enumVariantTypes)
-        ) {
-            return this.coreTypes.Nothing;
-        } else if (flattenedAndUnwrappedTypes.length === 1) {
-            return flattenedAndUnwrappedTypes[0]!;
-        }
-
-        const isNullable = flattenedAndUnwrappedTypes.some((it) => it.isNullable);
+        const isNullable = simplifiedTypes.some((it) => it.isNullable);
 
         // Class-based types
         if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
             if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
+                // Class types/literal types are never compatible to enum types/enum variant types
                 return this.Any(isNullable);
             } else {
                 return this.lowestCommonSupertypeForClassBasedTypes(
@@ -939,16 +930,13 @@ export class SafeDsTypeComputer {
         );
     }
 
-    /**
-     * Flattens union types and unwraps all others.
-     */
-    private *flattenUnionTypesAndUnwrap(types: Type[]): Generator<Type, void, undefined> {
-        for (const type of types) {
-            if (type instanceof UnionType) {
-                yield* this.flattenUnionTypesAndUnwrap(type.possibleTypes);
-            } else {
-                yield type.unwrap();
-            }
+    private simplifyTypes(types: Type[]) {
+        const simplifiedType = this.simplifyType(new UnionType(...types));
+
+        if (simplifiedType instanceof UnionType) {
+            return simplifiedType.possibleTypes;
+        } else {
+            return [simplifiedType];
         }
     }
 
@@ -965,11 +953,7 @@ export class SafeDsTypeComputer {
         };
 
         for (const type of types) {
-            if (type.equals(this.coreTypes.Nothing)) {
-                // Do nothing
-            } else if (type.equals(this.coreTypes.NothingOrNull)) {
-                result.constants.push(NullConstant);
-            } else if (type instanceof ClassType) {
+            if (type instanceof ClassType) {
                 result.classTypes.push(type);
             } else if (type instanceof EnumType) {
                 result.enumTypes.push(type);
@@ -999,6 +983,7 @@ export class SafeDsTypeComputer {
         // If there are only constants, return a literal type
         const literalType = new LiteralType(...constants);
         if (isEmpty(classTypes)) {
+            /* c8 ignore next 2 */
             return literalType;
         }
 
@@ -1034,18 +1019,18 @@ export class SafeDsTypeComputer {
     ): Type {
         // Build candidates & other
         const candidates: Type[] = [];
+
         if (!isEmpty(enumTypes)) {
             candidates.push(enumTypes[0]!.updateNullability(isNullable));
-        } else {
-            if (!isEmpty(enumVariantTypes)) {
-                candidates.push(enumVariantTypes[0]!.updateNullability(isNullable));
+        } else if (!isEmpty(enumVariantTypes)) {
+            candidates.push(enumVariantTypes[0]!.updateNullability(isNullable));
 
-                const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
-                if (containingEnum) {
-                    candidates.push(new EnumType(containingEnum, isNullable));
-                }
+            const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
+            if (containingEnum) {
+                candidates.push(new EnumType(containingEnum, isNullable));
             }
         }
+
         const other = [...enumTypes, ...enumVariantTypes];
 
         // Check whether a candidate type is compatible to all other types

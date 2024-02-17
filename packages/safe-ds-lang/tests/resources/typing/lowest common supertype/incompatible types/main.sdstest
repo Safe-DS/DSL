@@ -1,0 +1,39 @@
+package tests.typing.lowestCommonSupertype.incompatibleTypes
+
+class C()
+enum E {
+    V
+}
+
+segment mySegment(
+    e: E,
+    eOrNull: E?,
+    vOrNull: E.V?
+) {
+    // $TEST$ serialization List<Any>
+    »[C(), e]«;
+
+    // $TEST$ serialization List<Any?>
+    »[C(), eOrNull]«;
+
+
+    // $TEST$ serialization List<Any>
+    »[C(), E.V]«;
+
+    // $TEST$ serialization List<Any?>
+    »[C(), vOrNull]«;
+
+
+    // $TEST$ serialization List<Any>
+    »[1, e]«;
+
+    // $TEST$ serialization List<Any?>
+    »[1, eOrNull]«;
+
+
+    // $TEST$ serialization List<Any>
+    »[1, E.V]«;
+
+    // $TEST$ serialization List<Any?>
+    »[1, vOrNull]«;
+}

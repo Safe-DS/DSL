@@ -1,0 +1,20 @@
+package tests.typing.lowestCommonSupertype.simplification
+
+class C()
+
+segment mySegment(
+    p1: union<literal<null>, literal<null>>,
+    p2: literal<>
+) {
+    // $TEST$ serialization List<Nothing?>
+    »[p1, p1]«;
+
+    // $TEST$ serialization List<literal<1, 1.5>>
+    »[1, 1.5]«;
+
+    // $TEST$ serialization List<C>
+    »[C(), p2]«;
+
+    // $TEST$ serialization List<C?>
+    »[C(), null]«;
+}

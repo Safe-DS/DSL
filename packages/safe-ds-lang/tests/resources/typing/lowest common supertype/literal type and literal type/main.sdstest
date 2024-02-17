@@ -1,0 +1,9 @@
+package tests.typing.lowestCommonSupertype.literalTypeAndLiteralType
+
+segment mySegment() {
+    // $TEST$ serialization List<literal<true, 1>>
+    »[true, 1]«;
+
+    // $TEST$ serialization List<literal<true, null>>
+    »[true, null]«;
+}

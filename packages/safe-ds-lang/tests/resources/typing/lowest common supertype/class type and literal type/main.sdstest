@@ -1,0 +1,50 @@
+package tests.typing.lowestCommonSupertype.classTypeAndLiteralType
+
+class C
+
+segment mySegment(
+    c: C,
+    cOrNull: C?,
+    int: Int,
+    intOrNull: Int?,
+    number: Number,
+    numberOrNull: Number?,
+    string: String,
+    stringOrNull: String?,
+    nothing: Nothing,
+    nothingOrNull: Nothing?,
+) {
+    // $TEST$ serialization List<Any>
+    »[1, c]«;
+
+    // $TEST$ serialization List<Any?>
+    »[1, cOrNull]«;
+
+
+    // $TEST$ serialization List<Int>
+    »[1, int]«;
+
+    // $TEST$ serialization List<Int?>
+    »[1, intOrNull]«;
+
+
+    // $TEST$ serialization List<Number>
+    »[1, number]«;
+
+    // $TEST$ serialization List<Number?>
+    »[1, numberOrNull]«;
+
+
+    // $TEST$ serialization List<Any>
+    »[1, string]«;
+
+    // $TEST$ serialization List<Any?>
+    »[1, stringOrNull]«;
+
+
+    // $TEST$ serialization List<literal<1>>
+    »[1, nothing]«;
+
+    // $TEST$ serialization List<literal<1, null>>
+    »[1, nothingOrNull]«;
+}

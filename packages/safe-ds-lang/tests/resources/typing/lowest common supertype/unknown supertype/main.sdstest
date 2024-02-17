@@ -1,0 +1,23 @@
+package tests.typing.lowestCommonSupertype.unknownSupertype
+
+class C
+@Pure fun f() -> (r1: Int, r2: Int)
+
+segment mySegment() {
+    // These types really don't have common supertype
+
+    // $TEST$ serialization List<$unknown>
+    »[1, C]«;
+
+    // $TEST$ serialization List<$unknown>
+    »[1, unknown]«;
+
+
+    // These types don't occur in legal code when we compute the lowest common supertype, so we don't handle them better
+
+    // $TEST$ serialization List<$unknown>
+    »[1, f]«;
+
+    // $TEST$ serialization List<$unknown>
+    »[1, f()]«;
+}
