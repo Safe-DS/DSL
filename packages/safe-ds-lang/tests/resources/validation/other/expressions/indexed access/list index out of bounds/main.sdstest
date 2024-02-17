@@ -3,7 +3,11 @@ package tests.validation.other.indexedAccess.listIndexOutOfBounds
 @Pure
 fun myFunction() -> resultList: List<Int>
 
-segment mySegment(parameterList: List<Int>, parameterIndex: Int) {
+segment mySegment(
+    parameterList: List<Int>,
+    parameterIndex: Int,
+    nullableList: List<Int>?,
+) {
     val placeholderList = [1];
 
     // $TEST$ error "List index '-1' is out of bounds."
@@ -23,6 +27,15 @@ segment mySegment(parameterList: List<Int>, parameterIndex: Int) {
     parameterList[»1«];
     // $TEST$ no error r"List index '.*' is out of bounds\."
     parameterList[»parameterIndex«];
+
+    // $TEST$ error "List index '-1' is out of bounds."
+    nullableList[»-1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    nullableList[»0«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    nullableList[»1«];
+    // $TEST$ no error r"List index '.*' is out of bounds\."
+    nullableList[»parameterIndex«];
 
     // $TEST$ error "List index '-1' is out of bounds."
     placeholderList[»-1«];

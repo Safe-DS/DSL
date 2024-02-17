@@ -118,10 +118,12 @@ import {
 import type { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
+import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly classHierarchy: SafeDsClassHierarchy;
+    private readonly coreClasses: SafeDsClasses;
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
@@ -132,6 +134,7 @@ export class SafeDsTypeComputer {
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.classHierarchy = services.types.ClassHierarchy;
+        this.coreClasses = services.builtins.Classes;
         this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
@@ -478,19 +481,23 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
         const receiverType = this.computeType(node.receiver);
-        const nonNullableReceiverType = this.computeNonNullableType(receiverType);
-        let result: Type = UnknownType;
-
-        if (this.typeChecker.isList(nonNullableReceiverType)) {
-            result = nonNullableReceiverType.getTypeParameterTypeByIndex(0);
-        } else if (this.typeChecker.isMap(nonNullableReceiverType)) {
-            result = nonNullableReceiverType.getTypeParameterTypeByIndex(1);
-        } else {
+        if (!(receiverType instanceof ClassType) && !(receiverType instanceof TypeParameterType)) {
             return UnknownType;
         }
 
-        // Update nullability
-        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
+        // Receiver is a list
+        const listType = this.computeMatchingSupertype(receiverType, this.coreClasses.List);
+        if (listType) {
+            return listType.getTypeParameterTypeByIndex(0).updateNullability(listType.isNullable && node.isNullSafe);
+        }
+
+        // Receiver is a map
+        const mapType = this.computeMatchingSupertype(receiverType, this.coreClasses.Map);
+        if (mapType) {
+            return mapType.getTypeParameterTypeByIndex(1).updateNullability(mapType.isNullable && node.isNullSafe);
+        }
+
+        return UnknownType;
     }
 
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
@@ -498,8 +505,8 @@ export class SafeDsTypeComputer {
         const rightOperandType = this.computeType(node.rightOperand);
 
         if (
-            this.typeChecker.isAssignableTo(leftOperandType, this.coreTypes.Int) &&
-            this.typeChecker.isAssignableTo(rightOperandType, this.coreTypes.Int)
+            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
+            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
         ) {
             return this.coreTypes.Int;
         } else {
@@ -535,9 +542,7 @@ export class SafeDsTypeComputer {
         // Substitute type parameters (must also work for inherited members)
         if (receiverType instanceof ClassType) {
             const classContainingMember = getContainerOfType(node.member?.target.ref, isSdsClass);
-            const typeContainingMember = stream([receiverType], this.streamSupertypes(receiverType)).find(
-                (it) => it.declaration === classContainingMember,
-            );
+            const typeContainingMember = this.computeMatchingSupertype(receiverType, classContainingMember);
 
             if (typeContainingMember) {
                 result = result.substituteTypeParameters(typeContainingMember.substitutions);
@@ -551,7 +556,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
 
-        if (this.typeChecker.isAssignableTo(operandType, this.coreTypes.Int)) {
+        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -725,7 +730,7 @@ export class SafeDsTypeComputer {
 
                 // Remove subtypes of other types
                 otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
-                if (this.typeChecker.isAssignableTo(currentType, otherType)) {
+                if (this.typeChecker.isSubtypeOf(currentType, otherType)) {
                     newPossibleTypes.splice(j, 1, otherType); // Update nullability
                     newPossibleTypes.splice(i, 1);
                     break;
@@ -940,7 +945,7 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Group the given types by their kind.
+     * Group the given types by their kind. This functions assumes that union types have been removed.
      */
     private groupTypes(types: Type[]): GroupTypesResult {
         const result: GroupTypesResult = {
@@ -974,6 +979,10 @@ export class SafeDsTypeComputer {
         return result;
     }
 
+    /**
+     * Returns the lowest common supertype for the given class-based types. This function assumes that either the array
+     * of class types or the array of constants is not empty.
+     */
     private lowestCommonSupertypeForClassBasedTypes(
         classTypes: ClassType[],
         constants: Constant[],
@@ -988,7 +997,7 @@ export class SafeDsTypeComputer {
         // Find the class type that is compatible to all other types
         const candidateClasses = stream(
             [classTypes[0]!.declaration],
-            this.classHierarchy.streamSuperclasses(classTypes[0]!.declaration),
+            this.classHierarchy.streamProperSuperclasses(classTypes[0]!.declaration),
         );
         const other = [...classTypes.slice(1), literalType];
 
@@ -1006,6 +1015,10 @@ export class SafeDsTypeComputer {
         return this.Any(isNullable);
     }
 
+    /**
+     * Returns the lowest common supertype for the given enum-based types. This function assumes that either the array
+     * of enum types or the array of enum variant types is not empty.
+     */
     private lowestCommonSupertypeForEnumBasedTypes(
         enumTypes: EnumType[],
         enumVariantTypes: EnumVariantType[],
@@ -1038,7 +1051,7 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
+        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(it, candidate));
     }
 
     private Any(isNullable: boolean): Type {
@@ -1046,36 +1059,68 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Stream supertypes
+    // Supertypes
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns a stream of all declared super types of the given type. Direct ancestors are returned first, followed by
+     * Walks through the supertypes of the given `type` (including the given `type`) and returns the first class type
+     * where the declaration matches the given `target`. If no such supertype exists, `undefined` is returned. Type
+     * parameters on parent types get substituted.
+     */
+    computeMatchingSupertype(
+        type: ClassType | TypeParameterType | undefined,
+        target: SdsClass | undefined,
+    ): ClassType | undefined {
+        // Handle undefined
+        if (!type || !target) {
+            return undefined;
+        }
+
+        // Handle type parameter types
+        if (type instanceof TypeParameterType) {
+            const upperBound = this.computeUpperBound(type);
+            if (upperBound instanceof ClassType) {
+                return this.computeMatchingSupertype(upperBound, target);
+            } else {
+                /* c8 ignore next 2 */
+                return undefined;
+            }
+        }
+
+        // Handle class types
+        return stream([type], this.streamProperSupertypes(type)).find((it) => it.declaration === target);
+    }
+
+    /**
+     * Returns a stream of all declared supertypes of the given type. Direct ancestors are returned first, followed by
      * their ancestors and so on. The given type is never included in the stream.
      *
      * Compared to `ClassHierarchy.streamSuperTypes`, this method cannot be used to detect cycles in the inheritance
      * hierarchy. However, it can handle type parameters on parent types and substitute them accordingly.
      */
-    streamSupertypes(type: ClassType | undefined): Stream<ClassType> {
+    streamProperSupertypes(type: ClassType | undefined): Stream<ClassType> {
         if (!type) {
             return EMPTY_STREAM;
         }
 
-        return stream(this.supertypesGenerator(type));
+        return stream(this.properSupertypesGenerator(type));
     }
 
-    private *supertypesGenerator(type: ClassType): Generator<ClassType, void> {
-        // Compared to `ClassHierarchy.superclassesGenerator`, we already include the given type in the list of visited
-        // elements, since this method here is not used to detect cycles.
+    private *properSupertypesGenerator(type: ClassType): Generator<ClassType, void> {
+        // Compared to `ClassHierarchy.properSuperclassesGenerator`, we already include the given type in the list of
+        // visited elements, since this method here is not used to detect cycles.
         const visited = new Set<SdsClass>([type.declaration]);
+        let isNullable = type.isNullable;
         let current = this.parentClassType(type);
+
         while (current && !visited.has(current.declaration)) {
             yield current;
             visited.add(current.declaration);
+            isNullable ||= current.isNullable;
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any;
+        const Any = this.coreTypes.Any.updateNullability(isNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1086,12 +1131,12 @@ export class SafeDsTypeComputer {
      * parameters get substituted. If there is no parent type or the parent type is not a class, `undefined` is
      * returned.
      */
-    private parentClassType(type: ClassType | undefined): ClassType | undefined {
-        const [firstParentTypeNode] = getParentTypes(type?.declaration);
-        const firstParentType = this.computeType(firstParentTypeNode, type?.substitutions);
+    private parentClassType(type: ClassType): ClassType | undefined {
+        const [firstParentTypeNode] = getParentTypes(type.declaration);
+        const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
 
         if (firstParentType instanceof ClassType) {
-            return firstParentType;
+            return firstParentType.updateNullability(type.isNullable || firstParentType.isNullable);
         }
         return undefined;
     }

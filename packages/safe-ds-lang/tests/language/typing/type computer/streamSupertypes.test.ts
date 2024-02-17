@@ -9,15 +9,15 @@ import { AssertionError } from 'assert';
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const typeComputer = services.types.TypeComputer;
 
-describe('streamSupertypes', async () => {
-    const supertypesAsStrings = (type: ClassType | undefined) =>
+describe('streamProperSupertypes', async () => {
+    const properSupertypesAsStrings = (type: ClassType | undefined) =>
         typeComputer
-            .streamSupertypes(type)
+            .streamProperSupertypes(type)
             .map((clazz) => clazz.toString())
             .toArray();
 
     it('should return an empty stream if passed undefined', () => {
-        expect(supertypesAsStrings(undefined)).toStrictEqual([]);
+        expect(properSupertypesAsStrings(undefined)).toStrictEqual([]);
     });
 
     const testCases = [
@@ -105,6 +105,30 @@ describe('streamSupertypes', async () => {
                 `,
             expected: ['B', 'Any'],
         },
+        {
+            testName: 'should consider the nullability of the parent type',
+            code: `
+                    class Test {
+                        attr a: A
+                    }
+
+                    class A sub B?
+                    class B
+            `,
+            expected: ['B?', 'Any?'],
+        },
+        {
+            testName: 'should consider the nullability of the start type',
+            code: `
+                    class Test {
+                        attr a: A?
+                    }
+
+                    class A sub B
+                    class B
+            `,
+            expected: ['B?', 'Any?'],
+        },
     ];
 
     it.each(testCases)('$testName', async ({ code, expected }) => {
@@ -114,6 +138,6 @@ describe('streamSupertypes', async () => {
             throw new AssertionError({ message: 'Expected type to be an instance of ClassType.', actual: type });
         }
 
-        expect(supertypesAsStrings(type)).toStrictEqual(expected);
+        expect(properSupertypesAsStrings(type)).toStrictEqual(expected);
     });
 });

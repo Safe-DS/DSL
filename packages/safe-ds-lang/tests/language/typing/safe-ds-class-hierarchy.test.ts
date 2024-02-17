@@ -60,15 +60,15 @@ describe('SafeDsClassHierarchy', async () => {
         });
     });
 
-    describe('streamSuperclasses', () => {
-        const superclassNames = (node: SdsClass | undefined) =>
+    describe('streamProperSuperclasses', () => {
+        const properSuperclassesNames = (node: SdsClass | undefined) =>
             classHierarchy
-                .streamSuperclasses(node)
+                .streamProperSuperclasses(node)
                 .map((clazz) => clazz.name)
                 .toArray();
 
         it('should return an empty stream if passed undefined', () => {
-            expect(superclassNames(undefined)).toStrictEqual([]);
+            expect(properSuperclassesNames(undefined)).toStrictEqual([]);
         });
 
         const testCases = [
@@ -124,7 +124,7 @@ describe('SafeDsClassHierarchy', async () => {
 
         it.each(testCases)('$testName', async ({ code, expected }) => {
             const firstClass = await getNodeOfType(services, code, isSdsClass);
-            expect(superclassNames(firstClass)).toStrictEqual(expected);
+            expect(properSuperclassesNames(firstClass)).toStrictEqual(expected);
         });
     });
 

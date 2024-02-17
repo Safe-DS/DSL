@@ -24,8 +24,8 @@ export const divisionDivisorMustNotBeZero = (services: SafeDsServices) => {
         const dividendType = typeComputer.computeType(node.leftOperand);
         if (
             dividendType === UnknownType ||
-            (!typeChecker.isAssignableTo(dividendType, coreTypes.Float) &&
-                !typeChecker.isAssignableTo(dividendType, coreTypes.Int))
+            (!typeChecker.isSubtypeOf(dividendType, coreTypes.Float) &&
+                !typeChecker.isSubtypeOf(dividendType, coreTypes.Int))
         ) {
             return;
         }

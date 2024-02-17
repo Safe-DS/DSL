@@ -25,3 +25,18 @@ pipeline myPipeline {
     // $TEST$ no error r"Expected type .* but got .*\."
     unresolved[»""«];
 }
+
+class MyMap sub Map<String, Int>
+
+segment mySegment(
+    myMap: MyMap,
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myMap[»""«];
+
+    // $TEST$ error "Expected type 'String' but got 'literal<1>'."
+    myMap[»1«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myMap[»key()«];
+}

@@ -1,9 +1,15 @@
 package tests.validation.types.checking.indexedAccessReceiver
 
+class MyList sub List<Int>
+class MyMap sub Map<String, Int>
+
 segment mySegment(
     listOrNull: List<Int>?,
     mapOrNull: Map<String, Int>?,
     intOrNull: Int?,
+
+    myList: MyList,
+    myMap: MyMap,
 ) {
     // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
     »[1]«[0];
@@ -23,6 +29,13 @@ segment mySegment(
 
     // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'Int?'."
     »intOrNull«[0];
+
+
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »myList«[0];
+
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »myMap«[""];
 
 
     // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got '$unknown'."

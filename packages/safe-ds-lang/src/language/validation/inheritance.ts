@@ -1,4 +1,4 @@
-import { expandToStringWithNL, getContainerOfType, stream, ValidationAcceptor } from 'langium';
+import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
 import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
@@ -34,8 +34,9 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
 
         if (typeContainingOwnMember instanceof ClassType) {
             const classContainingOverriddenMember = getContainerOfType(overriddenMember, isSdsClass);
-            const typeContainingOverriddenMember = stream(typeComputer.streamSupertypes(typeContainingOwnMember)).find(
-                (it) => it.declaration === classContainingOverriddenMember,
+            const typeContainingOverriddenMember = typeComputer.computeMatchingSupertype(
+                typeContainingOwnMember,
+                classContainingOverriddenMember,
             );
 
             if (typeContainingOverriddenMember) {
@@ -45,7 +46,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             }
         }
 
-        if (!typeChecker.isAssignableTo(ownMemberType, overriddenMemberType)) {
+        if (!typeChecker.isSubtypeOf(ownMemberType, overriddenMemberType)) {
             accept(
                 'error',
                 expandToStringWithNL`
@@ -59,7 +60,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
                     code: CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER,
                 },
             );
-        } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
+        } else if (typeChecker.isSubtypeOf(overriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
                 return;
@@ -135,7 +136,7 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
     const classHierarchy = services.types.ClassHierarchy;
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
-        const superClasses = classHierarchy.streamSuperclasses(node);
+        const superClasses = classHierarchy.streamProperSuperclasses(node);
         if (superClasses.includes(node)) {
             accept('error', 'A class must not directly or indirectly be a subtype of itself.', {
                 node: getParentTypes(node)[0]!,

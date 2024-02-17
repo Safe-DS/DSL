@@ -26,7 +26,7 @@ import {
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { NamedTupleType, UnknownType } from '../typing/model.js';
+import { ClassType, NamedTupleType, TypeParameterType, UnknownType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -51,7 +51,7 @@ export const argumentTypeMustMatchParameterType = (services: SafeDsServices) => 
         const argumentType = typeComputer.computeType(node);
         const parameterType = typeComputer.computeType(parameter);
 
-        if (!typeChecker.isAssignableTo(argumentType, parameterType)) {
+        if (!typeChecker.isSubtypeOf(argumentType, parameterType)) {
             accept('error', `Expected type '${parameterType}' but got '${argumentType}'.`, {
                 node,
                 property: 'value',
@@ -115,6 +115,7 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
 };
 
 export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreClasses = services.builtins.Classes;
     const coreTypes = services.types.CoreTypes;
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
@@ -123,22 +124,25 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
         const receiverType = typeComputer.computeType(node.receiver);
         if (typeChecker.isList(receiverType)) {
             const indexType = typeComputer.computeType(node.index);
-            if (!typeChecker.isAssignableTo(indexType, coreTypes.Int)) {
+            if (!typeChecker.isSubtypeOf(indexType, coreTypes.Int)) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
                     node,
                     property: 'index',
                     code: CODE_TYPE_MISMATCH,
                 });
             }
-        } else if (typeChecker.isMap(receiverType)) {
-            const keyType = receiverType.getTypeParameterTypeByIndex(0);
-            const indexType = typeComputer.computeType(node.index);
-            if (!typeChecker.isAssignableTo(indexType, keyType)) {
-                accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
-                    node,
-                    property: 'index',
-                    code: CODE_TYPE_MISMATCH,
-                });
+        } else if (receiverType instanceof ClassType || receiverType instanceof TypeParameterType) {
+            const mapType = typeComputer.computeMatchingSupertype(receiverType, coreClasses.Map);
+            if (mapType) {
+                const keyType = mapType.getTypeParameterTypeByIndex(0);
+                const indexType = typeComputer.computeType(node.index);
+                if (!typeChecker.isSubtypeOf(indexType, keyType)) {
+                    accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
+                        node,
+                        property: 'index',
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
             }
         }
     };
@@ -155,13 +159,13 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
         switch (node.operator) {
             case 'or':
             case 'and':
-                if (node.leftOperand && !typeChecker.isAssignableTo(leftType, coreTypes.Boolean)) {
+                if (node.leftOperand && !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
                         node: node.leftOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
                 }
-                if (node.rightOperand && !typeChecker.isAssignableTo(rightType, coreTypes.Boolean)) {
+                if (node.rightOperand && !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
                         node: node.rightOperand,
                         code: CODE_TYPE_MISMATCH,
@@ -178,8 +182,8 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
             case '/':
                 if (
                     node.leftOperand &&
-                    !typeChecker.isAssignableTo(leftType, coreTypes.Float) &&
-                    !typeChecker.isAssignableTo(leftType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Float) &&
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int)
                 ) {
                     accept('error', `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${leftType}'.`, {
                         node: node.leftOperand,
@@ -188,8 +192,8 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                 }
                 if (
                     node.rightOperand &&
-                    !typeChecker.isAssignableTo(rightType, coreTypes.Float) &&
-                    !typeChecker.isAssignableTo(rightType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Float) &&
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int)
                 ) {
                     accept(
                         'error',
@@ -260,7 +264,7 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
         const defaultValueType = typeComputer.computeType(defaultValue);
         const parameterType = typeComputer.computeType(node);
 
-        if (!typeChecker.isAssignableTo(defaultValueType, parameterType)) {
+        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType)) {
             accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
@@ -279,7 +283,7 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
         const operandType = typeComputer.computeType(node.operand);
         switch (node.operator) {
             case 'not':
-                if (!typeChecker.isAssignableTo(operandType, coreTypes.Boolean)) {
+                if (!typeChecker.isSubtypeOf(operandType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${operandType}'.`, {
                         node,
                         property: 'operand',
@@ -289,8 +293,8 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
                 return;
             case '-':
                 if (
-                    !typeChecker.isAssignableTo(operandType, coreTypes.Float) &&
-                    !typeChecker.isAssignableTo(operandType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Float) &&
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int)
                 ) {
                     accept(
                         'error',
@@ -335,7 +339,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const yieldType = typeComputer.computeType(node);
         const resultType = typeComputer.computeType(result);
 
-        if (!typeChecker.isAssignableTo(yieldType, resultType)) {
+        if (!typeChecker.isSubtypeOf(yieldType, resultType)) {
             accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',
