@@ -50,9 +50,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is assignable {@link other}.
      */
-    isAssignableTo = (type: Type, other: Type, options?: IsAssignableToOptions): boolean => {
-        const ignoreTypeParameters = options?.ignoreTypeParameters ?? false;
-
+    isAssignableTo = (type: Type, other: Type, options: IsAssignableToOptions = {}): boolean => {
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (other instanceof TypeParameterType) {
@@ -60,44 +58,47 @@ export class SafeDsTypeChecker {
             const otherUpperBound = this.typeComputer().computeUpperBound(other);
 
             if (!(type instanceof TypeParameterType)) {
-                return this.isAssignableTo(otherLowerBound, type) && this.isAssignableTo(type, otherUpperBound);
+                return (
+                    this.isAssignableTo(otherLowerBound, type, options) &&
+                    this.isAssignableTo(type, otherUpperBound, options)
+                );
             }
 
             const typeLowerBound = this.typeComputer().computeLowerBound(type);
             const typeUpperBound = this.typeComputer().computeUpperBound(type);
 
             return (
-                this.isAssignableTo(otherLowerBound, typeLowerBound) &&
-                this.isAssignableTo(typeUpperBound, otherUpperBound)
+                this.isAssignableTo(otherLowerBound, typeLowerBound, options) &&
+                this.isAssignableTo(typeUpperBound, otherUpperBound, options)
             );
         } else if (other instanceof UnionType) {
-            return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
+            return other.possibleTypes.some((it) => this.isAssignableTo(type, it, options));
         }
 
         if (type instanceof CallableType) {
-            return this.callableTypeIsAssignableTo(type, other);
+            return this.callableTypeIsAssignableTo(type, other, options);
         } else if (type instanceof ClassType) {
-            return this.classTypeIsAssignableTo(type, other, ignoreTypeParameters);
+            return this.classTypeIsAssignableTo(type, other, options);
         } else if (type instanceof EnumType) {
             return this.enumTypeIsAssignableTo(type, other);
         } else if (type instanceof EnumVariantType) {
             return this.enumVariantTypeIsAssignableTo(type, other);
         } else if (type instanceof LiteralType) {
-            return this.literalTypeIsAssignableTo(type, other);
+            return this.literalTypeIsAssignableTo(type, other, options);
         } else if (type instanceof NamedTupleType) {
-            return this.namedTupleTypeIsAssignableTo(type, other);
+            return this.namedTupleTypeIsAssignableTo(type, other, options);
         } else if (type instanceof StaticType) {
-            return this.staticTypeIsAssignableTo(type, other);
+            return this.staticTypeIsAssignableTo(type, other, options);
         } else if (type instanceof TypeParameterType) {
-            return this.typeParameterTypeIsAssignableTo(type, other);
+            return this.typeParameterTypeIsAssignableTo(type, other, options);
         } else if (type instanceof UnionType) {
-            return this.unionTypeIsAssignableTo(type, other);
+            return this.unionTypeIsAssignableTo(type, other, options);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
     };
 
-    private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
+    private callableTypeIsAssignableTo(type: CallableType, other: Type, options: IsAssignableToOptions): boolean {
         if (other instanceof ClassType) {
             return other.declaration === this.builtinClasses.Any;
         } else if (other instanceof CallableType) {
@@ -122,7 +123,7 @@ export class SafeDsTypeChecker {
                 }
 
                 // Types must be contravariant
-                if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
+                if (!this.isAssignableTo(otherEntry.type, typeEntry.type, options)) {
                     return false;
                 }
             }
@@ -143,7 +144,7 @@ export class SafeDsTypeChecker {
                 // Names must not match since we always fetch results by index
 
                 // Types must be covariant
-                if (!this.isAssignableTo(typeEntry.type, otherEntry.type)) {
+                if (!this.isAssignableTo(typeEntry.type, otherEntry.type, options)) {
                     return false;
                 }
             }
@@ -156,7 +157,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private classTypeIsAssignableTo(type: ClassType, other: Type, ignoreTypeParameters: boolean): boolean {
+    private classTypeIsAssignableTo(type: ClassType, other: Type, options: IsAssignableToOptions): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         } else if (type.declaration === this.builtinClasses.Nothing) {
@@ -170,7 +171,7 @@ export class SafeDsTypeChecker {
 
             // We are done already if we ignore type parameters or if the other type has no type parameters
             const typeParameters = getTypeParameters(other.declaration);
-            if (ignoreTypeParameters || isEmpty(typeParameters)) {
+            if (options.ignoreTypeParameters || isEmpty(typeParameters)) {
                 return true;
             }
 
@@ -189,9 +190,9 @@ export class SafeDsTypeChecker {
                 if (TypeParameter.isInvariant(it)) {
                     return candidateType !== UnknownType && candidateType.equals(otherType);
                 } else if (TypeParameter.isCovariant(it)) {
-                    return this.isAssignableTo(candidateType, otherType);
+                    return this.isAssignableTo(candidateType, otherType, options);
                 } else {
-                    return this.isAssignableTo(otherType, candidateType);
+                    return this.isAssignableTo(otherType, candidateType, options);
                 }
             });
         } else {
@@ -230,7 +231,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private literalTypeIsAssignableTo(type: LiteralType, other: Type): boolean {
+    private literalTypeIsAssignableTo(type: LiteralType, other: Type, options: IsAssignableToOptions): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         } else if (type.constants.length === 0) {
@@ -246,7 +247,7 @@ export class SafeDsTypeChecker {
                 return true;
             }
 
-            return type.constants.every((constant) => this.constantIsAssignableToClassType(constant, other));
+            return type.constants.every((constant) => this.constantIsAssignableToClassType(constant, other, options));
         } else if (other instanceof LiteralType) {
             return type.constants.every((constant) =>
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
@@ -256,19 +257,30 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private constantIsAssignableToClassType(constant: Constant, other: ClassType): boolean {
+    private constantIsAssignableToClassType(
+        constant: Constant,
+        other: ClassType,
+        options: IsAssignableToOptions,
+    ): boolean {
         const classType = this.typeComputer().computeClassTypeForConstant(constant);
-        return this.isAssignableTo(classType, other);
+        return this.isAssignableTo(classType, other, options);
     }
 
-    private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
+    private namedTupleTypeIsAssignableTo(
+        type: NamedTupleType<SdsDeclaration>,
+        other: Type,
+        options: IsAssignableToOptions,
+    ): boolean {
         if (other instanceof NamedTupleType) {
             return (
                 type.length === other.length &&
                 type.entries.every((typeEntry, i) => {
                     const otherEntry = other.entries[i]!;
                     // We deliberately ignore the declarations here
-                    return typeEntry.name === otherEntry.name && this.isAssignableTo(typeEntry.type, otherEntry.type);
+                    return (
+                        typeEntry.name === otherEntry.name &&
+                        this.isAssignableTo(typeEntry.type, otherEntry.type, options)
+                    );
                 })
             );
         } else {
@@ -276,9 +288,9 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private staticTypeIsAssignableTo(type: StaticType, other: Type): boolean {
+    private staticTypeIsAssignableTo(type: StaticType, other: Type, options: IsAssignableToOptions): boolean {
         if (other instanceof CallableType) {
-            return this.isAssignableTo(this.associatedCallableTypeForStaticType(type), other);
+            return this.isAssignableTo(this.associatedCallableTypeForStaticType(type), other, options);
         } else {
             return type.equals(other);
         }
@@ -320,13 +332,17 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private typeParameterTypeIsAssignableTo(type: TypeParameterType, other: Type): boolean {
+    private typeParameterTypeIsAssignableTo(
+        type: TypeParameterType,
+        other: Type,
+        options: IsAssignableToOptions,
+    ): boolean {
         const upperBound = this.typeComputer().computeUpperBound(type);
-        return this.isAssignableTo(upperBound, other);
+        return this.isAssignableTo(upperBound, other, options);
     }
 
-    private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
-        return type.possibleTypes.every((it) => this.isAssignableTo(it, other));
+    private unionTypeIsAssignableTo(type: UnionType, other: Type, options: IsAssignableToOptions): boolean {
+        return type.possibleTypes.every((it) => this.isAssignableTo(it, other, options));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -390,7 +406,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is some kind of list (with any element type).
      */
-    isList(type: Type): type is ClassType {
+    isList(type: Type): boolean {
         return (
             !type.equals(this.coreTypes.Nothing) &&
             this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
@@ -400,7 +416,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is some kind of map (with any key/value types).
      */
-    isMap(type: Type): type is ClassType {
+    isMap(type: Type): boolean {
         return (
             !type.equals(this.coreTypes.Nothing) &&
             this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
