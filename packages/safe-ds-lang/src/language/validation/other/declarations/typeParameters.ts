@@ -121,7 +121,7 @@ export const typeParameterBoundsMustBeCompatible = (services: SafeDsServices) =>
             return;
         }
 
-        if (!typeChecker.isAssignableTo(lowerBound, upperBound)) {
+        if (!typeChecker.isSubtypeOf(lowerBound, upperBound)) {
             accept('error', `The lower bound '${lowerBound}' is not assignable to the upper bound '${upperBound}'.`, {
                 node,
                 code: CODE_TYPE_PARAMETER_INCOMPATIBLE_BOUNDS,

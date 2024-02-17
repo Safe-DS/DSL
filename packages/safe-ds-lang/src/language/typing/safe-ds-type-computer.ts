@@ -507,8 +507,8 @@ export class SafeDsTypeComputer {
         const rightOperandType = this.computeType(node.rightOperand);
 
         if (
-            this.typeChecker.isAssignableTo(leftOperandType, this.coreTypes.Int) &&
-            this.typeChecker.isAssignableTo(rightOperandType, this.coreTypes.Int)
+            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
+            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
         ) {
             return this.coreTypes.Int;
         } else {
@@ -558,7 +558,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
 
-        if (this.typeChecker.isAssignableTo(operandType, this.coreTypes.Int)) {
+        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -732,7 +732,7 @@ export class SafeDsTypeComputer {
 
                 // Remove subtypes of other types
                 otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
-                if (this.typeChecker.isAssignableTo(currentType, otherType)) {
+                if (this.typeChecker.isSubtypeOf(currentType, otherType)) {
                     newPossibleTypes.splice(j, 1, otherType); // Update nullability
                     newPossibleTypes.splice(i, 1);
                     break;
@@ -1053,7 +1053,7 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isAssignableTo(it, candidate));
+        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(it, candidate));
     }
 
     private Any(isNullable: boolean): Type {

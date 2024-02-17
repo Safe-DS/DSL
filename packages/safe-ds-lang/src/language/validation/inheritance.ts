@@ -46,7 +46,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             }
         }
 
-        if (!typeChecker.isAssignableTo(ownMemberType, overriddenMemberType)) {
+        if (!typeChecker.isSubtypeOf(ownMemberType, overriddenMemberType)) {
             accept(
                 'error',
                 expandToStringWithNL`
@@ -60,7 +60,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
                     code: CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER,
                 },
             );
-        } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
+        } else if (typeChecker.isSubtypeOf(overriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
                 return;

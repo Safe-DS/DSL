@@ -44,13 +44,20 @@ export class SafeDsTypeChecker {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // isAssignableTo
+    // General cases
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Checks whether {@link type} is assignable {@link other}.
+     * Checks whether {@link type} is a supertype of {@link other}.
      */
-    isAssignableTo = (type: Type, other: Type, options: IsAssignableToOptions = {}): boolean => {
+    isSupertypeOf = (type: Type, other: Type, options: TypeCheckOptions = {}): boolean => {
+        return this.isSubtypeOf(other, type, options);
+    };
+
+    /**
+     * Checks whether {@link type} is a subtype of {@link other}.
+     */
+    isSubtypeOf = (type: Type, other: Type, options: TypeCheckOptions = {}): boolean => {
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (other instanceof TypeParameterType) {
@@ -59,8 +66,7 @@ export class SafeDsTypeChecker {
 
             if (!(type instanceof TypeParameterType)) {
                 return (
-                    this.isAssignableTo(otherLowerBound, type, options) &&
-                    this.isAssignableTo(type, otherUpperBound, options)
+                    this.isSubtypeOf(otherLowerBound, type, options) && this.isSubtypeOf(type, otherUpperBound, options)
                 );
             }
 
@@ -68,37 +74,37 @@ export class SafeDsTypeChecker {
             const typeUpperBound = this.typeComputer().computeUpperBound(type);
 
             return (
-                this.isAssignableTo(otherLowerBound, typeLowerBound, options) &&
-                this.isAssignableTo(typeUpperBound, otherUpperBound, options)
+                this.isSubtypeOf(otherLowerBound, typeLowerBound, options) &&
+                this.isSubtypeOf(typeUpperBound, otherUpperBound, options)
             );
         } else if (other instanceof UnionType) {
-            return other.possibleTypes.some((it) => this.isAssignableTo(type, it, options));
+            return other.possibleTypes.some((it) => this.isSubtypeOf(type, it, options));
         }
 
         if (type instanceof CallableType) {
-            return this.callableTypeIsAssignableTo(type, other, options);
+            return this.callableTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof ClassType) {
-            return this.classTypeIsAssignableTo(type, other, options);
+            return this.classTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof EnumType) {
-            return this.enumTypeIsAssignableTo(type, other);
+            return this.enumTypeIsSubtypeOf(type, other);
         } else if (type instanceof EnumVariantType) {
-            return this.enumVariantTypeIsAssignableTo(type, other);
+            return this.enumVariantTypeIsSubtypeOf(type, other);
         } else if (type instanceof LiteralType) {
-            return this.literalTypeIsAssignableTo(type, other, options);
+            return this.literalTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof NamedTupleType) {
-            return this.namedTupleTypeIsAssignableTo(type, other, options);
+            return this.namedTupleTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof StaticType) {
-            return this.staticTypeIsAssignableTo(type, other, options);
+            return this.staticTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof TypeParameterType) {
-            return this.typeParameterTypeIsAssignableTo(type, other, options);
+            return this.typeParameterTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof UnionType) {
-            return this.unionTypeIsAssignableTo(type, other, options);
+            return this.unionTypeIsSubtypeOf(type, other, options);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
     };
 
-    private callableTypeIsAssignableTo(type: CallableType, other: Type, options: IsAssignableToOptions): boolean {
+    private callableTypeIsSubtypeOf(type: CallableType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof ClassType) {
             return other.declaration === this.builtinClasses.Any;
         } else if (other instanceof CallableType) {
@@ -123,7 +129,7 @@ export class SafeDsTypeChecker {
                 }
 
                 // Types must be contravariant
-                if (!this.isAssignableTo(otherEntry.type, typeEntry.type, options)) {
+                if (!this.isSubtypeOf(otherEntry.type, typeEntry.type, options)) {
                     return false;
                 }
             }
@@ -144,7 +150,7 @@ export class SafeDsTypeChecker {
                 // Names must not match since we always fetch results by index
 
                 // Types must be covariant
-                if (!this.isAssignableTo(typeEntry.type, otherEntry.type, options)) {
+                if (!this.isSubtypeOf(typeEntry.type, otherEntry.type, options)) {
                     return false;
                 }
             }
@@ -157,7 +163,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private classTypeIsAssignableTo(type: ClassType, other: Type, options: IsAssignableToOptions): boolean {
+    private classTypeIsSubtypeOf(type: ClassType, other: Type, options: TypeCheckOptions): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         } else if (type.declaration === this.builtinClasses.Nothing) {
@@ -190,9 +196,9 @@ export class SafeDsTypeChecker {
                 if (TypeParameter.isInvariant(it)) {
                     return candidateType !== UnknownType && candidateType.equals(otherType);
                 } else if (TypeParameter.isCovariant(it)) {
-                    return this.isAssignableTo(candidateType, otherType, options);
+                    return this.isSubtypeOf(candidateType, otherType, options);
                 } else {
-                    return this.isAssignableTo(otherType, candidateType, options);
+                    return this.isSubtypeOf(otherType, candidateType, options);
                 }
             });
         } else {
@@ -200,7 +206,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private enumTypeIsAssignableTo(type: EnumType, other: Type): boolean {
+    private enumTypeIsSubtypeOf(type: EnumType, other: Type): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         }
@@ -214,7 +220,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private enumVariantTypeIsAssignableTo(type: EnumVariantType, other: Type): boolean {
+    private enumVariantTypeIsSubtypeOf(type: EnumVariantType, other: Type): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         }
@@ -231,7 +237,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private literalTypeIsAssignableTo(type: LiteralType, other: Type, options: IsAssignableToOptions): boolean {
+    private literalTypeIsSubtypeOf(type: LiteralType, other: Type, options: TypeCheckOptions): boolean {
         if (type.isNullable && !other.isNullable) {
             return false;
         } else if (type.constants.length === 0) {
@@ -247,7 +253,7 @@ export class SafeDsTypeChecker {
                 return true;
             }
 
-            return type.constants.every((constant) => this.constantIsAssignableToClassType(constant, other, options));
+            return type.constants.every((constant) => this.constantIsSubtypeOfClassType(constant, other, options));
         } else if (other instanceof LiteralType) {
             return type.constants.every((constant) =>
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
@@ -257,19 +263,15 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private constantIsAssignableToClassType(
-        constant: Constant,
-        other: ClassType,
-        options: IsAssignableToOptions,
-    ): boolean {
+    private constantIsSubtypeOfClassType(constant: Constant, other: ClassType, options: TypeCheckOptions): boolean {
         const classType = this.typeComputer().computeClassTypeForConstant(constant);
-        return this.isAssignableTo(classType, other, options);
+        return this.isSubtypeOf(classType, other, options);
     }
 
-    private namedTupleTypeIsAssignableTo(
+    private namedTupleTypeIsSubtypeOf(
         type: NamedTupleType<SdsDeclaration>,
         other: Type,
-        options: IsAssignableToOptions,
+        options: TypeCheckOptions,
     ): boolean {
         if (other instanceof NamedTupleType) {
             return (
@@ -278,8 +280,7 @@ export class SafeDsTypeChecker {
                     const otherEntry = other.entries[i]!;
                     // We deliberately ignore the declarations here
                     return (
-                        typeEntry.name === otherEntry.name &&
-                        this.isAssignableTo(typeEntry.type, otherEntry.type, options)
+                        typeEntry.name === otherEntry.name && this.isSubtypeOf(typeEntry.type, otherEntry.type, options)
                     );
                 })
             );
@@ -288,9 +289,9 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private staticTypeIsAssignableTo(type: StaticType, other: Type, options: IsAssignableToOptions): boolean {
+    private staticTypeIsSubtypeOf(type: StaticType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof CallableType) {
-            return this.isAssignableTo(this.associatedCallableTypeForStaticType(type), other, options);
+            return this.isSubtypeOf(this.associatedCallableTypeForStaticType(type), other, options);
         } else {
             return type.equals(other);
         }
@@ -332,21 +333,17 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private typeParameterTypeIsAssignableTo(
-        type: TypeParameterType,
-        other: Type,
-        options: IsAssignableToOptions,
-    ): boolean {
+    private typeParameterTypeIsSubtypeOf(type: TypeParameterType, other: Type, options: TypeCheckOptions): boolean {
         const upperBound = this.typeComputer().computeUpperBound(type);
-        return this.isAssignableTo(upperBound, other, options);
+        return this.isSubtypeOf(upperBound, other, options);
     }
 
-    private unionTypeIsAssignableTo(type: UnionType, other: Type, options: IsAssignableToOptions): boolean {
-        return type.possibleTypes.every((it) => this.isAssignableTo(it, other, options));
+    private unionTypeIsSubtypeOf(type: UnionType, other: Type, options: TypeCheckOptions): boolean {
+        return type.possibleTypes.every((it) => this.isSubtypeOf(it, other, options));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Other
+    // Special cases
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
@@ -409,7 +406,7 @@ export class SafeDsTypeChecker {
     isList(type: Type): boolean {
         return (
             !type.equals(this.coreTypes.Nothing) &&
-            this.isAssignableTo(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
+            this.isSubtypeOf(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
         );
     }
 
@@ -419,13 +416,13 @@ export class SafeDsTypeChecker {
     isMap(type: Type): boolean {
         return (
             !type.equals(this.coreTypes.Nothing) &&
-            this.isAssignableTo(type, this.coreTypes.Map(UnknownType, UnknownType), {
+            this.isSubtypeOf(type, this.coreTypes.Map(UnknownType, UnknownType), {
                 ignoreTypeParameters: true,
             })
         );
     }
 }
 
-interface IsAssignableToOptions {
+interface TypeCheckOptions {
     ignoreTypeParameters?: boolean;
 }
