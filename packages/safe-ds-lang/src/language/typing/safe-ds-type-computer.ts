@@ -118,10 +118,12 @@ import {
 import type { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
+import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly classHierarchy: SafeDsClassHierarchy;
+    private readonly coreClasses: SafeDsClasses;
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
@@ -132,6 +134,7 @@ export class SafeDsTypeComputer {
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.classHierarchy = services.types.ClassHierarchy;
+        this.coreClasses = services.builtins.Classes;
         this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
@@ -482,9 +485,15 @@ export class SafeDsTypeComputer {
         let result: Type = UnknownType;
 
         if (this.typeChecker.isList(nonNullableReceiverType)) {
-            result = nonNullableReceiverType.getTypeParameterTypeByIndex(0);
+            const listType = this.computeMatchingSupertype(nonNullableReceiverType, this.coreClasses.List);
+            if (listType) {
+                result = listType.getTypeParameterTypeByIndex(0);
+            }
         } else if (this.typeChecker.isMap(nonNullableReceiverType)) {
-            result = nonNullableReceiverType.getTypeParameterTypeByIndex(1);
+            const mapType = this.computeMatchingSupertype(nonNullableReceiverType, this.coreClasses.Map);
+            if (mapType) {
+                result = mapType.getTypeParameterTypeByIndex(1);
+            }
         } else {
             return UnknownType;
         }
