@@ -1,0 +1,39 @@
+package tests.typing.lowestCommonSupertype.singularTypeAfterSimplification
+
+class C()
+enum E {
+    V
+}
+
+@Pure fun f() -> (r1: Int, r2: Int)
+
+segment mySegment(
+    p1: E
+) {
+    // $TEST$ serialization List<() -> ()>
+    »[() {}]«;
+
+    // $TEST$ serialization List<literal<1>>
+    »[1]«;
+
+    // $TEST$ serialization List<(r1: Int, r2: Int)>
+    »[f()]«;
+
+    // $TEST$ serialization List<C>
+    »[C()]«;
+
+    // $TEST$ serialization List<E>
+    »[p1]«;
+
+    // $TEST$ serialization List<V>
+    »[E.V]«;
+
+    // $TEST$ serialization List<$type<C>>
+    »[C]«;
+
+    // $TEST$ serialization List<$unknown>
+    »[unknown]«;
+}
+
+// $TEST$ serialization List<T>
+class D<T>(t: T, list: Any = »[t]«)
