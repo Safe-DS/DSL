@@ -193,7 +193,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     }
 
     private getSupertypesOfClass(node: SdsClass): TypeHierarchyItem[] | undefined {
-        const parentClass = this.classHierarchy.streamSuperclasses(node).head();
+        const parentClass = this.classHierarchy.streamProperSuperclasses(node).head();
         if (!parentClass) {
             /* c8 ignore next 2 */
             return undefined;

@@ -25,7 +25,7 @@ export class SafeDsClassHierarchy {
             return true;
         }
 
-        return node === other || this.streamSuperclasses(node).includes(other);
+        return node === other || this.streamProperSuperclasses(node).includes(other);
     }
 
     /**
@@ -33,15 +33,15 @@ export class SafeDsClassHierarchy {
      * ancestors and so on. The class itself is not included in the stream unless there is a cycle in the inheritance
      * hierarchy.
      */
-    streamSuperclasses(node: SdsClass | undefined): Stream<SdsClass> {
+    streamProperSuperclasses(node: SdsClass | undefined): Stream<SdsClass> {
         if (!node) {
             return EMPTY_STREAM;
         }
 
-        return stream(this.superclassesGenerator(node));
+        return stream(this.properSuperclassesGenerator(node));
     }
 
-    private *superclassesGenerator(node: SdsClass): Generator<SdsClass, void> {
+    private *properSuperclassesGenerator(node: SdsClass): Generator<SdsClass, void> {
         const visited = new Set<SdsClass>();
         let current = this.parentClass(node);
         while (current && !visited.has(current)) {
@@ -61,7 +61,7 @@ export class SafeDsClassHierarchy {
             return EMPTY_STREAM;
         }
 
-        return this.streamSuperclasses(node).flatMap(getClassMembers);
+        return this.streamProperSuperclasses(node).flatMap(getClassMembers);
     }
 
     /**

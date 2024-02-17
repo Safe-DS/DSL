@@ -990,7 +990,7 @@ export class SafeDsTypeComputer {
         // Find the class type that is compatible to all other types
         const candidateClasses = stream(
             [classTypes[0]!.declaration],
-            this.classHierarchy.streamSuperclasses(classTypes[0]!.declaration),
+            this.classHierarchy.streamProperSuperclasses(classTypes[0]!.declaration),
         );
         const other = [...classTypes.slice(1), literalType];
 
