@@ -1,0 +1,24 @@
+package tests.typing.lowestCommonSupertype.enumTypeAndEnumType
+
+enum E1
+enum E2
+
+segment mySegment(
+    e1: E1,
+    e1OrNull: E1?,
+    e2: E2,
+    e2OrNull: E2?
+) {
+    // $TEST$ serialization List<E1>
+    »[e1, e1]«;
+
+    // $TEST$ serialization List<E1?>
+    »[e1, e1OrNull]«;
+
+
+    // $TEST$ serialization List<Any>
+    »[e1, e2]«;
+
+    // $TEST$ serialization List<Any?>
+    »[e1, e2OrNull]«;
+}

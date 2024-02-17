@@ -1,0 +1,18 @@
+package tests.typing.lowestCommonSupertype.noTypesAfterSimplification
+
+segment mySegment(
+    p1: literal<>,
+    p2: union<>,
+) {
+    // $TEST$ serialization List<Nothing>
+    »[]«;
+
+    // $TEST$ serialization List<Nothing>
+    »[p1]«;
+
+    // $TEST$ serialization List<Nothing>
+    »[p2]«;
+
+    // $TEST$ serialization List<Nothing>
+    »[p1, p2]«;
+}

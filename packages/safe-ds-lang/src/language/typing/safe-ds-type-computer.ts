@@ -891,7 +891,7 @@ export class SafeDsTypeComputer {
     // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
-    lowestCommonSupertype(...types: Type[]): Type {
+    private lowestCommonSupertype(...types: Type[]): Type {
         // No types given
         const flattenedAndUnwrappedTypes = [...this.flattenUnionTypesAndUnwrap(types)];
         if (isEmpty(flattenedAndUnwrappedTypes)) {
