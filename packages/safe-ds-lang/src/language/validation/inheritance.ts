@@ -10,6 +10,7 @@ export const CODE_INHERITANCE_MULTIPLE_INHERITANCE = 'inheritance/multiple-inher
 export const CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER = 'inheritance/identical-to-overridden-member';
 export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/incompatible-to-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
+export const CODE_INHERITANCE_NULLABLE = 'inheritance/nullable';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
@@ -115,11 +116,18 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
 
         // First parent type must be a class
         const computedType = computeType(firstParentType);
-        if (computedType !== UnknownType && !(computedType instanceof ClassType)) {
-            accept('error', 'A class must only inherit classes.', {
-                node: firstParentType!,
-                code: CODE_INHERITANCE_NOT_A_CLASS,
-            });
+        if (computedType !== UnknownType) {
+            if (!(computedType instanceof ClassType)) {
+                accept('error', 'A class must only inherit classes.', {
+                    node: firstParentType!,
+                    code: CODE_INHERITANCE_NOT_A_CLASS,
+                });
+            } else if (computedType.isNullable) {
+                accept('error', 'The parent type must not be nullable.', {
+                    node: firstParentType!,
+                    code: CODE_INHERITANCE_NULLABLE,
+                });
+            }
         }
 
         // Must have only one parent type
