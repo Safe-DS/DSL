@@ -403,7 +403,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is some kind of list (with any element type).
      */
-    isList(type: Type): boolean {
+    isList(type: Type): type is ClassType | TypeParameterType {
         return (
             !type.equals(this.coreTypes.Nothing) &&
             this.isSubtypeOf(type, this.coreTypes.List(UnknownType), { ignoreTypeParameters: true })
@@ -413,7 +413,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is some kind of map (with any key/value types).
      */
-    isMap(type: Type): boolean {
+    isMap(type: Type): type is ClassType | TypeParameterType {
         return (
             !type.equals(this.coreTypes.Nothing) &&
             this.isSubtypeOf(type, this.coreTypes.Map(UnknownType, UnknownType), {

@@ -1069,11 +1069,26 @@ export class SafeDsTypeComputer {
      * where the declaration matches the given `target`. If no such supertype exists, `undefined` is returned. Type
      * parameters on parent types get substituted.
      */
-    computeMatchingSupertype(type: ClassType | undefined, target: SdsClass | undefined): ClassType | undefined {
+    computeMatchingSupertype(
+        type: ClassType | TypeParameterType | undefined,
+        target: SdsClass | undefined,
+    ): ClassType | undefined {
+        // Handle undefined
         if (!type || !target) {
             return undefined;
         }
 
+        // Handle type parameter types
+        if (type instanceof TypeParameterType) {
+            const upperBound = this.computeUpperBound(type);
+            if (upperBound instanceof ClassType) {
+                return this.computeMatchingSupertype(upperBound, target);
+            } else {
+                return undefined;
+            }
+        }
+
+        // Handle class types
         return stream([type], this.streamProperSupertypes(type)).find((it) => it.declaration === target);
     }
 
@@ -1093,17 +1108,20 @@ export class SafeDsTypeComputer {
     }
 
     private *properSupertypesGenerator(type: ClassType): Generator<ClassType, void> {
-        // Compared to `ClassHierarchy.superclassesGenerator`, we already include the given type in the list of visited
-        // elements, since this method here is not used to detect cycles.
+        // Compared to `ClassHierarchy.properSuperclassesGenerator`, we already include the given type in the list of
+        // visited elements, since this method here is not used to detect cycles.
         const visited = new Set<SdsClass>([type.declaration]);
+        let isNullable = type.isNullable;
         let current = this.parentClassType(type);
+
         while (current && !visited.has(current.declaration)) {
             yield current;
             visited.add(current.declaration);
+            isNullable ||= current.isNullable;
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any;
+        const Any = this.coreTypes.Any.updateNullability(isNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1114,12 +1132,13 @@ export class SafeDsTypeComputer {
      * parameters get substituted. If there is no parent type or the parent type is not a class, `undefined` is
      * returned.
      */
-    private parentClassType(type: ClassType | undefined): ClassType | undefined {
-        const [firstParentTypeNode] = getParentTypes(type?.declaration);
-        const firstParentType = this.computeType(firstParentTypeNode, type?.substitutions);
+    private parentClassType(type: ClassType): ClassType | undefined {
+        const [firstParentTypeNode] = getParentTypes(type.declaration);
+        const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
+        console.log(firstParentType.toString());
 
         if (firstParentType instanceof ClassType) {
-            return firstParentType;
+            return firstParentType.updateNullability(type.isNullable || firstParentType.isNullable);
         }
         return undefined;
     }
