@@ -26,7 +26,7 @@ import {
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { NamedTupleType, UnknownType } from '../typing/model.js';
+import { ClassType, NamedTupleType, TypeParameterType, UnknownType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -115,6 +115,7 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
 };
 
 export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) => {
+    const coreClasses = services.builtins.Classes;
     const coreTypes = services.types.CoreTypes;
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
@@ -130,15 +131,18 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
                     code: CODE_TYPE_MISMATCH,
                 });
             }
-        } else if (typeChecker.isMap(receiverType)) {
-            const keyType = receiverType.getTypeParameterTypeByIndex(0);
-            const indexType = typeComputer.computeType(node.index);
-            if (!typeChecker.isSubtypeOf(indexType, keyType)) {
-                accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
-                    node,
-                    property: 'index',
-                    code: CODE_TYPE_MISMATCH,
-                });
+        } else if (receiverType instanceof ClassType || receiverType instanceof TypeParameterType) {
+            const mapType = typeComputer.computeMatchingSupertype(receiverType, coreClasses.Map);
+            if (mapType) {
+                const keyType = mapType.getTypeParameterTypeByIndex(0);
+                const indexType = typeComputer.computeType(node.index);
+                if (!typeChecker.isSubtypeOf(indexType, keyType)) {
+                    accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
+                        node,
+                        property: 'index',
+                        code: CODE_TYPE_MISMATCH,
+                    });
+                }
             }
         }
     };
