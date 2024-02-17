@@ -34,7 +34,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
 
         if (typeContainingOwnMember instanceof ClassType) {
             const classContainingOverriddenMember = getContainerOfType(overriddenMember, isSdsClass);
-            const typeContainingOverriddenMember = typeComputer.computeSupertypeOfClass(
+            const typeContainingOverriddenMember = typeComputer.computeMatchingSupertype(
                 typeContainingOwnMember,
                 classContainingOverriddenMember,
             );

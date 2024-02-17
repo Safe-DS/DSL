@@ -535,7 +535,7 @@ export class SafeDsTypeComputer {
         // Substitute type parameters (must also work for inherited members)
         if (receiverType instanceof ClassType) {
             const classContainingMember = getContainerOfType(node.member?.target.ref, isSdsClass);
-            const typeContainingMember = this.computeSupertypeOfClass(receiverType, classContainingMember);
+            const typeContainingMember = this.computeMatchingSupertype(receiverType, classContainingMember);
 
             if (typeContainingMember) {
                 result = result.substituteTypeParameters(typeContainingMember.substitutions);
@@ -1056,15 +1056,16 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns the supertype of the given `type` that is declared by the given `clazz`. If no such supertype exists,
-     * `undefined` is returned. Type parameters on parent types get substituted.
+     * Walks through the supertypes of the given `type` (including the given `type`) and returns the first class type
+     * where the declaration matches the given `target`. If no such supertype exists, `undefined` is returned. Type
+     * parameters on parent types get substituted.
      */
-    computeSupertypeOfClass(type: ClassType | undefined, clazz: SdsClass | undefined): ClassType | undefined {
-        if (!type || !clazz) {
+    computeMatchingSupertype(type: ClassType | undefined, target: SdsClass | undefined): ClassType | undefined {
+        if (!type || !target) {
             return undefined;
         }
 
-        return stream([type], this.streamSupertypes(type)).find((it) => it.declaration === clazz);
+        return stream([type], this.streamProperSupertypes(type)).find((it) => it.declaration === target);
     }
 
     /**

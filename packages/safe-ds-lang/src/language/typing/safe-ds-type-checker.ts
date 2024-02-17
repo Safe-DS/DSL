@@ -175,7 +175,7 @@ export class SafeDsTypeChecker {
             }
 
             // Get the parent type that refers to the same class as `other`
-            const candidate = this.typeComputer().computeSupertypeOfClass(type, other.declaration);
+            const candidate = this.typeComputer().computeMatchingSupertype(type, other.declaration);
             if (!candidate) {
                 /* c8 ignore next 2 */
                 return false;
