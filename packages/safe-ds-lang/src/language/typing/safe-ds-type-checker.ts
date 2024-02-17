@@ -376,6 +376,21 @@ export class SafeDsTypeChecker {
     };
 
     /**
+     * Returns whether {@link type} can be `null`. Compared to {@link Type.isNullable}, this method also considers the
+     * upper bound of type parameter types.
+     */
+    canBeNull = (type: Type): boolean => {
+        if (type.isNullable) {
+            return true;
+        } else if (type instanceof TypeParameterType) {
+            const upperBound = this.typeComputer().computeUpperBound(type);
+            return upperBound.isNullable;
+        } else {
+            return false;
+        }
+    };
+
+    /**
      * Checks whether {@link type} is allowed as the type of a constant parameter.
      */
     canBeTypeOfConstantParameter = (type: Type): boolean => {

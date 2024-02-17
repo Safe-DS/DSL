@@ -791,7 +791,7 @@ export class SafeDsTypeComputer {
      * If invalid lower bounds are specified (e.g. because of an unresolved reference or a cycle), `$unknown` is
      * returned. The result is simplified as much as possible.
      */
-    computeLowerBound(nodeOrType: SdsTypeParameter | TypeParameterType): Type {
+    computeLowerBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeBoundOptions = {}): Type {
         let type: TypeParameterType;
         if (nodeOrType instanceof TypeParameterType) {
             type = nodeOrType;
@@ -799,10 +799,14 @@ export class SafeDsTypeComputer {
             type = this.computeType(nodeOrType) as TypeParameterType;
         }
 
-        return this.doComputeLowerBound(type, new Set());
+        return this.doComputeLowerBound(type, new Set(), options);
     }
 
-    private doComputeLowerBound(type: TypeParameterType, visited: Set<SdsTypeParameter>): Type {
+    private doComputeLowerBound(
+        type: TypeParameterType,
+        visited: Set<SdsTypeParameter>,
+        options: ComputeBoundOptions,
+    ): Type {
         // Check for cycles
         if (visited.has(type.declaration)) {
             return UnknownType;
@@ -817,10 +821,10 @@ export class SafeDsTypeComputer {
         const boundType = this.computeLowerBoundType(lowerBounds[0]!);
         if (!(boundType instanceof NamedType)) {
             return UnknownType;
-        } else if (!(boundType instanceof TypeParameterType)) {
+        } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
             return boundType;
         } else {
-            return this.doComputeLowerBound(boundType, visited);
+            return this.doComputeLowerBound(boundType, visited, options);
         }
     }
 
@@ -837,7 +841,7 @@ export class SafeDsTypeComputer {
      * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
      * `$unknown` is returned. The result is simplified as much as possible.
      */
-    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType): Type {
+    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeBoundOptions = {}): Type {
         let type: TypeParameterType;
         if (nodeOrType instanceof TypeParameterType) {
             type = nodeOrType;
@@ -845,11 +849,15 @@ export class SafeDsTypeComputer {
             type = this.computeType(nodeOrType) as TypeParameterType;
         }
 
-        const result = this.doComputeUpperBound(type, new Set());
+        const result = this.doComputeUpperBound(type, new Set(), options);
         return result.updateNullability(result.isNullable || type.isNullable);
     }
 
-    private doComputeUpperBound(type: TypeParameterType, visited: Set<SdsTypeParameter>): Type {
+    private doComputeUpperBound(
+        type: TypeParameterType,
+        visited: Set<SdsTypeParameter>,
+        options: ComputeBoundOptions,
+    ): Type {
         // Check for cycles
         if (visited.has(type.declaration)) {
             return UnknownType;
@@ -864,10 +872,10 @@ export class SafeDsTypeComputer {
         const boundType = this.computeUpperBoundType(upperBounds[0]!);
         if (!(boundType instanceof NamedType)) {
             return UnknownType;
-        } else if (!(boundType instanceof TypeParameterType)) {
+        } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
             return boundType;
         } else {
-            return this.doComputeUpperBound(boundType, visited);
+            return this.doComputeUpperBound(boundType, visited, options);
         }
     }
 
@@ -1138,6 +1146,17 @@ export class SafeDsTypeComputer {
         }
         return undefined;
     }
+}
+
+/**
+ * Options for {@link computeLowerBound} and {@link computeUpperBound}.
+ */
+interface ComputeBoundOptions {
+    /**
+     * If `true`, the computation stops at type parameter types and returns them as is. Otherwise, it finds the bounds
+     * for the type parameter types recursively.
+     */
+    stopAtTypeParameterType?: boolean;
 }
 
 interface GroupTypesResult {
