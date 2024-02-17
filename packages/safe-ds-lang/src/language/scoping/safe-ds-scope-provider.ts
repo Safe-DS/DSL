@@ -71,7 +71,7 @@ import {
 } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType, EnumVariantType, LiteralType } from '../typing/model.js';
+import { ClassType, EnumVariantType, LiteralType, TypeParameterType } from '../typing/model.js';
 import type { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
@@ -227,6 +227,8 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         let receiverType = this.typeComputer.computeType(node.receiver);
         if (receiverType instanceof LiteralType) {
             receiverType = this.typeComputer.computeClassTypeForLiteralType(receiverType);
+        } else if (receiverType instanceof TypeParameterType) {
+            receiverType = this.typeComputer.computeUpperBound(receiverType);
         }
 
         if (receiverType instanceof ClassType) {
