@@ -1082,6 +1082,7 @@ export class SafeDsTypeComputer {
             if (upperBound instanceof ClassType) {
                 return this.computeMatchingSupertype(upperBound, target);
             } else {
+                /* c8 ignore next 2 */
                 return undefined;
             }
         }
