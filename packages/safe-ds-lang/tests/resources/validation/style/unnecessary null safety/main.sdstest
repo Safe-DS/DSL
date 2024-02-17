@@ -93,6 +93,24 @@ segment indexedAccess(
     »unresolved?[0]«;
 }
 
+class IndexedAccess<Nullable, NonNullable>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p1: Any? = »nullable[0]«,
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p2: Any? = »nonNullable[0]«,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p3: Any? = »nullable?[0]«,
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    p4: Any? = »nonNullable?[0]«,
+) where {
+    Nullable sub List<Int>?,
+    NonNullable sub List<Int>
+}
+
 segment memberAccess(
     myClass: MyClass,
     myClassOrNull: MyClass?,
@@ -127,4 +145,22 @@ segment memberAccess(
 
     // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
     »unresolved?.a«;
+}
+
+class MemberAccess<Nullable, NonNullable>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p1: Any? = »nullable.a«,
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p2: Any? = »nonNullable.a«,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p3: Any? = »nullable?.a«,
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    p4: Any? = »nonNullable?.a«,
+) where {
+    Nullable sub MyClass?,
+    NonNullable sub MyClass
 }

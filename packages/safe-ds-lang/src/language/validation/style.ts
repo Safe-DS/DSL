@@ -323,14 +323,14 @@ export const chainedExpressionNullSafetyShouldBeNeeded = (services: SafeDsServic
         }
 
         const receiverType = typeComputer.computeType(node.receiver);
-        if (receiverType === UnknownType) {
+        if (receiverType === UnknownType || typeChecker.canBeNull(receiverType)) {
             return;
         }
 
         if (
-            (isSdsCall(node) && !receiverType.isNullable && typeChecker.canBeCalled(receiverType)) ||
-            (isSdsIndexedAccess(node) && !receiverType.isNullable && typeChecker.canBeAccessedByIndex(receiverType)) ||
-            (isSdsMemberAccess(node) && !receiverType.isNullable)
+            (isSdsCall(node) && typeChecker.canBeCalled(receiverType)) ||
+            (isSdsIndexedAccess(node) && typeChecker.canBeAccessedByIndex(receiverType)) ||
+            isSdsMemberAccess(node)
         ) {
             accept('info', 'The receiver is never null, so null-safety is unnecessary.', {
                 node,
