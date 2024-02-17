@@ -983,6 +983,7 @@ export class SafeDsTypeComputer {
         // If there are only constants, return a literal type
         const literalType = new LiteralType(...constants);
         if (isEmpty(classTypes)) {
+            /* c8 ignore next 2 */
             return literalType;
         }
 
