@@ -940,16 +940,12 @@ export class SafeDsTypeComputer {
         const isNullable = replacedTypes.some((it) => it.isExplicitlyNullable);
 
         // Class-based types
-        if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
+        if (!isEmpty(groupedTypes.classTypes)) {
             if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
-                // Class types/literal types are never compatible to enum types/enum variant types
+                // Class types other than Any/Any? are never compatible to enum types/enum variant types
                 return this.Any(isNullable);
             } else {
-                return this.lowestCommonSupertypeForClassBasedTypes(
-                    groupedTypes.classTypes,
-                    groupedTypes.constants,
-                    isNullable,
-                );
+                return this.lowestCommonSupertypeForClassBasedTypes(groupedTypes.classTypes, isNullable);
             }
         }
 
@@ -977,21 +973,27 @@ export class SafeDsTypeComputer {
     private groupTypes(types: Type[]): GroupTypesResult {
         const result: GroupTypesResult = {
             classTypes: [],
-            constants: [],
             enumTypes: [],
             enumVariantTypes: [],
             hasTypeWithUnknownSupertype: false,
         };
 
         for (const type of types) {
-            if (type instanceof ClassType) {
+            if (type.equals(this.coreTypes.Nothing) || type.equals(this.coreTypes.NothingOrNull)) {
+                // Drop Nothing/Nothing? types. They are compatible to everything with appropriate nullability.
+            } else if (type instanceof ClassType) {
                 result.classTypes.push(type);
             } else if (type instanceof EnumType) {
                 result.enumTypes.push(type);
             } else if (type instanceof EnumVariantType) {
                 result.enumVariantTypes.push(type);
             } else if (type instanceof LiteralType) {
-                result.constants.push(...type.constants);
+                const classType = this.computeClassTypeForLiteralType(type);
+                if (classType instanceof ClassType) {
+                    result.classTypes.push(classType);
+                } else {
+                    result.hasTypeWithUnknownSupertype = true;
+                }
             } else {
                 // Other types don't have a clear lowest common supertype
                 result.hasTypeWithUnknownSupertype = true;
@@ -1003,48 +1005,78 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Returns the lowest common supertype for the given class-based types. This function assumes that either the array
-     * of class types or the array of constants is not empty.
+     * Returns the lowest common supertype for the given class-based types.
      */
-    private lowestCommonSupertypeForClassBasedTypes(
-        classTypes: ClassType[],
-        constants: Constant[],
-        isNullable: boolean,
-    ): Type {
-        // TODO: restructure like for enums: if there are class types,
-
-        // If there are only constants, return a literal type
-        const literalType = new LiteralType(...constants);
+    private lowestCommonSupertypeForClassBasedTypes(classTypes: ClassType[], isNullable: boolean): Type {
         if (isEmpty(classTypes)) {
             /* c8 ignore next 2 */
-            return literalType;
+            return this.Nothing(isNullable);
         }
 
         // Find the class type that is compatible to all other types
-        // TODO: must ensure class types is not empty
-        const candidateClasses = stream(
-            [classTypes[0]!.declaration],
-            this.classHierarchy.streamProperSuperclasses(classTypes[0]!.declaration),
-        );
-        const other = [...classTypes.slice(1), literalType];
+        const firstClassType = classTypes[0]!.updateExplicitNullability(isNullable);
+        const candidates = [firstClassType, ...this.streamProperSupertypes(firstClassType)];
+        let other = [...classTypes.slice(1)];
 
-        for (const candidateClass of candidateClasses) {
-            // TODO: handle type parameters
-            const candidateType = new ClassType(candidateClass, NO_SUBSTITUTIONS, isNullable);
-            // TODO: We need to check first without type parameters
-            //  Then check with type parameters and whether we can find a common supertype for them, respecting variance
-            //  If we can't, try the next candidate
-            if (this.isCommonSupertype(candidateType, other)) {
-                return candidateType;
+        this.logTypes(candidates);
+        this.logTypes(other);
+
+        for (const candidate of candidates) {
+            if (this.isCommonSupertypeIgnoringTypeParameters(candidate, other)) {
+                // If the class has no type parameters, we are done
+                const typeParameters = getTypeParameters(candidate.declaration);
+                if (isEmpty(typeParameters)) {
+                    return candidate;
+                }
+
+                // Check whether all substitutions of invariant type parameters are equal
+                other = other.map((it) => this.computeMatchingSupertype(it, candidate.declaration)!);
+                this.logTypes(other);
+
+                if (!this.substitutionsForInvariantTypeParametersAreEqual(typeParameters, candidate, other)) {
+                    continue;
+                }
+
+                // Unified substitutions for type parameters:
+                //     * compute the lowest common supertype for substitutions of covariant type parameters,
+                //     * compute the highest common subtype for substitutions of contravariant type parameters.
+
+                // TODO: normalize the type parameters in the candidate
+                // const substitutions = candidate.substitutions;
+                // for (const typeParameter of typeParameters) {
+                // }
+
+                // TODO: always return the candidate with the new substitutions
+                return candidate;
             }
         }
         /* c8 ignore next */
         return this.Any(isNullable);
     }
 
+    private substitutionsForInvariantTypeParametersAreEqual(
+        allTypeParameters: SdsTypeParameter[],
+        candidate: ClassType,
+        others: ClassType[],
+    ) {
+        return allTypeParameters.filter(TypeParameter.isInvariant).every((typeParameter) => {
+            const candidateSubstitution = candidate.substitutions.get(typeParameter);
+            return (
+                candidateSubstitution &&
+                others.every((other) => {
+                    const otherSubstitution = other.substitutions.get(typeParameter);
+                    return otherSubstitution && candidateSubstitution.equals(otherSubstitution);
+                })
+            );
+        });
+    }
+
+    private logTypes(types: Type[]): void {
+        console.log(types.map((it) => it?.toString()));
+    }
+
     /**
-     * Returns the lowest common supertype for the given enum-based types. This function assumes that either the array
-     * of enum types or the array of enum variant types is not empty.
+     * Returns the lowest common supertype for the given enum-based types.
      */
     private lowestCommonSupertypeForEnumBasedTypes(
         enumTypes: EnumType[],
@@ -1063,6 +1095,9 @@ export class SafeDsTypeComputer {
             if (containingEnum) {
                 candidates.push(new EnumType(containingEnum, isNullable));
             }
+        } else {
+            /* c8 ignore next 2 */
+            return this.Nothing(isNullable);
         }
 
         const other = [...enumTypes, ...enumVariantTypes];
@@ -1077,12 +1112,20 @@ export class SafeDsTypeComputer {
         return this.Any(isNullable);
     }
 
+    private isCommonSupertypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
+        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it, { ignoreTypeParameters: true }));
+    }
+
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(it, candidate));
+        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it));
     }
 
     private Any(isNullable: boolean): Type {
         return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
+    }
+
+    private Nothing(isNullable: boolean): Type {
+        return isNullable ? this.coreTypes.NothingOrNull : this.coreTypes.Nothing;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1180,7 +1223,6 @@ interface ComputeBoundOptions {
 
 interface GroupTypesResult {
     classTypes: ClassType[];
-    constants: Constant[];
     enumTypes: EnumType[];
     enumVariantTypes: EnumVariantType[];
     hasTypeWithUnknownSupertype: boolean;
