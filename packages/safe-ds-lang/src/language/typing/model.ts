@@ -20,9 +20,10 @@ export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
  */
 export abstract class Type {
     /**
-     * Whether this type allows `null` as a value.
+     * Whether this type is explicitly marked as nullable. A type parameter type can also become nullable if its upper
+     * bound is nullable, which is not covered here. Use {@link TypeChecker.canBeNull} for this.
      */
-    abstract isNullable: boolean;
+    abstract isExplicitlyNullable: boolean;
 
     /**
      * Returns whether the type is equal to another type.
@@ -51,7 +52,7 @@ export abstract class Type {
 }
 
 export class CallableType extends Type {
-    override isNullable: boolean = false;
+    override isExplicitlyNullable: boolean = false;
 
     constructor(
         readonly callable: SdsCallable,
@@ -133,7 +134,7 @@ export class LiteralType extends Type {
         this.constants = constants;
     }
 
-    override get isNullable(): boolean {
+    override get isExplicitlyNullable(): boolean {
         if (this._isNullable === undefined) {
             this._isNullable = this.constants.some((it) => it === NullConstant);
         }
@@ -167,9 +168,9 @@ export class LiteralType extends Type {
     }
 
     override updateNullability(isNullable: boolean): LiteralType {
-        if (this.isNullable && !isNullable) {
+        if (this.isExplicitlyNullable && !isNullable) {
             return new LiteralType(...this.constants.filter((it) => it !== NullConstant));
-        } else if (!this.isNullable && isNullable) {
+        } else if (!this.isExplicitlyNullable && isNullable) {
             return new LiteralType(...this.constants, NullConstant);
         } else {
             return this;
@@ -179,7 +180,7 @@ export class LiteralType extends Type {
 
 export class NamedTupleType<T extends SdsDeclaration> extends Type {
     readonly entries: NamedTupleEntry<T>[];
-    override readonly isNullable = false;
+    override readonly isExplicitlyNullable = false;
 
     constructor(...entries: NamedTupleEntry<T>[]) {
         super();
@@ -289,7 +290,7 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
     }
 
     override toString(): string {
-        if (this.isNullable) {
+        if (this.isExplicitlyNullable) {
             return `${this.declaration.name}?`;
         } else {
             return this.declaration.name;
@@ -307,7 +308,7 @@ export class ClassType extends NamedType<SdsClass> {
     constructor(
         declaration: SdsClass,
         readonly substitutions: TypeParameterSubstitutions,
-        override readonly isNullable: boolean,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
     }
@@ -330,7 +331,7 @@ export class ClassType extends NamedType<SdsClass> {
 
         return (
             other.declaration === this.declaration &&
-            other.isNullable === this.isNullable &&
+            other.isExplicitlyNullable === this.isExplicitlyNullable &&
             substitutionsAreEqual(other.substitutions, this.substitutions)
         );
     }
@@ -344,7 +345,7 @@ export class ClassType extends NamedType<SdsClass> {
                 .join(', ')}>`;
         }
 
-        if (this.isNullable) {
+        if (this.isExplicitlyNullable) {
             result += '?';
         }
 
@@ -360,16 +361,16 @@ export class ClassType extends NamedType<SdsClass> {
             stream(this.substitutions).map(([key, value]) => [key, value.substituteTypeParameters(substitutions)]),
         );
 
-        return new ClassType(this.declaration, newSubstitutions, this.isNullable);
+        return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
     }
 
     override unwrap(): ClassType {
         const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.unwrap()]));
-        return new ClassType(this.declaration, newSubstitutions, this.isNullable);
+        return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
     }
 
     override updateNullability(isNullable: boolean): ClassType {
-        if (this.isNullable === isNullable) {
+        if (this.isExplicitlyNullable === isNullable) {
             return this;
         }
 
@@ -380,7 +381,7 @@ export class ClassType extends NamedType<SdsClass> {
 export class EnumType extends NamedType<SdsEnum> {
     constructor(
         declaration: SdsEnum,
-        override readonly isNullable: boolean,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
     }
@@ -392,7 +393,7 @@ export class EnumType extends NamedType<SdsEnum> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isExplicitlyNullable === this.isExplicitlyNullable;
     }
 
     override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
@@ -400,7 +401,7 @@ export class EnumType extends NamedType<SdsEnum> {
     }
 
     override updateNullability(isNullable: boolean): EnumType {
-        if (this.isNullable === isNullable) {
+        if (this.isExplicitlyNullable === isNullable) {
             return this;
         }
 
@@ -411,7 +412,7 @@ export class EnumType extends NamedType<SdsEnum> {
 export class EnumVariantType extends NamedType<SdsEnumVariant> {
     constructor(
         declaration: SdsEnumVariant,
-        override readonly isNullable: boolean,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
     }
@@ -423,7 +424,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isExplicitlyNullable === this.isExplicitlyNullable;
     }
 
     override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
@@ -431,7 +432,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
     }
 
     override updateNullability(isNullable: boolean): EnumVariantType {
-        if (this.isNullable === isNullable) {
+        if (this.isExplicitlyNullable === isNullable) {
             return this;
         }
 
@@ -442,7 +443,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
 export class TypeParameterType extends NamedType<SdsTypeParameter> {
     constructor(
         declaration: SdsTypeParameter,
-        override readonly isNullable: boolean,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
     }
@@ -454,7 +455,7 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isExplicitlyNullable === this.isExplicitlyNullable;
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type {
@@ -462,7 +463,7 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
 
         if (!substitution) {
             return this;
-        } else if (this.isNullable) {
+        } else if (this.isExplicitlyNullable) {
             return substitution.updateNullability(true);
         } else {
             return substitution;
@@ -470,7 +471,7 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
     }
 
     override updateNullability(isNullable: boolean): TypeParameterType {
-        if (this.isNullable === isNullable) {
+        if (this.isExplicitlyNullable === isNullable) {
             return this;
         }
 
@@ -482,7 +483,7 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
  * A type that represents an actual class, enum, or enum variant instead of an instance of it.
  */
 export class StaticType extends Type {
-    override readonly isNullable = false;
+    override readonly isExplicitlyNullable = false;
 
     constructor(readonly instanceType: NamedType<SdsDeclaration>) {
         super();
@@ -531,9 +532,9 @@ export class UnionType extends Type {
         this.possibleTypes = possibleTypes;
     }
 
-    override get isNullable(): boolean {
+    override get isExplicitlyNullable(): boolean {
         if (this._isNullable === undefined) {
-            this._isNullable = this.possibleTypes.some((it) => it.isNullable);
+            this._isNullable = this.possibleTypes.some((it) => it.isExplicitlyNullable);
         }
 
         return this._isNullable;
@@ -584,9 +585,9 @@ export class UnionType extends Type {
     }
 
     override updateNullability(isNullable: boolean): Type {
-        if (this.isNullable && !isNullable) {
+        if (this.isExplicitlyNullable && !isNullable) {
             return new UnionType(...this.possibleTypes.map((it) => it.updateNullability(false)));
-        } else if (!this.isNullable && isNullable) {
+        } else if (!this.isExplicitlyNullable && isNullable) {
             if (isEmpty(this.possibleTypes)) {
                 return new LiteralType(NullConstant);
             } else {
@@ -599,7 +600,7 @@ export class UnionType extends Type {
 }
 
 class UnknownTypeClass extends Type {
-    readonly isNullable = false;
+    readonly isExplicitlyNullable = false;
 
     override equals(other: unknown): boolean {
         return other instanceof UnknownTypeClass;

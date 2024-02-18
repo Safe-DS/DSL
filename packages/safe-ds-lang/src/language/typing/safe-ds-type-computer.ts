@@ -460,7 +460,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateNullability(receiverType.isNullable && node.isNullSafe);
+        return result.updateNullability(receiverType.isExplicitlyNullable && node.isNullSafe);
     }
 
     private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
@@ -488,13 +488,17 @@ export class SafeDsTypeComputer {
         // Receiver is a list
         const listType = this.computeMatchingSupertype(receiverType, this.coreClasses.List);
         if (listType) {
-            return listType.getTypeParameterTypeByIndex(0).updateNullability(listType.isNullable && node.isNullSafe);
+            return listType
+                .getTypeParameterTypeByIndex(0)
+                .updateNullability(listType.isExplicitlyNullable && node.isNullSafe);
         }
 
         // Receiver is a map
         const mapType = this.computeMatchingSupertype(receiverType, this.coreClasses.Map);
         if (mapType) {
-            return mapType.getTypeParameterTypeByIndex(1).updateNullability(mapType.isNullable && node.isNullSafe);
+            return mapType
+                .getTypeParameterTypeByIndex(1)
+                .updateNullability(mapType.isExplicitlyNullable && node.isNullSafe);
         }
 
         return UnknownType;
@@ -516,7 +520,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
         const leftOperandType = this.computeType(node.leftOperand);
-        if (leftOperandType.isNullable) {
+        if (leftOperandType.isExplicitlyNullable) {
             const rightOperandType = this.computeType(node.rightOperand);
             return this.lowestCommonSupertype(leftOperandType.updateNullability(false), rightOperandType);
         } else {
@@ -550,7 +554,9 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateNullability((receiverType.isNullable && node.isNullSafe) || result.isNullable);
+        return result.updateNullability(
+            (receiverType.isExplicitlyNullable && node.isNullSafe) || result.isExplicitlyNullable,
+        );
     }
 
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
@@ -729,7 +735,9 @@ export class SafeDsTypeComputer {
                 }
 
                 // Remove subtypes of other types
-                otherType = otherType.updateNullability(currentType.isNullable || otherType.isNullable);
+                otherType = otherType.updateNullability(
+                    currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
+                );
                 if (this.typeChecker.isSubtypeOf(currentType, otherType)) {
                     newPossibleTypes.splice(j, 1, otherType); // Update nullability
                     newPossibleTypes.splice(i, 1);
@@ -850,7 +858,7 @@ export class SafeDsTypeComputer {
         }
 
         const result = this.doComputeUpperBound(type, new Set(), options);
-        return result.updateNullability(result.isNullable || type.isNullable);
+        return result.updateNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
     private doComputeUpperBound(
@@ -906,7 +914,7 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
-        const isNullable = simplifiedTypes.some((it) => it.isNullable);
+        const isNullable = simplifiedTypes.some((it) => it.isExplicitlyNullable);
 
         // Class-based types
         if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
@@ -1111,7 +1119,7 @@ export class SafeDsTypeComputer {
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any.updateNullability(type.isNullable);
+        const Any = this.coreTypes.Any.updateNullability(type.isExplicitlyNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1127,7 +1135,7 @@ export class SafeDsTypeComputer {
         const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
 
         if (firstParentType instanceof ClassType) {
-            return firstParentType.updateNullability(type.isNullable);
+            return firstParentType.updateNullability(type.isExplicitlyNullable);
         }
         return undefined;
     }

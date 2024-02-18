@@ -164,7 +164,7 @@ export class SafeDsTypeChecker {
     }
 
     private classTypeIsSubtypeOf(type: ClassType, other: Type, options: TypeCheckOptions): boolean {
-        if (type.isNullable && !other.isNullable) {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
         } else if (type.declaration === this.builtinClasses.Nothing) {
             return true;
@@ -207,7 +207,7 @@ export class SafeDsTypeChecker {
     }
 
     private enumTypeIsSubtypeOf(type: EnumType, other: Type): boolean {
-        if (type.isNullable && !other.isNullable) {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
         }
 
@@ -221,7 +221,7 @@ export class SafeDsTypeChecker {
     }
 
     private enumVariantTypeIsSubtypeOf(type: EnumVariantType, other: Type): boolean {
-        if (type.isNullable && !other.isNullable) {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
         }
 
@@ -238,18 +238,18 @@ export class SafeDsTypeChecker {
     }
 
     private literalTypeIsSubtypeOf(type: LiteralType, other: Type, options: TypeCheckOptions): boolean {
-        if (type.isNullable && !other.isNullable) {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
         } else if (type.constants.length === 0) {
             // Empty literal types are equivalent to `Nothing` and assignable to any type
             return true;
         } else if (type.constants.every((it) => it === NullConstant)) {
             // Literal types containing only `null` are equivalent to `Nothing?` and assignable to any nullable type
-            return other.isNullable;
+            return other.isExplicitlyNullable;
         }
 
         if (other instanceof ClassType) {
-            if (other.equals(this.coreTypes.Any.updateNullability(type.isNullable))) {
+            if (other.equals(this.coreTypes.Any.updateNullability(type.isExplicitlyNullable))) {
                 return true;
             }
 
@@ -376,15 +376,15 @@ export class SafeDsTypeChecker {
     };
 
     /**
-     * Returns whether {@link type} can be `null`. Compared to {@link Type.isNullable}, this method also considers the
+     * Returns whether {@link type} can be `null`. Compared to {@link Type.isExplicitlyNullable}, this method also considers the
      * upper bound of type parameter types.
      */
     canBeNull = (type: Type): boolean => {
-        if (type.isNullable) {
+        if (type.isExplicitlyNullable) {
             return true;
         } else if (type instanceof TypeParameterType) {
             const upperBound = this.typeComputer().computeUpperBound(type);
-            return upperBound.isNullable;
+            return upperBound.isExplicitlyNullable;
         } else {
             return false;
         }
