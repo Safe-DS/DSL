@@ -435,7 +435,7 @@ describe('type model', async () => {
         });
     });
 
-    const updateNullabilityTests: UpdateNullabilityTest[] = [
+    const updateExplicitNullabilityTests: UpdateExplicitNullabilityTest[] = [
         {
             type: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
             isNullable: true,
@@ -573,9 +573,9 @@ describe('type model', async () => {
             expectedType: UnknownType,
         },
     ];
-    describe.each(updateNullabilityTests)('updateNullability', ({ type, isNullable, expectedType }) => {
+    describe.each(updateExplicitNullabilityTests)('updateExplicitNullability', ({ type, isNullable, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
-            const actual = type.updateNullability(isNullable);
+            const actual = type.updateExplicitNullability(isNullable);
             expectEqualTypes(actual, expectedType);
         });
     });
@@ -686,9 +686,9 @@ interface UnwrapTest {
 }
 
 /**
- * Tests for {@link Type.updateNullability}.
+ * Tests for {@link Type.updateExplicitNullability}.
  */
-interface UpdateNullabilityTest {
+interface UpdateExplicitNullabilityTest {
     /**
      * The type to test.
      */

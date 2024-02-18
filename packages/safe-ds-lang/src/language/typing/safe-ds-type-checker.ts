@@ -249,7 +249,7 @@ export class SafeDsTypeChecker {
         }
 
         if (other instanceof ClassType) {
-            if (other.equals(this.coreTypes.Any.updateNullability(type.isExplicitlyNullable))) {
+            if (other.equals(this.coreTypes.Any.updateExplicitNullability(type.isExplicitlyNullable))) {
                 return true;
             }
 
@@ -417,7 +417,7 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is some kind of list (with any element type).
      */
     isList(type: Type): type is ClassType | TypeParameterType {
-        const listOrNull = this.coreTypes.List(UnknownType).updateNullability(true);
+        const listOrNull = this.coreTypes.List(UnknownType).updateExplicitNullability(true);
 
         return (
             !type.equals(this.coreTypes.Nothing) &&
@@ -432,7 +432,7 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is some kind of map (with any key/value types).
      */
     isMap(type: Type): type is ClassType | TypeParameterType {
-        const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).updateNullability(true);
+        const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).updateExplicitNullability(true);
 
         return (
             !type.equals(this.coreTypes.Nothing) &&
