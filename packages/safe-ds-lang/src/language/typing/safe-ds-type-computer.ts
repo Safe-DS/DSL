@@ -711,7 +711,7 @@ export class SafeDsTypeComputer {
                     continue;
                 }
 
-                let otherType = newPossibleTypes[j]!;
+                const otherType = newPossibleTypes[j]!;
 
                 // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
                 // create another union type.
@@ -734,12 +734,26 @@ export class SafeDsTypeComputer {
                     break;
                 }
 
-                // Remove subtypes of other types
-                otherType = otherType.updateExplicitNullability(
+                // Remove subtypes of other types. Type parameter types are a special case, since there might be a
+                // subtype relation between `currentType` and `otherType` in both directions. We always keep the type
+                // parameter type in this case for consistency, since it can be narrower if it has a lower bound.
+                if (currentType instanceof TypeParameterType) {
+                    const candidateType = currentType.updateExplicitNullability(
+                        currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
+                    );
+
+                    if (this.typeChecker.isSubtypeOf(otherType, candidateType)) {
+                        newPossibleTypes.splice(j, 1, candidateType);
+                        newPossibleTypes.splice(i, 1);
+                        break;
+                    }
+                }
+
+                const candidateType = otherType.updateExplicitNullability(
                     currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
                 );
-                if (this.typeChecker.isSubtypeOf(currentType, otherType)) {
-                    newPossibleTypes.splice(j, 1, otherType); // Update nullability
+                if (this.typeChecker.isSubtypeOf(currentType, candidateType)) {
+                    newPossibleTypes.splice(j, 1, candidateType); // Update nullability
                     newPossibleTypes.splice(i, 1);
                     break;
                 }
