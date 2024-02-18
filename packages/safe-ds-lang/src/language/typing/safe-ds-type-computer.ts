@@ -115,14 +115,12 @@ import {
     UnionType,
     UnknownType,
 } from './model.js';
-import type { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
-    private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreClasses: SafeDsClasses;
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
@@ -133,7 +131,6 @@ export class SafeDsTypeComputer {
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
-        this.classHierarchy = services.types.ClassHierarchy;
         this.coreClasses = services.builtins.Classes;
         this.coreTypes = services.types.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
@@ -337,10 +334,10 @@ export class SafeDsTypeComputer {
 
         // Terminal cases
         if (isSdsList(node)) {
-            const elementType = this.lowestCommonSupertype(...node.elements.map((it) => this.computeType(it)));
+            const elementType = this.lowestCommonSupertype(node.elements.map((it) => this.computeType(it)));
             return this.coreTypes.List(elementType);
         } else if (isSdsMap(node)) {
-            let keyType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.key)));
+            let keyType = this.lowestCommonSupertype(node.entries.map((it) => this.computeType(it.key)));
 
             // Keeping literal types for keys is too strict: We would otherwise infer the key type of `{"a": 1, "b": 2}`
             // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
@@ -350,7 +347,7 @@ export class SafeDsTypeComputer {
                 keyType = this.computeClassTypeForLiteralType(keyType);
             }
 
-            const valueType = this.lowestCommonSupertype(...node.entries.map((it) => this.computeType(it.value)));
+            const valueType = this.lowestCommonSupertype(node.entries.map((it) => this.computeType(it.value)));
             return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
@@ -522,7 +519,7 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isExplicitlyNullable) {
             const rightOperandType = this.computeType(node.rightOperand);
-            return this.lowestCommonSupertype(leftOperandType.updateExplicitNullability(false), rightOperandType);
+            return this.lowestCommonSupertype([leftOperandType.updateExplicitNullability(false), rightOperandType]);
         } else {
             return leftOperandType;
         }
@@ -782,7 +779,7 @@ export class SafeDsTypeComputer {
      * Returns the lowest class type for the given literal type.
      */
     computeClassTypeForLiteralType(literalType: LiteralType): Type {
-        return this.lowestCommonSupertype(...literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
+        return this.lowestCommonSupertype(literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
     }
 
     /**
@@ -913,7 +910,7 @@ export class SafeDsTypeComputer {
     // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
-    private lowestCommonSupertype(...types: Type[]): Type {
+    private lowestCommonSupertype(types: Type[]): Type {
         // Simplify types
         const simplifiedTypes = this.simplifyTypes(types);
 
@@ -1037,17 +1034,13 @@ export class SafeDsTypeComputer {
                     continue;
                 }
 
-                // Unified substitutions for type parameters:
-                //     * compute the lowest common supertype for substitutions of covariant type parameters,
-                //     * compute the highest common subtype for substitutions of contravariant type parameters.
-
-                // TODO: normalize the type parameters in the candidate
-                // const substitutions = candidate.substitutions;
-                // for (const typeParameter of typeParameters) {
-                // }
-
-                // TODO: always return the candidate with the new substitutions
-                return candidate;
+                // Unify substitutions for type parameters
+                const substitutions = this.newTypeParameterSubstitutionsForLowestCommonSupertype(
+                    typeParameters,
+                    candidate,
+                    other,
+                );
+                return new ClassType(candidate.declaration, substitutions, isNullable);
             }
         }
         /* c8 ignore next */
@@ -1058,7 +1051,7 @@ export class SafeDsTypeComputer {
         allTypeParameters: SdsTypeParameter[],
         candidate: ClassType,
         others: ClassType[],
-    ) {
+    ): boolean {
         return allTypeParameters.filter(TypeParameter.isInvariant).every((typeParameter) => {
             const candidateSubstitution = candidate.substitutions.get(typeParameter);
             return (
@@ -1071,8 +1064,36 @@ export class SafeDsTypeComputer {
         });
     }
 
-    private logTypes(types: Type[]): void {
-        console.log(types.map((it) => it?.toString()));
+    private newTypeParameterSubstitutionsForLowestCommonSupertype(
+        typeParameters: SdsTypeParameter[],
+        candidate: ClassType,
+        others: ClassType[],
+    ): TypeParameterSubstitutions {
+        const substitutions: TypeParameterSubstitutions = new Map();
+
+        for (const typeParameter of typeParameters) {
+            const candidateSubstitution = candidate.substitutions.get(typeParameter) ?? UnknownType;
+
+            if (TypeParameter.isCovariant(typeParameter)) {
+                // Compute the lowest common supertype for substitutions
+                const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
+                substitutions.set(
+                    typeParameter,
+                    this.lowestCommonSupertype([candidateSubstitution, ...otherSubstitutions]),
+                );
+            } else if (TypeParameter.isContravariant(typeParameter)) {
+                // Compute the highest common subtype for substitutions
+                const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
+                substitutions.set(
+                    typeParameter,
+                    this.highestCommonSubtype([candidateSubstitution, ...otherSubstitutions]),
+                );
+            } else {
+                substitutions.set(typeParameter, candidateSubstitution);
+            }
+        }
+
+        return substitutions;
     }
 
     /**
@@ -1120,12 +1141,13 @@ export class SafeDsTypeComputer {
         return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it));
     }
 
-    private Any(isNullable: boolean): Type {
-        return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
-    }
+    // -----------------------------------------------------------------------------------------------------------------
+    // Highest common subtype
+    // -----------------------------------------------------------------------------------------------------------------
 
-    private Nothing(isNullable: boolean): Type {
-        return isNullable ? this.coreTypes.NothingOrNull : this.coreTypes.Nothing;
+    private highestCommonSubtype(_types: Type[]): Type {
+        // TODO(lr): Implement
+        return this.coreTypes.Nothing;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1207,6 +1229,22 @@ export class SafeDsTypeComputer {
             return firstParentType.updateExplicitNullability(type.isExplicitlyNullable);
         }
         return undefined;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Any(isNullable: boolean): Type {
+        return isNullable ? this.coreTypes.AnyOrNull : this.coreTypes.Any;
+    }
+
+    private Nothing(isNullable: boolean): Type {
+        return isNullable ? this.coreTypes.NothingOrNull : this.coreTypes.Nothing;
+    }
+
+    private logTypes(types: Type[]): void {
+        console.log(types.map((it) => it?.toString()));
     }
 }
 
