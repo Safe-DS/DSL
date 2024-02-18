@@ -1,0 +1,29 @@
+package tests.typing.lowestCommonSupertype.classTypeAndTypeParameterType
+
+class C
+class D
+
+class Test<Unbounded, BoundedByC, BoundedByD, BoundedByDOrNull>(
+    c: C,
+
+    unbounded: Unbounded,
+    unboundedOrNull: Unbounded?,
+    boundedByC: BoundedByC,
+    boundedByD: BoundedByD,
+    boundedByDOrNull: BoundedByDOrNull,
+
+    // $TEST$ serialization List<Unbounded>
+    p1: Any = »[c, unbounded]«,
+    // $TEST$ serialization List<Unbounded?>
+    p2: Any = »[c, unboundedOrNull]«,
+    // $TEST$ serialization List<BoundedByC>
+    p3: Any = »[c, boundedByC]«,
+    // $TEST$ serialization List<Any>
+    p4: Any = »[c, boundedByD]«,
+    // $TEST$ serialization List<Any?>
+    p5: Any = »[c, boundedByDOrNull]«,
+) where {
+    BoundedByC sub C,
+    BoundedByD sub D,
+    BoundedByDOrNull sub D?,
+}
