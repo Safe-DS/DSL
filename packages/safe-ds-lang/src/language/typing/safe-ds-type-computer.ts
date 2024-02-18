@@ -1015,9 +1015,6 @@ export class SafeDsTypeComputer {
         const candidates = [firstClassType, ...this.streamProperSupertypes(firstClassType)];
         let other = [...classTypes.slice(1)];
 
-        this.logTypes(candidates);
-        this.logTypes(other);
-
         for (const candidate of candidates) {
             if (this.isCommonSupertypeIgnoringTypeParameters(candidate, other)) {
                 // If the class has no type parameters, we are done
@@ -1028,7 +1025,6 @@ export class SafeDsTypeComputer {
 
                 // Check whether all substitutions of invariant type parameters are equal
                 other = other.map((it) => this.computeMatchingSupertype(it, candidate.declaration)!);
-                this.logTypes(other);
 
                 if (!this.substitutionsForInvariantTypeParametersAreEqual(typeParameters, candidate, other)) {
                     continue;
@@ -1241,10 +1237,6 @@ export class SafeDsTypeComputer {
 
     private Nothing(isNullable: boolean): Type {
         return isNullable ? this.coreTypes.NothingOrNull : this.coreTypes.Nothing;
-    }
-
-    private logTypes(types: Type[]): void {
-        console.log(types.map((it) => it?.toString()));
     }
 }
 
