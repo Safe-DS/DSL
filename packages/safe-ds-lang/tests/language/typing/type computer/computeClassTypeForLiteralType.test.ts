@@ -44,19 +44,19 @@ const tests: ComputeClassTypeForLiteralTypeTest[] = [
     // Nullable types
     {
         literalType: new LiteralType(new BooleanConstant(false), NullConstant),
-        expected: coreTypes.Boolean.updateNullability(true),
+        expected: coreTypes.Boolean.updateExplicitNullability(true),
     },
     {
         literalType: new LiteralType(new FloatConstant(1.5), NullConstant),
-        expected: coreTypes.Float.updateNullability(true),
+        expected: coreTypes.Float.updateExplicitNullability(true),
     },
     {
         literalType: new LiteralType(new IntConstant(1n), NullConstant),
-        expected: coreTypes.Int.updateNullability(true),
+        expected: coreTypes.Int.updateExplicitNullability(true),
     },
     {
         literalType: new LiteralType(new StringConstant(''), NullConstant),
-        expected: coreTypes.String.updateNullability(true),
+        expected: coreTypes.String.updateExplicitNullability(true),
     },
     // Other combinations
     {
@@ -77,7 +77,7 @@ const tests: ComputeClassTypeForLiteralTypeTest[] = [
     },
     {
         literalType: new LiteralType(new FloatConstant(1.5), new IntConstant(1n), NullConstant),
-        expected: coreTypes.Number.updateNullability(true),
+        expected: coreTypes.Number.updateExplicitNullability(true),
     },
     {
         literalType: new LiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),

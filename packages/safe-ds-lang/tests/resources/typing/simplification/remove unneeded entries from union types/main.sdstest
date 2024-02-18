@@ -71,3 +71,91 @@ class TestsInvolvingNothing(
     // $TEST$ serialization union<() -> (), Nothing?>
     p6: »union<() -> (), Nothing?>«,
 )
+
+class TestsInvolvingTypeParameters<Unbounded, UpperBound, BothBounds>(
+    // $TEST$ serialization Unbounded
+    a1: »union<Unbounded, Nothing>«,
+    // $TEST$ serialization Unbounded
+    a2: »union<Nothing, Unbounded>«,
+
+    // $TEST$ serialization Unbounded?
+    a3: »union<Unbounded, Nothing?>«,
+    // $TEST$ serialization Unbounded?
+    a4: »union<Nothing?, Unbounded>«,
+
+    // $TEST$ serialization Unbounded
+    a5: »union<Unbounded, Any>«,
+    // $TEST$ serialization Unbounded
+    a6: »union<Any, Unbounded>«,
+
+    // $TEST$ serialization Unbounded?
+    a7: »union<Unbounded, Any?>«,
+    // $TEST$ serialization Unbounded?
+    a8: »union<Any?, Unbounded>«,
+
+
+    // $TEST$ serialization UpperBound
+    b1: »union<UpperBound, Nothing>«,
+    // $TEST$ serialization UpperBound
+    b2: »union<Nothing, UpperBound>«,
+
+    // $TEST$ serialization UpperBound?
+    b3: »union<UpperBound, Nothing?>«,
+    // $TEST$ serialization UpperBound?
+    b4: »union<Nothing?, UpperBound>«,
+
+    // $TEST$ serialization UpperBound
+    b5: »union<UpperBound, Int>«,
+    // $TEST$ serialization UpperBound
+    b6: »union<Int, UpperBound>«,
+
+    // $TEST$ serialization UpperBound
+    b7: »union<UpperBound, Number>«,
+    // $TEST$ serialization UpperBound
+    b8: »union<Number, UpperBound>«,
+
+    // $TEST$ serialization UpperBound?
+    b9: »union<UpperBound, Number?>«,
+    // $TEST$ serialization UpperBound?
+    b10: »union<Number?, UpperBound>«,
+
+    // $TEST$ serialization Any?
+    b11: »union<UpperBound, Any?>«,
+    // $TEST$ serialization Any?
+    b12: »union<Any?, UpperBound>«,
+
+
+    // $TEST$ serialization union<BothBounds, Nothing>
+    c1: »union<BothBounds, Nothing>«,
+    // $TEST$ serialization union<Nothing, BothBounds>
+    c2: »union<Nothing, BothBounds>«,
+
+    // $TEST$ serialization union<BothBounds, String>
+    c3: »union<BothBounds, String>«,
+    // $TEST$ serialization union<String, BothBounds>
+    c4: »union<String, BothBounds>«,
+
+    // $TEST$ serialization BothBounds
+    c5: »union<BothBounds, Int>«,
+    // $TEST$ serialization BothBounds
+    c6: »union<Int, BothBounds>«,
+
+    // $TEST$ serialization BothBounds
+    c7: »union<BothBounds, Number>«,
+    // $TEST$ serialization BothBounds
+    c8: »union<Number, BothBounds>«,
+
+    // $TEST$ serialization BothBounds
+    c9: »union<BothBounds, Any>«,
+    // $TEST$ serialization BothBounds
+    c10: »union<Any, BothBounds>«,
+
+    // $TEST$ serialization BothBounds?
+    c11: »union<BothBounds, Any?>«,
+    // $TEST$ serialization BothBounds?
+    c12: »union<Any?, BothBounds>«,
+) where {
+    UpperBound sub Number,
+    BothBounds super Int,
+    BothBounds sub Any,
+}

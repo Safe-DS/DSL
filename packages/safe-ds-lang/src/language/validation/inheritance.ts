@@ -122,7 +122,7 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
                     node: firstParentType!,
                     code: CODE_INHERITANCE_NOT_A_CLASS,
                 });
-            } else if (computedType.isNullable) {
+            } else if (computedType.isExplicitlyNullable) {
                 accept('error', 'The parent type must not be nullable.', {
                     node: firstParentType!,
                     code: CODE_INHERITANCE_NULLABLE,
