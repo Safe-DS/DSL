@@ -1077,14 +1077,14 @@ export class SafeDsTypeComputer {
                     typeParameter,
                     this.lowestCommonSupertype([candidateSubstitution, ...otherSubstitutions]),
                 );
-            } else if (TypeParameter.isContravariant(typeParameter)) {
+            } /* c8 ignore start */ else if (TypeParameter.isContravariant(typeParameter)) {
                 // Compute the highest common subtype for substitutions
                 const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
                 substitutions.set(
                     typeParameter,
                     this.highestCommonSubtype([candidateSubstitution, ...otherSubstitutions]),
                 );
-            } else {
+            } /* c8 ignore stop */ else {
                 substitutions.set(typeParameter, candidateSubstitution);
             }
         }
@@ -1141,10 +1141,12 @@ export class SafeDsTypeComputer {
     // Highest common subtype
     // -----------------------------------------------------------------------------------------------------------------
 
+    /* c8 ignore start */
     private highestCommonSubtype(_types: Type[]): Type {
         // TODO(lr): Implement
         return this.coreTypes.Nothing;
     }
+    /* c8 ignore stop */
 
     // -----------------------------------------------------------------------------------------------------------------
     // Supertypes
