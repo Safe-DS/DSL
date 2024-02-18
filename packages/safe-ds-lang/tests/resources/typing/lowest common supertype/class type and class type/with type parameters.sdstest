@@ -6,6 +6,8 @@ class FloatCovariant sub Covariant<Float>
 class Invariant<T>
 class FloatInvariant sub Invariant<Float>
 
+class Multiple<T1, out T2>
+
 segment covariant(
     coNumber: Covariant<Number>,
     coInt: Covariant<Int>,
@@ -70,4 +72,17 @@ segment invariant(
 
     // $TEST$ serialization List<FloatInvariant>
     »[invFloat, invFloat]«;
+}
+
+segment multiple(
+    multipleNumberInt: Multiple<Number, Int>,
+    multipleNumberFloat: Multiple<Number, Float>,
+) {
+    // $TEST$ serialization List<Multiple<Number, Int>>
+    »[multipleNumberInt, multipleNumberInt]«;
+    // $TEST$ serialization List<Multiple<Number, Number>>
+    »[multipleNumberInt, multipleNumberFloat]«;
+
+    // $TEST$ serialization List<Multiple<Number, Float>>
+    »[multipleNumberFloat, multipleNumberFloat]«;
 }
