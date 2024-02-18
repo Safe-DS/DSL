@@ -1,0 +1,54 @@
+package tests.typing.lowestCommonSupertype.typeParameterTypeAndTypeParameterType
+
+class C
+class D sub C
+class E sub C
+
+class Test<NothingToAnyOrNull, NothingToD, NothingToE, DToAnyOrNull, DToC>(
+    nothingToAnyOrNull: NothingToAnyOrNull,
+    nothingToD: NothingToD,
+    nothingToE: NothingToE,
+    dToAnyOrNull: DToAnyOrNull,
+    dToC: DToC,
+
+    // $TEST$ serialization List<NothingToAnyOrNull>
+    a1: Any = »[nothingToAnyOrNull, nothingToAnyOrNull]«,
+    // $TEST$ serialization List<NothingToAnyOrNull>
+    a2: Any = »[nothingToAnyOrNull, nothingToD]«,
+    // $TEST$ serialization List<NothingToAnyOrNull>
+    a3: Any = »[nothingToAnyOrNull, nothingToE]«,
+    // $TEST$ serialization List<NothingToAnyOrNull>
+    a4: Any = »[nothingToAnyOrNull, dToAnyOrNull]«,
+    // $TEST$ serialization List<NothingToAnyOrNull>
+    a5: Any = »[nothingToAnyOrNull, dToC]«,
+
+    // $TEST$ serialization List<NothingToD>
+    b1: Any = »[nothingToD, nothingToD]«,
+    // $TEST$ serialization List<C>
+    b2: Any = »[nothingToD, nothingToE]«,
+    // $TEST$ serialization List<Any?>
+    b3: Any = »[nothingToD, dToAnyOrNull]«,
+    // $TEST$ serialization List<C>
+    b4: Any = »[nothingToD, dToC]«,
+
+    // $TEST$ serialization List<NothingToE>
+    c1: Any = »[nothingToE, nothingToE]«,
+    // $TEST$ serialization List<Any?>
+    c2: Any = »[nothingToE, dToAnyOrNull]«,
+    // $TEST$ serialization List<C>
+    c3: Any = »[nothingToE, dToC]«,
+
+    // $TEST$ serialization List<DToAnyOrNull>
+    d1: Any = »[dToAnyOrNull, dToAnyOrNull]«,
+    // $TEST$ serialization List<DToAnyOrNull>
+    d2: Any = »[dToAnyOrNull, dToC]«,
+
+    // $TEST$ serialization List<DToC>
+    e1: Any = »[dToC, dToC]«,
+) where {
+    NothingToD sub D,
+    NothingToE sub E,
+    DToAnyOrNull super D,
+    DToC super D,
+    DToC sub C,
+}

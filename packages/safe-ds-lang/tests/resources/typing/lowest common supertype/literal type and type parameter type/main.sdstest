@@ -1,0 +1,24 @@
+package tests.typing.lowestCommonSupertype.literalTypeAndTypeParameterType
+
+class Test<Unbounded, BoundedByInt, BoundedByString, BoundedByStringOrNull>(
+    unbounded: Unbounded,
+    unboundedOrNull: Unbounded?,
+    boundedByInt: BoundedByInt,
+    boundedByString: BoundedByString,
+    boundedByStringOrNull: BoundedByStringOrNull,
+
+    // $TEST$ serialization List<Unbounded>
+    p1: Any = »[1, unbounded]«,
+    // $TEST$ serialization List<Unbounded?>
+    p2: Any = »[1, unboundedOrNull]«,
+    // $TEST$ serialization List<BoundedByInt>
+    p3: Any = »[1, boundedByInt]«,
+    // $TEST$ serialization List<Any>
+    p4: Any = »[1, boundedByString]«,
+    // $TEST$ serialization List<Any?>
+    p5: Any = »[1, boundedByStringOrNull]«,
+) where {
+    BoundedByInt sub Int,
+    BoundedByString sub String,
+    BoundedByStringOrNull sub String?,
+}

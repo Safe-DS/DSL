@@ -922,13 +922,22 @@ export class SafeDsTypeComputer {
             return simplifiedTypes[0]!;
         }
 
+        // Replace type parameter types by their upper bound
+        const replacedTypes = simplifiedTypes.map((it) => {
+            if (it instanceof TypeParameterType) {
+                return this.computeUpperBound(it);
+            } else {
+                return it;
+            }
+        });
+
         // Includes type with unknown supertype
-        const groupedTypes = this.groupTypes(simplifiedTypes);
+        const groupedTypes = this.groupTypes(replacedTypes);
         if (groupedTypes.hasTypeWithUnknownSupertype) {
             return UnknownType;
         }
 
-        const isNullable = simplifiedTypes.some((it) => it.isExplicitlyNullable);
+        const isNullable = replacedTypes.some((it) => it.isExplicitlyNullable);
 
         // Class-based types
         if (!isEmpty(groupedTypes.classTypes) || !isEmpty(groupedTypes.constants)) {
@@ -1002,6 +1011,8 @@ export class SafeDsTypeComputer {
         constants: Constant[],
         isNullable: boolean,
     ): Type {
+        // TODO: restructure like for enums: if there are class types,
+
         // If there are only constants, return a literal type
         const literalType = new LiteralType(...constants);
         if (isEmpty(classTypes)) {
@@ -1010,6 +1021,7 @@ export class SafeDsTypeComputer {
         }
 
         // Find the class type that is compatible to all other types
+        // TODO: must ensure class types is not empty
         const candidateClasses = stream(
             [classTypes[0]!.declaration],
             this.classHierarchy.streamProperSuperclasses(classTypes[0]!.declaration),
