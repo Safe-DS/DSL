@@ -659,43 +659,12 @@ export class SafeDsTypeComputer {
      * already simplified, so this method is mainly useful for types that are constructed or modified manually.
      */
     simplifyType(type: Type): Type {
-        const unwrappedType = type.simplify();
+        const simplifiedType = type.simplify();
 
-        if (unwrappedType instanceof LiteralType) {
-            return this.simplifyLiteralType(unwrappedType);
-        } else if (unwrappedType instanceof UnionType) {
-            return this.simplifyUnionType(unwrappedType);
+        if (simplifiedType instanceof UnionType) {
+            return this.simplifyUnionType(simplifiedType);
         } else {
-            return unwrappedType;
-        }
-    }
-
-    private simplifyLiteralType(type: LiteralType): Type {
-        // Handle empty literal types
-        if (isEmpty(type.constants)) {
-            return this.coreTypes.Nothing;
-        }
-
-        // Remove duplicate constants
-        const uniqueConstants: Constant[] = [];
-        const knownConstants = new Set<String>();
-
-        for (const constant of type.constants) {
-            let key = constant.toString();
-
-            if (!knownConstants.has(key)) {
-                uniqueConstants.push(constant);
-                knownConstants.add(key);
-            }
-        }
-
-        // Apply other simplifications
-        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
-            return this.coreTypes.NothingOrNull;
-        } else if (uniqueConstants.length < type.constants.length) {
-            return this.factory.createLiteralType(...uniqueConstants);
-        } else {
-            return type;
+            return simplifiedType;
         }
     }
 

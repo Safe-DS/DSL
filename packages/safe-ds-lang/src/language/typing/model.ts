@@ -24,8 +24,8 @@ export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 export abstract class Type {
     /**
      * Whether this type is explicitly marked as nullable (e.g. using a `?` for named types). A type parameter type can
-     * also become nullable if its upper bound is nullable, which is not covered here. Use {@link TypeChecker.canBeNull}
-     * if you need to cover this.
+     * also become nullable if its upper bound is nullable, which is not checked here. Use {@link TypeChecker.canBeNull}
+     * if this is relevant for your situation.
      */
     abstract isExplicitlyNullable: boolean;
 
@@ -103,6 +103,15 @@ export class CallableType extends Type {
         return `(${inputTypeString}) -> ${this.outputType}`;
     }
 
+    override simplify(): CallableType {
+        return this.factory.createCallableType(
+            this.callable,
+            this.parameter,
+            this.factory.createNamedTupleType(...this.inputType.entries.map((it) => it.simplify())),
+            this.factory.createNamedTupleType(...this.outputType.entries.map((it) => it.simplify())),
+        );
+    }
+
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): CallableType {
         if (isEmpty(substitutions)) {
             return this;
@@ -113,15 +122,6 @@ export class CallableType extends Type {
             this.parameter,
             this.inputType.substituteTypeParameters(substitutions),
             this.outputType.substituteTypeParameters(substitutions),
-        );
-    }
-
-    override simplify(): CallableType {
-        return this.factory.createCallableType(
-            this.callable,
-            this.parameter,
-            this.factory.createNamedTupleType(...this.inputType.entries.map((it) => it.unwrap())),
-            this.factory.createNamedTupleType(...this.outputType.entries.map((it) => it.unwrap())),
         );
     }
 
@@ -172,16 +172,6 @@ export class IntersectionType extends Type {
         return `$intersection<${this.types.join(', ')}>`;
     }
 
-    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): IntersectionType {
-        if (isEmpty(substitutions)) {
-            return this;
-        }
-
-        return this.factory.createIntersectionType(
-            ...this.types.map((it) => it.substituteTypeParameters(substitutions)),
-        );
-    }
-
     override simplify(): Type {
         // Flatten nested intersections
         const newTypes = this.types.flatMap((type) => {
@@ -201,6 +191,16 @@ export class IntersectionType extends Type {
         return this.factory.createIntersectionType(...newTypes);
     }
 
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): IntersectionType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return this.factory.createIntersectionType(
+            ...this.types.map((it) => it.substituteTypeParameters(substitutions)),
+        );
+    }
+
     override withExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (isEmpty(this.types)) {
             return this.coreTypes.Any.withExplicitNullability(isExplicitlyNullable);
@@ -217,6 +217,7 @@ export class IntersectionType extends Type {
 }
 
 export class LiteralType extends Type {
+    private readonly coreTypes: SafeDsCoreTypes;
     private readonly factory: SafeDsTypeFactory;
 
     readonly constants: Constant[];
@@ -225,6 +226,7 @@ export class LiteralType extends Type {
     constructor(services: SafeDsServices, constants: Constant[]) {
         super();
 
+        this.coreTypes = services.types.CoreTypes;
         this.factory = services.types.TypeFactory;
 
         this.constants = constants;
@@ -255,11 +257,36 @@ export class LiteralType extends Type {
         return `literal<${this.constants.join(', ')}>`;
     }
 
-    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
-        return this;
+    override simplify(): Type {
+        // Handle empty literal types
+        if (isEmpty(this.constants)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Remove duplicate constants
+        const uniqueConstants: Constant[] = [];
+        const knownConstants = new Set<String>();
+
+        for (const constant of this.constants) {
+            let key = constant.toString();
+
+            if (!knownConstants.has(key)) {
+                uniqueConstants.push(constant);
+                knownConstants.add(key);
+            }
+        }
+
+        // Apply other simplifications
+        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
+            return this.coreTypes.NothingOrNull;
+        } else if (uniqueConstants.length < this.constants.length) {
+            return this.factory.createLiteralType(...uniqueConstants);
+        } else {
+            return this;
+        }
     }
 
-    override simplify(): LiteralType {
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
         return this;
     }
 
@@ -317,16 +344,6 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
         return `(${this.entries.join(', ')})`;
     }
 
-    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleType<T> {
-        if (isEmpty(substitutions)) {
-            return this;
-        }
-
-        return this.factory.createNamedTupleType(
-            ...this.entries.map((it) => it.substituteTypeParameters(substitutions)),
-        );
-    }
-
     /**
      * If this only has one entry, returns its type. Otherwise, returns this.
      */
@@ -335,7 +352,17 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
             return this.entries[0]!.type.simplify();
         }
 
-        return this.factory.createNamedTupleType(...this.entries.map((it) => it.unwrap()));
+        return this.factory.createNamedTupleType(...this.entries.map((it) => it.simplify()));
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleType<T> {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return this.factory.createNamedTupleType(
+            ...this.entries.map((it) => it.substituteTypeParameters(substitutions)),
+        );
     }
 
     override withExplicitNullability(isExplicitlyNullable: boolean): Type {
@@ -379,7 +406,7 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
         return new NamedTupleEntry(this.declaration, this.name, this.type.substituteTypeParameters(substitutions));
     }
 
-    unwrap(): NamedTupleEntry<T> {
+    simplify(): NamedTupleEntry<T> {
         return new NamedTupleEntry(this.declaration, this.name, this.type.simplify());
     }
 }
@@ -397,11 +424,11 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
         }
     }
 
-    abstract override withExplicitNullability(isExplicitlyNullable: boolean): NamedType<T>;
-
     simplify(): NamedType<T> {
         return this;
     }
+
+    abstract override withExplicitNullability(isExplicitlyNullable: boolean): NamedType<T>;
 }
 
 export class ClassType extends NamedType<SdsClass> {
@@ -452,6 +479,11 @@ export class ClassType extends NamedType<SdsClass> {
         return result;
     }
 
+    override simplify(): ClassType {
+        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.simplify()]));
+        return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
+    }
+
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): ClassType {
         if (isEmpty(substitutions)) {
             return this;
@@ -461,11 +493,6 @@ export class ClassType extends NamedType<SdsClass> {
             stream(this.substitutions).map(([key, value]) => [key, value.substituteTypeParameters(substitutions)]),
         );
 
-        return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
-    }
-
-    override simplify(): ClassType {
-        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.simplify()]));
         return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
     }
 
@@ -610,13 +637,13 @@ export class StaticType extends Type {
         return `$type<${this.instanceType}>`;
     }
 
-    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): StaticType {
-        // The substitutions are only meaningful for instances of a declaration, not for the declaration itself. Hence,
-        // we don't substitute anything here.
+    override simplify(): Type {
         return this;
     }
 
-    override simplify(): Type {
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): StaticType {
+        // The substitutions are only meaningful for instances of a declaration, not for the declaration itself. Hence,
+        // we don't substitute anything here.
         return this;
     }
 
@@ -667,14 +694,6 @@ export class UnionType extends Type {
         return `union<${this.types.join(', ')}>`;
     }
 
-    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
-        if (isEmpty(substitutions)) {
-            return this;
-        }
-
-        return this.factory.createUnionType(...this.types.map((it) => it.substituteTypeParameters(substitutions)));
-    }
-
     override simplify(): Type {
         // Flatten nested unions
         const newTypes = this.types.flatMap((type) => {
@@ -692,6 +711,14 @@ export class UnionType extends Type {
         }
 
         return this.factory.createUnionType(...newTypes);
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return this.factory.createUnionType(...this.types.map((it) => it.substituteTypeParameters(substitutions)));
     }
 
     override withExplicitNullability(isExplicitlyNullable: boolean): Type {
@@ -720,11 +747,11 @@ class UnknownTypeClass extends Type {
         return '$unknown';
     }
 
-    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+    override simplify(): Type {
         return this;
     }
 
-    override simplify(): Type {
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
         return this;
     }
 
