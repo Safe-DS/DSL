@@ -513,7 +513,7 @@ describe('type model', async () => {
     ];
     describe.each(unwrapTests)('unwrap', ({ type, expectedType }) => {
         it(`should remove any unnecessary containers (${type.constructor.name} -- ${type})`, () => {
-            const actual = type.unwrap();
+            const actual = type.simplify();
             expectEqualTypes(actual, expectedType);
         });
     });
@@ -812,7 +812,7 @@ interface SubstituteTypeParametersTest {
 }
 
 /**
- * Tests for {@link Type.unwrap}.
+ * Tests for {@link Type.simplify}.
  */
 interface UnwrapTest {
     /**

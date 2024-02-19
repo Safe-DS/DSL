@@ -659,7 +659,7 @@ export class SafeDsTypeComputer {
      * already simplified, so this method is mainly useful for types that are constructed or modified manually.
      */
     simplifyType(type: Type): Type {
-        const unwrappedType = type.unwrap();
+        const unwrappedType = type.simplify();
 
         if (unwrappedType instanceof LiteralType) {
             return this.simplifyLiteralType(unwrappedType);

@@ -40,14 +40,16 @@ export abstract class Type {
     abstract toString(): string;
 
     /**
+     * Returns an equivalent type that is simplified as much as possible. Types computed by
+     * {@link TypeComputer.computeType} are already simplified, so this method is mainly useful for types that are
+     * constructed or modified manually.
+     */
+    abstract simplify(): Type;
+
+    /**
      * Returns a copy of this type with the given type parameters substituted.
      */
     abstract substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type;
-
-    /**
-     * Removes any unnecessary containers from the type.
-     */
-    abstract unwrap(): Type;
 
     /**
      * Returns a copy of this type with the given nullability.
@@ -114,7 +116,7 @@ export class CallableType extends Type {
         );
     }
 
-    override unwrap(): CallableType {
+    override simplify(): CallableType {
         return this.factory.createCallableType(
             this.callable,
             this.parameter,
@@ -180,10 +182,10 @@ export class IntersectionType extends Type {
         );
     }
 
-    override unwrap(): Type {
+    override simplify(): Type {
         // Flatten nested intersections
         const newTypes = this.types.flatMap((type) => {
-            const unwrappedType = type.unwrap();
+            const unwrappedType = type.simplify();
             if (unwrappedType instanceof IntersectionType) {
                 return unwrappedType.types;
             } else {
@@ -257,7 +259,7 @@ export class LiteralType extends Type {
         return this;
     }
 
-    override unwrap(): LiteralType {
+    override simplify(): LiteralType {
         return this;
     }
 
@@ -328,9 +330,9 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
     /**
      * If this only has one entry, returns its type. Otherwise, returns this.
      */
-    override unwrap(): Type {
+    override simplify(): Type {
         if (this.entries.length === 1) {
-            return this.entries[0]!.type.unwrap();
+            return this.entries[0]!.type.simplify();
         }
 
         return this.factory.createNamedTupleType(...this.entries.map((it) => it.unwrap()));
@@ -378,7 +380,7 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
     }
 
     unwrap(): NamedTupleEntry<T> {
-        return new NamedTupleEntry(this.declaration, this.name, this.type.unwrap());
+        return new NamedTupleEntry(this.declaration, this.name, this.type.simplify());
     }
 }
 
@@ -397,7 +399,7 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
 
     abstract override updateExplicitNullability(isExplicitlyNullable: boolean): NamedType<T>;
 
-    unwrap(): NamedType<T> {
+    simplify(): NamedType<T> {
         return this;
     }
 }
@@ -462,8 +464,8 @@ export class ClassType extends NamedType<SdsClass> {
         return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
     }
 
-    override unwrap(): ClassType {
-        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.unwrap()]));
+    override simplify(): ClassType {
+        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.simplify()]));
         return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
     }
 
@@ -614,7 +616,7 @@ export class StaticType extends Type {
         return this;
     }
 
-    override unwrap(): Type {
+    override simplify(): Type {
         return this;
     }
 
@@ -673,10 +675,10 @@ export class UnionType extends Type {
         return this.factory.createUnionType(...this.types.map((it) => it.substituteTypeParameters(substitutions)));
     }
 
-    override unwrap(): Type {
+    override simplify(): Type {
         // Flatten nested unions
         const newTypes = this.types.flatMap((type) => {
-            const unwrappedType = type.unwrap();
+            const unwrappedType = type.simplify();
             if (unwrappedType instanceof UnionType) {
                 return unwrappedType.types;
             } else {
@@ -722,7 +724,7 @@ class UnknownTypeClass extends Type {
         return this;
     }
 
-    override unwrap(): Type {
+    override simplify(): Type {
         return this;
     }
 
