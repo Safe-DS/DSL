@@ -22,11 +22,11 @@ class Test<
     boundedByOtherEnum: BoundedByOtherEnum,
     boundedByOtherEnumOrNull: BoundedByOtherEnumOrNull,
 
-    // $TEST$ serialization List<Unbounded>
+    // $TEST$ serialization List<Any?>
     p1: Any = »[e, unbounded]«,
-    // $TEST$ serialization List<Unbounded?>
+    // $TEST$ serialization List<Any?>
     p2: Any = »[e, unboundedOrNull]«,
-    // $TEST$ serialization List<BoundedByEnum>
+    // $TEST$ serialization List<E>
     p3: Any = »[e, boundedByEnum]«,
     // $TEST$ serialization List<E>
     p4: Any = »[e, boundedByEnumVariant]«,

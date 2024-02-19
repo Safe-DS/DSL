@@ -12,11 +12,11 @@ class Test<Unbounded, BoundedByC sub C, BoundedByD sub D, BoundedByDOrNull sub D
     boundedByD: BoundedByD,
     boundedByDOrNull: BoundedByDOrNull,
 
-    // $TEST$ serialization List<Unbounded>
+    // $TEST$ serialization List<Any?>
     p1: Any = »[c, unbounded]«,
-    // $TEST$ serialization List<Unbounded?>
+    // $TEST$ serialization List<Any?>
     p2: Any = »[c, unboundedOrNull]«,
-    // $TEST$ serialization List<BoundedByC>
+    // $TEST$ serialization List<C>
     p3: Any = »[c, boundedByC]«,
     // $TEST$ serialization List<Any>
     p4: Any = »[c, boundedByD]«,

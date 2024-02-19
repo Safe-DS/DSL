@@ -692,7 +692,7 @@ export class SafeDsTypeComputer {
      * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
      * `$unknown` is returned. The result is simplified as much as possible.
      */
-    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeBoundOptions = {}): Type {
+    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeUpperBoundOptions = {}): Type {
         let type: TypeParameterType;
         if (nodeOrType instanceof TypeParameterType) {
             type = nodeOrType;
@@ -704,7 +704,7 @@ export class SafeDsTypeComputer {
         return result.withExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
-    private doComputeUpperBound(type: TypeParameterType, options: ComputeBoundOptions): Type {
+    private doComputeUpperBound(type: TypeParameterType, options: ComputeUpperBoundOptions): Type {
         const upperBound = type.declaration.upperBound;
         if (!upperBound) {
             return this.coreTypes.AnyOrNull;
@@ -1052,14 +1052,15 @@ export class SafeDsTypeComputer {
     }
 
     private Nothing(isNullable: boolean): Type {
+        /* c8 ignore next 2 */
         return isNullable ? this.coreTypes.NothingOrNull : this.coreTypes.Nothing;
     }
 }
 
 /**
- * Options for {@link computeLowerBound} and {@link computeUpperBound}.
+ * Options for {@link computeUpperBound}.
  */
-interface ComputeBoundOptions {
+interface ComputeUpperBoundOptions {
     /**
      * If `true`, the computation stops at type parameter types and returns them as is. Otherwise, it finds the bounds
      * for the type parameter types recursively.

@@ -682,6 +682,8 @@ export class UnionType extends Type {
         // occurrence of duplicate types. It's also makes splicing easier.
         for (let i = newTypes.length - 1; i >= 0; i--) {
             const currentType = newTypes[i]!;
+            const currentTypeIsNothing = currentType.equals(this.coreTypes.Nothing);
+            const currentTypeIsNothingOrNull = currentType.equals(this.coreTypes.NothingOrNull);
 
             for (let j = newTypes.length - 1; j >= 0; j--) {
                 if (i === j) {
@@ -690,10 +692,28 @@ export class UnionType extends Type {
 
                 const otherType = newTypes[j]!;
 
+                // Remove identical types
+                if (currentType.equals(otherType)) {
+                    // Remove the current type
+                    newTypes.splice(i, 1);
+                    break;
+                }
+
+                // We can always attempt to replace `Nothing` or `Nothing?` with other types, since they are the bottom
+                // types. But otherwise, we cannot use a type that is not fully substituted as a replacement. After
+                // substitution, we might lose information about the original type:
+                //
+                // Consider the type `union<C, T>`, where `C` is a class and `T` is a type parameter without an upper
+                // bound. While `C` is a subtype of `T`, we cannot replace the union type with `T`, since we might later
+                // substitute `T` with a type that is not a supertype of `C`.
+                if (!currentTypeIsNothing && !currentTypeIsNothingOrNull && !otherType.isFullySubstituted) {
+                    continue;
+                }
+
                 // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
                 // create another union type.
                 if (
-                    currentType.equals(this.coreTypes.NothingOrNull) &&
+                    currentTypeIsNothingOrNull &&
                     (otherType instanceof CallableType ||
                         otherType instanceof NamedTupleType ||
                         otherType instanceof StaticType)
@@ -706,31 +726,22 @@ export class UnionType extends Type {
                     // Other type always occurs before current type
                     const newConstants = [...otherType.constants, ...currentType.constants];
                     const newLiteralType = this.factory.createLiteralType(...newConstants).simplify();
+
+                    // Replace the other type with the new literal type
                     newTypes.splice(j, 1, newLiteralType);
+                    // Remove the current type
                     newTypes.splice(i, 1);
                     break;
                 }
 
-                // Remove subtypes of other types. Type parameter types are a special case, since there might be a
-                // subtype relation between `currentType` and `otherType` in both directions. We always keep the type
-                // parameter type in this case for consistency, since it can be narrower if it has a lower bound.
-                if (currentType instanceof TypeParameterType) {
-                    const candidateType = currentType.withExplicitNullability(
-                        currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
-                    );
-
-                    if (this.typeChecker.isSubtypeOf(otherType, candidateType)) {
-                        newTypes.splice(j, 1, candidateType);
-                        newTypes.splice(i, 1);
-                        break;
-                    }
-                }
-
+                // Remove subtypes of other types
                 const candidateType = otherType.withExplicitNullability(
                     currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
                 );
-                if (this.typeChecker.isSubtypeOf(currentType, candidateType)) {
-                    newTypes.splice(j, 1, candidateType); // Update nullability
+                if (this.typeChecker.isSupertypeOf(candidateType, currentType)) {
+                    // Replace the other type with the candidate type (updated nullability)
+                    newTypes.splice(j, 1, candidateType);
+                    // Remove the current type
                     newTypes.splice(i, 1);
                     break;
                 }
