@@ -55,6 +55,7 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     if (typeParameterHasInsufficientContext) {
         accept('error', 'Insufficient context to infer this type parameter.', {
             node,
+            property: 'name',
             code: CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT,
         });
     }
