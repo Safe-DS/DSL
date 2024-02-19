@@ -93,7 +93,7 @@ segment indexedAccess(
     »unresolved?[0]«;
 }
 
-class IndexedAccess<Nullable, NonNullable>(
+class IndexedAccess<Nullable sub List<Int>?, NonNullable sub List<Int>>(
     nullable: Nullable,
     nonNullable: NonNullable,
 
@@ -106,10 +106,7 @@ class IndexedAccess<Nullable, NonNullable>(
     p3: Any? = »nullable?[0]«,
     // $TEST$ no error "The receiver can be null so a null-safe indexed access must be used."
     p4: Any? = »nonNullable?[0]«,
-) where {
-    Nullable sub List<Int>?,
-    NonNullable sub List<Int>
-}
+)
 
 segment memberAccess(
     myClass: MyClass,
@@ -147,7 +144,7 @@ segment memberAccess(
     »unresolved?.a«;
 }
 
-class MemberAccess<Nullable, NonNullable>(
+class MemberAccess<Nullable sub MyClass?, NonNullable sub MyClass>(
     nullable: Nullable,
     nonNullable: NonNullable,
 
@@ -160,7 +157,4 @@ class MemberAccess<Nullable, NonNullable>(
     p3: Any? = »nullable?.a«,
     // $TEST$ no error "The receiver can be null so a null-safe member access must be used."
     p4: Any? = »nonNullable?.a«,
-) where {
-    Nullable sub MyClass?,
-    NonNullable sub MyClass
-}
+)

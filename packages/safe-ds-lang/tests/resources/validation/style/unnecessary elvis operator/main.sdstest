@@ -41,7 +41,7 @@ pipeline test {
     »null ?: null«;
 }
 
-class TestsForTypeParameters<Nullable, NonNullable>(
+class TestsForTypeParameters<Nullable, NonNullable sub Any>(
     nullable: Nullable,
     nonNullable: NonNullable,
 
@@ -53,6 +53,4 @@ class TestsForTypeParameters<Nullable, NonNullable>(
     p3: Any? = »nonNullable ?: 2«,
     // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
     p4: Any? = »nonNullable ?: null«,
-) where {
-    NonNullable sub Any
-}
+)

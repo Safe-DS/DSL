@@ -79,7 +79,6 @@ import {
     segmentShouldBeUsed,
 } from './other/declarations/segments.js';
 import {
-    typeParameterBoundMustBeAcyclic,
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
     typeParameterMustOnlyBeVariantOnClass,
@@ -348,7 +347,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [
-            typeParameterBoundMustBeAcyclic,
             typeParameterMustBeUsedInCorrectPosition(services),
             typeParameterMustHaveSufficientContext,
             typeParameterMustOnlyBeVariantOnClass,
