@@ -34,6 +34,7 @@ import {
     isSdsSegment,
     isSdsStatement,
     isSdsTypeArgument,
+    isSdsTypeParameter,
     isSdsWildcardImport,
     isSdsYield,
     SdsAnnotation,
@@ -44,6 +45,7 @@ import {
     SdsImportedDeclaration,
     SdsMemberAccess,
     SdsMemberType,
+    SdsNamedType,
     SdsNamedTypeDeclaration,
     type SdsParameter,
     SdsPlaceholder,
@@ -110,7 +112,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             if (isSdsMemberType(node.$container) && node.$containerProperty === 'member') {
                 return this.getScopeForMemberTypeMember(node.$container);
             } else {
-                return this.getScopeForNamedTypeDeclaration(context);
+                return this.getScopeForNamedTypeDeclaration(node, context);
             }
         } else if (isSdsReference(node) && context.property === 'target') {
             if (isSdsMemberAccess(node.$container) && node.$containerProperty === 'member') {
@@ -192,8 +194,19 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
     }
 
-    private getScopeForNamedTypeDeclaration(context: ReferenceInfo): Scope {
-        return this.coreDeclarations(SdsNamedTypeDeclaration, super.getScope(context));
+    private getScopeForNamedTypeDeclaration(node: SdsNamedType, context: ReferenceInfo): Scope {
+        // Default scope
+        let currentScope = this.coreDeclarations(SdsNamedTypeDeclaration, super.getScope(context));
+
+        // Type parameters (up to the containing type parameter)
+        const containingTypeParameter = getContainerOfType(node, isSdsTypeParameter);
+        if (containingTypeParameter) {
+            const allTypeParameters = getTypeParameters(containingTypeParameter?.$container);
+            const priorTypeParameters = allTypeParameters.slice(0, containingTypeParameter.$containerIndex);
+            currentScope = this.createScopeForNodes(priorTypeParameters, currentScope);
+        }
+
+        return currentScope;
     }
 
     private getScopeForMemberAccessMember(node: SdsMemberAccess): Scope {

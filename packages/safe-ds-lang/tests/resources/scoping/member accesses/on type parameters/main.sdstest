@@ -5,7 +5,7 @@ class C {
     attr »a«: Int
 }
 
-class MyClass<Unbounded, UpperBound>(
+class MyClass<Unbounded, UpperBound sub C>(
     unbounded: Unbounded,
     upperBound: UpperBound,
 
@@ -13,9 +13,7 @@ class MyClass<Unbounded, UpperBound>(
     p1: Any = unbounded.»a«,
     // $TEST$ references attribute
     p2: Any = upperBound.»a«,
-) where {
-    UpperBound sub C
-} {
+) {
     attr unbounded: Unbounded
     attr upperBound: UpperBound
 }

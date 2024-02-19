@@ -4,131 +4,24 @@ import {
     isSdsClass,
     isSdsClassMember,
     isSdsDeclaration,
-    isSdsNamedType,
     isSdsNamedTypeDeclaration,
     isSdsParameter,
     isSdsParameterList,
     isSdsTypeArgument,
-    isSdsTypeParameter,
     isSdsUnionType,
     SdsClass,
     SdsDeclaration,
     SdsTypeParameter,
-    SdsTypeParameterBound,
 } from '../../../generated/ast.js';
 import { isStatic, TypeParameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../../../helpers/safe-ds-node-mapper.js';
-import { UnknownType } from '../../../typing/model.js';
+import { NamedType, UnknownType } from '../../../typing/model.js';
 
-export const CODE_TYPE_PARAMETER_CYCLIC_BOUND = 'type-parameter/cyclic-bound';
-export const CODE_TYPE_PARAMETER_INCOMPATIBLE_BOUNDS = 'type-parameter/incompatible-bounds';
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
-export const CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS = 'type-parameter/multiple-bounds';
+export const CODE_TYPE_PARAMETER_UPPER_BOUND = 'type-parameter/upper-bound';
 export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
 export const CODE_TYPE_PARAMETER_VARIANCE = 'type-parameter/variance';
-
-export const typeParameterBoundMustBeAcyclic = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-    const lowerBound = TypeParameter.getLowerBounds(node)[0];
-    if (lowerBound && !lowerTypeParameterBoundIsAcyclic(lowerBound)) {
-        accept('error', 'Bounds of type parameters must be acyclic.', {
-            node: lowerBound,
-            code: CODE_TYPE_PARAMETER_CYCLIC_BOUND,
-        });
-    }
-
-    const upperBound = TypeParameter.getUpperBounds(node)[0];
-    if (upperBound && !upperTypeParameterBoundIsAcyclic(upperBound)) {
-        accept('error', 'Bounds of type parameters must be acyclic.', {
-            node: upperBound,
-            code: CODE_TYPE_PARAMETER_CYCLIC_BOUND,
-        });
-    }
-};
-
-const lowerTypeParameterBoundIsAcyclic = (node: SdsTypeParameterBound): boolean => {
-    const visited = new Set<SdsTypeParameter>();
-    let current: SdsTypeParameterBound | undefined = node;
-
-    while (current) {
-        const typeParameter = getBoundingTypeParameter(current, 'sub');
-        if (!typeParameter) {
-            return true;
-        } else if (visited.has(typeParameter)) {
-            return false;
-        }
-
-        visited.add(typeParameter);
-        current = TypeParameter.getLowerBounds(typeParameter)[0];
-    }
-
-    return true;
-};
-
-const upperTypeParameterBoundIsAcyclic = (node: SdsTypeParameterBound): boolean => {
-    const visited = new Set<SdsTypeParameter>();
-    let current: SdsTypeParameterBound | undefined = node;
-
-    while (current) {
-        const typeParameter = getBoundingTypeParameter(current, 'super');
-        if (!typeParameter) {
-            return true;
-        } else if (visited.has(typeParameter)) {
-            return false;
-        }
-
-        visited.add(typeParameter);
-        current = TypeParameter.getUpperBounds(typeParameter)[0];
-    }
-
-    return true;
-};
-
-/**
- * Returns the next type parameter to be visited when checking for cycles.
- *
- * @param node
- * The current type parameter bound.
- *
- * @param invertedOperator
- * The operator for the inverted bound direction ('sub' for lower bounds, 'super' for upper bounds).
- */
-const getBoundingTypeParameter = (
-    node: SdsTypeParameterBound,
-    invertedOperator: string,
-): SdsTypeParameter | undefined => {
-    if (node.operator === invertedOperator) {
-        return node.leftOperand?.ref;
-    } else if (isSdsNamedType(node.rightOperand) && isSdsTypeParameter(node.rightOperand.declaration?.ref)) {
-        return node.rightOperand.declaration?.ref;
-    } else {
-        return undefined;
-    }
-};
-
-export const typeParameterBoundsMustBeCompatible = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
-
-    return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-        const lowerBound = typeComputer.computeLowerBound(node);
-        if (lowerBound === UnknownType) {
-            return;
-        }
-
-        const upperBound = typeComputer.computeUpperBound(node);
-        if (upperBound === UnknownType) {
-            return;
-        }
-
-        if (!typeChecker.isSubtypeOf(lowerBound, upperBound)) {
-            accept('error', `The lower bound '${lowerBound}' is not assignable to the upper bound '${upperBound}'.`, {
-                node,
-                code: CODE_TYPE_PARAMETER_INCOMPATIBLE_BOUNDS,
-            });
-        }
-    };
-};
 
 export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
     const containingCallable = getContainerOfType(node, isSdsCallable);
@@ -162,29 +55,26 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     if (typeParameterHasInsufficientContext) {
         accept('error', 'Insufficient context to infer this type parameter.', {
             node,
+            property: 'name',
             code: CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT,
         });
     }
 };
 
-export const typeParameterMustNotHaveMultipleBounds = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-    TypeParameter.getLowerBounds(node)
-        .slice(1)
-        .forEach((it) => {
-            accept('error', `The type parameter '${node.name}' can only have a single lower bound.`, {
-                node: it,
-                code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
-            });
-        });
+export const typeParameterUpperBoundMustBeNamedType = (services: SafeDsServices) => {
+    const typeComputer = services.types.TypeComputer;
 
-    TypeParameter.getUpperBounds(node)
-        .slice(1)
-        .forEach((it) => {
-            accept('error', `The type parameter '${node.name}' can only have a single upper bound.`, {
-                node: it,
-                code: CODE_TYPE_PARAMETER_MULTIPLE_BOUNDS,
+    return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
+        const boundType = typeComputer.computeType(node.upperBound);
+
+        if (boundType !== UnknownType && !(boundType instanceof NamedType)) {
+            accept('error', 'The upper bound of a type parameter must be a named type.', {
+                node,
+                property: 'upperBound',
+                code: CODE_TYPE_PARAMETER_UPPER_BOUND,
             });
-        });
+        }
+    };
 };
 
 export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsServices) => {

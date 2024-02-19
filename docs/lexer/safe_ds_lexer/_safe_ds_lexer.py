@@ -51,7 +51,6 @@ operators = (
     "not",
     "or",
     "sub",
-    "super",
 )
 
 builtins = (

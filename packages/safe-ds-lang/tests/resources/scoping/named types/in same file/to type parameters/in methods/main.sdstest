@@ -6,9 +6,42 @@ fun myFunction1<BeforeGlobal>()
 class MyClass1<»Container«, Overridden> {
     fun myFunction2<BeforeMember>()
 
-    // $TEST$ target own
-    // $TEST$ target overridden
-    fun myFunction3<»Own«, »Overridden«>(
+    fun myFunction3<
+        // $TEST$ target own
+        »Own«,
+
+        // $TEST$ target overridden
+        »Overridden«,
+
+        // $TEST$ references own
+        T1 sub »Own«,
+
+        // $TEST$ references overridden
+        T2 sub »Overridden«,
+
+        // $TEST$ references container
+        T3 sub »Container«,
+
+        // $TEST$ unresolved
+        T4 sub »BeforeMember«,
+
+        // $TEST$ unresolved
+        T5 sub »AfterMember«,
+
+        // $TEST$ unresolved
+        T6 sub »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        T7 sub »AfterGlobal«,
+
+        // $TEST$ unresolved
+        T8 sub »Unresolved«,
+
+        // $TEST$ unresolved
+        T9 sub »Forward«,
+
+        Forward,
+    >(
         // $TEST$ references own
         a: »Own«,
 
@@ -56,31 +89,7 @@ class MyClass1<»Container«, Overridden> {
 
         // $TEST$ unresolved
         s: »Unresolved«,
-    ) where {
-        // $TEST$ references own
-        Own sub »Own«,
-
-        // $TEST$ references overridden
-        Own sub »Overridden«,
-
-        // $TEST$ references container
-        Own sub »Container«,
-
-        // $TEST$ unresolved
-        Own sub »BeforeMember«,
-
-        // $TEST$ unresolved
-        Own sub »AfterMember«,
-
-        // $TEST$ unresolved
-        Own sub »BeforeGlobal«,
-
-        // $TEST$ unresolved
-        Own sub »AfterGlobal«,
-
-        // $TEST$ unresolved
-        Own sub »Unresolved«,
-    }
+    )
 
     fun myFunction5<AfterMember>()
 }

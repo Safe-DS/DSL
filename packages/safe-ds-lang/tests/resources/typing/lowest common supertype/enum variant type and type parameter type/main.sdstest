@@ -5,7 +5,12 @@ enum E {
     V2
 }
 
-class D<Unbounded, BoundedByEnumVariant, BoundedByOtherEnumVariant, BoundedByOtherEnumVariantOrNull>(
+class D<
+    Unbounded,
+    BoundedByEnumVariant sub E.V1,
+    BoundedByOtherEnumVariant sub E.V2,
+    BoundedByOtherEnumVariantOrNull sub E.V2?
+>(
     v: E.V1,
 
     unbounded: Unbounded,
@@ -24,8 +29,4 @@ class D<Unbounded, BoundedByEnumVariant, BoundedByOtherEnumVariant, BoundedByOth
     p4: Any = »[v, boundedByOtherEnumVariant]«,
     // $TEST$ serialization List<E?>
     p5: Any = »[v, boundedByOtherEnumVariantOrNull]«,
-) where {
-    BoundedByEnumVariant sub E.V1,
-    BoundedByOtherEnumVariant sub E.V2,
-    BoundedByOtherEnumVariantOrNull sub E.V2?
-}
+)

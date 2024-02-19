@@ -6,7 +6,13 @@ enum E {
 
 enum F
 
-class Test<Unbounded, BoundedByEnum, BoundedByEnumVariant, BoundedByOtherEnum, BoundedByOtherEnumOrNull>(
+class Test<
+    Unbounded,
+    BoundedByEnum sub E,
+    BoundedByEnumVariant sub E.V,
+    BoundedByOtherEnum sub F,
+    BoundedByOtherEnumOrNull sub F?
+>(
     e: E,
 
     unbounded: Unbounded,
@@ -28,9 +34,4 @@ class Test<Unbounded, BoundedByEnum, BoundedByEnumVariant, BoundedByOtherEnum, B
     p5: Any = »[e, boundedByOtherEnum]«,
     // $TEST$ serialization List<Any?>
     p6: Any = »[e, boundedByOtherEnumOrNull]«,
-) where {
-    BoundedByEnum sub E,
-    BoundedByEnumVariant sub E.V,
-    BoundedByOtherEnum sub F,
-    BoundedByOtherEnumOrNull sub F?,
-}
+)

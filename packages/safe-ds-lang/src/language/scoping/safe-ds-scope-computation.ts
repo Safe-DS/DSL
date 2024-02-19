@@ -7,12 +7,15 @@ import {
     PrecomputedScopes,
 } from 'langium';
 import {
+    isSdsAnnotation,
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
     isSdsEnumVariant,
     isSdsFunction,
     isSdsModule,
+    isSdsParameter,
+    isSdsParameterList,
     isSdsPipeline,
     isSdsSegment,
     isSdsTypeParameter,
@@ -20,6 +23,7 @@ import {
     SdsClass,
     SdsEnum,
     SdsEnumVariant,
+    SdsParameter,
     SdsTypeParameter,
 } from '../generated/ast.js';
 
@@ -46,6 +50,8 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
             this.processSdsEnum(node, document, scopes);
         } else if (isSdsEnumVariant(node)) {
             this.processSdsEnumVariant(node, document, scopes);
+        } else if (isSdsParameter(node)) {
+            this.processSdsParameter(node, document, scopes);
         } else if (isSdsTypeParameter(node)) {
             this.processSdsTypeParameter(node, document, scopes);
         } else {
@@ -101,6 +107,32 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         this.addToScopesIfKeyIsDefined(scopes, node.constraintList, description);
     }
 
+    private processSdsParameter(node: SdsParameter, document: LangiumDocument, scopes: PrecomputedScopes): void {
+        const containingCallable = getContainerOfType(node, isSdsParameterList)?.$container;
+        if (!containingCallable) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        const name = this.nameProvider.getName(node);
+        if (!name) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        const description = this.descriptions.createDescription(node, name, document);
+
+        if (isSdsAnnotation(containingCallable)) {
+            this.addToScopesIfKeyIsDefined(scopes, containingCallable.constraintList, description);
+        } else if (isSdsClass(containingCallable)) {
+            this.addToScopesIfKeyIsDefined(scopes, containingCallable.constraintList, description);
+        } else if (isSdsEnumVariant(containingCallable)) {
+            this.addToScopesIfKeyIsDefined(scopes, containingCallable.constraintList, description);
+        } else if (isSdsFunction(containingCallable)) {
+            this.addToScopesIfKeyIsDefined(scopes, containingCallable.constraintList, description);
+        }
+    }
+
     private processSdsTypeParameter(
         node: SdsTypeParameter,
         document: LangiumDocument,
@@ -123,12 +155,10 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         if (isSdsClass(containingDeclaration)) {
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.parameterList, description);
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.parentTypeList, description);
-            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.constraintList, description);
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.body, description);
         } else if (isSdsFunction(containingDeclaration)) {
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.parameterList, description);
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.resultList, description);
-            this.addToScopesIfKeyIsDefined(scopes, containingDeclaration.constraintList, description);
         }
     }
 

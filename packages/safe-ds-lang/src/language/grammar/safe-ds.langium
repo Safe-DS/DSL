@@ -378,23 +378,19 @@ SdsConstraintList returns SdsConstraintList:
 interface SdsConstraint extends SdsObject {}
 
 SdsConstraint returns SdsConstraint:
-    SdsTypeParameterBound
+    SdsParameterBound
 ;
 
-interface SdsTypeParameterBound extends SdsConstraint {
-    leftOperand?: @SdsTypeParameter
+interface SdsParameterBound extends SdsConstraint {
+    leftOperand?: @SdsParameter
     operator: string
-    rightOperand: SdsType
+    rightOperand: SdsExpression
 }
 
-SdsTypeParameterBound returns SdsTypeParameterBound:
-    leftOperand=[SdsTypeParameter:ID]
-    operator=SdsTypeParameterBoundOperator
-    rightOperand=SdsType
-;
-
-SdsTypeParameterBoundOperator returns string:
-    'sub' | 'super'
+SdsParameterBound returns SdsParameterBound:
+    leftOperand=[SdsParameter:ID]
+    operator=SdsComparisonOperator
+    rightOperand=SdsExpression
 ;
 
 
@@ -967,11 +963,7 @@ SdsUnionTypeArgumentList returns SdsTypeArgumentList:
 ;
 
 SdsUnionTypeArgument returns SdsTypeArgument:
-    value=SdsUnionTypeArgumentValue
-;
-
-SdsUnionTypeArgumentValue returns SdsTypeArgumentValue:
-    {SdsTypeProjection} ^type=SdsType
+    value=SdsType
 ;
 
 SdsParentType returns SdsType:
@@ -995,6 +987,7 @@ SdsTypeParameterList returns SdsTypeParameterList:
 
 interface SdsTypeParameter extends SdsNamedTypeDeclaration {
     variance?: string
+    upperBound?: SdsType
     defaultValue?: SdsType
 }
 
@@ -1002,6 +995,7 @@ SdsTypeParameter returns SdsTypeParameter:
     annotationCalls+=SdsAnnotationCall*
     variance=SdsTypeParameterVariance?
     name=ID
+    ('sub' upperBound=SdsType)?
     ('=' defaultValue=SdsType)?
 ;
 
@@ -1022,22 +1016,12 @@ SdsTypeArgumentList returns SdsTypeArgumentList:
 
 interface SdsTypeArgument extends SdsObject {
     typeParameter?: @SdsTypeParameter
-    value: SdsTypeArgumentValue
+    value: SdsType
 }
 
 SdsTypeArgument returns SdsTypeArgument:
     (typeParameter=[SdsTypeParameter:ID] '=' )?
-    value=SdsTypeArgumentValue
-;
-
-interface SdsTypeArgumentValue extends SdsObject {}
-
-interface SdsTypeProjection extends SdsTypeArgumentValue {
-    ^type: SdsType
-}
-
-SdsTypeArgumentValue returns SdsTypeArgumentValue:
-    {SdsTypeProjection} ^type=SdsType
+    value=SdsType
 ;
 
 

@@ -87,8 +87,8 @@ export class SafeDsFormatter extends AbstractFormatter {
         // -----------------------------------------------------------------------------
         else if (ast.isSdsConstraintList(node)) {
             this.formatSdsConstraintList(node);
-        } else if (ast.isSdsTypeParameterBound(node)) {
-            this.formatSdsTypeParameterBound(node);
+        } else if (ast.isSdsParameterBound(node)) {
+            this.formatSdsParameterBound(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -529,7 +529,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
     }
 
-    private formatSdsTypeParameterBound(node: ast.SdsTypeParameterBound) {
+    private formatSdsParameterBound(node: ast.SdsParameterBound) {
         const formatter = this.getNodeFormatter(node);
 
         formatter.property('operator').surround(oneSpace());

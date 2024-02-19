@@ -72,7 +72,7 @@ class TestsInvolvingNothing(
     p6: »union<() -> (), Nothing?>«,
 )
 
-class TestsInvolvingTypeParameters<Unbounded, UpperBound, BothBounds>(
+class TestsInvolvingTypeParameters<Unbounded, UpperBound sub Number>(
     // $TEST$ serialization Unbounded
     a1: »union<Unbounded, Nothing>«,
     // $TEST$ serialization Unbounded
@@ -123,39 +123,4 @@ class TestsInvolvingTypeParameters<Unbounded, UpperBound, BothBounds>(
     b11: »union<UpperBound, Any?>«,
     // $TEST$ serialization Any?
     b12: »union<Any?, UpperBound>«,
-
-
-    // $TEST$ serialization union<BothBounds, Nothing>
-    c1: »union<BothBounds, Nothing>«,
-    // $TEST$ serialization union<Nothing, BothBounds>
-    c2: »union<Nothing, BothBounds>«,
-
-    // $TEST$ serialization union<BothBounds, String>
-    c3: »union<BothBounds, String>«,
-    // $TEST$ serialization union<String, BothBounds>
-    c4: »union<String, BothBounds>«,
-
-    // $TEST$ serialization BothBounds
-    c5: »union<BothBounds, Int>«,
-    // $TEST$ serialization BothBounds
-    c6: »union<Int, BothBounds>«,
-
-    // $TEST$ serialization BothBounds
-    c7: »union<BothBounds, Number>«,
-    // $TEST$ serialization BothBounds
-    c8: »union<Number, BothBounds>«,
-
-    // $TEST$ serialization BothBounds
-    c9: »union<BothBounds, Any>«,
-    // $TEST$ serialization BothBounds
-    c10: »union<Any, BothBounds>«,
-
-    // $TEST$ serialization BothBounds?
-    c11: »union<BothBounds, Any?>«,
-    // $TEST$ serialization BothBounds?
-    c12: »union<Any?, BothBounds>«,
-) where {
-    UpperBound sub Number,
-    BothBounds super Int,
-    BothBounds sub Any,
-}
+)

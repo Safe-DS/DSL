@@ -131,6 +131,15 @@ describe('SafeDsSemanticTokenProvider', async () => {
             expectedTokenTypes: [SemanticTokenTypes.enum],
         },
         {
+            testName: 'parameter bound',
+            code: `
+                class C(p: Int) where {
+                    <|p|> < 0
+                }
+            `,
+            expectedTokenTypes: [SemanticTokenTypes.parameter],
+        },
+        {
             testName: 'reference',
             code: `
                 fun f(p: String)
@@ -147,15 +156,6 @@ describe('SafeDsSemanticTokenProvider', async () => {
                 class C<T>
 
                 fun f(p: C<<|T|> = C>)
-            `,
-            expectedTokenTypes: [SemanticTokenTypes.typeParameter],
-        },
-        {
-            testName: 'type parameter constraint',
-            code: `
-                class C<T> where {
-                    <|T|> sub C
-                }
             `,
             expectedTokenTypes: [SemanticTokenTypes.typeParameter],
         },

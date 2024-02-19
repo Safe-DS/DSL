@@ -24,7 +24,7 @@
         },
         {
             "name": "keyword.operator.expression.safe-ds",
-            "match": "\\b(and|not|or|sub|super)\\b"
+            "match": "\\b(and|not|or|sub)\\b"
         },
         {
             "name": "keyword.other.safe-ds",

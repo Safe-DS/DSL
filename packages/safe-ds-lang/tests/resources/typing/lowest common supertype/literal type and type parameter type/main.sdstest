@@ -1,6 +1,11 @@
 package tests.typing.lowestCommonSupertype.literalTypeAndTypeParameterType
 
-class Test<Unbounded, BoundedByInt, BoundedByString, BoundedByStringOrNull>(
+class Test<
+    Unbounded,
+    BoundedByInt sub Int,
+    BoundedByString sub String,
+    BoundedByStringOrNull sub String?
+>(
     unbounded: Unbounded,
     unboundedOrNull: Unbounded?,
     boundedByInt: BoundedByInt,
@@ -17,8 +22,4 @@ class Test<Unbounded, BoundedByInt, BoundedByString, BoundedByStringOrNull>(
     p4: Any = »[1, boundedByString]«,
     // $TEST$ serialization List<Any?>
     p5: Any = »[1, boundedByStringOrNull]«,
-) where {
-    BoundedByInt sub Int,
-    BoundedByString sub String,
-    BoundedByStringOrNull sub String?,
-}
+)

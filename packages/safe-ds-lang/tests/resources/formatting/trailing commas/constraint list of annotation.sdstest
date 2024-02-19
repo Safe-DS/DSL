@@ -1,11 +1,11 @@
 annotation A where {
-    T sub Any ,
-     T super Int ,
+    p < 0 ,
+     q > 1 ,
  }
 
 // -----------------------------------------------------------------------------
 
 annotation A where {
-    T sub Any,
-    T super Int,
+    p < 0,
+    q > 1,
 }

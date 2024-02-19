@@ -41,7 +41,7 @@ segment mySegment(param1: Map<String, Int>, param2: Map<String, Int>?, param3: M
     »param3?[unresolved]«;
 }
 
-class MyClass<MyMap, MyNullableMap>(
+class MyClass<MyMap sub Map<String, Int>, MyNullableMap sub Map<String, Int>?>(
     param1: MyMap,
     param2: MyMap?,
     param3: MyNullableMap,
@@ -82,7 +82,4 @@ class MyClass<MyMap, MyNullableMap>(
 
     // $TEST$ serialization Int?
     p12: Any? = »param3?[unresolved]«,
-) where {
-    MyMap sub Map<String, Int>,
-    MyNullableMap sub Map<String, Int>?,
-}
+)
