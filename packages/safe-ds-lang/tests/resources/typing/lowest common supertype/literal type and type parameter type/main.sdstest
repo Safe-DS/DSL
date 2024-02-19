@@ -12,11 +12,11 @@ class Test<
     boundedByString: BoundedByString,
     boundedByStringOrNull: BoundedByStringOrNull,
 
-    // $TEST$ serialization List<Unbounded>
+    // $TEST$ serialization List<Any?>
     p1: Any = »[1, unbounded]«,
-    // $TEST$ serialization List<Unbounded?>
+    // $TEST$ serialization List<Any?>
     p2: Any = »[1, unboundedOrNull]«,
-    // $TEST$ serialization List<BoundedByInt>
+    // $TEST$ serialization List<Int>
     p3: Any = »[1, boundedByInt]«,
     // $TEST$ serialization List<Any>
     p4: Any = »[1, boundedByString]«,

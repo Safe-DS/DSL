@@ -73,11 +73,6 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => factory.createIntersectionType(UnknownType),
-            unequalValueOfSameType: () => factory.createIntersectionType(),
-            valueOfOtherType: () => UnknownType,
-        },
-        {
             value: () => factory.createLiteralType(new BooleanConstant(true)),
             unequalValueOfSameType: () => factory.createLiteralType(new IntConstant(1n)),
             valueOfOtherType: () => UnknownType,
@@ -181,10 +176,6 @@ describe('type model', async () => {
             expectedString: '(p2?: $unknown) -> ()',
         },
         {
-            value: factory.createIntersectionType(UnknownType),
-            expectedString: '$intersection<$unknown>',
-        },
-        {
             value: factory.createLiteralType(new BooleanConstant(true)),
             expectedString: 'literal<true>',
         },
@@ -269,19 +260,6 @@ describe('type model', async () => {
                 ),
                 factory.createNamedTupleType(
                     new NamedTupleEntry(result, 'r', factory.createLiteralType(new IntConstant(1n))),
-                ),
-            ),
-        },
-        {
-            type: factory.createIntersectionType(
-                new ClassType(class1, new Map([[typeParameter2, new TypeParameterType(typeParameter1, false)]]), false),
-            ),
-            substitutions: substitutions1,
-            expectedType: factory.createIntersectionType(
-                new ClassType(
-                    class1,
-                    new Map([[typeParameter2, factory.createLiteralType(new IntConstant(1n))]]),
-                    false,
                 ),
             ),
         },
@@ -377,44 +355,6 @@ describe('type model', async () => {
         });
     });
 
-    const simplifyTests: SimplifyTest[] = [
-        {
-            type: factory.createIntersectionType(),
-            expectedType: factory.createIntersectionType(),
-        },
-        {
-            type: factory.createIntersectionType(new ClassType(class1, new Map(), false)),
-            expectedType: new ClassType(class1, new Map(), false),
-        },
-        {
-            type: factory.createIntersectionType(
-                factory.createIntersectionType(new ClassType(class1, new Map(), false)),
-            ),
-            expectedType: new ClassType(class1, new Map(), false),
-        },
-        {
-            type: factory.createIntersectionType(
-                factory.createIntersectionType(
-                    new ClassType(class1, new Map(), false),
-                    new ClassType(class2, new Map(), false),
-                ),
-                factory.createIntersectionType(new EnumType(enum1, false), new EnumVariantType(enumVariant1, false)),
-            ),
-            expectedType: factory.createIntersectionType(
-                new ClassType(class1, new Map(), false),
-                new ClassType(class2, new Map(), false),
-                new EnumType(enum1, false),
-                new EnumVariantType(enumVariant1, false),
-            ),
-        },
-    ];
-    describe.each(simplifyTests)('simplify', ({ type, expectedType }) => {
-        it(`should simplify type (${type.constructor.name} -- ${type})`, () => {
-            const actual = type.simplify();
-            expectEqualTypes(actual, expectedType);
-        });
-    });
-
     const withExplicitNullabilityTests: WithExplicitNullabilityTest[] = [
         {
             type: factory.createCallableType(
@@ -448,36 +388,6 @@ describe('type model', async () => {
                 factory.createNamedTupleType(),
                 factory.createNamedTupleType(),
             ),
-        },
-        {
-            type: factory.createIntersectionType(),
-            isNullable: true,
-            expectedType: coreTypes.AnyOrNull,
-        },
-        {
-            type: factory.createIntersectionType(),
-            isNullable: false,
-            expectedType: coreTypes.Any,
-        },
-        {
-            type: factory.createIntersectionType(new ClassType(class1, new Map(), false)),
-            isNullable: true,
-            expectedType: factory.createIntersectionType(new ClassType(class1, new Map(), true)),
-        },
-        {
-            type: factory.createIntersectionType(new ClassType(class1, new Map(), false)),
-            isNullable: false,
-            expectedType: factory.createIntersectionType(new ClassType(class1, new Map(), false)),
-        },
-        {
-            type: factory.createIntersectionType(new ClassType(class1, new Map(), true)),
-            isNullable: true,
-            expectedType: factory.createIntersectionType(new ClassType(class1, new Map(), true)),
-        },
-        {
-            type: factory.createIntersectionType(new ClassType(class1, new Map(), true)),
-            isNullable: false,
-            expectedType: factory.createIntersectionType(new ClassType(class1, new Map(), false)),
         },
         {
             type: factory.createLiteralType(new BooleanConstant(true)),
@@ -701,21 +611,6 @@ interface SubstituteTypeParametersTest {
      * The type parameter substitutions to apply.
      */
     substitutions: TypeParameterSubstitutions;
-
-    /**
-     * The expected result.
-     */
-    expectedType: Type;
-}
-
-/**
- * Tests for {@link Type.simplify}.
- */
-interface SimplifyTest {
-    /**
-     * The type to test.
-     */
-    type: Type;
 
     /**
      * The expected result.

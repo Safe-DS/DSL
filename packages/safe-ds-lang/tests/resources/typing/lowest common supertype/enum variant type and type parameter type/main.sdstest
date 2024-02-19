@@ -19,11 +19,11 @@ class D<
     boundedByOtherEnumVariant: BoundedByOtherEnumVariant,
     boundedByOtherEnumVariantOrNull: BoundedByOtherEnumVariantOrNull,
 
-    // $TEST$ serialization List<Unbounded>
+    // $TEST$ serialization List<Any?>
     p1: Any = »[v, unbounded]«,
-    // $TEST$ serialization List<Unbounded?>
+    // $TEST$ serialization List<Any?>
     p2: Any = »[v, unboundedOrNull]«,
-    // $TEST$ serialization List<BoundedByEnumVariant>
+    // $TEST$ serialization List<V1>
     p3: Any = »[v, boundedByEnumVariant]«,
     // $TEST$ serialization List<E>
     p4: Any = »[v, boundedByOtherEnumVariant]«,

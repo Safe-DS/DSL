@@ -83,14 +83,14 @@ class TestsInvolvingTypeParameters<Unbounded, UpperBound sub Number>(
     // $TEST$ serialization Unbounded?
     a4: »union<Nothing?, Unbounded>«,
 
-    // $TEST$ serialization Unbounded
+    // $TEST$ serialization union<Unbounded, Any>
     a5: »union<Unbounded, Any>«,
-    // $TEST$ serialization Unbounded
+    // $TEST$ serialization union<Any, Unbounded>
     a6: »union<Any, Unbounded>«,
 
-    // $TEST$ serialization Unbounded?
+    // $TEST$ serialization Any?
     a7: »union<Unbounded, Any?>«,
-    // $TEST$ serialization Unbounded?
+    // $TEST$ serialization Any?
     a8: »union<Any?, Unbounded>«,
 
 
@@ -104,19 +104,19 @@ class TestsInvolvingTypeParameters<Unbounded, UpperBound sub Number>(
     // $TEST$ serialization UpperBound?
     b4: »union<Nothing?, UpperBound>«,
 
-    // $TEST$ serialization UpperBound
+    // $TEST$ serialization union<UpperBound, Int>
     b5: »union<UpperBound, Int>«,
-    // $TEST$ serialization UpperBound
+    // $TEST$ serialization union<Int, UpperBound>
     b6: »union<Int, UpperBound>«,
 
-    // $TEST$ serialization UpperBound
+    // $TEST$ serialization Number
     b7: »union<UpperBound, Number>«,
-    // $TEST$ serialization UpperBound
+    // $TEST$ serialization Number
     b8: »union<Number, UpperBound>«,
 
-    // $TEST$ serialization UpperBound?
+    // $TEST$ serialization Number?
     b9: »union<UpperBound, Number?>«,
-    // $TEST$ serialization UpperBound?
+    // $TEST$ serialization Number?
     b10: »union<Number?, UpperBound>«,
 
     // $TEST$ serialization Any?

@@ -13,11 +13,11 @@ class Test<NothingToAnyOrNull, NothingToD sub D, NothingToE sub E, NothingToF su
 
     // $TEST$ serialization List<NothingToAnyOrNull>
     a1: Any = »[nothingToAnyOrNull, nothingToAnyOrNull]«,
-    // $TEST$ serialization List<NothingToAnyOrNull>
+    // $TEST$ serialization List<Any?>
     a2: Any = »[nothingToAnyOrNull, nothingToD]«,
-    // $TEST$ serialization List<NothingToAnyOrNull>
+    // $TEST$ serialization List<Any?>
     a3: Any = »[nothingToAnyOrNull, nothingToE]«,
-    // $TEST$ serialization List<NothingToAnyOrNull>
+    // $TEST$ serialization List<Any?>
     a4: Any = »[nothingToAnyOrNull, nothingToF]«,
 
     // $TEST$ serialization List<NothingToD>
