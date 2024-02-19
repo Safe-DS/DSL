@@ -29,17 +29,20 @@ import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 import { isEmpty } from '../../helpers/collections.js';
+import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
     private readonly typeComputer: () => SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
+        this.factory = services.types.TypeFactory;
         this.typeComputer = () => services.types.TypeComputer;
     }
 
@@ -78,7 +81,7 @@ export class SafeDsTypeChecker {
                 this.isSubtypeOf(typeUpperBound, otherUpperBound, options)
             );
         } else if (other instanceof UnionType) {
-            return other.possibleTypes.some((it) => this.isSubtypeOf(type, it, options));
+            return other.types.some((it) => this.isSubtypeOf(type, it, options));
         }
 
         if (type instanceof CallableType) {
@@ -249,7 +252,7 @@ export class SafeDsTypeChecker {
         }
 
         if (other instanceof ClassType) {
-            if (other.equals(this.coreTypes.Any.updateExplicitNullability(type.isExplicitlyNullable))) {
+            if (other.equals(this.coreTypes.Any.withExplicitNullability(type.isExplicitlyNullable))) {
                 return true;
             }
 
@@ -305,29 +308,29 @@ export class SafeDsTypeChecker {
                 return UnknownType;
             }
 
-            const parameterEntries = new NamedTupleType(
+            const parameterEntries = this.factory.createNamedTupleType(
                 ...getParameters(declaration).map(
                     (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
                 ),
             );
-            const resultEntries = new NamedTupleType(
+            const resultEntries = this.factory.createNamedTupleType(
                 new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
             );
 
-            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
+            return this.factory.createCallableType(declaration, undefined, parameterEntries, resultEntries);
         } else if (instanceType instanceof EnumVariantType) {
             const declaration = instanceType.declaration;
 
-            const parameterEntries = new NamedTupleType(
+            const parameterEntries = this.factory.createNamedTupleType(
                 ...getParameters(declaration).map(
                     (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
                 ),
             );
-            const resultEntries = new NamedTupleType(
+            const resultEntries = this.factory.createNamedTupleType(
                 new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
             );
 
-            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
+            return this.factory.createCallableType(declaration, undefined, parameterEntries, resultEntries);
         } else {
             return UnknownType;
         }
@@ -339,7 +342,7 @@ export class SafeDsTypeChecker {
     }
 
     private unionTypeIsSubtypeOf(type: UnionType, other: Type, options: TypeCheckOptions): boolean {
-        return type.possibleTypes.every((it) => this.isSubtypeOf(it, other, options));
+        return type.types.every((it) => this.isSubtypeOf(it, other, options));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -417,7 +420,7 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is some kind of list (with any element type).
      */
     isList(type: Type): type is ClassType | TypeParameterType {
-        const listOrNull = this.coreTypes.List(UnknownType).updateExplicitNullability(true);
+        const listOrNull = this.coreTypes.List(UnknownType).withExplicitNullability(true);
 
         return (
             !type.equals(this.coreTypes.Nothing) &&
@@ -432,7 +435,7 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is some kind of map (with any key/value types).
      */
     isMap(type: Type): type is ClassType | TypeParameterType {
-        const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).updateExplicitNullability(true);
+        const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).withExplicitNullability(true);
 
         return (
             !type.equals(this.coreTypes.Nothing) &&

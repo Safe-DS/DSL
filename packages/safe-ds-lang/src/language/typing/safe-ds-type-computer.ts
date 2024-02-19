@@ -118,11 +118,13 @@ import {
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
+import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly coreClasses: SafeDsClasses;
     private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly typeChecker: SafeDsTypeChecker;
@@ -133,6 +135,7 @@ export class SafeDsTypeComputer {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.coreClasses = services.builtins.Classes;
         this.coreTypes = services.types.CoreTypes;
+        this.factory = services.types.TypeFactory;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.typeChecker = services.types.TypeChecker;
@@ -155,7 +158,7 @@ export class SafeDsTypeComputer {
 
         // Ignore type parameter substitutions for caching
         const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
-            this.simplifyType(this.doComputeType(node)),
+            this.doComputeType(node).simplify(),
         );
         if (isEmpty(substitutions)) {
             return unsubstitutedType;
@@ -163,7 +166,7 @@ export class SafeDsTypeComputer {
 
         // Substitute type parameters
         const simplifiedSubstitutions = new Map(
-            [...substitutions].map(([typeParameter, type]) => [typeParameter, this.simplifyType(type)]),
+            [...substitutions].map(([typeParameter, type]) => [typeParameter, type.simplify()]),
         );
         return unsubstitutedType.substituteTypeParameters(simplifiedSubstitutions);
     }
@@ -216,15 +219,20 @@ export class SafeDsTypeComputer {
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
-            return new CallableType(node, undefined, new NamedTupleType(...parameterEntries), new NamedTupleType());
+            return this.factory.createCallableType(
+                node,
+                undefined,
+                this.factory.createNamedTupleType(...parameterEntries),
+                this.factory.createNamedTupleType(),
+            );
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
-            return new ClassType(node, NO_SUBSTITUTIONS, false);
+            return this.factory.createClassType(node, NO_SUBSTITUTIONS, false);
         } else if (isSdsEnum(node)) {
-            return new EnumType(node, false);
+            return this.factory.createEnumType(node, false);
         } else if (isSdsEnumVariant(node)) {
-            return new EnumVariantType(node, false);
+            return this.factory.createEnumVariantType(node, false);
         } else if (isSdsFunction(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsParameter(node)) {
@@ -238,7 +246,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsTypeParameter(node)) {
-            return new TypeParameterType(node, false);
+            return this.factory.createTypeParameterType(node, false);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -252,11 +260,11 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(
+        return this.factory.createCallableType(
             node,
             undefined,
-            new NamedTupleType(...parameterEntries),
-            new NamedTupleType(...resultEntries),
+            this.factory.createNamedTupleType(...parameterEntries),
+            this.factory.createNamedTupleType(...resultEntries),
         );
     }
 
@@ -314,7 +322,7 @@ export class SafeDsTypeComputer {
 
     private rememberParameterInCallableType(node: SdsParameter, type: Type) {
         if (type instanceof CallableType) {
-            return new CallableType(type.callable, node, type.inputType, type.outputType);
+            return this.factory.createCallableType(type.callable, node, type.inputType, type.outputType);
         } else {
             return type;
         }
@@ -329,7 +337,7 @@ export class SafeDsTypeComputer {
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
-            return new LiteralType(evaluatedNode);
+            return this.factory.createLiteralType(evaluatedNode);
         }
 
         // Terminal cases
@@ -432,11 +440,11 @@ export class SafeDsTypeComputer {
             .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
             .toArray();
 
-        return new CallableType(
+        return this.factory.createCallableType(
             node,
             undefined,
-            new NamedTupleType(...parameterEntries),
-            new NamedTupleType(...resultEntries),
+            this.factory.createNamedTupleType(...parameterEntries),
+            this.factory.createNamedTupleType(...resultEntries),
         );
     }
 
@@ -457,7 +465,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateExplicitNullability(receiverType.isExplicitlyNullable && node.isNullSafe);
+        return result.withExplicitNullability(receiverType.isExplicitlyNullable && node.isNullSafe);
     }
 
     private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
@@ -468,11 +476,11 @@ export class SafeDsTypeComputer {
             new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
         ];
 
-        return new CallableType(
+        return this.factory.createCallableType(
             node,
             undefined,
-            new NamedTupleType(...parameterEntries),
-            new NamedTupleType(...resultEntries),
+            this.factory.createNamedTupleType(...parameterEntries),
+            this.factory.createNamedTupleType(...resultEntries),
         );
     }
 
@@ -487,7 +495,7 @@ export class SafeDsTypeComputer {
         if (listType) {
             return listType
                 .getTypeParameterTypeByIndex(0)
-                .updateExplicitNullability(listType.isExplicitlyNullable && node.isNullSafe);
+                .withExplicitNullability(listType.isExplicitlyNullable && node.isNullSafe);
         }
 
         // Receiver is a map
@@ -495,7 +503,7 @@ export class SafeDsTypeComputer {
         if (mapType) {
             return mapType
                 .getTypeParameterTypeByIndex(1)
-                .updateExplicitNullability(mapType.isExplicitlyNullable && node.isNullSafe);
+                .withExplicitNullability(mapType.isExplicitlyNullable && node.isNullSafe);
         }
 
         return UnknownType;
@@ -519,7 +527,7 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isExplicitlyNullable) {
             const rightOperandType = this.computeType(node.rightOperand);
-            return this.lowestCommonSupertype([leftOperandType.updateExplicitNullability(false), rightOperandType]);
+            return this.lowestCommonSupertype([leftOperandType.withExplicitNullability(false), rightOperandType]);
         } else {
             return leftOperandType;
         }
@@ -551,7 +559,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateExplicitNullability(
+        return result.withExplicitNullability(
             (receiverType.isExplicitlyNullable && node.isNullSafe) || result.isExplicitlyNullable,
         );
     }
@@ -571,7 +579,7 @@ export class SafeDsTypeComputer {
         const instanceType = this.computeType(target);
 
         if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
-            return new StaticType(instanceType.updateExplicitNullability(false));
+            return this.factory.createStaticType(instanceType.withExplicitNullability(false));
         } else {
             return instanceType;
         }
@@ -588,7 +596,9 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfNamedType(node);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
-            return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
+            return this.factory.createUnionType(
+                ...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)),
+            );
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -597,20 +607,20 @@ export class SafeDsTypeComputer {
     private computeTypeOfLiteralType(node: SdsLiteralType): Type {
         const constants = getLiterals(node).map((it) => this.partialEvaluator.evaluate(it));
         if (constants.every(isConstant)) {
-            return new LiteralType(...constants);
+            return this.factory.createLiteralType(...constants);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
     }
 
     private computeTypeOfNamedType(node: SdsNamedType) {
-        const unparameterizedType = this.computeType(node.declaration?.ref).updateExplicitNullability(node.isNullable);
+        const unparameterizedType = this.computeType(node.declaration?.ref).withExplicitNullability(node.isNullable);
         if (!(unparameterizedType instanceof ClassType)) {
             return unparameterizedType;
         }
 
         const substitutions = this.getTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
-        return new ClassType(unparameterizedType.declaration, substitutions, node.isNullable);
+        return this.factory.createClassType(unparameterizedType.declaration, substitutions, node.isNullable);
     }
 
     private getTypeParameterSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
@@ -641,130 +651,6 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Simplify type
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Returns an equivalent type that is simplified as much as possible. Types computed by {@link computeType} are
-     * already simplified, so this method is mainly useful for types that are constructed or modified manually.
-     */
-    simplifyType(type: Type): Type {
-        const unwrappedType = type.unwrap();
-
-        if (unwrappedType instanceof LiteralType) {
-            return this.simplifyLiteralType(unwrappedType);
-        } else if (unwrappedType instanceof UnionType) {
-            return this.simplifyUnionType(unwrappedType);
-        } else {
-            return unwrappedType;
-        }
-    }
-
-    private simplifyLiteralType(type: LiteralType): Type {
-        // Handle empty literal types
-        if (isEmpty(type.constants)) {
-            return this.coreTypes.Nothing;
-        }
-
-        // Remove duplicate constants
-        const uniqueConstants: Constant[] = [];
-        const knownConstants = new Set<String>();
-
-        for (const constant of type.constants) {
-            let key = constant.toString();
-
-            if (!knownConstants.has(key)) {
-                uniqueConstants.push(constant);
-                knownConstants.add(key);
-            }
-        }
-
-        // Apply other simplifications
-        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
-            return this.coreTypes.NothingOrNull;
-        } else if (uniqueConstants.length < type.constants.length) {
-            return new LiteralType(...uniqueConstants);
-        } else {
-            return type;
-        }
-    }
-
-    private simplifyUnionType(type: UnionType): Type {
-        // Handle empty union types
-        if (isEmpty(type.possibleTypes)) {
-            return this.coreTypes.Nothing;
-        }
-
-        // Simplify possible types
-        const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
-
-        // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
-        // occurrence of duplicate types. It's also makes splicing easier.
-        for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
-            const currentType = newPossibleTypes[i]!;
-
-            for (let j = newPossibleTypes.length - 1; j >= 0; j--) {
-                if (i === j) {
-                    continue;
-                }
-
-                const otherType = newPossibleTypes[j]!;
-
-                // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
-                // create another union type.
-                if (
-                    currentType.equals(this.coreTypes.NothingOrNull) &&
-                    (otherType instanceof CallableType ||
-                        otherType instanceof NamedTupleType ||
-                        otherType instanceof StaticType)
-                ) {
-                    continue;
-                }
-
-                // Merge literal types
-                if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
-                    // Other type always occurs before current type
-                    const newConstants = [...otherType.constants, ...currentType.constants];
-                    const newLiteralType = this.simplifyType(new LiteralType(...newConstants));
-                    newPossibleTypes.splice(j, 1, newLiteralType);
-                    newPossibleTypes.splice(i, 1);
-                    break;
-                }
-
-                // Remove subtypes of other types. Type parameter types are a special case, since there might be a
-                // subtype relation between `currentType` and `otherType` in both directions. We always keep the type
-                // parameter type in this case for consistency, since it can be narrower if it has a lower bound.
-                if (currentType instanceof TypeParameterType) {
-                    const candidateType = currentType.updateExplicitNullability(
-                        currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
-                    );
-
-                    if (this.typeChecker.isSubtypeOf(otherType, candidateType)) {
-                        newPossibleTypes.splice(j, 1, candidateType);
-                        newPossibleTypes.splice(i, 1);
-                        break;
-                    }
-                }
-
-                const candidateType = otherType.updateExplicitNullability(
-                    currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
-                );
-                if (this.typeChecker.isSubtypeOf(currentType, candidateType)) {
-                    newPossibleTypes.splice(j, 1, candidateType); // Update nullability
-                    newPossibleTypes.splice(i, 1);
-                    break;
-                }
-            }
-        }
-
-        if (newPossibleTypes.length === 1) {
-            return newPossibleTypes[0]!;
-        } else {
-            return new UnionType(...newPossibleTypes);
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     // Various type conversions
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -772,7 +658,7 @@ export class SafeDsTypeComputer {
      * Returns the non-nullable type for the given type. The result is simplified as much as possible.
      */
     computeNonNullableType(type: Type): Type {
-        return this.simplifyType(type.updateExplicitNullability(false));
+        return type.withExplicitNullability(false).simplify();
     }
 
     /**
@@ -869,7 +755,7 @@ export class SafeDsTypeComputer {
         }
 
         const result = this.doComputeUpperBound(type, new Set(), options);
-        return result.updateExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
+        return result.withExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
     private doComputeUpperBound(
@@ -955,10 +841,10 @@ export class SafeDsTypeComputer {
     }
 
     private simplifyTypes(types: Type[]) {
-        const simplifiedType = this.simplifyType(new UnionType(...types));
+        const simplifiedType = this.factory.createUnionType(...types).simplify();
 
         if (simplifiedType instanceof UnionType) {
-            return simplifiedType.possibleTypes;
+            return simplifiedType.types;
         } else {
             return [simplifiedType];
         }
@@ -1011,7 +897,7 @@ export class SafeDsTypeComputer {
         }
 
         // Find the class type that is compatible to all other types
-        const firstClassType = classTypes[0]!.updateExplicitNullability(isNullable);
+        const firstClassType = classTypes[0]!.withExplicitNullability(isNullable);
         const candidates = [firstClassType, ...this.streamProperSupertypes(firstClassType)];
         let other = [...classTypes.slice(1)];
 
@@ -1036,7 +922,7 @@ export class SafeDsTypeComputer {
                     candidate,
                     other,
                 );
-                return new ClassType(candidate.declaration, substitutions, isNullable);
+                return this.factory.createClassType(candidate.declaration, substitutions, isNullable);
             }
         }
         /* c8 ignore next */
@@ -1104,13 +990,13 @@ export class SafeDsTypeComputer {
         const candidates: Type[] = [];
 
         if (!isEmpty(enumTypes)) {
-            candidates.push(enumTypes[0]!.updateExplicitNullability(isNullable));
+            candidates.push(enumTypes[0]!.withExplicitNullability(isNullable));
         } else if (!isEmpty(enumVariantTypes)) {
-            candidates.push(enumVariantTypes[0]!.updateExplicitNullability(isNullable));
+            candidates.push(enumVariantTypes[0]!.withExplicitNullability(isNullable));
 
             const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
             if (containingEnum) {
-                candidates.push(new EnumType(containingEnum, isNullable));
+                candidates.push(this.factory.createEnumType(containingEnum, isNullable));
             }
         } else {
             /* c8 ignore next 2 */
@@ -1208,7 +1094,7 @@ export class SafeDsTypeComputer {
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any.updateExplicitNullability(type.isExplicitlyNullable);
+        const Any = this.coreTypes.Any.withExplicitNullability(type.isExplicitlyNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1224,7 +1110,7 @@ export class SafeDsTypeComputer {
         const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
 
         if (firstParentType instanceof ClassType) {
-            return firstParentType.updateExplicitNullability(type.isExplicitlyNullable);
+            return firstParentType.withExplicitNullability(type.isExplicitlyNullable);
         }
         return undefined;
     }

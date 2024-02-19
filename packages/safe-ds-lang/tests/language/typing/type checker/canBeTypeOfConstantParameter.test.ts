@@ -2,18 +2,12 @@ import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsModule } from '../../../../src/language/generated/ast.js';
 import { createSafeDsServicesWithBuiltins, getEnumVariants, getModuleMembers } from '../../../../src/language/index.js';
-import {
-    ClassType,
-    EnumType,
-    EnumVariantType,
-    LiteralType,
-    Type,
-    UnknownType,
-} from '../../../../src/language/typing/model.js';
+import { ClassType, EnumType, EnumVariantType, Type, UnknownType } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
+const factory = services.types.TypeFactory;
 const typeChecker = services.types.TypeChecker;
 const typeComputer = services.types.TypeComputer;
 
@@ -98,7 +92,7 @@ describe('SafeDsTypeChecker', async () => {
             expected: false,
         },
         {
-            type: new LiteralType(),
+            type: factory.createLiteralType(),
             expected: true,
         },
         {
@@ -112,8 +106,8 @@ describe('SafeDsTypeChecker', async () => {
             expect(typeChecker.canBeTypeOfConstantParameter(type)).toBe(expected);
         });
 
-        it(type.updateExplicitNullability(true).toString, () => {
-            expect(typeChecker.canBeTypeOfConstantParameter(type.updateExplicitNullability(true))).toBe(expected);
+        it(type.withExplicitNullability(true).toString, () => {
+            expect(typeChecker.canBeTypeOfConstantParameter(type.withExplicitNullability(true))).toBe(expected);
         });
     });
 });

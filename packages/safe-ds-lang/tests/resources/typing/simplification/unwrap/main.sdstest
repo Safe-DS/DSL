@@ -1,9 +1,46 @@
 package tests.typing.simplification.unwrap
 
-class C(
-    // $TEST$ serialization union<String, Int, Boolean>
-    p1: »union<union<String, Int>, Boolean>«,
+segment callableType(
+    // $TEST$ serialization () -> ()
+    f1: »() -> ()«,
+
+    // $TEST$ serialization (p: String) -> (r: String)
+    f2: »(p: union<union<String>>) -> (r: union<union<String>>)«
+) {}
+
+segment namedTupleType(
+    f1: () -> (),
+    f2: () -> (r: String),
+    f3: () -> (r1: union<union<String>>, r2: union<union<String>>)
+) {
+    // $TEST$ serialization ()
+    »f1()«;
 
     // $TEST$ serialization String
-    p2: »union<union<String>>«
-)
+    »f2()«;
+
+    // $TEST$ serialization (r1: String, r2: String)
+    »f3()«;
+}
+
+segment classType(
+    // $TEST$ serialization String
+    p1: »String«,
+
+    // $TEST$ serialization List<String>
+    p2: »List<String>«,
+
+    // $TEST$ serialization List<String>
+    p3: »List<union<union<String>>>«,
+) {}
+
+segment unionType(
+    // $TEST$ serialization String
+    p1: »union<String>«,
+
+    // $TEST$ serialization String
+    p2: »union<union<String>>«,
+
+    // $TEST$ serialization union<String, Int, Boolean>
+    p3: »union<union<String, Int>, Boolean>«,
+) {}

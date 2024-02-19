@@ -44,6 +44,7 @@ import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
 import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
 import { SafeDsRunner } from './runner/safe-ds-runner.js';
+import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -79,6 +80,7 @@ export type SafeDsAddedServices = {
         CoreTypes: SafeDsCoreTypes;
         TypeChecker: SafeDsTypeChecker;
         TypeComputer: SafeDsTypeComputer;
+        TypeFactory: SafeDsTypeFactory;
     };
     workspace: {
         PackageManager: SafeDsPackageManager;
@@ -149,6 +151,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         CoreTypes: (services) => new SafeDsCoreTypes(services),
         TypeChecker: (services) => new SafeDsTypeChecker(services),
         TypeComputer: (services) => new SafeDsTypeComputer(services),
+        TypeFactory: (services) => new SafeDsTypeFactory(services),
     },
     workspace: {
         PackageManager: (services) => new SafeDsPackageManager(services),
