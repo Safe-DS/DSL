@@ -50,41 +50,7 @@ const UnnamedBounds = typeParameters[3]!;
 const UnresolvedBounds = typeParameters[4]!;
 const CyclicBounds = typeParameters[5]!;
 
-const computeLowerBoundTests: ComputeBoundTest[] = [
-    {
-        typeParameter: unbounded,
-        expected: coreTypes.Nothing,
-    },
-    {
-        typeParameter: legalDirectBounds,
-        expected: coreTypes.Int,
-    },
-    {
-        typeParameter: legalIndirectBounds,
-        expected: coreTypes.Int,
-    },
-    {
-        typeParameter: UnnamedBounds,
-        expected: UnknownType,
-    },
-    {
-        typeParameter: UnresolvedBounds,
-        expected: UnknownType,
-    },
-    {
-        typeParameter: CyclicBounds,
-        expected: UnknownType,
-    },
-];
-
-describe.each(computeLowerBoundTests)('computeLowerBound', ({ typeParameter, expected }) => {
-    it(`should return the lower bound (${typeParameter.name})`, () => {
-        const actual = typeComputer.computeLowerBound(typeParameter);
-        expectEqualTypes(actual, expected);
-    });
-});
-
-const computeUpperBoundTests: ComputeBoundTest[] = [
+const computeUpperBoundTests: ComputeUpperBoundTest[] = [
     {
         typeParameter: unbounded,
         expected: coreTypes.AnyOrNull,
@@ -119,9 +85,9 @@ describe.each(computeUpperBoundTests)('computeUpperBound', ({ typeParameter, exp
 });
 
 /**
- * A test case for {@link TypeComputer.computeLowerBound} and {@link TypeComputer.computeUpperBound}.
+ * A test case for {@link TypeComputer.computeUpperBound}.
  */
-interface ComputeBoundTest {
+interface ComputeUpperBoundTest {
     /**
      * The type parameter to get the bound for.
      */

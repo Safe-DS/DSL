@@ -79,16 +79,11 @@ import {
     segmentShouldBeUsed,
 } from './other/declarations/segments.js';
 import {
-    typeParameterBoundLeftOperandMustBeOwnTypeParameter,
-    typeParameterBoundRightOperandMustBeNamedType,
-} from './other/declarations/typeParameterBounds.js';
-import {
     typeParameterBoundMustBeAcyclic,
-    typeParameterBoundsMustBeCompatible,
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
-    typeParameterMustNotHaveMultipleBounds,
     typeParameterMustOnlyBeVariantOnClass,
+    typeParameterUpperBoundMustBeNamedType,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
@@ -354,15 +349,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
         SdsTypeParameter: [
             typeParameterBoundMustBeAcyclic,
-            typeParameterBoundsMustBeCompatible(services),
             typeParameterMustBeUsedInCorrectPosition(services),
             typeParameterMustHaveSufficientContext,
-            typeParameterMustNotHaveMultipleBounds,
             typeParameterMustOnlyBeVariantOnClass,
-        ],
-        SdsTypeParameterBound: [
-            typeParameterBoundLeftOperandMustBeOwnTypeParameter,
-            typeParameterBoundRightOperandMustBeNamedType(services),
+            typeParameterUpperBoundMustBeNamedType(services),
         ],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,

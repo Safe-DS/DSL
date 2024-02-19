@@ -64,22 +64,8 @@ export class SafeDsTypeChecker {
         if (type === UnknownType || other === UnknownType) {
             return false;
         } else if (other instanceof TypeParameterType) {
-            const otherLowerBound = this.typeComputer().computeLowerBound(other);
             const otherUpperBound = this.typeComputer().computeUpperBound(other);
-
-            if (!(type instanceof TypeParameterType)) {
-                return (
-                    this.isSubtypeOf(otherLowerBound, type, options) && this.isSubtypeOf(type, otherUpperBound, options)
-                );
-            }
-
-            const typeLowerBound = this.typeComputer().computeLowerBound(type);
-            const typeUpperBound = this.typeComputer().computeUpperBound(type);
-
-            return (
-                this.isSubtypeOf(otherLowerBound, typeLowerBound, options) &&
-                this.isSubtypeOf(typeUpperBound, otherUpperBound, options)
-            );
+            return this.isSubtypeOf(type, otherUpperBound, options);
         } else if (other instanceof UnionType) {
             return other.types.some((it) => this.isSubtypeOf(type, it, options));
         }

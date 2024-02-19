@@ -49,7 +49,6 @@ import {
     isSdsTypeArgument,
     isSdsTypeCast,
     isSdsTypeParameter,
-    isSdsTypeProjection,
     isSdsUnionType,
     isSdsYield,
     SdsAbstractResult,
@@ -74,7 +73,6 @@ import {
     SdsType,
     SdsTypeArgument,
     SdsTypeParameter,
-    SdsTypeParameterBound,
 } from '../generated/ast.js';
 import {
     getAssignees,
@@ -187,9 +185,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsType(node)) {
             return this.computeTypeOfType(node);
         } else if (isSdsTypeArgument(node)) {
-            return this.computeType(node.value);
-        } else if (isSdsTypeProjection(node)) {
-            return this.computeTypeOfType(node.type);
+            return this.computeTypeOfType(node.value);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -692,56 +688,6 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns the lower bound for the given input. If no lower bound is specified explicitly, the result is `Nothing`.
-     * If invalid lower bounds are specified (e.g. because of an unresolved reference or a cycle), `$unknown` is
-     * returned. The result is simplified as much as possible.
-     */
-    computeLowerBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeBoundOptions = {}): Type {
-        let type: TypeParameterType;
-        if (nodeOrType instanceof TypeParameterType) {
-            type = nodeOrType;
-        } else {
-            type = this.computeType(nodeOrType) as TypeParameterType;
-        }
-
-        return this.doComputeLowerBound(type, new Set(), options);
-    }
-
-    private doComputeLowerBound(
-        type: TypeParameterType,
-        visited: Set<SdsTypeParameter>,
-        options: ComputeBoundOptions,
-    ): Type {
-        // Check for cycles
-        if (visited.has(type.declaration)) {
-            return UnknownType;
-        }
-        visited.add(type.declaration);
-
-        const lowerBounds = TypeParameter.getLowerBounds(type.declaration);
-        if (isEmpty(lowerBounds)) {
-            return this.coreTypes.Nothing;
-        }
-
-        const boundType = this.computeLowerBoundType(lowerBounds[0]!);
-        if (!(boundType instanceof NamedType)) {
-            return UnknownType;
-        } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
-            return boundType;
-        } else {
-            return this.doComputeLowerBound(boundType, visited, options);
-        }
-    }
-
-    private computeLowerBoundType(node: SdsTypeParameterBound): Type {
-        if (node.operator === 'super') {
-            return this.computeType(node.rightOperand);
-        } else {
-            return this.computeType(node.leftOperand?.ref);
-        }
-    }
-
-    /**
      * Returns the upper bound for the given input. If no upper bound is specified explicitly, the result is `Any?`. If
      * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
      * `$unknown` is returned. The result is simplified as much as possible.
@@ -769,26 +715,18 @@ export class SafeDsTypeComputer {
         }
         visited.add(type.declaration);
 
-        const upperBounds = TypeParameter.getUpperBounds(type.declaration);
-        if (isEmpty(upperBounds)) {
+        const upperBound = type.declaration.upperBound;
+        if (!upperBound) {
             return this.coreTypes.AnyOrNull;
         }
 
-        const boundType = this.computeUpperBoundType(upperBounds[0]!);
+        const boundType = this.computeType(upperBound);
         if (!(boundType instanceof NamedType)) {
             return UnknownType;
         } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
             return boundType;
         } else {
             return this.doComputeUpperBound(boundType, visited, options);
-        }
-    }
-
-    private computeUpperBoundType(node: SdsTypeParameterBound): Type {
-        if (node.operator === 'sub') {
-            return this.computeType(node.rightOperand);
-        } else {
-            return this.computeType(node.leftOperand?.ref);
         }
     }
 

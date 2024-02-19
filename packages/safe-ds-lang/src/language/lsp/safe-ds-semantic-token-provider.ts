@@ -24,7 +24,6 @@ import {
     isSdsSegment,
     isSdsTypeArgument,
     isSdsTypeParameter,
-    isSdsTypeParameterBound,
     isSdsYield,
 } from '../generated/ast.js';
 import { SafeDsServices } from '../safe-ds-module.js';
@@ -108,12 +107,6 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                     type: SemanticTokenTypes.typeParameter,
                 });
             }
-        } else if (isSdsTypeParameterBound(node)) {
-            acceptor({
-                node,
-                property: 'leftOperand',
-                type: SemanticTokenTypes.typeParameter,
-            });
         } else if (isSdsYield(node)) {
             // For lack of a better option, we use the token type for parameters here
             acceptor({
