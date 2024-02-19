@@ -17,26 +17,11 @@ const typeComputer = services.types.TypeComputer;
 const code = `
     class MyClass<
         Unbounded,
-        LegalDirectBounds,
-        LegalIndirectBounds,
-        UnnamedBounds,
-        UnresolvedBounds,
-        CyclicBounds,
-    > where {
-        LegalDirectBounds super Int,
         LegalDirectBounds sub Number,
-
-        LegalIndirectBounds super LegalDirectBounds,
         LegalIndirectBounds sub LegalDirectBounds,
-
-        UnnamedBounds super literal<1>,
         UnnamedBounds sub literal<2>,
-
-        UnresolvedBounds super unknown,
         UnresolvedBounds sub unknown,
-
-        CyclicBounds sub CyclicBounds,
-    }
+    >
 `;
 const module = await getNodeOfType(services, code, isSdsModule);
 
@@ -46,9 +31,8 @@ const typeParameters = getTypeParameters(classes[0]);
 const unbounded = typeParameters[0]!;
 const legalDirectBounds = typeParameters[1]!;
 const legalIndirectBounds = typeParameters[2]!;
-const UnnamedBounds = typeParameters[3]!;
-const UnresolvedBounds = typeParameters[4]!;
-const CyclicBounds = typeParameters[5]!;
+const unnamedBounds = typeParameters[3]!;
+const unresolvedBounds = typeParameters[4]!;
 
 const computeUpperBoundTests: ComputeUpperBoundTest[] = [
     {
@@ -64,15 +48,11 @@ const computeUpperBoundTests: ComputeUpperBoundTest[] = [
         expected: coreTypes.Number,
     },
     {
-        typeParameter: UnnamedBounds,
+        typeParameter: unnamedBounds,
         expected: UnknownType,
     },
     {
-        typeParameter: UnresolvedBounds,
-        expected: UnknownType,
-    },
-    {
-        typeParameter: CyclicBounds,
+        typeParameter: unresolvedBounds,
         expected: UnknownType,
     },
 ];
