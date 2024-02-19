@@ -200,14 +200,12 @@ export class IntersectionType extends Type {
     }
 
     override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (isEmpty(this.types)) {
+            return this.coreTypes.Any.updateExplicitNullability(isExplicitlyNullable);
+        }
+
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
-            if (isEmpty(this.types)) {
-                return this.coreTypes.Any;
-            } else {
-                return this.factory.createIntersectionType(
-                    ...this.types.map((it) => it.updateExplicitNullability(false)),
-                );
-            }
+            return this.factory.createIntersectionType(...this.types.map((it) => it.updateExplicitNullability(false)));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
             return this.factory.createIntersectionType(...this.types.map((it) => it.updateExplicitNullability(true)));
         } else {
@@ -217,7 +215,6 @@ export class IntersectionType extends Type {
 }
 
 export class LiteralType extends Type {
-    private readonly coreTypes: SafeDsCoreTypes;
     private readonly factory: SafeDsTypeFactory;
 
     readonly constants: Constant[];
@@ -226,7 +223,6 @@ export class LiteralType extends Type {
     constructor(services: SafeDsServices, constants: Constant[]) {
         super();
 
-        this.coreTypes = services.types.CoreTypes;
         this.factory = services.types.TypeFactory;
 
         this.constants = constants;
@@ -697,14 +693,14 @@ export class UnionType extends Type {
     }
 
     override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (isEmpty(this.types)) {
+            return this.coreTypes.Nothing.updateExplicitNullability(isExplicitlyNullable);
+        }
+
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
             return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(false)));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
-            if (isEmpty(this.types)) {
-                return this.coreTypes.NothingOrNull;
-            } else {
-                return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(true)));
-            }
+            return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(true)));
         } else {
             return this;
         }
