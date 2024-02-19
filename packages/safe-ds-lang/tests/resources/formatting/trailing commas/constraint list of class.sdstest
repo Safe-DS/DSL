@@ -1,11 +1,11 @@
-class C<T> where {
-    T sub Any ,
-     T super Int ,
+class C where {
+    p < 0 ,
+     q > 1 ,
  }
 
 // -----------------------------------------------------------------------------
 
-class C<T> where {
-    T sub Any,
-    T super Int,
+class C where {
+    p < 0,
+    q > 1,
 }

@@ -1,11 +1,11 @@
-fun f<T>() where {
-    T sub Any ,
-     T super Int ,
+fun f() where {
+    p < 0 ,
+     q > 1 ,
  }
 
 // -----------------------------------------------------------------------------
 
-fun f<T>() where {
-    T sub Any,
-    T super Int,
+fun f() where {
+    p < 0,
+    q > 1,
 }

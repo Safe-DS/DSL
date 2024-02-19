@@ -1,7 +1,7 @@
-annotation MyAnnotation where  {  T  sub  Number  }
+annotation MyAnnotation where  {  p  >  0  }
 
 // -----------------------------------------------------------------------------
 
 annotation MyAnnotation where {
-    T sub Number
+    p > 0
 }
