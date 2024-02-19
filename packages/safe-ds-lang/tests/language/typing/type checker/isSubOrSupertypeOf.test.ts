@@ -975,26 +975,10 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     const code = `
         class TestClass<
             Unbounded,
-            LowerBound,
-            UpperBound,
-            BothBounds,
-
-            IndirectLowerBound,
-            IndirectUpperBound,
-            Cyclic,
-            Unresolved,
-        > where {
-            LowerBound super Number,
             UpperBound sub Number,
-            BothBounds super Int,
-            BothBounds sub Number,
-
-            IndirectLowerBound super LowerBound,
             IndirectUpperBound sub UpperBound,
-            Cyclic sub Cyclic,
-            Unresolved super Unknown,
             Unresolved sub Unknown,
-        }
+        >
     `;
     const module = await getNodeOfType(services, code, isSdsModule);
     const classes = getModuleMembers(module).filter(isSdsClass);
@@ -1003,12 +987,8 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     const computeTypeOfTypeParameterWithName = computeTypeOfDeclarationWithName(typeParameters);
 
     const unbounded = computeTypeOfTypeParameterWithName('Unbounded');
-    const lowerBound = computeTypeOfTypeParameterWithName('LowerBound');
     const upperBound = computeTypeOfTypeParameterWithName('UpperBound');
-    const bothBounds = computeTypeOfTypeParameterWithName('BothBounds');
-    const indirectLowerBound = computeTypeOfTypeParameterWithName('IndirectLowerBound');
     const indirectUpperBound = computeTypeOfTypeParameterWithName('IndirectUpperBound');
-    const cyclic = computeTypeOfTypeParameterWithName('Cyclic');
     const unresolved = computeTypeOfTypeParameterWithName('Unresolved');
 
     return [
@@ -1019,22 +999,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: lowerBound,
-            type2: unbounded,
-            expected: true,
-        },
-        {
             type1: upperBound,
-            type2: unbounded,
-            expected: true,
-        },
-        {
-            type1: bothBounds,
-            type2: unbounded,
-            expected: true,
-        },
-        {
-            type1: indirectLowerBound,
             type2: unbounded,
             expected: true,
         },
@@ -1042,11 +1007,6 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type1: indirectUpperBound,
             type2: unbounded,
             expected: true,
-        },
-        {
-            type1: cyclic,
-            type2: unbounded,
-            expected: false,
         },
         {
             type1: unresolved,
@@ -1069,68 +1029,6 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
 
-        // Compare to LowerBound
-        {
-            type1: unbounded,
-            type2: lowerBound,
-            expected: false,
-        },
-        {
-            type1: lowerBound,
-            type2: lowerBound,
-            expected: true,
-        },
-        {
-            type1: upperBound,
-            type2: lowerBound,
-            expected: false,
-        },
-        {
-            type1: bothBounds,
-            type2: lowerBound,
-            expected: false,
-        },
-        {
-            type1: indirectLowerBound,
-            type2: lowerBound,
-            expected: true,
-        },
-        {
-            type1: indirectUpperBound,
-            type2: lowerBound,
-            expected: false,
-        },
-        {
-            type1: cyclic,
-            type2: lowerBound,
-            expected: false,
-        },
-        {
-            type1: unresolved,
-            type2: lowerBound,
-            expected: false,
-        },
-        {
-            type1: coreTypes.AnyOrNull,
-            type2: lowerBound,
-            expected: true,
-        },
-        {
-            type1: coreTypes.Number,
-            type2: lowerBound,
-            expected: true,
-        },
-        {
-            type1: coreTypes.Number.withExplicitNullability(true),
-            type2: lowerBound,
-            expected: true,
-        },
-        {
-            type1: coreTypes.Nothing,
-            type2: lowerBound,
-            expected: false,
-        },
-
         // Compare to UpperBound
         {
             type1: unbounded,
@@ -1138,34 +1036,14 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: false,
         },
         {
-            type1: lowerBound,
-            type2: upperBound,
-            expected: false,
-        },
-        {
             type1: upperBound,
             type2: upperBound,
             expected: true,
         },
         {
-            type1: bothBounds,
-            type2: upperBound,
-            expected: true,
-        },
-        {
-            type1: indirectLowerBound,
-            type2: upperBound,
-            expected: false,
-        },
-        {
             type1: indirectUpperBound,
             type2: upperBound,
             expected: true,
-        },
-        {
-            type1: cyclic,
-            type2: upperBound,
-            expected: false,
         },
         {
             type1: unresolved,
@@ -1198,105 +1076,6 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
 
-        // Compare to BothBounds
-        {
-            type1: unbounded,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: lowerBound,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: upperBound,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: bothBounds,
-            type2: bothBounds,
-            expected: true,
-        },
-        {
-            type1: indirectLowerBound,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: indirectUpperBound,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: cyclic,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: unresolved,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: coreTypes.AnyOrNull,
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: coreTypes.Number,
-            type2: bothBounds,
-            expected: true,
-        },
-        {
-            type1: coreTypes.Number.withExplicitNullability(true),
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: coreTypes.Number.withExplicitNullability(true),
-            type2: bothBounds.withExplicitNullability(true),
-            expected: true,
-        },
-        {
-            type1: coreTypes.Int,
-            type2: bothBounds,
-            expected: true,
-        },
-        {
-            type1: coreTypes.Int.withExplicitNullability(true),
-            type2: bothBounds,
-            expected: false,
-        },
-        {
-            type1: coreTypes.Int.withExplicitNullability(true),
-            type2: bothBounds.withExplicitNullability(true),
-            expected: true,
-        },
-        {
-            type1: coreTypes.Nothing,
-            type2: bothBounds,
-            expected: false,
-        },
-
-        // Compare to IndirectLowerBound
-        {
-            type1: indirectLowerBound,
-            type2: indirectLowerBound,
-            expected: true,
-        },
-        {
-            type1: coreTypes.AnyOrNull,
-            type2: indirectLowerBound,
-            expected: true,
-        },
-        {
-            type1: coreTypes.Nothing,
-            type2: indirectLowerBound,
-            expected: false,
-        },
-
         // Compare to IndirectUpperBound
         {
             type1: indirectUpperBound,
@@ -1314,26 +1093,9 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
 
-        // Compare to Cyclic
-        {
-            type1: cyclic,
-            type2: cyclic,
-            expected: false,
-        },
-        {
-            type1: coreTypes.AnyOrNull,
-            type2: cyclic,
-            expected: false,
-        },
-        {
-            type1: coreTypes.Nothing,
-            type2: cyclic,
-            expected: false,
-        },
-
         // Compare to Unresolved
         {
-            type1: cyclic,
+            type1: upperBound,
             type2: unresolved,
             expected: false,
         },
@@ -1370,26 +1132,6 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: lowerBound,
-            type2: coreTypes.Any,
-            expected: false,
-        },
-        {
-            type1: lowerBound,
-            type2: coreTypes.AnyOrNull,
-            expected: true,
-        },
-        {
-            type1: lowerBound.withExplicitNullability(true),
-            type2: coreTypes.Any,
-            expected: false,
-        },
-        {
-            type1: lowerBound.withExplicitNullability(true),
-            type2: coreTypes.AnyOrNull,
-            expected: true,
-        },
-        {
             type1: upperBound,
             type2: coreTypes.Any,
             expected: true,
@@ -1416,36 +1158,6 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         },
         {
             type1: upperBound.withExplicitNullability(true),
-            type2: coreTypes.Number,
-            expected: false,
-        },
-        {
-            type1: bothBounds,
-            type2: coreTypes.Any,
-            expected: true,
-        },
-        {
-            type1: bothBounds.withExplicitNullability(true),
-            type2: coreTypes.AnyOrNull,
-            expected: true,
-        },
-        {
-            type1: bothBounds,
-            type2: coreTypes.Number,
-            expected: true,
-        },
-        {
-            type1: bothBounds.withExplicitNullability(true),
-            type2: coreTypes.Any,
-            expected: false,
-        },
-        {
-            type1: bothBounds.withExplicitNullability(true),
-            type2: coreTypes.AnyOrNull,
-            expected: true,
-        },
-        {
-            type1: bothBounds.withExplicitNullability(true),
             type2: coreTypes.Number,
             expected: false,
         },
