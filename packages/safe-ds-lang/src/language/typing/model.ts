@@ -31,6 +31,11 @@ export abstract class Type {
     abstract isExplicitlyNullable: boolean;
 
     /**
+     * Whether the type does not contain type parameter types anymore.
+     */
+    abstract isFullySubstituted: boolean;
+
+    /**
      * Returns whether the type is equal to another type.
      */
     abstract equals(other: unknown): boolean;
@@ -60,6 +65,7 @@ export abstract class Type {
 
 export class CallableType extends Type {
     private readonly factory: SafeDsTypeFactory;
+
     override isExplicitlyNullable: boolean = false;
 
     constructor(
@@ -72,6 +78,10 @@ export class CallableType extends Type {
         super();
 
         this.factory = services.types.TypeFactory;
+    }
+
+    override get isFullySubstituted(): boolean {
+        return this.inputType.isFullySubstituted && this.outputType.isFullySubstituted;
     }
 
     /**
@@ -114,7 +124,7 @@ export class CallableType extends Type {
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): CallableType {
-        if (isEmpty(substitutions)) {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
             return this;
         }
 
@@ -139,16 +149,17 @@ export class LiteralType extends Type {
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly factory: SafeDsTypeFactory;
 
-    readonly constants: Constant[];
     private _isExplicitlyNullable: boolean | undefined;
+    override readonly isFullySubstituted = true;
 
-    constructor(services: SafeDsServices, constants: Constant[]) {
+    constructor(
+        services: SafeDsServices,
+        readonly constants: Constant[],
+    ) {
         super();
 
         this.coreTypes = services.types.CoreTypes;
         this.factory = services.types.TypeFactory;
-
-        this.constants = constants;
     }
 
     override get isExplicitlyNullable(): boolean {
@@ -222,14 +233,24 @@ export class LiteralType extends Type {
 
 export class NamedTupleType<T extends SdsDeclaration> extends Type {
     private readonly factory: SafeDsTypeFactory;
+
     readonly entries: NamedTupleEntry<T>[];
     override readonly isExplicitlyNullable = false;
+    private _isFullySubstituted: boolean | undefined;
 
     constructor(services: SafeDsServices, entries: NamedTupleEntry<T>[]) {
         super();
 
         this.factory = services.types.TypeFactory;
         this.entries = entries;
+    }
+
+    override get isFullySubstituted(): boolean {
+        if (this._isFullySubstituted === undefined) {
+            this._isFullySubstituted = this.entries.every((it) => it.type.isFullySubstituted);
+        }
+
+        return this._isFullySubstituted;
     }
 
     /**
@@ -275,7 +296,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleType<T> {
-        if (isEmpty(substitutions)) {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
             return this;
         }
 
@@ -317,7 +338,7 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
     }
 
     substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleEntry<T> {
-        if (isEmpty(substitutions)) {
+        if (isEmpty(substitutions) || this.type.isFullySubstituted) {
             /* c8 ignore next 2 */
             return this;
         }
@@ -351,12 +372,22 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
 }
 
 export class ClassType extends NamedType<SdsClass> {
+    private _isFullySubstituted: boolean | undefined;
+
     constructor(
         declaration: SdsClass,
         readonly substitutions: TypeParameterSubstitutions,
         override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
+    }
+
+    override get isFullySubstituted(): boolean {
+        if (this._isFullySubstituted === undefined) {
+            this._isFullySubstituted = stream(this.substitutions.values()).every((it) => it.isFullySubstituted);
+        }
+
+        return this._isFullySubstituted;
     }
 
     getTypeParameterTypeByIndex(index: number): Type {
@@ -404,7 +435,7 @@ export class ClassType extends NamedType<SdsClass> {
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): ClassType {
-        if (isEmpty(substitutions)) {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
             return this;
         }
 
@@ -425,6 +456,8 @@ export class ClassType extends NamedType<SdsClass> {
 }
 
 export class EnumType extends NamedType<SdsEnum> {
+    override readonly isFullySubstituted = true;
+
     constructor(
         declaration: SdsEnum,
         override readonly isExplicitlyNullable: boolean,
@@ -456,6 +489,8 @@ export class EnumType extends NamedType<SdsEnum> {
 }
 
 export class EnumVariantType extends NamedType<SdsEnumVariant> {
+    override readonly isFullySubstituted = true;
+
     constructor(
         declaration: SdsEnumVariant,
         override readonly isExplicitlyNullable: boolean,
@@ -487,6 +522,8 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
 }
 
 export class TypeParameterType extends NamedType<SdsTypeParameter> {
+    override readonly isFullySubstituted = false;
+
     constructor(
         declaration: SdsTypeParameter,
         override readonly isExplicitlyNullable: boolean,
@@ -526,12 +563,13 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
 }
 
 /**
- * A type that represents an actual class, enum, or enum variant instead of an instance of it.
+ * A type that represents an actual named type declaration instead of an instance of it.
  */
 export class StaticType extends Type {
     private readonly factory: SafeDsTypeFactory;
 
     override readonly isExplicitlyNullable = false;
+    override readonly isFullySubstituted = true;
 
     constructor(
         services: SafeDsServices,
@@ -582,6 +620,7 @@ export class UnionType extends Type {
 
     readonly types: Type[];
     private _isExplicitlyNullable: boolean | undefined;
+    private _isFullySubstituted: boolean | undefined;
 
     constructor(services: SafeDsServices, types: Type[]) {
         super();
@@ -599,6 +638,14 @@ export class UnionType extends Type {
         }
 
         return this._isExplicitlyNullable;
+    }
+
+    override get isFullySubstituted(): boolean {
+        if (this._isFullySubstituted === undefined) {
+            this._isFullySubstituted = this.types.every((it) => it.isFullySubstituted);
+        }
+
+        return this._isFullySubstituted;
     }
 
     override equals(other: unknown): boolean {
@@ -698,7 +745,7 @@ export class UnionType extends Type {
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
-        if (isEmpty(substitutions)) {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
             return this;
         }
 
@@ -721,7 +768,8 @@ export class UnionType extends Type {
 }
 
 class UnknownTypeClass extends Type {
-    readonly isExplicitlyNullable = false;
+    override readonly isExplicitlyNullable = false;
+    override readonly isFullySubstituted = true;
 
     override equals(other: unknown): boolean {
         return other instanceof UnknownTypeClass;
