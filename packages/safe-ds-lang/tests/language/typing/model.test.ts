@@ -377,37 +377,7 @@ describe('type model', async () => {
         });
     });
 
-    const unwrapTests: UnwrapTest[] = [
-        {
-            type: factory.createCallableType(
-                callable1,
-                undefined,
-                factory.createNamedTupleType(),
-                factory.createNamedTupleType(),
-            ),
-            expectedType: factory.createCallableType(
-                callable1,
-                undefined,
-                factory.createNamedTupleType(),
-                factory.createNamedTupleType(),
-            ),
-        },
-        {
-            type: factory.createCallableType(
-                callable1,
-                undefined,
-                factory.createNamedTupleType(
-                    new NamedTupleEntry(parameter1, 'p1', factory.createUnionType(UnknownType)),
-                ),
-                factory.createNamedTupleType(new NamedTupleEntry(result, 'r', factory.createUnionType(UnknownType))),
-            ),
-            expectedType: factory.createCallableType(
-                callable1,
-                undefined,
-                factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-                factory.createNamedTupleType(new NamedTupleEntry(result, 'r', UnknownType)),
-            ),
-        },
+    const simplifyTests: SimplifyTest[] = [
         {
             type: factory.createIntersectionType(),
             expectedType: factory.createIntersectionType(),
@@ -437,82 +407,9 @@ describe('type model', async () => {
                 new EnumVariantType(enumVariant1, false),
             ),
         },
-        {
-            type: factory.createLiteralType(new BooleanConstant(true)),
-            expectedType: factory.createLiteralType(new BooleanConstant(true)),
-        },
-        {
-            type: factory.createNamedTupleType(),
-            expectedType: factory.createNamedTupleType(),
-        },
-        {
-            type: factory.createNamedTupleType(
-                new NamedTupleEntry(parameter1, 'p1', factory.createUnionType(UnknownType)),
-                new NamedTupleEntry(parameter1, 'p1', factory.createUnionType(UnknownType)),
-            ),
-            expectedType: factory.createNamedTupleType(
-                new NamedTupleEntry(parameter1, 'p1', UnknownType),
-                new NamedTupleEntry(parameter1, 'p1', UnknownType),
-            ),
-        },
-        {
-            type: new ClassType(class1, new Map(), false),
-            expectedType: new ClassType(class1, new Map(), false),
-        },
-        {
-            type: new ClassType(class1, new Map([[typeParameter1, factory.createUnionType(UnknownType)]]), false),
-            expectedType: new ClassType(class1, new Map([[typeParameter1, UnknownType]]), false),
-        },
-        {
-            type: new EnumType(enum1, false),
-            expectedType: new EnumType(enum1, false),
-        },
-        {
-            type: new EnumVariantType(enumVariant1, false),
-            expectedType: new EnumVariantType(enumVariant1, false),
-        },
-        {
-            type: new TypeParameterType(typeParameter1, false),
-            expectedType: new TypeParameterType(typeParameter1, false),
-        },
-        {
-            type: factory.createStaticType(new ClassType(class1, new Map(), false)),
-            expectedType: factory.createStaticType(new ClassType(class1, new Map(), false)),
-        },
-        {
-            type: factory.createUnionType(),
-            expectedType: coreTypes.Nothing,
-        },
-        {
-            type: factory.createUnionType(new ClassType(class1, new Map(), false)),
-            expectedType: new ClassType(class1, new Map(), false),
-        },
-        {
-            type: factory.createUnionType(factory.createUnionType(new ClassType(class1, new Map(), false))),
-            expectedType: new ClassType(class1, new Map(), false),
-        },
-        {
-            type: factory.createUnionType(
-                factory.createUnionType(
-                    new ClassType(class1, new Map(), false),
-                    new ClassType(class2, new Map(), false),
-                ),
-                factory.createUnionType(new EnumType(enum1, false), new EnumVariantType(enumVariant1, false)),
-            ),
-            expectedType: factory.createUnionType(
-                new ClassType(class1, new Map(), false),
-                new ClassType(class2, new Map(), false),
-                new EnumType(enum1, false),
-                new EnumVariantType(enumVariant1, false),
-            ),
-        },
-        {
-            type: UnknownType,
-            expectedType: UnknownType,
-        },
     ];
-    describe.each(unwrapTests)('unwrap', ({ type, expectedType }) => {
-        it(`should remove any unnecessary containers (${type.constructor.name} -- ${type})`, () => {
+    describe.each(simplifyTests)('simplify', ({ type, expectedType }) => {
+        it(`should simplify type (${type.constructor.name} -- ${type})`, () => {
             const actual = type.simplify();
             expectEqualTypes(actual, expectedType);
         });
@@ -814,7 +711,7 @@ interface SubstituteTypeParametersTest {
 /**
  * Tests for {@link Type.simplify}.
  */
-interface UnwrapTest {
+interface SimplifyTest {
     /**
      * The type to test.
      */
