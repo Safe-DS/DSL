@@ -465,7 +465,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateExplicitNullability(receiverType.isExplicitlyNullable && node.isNullSafe);
+        return result.withExplicitNullability(receiverType.isExplicitlyNullable && node.isNullSafe);
     }
 
     private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
@@ -495,7 +495,7 @@ export class SafeDsTypeComputer {
         if (listType) {
             return listType
                 .getTypeParameterTypeByIndex(0)
-                .updateExplicitNullability(listType.isExplicitlyNullable && node.isNullSafe);
+                .withExplicitNullability(listType.isExplicitlyNullable && node.isNullSafe);
         }
 
         // Receiver is a map
@@ -503,7 +503,7 @@ export class SafeDsTypeComputer {
         if (mapType) {
             return mapType
                 .getTypeParameterTypeByIndex(1)
-                .updateExplicitNullability(mapType.isExplicitlyNullable && node.isNullSafe);
+                .withExplicitNullability(mapType.isExplicitlyNullable && node.isNullSafe);
         }
 
         return UnknownType;
@@ -527,7 +527,7 @@ export class SafeDsTypeComputer {
         const leftOperandType = this.computeType(node.leftOperand);
         if (leftOperandType.isExplicitlyNullable) {
             const rightOperandType = this.computeType(node.rightOperand);
-            return this.lowestCommonSupertype([leftOperandType.updateExplicitNullability(false), rightOperandType]);
+            return this.lowestCommonSupertype([leftOperandType.withExplicitNullability(false), rightOperandType]);
         } else {
             return leftOperandType;
         }
@@ -559,7 +559,7 @@ export class SafeDsTypeComputer {
         }
 
         // Update nullability
-        return result.updateExplicitNullability(
+        return result.withExplicitNullability(
             (receiverType.isExplicitlyNullable && node.isNullSafe) || result.isExplicitlyNullable,
         );
     }
@@ -579,7 +579,7 @@ export class SafeDsTypeComputer {
         const instanceType = this.computeType(target);
 
         if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
-            return this.factory.createStaticType(instanceType.updateExplicitNullability(false));
+            return this.factory.createStaticType(instanceType.withExplicitNullability(false));
         } else {
             return instanceType;
         }
@@ -614,7 +614,7 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfNamedType(node: SdsNamedType) {
-        const unparameterizedType = this.computeType(node.declaration?.ref).updateExplicitNullability(node.isNullable);
+        const unparameterizedType = this.computeType(node.declaration?.ref).withExplicitNullability(node.isNullable);
         if (!(unparameterizedType instanceof ClassType)) {
             return unparameterizedType;
         }
@@ -745,7 +745,7 @@ export class SafeDsTypeComputer {
                 // subtype relation between `currentType` and `otherType` in both directions. We always keep the type
                 // parameter type in this case for consistency, since it can be narrower if it has a lower bound.
                 if (currentType instanceof TypeParameterType) {
-                    const candidateType = currentType.updateExplicitNullability(
+                    const candidateType = currentType.withExplicitNullability(
                         currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
                     );
 
@@ -756,7 +756,7 @@ export class SafeDsTypeComputer {
                     }
                 }
 
-                const candidateType = otherType.updateExplicitNullability(
+                const candidateType = otherType.withExplicitNullability(
                     currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
                 );
                 if (this.typeChecker.isSubtypeOf(currentType, candidateType)) {
@@ -782,7 +782,7 @@ export class SafeDsTypeComputer {
      * Returns the non-nullable type for the given type. The result is simplified as much as possible.
      */
     computeNonNullableType(type: Type): Type {
-        return this.simplifyType(type.updateExplicitNullability(false));
+        return this.simplifyType(type.withExplicitNullability(false));
     }
 
     /**
@@ -879,7 +879,7 @@ export class SafeDsTypeComputer {
         }
 
         const result = this.doComputeUpperBound(type, new Set(), options);
-        return result.updateExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
+        return result.withExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
     private doComputeUpperBound(
@@ -1021,7 +1021,7 @@ export class SafeDsTypeComputer {
         }
 
         // Find the class type that is compatible to all other types
-        const firstClassType = classTypes[0]!.updateExplicitNullability(isNullable);
+        const firstClassType = classTypes[0]!.withExplicitNullability(isNullable);
         const candidates = [firstClassType, ...this.streamProperSupertypes(firstClassType)];
         let other = [...classTypes.slice(1)];
 
@@ -1114,9 +1114,9 @@ export class SafeDsTypeComputer {
         const candidates: Type[] = [];
 
         if (!isEmpty(enumTypes)) {
-            candidates.push(enumTypes[0]!.updateExplicitNullability(isNullable));
+            candidates.push(enumTypes[0]!.withExplicitNullability(isNullable));
         } else if (!isEmpty(enumVariantTypes)) {
-            candidates.push(enumVariantTypes[0]!.updateExplicitNullability(isNullable));
+            candidates.push(enumVariantTypes[0]!.withExplicitNullability(isNullable));
 
             const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
             if (containingEnum) {
@@ -1218,7 +1218,7 @@ export class SafeDsTypeComputer {
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any.updateExplicitNullability(type.isExplicitlyNullable);
+        const Any = this.coreTypes.Any.withExplicitNullability(type.isExplicitlyNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1234,7 +1234,7 @@ export class SafeDsTypeComputer {
         const firstParentType = this.computeType(firstParentTypeNode, type.substitutions);
 
         if (firstParentType instanceof ClassType) {
-            return firstParentType.updateExplicitNullability(type.isExplicitlyNullable);
+            return firstParentType.withExplicitNullability(type.isExplicitlyNullable);
         }
         return undefined;
     }

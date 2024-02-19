@@ -106,8 +106,8 @@ describe('SafeDsTypeChecker', async () => {
             expect(typeChecker.canBeTypeOfConstantParameter(type)).toBe(expected);
         });
 
-        it(type.updateExplicitNullability(true).toString, () => {
-            expect(typeChecker.canBeTypeOfConstantParameter(type.updateExplicitNullability(true))).toBe(expected);
+        it(type.withExplicitNullability(true).toString, () => {
+            expect(typeChecker.canBeTypeOfConstantParameter(type.withExplicitNullability(true))).toBe(expected);
         });
     });
 });

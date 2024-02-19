@@ -54,7 +54,7 @@ export abstract class Type {
     /**
      * Returns a copy of this type with the given nullability.
      */
-    abstract updateExplicitNullability(isExplicitlyNullable: boolean): Type;
+    abstract withExplicitNullability(isExplicitlyNullable: boolean): Type;
 }
 
 export class CallableType extends Type {
@@ -125,7 +125,7 @@ export class CallableType extends Type {
         );
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (!isExplicitlyNullable) {
             return this;
         }
@@ -201,15 +201,15 @@ export class IntersectionType extends Type {
         return this.factory.createIntersectionType(...newTypes);
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (isEmpty(this.types)) {
-            return this.coreTypes.Any.updateExplicitNullability(isExplicitlyNullable);
+            return this.coreTypes.Any.withExplicitNullability(isExplicitlyNullable);
         }
 
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
-            return this.factory.createIntersectionType(...this.types.map((it) => it.updateExplicitNullability(false)));
+            return this.factory.createIntersectionType(...this.types.map((it) => it.withExplicitNullability(false)));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
-            return this.factory.createIntersectionType(...this.types.map((it) => it.updateExplicitNullability(true)));
+            return this.factory.createIntersectionType(...this.types.map((it) => it.withExplicitNullability(true)));
         } else {
             return this;
         }
@@ -263,7 +263,7 @@ export class LiteralType extends Type {
         return this;
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): LiteralType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): LiteralType {
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
             return this.factory.createLiteralType(...this.constants.filter((it) => it !== NullConstant));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
@@ -338,7 +338,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
         return this.factory.createNamedTupleType(...this.entries.map((it) => it.unwrap()));
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (!isExplicitlyNullable) {
             return this;
         }
@@ -397,7 +397,7 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
         }
     }
 
-    abstract override updateExplicitNullability(isExplicitlyNullable: boolean): NamedType<T>;
+    abstract override withExplicitNullability(isExplicitlyNullable: boolean): NamedType<T>;
 
     simplify(): NamedType<T> {
         return this;
@@ -469,7 +469,7 @@ export class ClassType extends NamedType<SdsClass> {
         return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): ClassType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): ClassType {
         if (this.isExplicitlyNullable === isExplicitlyNullable) {
             return this;
         }
@@ -500,7 +500,7 @@ export class EnumType extends NamedType<SdsEnum> {
         return this;
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): EnumType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): EnumType {
         if (this.isExplicitlyNullable === isExplicitlyNullable) {
             return this;
         }
@@ -531,7 +531,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
         return this;
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): EnumVariantType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): EnumVariantType {
         if (this.isExplicitlyNullable === isExplicitlyNullable) {
             return this;
         }
@@ -564,13 +564,13 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
         if (!substitution) {
             return this;
         } else if (this.isExplicitlyNullable) {
-            return substitution.updateExplicitNullability(true);
+            return substitution.withExplicitNullability(true);
         } else {
             return substitution;
         }
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): TypeParameterType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): TypeParameterType {
         if (this.isExplicitlyNullable === isExplicitlyNullable) {
             return this;
         }
@@ -620,7 +620,7 @@ export class StaticType extends Type {
         return this;
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (!isExplicitlyNullable) {
             return this;
         }
@@ -694,15 +694,15 @@ export class UnionType extends Type {
         return this.factory.createUnionType(...newTypes);
     }
 
-    override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (isEmpty(this.types)) {
-            return this.coreTypes.Nothing.updateExplicitNullability(isExplicitlyNullable);
+            return this.coreTypes.Nothing.withExplicitNullability(isExplicitlyNullable);
         }
 
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
-            return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(false)));
+            return this.factory.createUnionType(...this.types.map((it) => it.withExplicitNullability(false)));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
-            return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(true)));
+            return this.factory.createUnionType(...this.types.map((it) => it.withExplicitNullability(true)));
         } else {
             return this;
         }
@@ -728,7 +728,7 @@ class UnknownTypeClass extends Type {
         return this;
     }
 
-    override updateExplicitNullability(_isExplicitlyNullable: boolean): Type {
+    override withExplicitNullability(_isExplicitlyNullable: boolean): Type {
         return this;
     }
 }

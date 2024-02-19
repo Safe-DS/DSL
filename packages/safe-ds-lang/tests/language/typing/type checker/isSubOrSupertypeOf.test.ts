@@ -222,13 +222,13 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: classType2.updateExplicitNullability(true),
+            type1: classType2.withExplicitNullability(true),
             type2: classType1,
             expected: false,
         },
         {
-            type1: classType2.updateExplicitNullability(true),
-            type2: classType1.updateExplicitNullability(true),
+            type1: classType2.withExplicitNullability(true),
+            type2: classType1.withExplicitNullability(true),
             expected: true,
         },
         // Class type to union type
@@ -260,12 +260,12 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: enumType1.updateExplicitNullability(true),
+            type1: enumType1.withExplicitNullability(true),
             type2: coreTypes.Any,
             expected: false,
         },
         {
-            type1: enumType1.updateExplicitNullability(true),
+            type1: enumType1.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
@@ -281,13 +281,13 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: false,
         },
         {
-            type1: enumType1.updateExplicitNullability(true),
+            type1: enumType1.withExplicitNullability(true),
             type2: enumType1,
             expected: false,
         },
         {
-            type1: enumType1.updateExplicitNullability(true),
-            type2: enumType1.updateExplicitNullability(true),
+            type1: enumType1.withExplicitNullability(true),
+            type2: enumType1.withExplicitNullability(true),
             expected: true,
         },
         // Enum type to union type
@@ -319,12 +319,12 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: enumVariantType1.updateExplicitNullability(true),
+            type1: enumVariantType1.withExplicitNullability(true),
             type2: coreTypes.Any,
             expected: false,
         },
         {
-            type1: enumVariantType1.updateExplicitNullability(true),
+            type1: enumVariantType1.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
@@ -340,13 +340,13 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: false,
         },
         {
-            type1: enumVariantType1.updateExplicitNullability(true),
+            type1: enumVariantType1.withExplicitNullability(true),
             type2: enumType1,
             expected: false,
         },
         {
-            type1: enumVariantType1.updateExplicitNullability(true),
-            type2: enumType1.updateExplicitNullability(true),
+            type1: enumVariantType1.withExplicitNullability(true),
+            type2: enumType1.withExplicitNullability(true),
             expected: true,
         },
         // Enum variant type to enum variant type
@@ -361,13 +361,13 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: false,
         },
         {
-            type1: enumVariantType1.updateExplicitNullability(true),
+            type1: enumVariantType1.withExplicitNullability(true),
             type2: enumVariantType1,
             expected: false,
         },
         {
-            type1: enumVariantType1.updateExplicitNullability(true),
-            type2: enumVariantType1.updateExplicitNullability(true),
+            type1: enumVariantType1.withExplicitNullability(true),
+            type2: enumVariantType1.withExplicitNullability(true),
             expected: true,
         },
         // Enum variant type to union type
@@ -430,7 +430,7 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         },
         {
             type1: factory.createLiteralType(new IntConstant(1n), NullConstant),
-            type2: coreTypes.Int.updateExplicitNullability(true),
+            type2: coreTypes.Int.withExplicitNullability(true),
             expected: true,
         },
         {
@@ -513,12 +513,12 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         },
         {
             type1: factory.createLiteralType(NullConstant),
-            type2: enumType1.updateExplicitNullability(true),
+            type2: enumType1.withExplicitNullability(true),
             expected: true,
         },
         {
             type1: factory.createLiteralType(NullConstant, NullConstant),
-            type2: enumType1.updateExplicitNullability(true),
+            type2: enumType1.withExplicitNullability(true),
             expected: true,
         },
         {
@@ -643,13 +643,13 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: false,
         },
         {
-            type1: factory.createUnionType(classType1.updateExplicitNullability(true)),
+            type1: factory.createUnionType(classType1.withExplicitNullability(true)),
             type2: classType1,
             expected: false,
         },
         {
-            type1: factory.createUnionType(classType1.updateExplicitNullability(true)),
-            type2: classType1.updateExplicitNullability(true),
+            type1: factory.createUnionType(classType1.withExplicitNullability(true)),
+            type2: classType1.withExplicitNullability(true),
             expected: true,
         },
         // Unknown to X
@@ -1121,7 +1121,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: coreTypes.Number.updateExplicitNullability(true),
+            type1: coreTypes.Number.withExplicitNullability(true),
             type2: lowerBound,
             expected: true,
         },
@@ -1183,13 +1183,13 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: coreTypes.Number.updateExplicitNullability(true),
+            type1: coreTypes.Number.withExplicitNullability(true),
             type2: upperBound,
             expected: false,
         },
         {
-            type1: coreTypes.Number.updateExplicitNullability(true),
-            type2: upperBound.updateExplicitNullability(true),
+            type1: coreTypes.Number.withExplicitNullability(true),
+            type2: upperBound.withExplicitNullability(true),
             expected: true,
         },
         {
@@ -1250,13 +1250,13 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: coreTypes.Number.updateExplicitNullability(true),
+            type1: coreTypes.Number.withExplicitNullability(true),
             type2: bothBounds,
             expected: false,
         },
         {
-            type1: coreTypes.Number.updateExplicitNullability(true),
-            type2: bothBounds.updateExplicitNullability(true),
+            type1: coreTypes.Number.withExplicitNullability(true),
+            type2: bothBounds.withExplicitNullability(true),
             expected: true,
         },
         {
@@ -1265,13 +1265,13 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: coreTypes.Int.updateExplicitNullability(true),
+            type1: coreTypes.Int.withExplicitNullability(true),
             type2: bothBounds,
             expected: false,
         },
         {
-            type1: coreTypes.Int.updateExplicitNullability(true),
-            type2: bothBounds.updateExplicitNullability(true),
+            type1: coreTypes.Int.withExplicitNullability(true),
+            type2: bothBounds.withExplicitNullability(true),
             expected: true,
         },
         {
@@ -1360,12 +1360,12 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: unbounded.updateExplicitNullability(true),
+            type1: unbounded.withExplicitNullability(true),
             type2: coreTypes.Any,
             expected: false,
         },
         {
-            type1: unbounded.updateExplicitNullability(true),
+            type1: unbounded.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
@@ -1380,12 +1380,12 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: lowerBound.updateExplicitNullability(true),
+            type1: lowerBound.withExplicitNullability(true),
             type2: coreTypes.Any,
             expected: false,
         },
         {
-            type1: lowerBound.updateExplicitNullability(true),
+            type1: lowerBound.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
@@ -1395,7 +1395,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: upperBound.updateExplicitNullability(true),
+            type1: upperBound.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
@@ -1405,17 +1405,17 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: upperBound.updateExplicitNullability(true),
+            type1: upperBound.withExplicitNullability(true),
             type2: coreTypes.Any,
             expected: false,
         },
         {
-            type1: upperBound.updateExplicitNullability(true),
+            type1: upperBound.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
         {
-            type1: upperBound.updateExplicitNullability(true),
+            type1: upperBound.withExplicitNullability(true),
             type2: coreTypes.Number,
             expected: false,
         },
@@ -1425,7 +1425,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: bothBounds.updateExplicitNullability(true),
+            type1: bothBounds.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
@@ -1435,17 +1435,17 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             expected: true,
         },
         {
-            type1: bothBounds.updateExplicitNullability(true),
+            type1: bothBounds.withExplicitNullability(true),
             type2: coreTypes.Any,
             expected: false,
         },
         {
-            type1: bothBounds.updateExplicitNullability(true),
+            type1: bothBounds.withExplicitNullability(true),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
         {
-            type1: bothBounds.updateExplicitNullability(true),
+            type1: bothBounds.withExplicitNullability(true),
             type2: coreTypes.Number,
             expected: false,
         },

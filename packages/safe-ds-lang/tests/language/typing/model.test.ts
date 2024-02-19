@@ -518,7 +518,7 @@ describe('type model', async () => {
         });
     });
 
-    const updateExplicitNullabilityTests: UpdateExplicitNullabilityTest[] = [
+    const withExplicitNullabilityTests: WithExplicitNullabilityTest[] = [
         {
             type: factory.createCallableType(
                 callable1,
@@ -709,9 +709,9 @@ describe('type model', async () => {
             expectedType: UnknownType,
         },
     ];
-    describe.each(updateExplicitNullabilityTests)('updateExplicitNullability', ({ type, isNullable, expectedType }) => {
+    describe.each(withExplicitNullabilityTests)('withExplicitNullability', ({ type, isNullable, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
-            const actual = type.updateExplicitNullability(isNullable);
+            const actual = type.withExplicitNullability(isNullable);
             expectEqualTypes(actual, expectedType);
         });
     });
@@ -827,9 +827,9 @@ interface UnwrapTest {
 }
 
 /**
- * Tests for {@link Type.updateExplicitNullability}.
+ * Tests for {@link Type.withExplicitNullability}.
  */
-interface UpdateExplicitNullabilityTest {
+interface WithExplicitNullabilityTest {
     /**
      * The type to test.
      */
