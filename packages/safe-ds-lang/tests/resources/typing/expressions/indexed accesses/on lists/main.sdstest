@@ -41,7 +41,7 @@ segment mySegment(param1: List<Int>, param2: List<Int>?, param3: IntList) {
     »param3?[unresolved]«;
 }
 
-class MyClass<MyList, MyNullableList>(
+class MyClass<MyList sub List<Int>, MyNullableList sub List<Int>?>(
     param1: MyList,
     param2: MyList?,
     param3: MyNullableList,
@@ -82,7 +82,4 @@ class MyClass<MyList, MyNullableList>(
 
     // $TEST$ serialization Int?
     p12: Any? = »param3?[unresolved]«,
-) where {
-    MyList sub List<Int>,
-    MyNullableList sub List<Int>?,
-}
+)

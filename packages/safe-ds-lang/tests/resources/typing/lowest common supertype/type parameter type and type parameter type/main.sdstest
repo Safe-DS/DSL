@@ -3,13 +3,13 @@ package tests.typing.lowestCommonSupertype.typeParameterTypeAndTypeParameterType
 class C
 class D sub C
 class E sub C
+class F
 
-class Test<NothingToAnyOrNull, NothingToD, NothingToE, DToAnyOrNull, DToC>(
+class Test<NothingToAnyOrNull, NothingToD sub D, NothingToE sub E, NothingToF sub F>(
     nothingToAnyOrNull: NothingToAnyOrNull,
     nothingToD: NothingToD,
     nothingToE: NothingToE,
-    dToAnyOrNull: DToAnyOrNull,
-    dToC: DToC,
+    nothingToF: NothingToF,
 
     // $TEST$ serialization List<NothingToAnyOrNull>
     a1: Any = »[nothingToAnyOrNull, nothingToAnyOrNull]«,
@@ -18,37 +18,20 @@ class Test<NothingToAnyOrNull, NothingToD, NothingToE, DToAnyOrNull, DToC>(
     // $TEST$ serialization List<NothingToAnyOrNull>
     a3: Any = »[nothingToAnyOrNull, nothingToE]«,
     // $TEST$ serialization List<NothingToAnyOrNull>
-    a4: Any = »[nothingToAnyOrNull, dToAnyOrNull]«,
-    // $TEST$ serialization List<NothingToAnyOrNull>
-    a5: Any = »[nothingToAnyOrNull, dToC]«,
+    a4: Any = »[nothingToAnyOrNull, nothingToF]«,
 
     // $TEST$ serialization List<NothingToD>
     b1: Any = »[nothingToD, nothingToD]«,
     // $TEST$ serialization List<C>
     b2: Any = »[nothingToD, nothingToE]«,
-    // $TEST$ serialization List<Any?>
-    b3: Any = »[nothingToD, dToAnyOrNull]«,
-    // $TEST$ serialization List<C>
-    b4: Any = »[nothingToD, dToC]«,
+    // $TEST$ serialization List<Any>
+    b3: Any = »[nothingToD, nothingToF]«,
 
     // $TEST$ serialization List<NothingToE>
     c1: Any = »[nothingToE, nothingToE]«,
-    // $TEST$ serialization List<Any?>
-    c2: Any = »[nothingToE, dToAnyOrNull]«,
-    // $TEST$ serialization List<C>
-    c3: Any = »[nothingToE, dToC]«,
+    // $TEST$ serialization List<Any>
+    c2: Any = »[nothingToE, nothingToF]«,
 
-    // $TEST$ serialization List<DToAnyOrNull>
-    d1: Any = »[dToAnyOrNull, dToAnyOrNull]«,
-    // $TEST$ serialization List<DToAnyOrNull>
-    d2: Any = »[dToAnyOrNull, dToC]«,
-
-    // $TEST$ serialization List<DToC>
-    e1: Any = »[dToC, dToC]«,
-) where {
-    NothingToD sub D,
-    NothingToE sub E,
-    DToAnyOrNull super D,
-    DToC super D,
-    DToC sub C,
-}
+    // $TEST$ serialization List<NothingToF>
+    d1: Any = »[nothingToF, nothingToF]«
+)
