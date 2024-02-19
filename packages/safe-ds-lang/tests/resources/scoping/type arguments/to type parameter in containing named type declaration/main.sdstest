@@ -6,11 +6,7 @@ class MyClass<»T«>(
     p: MyClass<»T« = Int>,
 
 // $TEST$ references outerClass
-) sub MyClass<»T« = Int> where {
-
-    // $TEST$ references outerClass
-    T sub MyClass<»T« = Int>,
-} {
+) sub MyClass<»T« = Int> {
     // $TEST$ references outerClass
     attr a: MyClass<»T« = Int>
 
@@ -20,19 +16,13 @@ class MyClass<»T«>(
     ) -> (
         // $TEST$ references outerClass
         r: MyClass<»T« = Int>,
-    ) where {
-        // $TEST$ references outerClass
-        T sub MyClass<»T« = Int>,
-    }
+    )
 
     enum MyEnum {
         MyEnumVariant(
             // $TEST$ references outerClass
             p: MyClass<»T« = Int>,
-        ) where {
-            // $TEST$ references outerClass
-            T sub MyClass<»T« = Int>,
-        }
+        )
     }
 
     // $TEST$ target innerClass
@@ -51,9 +41,6 @@ class MyClass<»T«>(
         ) -> (
             // $TEST$ references innerClass
             r: MyClass<»T« = Int>,
-        ) where {
-            // $TEST$ references innerClass
-            T sub MyClass<»T« = Int>,
-        }
+        )
     }
 }

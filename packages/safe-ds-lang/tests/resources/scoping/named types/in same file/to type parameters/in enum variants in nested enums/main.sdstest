@@ -17,19 +17,7 @@ class MyClass<»Container«> {
 
             // $TEST$ unresolved
             d: »Unresolved«,
-        ) where {
-            // $TEST$ references container
-            Own sub »Container«,
-
-            // $TEST$ unresolved
-            Own sub »BeforeEnum«,
-
-            // $TEST$ unresolved
-            Own sub »AfterEnum«,
-
-            // $TEST$ unresolved
-            Own sub »Unresolved«,
-        }
+        )
     }
 
     fun myFunction2<AfterEnum>()

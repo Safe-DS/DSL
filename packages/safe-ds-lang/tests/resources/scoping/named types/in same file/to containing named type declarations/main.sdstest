@@ -1,21 +1,27 @@
 package tests.scoping.namedTypes.inSameFile.toContainingNamedTypeDeclarations
 
 // $TEST$ target outerClass
-class »MyClass«<T>(
+class »MyClass«<
+    // $TEST$ references outerClass
+    T sub »MyClass«
+>(
     // $TEST$ references outerClass
     p: »MyClass«
 // $TEST$ references outerClass
-) sub »MyClass« where {
-    // $TEST$ references outerClass
-    T sub »MyClass«
-} {
+) sub »MyClass« {
     // $TEST$ references outerClass
     attr a1: »MyClass«
 
     // $TEST$ unresolved
     attr a2: »MyEnum«
 
-    fun f<T>(
+    fun f<
+        // $TEST$ references outerClass
+        T1 sub »MyClass«,
+
+        // $TEST$ unresolved
+        T2 sub »MyEnum«,
+    >(
         // $TEST$ references outerClass
         p1: »MyClass«,
 
@@ -27,13 +33,7 @@ class »MyClass«<T>(
 
         // $TEST$ unresolved
         r2: »MyEnum«
-    ) where {
-        // $TEST$ references outerClass
-        T sub »MyClass«,
-
-        // $TEST$ unresolved
-        T sub »MyEnum«,
-    }
+    )
 
     // $TEST$ target enum
     enum »MyEnum« {
@@ -47,16 +47,7 @@ class »MyClass«<T>(
 
             // $TEST$ references variant
             p3: »MyEnumVariant«,
-        ) where {
-            // $TEST$ references outerClass
-            T sub »MyClass«,
-
-            // $TEST$ references enum
-            T sub »MyEnum«,
-
-            // $TEST$ references variant
-            T sub »MyEnumVariant«,
-        }
+        )
     }
 
     // $TEST$ target innerClass
@@ -76,7 +67,13 @@ class »MyClass«<T>(
         // $TEST$ unresolved
         attr a2: »MyEnum«
 
-        fun f<T>(
+        fun f<
+            // $TEST$ references innerClass
+            T1 sub »MyClass«,
+
+            // $TEST$ unresolved
+            T2 sub »MyEnum«,
+        >(
             // $TEST$ references innerClass
             p1: »MyClass«,
 
@@ -88,12 +85,6 @@ class »MyClass«<T>(
 
             // $TEST$ unresolved
             r2: »MyEnum«,
-        ) where {
-            // $TEST$ references innerClass
-            T sub »MyClass«,
-
-            // $TEST$ unresolved
-            T sub »MyEnum«,
-        }
+        )
     }
 }
