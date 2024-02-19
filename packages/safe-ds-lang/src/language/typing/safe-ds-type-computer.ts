@@ -700,21 +700,11 @@ export class SafeDsTypeComputer {
             type = this.computeType(nodeOrType) as TypeParameterType;
         }
 
-        const result = this.doComputeUpperBound(type, new Set(), options);
+        const result = this.doComputeUpperBound(type, options);
         return result.withExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
-    private doComputeUpperBound(
-        type: TypeParameterType,
-        visited: Set<SdsTypeParameter>,
-        options: ComputeBoundOptions,
-    ): Type {
-        // Check for cycles
-        if (visited.has(type.declaration)) {
-            return UnknownType;
-        }
-        visited.add(type.declaration);
-
+    private doComputeUpperBound(type: TypeParameterType, options: ComputeBoundOptions): Type {
         const upperBound = type.declaration.upperBound;
         if (!upperBound) {
             return this.coreTypes.AnyOrNull;
@@ -726,7 +716,7 @@ export class SafeDsTypeComputer {
         } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
             return boundType;
         } else {
-            return this.doComputeUpperBound(boundType, visited, options);
+            return this.doComputeUpperBound(boundType, options);
         }
     }
 
