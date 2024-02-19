@@ -15,6 +15,7 @@ import { stream } from 'langium';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
+import { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 
 export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 
@@ -659,6 +660,7 @@ export class StaticType extends Type {
 export class UnionType extends Type {
     private readonly coreTypes: SafeDsCoreTypes;
     private readonly factory: SafeDsTypeFactory;
+    private readonly typeChecker: SafeDsTypeChecker;
 
     readonly types: Type[];
     private _isExplicitlyNullable: boolean | undefined;
@@ -668,6 +670,7 @@ export class UnionType extends Type {
 
         this.coreTypes = services.types.CoreTypes;
         this.factory = services.types.TypeFactory;
+        this.typeChecker = services.types.TypeChecker;
 
         this.types = types;
     }
@@ -695,6 +698,11 @@ export class UnionType extends Type {
     }
 
     override simplify(): Type {
+        // Handle empty union types
+        if (isEmpty(this.types)) {
+            return this.coreTypes.Nothing;
+        }
+
         // Flatten nested unions
         const newTypes = this.types.flatMap((type) => {
             const unwrappedType = type.simplify();
@@ -705,12 +713,70 @@ export class UnionType extends Type {
             }
         });
 
-        // Remove the outer union if there's only one type left
-        if (newTypes.length === 1) {
-            return newTypes[0]!;
+        // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
+        // occurrence of duplicate types. It's also makes splicing easier.
+        for (let i = newTypes.length - 1; i >= 0; i--) {
+            const currentType = newTypes[i]!;
+
+            for (let j = newTypes.length - 1; j >= 0; j--) {
+                if (i === j) {
+                    continue;
+                }
+
+                const otherType = newTypes[j]!;
+
+                // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
+                // create another union type.
+                if (
+                    currentType.equals(this.coreTypes.NothingOrNull) &&
+                    (otherType instanceof CallableType ||
+                        otherType instanceof NamedTupleType ||
+                        otherType instanceof StaticType)
+                ) {
+                    continue;
+                }
+
+                // Merge literal types
+                if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
+                    // Other type always occurs before current type
+                    const newConstants = [...otherType.constants, ...currentType.constants];
+                    const newLiteralType = this.factory.createLiteralType(...newConstants).simplify();
+                    newTypes.splice(j, 1, newLiteralType);
+                    newTypes.splice(i, 1);
+                    break;
+                }
+
+                // Remove subtypes of other types. Type parameter types are a special case, since there might be a
+                // subtype relation between `currentType` and `otherType` in both directions. We always keep the type
+                // parameter type in this case for consistency, since it can be narrower if it has a lower bound.
+                if (currentType instanceof TypeParameterType) {
+                    const candidateType = currentType.withExplicitNullability(
+                        currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
+                    );
+
+                    if (this.typeChecker.isSubtypeOf(otherType, candidateType)) {
+                        newTypes.splice(j, 1, candidateType);
+                        newTypes.splice(i, 1);
+                        break;
+                    }
+                }
+
+                const candidateType = otherType.withExplicitNullability(
+                    currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
+                );
+                if (this.typeChecker.isSubtypeOf(currentType, candidateType)) {
+                    newTypes.splice(j, 1, candidateType); // Update nullability
+                    newTypes.splice(i, 1);
+                    break;
+                }
+            }
         }
 
-        return this.factory.createUnionType(...newTypes);
+        if (newTypes.length === 1) {
+            return newTypes[0]!;
+        } else {
+            return this.factory.createUnionType(...newTypes);
+        }
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {

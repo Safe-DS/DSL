@@ -481,7 +481,7 @@ describe('type model', async () => {
         },
         {
             type: factory.createUnionType(),
-            expectedType: factory.createUnionType(),
+            expectedType: coreTypes.Nothing,
         },
         {
             type: factory.createUnionType(new ClassType(class1, new Map(), false)),

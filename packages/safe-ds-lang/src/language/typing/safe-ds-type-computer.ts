@@ -158,7 +158,7 @@ export class SafeDsTypeComputer {
 
         // Ignore type parameter substitutions for caching
         const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
-            this.simplifyType(this.doComputeType(node)),
+            this.doComputeType(node).simplify(),
         );
         if (isEmpty(substitutions)) {
             return unsubstitutedType;
@@ -166,7 +166,7 @@ export class SafeDsTypeComputer {
 
         // Substitute type parameters
         const simplifiedSubstitutions = new Map(
-            [...substitutions].map(([typeParameter, type]) => [typeParameter, this.simplifyType(type)]),
+            [...substitutions].map(([typeParameter, type]) => [typeParameter, type.simplify()]),
         );
         return unsubstitutedType.substituteTypeParameters(simplifiedSubstitutions);
     }
@@ -651,99 +651,6 @@ export class SafeDsTypeComputer {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Simplify type
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Returns an equivalent type that is simplified as much as possible. Types computed by {@link computeType} are
-     * already simplified, so this method is mainly useful for types that are constructed or modified manually.
-     */
-    simplifyType(type: Type): Type {
-        const simplifiedType = type.simplify();
-
-        if (simplifiedType instanceof UnionType) {
-            return this.simplifyUnionType(simplifiedType);
-        } else {
-            return simplifiedType;
-        }
-    }
-
-    private simplifyUnionType(type: UnionType): Type {
-        // Handle empty union types
-        if (isEmpty(type.types)) {
-            return this.coreTypes.Nothing;
-        }
-
-        // Simplify possible types
-        const newPossibleTypes = type.types.map((it) => this.simplifyType(it));
-
-        // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
-        // occurrence of duplicate types. It's also makes splicing easier.
-        for (let i = newPossibleTypes.length - 1; i >= 0; i--) {
-            const currentType = newPossibleTypes[i]!;
-
-            for (let j = newPossibleTypes.length - 1; j >= 0; j--) {
-                if (i === j) {
-                    continue;
-                }
-
-                const otherType = newPossibleTypes[j]!;
-
-                // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
-                // create another union type.
-                if (
-                    currentType.equals(this.coreTypes.NothingOrNull) &&
-                    (otherType instanceof CallableType ||
-                        otherType instanceof NamedTupleType ||
-                        otherType instanceof StaticType)
-                ) {
-                    continue;
-                }
-
-                // Merge literal types
-                if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
-                    // Other type always occurs before current type
-                    const newConstants = [...otherType.constants, ...currentType.constants];
-                    const newLiteralType = this.simplifyType(this.factory.createLiteralType(...newConstants));
-                    newPossibleTypes.splice(j, 1, newLiteralType);
-                    newPossibleTypes.splice(i, 1);
-                    break;
-                }
-
-                // Remove subtypes of other types. Type parameter types are a special case, since there might be a
-                // subtype relation between `currentType` and `otherType` in both directions. We always keep the type
-                // parameter type in this case for consistency, since it can be narrower if it has a lower bound.
-                if (currentType instanceof TypeParameterType) {
-                    const candidateType = currentType.withExplicitNullability(
-                        currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
-                    );
-
-                    if (this.typeChecker.isSubtypeOf(otherType, candidateType)) {
-                        newPossibleTypes.splice(j, 1, candidateType);
-                        newPossibleTypes.splice(i, 1);
-                        break;
-                    }
-                }
-
-                const candidateType = otherType.withExplicitNullability(
-                    currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
-                );
-                if (this.typeChecker.isSubtypeOf(currentType, candidateType)) {
-                    newPossibleTypes.splice(j, 1, candidateType); // Update nullability
-                    newPossibleTypes.splice(i, 1);
-                    break;
-                }
-            }
-        }
-
-        if (newPossibleTypes.length === 1) {
-            return newPossibleTypes[0]!;
-        } else {
-            return this.factory.createUnionType(...newPossibleTypes);
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     // Various type conversions
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -751,7 +658,7 @@ export class SafeDsTypeComputer {
      * Returns the non-nullable type for the given type. The result is simplified as much as possible.
      */
     computeNonNullableType(type: Type): Type {
-        return this.simplifyType(type.withExplicitNullability(false));
+        return type.withExplicitNullability(false).simplify();
     }
 
     /**
@@ -934,7 +841,7 @@ export class SafeDsTypeComputer {
     }
 
     private simplifyTypes(types: Type[]) {
-        const simplifiedType = this.simplifyType(this.factory.createUnionType(...types));
+        const simplifiedType = this.factory.createUnionType(...types).simplify();
 
         if (simplifiedType instanceof UnionType) {
             return simplifiedType.types;
