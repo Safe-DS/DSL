@@ -4,7 +4,6 @@ import {
     ClassType,
     EnumType,
     EnumVariantType,
-    IntersectionType,
     LiteralType,
     NamedTupleEntry,
     NamedTupleType,
@@ -53,10 +52,6 @@ export class SafeDsTypeFactory {
 
     createEnumVariantType(declaration: SdsEnumVariant, isExplicitlyNullable: boolean): EnumVariantType {
         return new EnumVariantType(declaration, isExplicitlyNullable);
-    }
-
-    createIntersectionType(...types: Type[]): IntersectionType {
-        return new IntersectionType(this.services, types);
     }
 
     createLiteralType(...constants: Constant[]): LiteralType {
