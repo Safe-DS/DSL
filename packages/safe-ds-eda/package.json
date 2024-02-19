@@ -4,6 +4,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "clean": "shx rm -rf dist lib *.tsbuildinfo",
         "dev": "vite",
         "watch": "vite build --watch",
         "build": "vite build",
