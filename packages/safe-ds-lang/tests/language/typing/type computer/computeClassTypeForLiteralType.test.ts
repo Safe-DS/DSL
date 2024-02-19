@@ -13,74 +13,75 @@ import { expectEqualTypes } from '../../../helpers/testAssertions.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
+const factory = services.types.TypeFactory;
 const typeComputer = services.types.TypeComputer;
 
 const tests: ComputeClassTypeForLiteralTypeTest[] = [
     // Base cases
     {
-        literalType: new LiteralType(),
+        literalType: factory.createLiteralType(),
         expected: coreTypes.Nothing,
     },
     {
-        literalType: new LiteralType(new BooleanConstant(false)),
+        literalType: factory.createLiteralType(new BooleanConstant(false)),
         expected: coreTypes.Boolean,
     },
     {
-        literalType: new LiteralType(new FloatConstant(1.5)),
+        literalType: factory.createLiteralType(new FloatConstant(1.5)),
         expected: coreTypes.Float,
     },
     {
-        literalType: new LiteralType(new IntConstant(1n)),
+        literalType: factory.createLiteralType(new IntConstant(1n)),
         expected: coreTypes.Int,
     },
     {
-        literalType: new LiteralType(NullConstant),
+        literalType: factory.createLiteralType(NullConstant),
         expected: coreTypes.NothingOrNull,
     },
     {
-        literalType: new LiteralType(new StringConstant('')),
+        literalType: factory.createLiteralType(new StringConstant('')),
         expected: coreTypes.String,
     },
     // Nullable types
     {
-        literalType: new LiteralType(new BooleanConstant(false), NullConstant),
+        literalType: factory.createLiteralType(new BooleanConstant(false), NullConstant),
         expected: coreTypes.Boolean.updateExplicitNullability(true),
     },
     {
-        literalType: new LiteralType(new FloatConstant(1.5), NullConstant),
+        literalType: factory.createLiteralType(new FloatConstant(1.5), NullConstant),
         expected: coreTypes.Float.updateExplicitNullability(true),
     },
     {
-        literalType: new LiteralType(new IntConstant(1n), NullConstant),
+        literalType: factory.createLiteralType(new IntConstant(1n), NullConstant),
         expected: coreTypes.Int.updateExplicitNullability(true),
     },
     {
-        literalType: new LiteralType(new StringConstant(''), NullConstant),
+        literalType: factory.createLiteralType(new StringConstant(''), NullConstant),
         expected: coreTypes.String.updateExplicitNullability(true),
     },
     // Other combinations
     {
-        literalType: new LiteralType(new BooleanConstant(false), new FloatConstant(1.5)),
+        literalType: factory.createLiteralType(new BooleanConstant(false), new FloatConstant(1.5)),
         expected: coreTypes.Any,
     },
     {
-        literalType: new LiteralType(new FloatConstant(1.5), new IntConstant(1n)),
+        literalType: factory.createLiteralType(new FloatConstant(1.5), new IntConstant(1n)),
         expected: coreTypes.Number,
     },
     {
-        literalType: new LiteralType(new IntConstant(1n), new StringConstant('')),
+        literalType: factory.createLiteralType(new IntConstant(1n), new StringConstant('')),
         expected: coreTypes.Any,
     },
     {
-        literalType: new LiteralType(new BooleanConstant(false), new FloatConstant(1.5), NullConstant),
+        literalType: factory.createLiteralType(new BooleanConstant(false), new FloatConstant(1.5), NullConstant),
         expected: coreTypes.AnyOrNull,
     },
     {
-        literalType: new LiteralType(new FloatConstant(1.5), new IntConstant(1n), NullConstant),
+        literalType: factory.createLiteralType(new FloatConstant(1.5), new IntConstant(1n), NullConstant),
         expected: coreTypes.Number.updateExplicitNullability(true),
     },
     {
-        literalType: new LiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),
+        literalType: factory.createLiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),
         expected: coreTypes.AnyOrNull,
     },
 ];

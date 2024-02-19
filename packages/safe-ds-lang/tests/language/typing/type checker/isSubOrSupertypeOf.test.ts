@@ -28,18 +28,15 @@ import {
     ClassType,
     EnumType,
     EnumVariantType,
-    LiteralType,
     NamedTupleEntry,
-    NamedTupleType,
-    StaticType,
     Type,
-    UnionType,
     UnknownType,
 } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
+const factory = services.types.TypeFactory;
 const typeChecker = services.types.TypeChecker;
 const typeComputer = services.types.TypeComputer;
 
@@ -237,12 +234,12 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         // Class type to union type
         {
             type1: classType1,
-            type2: new UnionType(classType1),
+            type2: factory.createUnionType(classType1),
             expected: true,
         },
         {
             type1: classType1,
-            type2: new UnionType(classType3),
+            type2: factory.createUnionType(classType3),
             expected: false,
         },
         // Class type to other
@@ -296,18 +293,18 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         // Enum type to union type
         {
             type1: enumType1,
-            type2: new UnionType(enumType1),
+            type2: factory.createUnionType(enumType1),
             expected: true,
         },
         {
             type1: enumType1,
-            type2: new UnionType(enumType2),
+            type2: factory.createUnionType(enumType2),
             expected: false,
         },
         // Enum type to other
         {
             type1: enumType1,
-            type2: new LiteralType(),
+            type2: factory.createLiteralType(),
             expected: false,
         },
         // Enum variant type to class type
@@ -376,282 +373,282 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         // Enum variant type to union type
         {
             type1: enumVariantType1,
-            type2: new UnionType(enumType1),
+            type2: factory.createUnionType(enumType1),
             expected: true,
         },
         {
             type1: enumVariantType1,
-            type2: new UnionType(enumType2),
+            type2: factory.createUnionType(enumType2),
             expected: false,
         },
         // Enum variant type to other
         {
             type1: enumVariantType1,
-            type2: new LiteralType(),
+            type2: factory.createLiteralType(),
             expected: false,
         },
         // Literal type to class type
         {
-            type1: new LiteralType(),
+            type1: factory.createLiteralType(),
             type2: classType1,
             expected: true,
         },
         {
-            type1: new LiteralType(new BooleanConstant(true)),
+            type1: factory.createLiteralType(new BooleanConstant(true)),
             type2: coreTypes.Boolean,
             expected: true,
         },
         {
-            type1: new LiteralType(new FloatConstant(1.5)),
+            type1: factory.createLiteralType(new FloatConstant(1.5)),
             type2: coreTypes.Float,
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n)),
+            type1: factory.createLiteralType(new IntConstant(1n)),
             type2: coreTypes.Int,
             expected: true,
         },
         {
-            type1: new LiteralType(NullConstant),
+            type1: factory.createLiteralType(NullConstant),
             type2: coreTypes.NothingOrNull,
             expected: true,
         },
         {
-            type1: new LiteralType(new StringConstant('')),
+            type1: factory.createLiteralType(new StringConstant('')),
             type2: coreTypes.String,
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n)),
+            type1: factory.createLiteralType(new IntConstant(1n)),
             type2: coreTypes.Any,
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n)),
+            type1: factory.createLiteralType(new IntConstant(1n)),
             type2: coreTypes.String,
             expected: false,
         },
         {
-            type1: new LiteralType(new IntConstant(1n), NullConstant),
+            type1: factory.createLiteralType(new IntConstant(1n), NullConstant),
             type2: coreTypes.Int.updateExplicitNullability(true),
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n), NullConstant),
+            type1: factory.createLiteralType(new IntConstant(1n), NullConstant),
             type2: coreTypes.Int,
             expected: false,
         },
         {
-            type1: new LiteralType(new IntConstant(1n), new StringConstant('')),
+            type1: factory.createLiteralType(new IntConstant(1n), new StringConstant('')),
             type2: coreTypes.Int,
             expected: false,
         },
         {
-            type1: new LiteralType(new IntConstant(1n), new StringConstant('')),
+            type1: factory.createLiteralType(new IntConstant(1n), new StringConstant('')),
             type2: coreTypes.String,
             expected: false,
         },
         {
-            type1: new LiteralType(new IntConstant(1n), new StringConstant('')),
+            type1: factory.createLiteralType(new IntConstant(1n), new StringConstant('')),
             type2: coreTypes.Any,
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),
+            type1: factory.createLiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),
             type2: coreTypes.AnyOrNull,
             expected: true,
         },
         // Literal type to literal type
         {
-            type1: new LiteralType(),
-            type2: new LiteralType(),
+            type1: factory.createLiteralType(),
+            type2: factory.createLiteralType(),
             expected: true,
         },
         {
-            type1: new LiteralType(new BooleanConstant(true)),
-            type2: new LiteralType(new BooleanConstant(true)),
+            type1: factory.createLiteralType(new BooleanConstant(true)),
+            type2: factory.createLiteralType(new BooleanConstant(true)),
             expected: true,
         },
         {
-            type1: new LiteralType(new BooleanConstant(true)),
-            type2: new LiteralType(new BooleanConstant(false)),
+            type1: factory.createLiteralType(new BooleanConstant(true)),
+            type2: factory.createLiteralType(new BooleanConstant(false)),
             expected: false,
         },
         {
-            type1: new LiteralType(new BooleanConstant(true)),
-            type2: new LiteralType(new FloatConstant(1.5)),
+            type1: factory.createLiteralType(new BooleanConstant(true)),
+            type2: factory.createLiteralType(new FloatConstant(1.5)),
             expected: false,
         },
         {
-            type1: new LiteralType(new BooleanConstant(true), NullConstant),
-            type2: new LiteralType(new BooleanConstant(true), NullConstant),
+            type1: factory.createLiteralType(new BooleanConstant(true), NullConstant),
+            type2: factory.createLiteralType(new BooleanConstant(true), NullConstant),
             expected: true,
         },
         {
-            type1: new LiteralType(new BooleanConstant(true), NullConstant),
-            type2: new LiteralType(new BooleanConstant(true)),
+            type1: factory.createLiteralType(new BooleanConstant(true), NullConstant),
+            type2: factory.createLiteralType(new BooleanConstant(true)),
             expected: false,
         },
         // Literal type to union type
         {
-            type1: new LiteralType(new IntConstant(1n)),
-            type2: new UnionType(coreTypes.Any),
+            type1: factory.createLiteralType(new IntConstant(1n)),
+            type2: factory.createUnionType(coreTypes.Any),
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n)),
-            type2: new UnionType(coreTypes.String),
+            type1: factory.createLiteralType(new IntConstant(1n)),
+            type2: factory.createUnionType(coreTypes.String),
             expected: false,
         },
         // Literal type to other
         {
-            type1: new LiteralType(), // Empty literal type
+            type1: factory.createLiteralType(), // Empty literal type
             type2: enumType1,
             expected: true,
         },
         {
-            type1: new LiteralType(NullConstant),
+            type1: factory.createLiteralType(NullConstant),
             type2: enumType1,
             expected: false,
         },
         {
-            type1: new LiteralType(NullConstant),
+            type1: factory.createLiteralType(NullConstant),
             type2: enumType1.updateExplicitNullability(true),
             expected: true,
         },
         {
-            type1: new LiteralType(NullConstant, NullConstant),
+            type1: factory.createLiteralType(NullConstant, NullConstant),
             type2: enumType1.updateExplicitNullability(true),
             expected: true,
         },
         {
-            type1: new LiteralType(new IntConstant(1n)),
+            type1: factory.createLiteralType(new IntConstant(1n)),
             type2: enumType1,
             expected: false,
         },
         // Named tuple type to named tuple type
         {
-            type1: new NamedTupleType(),
-            type2: new NamedTupleType(),
+            type1: factory.createNamedTupleType(),
+            type2: factory.createNamedTupleType(),
             expected: true,
         },
         {
-            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
-            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type1: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type2: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
             expected: true,
         },
         {
-            type1: new NamedTupleType(new NamedTupleEntry(class1, 'a', coreTypes.Int)),
-            type2: new NamedTupleType(new NamedTupleEntry(class2, 'a', coreTypes.Int)),
+            type1: factory.createNamedTupleType(new NamedTupleEntry(class1, 'a', coreTypes.Int)),
+            type2: factory.createNamedTupleType(new NamedTupleEntry(class2, 'a', coreTypes.Int)),
             expected: true,
         },
         {
-            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
-            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Any)),
+            type1: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type2: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Any)),
             expected: true,
         },
         {
-            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Any)),
-            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type1: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Any)),
+            type2: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
             expected: false,
         },
         {
-            type1: new NamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
-            type2: new NamedTupleType(new NamedTupleEntry(undefined, 'b', coreTypes.Int)),
+            type1: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'a', coreTypes.Int)),
+            type2: factory.createNamedTupleType(new NamedTupleEntry(undefined, 'b', coreTypes.Int)),
             expected: false,
         },
         // Named tuple type to other
         {
-            type1: new NamedTupleType(),
+            type1: factory.createNamedTupleType(),
             type2: enumType1,
             expected: false,
         },
         // Static type to callable type
         {
-            type1: new StaticType(classType1),
+            type1: factory.createStaticType(classType1),
             type2: callableType1,
             expected: false,
         },
         {
-            type1: new StaticType(classType1),
+            type1: factory.createStaticType(classType1),
             type2: callableType3,
             expected: true,
         },
         {
-            type1: new StaticType(classType2),
+            type1: factory.createStaticType(classType2),
             type2: callableType11,
             expected: true,
         },
         {
-            type1: new StaticType(classType3),
+            type1: factory.createStaticType(classType3),
             type2: callableType1,
             expected: false,
         },
         {
-            type1: new StaticType(enumType1),
+            type1: factory.createStaticType(enumType1),
             type2: callableType1,
             expected: false,
         },
         {
-            type1: new StaticType(enumVariantType1),
+            type1: factory.createStaticType(enumVariantType1),
             type2: callableType1,
             expected: false,
         },
         {
-            type1: new StaticType(enumVariantType1),
+            type1: factory.createStaticType(enumVariantType1),
             type2: callableType3,
             expected: true,
         },
         {
-            type1: new StaticType(enumVariantType2),
+            type1: factory.createStaticType(enumVariantType2),
             type2: callableType12,
             expected: true,
         },
         // Static type to static type
         {
-            type1: new StaticType(classType1),
-            type2: new StaticType(classType1),
+            type1: factory.createStaticType(classType1),
+            type2: factory.createStaticType(classType1),
             expected: true,
         },
         {
-            type1: new StaticType(classType1),
-            type2: new StaticType(classType2),
+            type1: factory.createStaticType(classType1),
+            type2: factory.createStaticType(classType2),
             expected: false,
         },
         // Static type to other
         {
-            type1: new StaticType(classType1),
+            type1: factory.createStaticType(classType1),
             type2: enumType1,
             expected: false,
         },
         // Union type to X
         {
-            type1: new UnionType(),
+            type1: factory.createUnionType(),
             type2: classType1,
             expected: true,
         },
         {
-            type1: new UnionType(classType1),
+            type1: factory.createUnionType(classType1),
             type2: classType1,
             expected: true,
         },
         {
-            type1: new UnionType(classType1, classType2),
+            type1: factory.createUnionType(classType1, classType2),
             type2: classType1,
             expected: true,
         },
         {
-            type1: new UnionType(classType1, classType3),
+            type1: factory.createUnionType(classType1, classType3),
             type2: classType1,
             expected: false,
         },
         {
-            type1: new UnionType(classType1.updateExplicitNullability(true)),
+            type1: factory.createUnionType(classType1.updateExplicitNullability(true)),
             type2: classType1,
             expected: false,
         },
         {
-            type1: new UnionType(classType1.updateExplicitNullability(true)),
+            type1: factory.createUnionType(classType1.updateExplicitNullability(true)),
             type2: classType1.updateExplicitNullability(true),
             expected: true,
         },

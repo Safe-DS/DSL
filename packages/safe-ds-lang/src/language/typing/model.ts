@@ -12,6 +12,9 @@ import {
 import { getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
 import { stream } from 'langium';
+import { SafeDsCoreTypes } from './safe-ds-core-types.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
 
 export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 
@@ -53,15 +56,19 @@ export abstract class Type {
 }
 
 export class CallableType extends Type {
+    private readonly factory: SafeDsTypeFactory;
     override isExplicitlyNullable: boolean = false;
 
     constructor(
+        services: SafeDsServices,
         readonly callable: SdsCallable,
         readonly parameter: SdsParameter | undefined,
         readonly inputType: NamedTupleType<SdsParameter>,
         readonly outputType: NamedTupleType<SdsAbstractResult>,
     ) {
         super();
+
+        this.factory = services.types.TypeFactory;
     }
 
     /**
@@ -99,7 +106,7 @@ export class CallableType extends Type {
             return this;
         }
 
-        return new CallableType(
+        return this.factory.createCallableType(
             this.callable,
             this.parameter,
             this.inputType.substituteTypeParameters(substitutions),
@@ -108,11 +115,11 @@ export class CallableType extends Type {
     }
 
     override unwrap(): CallableType {
-        return new CallableType(
+        return this.factory.createCallableType(
             this.callable,
             this.parameter,
-            new NamedTupleType(...this.inputType.entries.map((it) => it.unwrap())),
-            new NamedTupleType(...this.outputType.entries.map((it) => it.unwrap())),
+            this.factory.createNamedTupleType(...this.inputType.entries.map((it) => it.unwrap())),
+            this.factory.createNamedTupleType(...this.outputType.entries.map((it) => it.unwrap())),
         );
     }
 
@@ -121,16 +128,106 @@ export class CallableType extends Type {
             return this;
         }
 
-        return new UnionType(this, new LiteralType(NullConstant));
+        return this.factory.createUnionType(this, this.factory.createLiteralType(NullConstant));
+    }
+}
+
+export class IntersectionType extends Type {
+    private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
+
+    readonly types: Type[];
+    private _isExplicitlyNullable: boolean | undefined;
+
+    constructor(services: SafeDsServices, types: Type[]) {
+        super();
+
+        this.coreTypes = services.types.CoreTypes;
+        this.factory = services.types.TypeFactory;
+
+        this.types = types;
+    }
+
+    override get isExplicitlyNullable(): boolean {
+        if (this._isExplicitlyNullable === undefined) {
+            this._isExplicitlyNullable = this.types.every((it) => it.isExplicitlyNullable);
+        }
+
+        return this._isExplicitlyNullable;
+    }
+
+    override equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof IntersectionType)) {
+            return false;
+        }
+
+        return this.types.length === other.types.length && this.types.every((type, i) => type.equals(other.types[i]));
+    }
+
+    override toString(): string {
+        return `$intersection<${this.types.join(', ')}>`;
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): IntersectionType {
+        if (isEmpty(substitutions)) {
+            return this;
+        }
+
+        return this.factory.createIntersectionType(
+            ...this.types.map((it) => it.substituteTypeParameters(substitutions)),
+        );
+    }
+
+    override unwrap(): Type {
+        // Flatten nested intersections
+        const newTypes = this.types.flatMap((type) => {
+            const unwrappedType = type.unwrap();
+            if (unwrappedType instanceof IntersectionType) {
+                return unwrappedType.types;
+            } else {
+                return unwrappedType;
+            }
+        });
+
+        // Remove the outer intersection if there's only one type left
+        if (newTypes.length === 1) {
+            return newTypes[0]!;
+        }
+
+        return this.factory.createIntersectionType(...newTypes);
+    }
+
+    override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (this.isExplicitlyNullable && !isExplicitlyNullable) {
+            if (isEmpty(this.types)) {
+                return this.coreTypes.Any;
+            } else {
+                return this.factory.createIntersectionType(
+                    ...this.types.map((it) => it.updateExplicitNullability(false)),
+                );
+            }
+        } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
+            return this.factory.createIntersectionType(...this.types.map((it) => it.updateExplicitNullability(true)));
+        } else {
+            return this;
+        }
     }
 }
 
 export class LiteralType extends Type {
+    private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
+
     readonly constants: Constant[];
     private _isExplicitlyNullable: boolean | undefined;
 
-    constructor(...constants: Constant[]) {
+    constructor(services: SafeDsServices, constants: Constant[]) {
         super();
+
+        this.coreTypes = services.types.CoreTypes;
+        this.factory = services.types.TypeFactory;
 
         this.constants = constants;
     }
@@ -170,9 +267,9 @@ export class LiteralType extends Type {
 
     override updateExplicitNullability(isExplicitlyNullable: boolean): LiteralType {
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
-            return new LiteralType(...this.constants.filter((it) => it !== NullConstant));
+            return this.factory.createLiteralType(...this.constants.filter((it) => it !== NullConstant));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
-            return new LiteralType(...this.constants, NullConstant);
+            return this.factory.createLiteralType(...this.constants, NullConstant);
         } else {
             return this;
         }
@@ -180,12 +277,14 @@ export class LiteralType extends Type {
 }
 
 export class NamedTupleType<T extends SdsDeclaration> extends Type {
+    private readonly factory: SafeDsTypeFactory;
     readonly entries: NamedTupleEntry<T>[];
     override readonly isExplicitlyNullable = false;
 
-    constructor(...entries: NamedTupleEntry<T>[]) {
+    constructor(services: SafeDsServices, entries: NamedTupleEntry<T>[]) {
         super();
 
+        this.factory = services.types.TypeFactory;
         this.entries = entries;
     }
 
@@ -225,7 +324,9 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
             return this;
         }
 
-        return new NamedTupleType(...this.entries.map((it) => it.substituteTypeParameters(substitutions)));
+        return this.factory.createNamedTupleType(
+            ...this.entries.map((it) => it.substituteTypeParameters(substitutions)),
+        );
     }
 
     /**
@@ -236,7 +337,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
             return this.entries[0]!.type.unwrap();
         }
 
-        return new NamedTupleType(...this.entries.map((it) => it.unwrap()));
+        return this.factory.createNamedTupleType(...this.entries.map((it) => it.unwrap()));
     }
 
     override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
@@ -244,7 +345,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
             return this;
         }
 
-        return new UnionType(this, new LiteralType(NullConstant));
+        return this.factory.createUnionType(this, this.factory.createLiteralType(NullConstant));
     }
 }
 
@@ -484,10 +585,17 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
  * A type that represents an actual class, enum, or enum variant instead of an instance of it.
  */
 export class StaticType extends Type {
+    private readonly factory: SafeDsTypeFactory;
+
     override readonly isExplicitlyNullable = false;
 
-    constructor(readonly instanceType: NamedType<SdsDeclaration>) {
+    constructor(
+        services: SafeDsServices,
+        readonly instanceType: NamedType<SdsDeclaration>,
+    ) {
         super();
+
+        this.factory = services.types.TypeFactory;
     }
 
     override equals(other: unknown): boolean {
@@ -519,23 +627,29 @@ export class StaticType extends Type {
             return this;
         }
 
-        return new UnionType(this, new LiteralType(NullConstant));
+        return this.factory.createUnionType(this, this.factory.createLiteralType(NullConstant));
     }
 }
 
 export class UnionType extends Type {
-    readonly possibleTypes: Type[];
+    private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
+
+    readonly types: Type[];
     private _isExplicitlyNullable: boolean | undefined;
 
-    constructor(...possibleTypes: Type[]) {
+    constructor(services: SafeDsServices, types: Type[]) {
         super();
 
-        this.possibleTypes = possibleTypes;
+        this.coreTypes = services.types.CoreTypes;
+        this.factory = services.types.TypeFactory;
+
+        this.types = types;
     }
 
     override get isExplicitlyNullable(): boolean {
         if (this._isExplicitlyNullable === undefined) {
-            this._isExplicitlyNullable = this.possibleTypes.some((it) => it.isExplicitlyNullable);
+            this._isExplicitlyNullable = this.types.some((it) => it.isExplicitlyNullable);
         }
 
         return this._isExplicitlyNullable;
@@ -548,14 +662,11 @@ export class UnionType extends Type {
             return false;
         }
 
-        return (
-            this.possibleTypes.length === other.possibleTypes.length &&
-            this.possibleTypes.every((type, i) => type.equals(other.possibleTypes[i]))
-        );
+        return this.types.length === other.types.length && this.types.every((type, i) => type.equals(other.types[i]));
     }
 
     override toString(): string {
-        return `union<${this.possibleTypes.join(', ')}>`;
+        return `union<${this.types.join(', ')}>`;
     }
 
     override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
@@ -563,36 +674,36 @@ export class UnionType extends Type {
             return this;
         }
 
-        return new UnionType(...this.possibleTypes.map((it) => it.substituteTypeParameters(substitutions)));
+        return this.factory.createUnionType(...this.types.map((it) => it.substituteTypeParameters(substitutions)));
     }
 
     override unwrap(): Type {
         // Flatten nested unions
-        const newPossibleTypes = this.possibleTypes.flatMap((type) => {
+        const newTypes = this.types.flatMap((type) => {
             const unwrappedType = type.unwrap();
             if (unwrappedType instanceof UnionType) {
-                return unwrappedType.possibleTypes;
+                return unwrappedType.types;
             } else {
                 return unwrappedType;
             }
         });
 
         // Remove the outer union if there's only one type left
-        if (newPossibleTypes.length === 1) {
-            return newPossibleTypes[0]!;
+        if (newTypes.length === 1) {
+            return newTypes[0]!;
         }
 
-        return new UnionType(...newPossibleTypes);
+        return this.factory.createUnionType(...newTypes);
     }
 
     override updateExplicitNullability(isExplicitlyNullable: boolean): Type {
         if (this.isExplicitlyNullable && !isExplicitlyNullable) {
-            return new UnionType(...this.possibleTypes.map((it) => it.updateExplicitNullability(false)));
+            return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(false)));
         } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
-            if (isEmpty(this.possibleTypes)) {
-                return new LiteralType(NullConstant);
+            if (isEmpty(this.types)) {
+                return this.coreTypes.NothingOrNull;
             } else {
-                return new UnionType(...this.possibleTypes.map((it) => it.updateExplicitNullability(true)));
+                return this.factory.createUnionType(...this.types.map((it) => it.updateExplicitNullability(true)));
             }
         } else {
             return this;

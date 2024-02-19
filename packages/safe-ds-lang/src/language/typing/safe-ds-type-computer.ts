@@ -118,11 +118,13 @@ import {
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeChecker } from './safe-ds-type-checker.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
+import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
 
 export class SafeDsTypeComputer {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly coreClasses: SafeDsClasses;
     private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly typeChecker: SafeDsTypeChecker;
@@ -133,6 +135,7 @@ export class SafeDsTypeComputer {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.coreClasses = services.builtins.Classes;
         this.coreTypes = services.types.CoreTypes;
+        this.factory = services.types.TypeFactory;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.typeChecker = services.types.TypeChecker;
@@ -216,15 +219,20 @@ export class SafeDsTypeComputer {
                 (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
             );
 
-            return new CallableType(node, undefined, new NamedTupleType(...parameterEntries), new NamedTupleType());
+            return this.factory.createCallableType(
+                node,
+                undefined,
+                this.factory.createNamedTupleType(...parameterEntries),
+                this.factory.createNamedTupleType(),
+            );
         } else if (isSdsAttribute(node)) {
             return this.computeType(node.type);
         } else if (isSdsClass(node)) {
-            return new ClassType(node, NO_SUBSTITUTIONS, false);
+            return this.factory.createClassType(node, NO_SUBSTITUTIONS, false);
         } else if (isSdsEnum(node)) {
-            return new EnumType(node, false);
+            return this.factory.createEnumType(node, false);
         } else if (isSdsEnumVariant(node)) {
-            return new EnumVariantType(node, false);
+            return this.factory.createEnumVariantType(node, false);
         } else if (isSdsFunction(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsParameter(node)) {
@@ -238,7 +246,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsTypeParameter(node)) {
-            return new TypeParameterType(node, false);
+            return this.factory.createTypeParameterType(node, false);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -252,11 +260,11 @@ export class SafeDsTypeComputer {
             (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
         );
 
-        return new CallableType(
+        return this.factory.createCallableType(
             node,
             undefined,
-            new NamedTupleType(...parameterEntries),
-            new NamedTupleType(...resultEntries),
+            this.factory.createNamedTupleType(...parameterEntries),
+            this.factory.createNamedTupleType(...resultEntries),
         );
     }
 
@@ -314,7 +322,7 @@ export class SafeDsTypeComputer {
 
     private rememberParameterInCallableType(node: SdsParameter, type: Type) {
         if (type instanceof CallableType) {
-            return new CallableType(type.callable, node, type.inputType, type.outputType);
+            return this.factory.createCallableType(type.callable, node, type.inputType, type.outputType);
         } else {
             return type;
         }
@@ -329,7 +337,7 @@ export class SafeDsTypeComputer {
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
-            return new LiteralType(evaluatedNode);
+            return this.factory.createLiteralType(evaluatedNode);
         }
 
         // Terminal cases
@@ -432,11 +440,11 @@ export class SafeDsTypeComputer {
             .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
             .toArray();
 
-        return new CallableType(
+        return this.factory.createCallableType(
             node,
             undefined,
-            new NamedTupleType(...parameterEntries),
-            new NamedTupleType(...resultEntries),
+            this.factory.createNamedTupleType(...parameterEntries),
+            this.factory.createNamedTupleType(...resultEntries),
         );
     }
 
@@ -468,11 +476,11 @@ export class SafeDsTypeComputer {
             new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
         ];
 
-        return new CallableType(
+        return this.factory.createCallableType(
             node,
             undefined,
-            new NamedTupleType(...parameterEntries),
-            new NamedTupleType(...resultEntries),
+            this.factory.createNamedTupleType(...parameterEntries),
+            this.factory.createNamedTupleType(...resultEntries),
         );
     }
 
@@ -571,7 +579,7 @@ export class SafeDsTypeComputer {
         const instanceType = this.computeType(target);
 
         if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
-            return new StaticType(instanceType.updateExplicitNullability(false));
+            return this.factory.createStaticType(instanceType.updateExplicitNullability(false));
         } else {
             return instanceType;
         }
@@ -588,7 +596,9 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfNamedType(node);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
-            return new UnionType(...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)));
+            return this.factory.createUnionType(
+                ...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)),
+            );
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -597,7 +607,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfLiteralType(node: SdsLiteralType): Type {
         const constants = getLiterals(node).map((it) => this.partialEvaluator.evaluate(it));
         if (constants.every(isConstant)) {
-            return new LiteralType(...constants);
+            return this.factory.createLiteralType(...constants);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -610,7 +620,7 @@ export class SafeDsTypeComputer {
         }
 
         const substitutions = this.getTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
-        return new ClassType(unparameterizedType.declaration, substitutions, node.isNullable);
+        return this.factory.createClassType(unparameterizedType.declaration, substitutions, node.isNullable);
     }
 
     private getTypeParameterSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
@@ -683,7 +693,7 @@ export class SafeDsTypeComputer {
         if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
             return this.coreTypes.NothingOrNull;
         } else if (uniqueConstants.length < type.constants.length) {
-            return new LiteralType(...uniqueConstants);
+            return this.factory.createLiteralType(...uniqueConstants);
         } else {
             return type;
         }
@@ -691,12 +701,12 @@ export class SafeDsTypeComputer {
 
     private simplifyUnionType(type: UnionType): Type {
         // Handle empty union types
-        if (isEmpty(type.possibleTypes)) {
+        if (isEmpty(type.types)) {
             return this.coreTypes.Nothing;
         }
 
         // Simplify possible types
-        const newPossibleTypes = type.possibleTypes.map((it) => this.simplifyType(it));
+        const newPossibleTypes = type.types.map((it) => this.simplifyType(it));
 
         // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
         // occurrence of duplicate types. It's also makes splicing easier.
@@ -725,7 +735,7 @@ export class SafeDsTypeComputer {
                 if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
                     // Other type always occurs before current type
                     const newConstants = [...otherType.constants, ...currentType.constants];
-                    const newLiteralType = this.simplifyType(new LiteralType(...newConstants));
+                    const newLiteralType = this.simplifyType(this.factory.createLiteralType(...newConstants));
                     newPossibleTypes.splice(j, 1, newLiteralType);
                     newPossibleTypes.splice(i, 1);
                     break;
@@ -760,7 +770,7 @@ export class SafeDsTypeComputer {
         if (newPossibleTypes.length === 1) {
             return newPossibleTypes[0]!;
         } else {
-            return new UnionType(...newPossibleTypes);
+            return this.factory.createUnionType(...newPossibleTypes);
         }
     }
 
@@ -955,10 +965,10 @@ export class SafeDsTypeComputer {
     }
 
     private simplifyTypes(types: Type[]) {
-        const simplifiedType = this.simplifyType(new UnionType(...types));
+        const simplifiedType = this.simplifyType(this.factory.createUnionType(...types));
 
         if (simplifiedType instanceof UnionType) {
-            return simplifiedType.possibleTypes;
+            return simplifiedType.types;
         } else {
             return [simplifiedType];
         }
@@ -1036,7 +1046,7 @@ export class SafeDsTypeComputer {
                     candidate,
                     other,
                 );
-                return new ClassType(candidate.declaration, substitutions, isNullable);
+                return this.factory.createClassType(candidate.declaration, substitutions, isNullable);
             }
         }
         /* c8 ignore next */
@@ -1110,7 +1120,7 @@ export class SafeDsTypeComputer {
 
             const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
             if (containingEnum) {
-                candidates.push(new EnumType(containingEnum, isNullable));
+                candidates.push(this.factory.createEnumType(containingEnum, isNullable));
             }
         } else {
             /* c8 ignore next 2 */
