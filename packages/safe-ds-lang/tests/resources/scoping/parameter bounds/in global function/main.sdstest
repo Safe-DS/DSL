@@ -1,0 +1,27 @@
+package tests.scoping.parameterBounds.inGlobalFunction
+
+fun myFunction1(before: Int)
+
+fun myFunction2(
+    // $TEST$ target own
+    »own«: Int
+) where {
+    // $TEST$ references own
+    »own« < 0,
+
+    // $TEST$ unresolved
+    »before« < 0,
+
+    // $TEST$ unresolved
+    »after« < 0,
+
+    // $TEST$ unresolved
+    »notAParameter« < 0,
+
+    // $TEST$ unresolved
+    »unresolved« < 0
+}
+
+fun myFunction3(after: Int)
+
+class notAParameter

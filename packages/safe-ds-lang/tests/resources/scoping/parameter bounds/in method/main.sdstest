@@ -1,0 +1,48 @@
+package tests.scoping.parameterBounds.inMethod
+
+fun myFunction1(beforeGlobal: Int)
+
+class MyClass1(container: Int, overridden: Int) {
+    fun myFunction2(beforeMember: Int)
+
+    fun myFunction3(
+        // $TEST$ target own
+        »own«: Int,
+
+        // $TEST$ target overridden
+        »overridden«: Int,
+    ) where {
+        // $TEST$ references own
+        »own« < 0,
+
+        // $TEST$ references overridden
+        »overridden« < 0,
+
+        // $TEST$ unresolved
+        »container« < 0,
+
+        // $TEST$ unresolved
+        »beforeMember« < 0,
+
+        // $TEST$ unresolved
+        »afterMember« < 0,
+
+        // $TEST$ unresolved
+        »beforeGlobal« < 0,
+
+        // $TEST$ unresolved
+        »afterGlobal« < 0,
+
+        // $TEST$ unresolved
+        »notAParameter« < 0,
+
+        // $TEST$ unresolved
+        »unresolved« < 0
+    }
+
+    fun myFunction5(afterMember: Int)
+}
+
+fun myFunction5(afterGlobal: Int)
+
+class notAParameter

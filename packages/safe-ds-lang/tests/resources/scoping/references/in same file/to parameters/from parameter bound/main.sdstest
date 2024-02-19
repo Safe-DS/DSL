@@ -1,0 +1,39 @@
+package tests.scoping.references.inSameFile.toParameters.fromParameterBound
+
+// $TEST$ target annotation_p
+annotation MyAnnotation(»p«: Int) where {
+    // $TEST$ references annotation_p
+    p < »p«,
+
+    // $TEST$ unresolved
+    p > »unresolved«,
+}
+
+// $TEST$ target class_p
+class MyClass(»p«: Int) where {
+    // $TEST$ references class_p
+    p < »p«,
+
+    // $TEST$ unresolved
+    p > »unresolved«,
+}
+
+// $TEST$ target enumVariant_p
+enum MyEnum {
+    MyEnumVariant(»p«: Int) where {
+        // $TEST$ references enumVariant_p
+        p < »p«,
+
+        // $TEST$ unresolved
+        p > »unresolved«,
+    }
+}
+
+// $TEST$ target function_p
+fun myFunction(»p«: Int) where {
+    // $TEST$ references function_p
+    p < »p«,
+
+    // $TEST$ unresolved
+    p > »unresolved«,
+}
