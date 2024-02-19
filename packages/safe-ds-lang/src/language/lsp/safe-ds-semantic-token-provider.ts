@@ -16,6 +16,7 @@ import {
     isSdsModule,
     isSdsNamedType,
     isSdsParameter,
+    isSdsParameterBound,
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsReference,
@@ -90,6 +91,12 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                     ...info,
                 });
             }
+        } else if (isSdsParameterBound(node)) {
+            acceptor({
+                node,
+                property: 'leftOperand',
+                type: SemanticTokenTypes.parameter,
+            });
         } else if (isSdsReference(node)) {
             const info = this.computeSemanticTokenInfoForDeclaration(node.target.ref);
             if (info) {
