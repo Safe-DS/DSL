@@ -1,0 +1,33 @@
+package tests.typing.highestCommonSubtype.unhandledType
+
+class Contravariant<in T>
+
+segment mySegment(
+    one: Contravariant<literal<1>>,
+    oneOrNull: Contravariant<literal<1, null>>,
+
+    `union`: Contravariant<union<Boolean, String>>,
+    unionOrNull: Contravariant<union<Boolean, String?>>,
+
+    callable: Contravariant<() -> ()>,
+
+    // Named tuple types and static types are also not handled, but we can't test them here
+) {
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, `union`]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[oneOrNull, `union`]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, unionOrNull]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[oneOrNull, unionOrNull]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, callable]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[oneOrNull, callable]«;
+}

@@ -68,8 +68,22 @@ export class SafeDsTypeChecker {
         }
 
         if (other instanceof TypeParameterType) {
-            const otherUpperBound = this.typeComputer().computeUpperBound(other);
-            return this.isSubtypeOf(type, otherUpperBound, options);
+            if (options.strictTypeParameterTypeCheck) {
+                // `T` can always be assigned to `T` and `T?`
+                if (
+                    type instanceof TypeParameterType &&
+                    type.declaration === other.declaration &&
+                    (!type.isExplicitlyNullable || other.isExplicitlyNullable)
+                ) {
+                    return true;
+                }
+
+                const otherLowerBound = this.coreTypes.Nothing.withExplicitNullability(other.isExplicitlyNullable);
+                return this.isSubtypeOf(type, otherLowerBound, options);
+            } else {
+                const otherUpperBound = this.typeComputer().computeUpperBound(other);
+                return this.isSubtypeOf(type, otherUpperBound, options);
+            }
         } else if (other instanceof UnionType) {
             return other.types.some((it) => this.isSubtypeOf(type, it, options));
         }
@@ -441,6 +455,24 @@ export class SafeDsTypeChecker {
     }
 }
 
+/**
+ * Options for {@link SafeDsTypeChecker.isSubtypeOf} and {@link SafeDsTypeChecker.isSupertypeOf}.
+ */
 interface TypeCheckOptions {
+    /**
+     * Whether to ignore type parameters when comparing class types.
+     */
     ignoreTypeParameters?: boolean;
+
+    /**
+     * By default, type parameter types are replaced with their upper bound when comparing types. This is usually the
+     * correct behavior, e.g. to check whether the type `Int` can be assigned to an unsubstituted type parameter type
+     * `T`.
+     *
+     * However, in some cases, we have to assume that the type parameter type that we compare to gets substituted later,
+     * e.g. by its lower bound `Nothing`. This options enables a strict check, replacing type parameter types in the
+     * first argument of {@link SafeDsTypeChecker.isSubtypeOf} with their upper bound, and in the second argument with
+     * their lower bound.
+     */
+    strictTypeParameterTypeCheck?: boolean;
 }

@@ -3,11 +3,6 @@ package tests.typing.lowestCommonSupertype.classTypeAndClassType
 class Covariant<out T>
 class FloatCovariant sub Covariant<Float>
 
-class Invariant<T>
-class FloatInvariant sub Invariant<Float>
-
-class Multiple<T1, out T2>
-
 segment covariant(
     coNumber: Covariant<Number>,
     coInt: Covariant<Int>,
@@ -39,9 +34,20 @@ segment covariant(
     »[coFloat, coFloat]«;
 }
 
-segment contravariant() {
-    // Tests are in the "highest common subtype" folder
+class Contravariant<in T>
+
+segment contravariant(
+    contraFloat: Contravariant<String>,
+    contraInt: Contravariant<Number>,
+) {
+    // Most tests are in the "highest common subtype" folder. Here we only test that we call the right method.
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[contraFloat, contraInt]«;
 }
+
+class Invariant<T>
+class FloatInvariant sub Invariant<Float>
 
 segment invariant(
     invNumber: Invariant<Number>,
@@ -73,6 +79,8 @@ segment invariant(
     // $TEST$ serialization List<FloatInvariant>
     »[invFloat, invFloat]«;
 }
+
+class Multiple<T1, out T2>
 
 segment multiple(
     multipleNumberInt: Multiple<Number, Int>,
