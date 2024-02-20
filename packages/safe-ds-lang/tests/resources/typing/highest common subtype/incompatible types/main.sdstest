@@ -1,0 +1,38 @@
+package tests.typing.highestCommonSubtype.incompatibleTypes
+
+class Contravariant<in T>
+
+enum E {
+    V
+}
+
+segment mySegment(
+    one: Contravariant<literal<1>>,
+    oneOrNull: Contravariant<literal<1, null>>,
+
+    e: Contravariant<E>,
+    eOrNull: Contravariant<E?>,
+
+    v: Contravariant<E.V>,
+    vOrNull: Contravariant<E.V?>
+) {
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, e]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[oneOrNull, e]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, eOrNull]«;
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[oneOrNull, eOrNull]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, v]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[oneOrNull, v]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, vOrNull]«;
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[oneOrNull, vOrNull]«;
+}
