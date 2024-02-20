@@ -682,7 +682,6 @@ export class UnionType extends Type {
         // occurrence of duplicate types. It's also makes splicing easier.
         for (let i = newTypes.length - 1; i >= 0; i--) {
             const currentType = newTypes[i]!;
-            const currentTypeIsNothing = currentType.equals(this.coreTypes.Nothing);
             const currentTypeIsNothingOrNull = currentType.equals(this.coreTypes.NothingOrNull);
 
             for (let j = newTypes.length - 1; j >= 0; j--) {
@@ -697,17 +696,6 @@ export class UnionType extends Type {
                     // Remove the current type
                     newTypes.splice(i, 1);
                     break;
-                }
-
-                // We can always attempt to replace `Nothing` or `Nothing?` with other types, since they are the bottom
-                // types. But otherwise, we cannot use a type that is not fully substituted as a replacement. After
-                // substitution, we might lose information about the original type:
-                //
-                // Consider the type `union<C, T>`, where `C` is a class and `T` is a type parameter without an upper
-                // bound. While `C` is a subtype of `T`, we cannot replace the union type with `T`, since we might later
-                // substitute `T` with a type that is not a supertype of `C`.
-                if (!currentTypeIsNothing && !currentTypeIsNothingOrNull && !otherType.isFullySubstituted) {
-                    continue;
                 }
 
                 // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
@@ -738,7 +726,9 @@ export class UnionType extends Type {
                 const candidateType = otherType.withExplicitNullability(
                     currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
                 );
-                if (this.typeChecker.isSupertypeOf(candidateType, currentType)) {
+                if (
+                    this.typeChecker.isSupertypeOf(candidateType, currentType, { strictTypeParameterTypeCheck: true })
+                ) {
                     // Replace the other type with the candidate type (updated nullability)
                     newTypes.splice(j, 1, candidateType);
                     // Remove the current type
