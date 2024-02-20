@@ -46,7 +46,7 @@ class Test<
     // $TEST$ serialization List<Contravariant<ToV>>
     b4: Any = »[eOrNull, toV]«,
     // $TEST$ serialization List<Contravariant<ToV?>>
-    b7: Any = »[eOrNull, toVOrNullExplicit]«,
+    b5: Any = »[eOrNull, toVOrNullExplicit]«,
     // $TEST$ serialization List<Contravariant<Nothing>>
-    b8: Any = »[eOrNull, toF]«,
+    b6: Any = »[eOrNull, toF]«,
 )
