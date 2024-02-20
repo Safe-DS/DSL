@@ -1,0 +1,14 @@
+package tests.typing.highestCommonSubtype.classTypeAndClassType.cannotStopIfClassHasNoTypeParameters
+
+class Contravariant<in T>
+
+class C<T>
+class D sub C<Int>
+
+segment mySegment(
+    p1: Contravariant<C<String>>,
+    p2: Contravariant<D>,
+) {
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[p1, p2]«;
+}
