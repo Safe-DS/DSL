@@ -2,7 +2,7 @@ package tests.typing.highestCommonSubtype.classTypeAndClassType.withTypeParamete
 
 class Covariant<out T>
 class FloatCovariant sub Covariant<Float>
-class SomeCovariant<T1, T2> sub Covariant<T1>
+class SomeCovariant<out T1, T2> sub Covariant<T1>
 
 segment covariant(
     coNumber: Contravariant<Covariant<Number>>,
@@ -24,16 +24,16 @@ segment covariant(
 
     // $TEST$ serialization List<Contravariant<Covariant<Int>>>
     »[coInt, coInt]«;
-    // $TEST$ serialization List<Contravariant<Covariant<Any>>>
+    // $TEST$ serialization List<Contravariant<Covariant<Nothing>>>
     »[coInt, coString]«;
-    // $TEST$ serialization List<Contravariant<Covariant<Number>>>
+    // $TEST$ serialization List<Contravariant<Nothing>>
     »[coInt, coFloat]«;
     // $TEST$ serialization List<Contravariant<SomeCovariant<Nothing, Boolean>>>
     »[coInt, coFloat2]«;
 
     // $TEST$ serialization List<Contravariant<Covariant<String>>>
     »[coString, coString]«;
-    // $TEST$ serialization List<Contravariant<Covariant<Any>>>
+    // $TEST$ serialization List<Contravariant<Nothing>>
     »[coString, coFloat]«;
     // $TEST$ serialization List<Contravariant<SomeCovariant<Nothing, Boolean>>>
     »[coString, coFloat2]«;
@@ -55,7 +55,7 @@ segment contravariant(
 ) {
     // Most tests are in the "lowest common supertype" folder. Here we only test that we call the right method.
 
-    // $TEST$ serialization List<Contravariant<Contravariant<Nothing>>>
+    // $TEST$ serialization List<Contravariant<Contravariant<Any>>>
     »[contraFloat, contraInt]«;
 }
 

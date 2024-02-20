@@ -854,25 +854,26 @@ export class SafeDsTypeComputer {
         // Find the class type that is compatible to all other types
         const firstClassType = classTypes[0]!.withExplicitNullability(isNullable);
         const candidates = [firstClassType, ...this.streamProperSupertypes(firstClassType)];
-        let other = [...classTypes.slice(1)];
+        let others = [...classTypes.slice(1)];
 
         for (const candidate of candidates) {
-            if (this.isCommonSupertypeIgnoringTypeParameters(candidate, other)) {
+            if (this.isCommonSupertypeIgnoringTypeParameters(candidate, others)) {
                 // If the class has no type parameters, we are done
                 const typeParameters = getTypeParameters(candidate.declaration);
                 if (isEmpty(typeParameters)) {
                     return candidate;
                 }
 
-                // Check whether all substitutions of invariant type parameters are equal
-                other = other.map((it) => this.computeMatchingSupertype(it, candidate.declaration)!);
+                // Lift all types to a common class
+                others = others.map((it) => this.computeMatchingSupertype(it, candidate.declaration)!);
 
-                if (!this.substitutionsForInvariantTypeParametersAreEqual(typeParameters, candidate, other)) {
+                // Check whether all substitutions of invariant type parameters are equal
+                if (!this.substitutionsForInvariantTypeParametersAreEqual(typeParameters, candidate, others)) {
                     continue;
                 }
 
                 // Unify substitutions for type parameters
-                const substitutions = this.newTypeParameterSubstitutionsLCS(typeParameters, candidate, other);
+                const substitutions = this.newTypeParameterSubstitutionsLCS(typeParameters, candidate, others);
                 return this.factory.createClassType(candidate.declaration, substitutions, isNullable);
             }
         }
@@ -902,33 +903,19 @@ export class SafeDsTypeComputer {
         candidate: ClassType,
         others: ClassType[],
     ): TypeParameterSubstitutions {
-        const substitutions: TypeParameterSubstitutions = new Map();
+        const covariantUnifier = (types: Type[]) =>
+            this.lowestCommonSupertype(types, {
+                skipTypeSimplification: true,
+            });
+        const contravariantUnifier = (types: Type[]) => this.highestCommonSubtype(types);
 
-        for (const typeParameter of typeParameters) {
-            const candidateSubstitution = candidate.substitutions.get(typeParameter) ?? UnknownType;
-
-            if (TypeParameter.isCovariant(typeParameter)) {
-                // Compute the lowest common supertype for substitutions
-                const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
-                substitutions.set(
-                    typeParameter,
-                    this.lowestCommonSupertype([candidateSubstitution, ...otherSubstitutions], {
-                        skipTypeSimplification: true,
-                    }),
-                );
-            } else if (TypeParameter.isContravariant(typeParameter)) {
-                // Compute the highest common subtype for substitutions
-                const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
-                substitutions.set(
-                    typeParameter,
-                    this.highestCommonSubtype([candidateSubstitution, ...otherSubstitutions]),
-                );
-            } else {
-                substitutions.set(typeParameter, candidateSubstitution);
-            }
-        }
-
-        return substitutions;
+        return this.newTypeParameterSubstitutions(
+            typeParameters,
+            candidate,
+            others,
+            covariantUnifier,
+            contravariantUnifier,
+        );
     }
 
     /**
@@ -956,11 +943,11 @@ export class SafeDsTypeComputer {
             return this.Nothing(isNullable);
         }
 
-        const other = [...enumTypes, ...enumVariantTypes];
+        const others = [...enumTypes, ...enumVariantTypes];
 
         // Check whether a candidate type is compatible to all other types
         for (const candidate of candidates) {
-            if (this.isCommonSupertype(candidate, other)) {
+            if (this.isCommonSupertype(candidate, others)) {
                 return candidate;
             }
         }
@@ -979,19 +966,12 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
     // Highest common subtype
     // -----------------------------------------------------------------------------------------------------------------
-
-    private logTypes(types: Type[]) {
-        console.log(types.map((it) => it.toString()));
-    }
-
     /**
      * Computes the highest common subtype for the given types. The result is simplified as much as possible. This
      * function is only meant to be called from `lowestCommonSupertype`, since we make several assumptions about the
      * input types, e.g. that they are already simplified.
      */
     private highestCommonSubtype(types: Type[]): Type {
-        this.logTypes(types);
-
         if (types.length === 0) {
             /* c8 ignore next 2 */
             return this.Any(true);
@@ -1006,7 +986,7 @@ export class SafeDsTypeComputer {
 
         // One of the types is already a common subtype of all others after updating nullability
         const commonSupertype = typesWithMatchingNullability.find((it) =>
-            this.isCommonSubtypeWithStringTypeParameterTypeCheck(it, types),
+            this.isCommonSubtypeWithStrictTypeParameterTypeCheck(it, types),
         );
         if (commonSupertype) {
             return commonSupertype;
@@ -1030,6 +1010,9 @@ export class SafeDsTypeComputer {
             return this.highestCommonSubtypeForLiteralTypes(partitionedTypes.literalTypes);
         }
 
+        // If a literal were a subtype of all other types, we would have already handled this when simplifying the types
+        // in `lowestCommonSupertype`. Since we instead got here, we can conclude that there is no common subtype other
+        // than `Nothing`/`Nothing?`.
         return this.Nothing(isNullable);
     }
 
@@ -1059,30 +1042,129 @@ export class SafeDsTypeComputer {
     }
 
     private highestCommonSubtypeForClassTypes(types: ClassType[], isNullable: boolean): Type {
+        if (isEmpty(types)) {
+            /* c8 ignore next 2 */
+            return this.Any(isNullable);
+        }
+
         // Find the type that is compatible to all other types ignoring type parameters
-        const candidate = stream(types)
-            .map((it) => it.withExplicitNullability(isNullable))
-            .find((it) => this.isCommonSubtypeIgnoringTypeParameters(it, types));
-
-        console.log(candidate?.toString());
-
-        if (!candidate) {
+        const candidate = types.find((it) => this.isCommonSubtypeIgnoringTypeParameters(it, types));
+        if (!candidate || candidate.equals(this.Nothing(isNullable))) {
             return this.Nothing(isNullable);
         }
 
-        // Even if the class has no type parameters, we are not done yet:
-        //
-        //     class C<T>
-        //     class D sub C<Int>
-        //
-        // The highest common subtype of `C<String>` and `D` is `Nothing` and not `D`.
+        let others = types.filter((it) => it !== candidate);
 
-        // // TODO: normalize type parameters
-        //
-        // console.log(types.map((it) => it.toString()));
-        // console.log(candidate);
+        // If the class has no type parameters, the candidate must match as is
+        const typeParameters = getTypeParameters(candidate.declaration);
+        if (isEmpty(typeParameters)) {
+            if (this.isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate, others)) {
+                return candidate;
+            } else {
+                return this.Nothing(isNullable);
+            }
+        }
 
-        return this.Nothing(isNullable);
+        // Bring all types down to a common class
+        others = this.bringAllTypesDownToCommonClass(candidate, others);
+
+        // Check whether all substitutions of invariant type parameters are equal
+        if (!this.substitutionsForInvariantTypeParametersAreEqual(typeParameters, candidate, others)) {
+            this.Nothing(isNullable);
+        }
+
+        // Unify substitutions for type parameters
+        const newSubstitutions = this.newTypeParameterSubstitutionsHCS(typeParameters, candidate, others);
+        return this.factory.createClassType(candidate.declaration, newSubstitutions, isNullable);
+    }
+
+    private bringAllTypesDownToCommonClass(candidate: ClassType, others: ClassType[]): ClassType[] {
+        const targetTemplate = this.createTargetTemplate(candidate);
+        const matchingSubtypes = others.map((it) => this.computeMatchingSubtype(it, targetTemplate)!);
+
+        console.log(
+            candidate.toString(),
+            targetTemplate.toString(),
+            others.map((it) => it.toString()),
+            matchingSubtypes.map((it) => it?.toString()),
+        );
+
+        return matchingSubtypes;
+    }
+
+    /**
+     * Creates a class type with the same declaration and nullability as the given type. Type parameters, however, are
+     * substituted by their own type parameter type to observe how they flow through the class hierarchy.
+     */
+    private createTargetTemplate(type: ClassType): ClassType {
+        const declaration = type.declaration;
+        const typeParameters = getTypeParameters(declaration);
+        const substitutions: TypeParameterSubstitutions = new Map();
+
+        for (const typeParameter of typeParameters) {
+            substitutions.set(typeParameter, this.factory.createTypeParameterType(typeParameter, false));
+        }
+
+        return this.factory.createClassType(declaration, substitutions, type.isExplicitlyNullable);
+    }
+
+    private computeMatchingSubtype(type: ClassType, targetTemplate: ClassType): ClassType | undefined {
+        if (type.declaration === targetTemplate.declaration) {
+            return type;
+        }
+
+        const superType = this.computeMatchingSupertype(targetTemplate, type.declaration);
+        if (!superType) {
+            return undefined;
+        }
+
+        // See where the type parameters ended up in the computed super type
+        const invertedTypeParameterMap = new Map<SdsTypeParameter, SdsTypeParameter>();
+        for (const [key, value] of superType.substitutions) {
+            if (value instanceof TypeParameterType) {
+                invertedTypeParameterMap.set(value.declaration, key);
+            }
+        }
+
+        // Compute the new substitutions
+        const substitutions: TypeParameterSubstitutions = new Map();
+        for (const typeParameter of getTypeParameters(targetTemplate.declaration)) {
+            const invertedTypeParameter = invertedTypeParameterMap.get(typeParameter);
+            if (!invertedTypeParameter) {
+                continue;
+            }
+
+            const substitution = type.substitutions.get(invertedTypeParameter);
+            if (substitution) {
+                substitutions.set(typeParameter, substitution);
+            }
+        }
+
+        return this.factory.createClassType(
+            targetTemplate.declaration,
+            substitutions,
+            targetTemplate.isExplicitlyNullable,
+        );
+    }
+
+    private newTypeParameterSubstitutionsHCS(
+        typeParameters: SdsTypeParameter[],
+        candidate: ClassType,
+        others: ClassType[],
+    ): TypeParameterSubstitutions {
+        const covariantUnifier = (types: Type[]) => this.highestCommonSubtype(types);
+        const contravariantUnifier = (types: Type[]) =>
+            this.lowestCommonSupertype(types, {
+                skipTypeSimplification: true,
+            });
+
+        return this.newTypeParameterSubstitutions(
+            typeParameters,
+            candidate,
+            others,
+            covariantUnifier,
+            contravariantUnifier,
+        );
     }
 
     private highestCommonSubtypeForLiteralTypes(types: LiteralType[]): Type {
@@ -1104,7 +1186,7 @@ export class SafeDsTypeComputer {
         return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it, { ignoreTypeParameters: true }));
     }
 
-    private isCommonSubtypeWithStringTypeParameterTypeCheck(candidate: Type, otherTypes: Type[]): boolean {
+    private isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) =>
             this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
         );
@@ -1200,8 +1282,48 @@ export class SafeDsTypeComputer {
     }
 
     private Nothing(isNullable: boolean): Type {
-        /* c8 ignore next 2 */
         return isNullable ? this.coreTypes.NothingOrNull : this.coreTypes.Nothing;
+    }
+
+    private newTypeParameterSubstitutions(
+        typeParameters: SdsTypeParameter[],
+        candidate: ClassType,
+        others: ClassType[],
+        covariantUnifier: (types: Type[]) => Type,
+        contravariantUnifier: (types: Type[]) => Type,
+    ): TypeParameterSubstitutions {
+        const substitutions: TypeParameterSubstitutions = new Map();
+
+        for (const typeParameter of typeParameters) {
+            const candidateSubstitution = candidate.substitutions.get(typeParameter) ?? UnknownType;
+
+            if (TypeParameter.isCovariant(typeParameter)) {
+                // Compute the lowest common supertype for substitutions
+                const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
+                console.log(
+                    'covariant',
+                    typeParameter.name,
+                    candidateSubstitution.toString(),
+                    otherSubstitutions.map((it) => it.toString()),
+                );
+                substitutions.set(typeParameter, covariantUnifier([candidateSubstitution, ...otherSubstitutions]));
+            } else if (TypeParameter.isContravariant(typeParameter)) {
+                // Compute the highest common subtype for substitutions
+                const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
+                console.log(
+                    'contravariant',
+                    typeParameter.name,
+                    candidateSubstitution.toString(),
+                    otherSubstitutions.map((it) => it.toString()),
+                );
+                substitutions.set(typeParameter, contravariantUnifier([candidateSubstitution, ...otherSubstitutions]));
+            } else {
+                console.log('invariant', typeParameter.name, candidateSubstitution.toString());
+                substitutions.set(typeParameter, candidateSubstitution);
+            }
+        }
+
+        return substitutions;
     }
 }
 
