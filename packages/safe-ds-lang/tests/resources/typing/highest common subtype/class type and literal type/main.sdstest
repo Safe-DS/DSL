@@ -1,0 +1,53 @@
+package tests.typing.highestCommonSubtype.classTypeAndLiteralType
+
+class Contravariant<in T>
+
+class C
+
+segment mySegment(
+    one: Contravariant<literal<1>>,
+    c: Contravariant<C>,
+    cOrNull: Contravariant<C?>,
+    int: Contravariant<Int>,
+    intOrNull: Contravariant<Int?>,
+    number: Contravariant<Number>,
+    numberOrNull: Contravariant<Number?>,
+    string: Contravariant<String>,
+    stringOrNull: Contravariant<String?>,
+    nothing: Contravariant<Nothing>,
+    nothingOrNull: Contravariant<Nothing?>,
+) {
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, c]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, cOrNull]«;
+
+
+    // $TEST$ serialization List<Contravariant<literal<1>>>
+    »[one, int]«;
+
+    // $TEST$ serialization List<Contravariant<literal<1>>>
+    »[one, intOrNull]«;
+
+
+    // $TEST$ serialization List<Contravariant<literal<1>>>
+    »[one, number]«;
+
+    // $TEST$ serialization List<Contravariant<literal<1>>>
+    »[one, numberOrNull]«;
+
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, string]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, stringOrNull]«;
+
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, nothing]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, nothingOrNull]«;
+}
