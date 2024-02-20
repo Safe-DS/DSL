@@ -812,6 +812,7 @@ export class SafeDsTypeComputer {
                 if (classType instanceof ClassType) {
                     result.classTypes.push(classType);
                 } else {
+                    /* c8 ignore next 2 */
                     result.containsUnknownType = true;
                 }
             } else if (type === UnknownType) {
