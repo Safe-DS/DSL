@@ -1059,6 +1059,7 @@ export class SafeDsTypeComputer {
         const typeParameters = getTypeParameters(candidate.declaration);
         if (isEmpty(typeParameters)) {
             if (this.isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate, others)) {
+                /* c8 ignore next 2 */
                 return candidate;
             } else {
                 return this.Nothing(isNullable);
@@ -1124,6 +1125,7 @@ export class SafeDsTypeComputer {
 
         const superType = this.computeMatchingSupertype(targetTemplate, type.declaration);
         if (!superType) {
+            /* c8 ignore next 2 */
             return undefined;
         }
 
