@@ -1,0 +1,8 @@
+fun myFunction< @Annotation  T  sub  Int >()
+
+// -----------------------------------------------------------------------------
+
+fun myFunction<
+    @Annotation
+    T sub Int
+>()
