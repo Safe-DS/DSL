@@ -61,9 +61,13 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is a subtype of {@link other}.
      */
     isSubtypeOf = (type: Type, other: Type, options: TypeCheckOptions = {}): boolean => {
-        if (type === UnknownType || other === UnknownType) {
+        if (type.equals(this.coreTypes.Nothing) || other.equals(this.coreTypes.AnyOrNull)) {
+            return true;
+        } else if (type === UnknownType || other === UnknownType) {
             return false;
-        } else if (other instanceof TypeParameterType) {
+        }
+
+        if (other instanceof TypeParameterType) {
             const otherUpperBound = this.typeComputer().computeUpperBound(other);
             return this.isSubtypeOf(type, otherUpperBound, options);
         } else if (other instanceof UnionType) {
@@ -262,7 +266,9 @@ export class SafeDsTypeChecker {
         other: Type,
         options: TypeCheckOptions,
     ): boolean {
-        if (other instanceof NamedTupleType) {
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof NamedTupleType) {
             return (
                 type.length === other.length &&
                 type.entries.every((typeEntry, i) => {
@@ -281,6 +287,8 @@ export class SafeDsTypeChecker {
     private staticTypeIsSubtypeOf(type: StaticType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof CallableType) {
             return this.isSubtypeOf(this.associatedCallableTypeForStaticType(type), other, options);
+        } else if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
         } else {
             return type.equals(other);
         }

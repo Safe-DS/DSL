@@ -103,6 +103,7 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     const enumVariantType2 = typeComputer.computeType(enumVariant2) as EnumVariantType;
 
     return [
+        // Callable type to callable type
         {
             type1: callableType1,
             type2: callableType1,
@@ -526,6 +527,22 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type2: enumType1,
             expected: false,
         },
+        // Named tuple type to class type
+        {
+            type1: factory.createNamedTupleType(),
+            type2: classType1,
+            expected: false,
+        },
+        {
+            type1: factory.createNamedTupleType(),
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: factory.createNamedTupleType(),
+            type2: coreTypes.AnyOrNull,
+            expected: true,
+        },
         // Named tuple type to named tuple type
         {
             type1: factory.createNamedTupleType(),
@@ -604,6 +621,22 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type2: callableType12,
             expected: true,
         },
+        // Static type to class type
+        {
+            type1: factory.createStaticType(classType1),
+            type2: classType1,
+            expected: false,
+        },
+        {
+            type1: factory.createStaticType(classType1),
+            type2: coreTypes.Any,
+            expected: true,
+        },
+        {
+            type1: factory.createStaticType(classType1),
+            type2: coreTypes.AnyOrNull,
+            expected: true,
+        },
         // Static type to static type
         {
             type1: factory.createStaticType(classType1),
@@ -657,6 +690,16 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type1: UnknownType,
             type2: UnknownType,
             expected: false,
+        },
+        {
+            type1: coreTypes.Nothing,
+            type2: UnknownType,
+            expected: true,
+        },
+        {
+            type1: UnknownType,
+            type2: coreTypes.AnyOrNull,
+            expected: true,
         },
     ];
 };
@@ -1011,7 +1054,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: unresolved,
             type2: unbounded,
-            expected: false,
+            expected: true,
         },
         {
             type1: coreTypes.AnyOrNull,
@@ -1107,7 +1150,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: coreTypes.Nothing,
             type2: unresolved,
-            expected: false,
+            expected: true,
         },
 
         // Compare to some other type
