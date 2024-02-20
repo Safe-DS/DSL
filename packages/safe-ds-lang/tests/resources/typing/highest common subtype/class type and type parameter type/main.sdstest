@@ -3,37 +3,48 @@ package tests.typing.highestCommonSubtype.classTypeAndTypeParameterType
 class Contravariant<in T>
 
 class C
-class D
+class D sub C
+class E
 
-class Test<NothingToAnyOrNull, NothingToC sub C, NothingToD sub D, NothingToDOrNull sub D?>(
+class Test<
+    ToAnyOrNull,
+    ToC sub C,
+    ToD sub D,
+    ToE sub E,
+>(
     c: Contravariant<C>,
     cOrNull: Contravariant<C?>,
 
-    nothingToAnyOrNull: Contravariant<NothingToAnyOrNull>,
-    nothingToAnyOrNullExplicit: Contravariant<NothingToAnyOrNull?>,
-    nothingToC: Contravariant<NothingToC>,
-    nothingToD: Contravariant<NothingToD>,
-    nothingToDOrNull: Contravariant<NothingToDOrNull>,
+    toAnyOrNull: Contravariant<ToAnyOrNull>,
+    toAnyOrNullExplicit: Contravariant<ToAnyOrNull?>,
+    toC: Contravariant<ToC>,
+    toD: Contravariant<ToD>,
+    toDOrNullExplicit: Contravariant<ToD?>,
+    toE: Contravariant<ToE>,
 
     // $TEST$ serialization List<Contravariant<Nothing>>
-    a1: Any = »[c, nothingToAnyOrNull]«,
+    a1: Any = »[c, toAnyOrNull]«,
     // $TEST$ serialization List<Contravariant<Nothing>>
-    a2: Any = »[c, nothingToAnyOrNullExplicit]«,
-    // $TEST$ serialization List<Contravariant<NothingToC>>
-    a3: Any = »[c, nothingToC]«,
+    a2: Any = »[c, toAnyOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<ToC>>
+    a3: Any = »[c, toC]«,
+    // $TEST$ serialization List<Contravariant<ToD>>
+    a4: Any = »[c, toD]«,
+    // $TEST$ serialization List<Contravariant<ToD>>
+    a5: Any = »[c, toDOrNullExplicit]«,
     // $TEST$ serialization List<Contravariant<Nothing>>
-    a4: Any = »[c, nothingToD]«,
-    // $TEST$ serialization List<Contravariant<Nothing>>
-    a5: Any = »[c, nothingToDOrNull]«,
+    a6: Any = »[c, toE]«,
 
     // $TEST$ serialization List<Contravariant<Nothing>>
-    b1: Any = »[cOrNull, nothingToAnyOrNull]«,
+    b1: Any = »[cOrNull, toAnyOrNull]«,
     // $TEST$ serialization List<Contravariant<Nothing?>>
-    b2: Any = »[cOrNull, nothingToAnyOrNullExplicit]«,
-    // $TEST$ serialization List<Contravariant<NothingToC>>
-    b3: Any = »[cOrNull, nothingToC]«,
+    b2: Any = »[cOrNull, toAnyOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<ToC>>
+    b3: Any = »[cOrNull, toC]«,
+    // $TEST$ serialization List<Contravariant<ToD>>
+    b4: Any = »[cOrNull, toD]«,
+    // $TEST$ serialization List<Contravariant<ToD?>>
+    b5: Any = »[cOrNull, toDOrNullExplicit]«,
     // $TEST$ serialization List<Contravariant<Nothing>>
-    b4: Any = »[cOrNull, nothingToD]«,
-    // $TEST$ serialization List<Contravariant<Nothing>>
-    b5: Any = »[cOrNull, nothingToDOrNull]«,
+    b6: Any = »[cOrNull, toE]«,
 )

@@ -1,0 +1,52 @@
+package tests.typing.highestCommonSubtype.enumTypeAndTypeParameterType
+
+class Contravariant<in T>
+
+enum E {
+    V
+}
+
+enum F
+
+class Test<
+    ToAnyOrNull,
+    ToE sub E,
+    ToV sub E.V,
+    ToF sub F
+>(
+    e: Contravariant<E>,
+    eOrNull: Contravariant<E?>,
+
+    toAnyOrNull: Contravariant<ToAnyOrNull>,
+    toAnyOrNullExplicit: Contravariant<ToAnyOrNull?>,
+    toE: Contravariant<ToE>,
+    toV: Contravariant<ToV>,
+    toVOrNullExplicit: Contravariant<ToV?>,
+    toF: Contravariant<ToF>,
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a1: Any = »[e, toAnyOrNull]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a2: Any = »[e, toAnyOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<ToE>>
+    a3: Any = »[e, toE]«,
+    // $TEST$ serialization List<Contravariant<ToV>>
+    a4: Any = »[e, toV]«,
+    // $TEST$ serialization List<Contravariant<ToV>>
+    a5: Any = »[e, toVOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a6: Any = »[e, toF]«,
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    b1: Any = »[eOrNull, toAnyOrNull]«,
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    b2: Any = »[eOrNull, toAnyOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<ToE>>
+    b3: Any = »[eOrNull, toE]«,
+    // $TEST$ serialization List<Contravariant<ToV>>
+    b4: Any = »[eOrNull, toV]«,
+    // $TEST$ serialization List<Contravariant<ToV?>>
+    b7: Any = »[eOrNull, toVOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    b8: Any = »[eOrNull, toF]«,
+)
