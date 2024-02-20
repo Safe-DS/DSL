@@ -915,6 +915,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
 
         formatter.property('variance').append(oneSpace());
+        formatter.keyword('sub').surround(oneSpace());
         formatter.keyword('=').surround(oneSpace());
     }
 
