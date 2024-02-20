@@ -1,0 +1,26 @@
+package tests.typing.highestCommonSubtype.typeParameterTypeAndTypeParameterType
+
+class Contravariant<in T>
+
+class Test<T1, T2>(
+    t1: Contravariant<T1>,
+    t1OrNull: Contravariant<T1?>,
+    t2: Contravariant<T2>,
+    t2OrNull: Contravariant<T2?>,
+
+    // $TEST$ serialization List<Contravariant<T1>>
+    a1: Any = »[t1, t1]«,
+    // $TEST$ serialization List<Contravariant<T1>>
+    a2: Any = »[t1, t1OrNull]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a3: Any = »[t1, t2]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a4: Any = »[t1, t2OrNull]«,
+
+    // $TEST$ serialization List<Contravariant<T1?>>
+    b1: Any = »[t1OrNull, t1OrNull]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    b2: Any = »[t1OrNull, t2]«,
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    b3: Any = »[t1OrNull, t2OrNull]«,
+)
