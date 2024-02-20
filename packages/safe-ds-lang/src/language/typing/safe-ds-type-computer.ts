@@ -724,6 +724,9 @@ export class SafeDsTypeComputer {
     // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Computes the lowest common supertype for the given types. The result is simplified as much as possible.
+     */
     private lowestCommonSupertype(types: Type[], options: LowestCommonSupertypeOptions = {}): Type {
         // Simplify types
         const simplifiedTypes = this.simplifyTypesLCS(types, options);
@@ -736,11 +739,11 @@ export class SafeDsTypeComputer {
         // Replace type parameter types by their upper bound
         const replacedTypes = this.replaceTypeParameterTypesWithUpperBound(simplifiedTypes);
 
-        // Group types by their kind
-        const groupedTypes = this.groupTypesLCS(replacedTypes);
+        // Partition types by their kind
+        const partitionedTypes = this.partitionTypesLCS(replacedTypes);
 
         // Includes unknown type
-        if (groupedTypes.containsUnknownType) {
+        if (partitionedTypes.containsUnknownType) {
             return this.coreTypes.AnyOrNull;
         }
 
@@ -748,24 +751,24 @@ export class SafeDsTypeComputer {
         const isNullable = replacedTypes.some((it) => it.isExplicitlyNullable);
 
         // Includes unhandled type
-        if (groupedTypes.containsUnhandledType) {
+        if (partitionedTypes.containsOtherType) {
             return this.Any(isNullable);
         }
 
         // Class-based types
-        if (!isEmpty(groupedTypes.classTypes)) {
-            if (!isEmpty(groupedTypes.enumTypes) || !isEmpty(groupedTypes.enumVariantTypes)) {
+        if (!isEmpty(partitionedTypes.classTypes)) {
+            if (!isEmpty(partitionedTypes.enumTypes) || !isEmpty(partitionedTypes.enumVariantTypes)) {
                 // Class types other than Any/Any? are never compatible to enum types/enum variant types
                 return this.Any(isNullable);
             } else {
-                return this.lowestCommonSupertypeForClassBasedTypes(groupedTypes.classTypes, isNullable);
+                return this.lowestCommonSupertypeForClassBasedTypes(partitionedTypes.classTypes, isNullable);
             }
         }
 
         // Enum-based types
         return this.lowestCommonSupertypeForEnumBasedTypes(
-            groupedTypes.enumTypes,
-            groupedTypes.enumVariantTypes,
+            partitionedTypes.enumTypes,
+            partitionedTypes.enumVariantTypes,
             isNullable,
         );
     }
@@ -798,16 +801,16 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Groups the given types by their kind. This functions assumes that union types have been removed. It is only
+     * Partitions the given types by their kind. This function assumes that union types have been removed. It is only
      * meant to be used when computing the lowest common supertype (LCS).
      */
-    private groupTypesLCS(types: Type[]): GroupTypesLCSResult {
-        const result: GroupTypesLCSResult = {
+    private partitionTypesLCS(types: Type[]): PartitionTypesLCSResult {
+        const result: PartitionTypesLCSResult = {
             classTypes: [],
             enumTypes: [],
             enumVariantTypes: [],
-            containsUnhandledType: false,
             containsUnknownType: false,
+            containsOtherType: false,
         };
 
         for (const type of types) {
@@ -831,7 +834,7 @@ export class SafeDsTypeComputer {
                 result.containsUnknownType = true;
             } else {
                 // Since these types don't occur in legal programs, we don't need to handle them better
-                result.containsUnhandledType = true;
+                result.containsOtherType = true;
                 return result;
             }
         }
@@ -981,43 +984,79 @@ export class SafeDsTypeComputer {
         console.log(types.map((it) => it.toString()));
     }
 
+    /**
+     * Computes the highest common subtype for the given types. The result is simplified as much as possible. This
+     * function is only meant to be called from `lowestCommonSupertype`, since we make several assumptions about the
+     * input types, e.g. that they are already simplified.
+     */
     private highestCommonSubtype(types: Type[]): Type {
-        // This method only works if called from `lowestCommonSupertype`:
-        //     * We assume, the given types are already simplified.
-        //     * We assume, all cases are already handled, except for class types with type parameters.
-
         this.logTypes(types);
 
-        /* c8 ignore start */
         if (types.length === 0) {
+            /* c8 ignore next 2 */
             return this.Any(true);
         } else if (types.length === 1) {
+            /* c8 ignore next 2 */
             return types[0]!;
         }
-        /* c8 ignore stop */
 
+        // Update nullability of all types
         const isNullable = types.every((it) => it.isExplicitlyNullable);
+        const typesWithMatchingNullability = types.map((it) => it.withExplicitNullability(isNullable));
 
         // One of the types is already a common subtype of all others after updating nullability
-        if (!isNullable) {
-            const commonSupertype = stream(types)
-                .map((it) => it.withExplicitNullability(isNullable))
-                .find((it) => this.isCommonSubtype(it, types));
-
-            if (commonSupertype) {
-                return commonSupertype;
-            }
+        const commonSupertype = typesWithMatchingNullability.find((it) =>
+            this.isCommonSubtypeWithStringTypeParameterTypeCheck(it, types),
+        );
+        if (commonSupertype) {
+            return commonSupertype;
         }
 
-        // All types must be class types
-        if (!types.every((it) => it instanceof ClassType)) {
+        // Partition types by their kind
+        const partitionedTypes = this.partitionTypesHCS(typesWithMatchingNullability);
+
+        // Contains unhandled type
+        if (partitionedTypes.containsOtherType) {
             return this.Nothing(isNullable);
         }
 
-        return this.highestCommonSubtypeForClassTypes(types as ClassType[], isNullable);
+        // Contains only class types
+        if (!isEmpty(partitionedTypes.classTypes) && isEmpty(partitionedTypes.literalTypes)) {
+            return this.highestCommonSubtypeForClassTypes(partitionedTypes.classTypes, isNullable);
+        }
+
+        // Contains only literal types
+        if (!isEmpty(partitionedTypes.literalTypes) && isEmpty(partitionedTypes.classTypes)) {
+            return this.highestCommonSubtypeForLiteralTypes(partitionedTypes.literalTypes);
+        }
+
+        return this.Nothing(isNullable);
     }
 
-    // private groupTypesHCS(types: Type[]): GroupTypesHCSResult {}
+    /**
+     * Partitions the given types by their kind. This function is only meant to be used when computing the highest
+     * common subtype (HCS).
+     */
+    private partitionTypesHCS(types: Type[]): PartitionTypesHCSResult {
+        const result: PartitionTypesHCSResult = {
+            classTypes: [],
+            literalTypes: [],
+            containsOtherType: false,
+        };
+
+        for (const type of types) {
+            if (type instanceof ClassType) {
+                result.classTypes.push(type);
+            } else if (type instanceof LiteralType) {
+                result.literalTypes.push(type);
+            } else {
+                result.containsOtherType = true;
+                return result;
+            }
+        }
+
+        return result;
+    }
 
     private highestCommonSubtypeForClassTypes(types: ClassType[], isNullable: boolean): Type {
         // Find the type that is compatible to all other types ignoring type parameters
@@ -1046,11 +1085,26 @@ export class SafeDsTypeComputer {
         return this.Nothing(isNullable);
     }
 
+    private highestCommonSubtypeForLiteralTypes(types: LiteralType[]): Type {
+        if (isEmpty(types)) {
+            /* c8 ignore next 2 */
+            return this.coreTypes.AnyOrNull;
+        }
+
+        // Intersect constants
+        const [first, ...other] = types;
+        const constants = first!.constants.filter((constant1) =>
+            other.every((type) => type.constants.some((constant2) => constant1.equals(constant2))),
+        );
+
+        return this.factory.createLiteralType(...constants).simplify();
+    }
+
     private isCommonSubtypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it, { ignoreTypeParameters: true }));
     }
 
-    private isCommonSubtype(candidate: Type, otherTypes: Type[]): boolean {
+    private isCommonSubtypeWithStringTypeParameterTypeCheck(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) =>
             this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
         );
@@ -1172,21 +1226,18 @@ interface LowestCommonSupertypeOptions {
     skipTypeSimplification?: boolean;
 }
 
-interface GroupTypesLCSResult {
+interface PartitionTypesLCSResult {
     classTypes: ClassType[];
     enumTypes: EnumType[];
     enumVariantTypes: EnumVariantType[];
-    containsUnhandledType: boolean;
     containsUnknownType: boolean;
+    containsOtherType: boolean;
 }
 
-interface GroupTypesHCSResult {
+interface PartitionTypesHCSResult {
     classTypes: ClassType[];
-    enumTypes: EnumType[];
-    enumVariantTypes: EnumVariantType[];
     literalTypes: LiteralType[];
-    containsUnhandledType: boolean;
-    containsUnknownType: boolean;
+    containsOtherType: boolean;
 }
 
 const NO_SUBSTITUTIONS: TypeParameterSubstitutions = new Map();
