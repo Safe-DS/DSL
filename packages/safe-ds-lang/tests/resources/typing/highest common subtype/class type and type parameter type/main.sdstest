@@ -1,0 +1,39 @@
+package tests.typing.highestCommonSubtype.classTypeAndTypeParameterType
+
+class Contravariant<in T>
+
+class C
+class D
+
+class Test<NothingToAnyOrNull, NothingToC sub C, NothingToD sub D, NothingToDOrNull sub D?>(
+    c: Contravariant<C>,
+    cOrNull: Contravariant<C?>,
+
+    nothingToAnyOrNull: Contravariant<NothingToAnyOrNull>,
+    nothingToAnyOrNullExplicit: Contravariant<NothingToAnyOrNull?>,
+    nothingToC: Contravariant<NothingToC>,
+    nothingToD: Contravariant<NothingToD>,
+    nothingToDOrNull: Contravariant<NothingToDOrNull>,
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a1: Any = »[c, nothingToAnyOrNull]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a2: Any = »[c, nothingToAnyOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<NothingToC>>
+    a3: Any = »[c, nothingToC]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a4: Any = »[c, nothingToD]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    a5: Any = »[c, nothingToDOrNull]«,
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    b1: Any = »[cOrNull, nothingToAnyOrNull]«,
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    b2: Any = »[cOrNull, nothingToAnyOrNullExplicit]«,
+    // $TEST$ serialization List<Contravariant<NothingToC>>
+    b3: Any = »[cOrNull, nothingToC]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    b4: Any = »[cOrNull, nothingToD]«,
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    b5: Any = »[cOrNull, nothingToDOrNull]«,
+)
