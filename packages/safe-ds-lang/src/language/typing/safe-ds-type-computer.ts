@@ -888,12 +888,10 @@ export class SafeDsTypeComputer {
     ): boolean {
         return allTypeParameters.filter(TypeParameter.isInvariant).every((typeParameter) => {
             const candidateSubstitution = candidate.substitutions.get(typeParameter);
-            console.log(candidateSubstitution?.toString());
             return (
                 candidateSubstitution &&
                 others.every((other) => {
                     const otherSubstitution = other.substitutions.get(typeParameter);
-                    console.log(otherSubstitution?.toString());
                     return otherSubstitution && candidateSubstitution.equals(otherSubstitution);
                 })
             );
@@ -1099,13 +1097,6 @@ export class SafeDsTypeComputer {
 
             result.push(matchingSubtype);
         }
-
-        console.log(
-            candidate.toString(),
-            targetTemplate.toString(),
-            others.map((it) => it.toString()),
-            result.map((it) => it?.toString()),
-        );
 
         return result;
     }
