@@ -888,10 +888,12 @@ export class SafeDsTypeComputer {
     ): boolean {
         return allTypeParameters.filter(TypeParameter.isInvariant).every((typeParameter) => {
             const candidateSubstitution = candidate.substitutions.get(typeParameter);
+            console.log(candidateSubstitution?.toString());
             return (
                 candidateSubstitution &&
                 others.every((other) => {
                     const otherSubstitution = other.substitutions.get(typeParameter);
+                    console.log(otherSubstitution?.toString());
                     return otherSubstitution && candidateSubstitution.equals(otherSubstitution);
                 })
             );
@@ -1066,11 +1068,11 @@ export class SafeDsTypeComputer {
         }
 
         // Bring all types down to a common class
-        others = this.bringAllTypesDownToCommonClass(candidate, others);
+        others = this.bringTypesDownToCommonClass(candidate, others);
 
         // Check whether all substitutions of invariant type parameters are equal
         if (!this.substitutionsForInvariantTypeParametersAreEqual(typeParameters, candidate, others)) {
-            this.Nothing(isNullable);
+            return this.Nothing(isNullable);
         }
 
         // Unify substitutions for type parameters
@@ -1078,18 +1080,34 @@ export class SafeDsTypeComputer {
         return this.factory.createClassType(candidate.declaration, newSubstitutions, isNullable);
     }
 
-    private bringAllTypesDownToCommonClass(candidate: ClassType, others: ClassType[]): ClassType[] {
+    private bringTypesDownToCommonClass(candidate: ClassType, others: ClassType[]): ClassType[] {
         const targetTemplate = this.createTargetTemplate(candidate);
-        const matchingSubtypes = others.map((it) => this.computeMatchingSubtype(it, targetTemplate)!);
+        const result: ClassType[] = [];
+
+        for (const type of others) {
+            const matchingSubtype = this.computeMatchingSubtype(type, targetTemplate)!;
+
+            // Apply substitutions of the candidate, if type parameter types are still free
+            for (const typeParameter of getTypeParameters(candidate.declaration)) {
+                if (!matchingSubtype.substitutions.has(typeParameter)) {
+                    const substitution = candidate.substitutions.get(typeParameter);
+                    if (substitution) {
+                        matchingSubtype.substitutions.set(typeParameter, substitution);
+                    }
+                }
+            }
+
+            result.push(matchingSubtype);
+        }
 
         console.log(
             candidate.toString(),
             targetTemplate.toString(),
             others.map((it) => it.toString()),
-            matchingSubtypes.map((it) => it?.toString()),
+            result.map((it) => it?.toString()),
         );
 
-        return matchingSubtypes;
+        return result;
     }
 
     /**
@@ -1298,27 +1316,12 @@ export class SafeDsTypeComputer {
             const candidateSubstitution = candidate.substitutions.get(typeParameter) ?? UnknownType;
 
             if (TypeParameter.isCovariant(typeParameter)) {
-                // Compute the lowest common supertype for substitutions
                 const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
-                console.log(
-                    'covariant',
-                    typeParameter.name,
-                    candidateSubstitution.toString(),
-                    otherSubstitutions.map((it) => it.toString()),
-                );
                 substitutions.set(typeParameter, covariantUnifier([candidateSubstitution, ...otherSubstitutions]));
             } else if (TypeParameter.isContravariant(typeParameter)) {
-                // Compute the highest common subtype for substitutions
                 const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
-                console.log(
-                    'contravariant',
-                    typeParameter.name,
-                    candidateSubstitution.toString(),
-                    otherSubstitutions.map((it) => it.toString()),
-                );
                 substitutions.set(typeParameter, contravariantUnifier([candidateSubstitution, ...otherSubstitutions]));
             } else {
-                console.log('invariant', typeParameter.name, candidateSubstitution.toString());
                 substitutions.set(typeParameter, candidateSubstitution);
             }
         }

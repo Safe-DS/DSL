@@ -60,7 +60,7 @@ segment contravariant(
 }
 
 class Invariant<T>
-class IntInvariant sub Invariant<Float>
+class IntInvariant sub Invariant<Int>
 class SomeInvariant<T1, T2> sub Invariant<T1>
 
 segment invariant(
@@ -97,7 +97,7 @@ segment invariant(
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[invString, invInt3]«;
 
-    // $TEST$ serialization List<Contravariant<FloatInvariant>>
+    // $TEST$ serialization List<Contravariant<IntInvariant>>
     »[invInt2, invInt2]«;
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[invInt2, invInt3]«;
