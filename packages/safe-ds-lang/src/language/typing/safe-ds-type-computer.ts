@@ -742,13 +742,21 @@ export class SafeDsTypeComputer {
             }
         });
 
-        // Includes type with unknown supertype
+        // Group types by their kind
         const groupedTypes = this.groupTypes(replacedTypes);
-        if (groupedTypes.hasTypeWithUnknownSupertype) {
-            return UnknownType;
+
+        // Includes unknown type
+        if (groupedTypes.containsUnknownType) {
+            return this.coreTypes.AnyOrNull;
         }
 
+        // The result must be nullable if any of the types is nullable
         const isNullable = replacedTypes.some((it) => it.isExplicitlyNullable);
+
+        // Includes unhandled type
+        if (groupedTypes.containsUnhandledType) {
+            return this.Any(isNullable);
+        }
 
         // Class-based types
         if (!isEmpty(groupedTypes.classTypes)) {
@@ -786,7 +794,8 @@ export class SafeDsTypeComputer {
             classTypes: [],
             enumTypes: [],
             enumVariantTypes: [],
-            hasTypeWithUnknownSupertype: false,
+            containsUnhandledType: false,
+            containsUnknownType: false,
         };
 
         for (const type of types) {
@@ -803,11 +812,13 @@ export class SafeDsTypeComputer {
                 if (classType instanceof ClassType) {
                     result.classTypes.push(classType);
                 } else {
-                    result.hasTypeWithUnknownSupertype = true;
+                    result.containsUnknownType = true;
                 }
+            } else if (type === UnknownType) {
+                result.containsUnknownType = true;
             } else {
-                // Other types don't have a clear lowest common supertype
-                result.hasTypeWithUnknownSupertype = true;
+                // Since these types don't occur in legal programs, we don't need to handle them better
+                result.containsUnhandledType = true;
                 return result;
             }
         }
@@ -1022,7 +1033,7 @@ export class SafeDsTypeComputer {
             current = this.parentClassType(current);
         }
 
-        const Any = this.coreTypes.Any.withExplicitNullability(type.isExplicitlyNullable);
+        const Any = this.Any(type.isExplicitlyNullable);
         if (Any instanceof ClassType && !visited.has(Any.declaration)) {
             yield Any;
         }
@@ -1072,7 +1083,8 @@ interface GroupTypesResult {
     classTypes: ClassType[];
     enumTypes: EnumType[];
     enumVariantTypes: EnumVariantType[];
-    hasTypeWithUnknownSupertype: boolean;
+    containsUnhandledType: boolean;
+    containsUnknownType: boolean;
 }
 
 const NO_SUBSTITUTIONS: TypeParameterSubstitutions = new Map();
