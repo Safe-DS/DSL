@@ -724,9 +724,9 @@ export class SafeDsTypeComputer {
     // Lowest common supertype
     // -----------------------------------------------------------------------------------------------------------------
 
-    private lowestCommonSupertype(types: Type[]): Type {
+    private lowestCommonSupertype(types: Type[], options: LowestCommonSupertypeOptions = {}): Type {
         // Simplify types
-        const simplifiedTypes = this.simplifyTypes(types);
+        const simplifiedTypes = this.simplifyTypesLCS(types, options);
 
         // A single type is its own lowest common supertype
         if (simplifiedTypes.length === 1) {
@@ -734,16 +734,10 @@ export class SafeDsTypeComputer {
         }
 
         // Replace type parameter types by their upper bound
-        const replacedTypes = simplifiedTypes.map((it) => {
-            if (it instanceof TypeParameterType) {
-                return this.computeUpperBound(it);
-            } else {
-                return it;
-            }
-        });
+        const replacedTypes = this.replaceTypeParameterTypesWithUpperBound(simplifiedTypes);
 
         // Group types by their kind
-        const groupedTypes = this.groupTypes(replacedTypes);
+        const groupedTypes = this.groupTypesLCS(replacedTypes);
 
         // Includes unknown type
         if (groupedTypes.containsUnknownType) {
@@ -776,7 +770,14 @@ export class SafeDsTypeComputer {
         );
     }
 
-    private simplifyTypes(types: Type[]) {
+    /**
+     * Simplifies a list of types for the purpose of computing the lowest common supertype (LCS).
+     */
+    private simplifyTypesLCS(types: Type[], options: LowestCommonSupertypeOptions): Type[] {
+        if (options.skipTypeSimplification) {
+            return types;
+        }
+
         const simplifiedType = this.factory.createUnionType(...types).simplify();
 
         if (simplifiedType instanceof UnionType) {
@@ -786,11 +787,22 @@ export class SafeDsTypeComputer {
         }
     }
 
+    private replaceTypeParameterTypesWithUpperBound(simplifiedTypes: Type[]) {
+        return simplifiedTypes.map((it) => {
+            if (it instanceof TypeParameterType) {
+                return this.computeUpperBound(it);
+            } else {
+                return it;
+            }
+        });
+    }
+
     /**
-     * Group the given types by their kind. This functions assumes that union types have been removed.
+     * Groups the given types by their kind. This functions assumes that union types have been removed. It is only
+     * meant to be used when computing the lowest common supertype (LCS).
      */
-    private groupTypes(types: Type[]): GroupTypesResult {
-        const result: GroupTypesResult = {
+    private groupTypesLCS(types: Type[]): GroupTypesLCSResult {
+        const result: GroupTypesLCSResult = {
             classTypes: [],
             enumTypes: [],
             enumVariantTypes: [],
@@ -857,11 +869,7 @@ export class SafeDsTypeComputer {
                 }
 
                 // Unify substitutions for type parameters
-                const substitutions = this.newTypeParameterSubstitutionsForLowestCommonSupertype(
-                    typeParameters,
-                    candidate,
-                    other,
-                );
+                const substitutions = this.newTypeParameterSubstitutionsLCS(typeParameters, candidate, other);
                 return this.factory.createClassType(candidate.declaration, substitutions, isNullable);
             }
         }
@@ -886,7 +894,7 @@ export class SafeDsTypeComputer {
         });
     }
 
-    private newTypeParameterSubstitutionsForLowestCommonSupertype(
+    private newTypeParameterSubstitutionsLCS(
         typeParameters: SdsTypeParameter[],
         candidate: ClassType,
         others: ClassType[],
@@ -901,16 +909,18 @@ export class SafeDsTypeComputer {
                 const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
                 substitutions.set(
                     typeParameter,
-                    this.lowestCommonSupertype([candidateSubstitution, ...otherSubstitutions]),
+                    this.lowestCommonSupertype([candidateSubstitution, ...otherSubstitutions], {
+                        skipTypeSimplification: true,
+                    }),
                 );
-            } /* c8 ignore start */ else if (TypeParameter.isContravariant(typeParameter)) {
+            } else if (TypeParameter.isContravariant(typeParameter)) {
                 // Compute the highest common subtype for substitutions
                 const otherSubstitutions = others.map((it) => it.substitutions.get(typeParameter) ?? UnknownType);
                 substitutions.set(
                     typeParameter,
                     this.highestCommonSubtype([candidateSubstitution, ...otherSubstitutions]),
                 );
-            } /* c8 ignore stop */ else {
+            } else {
                 substitutions.set(typeParameter, candidateSubstitution);
             }
         }
@@ -967,12 +977,84 @@ export class SafeDsTypeComputer {
     // Highest common subtype
     // -----------------------------------------------------------------------------------------------------------------
 
-    /* c8 ignore start */
-    private highestCommonSubtype(_types: Type[]): Type {
-        // TODO(lr): Implement
-        return this.coreTypes.Nothing;
+    private logTypes(types: Type[]) {
+        console.log(types.map((it) => it.toString()));
     }
-    /* c8 ignore stop */
+
+    private highestCommonSubtype(types: Type[]): Type {
+        // This method only works if called from `lowestCommonSupertype`:
+        //     * We assume, the given types are already simplified.
+        //     * We assume, all cases are already handled, except for class types with type parameters.
+
+        this.logTypes(types);
+
+        /* c8 ignore start */
+        if (types.length === 0) {
+            return this.Any(true);
+        } else if (types.length === 1) {
+            return types[0]!;
+        }
+        /* c8 ignore stop */
+
+        const isNullable = types.every((it) => it.isExplicitlyNullable);
+
+        // One of the types is already a common subtype of all others after updating nullability
+        if (!isNullable) {
+            const commonSupertype = stream(types)
+                .map((it) => it.withExplicitNullability(isNullable))
+                .find((it) => this.isCommonSubtype(it, types));
+
+            if (commonSupertype) {
+                return commonSupertype;
+            }
+        }
+
+        // All types must be class types
+        if (!types.every((it) => it instanceof ClassType)) {
+            return this.Nothing(isNullable);
+        }
+
+        return this.highestCommonSubtypeForClassTypes(types as ClassType[], isNullable);
+    }
+
+    // private groupTypesHCS(types: Type[]): GroupTypesHCSResult {}
+
+    private highestCommonSubtypeForClassTypes(types: ClassType[], isNullable: boolean): Type {
+        // Find the type that is compatible to all other types ignoring type parameters
+        const candidate = stream(types)
+            .map((it) => it.withExplicitNullability(isNullable))
+            .find((it) => this.isCommonSubtypeIgnoringTypeParameters(it, types));
+
+        console.log(candidate?.toString());
+
+        if (!candidate) {
+            return this.Nothing(isNullable);
+        }
+
+        // Even if the class has no type parameters, we are not done yet:
+        //
+        //     class C<T>
+        //     class D sub C<Int>
+        //
+        // The highest common subtype of `C<String>` and `D` is `Nothing` and not `D`.
+
+        // // TODO: normalize type parameters
+        //
+        // console.log(types.map((it) => it.toString()));
+        // console.log(candidate);
+
+        return this.Nothing(isNullable);
+    }
+
+    private isCommonSubtypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
+        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it, { ignoreTypeParameters: true }));
+    }
+
+    private isCommonSubtype(candidate: Type, otherTypes: Type[]): boolean {
+        return otherTypes.every((it) =>
+            this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
+        );
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     // Supertypes
@@ -1080,10 +1162,29 @@ interface ComputeUpperBoundOptions {
     stopAtTypeParameterType?: boolean;
 }
 
-interface GroupTypesResult {
+/**
+ * Options for {@link lowestCommonSupertype}.
+ */
+interface LowestCommonSupertypeOptions {
+    /**
+     * If `true`, the type simplification is skipped and the given types are used as is.
+     */
+    skipTypeSimplification?: boolean;
+}
+
+interface GroupTypesLCSResult {
     classTypes: ClassType[];
     enumTypes: EnumType[];
     enumVariantTypes: EnumVariantType[];
+    containsUnhandledType: boolean;
+    containsUnknownType: boolean;
+}
+
+interface GroupTypesHCSResult {
+    classTypes: ClassType[];
+    enumTypes: EnumType[];
+    enumVariantTypes: EnumVariantType[];
+    literalTypes: LiteralType[];
     containsUnhandledType: boolean;
     containsUnknownType: boolean;
 }

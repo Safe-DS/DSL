@@ -69,6 +69,15 @@ export class SafeDsTypeChecker {
 
         if (other instanceof TypeParameterType) {
             if (options.strictTypeParameterTypeCheck) {
+                // `T` can always be assigned to `T` and `T?`
+                if (
+                    type instanceof TypeParameterType &&
+                    type.declaration === other.declaration &&
+                    (!type.isExplicitlyNullable || other.isExplicitlyNullable)
+                ) {
+                    return true;
+                }
+
                 const otherLowerBound = this.coreTypes.Nothing.withExplicitNullability(other.isExplicitlyNullable);
                 return this.isSubtypeOf(type, otherLowerBound, options);
             } else {
