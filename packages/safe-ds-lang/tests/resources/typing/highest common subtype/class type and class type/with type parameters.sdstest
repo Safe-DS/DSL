@@ -1,0 +1,122 @@
+package tests.typing.highestCommonSubtype.classTypeAndClassType.withTypeParameters
+
+class Covariant<out T>
+class FloatCovariant sub Covariant<Float>
+class SomeCovariant<T1, T2> sub Covariant<T1>
+
+segment covariant(
+    coNumber: Contravariant<Covariant<Number>>,
+    coInt: Contravariant<Covariant<Int>>,
+    coString: Contravariant<Covariant<String>>,
+    coFloat: Contravariant<FloatCovariant>,
+    coFloat2: Contravariant<SomeCovariant<Float, Boolean>>,
+) {
+    // $TEST$ serialization List<Contravariant<Covariant<Number>>>
+    »[coNumber, coNumber]«;
+    // $TEST$ serialization List<Contravariant<Covariant<Int>>>
+    »[coNumber, coInt]«;
+    // $TEST$ serialization List<Contravariant<Covariant<Nothing>>>
+    »[coNumber, coString]«;
+    // $TEST$ serialization List<Contravariant<FloatCovariant>>
+    »[coNumber, coFloat]«;
+    // $TEST$ serialization List<Contravariant<SomeCovariant<Float, Boolean>>>
+    »[coNumber, coFloat2]«;
+
+    // $TEST$ serialization List<Contravariant<Covariant<Int>>>
+    »[coInt, coInt]«;
+    // $TEST$ serialization List<Contravariant<Covariant<Any>>>
+    »[coInt, coString]«;
+    // $TEST$ serialization List<Contravariant<Covariant<Number>>>
+    »[coInt, coFloat]«;
+    // $TEST$ serialization List<Contravariant<SomeCovariant<Nothing, Boolean>>>
+    »[coInt, coFloat2]«;
+
+    // $TEST$ serialization List<Contravariant<Covariant<String>>>
+    »[coString, coString]«;
+    // $TEST$ serialization List<Contravariant<Covariant<Any>>>
+    »[coString, coFloat]«;
+    // $TEST$ serialization List<Contravariant<SomeCovariant<Nothing, Boolean>>>
+    »[coString, coFloat2]«;
+
+    // $TEST$ serialization List<Contravariant<FloatCovariant>>
+    »[coFloat, coFloat]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[coFloat, coFloat2]«;
+
+    // $TEST$ serialization List<Contravariant<SomeCovariant<Float, Boolean>>>
+    »[coFloat2, coFloat2]«;
+}
+
+class Contravariant<in T>
+
+segment contravariant(
+    contraFloat: Contravariant<Contravariant<String>>,
+    contraInt: Contravariant<Contravariant<Number>>,
+) {
+    // Most tests are in the "lowest common supertype" folder. Here we only test that we call the right method.
+
+    // $TEST$ serialization List<Contravariant<Contravariant<Nothing>>>
+    »[contraFloat, contraInt]«;
+}
+
+class Invariant<T>
+class IntInvariant sub Invariant<Float>
+class SomeInvariant<T1, T2> sub Invariant<T1>
+
+segment invariant(
+    invNumber: Contravariant<Invariant<Number>>,
+    invInt: Contravariant<Invariant<Int>>,
+    invString: Contravariant<Invariant<String>>,
+    invInt2: Contravariant<IntInvariant>,
+    invInt3: Contravariant<SomeInvariant<Int, Boolean>>,
+) {
+    // $TEST$ serialization List<Contravariant<Invariant<Number>>>
+    »[invNumber, invNumber]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invNumber, invInt]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invNumber, invString]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invNumber, invInt2]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invNumber, invInt3]«;
+
+    // $TEST$ serialization List<Contravariant<Invariant<Int>>>
+    »[invInt, invInt]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invInt, invString]«;
+    // $TEST$ serialization List<Contravariant<IntInvariant>>
+    »[invInt, invInt2]«;
+    // $TEST$ serialization List<Contravariant<SomeInvariant<Int, Boolean>>>
+    »[invInt, invInt3]«;
+
+    // $TEST$ serialization List<Contravariant<Invariant<String>>>
+    »[invString, invString]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invString, invInt2]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invString, invInt3]«;
+
+    // $TEST$ serialization List<Contravariant<FloatInvariant>>
+    »[invInt2, invInt2]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[invInt2, invInt3]«;
+
+    // $TEST$ serialization List<Contravariant<SomeInvariant<Int, Boolean>>>
+    »[invInt3, invInt3]«;
+}
+
+class Multiple<T1, out T2>
+
+segment multiple(
+    multipleNumberNumber: Contravariant<Multiple<Number, Number>>,
+    multipleNumberFloat: Contravariant<Multiple<Number, Float>>,
+) {
+    // $TEST$ serialization List<Contravariant<Multiple<Number, Number>>>
+    »[multipleNumberNumber, multipleNumberNumber]«;
+    // $TEST$ serialization List<Contravariant<Multiple<Number, Float>>>
+    »[multipleNumberNumber, multipleNumberFloat]«;
+
+    // $TEST$ serialization List<Contravariant<Multiple<Number, Float>>>
+    »[multipleNumberFloat, multipleNumberFloat]«;
+}
