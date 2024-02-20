@@ -6,6 +6,8 @@ class C
 
 segment mySegment(
     one: Contravariant<literal<1>>,
+    oneOrNull: Contravariant<literal<1, null>>,
+
     c: Contravariant<C>,
     cOrNull: Contravariant<C?>,
     int: Contravariant<Int>,
@@ -23,12 +25,18 @@ segment mySegment(
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[one, cOrNull]«;
 
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[oneOrNull, cOrNull]«;
+
 
     // $TEST$ serialization List<Contravariant<literal<1>>>
     »[one, int]«;
 
     // $TEST$ serialization List<Contravariant<literal<1>>>
     »[one, intOrNull]«;
+
+    // $TEST$ serialization List<Contravariant<literal<1, null>>>
+    »[oneOrNull, intOrNull]«;
 
 
     // $TEST$ serialization List<Contravariant<literal<1>>>
@@ -37,6 +45,9 @@ segment mySegment(
     // $TEST$ serialization List<Contravariant<literal<1>>>
     »[one, numberOrNull]«;
 
+    // $TEST$ serialization List<Contravariant<literal<1, null>>>
+    »[oneOrNull, numberOrNull]«;
+
 
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[one, string]«;
@@ -44,10 +55,16 @@ segment mySegment(
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[one, stringOrNull]«;
 
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[oneOrNull, stringOrNull]«;
+
 
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[one, nothing]«;
 
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[one, nothingOrNull]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[oneOrNull, nothingOrNull]«;
 }
