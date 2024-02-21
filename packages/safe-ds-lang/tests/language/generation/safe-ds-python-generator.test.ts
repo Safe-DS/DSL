@@ -21,7 +21,6 @@ describe('generation', async () => {
 
         // Get target placeholder name for "run until"
         let runUntilPlaceholderName: string | undefined = undefined;
-
         if (test.runUntil) {
             const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
                 URI.parse(test.runUntil.uri),
@@ -45,15 +44,15 @@ describe('generation', async () => {
                 (entry) => entry[1]!,
             );
 
-        // File paths must match
-        const actualOutputPaths = Array.from(actualOutputs.keys()).sort();
-        const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.toString()).sort();
-        expect(actualOutputPaths).toStrictEqual(expectedOutputPaths);
-
-        // File contents must match (ignoring line breaks)
+        // File contents must match
         for (const [uriString, code] of actualOutputs) {
             const fsPath = URI.parse(uriString).fsPath;
             await expect(code).toMatchFileSnapshot(fsPath);
         }
+
+        // File paths must match
+        const actualOutputPaths = Array.from(actualOutputs.keys()).sort();
+        const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.toString()).sort();
+        expect(actualOutputPaths).toStrictEqual(expectedOutputPaths);
     });
 });

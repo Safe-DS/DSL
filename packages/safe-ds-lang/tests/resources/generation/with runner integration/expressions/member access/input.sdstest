@@ -1,0 +1,41 @@
+package tests.generator.memberAccessWithRunnerIntegration
+
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
+
+@Pure fun g() -> result: Boolean
+
+@Pure fun h() -> (result1: Boolean, result2: Boolean)
+
+class C() {
+    attr a: Int
+    @PythonName("c") attr b: Int
+
+    @Pure
+    @PythonCall("$param.i($this)")
+    fun i(param: Any?) -> result: Boolean
+
+    @Pure
+    fun j(param: Any?) -> result: Boolean
+
+    @Pure
+    @PythonName("k2") fun k(param: Any?) -> result: Boolean
+
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("name")])
+    static fun from_csv_file(name: String) -> c: C
+}
+
+@Pure fun factory() -> instance: C?
+
+pipeline test {
+    f(g().result);
+    f(h().result1);
+    f(h().result2);
+    f(C().a);
+    f(C().b);
+    f(factory()?.a);
+    f(factory()?.b);
+    f(C().i(1));
+    f(C().j(123));
+    f(C().k("abc"));
+    f(C.from_csv_file("abc.csv"));
+}

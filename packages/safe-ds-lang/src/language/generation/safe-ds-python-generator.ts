@@ -1110,6 +1110,7 @@ export class SafeDsPythonGenerator {
         declaration: SdsDeclaration | undefined,
     ): ImportData | undefined {
         if (!expression || !declaration) {
+            /* c8 ignore next 2 */
             return undefined;
         }
 
