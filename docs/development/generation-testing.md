@@ -29,8 +29,4 @@ generation test.
    inside the `generated` folder to specify the expected output of the program. The relative paths to the Python files
    and the contents of the Python files will be compared to the actual generation output.
 6. Run the tests. The test runner will automatically pick up the new test.
-7. To quickly update the expected output after changes to the code generator, set the variable `updateSnapshots` in
-   [safe-ds-python-generator.test.ts][test-file] to `true` and run the tests again. Set the variable back to `false`
-   afterward. Verify that the changes are correct by inspecting the Git diff.
-
-[test-file]: https://github.com/Safe-DS/DSL/blob/main/packages/safe-ds-lang/tests/language/generation/safe-ds-python-generator.test.ts
+7. To quickly update the expected output after changes to the code generator, run `vitest` with the `--update` flag.
