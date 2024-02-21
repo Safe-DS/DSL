@@ -18,6 +18,7 @@ import { URI } from 'langium';
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 const rootResourceName = 'generation';
+const runnerIntegration = 'runner integration';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
     const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
@@ -27,9 +28,8 @@ export const createGenerationTests = async (): Promise<GenerationTest[]> => {
 };
 
 const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Promise<GenerationTest> => {
-    const expectedOutputRoot = URI.file(path.join(parentDirectory.fsPath, 'output'));
-    const actualOutputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
-    const expectedOutputFiles = readExpectedOutputFiles(expectedOutputRoot, actualOutputRoot);
+    const outputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
+    const expectedOutputFiles = readExpectedOutputFiles(outputRoot);
     let runUntil: Location | undefined;
 
     // Load all files, so they get linked
@@ -60,7 +60,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         if (checksResult.value.length === 1) {
             const check = checksResult.value[0]!;
 
-            // Expected unresolved reference
+            // Partial execution
             if (check.comment !== 'run_until') {
                 return invalidTest('FILE', new InvalidCommentError(check.comment, uri));
             }
@@ -79,23 +79,22 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     return {
         testName: `[${shortenedResourceName}]`,
         inputUris,
-        actualOutputRoot,
+        outputRoot,
         expectedOutputFiles,
         runUntil,
-        disableRunnerIntegration: shortenedResourceName.startsWith('eject'), // Tests in the "eject" top level folder are tested with disabled runner integration
+        disableRunnerIntegration: !shortenedResourceName.startsWith(runnerIntegration),
     };
 };
 
 /**
  * Read all expected output files.
  *
- * @param expectedOutputRoot Where the expected output files are located.
- * @param actualOutputRoot Where the actual output files supposed to be located.
+ * @param outputRoot Where the actual output files are supposed to be located.
  */
-const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI): ExpectedOutputFile[] => {
-    return listTestFilesWithExtensions(uriToShortenedTestResourceName(expectedOutputRoot), ['py', 'map'])
+const readExpectedOutputFiles = (outputRoot: URI): ExpectedOutputFile[] => {
+    return listTestFilesWithExtensions(uriToShortenedTestResourceName(outputRoot), ['py', 'map'])
         .sort((a, b) => {
-            // List .py files first
+            // List .py files first, so they get compared first
             if (a.fsPath.endsWith('.map') && b.fsPath.endsWith('.py')) {
                 return 1;
             }
@@ -104,7 +103,7 @@ const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI)
         })
         .map((uri) => {
             return {
-                uri: URI.file(path.join(actualOutputRoot.fsPath, path.relative(expectedOutputRoot.fsPath, uri.fsPath))),
+                uri,
                 code: fs.readFileSync(uri.fsPath).toString(),
             };
         });
@@ -122,7 +121,7 @@ const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): Gene
     return {
         testName,
         inputUris: [],
-        actualOutputRoot: URI.file(''),
+        outputRoot: URI.file(''),
         expectedOutputFiles: [],
         error,
         disableRunnerIntegration: false,
@@ -139,9 +138,9 @@ interface GenerationTest extends TestDescription {
     inputUris: URI[];
 
     /**
-     * The directory, where actual output files should be temporarily stored.
+     * The directory, where output files are located.
      */
-    actualOutputRoot: URI;
+    outputRoot: URI;
 
     /**
      * The expected generated code.

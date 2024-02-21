@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.sdstest"],"names":["testpipeline","ifilewrite","ifileread","impurefilereadagain"],"mappings":"AAAA;;AAMA,IAASA,YAAY;IAEjB,kBAAsBC,UAAU,CAAC,OAAO;IACxC,mBAAuBA,UAAU,CAAC,OAAO;IACzC,sBAA0BC,SAAS,CAAC,OAAO;IAG3C,SAAe,CAAAC,mBAAmB,EAAC,CAAC,EAAC,CAAC","file":"gen_input.py"}

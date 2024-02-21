@@ -21,7 +21,6 @@ describe('generation', async () => {
 
         // Get target placeholder name for "run until"
         let runUntilPlaceholderName: string | undefined = undefined;
-
         if (test.runUntil) {
             const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
                 URI.parse(test.runUntil.uri),
@@ -30,10 +29,10 @@ describe('generation', async () => {
         }
 
         // Generate code for all documents
-        const actualOutputs = stream(documents)
+        const actualOutputs: Map<string, string> = stream(documents)
             .flatMap((document) =>
                 pythonGenerator.generate(document, {
-                    destination: test.actualOutputRoot,
+                    destination: test.outputRoot,
                     createSourceMaps: true,
                     targetPlaceholder: runUntilPlaceholderName,
                     disableRunnerIntegration: test.disableRunnerIntegration,
@@ -41,19 +40,19 @@ describe('generation', async () => {
             )
             .map((textDocument) => [textDocument.uri, textDocument.getText()])
             .toMap(
-                (entry) => entry[0],
-                (entry) => entry[1],
+                (entry) => entry[0]!,
+                (entry) => entry[1]!,
             );
+
+        // File contents must match
+        for (const [uriString, code] of actualOutputs) {
+            const fsPath = URI.parse(uriString).fsPath;
+            await expect(code).toMatchFileSnapshot(fsPath);
+        }
 
         // File paths must match
         const actualOutputPaths = Array.from(actualOutputs.keys()).sort();
         const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.toString()).sort();
         expect(actualOutputPaths).toStrictEqual(expectedOutputPaths);
-
-        // File contents must match
-        for (const expectedOutputFile of test.expectedOutputFiles) {
-            const actualCode = actualOutputs.get(expectedOutputFile.uri.toString());
-            expect(actualCode).toBe(expectedOutputFile.code);
-        }
     });
 });
