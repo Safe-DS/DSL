@@ -25,9 +25,9 @@ generation test.
     ```ts
     // $TEST$ run_until
     ```
-5. Add another folder called `output` inside the folder that you created in step 1. Place folders and Python files
-   inside the `output` folder to specify the expected output of the program. The relative paths to the Python files and
-   the contents of the Python files will be compared to the actual generation output.
+5. Add another folder called `generated` inside the folder that you created in step 1. Place folders and Python files
+   inside the `generated` folder to specify the expected output of the program. The relative paths to the Python files
+   and the contents of the Python files will be compared to the actual generation output.
 6. Run the tests. The test runner will automatically pick up the new test.
 7. To quickly update the expected output after changes to the code generator, set the variable `updateSnapshots` in
    [safe-ds-python-generator.test.ts][test-file] to `true` and run the tests again. Set the variable back to `false`

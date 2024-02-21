@@ -43,7 +43,7 @@ describe('generation', async () => {
         const actualOutputs: Map<string, string> = stream(documents)
             .flatMap((document) =>
                 pythonGenerator.generate(document, {
-                    destination: test.actualOutputRoot,
+                    destination: test.outputRoot,
                     createSourceMaps: true,
                     targetPlaceholder: runUntilPlaceholderName,
                     disableRunnerIntegration: test.disableRunnerIntegration,

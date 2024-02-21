@@ -12,6 +12,7 @@ coverage/
 dist/
 dist-ssr/
 generated/
+!**/tests/resources/generation/**/generated/
 lib/
 out/
 *.tsbuildinfo
