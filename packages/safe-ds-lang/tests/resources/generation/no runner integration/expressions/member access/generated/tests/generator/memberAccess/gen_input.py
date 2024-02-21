@@ -1,6 +1,5 @@
 # Imports ----------------------------------------------------------------------
 
-import safeds_runner.server.pipeline_manager
 from typing import Any, TypeVar
 
 # Type variables ---------------------------------------------------------------
@@ -15,14 +14,14 @@ def __gen_null_safe_member_access(receiver: Any, member_name: str) -> __gen_T | 
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.g", g, [], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.h", h, [], [])[0])
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.h", h, [], [])[1])
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C", C, [], []).a)
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C", C, [], []).c)
-    f(__gen_null_safe_member_access(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.factory", factory, [], []), 'a'))
-    f(__gen_null_safe_member_access(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.factory", factory, [], []), 'c'))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C.i", lambda *_ : 1.i(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C", C, [], [])), [1], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C.j", C.j, [safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C", C, [], []), 123], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C.k2", C.k2, [safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C", C, [], []), 'abc'], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.memberAccess.C.from_csv_file", C.from_csv_file, ['abc.csv'], [safeds_runner.server.pipeline_manager.runner_filemtime('abc.csv')]))
+    f(g())
+    f(h()[0])
+    f(h()[1])
+    f(C().a)
+    f(C().c)
+    f(__gen_null_safe_member_access(factory(), 'a'))
+    f(__gen_null_safe_member_access(factory(), 'c'))
+    f(1.i(C()))
+    f(C().j(123))
+    f(C().k2('abc'))
+    f(C.from_csv_file('abc.csv'))
