@@ -1,0 +1,18 @@
+package tests.generator.wildcardWithRunnerIntegration
+
+from tests.generator.differentPackageWildcardWithRunnerIntegration import *
+from tests.generator.withPythonModuleWildcardWithRunnerIntegration import *
+
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
+
+pipeline test {
+    f(function1InDifferentPackage());
+    f(function1InDifferentPackage());
+    f(function2InDifferentPackage());
+    f(function2InDifferentPackage());
+
+    f(function1InCompilationUnitWithPythonModule());
+    f(function1InCompilationUnitWithPythonModule());
+    f(function2InCompilationUnitWithPythonModule());
+    f(function2InCompilationUnitWithPythonModule());
+}
