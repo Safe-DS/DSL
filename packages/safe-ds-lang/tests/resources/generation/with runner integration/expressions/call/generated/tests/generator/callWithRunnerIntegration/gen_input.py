@@ -31,3 +31,4 @@ def test():
     __gen_null_safe_call(i, lambda: 'abc'.i())
     __gen_null_safe_call(j, lambda: 'abc'.j(123))
     __gen_null_safe_call(k, lambda: k(456, 1.23))
+    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.readFile", readFile, [], [safeds_runner.server.pipeline_manager.runner_filemtime('a.txt')]))

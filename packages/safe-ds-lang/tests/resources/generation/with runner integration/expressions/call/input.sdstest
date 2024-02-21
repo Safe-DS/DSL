@@ -24,6 +24,9 @@ fun j(param: Any?, param2: Any?)
 @PythonCall("k($param2, $param)")
 fun k(param: Any?, param2: Any?)
 
+@Impure([ImpurityReason.FileReadFromConstantPath("a.txt")])
+fun readFile() -> content: String
+
 pipeline test {
     f((g(1, 2)));
     f((g(param2 = 1, param1 = 2)));
@@ -42,4 +45,6 @@ pipeline test {
     i?("abc");
     j?("abc", 123);
     k?(1.23, 456);
+
+    f(readFile());
 }
