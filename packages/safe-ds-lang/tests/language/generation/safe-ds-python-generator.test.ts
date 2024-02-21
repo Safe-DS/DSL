@@ -4,6 +4,7 @@ import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { stream, URI } from 'langium';
+import { normalizeLineBreaks } from '../../../src/helpers/strings.js';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const pythonGenerator = services.generation.PythonGenerator;
@@ -50,10 +51,12 @@ describe('generation', async () => {
         const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.toString()).sort();
         expect(actualOutputPaths).toStrictEqual(expectedOutputPaths);
 
-        // File contents must match
+        // File contents must match (ignoring line breaks)
         for (const expectedOutputFile of test.expectedOutputFiles) {
-            const actualCode = actualOutputs.get(expectedOutputFile.uri.toString());
-            expect(actualCode).toBe(expectedOutputFile.code);
+            const expectedCode = normalizeLineBreaks(expectedOutputFile.code);
+            const actualCode = normalizeLineBreaks(actualOutputs.get(expectedOutputFile.uri.toString()));
+
+            expect(actualCode).toBe(expectedCode);
         }
     });
 });
