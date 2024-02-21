@@ -18,7 +18,7 @@ import { URI } from 'langium';
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 const rootResourceName = 'generation';
-const withRunnerIntegration = 'with runner integration';
+const runnerIntegration = 'runner integration';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
     const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
@@ -60,7 +60,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         if (checksResult.value.length === 1) {
             const check = checksResult.value[0]!;
 
-            // Expected unresolved reference
+            // Partial execution
             if (check.comment !== 'run_until') {
                 return invalidTest('FILE', new InvalidCommentError(check.comment, uri));
             }
@@ -82,7 +82,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         outputRoot,
         expectedOutputFiles,
         runUntil,
-        disableRunnerIntegration: !shortenedResourceName.startsWith(withRunnerIntegration),
+        disableRunnerIntegration: !shortenedResourceName.startsWith(runnerIntegration),
     };
 };
 

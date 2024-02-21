@@ -5,10 +5,10 @@ generation test.
 
 ## Adding a generation test
 
-1. If you do not want to test the runner integration (default), create a new **folder** (not just a file!) in the
-   `tests/resources/generation/no runner integration` directory or any subdirectory. Otherwise, create a new folder
-   the `tests/resources/generation/with runner integration` directory or any subdirectory. Give the folder a descriptive
-   name, since the folder name becomes part of the test name.
+1. Create a new **folder** (not just a file!) in the `tests/resources/generation` directory or any subdirectory. Give
+   the folder a descriptive name, since the folder name becomes part of the test name. By default, the runner
+   integration is disabled. If you want to test the runner integration, place the folder in
+   `tests/resources/generation/runner integration` or any subdirectory instead.
 
     !!! tip "Skipping a test"
 
@@ -29,4 +29,7 @@ generation test.
    inside the `generated` folder to specify the expected output of the program. The relative paths to the Python files
    and the contents of the Python files will be compared to the actual generation output.
 6. Run the tests. The test runner will automatically pick up the new test.
-7. To quickly update the expected output after changes to the code generator, run `vitest` with the `--update` flag.
+
+## Updating the expected output
+
+To quickly update the expected output after changes to the code generator, run `vitest` with the `--update` flag.
