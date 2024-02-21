@@ -1106,9 +1106,13 @@ export class SafeDsPythonGenerator {
     }
 
     private getExternalReferenceNeededImport(
-        expression: SdsExpression,
-        declaration: SdsDeclaration,
+        expression: SdsExpression | undefined,
+        declaration: SdsDeclaration | undefined,
     ): ImportData | undefined {
+        if (!expression || !declaration) {
+            return undefined;
+        }
+
         // Root Node is always a module.
         const currentModule = <SdsModule>findRootNode(expression);
         const targetModule = <SdsModule>findRootNode(declaration);
