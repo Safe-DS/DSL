@@ -5,16 +5,14 @@ generation test.
 
 ## Adding a generation test
 
-1. Create a new **folder** (not just a file!) in the `tests/resources/generation` directory or any subdirectory. Give
-   the folder a descriptive name, since the folder name becomes part of the test name.
+1. If you do not want to test the runner integration (default), create a new **folder** (not just a file!) in the
+   `tests/resources/generation/no runner integration` directory or any subdirectory. Otherwise, create a new folder
+   the `tests/resources/generation/with runner integration` directory or any subdirectory. Give the folder a descriptive
+   name, since the folder name becomes part of the test name.
 
     !!! tip "Skipping a test"
 
         If you want to skip a test, add the prefix `skip-` to the folder name.
-
-    !!! tip "Tests without runner integration"
-
-        If you want to create a test without runner integration (memoization and placeholder saving), put it in the `eject` folder or use `eject` as a prefix for a new top level folder.
 
 2. Add files with the extension `.sdstest`, `.sdspipe`, or `.sdsstub` **directly inside the folder**. All files in a
    folder will be loaded into the same workspace, so they can reference each other. Files in different folders are

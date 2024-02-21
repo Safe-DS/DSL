@@ -18,6 +18,7 @@ import { URI } from 'langium';
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
 await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 const rootResourceName = 'generation';
+const withRunnerIntegrationResourceName = 'with runner integration';
 
 export const createGenerationTests = async (): Promise<GenerationTest[]> => {
     const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
@@ -82,7 +83,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         actualOutputRoot,
         expectedOutputFiles,
         runUntil,
-        disableRunnerIntegration: shortenedResourceName.startsWith('eject'), // Tests in the "eject" top level folder are tested with disabled runner integration
+        disableRunnerIntegration: !shortenedResourceName.startsWith(withRunnerIntegrationResourceName),
     };
 };
 
@@ -95,7 +96,7 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
 const readExpectedOutputFiles = (expectedOutputRoot: URI, actualOutputRoot: URI): ExpectedOutputFile[] => {
     return listTestFilesWithExtensions(uriToShortenedTestResourceName(expectedOutputRoot), ['py', 'map'])
         .sort((a, b) => {
-            // List .py files first
+            // List .py files first, so they get compared first
             if (a.fsPath.endsWith('.map') && b.fsPath.endsWith('.py')) {
                 return 1;
             }

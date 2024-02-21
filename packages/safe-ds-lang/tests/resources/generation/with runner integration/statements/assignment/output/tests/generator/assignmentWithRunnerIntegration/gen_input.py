@@ -1,0 +1,39 @@
+# Imports ----------------------------------------------------------------------
+
+import safeds_runner.server.pipeline_manager
+
+# Segments ---------------------------------------------------------------------
+
+def testSegment():
+    g()
+    a, _, __gen_yield_c = g()
+    x, _, _ = g()
+    f1(a)
+    f1(x)
+    return __gen_yield_c
+
+# Pipelines --------------------------------------------------------------------
+
+def testPipeline():
+    g()
+    a, _, _ = g()
+    safeds_runner.server.pipeline_manager.runner_save_placeholder('a', a)
+    x, _, _ = g()
+    safeds_runner.server.pipeline_manager.runner_save_placeholder('x', x)
+    f1(a)
+    f1(x)
+    l, m, n = g()
+    safeds_runner.server.pipeline_manager.runner_save_placeholder('l', l)
+    safeds_runner.server.pipeline_manager.runner_save_placeholder('m', m)
+    safeds_runner.server.pipeline_manager.runner_save_placeholder('n', n)
+    f1(l)
+    f1(m)
+    f1(n)
+    def __gen_block_lambda_0():
+        g()
+        a, _, __gen_block_lambda_result_c = g()
+        x, _, _ = g()
+        f1(a)
+        f1(x)
+        return __gen_block_lambda_result_c
+    f2(__gen_block_lambda_0)
