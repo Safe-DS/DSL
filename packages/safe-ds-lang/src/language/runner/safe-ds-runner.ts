@@ -105,7 +105,9 @@ export class SafeDsRunner {
             }
         } catch (error) {
             this.logging.outputError(`Could not start runner: ${error instanceof Error ? error.message : error}`);
-            this.logging.displayError(`The runner process could not be started: ${error instanceof Error ? error.message : error}`);
+            this.logging.displayError(
+                `The runner process could not be started: ${error instanceof Error ? error.message : error}`,
+            );
             return;
         }
         // Start the runner at the specified port
