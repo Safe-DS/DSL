@@ -11,6 +11,7 @@ import {
     type SdsParameter,
 } from '../generated/ast.js';
 import { getParameters, streamBlockLambdaResults } from '../helpers/nodeProperties.js';
+import { escapeString } from '../grammar/safe-ds-value-converter.js';
 
 export type ParameterSubstitutions = Map<SdsParameter, EvaluatedNode>;
 export type ResultSubstitutions = Map<SdsAbstractResult, EvaluatedNode>;
@@ -131,11 +132,11 @@ export class StringConstant extends Constant {
     }
 
     override toString(): string {
-        return `"${this.value}"`;
+        return `"${escapeString(this.value)}"`;
     }
 
     override toInterpolationString(): string {
-        return this.value;
+        return escapeString(this.value);
     }
 }
 

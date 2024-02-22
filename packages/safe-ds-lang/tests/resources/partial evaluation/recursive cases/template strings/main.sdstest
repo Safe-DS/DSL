@@ -4,7 +4,7 @@ pipeline test {
     // $TEST$ serialization "start 1 inner1 true inner2 test end"
     »"start {{ 1 }} inner1 {{ true }} inner2 {{ "test" }} end"«;
 
-    // $TEST$ serialization "start	1 inner1	true inner2	test end	"
+    // $TEST$ serialization "start\\t1 inner1\\ttrue inner2\\ttest end\\t"
     »"start\t{{ 1 }} inner1\t{{ true }} inner2\t{{ "test" }} end\t"«;
 
     // $TEST$ serialization ?
