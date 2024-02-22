@@ -105,7 +105,7 @@ const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
-const RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE = 'safeds_runner.server.pipeline_manager';
+const RUNNER_PACKAGE = 'safeds_runner';
 const PYTHON_INDENT = '    ';
 
 const SPACING = new CompositeGeneratorNode(NL, NL);
@@ -648,11 +648,11 @@ export class SafeDsPythonGenerator {
             if (frame.isInsidePipeline && !generateLambda && !frame.disableRunnerIntegration) {
                 for (const savableAssignment of assignees.filter(isSdsPlaceholder)) {
                     // should always be SdsPlaceholder
-                    frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
+                    frame.addImport({ importPath: RUNNER_PACKAGE });
                     assignmentStatements.push(
                         expandTracedToNode(
                             savableAssignment,
-                        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_save_placeholder('${savableAssignment.name}', ${savableAssignment.name})`,
+                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${savableAssignment.name})`,
                     );
                 }
             }
@@ -954,7 +954,7 @@ export class SafeDsPythonGenerator {
         if (!this.isMemoizableCall(expression) || frame.disableRunnerIntegration) {
             return generatedPythonCall;
         }
-        frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
+        frame.addImport({ importPath: RUNNER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
         const memoizedArgs = getParameters(callable).map(
@@ -962,7 +962,7 @@ export class SafeDsPythonGenerator {
         );
         return expandTracedToNode(
             expression,
-        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${this.generateFullyQualifiedFunctionName(
+        )`${RUNNER_PACKAGE}.memoized_call("${this.generateFullyQualifiedFunctionName(
             expression,
         )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
@@ -983,7 +983,7 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         thisParam: CompositeGeneratorNode | undefined = undefined,
     ): CompositeGeneratorNode {
-        frame.addImport({ importPath: RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE });
+        frame.addImport({ importPath: RUNNER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
         const memoizedArgs = getParameters(callable).map(
@@ -995,9 +995,7 @@ export class SafeDsPythonGenerator {
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
-        return expandTracedToNode(
-            expression,
-        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_memoized_function_call("${fullyQualifiedTargetName}", ${
+        return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
             containsOptionalArgs
@@ -1026,9 +1024,7 @@ export class SafeDsPythonGenerator {
             if (reason instanceof FileRead) {
                 if (typeof reason.path === 'string') {
                     hiddenParameters.push(
-                        expandTracedToNode(
-                            expression,
-                        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime('${reason.path}')`,
+                        expandTracedToNode(expression)`${RUNNER_PACKAGE}.file_mtime('${reason.path}')`,
                     );
                 } else if (isSdsParameter(reason.path)) {
                     const argument = this.nodeMapper
@@ -1041,9 +1037,7 @@ export class SafeDsPythonGenerator {
                         );
                     }
                     hiddenParameters.push(
-                        expandTracedToNode(
-                            argument,
-                        )`${RUNNER_SERVER_PIPELINE_MANAGER_PACKAGE}.runner_filemtime(${this.generateArgument(
+                        expandTracedToNode(argument)`${RUNNER_PACKAGE}.file_mtime(${this.generateArgument(
                             argument,
                             frame,
                         )})`,

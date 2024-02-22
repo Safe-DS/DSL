@@ -1,6 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
-import safeds_runner.server.pipeline_manager
+import safeds_runner
 from typing import Any, Callable, TypeVar
 
 # Type variables ---------------------------------------------------------------
@@ -15,20 +15,20 @@ def __gen_null_safe_call(receiver: Any, callable: Callable[[], __gen_T]) -> __ge
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(1, param2=2), [1, 2], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(2, param2=1), [2, 1], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(1, param_2=2), [1, 2], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(2, param_2=1), [2, 1], []))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.h", h, [2, 0], []))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(1, param2=2), [1, 2], []))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(2, param2=1), [2, 1], []))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(1, param_2=2), [1, 2], []))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(2, param_2=1), [2, 1], []))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.h", h, [2, 0], []))
     'abc'.i()
     'abc'.j(123)
     k(456, 1.23)
-    __gen_null_safe_call(f, lambda: f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(1, param2=2), [1, 2], [])))
-    __gen_null_safe_call(f, lambda: f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(2, param2=1), [2, 1], [])))
-    __gen_null_safe_call(f, lambda: f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(1, param_2=2), [1, 2], [])))
-    __gen_null_safe_call(f, lambda: f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(2, param_2=1), [2, 1], [])))
-    __gen_null_safe_call(f, lambda: f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.h", h, [2, 0], [])))
+    __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(1, param2=2), [1, 2], [])))
+    __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.g", lambda *_ : g(2, param2=1), [2, 1], [])))
+    __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(1, param_2=2), [1, 2], [])))
+    __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.h", lambda *_ : h(2, param_2=1), [2, 1], [])))
+    __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.h", h, [2, 0], [])))
     __gen_null_safe_call(i, lambda: 'abc'.i())
     __gen_null_safe_call(j, lambda: 'abc'.j(123))
     __gen_null_safe_call(k, lambda: k(456, 1.23))
-    f(safeds_runner.server.pipeline_manager.runner_memoized_function_call("tests.generator.callWithRunnerIntegration.readFile", readFile, [], [safeds_runner.server.pipeline_manager.runner_filemtime('a.txt')]))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.readFile", readFile, [], [safeds_runner.file_mtime('a.txt')]))

@@ -21,7 +21,7 @@ import semver from 'semver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
-const SUPPORTED_VERSION_RANGE = '>=0.6.0 <0.7.0';
+const SUPPORTED_VERSION_RANGE = '~0.7.0';
 
 export class SafeDsRunner {
     private readonly annotations: SafeDsAnnotations;
