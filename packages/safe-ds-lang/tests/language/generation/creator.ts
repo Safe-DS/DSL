@@ -5,7 +5,6 @@ import {
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
-import fs from 'fs';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
@@ -29,7 +28,7 @@ export const createGenerationTests = async (): Promise<GenerationTest[]> => {
 
 const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Promise<GenerationTest> => {
     const outputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
-    const expectedOutputFiles = readExpectedOutputFiles(outputRoot);
+    const expectedOutputUris = listExpectedOutputFiles(outputRoot);
     let runUntil: Location | undefined;
 
     // Load all files, so they get linked
@@ -80,33 +79,19 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
         testName: `[${shortenedResourceName}]`,
         inputUris,
         outputRoot,
-        expectedOutputFiles,
+        expectedOutputUris,
         runUntil,
         disableRunnerIntegration: !shortenedResourceName.startsWith(runnerIntegration),
     };
 };
 
 /**
- * Read all expected output files.
+ * List all expected output files.
  *
- * @param outputRoot Where the actual output files are supposed to be located.
+ * @param outputRoot The directory, where output files are located.
  */
-const readExpectedOutputFiles = (outputRoot: URI): ExpectedOutputFile[] => {
-    return listTestFilesWithExtensions(uriToShortenedTestResourceName(outputRoot), ['py', 'map'])
-        .sort((a, b) => {
-            // List .py files first, so they get compared first
-            if (a.fsPath.endsWith('.map') && b.fsPath.endsWith('.py')) {
-                return 1;
-            }
-
-            return -1;
-        })
-        .map((uri) => {
-            return {
-                uri,
-                code: fs.readFileSync(uri.fsPath).toString(),
-            };
-        });
+const listExpectedOutputFiles = (outputRoot: URI): URI[] => {
+    return listTestFilesWithExtensions(uriToShortenedTestResourceName(outputRoot), ['py', 'map']);
 };
 
 /**
@@ -122,7 +107,7 @@ const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): Gene
         testName,
         inputUris: [],
         outputRoot: URI.file(''),
-        expectedOutputFiles: [],
+        expectedOutputUris: [],
         error,
         disableRunnerIntegration: false,
     };
@@ -143,9 +128,9 @@ interface GenerationTest extends TestDescription {
     outputRoot: URI;
 
     /**
-     * The expected generated code.
+     * The expected output files.
      */
-    expectedOutputFiles: ExpectedOutputFile[];
+    expectedOutputUris: URI[];
 
     /**
      * Location after which execution should be stopped.
@@ -153,24 +138,9 @@ interface GenerationTest extends TestDescription {
     runUntil?: Location;
 
     /**
-     * Whether the test should run with runner integration (memoization & placeholder saving) disabled
+     * Whether the test should run with runner integration (memoization & placeholder saving) disabled.
      */
     disableRunnerIntegration: boolean;
-}
-
-/**
- * A file containing the expected output.
- */
-interface ExpectedOutputFile {
-    /**
-     * URI of the output file.
-     */
-    uri: URI;
-
-    /**
-     * Content of the output file.
-     */
-    code: string;
 }
 
 /**

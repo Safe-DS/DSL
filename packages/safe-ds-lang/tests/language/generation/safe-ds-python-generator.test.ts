@@ -52,7 +52,7 @@ describe('generation', async () => {
 
         // File paths must match
         const actualOutputPaths = Array.from(actualOutputs.keys()).sort();
-        const expectedOutputPaths = test.expectedOutputFiles.map((file) => file.uri.toString()).sort();
+        const expectedOutputPaths = test.expectedOutputUris.map((uri) => uri.toString()).sort();
         expect(actualOutputPaths).toStrictEqual(expectedOutputPaths);
     });
 });
