@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { ast, createSafeDsServicesWithBuiltins, SafeDsServices, messages } from '@safe-ds/lang';
+import { ast, createSafeDsServicesWithBuiltins, messages, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
@@ -372,9 +372,7 @@ const validateDocuments = async function (
                 );
             }
         }
-        return `As file(s) ${errors
-            .map((validationInfo) => validationInfo.validatedDocument.uri.toString())
-            .join(', ')} has errors, the main pipeline cannot be run.`;
+        return 'Cannot run the main pipeline, because some files have errors.';
     }
     return undefined;
 };
