@@ -3,9 +3,13 @@ package tests.validation.other.declarations.segments.unusedParameters
 segment mySegment(
     // $TEST$ warning "This parameter is unused and can be removed."
     »unused«: Int,
+    // $TEST$ warning "This parameter is unused and can be removed."
+    »onlyHasBound«: Int,
     // $TEST$ no warning "This parameter is unused and can be removed."
     »used«: Int
-) {
+) where {
+    onlyHasBound < 0
+} {
     used;
 
     /*
