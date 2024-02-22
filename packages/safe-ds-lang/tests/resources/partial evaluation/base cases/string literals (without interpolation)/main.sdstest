@@ -4,6 +4,6 @@ pipeline test {
     // $TEST$ serialization "test"
     »"test"«;
 
-    // $TEST$ serialization "test	"
+    // $TEST$ serialization "test\t"
     »"test\t"«;
 }

@@ -75,3 +75,31 @@ const handleEscapeSequence = (input: string, index: number, endIndex: number): [
 
     return [current, index + 1];
 };
+
+const replacements = new Map([
+    ['\b', '\\b'],
+    ['\f', '\\f'],
+    ['\n', '\\n'],
+    ['\r', '\\r'],
+    ['\t', '\\t'],
+    ['\v', '\\v'],
+    ['\0', '\\0'],
+    ['"', '\\"'],
+    ['{', '\\{'],
+    ['\\', '\\\\'],
+]);
+
+/**
+ * Escape a string.
+ */
+export const escapeString = (input: string): string => {
+    let result = '';
+
+    for (let i = 0; i < input.length; i++) {
+        const current = input.charAt(i);
+        const replacement = replacements.get(current);
+        result += replacement ? replacement : current;
+    }
+
+    return result;
+};
