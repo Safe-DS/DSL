@@ -484,6 +484,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         formatter.property('name').prepend(oneSpace());
         formatter.property('parameterList').prepend(noSpace());
         formatter.property('resultList').prepend(oneSpace());
+        formatter.property('constraintList').prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
     }
 

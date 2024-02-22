@@ -1,5 +1,5 @@
-fun  myFunction ( )  where  { }
+segment  mySegment ( )  where  { }  { }
 
 // -----------------------------------------------------------------------------
 
-fun myFunction() where {}
+segment mySegment() where {} {}
