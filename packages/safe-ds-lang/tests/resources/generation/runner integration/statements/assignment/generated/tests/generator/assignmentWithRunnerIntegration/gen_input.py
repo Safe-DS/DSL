@@ -1,6 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
-import safeds_runner.server.pipeline_manager
+import safeds_runner
 
 # Segments ---------------------------------------------------------------------
 
@@ -17,15 +17,15 @@ def testSegment():
 def testPipeline():
     g()
     a, _, _ = g()
-    safeds_runner.server.pipeline_manager.runner_save_placeholder('a', a)
+    safeds_runner.save_placeholder('a', a)
     x, _, _ = g()
-    safeds_runner.server.pipeline_manager.runner_save_placeholder('x', x)
+    safeds_runner.save_placeholder('x', x)
     f1(a)
     f1(x)
     l, m, n = g()
-    safeds_runner.server.pipeline_manager.runner_save_placeholder('l', l)
-    safeds_runner.server.pipeline_manager.runner_save_placeholder('m', m)
-    safeds_runner.server.pipeline_manager.runner_save_placeholder('n', n)
+    safeds_runner.save_placeholder('l', l)
+    safeds_runner.save_placeholder('m', m)
+    safeds_runner.save_placeholder('n', n)
     f1(l)
     f1(m)
     f1(n)
