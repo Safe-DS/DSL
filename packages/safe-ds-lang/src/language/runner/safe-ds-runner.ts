@@ -104,8 +104,8 @@ export class SafeDsRunner {
                 this.logging.outputInfo(`Using safe-ds-runner version: ${versionString}`);
             }
         } catch (error) {
-            this.logging.outputError(`Could not start runner: ${error}`);
-            this.logging.displayError('The runner process could not be started.');
+            this.logging.outputError(`Could not start runner: ${error instanceof Error ? error.message : error}`);
+            this.logging.displayError(`The runner process could not be started: ${error instanceof Error ? error.message : error}`);
             return;
         }
         // Start the runner at the specified port
@@ -413,6 +413,9 @@ export class SafeDsRunner {
             });
             process.on('close', (code) => {
                 reject(new Error(`The subprocess shut down: ${code}`));
+            });
+            process.on('error', (err) => {
+                reject(new Error(`The subprocess could not be started (${err.message})`));
             });
         });
     }

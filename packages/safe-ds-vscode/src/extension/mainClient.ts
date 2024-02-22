@@ -382,6 +382,7 @@ const registerVSCodeWatchers = function () {
         if (event.affectsConfiguration('safe-ds.runner.command')) {
             // Try starting runner
             logOutput('Safe-DS Runner Command was updated');
+            services.runtime.Runner.updateRunnerCommand(vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!);
             if (!services.runtime.Runner.isPythonServerAvailable()) {
                 services.runtime.Runner.startPythonServer();
             } else {
