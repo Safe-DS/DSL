@@ -1,0 +1,27 @@
+package tests.scoping.parameterBounds.inSegment
+
+segment mySegment1(before: Int) {}
+
+segment mySegment2(
+    // $TEST$ target own
+    »own«: Int
+) where {
+    // $TEST$ references own
+    »own« < 0,
+
+    // $TEST$ unresolved
+    »before« < 0,
+
+    // $TEST$ unresolved
+    »after« < 0,
+
+    // $TEST$ unresolved
+    »notAParameter« < 0,
+
+    // $TEST$ unresolved
+    »unresolved« < 0
+} {}
+
+segment mySegment3(after: Int) {}
+
+class notAParameter

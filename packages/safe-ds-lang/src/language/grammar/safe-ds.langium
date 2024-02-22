@@ -320,6 +320,7 @@ fragment SdsPipelineFragment:
 interface SdsSegment extends SdsCallable, SdsModuleMember {
     visibility?: string
     resultList?: SdsResultList
+    constraintList?: SdsConstraintList
     body: SdsBlock
 }
 
@@ -329,6 +330,7 @@ fragment SdsSegmentFragment:
     name=ID
     parameterList=SdsParameterList
     resultList=SdsResultList?
+    constraintList=SdsConstraintList?
     body=SdsBlock
 ;
 
