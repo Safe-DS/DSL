@@ -7,22 +7,22 @@ enum MyEnum {
 }
 
 pipeline myPipeline {
-    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameterList
     »MyEnum.MyEnumVariantWithoutParameterList«;
 
-    // $TEST$ serialization MyEnumVariantWithoutParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameters
     »MyEnum.MyEnumVariantWithoutParameters«;
 
-    // $TEST$ serialization $type<MyEnumVariantWithParameters>
+    // $TEST$ serialization $type<MyEnum.MyEnumVariantWithParameters>
     »MyEnum.MyEnumVariantWithParameters«;
 
 
-    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameterList
     »MyEnum?.MyEnumVariantWithoutParameterList«;
 
-    // $TEST$ serialization MyEnumVariantWithoutParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameters
     »MyEnum?.MyEnumVariantWithoutParameters«;
 
-    // $TEST$ serialization $type<MyEnumVariantWithParameters>
+    // $TEST$ serialization $type<MyEnum.MyEnumVariantWithParameters>
     »MyEnum?.MyEnumVariantWithParameters«;
 }

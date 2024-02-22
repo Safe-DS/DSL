@@ -205,11 +205,11 @@ describe('type model', async () => {
         },
         {
             value: new EnumVariantType(enumVariant1, false),
-            expectedString: 'MyEnumVariant1',
+            expectedString: 'MyEnum1.MyEnumVariant1',
         },
         {
             value: new EnumVariantType(enumVariant1, true),
-            expectedString: 'MyEnumVariant1?',
+            expectedString: 'MyEnum1.MyEnumVariant1?',
         },
         {
             value: new TypeParameterType(typeParameter1, false),

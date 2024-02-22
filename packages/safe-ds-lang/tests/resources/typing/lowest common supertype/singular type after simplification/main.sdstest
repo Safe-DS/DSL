@@ -25,7 +25,7 @@ segment mySegment(
     // $TEST$ serialization List<E>
     »[p1]«;
 
-    // $TEST$ serialization List<V>
+    // $TEST$ serialization List<E.V>
     »[E.V]«;
 
     // $TEST$ serialization List<$type<C>>

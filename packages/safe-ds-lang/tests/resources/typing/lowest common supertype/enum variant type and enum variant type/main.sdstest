@@ -16,10 +16,10 @@ segment mySegment(
     v3: E3.V3,
     v3OrNull: E3.V3?
 ) {
-    // $TEST$ serialization List<V1>
+    // $TEST$ serialization List<E1.V1>
     »[v1, v1]«;
 
-    // $TEST$ serialization List<V1?>
+    // $TEST$ serialization List<E1.V1?>
     »[v1, v1OrNull]«;
 
 

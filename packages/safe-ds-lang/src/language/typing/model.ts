@@ -1,5 +1,6 @@
 import { isEmpty } from '../../helpers/collections.js';
 import {
+    isSdsEnum,
     SdsAbstractResult,
     SdsCallable,
     SdsClass,
@@ -11,7 +12,7 @@ import {
 } from '../generated/ast.js';
 import { getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
-import { stream } from 'langium';
+import { getContainerOfType, stream } from 'langium';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
@@ -510,6 +511,16 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
 
     override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
         return this;
+    }
+
+    override toString(): string {
+        const containingEnum = getContainerOfType(this.declaration, isSdsEnum);
+        if (containingEnum) {
+            return `${containingEnum.name}.${super.toString()}`;
+        } else {
+            /* c8 ignore next 2 */
+            return super.toString();
+        }
     }
 
     override withExplicitNullability(isExplicitlyNullable: boolean): EnumVariantType {
