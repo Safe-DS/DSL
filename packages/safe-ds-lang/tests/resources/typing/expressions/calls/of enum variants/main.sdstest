@@ -7,14 +7,14 @@ enum MyEnum {
 }
 
 pipeline myPipeline {
-    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameterList
     »MyEnum.MyEnumVariantWithoutParameterList()«;
 
     // $TEST$ serialization $unknown
     val alias1 = MyEnum.MyEnumVariantWithoutParameterList;
     »alias1()«;
 
-    // $TEST$ serialization MyEnumVariantWithoutParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameters
     »MyEnum.MyEnumVariantWithoutParameters()«;
 
     // $TEST$ serialization $unknown
@@ -28,10 +28,10 @@ pipeline myPipeline {
     val alias3 = MyEnum.MyEnumVariantWithoutParameters();
     »alias3()«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithParameters
     »MyEnum.MyEnumVariantWithParameters(1)«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithParameters
     val alias4 = MyEnum.MyEnumVariantWithParameters;
     »alias4(1)«;
 
@@ -45,14 +45,14 @@ pipeline myPipeline {
 
     // Null-safe calls -------------------------------------------------------------------------------------------------
 
-    // $TEST$ serialization MyEnumVariantWithoutParameterList
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameterList
     »MyEnum.MyEnumVariantWithoutParameterList?()«;
 
     // $TEST$ serialization $unknown
     val alias1 = MyEnum.MyEnumVariantWithoutParameterList;
     »alias1?()«;
 
-    // $TEST$ serialization MyEnumVariantWithoutParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameters
     »MyEnum.MyEnumVariantWithoutParameters?()«;
 
     // $TEST$ serialization $unknown
@@ -66,10 +66,10 @@ pipeline myPipeline {
     val alias3 = MyEnum.MyEnumVariantWithoutParameters?();
     »alias3?()«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithParameters
     »MyEnum.MyEnumVariantWithParameters(1)«;
 
-    // $TEST$ serialization MyEnumVariantWithParameters
+    // $TEST$ serialization MyEnum.MyEnumVariantWithParameters
     val alias4 = MyEnum.MyEnumVariantWithParameters;
     »alias4?(1)«;
 

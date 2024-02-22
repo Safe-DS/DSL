@@ -16,13 +16,13 @@ segment mySegment(
     v: Contravariant<E.V>,
     vOrNull: Contravariant<E.V?>,
 ) {
-    // $TEST$ serialization List<Contravariant<V>>
+    // $TEST$ serialization List<Contravariant<E.V>>
     »[any, v]«;
-    // $TEST$ serialization List<Contravariant<V>>
+    // $TEST$ serialization List<Contravariant<E.V>>
     »[anyOrNull, v]«;
-    // $TEST$ serialization List<Contravariant<V>>
+    // $TEST$ serialization List<Contravariant<E.V>>
     »[any, vOrNull]«;
-    // $TEST$ serialization List<Contravariant<V?>>
+    // $TEST$ serialization List<Contravariant<E.V?>>
     »[anyOrNull, vOrNull]«;
 
     // $TEST$ serialization List<Contravariant<Nothing>>

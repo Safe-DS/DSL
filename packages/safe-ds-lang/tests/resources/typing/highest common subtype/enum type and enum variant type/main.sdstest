@@ -17,13 +17,13 @@ segment mySegment(
     v2: Contravariant<E2.V2>,
     v2OrNull: Contravariant<E2.V2?>,
 ) {
-    // $TEST$ serialization List<Contravariant<V1>>
+    // $TEST$ serialization List<Contravariant<E1.V1>>
     »[e1, v1]«;
 
-    // $TEST$ serialization List<Contravariant<V1>>
+    // $TEST$ serialization List<Contravariant<E1.V1>>
     »[e1, v1OrNull]«;
 
-    // $TEST$ serialization List<Contravariant<V1?>>
+    // $TEST$ serialization List<Contravariant<E1.V1?>>
     »[e1OrNull, v1OrNull]«;
 
 

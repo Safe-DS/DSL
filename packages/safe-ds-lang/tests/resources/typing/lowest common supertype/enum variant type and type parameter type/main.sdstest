@@ -23,7 +23,7 @@ class D<
     p1: Any = »[v, unbounded]«,
     // $TEST$ serialization List<Any?>
     p2: Any = »[v, unboundedOrNull]«,
-    // $TEST$ serialization List<V1>
+    // $TEST$ serialization List<E.V1>
     p3: Any = »[v, boundedByEnumVariant]«,
     // $TEST$ serialization List<E>
     p4: Any = »[v, boundedByOtherEnumVariant]«,
