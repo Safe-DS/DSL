@@ -1076,7 +1076,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: unbounded,
             type2: upperBound,
-            expected: false,
+            expected: true,
         },
         {
             type1: upperBound,
@@ -1091,7 +1091,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: unresolved,
             type2: upperBound,
-            expected: false,
+            expected: true,
         },
         {
             type1: coreTypes.AnyOrNull,
@@ -1157,7 +1157,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: unbounded,
             type2: coreTypes.Any,
-            expected: false,
+            expected: true,
         },
         {
             type1: unbounded,

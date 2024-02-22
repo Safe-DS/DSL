@@ -345,8 +345,14 @@ export class SafeDsTypeChecker {
     }
 
     private typeParameterTypeIsSubtypeOf(type: TypeParameterType, other: Type, options: TypeCheckOptions): boolean {
-        const upperBound = this.typeComputer().computeUpperBound(type);
-        return this.isSubtypeOf(upperBound, other, options);
+        if (options.strictTypeParameterTypeCheck) {
+            const upperBound = this.typeComputer().computeUpperBound(type);
+            return this.isSubtypeOf(upperBound, other, options);
+        } else {
+            // We need to check whether `type` is assignable to `other` after substituting `type` with its lower bound.
+            // Since this bound is `Nothing`, which is a subtype of everything, it boils down to a nullability check.
+            return !type.isExplicitlyNullable || other.isExplicitlyNullable;
+        }
     }
 
     private unionTypeIsSubtypeOf(type: UnionType, other: Type, options: TypeCheckOptions): boolean {
