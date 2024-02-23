@@ -3,6 +3,7 @@ import { ExtensionToWebview, WebviewToExtension } from './message-types.js';
 import { logAny, logOutput } from '../../extension/output.js';
 import { LanguageClient, RequestType } from 'vscode-languageclient/node.js';
 import * as vscode from 'vscode';
+import { GetAst, GetAstTypes } from '../../../../safe-ds-lang/src/language/custom-editor/getAst.js';
 
 export class MessageHandler {
     private static instance: MessageHandler;
@@ -47,18 +48,12 @@ export class MessageHandler {
     public get languageServer() {
         const client = this.client;
         return {
-            async getAST(documentUri: vscode.Uri) {
-                interface MyCustomRequestParams {
-                    uri: vscode.Uri;
-                }
-                interface MyCustomRequestResponse {
-                    json: string;
-                }
-                const MyCustomRequestType = new RequestType<MyCustomRequestParams, MyCustomRequestResponse, void>(
-                    'custom-editor/getAST',
+            async getAst(documentUri: vscode.Uri) {
+                // await client.onReady(); // Ensure the client is ready before sending requests // This is suggested in every tutorial, but the method doesn't exist?
+                const response = await client.sendRequest(
+                    new RequestType<GetAstTypes.Message, GetAstTypes.Response, void>(GetAst.method),
+                    { uri: documentUri },
                 );
-                // await client.onReady(); // Ensure the client is ready before sending requests
-                const response = await client.sendRequest(MyCustomRequestType, { uri: documentUri });
                 logAny(response);
             },
         };

@@ -1,6 +1,6 @@
 import { LangiumSharedServices } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { GenericRequestType } from './message-types.js';
+import { GenericRequestType } from './types.js';
 import * as vscode from 'vscode';
 
 export namespace GetAstTypes {
@@ -29,7 +29,7 @@ const getAstHandler = async (
     return { json: AST };
 };
 
-export const getAst: GenericRequestType = {
+export const GetAst: GenericRequestType = {
     method: 'custom-editor/getAST',
     handler:
         (sharedServices: LangiumSharedServices, safeDsServices: SafeDsServices) => (message: GetAstTypes.Message) =>
