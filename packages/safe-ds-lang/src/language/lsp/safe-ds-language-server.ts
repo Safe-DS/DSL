@@ -47,6 +47,8 @@ import {
     type TypeHierarchySupertypesParams,
 } from 'vscode-languageserver';
 import { TypeHierarchyProvider } from './safe-ds-type-hierarchy-provider.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { addDiagramHandler } from '../custom-editor/safe-ds-custom-editor-provider.js';
 
 interface LangiumAddedServices {
     lsp: {
@@ -74,47 +76,49 @@ export class SafeDsLanguageServer extends DefaultLanguageServer {
     }
 }
 
-export const startLanguageServer = (services: LangiumSharedServices): void => {
-    const connection = services.lsp.Connection;
+export const startLanguageServer = (sharedServices: LangiumSharedServices, safeDsServices: SafeDsServices): void => {
+    const connection = sharedServices.lsp.Connection;
     if (!connection) {
         throw new Error('Starting a language server requires the languageServer.Connection service to be set.');
     }
 
-    addDocumentsHandler(connection, services);
-    addDiagnosticsHandler(connection, services);
-    addCompletionHandler(connection, services);
-    addFindReferencesHandler(connection, services);
-    addDocumentSymbolHandler(connection, services);
-    addGotoDefinitionHandler(connection, services);
-    addGoToTypeDefinitionHandler(connection, services);
-    addGoToImplementationHandler(connection, services);
-    addDocumentHighlightsHandler(connection, services);
-    addFoldingRangeHandler(connection, services);
-    addFormattingHandler(connection, services);
-    addCodeActionHandler(connection, services);
-    addRenameHandler(connection, services);
-    addHoverHandler(connection, services);
-    addInlayHintHandler(connection, services);
-    addSemanticTokenHandler(connection, services);
-    addExecuteCommandHandler(connection, services);
-    addSignatureHelpHandler(connection, services);
-    addCallHierarchyHandler(connection, services);
-    addTypeHierarchyHandler(connection, services);
-    addCodeLensHandler(connection, services);
-    addDocumentLinkHandler(connection, services);
-    addConfigurationChangeHandler(connection, services);
-    addGoToDeclarationHandler(connection, services);
-    addWorkspaceSymbolHandler(connection, services);
+    addDocumentsHandler(connection, sharedServices);
+    addDiagnosticsHandler(connection, sharedServices);
+    addCompletionHandler(connection, sharedServices);
+    addFindReferencesHandler(connection, sharedServices);
+    addDocumentSymbolHandler(connection, sharedServices);
+    addGotoDefinitionHandler(connection, sharedServices);
+    addGoToTypeDefinitionHandler(connection, sharedServices);
+    addGoToImplementationHandler(connection, sharedServices);
+    addDocumentHighlightsHandler(connection, sharedServices);
+    addFoldingRangeHandler(connection, sharedServices);
+    addFormattingHandler(connection, sharedServices);
+    addCodeActionHandler(connection, sharedServices);
+    addRenameHandler(connection, sharedServices);
+    addHoverHandler(connection, sharedServices);
+    addInlayHintHandler(connection, sharedServices);
+    addSemanticTokenHandler(connection, sharedServices);
+    addExecuteCommandHandler(connection, sharedServices);
+    addSignatureHelpHandler(connection, sharedServices);
+    addCallHierarchyHandler(connection, sharedServices);
+    addTypeHierarchyHandler(connection, sharedServices);
+    addCodeLensHandler(connection, sharedServices);
+    addDocumentLinkHandler(connection, sharedServices);
+    addConfigurationChangeHandler(connection, sharedServices);
+    addGoToDeclarationHandler(connection, sharedServices);
+    addWorkspaceSymbolHandler(connection, sharedServices);
+
+    addDiagramHandler(connection, sharedServices, safeDsServices);
 
     connection.onInitialize((params) => {
-        return services.lsp.LanguageServer.initialize(params);
+        return sharedServices.lsp.LanguageServer.initialize(params);
     });
     connection.onInitialized((params) => {
-        return services.lsp.LanguageServer.initialized(params);
+        return sharedServices.lsp.LanguageServer.initialized(params);
     });
 
     // Make the text document manager listen on the connection for open, change and close text document events.
-    const documents = services.workspace.TextDocuments;
+    const documents = sharedServices.workspace.TextDocuments;
     documents.listen(connection);
 
     // Start listening for incoming messages from the client.

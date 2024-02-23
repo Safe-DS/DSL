@@ -32,7 +32,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
     acceptRunRequests(context);
 
     // Setup for Custom Editor
-    SafeDSCustomTextEditorProvider.registerProvider(context);
+    SafeDSCustomTextEditorProvider.registerProvider(context, client);
     SafeDSCustomTextEditorProvider.registerCommands(context);
 };
 

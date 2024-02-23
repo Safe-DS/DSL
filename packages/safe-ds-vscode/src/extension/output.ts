@@ -113,7 +113,7 @@ export const logOutput = function (value: string) {
  */
 export const logAny = function (value: any) {
     logOutputChannel!.info(value);
-    console.log(value);
+    console.dir(value, { depth: null });
 };
 
 /**

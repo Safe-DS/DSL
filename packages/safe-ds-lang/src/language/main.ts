@@ -10,9 +10,9 @@ export const startLanguageServer = () => {
 
     // Inject the shared services and language-specific services
     // @ts-ignore
-    const { shared } = createSafeDsServices({ connection, ...NodeFileSystem });
+    const { shared, SafeDs } = createSafeDsServices({ connection, ...NodeFileSystem });
 
     // Start the language server with the shared services
-    doStartLanguageServer(shared);
+    doStartLanguageServer(shared, SafeDs);
 };
 /* c8 ignore stop */

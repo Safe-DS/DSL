@@ -1,5 +1,6 @@
 //import type { ToExtensionMessage } from '../../types/shared-eda-vscode/messaging.js';
 
+//Todo: This needs some cleaning up
 declare global {
     interface Window {
         injVscode: {

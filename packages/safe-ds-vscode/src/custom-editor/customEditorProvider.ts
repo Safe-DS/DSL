@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { logOutput } from '../extension/output.js';
 import { MessageHandler } from './messaging/messageHandler.js';
+import { LanguageClient } from 'vscode-languageclient/node.js';
 
 /**
  * Provider for the Safe-DS custom visual editor.
@@ -17,10 +18,13 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         supportsMultipleEditorsPerDocument: false,
     };
 
-    constructor(private readonly context: vscode.ExtensionContext) {}
+    constructor(
+        private readonly context: vscode.ExtensionContext,
+        private readonly client: LanguageClient,
+    ) {}
 
-    public static registerProvider(context: vscode.ExtensionContext): void {
-        const provider = new SafeDSCustomTextEditorProvider(context);
+    public static registerProvider(context: vscode.ExtensionContext, client: LanguageClient): void {
+        const provider = new SafeDSCustomTextEditorProvider(context, client);
         context.subscriptions.push(
             vscode.window.registerCustomEditorProvider(
                 SafeDSCustomTextEditorProvider.viewType,
@@ -74,11 +78,12 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         webviewPanel.webview.options = {
             enableScripts: true,
         };
-        const messageHandler = MessageHandler.getInstance(webviewPanel.webview);
-        this.context.subscriptions.push(messageHandler.listenToMessages());
+        const messageHandler = MessageHandler.getInstance(webviewPanel.webview, this.client);
+        this.context.subscriptions.push(messageHandler.webview.listenToMessages());
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 
-        messageHandler.sendMessageTest('Hi from Extension');
+        messageHandler.webview.sendMessageTest('Hi from Extension');
+        await messageHandler.languageServer.getAST(document.uri);
     }
 
     /**
@@ -141,11 +146,6 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 				<title>"${title}"</title>
 			</head>
 			<body>
-                <div>
-                    HELLO WORLD
-                </div>
-				<div class="root"/>
-
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
