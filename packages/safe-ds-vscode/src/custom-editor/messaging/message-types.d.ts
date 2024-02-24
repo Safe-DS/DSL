@@ -3,27 +3,25 @@ interface Message {
     value: any;
 }
 
-/*
- *  Extension to Webview
- */
-interface ExtensionToWebviewTest extends Message {
-    command: 'test';
-    value: string;
+namespace NsExtensionToWebview {
+    export interface Test extends Message {
+        command: 'test';
+        value: string;
+    }
+
+    export interface Update extends Message {
+        command: 'update';
+        value: number;
+    }
 }
 
-interface ExtensionToWebviewUpdate extends Message {
-    command: 'update';
-    value: number;
+export type ExtensionToWebview = NsExtensionToWebview.Test | NsExtensionToWebview.Update;
+
+namespace NsWebviewToExtension {
+    export interface Test extends Message {
+        command: 'test';
+        value: string;
+    }
 }
 
-export type ExtensionToWebview = ExtensionToWebviewTest | ExtensionToWebviewUpdate;
-
-/*
- *  Webview to Extension
- */
-interface WebviewToExtensionTest extends Message {
-    command: 'test';
-    value: string;
-}
-
-export type WebviewToExtension = WebviewToExtensionTest;
+export type WebviewToExtension = NsWebviewToExtension.Test;

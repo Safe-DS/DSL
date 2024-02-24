@@ -4,12 +4,12 @@ import { GenericRequestType } from './types.js';
 import * as vscode from 'vscode';
 
 export namespace GetAstTypes {
-    export interface Message {
+    export type Message = {
         uri: vscode.Uri;
-    }
-    export interface Response {
+    };
+    export type Response = {
         json: string;
-    }
+    };
 }
 
 const getAstHandler = async (
