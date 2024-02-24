@@ -342,6 +342,7 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
 };
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
+    await vscode.workspace.saveAll();
     await runPipelineFile(filePath, crypto.randomUUID());
 };
 
