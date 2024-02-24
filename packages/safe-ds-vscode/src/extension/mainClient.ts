@@ -153,9 +153,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
         });
     };
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', commandRunPipelineFile),
-    );
+    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));
 
     context.subscriptions.push(
         registerCommandWithCheck('safe-ds.runEdaFromContext', () => {
