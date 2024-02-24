@@ -153,9 +153,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
         });
     };
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('extension.safe-ds.runPipelineFile', commandRunPipelineFile),
-    );
+    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));
 
     context.subscriptions.push(
         registerCommandWithCheck('safe-ds.runEdaFromContext', () => {
@@ -344,6 +342,7 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
 };
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
+    await vscode.workspace.saveAll();
     await runPipelineFile(filePath, crypto.randomUUID());
 };
 
