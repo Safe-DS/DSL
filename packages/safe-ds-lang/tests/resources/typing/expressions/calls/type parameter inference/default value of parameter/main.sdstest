@@ -1,0 +1,13 @@
+package tests.typing.expressions.calls.typeParameterInference.defaultValueOfParameter
+
+class C1<T>(p1: T = 0)
+
+@Pure fun f1<T>(p1: T = 0) -> r1: T
+
+pipeline myPipeline {
+    // $TEST$ serialization C1<literal<0>>
+    »C1()«;
+
+    // $TEST$ serialization literal<0>
+    »f1()«;
+}

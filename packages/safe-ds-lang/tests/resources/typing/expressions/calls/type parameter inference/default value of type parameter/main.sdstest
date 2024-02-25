@@ -1,0 +1,19 @@
+package tests.typing.expressions.calls.typeParameterInference.defaultValueOfTypeParameter
+
+class C1<T>()
+class C2<T = Int>()
+
+@Pure fun f1<T>() -> r1: T
+@Pure fun f2<T = Int>() -> r1: T
+
+pipeline myPipeline {
+    // $TEST$ serialization C1<Nothing>
+    »C1()«;
+    // $TEST$ serialization C1<Int>
+    »C2()«;
+
+    // $TEST$ serialization Nothing
+    »f1()«;
+    // $TEST$ serialization Int
+    »f2()«;
+}

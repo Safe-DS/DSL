@@ -1,0 +1,58 @@
+package tests.typing.expressions.calls.typeParameterInference.differingVariance
+
+class Contravariant<in T>
+class Invariant<T>
+class Covariant<out T>
+
+class C1<T>(p1: Contravariant<T>, p2: Invariant<T>)
+class C2<T>(p1: Contravariant<T>, p2: Covariant<T>)
+
+@Pure fun f1<T>(p1: Contravariant<T>, p2: Invariant<T>) -> r1: T
+@Pure fun f2<T>(p1: Contravariant<T>, p3: Covariant<T>) -> r1: T
+
+segment mySegment(
+    a1: Contravariant<Nothing>,
+    a2: Invariant<Nothing>,
+    a3: Covariant<Nothing>,
+
+    b1: Contravariant<Number>,
+    b2: Invariant<Number>,
+    b3: Covariant<Number>,
+) {
+    // $TEST$ serialization C1<Nothing>
+    »C1(a1, a2)«;
+    // $TEST$ serialization C1<Nothing>
+    »C1(a1, b2)«;
+    // $TEST$ serialization C1<Number>
+    »C1(b1, a2)«;
+    // $TEST$ serialization C1<Number>
+    »C1(b1, b2)«;
+
+    // $TEST$ serialization C1<Nothing>
+    »C2(a1, a3)«;
+    // $TEST$ serialization C1<Nothing>
+    »C2(a1, b3)«;
+    // $TEST$ serialization C1<Number>
+    »C2(b1, a3)«;
+    // $TEST$ serialization C1<Number>
+    »C2(b1, b3)«;
+
+    // $TEST$ serialization Nothing
+    »f1(a1, a2)«;
+    // $TEST$ serialization Nothing
+    »f1(a1, b2)«;
+    // $TEST$ serialization Number
+    »f1(b1, a2)«;
+    // $TEST$ serialization Number
+    »f1(b1, b2)«;
+
+    // $TEST$ serialization Nothing
+    »f2(a1, a3)«;
+    // $TEST$ serialization Nothing
+    »f2(a1, b3)«;
+    // $TEST$ serialization Number
+    »f2(b1, a3)«;
+    // $TEST$ serialization Number
+    »f2(b1, b3)«;
+
+}
