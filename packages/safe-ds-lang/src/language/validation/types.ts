@@ -22,6 +22,7 @@ import {
     SdsPrefixOperation,
     SdsResult,
     SdsTypeCast,
+    SdsTypeParameter,
     SdsYield,
 } from '../generated/ast.js';
 import { getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
@@ -251,6 +252,44 @@ export const mapMustNotContainNamedTuples = (services: SafeDsServices) => {
     };
 };
 
+export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsNamedType, accept: ValidationAcceptor): void => {
+        const type = typeComputer.computeType(node);
+        if (!(type instanceof ClassType) || isEmpty(type.substitutions)) {
+            return;
+        }
+
+        for (const typeArgument of getTypeArguments(node)) {
+            const typeParameter = nodeMapper.typeArgumentToTypeParameter(typeArgument);
+            if (!typeParameter) {
+                continue;
+            }
+
+            const typeArgumentType = type.substitutions.get(typeParameter);
+            if (!typeArgumentType) {
+                /* c8 ignore next 2 */
+                continue;
+            }
+
+            const upperBound = typeComputer
+                .computeUpperBound(typeParameter, { stopAtTypeParameterType: true })
+                .substituteTypeParameters(type.substitutions);
+
+            if (!typeChecker.isSubtypeOf(typeArgumentType, upperBound, { strictTypeParameterTypeCheck: true })) {
+                accept('error', `Expected type '${upperBound}' but got '${typeArgumentType}'.`, {
+                    node: typeArgument,
+                    property: 'value',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+        }
+    };
+};
+
 export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDsServices) => {
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
@@ -320,6 +359,28 @@ export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) 
             accept('error', 'Type casts can only be applied to expressions of unknown type.', {
                 // Using property: "expression" does not work here, probably due to eclipse-langium/langium#1218
                 node: node.expression,
+                code: CODE_TYPE_MISMATCH,
+            });
+        }
+    };
+};
+
+export const typeParameterDefaultValueMustMatchUpperBound = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsTypeParameter, accept: ValidationAcceptor): void => {
+        if (!node.defaultValue || !node.upperBound) {
+            return;
+        }
+
+        const defaultValueType = typeComputer.computeType(node.defaultValue);
+        const upperBoundType = typeComputer.computeUpperBound(node, { stopAtTypeParameterType: true });
+
+        if (!typeChecker.isSubtypeOf(defaultValueType, upperBoundType, { strictTypeParameterTypeCheck: true })) {
+            accept('error', `Expected type '${upperBoundType}' but got '${defaultValueType}'.`, {
+                node,
+                property: 'defaultValue',
                 code: CODE_TYPE_MISMATCH,
             });
         }
