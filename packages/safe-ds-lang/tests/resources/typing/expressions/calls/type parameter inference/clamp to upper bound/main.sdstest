@@ -1,13 +1,19 @@
 package tests.typing.expressions.calls.typeParameterInference.clampToUpperBound
 
-class C1<T sub Int>(p1: T)
+class C1<T sub Int = String>(p1: T)
 
-@Pure fun f1<T sub Int>(p1: T) -> r1: T
+@Pure fun f1<T sub Int = String>(p1: T) -> r1: T
 
 pipeline myPipeline {
     // $TEST$ serialization C1<Int>
     »C1("")«;
 
+    // $TEST$ serialization C1<Int>
+    »C1()«;
+
     // $TEST$ serialization Int
     »f1("")«;
+
+    // $TEST$ serialization Int
+    »f1()«;
 }

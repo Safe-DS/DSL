@@ -832,15 +832,17 @@ export class SafeDsTypeComputer {
 
         // Normalize substitutions
         for (const [typeParameter, substitution] of state.substitutions) {
+            let newSubstitution = substitution;
+
             // Replace unknown types by default values or lower bound (Nothing)
-            if (substitution === UnknownType) {
+            if (newSubstitution === UnknownType) {
                 const defaultValueType = this.computeType(typeParameter.defaultValue);
                 if (defaultValueType === UnknownType) {
                     state.substitutions.set(typeParameter, this.coreTypes.Nothing);
+                    continue;
                 } else {
-                    state.substitutions.set(typeParameter, defaultValueType);
+                    newSubstitution = defaultValueType;
                 }
-                continue;
             }
 
             // Clamp to upper bound
@@ -848,9 +850,11 @@ export class SafeDsTypeComputer {
                 stopAtTypeParameterType: true,
             }).substituteTypeParameters(state.substitutions);
 
-            if (!this.typeChecker.isSubtypeOf(substitution, upperBound)) {
-                state.substitutions.set(typeParameter, upperBound);
+            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
+                newSubstitution = upperBound;
             }
+
+            state.substitutions.set(typeParameter, newSubstitution);
         }
 
         return state.substitutions;
