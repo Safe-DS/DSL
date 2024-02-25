@@ -166,6 +166,7 @@ import {
     listMustNotContainNamedTuples,
     mapMustNotContainNamedTuples,
     namedTypeMustSetAllTypeParameters,
+    namedTypeTypeArgumentsMustMatchBounds,
     parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
     prefixOperationOperandMustHaveCorrectType,
@@ -314,6 +315,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeMustSetAllTypeParameters(services),
             namedTypeTypeArgumentListShouldBeNeeded(services),
             namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
+            namedTypeTypeArgumentsMustMatchBounds(services),
         ],
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),

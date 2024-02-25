@@ -252,6 +252,44 @@ export const mapMustNotContainNamedTuples = (services: SafeDsServices) => {
     };
 };
 
+export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+    const typeChecker = services.types.TypeChecker;
+    const typeComputer = services.types.TypeComputer;
+
+    return (node: SdsNamedType, accept: ValidationAcceptor): void => {
+        const type = typeComputer.computeType(node);
+        if (!(type instanceof ClassType) || isEmpty(type.substitutions)) {
+            return;
+        }
+
+        for (const typeArgument of getTypeArguments(node)) {
+            const typeParameter = nodeMapper.typeArgumentToTypeParameter(typeArgument);
+            if (!typeParameter) {
+                continue;
+            }
+
+            const typeArgumentType = type.substitutions.get(typeParameter);
+            if (!typeArgumentType) {
+                /* c8 ignore next 2 */
+                continue;
+            }
+
+            const upperBound = typeComputer
+                .computeUpperBound(typeParameter, { stopAtTypeParameterType: true })
+                .substituteTypeParameters(type.substitutions);
+
+            if (!typeChecker.isSubtypeOf(typeArgumentType, upperBound, { strictTypeParameterTypeCheck: true })) {
+                accept('error', `Expected type '${upperBound}' but got '${typeArgumentType}'.`, {
+                    node: typeArgument,
+                    property: 'value',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+        }
+    };
+};
+
 export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDsServices) => {
     const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
