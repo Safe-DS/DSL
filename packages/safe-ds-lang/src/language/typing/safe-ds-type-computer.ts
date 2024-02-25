@@ -862,9 +862,8 @@ export class SafeDsTypeComputer {
         currentVariance: Variance,
         state: ComputeTypeParameterSubstitutionsForParametersState,
     ) {
-        console.log(parameterType.toString(), argumentType.toString(), currentVariance);
-
-        if (argumentType instanceof TypeParameterType) {
+        if (argumentType instanceof TypeParameterType && state.substitutions.has(argumentType.declaration)) {
+            // Can happen for lambdas without manifest parameter types. We gain no information here.
             return;
         } else if (parameterType instanceof CallableType && argumentType instanceof CallableType) {
             // Compare parameters
@@ -917,6 +916,7 @@ export class SafeDsTypeComputer {
             }
 
             if (!matchingParameterType || !matchingArgumentType) {
+                /* c8 ignore next 2 */
                 return;
             }
 
@@ -925,6 +925,7 @@ export class SafeDsTypeComputer {
                 const argumentTypeSubstitutions = matchingParameterType.substitutions.get(typeParameter);
                 const parameterTypeSubstitutions = matchingArgumentType.substitutions.get(typeParameter);
                 if (!argumentTypeSubstitutions || !parameterTypeSubstitutions) {
+                    /* c8 ignore next 2 */
                     continue;
                 }
 
@@ -948,6 +949,7 @@ export class SafeDsTypeComputer {
             const currentSubstitution = state.substitutions.get(parameterType.declaration);
             const remainingVariance = state.remainingVariances.get(parameterType.declaration);
             if (!currentSubstitution) {
+                /* c8 ignore next 2 */
                 return;
             }
 
@@ -967,11 +969,11 @@ export class SafeDsTypeComputer {
     private flippedVariance(variance: Variance): Variance {
         if (variance === 'covariant') {
             return 'contravariant';
-        } else if (variance === 'contravariant') {
+        } /* c8 ignore start */ else if (variance === 'contravariant') {
             return 'covariant';
         } else {
             return variance;
-        }
+        } /* c8 ignore stop */
     }
 
     // -----------------------------------------------------------------------------------------------------------------

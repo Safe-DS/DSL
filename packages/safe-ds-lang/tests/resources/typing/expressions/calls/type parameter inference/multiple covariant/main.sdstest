@@ -7,6 +7,8 @@ class SomeCovariant<out T> sub Covariant<T>
 class C1<T>(p1: T, p2: Covariant<T>, p3: () -> r1: T)
 @Pure fun f1<T>(p1: T, p2: Covariant<T>, p3: () -> r1: T) -> r1: T
 
+class SomeClass()
+
 segment mySegment(
     a1: Int,
     a2: Number,
@@ -30,6 +32,8 @@ segment mySegment(
     »C1(a1, b3, c)«;
     // $TEST$ serialization C1<Any>
     »C1(a1, b1, () -> "")«;
+    // $TEST$ serialization C1<Any>
+    »C1(a1, b1, SomeClass)«;
 
     // $TEST$ serialization Number
     »f1(a1, b1, c)«;
@@ -43,4 +47,6 @@ segment mySegment(
     »f1(a1, b3, c)«;
     // $TEST$ serialization Any
     »f1(a1, b1, () -> "")«;
+    // $TEST$ serialization Any
+    »f1(a1, b1, SomeClass)«;
 }
