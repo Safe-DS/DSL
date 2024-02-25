@@ -1,0 +1,16 @@
+package tests.typing.expressions.calls.typeParameterInference.singleContravariant
+
+class Contravariant<in T>
+
+class C1<T>(p1: Contravariant<T>)
+@Pure fun f1<T>(p1: Contravariant<T>) -> r1: T
+
+segment mySegment(
+    p1: Contravariant<Int>,
+) {
+    // $TEST$ serialization C1<Int>
+    »C1(p1)«;
+
+    // $TEST$ serialization Int
+    »f1(p1)«;
+}

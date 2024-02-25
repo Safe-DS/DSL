@@ -1,0 +1,40 @@
+package tests.typing.expressions.calls.typeParameterInference.deepNesting
+
+class Covariant<out T>
+class CovariantNumber sub Covariant<Number>
+class SomeCovariant<out T> sub Covariant<T>
+
+class Contravariant<in T>
+
+class C1<T>(p1: Contravariant<Covariant<T>>, p2: Contravariant<Covariant<T>>)
+@Pure fun f1<T>(p1: Contravariant<Covariant<T>>, p2: Contravariant<Covariant<T>>) -> r1: T
+
+segment mySegment(
+    a1: Contravariant<Covariant<Int>>,
+    a2: Contravariant<Covariant<Number>>,
+    a3: Contravariant<Covariant<Any?>>,
+    a4: Contravariant<CovariantNumber>,
+    a5: Contravariant<SomeCovariant<String?>>,
+) {
+    // $TEST$ serialization C1<Int>
+    »C1(a2, a1)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a2, a2)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a2, a3)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a2, a4)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a2, a5)«;
+
+    // $TEST$ serialization Int
+    »f1(a2, a1)«;
+    // $TEST$ serialization Number
+    »f1(a2, a2)«;
+    // $TEST$ serialization Number
+    »f1(a2, a3)«;
+    // $TEST$ serialization Number
+    »f1(a2, a4)«;
+    // $TEST$ serialization Number
+    »f1(a2, a5)«;
+}

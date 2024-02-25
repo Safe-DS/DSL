@@ -339,7 +339,7 @@ export const getTypeArguments = (node: SdsTypeArgumentList | SdsNamedType | unde
 };
 
 export const getTypeParameters = (
-    node: SdsTypeParameterList | SdsNamedTypeDeclaration | undefined,
+    node: SdsTypeParameterList | SdsCallable | SdsNamedTypeDeclaration | undefined,
 ): SdsTypeParameter[] => {
     if (!node) {
         return [];
@@ -348,6 +348,8 @@ export const getTypeParameters = (
     if (isSdsTypeParameterList(node)) {
         return node.typeParameters;
     } else if (isSdsClass(node)) {
+        return getTypeParameters(node.typeParameterList);
+    } else if (isSdsFunction(node)) {
         return getTypeParameters(node.typeParameterList);
     } /* c8 ignore start */ else {
         return [];

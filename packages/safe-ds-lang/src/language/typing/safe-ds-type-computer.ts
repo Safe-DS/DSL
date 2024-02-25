@@ -55,6 +55,7 @@ import {
     SdsAssignee,
     type SdsBlockLambda,
     SdsCall,
+    SdsCallable,
     SdsCallableType,
     SdsClass,
     SdsDeclaration,
@@ -75,6 +76,7 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import {
+    getArguments,
     getAssignees,
     getLiterals,
     getParameters,
@@ -453,10 +455,31 @@ export class SafeDsTypeComputer {
             if (!isSdsAnnotation(nonNullableReceiverType.callable)) {
                 result = nonNullableReceiverType.outputType;
             }
+
+            // Substitute type parameters
+            if (isSdsFunction(nonNullableReceiverType.callable)) {
+                const substitutions = this.computeTypeParameterSubstitutionsForCallable(
+                    nonNullableReceiverType.callable,
+                    node,
+                );
+
+                result = result.substituteTypeParameters(substitutions);
+            }
         } else if (nonNullableReceiverType instanceof StaticType) {
             const instanceType = nonNullableReceiverType.instanceType;
             if (isSdsCallable(instanceType.declaration)) {
                 result = instanceType;
+            }
+
+            // Substitute type parameters
+            if (instanceType instanceof ClassType) {
+                const substitutions = this.computeTypeParameterSubstitutionsForCallable(instanceType.declaration, node);
+
+                result = this.factory.createClassType(
+                    instanceType.declaration,
+                    substitutions,
+                    instanceType.isExplicitlyNullable,
+                );
             }
         }
 
@@ -615,11 +638,14 @@ export class SafeDsTypeComputer {
             return unparameterizedType;
         }
 
-        const substitutions = this.getTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
+        const substitutions = this.computeTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
         return this.factory.createClassType(unparameterizedType.declaration, substitutions, node.isNullable);
     }
 
-    private getTypeParameterSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
+    private computeTypeParameterSubstitutionsForNamedType(
+        node: SdsNamedType,
+        clazz: SdsClass,
+    ): TypeParameterSubstitutions {
         const typeParameters = getTypeParameters(clazz);
         if (isEmpty(typeParameters)) {
             return NO_SUBSTITUTIONS;
@@ -683,6 +709,38 @@ export class SafeDsTypeComputer {
         } /* c8 ignore stop */
     }
 
+    computeCallableTypeForStaticType(type: StaticType): Type {
+        const instanceType = type.instanceType;
+        if (instanceType instanceof ClassType) {
+            const declaration = instanceType.declaration;
+            if (!declaration.parameterList) {
+                return UnknownType;
+            }
+
+            const parameterEntries = this.factory.createNamedTupleType(
+                ...getParameters(declaration).map((it) => new NamedTupleEntry(it, it.name, this.computeType(it))),
+            );
+            const resultEntries = this.factory.createNamedTupleType(
+                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
+            );
+
+            return this.factory.createCallableType(declaration, undefined, parameterEntries, resultEntries);
+        } else if (instanceType instanceof EnumVariantType) {
+            const declaration = instanceType.declaration;
+
+            const parameterEntries = this.factory.createNamedTupleType(
+                ...getParameters(declaration).map((it) => new NamedTupleEntry(it, it.name, this.computeType(it))),
+            );
+            const resultEntries = this.factory.createNamedTupleType(
+                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
+            );
+
+            return this.factory.createCallableType(declaration, undefined, parameterEntries, resultEntries);
+        } else {
+            return UnknownType;
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Type parameter bounds
     // -----------------------------------------------------------------------------------------------------------------
@@ -718,6 +776,204 @@ export class SafeDsTypeComputer {
         } else {
             return this.doComputeUpperBound(boundType, options);
         }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Type parameter substitutions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Computes substitutions for the type parameters of the given callable in the context of the given call.
+     *
+     * @param callable The callable with the type parameters to compute substitutions for.
+     * @param call The call to compute substitutions for.
+     * @returns The computed substitutions for the type parameters of the callable.
+     */
+    computeTypeParameterSubstitutionsForCallable(callable: SdsCallable, call: SdsCall): TypeParameterSubstitutions {
+        const typeParameters = getTypeParameters(callable);
+        if (isEmpty(typeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const parameters = getParameters(callable);
+        const args = getArguments(call);
+
+        const parametersToArguments = this.nodeMapper.parametersToArguments(parameters, args);
+        const parameterTypesToArgumentTypes: [Type, Type][] = parameters.map((parameter) => {
+            const argument = parametersToArguments.get(parameter);
+            return [this.computeType(parameter.type), this.computeType(argument?.value ?? parameter.defaultValue)];
+        });
+
+        return this.computeTypeParameterSubstitutionsForParameters(typeParameters, parameterTypesToArgumentTypes);
+    }
+
+    /**
+     * Computes substitutions for the given type parameters in a list of parameter types based on the corresponding
+     * argument types.
+     *
+     * @param typeParameters The type parameters to compute substitutions for.
+     * @param parameterTypesToArgumentTypes Pairs of parameter types and the corresponding argument types.
+     * @returns The computed substitutions for the type parameters in the parameter types.
+     */
+    computeTypeParameterSubstitutionsForParameters(
+        typeParameters: SdsTypeParameter[],
+        parameterTypesToArgumentTypes: [Type, Type][],
+    ): TypeParameterSubstitutions {
+        // Build initial state
+        const state: ComputeTypeParameterSubstitutionsForParametersState = {
+            substitutions: new Map(typeParameters.map((it) => [it, UnknownType])),
+            remainingVariances: new Map(typeParameters.map((it) => [it, 'bivariant'])),
+        };
+
+        // Compute substitutions
+        for (const [parameterType, argumentType] of parameterTypesToArgumentTypes) {
+            this.computeTypeParameterSubstitutionsForParameter(parameterType, argumentType, 'covariant', state);
+        }
+
+        // Normalize substitutions
+        for (const [typeParameter, substitution] of state.substitutions) {
+            // Replace unknown types by default values or lower bound (Nothing)
+            if (substitution === UnknownType) {
+                const defaultValueType = this.computeType(typeParameter.defaultValue);
+                if (defaultValueType === UnknownType) {
+                    state.substitutions.set(typeParameter, this.coreTypes.Nothing);
+                } else {
+                    state.substitutions.set(typeParameter, defaultValueType);
+                }
+                continue;
+            }
+
+            // Clamp to upper bound
+            const upperBound = this.computeUpperBound(typeParameter, {
+                stopAtTypeParameterType: true,
+            }).substituteTypeParameters(state.substitutions);
+
+            if (!this.typeChecker.isSubtypeOf(substitution, upperBound)) {
+                state.substitutions.set(typeParameter, upperBound);
+            }
+        }
+
+        return state.substitutions;
+    }
+
+    private computeTypeParameterSubstitutionsForParameter(
+        parameterType: Type,
+        argumentType: Type,
+        currentVariance: Variance,
+        state: ComputeTypeParameterSubstitutionsForParametersState,
+    ) {
+        if (argumentType instanceof TypeParameterType && state.substitutions.has(argumentType.declaration)) {
+            // Can happen for lambdas without manifest parameter types. We gain no information here.
+            return;
+        } else if (parameterType instanceof CallableType && argumentType instanceof CallableType) {
+            // Compare parameters
+            const parameterTypeParameters = parameterType.inputType.entries;
+            const argumentTypeParameters = argumentType.inputType.entries;
+            const minParametersLength = Math.min(parameterTypeParameters.length, argumentTypeParameters.length);
+            for (let i = 0; i < minParametersLength; i++) {
+                const parameterEntry = parameterTypeParameters[i]!;
+                const argumentEntry = argumentTypeParameters[i]!;
+                this.computeTypeParameterSubstitutionsForParameter(
+                    parameterEntry.type,
+                    argumentEntry.type,
+                    this.flippedVariance(currentVariance),
+                    state,
+                );
+            }
+
+            // Compare results
+            const parameterTypeResults = parameterType.outputType.entries;
+            const argumentTypeResults = argumentType.outputType.entries;
+            const minResultsLength = Math.min(parameterTypeResults.length, argumentTypeResults.length);
+            for (let i = 0; i < minResultsLength; i++) {
+                const parameterEntry = parameterTypeResults[i]!;
+                const argumentEntry = argumentTypeResults[i]!;
+                this.computeTypeParameterSubstitutionsForParameter(
+                    parameterEntry.type,
+                    argumentEntry.type,
+                    currentVariance,
+                    state,
+                );
+            }
+        } else if (parameterType instanceof CallableType && argumentType instanceof StaticType) {
+            if (currentVariance === 'covariant') {
+                const callableArgumentType = this.computeCallableTypeForStaticType(argumentType);
+                this.computeTypeParameterSubstitutionsForParameter(
+                    parameterType,
+                    callableArgumentType,
+                    currentVariance,
+                    state,
+                );
+            }
+        } else if (parameterType instanceof ClassType && argumentType instanceof ClassType) {
+            let matchingParameterType: ClassType | undefined = parameterType;
+            let matchingArgumentType: ClassType | undefined = argumentType;
+
+            if (currentVariance === 'covariant') {
+                matchingArgumentType = this.computeMatchingSupertype(argumentType, parameterType.declaration);
+            } else if (currentVariance === 'contravariant') {
+                matchingParameterType = this.computeMatchingSupertype(parameterType, argumentType.declaration);
+            }
+
+            if (!matchingParameterType || !matchingArgumentType) {
+                /* c8 ignore next 2 */
+                return;
+            }
+
+            const parameterTypeParameters = getTypeParameters(parameterType.declaration);
+            for (const typeParameter of parameterTypeParameters) {
+                const argumentTypeSubstitutions = matchingParameterType.substitutions.get(typeParameter);
+                const parameterTypeSubstitutions = matchingArgumentType.substitutions.get(typeParameter);
+                if (!argumentTypeSubstitutions || !parameterTypeSubstitutions) {
+                    /* c8 ignore next 2 */
+                    continue;
+                }
+
+                if (TypeParameter.isCovariant(typeParameter)) {
+                    this.computeTypeParameterSubstitutionsForParameter(
+                        argumentTypeSubstitutions,
+                        parameterTypeSubstitutions,
+                        currentVariance,
+                        state,
+                    );
+                } else if (TypeParameter.isContravariant(typeParameter)) {
+                    this.computeTypeParameterSubstitutionsForParameter(
+                        argumentTypeSubstitutions,
+                        parameterTypeSubstitutions,
+                        this.flippedVariance(currentVariance),
+                        state,
+                    );
+                }
+            }
+        } else if (parameterType instanceof TypeParameterType) {
+            const currentSubstitution = state.substitutions.get(parameterType.declaration);
+            const remainingVariance = state.remainingVariances.get(parameterType.declaration);
+            if (!currentSubstitution) {
+                /* c8 ignore next 2 */
+                return;
+            }
+
+            if (remainingVariance === 'bivariant') {
+                state.substitutions.set(parameterType.declaration, argumentType);
+                state.remainingVariances.set(parameterType.declaration, currentVariance);
+            } else if (remainingVariance === 'covariant' && currentVariance === 'covariant') {
+                const lowestCommonSupertype = this.lowestCommonSupertype([currentSubstitution, argumentType]);
+                state.substitutions.set(parameterType.declaration, lowestCommonSupertype);
+            } else if (remainingVariance === 'contravariant' && currentVariance === 'contravariant') {
+                const highestCommonSubtype = this.highestCommonSubtype([currentSubstitution, argumentType]);
+                state.substitutions.set(parameterType.declaration, highestCommonSubtype);
+            }
+        }
+    }
+
+    private flippedVariance(variance: Variance): Variance {
+        if (variance === 'covariant') {
+            return 'contravariant';
+        } /* c8 ignore start */ else if (variance === 'contravariant') {
+            return 'covariant';
+        } else {
+            return variance;
+        } /* c8 ignore stop */
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1333,6 +1589,13 @@ interface ComputeUpperBoundOptions {
      */
     stopAtTypeParameterType?: boolean;
 }
+
+interface ComputeTypeParameterSubstitutionsForParametersState {
+    substitutions: TypeParameterSubstitutions;
+    remainingVariances: Map<SdsTypeParameter, Variance | undefined>;
+}
+
+type Variance = 'bivariant' | 'covariant' | 'contravariant' | 'invariant';
 
 /**
  * Options for {@link lowestCommonSupertype}.
