@@ -1,0 +1,19 @@
+package tests.validation.types.checking.defaultValues
+
+class SomeClass<T1, T2 sub Number>(
+    // $TEST$ no error r"Expected type .* but got .*\."
+    p1: T1 = »true«,
+    // $TEST$ no error r"Expected type .* but got .*\."
+    p2: T1 = »1«,
+    // $TEST$ error "Expected type 'T2' but got 'literal<"">'."
+    p3: T2 = »""«,
+)
+
+fun someFunction<T1, T2 sub Number>(
+    // $TEST$ no error r"Expected type .* but got .*\."
+    p1: T1 = »true«,
+    // $TEST$ no error r"Expected type .* but got .*\."
+    p2: T1 = »1«,
+    // $TEST$ error "Expected type 'T2' but got 'literal<"">'."
+    p3: T2 = »""«,
+)
