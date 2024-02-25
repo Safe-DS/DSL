@@ -1,14 +1,7 @@
 import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { isSdsCallable, isSdsClass, isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import {
-    Enum,
-    EnumVariant,
-    getParameters,
-    getTypeParameters,
-    Parameter,
-    TypeParameter,
-} from '../helpers/nodeProperties.js';
+import { isSdsCallable, isSdsClass, isSdsEnum, SdsDeclaration } from '../generated/ast.js';
+import { Enum, EnumVariant, getTypeParameters, Parameter, TypeParameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
@@ -17,7 +10,6 @@ import {
     EnumType,
     EnumVariantType,
     LiteralType,
-    NamedTupleEntry,
     NamedTupleType,
     StaticType,
     Type,
@@ -300,47 +292,12 @@ export class SafeDsTypeChecker {
 
     private staticTypeIsSubtypeOf(type: StaticType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof CallableType) {
-            return this.isSubtypeOf(this.associatedCallableTypeForStaticType(type), other, options);
+            const callableType = this.typeComputer().computeCallableTypeForStaticType(type);
+            return this.isSubtypeOf(callableType, other, options);
         } else if (other instanceof ClassType) {
             return other.declaration === this.builtinClasses.Any;
         } else {
             return type.equals(other);
-        }
-    }
-
-    private associatedCallableTypeForStaticType(type: StaticType): Type {
-        const instanceType = type.instanceType;
-        if (instanceType instanceof ClassType) {
-            const declaration = instanceType.declaration;
-            if (!declaration.parameterList) {
-                return UnknownType;
-            }
-
-            const parameterEntries = this.factory.createNamedTupleType(
-                ...getParameters(declaration).map(
-                    (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
-                ),
-            );
-            const resultEntries = this.factory.createNamedTupleType(
-                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
-            );
-
-            return this.factory.createCallableType(declaration, undefined, parameterEntries, resultEntries);
-        } else if (instanceType instanceof EnumVariantType) {
-            const declaration = instanceType.declaration;
-
-            const parameterEntries = this.factory.createNamedTupleType(
-                ...getParameters(declaration).map(
-                    (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
-                ),
-            );
-            const resultEntries = this.factory.createNamedTupleType(
-                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
-            );
-
-            return this.factory.createCallableType(declaration, undefined, parameterEntries, resultEntries);
-        } else {
-            return UnknownType;
         }
     }
 

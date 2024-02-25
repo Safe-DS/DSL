@@ -28,13 +28,13 @@ segment mySegment(
     // $TEST$ serialization C1<Number>
     »C1(b1, b2)«;
 
-    // $TEST$ serialization C1<Nothing>
+    // $TEST$ serialization C2<Nothing>
     »C2(a1, a3)«;
-    // $TEST$ serialization C1<Nothing>
+    // $TEST$ serialization C2<Nothing>
     »C2(a1, b3)«;
-    // $TEST$ serialization C1<Number>
+    // $TEST$ serialization C2<Number>
     »C2(b1, a3)«;
-    // $TEST$ serialization C1<Number>
+    // $TEST$ serialization C2<Number>
     »C2(b1, b3)«;
 
     // $TEST$ serialization Nothing

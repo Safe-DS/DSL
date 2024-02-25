@@ -9,7 +9,7 @@ class C2<T = Int>()
 pipeline myPipeline {
     // $TEST$ serialization C1<Nothing>
     »C1()«;
-    // $TEST$ serialization C1<Int>
+    // $TEST$ serialization C2<Int>
     »C2()«;
 
     // $TEST$ serialization Nothing
