@@ -1215,7 +1215,9 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it));
+        return otherTypes.every((it) =>
+            this.typeChecker.isSupertypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------------------

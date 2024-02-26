@@ -395,6 +395,7 @@ export class SafeDsTypeChecker {
             !type.equals(this.coreTypes.NothingOrNull) &&
             this.isSubtypeOf(type, listOrNull, {
                 ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
             })
         );
     }
@@ -410,6 +411,7 @@ export class SafeDsTypeChecker {
             !type.equals(this.coreTypes.NothingOrNull) &&
             this.isSubtypeOf(type, mapOrNull, {
                 ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
             })
         );
     }
