@@ -1,3 +1,40 @@
+## [0.8.0](https://github.com/Safe-DS/DSL/compare/v0.7.0...v0.8.0) (2024-02-26)
+
+
+### Features
+
+* check the runner version to be compatible ([#888](https://github.com/Safe-DS/DSL/issues/888)) ([83378a3](https://github.com/Safe-DS/DSL/commit/83378a3187f27226476630273b1b1c4445c306c5)), closes [#880](https://github.com/Safe-DS/DSL/issues/880)
+* check type parameter bounds for default values and named types ([#919](https://github.com/Safe-DS/DSL/issues/919)) ([7003ea6](https://github.com/Safe-DS/DSL/commit/7003ea67c1eb8c39c0a3e2a1f841227cd8460e2a)), closes [#614](https://github.com/Safe-DS/DSL/issues/614)
+* clamp default values of parameter types to upper bound ([#921](https://github.com/Safe-DS/DSL/issues/921)) ([76ad869](https://github.com/Safe-DS/DSL/commit/76ad8694ef5748c6f28970064f50dd27a39e9c0b))
+* compute highest common subtype ([#901](https://github.com/Safe-DS/DSL/issues/901)) ([5630a9f](https://github.com/Safe-DS/DSL/commit/5630a9ff272ec92a1573c12fb5047608bf70bdf9)), closes [#860](https://github.com/Safe-DS/DSL/issues/860)
+* compute type parameters for calls ([#920](https://github.com/Safe-DS/DSL/issues/920)) ([35dc826](https://github.com/Safe-DS/DSL/commit/35dc826c3949bce23d4a6af2ba0e45ff7df1de35)), closes [#861](https://github.com/Safe-DS/DSL/issues/861)
+* consider nullability of upper type parameter bound in various checks ([#892](https://github.com/Safe-DS/DSL/issues/892)) ([940515a](https://github.com/Safe-DS/DSL/commit/940515a6ca1633b4af407d56079057fb1bf9d71f))
+* constraints for segments ([#911](https://github.com/Safe-DS/DSL/issues/911)) ([e57f886](https://github.com/Safe-DS/DSL/commit/e57f886f83a2b926bc13efb09b57356e7d0ed4cb)), closes [#903](https://github.com/Safe-DS/DSL/issues/903)
+* EDA on pipeline Tables ([#834](https://github.com/Safe-DS/DSL/issues/834)) ([f42c9aa](https://github.com/Safe-DS/DSL/commit/f42c9aa5c8fcf5654c21c7819bedc252c832f883))
+* error if parent type is nullable ([#891](https://github.com/Safe-DS/DSL/issues/891)) ([add650d](https://github.com/Safe-DS/DSL/commit/add650dd8864770bb1b6e24c24c34e7a97c43217))
+* escape characters in string conversion of string constants ([#908](https://github.com/Safe-DS/DSL/issues/908)) ([72a9c3c](https://github.com/Safe-DS/DSL/commit/72a9c3c0ccf8cbb384707a6c1f3ba5d1166e1222)), closes [#904](https://github.com/Safe-DS/DSL/issues/904)
+* format upper bound of type parameters ([#898](https://github.com/Safe-DS/DSL/issues/898)) ([9d6ce28](https://github.com/Safe-DS/DSL/commit/9d6ce282c7f0fcc7bd6fed71d8cd446362ebca7f))
+* handle invariant/covariant type parameters when computing lowest common supertype ([#868](https://github.com/Safe-DS/DSL/issues/868)) ([4d6cb4e](https://github.com/Safe-DS/DSL/commit/4d6cb4ef6fa7c8f9aedbbc525b82150b2689092b)), closes [#860](https://github.com/Safe-DS/DSL/issues/860) [#861](https://github.com/Safe-DS/DSL/issues/861)
+* improve handling of subclasses of lists/maps ([#890](https://github.com/Safe-DS/DSL/issues/890)) ([bb0c94b](https://github.com/Safe-DS/DSL/commit/bb0c94b4cce56762dab496daff29ad7bce15cf9f))
+* improvements to constraints ([#896](https://github.com/Safe-DS/DSL/issues/896)) ([b81bef9](https://github.com/Safe-DS/DSL/commit/b81bef9c3a530a05157a965890b7ff068381b800)), closes [#18](https://github.com/Safe-DS/DSL/issues/18) [#860](https://github.com/Safe-DS/DSL/issues/860) [#18](https://github.com/Safe-DS/DSL/issues/18)
+* include enum name in string conversion of enum variant types ([#907](https://github.com/Safe-DS/DSL/issues/907)) ([1f6502e](https://github.com/Safe-DS/DSL/commit/1f6502e9253747bd4154451255fb22dc8cfbbe52)), closes [#902](https://github.com/Safe-DS/DSL/issues/902)
+* scoping for member accesses if receiver has type parameter type ([#889](https://github.com/Safe-DS/DSL/issues/889)) ([1277bd1](https://github.com/Safe-DS/DSL/commit/1277bd1f5efe4cf9532d03b656d26b026428b461))
+* shorter message if runner is started but files have errors ([#912](https://github.com/Safe-DS/DSL/issues/912)) ([b611b44](https://github.com/Safe-DS/DSL/commit/b611b4461d7a0f3003587faa5db159b794baf899)), closes [#910](https://github.com/Safe-DS/DSL/issues/910)
+* simplify union types containing type parameter types disregarding entry order ([#894](https://github.com/Safe-DS/DSL/issues/894)) ([cf6e77e](https://github.com/Safe-DS/DSL/commit/cf6e77e120d5572e83205c1c516451b4740f71ec))
+* singular type is its own lowest common supertype ([#893](https://github.com/Safe-DS/DSL/issues/893)) ([79d611d](https://github.com/Safe-DS/DSL/commit/79d611d3800b61b5c6c4bb78b91afb76055b902a))
+* substitute type parameter when type checking calls ([#923](https://github.com/Safe-DS/DSL/issues/923)) ([2e09306](https://github.com/Safe-DS/DSL/commit/2e0930683607f375b051c6d65cf0473579e5ede0)), closes [#915](https://github.com/Safe-DS/DSL/issues/915)
+* substitute type parameters when checking overridden members ([#922](https://github.com/Safe-DS/DSL/issues/922)) ([0e657cf](https://github.com/Safe-DS/DSL/commit/0e657cf81e20965640a840c09562224e5eee3802)), closes [#917](https://github.com/Safe-DS/DSL/issues/917)
+* update to `safe-ds-runner` v0.7.0 ([#906](https://github.com/Safe-DS/DSL/issues/906)) ([070f406](https://github.com/Safe-DS/DSL/commit/070f406ccbdcdc7033f8cfcdb1111ca8dd192166))
+* use bounds of type system where possible ([#899](https://github.com/Safe-DS/DSL/issues/899)) ([cf92762](https://github.com/Safe-DS/DSL/commit/cf92762d7fdee714f9e4e7d39080531d7b05f3fe))
+
+
+### Bug Fixes
+
+* lenient type checking involving type parameter types ([#916](https://github.com/Safe-DS/DSL/issues/916)) ([b9d3641](https://github.com/Safe-DS/DSL/commit/b9d36415f89e156aa0cf095b3460509e32bf3a46)), closes [#915](https://github.com/Safe-DS/DSL/issues/915) [#915](https://github.com/Safe-DS/DSL/issues/915)
+* runner startup silent failure ([#914](https://github.com/Safe-DS/DSL/issues/914)) ([8812944](https://github.com/Safe-DS/DSL/commit/88129448ed984d86fb8fd9f431e7a6228e59ca4d)), closes [#909](https://github.com/Safe-DS/DSL/issues/909)
+* save dirty files before running pipeline ([#918](https://github.com/Safe-DS/DSL/issues/918)) ([4302ca6](https://github.com/Safe-DS/DSL/commit/4302ca650361ad1c4bc30464ea63892d9276336d))
+* simplification of union types ([#897](https://github.com/Safe-DS/DSL/issues/897)) ([4c577a3](https://github.com/Safe-DS/DSL/commit/4c577a3effe0b7fe4fcd9dc4f5e0f8c935129ff5))
+
 ## [0.7.0](https://github.com/Safe-DS/DSL/compare/v0.6.0...v0.7.0) (2024-02-12)
 
 
