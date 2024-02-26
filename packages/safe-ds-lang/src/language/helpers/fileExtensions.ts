@@ -1,4 +1,4 @@
-import { AstNode, getDocument, LangiumDocument } from 'langium';
+import { AstNode, AstUtils, LangiumDocument } from 'langium';
 
 /**
  * Marks the file as a pipeline file, which can be executed by our runtime component.
@@ -38,17 +38,17 @@ export type SdSFileExtension = typeof PIPELINE_FILE_EXTENSION | typeof STUB_FILE
 /**
  * Returns whether the object is contained in a pipeline file.
  */
-export const isInPipelineFile = (node: AstNode) => isPipelineFile(getDocument(node));
+export const isInPipelineFile = (node: AstNode) => isPipelineFile(AstUtils.getDocument(node));
 
 /**
  * Returns whether the object is contained in a stub file.
  */
-export const isInStubFile = (node: AstNode) => isStubFile(getDocument(node));
+export const isInStubFile = (node: AstNode) => isStubFile(AstUtils.getDocument(node));
 
 /**
  * Returns whether the object is contained in a test file.
  */
-export const isInTestFile = (node: AstNode) => isTestFile(getDocument(node));
+export const isInTestFile = (node: AstNode) => isTestFile(AstUtils.getDocument(node));
 
 /**
  * Returns whether the resource represents a pipeline file.

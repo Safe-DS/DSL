@@ -1,4 +1,3 @@
-import { streamAllContents } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import {
@@ -33,6 +32,7 @@ import {
     UnknownType,
 } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { AstUtils } from 'langium';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
@@ -96,7 +96,7 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     const enumType1 = typeComputer.computeType(enum1) as EnumType;
     const enumType2 = typeComputer.computeType(enum2) as EnumType;
 
-    const enumVariants = streamAllContents(module).filter(isSdsEnumVariant).toArray();
+    const enumVariants = AstUtils.streamAllContents(module).filter(isSdsEnumVariant).toArray();
     const enumVariant1 = enumVariants[0];
     const enumVariant2 = enumVariants[1];
     const enumVariantType1 = typeComputer.computeType(enumVariant1) as EnumVariantType;

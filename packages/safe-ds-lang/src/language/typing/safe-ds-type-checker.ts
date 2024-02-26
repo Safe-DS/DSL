@@ -1,4 +1,3 @@
-import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsCallable, isSdsClass, isSdsEnum, SdsDeclaration } from '../generated/ast.js';
 import { Enum, EnumVariant, getTypeParameters, Parameter, TypeParameter } from '../helpers/nodeProperties.js';
@@ -21,6 +20,7 @@ import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 import { isEmpty } from '../../helpers/collections.js';
+import { AstUtils } from 'langium';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
@@ -233,7 +233,7 @@ export class SafeDsTypeChecker {
         if (other instanceof ClassType) {
             return other.declaration === this.builtinClasses.Any;
         } else if (other instanceof EnumType) {
-            const containingEnum = getContainerOfType(type.declaration, isSdsEnum);
+            const containingEnum = AstUtils.getContainerOfType(type.declaration, isSdsEnum);
             return containingEnum === other.declaration;
         } else if (other instanceof EnumVariantType) {
             return type.declaration === other.declaration;

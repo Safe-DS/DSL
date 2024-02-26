@@ -1,4 +1,4 @@
-import { AbstractInlayHintProvider, AstNode, DocumentationProvider, InlayHintAcceptor } from 'langium';
+import { AstNode, DocumentationProvider } from 'langium';
 import { InlayHintKind, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { isSdsArgument, isSdsBlockLambdaResult, isSdsPlaceholder, isSdsYield } from '../generated/ast.js';
@@ -7,6 +7,7 @@ import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { NamedType } from '../typing/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { AbstractInlayHintProvider, InlayHintAcceptor } from 'langium/lsp';
 
 export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
     private readonly documentationProvider: DocumentationProvider;

@@ -1,4 +1,4 @@
-import { AstNode, getContainerOfType, Stream, stream } from 'langium';
+import { AstNode, AstUtils, Stream, stream } from 'langium';
 import {
     isSdsAnnotation,
     isSdsArgument,
@@ -111,7 +111,7 @@ export namespace Parameter {
             return false;
         }
 
-        const containingCallable = getContainerOfType(node, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
 
         // In those cases, the const modifier is not applicable
         if (isSdsCallableType(containingCallable) || isSdsLambda(containingCallable)) {
@@ -208,7 +208,7 @@ export const getAnnotationCalls = (node: SdsAnnotatedObject | undefined): SdsAnn
 };
 
 export const getAnnotationCallTarget = (node: SdsAnnotationCall | undefined): SdsDeclaration | undefined => {
-    return getContainerOfType(node, isSdsDeclaration);
+    return AstUtils.getContainerOfType(node, isSdsDeclaration);
 };
 
 export const findFirstAnnotationCallOf = (
@@ -283,7 +283,7 @@ export const getModuleMembers = (node: SdsModule | undefined): SdsModuleMember[]
 };
 
 export const getPackageName = (node: AstNode | undefined): string | undefined => {
-    return getContainerOfType(node, isSdsModule)?.name;
+    return AstUtils.getContainerOfType(node, isSdsModule)?.name;
 };
 
 export const getParameters = (node: SdsCallable | undefined): SdsParameter[] => {
@@ -302,7 +302,7 @@ export const getQualifiedName = (node: SdsDeclaration | undefined): string | und
         if (current.name) {
             segments.unshift(current.name);
         }
-        current = getContainerOfType(current.$container, isSdsDeclaration);
+        current = AstUtils.getContainerOfType(current.$container, isSdsDeclaration);
     }
 
     return segments.join('.');

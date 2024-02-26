@@ -1,4 +1,4 @@
-import { AstNode, EmptyFileSystem, expandToString } from 'langium';
+import { AstNode, EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
 import { normalizeLineBreaks } from '../../../src/helpers/strings.js';
 import {
@@ -10,6 +10,7 @@ import {
 } from '../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { expandToString } from 'langium/generate';
 
 const services = createSafeDsServices(EmptyFileSystem).SafeDs;
 const documentationProvider = services.documentation.DocumentationProvider;

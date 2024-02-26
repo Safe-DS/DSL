@@ -1,4 +1,4 @@
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { isEmpty } from '../../../../helpers/collections.js';
 import {
     isSdsCallable,
@@ -92,6 +92,6 @@ export const lambdaParametersMustNotBeAnnotated = (node: SdsLambda, accept: Vali
 };
 
 export const parameterCanBeAnnotated = (node: SdsParameter) => {
-    const containingCallable = getContainerOfType(node, isSdsCallable);
+    const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
     return !isSdsCallableType(containingCallable) && !isSdsLambda(containingCallable);
 };

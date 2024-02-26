@@ -1,10 +1,11 @@
-import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
 import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, Type, UnknownType } from '../typing/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { expandToStringWithNL } from 'langium/generate';
 
 export const CODE_INHERITANCE_CYCLE = 'inheritance/cycle';
 export const CODE_INHERITANCE_MULTIPLE_INHERITANCE = 'inheritance/multiple-inheritance';
@@ -88,11 +89,11 @@ const computeMemberTypes = (
     let overriddenMemberType = typeComputer.computeType(overriddenMember);
 
     // Substitute type parameters of class containing the overridden member
-    const classContainingOwnMember = getContainerOfType(ownMember, isSdsClass);
+    const classContainingOwnMember = AstUtils.getContainerOfType(ownMember, isSdsClass);
     const typeContainingOwnMember = typeComputer.computeType(classContainingOwnMember);
 
     if (typeContainingOwnMember instanceof ClassType) {
-        const classContainingOverriddenMember = getContainerOfType(overriddenMember, isSdsClass);
+        const classContainingOverriddenMember = AstUtils.getContainerOfType(overriddenMember, isSdsClass);
         const typeContainingOverriddenMember = typeComputer.computeMatchingSupertype(
             typeContainingOwnMember,
             classContainingOverriddenMember,
@@ -142,7 +143,7 @@ interface ComputeMemberTypesResult {
 }
 
 const isInSafedsLangAnyClass = (services: SafeDsServices, node: SdsClassMember): boolean => {
-    const containingClass = getContainerOfType(node, isSdsClass);
+    const containingClass = AstUtils.getContainerOfType(node, isSdsClass);
     return (
         isSdsClass(containingClass) &&
         getQualifiedName(containingClass) === getQualifiedName(services.builtins.Classes.Any)

@@ -1,5 +1,6 @@
 import { parseHelper } from 'langium/test';
-import { LangiumServices, URI } from 'langium';
+import { URI } from 'langium';
+import { type LangiumServices } from 'langium/lsp';
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { TestDescriptionError } from './testDescription.js';
 
@@ -77,8 +78,8 @@ const getDiagnostics = async (services: LangiumServices, code: string): Promise<
  * @returns The diagnostics.
  */
 const getDiagnosticsAtURI = (services: LangiumServices, uri: URI): Diagnostic[] => {
-    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
-    return document.diagnostics ?? [];
+    const document = services.shared.workspace.LangiumDocuments.getDocument(uri);
+    return document?.diagnostics ?? [];
 };
 
 /**

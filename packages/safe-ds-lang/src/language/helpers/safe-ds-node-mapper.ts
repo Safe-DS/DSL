@@ -1,4 +1,4 @@
-import { EMPTY_STREAM, findLocalReferences, getContainerOfType, Stream } from 'langium';
+import { AstUtils, EMPTY_STREAM, Stream } from 'langium';
 import {
     isSdsAbstractCall,
     isSdsAnnotationCall,
@@ -63,7 +63,7 @@ export class SafeDsNodeMapper {
         }
 
         // Positional argument
-        const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall)!;
+        const containingAbstractCall = AstUtils.getContainerOfType(node, isSdsAbstractCall)!;
         const args = getArguments(containingAbstractCall);
         const argumentPosition = node.$containerIndex ?? -1;
 
@@ -93,7 +93,7 @@ export class SafeDsNodeMapper {
             return undefined;
         }
 
-        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        const containingAssignment = AstUtils.getContainerOfType(node, isSdsAssignment);
         /* c8 ignore start */
         if (!containingAssignment) {
             return undefined;
@@ -249,14 +249,14 @@ export class SafeDsNodeMapper {
             return EMPTY_STREAM;
         }
 
-        const containingCallable = getContainerOfType(node, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
         /* c8 ignore start */
         if (!containingCallable) {
             return EMPTY_STREAM;
         }
         /* c8 ignore stop */
 
-        return findLocalReferences(node, containingCallable)
+        return AstUtils.findLocalReferences(node, containingCallable)
             .map((it) => it.$refNode?.astNode)
             .filter(isSdsReference);
     }
@@ -269,14 +269,14 @@ export class SafeDsNodeMapper {
             return EMPTY_STREAM;
         }
 
-        const containingBlock = getContainerOfType(node, isSdsBlock);
+        const containingBlock = AstUtils.getContainerOfType(node, isSdsBlock);
         /* c8 ignore start */
         if (!containingBlock) {
             return EMPTY_STREAM;
         }
         /* c8 ignore stop */
 
-        return findLocalReferences(node, containingBlock)
+        return AstUtils.findLocalReferences(node, containingBlock)
             .map((it) => it.$refNode?.astNode)
             .filter(isSdsReference);
     }
@@ -289,12 +289,12 @@ export class SafeDsNodeMapper {
             return EMPTY_STREAM;
         }
 
-        const containingSegment = getContainerOfType(node, isSdsSegment);
+        const containingSegment = AstUtils.getContainerOfType(node, isSdsSegment);
         if (!containingSegment) {
             return EMPTY_STREAM;
         }
 
-        return findLocalReferences(node, containingSegment)
+        return AstUtils.findLocalReferences(node, containingSegment)
             .map((it) => it.$refNode?.astNode)
             .filter(isSdsYield);
     }
@@ -314,7 +314,7 @@ export class SafeDsNodeMapper {
         }
 
         // Positional type argument
-        const containingType = getContainerOfType(node, isSdsType);
+        const containingType = AstUtils.getContainerOfType(node, isSdsType);
         if (!isSdsNamedType(containingType)) {
             return undefined;
         }

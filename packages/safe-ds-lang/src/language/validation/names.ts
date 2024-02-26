@@ -1,4 +1,4 @@
-import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
+import { AstNodeDescription, AstUtils, ValidationAcceptor } from 'langium';
 import { duplicatesBy } from '../../helpers/collections.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
 import { BUILTINS_LANG_PACKAGE, BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
@@ -260,7 +260,7 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
     const builtinUris = new Set(listBuiltinFiles().map((it) => it.toString()));
 
     return (node: SdsModule, accept: ValidationAcceptor): void => {
-        const moduleUri = getDocument(node).uri?.toString();
+        const moduleUri = AstUtils.getDocument(node).uri?.toString();
         if (builtinUris.has(moduleUri)) {
             return;
         }

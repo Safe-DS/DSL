@@ -1,4 +1,4 @@
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { isSdsCallableType, isSdsParameter, SdsCallableType } from '../../../generated/ast.js';
 
 import { getParameters, Parameter } from '../../../helpers/nodeProperties.js';
@@ -37,12 +37,12 @@ const contextIsCorrect = (node: SdsCallableType): boolean => {
     }
 
     // Check whether we already show an error on a containing callable type
-    let containingCallableType = getContainerOfType(node.$container, isSdsCallableType);
+    let containingCallableType = AstUtils.getContainerOfType(node.$container, isSdsCallableType);
     while (containingCallableType) {
         if (!isSdsParameter(containingCallableType.$container)) {
             return true; // Container already has wrong context
         }
-        containingCallableType = getContainerOfType(containingCallableType.$container, isSdsCallableType);
+        containingCallableType = AstUtils.getContainerOfType(containingCallableType.$container, isSdsCallableType);
     }
 
     return false;

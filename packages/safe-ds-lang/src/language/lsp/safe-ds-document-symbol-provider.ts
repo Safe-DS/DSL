@@ -1,4 +1,4 @@
-import { type AstNode, DefaultDocumentSymbolProvider, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import type { DocumentSymbol } from 'vscode-languageserver';
 import {
     isSdsAnnotation,
@@ -11,6 +11,7 @@ import {
 } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import type { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
+import { DefaultDocumentSymbolProvider } from 'langium/lsp';
 
 export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider {
     private readonly nodeInfoProvider: SafeDsNodeInfoProvider;

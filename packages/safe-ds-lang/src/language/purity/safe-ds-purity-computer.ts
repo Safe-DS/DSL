@@ -1,12 +1,4 @@
-import {
-    type AstNode,
-    type AstNodeLocator,
-    EMPTY_STREAM,
-    getContainerOfType,
-    getDocument,
-    Stream,
-    WorkspaceCache,
-} from 'langium';
+import { type AstNode, type AstNodeLocator, AstUtils, EMPTY_STREAM, Stream, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import type { SafeDsCallGraphComputer } from '../flow/safe-ds-call-graph-computer.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
@@ -99,7 +91,7 @@ export class SafeDsPurityComputer {
      * The parameter to check.
      */
     isPureParameter(node: SdsParameter | undefined): boolean {
-        const containingCallable = getContainerOfType(node, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
         if (
             !containingCallable ||
             isSdsAnnotation(containingCallable) ||
@@ -258,7 +250,7 @@ export class SafeDsPurityComputer {
                 isSdsParameter(it) &&
                 // Leads to endless recursion if we don't check this
                 // (see test case "should return the impurity reasons of a parameter call in a function")
-                !isSdsFunction(getContainerOfType(it, isSdsCallable)) &&
+                !isSdsFunction(AstUtils.getContainerOfType(it, isSdsCallable)) &&
                 !this.isPureParameter(it)
             ) {
                 return [new PotentiallyImpureParameterCall(it)];
@@ -273,7 +265,7 @@ export class SafeDsPurityComputer {
     private getExecutedCallsInExpression(expression: SdsExpression | undefined): SdsCall[] {
         return this.callGraphComputer.getAllContainedCalls(expression).filter((it) => {
             // Keep only calls that are not contained in a lambda inside the expression
-            const containingLambda = getContainerOfType(it, isSdsLambda);
+            const containingLambda = AstUtils.getContainerOfType(it, isSdsLambda);
             return !containingLambda || !isContainedInOrEqual(containingLambda, expression);
         });
     }
@@ -319,7 +311,7 @@ export class SafeDsPurityComputer {
     }
 
     private getNodeId(node: AstNode) {
-        const documentUri = getDocument(node).uri.toString();
+        const documentUri = AstUtils.getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
     }

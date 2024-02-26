@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isNamed, streamAst } from 'langium';
+import { AstUtils, isNamed } from 'langium';
 import {
     isSdsBlockLambda,
     isSdsCall,
@@ -31,7 +31,9 @@ describe('SafeDsCallGraphComputer', () => {
             const module = await getNodeOfType(services, test.code, isSdsModule);
 
             for (const { location, expectedCallables } of test.expectedCallGraphs) {
-                const node = streamAst(module).find((call) => isRangeEqual(call.$cstNode!.range, location.range));
+                const node = AstUtils.streamAst(module).find((call) =>
+                    isRangeEqual(call.$cstNode!.range, location.range),
+                );
                 if (!node || (!isSdsCall(node) && !isSdsCallable(node))) {
                     throw new Error(`Could not find call/callable at ${locationToString(location)}`);
                 }

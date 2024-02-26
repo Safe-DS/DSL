@@ -1,6 +1,6 @@
 import {
     AstNode,
-    getContainerOfType,
+    AstUtils,
     isJSDoc,
     JSDocComment,
     JSDocDocumentationProvider,
@@ -25,7 +25,7 @@ const TYPE_PARAM_TAG = 'typeParam';
 export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     override getDocumentation(node: AstNode): string | undefined {
         if (isSdsParameter(node) || isSdsResult(node) || isSdsTypeParameter(node)) {
-            const containingCallable = getContainerOfType(node, isSdsCallable);
+            const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
             /* c8 ignore start */
             if (!containingCallable) {
                 return undefined;

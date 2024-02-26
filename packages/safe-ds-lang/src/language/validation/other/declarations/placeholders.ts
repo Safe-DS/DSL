@@ -7,7 +7,7 @@ import {
     isSdsStatement,
     SdsPlaceholder,
 } from '../../../generated/ast.js';
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { getStatements } from '../../../helpers/nodeProperties.js';
 import { DiagnosticTag } from 'vscode-languageserver';
@@ -21,7 +21,7 @@ export const placeholdersMustNotBeAnAlias = (node: SdsPlaceholder, accept: Valid
         return;
     }
 
-    const containingAssignment = getContainerOfType(node, isSdsAssignment);
+    const containingAssignment = AstUtils.getContainerOfType(node, isSdsAssignment);
     const rhs = containingAssignment?.expression;
     if (!isSdsReference(rhs)) {
         return;
@@ -45,8 +45,8 @@ export const placeholderShouldBeUsed =
         }
 
         // Don't show a warning if the placeholder is declared in the last statement in the block
-        const containingStatement = getContainerOfType(node, isSdsStatement);
-        const containingBlock = getContainerOfType(containingStatement, isSdsBlock);
+        const containingStatement = AstUtils.getContainerOfType(node, isSdsStatement);
+        const containingBlock = AstUtils.getContainerOfType(containingStatement, isSdsBlock);
         const allStatementsInBlock = getStatements(containingBlock);
         if (last(allStatementsInBlock) === containingStatement) {
             return;

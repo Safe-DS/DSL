@@ -1,9 +1,8 @@
 import {
     AstNode,
     AstNodeLocator,
-    DefaultRenameProvider,
-    findDeclarationNodeAtOffset,
-    getContainerOfType,
+    AstUtils,
+    CstUtils,
     LangiumDocument,
     LangiumDocuments,
     ReferenceDescription,
@@ -14,6 +13,7 @@ import { Position, RenameParams, TextEdit, WorkspaceEdit } from 'vscode-language
 import { SafeDsServices } from '../safe-ds-module.js';
 import { isSdsImportedDeclaration, isSdsModule } from '../generated/ast.js';
 import { getImportedDeclarations } from '../helpers/nodeProperties.js';
+import { DefaultRenameProvider } from 'langium/lsp';
 
 export class SafeDsRenameProvider extends DefaultRenameProvider {
     private readonly astNodeLocator: AstNodeLocator;
@@ -42,7 +42,7 @@ export class SafeDsRenameProvider extends DefaultRenameProvider {
         }
 
         const offset = document.textDocument.offsetAt(position);
-        const leafNode = findDeclarationNodeAtOffset(rootNode, offset, this.grammarConfig.nameRegexp);
+        const leafNode = CstUtils.findDeclarationNodeAtOffset(rootNode, offset, this.grammarConfig.nameRegexp);
         if (!leafNode) {
             /* c8 ignore next 2 */
             return undefined;
@@ -71,7 +71,7 @@ export class SafeDsRenameProvider extends DefaultRenameProvider {
         }
 
         // Other references must be renamed unless they are imported under an alias
-        const sourceModule = getContainerOfType(sourceNode, isSdsModule);
+        const sourceModule = AstUtils.getContainerOfType(sourceNode, isSdsModule);
         if (!sourceModule) {
             /* c8 ignore next 2 */
             return false;
@@ -90,22 +90,22 @@ export class SafeDsRenameProvider extends DefaultRenameProvider {
     }
 
     private getAstNode(uri: URI, path: string): AstNode | undefined {
-        if (!this.langiumDocuments.hasDocument(uri)) {
+        const document = this.langiumDocuments.getDocument(uri);
+        if (!document) {
             /* c8 ignore next 2 */
             return undefined;
         }
 
-        const document = this.langiumDocuments.getOrCreateDocument(uri);
         return this.astNodeLocator.getAstNode(document.parseResult.value, path);
     }
 
     private getReferenceText(ref: ReferenceDescription): string | undefined {
-        if (!this.langiumDocuments.hasDocument(ref.sourceUri)) {
+        const document = this.langiumDocuments.getDocument(ref.sourceUri);
+        if (!document) {
             /* c8 ignore next 2 */
             return undefined;
         }
 
-        const document = this.langiumDocuments.getOrCreateDocument(ref.sourceUri);
         return document.textDocument.getText(ref.segment.range);
     }
 
