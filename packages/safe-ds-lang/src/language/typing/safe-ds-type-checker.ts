@@ -57,13 +57,13 @@ export class SafeDsTypeChecker {
         }
 
         if (other instanceof TypeParameterType) {
+            if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
+                return false;
+            }
+
             if (options.strictTypeParameterTypeCheck) {
-                // `T` can always be assigned to `T` and `T?`
-                if (
-                    type instanceof TypeParameterType &&
-                    type.declaration === other.declaration &&
-                    (!type.isExplicitlyNullable || other.isExplicitlyNullable)
-                ) {
+                // `T` can always be assigned to `T` and `T?` or some type parameter it is bounded by
+                if (type instanceof TypeParameterType && this.typeParameterIsBoundedByTypeParameter(type, other)) {
                     return true;
                 }
 
@@ -99,6 +99,20 @@ export class SafeDsTypeChecker {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
     };
+
+    private typeParameterIsBoundedByTypeParameter(type: TypeParameterType, other: TypeParameterType): boolean {
+        let current: Type = type;
+
+        while (current instanceof TypeParameterType) {
+            if (current.declaration === other.declaration) {
+                return true;
+            }
+
+            current = this.typeComputer().computeUpperBound(current, { stopAtTypeParameterType: true });
+        }
+
+        return false;
+    }
 
     private callableTypeIsSubtypeOf(type: CallableType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof ClassType) {

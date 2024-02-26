@@ -307,9 +307,14 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
         }
 
         const defaultValueType = typeComputer.computeType(defaultValue);
-        const parameterType = typeComputer.computeType(node);
+        let parameterType = typeComputer.computeType(node);
 
-        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType)) {
+        // Only the upper bound must match if the default value does not have a type parameter type
+        if (!(defaultValueType instanceof TypeParameterType) && parameterType instanceof TypeParameterType) {
+            parameterType = typeComputer.computeUpperBound(parameterType, { stopAtTypeParameterType: true });
+        }
+
+        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType, { strictTypeParameterTypeCheck: true })) {
             accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
