@@ -31,11 +31,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             computeMemberTypes(node, overriddenMember, typeComputer);
 
         // Check whether the overriding is legal and needed
-        if (
-            !typeChecker.isSubtypeOf(substitutedOwnMemberType, overriddenMemberType, {
-                strictTypeParameterTypeCheck: true,
-            })
-        ) {
+        if (!typeChecker.isSubtypeOf(substitutedOwnMemberType, overriddenMemberType)) {
             accept(
                 'error',
                 expandToStringWithNL`
@@ -49,11 +45,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
                     code: CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER,
                 },
             );
-        } else if (
-            typeChecker.isSubtypeOf(substitutedOverriddenMemberType, ownMemberType, {
-                strictTypeParameterTypeCheck: true,
-            })
-        ) {
+        } else if (typeChecker.isSubtypeOf(substitutedOverriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
                 return;

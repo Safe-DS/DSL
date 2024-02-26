@@ -1044,22 +1044,22 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: upperBound,
             type2: unbounded,
-            expected: true,
+            expected: false,
         },
         {
             type1: indirectUpperBound,
             type2: unbounded,
-            expected: true,
+            expected: false,
         },
         {
             type1: unresolved,
             type2: unbounded,
-            expected: true,
+            expected: false,
         },
         {
             type1: coreTypes.AnyOrNull,
             type2: unbounded,
-            expected: true,
+            expected: false,
         },
         {
             type1: coreTypes.Nothing,
@@ -1069,14 +1069,14 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: coreTypes.NothingOrNull,
             type2: unbounded,
-            expected: true,
+            expected: false,
         },
 
         // Compare to UpperBound
         {
             type1: unbounded,
             type2: upperBound,
-            expected: true,
+            expected: false,
         },
         {
             type1: upperBound,
@@ -1091,7 +1091,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: unresolved,
             type2: upperBound,
-            expected: true,
+            expected: false,
         },
         {
             type1: coreTypes.AnyOrNull,
@@ -1101,7 +1101,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: coreTypes.Number,
             type2: upperBound,
-            expected: true,
+            expected: false,
         },
         {
             type1: coreTypes.Number.withExplicitNullability(true),
@@ -1111,7 +1111,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: coreTypes.Number.withExplicitNullability(true),
             type2: upperBound.withExplicitNullability(true),
-            expected: true,
+            expected: false,
         },
         {
             type1: coreTypes.Nothing,
@@ -1123,6 +1123,11 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: indirectUpperBound,
             type2: indirectUpperBound,
+            expected: true,
+        },
+        {
+            type1: indirectUpperBound,
+            type2: upperBound,
             expected: true,
         },
         {
@@ -1157,7 +1162,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         {
             type1: unbounded,
             type2: coreTypes.Any,
-            expected: true,
+            expected: false,
         },
         {
             type1: unbounded,

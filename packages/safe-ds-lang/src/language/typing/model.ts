@@ -737,9 +737,7 @@ export class UnionType extends Type {
                 const candidateType = otherType.withExplicitNullability(
                     currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
                 );
-                if (
-                    this.typeChecker.isSupertypeOf(candidateType, currentType, { strictTypeParameterTypeCheck: true })
-                ) {
+                if (this.typeChecker.isSupertypeOf(candidateType, currentType)) {
                     // Replace the other type with the candidate type (updated nullability)
                     newTypes.splice(j, 1, candidateType);
                     // Remove the current type

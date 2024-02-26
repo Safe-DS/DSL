@@ -348,9 +348,7 @@ export class SafeDsTypeComputer {
             // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
             // access. Where possible, we already validate the existence of keys in indexed accesses using the partial
             // evaluator.
-            if (keyType instanceof LiteralType) {
-                keyType = this.computeClassTypeForLiteralType(keyType);
-            }
+            keyType = this.computeClassTypeForLiteralType(keyType);
 
             const valueType = this.lowestCommonSupertype(node.entries.map((it) => this.computeType(it.value)));
             return this.coreTypes.Map(keyType, valueType);
@@ -457,7 +455,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (isSdsFunction(nonNullableReceiverType.callable)) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
+                const substitutions = this.computeSubstitutionsForCall(node);
                 result = result.substituteTypeParameters(substitutions);
             }
         } else if (nonNullableReceiverType instanceof StaticType) {
@@ -468,7 +466,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (instanceType instanceof ClassType) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
+                const substitutions = this.computeSubstitutionsForCall(node);
 
                 result = this.factory.createClassType(
                     instanceType.declaration,
@@ -528,8 +526,8 @@ export class SafeDsTypeComputer {
         const rightOperandType = this.computeType(node.rightOperand);
 
         if (
-            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true }) &&
-            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })
+            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
+            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
         ) {
             return this.coreTypes.Int;
         } else {
@@ -581,7 +579,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
 
-        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })) {
+        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -679,10 +677,15 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Returns the lowest class type for the given literal type.
+     * Returns the lowest class type for the given literal type. If the given type is not a literal type, it is returned
+     * as is.
      */
-    computeClassTypeForLiteralType(literalType: LiteralType): Type {
-        return this.lowestCommonSupertype(literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
+    computeClassTypeForLiteralType(type: Type): Type {
+        if (!(type instanceof LiteralType)) {
+            return type;
+        }
+
+        return this.lowestCommonSupertype(type.constants.map((it) => this.computeClassTypeForConstant(it)));
     }
 
     /**
@@ -783,7 +786,7 @@ export class SafeDsTypeComputer {
      * @param call The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
      */
-    computeTypeParameterSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
+    computeSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
         const callable = this.nodeMapper.callToCallable(call);
         const typeParameters = getTypeParameters(callable);
         if (isEmpty(typeParameters)) {
@@ -874,7 +877,7 @@ export class SafeDsTypeComputer {
                 stopAtTypeParameterType: true,
             }).substituteTypeParameters(state.substitutions);
 
-            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound, { strictTypeParameterTypeCheck: true })) {
+            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
                 newSubstitution = upperBound;
             }
 
@@ -1243,15 +1246,12 @@ export class SafeDsTypeComputer {
         return otherTypes.every((it) =>
             this.typeChecker.isSupertypeOf(candidate, it, {
                 ignoreTypeParameters: true,
-                strictTypeParameterTypeCheck: true,
             }),
         );
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) =>
-            this.typeChecker.isSupertypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
-        );
+        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1486,15 +1486,12 @@ export class SafeDsTypeComputer {
         return otherTypes.every((it) =>
             this.typeChecker.isSubtypeOf(candidate, it, {
                 ignoreTypeParameters: true,
-                strictTypeParameterTypeCheck: true,
             }),
         );
     }
 
     private isCommonSubtype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) =>
-            this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
-        );
+        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

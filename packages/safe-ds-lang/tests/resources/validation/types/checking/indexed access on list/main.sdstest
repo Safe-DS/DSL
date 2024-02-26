@@ -25,3 +25,11 @@ pipeline myPipeline {
     // $TEST$ no error r"Expected type .* but got .*\."
     unresolved[»""«];
 }
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'Int' but got 'T'."
+    a: Any? = [0][»p1«],
+)

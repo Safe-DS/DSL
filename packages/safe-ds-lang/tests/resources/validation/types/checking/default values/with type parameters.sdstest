@@ -1,19 +1,45 @@
 package tests.validation.types.checking.defaultValues
 
-class SomeClass<T1, T2 sub Number>(
-    // $TEST$ no error r"Expected type .* but got .*\."
-    p1: T1 = »true«,
-    // $TEST$ no error r"Expected type .* but got .*\."
-    p2: T1 = »1«,
+class SomeClass<T1, T2 sub Number, T3 sub T2>(
+    // $TEST$ error "Expected type 'T1' but got 'literal<true>'."
+    a1: T1 = »true«,
+    // $TEST$ error "Expected type 'T1' but got 'literal<1>'."
+    a2: T1 = »1«,
     // $TEST$ error "Expected type 'T2' but got 'literal<"">'."
-    p3: T2 = »""«,
+    a3: T2 = »""«,
+    // $TEST$ error "Expected type 'T3' but got 'literal<1>'."
+    a4: T3 = »1«,
+    // $TEST$ error "Expected type 'T3' but got 'literal<"">'."
+    a5: T3 = »""«,
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    b1: T1 = »a1«,
+    // $TEST$ error "Expected type 'T2' but got 'T1'."
+    b2: T2 = »a1«,
+    // $TEST$ error "Expected type 'T1' but got 'T2'."
+    b3: T1 = »a3«,
+    // $TEST$ no error r"Expected type .* but got .*\."
+    b4: T2 = »a4«,
 )
 
-fun someFunction<T1, T2 sub Number>(
-    // $TEST$ no error r"Expected type .* but got .*\."
-    p1: T1 = »true«,
-    // $TEST$ no error r"Expected type .* but got .*\."
-    p2: T1 = »1«,
+@Pure fun someFunction<T1, T2 sub Number, T3 sub T2>(
+    // $TEST$ error "Expected type 'T1' but got 'literal<true>'."
+    a1: T1 = »true«,
+    // $TEST$ error "Expected type 'T1' but got 'literal<1>'."
+    a2: T1 = »1«,
     // $TEST$ error "Expected type 'T2' but got 'literal<"">'."
-    p3: T2 = »""«,
+    a3: T2 = »""«,
+    // $TEST$ error "Expected type 'T3' but got 'literal<1>'."
+    a4: T3 = »1«,
+    // $TEST$ error "Expected type 'T3' but got 'literal<"">'."
+    a5: T3 = »""«,
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    b1: T1 = »a1«,
+    // $TEST$ error "Expected type 'T2' but got 'T1'."
+    b2: T2 = »a1«,
+    // $TEST$ error "Expected type 'T1' but got 'T2'."
+    b3: T1 = »a3«,
+    // $TEST$ no error r"Expected type .* but got .*\."
+    b4: T2 = »a4«,
 )

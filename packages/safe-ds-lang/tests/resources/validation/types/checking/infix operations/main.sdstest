@@ -128,3 +128,41 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
     »unresolved« > »unresolved«;
 }
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    a1: Any? = »p1« or »p1«,
+    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    a2: Any? = »p1« and »p1«,
+
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    b1: Any? = »p1« + »p1«,
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    b2: Any? = »p1« - »p1«,
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    b3: Any? = »p1« * »p1«,
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    b4: Any? = »p1« / »p1«,
+
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    c1: Any? = »p1« < »p1«,
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    c2: Any? = »p1« <= »p1«,
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    c3: Any? = »p1« >= »p1«,
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    c4: Any? = »p1« > »p1«,
+)
