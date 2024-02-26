@@ -61,18 +61,13 @@ export class SafeDsTypeChecker {
                 return false;
             }
 
-            if (options.strictTypeParameterTypeCheck) {
-                // `T` can always be assigned to `T` and `T?` or some type parameter it is bounded by
-                if (type instanceof TypeParameterType && this.typeParameterIsBoundedByTypeParameter(type, other)) {
-                    return true;
-                }
-
-                const otherLowerBound = this.coreTypes.Nothing.withExplicitNullability(other.isExplicitlyNullable);
-                return this.isSubtypeOf(type, otherLowerBound, options);
-            } else {
-                const otherUpperBound = this.typeComputer().computeUpperBound(other);
-                return this.isSubtypeOf(type, otherUpperBound, options);
+            // `T` can always be assigned to `T` or some type parameter it is bounded by
+            if (type instanceof TypeParameterType && this.typeParameterIsBoundedByTypeParameter(type, other)) {
+                return true;
             }
+
+            const otherLowerBound = this.coreTypes.Nothing.withExplicitNullability(other.isExplicitlyNullable);
+            return this.isSubtypeOf(type, otherLowerBound, options);
         } else if (other instanceof UnionType) {
             return other.types.some((it) => this.isSubtypeOf(type, it, options));
         }
@@ -313,14 +308,8 @@ export class SafeDsTypeChecker {
     }
 
     private typeParameterTypeIsSubtypeOf(type: TypeParameterType, other: Type, options: TypeCheckOptions): boolean {
-        if (options.strictTypeParameterTypeCheck) {
-            const upperBound = this.typeComputer().computeUpperBound(type);
-            return this.isSubtypeOf(upperBound, other, options);
-        } else {
-            // We need to check whether `type` is assignable to `other` after substituting `type` with its lower bound.
-            // Since this bound is `Nothing`, which is a subtype of everything, it boils down to a nullability check.
-            return !type.isExplicitlyNullable || other.isExplicitlyNullable;
-        }
+        const upperBound = this.typeComputer().computeUpperBound(type);
+        return this.isSubtypeOf(upperBound, other, options);
     }
 
     private unionTypeIsSubtypeOf(type: UnionType, other: Type, options: TypeCheckOptions): boolean {
@@ -409,7 +398,6 @@ export class SafeDsTypeChecker {
             !type.equals(this.coreTypes.NothingOrNull) &&
             this.isSubtypeOf(type, listOrNull, {
                 ignoreTypeParameters: true,
-                strictTypeParameterTypeCheck: true,
             })
         );
     }
@@ -425,7 +413,6 @@ export class SafeDsTypeChecker {
             !type.equals(this.coreTypes.NothingOrNull) &&
             this.isSubtypeOf(type, mapOrNull, {
                 ignoreTypeParameters: true,
-                strictTypeParameterTypeCheck: true,
             })
         );
     }
@@ -439,16 +426,4 @@ interface TypeCheckOptions {
      * Whether to ignore type parameters when comparing class types.
      */
     ignoreTypeParameters?: boolean;
-
-    /**
-     * By default, type parameter types are replaced with their upper bound when comparing types. This is usually the
-     * correct behavior, e.g. to check whether the type `Int` can be assigned to an unsubstituted type parameter type
-     * `T`.
-     *
-     * However, in some cases, we have to assume that the type parameter type that we compare to gets substituted later,
-     * e.g. by its lower bound `Nothing`. This options enables a strict check, replacing type parameter types in the
-     * first argument of {@link SafeDsTypeChecker.isSubtypeOf} with their upper bound, and in the second argument with
-     * their lower bound.
-     */
-    strictTypeParameterTypeCheck?: boolean;
 }

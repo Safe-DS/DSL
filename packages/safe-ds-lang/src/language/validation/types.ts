@@ -125,7 +125,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
         const receiverType = typeComputer.computeType(node.receiver);
         if (typeChecker.isList(receiverType)) {
             const indexType = typeComputer.computeType(node.index);
-            if (!typeChecker.isSubtypeOf(indexType, coreTypes.Int, { strictTypeParameterTypeCheck: true })) {
+            if (!typeChecker.isSubtypeOf(indexType, coreTypes.Int)) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
                     node,
                     property: 'index',
@@ -137,7 +137,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
             if (mapType) {
                 const keyType = mapType.getTypeParameterTypeByIndex(0);
                 const indexType = typeComputer.computeType(node.index);
-                if (!typeChecker.isSubtypeOf(indexType, keyType, { strictTypeParameterTypeCheck: true })) {
+                if (!typeChecker.isSubtypeOf(indexType, keyType)) {
                     accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
                         node,
                         property: 'index',
@@ -160,19 +160,13 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
         switch (node.operator) {
             case 'or':
             case 'and':
-                if (
-                    node.leftOperand &&
-                    !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean, { strictTypeParameterTypeCheck: true })
-                ) {
+                if (node.leftOperand && !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
                         node: node.leftOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
                 }
-                if (
-                    node.rightOperand &&
-                    !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean, { strictTypeParameterTypeCheck: true })
-                ) {
+                if (node.rightOperand && !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
                         node: node.rightOperand,
                         code: CODE_TYPE_MISMATCH,
@@ -189,8 +183,8 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
             case '/':
                 if (
                     node.leftOperand &&
-                    !typeChecker.isSubtypeOf(leftType, coreTypes.Float, { strictTypeParameterTypeCheck: true }) &&
-                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int, { strictTypeParameterTypeCheck: true })
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Float) &&
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int)
                 ) {
                     accept('error', `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${leftType}'.`, {
                         node: node.leftOperand,
@@ -199,8 +193,8 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                 }
                 if (
                     node.rightOperand &&
-                    !typeChecker.isSubtypeOf(rightType, coreTypes.Float, { strictTypeParameterTypeCheck: true }) &&
-                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int, { strictTypeParameterTypeCheck: true })
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Float) &&
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int)
                 ) {
                     accept(
                         'error',
@@ -285,7 +279,7 @@ export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) 
                 .computeUpperBound(typeParameter, { stopAtTypeParameterType: true })
                 .substituteTypeParameters(type.substitutions);
 
-            if (!typeChecker.isSubtypeOf(typeArgumentType, upperBound, { strictTypeParameterTypeCheck: true })) {
+            if (!typeChecker.isSubtypeOf(typeArgumentType, upperBound)) {
                 accept('error', `Expected type '${upperBound}' but got '${typeArgumentType}'.`, {
                     node: typeArgument,
                     property: 'value',
@@ -314,7 +308,7 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
             parameterType = typeComputer.computeUpperBound(parameterType, { stopAtTypeParameterType: true });
         }
 
-        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType, { strictTypeParameterTypeCheck: true })) {
+        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType)) {
             accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
@@ -333,7 +327,7 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
         const operandType = typeComputer.computeType(node.operand);
         switch (node.operator) {
             case 'not':
-                if (!typeChecker.isSubtypeOf(operandType, coreTypes.Boolean, { strictTypeParameterTypeCheck: true })) {
+                if (!typeChecker.isSubtypeOf(operandType, coreTypes.Boolean)) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${operandType}'.`, {
                         node,
                         property: 'operand',
@@ -343,8 +337,8 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
                 return;
             case '-':
                 if (
-                    !typeChecker.isSubtypeOf(operandType, coreTypes.Float, { strictTypeParameterTypeCheck: true }) &&
-                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int, { strictTypeParameterTypeCheck: true })
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Float) &&
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int)
                 ) {
                     accept(
                         'error',
@@ -388,7 +382,7 @@ export const typeParameterDefaultValueMustMatchUpperBound = (services: SafeDsSer
         const defaultValueType = typeComputer.computeType(node.defaultValue);
         const upperBoundType = typeComputer.computeUpperBound(node, { stopAtTypeParameterType: true });
 
-        if (!typeChecker.isSubtypeOf(defaultValueType, upperBoundType, { strictTypeParameterTypeCheck: true })) {
+        if (!typeChecker.isSubtypeOf(defaultValueType, upperBoundType)) {
             accept('error', `Expected type '${upperBoundType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
@@ -411,7 +405,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const yieldType = typeComputer.computeType(node);
         const resultType = typeComputer.computeType(result);
 
-        if (!typeChecker.isSubtypeOf(yieldType, resultType, { strictTypeParameterTypeCheck: true })) {
+        if (!typeChecker.isSubtypeOf(yieldType, resultType)) {
             accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',

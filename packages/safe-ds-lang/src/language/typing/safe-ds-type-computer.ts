@@ -528,8 +528,8 @@ export class SafeDsTypeComputer {
         const rightOperandType = this.computeType(node.rightOperand);
 
         if (
-            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true }) &&
-            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })
+            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
+            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
         ) {
             return this.coreTypes.Int;
         } else {
@@ -581,7 +581,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
 
-        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })) {
+        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -874,7 +874,7 @@ export class SafeDsTypeComputer {
                 stopAtTypeParameterType: true,
             }).substituteTypeParameters(state.substitutions);
 
-            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound, { strictTypeParameterTypeCheck: true })) {
+            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
                 newSubstitution = upperBound;
             }
 
@@ -1243,15 +1243,12 @@ export class SafeDsTypeComputer {
         return otherTypes.every((it) =>
             this.typeChecker.isSupertypeOf(candidate, it, {
                 ignoreTypeParameters: true,
-                strictTypeParameterTypeCheck: true,
             }),
         );
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) =>
-            this.typeChecker.isSupertypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
-        );
+        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1486,15 +1483,12 @@ export class SafeDsTypeComputer {
         return otherTypes.every((it) =>
             this.typeChecker.isSubtypeOf(candidate, it, {
                 ignoreTypeParameters: true,
-                strictTypeParameterTypeCheck: true,
             }),
         );
     }
 
     private isCommonSubtype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) =>
-            this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
-        );
+        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
