@@ -4,18 +4,22 @@ class C1<T1>
 class C2<T1 sub Number>
 class C3<T1, T2 sub T1>
 
-@Pure fun f(
+@Pure fun f<T>(
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     a1: C1<»Any?«>,
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     a2: C1<T1 = »Any?«>,
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     a3: C1<Unknown = »Any?«>,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    a4: C1<»T«>,
 
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     b1: C2<»Number«>,
     // $TEST$ error "Expected type 'Number' but got 'String'."
     b2: C2<»String«>,
+    // $TEST$ error "Expected type 'Number' but got 'T'."
+    b3: C2<»T«>,
 
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     // $TEST$ no error r"Expected type '.*' but got '.*'\."

@@ -160,13 +160,19 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
         switch (node.operator) {
             case 'or':
             case 'and':
-                if (node.leftOperand && !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean)) {
+                if (
+                    node.leftOperand &&
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean, { strictTypeParameterTypeCheck: true })
+                ) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
                         node: node.leftOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
                 }
-                if (node.rightOperand && !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean)) {
+                if (
+                    node.rightOperand &&
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean, { strictTypeParameterTypeCheck: true })
+                ) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
                         node: node.rightOperand,
                         code: CODE_TYPE_MISMATCH,
@@ -183,8 +189,8 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
             case '/':
                 if (
                     node.leftOperand &&
-                    !typeChecker.isSubtypeOf(leftType, coreTypes.Float) &&
-                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Float, { strictTypeParameterTypeCheck: true }) &&
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int, { strictTypeParameterTypeCheck: true })
                 ) {
                     accept('error', `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${leftType}'.`, {
                         node: node.leftOperand,
@@ -193,8 +199,8 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                 }
                 if (
                     node.rightOperand &&
-                    !typeChecker.isSubtypeOf(rightType, coreTypes.Float) &&
-                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Float, { strictTypeParameterTypeCheck: true }) &&
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int, { strictTypeParameterTypeCheck: true })
                 ) {
                     accept(
                         'error',
@@ -400,7 +406,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const yieldType = typeComputer.computeType(node);
         const resultType = typeComputer.computeType(result);
 
-        if (!typeChecker.isSubtypeOf(yieldType, resultType)) {
+        if (!typeChecker.isSubtypeOf(yieldType, resultType, { strictTypeParameterTypeCheck: true })) {
             accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',

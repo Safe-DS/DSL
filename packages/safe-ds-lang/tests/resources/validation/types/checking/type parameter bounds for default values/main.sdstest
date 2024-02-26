@@ -17,6 +17,8 @@ class C2<
     T3 sub Number = »Number«,
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     T4 sub T1 = »T1«,
+    // $TEST$ error "Expected type 'T1' but got 'T2'."
+    T5 sub T1 = »T2«,
 >
 class C3<
     T1 sub Int,
@@ -45,6 +47,8 @@ class C3<
     T3 sub Number = »Number«,
     // $TEST$ no error r"Expected type '.*' but got '.*'\."
     T4 sub T1 = »T1«,
+    // $TEST$ error "Expected type 'T1' but got 'T2'."
+    T5 sub T1 = »T2«,
 >()
 @Pure fun f3<
     T1 sub Int,
