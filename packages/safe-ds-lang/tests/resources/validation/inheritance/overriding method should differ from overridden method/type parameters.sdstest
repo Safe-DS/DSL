@@ -1,20 +1,41 @@
-package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod
+package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod.typeParameters
 
-class MySuperClass3<T> {
+class MySuperClass<T> {
     attr myInstanceAttribute: T
-    @Pure fun myInstanceMethod(a: T = 0) -> r: T
+    @Pure fun myInstanceMethod1(a: T = 0) -> r: T
+    @Pure fun myInstanceMethod2(a: Int) -> r: Int
+    @Pure fun myInstanceMethod3<T>(a: T) -> r: T
 }
 
-class MyClass5 sub MySuperClass3<Number> {
+class MyClass2<T> sub MySuperClass<T> {
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    attr »myInstanceAttribute«: T
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    @Pure fun »myInstanceMethod1«(a: T = 0) -> r: T
+}
+
+class MyClass1 sub MySuperClass<Number> {
     // $TEST$ info "Overriding member is identical to overridden member and can be removed."
     attr »myInstanceAttribute«: Number
     // $TEST$ info "Overriding member is identical to overridden member and can be removed."
-    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Number
+    @Pure fun »myInstanceMethod1«(a: Number = 0) -> r: Number
 }
 
-class MyClass6 sub MySuperClass3<Number> {
+class MyClass3 sub MySuperClass<Number> {
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
     attr »myInstanceAttribute«: Int
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
-    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Int
+    @Pure fun »myInstanceMethod1«(a: Number = 0) -> r: Int
+}
+
+class MyClass4 sub MySuperClass<Number> {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure fun »myInstanceMethod2«<T>(a: T) -> r: T
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    @Pure fun »myInstanceMethod3«<T>(a: T) -> r: T
+}
+
+class MyClass5 sub MySuperClass<Number> {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure fun »myInstanceMethod3«(a: Int) -> r: Int
 }

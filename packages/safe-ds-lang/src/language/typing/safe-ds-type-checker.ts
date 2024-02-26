@@ -21,20 +21,17 @@ import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
 import { isEmpty } from '../../helpers/collections.js';
-import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly coreTypes: SafeDsCoreTypes;
-    private readonly factory: SafeDsTypeFactory;
     private readonly typeComputer: () => SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.types.ClassHierarchy;
         this.coreTypes = services.types.CoreTypes;
-        this.factory = services.types.TypeFactory;
         this.typeComputer = () => services.types.TypeComputer;
     }
 
@@ -398,6 +395,7 @@ export class SafeDsTypeChecker {
             !type.equals(this.coreTypes.NothingOrNull) &&
             this.isSubtypeOf(type, listOrNull, {
                 ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
             })
         );
     }
@@ -413,6 +411,7 @@ export class SafeDsTypeChecker {
             !type.equals(this.coreTypes.NothingOrNull) &&
             this.isSubtypeOf(type, mapOrNull, {
                 ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
             })
         );
     }

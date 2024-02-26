@@ -140,3 +140,15 @@ pipeline mixedOperands {
     // $TEST$ serialization Float
     val divisionFloatFloat = »1.5 / anyFloat()«;
 }
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ serialization Float
+    p2: Any? = »p1 + 1«,
+    // $TEST$ serialization Float
+    p3: Any? = »1 + p1«,
+    // $TEST$ serialization Float
+    p4: Any? = »-p1«,
+)

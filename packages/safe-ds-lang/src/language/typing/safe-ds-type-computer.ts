@@ -55,7 +55,6 @@ import {
     SdsAssignee,
     type SdsBlockLambda,
     SdsCall,
-    SdsCallable,
     SdsCallableType,
     SdsClass,
     SdsDeclaration,
@@ -458,11 +457,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (isSdsFunction(nonNullableReceiverType.callable)) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCallable(
-                    nonNullableReceiverType.callable,
-                    node,
-                );
-
+                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
                 result = result.substituteTypeParameters(substitutions);
             }
         } else if (nonNullableReceiverType instanceof StaticType) {
@@ -473,7 +468,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (instanceType instanceof ClassType) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCallable(instanceType.declaration, node);
+                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
 
                 result = this.factory.createClassType(
                     instanceType.declaration,
@@ -533,8 +528,8 @@ export class SafeDsTypeComputer {
         const rightOperandType = this.computeType(node.rightOperand);
 
         if (
-            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
-            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
+            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true }) &&
+            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })
         ) {
             return this.coreTypes.Int;
         } else {
@@ -586,7 +581,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
 
-        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
+        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -783,13 +778,13 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Computes substitutions for the type parameters of the given callable in the context of the given call.
+     * Computes substitutions for the type parameters of a callable in the context of a call.
      *
-     * @param callable The callable with the type parameters to compute substitutions for.
      * @param call The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
      */
-    computeTypeParameterSubstitutionsForCallable(callable: SdsCallable, call: SdsCall): TypeParameterSubstitutions {
+    computeTypeParameterSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
+        const callable = this.nodeMapper.callToCallable(call);
         const typeParameters = getTypeParameters(callable);
         if (isEmpty(typeParameters)) {
             return NO_SUBSTITUTIONS;
@@ -804,7 +799,36 @@ export class SafeDsTypeComputer {
             return [this.computeType(parameter.type), this.computeType(argument?.value ?? parameter.defaultValue)];
         });
 
-        return this.computeTypeParameterSubstitutionsForParameters(typeParameters, parameterTypesToArgumentTypes);
+        return this.computeTypeParameterSubstitutionsForArguments(typeParameters, parameterTypesToArgumentTypes);
+    }
+
+    /**
+     * Computes substitutions for the type parameters of a callable in the context of overriding another callable.
+     *
+     * @param ownMemberType The type of the overriding callable.
+     * @param overriddenMemberType The type of the overridden callable.
+     */
+    computeSubstitutionsForOverriding(ownMemberType: Type, overriddenMemberType: Type): TypeParameterSubstitutions {
+        if (!(ownMemberType instanceof CallableType) || !(overriddenMemberType instanceof CallableType)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const ownTypeParameters = getTypeParameters(ownMemberType.callable);
+        if (isEmpty(ownTypeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const ownParameterTypes = ownMemberType.inputType.entries.map((it) => it.type);
+        const overriddenParameterTypes = overriddenMemberType.inputType.entries.map((it) => it.type);
+
+        const minimumParameterCount = Math.min(ownParameterTypes.length, overriddenParameterTypes.length);
+        const ownTypesToOverriddenTypes: [Type, Type][] = [];
+
+        for (let i = 0; i < minimumParameterCount; i++) {
+            ownTypesToOverriddenTypes.push([ownParameterTypes[i]!, overriddenParameterTypes[i]!]);
+        }
+
+        return this.computeTypeParameterSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
     }
 
     /**
@@ -815,7 +839,7 @@ export class SafeDsTypeComputer {
      * @param parameterTypesToArgumentTypes Pairs of parameter types and the corresponding argument types.
      * @returns The computed substitutions for the type parameters in the parameter types.
      */
-    computeTypeParameterSubstitutionsForParameters(
+    private computeTypeParameterSubstitutionsForArguments(
         typeParameters: SdsTypeParameter[],
         parameterTypesToArgumentTypes: [Type, Type][],
     ): TypeParameterSubstitutions {
@@ -850,7 +874,7 @@ export class SafeDsTypeComputer {
                 stopAtTypeParameterType: true,
             }).substituteTypeParameters(state.substitutions);
 
-            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
+            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound, { strictTypeParameterTypeCheck: true })) {
                 newSubstitution = upperBound;
             }
 
@@ -1216,11 +1240,18 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSupertypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it, { ignoreTypeParameters: true }));
+        return otherTypes.every((it) =>
+            this.typeChecker.isSupertypeOf(candidate, it, {
+                ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
+            }),
+        );
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it));
+        return otherTypes.every((it) =>
+            this.typeChecker.isSupertypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1245,9 +1276,7 @@ export class SafeDsTypeComputer {
         const typesWithMatchingNullability = types.map((it) => it.withExplicitNullability(isNullable));
 
         // One of the types is already a common subtype of all others after updating nullability
-        const commonSupertype = typesWithMatchingNullability.find((it) =>
-            this.isCommonSubtypeWithStrictTypeParameterTypeCheck(it, types),
-        );
+        const commonSupertype = typesWithMatchingNullability.find((it) => this.isCommonSubtype(it, types));
         if (commonSupertype) {
             return commonSupertype;
         }
@@ -1318,7 +1347,7 @@ export class SafeDsTypeComputer {
         // If the class has no type parameters, the candidate must match as is
         const typeParameters = getTypeParameters(candidate.declaration);
         if (isEmpty(typeParameters)) {
-            if (this.isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate, others)) {
+            if (this.isCommonSubtype(candidate, others)) {
                 /* c8 ignore next 2 */
                 return candidate;
             } else {
@@ -1454,10 +1483,15 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSubtypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it, { ignoreTypeParameters: true }));
+        return otherTypes.every((it) =>
+            this.typeChecker.isSubtypeOf(candidate, it, {
+                ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
+            }),
+        );
     }
 
-    private isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate: Type, otherTypes: Type[]): boolean {
+    private isCommonSubtype(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) =>
             this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
         );
