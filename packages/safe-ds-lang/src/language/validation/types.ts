@@ -328,7 +328,7 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
         const operandType = typeComputer.computeType(node.operand);
         switch (node.operator) {
             case 'not':
-                if (!typeChecker.isSubtypeOf(operandType, coreTypes.Boolean)) {
+                if (!typeChecker.isSubtypeOf(operandType, coreTypes.Boolean, { strictTypeParameterTypeCheck: true })) {
                     accept('error', `Expected type '${coreTypes.Boolean}' but got '${operandType}'.`, {
                         node,
                         property: 'operand',
@@ -338,8 +338,8 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
                 return;
             case '-':
                 if (
-                    !typeChecker.isSubtypeOf(operandType, coreTypes.Float) &&
-                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Float, { strictTypeParameterTypeCheck: true }) &&
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int, { strictTypeParameterTypeCheck: true })
                 ) {
                     accept(
                         'error',

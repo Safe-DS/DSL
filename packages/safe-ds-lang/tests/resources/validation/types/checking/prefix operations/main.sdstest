@@ -18,3 +18,14 @@ segment mySegment() {
     // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
     -»unresolved«;
 }
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    a: Any? = not »p1«,
+
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    b: Any? = -»p1«,
+)
