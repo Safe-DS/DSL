@@ -528,8 +528,8 @@ export class SafeDsTypeComputer {
         const rightOperandType = this.computeType(node.rightOperand);
 
         if (
-            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
-            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
+            this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true }) &&
+            this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })
         ) {
             return this.coreTypes.Int;
         } else {
@@ -581,7 +581,7 @@ export class SafeDsTypeComputer {
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
 
-        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
+        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int, { strictTypeParameterTypeCheck: true })) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;
@@ -1211,7 +1211,12 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSupertypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSupertypeOf(candidate, it, { ignoreTypeParameters: true }));
+        return otherTypes.every((it) =>
+            this.typeChecker.isSupertypeOf(candidate, it, {
+                ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
+            }),
+        );
     }
 
     private isCommonSupertype(candidate: Type, otherTypes: Type[]): boolean {
@@ -1242,9 +1247,7 @@ export class SafeDsTypeComputer {
         const typesWithMatchingNullability = types.map((it) => it.withExplicitNullability(isNullable));
 
         // One of the types is already a common subtype of all others after updating nullability
-        const commonSupertype = typesWithMatchingNullability.find((it) =>
-            this.isCommonSubtypeWithStrictTypeParameterTypeCheck(it, types),
-        );
+        const commonSupertype = typesWithMatchingNullability.find((it) => this.isCommonSubtype(it, types));
         if (commonSupertype) {
             return commonSupertype;
         }
@@ -1315,7 +1318,7 @@ export class SafeDsTypeComputer {
         // If the class has no type parameters, the candidate must match as is
         const typeParameters = getTypeParameters(candidate.declaration);
         if (isEmpty(typeParameters)) {
-            if (this.isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate, others)) {
+            if (this.isCommonSubtype(candidate, others)) {
                 /* c8 ignore next 2 */
                 return candidate;
             } else {
@@ -1451,10 +1454,15 @@ export class SafeDsTypeComputer {
     }
 
     private isCommonSubtypeIgnoringTypeParameters(candidate: Type, otherTypes: Type[]): boolean {
-        return otherTypes.every((it) => this.typeChecker.isSubtypeOf(candidate, it, { ignoreTypeParameters: true }));
+        return otherTypes.every((it) =>
+            this.typeChecker.isSubtypeOf(candidate, it, {
+                ignoreTypeParameters: true,
+                strictTypeParameterTypeCheck: true,
+            }),
+        );
     }
 
-    private isCommonSubtypeWithStrictTypeParameterTypeCheck(candidate: Type, otherTypes: Type[]): boolean {
+    private isCommonSubtype(candidate: Type, otherTypes: Type[]): boolean {
         return otherTypes.every((it) =>
             this.typeChecker.isSubtypeOf(candidate, it, { strictTypeParameterTypeCheck: true }),
         );
