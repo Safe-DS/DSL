@@ -1,20 +1,46 @@
-package tests.validation.inheritance.overridingMethodMustMatchOverriddenMethod
+package tests.validation.inheritance.overridingMethodMustMatchOverriddenMethod.typeParameters
 
-class MySuperClass2<T> {
+class MySuperClass<T> {
     attr myInstanceAttribute: T
-    @Pure fun myInstanceMethod(a: T = 0) -> r: T
+    @Pure fun myInstanceMethod1(a: T = 0) -> r: T
+    @Pure fun myInstanceMethod2(a: Int) -> r: Int
+    @Pure fun myInstanceMethod3<T>(a: T) -> r: T
 }
 
-class MyClass3 sub MySuperClass2<Number> {
+class MyClass1 sub MySuperClass<Number> {
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
     attr »myInstanceAttribute«: Int
     // $TEST$ no error r"Overriding member does not match the overridden member:.*"
-    @Pure fun »myInstanceMethod«(a: Any = 0) -> r: Int
+    @Pure fun »myInstanceMethod1«(a: Any = 0) -> r: Int
 }
 
-class MyClass4 sub MySuperClass2<Number> {
+class MyClass2<T> sub MySuperClass<T> {
+    // $TEST$ no error r"Overriding member does not match the overridden member:.*"
+    attr »myInstanceAttribute«: T
+    // $TEST$ no error r"Overriding member does not match the overridden member:.*"
+    @Pure fun »myInstanceMethod1«(a: T = 0) -> r: T
+}
+
+class MyClass3 sub MySuperClass<Number> {
     // $TEST$ error r"Overriding member does not match the overridden member:.*"
     attr »myInstanceAttribute«: Any
     // $TEST$ error r"Overriding member does not match the overridden member:.*"
-    @Pure fun »myInstanceMethod«(a: Number = 0) -> r: Any
+    @Pure fun »myInstanceMethod1«(a: Number = 0) -> r: Any
+}
+
+class MyClass4 sub MySuperClass<Number> {
+    // $TEST$ no error r"Overriding member does not match the overridden member:.*"
+    @Pure fun »myInstanceMethod2«<T>(a: T) -> r: T
+    // $TEST$ no error r"Overriding member does not match the overridden member:.*"
+    @Pure fun »myInstanceMethod3«<T>(a: T) -> r: T
+}
+
+class MyClass5 sub MySuperClass<Number> {
+    // $TEST$ error r"Overriding member does not match the overridden member:.*"
+    @Pure fun »myInstanceMethod3«(a: Int) -> r: Int
+}
+
+class MyClass6<T> sub MySuperClass<Number> {
+    // $TEST$ error r"Overriding member does not match the overridden member:.*"
+    attr »myInstanceAttribute«: T
 }

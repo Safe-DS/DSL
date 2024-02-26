@@ -778,7 +778,7 @@ export class SafeDsTypeComputer {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Computes substitutions for the type parameters of the given callable in the context of the given call.
+     * Computes substitutions for the type parameters of a callable in the context of a call.
      *
      * @param call The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
@@ -803,6 +803,35 @@ export class SafeDsTypeComputer {
     }
 
     /**
+     * Computes substitutions for the type parameters of a callable in the context of overriding another callable.
+     *
+     * @param ownMemberType The type of the overriding callable.
+     * @param overriddenMemberType The type of the overridden callable.
+     */
+    computeSubstitutionsForOverriding(ownMemberType: Type, overriddenMemberType: Type): TypeParameterSubstitutions {
+        if (!(ownMemberType instanceof CallableType) || !(overriddenMemberType instanceof CallableType)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const ownTypeParameters = getTypeParameters(ownMemberType.callable);
+        if (isEmpty(ownTypeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const ownParameterTypes = ownMemberType.inputType.entries.map((it) => it.type);
+        const overriddenParameterTypes = overriddenMemberType.inputType.entries.map((it) => it.type);
+
+        const minimumParameterCount = Math.min(ownParameterTypes.length, overriddenParameterTypes.length);
+        const ownTypesToOverriddenTypes: [Type, Type][] = [];
+
+        for (let i = 0; i < minimumParameterCount; i++) {
+            ownTypesToOverriddenTypes.push([ownParameterTypes[i]!, overriddenParameterTypes[i]!]);
+        }
+
+        return this.computeTypeParameterSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
+    }
+
+    /**
      * Computes substitutions for the given type parameters in a list of parameter types based on the corresponding
      * argument types.
      *
@@ -810,7 +839,7 @@ export class SafeDsTypeComputer {
      * @param parameterTypesToArgumentTypes Pairs of parameter types and the corresponding argument types.
      * @returns The computed substitutions for the type parameters in the parameter types.
      */
-    computeTypeParameterSubstitutionsForArguments(
+    private computeTypeParameterSubstitutionsForArguments(
         typeParameters: SdsTypeParameter[],
         parameterTypesToArgumentTypes: [Type, Type][],
     ): TypeParameterSubstitutions {
@@ -845,7 +874,7 @@ export class SafeDsTypeComputer {
                 stopAtTypeParameterType: true,
             }).substituteTypeParameters(state.substitutions);
 
-            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
+            if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound, { strictTypeParameterTypeCheck: true })) {
                 newSubstitution = upperBound;
             }
 
