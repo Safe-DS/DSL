@@ -348,9 +348,7 @@ export class SafeDsTypeComputer {
             // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
             // access. Where possible, we already validate the existence of keys in indexed accesses using the partial
             // evaluator.
-            if (keyType instanceof LiteralType) {
-                keyType = this.computeClassTypeForLiteralType(keyType);
-            }
+            keyType = this.computeClassTypeForLiteralType(keyType);
 
             const valueType = this.lowestCommonSupertype(node.entries.map((it) => this.computeType(it.value)));
             return this.coreTypes.Map(keyType, valueType);
@@ -679,10 +677,15 @@ export class SafeDsTypeComputer {
     }
 
     /**
-     * Returns the lowest class type for the given literal type.
+     * Returns the lowest class type for the given literal type. If the given type is not a literal type, it is returned
+     * as is.
      */
-    computeClassTypeForLiteralType(literalType: LiteralType): Type {
-        return this.lowestCommonSupertype(literalType.constants.map((it) => this.computeClassTypeForConstant(it)));
+    computeClassTypeForLiteralType(type: Type): Type {
+        if (!(type instanceof LiteralType)) {
+            return type;
+        }
+
+        return this.lowestCommonSupertype(type.constants.map((it) => this.computeClassTypeForConstant(it)));
     }
 
     /**
