@@ -19,12 +19,12 @@ export abstract class SafeDsModuleMembers<T extends SdsModuleMember> {
             return this.cache.get(key);
         }
 
-        if (!this.langiumDocuments.hasDocument(uri)) {
+        const document = this.langiumDocuments.getDocument(uri);
+        if (!document) {
             /* c8 ignore next 2 */
             return undefined;
         }
 
-        const document = this.langiumDocuments.getOrCreateDocument(uri);
         const root = document.parseResult.value;
         if (!isSdsModule(root)) {
             /* c8 ignore next 2 */

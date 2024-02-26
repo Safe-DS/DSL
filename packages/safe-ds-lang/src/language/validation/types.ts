@@ -1,4 +1,4 @@
-import { AstNode, getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstNode, AstUtils, ValidationAcceptor } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import { pluralize } from '../../helpers/strings.js';
 import {
@@ -469,7 +469,7 @@ export const attributeMustHaveTypeHint = (node: SdsAttribute, accept: Validation
 
 export const parameterMustHaveTypeHint = (node: SdsParameter, accept: ValidationAcceptor): void => {
     if (!node.type) {
-        const containingCallable = getContainerOfType(node, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
 
         if (!isSdsLambda(containingCallable)) {
             accept('error', 'A parameter must have a type hint.', {

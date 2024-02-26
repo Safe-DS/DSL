@@ -1,12 +1,4 @@
-import {
-    AstNode,
-    type AstNodeLocator,
-    getContainerOfType,
-    getDocument,
-    stream,
-    streamAst,
-    WorkspaceCache,
-} from 'langium';
+import { AstNode, type AstNodeLocator, AstUtils, stream, WorkspaceCache } from 'langium';
 import {
     isSdsBlockLambda,
     isSdsCall,
@@ -197,7 +189,7 @@ export class SafeDsCallGraphComputer {
         }
 
         return [...callsInDefaultValues, ...callsInBody]
-            .filter((it) => getContainerOfType(it, isSdsCallable) === callable)
+            .filter((it) => AstUtils.getContainerOfType(it, isSdsCallable) === callable)
             .map((it) => this.createSyntheticCallForCall(it, substitutions));
     }
 
@@ -334,11 +326,11 @@ export class SafeDsCallGraphComputer {
         }
 
         const key = this.getNodeId(node);
-        return this.callCache.get(key, () => streamAst(node).filter(isSdsCall).toArray());
+        return this.callCache.get(key, () => AstUtils.streamAst(node).filter(isSdsCall).toArray());
     }
 
     private getNodeId(node: AstNode) {
-        const documentUri = getDocument(node).uri.toString();
+        const documentUri = AstUtils.getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
     }

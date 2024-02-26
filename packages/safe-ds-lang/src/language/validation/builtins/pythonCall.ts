@@ -1,4 +1,4 @@
-import { hasContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { isSdsClass, SdsFunction } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { findFirstAnnotationCallOf, getParameters } from '../../helpers/nodeProperties.js';
@@ -21,7 +21,7 @@ export const pythonCallMustOnlyContainValidTemplateExpressions = (services: Safe
 
         // Compute valid template expressions
         const validTemplateExpressions = new Set(getParameters(node).map((it) => `\$${it.name}`));
-        if (hasContainerOfType(node, isSdsClass)) {
+        if (AstUtils.hasContainerOfType(node, isSdsClass)) {
             validTemplateExpressions.add('$this');
         }
 

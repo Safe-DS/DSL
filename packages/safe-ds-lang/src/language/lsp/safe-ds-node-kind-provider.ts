@@ -1,4 +1,4 @@
-import { AstNode, AstNodeDescription, hasContainerOfType, isAstNode, NodeKindProvider } from 'langium';
+import { AstNode, AstNodeDescription, AstUtils, isAstNode } from 'langium';
 import { CompletionItemKind, SymbolKind } from 'vscode-languageserver';
 import {
     isSdsClass,
@@ -19,12 +19,13 @@ import {
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
+import { NodeKindProvider } from 'langium/lsp';
 
 export class SafeDsNodeKindProvider implements NodeKindProvider {
     getSymbolKind(nodeOrDescription: AstNode | AstNodeDescription): SymbolKind {
         // The WorkspaceSymbolProvider only passes descriptions, where the node might be undefined
         const node = this.getNode(nodeOrDescription);
-        if (isSdsFunction(node) && hasContainerOfType(node, isSdsClass)) {
+        if (isSdsFunction(node) && AstUtils.hasContainerOfType(node, isSdsClass)) {
             return SymbolKind.Method;
         }
 

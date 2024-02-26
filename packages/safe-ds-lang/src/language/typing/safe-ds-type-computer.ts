@@ -1,13 +1,4 @@
-import {
-    AstNode,
-    AstNodeLocator,
-    EMPTY_STREAM,
-    getContainerOfType,
-    getDocument,
-    Stream,
-    stream,
-    WorkspaceCache,
-} from 'langium';
+import { AstNode, AstNodeLocator, AstUtils, EMPTY_STREAM, Stream, stream, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
     isSdsAnnotation,
@@ -171,7 +162,7 @@ export class SafeDsTypeComputer {
     }
 
     private getNodeId(node: AstNode) {
-        const documentUri = getDocument(node).uri.toString();
+        const documentUri = AstUtils.getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
     }
@@ -193,7 +184,7 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfAssignee(node: SdsAssignee): Type {
-        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        const containingAssignment = AstUtils.getContainerOfType(node, isSdsAssignment);
         if (!containingAssignment) {
             /* c8 ignore next 2 */
             return UnknownType;
@@ -284,7 +275,7 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfParameterContext(node: SdsParameter): Type {
-        const containingCallable = getContainerOfType(node, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
         if (!isSdsLambda(containingCallable)) {
             return UnknownType;
         }
@@ -562,7 +553,7 @@ export class SafeDsTypeComputer {
 
         // Substitute type parameters (must also work for inherited members)
         if (receiverType instanceof ClassType) {
-            const classContainingMember = getContainerOfType(node.member?.target.ref, isSdsClass);
+            const classContainingMember = AstUtils.getContainerOfType(node.member?.target.ref, isSdsClass);
             const typeContainingMember = this.computeMatchingSupertype(receiverType, classContainingMember);
 
             if (typeContainingMember) {
@@ -1221,7 +1212,7 @@ export class SafeDsTypeComputer {
         } else if (!isEmpty(enumVariantTypes)) {
             candidates.push(enumVariantTypes[0]!.withExplicitNullability(isNullable));
 
-            const containingEnum = getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
+            const containingEnum = AstUtils.getContainerOfType(enumVariantTypes[0]!.declaration, isSdsEnum);
             if (containingEnum) {
                 candidates.push(this.factory.createEnumType(containingEnum, isNullable));
             }

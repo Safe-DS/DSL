@@ -1,4 +1,4 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
+import { AstNode, AstNodeLocator, AstUtils, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
     isSdsArgument,
@@ -122,7 +122,7 @@ export class SafeDsPartialEvaluator {
     }
 
     private getNodeId(node: AstNode) {
-        const documentUri = getDocument(node).uri.toString();
+        const documentUri = AstUtils.getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
     }
@@ -148,7 +148,7 @@ export class SafeDsPartialEvaluator {
         substitutions: ParameterSubstitutions,
         visited: VisitedState[],
     ): EvaluatedNode {
-        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        const containingAssignment = AstUtils.getContainerOfType(node, isSdsAssignment);
         if (!containingAssignment) {
             /* c8 ignore next 2 */
             return UnknownEvaluatedNode;

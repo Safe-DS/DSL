@@ -1,21 +1,15 @@
+import { AstUtils, LangiumDocument, TreeStreamImpl, URI } from 'langium';
 import {
     CompositeGeneratorNode,
     expandToNode,
     expandTracedToNode,
-    findRootNode,
-    getContainerOfType,
-    getDocument,
     joinToNode,
     joinTracedToNode,
-    LangiumDocument,
     NL,
-    streamAllContents,
     toStringAndTrace,
     TraceRegion,
     traceToNode,
-    TreeStreamImpl,
-    URI,
-} from 'langium';
+} from 'langium/generate';
 import path from 'path';
 import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -310,7 +304,7 @@ export class SafeDsPythonGenerator {
             if (currentName) {
                 segments.unshift(currentName);
             }
-            current = getContainerOfType(current.$container, isSdsDeclaration);
+            current = AstUtils.getContainerOfType(current.$container, isSdsDeclaration);
         }
 
         return segments.join('.');
@@ -531,14 +525,14 @@ export class SafeDsPythonGenerator {
         statementsWithEffect: SdsStatement[],
     ): SdsStatement[] {
         // Find assignment of placeholder, to search used placeholders and impure dependencies
-        const assignment = getContainerOfType(targetPlaceholder, isSdsAssignment);
+        const assignment = AstUtils.getContainerOfType(targetPlaceholder, isSdsAssignment);
         if (!assignment || !assignment.expression) {
             /* c8 ignore next 2 */
             throw new Error(`No assignment for placeholder: ${targetPlaceholder.name}`);
         }
         // All collected referenced placeholders that are needed for calculating the target placeholder. An expression in the assignment will always exist here
         const referencedPlaceholders = new Set<SdsPlaceholder>(
-            streamAllContents(assignment.expression!)
+            AstUtils.streamAllContents(assignment.expression!)
                 .filter(isSdsReference)
                 .filter((reference) => isSdsPlaceholder(reference.target.ref))
                 .map((reference) => <SdsPlaceholder>reference.target.ref!)
@@ -569,7 +563,7 @@ export class SafeDsPythonGenerator {
                 collectedStatements.push(prevStatement);
                 // Collect all referenced placeholders
                 if (isSdsExpressionStatement(prevStatement) || isSdsAssignment(prevStatement)) {
-                    streamAllContents(prevStatement.expression!)
+                    AstUtils.streamAllContents(prevStatement.expression!)
                         .filter(isSdsReference)
                         .filter((reference) => isSdsPlaceholder(reference.target.ref))
                         .map((reference) => <SdsPlaceholder>reference.target.ref!)
@@ -595,7 +589,7 @@ export class SafeDsPythonGenerator {
         const blockLambdaCode: CompositeGeneratorNode[] = [];
         if (isSdsAssignment(statement)) {
             if (statement.expression) {
-                for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
+                for (const lambda of AstUtils.streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
                     blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
                 }
             }
@@ -604,7 +598,7 @@ export class SafeDsPythonGenerator {
                 separator: NL,
             })!;
         } else if (isSdsExpressionStatement(statement)) {
-            for (const lambda of streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
+            for (const lambda of AstUtils.streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
                 blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
             }
             blockLambdaCode.push(this.generateExpression(statement.expression, frame));
@@ -874,7 +868,7 @@ export class SafeDsPythonGenerator {
                 const suffix = isSdsCall(expression.$container) ? '' : '()';
                 return expandTracedToNode(expression)`${receiver}.${enumMember}${suffix}`;
             } else if (isSdsAbstractResult(member)) {
-                const resultList = getAbstractResults(getContainerOfType(member, isSdsCallable));
+                const resultList = getAbstractResults(AstUtils.getContainerOfType(member, isSdsCallable));
                 if (resultList.length === 1) {
                     return traceToNode(expression)(receiver);
                 }
@@ -1109,8 +1103,8 @@ export class SafeDsPythonGenerator {
         }
 
         // Root Node is always a module.
-        const currentModule = <SdsModule>findRootNode(expression);
-        const targetModule = <SdsModule>findRootNode(declaration);
+        const currentModule = <SdsModule>AstUtils.findRootNode(expression);
+        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
         for (const value of getImports(currentModule)) {
             // Verify same package
             if (value.package !== targetModule.name) {
@@ -1150,8 +1144,8 @@ export class SafeDsPythonGenerator {
         declaration: SdsDeclaration,
     ): ImportData | undefined {
         // Root Node is always a module.
-        const currentModule = <SdsModule>findRootNode(expression);
-        const targetModule = <SdsModule>findRootNode(declaration);
+        const currentModule = <SdsModule>AstUtils.findRootNode(expression);
+        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
         if (currentModule !== targetModule && !isInStubFile(targetModule)) {
             return {
                 importPath: `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
@@ -1164,7 +1158,7 @@ export class SafeDsPythonGenerator {
     }
 
     private getModuleFileBaseName(module: SdsModule): string {
-        const filePath = getDocument(module).uri.fsPath;
+        const filePath = AstUtils.getDocument(module).uri.fsPath;
         return path.basename(filePath, path.extname(filePath));
     }
 

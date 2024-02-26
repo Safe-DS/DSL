@@ -107,7 +107,9 @@ export const loadDocuments = async (
     uris: URI[],
     options: BuildOptions = {},
 ): Promise<LangiumDocument[]> => {
-    const documents = uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri));
+    const documents = await Promise.all(
+        uris.map((uri) => services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri)),
+    );
     await services.shared.workspace.DocumentBuilder.build(documents, options);
     return documents;
 };

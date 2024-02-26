@@ -1,4 +1,4 @@
-import { hasContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import {
     isSdsMap,
     isSdsUnionType,
@@ -55,7 +55,7 @@ export const mapsShouldBeUsedWithCaution = (services: SafeDsServices) => {
         }
 
         // There's already a warning on the container
-        if (hasContainerOfType(node.$container, isSdsMap)) {
+        if (AstUtils.hasContainerOfType(node.$container, isSdsMap)) {
             return;
         }
 
@@ -76,7 +76,7 @@ export const unionTypesShouldBeUsedWithCaution = (services: SafeDsServices) => {
         }
 
         // There's already a warning on the container
-        if (hasContainerOfType(node.$container, isSdsUnionType)) {
+        if (AstUtils.hasContainerOfType(node.$container, isSdsUnionType)) {
             return;
         }
 

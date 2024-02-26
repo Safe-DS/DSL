@@ -1,13 +1,14 @@
-import { LangiumDocument, LangiumServices, stream, URI } from 'langium';
+import { LangiumDocument, stream, URI } from 'langium';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ExitCode } from '../cli/exitCode.js';
 import { globSync } from 'glob';
 import { Result } from 'true-myth';
 import chalk from 'chalk';
+import { type LangiumServices } from 'langium/lsp';
 
 /**
- * Extracts a document from a file name.
+ * Extracts documents at the given paths.
  */
 export const extractDocuments = async function (
     services: LangiumServices,
@@ -24,7 +25,7 @@ export const extractDocuments = async function (
         process.exit(uris.error.code);
     }
 
-    const documents = uris.value.map((uri) => langiumDocuments.getOrCreateDocument(uri));
+    const documents = await Promise.all(uris.value.map((uri) => langiumDocuments.getOrCreateDocument(uri)));
     await documentBuilder.build(documents, { validation: true });
     return documents;
 };

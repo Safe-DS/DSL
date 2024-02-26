@@ -1,4 +1,4 @@
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { duplicatesBy, isEmpty } from '../../../helpers/collections.js';
 import { pluralize } from '../../../helpers/strings.js';
 import { isSdsAnnotation, isSdsCall, SdsAbstractCall, SdsArgumentList } from '../../generated/ast.js';
@@ -80,7 +80,7 @@ export const argumentListMustNotSetParameterMultipleTimes = (services: SafeDsSer
 
     return (node: SdsArgumentList, accept: ValidationAcceptor): void => {
         // We already report other errors in this case
-        const containingCall = getContainerOfType(node, isSdsCall);
+        const containingCall = AstUtils.getContainerOfType(node, isSdsCall);
         const callable = nodeMapper.callToCallable(containingCall);
         if (isSdsAnnotation(callable)) {
             return;

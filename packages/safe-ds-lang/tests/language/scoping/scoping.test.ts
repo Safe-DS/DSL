@@ -1,5 +1,5 @@
 import { AssertionError } from 'assert';
-import { AstNode, DocumentValidator, getDocument, LangiumDocument, Reference, URI } from 'langium';
+import { AstNode, AstUtils, DocumentValidator, LangiumDocument, Reference, URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments, isRangeEqual, validationHelper } from 'langium/test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -15,6 +15,7 @@ const services = createSafeDsServices(NodeFileSystem).SafeDs;
 const builtinAnnotations = services.builtins.Annotations;
 const builtinEnums = services.builtins.Enums;
 const builtinClasses = services.builtins.Classes;
+const langiumDocuments = services.shared.workspace.LangiumDocuments;
 
 describe('scoping', async () => {
     beforeEach(async () => {
@@ -134,9 +135,7 @@ describe('scoping', async () => {
  * @throws AssertionError If no matching actual reference was found.
  */
 const findActualTargetLocation = (expectedReference: ExpectedReference): Location | undefined => {
-    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
-        URI.parse(expectedReference.location.uri),
-    );
+    const document = langiumDocuments.getDocument(URI.parse(expectedReference.location.uri))!;
 
     const actualReference = findActualReference(document, expectedReference);
 
@@ -190,8 +189,8 @@ const expectSameDocument = (node1: AstNode | undefined, node2: AstNode | undefin
         throw new AssertionError({ message: `node2 is undefined.` });
     }
 
-    const document1 = getDocument(node1);
-    const document2 = getDocument(node2);
+    const document1 = AstUtils.getDocument(node1);
+    const document2 = AstUtils.getDocument(node2);
 
     expect(document1.uri.toString()).toStrictEqual(document2.uri.toString());
 };

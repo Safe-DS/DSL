@@ -286,7 +286,7 @@ describe('SafeDsRenameProvider', async () => {
 
         // Check the results
         for (const description of descriptions) {
-            const document = langiumDocuments.getOrCreateDocument(URI.parse(description.uri));
+            const document = langiumDocuments.getDocument(URI.parse(description.uri))!;
             const edits = changes[description.uri] ?? [];
             const actualOutput = TextDocument.applyEdits(document.textDocument, edits);
 

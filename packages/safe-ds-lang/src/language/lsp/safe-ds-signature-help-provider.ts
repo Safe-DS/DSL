@@ -1,13 +1,12 @@
 import {
     type AstNode,
+    AstUtils,
+    CstUtils,
     type DocumentationProvider,
-    findLeafNodeAtOffset,
-    findNodesForKeyword,
-    getContainerOfType,
+    GrammarUtils,
     isNamed,
     type LangiumDocument,
     type MaybePromise,
-    type SignatureHelpProvider,
 } from 'langium';
 import type {
     CancellationToken,
@@ -22,6 +21,7 @@ import { type SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { type SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { CallableType, NamedType } from '../typing/model.js';
+import { SignatureHelpProvider } from 'langium/lsp';
 
 export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
     private readonly documentationProvider: DocumentationProvider;
@@ -47,7 +47,7 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
         /* c8 ignore stop */
 
         const offset = document.textDocument.offsetAt(params.position);
-        const sourceCstNode = findLeafNodeAtOffset(rootCstNode, offset);
+        const sourceCstNode = CstUtils.findLeafNodeAtOffset(rootCstNode, offset);
         /* c8 ignore start */
         if (!sourceCstNode) {
             return undefined;
@@ -61,7 +61,7 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
      * Returns the signature help for the given node at the given offset.
      */
     private getSignature(node: AstNode, offset: number): MaybePromise<SignatureHelp | undefined> {
-        const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
+        const containingAbstractCall = AstUtils.getContainerOfType(node, isSdsAbstractCall);
         if (!containingAbstractCall) {
             return undefined;
         }
@@ -71,7 +71,7 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
             return undefined;
         }
 
-        const commas = findNodesForKeyword(containingAbstractCall.argumentList.$cstNode, ',');
+        const commas = GrammarUtils.findNodesForKeyword(containingAbstractCall.argumentList.$cstNode, ',');
         const activeParameter = commas.findLastIndex((comma) => comma.offset < offset) + 1;
 
         return {

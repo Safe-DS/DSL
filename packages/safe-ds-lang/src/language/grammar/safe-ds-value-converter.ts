@@ -1,4 +1,4 @@
-import { convertBigint, CstNode, DefaultValueConverter, GrammarAST, ValueType } from 'langium';
+import { CstNode, DefaultValueConverter, GrammarAST, ValueConverter, ValueType } from 'langium';
 
 export class SafeDsValueConverter extends DefaultValueConverter {
     protected override runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {
@@ -6,7 +6,7 @@ export class SafeDsValueConverter extends DefaultValueConverter {
             case 'ID':
                 return input.replaceAll('`', '');
             case 'INT':
-                return convertBigint(input);
+                return ValueConverter.convertBigint(input);
             case 'STRING':
                 return convertString(input, 1, 1);
             case 'TEMPLATE_STRING_START':

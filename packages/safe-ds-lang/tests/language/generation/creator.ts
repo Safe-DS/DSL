@@ -5,7 +5,7 @@ import {
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
@@ -14,8 +14,9 @@ import { TestDescription, TestDescriptionError } from '../../helpers/testDescrip
 import { locationToString } from '../../../src/helpers/locations.js';
 import { URI } from 'langium';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
-await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
+const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const langiumDocuments = services.shared.workspace.LangiumDocuments;
+
 const rootResourceName = 'generation';
 const runnerIntegration = 'runner integration';
 
@@ -35,7 +36,8 @@ const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Pro
     await loadDocuments(services, inputUris, { validation: true });
 
     for (const uri of inputUris) {
-        const code = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri).textDocument.getText();
+        const document = langiumDocuments.getDocument(uri)!;
+        const code = document.textDocument.getText();
 
         // File must not contain any errors
         const errors = getErrorsAtURI(services, uri);

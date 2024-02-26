@@ -1,4 +1,5 @@
-import { AbstractSemanticTokenProvider, AstNode, hasContainerOfType, SemanticTokenAcceptor } from 'langium';
+import { AbstractSemanticTokenProvider, SemanticTokenAcceptor } from 'langium/lsp';
+import { AstNode, AstUtils } from 'langium';
 import { SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import {
@@ -168,7 +169,7 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                 modifier: additionalModifiers,
             };
         } else if (isSdsFunction(node)) {
-            if (hasContainerOfType(node, isSdsClass)) {
+            if (AstUtils.hasContainerOfType(node, isSdsClass)) {
                 return {
                     type: SemanticTokenTypes.method,
                     modifier: node.isStatic

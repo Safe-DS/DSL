@@ -1,16 +1,8 @@
-import {
-    AbstractFormatter,
-    AstNode,
-    CstNode,
-    findCommentNode,
-    Formatting,
-    FormattingAction,
-    FormattingActionOptions,
-    isAstNode,
-} from 'langium';
+import { AstNode, CstNode, CstUtils, isAstNode } from 'langium';
 import { last } from '../../helpers/collections.js';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
+import { AbstractFormatter, Formatting, FormattingAction, FormattingActionOptions } from 'langium/lsp';
 import indent = Formatting.indent;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
@@ -1021,9 +1013,9 @@ export class SafeDsFormatter extends AbstractFormatter {
         const commentNames = ['ML_COMMENT', 'SL_COMMENT'];
 
         if (isAstNode(node)) {
-            return findCommentNode(node.$cstNode, commentNames);
+            return CstUtils.findCommentNode(node.$cstNode, commentNames);
         } else {
-            return findCommentNode(node, commentNames);
+            return CstUtils.findCommentNode(node, commentNames);
         }
     }
 }

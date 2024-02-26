@@ -1,14 +1,12 @@
+import { DeepPartial, inject, Module } from 'langium';
 import {
     createDefaultModule,
     createDefaultSharedModule,
-    DeepPartial,
     DefaultSharedModuleContext,
-    inject,
     LangiumServices,
     LangiumSharedServices,
-    Module,
     PartialLangiumServices,
-} from 'langium';
+} from 'langium/lsp';
 import { SafeDsAnnotations } from './builtins/safe-ds-annotations.js';
 import { SafeDsClasses } from './builtins/safe-ds-classes.js';
 import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js';
@@ -23,7 +21,6 @@ import { SafeDsCallHierarchyProvider } from './lsp/safe-ds-call-hierarchy-provid
 import { SafeDsDocumentSymbolProvider } from './lsp/safe-ds-document-symbol-provider.js';
 import { SafeDsFormatter } from './lsp/safe-ds-formatter.js';
 import { SafeDsInlayHintProvider } from './lsp/safe-ds-inlay-hint-provider.js';
-import { SafeDsLanguageServer } from './lsp/safe-ds-language-server.js';
 import { SafeDsNodeInfoProvider } from './lsp/safe-ds-node-info-provider.js';
 import { SafeDsNodeKindProvider } from './lsp/safe-ds-node-kind-provider.js';
 import { SafeDsSemanticTokenProvider } from './lsp/safe-ds-semantic-token-provider.js';
@@ -70,7 +67,6 @@ export type SafeDsAddedServices = {
     };
     lsp: {
         NodeInfoProvider: SafeDsNodeInfoProvider;
-        TypeHierarchyProvider: SafeDsTypeHierarchyProvider;
     };
     purity: {
         PurityComputer: SafeDsPurityComputer;
@@ -166,7 +162,6 @@ export type SafeDsSharedServices = LangiumSharedServices;
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
     lsp: {
-        LanguageServer: (services) => new SafeDsLanguageServer(services),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {

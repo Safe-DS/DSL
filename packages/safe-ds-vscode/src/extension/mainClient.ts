@@ -316,8 +316,10 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
         });
     const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sdspipe,sdsstub,sdstest}');
     // Load all documents
-    const unvalidatedSdsDocuments = workspaceSdsFiles.map((newDocumentUri) =>
-        services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
+    const unvalidatedSdsDocuments = await Promise.all(
+        workspaceSdsFiles.map((newDocumentUri) =>
+            services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
+        ),
     );
     // Validate them
     const validationErrorMessage = await validateDocuments(services, unvalidatedSdsDocuments);
@@ -327,16 +329,17 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
     }
     // Run it
     printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
+
     let mainDocument;
     if (!services.shared.workspace.LangiumDocuments.hasDocument(pipelinePath)) {
-        mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
+        mainDocument = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
         const mainDocumentValidationErrorMessage = await validateDocuments(services, [mainDocument]);
         if (mainDocumentValidationErrorMessage) {
             vscode.window.showErrorMessage(mainDocumentValidationErrorMessage);
             return;
         }
     } else {
-        mainDocument = services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
+        mainDocument = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
     await services.runtime.Runner.executePipeline(mainDocument, pipelineId);
 };

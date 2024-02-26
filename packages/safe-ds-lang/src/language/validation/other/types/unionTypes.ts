@@ -7,7 +7,7 @@ import {
     isSdsUnionType,
     SdsUnionType,
 } from '../../../generated/ast.js';
-import { getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { getTypeArguments } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { Type } from '../../../typing/model.js';
@@ -27,7 +27,7 @@ export const unionTypeMustBeUsedInCorrectContext = (node: SdsUnionType, accept: 
 };
 
 const contextIsCorrect = (node: SdsUnionType): boolean => {
-    if (hasContainerOfType(node.$container, isSdsUnionType)) {
+    if (AstUtils.hasContainerOfType(node.$container, isSdsUnionType)) {
         return true;
     }
 
@@ -36,7 +36,7 @@ const contextIsCorrect = (node: SdsUnionType): boolean => {
         return false;
     }
 
-    const containingCallable = getContainerOfType(container, isSdsCallable);
+    const containingCallable = AstUtils.getContainerOfType(container, isSdsCallable);
     return (
         !containingCallable ||
         isSdsAnnotation(containingCallable) ||

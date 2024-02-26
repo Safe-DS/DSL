@@ -1,7 +1,7 @@
 import { Location, Range } from 'vscode-languageserver';
 import { isRangeEqual, parseHelper } from 'langium/test';
 import { SafeDsServices } from '../../src/language/index.js';
-import { AstNode, streamAllContents, streamAst, URI } from 'langium';
+import { AstNode, AstUtils, URI } from 'langium';
 import { SdsModule } from '../../src/language/generated/ast.js';
 import { AssertionError } from 'assert';
 import { locationToString } from '../../src/helpers/locations.js';
@@ -18,16 +18,16 @@ export const getNodeByLocation = (services: SafeDsServices, location: Location):
     const langiumDocuments = services.shared.workspace.LangiumDocuments;
     const uri = URI.parse(location.uri);
 
-    if (!langiumDocuments.hasDocument(uri)) {
+    const document = langiumDocuments.getDocument(uri);
+    if (!document) {
         throw new AssertionError({
             message: `No document found at ${location.uri}`,
         });
     }
 
-    const document = langiumDocuments.getOrCreateDocument(URI.parse(location.uri));
     const module = document.parseResult.value as SdsModule;
 
-    for (const node of streamAllContents(module)) {
+    for (const node of AstUtils.streamAllContents(module)) {
         // Entire node matches the range
         const actualRange = node.$cstNode?.range;
         if (actualRange && isRangeEqual(actualRange, location.range)) {
@@ -67,7 +67,7 @@ export const getNodeOfType = async <T extends AstNode>(
 ): Promise<T> => {
     const document = await parseHelper(services)(code);
     const module = document.parseResult.value as SdsModule;
-    const candidates = streamAst(module).filter(predicate).toArray();
+    const candidates = AstUtils.streamAst(module).filter(predicate).toArray();
 
     if (candidates.length === 0) {
         throw new AssertionError({ message: `Expected to find a matching node but found none.` });

@@ -2,10 +2,9 @@ import {
     AstNode,
     AstNodeDescription,
     AstReflection,
+    AstUtils,
     DefaultScopeProvider,
     EMPTY_SCOPE,
-    getContainerOfType,
-    getDocument,
     ReferenceInfo,
     Scope,
     WorkspaceCache,
@@ -134,7 +133,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getScopeForArgumentParameter(node: SdsArgument): Scope {
-        const containingAbstractCall = getContainerOfType(node, isSdsAbstractCall);
+        const containingAbstractCall = AstUtils.getContainerOfType(node, isSdsAbstractCall);
         const callable = this.nodeMapper.callToCallable(containingAbstractCall);
         if (!callable) {
             return EMPTY_SCOPE;
@@ -147,7 +146,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     private getScopeForImportedDeclarationDeclaration(node: SdsImportedDeclaration): Scope {
         const ownPackageName = getPackageName(node);
 
-        const containingQualifiedImport = getContainerOfType(node, isSdsQualifiedImport);
+        const containingQualifiedImport = AstUtils.getContainerOfType(node, isSdsQualifiedImport);
         if (!containingQualifiedImport) {
             /* c8 ignore next 2 */
             return EMPTY_SCOPE;
@@ -199,7 +198,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         let currentScope = this.coreDeclarations(SdsNamedTypeDeclaration, super.getScope(context));
 
         // Type parameters (up to the containing type parameter)
-        const containingTypeParameter = getContainerOfType(node, isSdsTypeParameter);
+        const containingTypeParameter = AstUtils.getContainerOfType(node, isSdsTypeParameter);
         if (containingTypeParameter) {
             const allTypeParameters = getTypeParameters(containingTypeParameter?.$container);
             const priorTypeParameters = allTypeParameters.slice(0, containingTypeParameter.$containerIndex);
@@ -301,7 +300,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
         // Cannot reference the target of an annotation call from inside the annotation call
         let start: AstNode | undefined;
-        const containingAnnotationCall = getContainerOfType(node, isSdsAnnotationCall);
+        const containingAnnotationCall = AstUtils.getContainerOfType(node, isSdsAnnotationCall);
         if (containingAnnotationCall) {
             start = getAnnotationCallTarget(containingAnnotationCall)?.$container;
         } else {
@@ -309,23 +308,23 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         // Only containing classes, enums, and enum variants can be referenced
-        let current = getContainerOfType(start, isSdsNamedTypeDeclaration);
+        let current = AstUtils.getContainerOfType(start, isSdsNamedTypeDeclaration);
         while (current) {
             result.push(current);
-            current = getContainerOfType(current.$container, isSdsNamedTypeDeclaration);
+            current = AstUtils.getContainerOfType(current.$container, isSdsNamedTypeDeclaration);
         }
 
         return this.createScopeForNodes(result, outerScope);
     }
 
     private globalDeclarationsInSameFile(node: AstNode, outerScope: Scope): Scope {
-        const module = getContainerOfType(node, isSdsModule);
+        const module = AstUtils.getContainerOfType(node, isSdsModule);
         if (!module) {
             /* c8 ignore next 2 */
             return outerScope;
         }
 
-        const precomputed = getDocument(module).precomputedScopes?.get(module);
+        const precomputed = AstUtils.getDocument(module).precomputedScopes?.get(module);
         if (!precomputed) {
             /* c8 ignore next 2 */
             return outerScope;
@@ -335,10 +334,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private localDeclarations(node: AstNode, outerScope: Scope): Scope {
-        const containingCallable = getContainerOfType(node.$container, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node.$container, isSdsCallable);
 
         // Parameters (up to the containing parameter)
-        const containingParameter = getContainerOfType(node, isSdsParameter);
+        const containingParameter = AstUtils.getContainerOfType(node, isSdsParameter);
 
         let parameters: Iterable<SdsParameter>;
         if (containingCallable && containingParameter) {
@@ -348,7 +347,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         }
 
         // Placeholders up to the containing statement
-        const containingStatement = getContainerOfType(node.$container, isSdsStatement);
+        const containingStatement = AstUtils.getContainerOfType(node.$container, isSdsStatement);
 
         let placeholders: Iterable<SdsPlaceholder>;
         if (!containingCallable || isContainedInOrEqual(containingStatement, containingCallable)) {
@@ -389,7 +388,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
             return;
         }
 
-        const containingBlock = getContainerOfType(statement, isSdsBlock);
+        const containingBlock = AstUtils.getContainerOfType(statement, isSdsBlock);
         for (const current of getStatements(containingBlock)) {
             if (current === statement) {
                 return;
@@ -402,7 +401,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getScopeForTypeArgumentTypeParameter(node: SdsTypeArgument): Scope {
-        const containingNamedType = getContainerOfType(node, isSdsNamedType);
+        const containingNamedType = AstUtils.getContainerOfType(node, isSdsNamedType);
         if (!containingNamedType) {
             /* c8 ignore next 2 */
             return EMPTY_SCOPE;
@@ -418,7 +417,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private getScopeForYieldResult(node: SdsYield): Scope {
-        const containingSegment = getContainerOfType(node, isSdsSegment);
+        const containingSegment = AstUtils.getContainerOfType(node, isSdsSegment);
         if (!containingSegment) {
             return EMPTY_SCOPE;
         }
@@ -428,7 +427,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
 
     protected override getGlobalScope(referenceType: string, context: ReferenceInfo): Scope {
         const node = context.container;
-        const key = `${getDocument(node).uri}~${referenceType}`;
+        const key = `${AstUtils.getDocument(node).uri}~${referenceType}`;
         return this.globalScopeCache.get(key, () => this.getGlobalScopeForNode(referenceType, node));
     }
 
@@ -466,7 +465,7 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
     }
 
     private explicitlyImportedDeclarations(referenceType: string, node: AstNode): AstNodeDescription[] {
-        const containingModule = getContainerOfType(node, isSdsModule);
+        const containingModule = AstUtils.getContainerOfType(node, isSdsModule);
         const imports = getImports(containingModule);
 
         const result: AstNodeDescription[] = [];

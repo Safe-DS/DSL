@@ -6,7 +6,9 @@ import { loadDocuments } from '../../helpers/testResources.js';
 import { stream, URI } from 'langium';
 
 const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const pythonGenerator = services.generation.PythonGenerator;
+
 const generationTests = createGenerationTests();
 
 describe('generation', async () => {
@@ -22,9 +24,7 @@ describe('generation', async () => {
         // Get target placeholder name for "run until"
         let runUntilPlaceholderName: string | undefined = undefined;
         if (test.runUntil) {
-            const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
-                URI.parse(test.runUntil.uri),
-            );
+            const document = langiumDocuments.getDocument(URI.parse(test.runUntil.uri))!;
             runUntilPlaceholderName = document.textDocument.getText(test.runUntil.range);
         }
 

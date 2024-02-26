@@ -1,4 +1,4 @@
-import { EMPTY_STREAM, getContainerOfType, stream, Stream } from 'langium';
+import { AstUtils, EMPTY_STREAM, stream, Stream } from 'langium';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { isSdsClass, isSdsNamedType, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getClassMembers, getParentTypes, isStatic } from '../helpers/nodeProperties.js';
@@ -91,7 +91,7 @@ export class SafeDsClassHierarchy {
         }
 
         // Don't consider members with the same name as a previous member
-        const containingClass = getContainerOfType(node, isSdsClass);
+        const containingClass = AstUtils.getContainerOfType(node, isSdsClass);
         if (!containingClass) {
             return undefined;
         }

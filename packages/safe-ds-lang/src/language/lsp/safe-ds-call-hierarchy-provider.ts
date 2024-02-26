@@ -1,14 +1,4 @@
-import {
-    AbstractCallHierarchyProvider,
-    type AstNode,
-    type CstNode,
-    findLeafNodeAtOffset,
-    getContainerOfType,
-    getDocument,
-    type NodeKindProvider,
-    type ReferenceDescription,
-    type Stream,
-} from 'langium';
+import { type AstNode, AstUtils, type CstNode, CstUtils, type ReferenceDescription, type Stream } from 'langium';
 import type {
     CallHierarchyIncomingCall,
     CallHierarchyOutgoingCall,
@@ -27,6 +17,7 @@ import {
 import type { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import type { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
+import { AbstractCallHierarchyProvider, NodeKindProvider } from 'langium/lsp';
 
 export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
     private readonly callGraphComputer: SafeDsCallGraphComputer;
@@ -79,7 +70,7 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
                 return;
             }
 
-            const callerDocumentUri = getDocument(caller).uri.toString();
+            const callerDocumentUri = AstUtils.getDocument(caller).uri.toString();
 
             result.push({
                 from: {
@@ -107,23 +98,28 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
     private getUniquePotentialCallers(references: Stream<ReferenceDescription>): Stream<SdsDeclaration> {
         return references
             .map((it) => {
-                const document = this.documents.getOrCreateDocument(it.sourceUri);
+                const document = this.documents.getDocument(it.sourceUri);
+                if (!document) {
+                    /* c8 ignore next 2 */
+                    return undefined;
+                }
+
                 const rootNode = document.parseResult.value;
                 if (!rootNode.$cstNode) {
                     /* c8 ignore next 2 */
                     return undefined;
                 }
 
-                const targetCstNode = findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
+                const targetCstNode = CstUtils.findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
                 if (!targetCstNode) {
                     /* c8 ignore next 2 */
                     return undefined;
                 }
 
-                const containingDeclaration = getContainerOfType(targetCstNode.astNode, isSdsDeclaration);
+                const containingDeclaration = AstUtils.getContainerOfType(targetCstNode.astNode, isSdsDeclaration);
                 if (isSdsParameter(containingDeclaration)) {
                     // For parameters, we return their containing callable instead
-                    return getContainerOfType(containingDeclaration.$container, isSdsDeclaration);
+                    return AstUtils.getContainerOfType(containingDeclaration.$container, isSdsDeclaration);
                 } else {
                     return containingDeclaration;
                 }
@@ -165,7 +161,7 @@ export class SafeDsCallHierarchyProvider extends AbstractCallHierarchyProvider {
                 return;
             }
 
-            const callableDocumentUri = getDocument(callable).uri.toString();
+            const callableDocumentUri = AstUtils.getDocument(callable).uri.toString();
             const callableId = callableDocumentUri + '~' + callableNameCstNode.text;
 
             const previousFromRanges = callsGroupedByCallable.get(callableId)?.fromRanges ?? [];

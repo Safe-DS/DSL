@@ -1,4 +1,4 @@
-import { AstNode, findLocalReferences, getContainerOfType, hasContainerOfType, ValidationAcceptor } from 'langium';
+import { AstNode, AstUtils, ValidationAcceptor } from 'langium';
 import {
     isSdsCallable,
     isSdsClass,
@@ -24,7 +24,7 @@ export const CODE_TYPE_PARAMETER_USAGE = 'type-parameter/usage';
 export const CODE_TYPE_PARAMETER_VARIANCE = 'type-parameter/variance';
 
 export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-    const containingCallable = getContainerOfType(node, isSdsCallable);
+    const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
     /* c8 ignore start */
     if (!containingCallable) {
         return;
@@ -39,14 +39,14 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     // A type parameter must be referenced in the parameter list of the containing callable...
     let typeParameterHasInsufficientContext =
         !containingCallable.parameterList ||
-        findLocalReferences(node, containingCallable.parameterList)
+        AstUtils.findLocalReferences(node, containingCallable.parameterList)
             // ...but references in a union type or in the parameter list of a callable type don't count
             .filter((reference) => {
                 const referenceNode = reference.$refNode?.astNode;
-                const containingParameterList = getContainerOfType(referenceNode, isSdsParameterList);
+                const containingParameterList = AstUtils.getContainerOfType(referenceNode, isSdsParameterList);
 
                 return (
-                    !hasContainerOfType(referenceNode, isSdsUnionType) &&
+                    !AstUtils.hasContainerOfType(referenceNode, isSdsUnionType) &&
                     containingParameterList === containingCallable.parameterList
                 );
             })
@@ -81,7 +81,7 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-        const declarationWithTypeParameter = getContainerOfType(node.$container, isSdsDeclaration);
+        const declarationWithTypeParameter = AstUtils.getContainerOfType(node.$container, isSdsDeclaration);
 
         // Early exit
         if (
@@ -91,7 +91,7 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
             return;
         }
 
-        findLocalReferences(node).forEach((it) => {
+        AstUtils.findLocalReferences(node).forEach((it) => {
             const reference = it.$refNode?.astNode;
             if (!reference) {
                 /* c8 ignore next 2 */
@@ -141,12 +141,12 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
 };
 
 const isInConstructor = (node: AstNode) => {
-    const parameterList = getContainerOfType(node, isSdsParameterList);
+    const parameterList = AstUtils.getContainerOfType(node, isSdsParameterList);
     return isSdsClass(parameterList?.$container);
 };
 
 const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsClass, reference: AstNode) => {
-    const containingClassMember = getContainerOfType(reference, isSdsClassMember);
+    const containingClassMember = AstUtils.getContainerOfType(reference, isSdsClassMember);
 
     // Handle usage in constructor
     if (!containingClassMember || containingClassMember === classWithTypeParameter) {
@@ -159,7 +159,7 @@ const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsCl
     }
 
     // Handle usage inside nested enums and classes (could be an instance attribute/function)
-    const containingNamedTypeDeclaration = getContainerOfType(reference, isSdsNamedTypeDeclaration);
+    const containingNamedTypeDeclaration = AstUtils.getContainerOfType(reference, isSdsNamedTypeDeclaration);
     return !containingNamedTypeDeclaration || containingNamedTypeDeclaration === classWithTypeParameter;
 };
 
@@ -222,7 +222,7 @@ export const typeParameterMustOnlyBeVariantOnClass = (node: SdsTypeParameter, ac
         return;
     }
 
-    const declarationWithTypeParameter = getContainerOfType(node.$container, isSdsDeclaration);
+    const declarationWithTypeParameter = AstUtils.getContainerOfType(node.$container, isSdsDeclaration);
     if (declarationWithTypeParameter && !isSdsClass(declarationWithTypeParameter)) {
         accept('error', 'Only type parameters of classes can be variant.', {
             node,

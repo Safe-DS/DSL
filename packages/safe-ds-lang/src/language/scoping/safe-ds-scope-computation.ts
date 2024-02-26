@@ -1,8 +1,8 @@
 import {
     AstNode,
     AstNodeDescription,
+    AstUtils,
     DefaultScopeComputation,
-    getContainerOfType,
     LangiumDocument,
     PrecomputedScopes,
 } from 'langium';
@@ -35,7 +35,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         }
 
         // Modules that don't state their package don't export anything
-        const containingModule = getContainerOfType(node, isSdsModule);
+        const containingModule = AstUtils.getContainerOfType(node, isSdsModule);
         if (!containingModule || !containingModule.name) {
             return;
         }
@@ -72,7 +72,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         this.addToScopesIfKeyIsDefined(scopes, node.constraintList, description);
         this.addToScopesIfKeyIsDefined(scopes, node.body, description);
 
-        const containingDeclaration = getContainerOfType(node.$container, isSdsDeclaration);
+        const containingDeclaration = AstUtils.getContainerOfType(node.$container, isSdsDeclaration);
         if (isSdsModule(containingDeclaration)) {
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
         }
@@ -88,7 +88,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
 
         this.addToScopesIfKeyIsDefined(scopes, node.body, description);
 
-        const containingDeclaration = getContainerOfType(node.$container, isSdsDeclaration);
+        const containingDeclaration = AstUtils.getContainerOfType(node.$container, isSdsDeclaration);
         if (isSdsModule(containingDeclaration)) {
             this.addToScopesIfKeyIsDefined(scopes, containingDeclaration, description);
         }
@@ -108,7 +108,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
     }
 
     private processSdsParameter(node: SdsParameter, document: LangiumDocument, scopes: PrecomputedScopes): void {
-        const containingCallable = getContainerOfType(node, isSdsParameterList)?.$container;
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsParameterList)?.$container;
         if (!containingCallable) {
             /* c8 ignore next 2 */
             return;
@@ -140,7 +140,7 @@ export class SafeDsScopeComputation extends DefaultScopeComputation {
         document: LangiumDocument,
         scopes: PrecomputedScopes,
     ): void {
-        const containingDeclaration = getContainerOfType(node, isSdsTypeParameterList)?.$container;
+        const containingDeclaration = AstUtils.getContainerOfType(node, isSdsTypeParameterList)?.$container;
         if (!containingDeclaration) {
             /* c8 ignore next 2 */
             return;

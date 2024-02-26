@@ -13,6 +13,7 @@ import { locationToString } from '../../../src/helpers/locations.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 
 const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const builtinFiles = listBuiltinFiles();
 
 const ignoredWarnings: (number | string | undefined)[] = [
@@ -31,7 +32,7 @@ describe('builtin files', () => {
     }));
 
     it.each(testCases)('[$shortenedResourceName] should have no errors or warnings', async ({ uri }) => {
-        const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
+        const document = langiumDocuments.getDocument(uri)!;
 
         const errorsOrWarnings =
             document.diagnostics?.filter(
