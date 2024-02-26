@@ -125,7 +125,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
         const receiverType = typeComputer.computeType(node.receiver);
         if (typeChecker.isList(receiverType)) {
             const indexType = typeComputer.computeType(node.index);
-            if (!typeChecker.isSubtypeOf(indexType, coreTypes.Int)) {
+            if (!typeChecker.isSubtypeOf(indexType, coreTypes.Int, { strictTypeParameterTypeCheck: true })) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
                     node,
                     property: 'index',
@@ -137,7 +137,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
             if (mapType) {
                 const keyType = mapType.getTypeParameterTypeByIndex(0);
                 const indexType = typeComputer.computeType(node.index);
-                if (!typeChecker.isSubtypeOf(indexType, keyType)) {
+                if (!typeChecker.isSubtypeOf(indexType, keyType, { strictTypeParameterTypeCheck: true })) {
                     accept('error', `Expected type '${keyType}' but got '${indexType}'.`, {
                         node,
                         property: 'index',

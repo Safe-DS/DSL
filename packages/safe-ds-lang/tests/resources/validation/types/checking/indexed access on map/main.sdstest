@@ -40,3 +40,11 @@ segment mySegment(
     // $TEST$ no error r"Expected type .* but got .*\."
     myMap[»key()«];
 }
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'String' but got 'T'."
+    a: Any? = {"": ""}[»p1«],
+)
