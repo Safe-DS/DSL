@@ -157,8 +157,8 @@ import {
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import {
-    argumentTypeMustMatchParameterType,
     attributeMustHaveTypeHint,
+    callArgumentTypesMustMatchParameterTypes,
     callReceiverMustBeCallable,
     indexedAccessIndexMustHaveCorrectType,
     indexedAccessReceiverMustBeListOrMap,
@@ -216,7 +216,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
-            argumentTypeMustMatchParameterType(services),
         ],
         SdsArgumentList: [
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
@@ -228,6 +227,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callArgumentListShouldBeNeeded(services),
             callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
+            callArgumentTypesMustMatchParameterTypes(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
         ],

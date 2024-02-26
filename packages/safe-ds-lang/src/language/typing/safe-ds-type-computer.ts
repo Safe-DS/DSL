@@ -455,7 +455,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (isSdsFunction(nonNullableReceiverType.callable)) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
+                const substitutions = this.computeSubstitutionsForCall(node);
                 result = result.substituteTypeParameters(substitutions);
             }
         } else if (nonNullableReceiverType instanceof StaticType) {
@@ -466,7 +466,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (instanceType instanceof ClassType) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
+                const substitutions = this.computeSubstitutionsForCall(node);
 
                 result = this.factory.createClassType(
                     instanceType.declaration,
@@ -786,7 +786,7 @@ export class SafeDsTypeComputer {
      * @param call The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
      */
-    computeTypeParameterSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
+    computeSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
         const callable = this.nodeMapper.callToCallable(call);
         const typeParameters = getTypeParameters(callable);
         if (isEmpty(typeParameters)) {
