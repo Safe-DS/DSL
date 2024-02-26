@@ -55,7 +55,6 @@ import {
     SdsAssignee,
     type SdsBlockLambda,
     SdsCall,
-    SdsCallable,
     SdsCallableType,
     SdsClass,
     SdsDeclaration,
@@ -458,11 +457,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (isSdsFunction(nonNullableReceiverType.callable)) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCallable(
-                    nonNullableReceiverType.callable,
-                    node,
-                );
-
+                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
                 result = result.substituteTypeParameters(substitutions);
             }
         } else if (nonNullableReceiverType instanceof StaticType) {
@@ -473,7 +468,7 @@ export class SafeDsTypeComputer {
 
             // Substitute type parameters
             if (instanceType instanceof ClassType) {
-                const substitutions = this.computeTypeParameterSubstitutionsForCallable(instanceType.declaration, node);
+                const substitutions = this.computeTypeParameterSubstitutionsForCall(node);
 
                 result = this.factory.createClassType(
                     instanceType.declaration,
@@ -785,11 +780,11 @@ export class SafeDsTypeComputer {
     /**
      * Computes substitutions for the type parameters of the given callable in the context of the given call.
      *
-     * @param callable The callable with the type parameters to compute substitutions for.
      * @param call The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
      */
-    computeTypeParameterSubstitutionsForCallable(callable: SdsCallable, call: SdsCall): TypeParameterSubstitutions {
+    computeTypeParameterSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
+        const callable = this.nodeMapper.callToCallable(call);
         const typeParameters = getTypeParameters(callable);
         if (isEmpty(typeParameters)) {
             return NO_SUBSTITUTIONS;
@@ -804,7 +799,7 @@ export class SafeDsTypeComputer {
             return [this.computeType(parameter.type), this.computeType(argument?.value ?? parameter.defaultValue)];
         });
 
-        return this.computeTypeParameterSubstitutionsForParameters(typeParameters, parameterTypesToArgumentTypes);
+        return this.computeTypeParameterSubstitutionsForArguments(typeParameters, parameterTypesToArgumentTypes);
     }
 
     /**
@@ -815,7 +810,7 @@ export class SafeDsTypeComputer {
      * @param parameterTypesToArgumentTypes Pairs of parameter types and the corresponding argument types.
      * @returns The computed substitutions for the type parameters in the parameter types.
      */
-    computeTypeParameterSubstitutionsForParameters(
+    computeTypeParameterSubstitutionsForArguments(
         typeParameters: SdsTypeParameter[],
         parameterTypesToArgumentTypes: [Type, Type][],
     ): TypeParameterSubstitutions {
