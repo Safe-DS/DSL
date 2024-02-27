@@ -180,6 +180,7 @@ import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess
 import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
 import { chainedExpressionsMustBeNullSafeIfReceiverIsNullable } from './other/expressions/chainedExpressions.js';
 import {
+    callArgumentMustRespectParameterBounds,
     parameterBoundParameterMustBeConstFloatOrInt,
     parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant,
 } from './other/declarations/parameterBounds.js';
@@ -231,6 +232,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callArgumentListShouldBeNeeded(services),
             callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
+            callArgumentMustRespectParameterBounds(services),
             callArgumentTypesMustMatchParameterTypes(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),

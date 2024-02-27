@@ -12,12 +12,14 @@ import {
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
+    isSdsEnumVariant,
     isSdsFunction,
     isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
     isSdsNamedType,
     isSdsParameter,
+    isSdsParameterBound,
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsSegment,
@@ -40,6 +42,7 @@ import {
     SdsClass,
     SdsClassMember,
     SdsColumn,
+    SdsConstraint,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
@@ -52,6 +55,7 @@ import {
     SdsNamedType,
     SdsNamedTypeDeclaration,
     SdsParameter,
+    SdsParameterBound,
     SdsPlaceholder,
     SdsQualifiedImport,
     SdsResult,
@@ -127,6 +131,12 @@ export namespace Parameter {
 
     export const isRequired = (node: SdsParameter | undefined): boolean => {
         return isSdsParameter(node) && !node.defaultValue;
+    };
+
+    export const getBounds = (node: SdsParameter | undefined): SdsParameterBound[] => {
+        const callable = AstUtils.getContainerOfType(node, isSdsCallable);
+        const result = getConstraints(callable).filter((it) => isSdsParameterBound(it) && it.leftOperand?.ref === node);
+        return result as SdsParameterBound[];
     };
 }
 
@@ -246,6 +256,22 @@ export const streamBlockLambdaResults = (node: SdsBlockLambda | undefined): Stre
 
 export const getClassMembers = (node: SdsClass | undefined): SdsClassMember[] => {
     return node?.body?.members ?? [];
+};
+
+export const getConstraints = (node: SdsCallable | undefined): SdsConstraint[] => {
+    if (isSdsAnnotation(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsClass(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsEnumVariant(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsFunction(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsSegment(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else {
+        return [];
+    }
 };
 
 export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {

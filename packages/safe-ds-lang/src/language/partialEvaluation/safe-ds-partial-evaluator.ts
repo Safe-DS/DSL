@@ -655,7 +655,23 @@ export class SafeDsPartialEvaluator {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Some checks
+    // Parameter substitutions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the parameter substitutions for the given call.
+     */
+    computeParameterSubstitutionsForCall(
+        call: SdsCall | undefined,
+        substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS,
+    ): ParameterSubstitutions {
+        const callable = this.nodeMapper.callToCallable(call);
+        const args = getArguments(call);
+        return this.getParameterSubstitutionsAfterCall(callable, args, NO_SUBSTITUTIONS, substitutions, []);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Checks
     // -----------------------------------------------------------------------------------------------------------------
 
     /**

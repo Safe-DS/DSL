@@ -1,0 +1,89 @@
+package tests.validation.other.declarations.parameterBounds.argumentsMustMatchParameterBounds
+
+@Pure fun f1(notConst: Int) where {
+    notConst > 0,
+}
+
+@Pure fun f2(const unbounded: Int)
+
+@Pure fun f3(const bothBounds: Int) where {
+    bothBounds > 0,
+    bothBounds < 10,
+}
+
+@Pure fun f4(
+    const lowerBound: Int,
+    const indirectLowerBound: Int,
+) where {
+    lowerBound >= 0,
+    indirectLowerBound >= lowerBound,
+}
+
+@Pure fun f5(
+    const upperBound: Int = -1,
+    const indirectUpperBound: Int = -2,
+) where {
+    upperBound <= 0,
+    indirectUpperBound <= upperBound,
+}
+
+segment mySegment(p: Int) {
+    // $TEST$ error "The value of 'notConst' must be greater than 0 but was 0."
+    f1(»0«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f1(»""«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f1(»p«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f1(»unresolved«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f1(unresolved = »1«);
+
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f2(»1«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f2(»""«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f2(»p«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f2(»unresolved«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f2(unresolved = »1«);
+
+    // $TEST$ error "The value of 'bothBounds' must be greater than 0 but was 0."
+    f3(»0«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f3(»5«);
+    // $TEST$ error "The value of 'bothBounds' must be less than 10 but was 10."
+    f3(»10«);
+
+    // $TEST$ error "The value of 'lowerBound' must be greater than or equal to 0 but was -1."
+    // $TEST$ error "The value of 'indirectLowerBound' must be greater than or equal to -1 but was -2."
+    f4(»-1«, »-2«);
+    // $TEST$ error "The value of 'lowerBound' must be greater than or equal to 0 but was -1."
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f4(»-1«, »-1«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    // $TEST$ error "The value of 'indirectLowerBound' must be greater than or equal to 0 but was -1."
+    f4(»0«, »-1«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f4(»0«, »0«);
+
+    // $TEST$ error "The value of 'upperBound' must be less than or equal to 0 but was 1."
+    // $TEST$ error "The value of 'indirectUpperBound' must be less than or equal to 1 but was 2."
+    f5(»1«, »2«);
+    // $TEST$ error "The value of 'upperBound' must be less than or equal to 0 but was 1."
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f5(»1«, »1«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    // $TEST$ error "The value of 'indirectUpperBound' must be less than or equal to 0 but was 1."
+    f5(»0«, »1«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f5(»0«, »0«);
+    // $TEST$ error "The value of 'indirectUpperBound' must be less than or equal to -1 but was 0."
+    f5(indirectUpperBound = »0«);
+    // $TEST$ no error r"The value of '.*' must be .* but was .*\."
+    f5(indirectUpperBound = »-1«);
+}

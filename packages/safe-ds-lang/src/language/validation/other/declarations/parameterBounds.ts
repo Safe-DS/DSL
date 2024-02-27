@@ -1,11 +1,86 @@
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { isSdsCallable, SdsParameterBound } from '../../../generated/ast.js';
+import { isSdsCallable, isSdsComparisonOperator, type SdsCall, SdsParameterBound } from '../../../generated/ast.js';
 import { AstUtils, ValidationAcceptor } from 'langium';
-import { getParameters, Parameter } from '../../../helpers/nodeProperties.js';
-import { FloatConstant, IntConstant } from '../../../partialEvaluation/model.js';
+import { getArguments, getParameters, Parameter } from '../../../helpers/nodeProperties.js';
+import { EvaluatedNode, FloatConstant, IntConstant, UnknownEvaluatedNode } from '../../../partialEvaluation/model.js';
 
+export const CODE_PARAMETER_BOUND_INVALID_VALUE = 'parameter-bound/invalid-value';
 export const CODE_PARAMETER_BOUND_PARAMETER = 'parameter-bound/parameter';
 export const CODE_PARAMETER_BOUND_RIGHT_OPERAND = 'parameter-bound/right-operand';
+
+export const callArgumentMustRespectParameterBounds = (services: SafeDsServices) => {
+    const nodeMapper = services.helpers.NodeMapper;
+    const partialEvaluator = services.evaluation.PartialEvaluator;
+
+    return (node: SdsCall, accept: ValidationAcceptor) => {
+        const substitutions = partialEvaluator.computeParameterSubstitutionsForCall(node);
+
+        for (const argument of getArguments(node)) {
+            const value = partialEvaluator.evaluate(argument.value);
+            if (value === UnknownEvaluatedNode) {
+                continue;
+            }
+
+            const parameter = nodeMapper.argumentToParameter(argument);
+            if (!parameter) {
+                continue;
+            }
+
+            for (const bound of Parameter.getBounds(parameter)) {
+                const rightOperand = partialEvaluator.evaluate(bound.rightOperand, substitutions);
+                const errorMessage = checkBound(parameter.name, value, bound.operator, rightOperand);
+
+                if (errorMessage) {
+                    accept('error', errorMessage, {
+                        node: argument,
+                        property: 'value',
+                        code: CODE_PARAMETER_BOUND_INVALID_VALUE,
+                    });
+                }
+            }
+        }
+    };
+};
+
+const checkBound = (
+    parameterName: string,
+    leftOperand: EvaluatedNode,
+    operator: string,
+    rightOperand: EvaluatedNode,
+): string | undefined => {
+    // Arguments must be valid
+    if (
+        (!(leftOperand instanceof FloatConstant) && !(leftOperand instanceof IntConstant)) ||
+        !isSdsComparisonOperator(operator) ||
+        (!(rightOperand instanceof FloatConstant) && !(rightOperand instanceof IntConstant))
+    ) {
+        return;
+    }
+
+    const createMessage = (relation: string) => {
+        return `The value of '${parameterName}' must be ${relation} ${rightOperand.toString()} but was ${leftOperand.toString()}.`;
+    };
+
+    if (operator === '<') {
+        if (leftOperand.value >= rightOperand.value) {
+            return createMessage('less than');
+        }
+    } else if (operator === '<=') {
+        if (leftOperand.value > rightOperand.value) {
+            return createMessage('less than or equal to');
+        }
+    } else if (operator === '>=') {
+        if (leftOperand.value < rightOperand.value) {
+            return createMessage('greater than or equal to');
+        }
+    } else if (operator === '>') {
+        if (leftOperand.value <= rightOperand.value) {
+            return createMessage('greater than');
+        }
+    }
+
+    return undefined;
+};
 
 export const parameterBoundParameterMustBeConstFloatOrInt = (services: SafeDsServices) => {
     const coreTypes = services.types.CoreTypes;
@@ -60,7 +135,7 @@ export const parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant 
             const substitutions = new Map(constantParameters.map((it) => [it, one]));
             const value = partialEvaluator.evaluate(node.rightOperand, substitutions);
 
-            rightOperandIsValid = value instanceof IntConstant || value instanceof FloatConstant;
+            rightOperandIsValid = value instanceof FloatConstant || value instanceof IntConstant;
         }
 
         if (!rightOperandIsValid) {
