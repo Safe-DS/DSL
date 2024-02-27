@@ -1,8 +1,14 @@
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import { isSdsCallable, isSdsComparisonOperator, type SdsCall, SdsParameterBound } from '../../../generated/ast.js';
+import {
+    isSdsCallable,
+    isSdsComparisonOperator,
+    type SdsCall,
+    SdsParameter,
+    SdsParameterBound,
+} from '../../../generated/ast.js';
 import { AstUtils, ValidationAcceptor } from 'langium';
 import { getArguments, getParameters, Parameter } from '../../../helpers/nodeProperties.js';
-import { EvaluatedNode, FloatConstant, IntConstant, UnknownEvaluatedNode } from '../../../partialEvaluation/model.js';
+import { Constant, EvaluatedNode, FloatConstant, IntConstant } from '../../../partialEvaluation/model.js';
 
 export const CODE_PARAMETER_BOUND_INVALID_VALUE = 'parameter-bound/invalid-value';
 export const CODE_PARAMETER_BOUND_PARAMETER = 'parameter-bound/parameter';
@@ -17,7 +23,7 @@ export const callArgumentMustRespectParameterBounds = (services: SafeDsServices)
 
         for (const argument of getArguments(node)) {
             const value = partialEvaluator.evaluate(argument.value);
-            if (value === UnknownEvaluatedNode) {
+            if (!(value instanceof Constant)) {
                 continue;
             }
 
@@ -37,6 +43,47 @@ export const callArgumentMustRespectParameterBounds = (services: SafeDsServices)
                         code: CODE_PARAMETER_BOUND_INVALID_VALUE,
                     });
                 }
+            }
+        }
+    };
+};
+
+export const parameterDefaultValueMustRespectParameterBounds = (services: SafeDsServices) => {
+    const partialEvaluator = services.evaluation.PartialEvaluator;
+
+    return (node: SdsParameter, accept: ValidationAcceptor) => {
+        if (!node.defaultValue) {
+            return;
+        }
+
+        const value = partialEvaluator.evaluate(node.defaultValue);
+        if (!(value instanceof Constant)) {
+            return;
+        }
+
+        // Error if we cannot verify some bounds
+        for (const bound of Parameter.getBounds(node)) {
+            const rightOperand = partialEvaluator.evaluate(bound.rightOperand);
+            if (!(rightOperand instanceof Constant)) {
+                accept('error', 'Cannot verify whether the parameter bounds are always met.', {
+                    node,
+                    property: 'defaultValue',
+                    code: CODE_PARAMETER_BOUND_INVALID_VALUE,
+                });
+                return;
+            }
+        }
+
+        // Error if the default value violates some bounds
+        for (const bound of Parameter.getBounds(node)) {
+            const rightOperand = partialEvaluator.evaluate(bound.rightOperand);
+            const errorMessage = checkBound(node.name, value, bound.operator, rightOperand);
+            if (errorMessage) {
+                accept('error', errorMessage, {
+                    node,
+                    property: 'defaultValue',
+                    code: CODE_PARAMETER_BOUND_INVALID_VALUE,
+                });
             }
         }
     };

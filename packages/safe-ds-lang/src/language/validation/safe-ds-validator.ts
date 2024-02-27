@@ -183,6 +183,7 @@ import {
     callArgumentMustRespectParameterBounds,
     parameterBoundParameterMustBeConstFloatOrInt,
     parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant,
+    parameterDefaultValueMustRespectParameterBounds,
 } from './other/declarations/parameterBounds.js';
 
 /**
@@ -327,6 +328,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             constantParameterMustHaveConstantDefaultValue(services),
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
+            parameterDefaultValueMustRespectParameterBounds(services),
             parameterDefaultValueTypeMustMatchParameterType(services),
             pureParameterDefaultValueMustBePure(services),
             requiredParameterMustNotBeDeprecated(services),
