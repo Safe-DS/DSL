@@ -179,6 +179,7 @@ import { statementMustDoSomething } from './other/statements/statements.js';
 import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
 import { chainedExpressionsMustBeNullSafeIfReceiverIsNullable } from './other/expressions/chainedExpressions.js';
+import { parameterBoundParameterMustBeConstFloatOrInt } from './other/declarations/parameterBounds.js';
 
 /**
  * Register custom validation checks.
@@ -326,6 +327,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
         ],
+        SdsParameterBound: [parameterBoundParameterMustBeConstFloatOrInt(services)],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
