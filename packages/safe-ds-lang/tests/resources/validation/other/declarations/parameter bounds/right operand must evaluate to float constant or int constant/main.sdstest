@@ -1,0 +1,94 @@
+package tests.validation.other.declarations.parameterBounds.rightOperandMustEvaluateToFloatConstantOrIntConstant
+
+@Pure fun f(
+    a1: Int,
+    a2: Float,
+    a3: String,
+
+    const b1: Int,
+    const b2: Float,
+    const b3: String,
+) where {
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »0«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »0«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »0«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »0«,
+
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »0.5«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »0.5«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »0.5«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »0.5«,
+
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »""«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »""«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »""«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »""«,
+
+
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »a1«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »a1«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »a1«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »a1«,
+
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »a2«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »a2«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »a2«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »a2«,
+
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »a3«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »a3«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »a3«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »a3«,
+
+
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »b1«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »b1«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »b1«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »b1«,
+
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »b2«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »b2«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »b2«,
+    // $TEST$ no error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »b2«,
+
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 < »b3«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 <= »b3«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 >= »b3«,
+    // $TEST$ error "The right operand of a parameter bound must evaluate to a float or int constant."
+    b1 > »b3«,
+}

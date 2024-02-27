@@ -41,12 +41,42 @@ class Float sub Number
 /**
  * A list of elements.
  */
-class List<out E>
+class List<out E> {
+
+    /**
+     * Returns the number of elements in the list.
+     */
+    @Pure
+    @PythonCall("len($this)")
+    fun size() -> size: Int
+}
 
 /**
  * A map of keys to values.
  */
-class Map<K, out V>
+class Map<K, out V> {
+
+    /**
+     * Returns the number of entries in the map.
+     */
+    @Pure
+    @PythonCall("len($this)")
+    fun size() -> size: Int
+
+    /**
+     * Returns the keys of the map.
+     */
+    @Pure
+    @PythonCall("list($this.keys())")
+    fun keys() -> keys: List<K>
+
+    /**
+     * Returns the values of the map.
+     */
+    @Pure
+    @PythonCall("list($this.values())")
+    fun values() -> values: List<V>
+}
 
 /**
  * Some text.

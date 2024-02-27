@@ -1,0 +1,44 @@
+package tests.validation.other.declarations.parameterBounds.parameterMustBeFloatOrInt
+
+@Pure fun f(
+    p1: Int,
+    p2: Float,
+    p3: String
+) where {
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p1« < 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p1« <= 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p1« >= 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p1« > 0,
+
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p2« < 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p2« <= 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p2« >= 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »p2« > 0,
+
+    // $TEST$ error "Only 'Float' and 'Int' parameters can have bounds."
+    »p3« < 0,
+    // $TEST$ error "Only 'Float' and 'Int' parameters can have bounds."
+    »p3« <= 0,
+    // $TEST$ error "Only 'Float' and 'Int' parameters can have bounds."
+    »p3« >= 0,
+    // $TEST$ error "Only 'Float' and 'Int' parameters can have bounds."
+    »p3« > 0,
+
+
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »unresolved« < 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »unresolved« <= 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »unresolved« >= 0,
+    // $TEST$ no error "Only 'Float' and 'Int' parameters can have bounds."
+    »unresolved« > 0,
+}

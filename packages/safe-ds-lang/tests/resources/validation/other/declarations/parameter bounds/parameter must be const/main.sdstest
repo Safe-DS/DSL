@@ -1,0 +1,76 @@
+package tests.validation.other.declarations.parameterBounds.parameterMustBeConst
+
+@Pure fun f(
+    a1: Int,
+    a2: Float,
+    a3: String,
+
+    const b1: Int,
+    const b2: Float,
+    const b3: String
+) where {
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a1« < 0,
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a1« <= 0,
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a1« >= 0,
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a1« > 0,
+
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a2« < 0,
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a2« <= 0,
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a2« >= 0,
+    // $TEST$ error "Only constant parameters can have bounds."
+    »a2« > 0,
+
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »a3« < 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »a3« <= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »a3« >= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »a3« > 0,
+
+
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b1« < 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b1« <= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b1« >= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b1« > 0,
+
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b2« < 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b2« <= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b2« >= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b2« > 0,
+
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b3« < 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b3« <= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b3« >= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »b3« > 0,
+
+
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »unresolved« < 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »unresolved« <= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »unresolved« >= 0,
+    // $TEST$ no error "Only constant parameters can have bounds."
+    »unresolved« > 0,
+}

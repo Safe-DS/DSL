@@ -179,6 +179,12 @@ import { statementMustDoSomething } from './other/statements/statements.js';
 import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
 import { chainedExpressionsMustBeNullSafeIfReceiverIsNullable } from './other/expressions/chainedExpressions.js';
+import {
+    callArgumentMustRespectParameterBounds,
+    parameterBoundParameterMustBeConstFloatOrInt,
+    parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant,
+    parameterDefaultValueMustRespectParameterBounds,
+} from './other/declarations/parameterBounds.js';
 
 /**
  * Register custom validation checks.
@@ -227,6 +233,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callArgumentListShouldBeNeeded(services),
             callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
+            callArgumentMustRespectParameterBounds(services),
             callArgumentTypesMustMatchParameterTypes(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
@@ -321,10 +328,15 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             constantParameterMustHaveConstantDefaultValue(services),
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
+            parameterDefaultValueMustRespectParameterBounds(services),
             parameterDefaultValueTypeMustMatchParameterType(services),
             pureParameterDefaultValueMustBePure(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
+        ],
+        SdsParameterBound: [
+            parameterBoundParameterMustBeConstFloatOrInt(services),
+            parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant(services),
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
