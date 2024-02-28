@@ -19,9 +19,14 @@ export const dumpDiagnostics = (context: ExtensionContext) => async () => {
     }
 
     // Dump diagnostics to a file
-    const uri = vscode.Uri.joinPath(diagnosticsDumpsUri(context), `${basicISOTimestamp()}.json`);
+    const machineId = vscode.env.machineId;
+    const timestamp = new Date();
+    const fileName = `${machineId}-${toBasicISOString(timestamp)}.json`;
+    const uri = vscode.Uri.joinPath(diagnosticsDumpsUri(context), fileName);
     const content = JSON.stringify(
         {
+            machineId,
+            timestamp: timestamp.toISOString(),
             text: currentDocument.getText(),
             diagnostics,
         },
@@ -43,6 +48,6 @@ export const diagnosticsDumpsUri = (context: ExtensionContext): Uri => {
     return vscode.Uri.joinPath(context.globalStorageUri, 'diagnosticsDumps');
 };
 
-const basicISOTimestamp = (): string => {
-    return new Date().toISOString().replaceAll(/[-:]/gu, '');
+const toBasicISOString = (date: Date): string => {
+    return date.toISOString().replaceAll(/[-:]/gu, '');
 };
