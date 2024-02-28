@@ -133,6 +133,11 @@
         },
         "commands": [
             {
+                "command": "safe-ds.dumpDiagnostics",
+                "title": "Dump Diagnostics to JSON",
+                "category": "Safe-DS"
+            },
+            {
                 "command": "safe-ds.refreshWebview",
                 "title": "Refresh Webview",
                 "category": "Safe-DS"
