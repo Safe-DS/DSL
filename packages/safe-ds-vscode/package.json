@@ -133,20 +133,30 @@
         },
         "commands": [
             {
-                "command": "safe-ds.runPipelineFile",
-                "title": "Run Pipeline",
-                "category": "Safe-DS",
-                "icon": "$(play)"
+                "command": "safe-ds.dumpDiagnostics",
+                "title": "Dump Diagnostics to JSON",
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.openDiagnosticsDumps",
+                "title": "Open Diagnostics Dumps in New VS Code Window",
+                "category": "Safe-DS"
             },
             {
                 "command": "safe-ds.refreshWebview",
                 "title": "Refresh Webview",
-                "category": "EDA"
+                "category": "Safe-DS"
             },
             {
                 "command": "safe-ds.runEdaFromContext",
                 "title": "Explore Table",
-                "category": "EDA"
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.runPipelineFile",
+                "title": "Run Pipeline",
+                "category": "Safe-DS",
+                "icon": "$(play)"
             }
         ],
         "snippets": [

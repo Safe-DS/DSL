@@ -8,6 +8,8 @@ import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutput
 import crypto from 'crypto';
 import { LangiumDocument, URI } from 'langium';
 import { EDAPanel, undefinedPanelIdentifier } from './eda/edaPanel.ts';
+import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
+import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -152,6 +154,11 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
             return callback(...args);
         });
     };
+
+    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)));
+    context.subscriptions.push(
+        vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
+    );
 
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));
 
