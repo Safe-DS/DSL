@@ -1,9 +1,19 @@
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
+export const customColors = {
+    vscode_foreground: 'var(--vscode-foreground)',
+    vscode_main_background: 'rgba(30, 30, 30, 1)',
+    vscode_sidebar_background: 'rgba(37, 37, 38, 1)',
+    vscode_sidebar_hover: 'rgba(42, 45, 46, 1)',
+
+    grid_background: 'rgba(30, 30, 30, 1)',
+    grid_minimap_mask: 'rgba(42, 45, 46, 0.5)',
+};
+
 /** @type {import('tailwindcss').Config} */
 const config = {
     darkMode: ['class'],
-    content: ['./src/**/*.{html,js,svelte,ts, css}'],
+    content: ['./src/**/*.{html,js,svelte,ts,css}'],
     safelist: ['dark'],
     theme: {
         container: {
@@ -14,7 +24,11 @@ const config = {
             },
         },
         extend: {
+            transitionDuration: {
+                35: '35ms',
+            },
             colors: {
+                ...customColors,
                 border: 'hsl(var(--border) / <alpha-value>)',
                 input: 'hsl(var(--input) / <alpha-value>)',
                 ring: 'hsl(var(--ring) / <alpha-value>)',

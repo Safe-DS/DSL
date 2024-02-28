@@ -19,3 +19,8 @@ type Parameter<T extends Datetype> = {
     value: DataTypeValue<T>;
     optional: boolean;
 };
+
+type Category = {
+    name: string;
+    icon: SvgComponent;
+};

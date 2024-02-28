@@ -117,6 +117,7 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         // Use a nonce to whitelist which scripts can be run
         const nonce = getNonce();
 
+        // The CSP for style-src includes 'unsafe-inline' as component libraries require the inline definition of styles
         return /* html */ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -128,9 +129,9 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 				and only allow scripts that have a specific nonce.
 				-->
 
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${
                     webview.cspSource
-                }; script-src 'nonce-${nonce}';">
+                }; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
 
                 <script nonce="${nonce}">
                     window.injVscode = acquireVsCodeApi();

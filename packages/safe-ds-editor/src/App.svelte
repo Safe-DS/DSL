@@ -1,16 +1,15 @@
 <script lang="ts">
-    // import MainWindow from './MainWindow.svelte';
-    // import PrimarySidebar from './PrimarySidebar.svelte';
-    // import SecondarySidebar from './SecondarySidebar.svelte';
-    // import './global.css';
+    import { categorysDark } from './assets/categories/categories';
+    import PrimarySidebar from './lib/components/sidebar/PrimarySidebar.svelte';
+    import Grid from '$lib/components/main/grid.svelte';
 
-    const mainSidebarCategories = [
-        { name: 'Data Preparation', fileName: 'preparation1.svg' },
-        { name: 'Data Preparation', fileName: 'preparation2.svg' },
-        { name: 'Modeling', fileName: 'modeling.svg' },
-        { name: 'Evaluation', fileName: 'evaluation.svg' },
-        { name: 'Import', fileName: 'import.svg' },
-        { name: 'Export', fileName: 'export.svg' },
+    const mainSidebarCategories: Category[] = [
+        { name: 'Data Preparation', icon: categorysDark.preparation1 },
+        { name: 'Data Preparation', icon: categorysDark.preparation2 },
+        { name: 'Modeling', icon: categorysDark.modeling },
+        { name: 'Evaluation', icon: categorysDark.evaluation },
+        { name: 'Import', icon: categorysDark.import },
+        { name: 'Export', icon: categorysDark.export },
     ];
 
     const parameterss: Parameter<DataType>[] = [
@@ -41,13 +40,15 @@
     ];
 </script>
 
-<main class="w-full h-full">
-    <div class="h-full w-full m-0 flex">
-        <!-- <PrimarySidebar {mainSidebarCategories} /> -->
-        <!-- <MainWindow />
-        <SecondarySidebar {mainSidebarCategories} /> -->
-    </div>
-</main>
+<div class=" relative h-full w-full">
+    <PrimarySidebar
+        class="absolute left-0 top-0 z-10"
+        categories={mainSidebarCategories}
+    ></PrimarySidebar>
+    <main class=" absolute left-0 top-0 h-full w-full">
+        <Grid />
+    </main>
+</div>
 
 <style>
 </style>

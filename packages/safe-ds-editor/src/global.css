@@ -73,8 +73,11 @@
         @apply border-border;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-vscode_main_background text-foreground;
         width: 100vw;
         height: 100vh;
+    }
+    div {
+        user-select: none;
     }
 }

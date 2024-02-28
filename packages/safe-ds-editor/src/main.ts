@@ -1,4 +1,5 @@
 import App from './App.svelte';
+// import '@xyflow/svelte/dist/style.css'; /* This is for Svelte flow and needs to be imported before Tailwind */
 import './global.css';
 import MessageHandler from './messaging/messageHandler';
 
@@ -9,6 +10,6 @@ const app = new App({
 });
 
 MessageHandler.listenToMessages();
-MessageHandler.sendMessageTest('Pinguine haben keine Knie, sagt main.ts');
+MessageHandler.sendMessageTest('Lattensepp und Hänno, sagt main.ts');
 
 export default app;

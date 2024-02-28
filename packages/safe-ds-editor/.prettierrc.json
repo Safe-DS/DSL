@@ -17,11 +17,11 @@
     "vueIndentScriptAndStyle": true,
     "endOfLine": "lf",
     "embeddedLanguageFormatting": "auto",
-
     "overrides": [
         {
             "files": ["*.yaml", "*.yml"],
             "options": { "tabWidth": 2 }
         }
-    ]
+    ],
+    "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"]
 }
