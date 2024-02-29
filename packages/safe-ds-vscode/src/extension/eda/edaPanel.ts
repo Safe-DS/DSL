@@ -122,12 +122,14 @@ export class EDAPanel {
             // Have to update and construct state as table placeholder could've changed in code
             panel.updateHtmlDone = false;
             panel._update();
-            panel.constructCurrentState().then((state) => {
-                webviewApi.postMessage(panel!.panel.webview, {
-                    command: 'setWebviewState',
-                    value: state,
-                });
-            });
+            panel.waitForUpdateHtmlDone(10000).then(() =>
+                panel.constructCurrentState().then((state) => {
+                    webviewApi.postMessage(panel!.panel.webview, {
+                        command: 'setWebviewState',
+                        value: state,
+                    });
+                }),
+            );
             return;
         } else {
             // Otherwise, create a new panel.
@@ -157,12 +159,14 @@ export class EDAPanel {
                 light: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
                 dark: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
             };
-            edaPanel.constructCurrentState().then((state) => {
-                webviewApi.postMessage(edaPanel!.panel.webview, {
-                    command: 'setWebviewState',
-                    value: state,
-                });
-            });
+            edaPanel.waitForUpdateHtmlDone(10000).then(() =>
+                edaPanel.constructCurrentState().then((state) => {
+                    webviewApi.postMessage(edaPanel!.panel.webview, {
+                        command: 'setWebviewState',
+                        value: state,
+                    });
+                }),
+            );
         }
     }
 
@@ -196,66 +200,54 @@ export class EDAPanel {
         this.updateHtmlDone = true;
     }
 
+    private waitForUpdateHtmlDone = (timeoutMs: number): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            const startTime = Date.now();
+            // Function to check updateHtmlDone status
+            const check = () => {
+                if (this.updateHtmlDone) {
+                    resolve();
+                } else if (Date.now() - startTime > timeoutMs) {
+                    reject(new Error('Timeout waiting for updateHtmlDone'));
+                } else {
+                    setTimeout(check, 100); // Check every 100ms
+                }
+            };
+            check();
+        });
+    };
+
     private findCurrentState(): State | undefined {
         const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
         return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
     }
 
     private constructCurrentState(): Promise<State> {
-        // Helper function to wait until updateHtmlDone is true or timeout
-        const waitForUpdateHtmlDone = (timeoutMs: number): Promise<void> => {
-            return new Promise((resolve, reject) => {
-                const startTime = Date.now();
-                // Function to check updateHtmlDone status
-                const check = () => {
-                    if (this.updateHtmlDone) {
-                        resolve();
-                    } else if (Date.now() - startTime > timeoutMs) {
-                        reject(new Error('Timeout waiting for updateHtmlDone'));
-                    } else {
-                        setTimeout(check, 100); // Check every 100ms
-                    }
-                };
-                check();
-            });
-        };
-
         return new Promise((resolve, reject) => {
-            // Wait for updateHtmlDone to be true or timeout after 10s
-            waitForUpdateHtmlDone(10000)
-                .then(() => {
-                    // Proceed with the original logic after waiting
-                    const existingCurrentState = this.findCurrentState();
-                    if (existingCurrentState) {
-                        printOutputMessage('Found current State.');
-                        resolve(existingCurrentState);
-                        return;
-                    }
+            const existingCurrentState = this.findCurrentState();
+            if (existingCurrentState) {
+                printOutputMessage('Found current State.');
+                resolve(existingCurrentState);
+                return;
+            }
 
-                    if (!this.tableIdentifier) {
-                        resolve({ tableIdentifier: undefined, history: [], defaultState: true });
-                        return;
-                    }
+            if (!this.tableIdentifier) {
+                resolve({ tableIdentifier: undefined, history: [], defaultState: true });
+                return;
+            }
 
-                    const instance = EDAPanel.instancesMap.get(this.tableIdentifier);
-                    if (!instance) {
-                        reject(new Error('RunnerApi instance not found.'));
+            const instance = EDAPanel.instancesMap.get(this.tableIdentifier);
+            if (!instance) {
+                reject(new Error('RunnerApi instance not found.'));
+            } else {
+                instance.runnerApi.getPlaceholderValue(this.tableIdentifier, this.startPipelineId).then((state) => {
+                    if (state === undefined) {
+                        reject(new Error('Timeout waiting for placeholder value'));
                     } else {
-                        instance.runnerApi
-                            .getPlaceholderValue(this.tableIdentifier, this.startPipelineId)
-                            .then((state) => {
-                                if (state === undefined) {
-                                    reject(new Error('Timeout waiting for placeholder value'));
-                                } else {
-                                    resolve(state);
-                                }
-                            });
+                        resolve(state);
                     }
-                })
-                .catch((error) => {
-                    // Handle timeout or other errors
-                    reject(error);
                 });
+            }
         });
     }
 
