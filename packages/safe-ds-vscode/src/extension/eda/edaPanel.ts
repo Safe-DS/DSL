@@ -1,15 +1,14 @@
 import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
-import { Column, State, Table } from '@safe-ds/eda/types/state.js';
+import { State } from '@safe-ds/eda/types/state.js';
 import { logOutput, printOutputMessage } from '../output.ts';
-import { messages, SafeDsServices } from '@safe-ds/lang';
-
-export const undefinedPanelIdentifier = 'undefinedPanelIdentifier';
+import { SafeDsServices } from '@safe-ds/lang';
+import { RunnerApi } from './apis/runnerApi.ts';
 
 export class EDAPanel {
     // Map to track multiple panels
-    private static panelsMap: Map<string, EDAPanel> = new Map();
+    private static instancesMap: Map<string, { panel: EDAPanel; runnerApi: RunnerApi }> = new Map();
     private static context: vscode.ExtensionContext;
     private static services: SafeDsServices;
 
@@ -18,17 +17,18 @@ export class EDAPanel {
     private readonly panel: vscode.WebviewPanel;
     private readonly extensionUri: vscode.Uri;
     private disposables: vscode.Disposable[] = [];
-    private tableIdentifier: string | undefined;
-    private startPipelineId: string = '';
+    private tableIdentifier: string;
     private column: vscode.ViewColumn | undefined;
     private webviewListener: vscode.Disposable | undefined;
     private viewStateChangeListener: vscode.Disposable | undefined;
+    private updateHtmlDone: boolean = false;
+    private startPipelineId: string;
 
     private constructor(
         panel: vscode.WebviewPanel,
         extensionUri: vscode.Uri,
         startPipeLineId: string,
-        tableIdentifier?: string,
+        tableIdentifier: string,
     ) {
         this.panel = panel;
         this.extensionUri = extensionUri;
@@ -36,6 +36,7 @@ export class EDAPanel {
         this.startPipelineId = startPipeLineId;
 
         // Set the webview's initial html content
+        this.updateHtmlDone = false;
         this._update();
 
         // Listen for when the panel is disposed
@@ -99,23 +100,27 @@ export class EDAPanel {
         extensionUri: vscode.Uri,
         context: vscode.ExtensionContext,
         startPipelineId: string,
-        servicess: SafeDsServices,
-        tableIdentifier?: string,
+        services: SafeDsServices,
+        tableIdentifier: string,
+        pipelinePath: vscode.Uri,
     ) {
         EDAPanel.context = context;
-        EDAPanel.services = servicess;
+        EDAPanel.services = services;
 
         // Set column to the active editor if it exists
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
         // If we already have a panel, show it.
-        let panel = EDAPanel.panelsMap.get(tableIdentifier ?? undefinedPanelIdentifier);
-        if (panel) {
+        let instance = EDAPanel.instancesMap.get(tableIdentifier);
+        if (instance) {
+            let panel = instance.panel;
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
             panel.startPipelineId = startPipelineId;
+            EDAPanel.instancesMap.set(tableIdentifier, { panel, runnerApi: new RunnerApi(services, pipelinePath) });
 
             // Have to update and construct state as table placeholder could've changed in code
+            panel.updateHtmlDone = false;
             panel._update();
             panel.constructCurrentState().then((state) => {
                 webviewApi.postMessage(panel!.panel.webview, {
@@ -143,7 +148,10 @@ export class EDAPanel {
             );
 
             const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier);
-            EDAPanel.panelsMap.set(tableIdentifier ?? undefinedPanelIdentifier, edaPanel);
+            EDAPanel.instancesMap.set(tableIdentifier, {
+                panel: edaPanel,
+                runnerApi: new RunnerApi(services, pipelinePath),
+            });
             edaPanel.column = column;
             edaPanel.panel.iconPath = {
                 light: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
@@ -160,24 +168,15 @@ export class EDAPanel {
 
     public static kill(tableIdentifier: string) {
         printOutputMessage('kill ' + tableIdentifier);
-        let panel = EDAPanel.panelsMap.get(tableIdentifier);
-        if (panel) {
-            panel.dispose();
-            EDAPanel.panelsMap.delete(tableIdentifier);
+        let instance = EDAPanel.instancesMap.get(tableIdentifier);
+        if (instance) {
+            instance.panel.dispose();
+            EDAPanel.instancesMap.delete(tableIdentifier);
         }
-    }
-
-    public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, tableIdentifier: string) {
-        const existingPanel = EDAPanel.panelsMap.get(tableIdentifier);
-        if (existingPanel) {
-            existingPanel.dispose();
-        }
-        const revivedPanel = new EDAPanel(panel, extensionUri, existingPanel?.startPipelineId ?? '', tableIdentifier);
-        EDAPanel.panelsMap.set(tableIdentifier, revivedPanel);
     }
 
     public dispose() {
-        EDAPanel.panelsMap.delete(this.tableIdentifier ?? undefinedPanelIdentifier);
+        EDAPanel.instancesMap.delete(this.tableIdentifier);
 
         // Clean up our panel
         this.panel.dispose();
@@ -194,6 +193,7 @@ export class EDAPanel {
     private async _update() {
         const webview = this.panel.webview;
         this.panel.webview.html = await this._getHtmlForWebview(webview);
+        this.updateHtmlDone = true;
     }
 
     private findCurrentState(): State | undefined {
@@ -240,34 +240,6 @@ export class EDAPanel {
                     }
 
                     const isNumerical = typeof columnValues[0] === 'number';
-                    const columnType = isNumerical ? 'numerical' : 'categorical';
-
-                    const column: Column = {
-                        name: columnName,
-                        values: columnValues,
-                        type: columnType,
-                        hidden: false,
-                        highlighted: false,
-                        appliedFilters: [],
-                        appliedSort: null,
-                        profiling: { top: [], bottom: [] },
-                        coloredHighLow: false,
-                    };
-                    table.columns.push([i++, column]);
-                }
-                table.totalRows = currentMax;
-                table.visibleRows = currentMax;
-                printOutputMessage('Got placeholder from Runner!');
-                resolve({ tableIdentifier: this.tableIdentifier, history: [], defaultState: false, table });
-            };
-
-            EDAPanel.services.runtime.Runner.addMessageCallback(placeholderValueCallback, 'placeholder_value');
-            printOutputMessage('Getting placeholder from Runner ...');
-            EDAPanel.services.runtime.Runner.sendMessageToPythonServer(
-                messages.createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier),
-            );
-
-            setTimeout(() => reject(new Error('Timeout waiting for placeholder value')), 30000);
         });
     }
 

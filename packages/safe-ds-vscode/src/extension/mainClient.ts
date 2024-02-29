@@ -7,7 +7,7 @@ import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
 import { LangiumDocument, URI } from 'langium';
-import { EDAPanel, undefinedPanelIdentifier } from './eda/edaPanel.ts';
+import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 
@@ -15,6 +15,7 @@ let client: LanguageClient;
 let services: SafeDsServices;
 let lastFinishedPipelineId: string | undefined;
 let lastSuccessfulPlaceholderName: string | undefined;
+let lastSuccessfulPipelinePath: vscode.Uri | undefined;
 
 // This function is called when the extension is activated.
 export const activate = async function (context: vscode.ExtensionContext) {
@@ -215,6 +216,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                             message.data.name === requestedPlaceholderName
                         ) {
                             lastFinishedPipelineId = pipelineId;
+                            lastSuccessfulPipelinePath = editor.document.uri;
                             lastSuccessfulPlaceholderName = requestedPlaceholderName;
                             EDAPanel.createOrShow(
                                 context.extensionUri,
@@ -222,6 +224,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                                 pipelineId,
                                 services,
                                 message.data.name,
+                                vscode.window.activeTextEditor!.document.uri,
                             );
                             services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
@@ -263,7 +266,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
 
                     runPipelineFile(editor.document.uri, pipelineId);
                 } else {
-                    EDAPanel.createOrShow(context.extensionUri, context, '', services, undefined);
+                    vscode.window.showErrorMessage('No placeholder selected!');
                 }
             } else {
                 vscode.window.showErrorMessage('No ative text editor!');
@@ -274,14 +277,19 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.refreshWebview', () => {
-            EDAPanel.kill(lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : undefinedPanelIdentifier);
+            if (!lastSuccessfulPipelinePath || !lastFinishedPipelineId || !lastSuccessfulPlaceholderName) {
+                vscode.window.showErrorMessage('No EDA Panel to refresh!');
+                return;
+            }
+            EDAPanel.kill(lastSuccessfulPlaceholderName);
             setTimeout(() => {
                 EDAPanel.createOrShow(
                     context.extensionUri,
                     context,
-                    '',
+                    lastFinishedPipelineId!,
                     services,
-                    lastSuccessfulPlaceholderName ? lastSuccessfulPlaceholderName : undefinedPanelIdentifier,
+                    lastSuccessfulPlaceholderName!,
+                    lastSuccessfulPipelinePath!,
                 );
             }, 100);
             setTimeout(() => {
@@ -292,6 +300,19 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
 };
 
 const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipelineId: string) {
+    const document = await getPipelineDocument(filePath);
+
+    if (document) {
+        // Run it
+        printOutputMessage(`Launching Pipeline (${pipelineId}): ${document?.uri.toString()}`);
+
+        await services.runtime.Runner.executePipeline(document, pipelineId);
+    }
+};
+
+export const getPipelineDocument = async function (
+    filePath: vscode.Uri | undefined,
+): Promise<LangiumDocument | undefined> {
     let pipelinePath = filePath;
     // Allow execution via command menu
     if (!pipelinePath && vscode.window.activeTextEditor) {
@@ -334,8 +355,6 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
         vscode.window.showErrorMessage(validationErrorMessage);
         return;
     }
-    // Run it
-    printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
 
     let mainDocument;
     if (!services.shared.workspace.LangiumDocuments.hasDocument(pipelinePath)) {
@@ -348,8 +367,17 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
     } else {
         mainDocument = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
-    await services.runtime.Runner.executePipeline(mainDocument, pipelineId);
+
+    return mainDocument;
 };
+
+// const text = mainDocument.textDocument.getText();
+// // find last "}" in text
+// const lastBracket = text.lastIndexOf('}');
+// // insert string in front of it as own line
+// const newString = 'val mvr2 = columns[1].missing_value_ratio(); \n';
+// const newText = text.slice(0, lastBracket) + newString + text.slice(lastBracket);
+// const newDoc = services.shared.workspace.LangiumDocumentFactory.fromString(newText, pipelinePath);
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
     await vscode.workspace.saveAll();
