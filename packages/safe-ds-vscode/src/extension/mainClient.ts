@@ -224,7 +224,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                                 pipelineId,
                                 services,
                                 message.data.name,
-                                vscode.window.activeTextEditor!.document.uri,
+                                editor.document.uri,
                             );
                             services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
@@ -370,14 +370,6 @@ export const getPipelineDocument = async function (
 
     return mainDocument;
 };
-
-// const text = mainDocument.textDocument.getText();
-// // find last "}" in text
-// const lastBracket = text.lastIndexOf('}');
-// // insert string in front of it as own line
-// const newString = 'val mvr2 = columns[1].missing_value_ratio(); \n';
-// const newText = text.slice(0, lastBracket) + newString + text.slice(lastBracket);
-// const newDoc = services.shared.workspace.LangiumDocumentFactory.fromString(newText, pipelinePath);
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
     await vscode.workspace.saveAll();

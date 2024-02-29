@@ -128,6 +128,9 @@ export class EDAPanel {
                         command: 'setWebviewState',
                         value: state,
                     });
+                    instance!.runnerApi.getProfiling(tableIdentifier).then(() => {
+                        printOutputMessage('JSON.stringify(columnNames)');
+                    });
                 }),
             );
             return;
@@ -165,6 +168,13 @@ export class EDAPanel {
                         command: 'setWebviewState',
                         value: state,
                     });
+
+                    EDAPanel.instancesMap
+                        .get(tableIdentifier)!
+                        .runnerApi.getProfiling(tableIdentifier)
+                        .then(() => {
+                            printOutputMessage('JSON.stringify(columnNames)');
+                        });
                 }),
             );
         }
@@ -240,7 +250,7 @@ export class EDAPanel {
             if (!instance) {
                 reject(new Error('RunnerApi instance not found.'));
             } else {
-                instance.runnerApi.getPlaceholderValue(this.tableIdentifier, this.startPipelineId).then((state) => {
+                instance.runnerApi.getStateByPlaceholder(this.tableIdentifier, this.startPipelineId).then((state) => {
                     if (state === undefined) {
                         reject(new Error('Timeout waiting for placeholder value'));
                     } else {
