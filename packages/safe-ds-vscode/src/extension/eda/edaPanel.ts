@@ -202,44 +202,60 @@ export class EDAPanel {
     }
 
     private constructCurrentState(): Promise<State> {
-        return new Promise((resolve, reject) => {
-            const existingCurrentState = this.findCurrentState();
-            if (existingCurrentState) {
-                printOutputMessage('Found current State.');
-                resolve(existingCurrentState);
-                return;
-            }
-
-            if (!this.tableIdentifier) {
-                resolve({ tableIdentifier: undefined, history: [], defaultState: true });
-                return;
-            }
-
-            const placeholderValueCallback = (message: messages.PlaceholderValueMessage) => {
-                if (message.id !== this.startPipelineId || message.data.name !== this.tableIdentifier) {
-                    return;
-                }
-                EDAPanel.services.runtime.Runner.removeMessageCallback(placeholderValueCallback, 'placeholder_value');
-
-                const pythonTableColumns = message.data.value;
-                const table: Table = {
-                    totalRows: 0,
-                    name: this.tableIdentifier,
-                    columns: [] as Table['columns'],
-                    appliedFilters: [] as Table['appliedFilters'],
+        // Helper function to wait until updateHtmlDone is true or timeout
+        const waitForUpdateHtmlDone = (timeoutMs: number): Promise<void> => {
+            return new Promise((resolve, reject) => {
+                const startTime = Date.now();
+                // Function to check updateHtmlDone status
+                const check = () => {
+                    if (this.updateHtmlDone) {
+                        resolve();
+                    } else if (Date.now() - startTime > timeoutMs) {
+                        reject(new Error('Timeout waiting for updateHtmlDone'));
+                    } else {
+                        setTimeout(check, 100); // Check every 100ms
+                    }
                 };
+                check();
+            });
+        };
 
-                let i = 0;
-                let currentMax = 0;
-                for (const [columnName, columnValues] of Object.entries(pythonTableColumns)) {
-                    if (!Array.isArray(columnValues)) {
-                        continue;
-                    }
-                    if (currentMax < columnValues.length) {
-                        currentMax = columnValues.length;
+        return new Promise((resolve, reject) => {
+            // Wait for updateHtmlDone to be true or timeout after 10s
+            waitForUpdateHtmlDone(10000)
+                .then(() => {
+                    // Proceed with the original logic after waiting
+                    const existingCurrentState = this.findCurrentState();
+                    if (existingCurrentState) {
+                        printOutputMessage('Found current State.');
+                        resolve(existingCurrentState);
+                        return;
                     }
 
-                    const isNumerical = typeof columnValues[0] === 'number';
+                    if (!this.tableIdentifier) {
+                        resolve({ tableIdentifier: undefined, history: [], defaultState: true });
+                        return;
+                    }
+
+                    const instance = EDAPanel.instancesMap.get(this.tableIdentifier);
+                    if (!instance) {
+                        reject(new Error('RunnerApi instance not found.'));
+                    } else {
+                        instance.runnerApi
+                            .getPlaceholderValue(this.tableIdentifier, this.startPipelineId)
+                            .then((state) => {
+                                if (state === undefined) {
+                                    reject(new Error('Timeout waiting for placeholder value'));
+                                } else {
+                                    resolve(state);
+                                }
+                            });
+                    }
+                })
+                .catch((error) => {
+                    // Handle timeout or other errors
+                    reject(error);
+                });
         });
     }
 
