@@ -1,7 +1,7 @@
 import type { FromExtensionMessage } from '../types/messaging';
 import type { State } from '../types/state';
 import * as extensionApi from './apis/extensionApi';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 let currentTabIndex = writable<number>(0);
 
@@ -25,6 +25,32 @@ window.addEventListener('message', (event) => {
         case 'setWebviewState':
             // This should be fired immediately whenever the panel is created or made visible again
             currentState.set(message.value);
+            break;
+        case 'setProfiling':
+            if (get(currentState) && get(currentState).table) {
+                currentState.update((state) => {
+                    return {
+                        ...state,
+                        table: {
+                            ...state.table!,
+                            columns: state.table!.columns.map((column) => {
+                                const profiling = message.value.find((p) => p.columnName === column[1].name);
+                                if (profiling) {
+                                    return [
+                                        column[0],
+                                        {
+                                            ...column[1],
+                                            profiling: profiling.profiling,
+                                        },
+                                    ];
+                                } else {
+                                    return column;
+                                }
+                            }),
+                        },
+                    };
+                });
+            }
             break;
     }
 });

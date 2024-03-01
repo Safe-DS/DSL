@@ -123,14 +123,20 @@ export class EDAPanel {
             panel.updateHtmlDone = false;
             panel._update();
             panel.waitForUpdateHtmlDone(10000).then(() =>
-                panel.constructCurrentState().then((state) => {
+                panel.constructCurrentState().then((stateInfo) => {
                     webviewApi.postMessage(panel!.panel.webview, {
                         command: 'setWebviewState',
-                        value: state,
+                        value: stateInfo.state,
                     });
-                    instance!.runnerApi.getProfiling(tableIdentifier).then(() => {
-                        printOutputMessage('JSON.stringify(columnNames)');
-                    });
+
+                    if (!stateInfo.fromExisting) {
+                        instance!.runnerApi.getProfiling(tableIdentifier).then((profiling) => {
+                            webviewApi.postMessage(panel!.panel.webview, {
+                                command: 'setProfiling',
+                                value: profiling,
+                            });
+                        });
+                    }
                 }),
             );
             return;
@@ -163,18 +169,23 @@ export class EDAPanel {
                 dark: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
             };
             edaPanel.waitForUpdateHtmlDone(10000).then(() =>
-                edaPanel.constructCurrentState().then((state) => {
+                edaPanel.constructCurrentState().then((stateInfo) => {
                     webviewApi.postMessage(edaPanel!.panel.webview, {
                         command: 'setWebviewState',
-                        value: state,
+                        value: stateInfo.state,
                     });
 
-                    EDAPanel.instancesMap
-                        .get(tableIdentifier)!
-                        .runnerApi.getProfiling(tableIdentifier)
-                        .then(() => {
-                            printOutputMessage('JSON.stringify(columnNames)');
-                        });
+                    if (!stateInfo.fromExisting) {
+                        EDAPanel.instancesMap
+                            .get(tableIdentifier)!
+                            .runnerApi.getProfiling(tableIdentifier)
+                            .then((profiling) => {
+                                webviewApi.postMessage(edaPanel!.panel.webview, {
+                                    command: 'setProfiling',
+                                    value: profiling,
+                                });
+                            });
+                    }
                 }),
             );
         }
@@ -232,17 +243,17 @@ export class EDAPanel {
         return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
     }
 
-    private constructCurrentState(): Promise<State> {
+    private constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
         return new Promise((resolve, reject) => {
             const existingCurrentState = this.findCurrentState();
             if (existingCurrentState) {
                 printOutputMessage('Found current State.');
-                resolve(existingCurrentState);
+                resolve({ state: existingCurrentState, fromExisting: true });
                 return;
             }
 
             if (!this.tableIdentifier) {
-                resolve({ tableIdentifier: undefined, history: [], defaultState: true });
+                resolve({ state: { tableIdentifier: undefined, history: [], defaultState: true }, fromExisting: true });
                 return;
             }
 
@@ -254,7 +265,7 @@ export class EDAPanel {
                     if (state === undefined) {
                         reject(new Error('Timeout waiting for placeholder value'));
                     } else {
-                        resolve(state);
+                        resolve({ state, fromExisting: false });
                     }
                 });
             }

@@ -578,14 +578,29 @@
                         class="borderColumn border-right profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
-                    {#each $currentState.table.columns as _column, index}
+                    {#each $currentState.table.columns as column, index}
                         <td
                             class="profiling"
                             class:expanded={showProfiling}
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                         >
                             <div class="content" class:expanded={showProfiling}>
-                                Heyyyyyyyyyyy <br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey<br /> Hey
+                                {#if column[1].profiling.top.length === 0 && column[1].profiling.bottom.length === 0}
+                                    <div>Loading ...</div>
+                                {:else}
+                                    {#each column[1].profiling.top as profilingTopItem}
+                                        {#if profilingTopItem.type === 'numerical'}
+                                            <div class="profilingItem">
+                                                <span style="color: {profilingTopItem.color};"
+                                                    >{profilingTopItem.name}:</span
+                                                >
+                                                <span style="color: {profilingTopItem.color};"
+                                                    >{profilingTopItem.value}</span
+                                                >
+                                            </div>
+                                        {/if}
+                                    {/each}
+                                {/if}
                             </div>
                         </td>
                     {/each}
@@ -789,6 +804,11 @@
         border-left: none !important;
         border-right: none !important;
         overflow: visible;
+    }
+
+    .profilingItem {
+        display: flex;
+        justify-content: space-between;
     }
 
     .borderColumn {

@@ -1,4 +1,4 @@
-import { Column, State, Table } from '@safe-ds/eda/types/state.js';
+import { Column, Profiling, ProfilingDetailStatistical, State, Table } from '@safe-ds/eda/types/state.js';
 import { SafeDsServices, messages } from '@safe-ds/lang';
 import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
@@ -48,13 +48,19 @@ export class RunnerApi {
         });
     }
 
-    private sdsStringForMultMissingValueRatio(
-        columnsPlaceholder: string,
-        columnIndex: number,
+    private sdsStringForMissingValueRatioByColumnName(
+        columnName: string,
+        tablePlaceholder: string,
         newPlaceholderName: string,
     ): string {
         return (
-            'val ' + newPlaceholderName + ' = ' + columnsPlaceholder + '[' + columnIndex + '].missing_value_ratio(); \n'
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.get_column("' +
+            columnName +
+            '").missing_value_ratio(); \n'
         );
     }
 
@@ -67,7 +73,7 @@ export class RunnerApi {
     }
 
     private randomPlaceholderName(): string {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         const charactersLength = characters.length;
         const randomArray = new Uint8Array(20);
         crypto.getRandomValues(randomArray);
@@ -89,8 +95,6 @@ export class RunnerApi {
                     return;
                 }
                 this.services.runtime.Runner.removeMessageCallback(placeholderValueCallback, 'placeholder_value');
-
-                printOutputMessage('Got placeholder from Runner!');
                 resolve(message.data.value);
             };
 
@@ -153,31 +157,31 @@ export class RunnerApi {
         }
     }
 
-    public async getProfiling(tableIdentifier: string): Promise<undefined> {
-        const columnsInfo = await this.getColumns(tableIdentifier);
-        // eslint-disable-next-line no-console
-        console.log(columnsInfo.columns);
-        const columns = columnsInfo.columns;
-        let missingValueRatioSdsStrings = '';
-        const placeholderNameToColumnNameMap = new Map<string, string>();
-        const missingValueRatioMap = new Map<string, string>();
+    public async getProfiling(tableIdentifier: string): Promise<{ columnName: string; profiling: Profiling }[]> {
+        const columnNames = await this.getColumnNames(tableIdentifier);
 
-        for (let i = 0; i < columns.length; i++) {
+        let missingValueRatioSdsStrings = ''; // SDS code to get missing value ratio for each column
+        const placeholderNameToColumnNameMap = new Map<string, string>(); // Mapping random placeholder name back to column name
+        const missingValueRatioMap = new Map<string, string>(); // Saved by random placeholder name
+
+        // Generate SDS code to get missing value ratio for each column
+        for (let i = 0; i < columnNames.length; i++) {
             const newPlaceholderName = this.randomPlaceholderName();
             missingValueRatioMap.set(newPlaceholderName, 'null');
-            placeholderNameToColumnNameMap.set(newPlaceholderName, columns[i]!);
-            missingValueRatioSdsStrings += this.sdsStringForMultMissingValueRatio(
-                columnsInfo.placeholderName,
-                i,
+            placeholderNameToColumnNameMap.set(newPlaceholderName, columnNames[i]!);
+
+            missingValueRatioSdsStrings += this.sdsStringForMissingValueRatioByColumnName(
+                columnNames[i]!,
+                tableIdentifier,
                 newPlaceholderName,
             );
         }
 
-        printOutputMessage(missingValueRatioSdsStrings);
-
+        // Execute with generated SDS code
         const pipelineId = crypto.randomUUID();
         await this.addToAndExecutePipeline(pipelineId, missingValueRatioSdsStrings);
 
+        // Get missing value ratio for each column
         for (const [placeholderName] of missingValueRatioMap) {
             const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineId);
             if (missingValueRatio) {
@@ -185,9 +189,35 @@ export class RunnerApi {
             }
         }
 
-        missingValueRatioMap.forEach((value, key) => {
-            printOutputMessage(placeholderNameToColumnNameMap.get(key) + ': ' + value);
-        });
+        // Create profiling data, interpret numerical values and color them
+        const profiling: { columnName: string; profiling: Profiling }[] = [];
+        for (const [placeholderName, columnName] of placeholderNameToColumnNameMap.entries()) {
+            const missingValuesRatio = parseFloat(missingValueRatioMap.get(placeholderName)!) * 100;
+
+            const validRatio: ProfilingDetailStatistical = {
+                type: 'numerical',
+                name: 'Valid',
+                value: missingValuesRatio ? (100 - missingValuesRatio).toFixed(2) + '%' : '100%',
+                color: 'var(--primary-color)',
+            };
+
+            const missingRatio: ProfilingDetailStatistical = {
+                type: 'numerical',
+                name: 'Missing',
+                value: missingValuesRatio ? missingValuesRatio.toFixed(2) + '%' : '0%',
+                color: missingValuesRatio > 0 ? 'var(--error-color)' : 'var(--font-light)',
+            };
+
+            profiling.push({
+                columnName,
+                profiling: {
+                    top: [validRatio, missingRatio],
+                    bottom: [],
+                },
+            });
+        }
+
+        return profiling;
     }
 
     public async getColumnNames(tableIdentifier: string): Promise<string[]> {
@@ -196,19 +226,18 @@ export class RunnerApi {
         const pipelineId = crypto.randomUUID();
         await this.addToAndExecutePipeline(pipelineId, columnNamesSdsCode);
         const columnNames = await this.getPlaceholderValue(newPlaceholderName, pipelineId);
-        // eslint-disable-next-line no-console
-        console.log(columnNames);
         return columnNames as string[];
     }
 
-    public async getColumns(tableIdentifier: string): Promise<{ columns: any; placeholderName: string }> {
-        const newPlaceholderName = this.randomPlaceholderName();
-        const columnsSdsCode = this.sdsStringForColumns(tableIdentifier, newPlaceholderName);
-        const pipelineId = crypto.randomUUID();
-        await this.addToAndExecutePipeline(pipelineId, columnsSdsCode);
-        const columns = await this.getPlaceholderValue(newPlaceholderName, pipelineId);
-        // eslint-disable-next-line no-console
-        console.log(columns);
-        return { columns, placeholderName: newPlaceholderName };
-    }
+    // Doesn't work as columns cannot be serialized yet by Runner
+    // public async getColumns(tableIdentifier: string): Promise<{ columns: any; placeholderName: string }> {
+    //     const newPlaceholderName = this.randomPlaceholderName();
+    //     const columnsSdsCode = this.sdsStringForColumns(tableIdentifier, newPlaceholderName);
+    //     const pipelineId = crypto.randomUUID();
+    //     await this.addToAndExecutePipeline(pipelineId, columnsSdsCode);
+    //     const columns = await this.getPlaceholderValue(newPlaceholderName, pipelineId);
+    //     // eslint-disable-next-line no-console
+    //     console.log(columns);
+    //     return { columns, placeholderName: newPlaceholderName };
+    // }
 }

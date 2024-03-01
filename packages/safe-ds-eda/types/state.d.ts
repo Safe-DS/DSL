@@ -83,7 +83,7 @@ export interface ProfilingDetailBase {
 export interface ProfilingDetailStatistical extends ProfilingDetailBase {
     type: 'numerical';
     name: string;
-    value: number;
+    value: string;
     color?: string;
 }
 
