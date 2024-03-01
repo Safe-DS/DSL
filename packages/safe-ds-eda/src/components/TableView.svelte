@@ -228,9 +228,15 @@
                 addColumnToSelection(columnIndex);
             }
         } else {
-            // Replace the current selection
-            // Replace the current selection with a new array to trigger reactivity
-            setSelectionToColumn(columnIndex);
+            const index = selectedColumnIndexes.indexOf(columnIndex);
+            if (index > -1 && selectedColumnIndexes.length === 1) {
+                // Already selected, so clear selection
+                selectedColumnIndexes = [];
+            } else {
+                // Not selected, replace the current selection
+                // Replace the current selection with a new array to trigger reactivity
+                setSelectionToColumn(columnIndex);
+            }
         }
     };
 
@@ -280,9 +286,15 @@
                 selectedRowIndexes = [...selectedRowIndexes, rowIndex];
             }
         } else {
-            // Replace the current selection
-            // Replace the current selection with a new array to trigger reactivity
-            selectedRowIndexes = [rowIndex];
+            const index = selectedRowIndexes.indexOf(rowIndex);
+            if (index > -1 && selectedRowIndexes.length === 1) {
+                // Already selected, so clear selection
+                selectedRowIndexes = [];
+            } else {
+                // Not selected, replace the current selection
+                // Replace the current selection with a new array to trigger reactivity
+                selectedRowIndexes = [rowIndex];
+            }
         }
     };
 
