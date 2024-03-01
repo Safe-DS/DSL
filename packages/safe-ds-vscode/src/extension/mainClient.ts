@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { ast, createSafeDsServicesWithBuiltins, messages, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServices, messages, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
@@ -21,7 +21,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
     const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
-    services = (await createSafeDsServicesWithBuiltins(NodeFileSystem, { runnerCommand: runnerCommandSetting })).SafeDs;
+    services = (await createSafeDsServices(NodeFileSystem, { runnerCommand: runnerCommandSetting })).SafeDs;
     services.runtime.Runner.updateRunnerLogging({
         displayError(value: string): void {
             vscode.window.showErrorMessage(value);

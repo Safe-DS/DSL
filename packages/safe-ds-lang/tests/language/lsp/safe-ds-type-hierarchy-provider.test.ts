@@ -2,10 +2,10 @@ import { NodeFileSystem } from 'langium/node';
 import { parseHelper } from 'langium/test';
 import { describe, expect, it } from 'vitest';
 import { type TypeHierarchyItem } from 'vscode-languageserver';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { findTestRanges } from '../../helpers/testRanges.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const typeHierarchyProvider = services.lsp.TypeHierarchyProvider!;
 const parse = parseHelper(services);
 

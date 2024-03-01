@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { isSdsAbstractCall } from '../../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { NodeFileSystem } from 'langium/node';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {

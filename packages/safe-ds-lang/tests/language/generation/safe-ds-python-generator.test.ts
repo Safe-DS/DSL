@@ -1,11 +1,11 @@
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createGenerationTests } from './creator.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { stream, URI } from 'langium';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const pythonGenerator = services.generation.PythonGenerator;
 

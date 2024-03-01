@@ -10,7 +10,7 @@ import {
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const rootResourceName = 'scoping';
 
 export const createScopingTests = (): Promise<ScopingTest[]> => {

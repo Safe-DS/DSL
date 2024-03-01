@@ -1,12 +1,12 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { ClassType } from '../../../../src/language/typing/model.js';
 import { isSdsAttribute } from '../../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { AssertionError } from 'assert';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const typeComputer = services.types.TypeComputer;
 
 describe('streamProperSupertypes', async () => {

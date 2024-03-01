@@ -7,7 +7,7 @@ import { getSyntaxErrors } from '../../../helpers/diagnostics.js';
 import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';
 import { listTestSafeDsFiles, uriToShortenedTestResourceName } from '../../../helpers/testResources.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const rootResourceName = 'formatting';
 const separator = '// -----------------------------------------------------------------------------';
 

@@ -1,7 +1,6 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsParameter } from '../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import {
     EndlessRecursion,
     FileRead,
@@ -13,8 +12,9 @@ import {
 } from '../../../src/language/purity/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { type EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const parameter = await getNodeOfType(services, 'fun f(p: Int)', isSdsParameter);
 
 describe('purity model', async () => {

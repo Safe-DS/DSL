@@ -1,4 +1,4 @@
-import { createSafeDsServicesWithBuiltins } from '@safe-ds/lang';
+import { createSafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { extractDocuments } from '../helpers/documents.js';
 import { diagnosticToString, getDiagnostics } from '../helpers/diagnostics.js';
@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import { ExitCode } from './exitCode.js';
 
 export const check = async (fsPaths: string[], options: CheckOptions): Promise<void> => {
-    const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 
     let errorCount = 0;
 

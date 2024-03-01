@@ -1,11 +1,10 @@
 import { EmptyFileSystem } from 'langium';
 import { describe, expect, it } from 'vitest';
 import { isSdsAbstractCall, SdsArgument } from '../../../../src/language/generated/ast.js';
-import { getArguments } from '../../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServices } from '../../../../src/language/index.js';
+import { createSafeDsServices, getArguments } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {

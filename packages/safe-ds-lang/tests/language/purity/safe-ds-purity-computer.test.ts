@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { isSdsCall, isSdsCallable, isSdsExpression, isSdsParameter } from '../../../src/language/generated/ast.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const purityComputer = services.purity.PurityComputer;
 
 describe('SafeDsPurityComputer', async () => {

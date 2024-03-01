@@ -209,6 +209,7 @@ export const createSafeDsServices = async function (
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
     if (options?.runnerCommand) {
+        /* c8 ignore next 2 */
         SafeDs.runtime.Runner.updateRunnerCommand(options?.runnerCommand);
     }
 
