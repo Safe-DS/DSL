@@ -3,9 +3,9 @@ import { NodeFileSystem } from 'langium/node';
 import { highlightHelper } from 'langium/test';
 import { describe, it } from 'vitest';
 import { SemanticTokenTypes } from 'vscode-languageserver';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 
 describe('SafeDsSemanticTokenProvider', async () => {
     it.each([

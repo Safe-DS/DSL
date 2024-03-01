@@ -5,7 +5,6 @@ import {
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 import path from 'path';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
@@ -13,8 +12,9 @@ import { NodeFileSystem } from 'langium/node';
 import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 import { locationToString } from '../../../src/helpers/locations.js';
 import { URI } from 'langium';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 
 const rootResourceName = 'generation';

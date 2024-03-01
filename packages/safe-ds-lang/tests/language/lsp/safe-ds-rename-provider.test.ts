@@ -1,12 +1,12 @@
 import { NodeFileSystem } from 'langium/node';
 import { afterEach, describe, expect, it } from 'vitest';
-import { createSafeDsServicesWithBuiltins, getModuleMembers } from '../../../src/language/index.js';
+import { createSafeDsServices, getModuleMembers } from '../../../src/language/index.js';
 import { clearDocuments } from 'langium/test';
 import { SdsModule } from '../../../src/language/generated/ast.js';
 import { URI } from 'langium';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const documentBuilder = services.shared.workspace.DocumentBuilder;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const langiumDocumentFactory = services.shared.workspace.LangiumDocumentFactory;

@@ -1,16 +1,12 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, it } from 'vitest';
 import { isSdsClass, isSdsModule, SdsTypeParameter } from '../../../../src/language/generated/ast.js';
-import {
-    createSafeDsServicesWithBuiltins,
-    getModuleMembers,
-    getTypeParameters,
-} from '../../../../src/language/index.js';
+import { createSafeDsServices, getModuleMembers, getTypeParameters } from '../../../../src/language/index.js';
 import { Type, UnknownType } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { expectEqualTypes } from '../../../helpers/testAssertions.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
 const typeComputer = services.types.TypeComputer;
 

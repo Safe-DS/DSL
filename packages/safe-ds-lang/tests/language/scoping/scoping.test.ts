@@ -11,7 +11,7 @@ import { createScopingTests, ExpectedReference } from './creator.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { isSdsAnnotationCall, isSdsNamedType, isSdsReference } from '../../../src/language/generated/ast.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const builtinAnnotations = services.builtins.Annotations;
 const builtinEnums = services.builtins.Enums;
 const builtinClasses = services.builtins.Classes;

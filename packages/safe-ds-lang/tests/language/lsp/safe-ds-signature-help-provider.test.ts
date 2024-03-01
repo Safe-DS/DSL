@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { parseHelper } from 'langium/test';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { SignatureHelp } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { findTestRanges } from '../../helpers/testRanges.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const signatureHelpProvider = services.lsp.SignatureHelp!;
 const parse = parseHelper(services);
 

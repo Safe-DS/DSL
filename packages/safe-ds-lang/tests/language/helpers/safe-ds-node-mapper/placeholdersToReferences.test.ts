@@ -4,7 +4,7 @@ import { isSdsPlaceholder } from '../../../../src/language/generated/ast.js';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {

@@ -5,7 +5,7 @@ import { createSafeDsServices } from '../../../src/language/index.js';
 import { EmptyFileSystem } from 'langium';
 import { isSdsModule, SdsCallable } from '../../../src/language/generated/ast.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const code = `
     fun f1()
     fun f2()

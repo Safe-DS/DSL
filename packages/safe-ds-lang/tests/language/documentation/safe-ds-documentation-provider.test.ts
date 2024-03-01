@@ -12,7 +12,7 @@ import { createSafeDsServices } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { expandToString } from 'langium/generate';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const documentationProvider = services.documentation.DocumentationProvider;
 const testDocumentation = 'Lorem ipsum.';
 

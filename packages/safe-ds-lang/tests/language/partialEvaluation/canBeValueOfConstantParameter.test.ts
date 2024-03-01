@@ -1,10 +1,10 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsExpression } from '../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;
 
 describe('SafeDsTypeChecker', async () => {

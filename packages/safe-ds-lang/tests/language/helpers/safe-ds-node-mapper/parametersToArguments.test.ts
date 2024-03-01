@@ -7,11 +7,10 @@ import {
     SdsParameter,
     SdsPipeline,
 } from '../../../../src/language/generated/ast.js';
-import { createSafeDsServices } from '../../../../src/language/index.js';
+import { createSafeDsServices, getArguments, getModuleMembers, getParameters } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
-import { getArguments, getModuleMembers, getParameters } from '../../../../src/language/helpers/nodeProperties.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
 const nodeMapper = services.helpers.NodeMapper;
 

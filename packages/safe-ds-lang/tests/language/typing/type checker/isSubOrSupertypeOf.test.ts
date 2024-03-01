@@ -10,7 +10,7 @@ import {
     SdsDeclaration,
 } from '../../../../src/language/generated/ast.js';
 import {
-    createSafeDsServicesWithBuiltins,
+    createSafeDsServices,
     getClassMembers,
     getModuleMembers,
     getTypeParameters,
@@ -34,7 +34,7 @@ import {
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { AstUtils } from 'langium';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
 const factory = services.types.TypeFactory;
 const typeChecker = services.types.TypeChecker;

@@ -4,7 +4,7 @@ import { afterEach, describe, it } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { createFormattingTests } from './creator.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const formatterTests = createFormattingTests();
 
 describe('formatter', async () => {

@@ -1,6 +1,6 @@
 // Services
 export type { SafeDsServices } from './safe-ds-module.js';
-export { createSafeDsServices, createSafeDsServicesWithBuiltins } from './safe-ds-module.js';
+export { createSafeDsServices } from './safe-ds-module.js';
 
 // Language Server
 export { startLanguageServer } from './main.js';
