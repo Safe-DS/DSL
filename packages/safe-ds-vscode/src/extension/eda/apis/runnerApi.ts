@@ -157,8 +157,16 @@ export class RunnerApi {
         }
     }
 
-    public async getProfiling(tableIdentifier: string): Promise<{ columnName: string; profiling: Profiling }[]> {
-        const columnNames = await this.getColumnNames(tableIdentifier);
+    public async getProfiling(
+        tableIdentifier: string,
+        table?: Table,
+    ): Promise<{ columnName: string; profiling: Profiling }[]> {
+        let columnNames: string[] = [];
+        if (!table) {
+            columnNames = await this.getColumnNames(tableIdentifier);
+        } else {
+            columnNames = table.columns.map((column) => column[1].name);
+        }
 
         let missingValueRatioSdsStrings = ''; // SDS code to get missing value ratio for each column
         const placeholderNameToColumnNameMap = new Map<string, string>(); // Mapping random placeholder name back to column name
