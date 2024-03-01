@@ -642,7 +642,10 @@
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     class:selectedColumn={selectedColumnIndexes.includes(index) ||
                                         selectedRowIndexes.includes(visibleStart + i)}
-                                    >{column[1].values[visibleStart + i] || ''}</td
+                                    >{column[1].values[visibleStart + i] !== null &&
+                                    column[1].values[visibleStart + i] !== undefined
+                                        ? column[1].values[visibleStart + i]
+                                        : ''}</td
                                 >
                             {/each}
                             <td
