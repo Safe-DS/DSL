@@ -806,23 +806,6 @@
         z-index: 10;
     }
 
-    .profilingBannerRow {
-        position: relative;
-        z-index: 10;
-        border-top: 2px solid var(--bg-bright);
-    }
-
-    .profilingBannerRow * {
-        border-left: none !important;
-        border-right: none !important;
-        overflow: visible;
-    }
-
-    .profilingItem {
-        display: flex;
-        justify-content: space-between;
-    }
-
     .borderColumn {
         padding: 5px 5px 5px 5px;
         width: 45px;
@@ -844,22 +827,6 @@
         vertical-align: middle;
     }
 
-    .profilingBanner {
-        height: 35px;
-        width: 100%;
-        background-color: var(--bg-dark);
-        font-size: 1.1rem;
-        border-top: 2px solid var(--bg-bright);
-        border-left: 3px solid var(--bg-bright);
-        border-bottom: 3px solid var(--bg-bright);
-        user-select: none;
-        padding-left: 0;
-        z-index: 10;
-    }
-    .profilingBanner:hover {
-        cursor: pointer;
-    }
-
     .rotate {
         transform: rotate(180deg);
     }
@@ -870,33 +837,6 @@
         height: 100%;
         width: 20px;
         margin-left: 5px;
-    }
-
-    .profiling {
-        padding: 0;
-        border-right: 2px solid var(--bg-bright);
-        border-left: 3px solid var(--bg-bright);
-        background-color: var(--bg-dark) !important;
-    }
-
-    .profiling.expanded {
-        padding: 8px 12px;
-    }
-
-    .profiling .content {
-        max-height: 0;
-        overflow: hidden;
-        opacity: 0;
-        transition: none;
-    }
-
-    .profiling .content.expanded {
-        overflow-y: scroll;
-        max-height: 200px; /* Adjust this value based on the actual content size */
-        opacity: 1;
-        transition:
-            max-height 0.7s ease,
-            opacity 0.5s ease;
     }
 
     .reorderHighlightedLeft {
@@ -936,5 +876,66 @@
     .contextMenu button:hover {
         background-color: var(--primary-color);
         color: var(--font-bright);
+    }
+
+    .profilingBannerRow {
+        position: relative;
+        z-index: 10;
+        border-top: 2px solid var(--bg-bright);
+    }
+
+    .profilingBannerRow * {
+        border-left: none !important;
+        border-right: none !important;
+        overflow: visible;
+    }
+
+    .profiling {
+        padding: 0;
+        border-right: 2px solid var(--bg-bright);
+        border-left: 3px solid var(--bg-bright);
+        background-color: var(--bg-dark) !important;
+    }
+
+    .profiling.expanded {
+        padding: 8px 2px 8px 12px;
+    }
+
+    .profiling .content {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: none;
+    }
+
+    .profilingBanner {
+        height: 35px;
+        width: 100%;
+        background-color: var(--bg-dark);
+        font-size: 1.1rem;
+        border-top: 2px solid var(--bg-bright);
+        border-left: 3px solid var(--bg-bright);
+        border-bottom: 3px solid var(--bg-bright);
+        user-select: none;
+        padding-left: 0;
+        z-index: 10;
+    }
+
+    .profilingBanner:hover {
+        cursor: pointer;
+    }
+
+    .profiling .content.expanded {
+        overflow-y: scroll;
+        max-height: 500px; /* Adjust this value based on the actual content size */
+        opacity: 1;
+        transition:
+            max-height 0.7s ease,
+            opacity 0.5s ease;
+    }
+
+    .profilingItem {
+        display: flex;
+        justify-content: space-between;
     }
 </style>
