@@ -3,6 +3,7 @@
     import { throttle } from 'lodash';
     import { currentState, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
+    import type { ProfilingDetailBase } from '../../types/state';
 
     export let sidebarWidth: number;
 
@@ -15,6 +16,7 @@
     let numRows = 0;
     const borderColumnWidth = 45; // Set in CSS, change here if changes in css
     const headerElements: HTMLElement[] = [];
+    let tallestProfiling: { type: ProfilingDetailBase['type']; count: number };
     const savedColumnWidths: Map<string, number> = new Map();
 
     $: {
@@ -26,9 +28,67 @@
                     numRows = column[1].values.length;
                 }
                 minTableWidth += 100;
+
+                // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
+                // (cannot give to tallest one, as then it will all be small)
+                // TODO very hacky way and not scalable for the Profiling types to change, but found no better way
+                if (column[1].profiling.top.length > 0 || column[1].profiling.bottom.length > 0) {
+                    const imageCount = column[1].profiling.top.filter((p) => p.type === 'image').length;
+                    const numericalCount = column[1].profiling.bottom.filter((p) => p.type === 'numerical').length;
+                    const nameCount = column[1].profiling.bottom.filter((p) => p.type === 'name').length;
+
+                    if (imageCount > 0) {
+                        if (
+                            !tallestProfiling ||
+                            tallestProfiling.type === 'name' ||
+                            tallestProfiling.type === 'numerical'
+                        ) {
+                            tallestProfiling = { type: 'image', count: imageCount };
+                        } else if (tallestProfiling.type === 'image' && tallestProfiling.count < imageCount) {
+                            tallestProfiling = { type: 'image', count: imageCount };
+                        }
+                    } else if (numericalCount > 0) {
+                        if (!tallestProfiling || tallestProfiling.type === 'name') {
+                            tallestProfiling = { type: 'numerical', count: numericalCount };
+                        } else if (tallestProfiling.type === 'numerical' && tallestProfiling.count < numericalCount) {
+                            tallestProfiling = { type: 'numerical', count: numericalCount };
+                        }
+                    } else if (nameCount > 0) {
+                        if (!tallestProfiling) {
+                            tallestProfiling = { type: 'name', count: nameCount };
+                        } else if (tallestProfiling.type === 'name' && tallestProfiling.count < nameCount) {
+                            tallestProfiling = { type: 'name', count: nameCount };
+                        }
+                    }
+                }
             });
         }
     }
+
+    const getOptionalProfilingHeight = function (profiling: ProfilingDetailBase[]): string {
+        if (tallestProfiling.type === 'image') {
+            const imageCount = profiling.filter((p) => p.type === 'image').length;
+            if (imageCount > 0 && tallestProfiling.count === imageCount) {
+                return '';
+            } else {
+                return '10px';
+            }
+        } else if (tallestProfiling.type === 'numerical') {
+            const numericalCount = profiling.filter((p) => p.type === 'numerical').length;
+            if (numericalCount > 0 && tallestProfiling.count === numericalCount) {
+                return '';
+            } else {
+                return '10px';
+            }
+        } else {
+            const nameCount = profiling.filter((p) => p.type === 'name').length;
+            if (nameCount > 0 && tallestProfiling.count === nameCount) {
+                return '';
+            } else {
+                return '10px';
+            }
+        }
+    };
 
     const getColumnWidth = function (columnName: string): number {
         if (savedColumnWidths.has(columnName)) {
@@ -594,24 +654,64 @@
                         <td
                             class="profiling"
                             class:expanded={showProfiling}
+                            style="height: {showProfiling
+                                ? getOptionalProfilingHeight(column[1].profiling.bottom)
+                                : ''};"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                         >
                             <div class="content" class:expanded={showProfiling}>
                                 {#if column[1].profiling.top.length === 0 && column[1].profiling.bottom.length === 0}
                                     <div>Loading ...</div>
                                 {:else}
-                                    {#each column[1].profiling.top as profilingTopItem}
-                                        {#if profilingTopItem.type === 'numerical'}
-                                            <div class="profilingItem">
-                                                <span style="color: {profilingTopItem.color};"
-                                                    >{profilingTopItem.name}:</span
-                                                >
-                                                <span style="color: {profilingTopItem.color};"
-                                                    >{profilingTopItem.value}</span
-                                                >
-                                            </div>
-                                        {/if}
-                                    {/each}
+                                    <div class="profilingItemsTop">
+                                        {#each column[1].profiling.top as profilingTopItem}
+                                            {#if profilingTopItem.type === 'name'}
+                                                <div class="profilingItem">
+                                                    <span
+                                                        style="color: {profilingTopItem.color ?? 'var(--font-light)'};"
+                                                        >{@html profilingTopItem.name}</span
+                                                    >
+                                                </div>
+                                            {:else if profilingTopItem.type === 'numerical'}
+                                                <div class="profilingItem">
+                                                    <span
+                                                        class="profilingItemFirst"
+                                                        style="color: {profilingTopItem.color ?? 'var(--font-light)'};"
+                                                        >{profilingTopItem.name}:</span
+                                                    >
+                                                    <span
+                                                        style="color: {profilingTopItem.color ?? 'var(--font-light)'};"
+                                                        >{profilingTopItem.value}</span
+                                                    >
+                                                </div>
+                                            {/if}
+                                        {/each}
+                                    </div>
+                                    <div class="profilingItemsBottom">
+                                        {#each column[1].profiling.bottom as profilingBottomItem}
+                                            {#if profilingBottomItem.type === 'name'}
+                                                <div class="profilingItem">
+                                                    <span
+                                                        style="color: {profilingBottomItem.color ??
+                                                            'var(--font-light)'};"
+                                                        >{@html profilingBottomItem.name}</span
+                                                    >
+                                                </div>
+                                            {:else if profilingBottomItem.type === 'numerical'}
+                                                <div class="profilingItem">
+                                                    <span
+                                                        class="profilingItemFirst"
+                                                        style="color: {profilingBottomItem.color ??
+                                                            'var(--font-light)'};">{profilingBottomItem.name}:</span
+                                                    >
+                                                    <span
+                                                        style="color: {profilingBottomItem.color ??
+                                                            'var(--font-light)'};">{profilingBottomItem.value}</span
+                                                    >
+                                                </div>
+                                            {/if}
+                                        {/each}
+                                    </div>
                                 {/if}
                             </div>
                         </td>
@@ -898,7 +998,7 @@
     }
 
     .profiling.expanded {
-        padding: 8px 2px 8px 12px;
+        padding: 10px 2px 10px 12px;
     }
 
     .profiling .content {
@@ -906,6 +1006,19 @@
         overflow: hidden;
         opacity: 0;
         transition: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .profiling .content.expanded {
+        overflow-y: scroll;
+        max-height: 500px;
+        opacity: 1;
+        transition:
+            max-height 0.7s ease,
+            opacity 0.5s ease;
     }
 
     .profilingBanner {
@@ -925,17 +1038,22 @@
         cursor: pointer;
     }
 
-    .profiling .content.expanded {
-        overflow-y: scroll;
-        max-height: 500px; /* Adjust this value based on the actual content size */
-        opacity: 1;
-        transition:
-            max-height 0.7s ease,
-            opacity 0.5s ease;
-    }
-
     .profilingItem {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 1px;
+    }
+
+    .profilingItemFirst {
+        margin-right: 10px;
+    }
+
+    .profilingItemsTop {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .profilingItemsBottom {
+        width: 100%;
     }
 </style>

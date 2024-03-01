@@ -130,7 +130,7 @@ export class EDAPanel {
                     });
 
                     if (!stateInfo.fromExisting) {
-                        instance!.runnerApi.getProfiling(tableIdentifier, stateInfo.state.table).then((profiling) => {
+                        instance!.runnerApi.getProfiling(tableIdentifier, stateInfo.state.table!).then((profiling) => {
                             webviewApi.postMessage(panel!.panel.webview, {
                                 command: 'setProfiling',
                                 value: profiling,
@@ -178,7 +178,7 @@ export class EDAPanel {
                     if (!stateInfo.fromExisting) {
                         EDAPanel.instancesMap
                             .get(tableIdentifier)!
-                            .runnerApi.getProfiling(tableIdentifier, stateInfo.state.table)
+                            .runnerApi.getProfiling(tableIdentifier, stateInfo.state.table!)
                             .then((profiling) => {
                                 webviewApi.postMessage(edaPanel!.panel.webview, {
                                     command: 'setProfiling',
@@ -249,11 +249,6 @@ export class EDAPanel {
             if (existingCurrentState) {
                 printOutputMessage('Found current State.');
                 resolve({ state: existingCurrentState, fromExisting: true });
-                return;
-            }
-
-            if (!this.tableIdentifier) {
-                resolve({ state: { tableIdentifier: undefined, history: [], defaultState: true }, fromExisting: true });
                 return;
             }
 

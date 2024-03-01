@@ -72,6 +72,12 @@ export class RunnerApi {
         return 'val ' + newPlaceholderName + ' = ' + tableIdentifier + '.to_columns(); \n';
     }
 
+    private sdsStringForIDnessByColumnName(columnName: string, tablePlaceholder: string, newPlaceholderName: string) {
+        return (
+            'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.get_column("' + columnName + '").idness(); \n'
+        );
+    }
+
     private randomPlaceholderName(): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         const charactersLength = characters.length;
@@ -159,35 +165,46 @@ export class RunnerApi {
 
     public async getProfiling(
         tableIdentifier: string,
-        table?: Table,
+        table: Table,
     ): Promise<{ columnName: string; profiling: Profiling }[]> {
-        let columnNames: string[] = [];
-        if (!table) {
-            columnNames = await this.getColumnNames(tableIdentifier);
-        } else {
-            columnNames = table.columns.map((column) => column[1].name);
-        }
+        const columns = table.columns;
 
-        let missingValueRatioSdsStrings = ''; // SDS code to get missing value ratio for each column
-        const placeholderNameToColumnNameMap = new Map<string, string>(); // Mapping random placeholder name back to column name
+        let sdsStrings = '';
+
+        const columnNameToPlaceholderMVNameMap = new Map<string, string>(); // Mapping random placeholder name for missing value ratio back to column name
         const missingValueRatioMap = new Map<string, string>(); // Saved by random placeholder name
 
-        // Generate SDS code to get missing value ratio for each column
-        for (let i = 0; i < columnNames.length; i++) {
-            const newPlaceholderName = this.randomPlaceholderName();
-            missingValueRatioMap.set(newPlaceholderName, 'null');
-            placeholderNameToColumnNameMap.set(newPlaceholderName, columnNames[i]!);
+        const columnNameToPlaceholderIDnessNameMap = new Map<string, string>(); // Mapping random placeholder name for IDness back to column name
+        const idnessMap = new Map<string, number>(); // Saved by random placeholder name
 
-            missingValueRatioSdsStrings += this.sdsStringForMissingValueRatioByColumnName(
-                columnNames[i]!,
+        // Generate SDS code to get missing value ratio for each column
+        for (let i = 0; i < columns.length; i++) {
+            const newMvPlaceholderName = this.randomPlaceholderName();
+            missingValueRatioMap.set(newMvPlaceholderName, 'null');
+            columnNameToPlaceholderMVNameMap.set(columns[i]![1].name, newMvPlaceholderName);
+
+            sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
+                columns[i]![1].name,
                 tableIdentifier,
-                newPlaceholderName,
+                newMvPlaceholderName,
             );
+
+            // Only need to check IDness for non-numerical columns
+            if (columns[i]![1].type !== 'numerical') {
+                const newIDnessPlaceholderName = this.randomPlaceholderName();
+                idnessMap.set(newIDnessPlaceholderName, 1);
+                columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
+                sdsStrings += this.sdsStringForIDnessByColumnName(
+                    columns[i]![1].name,
+                    tableIdentifier,
+                    newIDnessPlaceholderName,
+                );
+            }
         }
 
         // Execute with generated SDS code
         const pipelineId = crypto.randomUUID();
-        await this.addToAndExecutePipeline(pipelineId, missingValueRatioSdsStrings);
+        await this.addToAndExecutePipeline(pipelineId, sdsStrings);
 
         // Get missing value ratio for each column
         for (const [placeholderName] of missingValueRatioMap) {
@@ -197,10 +214,19 @@ export class RunnerApi {
             }
         }
 
+        // Get IDness for each column
+        for (const [placeholderName] of idnessMap) {
+            const idness = await this.getPlaceholderValue(placeholderName, pipelineId);
+            if (idness) {
+                idnessMap.set(placeholderName, idness as number);
+            }
+        }
+
         // Create profiling data, interpret numerical values and color them
         const profiling: { columnName: string; profiling: Profiling }[] = [];
-        for (const [placeholderName, columnName] of placeholderNameToColumnNameMap.entries()) {
-            const missingValuesRatio = parseFloat(missingValueRatioMap.get(placeholderName)!) * 100;
+        for (const column of columns) {
+            const missingValuesRatio =
+                parseFloat(missingValueRatioMap.get(columnNameToPlaceholderMVNameMap.get(column[1].name)!)!) * 100;
 
             const validRatio: ProfilingDetailStatistical = {
                 type: 'numerical',
@@ -216,13 +242,68 @@ export class RunnerApi {
                 color: missingValuesRatio > 0 ? 'var(--error-color)' : 'var(--font-light)',
             };
 
-            profiling.push({
-                columnName,
-                profiling: {
-                    top: [validRatio, missingRatio],
-                    bottom: [],
-                },
-            });
+            // If not numerical, add proper profilings according to idness results
+            if (column[1].type !== 'numerical') {
+                const idness = idnessMap.get(columnNameToPlaceholderIDnessNameMap.get(column[1].name)!)!;
+                const uniqueValues = idness * column[1].values.length;
+
+                if (uniqueValues <= 3) {
+                    // Can display each separate percentages of unique values
+                    // Find all unique values
+                    const uniqueValueCounts = new Map<string, number>();
+                    for (let i = 0; i < column[1].values.length; i++) {
+                        if (column[1].values[i])
+                            uniqueValueCounts.set(
+                                column[1].values[i],
+                                (uniqueValueCounts.get(column[1].values[i]) || 0) + 1,
+                            );
+                    }
+
+                    let uniqueProfilings: ProfilingDetailStatistical[] = [];
+                    for (const [key, value] of uniqueValueCounts) {
+                        uniqueProfilings.push({
+                            type: 'numerical',
+                            name: key,
+                            value: ((value / column[1].values.length) * 100).toFixed(2) + '%',
+                            color: 'var(--font-light)',
+                        });
+                    }
+
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            top: [validRatio, missingRatio],
+                            bottom: [
+                                { type: 'name', name: 'Categorical', color: 'var(--font-dark)' },
+                                ...uniqueProfilings,
+                            ],
+                        },
+                    });
+                } else {
+                    // Display only the number of unique values
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            top: [validRatio, missingRatio],
+                            bottom: [
+                                {
+                                    type: 'name',
+                                    name: uniqueValues + ' Unique <br>Strings',
+                                    color: 'var(--font-light)',
+                                },
+                            ],
+                        },
+                    });
+                }
+            } else {
+                profiling.push({
+                    columnName: column[1].name,
+                    profiling: {
+                        top: [validRatio, missingRatio],
+                        bottom: [],
+                    },
+                });
+            }
         }
 
         return profiling;
