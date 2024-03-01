@@ -1,6 +1,5 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, it } from 'vitest';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import {
     BooleanConstant,
     FloatConstant,
@@ -10,8 +9,9 @@ import {
 } from '../../../../src/language/partialEvaluation/model.js';
 import { LiteralType, Type } from '../../../../src/language/typing/model.js';
 import { expectEqualTypes } from '../../../helpers/testAssertions.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
 const factory = services.types.TypeFactory;
 const typeComputer = services.types.TypeComputer;

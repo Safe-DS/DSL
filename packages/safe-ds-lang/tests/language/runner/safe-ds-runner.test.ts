@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import net from 'net';
 import { URI } from 'langium';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const runner = services.runtime.Runner;
 
 describe('SafeDsRunner', async () => {

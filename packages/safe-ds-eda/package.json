@@ -16,9 +16,9 @@
         "svelte-svg": "^0.0.7"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^2.4.2",
+        "@sveltejs/vite-plugin-svelte": "^3.0.2",
         "@types/lodash": "^4.14.202",
-        "svelte-check": "^3.4.4",
-        "vite": "^4.4.0"
+        "svelte-check": "^3.6.6",
+        "vite": "^5.1.4"
     }
 }

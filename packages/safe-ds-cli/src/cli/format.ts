@@ -1,4 +1,4 @@
-import { createSafeDsServicesWithBuiltins } from '@safe-ds/lang';
+import { createSafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { extractDocuments } from '../helpers/documents.js';
 import { exitIfDocumentHasSyntaxErrors } from '../helpers/diagnostics.js';
@@ -7,7 +7,7 @@ import { writeFile } from 'node:fs/promises';
 import chalk from 'chalk';
 
 export const format = async (fsPaths: string[]): Promise<void> => {
-    const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
     const documents = await extractDocuments(services, fsPaths);
 
     // Exit if any document has syntax errors before formatting code

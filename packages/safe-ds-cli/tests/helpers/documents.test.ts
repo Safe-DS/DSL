@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { Result } from 'true-myth';
 import { processPaths } from '../../src/helpers/documents.js';
-import { createSafeDsServicesWithBuiltins } from '@safe-ds/lang';
+import { createSafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { fileURLToPath } from 'url';
 import path from 'node:path';
 import { ExitCode } from '../../src/cli/exitCode.js';
 
 describe('processPaths', async () => {
-    const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
     const testResourcesRoot = new URL('../resources/processPaths/', import.meta.url);
 
     const tests: ProcessPathsTest[] = [

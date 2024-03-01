@@ -7,10 +7,10 @@ import {
     SdsClass,
     type SdsClassMember,
 } from '../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins, getClassMembers } from '../../../src/language/index.js';
+import { createSafeDsServices, getClassMembers } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const builtinClasses = services.builtins.Classes;
 const classHierarchy = services.types.ClassHierarchy;
 

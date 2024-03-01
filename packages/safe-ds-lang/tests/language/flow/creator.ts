@@ -7,7 +7,7 @@ import fs from 'fs';
 import { getSyntaxErrors, SyntaxErrorsInCodeError } from '../../helpers/diagnostics.js';
 import { findTestChecks } from '../../helpers/testChecks.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const rootResourceName = 'call graph';
 
 export const createCallGraphTests = (): Promise<CallGraphTest[]> => {

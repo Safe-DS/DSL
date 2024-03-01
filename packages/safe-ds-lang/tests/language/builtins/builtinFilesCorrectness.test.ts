@@ -12,7 +12,7 @@ import { CODE_EXPERIMENTAL_LANGUAGE_FEATURE } from '../../../src/language/valida
 import { locationToString } from '../../../src/helpers/locations.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const builtinFiles = listBuiltinFiles();
 

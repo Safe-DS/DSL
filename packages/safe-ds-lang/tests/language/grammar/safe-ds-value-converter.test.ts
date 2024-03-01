@@ -13,7 +13,7 @@ import {
 } from '../../../src/language/generated/ast.js';
 import { escapeString } from '../../../src/language/grammar/safe-ds-value-converter.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 
 describe('runConverter', () => {
     describe('ID', () => {

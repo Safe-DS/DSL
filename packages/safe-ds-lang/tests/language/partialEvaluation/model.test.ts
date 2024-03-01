@@ -8,8 +8,7 @@ import {
     isSdsSegment,
     type SdsBlockLambdaResult,
 } from '../../../src/language/generated/ast.js';
-import { getAbstractResults, getParameters } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServices, getAbstractResults, getParameters } from '../../../src/language/index.js';
 import {
     BlockLambdaClosure,
     BooleanConstant,
@@ -31,7 +30,7 @@ import {
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const code = `
 enum MyEnum {
     MyEnumVariant1

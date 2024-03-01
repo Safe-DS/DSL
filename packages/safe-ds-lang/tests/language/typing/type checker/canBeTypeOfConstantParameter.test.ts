@@ -1,11 +1,11 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsModule } from '../../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins, getEnumVariants, getModuleMembers } from '../../../../src/language/index.js';
+import { createSafeDsServices, getEnumVariants, getModuleMembers } from '../../../../src/language/index.js';
 import { ClassType, EnumType, EnumVariantType, Type, UnknownType } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const coreTypes = services.types.CoreTypes;
 const factory = services.types.TypeFactory;
 const typeChecker = services.types.TypeChecker;
