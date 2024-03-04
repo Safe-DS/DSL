@@ -1,6 +1,5 @@
 <script lang="ts">
     import resize from '$lib/traits/resizable';
-    import { categorysDark } from 'src/assets/categories/categories';
     import * as Accordion from '$lib/components/ui/accordion';
     import { cn } from '$lib/utils';
     import type { ClassValue } from 'clsx';
@@ -12,11 +11,11 @@
 
 <div class={cn('h-full', className)}>
     <div
-        class="relative h-full w-[270px] overflow-hidden"
+        class="relative z-10 h-full w-[270px]"
         use:resize={{ sides: ['right'] }}
     >
         <div
-            class=" bg-vscode_sidebar_background flex h-full w-full flex-col gap-2"
+            class=" bg-vscode_sidebar_background flex h-full w-full flex-col gap-2 overflow-hidden"
         >
             <h2 class=" p-2 text-2xl font-bold">Functions</h2>
             <Accordion.Root multiple={true}>
@@ -27,7 +26,7 @@
                         >
                             <svelte:component
                                 this={category.icon}
-                                className="h-5 w-5 flex-shrink-0"
+                                className="h-5 w-5 flex-shrink-0 stroke-vscode_foreground"
                             />
                             {category.name}
                         </Accordion.Trigger>

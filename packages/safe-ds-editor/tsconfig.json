@@ -6,8 +6,8 @@
         "module": "ESNext",
         "resolveJsonModule": true,
         "baseUrl": ".",
-        "allowJs": true,
-        "checkJs": true,
+        "allowJs": false,
+        "checkJs": false,
         "paths": {
             "$lib": ["src/lib"],
             "$lib/*": ["src/lib/*"]
