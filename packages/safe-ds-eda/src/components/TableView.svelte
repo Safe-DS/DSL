@@ -4,6 +4,7 @@
     import { currentState, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import WarnIcon from '../icons/Warn.svelte';
+    import FilterIcon from '../icons/Filter.svelte';
     import type { Profiling, ProfilingDetailBase } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
 
@@ -627,11 +628,19 @@
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
+                                <div class="filterIconWrapper">
+                                    <FilterIcon />
+                                </div>
+                                <div class="sortIconsWrapper">
+                                    <div class="sortIconWrapper">
+                                        <CaretIcon color="var(--transparent)" />
+                                    </div>
+                                    <div class="sortIconWrapper rotate">
+                                        <CaretIcon color="var(--transparent)" />
+                                    </div>
+                                </div>
                                 <!-- svelte-ignore a11y-no-static-element-interactions -->
-                                <div
-                                    class="resize-handle"
-                                    on:mousedown={(event) => startResizeDrag(event, index)}
-                                ></div>
+                                <div class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}></div>
                             </th>
                         {/each}
                         <th
@@ -644,7 +653,7 @@
                 <!-- Profiling info -->
                 <tr class="hiddenProfilingWrapper noHover" style="top: {scrollTop}px;">
                     <td
-                        class="borderColumn border-right profiling"
+                        class="borderColumn borderRight profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     {#each $currentState.table.columns as column, index}
@@ -675,7 +684,7 @@
                 <!-- Profiling banner, to toggle profiling info -->
                 <tr class="profilingBannerRow" style="height: {rowHeight}px; top: {scrollTop}px;">
                     <td
-                        class="borderColumn border-right profilingBanner"
+                        class="borderColumn borderRight profilingBanner"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     <td
@@ -846,7 +855,7 @@
         background-color: var(--bg-dark) !important;
     }
 
-    .resize-handle {
+    .resizeHandle {
         cursor: ew-resize;
         width: 3px; /* Adjust as needed */
         height: 100%;
@@ -855,7 +864,7 @@
         top: 0;
     }
 
-    .border-right {
+    .borderRight {
         border-right: 2px solid var(--bg-bright);
     }
     .hiddenProfilingWrapper {
@@ -902,6 +911,35 @@
         height: 100%;
         width: 13px;
         margin-left: 2px;
+    }
+
+    .filterIconWrapper {
+        display: inline-flex;
+        justify-content: center;
+        height: 100%;
+        width: 13px;
+        margin-left: 2px;
+        transform: translateY(2px);
+    }
+
+    .sortIconsWrapper {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        height: 66%;
+        position: absolute;
+        right: 0px;
+        top: 17%;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--primary-color) 28%);
+        padding-left: 11px;
+        padding-right: 10px;
+    }
+
+    .sortIconWrapper {
+        display: inline-flex;
+        justify-content: center;
+        height: 100%;
+        width: 11px;
     }
 
     .reorderHighlightedLeft {
