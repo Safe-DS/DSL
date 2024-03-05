@@ -129,7 +129,13 @@ export class EDAPanel {
                         value: stateInfo.state,
                     });
 
-                    if (!stateInfo.fromExisting) {
+                    if (
+                        !stateInfo.fromExisting ||
+                        !stateInfo.state.table ||
+                        !stateInfo.state
+                            .table!.columns.map((c) => c[1].profiling)
+                            .find((p) => p.bottom.length > 0 || p.top.length > 0)
+                    ) {
                         instance!.runnerApi.getProfiling(tableIdentifier, stateInfo.state.table!).then((profiling) => {
                             webviewApi.postMessage(panel!.panel.webview, {
                                 command: 'setProfiling',
@@ -175,7 +181,13 @@ export class EDAPanel {
                         value: stateInfo.state,
                     });
 
-                    if (!stateInfo.fromExisting) {
+                    if (
+                        !stateInfo.fromExisting ||
+                        !stateInfo.state.table ||
+                        !stateInfo.state
+                            .table!.columns.map((c) => c[1].profiling)
+                            .find((p) => p.bottom.length > 0 || p.top.length > 0)
+                    ) {
                         EDAPanel.instancesMap
                             .get(tableIdentifier)!
                             .runnerApi.getProfiling(tableIdentifier, stateInfo.state.table!)
