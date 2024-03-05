@@ -78,6 +78,22 @@ export class RunnerApi {
         );
     }
 
+    private sdsStringForHistogramByColumnName(
+        columnName: string,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.get_column("' +
+            columnName +
+            '").plot_histogram(); \n'
+        );
+    }
+
     private randomPlaceholderName(): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         const charactersLength = characters.length;
@@ -177,6 +193,9 @@ export class RunnerApi {
         const columnNameToPlaceholderIDnessNameMap = new Map<string, string>(); // Mapping random placeholder name for IDness back to column name
         const idnessMap = new Map<string, number>(); // Saved by random placeholder name
 
+        const columnNameToPlaceholderHistogramNameMap = new Map<string, string>(); // Mapping random placeholder name for histogram back to column name
+        const histogramMap = new Map<string, string>(); // Saved by random placeholder name
+
         // Generate SDS code to get missing value ratio for each column
         for (let i = 0; i < columns.length; i++) {
             const newMvPlaceholderName = this.randomPlaceholderName();
@@ -187,6 +206,16 @@ export class RunnerApi {
                 columns[i]![1].name,
                 tableIdentifier,
                 newMvPlaceholderName,
+            );
+
+            const newHistogramPlaceholderName = this.randomPlaceholderName();
+            histogramMap.set(newHistogramPlaceholderName, 'null');
+            columnNameToPlaceholderHistogramNameMap.set(columns[i]![1].name, newHistogramPlaceholderName);
+
+            sdsStrings += this.sdsStringForHistogramByColumnName(
+                columns[i]![1].name,
+                tableIdentifier,
+                newHistogramPlaceholderName,
             );
 
             // Only need to check IDness for non-numerical columns
@@ -221,6 +250,14 @@ export class RunnerApi {
                 idnessMap.set(placeholderName, idness as number);
             }
         }
+
+        // // Get histogram for each column
+        // for (const [placeholderName] of histogramMap) {
+        //     const histogram = await this.getPlaceholderValue(placeholderName, pipelineId);
+        //     if (histogram) {
+        //         histogramMap.set(placeholderName, histogram as string);
+        //     }
+        // }
 
         // Create profiling data, interpret numerical values and color them
         const profiling: { columnName: string; profiling: Profiling }[] = [];
@@ -286,9 +323,10 @@ export class RunnerApi {
                         profiling: {
                             top: [validRatio, missingRatio],
                             bottom: [
+                                { type: 'name', name: 'Categorical', color: 'var(--font-dark)' },
                                 {
                                     type: 'name',
-                                    name: uniqueValues + ' Unique <br>Strings',
+                                    name: uniqueValues + ' Uniques',
                                     color: 'var(--font-light)',
                                 },
                             ],

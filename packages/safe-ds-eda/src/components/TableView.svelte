@@ -3,6 +3,7 @@
     import { throttle } from 'lodash';
     import { currentState, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
+    import WarnIcon from '../icons/Warn.svelte';
     import type { Profiling, ProfilingDetailBase } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
 
@@ -24,6 +25,7 @@
         if ($currentState.table) {
             minTableWidth = 0;
             numRows = 0;
+            maxProfilingItemCount = 0;
             $currentState.table.columns.forEach((column) => {
                 if (column[1].values.length > numRows) {
                     numRows = column[1].values.length;
@@ -33,37 +35,17 @@
                 // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
                 // (cannot give to tallest one, as then it will all be small)
                 if (column[1].profiling.top.length > 0 || column[1].profiling.bottom.length > 0) {
-                    maxProfilingItemCount = 0;
+                    let profilingItemCount = 0;
                     for (const profilingItem of column[1].profiling.top.concat(column[1].profiling.bottom)) {
-                        maxProfilingItemCount += calcProfilingItemValue(profilingItem);
+                        profilingItemCount += calcProfilingItemValue(profilingItem);
+                    }
+                    if (profilingItemCount > maxProfilingItemCount) {
+                        maxProfilingItemCount = profilingItemCount;
                     }
                 }
             });
         }
     }
-
-    const getOptionalProfilingHeight = function (profiling: Profiling): string {
-        let profilingItemCount = 0;
-
-        for (const profilingItem of profiling.top.concat(profiling.bottom)) {
-            profilingItemCount += calcProfilingItemValue(profilingItem);
-        }
-
-        if (profilingItemCount === maxProfilingItemCount) {
-            return '';
-        } else {
-            return '30px';
-        }
-    };
-
-    const calcProfilingItemValue = function (profilingItem: ProfilingDetailBase): number {
-        // To edit when Profiling type scales/changes
-        if (profilingItem.type === 'image') {
-            return 3; // Bigger than normal text line, should be set to 3x line height
-        } else {
-            return 1;
-        }
-    };
 
     const getColumnWidth = function (columnName: string): number {
         if (savedColumnWidths.has(columnName)) {
@@ -522,6 +504,44 @@
         if (!$preventClicks) showProfiling = !showProfiling;
     };
 
+    const getOptionalProfilingHeight = function (profiling: Profiling): string {
+        let profilingItemCount = 0;
+
+        for (const profilingItem of profiling.top.concat(profiling.bottom)) {
+            profilingItemCount += calcProfilingItemValue(profilingItem);
+        }
+
+        if (profilingItemCount === maxProfilingItemCount) {
+            return '';
+        } else {
+            return '30px';
+        }
+    };
+
+    const calcProfilingItemValue = function (profilingItem: ProfilingDetailBase): number {
+        // To edit when Profiling type scales/changes
+        if (profilingItem.type === 'image') {
+            return 3; // Bigger than normal text line, should be set to 3x line height
+        } else {
+            return 1;
+        }
+    };
+
+    const profilingWarnings = function (): boolean {
+        for (const column of $currentState.table!.columns) {
+            for (const profilingItem of column[1].profiling.top) {
+                if (
+                    profilingItem.type === 'numerical' &&
+                    profilingItem.name === 'Missing' &&
+                    parseFloat(profilingItem.value.replace('%', '')) > 0
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
     // --- Lifecycle ---
     let interval: NodeJS.Timeout;
 
@@ -666,7 +686,12 @@
                     >
                         <div>
                             <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                            <div class="iconWrapper" class:rotate={!showProfiling}>
+                            {#if profilingWarnings()}
+                                <div class="warnIconWrapper">
+                                    <WarnIcon />
+                                </div>
+                            {/if}
+                            <div class="caretIconWrapper" class:rotate={!showProfiling}>
                                 <CaretIcon />
                             </div>
                         </div>
@@ -863,12 +888,20 @@
         transform: rotate(180deg);
     }
 
-    .iconWrapper {
+    .caretIconWrapper {
         display: inline-flex;
         justify-content: center;
         height: 100%;
         width: 20px;
         margin-left: 5px;
+    }
+
+    .warnIconWrapper {
+        display: inline-flex;
+        justify-content: center;
+        height: 100%;
+        width: 13px;
+        margin-left: 2px;
     }
 
     .reorderHighlightedLeft {
