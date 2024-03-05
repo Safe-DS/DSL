@@ -8,6 +8,7 @@
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import ChevonRight from 'svelte-radix/ChevronRight.svelte';
     import Port from './port.svelte';
+    import statusIndicator from '$lib/traits/status-indicator';
 
     type $$Props = NodeProps;
 
@@ -41,7 +42,10 @@
         />
         <span class="text-node_main_text truncate">{statement.name}</span>
     </div>
-    <div class=" h-1 w-full bg-green-400"></div>
+    <div
+        use:statusIndicator={{ status: statement.status }}
+        class=" h-1 w-full"
+    ></div>
     {#if expanded}
         <div class=" bg-vscode_main_background grid py-1">
             <Port

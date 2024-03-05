@@ -74,7 +74,7 @@ export default function tooltip(
 }
 
 const tooltipArrow = `<svg
-class="w-5 h-5 absolute -bottom-[11px] left-1/2 transform -translate-x-1/2 rotate-180"
+class="w-5 h-5 absolute -bottom-[10px] left-1/2 transform -translate-x-1/2 rotate-180"
 viewBox="0 0 512 512"
 transform="rotate(180)"
 >

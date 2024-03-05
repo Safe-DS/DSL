@@ -12,29 +12,31 @@
     import NodeStatement from '../nodes/node-statement.svelte';
     import type { NodeCustom } from './node-types';
     import { categorysDark } from 'src/assets/categories/categories';
+    import NodePlaceholder from '../nodes/node-placeholder.svelte';
+    import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
 
     const parameters: Parameter<DataType>[] = [
         {
             name: 'Text Parameter',
-            type: 'string',
+            type: { type: 'string', icon: getIconFromDatatype('string') },
             value: 'Das hier ist ein String!',
             optional: false,
         },
         {
             name: 'Zahlen Parameter',
-            type: 'number',
+            type: { type: 'number', icon: getIconFromDatatype('number') },
             value: '420',
             optional: false,
         },
         {
             name: 'Lambda Parameter',
-            type: 'lambda',
+            type: { type: 'lambda', icon: getIconFromDatatype('lambda') },
             value: '',
             optional: false,
         },
         {
             name: 'Tabelle Parameter',
-            type: 'table',
+            type: { type: 'table', icon: getIconFromDatatype('table') },
             value: 'Eingangsfunktion.VariablenName',
             optional: false,
         },
@@ -47,6 +49,12 @@
         status: 'done',
     };
 
+    const testPlaceholder: Placeholder = {
+        name: 'TestPlaceholder',
+        type: { type: 'table', icon: getIconFromDatatype('table') },
+        status: 'done',
+    };
+
     const nodes: Writable<NodeCustom[]> = writable([
         {
             id: '0',
@@ -54,15 +62,22 @@
             data: { statement: testStatement },
             position: { x: 0, y: 0 },
         },
+        {
+            id: '1',
+            type: 'placeholder',
+            data: { placeholder: testPlaceholder },
+            position: { x: 0, y: 200 },
+        },
     ]);
 
     const edges = writable([]);
 
     const nodeTypes = {
         statement: NodeStatement,
+        placeholder: NodePlaceholder,
     };
 
-    const snapGrid: [number, number] = [25, 25];
+    const snapGrid: [number, number] = [20, 20];
 </script>
 
 <div class=" h-full">
@@ -75,6 +90,8 @@
         proOptions={{ hideAttribution: true }}
         on:nodeclick={(event) =>
             console.log('on node click', event.detail.node)}
+        on:edgeclick={(event) =>
+            console.log('on edge click', event.detail.edge)}
     >
         <Controls position="bottom-right" />
         <Background

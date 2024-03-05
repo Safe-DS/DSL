@@ -13,5 +13,10 @@
             "$lib/*": ["src/lib/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.svelte", "types/**/*.d.ts"]
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.svelte",
+        "types/**/*.d.ts",
+        "src/lib/components/nodes/utils.tsx"
+    ]
 }

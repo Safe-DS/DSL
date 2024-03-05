@@ -1,24 +1,20 @@
-declare type DataType = 'string' | 'number' | 'lambda' | 'table' | 'undefined';
+declare type DataType = {
+    type: 'string' | 'number' | 'lambda' | 'table' | 'undefined';
+    icon: SvgComponent;
+};
 
 // Helper type to map DataType to TypeScript types
-declare type DataTypeValue<T extends DataType> = T extends 'string'
+declare type DataTypeValue<T extends DataType> = T.type extends 'string'
     ? string
-    : T extends 'number'
+    : T.type extends 'number'
     ? number
-    : T extends 'lambda'
+    : T.type extends 'lambda'
     ? string
-    : T extends 'table'
+    : T.type extends 'table'
     ? string
-    : T extends 'undefined'
+    : T.type extends 'undefined'
     ? undefined
     : never;
-
-declare type Statement = {
-    name: string;
-    category: Category;
-    parameters: Parameter[];
-    status: NodeStatus;
-};
 
 declare type Parameter<T extends Datetype> = {
     name: string;
@@ -33,3 +29,16 @@ declare type Category = {
 };
 
 declare type NodeStatus = 'ready' | 'queued' | 'done' | 'error';
+
+declare type Statement = {
+    name: string;
+    category: Category;
+    parameters: Parameter[];
+    status: NodeStatus;
+};
+
+declare type Placeholder = {
+    name: string;
+    type: DataType;
+    status: NodeStatus;
+};

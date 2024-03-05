@@ -79,6 +79,8 @@ const config = {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)',
+                placeholderFrame: '80px / 50px',
+                placeholderCore: '80px / 40px',
             },
             fontFamily: {
                 sans: [...fontFamily.sans],

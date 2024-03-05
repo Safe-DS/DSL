@@ -28,3 +28,20 @@ export const dataTypesDark: DataTypes = {
     string: StringDark,
     table: TableDark,
 };
+
+export const getIconFromDatatype = (
+    type: 'string' | 'number' | 'lambda' | 'table' | 'undefined',
+): SvgComponent => {
+    switch (type) {
+        case 'string':
+            return StringDark;
+        case 'number':
+            return NumberDark;
+        case 'lambda':
+            return LambdaDark;
+        case 'table':
+            return TableDark;
+        case 'undefined':
+            return undefined;
+    }
+};
