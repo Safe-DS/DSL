@@ -25,4 +25,4 @@ setTimeout(() => {
             console.error('Error during copying:', err);
             process.exit(1);
         });
-}, 300);
+}, 1000);

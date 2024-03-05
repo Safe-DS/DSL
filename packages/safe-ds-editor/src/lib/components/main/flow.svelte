@@ -41,7 +41,7 @@
     ];
 
     const testStatement: Statement = {
-        name: 'getReferenceByNameorDate',
+        name: 'getReferenceByNameOrDate',
         category: { name: 'Modeling', icon: categorysDark.modeling },
         parameters: parameters,
         status: 'done',

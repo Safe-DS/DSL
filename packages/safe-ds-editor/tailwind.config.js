@@ -8,6 +8,11 @@ export const customColors = {
 
     grid_background: 'rgba(30, 30, 30, 1)',
     grid_minimap_mask: 'rgba(42, 45, 46, 0.5)',
+
+    node_main: 'rgba(64, 64, 64, 1)',
+    node_secondary: 'rgba(30, 30, 30, 1)',
+    node_main_text: 'rgba(204, 204, 204, 1)',
+    node_secondary_text: 'rgba(170, 170, 170, 1)',
 };
 
 /** @type {import('tailwindcss').Config} */
@@ -24,6 +29,9 @@ const config = {
             },
         },
         extend: {
+            boxShadow: {
+                node: '1px 1px 6px #000000',
+            },
             transitionDuration: {
                 35: '35ms',
             },
