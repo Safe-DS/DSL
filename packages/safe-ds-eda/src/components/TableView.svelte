@@ -5,8 +5,14 @@
     import CaretIcon from '../icons/Caret.svelte';
     import WarnIcon from '../icons/Warn.svelte';
     import FilterIcon from '../icons/Filter.svelte';
-    import type { Profiling, ProfilingDetailBase } from '../../types/state';
+    import type {
+        PossibleColumnFilter,
+        Profiling,
+        ProfilingDetailBase,
+        ProfilingDetailStatistical,
+    } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
+    import ColumnFilters from './column-filters/ColumnFilters.svelte';
 
     export let sidebarWidth: number;
 
@@ -72,6 +78,13 @@
         return baseWidth + Math.log(columnName.length + 1) * scale;
     };
 
+    const handleMainCellClick = function (): void {
+        if (!$preventClicks) {
+            selectedColumnIndexes = [];
+            selectedRowIndexes = [];
+        }
+    };
+
     // --- Column resizing ---
     let isResizeDragging = false;
     let startWidth: number;
@@ -95,7 +108,6 @@
 
     const startResizeDrag = function (event: MouseEvent, columnIndex: number): void {
         event.stopPropagation();
-        clickOnColumn = true;
         const columnElement = headerElements[columnIndex];
         isResizeDragging = true;
         startX = event.clientX;
@@ -120,7 +132,6 @@
     let preventResizeTableSpaceUpdate = false;
     let holdTimeout: NodeJS.Timeout;
     let isClick = true; // Flag to distinguish between click and hold
-    let clickOnColumn = false; // For global window click clear of selection
 
     let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
 
@@ -139,8 +150,6 @@
     const handleColumnInteractionStart = function (event: MouseEvent, columnIndex: number): void {
         // Check if the left or right mouse button was pressed
         if (event.button !== 0 && event.button !== 2) return;
-
-        clickOnColumn = true; // For global window click clear of selection
 
         if (event.button === 2) {
             // Right click
@@ -259,11 +268,19 @@
     };
 
     const addColumnToSelection = function (columnIndex: number): void {
+        if (selectedRowIndexes.length > 0) {
+            selectedRowIndexes = [];
+        }
+
         // Add the index and create a new array to trigger reactivity
         selectedColumnIndexes = [...selectedColumnIndexes, columnIndex];
     };
 
     const removeColumnFromSelection = function (columnIndex: number, selectedColumnIndexesIndex?: number): void {
+        if (selectedRowIndexes.length > 0) {
+            selectedRowIndexes = [];
+        }
+
         // Remove the index and create a new array to trigger reactivity
         selectedColumnIndexes = [
             ...selectedColumnIndexes.slice(0, selectedColumnIndexesIndex ?? selectedColumnIndexes.indexOf(columnIndex)),
@@ -274,13 +291,16 @@
     };
 
     const setSelectionToColumn = function (columnIndex: number): void {
+        if (selectedRowIndexes.length > 0) {
+            selectedRowIndexes = [];
+        }
+
         // Replace the current selection with a new array to trigger reactivity
         selectedColumnIndexes = [columnIndex];
     };
 
     // --- Row selecting ---
     let selectedRowIndexes: number[] = [];
-    let clickOnRow = false;
 
     const handleRowClick = function (event: MouseEvent, rowIndex: number): void {
         // Logic for what happens when a row is clicked
@@ -288,7 +308,9 @@
             return;
         }
 
-        clickOnRow = true; // For global window click clear of selection
+        if (selectedColumnIndexes.length > 0) {
+            selectedColumnIndexes = [];
+        }
 
         // Check if Ctrl (or Cmd on Mac) is held down
         if (event.ctrlKey || event.metaKey) {
@@ -414,10 +436,12 @@
     }
 
     // --- Right clicks ---
+    let currentContextMenu: HTMLElement | null = null;
+
+    // Column header right click
     let showingColumnHeaderRightClickMenu = false;
     let rightClickedColumnIndex = -1;
     let rightClickColumnMenuElement: HTMLElement;
-    let currentContextMenu: HTMLElement | null = null;
 
     const handleColumnRightClick = function (event: MouseEvent, columnIndex: number): void {
         // Logic for what happens when a header is right clicked
@@ -431,25 +455,82 @@
             rightClickColumnMenuElement!.style.top = event.clientY + scrollTop + 'px';
         });
 
-        // Click anywhere else to close the menu, context menu selection has to prevent propagation
+        // Click anywhere else to close the menu
         window.addEventListener('click', handleRightClickEnd);
     };
+
+    // Filter context menu
+    let showingFilterContextMenu = false;
+    let filterColumnIndex = -1;
+    let filterContextMenuElement: HTMLElement;
+
+    const handleFilterContextMenu = function (event: MouseEvent, columnIndex: number): void {
+        if (event.button !== 0) return;
+
+        // Logic for what happens when a filter icon is clicked
+        event.stopPropagation();
+        doDefaultContextMenuSetup();
+        showingFilterContextMenu = true;
+        filterColumnIndex = columnIndex;
+
+        requestAnimationFrame(() => {
+            currentContextMenu = filterContextMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
+            filterContextMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            filterContextMenuElement!.style.top = event.clientY + scrollTop + 'px';
+        });
+
+        // Click anywhere else to close the menu, if not clicked in the menu
+        window.addEventListener('mousedown', handleRightClickEnd);
+    };
+
+    // Scaling methods
 
     const doDefaultContextMenuSetup = function (): void {
         preventClicks.set(true);
         disableNonContextMenuEffects();
     };
 
-    const handleRightClickEnd = function (): void {
-        // Code specific to each menu
-        showingColumnHeaderRightClickMenu = false;
-        rightClickedColumnIndex = -1;
-        // ----
+    const handleRightClickEnd = function (event: MouseEvent): void {
+        const generalCleanup = function (): void {
+            restoreNonContextMenuEffects();
+            setTimeout(() => preventClicks.set(false), 100); // To give time for relevant click events to be prevented
+            currentContextMenu = null;
+            window.removeEventListener('click', handleRightClickEnd);
+            window.removeEventListener('mousedown', handleRightClickEnd);
+        };
 
-        restoreNonContextMenuEffects();
-        preventClicks.set(false);
-        currentContextMenu = null;
-        window.removeEventListener('click', handleRightClickEnd);
+        // Code specific to each menu
+        if (showingColumnHeaderRightClickMenu) {
+            showingColumnHeaderRightClickMenu = false;
+            rightClickedColumnIndex = -1;
+            generalCleanup();
+        }
+        if (showingFilterContextMenu) {
+            if (event.target instanceof HTMLElement) {
+                let element = event.target;
+
+                const hasParentWithClass = (element: HTMLElement, className: string) => {
+                    while (element && element !== document.body) {
+                        if (element.classList.contains(className)) {
+                            return true;
+                        }
+                        if (!element.parentElement) {
+                            return false;
+                        }
+                        element = element.parentElement;
+                    }
+                    return false;
+                };
+
+                // Check if the clicked element or any of its parents have the 'contextMenu' class
+                if (hasParentWithClass(element, 'contextMenu')) {
+                    return;
+                }
+            }
+            showingFilterContextMenu = false;
+            filterColumnIndex = -1;
+            generalCleanup();
+        }
     };
 
     const originalHoverStyles = new Map<CSSStyleRule, string>();
@@ -528,14 +609,10 @@
         }
     };
 
-    const profilingWarnings = function (): boolean {
+    const hasProfilingWarnings = function (): boolean {
         for (const column of $currentState.table!.columns) {
             for (const profilingItem of column[1].profiling.top) {
-                if (
-                    profilingItem.type === 'numerical' &&
-                    profilingItem.name === 'Missing' &&
-                    parseFloat(profilingItem.value.replace('%', '')) > 0
-                ) {
+                if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'warn') {
                     return true;
                 }
             }
@@ -543,44 +620,57 @@
         return false;
     };
 
+    const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
+        if (!$currentState.table) return [];
+
+        const column = $currentState.table.columns[columnIndex][1];
+
+        const possibleColumnFilters: PossibleColumnFilter[] = [];
+
+        if (column.type === 'categorical') {
+            const profilingCategories: ProfilingDetailStatistical[] = column.profiling.bottom
+                .concat(column.profiling.top)
+                .filter(
+                    (profilingItem) =>
+                        profilingItem.type === 'numerical' && profilingItem.interpretation === 'category',
+                ) as ProfilingDetailStatistical[];
+
+            // If there is distinct categories in profiling, use those as filter options, else use search string
+            if (profilingCategories.length > 0) {
+                possibleColumnFilters.push({
+                    type: 'specificValue',
+                    values: profilingCategories.map((profilingItem) => profilingItem.value.replace('%', '')),
+                    columnName: column.name,
+                });
+            } else {
+                possibleColumnFilters.push({
+                    type: 'searchString',
+                    columnName: column.name,
+                });
+            }
+        } else {
+            const colMax = column.values.reduce(
+                (acc: number, val: number) => Math.max(acc, val),
+                Number.NEGATIVE_INFINITY,
+            );
+            const colMin = column.values.reduce(
+                (acc: number, val: number) => Math.min(acc, val),
+                Number.NEGATIVE_INFINITY,
+            );
+
+            possibleColumnFilters.push({
+                type: 'valueRange',
+                min: colMin,
+                max: colMax,
+                columnName: column.name,
+            });
+        }
+
+        return possibleColumnFilters;
+    };
+
     // --- Lifecycle ---
     let interval: NodeJS.Timeout;
-
-    const clearSelections = function (event: MouseEvent): void {
-        // Clears selections if last click was not on a column or row and currrent click is not on a context menu item if context menu is open
-        // WARN/TODO: Does not yet work for subemnus in context menus or menus with non possible closing clicks, those will need yet another class to be detected and handled
-        // This also prepares selection clearing for next iteration if click was on column or row
-
-        // Clear column selection if approriate
-        if (
-            !clickOnColumn &&
-            !(
-                currentContextMenu &&
-                event.target instanceof HTMLElement &&
-                !(event.target as HTMLElement).classList.contains('contextItem')
-            )
-        ) {
-            // Clear if click last item clicked was not on a column or if current click is on a context menu item if context menu is open,
-            // which should just close the context menu and not clear selection
-            selectedColumnIndexes = [];
-        }
-        clickOnColumn = false; // meaning if next click is not on a column, selection will be cleared in next iteration
-
-        // Clear row selection if approriate
-        if (
-            !clickOnRow &&
-            !(
-                currentContextMenu &&
-                event.target instanceof HTMLElement &&
-                !(event.target as HTMLElement).classList.contains('contextItem')
-            )
-        ) {
-            // Clear if click last item clicked was not on a row or if current click is on a context menu item if context menu is open,
-            // which should just close the context menu and not clear selection
-            selectedRowIndexes = [];
-        }
-        clickOnRow = false; // meaning if next click is not on a row, selection will be cleared in next iteration
-    };
 
     onMount(() => {
         updateScrollTop();
@@ -589,7 +679,6 @@
         tableContainer.addEventListener('scroll', updateScrollTop);
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
         window.addEventListener('resize', throttledUpdateTableSpace);
-        window.addEventListener('click', clearSelections);
         interval = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
 
         return () => {
@@ -597,7 +686,6 @@
             tableContainer.addEventListener('scroll', updateScrollTop);
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
             window.removeEventListener('resize', throttledUpdateTableSpace);
-            window.removeEventListener('click', clearSelections);
             clearInterval(interval);
         };
     });
@@ -628,7 +716,12 @@
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
-                                <div class="filterIconWrapper">
+                                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                                <div
+                                    class="filterIconWrapper"
+                                    on:mousedown={(event) => handleFilterContextMenu(event, index)}
+                                >
                                     <FilterIcon />
                                 </div>
                                 <div class="sortIconsWrapper">
@@ -695,7 +788,7 @@
                     >
                         <div>
                             <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                            {#if profilingWarnings()}
+                            {#if hasProfilingWarnings()}
                                 <div class="warnIconWrapper">
                                     <WarnIcon />
                                 </div>
@@ -732,6 +825,7 @@
                             >
                             {#each $currentState.table.columns as column, index}
                                 <td
+                                    on:click={handleMainCellClick}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     class:selectedColumn={selectedColumnIndexes.includes(index) ||
                                         selectedRowIndexes.includes(visibleStart + i)}
@@ -781,6 +875,11 @@
                     >Select Column</button
                 >
             {/if}
+        </div>
+    {/if}
+    {#if showingFilterContextMenu}
+        <div class="contextMenu" bind:this={filterContextMenuElement}>
+            <ColumnFilters possibleFilters={getPosiibleColumnFilters(filterColumnIndex)} />
         </div>
     {/if}
 </div>

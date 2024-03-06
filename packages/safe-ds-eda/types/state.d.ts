@@ -85,6 +85,7 @@ export interface ProfilingDetailStatistical extends ProfilingDetailBase {
     name: string;
     value: string;
     color?: string;
+    interpretation: 'warn' | 'category' | 'default';
 }
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
@@ -140,6 +141,10 @@ export interface SearchStringFilter extends ColumnFilterBase {
     searchString: string;
 }
 
+export interface PossibleSearchStringFilter extends ColumnFilterBase {
+    type: 'searchString';
+}
+
 export interface ValueRangeFilter extends ColumnFilterBase {
     type: 'valueRange';
     min: number;
@@ -148,11 +153,18 @@ export interface ValueRangeFilter extends ColumnFilterBase {
 
 export interface SpecificValueFilter extends ColumnFilterBase {
     type: 'specificValue';
-    value: number;
+    value: string;
 }
 
-export type NumericalFilter = ValueRangeFilter | SpecificValueFilter;
-export type CategoricalFilter = SearchStringFilter;
+export interface PossibleSpecificValueFilter extends ColumnFilterBase {
+    type: 'specificValue';
+    values: string[];
+}
+
+export type NumericalFilter = ValueRangeFilter;
+export type CategoricalFilter = SearchStringFilter | SpecificValueFilter;
+
+export type PossibleColumnFilter = ValueRangeFilter | PossibleSearchStringFilter | PossibleSpecificValueFilter;
 
 export interface TableFilter extends FilterBase {
     type: 'hideMissingValueColumns' | 'hideNonNumericalColumns' | 'hideDuplicateRows' | 'hideRowsWithOutliers';

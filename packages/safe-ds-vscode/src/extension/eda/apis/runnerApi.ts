@@ -270,6 +270,7 @@ export class RunnerApi {
                 name: 'Valid',
                 value: missingValuesRatio ? (100 - missingValuesRatio).toFixed(2) + '%' : '100%',
                 color: 'var(--primary-color)',
+                interpretation: 'default',
             };
 
             const missingRatio: ProfilingDetailStatistical = {
@@ -277,6 +278,7 @@ export class RunnerApi {
                 name: 'Missing',
                 value: missingValuesRatio ? missingValuesRatio.toFixed(2) + '%' : '0%',
                 color: missingValuesRatio > 0 ? 'var(--error-color)' : 'var(--font-light)',
+                interpretation: missingValuesRatio > 0 ? 'warn' : 'default',
             };
 
             // If not numerical, add proper profilings according to idness results
@@ -303,6 +305,7 @@ export class RunnerApi {
                             name: key,
                             value: ((value / column[1].values.length) * 100).toFixed(2) + '%',
                             color: 'var(--font-light)',
+                            interpretation: 'category',
                         });
                     }
 
