@@ -15,8 +15,7 @@ import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
 import treeKill from 'tree-kill';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
-import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
-import { getModuleMembers } from '../helpers/nodeProperties.js';
+import { isSdsModule } from '../generated/ast.js';
 import semver from 'semver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
@@ -281,13 +280,15 @@ export class SafeDsRunner {
      * Execute a Safe-DS pipeline on the python runner.
      * If a valid target placeholder is provided, the pipeline is only executed partially, to calculate the result of the placeholder.
      *
-     * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param id A unique id that is used in further communication with this pipeline.
+     * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
+     * @param pipelineName Name of the pipeline that should be run
      * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
      */
     public async executePipeline(
-        pipelineDocument: LangiumDocument,
         id: string,
+        pipelineDocument: LangiumDocument,
+        pipelineName: string,
         targetPlaceholder: string | undefined = undefined,
     ) {
         if (!this.isPythonServerAvailable()) {
@@ -305,13 +306,6 @@ export class SafeDsRunner {
         // Pipeline / Module name handling
         const mainPythonModuleName = this.annotations.getPythonModule(node);
         const mainPackage = mainPythonModuleName === undefined ? node.name.split('.') : [mainPythonModuleName];
-        const firstPipeline = getModuleMembers(node).find(isSdsPipeline);
-        if (firstPipeline === undefined) {
-            this.logging.outputError('Cannot execute: no pipeline found');
-            this.logging.displayError('The current file cannot be executed, as no pipeline could be found.');
-            return;
-        }
-        const mainPipelineName = this.annotations.getPythonName(firstPipeline) || firstPipeline.name;
         const mainModuleName = this.getMainModuleName(pipelineDocument);
         // Code generation
         const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targetPlaceholder);
@@ -330,7 +324,7 @@ export class SafeDsRunner {
                 main: {
                     modulepath: mainPackage.join('.'),
                     module: mainModuleName,
-                    pipeline: mainPipelineName,
+                    pipeline: pipelineName,
                 },
             }),
         );
