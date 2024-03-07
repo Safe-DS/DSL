@@ -284,16 +284,14 @@ export class RunnerApi {
                 type: 'numerical',
                 name: 'Valid',
                 value: missingValuesRatio ? (100 - missingValuesRatio).toFixed(2) + '%' : '100%',
-                color: 'var(--primary-color)',
-                interpretation: 'default',
+                interpretation: 'good',
             };
 
             const missingRatio: ProfilingDetailStatistical = {
                 type: 'numerical',
                 name: 'Missing',
                 value: missingValuesRatio ? missingValuesRatio.toFixed(2) + '%' : '0%',
-                color: missingValuesRatio > 0 ? 'var(--error-color)' : 'var(--font-light)',
-                interpretation: missingValuesRatio > 0 ? 'warn' : 'default',
+                interpretation: missingValuesRatio > 0 ? 'error' : 'default',
             };
 
             // If not numerical, add proper profilings according to idness results
@@ -319,7 +317,6 @@ export class RunnerApi {
                             type: 'numerical',
                             name: key,
                             value: ((value / column[1].values.length) * 100).toFixed(2) + '%',
-                            color: 'var(--font-light)',
                             interpretation: 'category',
                         });
                     }
@@ -329,7 +326,7 @@ export class RunnerApi {
                         profiling: {
                             top: [validRatio, missingRatio],
                             bottom: [
-                                { type: 'name', name: 'Categorical', color: 'var(--font-dark)' },
+                                { type: 'name', name: 'Categorical', interpretation: 'bold' },
                                 ...uniqueProfilings,
                             ],
                         },
@@ -341,11 +338,11 @@ export class RunnerApi {
                         profiling: {
                             top: [validRatio, missingRatio],
                             bottom: [
-                                { type: 'name', name: 'Categorical', color: 'var(--font-dark)' },
+                                { type: 'name', name: 'Categorical', interpretation: 'bold' },
                                 {
                                     type: 'name',
                                     name: uniqueValues + ' Uniques',
-                                    color: 'var(--font-light)',
+                                    interpretation: 'default',
                                 },
                             ],
                         },

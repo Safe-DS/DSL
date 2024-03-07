@@ -3,12 +3,12 @@
     import { throttle } from 'lodash';
     import { currentState, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
-    import WarnIcon from '../icons/Warn.svelte';
+    import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
     import type {
         PossibleColumnFilter,
         Profiling,
-        ProfilingDetailBase,
+        ProfilingDetail,
         ProfilingDetailStatistical,
     } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
@@ -600,7 +600,7 @@
         }
     };
 
-    const calcProfilingItemValue = function (profilingItem: ProfilingDetailBase): number {
+    const calcProfilingItemValue = function (profilingItem: ProfilingDetail): number {
         // To edit when Profiling type scales/changes
         if (profilingItem.type === 'image') {
             return 3; // Bigger than normal text line, should be set to 3x line height
@@ -609,10 +609,10 @@
         }
     };
 
-    const hasProfilingWarnings = function (): boolean {
+    const hasProfilingErrors = function (): boolean {
         for (const column of $currentState.table!.columns) {
             for (const profilingItem of column[1].profiling.top) {
-                if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'warn') {
+                if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'error') {
                     return true;
                 }
             }
@@ -788,9 +788,9 @@
                     >
                         <div>
                             <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                            {#if hasProfilingWarnings()}
-                                <div class="warnIconWrapper">
-                                    <WarnIcon />
+                            {#if hasProfilingErrors()}
+                                <div class="errorIconWrapper">
+                                    <ErrorIcon />
                                 </div>
                             {/if}
                             <div class="caretIconWrapper" class:rotate={!showProfiling}>
@@ -1004,7 +1004,7 @@
         margin-left: 5px;
     }
 
-    .warnIconWrapper {
+    .errorIconWrapper {
         display: inline-flex;
         justify-content: center;
         height: 100%;

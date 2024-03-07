@@ -78,14 +78,14 @@ export interface Profiling {
 export interface ProfilingDetailBase {
     type: 'numerical' | 'image' | 'name';
     name: string;
+    interpretation: 'warn' | 'error' | 'default' | 'bold' | 'good';
 }
 
 export interface ProfilingDetailStatistical extends ProfilingDetailBase {
     type: 'numerical';
     name: string;
     value: string;
-    color?: string;
-    interpretation: 'warn' | 'category' | 'default';
+    interpretation: ProfilingDetailBase['interpretation'] | 'category';
 }
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
@@ -97,7 +97,6 @@ export interface ProfilingDetailImage extends ProfilingDetailBase {
 export interface ProfilingDetailName extends ProfilingDetailBase {
     type: 'name';
     name: string;
-    color?: string;
 }
 
 export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage | ProfilingDetailName;
