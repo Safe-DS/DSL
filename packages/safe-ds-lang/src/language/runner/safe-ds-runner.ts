@@ -283,11 +283,13 @@ export class SafeDsRunner {
      *
      * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param id A unique id that is used in further communication with this pipeline.
+     * @param pipelineName Name of the pipeline that should be run
      * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
      */
     public async executePipeline(
         pipelineDocument: LangiumDocument,
         id: string,
+        pipelineName: string,
         targetPlaceholder: string | undefined = undefined,
     ) {
         if (!this.isPythonServerAvailable()) {
@@ -305,13 +307,6 @@ export class SafeDsRunner {
         // Pipeline / Module name handling
         const mainPythonModuleName = this.annotations.getPythonModule(node);
         const mainPackage = mainPythonModuleName === undefined ? node.name.split('.') : [mainPythonModuleName];
-        const firstPipeline = getModuleMembers(node).find(isSdsPipeline);
-        if (firstPipeline === undefined) {
-            this.logging.outputError('Cannot execute: no pipeline found');
-            this.logging.displayError('The current file cannot be executed, as no pipeline could be found.');
-            return;
-        }
-        const mainPipelineName = this.annotations.getPythonName(firstPipeline) || firstPipeline.name;
         const mainModuleName = this.getMainModuleName(pipelineDocument);
         // Code generation
         const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targetPlaceholder);
@@ -330,7 +325,7 @@ export class SafeDsRunner {
                 main: {
                     modulepath: mainPackage.join('.'),
                     module: mainModuleName,
-                    pipeline: mainPipelineName,
+                    pipeline: pipelineName,
                 },
             }),
         );

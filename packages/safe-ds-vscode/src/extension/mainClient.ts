@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { ast, createSafeDsServices, messages, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServices, getModuleMembers, messages, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
@@ -335,8 +335,6 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
         return;
     }
     // Run it
-    printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath}`);
-
     let mainDocument;
     if (!services.shared.workspace.LangiumDocuments.hasDocument(pipelinePath)) {
         mainDocument = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
@@ -348,7 +346,18 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
     } else {
         mainDocument = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
-    await services.runtime.Runner.executePipeline(mainDocument, pipelineId);
+
+    const firstPipeline = getModuleMembers(<ast.SdsModule>mainDocument.parseResult.value).find(ast.isSdsPipeline);
+    if (firstPipeline === undefined) {
+        logError('Cannot execute: no pipeline found');
+        vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
+        return;
+    }
+    const mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
+
+    printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath} - ${mainPipelineName}`);
+
+    await services.runtime.Runner.executePipeline(mainDocument, pipelineId, mainPipelineName);
 };
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
