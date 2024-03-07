@@ -4,6 +4,7 @@ import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
+import { CODEGEN_PREFIX } from '../../../../../safe-ds-lang/src/language/generation/safe-ds-python-generator.ts';
 
 export class RunnerApi {
     services: SafeDsServices;
@@ -120,7 +121,7 @@ export class RunnerApi {
         randomArray.forEach((value) => {
             result += characters.charAt(value % charactersLength);
         });
-        return result;
+        return CODEGEN_PREFIX + result;
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
