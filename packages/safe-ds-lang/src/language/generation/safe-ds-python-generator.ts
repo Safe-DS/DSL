@@ -16,6 +16,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { groupBy, isEmpty } from '../../helpers/collections.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
+    isSdsAbstractCall,
     isSdsAbstractResult,
     isSdsAssignment,
     isSdsBlockLambda,
@@ -29,7 +30,7 @@ import {
     isSdsExpressionStatement,
     isSdsFunction,
     isSdsIndexedAccess,
-    isSdsInfixOperation,
+    isSdsInfixOperation, isSdsLambda,
     isSdsList,
     isSdsMap,
     isSdsMemberAccess,
@@ -968,7 +969,44 @@ export class SafeDsPythonGenerator {
     private isMemoizableCall(expression: SdsCall): boolean {
         const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
         // If the file is not known, the call is not memoizable
-        return !impurityReasons.some((reason) => !(reason instanceof FileRead) || reason.path === undefined);
+        return (
+            !impurityReasons.some((reason) => !(reason instanceof FileRead) || reason.path === undefined) &&
+            !this.doesCallContainLambdaReferencingSegment(expression)
+        );
+    }
+
+    private doesCallContainLambdaReferencingSegment(expression: SdsCall): boolean {
+        const args = getArguments(expression);
+        return args
+            .filter((arg) => isSdsLambda(arg.value))
+            .some((arg) => {
+                if (isSdsExpressionLambda(arg.value)) {
+                    return this.doesExpressionContainSegmentCall(arg.value.result);
+                } else if (isSdsBlockLambda(arg.value)) {
+                    return arg.value.body.statements
+                        .map((stmt) =>
+                            isSdsExpressionStatement(stmt) || isSdsAssignment(stmt) ? stmt.expression : undefined,
+                        )
+                        .some((stmt) => this.doesExpressionContainSegmentCall(stmt));
+                } else {
+                    /* c8 ignore next 2 */
+                    return false;
+                }
+            });
+    }
+
+    private doesExpressionContainSegmentCall(expression: SdsExpression | undefined): boolean {
+        if (!expression) {
+            /* c8 ignore next 2 */
+            return false;
+        }
+        return (
+            AstUtils.streamAst(expression)
+                .filter(isSdsAbstractCall)
+                .map((call) => this.nodeMapper.callToCallable(call))
+                .filter(isSdsSegment)
+                .count() > 0
+        );
     }
 
     private generateMemoizedCall(
