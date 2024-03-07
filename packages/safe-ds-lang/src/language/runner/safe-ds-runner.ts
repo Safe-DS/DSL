@@ -15,8 +15,7 @@ import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
 import treeKill from 'tree-kill';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
-import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
-import { getModuleMembers } from '../helpers/nodeProperties.js';
+import { isSdsModule } from '../generated/ast.js';
 import semver from 'semver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
