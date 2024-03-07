@@ -1,4 +1,4 @@
-import { AstUtils, LangiumDocument, TreeStreamImpl, URI } from 'langium';
+import { AstNode, AstUtils, LangiumDocument, TreeStreamImpl, URI } from 'langium';
 import {
     CompositeGeneratorNode,
     expandToNode,
@@ -31,7 +31,6 @@ import {
     isSdsFunction,
     isSdsIndexedAccess,
     isSdsInfixOperation,
-    isSdsLambda,
     isSdsList,
     isSdsMap,
     isSdsMemberAccess,
@@ -977,18 +976,12 @@ export class SafeDsPythonGenerator {
     }
 
     private doesCallContainLambdaReferencingSegment(expression: SdsCall): boolean {
-        const args = getArguments(expression);
-        return args
-            .filter((arg) => isSdsLambda(arg.value))
+        return getArguments(expression)
             .some((arg) => {
                 if (isSdsExpressionLambda(arg.value)) {
-                    return this.doesExpressionContainSegmentCall(arg.value.result);
+                    return this.containsSegmentCall(arg.value.result);
                 } else if (isSdsBlockLambda(arg.value)) {
-                    return arg.value.body.statements
-                        .map((stmt) =>
-                            isSdsExpressionStatement(stmt) || isSdsAssignment(stmt) ? stmt.expression : undefined,
-                        )
-                        .some((stmt) => this.doesExpressionContainSegmentCall(stmt));
+                    return this.containsSegmentCall(arg.value.body);
                 } else {
                     /* c8 ignore next 2 */
                     return false;
@@ -996,17 +989,18 @@ export class SafeDsPythonGenerator {
             });
     }
 
-    private doesExpressionContainSegmentCall(expression: SdsExpression | undefined): boolean {
-        if (!expression) {
+    private containsSegmentCall(node: AstNode | undefined): boolean {
+        if (!node) {
             /* c8 ignore next 2 */
             return false;
         }
         return (
-            AstUtils.streamAst(expression)
+            AstUtils.streamAst(node)
                 .filter(isSdsAbstractCall)
-                .map((call) => this.nodeMapper.callToCallable(call))
-                .filter(isSdsSegment)
-                .count() > 0
+                .some((call) => {
+                    const callable = this.nodeMapper.callToCallable(call);
+                    return isSdsSegment(callable);
+                })
         );
     }
 
