@@ -976,17 +976,16 @@ export class SafeDsPythonGenerator {
     }
 
     private doesCallContainLambdaReferencingSegment(expression: SdsCall): boolean {
-        return getArguments(expression)
-            .some((arg) => {
-                if (isSdsExpressionLambda(arg.value)) {
-                    return this.containsSegmentCall(arg.value.result);
-                } else if (isSdsBlockLambda(arg.value)) {
-                    return this.containsSegmentCall(arg.value.body);
-                } else {
-                    /* c8 ignore next 2 */
-                    return false;
-                }
-            });
+        return getArguments(expression).some((arg) => {
+            if (isSdsExpressionLambda(arg.value)) {
+                return this.containsSegmentCall(arg.value.result);
+            } else if (isSdsBlockLambda(arg.value)) {
+                return this.containsSegmentCall(arg.value.body);
+            } else {
+                /* c8 ignore next 2 */
+                return false;
+            }
+        });
     }
 
     private containsSegmentCall(node: AstNode | undefined): boolean {
@@ -994,14 +993,12 @@ export class SafeDsPythonGenerator {
             /* c8 ignore next 2 */
             return false;
         }
-        return (
-            AstUtils.streamAst(node)
-                .filter(isSdsAbstractCall)
-                .some((call) => {
-                    const callable = this.nodeMapper.callToCallable(call);
-                    return isSdsSegment(callable);
-                })
-        );
+        return AstUtils.streamAst(node)
+            .filter(isSdsAbstractCall)
+            .some((call) => {
+                const callable = this.nodeMapper.callToCallable(call);
+                return isSdsSegment(callable);
+            });
     }
 
     private generateMemoizedCall(
