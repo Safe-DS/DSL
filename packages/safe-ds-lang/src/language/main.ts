@@ -4,13 +4,12 @@ import { createConnection, ProposedFeatures } from 'vscode-languageserver/node.j
 import { createSafeDsServices } from './safe-ds-module.js';
 
 /* c8 ignore start */
-export const startLanguageServer = () => {
+export const startLanguageServer = async () => {
     // Create a connection to the client
     const connection = createConnection(ProposedFeatures.all);
 
     // Inject the shared services and language-specific services
-    // @ts-ignore
-    const { shared } = createSafeDsServices({ connection, ...NodeFileSystem });
+    const { shared } = await createSafeDsServices({ connection, ...NodeFileSystem });
 
     // Start the language server with the shared services
     doStartLanguageServer(shared);
