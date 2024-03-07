@@ -1,4 +1,4 @@
-import { AstUtils, LangiumDocument, TreeStreamImpl, URI } from 'langium';
+import { AstNode, AstUtils, LangiumDocument, TreeStreamImpl, URI } from 'langium';
 import {
     CompositeGeneratorNode,
     expandToNode,
@@ -16,6 +16,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { groupBy, isEmpty } from '../../helpers/collections.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import {
+    isSdsAbstractCall,
     isSdsAbstractResult,
     isSdsAssignment,
     isSdsBlockLambda,
@@ -968,7 +969,36 @@ export class SafeDsPythonGenerator {
     private isMemoizableCall(expression: SdsCall): boolean {
         const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
         // If the file is not known, the call is not memoizable
-        return !impurityReasons.some((reason) => !(reason instanceof FileRead) || reason.path === undefined);
+        return (
+            !impurityReasons.some((reason) => !(reason instanceof FileRead) || reason.path === undefined) &&
+            !this.doesCallContainLambdaReferencingSegment(expression)
+        );
+    }
+
+    private doesCallContainLambdaReferencingSegment(expression: SdsCall): boolean {
+        return getArguments(expression).some((arg) => {
+            if (isSdsExpressionLambda(arg.value)) {
+                return this.containsSegmentCall(arg.value.result);
+            } else if (isSdsBlockLambda(arg.value)) {
+                return this.containsSegmentCall(arg.value.body);
+            } else {
+                /* c8 ignore next 2 */
+                return false;
+            }
+        });
+    }
+
+    private containsSegmentCall(node: AstNode | undefined): boolean {
+        if (!node) {
+            /* c8 ignore next 2 */
+            return false;
+        }
+        return AstUtils.streamAst(node)
+            .filter(isSdsAbstractCall)
+            .some((call) => {
+                const callable = this.nodeMapper.callToCallable(call);
+                return isSdsSegment(callable);
+            });
     }
 
     private generateMemoizedCall(
