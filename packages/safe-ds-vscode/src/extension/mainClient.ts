@@ -6,15 +6,16 @@ import { ast, createSafeDsServices, getModuleMembers, messages, SafeDsServices }
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
-import { LangiumDocument, URI } from 'langium';
+import { LangiumDocument, URI, AstUtils, AstNode } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
-let lastFinishedPipelineId: string | undefined;
-let lastSuccessfulPlaceholderName: string | undefined;
+let lastFinishedPipelineExecutionId: string | undefined;
+let lastSuccessfulPipelineName: string | undefined;
+let lastSuccessfulTableName: string | undefined;
 let lastSuccessfulPipelinePath: vscode.Uri | undefined;
 
 // This function is called when the extension is activated.
@@ -87,7 +88,7 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
     return result;
 };
 
-const acceptRunRequests = function (context: vscode.ExtensionContext) {
+const acceptRunRequests = async function (context: vscode.ExtensionContext) {
     // Register logging message callbacks
     registerMessageLoggingCallbacks();
     // Register VS Code Entry Points
@@ -146,7 +147,7 @@ const registerMessageLoggingCallbacks = function () {
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
-    const registerCommandWithCheck = (commandId: string, callback: (...args: any[]) => any) => {
+    const registerCommandWithCheck = (commandId: string, callback: (...args: any[]) => Promise<any>) => {
         return vscode.commands.registerCommand(commandId, (...args: any[]) => {
             if (!services.runtime.Runner.isPythonServerAvailable()) {
                 vscode.window.showErrorMessage('Extension not fully started yet.');
@@ -164,7 +165,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));
 
     context.subscriptions.push(
-        registerCommandWithCheck('safe-ds.runEdaFromContext', () => {
+        registerCommandWithCheck('safe-ds.runEdaFromContext', async () => {
             const editor = vscode.window.activeTextEditor;
             if (editor) {
                 const position = editor.selection.active;
@@ -179,8 +180,59 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                         vscode.window.showErrorMessage('No .sdspipe file selected!');
                         return;
                     }
+
+                    // Getting of pipeline name
+                    const document = await getPipelineDocument(editor.document.uri);
+                    if (!document) {
+                        vscode.window.showErrorMessage('Internal error!');
+                        return;
+                    }
+                    const module = document.parseResult.value as ast.SdsModule;
+
+                    type CustomRangeType = {
+                        start: { line: number; character: number };
+                        end: { line: number; character: number };
+                    };
+                    const isRangeEqual = function (lhs: CustomRangeType, rhs: CustomRangeType): boolean {
+                        return (
+                            lhs.start.character === rhs.start.character &&
+                            lhs.start.line === rhs.start.line &&
+                            lhs.end.character === rhs.end.character &&
+                            lhs.end.line === rhs.end.line
+                        );
+                    };
+
+                    // Find node of placeholder
+                    let placeholderNode: AstNode | undefined;
+                    for (const node of AstUtils.streamAllContents(module)) {
+                        // Entire node matches the range
+                        const actualRange = node.$cstNode?.range;
+                        if (actualRange && isRangeEqual(actualRange, range)) {
+                            placeholderNode = node;
+                        }
+
+                        // The node has a name node that matches the range
+                        const actualNameRange = services.references.NameProvider.getNameNode(node)?.range;
+                        if (actualNameRange && isRangeEqual(actualNameRange, range)) {
+                            placeholderNode = node;
+                        }
+                    }
+                    if (!placeholderNode) {
+                        vscode.window.showErrorMessage('Internal error!');
+                        return;
+                    }
+
+                    // Get pipeline container
+                    const container = AstUtils.getContainerOfType(placeholderNode, ast.isSdsPipeline);
+                    if (!container) {
+                        vscode.window.showErrorMessage('Internal error!');
+                        return;
+                    }
+
+                    const pipelineName = container?.name;
+
                     // gen custom id for pipeline
-                    const pipelineId = crypto.randomUUID();
+                    const pipelineExecutionId = crypto.randomUUID();
 
                     let loadingInProgress = true; // Flag to track loading status
                     // Show progress indicator
@@ -211,27 +263,32 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                             `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
                         );
                         if (
-                            message.id === pipelineId &&
+                            message.id === pipelineExecutionId &&
                             message.data.type === 'Table' &&
                             message.data.name === requestedPlaceholderName
                         ) {
-                            lastFinishedPipelineId = pipelineId;
+                            lastFinishedPipelineExecutionId = pipelineExecutionId;
                             lastSuccessfulPipelinePath = editor.document.uri;
-                            lastSuccessfulPlaceholderName = requestedPlaceholderName;
+                            lastSuccessfulTableName = requestedPlaceholderName;
+                            lastSuccessfulPipelineName = pipelineName;
                             EDAPanel.createOrShow(
                                 context.extensionUri,
                                 context,
-                                pipelineId,
+                                pipelineExecutionId,
                                 services,
-                                message.data.name,
                                 editor.document.uri,
+                                pipelineName,
+                                message.data.name,
                             );
                             services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
-                        } else if (message.id === pipelineId && message.data.name !== requestedPlaceholderName) {
+                        } else if (
+                            message.id === pipelineExecutionId &&
+                            message.data.name !== requestedPlaceholderName
+                        ) {
                             return;
-                        } else if (message.id === pipelineId) {
-                            lastFinishedPipelineId = pipelineId;
+                        } else if (message.id === pipelineExecutionId) {
+                            lastFinishedPipelineExecutionId = pipelineExecutionId;
                             vscode.window.showErrorMessage(`Selected placeholder is not of type 'Table'.`);
                             services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                             cleanupLoadingIndication();
@@ -242,11 +299,11 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                     const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
                         printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
                         if (
-                            message.id === pipelineId &&
+                            message.id === pipelineExecutionId &&
                             message.data === 'done' &&
-                            lastFinishedPipelineId !== pipelineId
+                            lastFinishedPipelineExecutionId !== pipelineExecutionId
                         ) {
-                            lastFinishedPipelineId = pipelineId;
+                            lastFinishedPipelineExecutionId = pipelineExecutionId;
                             vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
                             services.runtime.Runner.removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
                             cleanupLoadingIndication();
@@ -255,8 +312,11 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                     services.runtime.Runner.addMessageCallback(runtimeProgressCallback, 'runtime_progress');
 
                     const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
-                        if (message.id === pipelineId && lastFinishedPipelineId !== pipelineId) {
-                            lastFinishedPipelineId = pipelineId;
+                        if (
+                            message.id === pipelineExecutionId &&
+                            lastFinishedPipelineExecutionId !== pipelineExecutionId
+                        ) {
+                            lastFinishedPipelineExecutionId = pipelineExecutionId;
                             vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
                             services.runtime.Runner.removeMessageCallback(runtimeErrorCallback, 'runtime_error');
                             cleanupLoadingIndication();
@@ -264,7 +324,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                     };
                     services.runtime.Runner.addMessageCallback(runtimeErrorCallback, 'runtime_error');
 
-                    runPipelineFile(editor.document.uri, pipelineId);
+                    runPipelineFile(editor.document.uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
                 } else {
                     vscode.window.showErrorMessage('No placeholder selected!');
                 }
@@ -277,19 +337,25 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.refreshWebview', () => {
-            if (!lastSuccessfulPipelinePath || !lastFinishedPipelineId || !lastSuccessfulPlaceholderName) {
+            if (
+                !lastSuccessfulPipelinePath ||
+                !lastFinishedPipelineExecutionId ||
+                !lastSuccessfulPipelineName ||
+                !lastSuccessfulTableName
+            ) {
                 vscode.window.showErrorMessage('No EDA Panel to refresh!');
                 return;
             }
-            EDAPanel.kill(lastSuccessfulPlaceholderName);
+            EDAPanel.kill(lastSuccessfulPipelineName!);
             setTimeout(() => {
                 EDAPanel.createOrShow(
                     context.extensionUri,
                     context,
-                    lastFinishedPipelineId!,
+                    lastFinishedPipelineExecutionId!,
                     services,
-                    lastSuccessfulPlaceholderName!,
                     lastSuccessfulPipelinePath!,
+                    lastSuccessfulPipelineName!,
+                    lastSuccessfulTableName!,
                 );
             }, 100);
             setTimeout(() => {
@@ -299,14 +365,32 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     );
 };
 
-const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipelineId: string) {
+const runPipelineFile = async function (
+    filePath: vscode.Uri | undefined,
+    pipelineExecutionId: string,
+    knownPipelineName?: string,
+    placeholderName?: string,
+) {
     const document = await getPipelineDocument(filePath);
 
     if (document) {
         // Run it
-        printOutputMessage(`Launching Pipeline (${pipelineId}): ${document?.uri.toString()}`);
+        let pipelineName;
+        if (!knownPipelineName) {
+            const firstPipeline = getModuleMembers(<ast.SdsModule>document.parseResult.value).find(ast.isSdsPipeline);
+            if (firstPipeline === undefined) {
+                logError('Cannot execute: no pipeline found');
+                vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
+                return;
+            }
+            pipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
+        } else {
+            pipelineName = knownPipelineName;
+        }
 
-        await services.runtime.Runner.executePipeline(document, pipelineId);
+        printOutputMessage(`Launching Pipeline (${pipelineExecutionId}): ${filePath} - ${pipelineName}`);
+
+        await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipelineName, placeholderName);
     }
 };
 
@@ -368,17 +452,7 @@ export const getPipelineDocument = async function (
         mainDocument = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(pipelinePath);
     }
 
-    const firstPipeline = getModuleMembers(<ast.SdsModule>mainDocument.parseResult.value).find(ast.isSdsPipeline);
-    if (firstPipeline === undefined) {
-        logError('Cannot execute: no pipeline found');
-        vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
-        return;
-    }
-    const mainPipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
-
-    printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath} - ${mainPipelineName}`);
-
-    await services.runtime.Runner.executePipeline(pipelineId, mainDocument, mainPipelineName);
+    return mainDocument;
 };
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {

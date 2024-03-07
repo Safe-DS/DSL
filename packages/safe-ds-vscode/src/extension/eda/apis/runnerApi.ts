@@ -1,50 +1,67 @@
-import { Column, Profiling, ProfilingDetailStatistical, State, Table } from '@safe-ds/eda/types/state.js';
+import { Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
 import { SafeDsServices, messages } from '@safe-ds/lang';
 import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
-import { getPipelineDocument } from '../../mainClient.ts';
 import crypto from 'crypto';
+import { getPipelineDocument } from '../../mainClient.ts';
 
 export class RunnerApi {
     services: SafeDsServices;
     pipelinePath: vscode.Uri;
+    pipelineName: string;
 
-    constructor(services: SafeDsServices, pipelinePath: vscode.Uri) {
+    constructor(services: SafeDsServices, pipelinePath: vscode.Uri, pipelineName: string) {
         this.services = services;
         this.pipelinePath = pipelinePath;
+        this.pipelineName = pipelineName;
     }
 
-    private async addToAndExecutePipeline(pipelineId: string, addedLines: string): Promise<void> {
+    private async addToAndExecutePipeline(pipelineExecutionId: string, addedLines: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const baseDocument = await getPipelineDocument(this.pipelinePath);
-            if (baseDocument) {
-                const documentText = baseDocument.textDocument.getText();
-                const lastBracket = documentText.lastIndexOf('}');
-
-                const newText = documentText.slice(0, lastBracket) + addedLines + documentText.slice(lastBracket);
-                const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
-                    newText,
-                    this.pipelinePath,
-                );
-                await this.services.runtime.Runner.executePipeline(newDoc, pipelineId);
-
-                const runtimeCallback = (message: messages.RuntimeProgressMessage) => {
-                    if (message.id !== pipelineId) {
-                        return;
-                    }
-                    if (message.data === 'done') {
-                        this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
-                        resolve();
-                    }
-                };
-                this.services.runtime.Runner.addMessageCallback(runtimeCallback, 'runtime_progress');
-
-                setTimeout(() => {
-                    reject('Pipeline execution timed out');
-                }, 30000);
-            } else {
-                reject('Could not find pipeline document');
+            if (!baseDocument) {
+                reject('Pipeline not found');
+                return;
             }
+
+            const documentText = baseDocument.textDocument.getText();
+
+            // Find pattern "pipeline <pipelineName> {" and add the SDS code before the closing bracket of it
+            const pipelineStart = documentText.indexOf('pipeline ' + this.pipelineName);
+            if (pipelineStart === -1) {
+                reject('Pipeline not found');
+                return;
+            }
+            const nextCurlyBraceEnd = documentText.indexOf('}', pipelineStart);
+            if (nextCurlyBraceEnd === -1) {
+                reject('Internal error: Pipeline end not found');
+                return;
+            }
+
+            const beforeClosingBrace = documentText.substring(0, nextCurlyBraceEnd);
+            const afterClosingBrace = documentText.substring(nextCurlyBraceEnd);
+            const newDocumentText = beforeClosingBrace + addedLines + afterClosingBrace;
+
+            const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
+                newDocumentText,
+                this.pipelinePath,
+            );
+            await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
+
+            const runtimeCallback = (message: messages.RuntimeProgressMessage) => {
+                if (message.id !== pipelineExecutionId) {
+                    return;
+                }
+                if (message.data === 'done') {
+                    this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
+                    resolve();
+                }
+            };
+            this.services.runtime.Runner.addMessageCallback(runtimeCallback, 'runtime_progress');
+
+            setTimeout(() => {
+                reject('Pipeline execution timed out');
+            }, 30000);
         });
     }
 
@@ -95,7 +112,7 @@ export class RunnerApi {
     }
 
     private randomPlaceholderName(): string {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // __gen, code gen prefix (konstante importieren)
         const charactersLength = characters.length;
         const randomArray = new Uint8Array(20);
         crypto.getRandomValues(randomArray);
@@ -106,14 +123,14 @@ export class RunnerApi {
         return result;
     }
 
-    private async getPlaceholderValue(placeholder: string, pipelineId: string): Promise<any | undefined> {
+    private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
         return new Promise((resolve) => {
             if (placeholder === '') {
                 resolve(undefined);
             }
 
             const placeholderValueCallback = (message: messages.PlaceholderValueMessage) => {
-                if (message.id !== pipelineId || message.data.name !== placeholder) {
+                if (message.id !== pipelineExecutionId || message.data.name !== placeholder) {
                     return;
                 }
                 this.services.runtime.Runner.removeMessageCallback(placeholderValueCallback, 'placeholder_value');
@@ -123,7 +140,7 @@ export class RunnerApi {
             this.services.runtime.Runner.addMessageCallback(placeholderValueCallback, 'placeholder_value');
             printOutputMessage('Getting placeholder from Runner ...');
             this.services.runtime.Runner.sendMessageToPythonServer(
-                messages.createPlaceholderQueryMessage(pipelineId, placeholder),
+                messages.createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
             );
 
             setTimeout(() => {
@@ -134,12 +151,12 @@ export class RunnerApi {
 
     // --- Public API ---
 
-    public async getStateByPlaceholder(tableIdentifier: string, pipelineId: string): Promise<State | undefined> {
-        const pythonTableColumns = await this.getPlaceholderValue(tableIdentifier, pipelineId);
+    public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
+        const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
             const table: Table = {
                 totalRows: 0,
-                name: tableIdentifier,
+                name: tableName,
                 columns: [] as Table['columns'],
                 appliedFilters: [] as Table['appliedFilters'],
             };
@@ -173,16 +190,13 @@ export class RunnerApi {
             table.totalRows = currentMax;
             table.visibleRows = currentMax;
 
-            return { tableIdentifier, history: [], defaultState: false, table };
+            return table;
         } else {
             return undefined;
         }
     }
 
-    public async getProfiling(
-        tableIdentifier: string,
-        table: Table,
-    ): Promise<{ columnName: string; profiling: Profiling }[]> {
+    public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
         const columns = table.columns;
 
         let sdsStrings = '';
@@ -204,7 +218,7 @@ export class RunnerApi {
 
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
                 columns[i]![1].name,
-                tableIdentifier,
+                table.name,
                 newMvPlaceholderName,
             );
 
@@ -214,7 +228,7 @@ export class RunnerApi {
 
             sdsStrings += this.sdsStringForHistogramByColumnName(
                 columns[i]![1].name,
-                tableIdentifier,
+                table.name,
                 newHistogramPlaceholderName,
             );
 
@@ -225,19 +239,19 @@ export class RunnerApi {
                 columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
                 sdsStrings += this.sdsStringForIDnessByColumnName(
                     columns[i]![1].name,
-                    tableIdentifier,
+                    table.name,
                     newIDnessPlaceholderName,
                 );
             }
         }
 
         // Execute with generated SDS code
-        const pipelineId = crypto.randomUUID();
-        await this.addToAndExecutePipeline(pipelineId, sdsStrings);
+        const pipelineExecutionId = crypto.randomUUID();
+        await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings);
 
         // Get missing value ratio for each column
         for (const [placeholderName] of missingValueRatioMap) {
-            const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineId);
+            const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (missingValueRatio) {
                 missingValueRatioMap.set(placeholderName, missingValueRatio as string);
             }
@@ -245,7 +259,7 @@ export class RunnerApi {
 
         // Get IDness for each column
         for (const [placeholderName] of idnessMap) {
-            const idness = await this.getPlaceholderValue(placeholderName, pipelineId);
+            const idness = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (idness) {
                 idnessMap.set(placeholderName, idness as number);
             }
@@ -253,7 +267,7 @@ export class RunnerApi {
 
         // // Get histogram for each column
         // for (const [placeholderName] of histogramMap) {
-        //     const histogram = await this.getPlaceholderValue(placeholderName, pipelineId);
+        //     const histogram = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
         //     if (histogram) {
         //         histogramMap.set(placeholderName, histogram as string);
         //     }
@@ -353,9 +367,9 @@ export class RunnerApi {
     public async getColumnNames(tableIdentifier: string): Promise<string[]> {
         const newPlaceholderName = this.randomPlaceholderName();
         const columnNamesSdsCode = this.sdsStringForColumnNames(tableIdentifier, newPlaceholderName);
-        const pipelineId = crypto.randomUUID();
-        await this.addToAndExecutePipeline(pipelineId, columnNamesSdsCode);
-        const columnNames = await this.getPlaceholderValue(newPlaceholderName, pipelineId);
+        const pipelineExecutionId = crypto.randomUUID();
+        await this.addToAndExecutePipeline(pipelineExecutionId, columnNamesSdsCode);
+        const columnNames = await this.getPlaceholderValue(newPlaceholderName, pipelineExecutionId);
         return columnNames as string[];
     }
 
@@ -363,9 +377,9 @@ export class RunnerApi {
     // public async getColumns(tableIdentifier: string): Promise<{ columns: any; placeholderName: string }> {
     //     const newPlaceholderName = this.randomPlaceholderName();
     //     const columnsSdsCode = this.sdsStringForColumns(tableIdentifier, newPlaceholderName);
-    //     const pipelineId = crypto.randomUUID();
-    //     await this.addToAndExecutePipeline(pipelineId, columnsSdsCode);
-    //     const columns = await this.getPlaceholderValue(newPlaceholderName, pipelineId);
+    //     const pipelineExecutionId = crypto.randomUUID();
+    //     await this.addToAndExecutePipeline(pipelineExecutionId, columnsSdsCode);
+    //     const columns = await this.getPlaceholderValue(newPlaceholderName, pipelineExecutionId);
     //     // eslint-disable-next-line no-console
     //     console.log(columns);
     //     return { columns, placeholderName: newPlaceholderName };

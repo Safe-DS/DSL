@@ -8,7 +8,7 @@ let currentTabIndex = writable<number>(0);
 let preventClicks = writable<boolean>(false);
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-let currentState = writable<State>({ tableIdentifier: window.tableIdentifier, history: [], defaultState: true });
+let currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true });
 
 // Set Global states whenever updatedAllStates changes
 currentState.subscribe(($currentState) => {

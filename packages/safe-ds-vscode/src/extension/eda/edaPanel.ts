@@ -8,7 +8,7 @@ import { RunnerApi } from './apis/runnerApi.ts';
 
 export class EDAPanel {
     // Map to track multiple panels
-    private static instancesMap: Map<string, { panel: EDAPanel; runnerApi: RunnerApi }> = new Map();
+    private static panelsMap: Map<string, EDAPanel> = new Map();
     private static context: vscode.ExtensionContext;
     private static services: SafeDsServices;
 
@@ -18,22 +18,28 @@ export class EDAPanel {
     private readonly extensionUri: vscode.Uri;
     private disposables: vscode.Disposable[] = [];
     private tableIdentifier: string;
+    private tableName: string;
     private column: vscode.ViewColumn | undefined;
     private webviewListener: vscode.Disposable | undefined;
     private viewStateChangeListener: vscode.Disposable | undefined;
     private updateHtmlDone: boolean = false;
-    private startPipelineId: string;
+    private startPipelineExecutionId: string;
+    private runnerApi: RunnerApi;
 
     private constructor(
         panel: vscode.WebviewPanel,
         extensionUri: vscode.Uri,
-        startPipeLineId: string,
-        tableIdentifier: string,
+        startPipelineExecutionId: string,
+        pipelinePath: vscode.Uri,
+        pipelineName: string,
+        tableName: string,
     ) {
+        this.tableIdentifier = pipelineName + '.' + tableName;
         this.panel = panel;
         this.extensionUri = extensionUri;
-        this.tableIdentifier = tableIdentifier;
-        this.startPipelineId = startPipeLineId;
+        this.startPipelineExecutionId = startPipelineExecutionId;
+        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName);
+        this.tableName = tableName;
 
         // Set the webview's initial html content
         this.updateHtmlDone = false;
@@ -96,55 +102,59 @@ export class EDAPanel {
         this.disposables.push(this.webviewListener);
     }
 
-    public static createOrShow(
+    public static async createOrShow(
         extensionUri: vscode.Uri,
         context: vscode.ExtensionContext,
-        startPipelineId: string,
+        startPipelineExecutionId: string,
         services: SafeDsServices,
-        tableIdentifier: string,
         pipelinePath: vscode.Uri,
-    ) {
+        pipelineName: string,
+        tableName: string,
+    ): Promise<void> {
         EDAPanel.context = context;
         EDAPanel.services = services;
+
+        let tableIdentifier = pipelineName + '.' + tableName;
 
         // Set column to the active editor if it exists
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
         // If we already have a panel, show it.
-        let instance = EDAPanel.instancesMap.get(tableIdentifier);
-        if (instance) {
-            let panel = instance.panel;
+        let panel = EDAPanel.panelsMap.get(tableIdentifier);
+        if (panel) {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
-            panel.startPipelineId = startPipelineId;
-            EDAPanel.instancesMap.set(tableIdentifier, { panel, runnerApi: new RunnerApi(services, pipelinePath) });
+            panel.startPipelineExecutionId = startPipelineExecutionId;
+            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName);
+            panel.tableName = tableName;
+            EDAPanel.panelsMap.set(tableIdentifier, panel);
 
             // Have to update and construct state as table placeholder could've changed in code
             panel.updateHtmlDone = false;
             panel._update();
-            panel.waitForUpdateHtmlDone(10000).then(() =>
-                panel.constructCurrentState().then((stateInfo) => {
-                    webviewApi.postMessage(panel!.panel.webview, {
-                        command: 'setWebviewState',
-                        value: stateInfo.state,
-                    });
+            await panel.waitForUpdateHtmlDone(10000);
 
-                    if (
-                        !stateInfo.fromExisting ||
-                        !stateInfo.state.table ||
-                        !stateInfo.state
-                            .table!.columns.map((c) => c[1].profiling)
-                            .find((p) => p.bottom.length > 0 || p.top.length > 0)
-                    ) {
-                        instance!.runnerApi.getProfiling(tableIdentifier, stateInfo.state.table!).then((profiling) => {
-                            webviewApi.postMessage(panel!.panel.webview, {
-                                command: 'setProfiling',
-                                value: profiling,
-                            });
-                        });
-                    }
-                }),
-            );
+            // Get and send state
+            const stateInfo = await panel.constructCurrentState();
+            webviewApi.postMessage(panel!.panel.webview, {
+                command: 'setWebviewState',
+                value: stateInfo.state,
+            });
+
+            // If not present, get and send profiling
+            if (
+                !stateInfo.fromExisting ||
+                !stateInfo.state.table ||
+                !stateInfo.state
+                    .table!.columns.map((c) => c[1].profiling)
+                    .find((p) => p.bottom.length > 0 || p.top.length > 0)
+            ) {
+                const profiling = await panel.runnerApi.getProfiling(stateInfo.state.table!);
+                webviewApi.postMessage(panel!.panel.webview, {
+                    command: 'setProfiling',
+                    value: profiling,
+                });
+            }
             return;
         } else {
             // Otherwise, create a new panel.
@@ -164,56 +174,57 @@ export class EDAPanel {
                 },
             );
 
-            const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier);
-            EDAPanel.instancesMap.set(tableIdentifier, {
-                panel: edaPanel,
-                runnerApi: new RunnerApi(services, pipelinePath),
-            });
+            const edaPanel = new EDAPanel(
+                newPanel,
+                extensionUri,
+                startPipelineExecutionId,
+                pipelinePath,
+                pipelineName,
+                tableName,
+            );
+            EDAPanel.panelsMap.set(tableIdentifier, edaPanel);
             edaPanel.column = column;
             edaPanel.panel.iconPath = {
                 light: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
                 dark: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
             };
-            edaPanel.waitForUpdateHtmlDone(10000).then(() =>
-                edaPanel.constructCurrentState().then((stateInfo) => {
-                    webviewApi.postMessage(edaPanel!.panel.webview, {
-                        command: 'setWebviewState',
-                        value: stateInfo.state,
-                    });
+            await edaPanel.waitForUpdateHtmlDone(10000);
+            const stateInfo = await edaPanel.constructCurrentState();
+            webviewApi.postMessage(edaPanel!.panel.webview, {
+                command: 'setWebviewState',
+                value: stateInfo.state,
+            });
 
-                    if (
-                        !stateInfo.fromExisting ||
-                        !stateInfo.state.table ||
-                        !stateInfo.state
-                            .table!.columns.map((c) => c[1].profiling)
-                            .find((p) => p.bottom.length > 0 || p.top.length > 0)
-                    ) {
-                        EDAPanel.instancesMap
-                            .get(tableIdentifier)!
-                            .runnerApi.getProfiling(tableIdentifier, stateInfo.state.table!)
-                            .then((profiling) => {
-                                webviewApi.postMessage(edaPanel!.panel.webview, {
-                                    command: 'setProfiling',
-                                    value: profiling,
-                                });
-                            });
-                    }
-                }),
-            );
+            if (
+                !stateInfo.fromExisting ||
+                !stateInfo.state.table ||
+                !stateInfo.state
+                    .table!.columns.map((c) => c[1].profiling)
+                    .find((p) => p.bottom.length > 0 || p.top.length > 0)
+            ) {
+                const profiling = await EDAPanel.panelsMap
+                    .get(tableIdentifier)!
+                    .runnerApi.getProfiling(stateInfo.state.table!);
+
+                webviewApi.postMessage(edaPanel!.panel.webview, {
+                    command: 'setProfiling',
+                    value: profiling,
+                });
+            }
         }
     }
 
     public static kill(tableIdentifier: string) {
         printOutputMessage('kill ' + tableIdentifier);
-        let instance = EDAPanel.instancesMap.get(tableIdentifier);
-        if (instance) {
-            instance.panel.dispose();
-            EDAPanel.instancesMap.delete(tableIdentifier);
+        let panel = EDAPanel.panelsMap.get(tableIdentifier);
+        if (panel) {
+            panel.panel.dispose();
+            EDAPanel.panelsMap.delete(tableIdentifier);
         }
     }
 
     public dispose() {
-        EDAPanel.instancesMap.delete(this.tableIdentifier);
+        EDAPanel.panelsMap.delete(this.tableIdentifier);
 
         // Clean up our panel
         this.panel.dispose();
@@ -255,28 +266,32 @@ export class EDAPanel {
         return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
     }
 
-    private constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
-        return new Promise((resolve, reject) => {
-            const existingCurrentState = this.findCurrentState();
-            if (existingCurrentState) {
-                printOutputMessage('Found current State.');
-                resolve({ state: existingCurrentState, fromExisting: true });
-                return;
-            }
+    private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
+        const existingCurrentState = this.findCurrentState();
+        if (existingCurrentState) {
+            printOutputMessage('Found current State.');
+            return { state: existingCurrentState, fromExisting: true };
+        }
 
-            const instance = EDAPanel.instancesMap.get(this.tableIdentifier);
-            if (!instance) {
-                reject(new Error('RunnerApi instance not found.'));
+        const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
+        if (!panel) {
+            throw new Error('RunnerApi panel not found.');
+        } else {
+            const table = await panel.runnerApi.getTableByPlaceholder(this.tableName, this.startPipelineExecutionId);
+            if (!table) {
+                throw new Error('Timeout waiting for placeholder value');
             } else {
-                instance.runnerApi.getStateByPlaceholder(this.tableIdentifier, this.startPipelineId).then((state) => {
-                    if (state === undefined) {
-                        reject(new Error('Timeout waiting for placeholder value'));
-                    } else {
-                        resolve({ state, fromExisting: false });
-                    }
-                });
+                return {
+                    state: {
+                        tableIdentifier: panel.tableIdentifier,
+                        history: [],
+                        defaultState: false,
+                        table,
+                    },
+                    fromExisting: false,
+                };
             }
-        });
+        }
     }
 
     private async _getHtmlForWebview(webview: vscode.Webview) {
@@ -318,7 +333,6 @@ export class EDAPanel {
       <link href="${stylesMainUri}" rel="stylesheet">
       <script nonce="${nonce}">
         window.injVscode = acquireVsCodeApi();
-        window.tableIdentifier = "${this.tableIdentifier}" === "undefined" ? undefined : "${this.tableIdentifier}";
       </script>
     </head>
     <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>
