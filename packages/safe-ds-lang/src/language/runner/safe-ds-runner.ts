@@ -280,14 +280,14 @@ export class SafeDsRunner {
      * Execute a Safe-DS pipeline on the python runner.
      * If a valid target placeholder is provided, the pipeline is only executed partially, to calculate the result of the placeholder.
      *
-     * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param id A unique id that is used in further communication with this pipeline.
+     * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param pipelineName Name of the pipeline that should be run
      * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
      */
     public async executePipeline(
-        pipelineDocument: LangiumDocument,
         id: string,
+        pipelineDocument: LangiumDocument,
         pipelineName: string,
         targetPlaceholder: string | undefined = undefined,
     ) {

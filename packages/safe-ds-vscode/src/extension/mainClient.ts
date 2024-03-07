@@ -357,7 +357,7 @@ const runPipelineFile = async function (filePath: vscode.Uri | undefined, pipeli
 
     printOutputMessage(`Launching Pipeline (${pipelineId}): ${pipelinePath} - ${mainPipelineName}`);
 
-    await services.runtime.Runner.executePipeline(mainDocument, pipelineId, mainPipelineName);
+    await services.runtime.Runner.executePipeline(pipelineId, mainDocument, mainPipelineName);
 };
 
 const commandRunPipelineFile = async function (filePath: vscode.Uri | undefined) {
