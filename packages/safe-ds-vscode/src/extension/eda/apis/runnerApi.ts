@@ -1,5 +1,6 @@
 import { Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
 import { SafeDsServices, messages } from '@safe-ds/lang';
+import { LangiumDocument, AstNode } from 'langium';
 import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
@@ -10,22 +11,26 @@ export class RunnerApi {
     services: SafeDsServices;
     pipelinePath: vscode.Uri;
     pipelineName: string;
+    baseDocument: LangiumDocument<AstNode> | undefined;
 
     constructor(services: SafeDsServices, pipelinePath: vscode.Uri, pipelineName: string) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
+        getPipelineDocument(this.pipelinePath).then((doc) => {
+            // Get here to avoid issues because of chanigng file
+            this.baseDocument = doc;
+        });
     }
 
     private async addToAndExecutePipeline(pipelineExecutionId: string, addedLines: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const baseDocument = await getPipelineDocument(this.pipelinePath);
-            if (!baseDocument) {
-                reject('Pipeline not found');
+            if (!this.baseDocument) {
+                reject('Document not found');
                 return;
             }
 
-            const documentText = baseDocument.textDocument.getText();
+            const documentText = this.baseDocument.textDocument.getText();
 
             // Find pattern "pipeline <pipelineName> {" and add the SDS code before the closing bracket of it
             const pipelineStart = documentText.indexOf('pipeline ' + this.pipelineName);
@@ -203,7 +208,7 @@ export class RunnerApi {
         let sdsStrings = '';
 
         const columnNameToPlaceholderMVNameMap = new Map<string, string>(); // Mapping random placeholder name for missing value ratio back to column name
-        const missingValueRatioMap = new Map<string, string>(); // Saved by random placeholder name
+        const missingValueRatioMap = new Map<string, number>(); // Saved by random placeholder name
 
         const columnNameToPlaceholderIDnessNameMap = new Map<string, string>(); // Mapping random placeholder name for IDness back to column name
         const idnessMap = new Map<string, number>(); // Saved by random placeholder name
@@ -214,7 +219,7 @@ export class RunnerApi {
         // Generate SDS code to get missing value ratio for each column
         for (let i = 0; i < columns.length; i++) {
             const newMvPlaceholderName = this.randomPlaceholderName();
-            missingValueRatioMap.set(newMvPlaceholderName, 'null');
+            missingValueRatioMap.set(newMvPlaceholderName, 0);
             columnNameToPlaceholderMVNameMap.set(columns[i]![1].name, newMvPlaceholderName);
 
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
@@ -254,7 +259,7 @@ export class RunnerApi {
         for (const [placeholderName] of missingValueRatioMap) {
             const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (missingValueRatio) {
-                missingValueRatioMap.set(placeholderName, missingValueRatio as string);
+                missingValueRatioMap.set(placeholderName, missingValueRatio as number);
             }
         }
 
@@ -278,7 +283,7 @@ export class RunnerApi {
         const profiling: { columnName: string; profiling: Profiling }[] = [];
         for (const column of columns) {
             const missingValuesRatio =
-                parseFloat(missingValueRatioMap.get(columnNameToPlaceholderMVNameMap.get(column[1].name)!)!) * 100;
+                missingValueRatioMap.get(columnNameToPlaceholderMVNameMap.get(column[1].name)!)! * 100;
 
             const validRatio: ProfilingDetailStatistical = {
                 type: 'numerical',
@@ -341,7 +346,19 @@ export class RunnerApi {
                                 { type: 'name', name: 'Categorical', interpretation: 'bold' },
                                 {
                                     type: 'name',
-                                    name: uniqueValues + ' Uniques',
+                                    name: uniqueValues + ' Distincts',
+                                    interpretation: 'default',
+                                },
+                                {
+                                    type: 'name',
+                                    name:
+                                        Math.round(
+                                            column[1].values.length *
+                                                (1 -
+                                                    missingValueRatioMap.get(
+                                                        columnNameToPlaceholderMVNameMap.get(column[1].name)!,
+                                                    )!),
+                                        ) + ' Total',
                                     interpretation: 'default',
                                 },
                             ],

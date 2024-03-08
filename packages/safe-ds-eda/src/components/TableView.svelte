@@ -13,6 +13,7 @@
     } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
+    import { derived } from 'svelte/store';
 
     export let sidebarWidth: number;
 
@@ -97,9 +98,9 @@
             const currentWidth = startWidth + event.clientX - startX;
             requestAnimationFrame(() => {
                 targetColumn.style.width = `${currentWidth}px`;
-                savedColumnWidths.set(targetColumn.innerText, currentWidth);
+                savedColumnWidths.set(targetColumn.innerText.trim(), currentWidth);
             });
-            resizeWidthMap.set(targetColumn.innerText, currentWidth);
+            resizeWidthMap.set(targetColumn.innerText.trim(), currentWidth);
             updateTableSpace();
         }
     };
@@ -167,14 +168,14 @@
         holdTimeout = setTimeout(() => {
             isClick = false; // If timeout completes, it's a hold
             document.addEventListener('mouseup', handleReorderDragEnd);
-            savedColumnWidthBeforeReorder = savedColumnWidths.get(headerElements[columnIndex].innerText)!;
+            savedColumnWidthBeforeReorder = savedColumnWidths.get(headerElements[columnIndex].innerText.trim())!;
             preventResizeTableSpaceUpdate = true; // To not add the new space to current dragged column
             isReorderDragging = true;
             dragStartIndex = columnIndex;
             dragCurrentIndex = columnIndex;
             draggedColumn = headerElements[columnIndex];
             draggedColumn.classList.add('dragging');
-            savedColumnWidths.set(draggedColumn.innerText, 0);
+            savedColumnWidths.set(draggedColumn.innerText.trim(), 0);
             updateTableSpace();
             selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
         }, 300); // milliseconds delay for hold detection
@@ -201,7 +202,7 @@
         if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
             preventResizeTableSpaceUpdate = false;
             if (draggedColumn) {
-                savedColumnWidths.set(draggedColumn.innerText, savedColumnWidthBeforeReorder);
+                savedColumnWidths.set(draggedColumn.innerText.trim(), savedColumnWidthBeforeReorder);
                 draggedColumn.style.left = '';
                 draggedColumn.style.top = '';
                 draggedColumn.classList.remove('dragging');
@@ -382,47 +383,55 @@
     }, 100);
 
     const updateTableSpace = function (): void {
+        if (isResizeDragging) return; // Don't update while resizing
+
         const newPossibleSpace = tableContainer.clientWidth;
 
         const utilitySpace = borderColumnWidth * 2; // 2 border columns
         let beforeWidth = utilitySpace;
         for (const width of savedColumnWidths.values()) {
-            if (width === 0) {
+            if (width !== 0) {
+                beforeWidth += width;
             }
-            beforeWidth += width;
         }
+
+        console.log('newPossibleSpace', newPossibleSpace);
+        console.log('beforeWidth', beforeWidth);
+        console.log(headerElements.map((column) => column.innerText.trim()));
 
         if (newPossibleSpace > beforeWidth) {
             // Extend all column widths proportionally with new space
             for (const column of headerElements) {
+                const columnName = column.innerText.trim();
                 const newWidth = column.offsetWidth + (newPossibleSpace - beforeWidth) / headerElements.length;
                 column.style.width = newWidth + 'px';
-                savedColumnWidths.set(column.innerText, newWidth);
+                savedColumnWidths.set(columnName, newWidth);
             }
         } else {
             // Shrink all column widths proportionally with new space if not below minimum width dedicated by a: width by header text or b: with by manual resize
             for (const column of headerElements) {
+                const columnName = column.innerText.trim();
                 const newWidth = column.offsetWidth - (beforeWidth - newPossibleSpace) / headerElements.length;
-                if (resizeWidthMap.has(column.innerText)) {
+                if (resizeWidthMap.has(columnName)) {
                     // User resized manually, so don't shrink below that
-                    if (resizeWidthMap.get(column.innerText)! <= newWidth) {
+                    if (resizeWidthMap.get(columnName)! <= newWidth) {
                         column.style.width = newWidth + 'px';
-                        savedColumnWidths.set(column.innerText, newWidth);
-                    } else if (column.offsetWidth !== resizeWidthMap.get(column.innerText)!) {
+                        savedColumnWidths.set(columnName, newWidth);
+                    } else if (column.offsetWidth !== resizeWidthMap.get(columnName)!) {
                         // To update even on fast resize
-                        column.style.width = resizeWidthMap.get(column.innerText)! + 'px';
-                        savedColumnWidths.set(column.innerText, resizeWidthMap.get(column.innerText)!);
+                        column.style.width = resizeWidthMap.get(columnName)! + 'px';
+                        savedColumnWidths.set(columnName, resizeWidthMap.get(columnName)!);
                     }
                 } else {
                     // Use the minimum width dedicated by the header text
-                    const minWidth = getColumnWidthFreshNumber(column.innerText);
+                    const minWidth = getColumnWidthFreshNumber(columnName);
                     if (minWidth <= newWidth) {
                         column.style.width = newWidth + 'px';
-                        savedColumnWidths.set(column.innerText, newWidth);
+                        savedColumnWidths.set(columnName, newWidth);
                     } else if (column.clientWidth !== minWidth) {
                         // To update even on fast resize
                         column.style.width = minWidth + 'px';
-                        savedColumnWidths.set(column.innerText, minWidth);
+                        savedColumnWidths.set(columnName, minWidth);
                     }
                 }
             }
@@ -465,7 +474,7 @@
     let filterContextMenuElement: HTMLElement;
 
     const handleFilterContextMenu = function (event: MouseEvent, columnIndex: number): void {
-        if (event.button !== 0) return;
+        if (event.button !== 0 || $preventClicks) return;
 
         // Logic for what happens when a filter icon is clicked
         event.stopPropagation();
@@ -609,16 +618,18 @@
         }
     };
 
-    const hasProfilingErrors = function (): boolean {
+    // As store to update on profiling changes
+    const hasProfilingErrors = derived(currentState, ($currentState) => {
+        if (!$currentState.table) return false;
         for (const column of $currentState.table!.columns) {
-            for (const profilingItem of column[1].profiling.top) {
+            for (const profilingItem of column[1].profiling.top.concat(column[1].profiling.bottom)) {
                 if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'error') {
                     return true;
                 }
             }
         }
         return false;
-    };
+    });
 
     const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
         if (!$currentState.table) return [];
@@ -639,7 +650,7 @@
             if (profilingCategories.length > 0) {
                 possibleColumnFilters.push({
                     type: 'specificValue',
-                    values: profilingCategories.map((profilingItem) => profilingItem.value.replace('%', '')),
+                    values: ['-'].concat(profilingCategories.map((profilingItem) => profilingItem.name)),
                     columnName: column.name,
                 });
             } else {
@@ -707,11 +718,7 @@
                         {#each $currentState.table.columns as column, index}
                             <th
                                 bind:this={headerElements[index]}
-                                class:reorderHighlightedRight={isReorderDragging && dragCurrentIndex === index}
-                                class:reorderHighlightedLeft={isReorderDragging &&
-                                    dragStartIndex !== index &&
-                                    (dragCurrentIndex === index + 1 ||
-                                        (dragStartIndex === index + 1 && dragCurrentIndex === index + 2))}
+                                class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
                                 style="width: {getColumnWidth(column[1].name)}px; position: relative;"
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
@@ -738,6 +745,8 @@
                         {/each}
                         <th
                             class="borderColumn borderColumnHeader"
+                            class:reorderHighlightedLeft={isReorderDragging &&
+                                dragCurrentIndex === $currentState.table.columns.length}
                             on:mousemove={(event) =>
                                 throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}>#</th
                         >
@@ -788,7 +797,7 @@
                     >
                         <div>
                             <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                            {#if hasProfilingErrors()}
+                            {#if $hasProfilingErrors}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
@@ -799,12 +808,14 @@
                         </div>
                     </td>
                     {#each $currentState.table.columns as _column, i}
-                        <td
-                            class="profilingBanner"
-                            on:click={toggleProfiling}
-                            on:mousemove={(event) => throttledHandleReorderDragOver(event, i + 1)}
-                        >
-                        </td>
+                        {#if i !== $currentState.table.columns.length - 1}
+                            <td
+                                class="profilingBanner"
+                                on:click={toggleProfiling}
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, i + 1)}
+                            >
+                            </td>
+                        {/if}
                     {/each}
                     <td
                         class="borderColumn profilingBanner"
@@ -1042,11 +1053,7 @@
     }
 
     .reorderHighlightedLeft {
-        background: linear-gradient(to right, #036ed1 0%, #036ed1 calc(100% - 2px), white calc(100% - 2px), white 100%);
-    }
-
-    .reorderHighlightedRight {
-        background: linear-gradient(to left, #036ed1 0%, #036ed1 calc(100% - 2px), white calc(100% - 2px), white 100%);
+        background: linear-gradient(to left, #036ed1 0%, #036ed1 calc(100% - 4px), white calc(100% - 4px), white 100%);
     }
 
     .dragging {

@@ -129,32 +129,32 @@ export class EDAPanel {
             panel.tableName = tableName;
             EDAPanel.panelsMap.set(tableIdentifier, panel);
 
-            // Have to update and construct state as table placeholder could've changed in code
-            panel.updateHtmlDone = false;
-            panel._update();
-            await panel.waitForUpdateHtmlDone(10000);
+            // // Have to update and construct state as table placeholder could've changed in code
+            // panel.updateHtmlDone = false;
+            // panel._update();
+            // await panel.waitForUpdateHtmlDone(10000);
 
-            // Get and send state
-            const stateInfo = await panel.constructCurrentState();
-            webviewApi.postMessage(panel!.panel.webview, {
-                command: 'setWebviewState',
-                value: stateInfo.state,
-            });
+            // // Get and send state
+            // const stateInfo = await panel.constructCurrentState();
+            // webviewApi.postMessage(panel!.panel.webview, {
+            //     command: 'setWebviewState',
+            //     value: stateInfo.state,
+            // });
 
-            // If not present, get and send profiling
-            if (
-                !stateInfo.fromExisting ||
-                !stateInfo.state.table ||
-                !stateInfo.state
-                    .table!.columns.map((c) => c[1].profiling)
-                    .find((p) => p.bottom.length > 0 || p.top.length > 0)
-            ) {
-                const profiling = await panel.runnerApi.getProfiling(stateInfo.state.table!);
-                webviewApi.postMessage(panel!.panel.webview, {
-                    command: 'setProfiling',
-                    value: profiling,
-                });
-            }
+            // // If not present, get and send profiling
+            // if (
+            //     !stateInfo.fromExisting ||
+            //     !stateInfo.state.table ||
+            //     !stateInfo.state
+            //         .table!.columns.map((c) => c[1].profiling)
+            //         .find((p) => p.bottom.length > 0 || p.top.length > 0)
+            // ) {
+            //     const profiling = await panel.runnerApi.getProfiling(stateInfo.state.table!);
+            //     webviewApi.postMessage(panel!.panel.webview, {
+            //         command: 'setProfiling',
+            //         value: profiling,
+            //     });
+            // }
             return;
         } else {
             // Otherwise, create a new panel.

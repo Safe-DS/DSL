@@ -85,7 +85,7 @@ export interface ProfilingDetailStatistical extends ProfilingDetailBase {
     type: 'numerical';
     name: string;
     value: string;
-    interpretation: ProfilingDetailBase['interpretation'] | 'category';
+    interpretation: ProfilingDetailBase['interpretation'] | 'category'; // 'category' needed for filters, to show distinct values
 }
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
