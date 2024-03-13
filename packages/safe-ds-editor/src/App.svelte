@@ -1,16 +1,16 @@
 <script lang="ts">
-    import { categorysDark } from './assets/categories/categories';
+    import { categorys } from './assets/categories/categories';
     import PrimarySidebar from './lib/components/sidebars/PrimarySidebar.svelte';
     import Grid from '$lib/components/main/flow.svelte';
     import NodeExtension from '$lib/components/nodes/node-extension.svelte';
 
     const mainSidebarCategories: Category[] = [
-        { name: 'Data Preparation', icon: categorysDark.preparation1 },
-        { name: 'Data Preparation', icon: categorysDark.preparation2 },
-        { name: 'Modeling', icon: categorysDark.modeling },
-        { name: 'Evaluation', icon: categorysDark.evaluation },
-        { name: 'Import', icon: categorysDark.import },
-        { name: 'Export', icon: categorysDark.export },
+        { name: 'Data Preparation', icon: categorys.preparation1 },
+        { name: 'Data Preparation', icon: categorys.preparation2 },
+        { name: 'Modeling', icon: categorys.modeling },
+        { name: 'Evaluation', icon: categorys.evaluation },
+        { name: 'Import', icon: categorys.import },
+        { name: 'Export', icon: categorys.export },
     ];
 </script>
 

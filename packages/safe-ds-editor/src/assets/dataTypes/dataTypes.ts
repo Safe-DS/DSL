@@ -1,12 +1,8 @@
 import type { SvgComponent } from 'types/assets';
-import TableDark from './darkmode/table-dark.svelte';
-import LambdaLight from './lightmode/lambda-light.svelte';
-import NumberLight from './lightmode/number-light.svelte';
-import StringLight from './lightmode/string-light.svelte';
-import TableLight from './lightmode/table-light.svelte';
-import LambdaDark from './darkmode/lambda-dark.svelte';
-import NumberDark from './darkmode/number-dark.svelte';
-import StringDark from './darkmode/string-dark.svelte';
+import Table from './assets/table.svelte';
+import Lambda from './assets/lambda.svelte';
+import Number from './assets/number.svelte';
+import String from './assets/string.svelte';
 
 type DataTypes = {
     lambda: SvgComponent;
@@ -15,18 +11,11 @@ type DataTypes = {
     table: SvgComponent;
 };
 
-export const dataTypesLight: DataTypes = {
-    lambda: LambdaLight,
-    number: NumberLight,
-    string: StringLight,
-    table: TableLight,
-};
-
-export const dataTypesDark: DataTypes = {
-    lambda: LambdaDark,
-    number: NumberDark,
-    string: StringDark,
-    table: TableDark,
+export const dataTypes: DataTypes = {
+    lambda: Lambda,
+    number: Number,
+    string: String,
+    table: Table,
 };
 
 export const getIconFromDatatype = (
@@ -34,13 +23,13 @@ export const getIconFromDatatype = (
 ): SvgComponent => {
     switch (type) {
         case 'string':
-            return StringDark;
+            return String;
         case 'number':
-            return NumberDark;
+            return Number;
         case 'lambda':
-            return LambdaDark;
+            return Lambda;
         case 'table':
-            return TableDark;
+            return Table;
         case 'undefined':
             return undefined;
     }

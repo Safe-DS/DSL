@@ -16,3 +16,6 @@ Diese Asset Bündel können dann an entsprechender Stelle in Svelte Komponenten 
     className="h-5 w-5"
 />
 ```
+
+## Theming
+Beim Hinzufügen neuer SVG's ist darauf zu achten, dass das bisher verwendete Theming beibehalten wird. So wird die Farbe via stroke-color definiert. Es sind daher alle hardkodierten Benennungen von stroke-color zu entfernen. Sollte ein SVG eine fill Farbe verwenden, so muss diese auf "currentColor" gesetzt werden. Auf diese Weise gleicht sich die fill-color automatisch der stroke-color an.

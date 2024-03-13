@@ -9,10 +9,11 @@
         BackgroundVariant,
     } from '@xyflow/svelte';
     import { customColors as colors } from '../../../../tailwind.config';
-    import NodeStatement from '../nodes/node-statement.svelte';
     import type { NodeCustom } from './node-types';
-    import { categorysDark } from 'src/assets/categories/categories';
+    import { categorys } from 'src/assets/categories/categories';
     import NodePlaceholder from '../nodes/node-placeholder.svelte';
+    import NodeStatement from '../nodes/node-statement.svelte';
+    import NodeExpression from '../nodes/node-expression.svelte';
     import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
 
     const parameters: Parameter<DataType>[] = [
@@ -44,14 +45,24 @@
 
     const testStatement: Statement = {
         name: 'getReferenceByNameOrDate',
-        category: { name: 'Modeling', icon: categorysDark.modeling },
+        category: { name: 'Modeling', icon: categorys.modeling },
         parameters: parameters,
         status: 'done',
     };
 
     const testPlaceholder: Placeholder = {
-        name: 'TestPlaceholder',
+        name: 'Test',
         type: { type: 'table', icon: getIconFromDatatype('table') },
+        status: 'done',
+    };
+
+    const testPlaceholder2: Placeholder = {
+        name: 'LongNameThatGetsCutOff',
+        type: { type: 'table', icon: getIconFromDatatype('table') },
+        status: 'done',
+    };
+
+    const testExpression: Expression = {
         status: 'done',
     };
 
@@ -66,7 +77,19 @@
             id: '1',
             type: 'placeholder',
             data: { placeholder: testPlaceholder },
-            position: { x: 0, y: 200 },
+            position: { x: 0, y: 150 },
+        },
+        {
+            id: '3',
+            type: 'placeholder',
+            data: { placeholder: testPlaceholder2 },
+            position: { x: 0, y: 250 },
+        },
+        {
+            id: '4',
+            type: 'expression',
+            data: { expression: testExpression },
+            position: { x: 300, y: 0 },
         },
     ]);
 
@@ -75,6 +98,7 @@
     const nodeTypes = {
         statement: NodeStatement,
         placeholder: NodePlaceholder,
+        expression: NodeExpression,
     };
 
     const snapGrid: [number, number] = [20, 20];
@@ -88,6 +112,7 @@
         {snapGrid}
         fitView
         proOptions={{ hideAttribution: true }}
+        nodesDraggable={false}
         on:nodeclick={(event) =>
             console.log('on node click', event.detail.node)}
         on:edgeclick={(event) =>

@@ -17,8 +17,11 @@
     const { placeholder } = data;
 </script>
 
-<div use:tooltip={{ content: placeholder.name, delay: 150 }} class="w-14">
-    <span class="relative -left-3 block w-20 truncate text-sm"
+<div
+    use:tooltip={{ content: placeholder.name, delay: 150 }}
+    class="w-14 cursor-default"
+>
+    <span class="relative -left-3 block w-20 truncate text-center text-sm"
         >{placeholder.name}</span
     >
     <div

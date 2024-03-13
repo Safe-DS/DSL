@@ -20,12 +20,12 @@
 
 <div
     use:tooltip={{ content: statement.name, delay: 150 }}
-    class=" bg-node_main shadow-node w-[180px] rounded-sm"
+    class=" bg-node_main shadow-node w-[180px] cursor-default rounded-sm"
 >
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
         data-state={expanded ? 'open' : 'closed'}
-        class=" flex flex-row items-center p-1 [&[data-state=open]>svg:last-of-type]:rotate-90"
+        class=" flex cursor-pointer flex-row items-center p-1 [&[data-state=open]>svg:last-of-type]:rotate-90"
         on:click={() => {
             expanded = !expanded;
         }}

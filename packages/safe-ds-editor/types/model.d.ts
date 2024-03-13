@@ -42,3 +42,7 @@ declare type Placeholder = {
     type: DataType;
     status: NodeStatus;
 };
+
+declare type Expression = {
+    status: NodeStatus;
+};

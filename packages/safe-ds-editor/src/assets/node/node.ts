@@ -1,25 +1,16 @@
 import type { SvgComponent } from 'types/assets';
-import ExpressionLight from './lightmode/expression-light.svelte';
-import ExtensionLight from './lightmode/extension-light.svelte';
-import WarningLight from './lightmode/warning-light.svelte';
-import ExpressionDark from './darkmode/expression-dark.svelte';
-import ExtensionDark from './darkmode/extension-dark.svelte';
-import WarningDark from './darkmode/warning-dark.svelte';
+import Extension from './assets/extension.svelte';
+import Warning from './assets/warning.svelte';
+import ExpressionIcon from './assets/expression-icon.svelte';
 
 type Node = {
-    expression: SvgComponent;
+    expressionIcon: SvgComponent;
     extension: SvgComponent;
     warning: SvgComponent;
 };
 
-export const nodeLight: Node = {
-    expression: ExpressionLight,
-    extension: ExtensionLight,
-    warning: WarningLight,
-};
-
-export const nodeDark: Node = {
-    expression: ExpressionDark,
-    extension: ExtensionDark,
-    warning: WarningDark,
+export const node: Node = {
+    expressionIcon: ExpressionIcon,
+    extension: Extension,
+    warning: Warning,
 };
