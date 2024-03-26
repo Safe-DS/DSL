@@ -1,9 +1,22 @@
 package tests.validation.types.checking.typeCasts
 
-pipeline test {
-    // $TEST$ no error "Type casts can only be applied to expressions of unknown type."
-    »unresolved« as Int;
+class C()
+class D() sub C
+class E() sub C
 
-    // $TEST$ error "Type casts can only be applied to expressions of unknown type."
-    »1« as Int;
+pipeline test {
+    // $TEST$ error "This type cast can never succeed."
+    »D()« as E;
+
+    // $TEST$ no error "This type cast can never succeed."
+    »C()« as C;
+
+    // $TEST$ no error "This type cast can never succeed."
+    »C()« as D;
+
+    // $TEST$ no error "This type cast can never succeed."
+    »D()« as C;
+
+    // $TEST$ no error "This type cast can never succeed."
+    »unresolved« as Int;
 }

@@ -354,12 +354,20 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
 };
 
 export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) => {
+    const typeChecker = services.types.TypeChecker;
     const typeComputer = services.types.TypeComputer;
 
     return (node: SdsTypeCast, accept: ValidationAcceptor): void => {
         const expressionType = typeComputer.computeType(node.expression);
-        if (node.expression && expressionType !== UnknownType) {
-            accept('error', 'Type casts can only be applied to expressions of unknown type.', {
+        const targetType = typeComputer.computeType(node.type);
+
+        if (
+            node.expression &&
+            expressionType !== UnknownType &&
+            !typeChecker.isSubtypeOf(expressionType, targetType) &&
+            !typeChecker.isSupertypeOf(expressionType, targetType)
+        ) {
+            accept('error', 'This type cast can never succeed.', {
                 // Using property: "expression" does not work here, probably due to eclipse-langium/langium#1218
                 node: node.expression,
                 code: CODE_TYPE_MISMATCH,
