@@ -68,7 +68,6 @@
 
     .tableWrapper {
         flex: 1;
-        overflow: scroll;
     }
 
     .resizer {

@@ -13,21 +13,16 @@
     } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
-    import { derived } from 'svelte/store';
+    import { derived, writable, type Readable, get } from 'svelte/store';
 
     export let sidebarWidth: number;
-
-    $: if (sidebarWidth && tableContainer) {
-        updateTableSpace();
-    }
 
     let showProfiling = false;
     let minTableWidth = 0;
     let numRows = 0;
-    const borderColumnWidth = 45; // Set in CSS, change here if changes in css
     const headerElements: HTMLElement[] = [];
     let maxProfilingItemCount = 0;
-    const savedColumnWidths: Map<string, number> = new Map();
+    let savedColumnWidths = writable(new Map<string, number>());
 
     $: {
         if ($currentState.table) {
@@ -55,29 +50,28 @@
         }
     }
 
-    const getColumnWidth = function (columnName: string): number {
-        if (savedColumnWidths.has(columnName)) {
-            return savedColumnWidths.get(columnName)!;
+    $: if (headerElements.length > 0) {
+        // Is svelte reactive but so far only runs once which is what we want, consideration to have loop in onMount that waits until headerElements is filled and then runs this code once
+        for (const column of headerElements) {
+            const columnName = column.innerText.trim();
+            if (get(savedColumnWidths).has(columnName)) continue; // Only set intital width if not already set
+
+            const baseWidth = 35; // Minimum width
+            const scale = 55;
+
+            // Use the logarithm of the character count, and scale it
+            const width = baseWidth + Math.log(columnName.length + 1) * scale;
+
+            // Save the width for future use
+            savedColumnWidths.update((map) => {
+                map.set(columnName, width);
+                return map;
+            });
+            console.log(columnName, width);
         }
-        const baseWidth = 35; // Minimum width
-        const scale = 55;
 
-        // Use the logarithm of the character count, and scale it
-        const width = baseWidth + Math.log(columnName.length + 1) * scale;
-
-        // Save the width for future use
-        savedColumnWidths.set(columnName, width);
-
-        return width;
-    };
-
-    const getColumnWidthFreshNumber = function (columnName: string): number {
-        const baseWidth = 35; // Minimum width
-        const scale = 55;
-
-        // Use the logarithm of the character count, and scale it
-        return baseWidth + Math.log(columnName.length + 1) * scale;
-    };
+        lastHeight = tableContainer.clientHeight; // For recalculateVisibleRowCount
+    }
 
     const handleMainCellClick = function (): void {
         if (!$preventClicks) {
@@ -98,10 +92,12 @@
             const currentWidth = startWidth + event.clientX - startX;
             requestAnimationFrame(() => {
                 targetColumn.style.width = `${currentWidth}px`;
-                savedColumnWidths.set(targetColumn.innerText.trim(), currentWidth);
+                savedColumnWidths.update((map) => {
+                    map.set(targetColumn.innerText.trim(), currentWidth);
+                    return map;
+                });
+                resizeWidthMap.set(targetColumn.innerText.trim(), currentWidth);
             });
-            resizeWidthMap.set(targetColumn.innerText.trim(), currentWidth);
-            updateTableSpace();
         }
     };
 
@@ -128,20 +124,20 @@
     let isReorderDragging = false;
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
-    let draggedColumn: HTMLElement | null = null;
+    let draggedColumnName: string | null = null;
+    let reorderPrototype: HTMLElement;
     let savedColumnWidthBeforeReorder = 0;
-    let preventResizeTableSpaceUpdate = false;
     let holdTimeout: NodeJS.Timeout;
     let isClick = true; // Flag to distinguish between click and hold
 
     let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
 
     const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
-        if (isReorderDragging && dragStartIndex !== null && draggedColumn) {
+        if (isReorderDragging && dragStartIndex !== null && draggedColumnName) {
             dragCurrentIndex = columnIndex;
             requestAnimationFrame(() => {
-                draggedColumn!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
-                draggedColumn!.style.top = event.clientY + 'px';
+                reorderPrototype!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+                reorderPrototype!.style.top = event.clientY + scrollTop + 'px';
             });
         }
     };
@@ -166,17 +162,14 @@
         isClick = true; // Assume it's a click initially
 
         holdTimeout = setTimeout(() => {
+            // Reorder drag start
             isClick = false; // If timeout completes, it's a hold
             document.addEventListener('mouseup', handleReorderDragEnd);
-            savedColumnWidthBeforeReorder = savedColumnWidths.get(headerElements[columnIndex].innerText.trim())!;
-            preventResizeTableSpaceUpdate = true; // To not add the new space to current dragged column
+            savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
+            draggedColumnName = headerElements[columnIndex].innerText.trim();
             isReorderDragging = true;
             dragStartIndex = columnIndex;
             dragCurrentIndex = columnIndex;
-            draggedColumn = headerElements[columnIndex];
-            draggedColumn.classList.add('dragging');
-            savedColumnWidths.set(draggedColumn.innerText.trim(), 0);
-            updateTableSpace();
             selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
         }, 300); // milliseconds delay for hold detection
 
@@ -200,13 +193,12 @@
 
     const handleReorderDragEnd = function (): void {
         if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
-            preventResizeTableSpaceUpdate = false;
-            if (draggedColumn) {
-                savedColumnWidths.set(draggedColumn.innerText.trim(), savedColumnWidthBeforeReorder);
-                draggedColumn.style.left = '';
-                draggedColumn.style.top = '';
-                draggedColumn.classList.remove('dragging');
-                draggedColumn = null;
+            if (draggedColumnName) {
+                savedColumnWidths.update((map) => {
+                    map.set(draggedColumnName!, savedColumnWidthBeforeReorder);
+                    return map;
+                });
+                draggedColumnName = null;
             }
             // Reset the z-index of all headers
             headerElements.forEach((header) => {
@@ -229,8 +221,6 @@
             isReorderDragging = false;
             dragStartIndex = null;
             dragCurrentIndex = null;
-            updateTableSpace();
-            updateTableSpace(); // Have to somehow call twice, first time it thinks the window is around 10px bigger than it is
         }
     };
 
@@ -342,7 +332,7 @@
     // --- Scroll loading ---
     let tableContainer: HTMLElement; // Reference to the table container
     const rowHeight = 33; // Adjust based on your row height
-    const buffer = 25; // Number of rows to render outside the viewport
+    const buffer = 40; // Number of rows to render outside the viewport
     let visibleStart = 0;
     let visibleEnd = 0;
     let visibleRowCount = 10;
@@ -351,7 +341,7 @@
 
     const updateVisibleRows = function (): void {
         visibleStart = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
-        visibleEnd = visibleStart + visibleRowCount;
+        visibleEnd = visibleStart + visibleRowCount + buffer;
     };
 
     const throttledUpdateVisibleRows = throttle(updateVisibleRows, 40);
@@ -374,75 +364,6 @@
     };
 
     const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
-
-    // --- Min Table with ---
-    const throttledUpdateTableSpace = throttle(() => {
-        if (!preventResizeTableSpaceUpdate) {
-            updateTableSpace();
-        }
-    }, 100);
-
-    const updateTableSpace = function (): void {
-        if (isResizeDragging) return; // Don't update while resizing
-
-        const newPossibleSpace = tableContainer.clientWidth;
-
-        const utilitySpace = borderColumnWidth * 2; // 2 border columns
-        let beforeWidth = utilitySpace;
-        for (const width of savedColumnWidths.values()) {
-            if (width !== 0) {
-                beforeWidth += width;
-            }
-        }
-
-        console.log('newPossibleSpace', newPossibleSpace);
-        console.log('beforeWidth', beforeWidth);
-        console.log(headerElements.map((column) => column.innerText.trim()));
-
-        if (newPossibleSpace > beforeWidth) {
-            // Extend all column widths proportionally with new space
-            for (const column of headerElements) {
-                const columnName = column.innerText.trim();
-                const newWidth = column.offsetWidth + (newPossibleSpace - beforeWidth) / headerElements.length;
-                column.style.width = newWidth + 'px';
-                savedColumnWidths.set(columnName, newWidth);
-            }
-        } else {
-            // Shrink all column widths proportionally with new space if not below minimum width dedicated by a: width by header text or b: with by manual resize
-            for (const column of headerElements) {
-                const columnName = column.innerText.trim();
-                const newWidth = column.offsetWidth - (beforeWidth - newPossibleSpace) / headerElements.length;
-                if (resizeWidthMap.has(columnName)) {
-                    // User resized manually, so don't shrink below that
-                    if (resizeWidthMap.get(columnName)! <= newWidth) {
-                        column.style.width = newWidth + 'px';
-                        savedColumnWidths.set(columnName, newWidth);
-                    } else if (column.offsetWidth !== resizeWidthMap.get(columnName)!) {
-                        // To update even on fast resize
-                        column.style.width = resizeWidthMap.get(columnName)! + 'px';
-                        savedColumnWidths.set(columnName, resizeWidthMap.get(columnName)!);
-                    }
-                } else {
-                    // Use the minimum width dedicated by the header text
-                    const minWidth = getColumnWidthFreshNumber(columnName);
-                    if (minWidth <= newWidth) {
-                        column.style.width = newWidth + 'px';
-                        savedColumnWidths.set(columnName, newWidth);
-                    } else if (column.clientWidth !== minWidth) {
-                        // To update even on fast resize
-                        column.style.width = minWidth + 'px';
-                        savedColumnWidths.set(columnName, minWidth);
-                    }
-                }
-            }
-        }
-    };
-
-    $: if (headerElements.length > 0) {
-        // Is svelte reactive but so far only runs once which is what we want, consideration to have loop in onMount that waits until headerElements is filled and then runs this code once
-        lastHeight = tableContainer.clientHeight;
-        updateTableSpace();
-    }
 
     // --- Right clicks ---
     let currentContextMenu: HTMLElement | null = null;
@@ -591,8 +512,20 @@
     };
 
     // --- Profiling ---
+    let fullHeadBackground: HTMLElement;
+    let profilingInfo: HTMLElement;
+
     const toggleProfiling = function (): void {
-        if (!$preventClicks) showProfiling = !showProfiling;
+        if (!$preventClicks) {
+            showProfiling = !showProfiling;
+            if (showProfiling) {
+                setTimeout(() => {
+                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px';
+                }, 700);
+            } else {
+                fullHeadBackground.style.height = rowHeight * 2 + 'px';
+            }
+        }
     };
 
     const getOptionalProfilingHeight = function (profiling: Profiling): string {
@@ -689,14 +622,12 @@
         tableContainer.addEventListener('scroll', throttledUpdateVisibleRows);
         tableContainer.addEventListener('scroll', updateScrollTop);
         window.addEventListener('resize', throttledRecalculateVisibleRowCount);
-        window.addEventListener('resize', throttledUpdateTableSpace);
         interval = setInterval(updateVisibleRows, 500); // To catch cases of fast scroll bar scrolling that leave table blank
 
         return () => {
             tableContainer.removeEventListener('scroll', throttledUpdateVisibleRows);
             tableContainer.addEventListener('scroll', updateScrollTop);
             window.removeEventListener('resize', throttledRecalculateVisibleRowCount);
-            window.removeEventListener('resize', throttledUpdateTableSpace);
             clearInterval(interval);
         };
     });
@@ -706,6 +637,11 @@
     {#if !$currentState.table}
         <span>Loading ...</span>
     {:else}
+        <div
+            bind:this={fullHeadBackground}
+            class="fullHeadBackground"
+            style="top: {scrollTop}px; height: {rowHeight * 2}px"
+        ></div>
         <div class="contentWrapper" style="height: {numRows * rowHeight}px;">
             <table>
                 <!-- Table Headers, mainly Column name and first/last row for indices -->
@@ -719,7 +655,11 @@
                             <th
                                 bind:this={headerElements[index]}
                                 class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
-                                style="width: {getColumnWidth(column[1].name)}px; position: relative;"
+                                style="width: {$savedColumnWidths.get(
+                                    column[1].name,
+                                )}px; position: relative; {isReorderDragging && dragStartIndex === index
+                                    ? 'display: none;'
+                                    : ''}"
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
@@ -753,7 +693,7 @@
                     </tr>
                 </thead>
                 <!-- Profiling info -->
-                <tr class="hiddenProfilingWrapper noHover" style="top: {scrollTop}px;">
+                <tr bind:this={profilingInfo} class="hiddenProfilingWrapper noHover" style="top: {scrollTop}px;">
                     <td
                         class="borderColumn borderRight profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -765,7 +705,7 @@
                             style="height: {showProfiling &&
                             (column[1].profiling.top.length !== 0 || column[1].profiling.bottom.length !== 0)
                                 ? getOptionalProfilingHeight(column[1].profiling)
-                                : ''};"
+                                : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                         >
                             <div class="content" class:expanded={showProfiling}>
@@ -807,12 +747,13 @@
                             </div>
                         </div>
                     </td>
-                    {#each $currentState.table.columns as _column, i}
-                        {#if i !== $currentState.table.columns.length - 1}
+                    {#each $currentState.table.columns as _column, index}
+                        {#if index !== $currentState.table.columns.length - 1}
                             <td
+                                style=" {isReorderDragging && dragStartIndex === index + 1 ? 'display: none;' : ''}"
                                 class="profilingBanner"
                                 on:click={toggleProfiling}
-                                on:mousemove={(event) => throttledHandleReorderDragOver(event, i + 1)}
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index + 1)}
                             >
                             </td>
                         {/if}
@@ -836,6 +777,7 @@
                             >
                             {#each $currentState.table.columns as column, index}
                                 <td
+                                    style=" {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                                     on:click={handleMainCellClick}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     class:selectedColumn={selectedColumnIndexes.includes(index) ||
@@ -864,6 +806,14 @@
     {#if numRows === -1}
         <!-- Just so these classes get compiled -->
         <span class="dragging selectedColumn">No data</span>
+    {/if}
+    {#if draggedColumnName}
+        <th
+            bind:this={reorderPrototype}
+            style="width: {$savedColumnWidths.get(draggedColumnName)}px; height: {rowHeight + 2.5}px;"
+            class="dragging"
+            >{draggedColumnName}
+        </th>
     {/if}
     <!-- Context menus -->
     {#if showingColumnHeaderRightClickMenu}
@@ -910,10 +860,21 @@
         background-color: var(--bg-dark);
     }
 
+    .fullHeadBackground {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 2;
+    }
+
     table {
         table-layout: fixed;
-        width: 100%;
+        width: 100.1%; /* To prevent lagging on vert scroll */
         background-color: var(--bg-dark);
+        overflow-x: scroll;
     }
 
     .headerRow {
@@ -921,6 +882,7 @@
         top: 0;
         z-index: 1000;
     }
+
     thead tr:hover {
         background-color: transparent;
     }
@@ -948,12 +910,13 @@
     }
     tbody {
         border-left: 3px solid var(--bg-bright);
+        z-index: 1;
     }
-    table tr {
+    tr {
         border-bottom: 2px solid var(--bg-dark);
         background-color: var(--bg-bright);
     }
-    table tr:hover {
+    tr:hover {
         background-color: var(--primary-color-desaturated);
     }
 
@@ -1061,6 +1024,12 @@
         pointer-events: none; /* Make it non-interactive */
         z-index: 1000; /* Ensure it's on top */
         border: 3px solid var(--bg-dark);
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        padding: 12px 8px;
+        text-overflow: ellipsis;
     }
 
     .contextMenu {
