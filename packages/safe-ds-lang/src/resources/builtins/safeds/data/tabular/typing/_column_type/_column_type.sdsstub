@@ -6,23 +6,23 @@ package safeds.data.tabular.typing
  * @param isNullable Whether the columntype is nullable.
  */
 class ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }
 
 /**
@@ -31,25 +31,25 @@ class ColumnType {
  * @param isNullable Whether the type also allows null values.
  */
 class Anything(
-	@PythonName("is_nullable") isNullable: Boolean = false
+    @PythonName("is_nullable") isNullable: Boolean = false
 ) sub ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }
 
 /**
@@ -58,25 +58,25 @@ class Anything(
  * @param isNullable Whether the type also allows null values.
  */
 class Boolean(
-	@PythonName("is_nullable") isNullable: Boolean = false
+    @PythonName("is_nullable") isNullable: Boolean = false
 ) sub ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }
 
 /**
@@ -85,25 +85,25 @@ class Boolean(
  * @param isNullable Whether the type also allows null values.
  */
 class RealNumber(
-	@PythonName("is_nullable") isNullable: Boolean = false
+    @PythonName("is_nullable") isNullable: Boolean = false
 ) sub ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }
 
 /**
@@ -112,25 +112,25 @@ class RealNumber(
  * @param isNullable Whether the type also allows null values.
  */
 class Integer(
-	@PythonName("is_nullable") isNullable: Boolean = false
+    @PythonName("is_nullable") isNullable: Boolean = false
 ) sub ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }
 
 /**
@@ -139,46 +139,46 @@ class Integer(
  * @param isNullable Whether the type also allows null values.
  */
 class String(
-	@PythonName("is_nullable") isNullable: Boolean = false
+    @PythonName("is_nullable") isNullable: Boolean = false
 ) sub ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }
 
 /**
  * Type for a column that contains None Values only.
  */
 class Nothing() sub ColumnType {
-	/**
-	 * Return whether the given column type is nullable.
-	 *
-	 * @result result1 True if the column is nullable.
-	 */
-	@Pure
-	@PythonName("is_nullable")
-	fun isNullable() -> result1: Boolean
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
 
-	/**
-	 * Return whether the given column type is numeric.
-	 *
-	 * @result result1 True if the column is numeric.
-	 */
-	@Pure
-	@PythonName("is_numeric")
-	fun isNumeric() -> result1: Boolean
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
 }

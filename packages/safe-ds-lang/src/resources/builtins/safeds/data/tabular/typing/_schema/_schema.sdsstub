@@ -1,6 +1,6 @@
 package safeds.data.tabular.typing
 
-from safeds.data.tabular.typing.ColumnType import ColumnType
+from safeds.data.tabular.typing import ColumnType
 
 /**
  * Store column names and corresponding data types for a `Table` or `Row`.
@@ -8,67 +8,67 @@ from safeds.data.tabular.typing.ColumnType import ColumnType
  * @param schema Map from column names to data types.
  */
 class Schema(
-	`schema`: Map<String, ColumnType>
+    `schema`: Map<String, ColumnType>
 ) {
-	/**
-	 * Return a list of all column names saved in this schema.
-	 */
-	@PythonName("column_names") attr columnNames: List<String>
+    /**
+     * Return a list of all column names saved in this schema.
+     */
+    @PythonName("column_names") attr columnNames: List<String>
 
-	/**
-	 * Return whether the schema contains a given column.
-	 *
-	 * @param columnName The name of the column.
-	 *
-	 * @result result1 True if the schema contains the column.
-	 */
-	@Pure
-	@PythonName("has_column")
-	fun hasColumn(
-		@PythonName("column_name") columnName: String
-	) -> result1: Boolean
+    /**
+     * Return whether the schema contains a given column.
+     *
+     * @param columnName The name of the column.
+     *
+     * @result result1 True if the schema contains the column.
+     */
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Boolean
 
-	/**
-	 * Return the type of the given column.
-	 *
-	 * @param columnName The name of the column.
-	 *
-	 * @result result1 The type of the column.
-	 */
-	@Pure
-	@PythonName("get_column_type")
-	fun getColumnType(
-		@PythonName("column_name") columnName: String
-	) -> result1: ColumnType
+    /**
+     * Return the type of the given column.
+     *
+     * @param columnName The name of the column.
+     *
+     * @result result1 The type of the column.
+     */
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        @PythonName("column_name") columnName: String
+    ) -> result1: ColumnType
 
-	/**
-	 * Return a dictionary that maps column names to column types.
-	 *
-	 * @result result1 Dictionary representation of the schema.
-	 */
-	@Pure
-	@PythonName("to_dict")
-	fun toDict() -> result1: Map<String, ColumnType>
+    /**
+     * Return a dictionary that maps column names to column types.
+     *
+     * @result result1 Dictionary representation of the schema.
+     */
+    @Pure
+    @PythonName("to_dict")
+    fun toDict() -> result1: Map<String, ColumnType>
 
-	/**
-	 * Merge multiple schemas into one.
-	 * 
-	 * For each type missmatch the new schema will have the least common supertype.
-	 * 
-	 * The type hierarchy is as follows:
-	 * * Anything
-	 *     * RealNumber
-	 *         * Integer
-	 *     * Boolean
-	 *     * String
-	 *
-	 * @param schemas the list of schemas you want to merge
-	 *
-	 * @result result1 the new merged schema
-	 */
-	@Pure
-	@PythonName("merge_multiple_schemas")
-	static fun mergeMultipleSchemas(
-		schemas: List<Schema>
-	) -> result1: Schema
+    /**
+     * Merge multiple schemas into one.
+     *
+     * For each type missmatch the new schema will have the least common supertype.
+     *
+     * The type hierarchy is as follows:
+     * * Anything
+     *     * RealNumber
+     *         * Integer
+     *     * Boolean
+     *     * String
+     *
+     * @param schemas the list of schemas you want to merge
+     *
+     * @result result1 the new merged schema
+     */
+    @Pure
+    @PythonName("merge_multiple_schemas")
+    static fun mergeMultipleSchemas(
+        schemas: List<Schema>
+    ) -> result1: Schema
 }

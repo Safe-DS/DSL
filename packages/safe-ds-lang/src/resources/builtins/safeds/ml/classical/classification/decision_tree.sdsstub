@@ -1,0 +1,24 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.ml.classical.classification import Classifier
+
+/**
+ * Decision tree classification.
+ */
+@PythonName("DecisionTree")
+class DecisionTreeClassifier() sub Classifier {
+    /**
+     * Create a copy of this classifier and fit it with the given training data.
+     *
+     * This classifier is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedClassifier The fitted classifier.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedClassifier: DecisionTreeClassifier
+}

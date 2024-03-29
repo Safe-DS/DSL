@@ -1,0 +1,33 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.ml.classical.regression import Regressor
+
+/**
+ * Random forest regression.
+ *
+ * @param numberOfTrees The number of trees to be used in the random forest. Has to be greater than 0.
+ */
+@PythonName("RandomForest")
+class RandomForestRegressor(
+    @PythonName("number_of_trees") numberOfTrees: Int = 100
+) sub Regressor {
+    /**
+     * Get the number of trees used in the random forest.
+     */
+    @PythonName("number_of_trees") attr numberOfTrees: Int
+
+    /**
+     * Create a copy of this regressor and fit it with the given training data.
+     *
+     * This regressor is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedRegressor The fitted regressor.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedRegressor: RandomForestRegressor
+}
