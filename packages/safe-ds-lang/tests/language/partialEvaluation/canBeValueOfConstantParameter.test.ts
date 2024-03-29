@@ -34,6 +34,10 @@ describe('SafeDsTypeChecker', async () => {
             expected: true,
         },
         {
+            code: 'unknown',
+            expected: true,
+        },
+        {
             code: 'unresolved()',
             expected: true,
         },

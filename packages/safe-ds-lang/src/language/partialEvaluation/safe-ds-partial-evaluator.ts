@@ -681,7 +681,14 @@ export class SafeDsPartialEvaluator {
      * Returns whether the given expression can be the value of a constant parameter.
      */
     canBeValueOfConstantParameter = (node: SdsExpression): boolean => {
-        if (isSdsBoolean(node) || isSdsFloat(node) || isSdsInt(node) || isSdsNull(node) || isSdsString(node)) {
+        if (
+            isSdsBoolean(node) ||
+            isSdsFloat(node) ||
+            isSdsInt(node) ||
+            isSdsNull(node) ||
+            isSdsString(node) ||
+            isSdsUnknown(node)
+        ) {
             return true;
         } else if (isSdsCall(node)) {
             // If some arguments are not provided, we already show an error.
