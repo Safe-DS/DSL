@@ -346,7 +346,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                 vscode.window.showErrorMessage('No EDA Panel to refresh!');
                 return;
             }
-            EDAPanel.kill(lastSuccessfulPipelineName!);
+            EDAPanel.kill(lastSuccessfulPipelineName! + '.' + lastSuccessfulTableName!);
             setTimeout(() => {
                 EDAPanel.createOrShow(
                     context.extensionUri,

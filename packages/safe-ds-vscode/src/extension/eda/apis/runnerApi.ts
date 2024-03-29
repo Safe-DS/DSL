@@ -358,7 +358,7 @@ export class RunnerApi {
                                                     missingValueRatioMap.get(
                                                         columnNameToPlaceholderMVNameMap.get(column[1].name)!,
                                                     )!),
-                                        ) + ' Total',
+                                        ) + ' Total Valids',
                                     interpretation: 'default',
                                 },
                             ],
