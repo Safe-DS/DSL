@@ -1,0 +1,40 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.ml.classical.regression import Regressor
+
+/**
+ * Elastic net regression.
+ *
+ * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+ * @param lassoRatio Number between 0 and 1 that controls the ratio between Lasso and Ridge regularization. If 0, only Ridge
+ * regularization is used. If 1, only Lasso regularization is used.
+ */
+@PythonName("ElasticNetRegression")
+class ElasticNetRegressor(
+    alpha: Float = 1.0,
+    @PythonName("lasso_ratio") lassoRatio: Float = 0.5
+) sub Regressor {
+    /**
+     * Get the regularization of the model.
+     */
+    attr alpha: Float
+    /**
+     * Get the ratio between Lasso and Ridge regularization.
+     */
+    @PythonName("lasso_ratio") attr lassoRatio: Float
+
+    /**
+     * Create a copy of this regressor and fit it with the given training data.
+     *
+     * This regressor is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedRegressor The fitted regressor.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedRegressor: ElasticNetRegressor
+}
