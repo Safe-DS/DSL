@@ -7,9 +7,7 @@ from safeds.data.tabular.typing import ColumnType
  *
  * @param schema Map from column names to data types.
  */
-class Schema(
-    `schema`: Map<String, ColumnType>
-) {
+class Schema {
     /**
      * Return a list of all column names saved in this schema.
      */
