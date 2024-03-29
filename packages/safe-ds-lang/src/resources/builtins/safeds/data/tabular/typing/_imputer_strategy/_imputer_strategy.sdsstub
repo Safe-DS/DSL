@@ -1,0 +1,8 @@
+package safeds.data.tabular.typing
+
+/**
+ * The abstract base class of the different imputation strategies supported by the `Imputer`.
+ * 
+ * This class is only needed for type annotations. Use the subclasses nested inside `Imputer.Strategy` instead.
+ */
+class ImputerStrategy

@@ -1,0 +1,68 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers.Table import Table
+from safeds.data.tabular.containers.TaggedTable import TaggedTable
+from safeds.ml.classical.classification.Classifier import Classifier
+
+/**
+ * Ada Boost classification.
+ *
+ * @param learner The learner from which the boosted ensemble is built.
+ * @param maximumNumberOfLearners The maximum number of learners at which boosting is terminated. In case of perfect fit, the learning procedure
+ * is stopped early. Has to be greater than 0.
+ * @param learningRate Weight applied to each classifier at each boosting iteration. A higher learning rate increases the contribution
+ * of each classifier. Has to be greater than 0.
+ */
+class AdaBoost(
+	learner: Classifier? = null,
+	@PythonName("maximum_number_of_learners") maximumNumberOfLearners: Int = 50,
+	@PythonName("learning_rate") learningRate: Float = 1.0
+) sub Classifier {
+	/**
+	 * Get the base learner used for training the ensemble.
+	 */
+	attr learner: Classifier?
+	/**
+	 * Get the maximum number of learners in the ensemble.
+	 */
+	@PythonName("maximum_number_of_learners") attr maximumNumberOfLearners: Int
+	/**
+	 * Get the learning rate.
+	 */
+	@PythonName("learning_rate") attr learningRate: Float
+
+	/**
+	 * Create a copy of this classifier and fit it with the given training data.
+	 * 
+	 * This classifier is not modified.
+	 *
+	 * @param trainingSet The training data containing the feature and target vectors.
+	 *
+	 * @result result1 The fitted classifier.
+	 */
+	@Pure
+	fun fit(
+		@PythonName("training_set") trainingSet: TaggedTable
+	) -> result1: AdaBoost
+
+	/**
+	 * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
+	 *
+	 * @param dataset The dataset containing the feature vectors.
+	 *
+	 * @result result1 A dataset containing the given feature vectors and the predicted target vector.
+	 */
+	@Pure
+	fun predict(
+		dataset: Table
+	) -> result1: TaggedTable
+
+	/**
+	 * Check if the classifier is fitted.
+	 *
+	 * @result result1 Whether the classifier is fitted.
+	 */
+	@Pure
+	@PythonName("is_fitted")
+	fun isFitted() -> result1: Boolean
+}

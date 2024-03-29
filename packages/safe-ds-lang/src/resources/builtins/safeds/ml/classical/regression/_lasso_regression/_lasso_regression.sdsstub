@@ -1,0 +1,54 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers.Table import Table
+from safeds.data.tabular.containers.TaggedTable import TaggedTable
+from safeds.ml.classical.regression.Regressor import Regressor
+
+/**
+ * Lasso regression.
+ *
+ * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+ */
+class LassoRegression(
+	alpha: Float = 1.0
+) sub Regressor {
+	/**
+	 * Get the regularization of the model.
+	 */
+	attr alpha: Float
+
+	/**
+	 * Create a copy of this regressor and fit it with the given training data.
+	 * 
+	 * This regressor is not modified.
+	 *
+	 * @param trainingSet The training data containing the feature and target vectors.
+	 *
+	 * @result result1 The fitted regressor.
+	 */
+	@Pure
+	fun fit(
+		@PythonName("training_set") trainingSet: TaggedTable
+	) -> result1: LassoRegression
+
+	/**
+	 * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
+	 *
+	 * @param dataset The dataset containing the feature vectors.
+	 *
+	 * @result result1 A dataset containing the given feature vectors and the predicted target vector.
+	 */
+	@Pure
+	fun predict(
+		dataset: Table
+	) -> result1: TaggedTable
+
+	/**
+	 * Check if the regressor is fitted.
+	 *
+	 * @result result1 Whether the regressor is fitted.
+	 */
+	@Pure
+	@PythonName("is_fitted")
+	fun isFitted() -> result1: Boolean
+}

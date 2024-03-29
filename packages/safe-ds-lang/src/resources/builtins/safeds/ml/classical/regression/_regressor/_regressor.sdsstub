@@ -1,0 +1,70 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers.Table import Table
+from safeds.data.tabular.containers.TaggedTable import TaggedTable
+
+/**
+ * Abstract base class for all regressors.
+ */
+class Regressor {
+	/**
+	 * Create a copy of this regressor and fit it with the given training data.
+	 * 
+	 * This regressor is not modified.
+	 *
+	 * @param trainingSet The training data containing the feature and target vectors.
+	 *
+	 * @result result1 The fitted regressor.
+	 */
+	@Pure
+	fun fit(
+		@PythonName("training_set") trainingSet: TaggedTable
+	) -> result1: Regressor
+
+	/**
+	 * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
+	 *
+	 * @param dataset The dataset containing the feature vectors.
+	 *
+	 * @result result1 A dataset containing the given feature vectors and the predicted target vector.
+	 */
+	@Pure
+	fun predict(
+		dataset: Table
+	) -> result1: TaggedTable
+
+	/**
+	 * Check if the classifier is fitted.
+	 *
+	 * @result result1 Whether the regressor is fitted.
+	 */
+	@Pure
+	@PythonName("is_fitted")
+	fun isFitted() -> result1: Boolean
+
+	/**
+	 * Compute the mean squared error (MSE) on the given data.
+	 *
+	 * @param validationOrTestSet The validation or test set.
+	 *
+	 * @result result1 The calculated mean squared error (the average of the distance of each individual row squared).
+	 */
+	@Pure
+	@PythonName("mean_squared_error")
+	fun meanSquaredError(
+		@PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+	) -> result1: Float
+
+	/**
+	 * Compute the mean absolute error (MAE) of the regressor on the given data.
+	 *
+	 * @param validationOrTestSet The validation or test set.
+	 *
+	 * @result result1 The calculated mean absolute error (the average of the distance of each individual row).
+	 */
+	@Pure
+	@PythonName("mean_absolute_error")
+	fun meanAbsoluteError(
+		@PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+	) -> result1: Float
+}

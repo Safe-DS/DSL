@@ -1,0 +1,107 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers.Table import Table
+from safeds.data.tabular.transformation.TableTransformer import TableTransformer
+from safeds.data.tabular.typing import ImputerStrategy
+from safeds.data.tabular.typing.ImputerStrategy import ImputerStrategy
+
+/**
+ * Replace missing values with the given strategy.
+ *
+ * @param strategy The strategy used to impute missing values. Use the classes nested inside `Imputer.Strategy` to specify it.
+ */
+class Imputer(
+	strategy: ImputerStrategy
+) sub TableTransformer {
+	class Strategy() {
+/**
+ * An imputation strategy for imputing missing data with given constant values.
+ *
+ * @param value The given value to impute missing values.
+ */
+		class Constant(
+			value: Any
+		) sub ImputerStrategy
+
+/**
+ * An imputation strategy for imputing missing data with mean values.
+ */
+		class Mean() sub ImputerStrategy
+
+/**
+ * An imputation strategy for imputing missing data with median values.
+ */
+		class Median() sub ImputerStrategy
+
+/**
+ * An imputation strategy for imputing missing data with mode values. The lowest value will be used if there are multiple values with the same highest count.
+ */
+		class Mode() sub ImputerStrategy
+	}
+
+	/**
+	 * Learn a transformation for a set of columns in a table.
+	 * 
+	 * This transformer is not modified.
+	 *
+	 * @param table The table used to fit the transformer.
+	 * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
+	 *
+	 * @result result1 The fitted transformer.
+	 */
+	@Pure
+	fun fit(
+		table: Table,
+		@PythonName("column_names") columnNames: List<String>?
+	) -> result1: Imputer
+
+	/**
+	 * Apply the learned transformation to a table.
+	 * 
+	 * The table is not modified.
+	 *
+	 * @param table The table to which the learned transformation is applied.
+	 *
+	 * @result result1 The transformed table.
+	 */
+	@Pure
+	fun transform(
+		table: Table
+	) -> result1: Table
+
+	/**
+	 * Check if the transformer is fitted.
+	 *
+	 * @result result1 Whether the transformer is fitted.
+	 */
+	@Pure
+	@PythonName("is_fitted")
+	fun isFitted() -> result1: Boolean
+
+	/**
+	 * Get the names of all new columns that have been added by the Imputer.
+	 *
+	 * @result result1 A list of names of the added columns, ordered as they will appear in the table.
+	 */
+	@Pure
+	@PythonName("get_names_of_added_columns")
+	fun getNamesOfAddedColumns() -> result1: List<String>
+
+	/**
+	 * Get the names of all columns that may have been changed by the Imputer.
+	 *
+	 * @result result1 The list of (potentially) changed column names, as passed to fit.
+	 */
+	@Pure
+	@PythonName("get_names_of_changed_columns")
+	fun getNamesOfChangedColumns() -> result1: List<String>
+
+	/**
+	 * Get the names of all columns that have been removed by the Imputer.
+	 *
+	 * @result result1 A list of names of the removed columns, ordered as they appear in the table the Imputer was fitted on.
+	 */
+	@Pure
+	@PythonName("get_names_of_removed_columns")
+	fun getNamesOfRemovedColumns() -> result1: List<String>
+}

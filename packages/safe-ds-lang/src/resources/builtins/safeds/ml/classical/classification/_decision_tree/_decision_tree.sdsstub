@@ -1,0 +1,45 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers.Table import Table
+from safeds.data.tabular.containers.TaggedTable import TaggedTable
+from safeds.ml.classical.classification.Classifier import Classifier
+
+/**
+ * Decision tree classification.
+ */
+class DecisionTree() sub Classifier {
+	/**
+	 * Create a copy of this classifier and fit it with the given training data.
+	 * 
+	 * This classifier is not modified.
+	 *
+	 * @param trainingSet The training data containing the feature and target vectors.
+	 *
+	 * @result result1 The fitted classifier.
+	 */
+	@Pure
+	fun fit(
+		@PythonName("training_set") trainingSet: TaggedTable
+	) -> result1: DecisionTree
+
+	/**
+	 * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
+	 *
+	 * @param dataset The dataset containing the feature vectors.
+	 *
+	 * @result result1 A dataset containing the given feature vectors and the predicted target vector.
+	 */
+	@Pure
+	fun predict(
+		dataset: Table
+	) -> result1: TaggedTable
+
+	/**
+	 * Check if the classifier is fitted.
+	 *
+	 * @result result1 Whether the classifier is fitted.
+	 */
+	@Pure
+	@PythonName("is_fitted")
+	fun isFitted() -> result1: Boolean
+}

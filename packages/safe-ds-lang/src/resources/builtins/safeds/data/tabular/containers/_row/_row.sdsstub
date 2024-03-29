@@ -1,0 +1,119 @@
+package safeds.data.tabular.containers
+
+from safeds.data.tabular.typing.ColumnType import ColumnType
+from safeds.data.tabular.typing.Schema import Schema
+
+/**
+ * A row is a collection of named values.
+ *
+ * @param data The data. If None, an empty row is created.
+ */
+class Row(
+	data: Map<String, Any>? = null
+) {
+	/**
+	 * Return a list of all column names in the row.
+	 */
+	@PythonName("column_names") attr columnNames: List<String>
+	/**
+	 * Return the number of columns in this row.
+	 */
+	@PythonName("number_of_column") attr numberOfColumn: Int
+	/**
+	 * Return the schema of the row.
+	 */
+	attr `schema`: Schema
+
+	/**
+	 * Create a row from a dictionary that maps column names to column values.
+	 *
+	 * @param data The data.
+	 *
+	 * @result result1 The created row.
+	 */
+	@Pure
+	@PythonName("from_dict")
+	static fun fromDict(
+		data: Map<String, Any>
+	) -> result1: Row
+
+	/**
+	 * Return the value of a specified column.
+	 *
+	 * @param columnName The column name.
+	 *
+	 * @result result1 The column value.
+	 */
+	@Pure
+	@PythonName("get_value")
+	fun getValue(
+		@PythonName("column_name") columnName: String
+	) -> result1: Any
+
+	/**
+	 * Check whether the row contains a given column.
+	 *
+	 * @param columnName The column name.
+	 *
+	 * @result result1 True, if the row contains the column, False otherwise.
+	 */
+	@Pure
+	@PythonName("has_column")
+	fun hasColumn(
+		@PythonName("column_name") columnName: String
+	) -> result1: Boolean
+
+	/**
+	 * Return the type of the specified column.
+	 *
+	 * @param columnName The column name.
+	 *
+	 * @result result1 The type of the column.
+	 */
+	@Pure
+	@PythonName("get_column_type")
+	fun getColumnType(
+		@PythonName("column_name") columnName: String
+	) -> result1: ColumnType
+
+	// TODO Safe-DS does not support tuple types.
+	/**
+	 * Sort the columns of a `Row` with the given comparator and return a new `Row`.
+	 * 
+	 * The original row is not modified. The comparator is a function that takes two tuples of (ColumnName,
+	 * Value) `col1` and `col2` and returns an integer:
+	 * 
+	 * * If `col1` should be ordered before `col2`, the function should return a negative number.
+	 * * If `col1` should be ordered after `col2`, the function should return a positive number.
+	 * * If the original order of `col1` and `col2` should be kept, the function should return 0.
+	 * 
+	 * If no comparator is given, the columns will be sorted alphabetically by their name.
+	 *
+	 * @param comparator The function used to compare two tuples of (ColumnName, Value).
+	 *
+	 * @result result1 A new row with sorted columns.
+	 */
+	@Pure
+	@PythonName("sort_columns")
+	fun sortColumns(
+		comparator: (param1: Tuple<Any>, param2: Tuple<Any>) -> param3: Int
+	) -> result1: Row
+
+	/**
+	 * Return a dictionary that maps column names to column values.
+	 *
+	 * @result result1 Dictionary representation of the row.
+	 */
+	@Pure
+	@PythonName("to_dict")
+	fun toDict() -> result1: Map<String, Any>
+
+	/**
+	 * Return an HTML representation of the row.
+	 *
+	 * @result result1 The generated HTML.
+	 */
+	@Pure
+	@PythonName("to_html")
+	fun toHtml() -> result1: String
+}
