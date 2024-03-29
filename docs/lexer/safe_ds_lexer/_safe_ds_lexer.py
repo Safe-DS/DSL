@@ -23,6 +23,7 @@ keywords_literal = (
     "false",
     "null",
     "true",
+    "unknown",
 )
 
 keywords_namespace = (

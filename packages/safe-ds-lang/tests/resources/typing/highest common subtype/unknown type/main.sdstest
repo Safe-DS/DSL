@@ -5,11 +5,11 @@ class Contravariant<in T>
 segment mySegment(
     one: Contravariant<literal<1>>,
     nullable: Contravariant<literal<null>>,
-    unknown: Contravariant<Unresolved>,
+    unresolved: Contravariant<Unresolved>,
 ) {
     // $TEST$ serialization List<Contravariant<Nothing>>
-    »[one, unknown]«;
+    »[one, unresolved]«;
 
     // $TEST$ serialization List<Contravariant<Nothing>>
-    »[nullable, unknown]«;
+    »[nullable, unresolved]«;
 }

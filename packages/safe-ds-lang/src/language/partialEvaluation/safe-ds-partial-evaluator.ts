@@ -34,6 +34,7 @@ import {
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
     isSdsTypeCast,
+    isSdsUnknown,
     type SdsArgument,
     type SdsAssignee,
     type SdsCall,
@@ -212,6 +213,8 @@ export class SafeDsPartialEvaluator {
             return new StringConstant(node.value);
         } else if (isSdsTemplateStringEnd(node)) {
             return new StringConstant(node.value);
+        } else if (isSdsUnknown(node)) {
+            return UnknownEvaluatedNode;
         } else if (isSdsBlockLambda(node)) {
             return new BlockLambdaClosure(node, substitutions);
         } else if (isSdsExpressionLambda(node)) {
@@ -678,7 +681,14 @@ export class SafeDsPartialEvaluator {
      * Returns whether the given expression can be the value of a constant parameter.
      */
     canBeValueOfConstantParameter = (node: SdsExpression): boolean => {
-        if (isSdsBoolean(node) || isSdsFloat(node) || isSdsInt(node) || isSdsNull(node) || isSdsString(node)) {
+        if (
+            isSdsBoolean(node) ||
+            isSdsFloat(node) ||
+            isSdsInt(node) ||
+            isSdsNull(node) ||
+            isSdsString(node) ||
+            isSdsUnknown(node)
+        ) {
             return true;
         } else if (isSdsCall(node)) {
             // If some arguments are not provided, we already show an error.

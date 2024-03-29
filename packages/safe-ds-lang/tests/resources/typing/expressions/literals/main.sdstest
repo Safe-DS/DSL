@@ -16,4 +16,7 @@ pipeline myPipeline {
 
     // $TEST$ serialization literal<"myString">
     val stringLiteral = »"myString"«;
+
+    // $TEST$ serialization Nothing
+    val unknownLiteral = »unknown«;
 }

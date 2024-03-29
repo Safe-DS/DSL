@@ -12,7 +12,7 @@
         },
         {
             "name": "constant.language.safe-ds",
-            "match": "\\b(false|null|true)\\b"
+            "match": "\\b(false|null|true|unknown)\\b"
         },
         {
             "name": "storage.type.safe-ds",
