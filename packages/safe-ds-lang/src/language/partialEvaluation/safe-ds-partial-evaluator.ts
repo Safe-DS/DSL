@@ -34,6 +34,7 @@ import {
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
     isSdsTypeCast,
+    isSdsUnknown,
     type SdsArgument,
     type SdsAssignee,
     type SdsCall,
@@ -212,6 +213,8 @@ export class SafeDsPartialEvaluator {
             return new StringConstant(node.value);
         } else if (isSdsTemplateStringEnd(node)) {
             return new StringConstant(node.value);
+        } else if (isSdsUnknown(node)) {
+            return UnknownEvaluatedNode;
         } else if (isSdsBlockLambda(node)) {
             return new BlockLambdaClosure(node, substitutions);
         } else if (isSdsExpressionLambda(node)) {
