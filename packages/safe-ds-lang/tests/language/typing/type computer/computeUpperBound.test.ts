@@ -16,7 +16,7 @@ const code = `
         LegalDirectBounds sub Number,
         LegalIndirectBounds sub LegalDirectBounds,
         UnnamedBounds sub literal<2>,
-        UnresolvedBounds sub unknown,
+        UnresolvedBounds sub Unresolved,
     >
 `;
 const module = await getNodeOfType(services, code, isSdsModule);
