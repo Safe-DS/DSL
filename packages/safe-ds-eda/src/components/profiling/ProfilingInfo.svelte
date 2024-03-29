@@ -25,9 +25,9 @@
 <div class="wrapper">
     <div class="profilingItemsTop">
         {#each profiling.top as profilingTopItem}
-            {#if profilingTopItem.type === 'name'}
+            {#if profilingTopItem.type === 'text'}
                 <div class="profilingItem">
-                    <span style="color: {getProfilingItemColor(profilingTopItem)};">{profilingTopItem.name}</span>
+                    <span style="color: {getProfilingItemColor(profilingTopItem)};">{profilingTopItem.value}</span>
                 </div>
             {:else if profilingTopItem.type === 'numerical'}
                 <div class="profilingItem">
@@ -41,9 +41,10 @@
     </div>
     <div class="profilingItemsBottom">
         {#each profiling.bottom as profilingBottomItem}
-            {#if profilingBottomItem.type === 'name'}
+            {#if profilingBottomItem.type === 'text'}
                 <div class="profilingItem">
-                    <span style="color: {getProfilingItemColor(profilingBottomItem)};">{profilingBottomItem.name}</span>
+                    <span style="color: {getProfilingItemColor(profilingBottomItem)};">{profilingBottomItem.value}</span
+                    >
                 </div>
             {:else if profilingBottomItem.type === 'numerical'}
                 <div class="profilingItem">

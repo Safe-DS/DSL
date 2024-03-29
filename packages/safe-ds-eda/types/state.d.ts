@@ -77,7 +77,7 @@ export interface Profiling {
 
 export interface ProfilingDetailBase {
     type: 'numerical' | 'image' | 'name';
-    name: string;
+    value: string;
     interpretation: 'warn' | 'error' | 'default' | 'bold' | 'good';
 }
 
@@ -90,13 +90,12 @@ export interface ProfilingDetailStatistical extends ProfilingDetailBase {
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
     type: 'image';
-    name: string;
-    encodedImage: string;
+    value: string;
 }
 
 export interface ProfilingDetailName extends ProfilingDetailBase {
-    type: 'name';
-    name: string;
+    type: 'text';
+    value: string;
 }
 
 export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage | ProfilingDetailName;

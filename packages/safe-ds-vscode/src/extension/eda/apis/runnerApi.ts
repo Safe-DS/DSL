@@ -119,14 +119,6 @@ export class RunnerApi {
 
     private randomPlaceholderName(): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // __gen, code gen prefix (konstante importieren)
-        const charactersLength = characters.length;
-        const randomArray = new Uint8Array(20);
-        crypto.getRandomValues(randomArray);
-        let result = '';
-        randomArray.forEach((value) => {
-            result += characters.charAt(value % charactersLength);
-        });
-        return CODEGEN_PREFIX + result;
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -331,7 +323,7 @@ export class RunnerApi {
                         profiling: {
                             top: [validRatio, missingRatio],
                             bottom: [
-                                { type: 'name', name: 'Categorical', interpretation: 'bold' },
+                                { type: 'text', value: 'Categorical', interpretation: 'bold' },
                                 ...uniqueProfilings,
                             ],
                         },
@@ -343,15 +335,15 @@ export class RunnerApi {
                         profiling: {
                             top: [validRatio, missingRatio],
                             bottom: [
-                                { type: 'name', name: 'Categorical', interpretation: 'bold' },
+                                { type: 'text', value: 'Categorical', interpretation: 'bold' },
                                 {
-                                    type: 'name',
-                                    name: uniqueValues + ' Distincts',
+                                    type: 'text',
+                                    value: uniqueValues + ' Distincts',
                                     interpretation: 'default',
                                 },
                                 {
-                                    type: 'name',
-                                    name:
+                                    type: 'text',
+                                    value:
                                         Math.round(
                                             column[1].values.length *
                                                 (1 -
@@ -380,7 +372,7 @@ export class RunnerApi {
     }
 
     public async getColumnNames(tableIdentifier: string): Promise<string[]> {
-        const newPlaceholderName = this.randomPlaceholderName();
+        const newPlaceholderName = this.genPlaceholderName();
         const columnNamesSdsCode = this.sdsStringForColumnNames(tableIdentifier, newPlaceholderName);
         const pipelineExecutionId = crypto.randomUUID();
         await this.addToAndExecutePipeline(pipelineExecutionId, columnNamesSdsCode);
