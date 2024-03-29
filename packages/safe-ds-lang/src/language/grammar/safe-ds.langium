@@ -756,6 +756,7 @@ SdsLiteral returns SdsLiteral:
   | SdsMap
   | SdsNull
   | SdsString
+  | SdsUnknown
 ;
 
 interface SdsBoolean extends SdsLiteral {
@@ -822,6 +823,12 @@ interface SdsString extends SdsLiteral {
 
 SdsString returns SdsString:
     value=STRING
+;
+
+interface SdsUnknown extends SdsLiteral {}
+
+SdsUnknown returns SdsUnknown:
+    {SdsUnknown} 'unknown'
 ;
 
 interface SdsParenthesizedExpression extends SdsExpression {
