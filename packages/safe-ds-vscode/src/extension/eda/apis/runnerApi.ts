@@ -12,6 +12,7 @@ export class RunnerApi {
     pipelinePath: vscode.Uri;
     pipelineName: string;
     baseDocument: LangiumDocument<AstNode> | undefined;
+    placeholderCounter = 0;
 
     constructor(services: SafeDsServices, pipelinePath: vscode.Uri, pipelineName: string) {
         this.services = services;
@@ -117,8 +118,8 @@ export class RunnerApi {
         );
     }
 
-    private randomPlaceholderName(): string {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // __gen, code gen prefix (konstante importieren)
+    private genPlaceholderName(): string {
+        return CODEGEN_PREFIX + this.placeholderCounter++;
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -210,7 +211,7 @@ export class RunnerApi {
 
         // Generate SDS code to get missing value ratio for each column
         for (let i = 0; i < columns.length; i++) {
-            const newMvPlaceholderName = this.randomPlaceholderName();
+            const newMvPlaceholderName = this.genPlaceholderName();
             missingValueRatioMap.set(newMvPlaceholderName, 0);
             columnNameToPlaceholderMVNameMap.set(columns[i]![1].name, newMvPlaceholderName);
 
@@ -220,7 +221,7 @@ export class RunnerApi {
                 newMvPlaceholderName,
             );
 
-            const newHistogramPlaceholderName = this.randomPlaceholderName();
+            const newHistogramPlaceholderName = this.genPlaceholderName();
             histogramMap.set(newHistogramPlaceholderName, 'null');
             columnNameToPlaceholderHistogramNameMap.set(columns[i]![1].name, newHistogramPlaceholderName);
 
@@ -232,7 +233,7 @@ export class RunnerApi {
 
             // Only need to check IDness for non-numerical columns
             if (columns[i]![1].type !== 'numerical') {
-                const newIDnessPlaceholderName = this.randomPlaceholderName();
+                const newIDnessPlaceholderName = this.genPlaceholderName();
                 idnessMap.set(newIDnessPlaceholderName, 1);
                 columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
                 sdsStrings += this.sdsStringForIDnessByColumnName(
