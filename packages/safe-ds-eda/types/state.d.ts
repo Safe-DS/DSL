@@ -90,7 +90,7 @@ export interface ProfilingDetailStatistical extends ProfilingDetailBase {
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
     type: 'image';
-    value: string;
+    value: Base64Image;
 }
 
 export interface ProfilingDetailName extends ProfilingDetailBase {
@@ -188,4 +188,11 @@ export interface ProfilingSettings extends ProfilingSettingsBase {
     standardDeviation: boolean;
     sum: boolean;
     variance: boolean;
+}
+
+// ------------ Types for general objects -----------
+
+export interface Base64Image {
+    format: string;
+    bytes: string;
 }

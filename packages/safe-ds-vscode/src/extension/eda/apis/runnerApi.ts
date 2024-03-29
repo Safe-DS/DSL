@@ -1,4 +1,4 @@
-import { Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
+import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
 import { SafeDsServices, messages } from '@safe-ds/lang';
 import { LangiumDocument, AstNode } from 'langium';
 import { printOutputMessage } from '../../output.ts';
@@ -207,7 +207,7 @@ export class RunnerApi {
         const idnessMap = new Map<string, number>(); // Saved by random placeholder name
 
         const columnNameToPlaceholderHistogramNameMap = new Map<string, string>(); // Mapping random placeholder name for histogram back to column name
-        const histogramMap = new Map<string, string>(); // Saved by random placeholder name
+        const histogramMap = new Map<string, Base64Image | undefined>(); // Saved by random placeholder name
 
         // Generate SDS code to get missing value ratio for each column
         for (let i = 0; i < columns.length; i++) {
@@ -221,8 +221,30 @@ export class RunnerApi {
                 newMvPlaceholderName,
             );
 
+            // Only need to check IDness for non-numerical columns
+            if (columns[i]![1].type !== 'numerical') {
+                const newIDnessPlaceholderName = this.genPlaceholderName();
+                idnessMap.set(newIDnessPlaceholderName, 1);
+                columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
+
+                sdsStrings += this.sdsStringForIDnessByColumnName(
+                    columns[i]![1].name,
+                    table.name,
+                    newIDnessPlaceholderName,
+                );
+
+                let uniqueValues = new Set();
+                for (let j = 0; j < columns[i]![1].values.length; j++) {
+                    uniqueValues.add(columns[i]![1].values[j]);
+                }
+                if (uniqueValues.size <= 3 || uniqueValues.size > 10) {
+                    // Must match conidtions below that choose to display histogram
+                    continue; // This historam only generated if between 4-10 categorigal uniques or numerical type
+                }
+            }
+
             const newHistogramPlaceholderName = this.genPlaceholderName();
-            histogramMap.set(newHistogramPlaceholderName, 'null');
+            histogramMap.set(newHistogramPlaceholderName, undefined);
             columnNameToPlaceholderHistogramNameMap.set(columns[i]![1].name, newHistogramPlaceholderName);
 
             sdsStrings += this.sdsStringForHistogramByColumnName(
@@ -230,18 +252,6 @@ export class RunnerApi {
                 table.name,
                 newHistogramPlaceholderName,
             );
-
-            // Only need to check IDness for non-numerical columns
-            if (columns[i]![1].type !== 'numerical') {
-                const newIDnessPlaceholderName = this.genPlaceholderName();
-                idnessMap.set(newIDnessPlaceholderName, 1);
-                columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
-                sdsStrings += this.sdsStringForIDnessByColumnName(
-                    columns[i]![1].name,
-                    table.name,
-                    newIDnessPlaceholderName,
-                );
-            }
         }
 
         // Execute with generated SDS code
@@ -264,13 +274,13 @@ export class RunnerApi {
             }
         }
 
-        // // Get histogram for each column
-        // for (const [placeholderName] of histogramMap) {
-        //     const histogram = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
-        //     if (histogram) {
-        //         histogramMap.set(placeholderName, histogram as string);
-        //     }
-        // }
+        // Get histogram for each column
+        for (const [placeholderName] of histogramMap) {
+            const histogram = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
+            if (histogram) {
+                histogramMap.set(placeholderName, histogram as Base64Image);
+            }
+        }
 
         // Create profiling data, interpret numerical values and color them
         const profiling: { columnName: string; profiling: Profiling }[] = [];
@@ -329,6 +339,19 @@ export class RunnerApi {
                             ],
                         },
                     });
+                } else if (uniqueValues <= 10) {
+                    const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
+
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            top: [validRatio, missingRatio],
+                            bottom: [
+                                { type: 'text', value: 'Categorical', interpretation: 'bold' },
+                                { type: 'image', value: histogram, interpretation: 'default' },
+                            ],
+                        },
+                    });
                 } else {
                     // Display only the number of unique values
                     profiling.push({
@@ -359,11 +382,16 @@ export class RunnerApi {
                     });
                 }
             } else {
+                const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
+
                 profiling.push({
                     columnName: column[1].name,
                     profiling: {
                         top: [validRatio, missingRatio],
-                        bottom: [],
+                        bottom: [
+                            { type: 'text', value: 'Numerical', interpretation: 'bold' },
+                            { type: 'image', value: histogram, interpretation: 'default' },
+                        ],
                     },
                 });
             }

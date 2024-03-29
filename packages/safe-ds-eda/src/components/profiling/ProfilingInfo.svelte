@@ -2,6 +2,7 @@
     import type { Profiling, ProfilingDetail } from '../../../types/state';
 
     export let profiling: Profiling;
+    export let imageWidth: number = 200;
 
     const getProfilingItemColor = function (profilingItem: ProfilingDetail) {
         if (profilingItem.interpretation === 'good') {
@@ -54,6 +55,18 @@
                     <span style="color: {getProfilingItemColor(profilingBottomItem)};">{profilingBottomItem.value}</span
                     >
                 </div>
+            {:else if profilingBottomItem.type === 'image'}
+                <div class="profilingItem">
+                    <img
+                        style="width: {imageWidth}px;"
+                        class="profilingImage"
+                        src={'data:image/' +
+                            profilingBottomItem.value.format +
+                            ';base64,' +
+                            profilingBottomItem.value.bytes}
+                        alt="profiling histogram"
+                    />
+                </div>
             {/if}
         {/each}
     </div>
@@ -84,5 +97,11 @@
 
     .profilingItemsBottom {
         width: 100%;
+    }
+
+    .profilingImage {
+        height: 150px;
+        object-fit: cover;
+        object-position: left;
     }
 </style>

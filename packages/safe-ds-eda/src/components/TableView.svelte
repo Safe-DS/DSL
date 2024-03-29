@@ -17,6 +17,8 @@
 
     export let sidebarWidth: number;
 
+    let profilingImageWidth = 200;
+
     let showProfiling = false;
     let minTableWidth = 0;
     let numRows = 0;
@@ -56,11 +58,13 @@
             const columnName = column.innerText.trim();
             if (get(savedColumnWidths).has(columnName)) continue; // Only set intital width if not already set
 
-            const baseWidth = 35; // Minimum width
-            const scale = 55;
+            // const baseWidth = 35; // Minimum width
+            // const scale = 55;
 
-            // Use the logarithm of the character count, and scale it
-            const width = baseWidth + Math.log(columnName.length + 1) * scale;
+            // // Use the logarithm of the character count, and scale it
+            // const width = baseWidth + Math.log(columnName.length + 1) * scale;
+
+            const width = profilingImageWidth + 2 * 12; // Image width + 2 borders
 
             // Save the width for future use
             savedColumnWidths.update((map) => {
@@ -545,7 +549,7 @@
     const calcProfilingItemValue = function (profilingItem: ProfilingDetail): number {
         // To edit when Profiling type scales/changes
         if (profilingItem.type === 'image') {
-            return 3; // Bigger than normal text line, should be set to 3x line height
+            return 9; // Bigger than normal text line, should be set to 3x line height
         } else {
             return 1;
         }
@@ -712,7 +716,7 @@
                                 {#if column[1].profiling.top.length === 0 && column[1].profiling.bottom.length === 0}
                                     <div>Loading ...</div>
                                 {:else}
-                                    <ProfilingInfo profiling={column[1].profiling} />
+                                    <ProfilingInfo profiling={column[1].profiling} imageWidth={profilingImageWidth} />
                                 {/if}
                             </div>
                         </td>
