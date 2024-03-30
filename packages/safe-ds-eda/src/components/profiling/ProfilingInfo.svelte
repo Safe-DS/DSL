@@ -37,6 +37,15 @@
                     >
                     <span style="color: {getProfilingItemColor(profilingTopItem)};">{profilingTopItem.value}</span>
                 </div>
+            {:else if profilingTopItem.type === 'image'}
+                <div class="profilingItem">
+                    <img
+                        style="width: {imageWidth}px;"
+                        class="profilingImage"
+                        src={'data:image/' + profilingTopItem.value.format + ';base64,' + profilingTopItem.value.bytes}
+                        alt="profiling histogram"
+                    />
+                </div>
             {/if}
         {/each}
     </div>
