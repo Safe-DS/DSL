@@ -11,8 +11,10 @@ from safeds.ml.classical.classification import Classifier
  */
 @PythonName("KNearestNeighbors")
 class KNearestNeighborsClassifier(
-    @PythonName("number_of_neighbors") numberOfNeighbors: Int
-) sub Classifier {
+    @PythonName("number_of_neighbors") const numberOfNeighbors: Int
+) sub Classifier where {
+    numberOfNeighbors >= 1
+} {
     /**
      * Get the number of neighbors used for interpolation.
      */

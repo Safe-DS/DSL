@@ -14,14 +14,17 @@ from safeds.ml.classical.classification import Classifier
  */
 @PythonName("AdaBoost")
 class AdaBoostClassifier(
-    learner: Classifier? = null,
-    @PythonName("maximum_number_of_learners") maximumNumberOfLearners: Int = 50,
-    @PythonName("learning_rate") learningRate: Float = 1.0
-) sub Classifier {
+    learner: Classifier = DecisionTreeClassifier(),
+    @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
+    @PythonName("learning_rate") const learningRate: Float = 1.0
+) sub Classifier where {
+    maximumNumberOfLearners >= 1,
+    learningRate > 0.0
+} {
     /**
      * Get the base learner used for training the ensemble.
      */
-    attr learner: Classifier?
+    attr learner: Classifier
     /**
      * Get the maximum number of learners in the ensemble.
      */

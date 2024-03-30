@@ -14,14 +14,17 @@ from safeds.ml.classical.regression import Regressor
  */
 @PythonName("AdaBoost")
 class AdaBoostRegressor(
-    learner: Regressor? = null,
-    @PythonName("maximum_number_of_learners") maximumNumberOfLearners: Int = 50,
-    @PythonName("learning_rate") learningRate: Float = 1.0
-) sub Regressor {
+    learner: Regressor = DecisionTreeRegressor(),
+    @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
+    @PythonName("learning_rate") const learningRate: Float = 1.0
+) sub Regressor where {
+    maximumNumberOfLearners >= 1,
+    learningRate > 0.0
+} {
     /**
      * Get the base learner used for training the ensemble.
      */
-    attr learner: Regressor?
+    attr learner: Regressor
     /**
      * Get the maximum number of learners in the ensemble.
      */
