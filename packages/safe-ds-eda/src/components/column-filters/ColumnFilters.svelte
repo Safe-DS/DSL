@@ -3,7 +3,7 @@
 
     export let possibleFilters: PossibleColumnFilter[];
 
-    const handleSpecificValueFilterChange = (event: Event) => {
+    const handleSpecificValueFilterChange = (_event: Event) => {
         // TODO: Implement
     };
 </script>
