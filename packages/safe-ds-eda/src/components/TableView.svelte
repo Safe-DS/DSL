@@ -6,11 +6,12 @@
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
     import type {
+        Column,
         PossibleColumnFilter,
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
-    } from '../../types/state';
+    } from '../../types/state.ts';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { derived, writable, get } from 'svelte/store';
@@ -31,7 +32,7 @@
             minTableWidth = 0;
             numRows = 0;
             maxProfilingItemCount = 0;
-            $currentState.table.columns.forEach((column) => {
+            $currentState.table.columns.forEach((column: [number, Column]) => {
                 if (column[1].values.length > numRows) {
                     numRows = column[1].values.length;
                 }
@@ -579,7 +580,7 @@
             const profilingCategories: ProfilingDetailStatistical[] = column.profiling.bottom
                 .concat(column.profiling.top)
                 .filter(
-                    (profilingItem) =>
+                    (profilingItem: ProfilingDetail) =>
                         profilingItem.type === 'numerical' && profilingItem.interpretation === 'category',
                 ) as ProfilingDetailStatistical[];
 

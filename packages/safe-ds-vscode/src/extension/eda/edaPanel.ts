@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
-import { State } from '@safe-ds/eda/types/state.js';
+import { State } from '@safe-ds/eda/types/state.ts';
 import { logOutput, printOutputMessage } from '../output.ts';
 import { SafeDsServices } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';

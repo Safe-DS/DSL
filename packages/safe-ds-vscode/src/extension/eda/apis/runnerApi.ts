@@ -1,4 +1,4 @@
-import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
+import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.ts';
 import { SafeDsServices, messages } from '@safe-ds/lang';
 import { LangiumDocument, AstNode } from 'langium';
 import { printOutputMessage } from '../../output.ts';
