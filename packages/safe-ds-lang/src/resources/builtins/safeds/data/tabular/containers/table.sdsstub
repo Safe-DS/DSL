@@ -23,7 +23,7 @@ from safeds.data.tabular.typing import ColumnType, Schema
  * @param data The data. If None, an empty table is created.
  */
 class Table(
-    data: Map<String, List<Any>>? = null
+    data: Map<String, List<Any>>? = null // TODO: update default value to empty map
 ) {
     /**
      * Return a list of all column names in this table.

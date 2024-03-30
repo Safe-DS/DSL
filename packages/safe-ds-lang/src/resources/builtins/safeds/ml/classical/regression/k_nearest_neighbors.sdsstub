@@ -11,8 +11,10 @@ from safeds.ml.classical.regression import Regressor
  */
 @PythonName("KNearestNeighbors")
 class KNearestNeighborsRegressor(
-    @PythonName("number_of_neighbors") numberOfNeighbors: Int
-) sub Regressor {
+    @PythonName("number_of_neighbors") const numberOfNeighbors: Int
+) sub Regressor where {
+    numberOfNeighbors >= 1
+} {
     /**
      * Get the number of neighbors used for interpolation.
      */

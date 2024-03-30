@@ -10,8 +10,10 @@ from safeds.ml.classical.regression import Regressor
  */
 @PythonName("RandomForest")
 class RandomForestRegressor(
-    @PythonName("number_of_trees") numberOfTrees: Int = 100
-) sub Regressor {
+    @PythonName("number_of_trees") const numberOfTrees: Int = 100
+) sub Regressor where {
+    numberOfTrees >= 1
+} {
     /**
      * Get the number of trees used in the random forest.
      */
