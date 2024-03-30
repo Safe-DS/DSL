@@ -24,6 +24,12 @@ fun j(param: Any?, param2: Any?)
 @PythonCall("k($param2, $param)")
 fun k(param: Any?, param2: Any?)
 
+@Pure
+fun l(param: (a: Int) -> result: Int) -> result: Int
+
+@Pure
+fun m(param: Int) -> result: Int
+
 @Impure([ImpurityReason.FileReadFromConstantPath("a.txt")])
 fun readFile() -> content: String
 
@@ -47,4 +53,16 @@ pipeline test {
     k?(1.23, 456);
 
     f(readFile());
+    f(l((a) -> segment_a(a)));
+    f(l((a) -> 3 * segment_a(a)));
+    f(l((a) -> m(3 * segment_a(a))));
+    f(l((a) -> 3 * m(m(3 * segment_a(a)))));
+    f(l((a) {yield result = segment_a(a); }));
+    f(l((a) {yield result = m(segment_a(a)); }));
+    f(l((a) -> 3 * a));
+    f(l((a) {yield result = 3 * m(a); }));
+}
+
+segment segment_a(a: Int) -> result: Int {
+    yield result = a * 2;
 }

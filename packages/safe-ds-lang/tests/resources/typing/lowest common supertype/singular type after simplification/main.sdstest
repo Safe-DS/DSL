@@ -32,7 +32,7 @@ segment mySegment(
     »[C]«;
 
     // $TEST$ serialization List<$unknown>
-    »[unknown]«;
+    »[unresolved]«;
 }
 
 // $TEST$ serialization List<T>

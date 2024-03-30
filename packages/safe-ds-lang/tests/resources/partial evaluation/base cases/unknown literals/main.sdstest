@@ -1,0 +1,6 @@
+package tests.partialValidation.baseCases.unknownLiterals
+
+pipeline test {
+    // $TEST$ serialization ?
+    »unknown«;
+}

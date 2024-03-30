@@ -1,0 +1,371 @@
+package safeds.data.tabular.containers
+
+from safeds.data.image.containers import Image
+from safeds.data.tabular.containers import Column, Row, Table
+
+/**
+ * @param data The data.
+ * @param targetName Name of the target column.
+ * @param timeName Name of the time column
+ * @param featureNames Names of the feature columns. If None, all columns except the target and time columns are used.
+ */
+class TimeSeries(
+    data: Map<String, List<Any>>,
+    @PythonName("target_name") targetName: String,
+    @PythonName("time_name") timeName: String,
+    @PythonName("feature_names") featureNames: List<String>? = null
+) sub Table {
+    /**
+     * Get the target column of the tagged table.
+     */
+    attr target: Column
+    /**
+     * Get the feature columns of the tagged table.
+     */
+    attr features: Table
+    /**
+     * Get the time column of the time series.
+     */
+    attr time: Column
+
+    /**
+     * Return a new `TimeSeries` with the provided column attached at the end, as neither target nor feature column.
+     *
+     * The original time series is not modified.
+     *
+     * @param column The column to be added.
+     *
+     * @result result1 The time series with the column attached as neither target nor feature column.
+     */
+    @Pure
+    @PythonName("add_column")
+    fun addColumn(
+        column: Column
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with the provided column attached at the end, as a feature column.
+     *
+     * the original time series is not modified.
+     *
+     * @param column The column to be added.
+     *
+     * @result result1 The time series with the attached feature column.
+     */
+    @Pure
+    @PythonName("add_column_as_feature")
+    fun addColumnAsFeature(
+        column: Column
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with the provided columns attached at the end, as feature columns.
+     *
+     * The original time series is not modified.
+     *
+     * @param columns The columns to be added as features.
+     *
+     * @result result1 The time series with the attached feature columns.
+     */
+    @Pure
+    @PythonName("add_columns_as_features")
+    fun addColumnsAsFeatures(
+        columns: union<List<Column>, Table>
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with multiple added columns, as neither target nor feature columns.
+     *
+     * The original time series is not modified.
+     *
+     * @param columns The columns to be added.
+     *
+     * @result result1 A new time series combining the original table and the given columns as neither target nor feature columns.
+     */
+    @Pure
+    @PythonName("add_columns")
+    fun addColumns(
+        columns: union<List<Column>, Table>
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with an extra Row attached.
+     *
+     * The original time series is not modified.
+     *
+     * @param row The row to be added.
+     *
+     * @result result1 A new time series with the added row at the end.
+     */
+    @Pure
+    @PythonName("add_row")
+    fun addRow(
+        row: Row
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with multiple extra Rows attached.
+     *
+     * The original time series is not modified.
+     *
+     * @param rows The rows to be added.
+     *
+     * @result result1 A new time series which combines the original time series and the given rows.
+     */
+    @Pure
+    @PythonName("add_rows")
+    fun addRows(
+        rows: union<List<Row>, Table>
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` containing only rows that match the given Callable (e.g. lambda function).
+     *
+     * The original time series is not modified.
+     *
+     * @param query A Callable that is applied to all rows.
+     *
+     * @result result1 A time series containing only the rows to match the query.
+     */
+    @Pure
+    @PythonName("filter_rows")
+    fun filterRows(
+        query: (param1: Row) -> param2: Boolean
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with only the given column(s).
+     *
+     * The original time series is not modified.
+     *
+     * @param columnNames A list containing the columns to be kept.
+     *
+     * @result result1 A time series containing only the given column(s).
+     */
+    @Pure
+    @PythonName("keep_only_columns")
+    fun keepOnlyColumns(
+        @PythonName("column_names") columnNames: List<String>
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with the given column(s) removed from the time series.
+     *
+     * The original time series is not modified.
+     *
+     * @param columnNames The names of all columns to be dropped.
+     *
+     * @result result1 A time series without the given columns.
+     */
+    @Pure
+    @PythonName("remove_columns")
+    fun removeColumns(
+        @PythonName("column_names") columnNames: List<String>
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with every column that misses values removed.
+     *
+     * The original time series is not modified.
+     *
+     * @result result1 A time series without the columns that contain missing values.
+     */
+    @Pure
+    @PythonName("remove_columns_with_missing_values")
+    fun removeColumnsWithMissingValues() -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with every column that contains non-numerical values removed.
+     *
+     * The original time series is not modified.
+     *
+     * @result result1 A time series without the columns that contain non-numerical values.
+     */
+    @Pure
+    @PythonName("remove_columns_with_non_numerical_values")
+    fun removeColumnsWithNonNumericalValues() -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with all row duplicates removed.
+     *
+     * The original time series is not modified.
+     *
+     * @result result1 The time series with the duplicate rows removed.
+     */
+    @Pure
+    @PythonName("remove_duplicate_rows")
+    fun removeDuplicateRows() -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` without the rows that contain missing values.
+     *
+     * The original time series is not modified.
+     *
+     * @result result1 A time series without the rows that contain missing values.
+     */
+    @Pure
+    @PythonName("remove_rows_with_missing_values")
+    fun removeRowsWithMissingValues() -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with all rows that contain at least one outlier removed.
+     *
+     * We define an outlier as a value that has a distance of more than 3 standard deviations from the column mean.
+     * Missing values are not considered outliers. They are also ignored during the calculation of the standard
+     * deviation.
+     *
+     * The original time series is not modified.
+     *
+     * @result result1 A new time series without rows containing outliers.
+     */
+    @Pure
+    @PythonName("remove_rows_with_outliers")
+    fun removeRowsWithOutliers() -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with a single column renamed.
+     *
+     * The original time series is not modified.
+     *
+     * @param oldName The old name of the column.
+     * @param newName The new name of the column.
+     *
+     * @result result1 The time series with the renamed column.
+     */
+    @Pure
+    @PythonName("rename_column")
+    fun renameColumn(
+        @PythonName("old_name") oldName: String,
+        @PythonName("new_name") newName: String
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with the specified old column replaced by a list of new columns.
+     *
+     * If the column to be replaced is the target or time column, it must be replaced by exactly one column. That column
+     * becomes the new target or time column. If the column to be replaced is a feature column, the new columns that replace it
+     * all become feature columns.
+     *
+     * The order of columns is kept. The original time series is not modified.
+     *
+     * @param oldColumnName The name of the column to be replaced.
+     * @param newColumns The new columns replacing the old column.
+     *
+     * @result result1 A time series with the old column replaced by the new columns.
+     */
+    @Pure
+    @PythonName("replace_column")
+    fun replaceColumn(
+        @PythonName("old_column_name") oldColumnName: String,
+        @PythonName("new_columns") newColumns: List<Column>
+    ) -> result1: TimeSeries
+
+    /**
+     * Slice a part of the table into a new `TimeSeries`.
+     *
+     * The original time series is not modified.
+     *
+     * @param start The first index of the range to be copied into a new time series, None by default.
+     * @param end The last index of the range to be copied into a new time series, None by default.
+     * @param step The step size used to iterate through the time series, 1 by default.
+     *
+     * @result result1 The resulting time series.
+     */
+    @Pure
+    @PythonName("slice_rows")
+    fun sliceRows(
+        start: Int? = null,
+        end: Int? = null,
+        step: Int = 1
+    ) -> result1: TimeSeries
+
+    /**
+     * Sort the columns of a `TimeSeries` with the given comparator and return a new `TimeSeries`.
+     *
+     * The comparator is a function that takes two columns `col1` and `col2` and
+     * returns an integer:
+     *
+     * * If the function returns a negative number, `col1` will be ordered before `col2`.
+     * * If the function returns a positive number, `col1` will be ordered after `col2`.
+     * * If the function returns 0, the original order of `col1` and `col2` will be kept.
+     *
+     * If no comparator is given, the columns will be sorted alphabetically by their name.
+     *
+     * The original time series is not modified.
+     *
+     * @param comparator The function used to compare two columns.
+     *
+     * @result result1 A new time series with sorted columns.
+     */
+    @Pure
+    @PythonName("sort_columns")
+    fun sortColumns(
+        comparator: (param1: Column, param2: Column) -> param3: Int
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `TimeSeries` with the provided column transformed by calling the provided transformer.
+     *
+     * The original time series is not modified.
+     *
+     * @param name The name of the column to be transformed.
+     * @param transformer The transformer to the given column
+     *
+     * @result result1 The time series with the transformed column.
+     */
+    @Pure
+    @PythonName("transform_column")
+    fun transformColumn(
+        name: String,
+        transformer: (param1: Row) -> param2: Any
+    ) -> result1: TimeSeries
+
+    /**
+     * Plot a lagplot for the target column.
+     *
+     * @param lag The amount of lag used to plot
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_lagplot")
+    fun plotLagplot(
+        lag: Int
+    ) -> result1: Image
+
+    /**
+     * Plot the time series target or the given column(s) as line plot.
+     *
+     * The function will take the time column as the default value for y_column_name and the target column as the
+     * default value for x_column_name.
+     *
+     * @param xColumnName The column name of the column to be plotted on the x-Axis, default is the time column.
+     * @param yColumnName The column name of the column to be plotted on the y-Axis, default is the target column.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_lineplot")
+    fun plotLineplot(
+        @PythonName("x_column_name") xColumnName: String? = null,
+        @PythonName("y_column_name") yColumnName: String? = null
+    ) -> result1: Image
+
+    /**
+     * Plot the time series target or the given column(s) as scatter plot.
+     *
+     * The function will take the time column as the default value for x_column_name and the target column as the
+     * default value for y_column_name.
+     *
+     * @param xColumnName The column name of the column to be plotted on the x-Axis.
+     * @param yColumnName The column name of the column to be plotted on the y-Axis.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_scatterplot")
+    fun plotScatterplot(
+        @PythonName("x_column_name") xColumnName: String? = null,
+        @PythonName("y_column_name") yColumnName: String? = null
+    ) -> result1: Image
+}

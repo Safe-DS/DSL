@@ -12,6 +12,12 @@ __gen_T = TypeVar("__gen_T")
 def __gen_null_safe_call(receiver: Any, callable: Callable[[], __gen_T]) -> __gen_T | None:
     return callable() if receiver is not None else None
 
+# Segments ---------------------------------------------------------------------
+
+def segment_a(a):
+    __gen_yield_result = (a) * (2)
+    return __gen_yield_result
+
 # Pipelines --------------------------------------------------------------------
 
 def test():
@@ -32,3 +38,20 @@ def test():
     __gen_null_safe_call(j, lambda: 'abc'.j(123))
     __gen_null_safe_call(k, lambda: k(456, 1.23))
     f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.readFile", readFile, [], [safeds_runner.file_mtime('a.txt')]))
+    f(l(lambda a: segment_a(a)))
+    f(l(lambda a: (3) * (segment_a(a))))
+    f(l(lambda a: safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.m", m, [(3) * (segment_a(a))], [])))
+    f(l(lambda a: (3) * (safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.m", m, [safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.m", m, [(3) * (segment_a(a))], [])], []))))
+    def __gen_block_lambda_0(a):
+        __gen_block_lambda_result_result = segment_a(a)
+        return __gen_block_lambda_result_result
+    f(l(__gen_block_lambda_0))
+    def __gen_block_lambda_1(a):
+        __gen_block_lambda_result_result = safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.m", m, [segment_a(a)], [])
+        return __gen_block_lambda_result_result
+    f(l(__gen_block_lambda_1))
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.l", l, [lambda a: (3) * (a)], []))
+    def __gen_block_lambda_2(a):
+        __gen_block_lambda_result_result = (3) * (safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.m", m, [a], []))
+        return __gen_block_lambda_result_result
+    f(safeds_runner.memoized_call("tests.generator.callWithRunnerIntegration.l", l, [__gen_block_lambda_2], []))

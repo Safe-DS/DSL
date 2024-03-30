@@ -1,0 +1,34 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.ml.classical.classification import Classifier
+
+/**
+ * K-nearest-neighbors classification.
+ *
+ * @param numberOfNeighbors The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and
+ * less than or equal to the sample size (validated when calling `fit`).
+ */
+@PythonName("KNearestNeighbors")
+class KNearestNeighborsClassifier(
+    @PythonName("number_of_neighbors") numberOfNeighbors: Int
+) sub Classifier {
+    /**
+     * Get the number of neighbors used for interpolation.
+     */
+    @PythonName("number_of_neighbors") attr numberOfNeighbors: Int
+
+    /**
+     * Create a copy of this classifier and fit it with the given training data.
+     *
+     * This classifier is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedClassifier The fitted classifier.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedClassifier: KNearestNeighborsClassifier
+}

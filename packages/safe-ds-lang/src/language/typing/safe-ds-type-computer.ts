@@ -41,6 +41,7 @@ import {
     isSdsTypeCast,
     isSdsTypeParameter,
     isSdsUnionType,
+    isSdsUnknown,
     isSdsYield,
     SdsAbstractResult,
     SdsAssignee,
@@ -345,6 +346,8 @@ export class SafeDsTypeComputer {
             return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
+        } else if (isSdsUnknown(node)) {
+            return this.coreTypes.Nothing;
         }
 
         // Recursive cases

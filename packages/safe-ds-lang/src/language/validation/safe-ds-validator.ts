@@ -185,6 +185,7 @@ import {
     parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant,
     parameterDefaultValueMustRespectParameterBounds,
 } from './other/declarations/parameterBounds.js';
+import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
 
 /**
  * Register custom validation checks.
@@ -379,6 +380,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             unionTypeShouldNotHaveDuplicateTypes(services),
             unionTypeShouldNotHaveASingularTypeArgument(services),
         ],
+        SdsUnknown: [unknownMustOnlyBeUsedAsDefaultValueOfStub],
         SdsYield: [yieldMustNotBeUsedInPipeline, yieldTypeMustMatchResultType(services)],
     };
     registry.register(checks);

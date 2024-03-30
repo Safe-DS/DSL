@@ -1,0 +1,735 @@
+package safeds.data.tabular.containers
+
+from safeds.data.image.containers import Image
+from safeds.data.tabular.containers import Column, Row, TaggedTable, TimeSeries
+from safeds.data.tabular.transformation import InvertibleTableTransformer, TableTransformer
+from safeds.data.tabular.typing import ColumnType, Schema
+
+/**
+ * A table is a two-dimensional collection of data. It can either be seen as a list of rows or as a list of columns.
+ *
+ * To create a `Table` call the constructor or use one of the following static methods:
+ *
+ * | Method                                                                       | Description                            |
+ * | ---------------------------------------------------------------------------- | -------------------------------------- |
+ * | [from_csv_file][safeds.data.tabular.containers._table.Table.from_csv_file]   | Create a table from a CSV file.        |
+ * | [from_json_file][safeds.data.tabular.containers._table.Table.from_json_file] | Create a table from a JSON file.       |
+ * | [from_dict][safeds.data.tabular.containers._table.Table.from_dict]           | Create a table from a dictionary.      |
+ * | [from_columns][safeds.data.tabular.containers._table.Table.from_columns]     | Create a table from a list of columns. |
+ * | [from_rows][safeds.data.tabular.containers._table.Table.from_rows]           | Create a table from a list of rows.    |
+ *
+ * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+ *
+ * @param data The data. If None, an empty table is created.
+ */
+class Table(
+    data: Map<String, List<Any>>? = null
+) {
+    /**
+     * Return a list of all column names in this table.
+     *
+     * Alias for self.schema.column_names -> list[str].
+     */
+    @PythonName("column_names") attr columnNames: List<String>
+    /**
+     * Return the number of columns.
+     */
+    @PythonName("number_of_columns") attr numberOfColumns: Int
+    /**
+     * Return the number of rows.
+     */
+    @PythonName("number_of_rows") attr numberOfRows: Int
+    /**
+     * Return the schema of the table.
+     */
+    attr `schema`: Schema
+
+    /**
+     * Read data from a CSV file into a table.
+     *
+     * @param path The path to the CSV file.
+     *
+     * @result result1 The table created from the CSV file.
+     */
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_csv_file")
+    static fun fromCsvFile(
+        path: String
+    ) -> result1: Table
+
+    /**
+     * Read data from an Excel file into a table.
+     *
+     * Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+     *
+     * @param path The path to the Excel file.
+     *
+     * @result result1 The table created from the Excel file.
+     */
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_excel_file")
+    static fun fromExcelFile(
+        path: String
+    ) -> result1: Table
+
+    /**
+     * Read data from a JSON file into a table.
+     *
+     * @param path The path to the JSON file.
+     *
+     * @result result1 The table created from the JSON file.
+     */
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_json_file")
+    static fun fromJsonFile(
+        path: String
+    ) -> result1: Table
+
+    /**
+     * Create a table from a dictionary that maps column names to column values.
+     *
+     * @param data The data.
+     *
+     * @result result1 The generated table.
+     */
+    @Pure
+    @PythonName("from_dict")
+    static fun fromDict(
+        data: Map<String, List<Any>>
+    ) -> result1: Table
+
+    /**
+     * Return a table created from a list of columns.
+     *
+     * @param columns The columns to be combined. They need to have the same size.
+     *
+     * @result result1 The generated table.
+     */
+    @Pure
+    @PythonName("from_columns")
+    static fun fromColumns(
+        columns: List<Column>
+    ) -> result1: Table
+
+    /**
+     * Return a table created from a list of rows.
+     *
+     * @param rows The rows to be combined. They need to have a matching schema.
+     *
+     * @result result1 The generated table.
+     */
+    @Pure
+    @PythonName("from_rows")
+    static fun fromRows(
+        rows: List<Row>
+    ) -> result1: Table
+
+    /**
+     * Return a column with the data of the specified column.
+     *
+     * @param columnName The name of the column.
+     *
+     * @result result1 The column.
+     */
+    @Pure
+    @PythonName("get_column")
+    fun getColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Column
+
+    /**
+     * Return whether the table contains a given column.
+     *
+     * Alias for self.schema.hasColumn(column_name: str) -> bool.
+     *
+     * @param columnName The name of the column.
+     *
+     * @result result1 True if the column exists.
+     */
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Boolean
+
+    /**
+     * Return the type of the given column.
+     *
+     * Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
+     *
+     * @param columnName The name of the column to be queried.
+     *
+     * @result result1 The type of the column.
+     */
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        @PythonName("column_name") columnName: String
+    ) -> result1: ColumnType
+
+    /**
+     * Return the row at a specified index.
+     *
+     * @param index The index.
+     *
+     * @result result1 The row of the table at the index.
+     */
+    @Pure
+    @PythonName("get_row")
+    fun getRow(
+        index: Int
+    ) -> result1: Row
+
+    /**
+     * Return a table with a number of statistical key values.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 The table with statistics.
+     */
+    @Pure
+    @PythonName("summarize_statistics")
+    fun summarizeStatistics() -> result1: Table
+
+    /**
+     * Return a new table with the provided column attached at the end.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 The table with the column attached.
+     */
+    @Pure
+    @PythonName("add_column")
+    fun addColumn(
+        column: Column
+    ) -> result1: Table
+
+    /**
+     * Return a new `Table` with multiple added columns.
+     *
+     * The original table is not modified.
+     *
+     * @param columns The columns to be added.
+     *
+     * @result result1 A new table combining the original table and the given columns.
+     */
+    @Pure
+    @PythonName("add_columns")
+    fun addColumns(
+        columns: union<List<Column>, Table>
+    ) -> result1: Table
+
+    /**
+     * Return a new `Table` with an added Row attached.
+     *
+     * If the table happens to be empty beforehand, respective columns will be added automatically.
+     *
+     * The order of columns of the new row will be adjusted to the order of columns in the table.
+     * The new table will contain the merged schema.
+     *
+     * The original table is not modified.
+     *
+     * @param row The row to be added.
+     *
+     * @result result1 A new table with the added row at the end.
+     */
+    @Pure
+    @PythonName("add_row")
+    fun addRow(
+        row: Row
+    ) -> result1: Table
+
+    /**
+     * Return a new `Table` with multiple added Rows attached.
+     *
+     * The order of columns of the new rows will be adjusted to the order of columns in the table.
+     * The new table will contain the merged schema.
+     *
+     * The original table is not modified.
+     *
+     * @param rows The rows to be added.
+     *
+     * @result result1 A new table which combines the original table and the given rows.
+     */
+    @Pure
+    @PythonName("add_rows")
+    fun addRows(
+        rows: union<List<Row>, Table>
+    ) -> result1: Table
+
+    /**
+     * Return a new table with rows filtered by Callable (e.g. lambda function).
+     *
+     * The original table is not modified.
+     *
+     * @param query A Callable that is applied to all rows.
+     *
+     * @result result1 A table containing only the rows filtered by the query.
+     */
+    @Pure
+    @PythonName("filter_rows")
+    fun filterRows(
+        query: (param1: Row) -> param2: Boolean
+    ) -> result1: Table
+
+    /**
+     * Return a dictionary with copies of the output tables as values and the keys from the key_selector.
+     *
+     * The original table is not modified.
+     *
+     * @param keySelector A Callable that is applied to all rows and returns the key of the group.
+     *
+     * @result result1 A dictionary containing the new tables as values and the selected keys as keys.
+     */
+    @Pure
+    @PythonName("group_rows_by")
+    fun groupRowsBy<T>(
+        @PythonName("key_selector") keySelector: (param1: Row) -> param2: T
+    ) -> result1: Map<T, Table>
+
+    /**
+     * Return a new table with only the given column(s).
+     *
+     * The original table is not modified.
+     *
+     * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+     *
+     * @param columnNames A list containing only the columns to be kept.
+     *
+     * @result result1 A table containing only the given column(s).
+     */
+    @Pure
+    @PythonName("keep_only_columns")
+    fun keepOnlyColumns(
+        @PythonName("column_names") columnNames: List<String>
+    ) -> result1: Table
+
+    /**
+     * Return a new table without the given column(s).
+     *
+     * The original table is not modified.
+     *
+     * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+     *
+     * @param columnNames A list containing all columns to be dropped.
+     *
+     * @result result1 A table without the given columns.
+     */
+    @Pure
+    @PythonName("remove_columns")
+    fun removeColumns(
+        @PythonName("column_names") columnNames: List<String>
+    ) -> result1: Table
+
+    /**
+     * Return a new table without the columns that contain missing values.
+     *
+     * The original table is not modified.
+     *
+     * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+     *
+     * @result result1 A table without the columns that contain missing values.
+     */
+    @Pure
+    @PythonName("remove_columns_with_missing_values")
+    fun removeColumnsWithMissingValues() -> result1: Table
+
+    /**
+     * Return a new table without the columns that contain non-numerical values.
+     *
+     * The original table is not modified.
+     *
+     * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+     *
+     * @result result1 A table without the columns that contain non-numerical values.
+     */
+    @Pure
+    @PythonName("remove_columns_with_non_numerical_values")
+    fun removeColumnsWithNonNumericalValues() -> result1: Table
+
+    /**
+     * Return a new table with every duplicate row removed.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 The table with the duplicate rows removed.
+     */
+    @Pure
+    @PythonName("remove_duplicate_rows")
+    fun removeDuplicateRows() -> result1: Table
+
+    /**
+     * Return a new table without the rows that contain missing values.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 A table without the rows that contain missing values.
+     */
+    @Pure
+    @PythonName("remove_rows_with_missing_values")
+    fun removeRowsWithMissingValues() -> result1: Table
+
+    /**
+     * Return a new table without those rows that contain at least one outlier.
+     *
+     * We define an outlier as a value that has a distance of more than 3 standard deviations from the column mean.
+     * Missing values are not considered outliers. They are also ignored during the calculation of the standard
+     * deviation.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 A new table without rows containing outliers.
+     */
+    @Pure
+    @PythonName("remove_rows_with_outliers")
+    fun removeRowsWithOutliers() -> result1: Table
+
+    /**
+     * Return a new `Table` with a single column renamed.
+     *
+     * The original table is not modified.
+     *
+     * @param oldName The old name of the target column.
+     * @param newName The new name of the target column.
+     *
+     * @result result1 The Table with the renamed column.
+     */
+    @Pure
+    @PythonName("rename_column")
+    fun renameColumn(
+        @PythonName("old_name") oldName: String,
+        @PythonName("new_name") newName: String
+    ) -> result1: Table
+
+    /**
+     * Return a new table with the specified old column replaced by a list of new columns.
+     *
+     * The order of columns is kept.
+     *
+     * The original table is not modified.
+     *
+     * @param oldColumnName The name of the column to be replaced.
+     * @param newColumns The list of new columns replacing the old column.
+     *
+     * @result result1 A table with the old column replaced by the new columns.
+     */
+    @Pure
+    @PythonName("replace_column")
+    fun replaceColumn(
+        @PythonName("old_column_name") oldColumnName: String,
+        @PythonName("new_columns") newColumns: List<Column>
+    ) -> result1: Table
+
+    /**
+     * Return a new `Table` with randomly shuffled rows of this `Table`.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 The shuffled Table.
+     */
+    @Pure
+    @PythonName("shuffle_rows")
+    fun shuffleRows() -> result1: Table
+
+    /**
+     * Slice a part of the table into a new table.
+     *
+     * The original table is not modified.
+     *
+     * @param start The first index of the range to be copied into a new table, None by default.
+     * @param end The last index of the range to be copied into a new table, None by default.
+     * @param step The step size used to iterate through the table, 1 by default.
+     *
+     * @result result1 The resulting table.
+     */
+    @Pure
+    @PythonName("slice_rows")
+    fun sliceRows(
+        start: Int? = null,
+        end: Int? = null,
+        step: Int = 1
+    ) -> result1: Table
+
+    /**
+     * Sort the columns of a `Table` with the given comparator and return a new `Table`.
+     *
+     * The comparator is a function that takes two columns `col1` and `col2` and
+     * returns an integer:
+     *
+     * * If `col1` should be ordered before `col2`, the function should return a negative number.
+     * * If `col1` should be ordered after `col2`, the function should return a positive number.
+     * * If the original order of `col1` and `col2` should be kept, the function should return 0.
+     *
+     * If no comparator is given, the columns will be sorted alphabetically by their name.
+     *
+     * The original table is not modified.
+     *
+     * @param comparator The function used to compare two columns.
+     *
+     * @result result1 A new table with sorted columns.
+     */
+    @Pure
+    @PythonName("sort_columns")
+    fun sortColumns(
+        comparator: (param1: Column, param2: Column) -> param3: Int
+    ) -> result1: Table
+
+    /**
+     * Sort the rows of a `Table` with the given comparator and return a new `Table`.
+     *
+     * The comparator is a function that takes two rows `row1` and `row2` and
+     * returns an integer:
+     *
+     * * If `row1` should be ordered before `row2`, the function should return a negative number.
+     * * If `row1` should be ordered after `row2`, the function should return a positive number.
+     * * If the original order of `row1` and `row2` should be kept, the function should return 0.
+     *
+     * The original table is not modified.
+     *
+     * @param comparator The function used to compare two rows.
+     *
+     * @result result1 A new table with sorted rows.
+     */
+    @Pure
+    @PythonName("sort_rows")
+    fun sortRows(
+        comparator: (param1: Row, param2: Row) -> param3: Int
+    ) -> result1: Table
+
+    /**
+     * Split the table into two new tables.
+     *
+     * The original table is not modified.
+     *
+     * @param percentageInFirst The desired size of the first table in percentage to the given table; must be between 0 and 1.
+     *
+     * @result result1 A tuple containing the two resulting tables. The first table has the specified size, the second table
+     * contains the rest of the data.
+     * @result result2 A tuple containing the two resulting tables. The first table has the specified size, the second table
+     * contains the rest of the data.
+     */
+    @Pure
+    @PythonName("split_rows")
+    fun splitRows(
+        @PythonName("percentage_in_first") percentageInFirst: Float
+    ) -> (result1: Table, result2: Table)
+
+    /**
+     * Return a new `TaggedTable` with columns marked as a target column or feature columns.
+     *
+     * The original table is not modified.
+     *
+     * @param targetName Name of the target column.
+     * @param featureNames Names of the feature columns. If None, all columns except the target column are used.
+     *
+     * @result result1 A new tagged table with the given target and feature names.
+     */
+    @Pure
+    @PythonName("tag_columns")
+    fun tagColumns(
+        @PythonName("target_name") targetName: String,
+        @PythonName("feature_names") featureNames: List<String>? = null
+    ) -> result1: TaggedTable
+
+    /**
+     * Return a new `TimeSeries` with columns marked as a target and time column or feature columns.
+     *
+     * The original table is not modified.
+     *
+     * @param targetName Name of the target column.
+     * @param timeName Name of the time column.
+     * @param featureNames Names of the feature columns. If None, all columns except the target and time columns are used.
+     *
+     * @result result1 A new time series with the given target, time and feature names.
+     */
+    @Pure
+    @PythonName("time_columns")
+    fun timeColumns(
+        @PythonName("target_name") targetName: String,
+        @PythonName("time_name") timeName: String,
+        @PythonName("feature_names") featureNames: List<String>? = null
+    ) -> result1: TimeSeries
+
+    /**
+     * Return a new `Table` with the provided column transformed by calling the provided transformer.
+     *
+     * The original table is not modified.
+     *
+     * @result result1 The table with the transformed column.
+     */
+    @Pure
+    @PythonName("transform_column")
+    fun transformColumn(
+        name: String,
+        transformer: (param1: Row) -> param2: Any
+    ) -> result1: Table
+
+    /**
+     * Return a new `Table` with a learned transformation applied to this table.
+     *
+     * The original table is not modified.
+     *
+     * @param transformer The transformer which transforms the given table.
+     *
+     * @result result1 The transformed table.
+     */
+    @Pure
+    @PythonName("transform_table")
+    fun transformTable(
+        transformer: TableTransformer
+    ) -> result1: Table
+
+    /**
+     * Return a new `Table` with the inverted transformation applied by the given transformer.
+     *
+     * The original table is not modified.
+     *
+     * @param transformer A transformer that was fitted with columns, which are all present in the table.
+     *
+     * @result result1 The original table.
+     */
+    @Pure
+    @PythonName("inverse_transform_table")
+    fun inverseTransformTable(
+        transformer: InvertibleTableTransformer
+    ) -> result1: Table
+
+    /**
+     * Plot a correlation heatmap for all numerical columns of this `Table`.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_correlation_heatmap")
+    fun plotCorrelationHeatmap() -> result1: Image
+
+    /**
+     * Plot two columns against each other in a lineplot.
+     *
+     * If there are multiple x-values for a y-value, the resulting plot will consist of a line representing the mean
+     * and the lower-transparency area around the line representing the 95% confidence interval.
+     *
+     * @param xColumnName The column name of the column to be plotted on the x-Axis.
+     * @param yColumnName The column name of the column to be plotted on the y-Axis.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_lineplot")
+    fun plotLineplot(
+        @PythonName("x_column_name") xColumnName: String,
+        @PythonName("y_column_name") yColumnName: String
+    ) -> result1: Image
+
+    /**
+     * Plot two columns against each other in a scatterplot.
+     *
+     * @param xColumnName The column name of the column to be plotted on the x-Axis.
+     * @param yColumnName The column name of the column to be plotted on the y-Axis.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_scatterplot")
+    fun plotScatterplot(
+        @PythonName("x_column_name") xColumnName: String,
+        @PythonName("y_column_name") yColumnName: String
+    ) -> result1: Image
+
+    /**
+     * Plot a boxplot for every numerical column.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_boxplots")
+    fun plotBoxplots() -> result1: Image
+
+    /**
+     * Plot a histogram for every column.
+     *
+     * @result result1 The plot as an image.
+     */
+    @Pure
+    @PythonName("plot_histograms")
+    fun plotHistograms() -> result1: Image
+
+    /**
+     * Write the data from the table into a CSV file.
+     *
+     * If the file and/or the directories do not exist they will be created. If the file already exists it will be
+     * overwritten.
+     *
+     * @param path The path to the output file.
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_csv_file")
+    fun toCsvFile(
+        path: String
+    )
+
+    /**
+     * Write the data from the table into an Excel file.
+     *
+     * Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+     * If the file and/or the directories do not exist, they will be created. If the file already exists, it will be
+     * overwritten.
+     *
+     * @param path The path to the output file.
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_excel_file")
+    fun toExcelFile(
+        path: String
+    )
+
+    /**
+     * Write the data from the table into a JSON file.
+     *
+     * If the file and/or the directories do not exist, they will be created. If the file already exists it will be
+     * overwritten.
+     *
+     * @param path The path to the output file.
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_json_file")
+    fun toJsonFile(
+        path: String
+    )
+
+    /**
+     * Return a dictionary that maps column names to column values.
+     *
+     * @result result1 Dictionary representation of the table.
+     */
+    @Pure
+    @PythonName("to_dict")
+    fun toDict() -> result1: Map<String, List<Any>>
+
+    /**
+     * Return an HTML representation of the table.
+     *
+     * @result result1 The generated HTML.
+     */
+    @Pure
+    @PythonName("to_html")
+    fun toHtml() -> result1: String
+
+    /**
+     * Return a list of the columns.
+     *
+     * @result result1 List of columns.
+     */
+    @Pure
+    @PythonName("to_columns")
+    fun toColumns() -> result1: List<Column>
+
+    /**
+     * Return a list of the rows.
+     *
+     * @result result1 List of rows.
+     */
+    @Pure
+    @PythonName("to_rows")
+    fun toRows() -> result1: List<Row>
+}

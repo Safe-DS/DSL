@@ -50,12 +50,14 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is a subtype of {@link other}.
      */
     isSubtypeOf = (type: Type, other: Type, options: TypeCheckOptions = {}): boolean => {
+        // Handle base cases
         if (type.equals(this.coreTypes.Nothing) || other.equals(this.coreTypes.AnyOrNull)) {
             return true;
         } else if (type === UnknownType || other === UnknownType) {
             return false;
         }
 
+        // Handle type parameter types
         if (other instanceof TypeParameterType) {
             if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
                 return false;
@@ -68,10 +70,16 @@ export class SafeDsTypeChecker {
 
             const otherLowerBound = this.coreTypes.Nothing.withExplicitNullability(other.isExplicitlyNullable);
             return this.isSubtypeOf(type, otherLowerBound, options);
+        }
+
+        // Handle union types
+        if (type instanceof UnionType) {
+            return type.types.every((it) => this.isSubtypeOf(it, other, options));
         } else if (other instanceof UnionType) {
             return other.types.some((it) => this.isSubtypeOf(type, it, options));
         }
 
+        // Handle other cases
         if (type instanceof CallableType) {
             return this.callableTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof ClassType) {
@@ -88,8 +96,6 @@ export class SafeDsTypeChecker {
             return this.staticTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof TypeParameterType) {
             return this.typeParameterTypeIsSubtypeOf(type, other, options);
-        } else if (type instanceof UnionType) {
-            return this.unionTypeIsSubtypeOf(type, other, options);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
@@ -310,10 +316,6 @@ export class SafeDsTypeChecker {
     private typeParameterTypeIsSubtypeOf(type: TypeParameterType, other: Type, options: TypeCheckOptions): boolean {
         const upperBound = this.typeComputer().computeUpperBound(type);
         return this.isSubtypeOf(upperBound, other, options);
-    }
-
-    private unionTypeIsSubtypeOf(type: UnionType, other: Type, options: TypeCheckOptions): boolean {
-        return type.types.every((it) => this.isSubtypeOf(it, other, options));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

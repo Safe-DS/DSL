@@ -59,8 +59,6 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
         class Class2() sub Class1
         class Class3
 
-        class Class4
-
         enum Enum1 {
             Variant1(p: Int)
             Variant2
@@ -654,7 +652,23 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type2: enumType1,
             expected: false,
         },
-        // Union type to X
+        // Union type to union type
+        {
+            type1: factory.createUnionType(classType1, classType2),
+            type2: factory.createUnionType(classType1, classType2),
+            expected: true,
+        },
+        {
+            type1: factory.createUnionType(classType1, classType2),
+            type2: factory.createUnionType(classType1, classType3),
+            expected: true,
+        },
+        {
+            type1: factory.createUnionType(classType1, classType3),
+            type2: factory.createUnionType(classType1, classType2),
+            expected: false,
+        },
+        // Union type to other
         {
             type1: factory.createUnionType(),
             type2: classType1,
