@@ -13,7 +13,7 @@
     } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
-    import { derived, writable, type Readable, get } from 'svelte/store';
+    import { derived, writable, get } from 'svelte/store';
 
     export let sidebarWidth: number;
 
@@ -442,15 +442,16 @@
             if (event.target instanceof HTMLElement) {
                 let element = event.target;
 
-                const hasParentWithClass = (element: HTMLElement, className: string) => {
-                    while (element && element !== document.body) {
-                        if (element.classList.contains(className)) {
+                const hasParentWithClass = (elementToScan: HTMLElement, className: string) => {
+                    let currentElement: HTMLElement = elementToScan;
+                    while (currentElement && currentElement !== document.body) {
+                        if (currentElement.classList.contains(className)) {
                             return true;
                         }
-                        if (!element.parentElement) {
+                        if (!currentElement.parentElement) {
                             return false;
                         }
-                        element = element.parentElement;
+                        currentElement = currentElement.parentElement;
                     }
                     return false;
                 };
@@ -666,7 +667,6 @@
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
-                                <!-- svelte-ignore a11y-click-events-have-key-events -->
                                 <!-- svelte-ignore a11y-no-static-element-interactions -->
                                 <div
                                     class="filterIconWrapper"

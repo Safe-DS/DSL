@@ -4,7 +4,7 @@
     export let possibleFilters: PossibleColumnFilter[];
 
     const handleSpecificValueFilterChange = (event: Event) => {
-        console.log((event.target as HTMLSelectElement).value);
+        // TODO: Implement
     };
 </script>
 

@@ -21,6 +21,7 @@ export class RunnerApi {
         getPipelineDocument(this.pipelinePath).then((doc) => {
             // Get here to avoid issues because of chanigng file
             // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
+            // (e.g. launching of extension on table with existing state but no current panel)
             this.baseDocument = doc;
         });
     }
