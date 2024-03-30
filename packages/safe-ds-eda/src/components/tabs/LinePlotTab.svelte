@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { OneColumnTab } from '../../../types/state.ts';
+    import type { TwoColumnTab } from '../../../types/state.ts';
     import LinePlotIcon from '../../icons/LinePlot.svelte';
 
-    export let tabObject: OneColumnTab;
+    export let tabObject: TwoColumnTab;
     export let active: boolean;
     export let width: number;
 </script>

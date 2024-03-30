@@ -31,3 +31,18 @@
 ::-webkit-scrollbar-corner {
     background-color: var(--bg-dark);
 }
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--font-dark);
+}
+
+button:focus {
+    outline-color: transparent !important;
+}
+
+button:hover {
+    background: none;
+}

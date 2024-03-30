@@ -668,8 +668,8 @@
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >{column[1].name}
-                                <!-- svelte-ignore a11y-no-static-element-interactions -->
                                 <div
+                                    role="none"
                                     class="filterIconWrapper"
                                     on:mousedown={(event) => handleFilterContextMenu(event, index)}
                                 >
@@ -683,8 +683,8 @@
                                         <CaretIcon color="var(--transparent)" />
                                     </div>
                                 </div>
-                                <!-- svelte-ignore a11y-no-static-element-interactions -->
-                                <div class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}></div>
+                                <button class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}
+                                ></button>
                             </th>
                         {/each}
                         <th

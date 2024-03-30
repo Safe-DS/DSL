@@ -34,19 +34,19 @@
     </div>
     <div class="tabs">
         {#if width > 50}
-            <nav
+            <button
                 class="tab"
                 class:tabActive={$currentTabIndex === 0}
                 on:click={() => currentTabIndex.update((_cs) => 0)}
             >
                 <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
-            </nav>
+            </button>
             {#if $currentState.tabs}
                 {#each $currentState.tabs as tab, index}
                     {#if tab.type === 'linePlot'}
-                        <nav on:click={() => currentTabIndex.update((_cs) => index + 1)}>
+                        <button on:click={() => currentTabIndex.update((_cs) => index + 1)}>
                             <LinePlotTab tabObject={tab} active={$currentTabIndex === index + 1} {width} />
-                        </nav>
+                        </button>
                     {/if}
                 {/each}
             {/if}
