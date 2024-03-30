@@ -72,6 +72,8 @@ export class RunnerApi {
         });
     }
 
+    // --- SDS code generation ---
+
     private sdsStringForMissingValueRatioByColumnName(
         columnName: string,
         tablePlaceholder: string,
@@ -90,10 +92,6 @@ export class RunnerApi {
 
     private sdsStringForColumnNames(tableIdentifier: string, newPlaceholderName: string): string {
         return 'val ' + newPlaceholderName + ' = ' + tableIdentifier + '.column_names; \n';
-    }
-
-    private sdsStringForColumns(tableIdentifier: string, newPlaceholderName: string): string {
-        return 'val ' + newPlaceholderName + ' = ' + tableIdentifier + '.to_columns(); \n';
     }
 
     private sdsStringForIDnessByColumnName(columnName: string, tablePlaceholder: string, newPlaceholderName: string) {
@@ -117,6 +115,8 @@ export class RunnerApi {
             '").plot_histogram(); \n'
         );
     }
+
+    // --- Placeholder handling ---
 
     private genPlaceholderName(): string {
         return CODEGEN_PREFIX + this.placeholderCounter++;
@@ -212,9 +212,7 @@ export class RunnerApi {
         // Generate SDS code to get missing value ratio for each column
         for (let i = 0; i < columns.length; i++) {
             const newMvPlaceholderName = this.genPlaceholderName();
-            missingValueRatioMap.set(newMvPlaceholderName, 0);
             columnNameToPlaceholderMVNameMap.set(columns[i]![1].name, newMvPlaceholderName);
-
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
                 columns[i]![1].name,
                 table.name,
@@ -224,15 +222,14 @@ export class RunnerApi {
             // Only need to check IDness for non-numerical columns
             if (columns[i]![1].type !== 'numerical') {
                 const newIDnessPlaceholderName = this.genPlaceholderName();
-                idnessMap.set(newIDnessPlaceholderName, 1);
                 columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
-
                 sdsStrings += this.sdsStringForIDnessByColumnName(
                     columns[i]![1].name,
                     table.name,
                     newIDnessPlaceholderName,
                 );
 
+                // Find unique values
                 let uniqueValues = new Set();
                 for (let j = 0; j < columns[i]![1].values.length; j++) {
                     uniqueValues.add(columns[i]![1].values[j]);
@@ -243,10 +240,9 @@ export class RunnerApi {
                 }
             }
 
+            // Histogram for numerical columns or categorical columns with 4-10 unique values
             const newHistogramPlaceholderName = this.genPlaceholderName();
-            histogramMap.set(newHistogramPlaceholderName, undefined);
             columnNameToPlaceholderHistogramNameMap.set(columns[i]![1].name, newHistogramPlaceholderName);
-
             sdsStrings += this.sdsStringForHistogramByColumnName(
                 columns[i]![1].name,
                 table.name,
@@ -259,7 +255,7 @@ export class RunnerApi {
         await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings);
 
         // Get missing value ratio for each column
-        for (const [placeholderName] of missingValueRatioMap) {
+        for (const [, placeholderName] of columnNameToPlaceholderMVNameMap) {
             const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (missingValueRatio) {
                 missingValueRatioMap.set(placeholderName, missingValueRatio as number);
@@ -267,7 +263,7 @@ export class RunnerApi {
         }
 
         // Get IDness for each column
-        for (const [placeholderName] of idnessMap) {
+        for (const [, placeholderName] of columnNameToPlaceholderIDnessNameMap) {
             const idness = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (idness) {
                 idnessMap.set(placeholderName, idness as number);
@@ -275,16 +271,17 @@ export class RunnerApi {
         }
 
         // Get histogram for each column
-        for (const [placeholderName] of histogramMap) {
+        for (const [, placeholderName] of columnNameToPlaceholderHistogramNameMap) {
             const histogram = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (histogram) {
                 histogramMap.set(placeholderName, histogram as Base64Image);
             }
         }
 
-        // Create profiling data, interpret numerical values and color them
+        // Create profiling data
         const profiling: { columnName: string; profiling: Profiling }[] = [];
         for (const column of columns) {
+            // Base info for the top of the profiling
             const missingValuesRatio =
                 missingValueRatioMap.get(columnNameToPlaceholderMVNameMap.get(column[1].name)!)! * 100;
 
@@ -309,7 +306,7 @@ export class RunnerApi {
 
                 if (uniqueValues <= 3) {
                     // Can display each separate percentages of unique values
-                    // Find all unique values
+                    // Find all unique values and count them
                     const uniqueValueCounts = new Map<string, number>();
                     for (let i = 0; i < column[1].values.length; i++) {
                         if (column[1].values[i])
@@ -340,6 +337,7 @@ export class RunnerApi {
                         },
                     });
                 } else if (uniqueValues <= 10) {
+                    // Display histogram for 4-10 unique values, has to match the condition above where histogram is generated
                     const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
 
                     profiling.push({
@@ -353,7 +351,7 @@ export class RunnerApi {
                         },
                     });
                 } else {
-                    // Display only the number of unique values
+                    // Display only the number of unique values vs total valid values
                     profiling.push({
                         columnName: column[1].name,
                         profiling: {
@@ -371,9 +369,9 @@ export class RunnerApi {
                                         Math.round(
                                             column[1].values.length *
                                                 (1 -
-                                                    missingValueRatioMap.get(
+                                                    (missingValueRatioMap.get(
                                                         columnNameToPlaceholderMVNameMap.get(column[1].name)!,
-                                                    )!),
+                                                    ) || 0)),
                                         ) + ' Total Valids',
                                     interpretation: 'default',
                                 },
@@ -382,6 +380,7 @@ export class RunnerApi {
                     });
                 }
             } else {
+                // Display histogram for numerical columns
                 const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
 
                 profiling.push({
@@ -408,16 +407,4 @@ export class RunnerApi {
         const columnNames = await this.getPlaceholderValue(newPlaceholderName, pipelineExecutionId);
         return columnNames as string[];
     }
-
-    // Doesn't work as columns cannot be serialized yet by Runner
-    // public async getColumns(tableIdentifier: string): Promise<{ columns: any; placeholderName: string }> {
-    //     const newPlaceholderName = this.randomPlaceholderName();
-    //     const columnsSdsCode = this.sdsStringForColumns(tableIdentifier, newPlaceholderName);
-    //     const pipelineExecutionId = crypto.randomUUID();
-    //     await this.addToAndExecutePipeline(pipelineExecutionId, columnsSdsCode);
-    //     const columns = await this.getPlaceholderValue(newPlaceholderName, pipelineExecutionId);
-    //     // eslint-disable-next-line no-console
-    //     console.log(columns);
-    //     return { columns, placeholderName: newPlaceholderName };
-    // }
 }

@@ -71,7 +71,6 @@
                 map.set(columnName, width);
                 return map;
             });
-            console.log(columnName, width);
         }
 
         lastHeight = tableContainer.clientHeight; // For recalculateVisibleRowCount
