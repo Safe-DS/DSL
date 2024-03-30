@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PossibleColumnFilter } from '../../../types/state';
+    import type { PossibleColumnFilter } from '../../../types/state.ts';
 
     export let possibleFilters: PossibleColumnFilter[];
 

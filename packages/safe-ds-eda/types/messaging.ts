@@ -1,7 +1,7 @@
 import * as defaultTypes from './state';
 
 // To extension
-type ToExtensionCommand = 'setGlobalState' | 'setInfo' | 'setError';
+type ToExtensionCommand = 'setCurrentGlobalState' | 'resetGlobalState' | 'setInfo' | 'setError';
 
 interface ToExtensionCommandMessage {
     command: ToExtensionCommand;
@@ -35,7 +35,7 @@ export type ToExtensionMessage =
     | ToExtensionSetErrorMessage;
 
 // From extension
-type FromExtensionCommand = 'setWebviewState';
+type FromExtensionCommand = 'setWebviewState' | 'setProfiling';
 
 interface FromExtensionCommandMessage {
     command: FromExtensionCommand;
