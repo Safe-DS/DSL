@@ -10,8 +10,10 @@ from safeds.ml.classical.classification import Classifier
  */
 @PythonName("RandomForest")
 class RandomForestClassifier(
-    @PythonName("number_of_trees") numberOfTrees: Int = 100
-) sub Classifier {
+    @PythonName("number_of_trees") const numberOfTrees: Int = 100
+) sub Classifier where {
+    numberOfTrees >= 1
+} {
     /**
      * Get the number of trees used in the random forest.
      */

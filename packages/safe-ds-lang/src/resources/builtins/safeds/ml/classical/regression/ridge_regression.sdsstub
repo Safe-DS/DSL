@@ -10,8 +10,10 @@ from safeds.ml.classical.regression import Regressor
  */
 @PythonName("RidgeRegression")
 class RidgeRegressor(
-    alpha: Float = 1.0
-) sub Regressor {
+    const alpha: Float = 1.0
+) sub Regressor where {
+    alpha >= 0.0
+} {
     /**
      * Get the regularization of the model.
      */

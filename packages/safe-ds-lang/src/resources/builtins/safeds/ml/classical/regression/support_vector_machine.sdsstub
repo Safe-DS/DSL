@@ -3,7 +3,6 @@ package safeds.ml.classical.regression
 from safeds.data.tabular.containers import Table, TaggedTable
 from safeds.ml.classical.regression import Regressor
 
-
 /**
  * Support vector machine.
  *
@@ -12,9 +11,11 @@ from safeds.ml.classical.regression import Regressor
  */
 @PythonName("SupportVectorMachine")
 class SupportVectorMachineRegressor(
-    c: Float = 1.0,
-    kernel: SupportVectorMachineRegressor.Kernel? = null
-) sub Regressor {
+    const c: Float = 1.0,
+    kernel: SupportVectorMachineRegressor.Kernel = SupportVectorMachineRegressor.Kernel.RadialBasisFunction
+) sub Regressor where {
+    c > 0.0
+} {
     /**
      * The kernel functions that can be used in the support vector machine.
      */

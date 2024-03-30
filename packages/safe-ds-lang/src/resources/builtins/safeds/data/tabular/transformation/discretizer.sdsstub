@@ -9,8 +9,10 @@ from safeds.data.tabular.transformation import TableTransformer
  * @param numberOfBins The number of bins to be created.
  */
 class Discretizer(
-    @PythonName("number_of_bins") numberOfBins: Int = 5
-) sub TableTransformer {
+    @PythonName("number_of_bins") const numberOfBins: Int = 5
+) sub TableTransformer where {
+    numberOfBins >= 2
+} {
     /**
      * Learn a transformation for a set of columns in a table.
      *

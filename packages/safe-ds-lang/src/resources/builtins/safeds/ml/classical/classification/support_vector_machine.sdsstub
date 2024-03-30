@@ -11,9 +11,11 @@ from safeds.ml.classical.classification import Classifier
  */
 @PythonName("SupportVectorMachine")
 class SupportVectorMachineClassifier(
-    c: Float = 1.0,
-    kernel: SupportVectorMachineClassifier.Kernel? = null
-) sub Classifier {
+    const c: Float = 1.0,
+    kernel: SupportVectorMachineClassifier.Kernel = SupportVectorMachineClassifier.Kernel.RadialBasisFunction
+) sub Classifier where {
+    c > 0.0
+} {
     /**
      * The kernel functions that can be used in the support vector machine.
      */

@@ -12,9 +12,13 @@ from safeds.ml.classical.regression import Regressor
  */
 @PythonName("ElasticNetRegression")
 class ElasticNetRegressor(
-    alpha: Float = 1.0,
-    @PythonName("lasso_ratio") lassoRatio: Float = 0.5
-) sub Regressor {
+    const alpha: Float = 1.0,
+    @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
+) sub Regressor where {
+    alpha >= 0.0,
+    lassoRatio >= 0.0,
+    lassoRatio <= 1.0
+} {
     /**
      * Get the regularization of the model.
      */

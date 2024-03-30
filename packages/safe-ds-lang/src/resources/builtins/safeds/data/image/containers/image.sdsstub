@@ -62,9 +62,12 @@ class Image {
      */
     @Pure
     fun resize(
-        @PythonName("new_width") newWidth: Int,
-        @PythonName("new_height") newHeight: Int
-    ) -> result1: Image
+        @PythonName("new_width") const newWidth: Int,
+        @PythonName("new_height") const newHeight: Int
+    ) -> result1: Image where {
+        newWidth >= 0,
+        newHeight >= 0
+    }
 
     /**
      * Return a new `Image` that is converted to grayscale.
@@ -86,11 +89,16 @@ class Image {
      */
     @Pure
     fun crop(
-        x: Int,
-        y: Int,
-        width: Int,
-        height: Int
-    ) -> result1: Image
+        const x: Int,
+        const y: Int,
+        const width: Int,
+        const height: Int
+    ) -> result1: Image where {
+        x >= 0,
+        y >= 0,
+        width >= 0,
+        height >= 0
+    }
 
     /**
      * Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
@@ -130,8 +138,10 @@ class Image {
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
-        factor: Float
-    ) -> result1: Image
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
 
     /**
      * Return a new `Image` with noise added to the image.
@@ -145,8 +155,10 @@ class Image {
     @Pure
     @PythonName("add_noise")
     fun addNoise(
-        @PythonName("standard_deviation") standardDeviation: Float
-    ) -> result1: Image
+        @PythonName("standard_deviation") const standardDeviation: Float
+    ) -> result1: Image where {
+        standardDeviation >= 0.0
+    }
 
     /**
      * Return a new `Image` with adjusted contrast.
@@ -163,8 +175,10 @@ class Image {
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
-        factor: Float
-    ) -> result1: Image
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
 
     /**
      * Return a new `Image` with adjusted color balance.
@@ -181,8 +195,10 @@ class Image {
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
-        factor: Float
-    ) -> result1: Image
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
 
     /**
      * Return a blurred version of the image.
@@ -196,8 +212,10 @@ class Image {
      */
     @Pure
     fun blur(
-        radius: Int
-    ) -> result1: Image
+        const radius: Int
+    ) -> result1: Image where {
+        radius >= 0
+    }
 
     /**
      * Return a sharpened version of the image.
@@ -213,8 +231,10 @@ class Image {
      */
     @Pure
     fun sharpen(
-        factor: Float
-    ) -> result1: Image
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
 
     /**
      * Return a new `Image` with colors inverted.

@@ -13,9 +13,12 @@ from safeds.ml.classical.classification import Classifier
  */
 @PythonName("GradientBoosting")
 class GradientBoostingClassifier(
-    @PythonName("number_of_trees") numberOfTrees: Int = 100,
-    @PythonName("learning_rate") learningRate: Float = 0.1
-) sub Classifier {
+    @PythonName("number_of_trees") const numberOfTrees: Int = 100,
+    @PythonName("learning_rate") const learningRate: Float = 0.1
+) sub Classifier where {
+    numberOfTrees >= 1,
+    learningRate > 0.0
+} {
     /**
      * Get the number of trees (estimators) in the ensemble.
      */

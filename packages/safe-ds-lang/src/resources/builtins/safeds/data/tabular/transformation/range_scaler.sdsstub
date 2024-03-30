@@ -10,8 +10,8 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  * @param maximum The maximum of the new range after the transformation
  */
 class RangeScaler(
-    minimum: Float = 0.0,
-    maximum: Float = 1.0
+    const minimum: Float = 0.0,
+    const maximum: Float = 1.0
 ) sub InvertibleTableTransformer {
     /**
      * Learn a transformation for a set of columns in a table.

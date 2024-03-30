@@ -28,11 +28,14 @@ class NeuralNetworkRegressor(
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
-        @PythonName("epoch_size") epochSize: Int = 25,
-        @PythonName("batch_size") batchSize: Int = 1,
+        @PythonName("epoch_size") const epochSize: Int = 25,
+        @PythonName("batch_size") const batchSize: Int = 1,
         @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
         @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
-    ) -> trainedRegressor: NeuralNetworkRegressor
+    ) -> trainedRegressor: NeuralNetworkRegressor where {
+        epochSize >= 1,
+        batchSize >= 1
+    }
 
     /**
      * Make a prediction for the given test data.
