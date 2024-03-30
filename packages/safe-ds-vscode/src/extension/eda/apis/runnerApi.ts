@@ -20,6 +20,7 @@ export class RunnerApi {
         this.pipelineName = pipelineName;
         getPipelineDocument(this.pipelinePath).then((doc) => {
             // Get here to avoid issues because of chanigng file
+            // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
             this.baseDocument = doc;
         });
     }

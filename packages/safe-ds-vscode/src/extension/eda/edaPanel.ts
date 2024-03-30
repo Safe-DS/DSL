@@ -129,32 +129,7 @@ export class EDAPanel {
             panel.tableName = tableName;
             EDAPanel.panelsMap.set(tableIdentifier, panel);
 
-            // // Have to update and construct state as table placeholder could've changed in code
-            // panel.updateHtmlDone = false;
-            // panel._update();
-            // await panel.waitForUpdateHtmlDone(10000);
-
-            // // Get and send state
-            // const stateInfo = await panel.constructCurrentState();
-            // webviewApi.postMessage(panel!.panel.webview, {
-            //     command: 'setWebviewState',
-            //     value: stateInfo.state,
-            // });
-
-            // // If not present, get and send profiling
-            // if (
-            //     !stateInfo.fromExisting ||
-            //     !stateInfo.state.table ||
-            //     !stateInfo.state
-            //         .table!.columns.map((c) => c[1].profiling)
-            //         .find((p) => p.bottom.length > 0 || p.top.length > 0)
-            // ) {
-            //     const profiling = await panel.runnerApi.getProfiling(stateInfo.state.table!);
-            //     webviewApi.postMessage(panel!.panel.webview, {
-            //         command: 'setProfiling',
-            //         value: profiling,
-            //     });
-            // }
+            // TODO: Display disclaimer that data can be outdated and show refresh button
             return;
         } else {
             // Otherwise, create a new panel.
@@ -195,12 +170,14 @@ export class EDAPanel {
                 value: stateInfo.state,
             });
 
+            // TODO: if from existing state, show disclaimer that updated data is loading and execute pipeline + history + profiling and send
+
             if (
                 !stateInfo.fromExisting ||
                 !stateInfo.state.table ||
-                !stateInfo.state
-                    .table!.columns.map((c) => c[1].profiling)
-                    .find((p) => p.bottom.length > 0 || p.top.length > 0)
+                !stateInfo.state.table!.columns.find(
+                    (c) => c[1].profiling.bottom.length > 0 || c[1].profiling.top.length > 0,
+                )
             ) {
                 const profiling = await EDAPanel.panelsMap
                     .get(tableIdentifier)!

@@ -524,7 +524,7 @@
             if (showProfiling) {
                 setTimeout(() => {
                     fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px';
-                }, 700);
+                }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
             } else {
                 fullHeadBackground.style.height = rowHeight * 2 + 'px';
             }
