@@ -16,6 +16,7 @@ mkdocs-literate-nav = "^0.6.1"
 mkdocs-material = "^9.5.12"
 mkdocs-same-dir = "^0.1.3"
 pygments = "^2.17.2"
+mkdocs-autorefs = "^1.0.1"
 
 [tool.poetry.plugins."pygments.lexers"]
 sds = "safe_ds_lexer:SafeDsLexer"

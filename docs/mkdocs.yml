@@ -80,6 +80,7 @@ theme:
 plugins:
   - literate-nav:
       nav_file: SUMMARY.md
+  - autorefs
   - glightbox
   - same-dir
   - search
