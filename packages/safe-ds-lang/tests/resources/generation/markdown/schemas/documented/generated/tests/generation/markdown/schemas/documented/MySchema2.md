@@ -6,5 +6,6 @@ Description of MySchema2.
 
 | Name | Type |
 |------|------|
-| `column1` | [`#!sds String`][#safeds.lang.String] |
-| `column2` | [`#!sds Int`][#safeds.lang.Int] |
+| `column1` | `#!sds String` |
+| `column2` | `#!sds Int` |
+| `column3` | [`#!sds MyClass`][#tests.generation.markdown.schemas.documented.MyClass] |

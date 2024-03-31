@@ -1,5 +1,5 @@
 import { SafeDsServices } from '../safe-ds-module.js';
-import { LangiumDocument, URI, UriUtils } from 'langium';
+import { AstUtils, LangiumDocument, URI, UriUtils } from 'langium';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
     isSdsAnnotation,
@@ -12,43 +12,69 @@ import {
     isSdsSegment,
     SdsAnnotation,
     SdsClass,
+    SdsDeclaration,
     SdsEnum,
     SdsFunction,
     SdsModuleMember,
     SdsSchema,
     SdsSegment,
 } from '../generated/ast.js';
-import { getModuleMembers, getPackageName, isPrivate } from '../helpers/nodeProperties.js';
+import {
+    getColumns,
+    getModuleMembers,
+    getPackageName,
+    getQualifiedName,
+    isPrivate,
+} from '../helpers/nodeProperties.js';
 import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
+import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
+import { isEmpty } from '../../helpers/collections.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { NamedType, Type } from '../typing/model.js';
 
 const INDENTATION = '    ';
 
 export class SafeDsMarkdownGenerator {
+    private readonly builtinAnnotations: SafeDsAnnotations;
     private readonly documentationProvider: SafeDsDocumentationProvider;
+    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
+        this.builtinAnnotations = services.builtins.Annotations;
         this.documentationProvider = services.documentation.DocumentationProvider;
+        this.typeComputer = services.types.TypeComputer;
     }
 
     generate(documents: LangiumDocument[], options: GenerateOptions): TextDocument[] {
-        const details = documents.flatMap((document) => this.generateDetailsForDocument(document, options));
+        const knownUris = new Set(documents.map((document) => document.uri.toString()));
+        const details = documents.flatMap((document) => this.generateDetailsForDocument(document, knownUris, options));
         const summary = this.generateSummary(details, options);
 
         return [...details, summary];
     }
 
-    private generateDetailsForDocument(document: LangiumDocument, options: GenerateOptions): TextDocument[] {
+    private generateDetailsForDocument(
+        document: LangiumDocument,
+        knownUris: Set<string>,
+        options: GenerateOptions,
+    ): TextDocument[] {
         const root = document.parseResult.value;
         if (!isSdsModule(root)) {
             /* c8 ignore next 2 */
             return [];
         }
 
-        return getModuleMembers(root).flatMap((member) => this.generateDetailsForModuleMember(member, options));
+        return getModuleMembers(root).flatMap((member) =>
+            this.generateDetailsForModuleMember(member, knownUris, options),
+        );
     }
 
-    private generateDetailsForModuleMember(node: SdsModuleMember, options: GenerateOptions): TextDocument[] {
-        const content = this.describeModuleMember(node, options);
+    private generateDetailsForModuleMember(
+        node: SdsModuleMember,
+        knownUris: Set<string>,
+        options: GenerateOptions,
+    ): TextDocument[] {
+        const content = this.describeModuleMember(node, knownUris, options);
         if (content === undefined) {
             return [];
         }
@@ -61,63 +87,158 @@ export class SafeDsMarkdownGenerator {
      * Returns a Markdown description for the given module member. If the member should not be documented, `undefined`
      * is returned.
      */
-    private describeModuleMember(node: SdsModuleMember, options: GenerateOptions): string | undefined {
+    private describeModuleMember(
+        node: SdsModuleMember,
+        knownUris: Set<string>,
+        options: GenerateOptions,
+    ): string | undefined {
         if (isPrivate(node)) {
             // Private declarations cannot be used outside their module, so they are not documented
             return undefined;
         }
 
         if (isSdsAnnotation(node)) {
-            return this.describeAnnotation(node, options);
+            return this.describeAnnotation(node, knownUris, options);
         } else if (isSdsClass(node)) {
-            return this.describeClass(node, options);
+            return this.describeClass(node, knownUris, options);
         } else if (isSdsEnum(node)) {
-            return this.describeEnum(node, options);
+            return this.describeEnum(node, knownUris, options);
         } else if (isSdsFunction(node)) {
-            return this.describeFunction(node, options);
+            return this.describeFunction(node, knownUris, options);
         } else if (isSdsPipeline(node)) {
             // Pipelines cannot be called, so they are not documented
             return undefined;
         } else if (isSdsSchema(node)) {
-            return this.describeSchema(node, options);
+            return this.describeSchema(node, knownUris, options);
         } else if (isSdsSegment(node)) {
-            return this.describeSegment(node, options);
+            return this.describeSegment(node, knownUris, options);
         } else {
             /* c8 ignore next 2 */
             throw new Error(`Unsupported module member type: ${node.$type}`);
         }
     }
 
-    private describeAnnotation(node: SdsAnnotation, options: GenerateOptions): string {
+    private describeAnnotation(node: SdsAnnotation, knownUris: Set<string>, options: GenerateOptions): string {
         // TODO
         return 'Annotation details';
     }
 
-    private describeClass(node: SdsClass, options: GenerateOptions): string {
+    private describeClass(node: SdsClass, knownUris: Set<string>, options: GenerateOptions): string {
         // TODO
         const description = this.documentationProvider.getDescription(node);
         const since = this.documentationProvider.getSince(node);
         return `Class details\n\n${description}\n\n${since}`;
     }
 
-    private describeEnum(node: SdsEnum, options: GenerateOptions): string {
+    private describeEnum(node: SdsEnum, knownUris: Set<string>, options: GenerateOptions): string {
         // TODO
         return 'Enum details';
     }
 
-    private describeFunction(node: SdsFunction, options: GenerateOptions): string {
+    private describeFunction(node: SdsFunction, knownUris: Set<string>, options: GenerateOptions): string {
         // TODO
         return 'Function details';
     }
 
-    private describeSchema(node: SdsSchema, options: GenerateOptions): string {
-        // TODO
-        return 'Schema details';
+    private describeSchema(node: SdsSchema, knownUris: Set<string>, options: GenerateOptions): string {
+        let result = this.renderPreamble(node, 1, 'schema');
+
+        // Columns
+        const columns = getColumns(node);
+        if (isEmpty(columns)) {
+            return result;
+        }
+
+        result += '\n**Columns:**\n\n';
+        result += '| Name | Type |\n';
+        result += '|------|------|\n';
+
+        for (const column of columns) {
+            const name = column.columnName.value;
+            const type = this.typeComputer.computeType(column.columnType);
+
+            result += `| \`${name}\` | ${this.renderType(type, knownUris)} |\n`;
+        }
+
+        return result;
     }
 
-    private describeSegment(node: SdsSegment, options: GenerateOptions): string | undefined {
+    private describeSegment(node: SdsSegment, knownUris: Set<string>, options: GenerateOptions): string | undefined {
         // TODO
         return 'Segment details';
+    }
+
+    private renderPreamble(node: SdsDeclaration, level: number, keyword: string): string {
+        let result = this.renderHeading(node, level, keyword) + '\n';
+
+        const deprecationWarning = this.renderDeprecationWarning(node, keyword);
+        if (deprecationWarning) {
+            result += `\n${deprecationWarning}\n`;
+        }
+
+        const description = this.documentationProvider.getDescription(node);
+        if (description) {
+            result += `\n${description}\n`;
+        }
+
+        return result;
+    }
+
+    private renderHeading(node: SdsDeclaration, level: number, keyword: string): string {
+        let result = '#'.repeat(Math.min(level, 6));
+        result += this.renderMaturity(node);
+        result += ` \`#!sds ${keyword}\``;
+        result += ` ${node.name}`;
+        result += ` {#${getQualifiedName(node)}}`;
+        return result;
+    }
+
+    private renderMaturity(node: SdsDeclaration): string {
+        if (this.builtinAnnotations.callsDeprecated(node)) {
+            return ' :warning:{ title="Deprecated" }';
+        } else if (this.builtinAnnotations.callsExperimental(node)) {
+            return ' :test-tube:{ title="Experimental" }';
+        } else {
+            return '';
+        }
+    }
+
+    private renderDeprecationWarning(node: SdsDeclaration, keyword: string): string {
+        const deprecationInfo = this.builtinAnnotations.getDeprecationInfo(node);
+        if (!deprecationInfo) {
+            return '';
+        }
+
+        let result = '!!! warning "Deprecated"\n';
+        result += `    This ${keyword} is deprecated`;
+
+        if (deprecationInfo.sinceVersion) {
+            result += ` since version **${deprecationInfo.sinceVersion}**`;
+        }
+        if (deprecationInfo.removalVersion) {
+            result += ` and will be removed in version **${deprecationInfo.removalVersion}**`;
+        }
+        result += '.\n\n';
+
+        if (deprecationInfo.alternative) {
+            result += `    * **Alternative:** ${deprecationInfo.alternative}\n`;
+        }
+        if (deprecationInfo.reason) {
+            result += `    * **Reason:** ${deprecationInfo.reason}\n`;
+        }
+
+        return result.trimEnd();
+    }
+
+    private renderType(type: Type, knownUris: Set<string>): string {
+        if (type instanceof NamedType) {
+            const documentUri = AstUtils.getDocument(type.declaration).uri.toString();
+            if (knownUris.has(documentUri)) {
+                return `[\`#!sds ${type}\`][#${getQualifiedName(type.declaration)}]`;
+            }
+        }
+
+        return `\`#!sds ${type}\``;
     }
 
     private uriForModuleMember(node: SdsModuleMember, options: GenerateOptions): URI {
