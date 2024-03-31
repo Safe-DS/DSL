@@ -1,4 +1,4 @@
-# `#!sds annotation` MyAnnotation2 {#tests.generation.markdown.annotations.documented.MyAnnotation2}
+# `#!sds annotation` MyAnnotation2 {#tests.generation.markdown.annotations.documented.MyAnnotation2 data-toc-label='MyAnnotation2'}
 
 Description of MyAnnotation2.
 
@@ -6,7 +6,7 @@ Description of MyAnnotation2.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `param1` | [`#!sds MyEnum1`][#tests.generation.markdown.annotations.documented.MyEnum1] | Description of param1. | - |
+| `param1` | [`#!sds MyEnum1`][tests.generation.markdown.annotations.documented.MyEnum1] | Description of param1. | - |
 | `param2` | `#!sds Float` | Description of param2. | `#!sds 1.0` |
 
 ??? quote "Source code in `main.sdsstub`"

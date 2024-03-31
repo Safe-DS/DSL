@@ -1,4 +1,4 @@
-# `#!sds annotation` MyAnnotation2 {#tests.generation.markdown.annotations.undocumented.MyAnnotation2}
+# `#!sds annotation` MyAnnotation2 {#tests.generation.markdown.annotations.undocumented.MyAnnotation2 data-toc-label='MyAnnotation2'}
 
 **Parameters:**
 

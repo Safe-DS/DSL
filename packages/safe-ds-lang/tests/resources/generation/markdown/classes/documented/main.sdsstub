@@ -1,0 +1,66 @@
+package tests.generation.markdown.classes.documented
+
+/**
+ * Description of MyClass1.
+ */
+class MyClass1
+
+/**
+ * Description of MyClass2.
+ */
+class MyClass2()
+
+/**
+ * Description of MyClass3.
+ *
+ * @typeParam TypeParam1 Description of TypeParam1.
+ * @typeParam TypeParam2 Description of TypeParam2.
+ * @typeParam TypeParam3 Description of TypeParam3.
+ */
+class MyClass3<TypeParam1, TypeParam2 sub MyClass1, TypeParam3 = MyClass1>
+
+/**
+ * Description of MyClass4.
+ *
+ * @param param1 Description of param1.
+ * @param param2 Description of param2.
+ */
+class MyClass4(param1: MyClass1, param2: Float = 1.0)
+
+/**
+ * Description of MyClass5.
+ */
+class MyClass5 sub MyClass1
+
+/**
+ * Description of MyClass6.
+ */
+class MyClass6 {
+    /**
+     * Description of myAttribute1.
+     */
+    attr myAttribute1: MyClass1
+    /**
+     * Description of myAttribute2.
+     */
+    static attr myAttribute2: Float
+
+    /**
+     * Description of myFunction1.
+     */
+    @Pure fun myFunction1()
+    /**
+     * Description of myFunction2.
+     */
+    @Pure static fun myFunction2()
+
+    /**
+     * Description of MyClass7.
+     */
+    class MyClass7
+
+    /**
+     * Description of MyEnum1.
+     */
+    enum MyEnum1
+}

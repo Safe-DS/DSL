@@ -1,4 +1,4 @@
-# :warning:{ title="Deprecated" } `#!sds schema` MySchema2 {#tests.generation.markdown.deprecated.MySchema2}
+# :warning:{ title="Deprecated" } `#!sds schema` MySchema2 {#tests.generation.markdown.deprecated.MySchema2 data-toc-label='MySchema2'}
 
 !!! warning "Deprecated"
 

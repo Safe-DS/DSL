@@ -1,4 +1,4 @@
-# `#!sds fun` myFunction2 {#tests.generation.markdown.functions.documented.myFunction2}
+# `#!sds attr` myFunction2 {#tests.generation.markdown.functions.documented.myFunction2 data-toc-label='myFunction2'}
 
 Description of myFunction2.
 
@@ -15,8 +15,8 @@ Description of myFunction2.
 | Name | Upper Bound | Description | Default |
 |------|-------------|-------------|---------|
 | `TypeParam1` | `#!sds Any?` | Description of TypeParam1. | - |
-| `TypeParam2` | [`#!sds MyClass1`][#tests.generation.markdown.functions.documented.MyClass1] | Description of TypeParam2. | - |
-| `TypeParam3` | `#!sds Any?` | Description of TypeParam3. | [`#!sds MyClass1`][#tests.generation.markdown.functions.documented.MyClass1] |
+| `TypeParam2` | [`#!sds MyClass1`][tests.generation.markdown.functions.documented.MyClass1] | Description of TypeParam2. | - |
+| `TypeParam3` | `#!sds Any?` | Description of TypeParam3. | [`#!sds MyClass1`][tests.generation.markdown.functions.documented.MyClass1] |
 
 ??? quote "Source code in `main.sdsstub`"
 

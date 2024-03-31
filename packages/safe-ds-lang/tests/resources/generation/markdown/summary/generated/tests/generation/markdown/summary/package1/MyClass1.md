@@ -1,5 +1,7 @@
-Class details
+# `#!sds abstract class` MyClass1 {#tests.generation.markdown.summary.package1.MyClass1 data-toc-label='MyClass1'}
 
-undefined
+??? quote "Source code in `package1_module1.sdsstub`"
 
-undefined
+    ```sds linenums="3"
+    class MyClass1
+    ```

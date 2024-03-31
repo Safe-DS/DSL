@@ -1,4 +1,4 @@
-# `#!sds enum` MyEnum1 {#tests.generation.markdown.enums.documented.MyEnum1}
+# `#!sds enum` MyEnum1 {#tests.generation.markdown.enums.documented.MyEnum1 data-toc-label='MyEnum1'}
 
 Description of MyEnum1.
 

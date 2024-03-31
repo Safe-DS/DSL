@@ -1,4 +1,4 @@
-# `#!sds enum` MyEnum2 {#tests.generation.markdown.enums.undocumented.MyEnum2}
+# `#!sds enum` MyEnum2 {#tests.generation.markdown.enums.undocumented.MyEnum2 data-toc-label='MyEnum2'}
 
 ??? quote "Source code in `main.sdsstub`"
 
@@ -9,9 +9,9 @@
     }
     ```
 
-## MyVariant1 {#tests.generation.markdown.enums.undocumented.MyEnum2.MyVariant1}
+## MyVariant1 {#tests.generation.markdown.enums.undocumented.MyEnum2.MyVariant1 data-toc-label='MyVariant1'}
 
-## MyVariant2 {#tests.generation.markdown.enums.undocumented.MyEnum2.MyVariant2}
+## MyVariant2 {#tests.generation.markdown.enums.undocumented.MyEnum2.MyVariant2 data-toc-label='MyVariant2'}
 
 **Parameters:**
 

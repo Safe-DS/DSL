@@ -1,4 +1,4 @@
-# `#!sds fun` myFunction2 {#tests.generation.markdown.functions.undocumented.myFunction2}
+# `#!sds attr` myFunction2 {#tests.generation.markdown.functions.undocumented.myFunction2 data-toc-label='myFunction2'}
 
 **Parameters:**
 

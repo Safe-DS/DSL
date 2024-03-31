@@ -1,4 +1,4 @@
-# :warning:{ title="Deprecated" } `#!sds annotation` MyAnnotation1 {#tests.generation.markdown.annotations.deprecated.MyAnnotation1}
+# :warning:{ title="Deprecated" } `#!sds annotation` MyAnnotation1 {#tests.generation.markdown.annotations.deprecated.MyAnnotation1 data-toc-label='MyAnnotation1'}
 
 !!! warning "Deprecated"
 

@@ -1,4 +1,4 @@
-# `#!sds enum` MyEnum2 {#tests.generation.markdown.enums.documented.MyEnum2}
+# `#!sds enum` MyEnum2 {#tests.generation.markdown.enums.documented.MyEnum2 data-toc-label='MyEnum2'}
 
 Description of MyEnum2.
 
@@ -21,11 +21,11 @@ Description of MyEnum2.
     }
     ```
 
-## MyVariant1 {#tests.generation.markdown.enums.documented.MyEnum2.MyVariant1}
+## MyVariant1 {#tests.generation.markdown.enums.documented.MyEnum2.MyVariant1 data-toc-label='MyVariant1'}
 
 Description of MyVariant1.
 
-## MyVariant2 {#tests.generation.markdown.enums.documented.MyEnum2.MyVariant2}
+## MyVariant2 {#tests.generation.markdown.enums.documented.MyEnum2.MyVariant2 data-toc-label='MyVariant2'}
 
 Description of MyVariant2.
 
@@ -33,5 +33,5 @@ Description of MyVariant2.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `param1` | [`#!sds MyClass1`][#tests.generation.markdown.enums.documented.MyClass1] | Description of param1. | - |
+| `param1` | [`#!sds MyClass1`][tests.generation.markdown.enums.documented.MyClass1] | Description of param1. | - |
 | `param2` | `#!sds Float` | Description of param2. | `#!sds 1.0` |

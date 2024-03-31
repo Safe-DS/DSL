@@ -1,4 +1,4 @@
-# :warning:{ title="Deprecated" } `#!sds enum` MyEnum1 {#tests.generation.markdown.enums.deprecated.MyEnum1}
+# :warning:{ title="Deprecated" } `#!sds enum` MyEnum1 {#tests.generation.markdown.enums.deprecated.MyEnum1 data-toc-label='MyEnum1'}
 
 !!! warning "Deprecated"
 

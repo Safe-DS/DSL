@@ -1,4 +1,4 @@
-# `#!sds internal segment` mySegment2 {#tests.generation.markdown.segments.documented.mySegment2}
+# `#!sds internal segment` mySegment2 {#tests.generation.markdown.segments.documented.mySegment2 data-toc-label='mySegment2'}
 
 Description of mySegment2.
 

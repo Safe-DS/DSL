@@ -1,4 +1,4 @@
-# `#!sds schema` MySchema2 {#tests.generation.markdown.schemas.documented.MySchema2}
+# `#!sds schema` MySchema2 {#tests.generation.markdown.schemas.documented.MySchema2 data-toc-label='MySchema2'}
 
 Description of MySchema2.
 
@@ -6,7 +6,7 @@ Description of MySchema2.
 
 | Name | Type |
 |------|------|
-| `column1` | [`#!sds MyClass`][#tests.generation.markdown.schemas.documented.MyClass] |
+| `column1` | [`#!sds MyClass`][tests.generation.markdown.schemas.documented.MyClass] |
 | `column2` | `#!sds Int` |
 
 ??? quote "Source code in `main.sdsstub`"

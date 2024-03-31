@@ -1,4 +1,4 @@
-# `#!sds segment` mySegment4 {#tests.generation.markdown.segments.documented.mySegment4}
+# `#!sds segment` mySegment4 {#tests.generation.markdown.segments.documented.mySegment4 data-toc-label='mySegment4'}
 
 Description of mySegment4.
 
@@ -6,7 +6,7 @@ Description of mySegment4.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`#!sds MyClass1`][#tests.generation.markdown.segments.documented.MyClass1] | Description of result1. |
+| `result1` | [`#!sds MyClass1`][tests.generation.markdown.segments.documented.MyClass1] | Description of result1. |
 | `result2` | `#!sds Float` | Description of result2. |
 
 ??? quote "Source code in `main.sdspipe`"

@@ -1,4 +1,4 @@
-# `#!sds segment` mySegment1 {#tests.generation.markdown.segments.undocumented.mySegment1}
+# `#!sds segment` mySegment1 {#tests.generation.markdown.segments.undocumented.mySegment1 data-toc-label='mySegment1'}
 
 ??? quote "Source code in `main.sdspipe`"
 
