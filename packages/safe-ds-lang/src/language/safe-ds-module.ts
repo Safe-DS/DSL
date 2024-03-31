@@ -54,6 +54,9 @@ export type SafeDsAddedServices = {
         Enums: SafeDsEnums;
         ImpurityReasons: SafeDsImpurityReasons;
     };
+    documentation: {
+        DocumentationProvider: SafeDsDocumentationProvider;
+    };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
     };
