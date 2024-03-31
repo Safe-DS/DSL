@@ -3,31 +3,31 @@ import {
     listTestSafeDsFilesGroupedByParentDirectory,
     loadDocuments,
     uriToShortenedTestResourceName,
-} from '../../helpers/testResources.js';
+} from '../../../helpers/testResources.js';
 import path from 'path';
-import { ErrorsInCodeError, getErrorsAtURI } from '../../helpers/diagnostics.js';
-import { findTestChecks } from '../../helpers/testChecks.js';
+import { ErrorsInCodeError, getErrorsAtURI } from '../../../helpers/diagnostics.js';
+import { findTestChecks } from '../../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
-import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
-import { locationToString } from '../../../src/helpers/locations.js';
+import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';
+import { locationToString } from '../../../../src/helpers/locations.js';
 import { URI } from 'langium';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 
-const rootResourceName = 'generation';
+const rootResourceName = 'generation/python';
 const runnerIntegration = 'runner integration';
 
-export const createGenerationTests = async (): Promise<GenerationTest[]> => {
+export const createPythonGenerationTests = async (): Promise<PythonGenerationTest[]> => {
     const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
-    const testCases = filesGroupedByParentDirectory.map((entry) => createGenerationTest(...entry));
+    const testCases = filesGroupedByParentDirectory.map((entry) => createPythonGenerationTest(...entry));
 
     return Promise.all(testCases);
 };
 
-const createGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Promise<GenerationTest> => {
+const createPythonGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Promise<PythonGenerationTest> => {
     const outputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
     const expectedOutputUris = listExpectedOutputFiles(outputRoot);
     let runUntil: Location | undefined;
@@ -102,7 +102,7 @@ const listExpectedOutputFiles = (outputRoot: URI): URI[] => {
  * @param level Whether a test file or a test suite is invalid.
  * @param error The error that occurred.
  */
-const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): GenerationTest => {
+const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): PythonGenerationTest => {
     const shortenedResourceName = uriToShortenedTestResourceName(error.uri, rootResourceName);
     const testName = `INVALID TEST ${level} [${shortenedResourceName}]`;
     return {
@@ -118,7 +118,7 @@ const invalidTest = (level: 'FILE' | 'SUITE', error: TestDescriptionError): Gene
 /**
  * A description of a generation test.
  */
-interface GenerationTest extends TestDescription {
+interface PythonGenerationTest extends TestDescription {
     /**
      * The original code.
      */

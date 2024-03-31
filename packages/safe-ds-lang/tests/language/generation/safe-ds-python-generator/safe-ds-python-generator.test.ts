@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
-import { createGenerationTests } from './creator.js';
-import { loadDocuments } from '../../helpers/testResources.js';
+import { createPythonGenerationTests } from './creator.js';
+import { loadDocuments } from '../../../helpers/testResources.js';
 import { stream, URI } from 'langium';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const pythonGenerator = services.generation.PythonGenerator;
 
-const generationTests = createGenerationTests();
+const generationTests = createPythonGenerationTests();
 
 describe('generation', async () => {
     it.each(await generationTests)('$testName', async (test) => {
