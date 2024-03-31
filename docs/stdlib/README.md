@@ -6,5 +6,15 @@ Description of MySchema2.
 
 | Name | Type |
 |------|------|
-| `column1` | [`#!sds String`][#safeds.lang.String] |
-| `column2` | [`#!sds Int`][#safeds.lang.Int] |
+| `column1` | `#!sds String` |
+| `column2` | `#!sds Int` |
+
+??? quote "Source code in `main.sdsstub`"
+
+    ```sds linenums="12"
+    schema MySchema2 {
+        "column1": String,
+        "column2": Int,
+        "column3": MyClass,
+    }
+    ```

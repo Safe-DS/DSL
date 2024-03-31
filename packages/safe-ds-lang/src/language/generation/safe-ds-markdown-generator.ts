@@ -31,6 +31,7 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedType, Type } from '../typing/model.js';
+import { expandToString } from 'langium/generate';
 
 const INDENTATION = '    ';
 
@@ -145,19 +146,23 @@ export class SafeDsMarkdownGenerator {
 
         // Columns
         const columns = getColumns(node);
-        if (isEmpty(columns)) {
-            return result;
+        if (!isEmpty(columns)) {
+            result += '\n**Columns:**\n\n';
+            result += '| Name | Type |\n';
+            result += '|------|------|\n';
+
+            for (const column of columns) {
+                const name = column.columnName.value;
+                const type = this.typeComputer.computeType(column.columnType);
+
+                result += `| \`${name}\` | ${this.renderType(type, knownUris)} |\n`;
+            }
         }
 
-        result += '\n**Columns:**\n\n';
-        result += '| Name | Type |\n';
-        result += '|------|------|\n';
-
-        for (const column of columns) {
-            const name = column.columnName.value;
-            const type = this.typeComputer.computeType(column.columnType);
-
-            result += `| \`${name}\` | ${this.renderType(type, knownUris)} |\n`;
+        // Source code
+        const sourceCode = this.renderSourceCode(node);
+        if (sourceCode) {
+            result += `\n${sourceCode}`;
         }
 
         return result;
@@ -209,7 +214,7 @@ export class SafeDsMarkdownGenerator {
             return '';
         }
 
-        let result = '!!! warning "Deprecated"\n';
+        let result = '!!! warning "Deprecated"\n\n';
         result += `    This ${keyword} is deprecated`;
 
         if (deprecationInfo.sinceVersion) {
@@ -221,10 +226,10 @@ export class SafeDsMarkdownGenerator {
         result += '.\n\n';
 
         if (deprecationInfo.alternative) {
-            result += `    * **Alternative:** ${deprecationInfo.alternative}\n`;
+            result += this.indent(`* **Alternative:** ${deprecationInfo.alternative}`) + `\n`;
         }
         if (deprecationInfo.reason) {
-            result += `    * **Reason:** ${deprecationInfo.reason}\n`;
+            result += this.indent(`* **Reason:** ${deprecationInfo.reason}`) + `\n`;
         }
 
         return result.trimEnd();
@@ -239,6 +244,25 @@ export class SafeDsMarkdownGenerator {
         }
 
         return `\`#!sds ${type}\``;
+    }
+
+    private renderSourceCode(node: SdsDeclaration): string {
+        const startLine = node.$cstNode?.range?.start?.line;
+        const text = node.$cstNode?.text;
+        if (!text || !startLine) {
+            return '';
+        }
+
+        const fileName = AstUtils.getDocument(node).uri.path.split('/').pop();
+
+        let result = `??? quote "Source code in \`${fileName}\`"\n\n`;
+        result += this.indent(expandToString`
+            \`\`\`sds linenums="${startLine + 1}"
+            ${text}
+            \`\`\`
+        `);
+
+        return result + '\n';
     }
 
     private uriForModuleMember(node: SdsModuleMember, options: GenerateOptions): URI {
