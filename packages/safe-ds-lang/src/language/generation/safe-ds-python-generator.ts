@@ -182,7 +182,7 @@ export class SafeDsPythonGenerator {
         this.purityComputer = services.purity.PurityComputer;
     }
 
-    generate(document: LangiumDocument, generateOptions: GenerateOptions): TextDocument[] {
+    generate(document: LangiumDocument, options: GenerateOptions): TextDocument[] {
         const node = document.parseResult.value;
 
         // Do not generate stub files
@@ -193,13 +193,13 @@ export class SafeDsPythonGenerator {
         const name = path.parse(document.uri.fsPath).name;
         const pythonModuleName = this.builtinAnnotations.getPythonModule(node);
         const packagePath = pythonModuleName === undefined ? node.name.split('.') : [pythonModuleName];
-        const parentDirectoryPath = path.join(generateOptions.destination!.fsPath, ...packagePath);
+        const parentDirectoryPath = path.join(options.destination!.fsPath, ...packagePath);
 
         const generatedFiles = new Map<string, string>();
-        const generatedModule = this.generateModule(node, generateOptions);
+        const generatedModule = this.generateModule(node, options);
         const { text, trace } = toStringAndTrace(generatedModule);
         const pythonOutputPath = `${path.join(parentDirectoryPath, this.formatGeneratedFileName(name))}.py`;
-        if (generateOptions.createSourceMaps) {
+        if (options.createSourceMaps) {
             generatedFiles.set(
                 `${pythonOutputPath}.map`,
                 this.generateSourceMap(document, text, trace, this.formatGeneratedFileName(name)),
