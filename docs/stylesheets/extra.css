@@ -1,4 +1,5 @@
-.md-typeset__table, .md-typeset__table table {
+.md-typeset__table,
+.md-typeset__table table {
     display: table !important;
     width: 100%;
 }
