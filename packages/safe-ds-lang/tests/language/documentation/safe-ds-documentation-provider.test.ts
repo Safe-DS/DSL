@@ -184,6 +184,18 @@ describe('SafeDsDocumentationProvider', () => {
                     **@since** — 1.0.0
                 `,
             },
+            {
+                testName: 'multiline tag',
+                code: `
+                    /**
+                     * @param param ${testDocumentation}
+                     * ${testDocumentation}
+                     */
+                    fun myFunction(param: String)
+                `,
+                predicate: isSdsParameter,
+                expectedDocumentation: `${testDocumentation} ${testDocumentation}`,
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
@@ -255,14 +267,14 @@ describe('SafeDsDocumentationProvider', () => {
                 expectedDocumentation: `${testDocumentation} myFunction2 ${testDocumentation}`,
             },
             {
-                testName: 'multiline test',
+                testName: 'multiline text',
                 code: `
                     /**
                      * ${testDocumentation}
                      *
                      * ${testDocumentation}
                      */
-                    fun myFunction<T>(param: String) -> result: String
+                    fun myFunction()
                 `,
                 predicate: isSdsFunction,
                 expectedDocumentation: `${testDocumentation}\n\n${testDocumentation}`,

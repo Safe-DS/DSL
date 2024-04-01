@@ -107,20 +107,20 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
         node: SdsParameter | SdsResult | SdsTypeParameter,
     ): string | undefined {
         const name = node.name;
-        /* c8 ignore start */
         if (!name) {
+            /* c8 ignore next 2 */
             return undefined;
         }
-        /* c8 ignore stop */
 
         const tagName = this.getTagName(node);
-        const matchRegex = new RegExp(`^${name}\\s+(?<content>.*)`, 'u');
+        const matchRegex = new RegExp(`^${name}\\s+(?<content>[\\s\\S]*)`, 'u');
 
         return comment
             .getTags(tagName)
             .map((it) => it.content.toMarkdown(this.createRenderOptions(node)))
             .find((it) => matchRegex.test(it))
-            ?.match(matchRegex)?.groups?.content;
+            ?.match(matchRegex)
+            ?.groups?.content?.replaceAll(/\s+/gu, ' ');
     }
 
     private getTagName(node: SdsParameter | SdsResult | SdsTypeParameter): string {
@@ -148,8 +148,8 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     protected override documentationTagRenderer(node: AstNode, tag: JSDocTag): string | undefined {
         if (tag.name === PARAM_TAG || tag.name === RESULT_TAG || tag.name === TYPE_PARAM_TAG) {
             const contentMd = tag.content.toMarkdown();
-            const [paramName, description] = contentMd.split(/\s(.*)/su);
-            return `**@${tag.name}** *${paramName}* — ${(description ?? '').trim()}`;
+            const [name, description] = contentMd.split(/\s(.*)/su);
+            return `**@${tag.name}** *${name}* — ${(description ?? '').trim()}`;
         } else {
             return super.documentationTagRenderer(node, tag);
         }
