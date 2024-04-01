@@ -27,7 +27,12 @@ Description of MyClass6.
         /**
          * Description of MyClass7.
          */
-        class MyClass7
+        class MyClass7 {
+            /**
+             * Description of myAttribute3.
+             */
+            attr myAttribute3: Int
+        }
     
         /**
          * Description of MyEnum1.
@@ -75,8 +80,19 @@ Description of MyClass7.
 ??? quote "Source code in `main.sdsstub`"
 
     ```sds linenums="60"
-    class MyClass7
+    class MyClass7 {
+        /**
+         * Description of myAttribute3.
+         */
+        attr myAttribute3: Int
+    }
     ```
+
+### `#!sds attr` myAttribute3 {#tests.generation.markdown.classes.documented.MyClass6.MyClass7.myAttribute3 data-toc-label='myAttribute3'}
+
+Description of myAttribute3.
+
+**Type:** `#!sds Int`
 
 ## `#!sds enum` MyEnum1 {#tests.generation.markdown.classes.documented.MyClass6.MyEnum1 data-toc-label='MyEnum1'}
 
@@ -84,6 +100,6 @@ Description of MyEnum1.
 
 ??? quote "Source code in `main.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="70"
     enum MyEnum1
     ```

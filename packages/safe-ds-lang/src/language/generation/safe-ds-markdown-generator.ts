@@ -386,10 +386,10 @@ export class SafeDsMarkdownGenerator {
         result += '.\n\n';
 
         if (deprecationInfo.alternative) {
-            result += this.indent(`* **Alternative:** ${deprecationInfo.alternative}`) + `\n`;
+            result += indent(`* **Alternative:** ${deprecationInfo.alternative}`) + `\n`;
         }
         if (deprecationInfo.reason) {
-            result += this.indent(`* **Reason:** ${deprecationInfo.reason}`) + `\n`;
+            result += indent(`* **Reason:** ${deprecationInfo.reason}`) + `\n`;
         }
 
         return result.trimEnd();
@@ -470,16 +470,22 @@ export class SafeDsMarkdownGenerator {
     }
 
     private renderSourceCode(node: SdsDeclaration): string {
-        const startLine = node.$cstNode?.range?.start?.line;
-        const text = node.$cstNode?.text;
-        if (!text || !startLine) {
+        const cstNode = node.$cstNode;
+        if (!cstNode) {
             return '';
         }
+
+        const startLine = cstNode.range.start.line;
+        const firstLineIndent = AstUtils.getDocument(node).textDocument.getText({
+            start: { line: startLine, character: 0 },
+            end: cstNode.range.start,
+        });
+        const text = removeLinePrefix(cstNode.text, firstLineIndent);
 
         const fileName = AstUtils.getDocument(node).uri.path.split('/').pop();
 
         let result = `??? quote "Source code in \`${fileName}\`"\n\n`;
-        result += this.indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\``);
+        result += indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\``);
 
         return result + '\n';
     }
@@ -547,7 +553,7 @@ export class SafeDsMarkdownGenerator {
                 }
 
                 result += `- ${key}\n`;
-                result += this.indent(this.describeSummary(newRoot, value));
+                result += indent(this.describeSummary(newRoot, value));
                 result += '\n';
             });
 
@@ -567,14 +573,6 @@ export class SafeDsMarkdownGenerator {
 
         return result;
     }
-
-    private indent(text: string): string {
-        return text
-            .trim()
-            .split('\n')
-            .map((line) => `${INDENTATION}${line}`)
-            .join('\n');
-    }
 }
 
 export interface GenerateOptions {
@@ -585,3 +583,18 @@ interface Summary {
     children: Map<string, Summary>;
     leaves: string[];
 }
+
+const indent = (text: string): string => {
+    return text
+        .trim()
+        .split('\n')
+        .map((line) => `${INDENTATION}${line}`)
+        .join('\n');
+};
+
+const removeLinePrefix = (text: string, prefix: string): string => {
+    return text
+        .split('\n')
+        .map((line) => (line.startsWith(prefix) ? line.slice(prefix.length) : line))
+        .join('\n');
+};

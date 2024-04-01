@@ -57,7 +57,12 @@ class MyClass6 {
     /**
      * Description of MyClass7.
      */
-    class MyClass7
+    class MyClass7 {
+        /**
+         * Description of myAttribute3.
+         */
+        attr myAttribute3: Int
+    }
 
     /**
      * Description of MyEnum1.
