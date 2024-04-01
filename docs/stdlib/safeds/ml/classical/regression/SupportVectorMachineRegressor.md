@@ -72,6 +72,45 @@ Support vector machine.
     }
     ```
 
+## `#!sds attr` c {#safeds.ml.classical.regression.SupportVectorMachineRegressor.c data-toc-label='c'}
+
+Get the regularization strength.
+
+**Type:** [`Float`][safeds.lang.Float]
+
+## `#!sds attr` kernel {#safeds.ml.classical.regression.SupportVectorMachineRegressor.kernel data-toc-label='kernel'}
+
+Get the type of kernel used.
+
+**Type:** [`Kernel`][safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel]
+
+## `#!sds fun` fit {#safeds.ml.classical.regression.SupportVectorMachineRegressor.fit data-toc-label='fit'}
+
+Create a copy of this regressor and fit it with the given training data.
+
+This regressor is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fittedRegressor` | [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor] | The fitted regressor. |
+
+??? quote "Source code in `support_vector_machine.sdsstub`"
+
+    ```sds linenums="64"
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedRegressor: SupportVectorMachineRegressor
+    ```
+
 ## `#!sds enum` Kernel {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel data-toc-label='Kernel'}
 
 The kernel functions that can be used in the support vector machine.
@@ -118,49 +157,10 @@ A polynomial kernel.
 |------|------|-------------|---------|
 | `degree` | [`Int`][safeds.lang.Int] | The degree of the polynomial. | - |
 
-### Sigmoid {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.Sigmoid data-toc-label='Sigmoid'}
-
-A sigmoid kernel.
-
 ### RadialBasisFunction {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.RadialBasisFunction data-toc-label='RadialBasisFunction'}
 
 A radial basis function kernel.
 
-## `#!sds attr` c {#safeds.ml.classical.regression.SupportVectorMachineRegressor.c data-toc-label='c'}
+### Sigmoid {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.Sigmoid data-toc-label='Sigmoid'}
 
-Get the regularization strength.
-
-**Type:** [`Float`][safeds.lang.Float]
-
-## `#!sds attr` kernel {#safeds.ml.classical.regression.SupportVectorMachineRegressor.kernel data-toc-label='kernel'}
-
-Get the type of kernel used.
-
-**Type:** [`Kernel`][safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel]
-
-## `#!sds fun` fit {#safeds.ml.classical.regression.SupportVectorMachineRegressor.fit data-toc-label='fit'}
-
-Create a copy of this regressor and fit it with the given training data.
-
-This regressor is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `fittedRegressor` | [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor] | The fitted regressor. |
-
-??? quote "Source code in `support_vector_machine.sdsstub`"
-
-    ```sds linenums="64"
-    @Pure
-    fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
-    ) -> fittedRegressor: SupportVectorMachineRegressor
-    ```
+A sigmoid kernel.

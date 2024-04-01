@@ -292,9 +292,9 @@ A container for image data.
     }
     ```
 
-## `#!sds attr` width {#safeds.data.image.containers.Image.width data-toc-label='width'}
+## `#!sds attr` channel {#safeds.data.image.containers.Image.channel data-toc-label='channel'}
 
-Get the width of the image in pixels.
+Get the number of channels of the image.
 
 **Type:** [`Int`][safeds.lang.Int]
 
@@ -304,81 +304,15 @@ Get the height of the image in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` channel {#safeds.data.image.containers.Image.channel data-toc-label='channel'}
+## `#!sds attr` width {#safeds.data.image.containers.Image.width data-toc-label='width'}
 
-Get the number of channels of the image.
+Get the width of the image in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds static fun` fromFile {#safeds.data.image.containers.Image.fromFile data-toc-label='fromFile'}
+## `#!sds fun` addNoise {#safeds.data.image.containers.Image.addNoise data-toc-label='addNoise'}
 
-Create an image from a file.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the image file. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image. |
-
-??? quote "Source code in `image.sdsstub`"
-
-    ```sds linenums="28"
-    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
-    @PythonName("from_file")
-    static fun fromFile(
-        path: String
-    ) -> result1: Image
-    ```
-
-## `#!sds fun` toJpegFile {#safeds.data.image.containers.Image.toJpegFile data-toc-label='toJpegFile'}
-
-Save the image as a JPEG file.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the JPEG file. | - |
-
-??? quote "Source code in `image.sdsstub`"
-
-    ```sds linenums="39"
-    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-    @PythonName("to_jpeg_file")
-    fun toJpegFile(
-        path: String
-    )
-    ```
-
-## `#!sds fun` toPngFile {#safeds.data.image.containers.Image.toPngFile data-toc-label='toPngFile'}
-
-Save the image as a PNG file.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the PNG file. | - |
-
-??? quote "Source code in `image.sdsstub`"
-
-    ```sds linenums="50"
-    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-    @PythonName("to_png_file")
-    fun toPngFile(
-        path: String
-    )
-    ```
-
-## `#!sds fun` resize {#safeds.data.image.containers.Image.resize data-toc-label='resize'}
-
-Return a new `Image` that has been resized to a given size.
+Return a new `Image` with noise added to the image.
 
 The original image is not modified.
 
@@ -386,25 +320,142 @@ The original image is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `newWidth` | [`Int`][safeds.lang.Int] | The new width of the image. | - |
-| `newHeight` | [`Int`][safeds.lang.Int] | The new height of the image. | - |
+| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of the normal distribution. Has to be bigger than or equal to 0. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given width and height. |
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with added noise. |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="66"
+    ```sds linenums="163"
     @Pure
-    fun resize(
-        @PythonName("new_width") const newWidth: Int,
-        @PythonName("new_height") const newHeight: Int
+    @PythonName("add_noise")
+    fun addNoise(
+        @PythonName("standard_deviation") const standardDeviation: Float
     ) -> result1: Image where {
-        newWidth >= 0,
-        newHeight >= 0
+        standardDeviation >= 0.0
+    }
+    ```
+
+## `#!sds fun` adjustBrightness {#safeds.data.image.containers.Image.adjustBrightness data-toc-label='adjustBrightness'}
+
+Return a new `Image` with an adjusted brightness.
+
+The original image is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `factor` | [`Float`][safeds.lang.Float] | The brightness factor. 1.0 will not change the brightness. Below 1.0 will result in a darker image. Above 1.0 will resolut in a brighter image. Has to be bigger than or equal to 0 (black). | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The Image with adjusted brightness. |
+
+??? quote "Source code in `image.sdsstub`"
+
+    ```sds linenums="146"
+    @Pure
+    @PythonName("adjust_brightness")
+    fun adjustBrightness(
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
+    ```
+
+## `#!sds fun` adjustColorBalance {#safeds.data.image.containers.Image.adjustColorBalance data-toc-label='adjustColorBalance'}
+
+Return a new `Image` with adjusted color balance.
+
+The original image is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `factor` | [`Float`][safeds.lang.Float] | Has to be bigger than or equal to 0. If 0 <= factor < 1, make image greyer. If factor = 1, no changes will be made. If factor > 1, increase color balance of image. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The new, adjusted image. |
+
+??? quote "Source code in `image.sdsstub`"
+
+    ```sds linenums="203"
+    @Pure
+    @PythonName("adjust_color_balance")
+    fun adjustColorBalance(
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
+    ```
+
+## `#!sds fun` adjustContrast {#safeds.data.image.containers.Image.adjustContrast data-toc-label='adjustContrast'}
+
+Return a new `Image` with adjusted contrast.
+
+The original image is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `factor` | [`Float`][safeds.lang.Float] | If factor > 1, increase contrast of image. If factor = 1, no changes will be made. If factor < 1, make image greyer. Has to be bigger than or equal to 0 (gray). | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | New image with adjusted contrast. |
+
+??? quote "Source code in `image.sdsstub`"
+
+    ```sds linenums="183"
+    @Pure
+    @PythonName("adjust_contrast")
+    fun adjustContrast(
+        const factor: Float
+    ) -> result1: Image where {
+        factor >= 0.0
+    }
+    ```
+
+## `#!sds fun` blur {#safeds.data.image.containers.Image.blur data-toc-label='blur'}
+
+Return a blurred version of the image.
+
+The original image is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `radius` | [`Int`][safeds.lang.Int] | Radius is directly proportional to the blur value. The radius is equal to the amount of pixels united in each direction. A radius of 1 will result in a united box of 9 pixels. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The blurred image. |
+
+??? quote "Source code in `image.sdsstub`"
+
+    ```sds linenums="221"
+    @Pure
+    fun blur(
+        const radius: Int
+    ) -> result1: Image where {
+        radius >= 0
     }
     ```
 
@@ -466,9 +517,9 @@ The original image is not modified.
     }
     ```
 
-## `#!sds fun` flipVertically {#safeds.data.image.containers.Image.flipVertically data-toc-label='flipVertically'}
+## `#!sds fun` findEdges {#safeds.data.image.containers.Image.findEdges data-toc-label='findEdges'}
 
-Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
+Return a grayscale version of the image with the edges highlighted.
 
 The original image is not modified.
 
@@ -476,14 +527,14 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with edges found. |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="118"
+    ```sds linenums="287"
     @Pure
-    @PythonName("flip_vertically")
-    fun flipVertically() -> result1: Image
+    @PythonName("find_edges")
+    fun findEdges() -> result1: Image
     ```
 
 ## `#!sds fun` flipHorizontally {#safeds.data.image.containers.Image.flipHorizontally data-toc-label='flipHorizontally'}
@@ -506,9 +557,49 @@ The original image is not modified.
     fun flipHorizontally() -> result1: Image
     ```
 
-## `#!sds fun` adjustBrightness {#safeds.data.image.containers.Image.adjustBrightness data-toc-label='adjustBrightness'}
+## `#!sds fun` flipVertically {#safeds.data.image.containers.Image.flipVertically data-toc-label='flipVertically'}
 
-Return a new `Image` with an adjusted brightness.
+Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
+
+The original image is not modified.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
+
+??? quote "Source code in `image.sdsstub`"
+
+    ```sds linenums="118"
+    @Pure
+    @PythonName("flip_vertically")
+    fun flipVertically() -> result1: Image
+    ```
+
+## `#!sds fun` invertColors {#safeds.data.image.containers.Image.invertColors data-toc-label='invertColors'}
+
+Return a new `Image` with colors inverted.
+
+The original image is not modified.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with inverted colors. |
+
+??? quote "Source code in `image.sdsstub`"
+
+    ```sds linenums="254"
+    @Pure
+    @PythonName("invert_colors")
+    fun invertColors() -> result1: Image
+    ```
+
+## `#!sds fun` resize {#safeds.data.image.containers.Image.resize data-toc-label='resize'}
+
+Return a new `Image` that has been resized to a given size.
 
 The original image is not modified.
 
@@ -516,143 +607,66 @@ The original image is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `factor` | [`Float`][safeds.lang.Float] | The brightness factor. 1.0 will not change the brightness. Below 1.0 will result in a darker image. Above 1.0 will resolut in a brighter image. Has to be bigger than or equal to 0 (black). | - |
+| `newWidth` | [`Int`][safeds.lang.Int] | The new width of the image. | - |
+| `newHeight` | [`Int`][safeds.lang.Int] | The new height of the image. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The Image with adjusted brightness. |
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given width and height. |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="146"
+    ```sds linenums="66"
     @Pure
-    @PythonName("adjust_brightness")
-    fun adjustBrightness(
-        const factor: Float
+    fun resize(
+        @PythonName("new_width") const newWidth: Int,
+        @PythonName("new_height") const newHeight: Int
     ) -> result1: Image where {
-        factor >= 0.0
+        newWidth >= 0,
+        newHeight >= 0
     }
     ```
 
-## `#!sds fun` addNoise {#safeds.data.image.containers.Image.addNoise data-toc-label='addNoise'}
+## `#!sds fun` rotateLeft {#safeds.data.image.containers.Image.rotateLeft data-toc-label='rotateLeft'}
 
-Return a new `Image` with noise added to the image.
+Return a new `Image` that is rotated 90 degrees counter-clockwise.
 
 The original image is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of the normal distribution. Has to be bigger than or equal to 0. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with added noise. |
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees counter-clockwise. |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="163"
+    ```sds linenums="276"
     @Pure
-    @PythonName("add_noise")
-    fun addNoise(
-        @PythonName("standard_deviation") const standardDeviation: Float
-    ) -> result1: Image where {
-        standardDeviation >= 0.0
-    }
+    @PythonName("rotate_left")
+    fun rotateLeft() -> result1: Image
     ```
 
-## `#!sds fun` adjustContrast {#safeds.data.image.containers.Image.adjustContrast data-toc-label='adjustContrast'}
+## `#!sds fun` rotateRight {#safeds.data.image.containers.Image.rotateRight data-toc-label='rotateRight'}
 
-Return a new `Image` with adjusted contrast.
+Return a new `Image` that is rotated 90 degrees clockwise.
 
 The original image is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `factor` | [`Float`][safeds.lang.Float] | If factor > 1, increase contrast of image. If factor = 1, no changes will be made. If factor < 1, make image greyer. Has to be bigger than or equal to 0 (gray). | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | New image with adjusted contrast. |
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees clockwise. |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="183"
+    ```sds linenums="265"
     @Pure
-    @PythonName("adjust_contrast")
-    fun adjustContrast(
-        const factor: Float
-    ) -> result1: Image where {
-        factor >= 0.0
-    }
-    ```
-
-## `#!sds fun` adjustColorBalance {#safeds.data.image.containers.Image.adjustColorBalance data-toc-label='adjustColorBalance'}
-
-Return a new `Image` with adjusted color balance.
-
-The original image is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `factor` | [`Float`][safeds.lang.Float] | Has to be bigger than or equal to 0. If 0 <= factor < 1, make image greyer. If factor = 1, no changes will be made. If factor > 1, increase color balance of image. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The new, adjusted image. |
-
-??? quote "Source code in `image.sdsstub`"
-
-    ```sds linenums="203"
-    @Pure
-    @PythonName("adjust_color_balance")
-    fun adjustColorBalance(
-        const factor: Float
-    ) -> result1: Image where {
-        factor >= 0.0
-    }
-    ```
-
-## `#!sds fun` blur {#safeds.data.image.containers.Image.blur data-toc-label='blur'}
-
-Return a blurred version of the image.
-
-The original image is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `radius` | [`Int`][safeds.lang.Int] | Radius is directly proportional to the blur value. The radius is equal to the amount of pixels united in each direction. A radius of 1 will result in a united box of 9 pixels. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The blurred image. |
-
-??? quote "Source code in `image.sdsstub`"
-
-    ```sds linenums="221"
-    @Pure
-    fun blur(
-        const radius: Int
-    ) -> result1: Image where {
-        radius >= 0
-    }
+    @PythonName("rotate_right")
+    fun rotateRight() -> result1: Image
     ```
 
 ## `#!sds fun` sharpen {#safeds.data.image.containers.Image.sharpen data-toc-label='sharpen'}
@@ -684,82 +698,68 @@ The original image is not modified.
     }
     ```
 
-## `#!sds fun` invertColors {#safeds.data.image.containers.Image.invertColors data-toc-label='invertColors'}
+## `#!sds fun` toJpegFile {#safeds.data.image.containers.Image.toJpegFile data-toc-label='toJpegFile'}
 
-Return a new `Image` with colors inverted.
+Save the image as a JPEG file.
 
-The original image is not modified.
+**Parameters:**
 
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with inverted colors. |
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the JPEG file. | - |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="254"
-    @Pure
-    @PythonName("invert_colors")
-    fun invertColors() -> result1: Image
+    ```sds linenums="39"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_jpeg_file")
+    fun toJpegFile(
+        path: String
+    )
     ```
 
-## `#!sds fun` rotateRight {#safeds.data.image.containers.Image.rotateRight data-toc-label='rotateRight'}
+## `#!sds fun` toPngFile {#safeds.data.image.containers.Image.toPngFile data-toc-label='toPngFile'}
 
-Return a new `Image` that is rotated 90 degrees clockwise.
+Save the image as a PNG file.
 
-The original image is not modified.
+**Parameters:**
 
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees clockwise. |
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the PNG file. | - |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="265"
-    @Pure
-    @PythonName("rotate_right")
-    fun rotateRight() -> result1: Image
+    ```sds linenums="50"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_png_file")
+    fun toPngFile(
+        path: String
+    )
     ```
 
-## `#!sds fun` rotateLeft {#safeds.data.image.containers.Image.rotateLeft data-toc-label='rotateLeft'}
+## `#!sds static fun` fromFile {#safeds.data.image.containers.Image.fromFile data-toc-label='fromFile'}
 
-Return a new `Image` that is rotated 90 degrees counter-clockwise.
+Create an image from a file.
 
-The original image is not modified.
+**Parameters:**
 
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees counter-clockwise. |
-
-??? quote "Source code in `image.sdsstub`"
-
-    ```sds linenums="276"
-    @Pure
-    @PythonName("rotate_left")
-    fun rotateLeft() -> result1: Image
-    ```
-
-## `#!sds fun` findEdges {#safeds.data.image.containers.Image.findEdges data-toc-label='findEdges'}
-
-Return a grayscale version of the image with the edges highlighted.
-
-The original image is not modified.
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the image file. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with edges found. |
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image. |
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="287"
-    @Pure
-    @PythonName("find_edges")
-    fun findEdges() -> result1: Image
+    ```sds linenums="28"
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_file")
+    static fun fromFile(
+        path: String
+    ) -> result1: Image
     ```

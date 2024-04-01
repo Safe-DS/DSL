@@ -376,17 +376,17 @@
     }
     ```
 
-## `#!sds attr` target {#safeds.data.tabular.containers.TimeSeries.target data-toc-label='target'}
-
-Get the target column of the tagged table.
-
-**Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
-
 ## `#!sds attr` features {#safeds.data.tabular.containers.TimeSeries.features data-toc-label='features'}
 
 Get the feature columns of the tagged table.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
+
+## `#!sds attr` target {#safeds.data.tabular.containers.TimeSeries.target data-toc-label='target'}
+
+Get the target column of the tagged table.
+
+**Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
 
 ## `#!sds attr` time {#safeds.data.tabular.containers.TimeSeries.time data-toc-label='time'}
 
@@ -450,34 +450,6 @@ the original time series is not modified.
     ) -> result1: TimeSeries
     ```
 
-## `#!sds fun` addColumnsAsFeatures {#safeds.data.tabular.containers.TimeSeries.addColumnsAsFeatures data-toc-label='addColumnsAsFeatures'}
-
-Return a new `TimeSeries` with the provided columns attached at the end, as feature columns.
-
-The original time series is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columns` | `#!sds union<List<Column<Any?>>, Table>` | The columns to be added as features. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the attached feature columns. |
-
-??? quote "Source code in `time_series.sdsstub`"
-
-    ```sds linenums="70"
-    @Pure
-    @PythonName("add_columns_as_features")
-    fun addColumnsAsFeatures(
-        columns: union<List<Column>, Table>
-    ) -> result1: TimeSeries
-    ```
-
 ## `#!sds fun` addColumns {#safeds.data.tabular.containers.TimeSeries.addColumns data-toc-label='addColumns'}
 
 Return a new `TimeSeries` with multiple added columns, as neither target nor feature columns.
@@ -502,6 +474,34 @@ The original time series is not modified.
     @Pure
     @PythonName("add_columns")
     fun addColumns(
+        columns: union<List<Column>, Table>
+    ) -> result1: TimeSeries
+    ```
+
+## `#!sds fun` addColumnsAsFeatures {#safeds.data.tabular.containers.TimeSeries.addColumnsAsFeatures data-toc-label='addColumnsAsFeatures'}
+
+Return a new `TimeSeries` with the provided columns attached at the end, as feature columns.
+
+The original time series is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columns` | `#!sds union<List<Column<Any?>>, Table>` | The columns to be added as features. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the attached feature columns. |
+
+??? quote "Source code in `time_series.sdsstub`"
+
+    ```sds linenums="70"
+    @Pure
+    @PythonName("add_columns_as_features")
+    fun addColumnsAsFeatures(
         columns: union<List<Column>, Table>
     ) -> result1: TimeSeries
     ```
@@ -616,6 +616,94 @@ The original time series is not modified.
     fun keepOnlyColumns(
         @PythonName("column_names") columnNames: List<String>
     ) -> result1: TimeSeries
+    ```
+
+## `#!sds fun` plotLagplot {#safeds.data.tabular.containers.TimeSeries.plotLagplot data-toc-label='plotLagplot'}
+
+Plot a lagplot for the target column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `lag` | [`Int`][safeds.lang.Int] | The amount of lag used to plot | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `time_series.sdsstub`"
+
+    ```sds linenums="330"
+    @Pure
+    @PythonName("plot_lagplot")
+    fun plotLagplot(
+        lag: Int
+    ) -> result1: Image
+    ```
+
+## `#!sds fun` plotLineplot {#safeds.data.tabular.containers.TimeSeries.plotLineplot data-toc-label='plotLineplot'}
+
+Plot the time series target or the given column(s) as line plot.
+
+The function will take the time column as the default value for y_column_name and the target column as the
+default value for x_column_name.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `xColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis, default is the time column. | `#!sds null` |
+| `yColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis, default is the target column. | `#!sds null` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `time_series.sdsstub`"
+
+    ```sds linenums="347"
+    @Pure
+    @PythonName("plot_lineplot")
+    fun plotLineplot(
+        @PythonName("x_column_name") xColumnName: String? = null,
+        @PythonName("y_column_name") yColumnName: String? = null
+    ) -> result1: Image
+    ```
+
+## `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.TimeSeries.plotScatterplot data-toc-label='plotScatterplot'}
+
+Plot the time series target or the given column(s) as scatter plot.
+
+The function will take the time column as the default value for x_column_name and the target column as the
+default value for y_column_name.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `xColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | `#!sds null` |
+| `yColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | `#!sds null` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `time_series.sdsstub`"
+
+    ```sds linenums="365"
+    @Pure
+    @PythonName("plot_scatterplot")
+    fun plotScatterplot(
+        @PythonName("x_column_name") xColumnName: String? = null,
+        @PythonName("y_column_name") yColumnName: String? = null
+    ) -> result1: Image
     ```
 
 ## `#!sds fun` removeColumns {#safeds.data.tabular.containers.TimeSeries.removeColumns data-toc-label='removeColumns'}
@@ -911,92 +999,4 @@ The original time series is not modified.
         name: String,
         transformer: (param1: Row) -> param2: Any
     ) -> result1: TimeSeries
-    ```
-
-## `#!sds fun` plotLagplot {#safeds.data.tabular.containers.TimeSeries.plotLagplot data-toc-label='plotLagplot'}
-
-Plot a lagplot for the target column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `lag` | [`Int`][safeds.lang.Int] | The amount of lag used to plot | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `time_series.sdsstub`"
-
-    ```sds linenums="330"
-    @Pure
-    @PythonName("plot_lagplot")
-    fun plotLagplot(
-        lag: Int
-    ) -> result1: Image
-    ```
-
-## `#!sds fun` plotLineplot {#safeds.data.tabular.containers.TimeSeries.plotLineplot data-toc-label='plotLineplot'}
-
-Plot the time series target or the given column(s) as line plot.
-
-The function will take the time column as the default value for y_column_name and the target column as the
-default value for x_column_name.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `xColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis, default is the time column. | `#!sds null` |
-| `yColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis, default is the target column. | `#!sds null` |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `time_series.sdsstub`"
-
-    ```sds linenums="347"
-    @Pure
-    @PythonName("plot_lineplot")
-    fun plotLineplot(
-        @PythonName("x_column_name") xColumnName: String? = null,
-        @PythonName("y_column_name") yColumnName: String? = null
-    ) -> result1: Image
-    ```
-
-## `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.TimeSeries.plotScatterplot data-toc-label='plotScatterplot'}
-
-Plot the time series target or the given column(s) as scatter plot.
-
-The function will take the time column as the default value for x_column_name and the target column as the
-default value for y_column_name.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `xColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | `#!sds null` |
-| `yColumnName` | [`String?`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | `#!sds null` |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `time_series.sdsstub`"
-
-    ```sds linenums="365"
-    @Pure
-    @PythonName("plot_scatterplot")
-    fun plotScatterplot(
-        @PythonName("x_column_name") xColumnName: String? = null,
-        @PythonName("y_column_name") yColumnName: String? = null
-    ) -> result1: Image
     ```

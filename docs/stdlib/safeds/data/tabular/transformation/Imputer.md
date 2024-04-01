@@ -58,6 +58,35 @@ Replace missing values with the given strategy.
     }
     ```
 
+## `#!sds fun` fit {#safeds.data.tabular.transformation.Imputer.fit data-toc-label='fit'}
+
+Learn a transformation for a set of columns in a table.
+
+This transformer is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
+| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `None`, all columns are used. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Imputer`][safeds.data.tabular.transformation.Imputer] | The fitted transformer. |
+
+??? quote "Source code in `imputer.sdsstub`"
+
+    ```sds linenums="48"
+    @Pure
+    fun fit(
+        table: Table,
+        @PythonName("column_names") columnNames: List<String>?
+    ) -> result1: Imputer
+    ```
+
 ## `#!sds enum` Strategy {#safeds.data.tabular.transformation.Imputer.Strategy data-toc-label='Strategy'}
 
 ??? quote "Source code in `imputer.sdsstub`"
@@ -109,32 +138,3 @@ An imputation strategy for imputing missing data with median values.
 ### Mode {#safeds.data.tabular.transformation.Imputer.Strategy.Mode data-toc-label='Mode'}
 
 An imputation strategy for imputing missing data with mode values. The lowest value will be used if there are multiple values with the same highest count.
-
-## `#!sds fun` fit {#safeds.data.tabular.transformation.Imputer.fit data-toc-label='fit'}
-
-Learn a transformation for a set of columns in a table.
-
-This transformer is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `None`, all columns are used. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Imputer`][safeds.data.tabular.transformation.Imputer] | The fitted transformer. |
-
-??? quote "Source code in `imputer.sdsstub`"
-
-    ```sds linenums="48"
-    @Pure
-    fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
-    ) -> result1: Imputer
-    ```

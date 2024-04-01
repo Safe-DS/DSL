@@ -365,62 +365,6 @@ Get the target column of the tagged table.
 
 **Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
 
-## `#!sds fun` addColumnAsFeature {#safeds.data.tabular.containers.TaggedTable.addColumnAsFeature data-toc-label='addColumnAsFeature'}
-
-Return a new table with the provided column attached at the end, as a feature column.
-
-the original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `column` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column to be added. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature column. |
-
-??? quote "Source code in `tagged_table.sdsstub`"
-
-    ```sds linenums="35"
-    @Pure
-    @PythonName("add_column_as_feature")
-    fun addColumnAsFeature(
-        column: Column
-    ) -> result1: TaggedTable
-    ```
-
-## `#!sds fun` addColumnsAsFeatures {#safeds.data.tabular.containers.TaggedTable.addColumnsAsFeatures data-toc-label='addColumnsAsFeatures'}
-
-Return a new `TaggedTable` with the provided columns attached at the end, as feature columns.
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columns` | `#!sds union<List<Column<Any?>>, Table>` | The columns to be added as features. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature columns. |
-
-??? quote "Source code in `tagged_table.sdsstub`"
-
-    ```sds linenums="50"
-    @Pure
-    @PythonName("add_columns_as_features")
-    fun addColumnsAsFeatures(
-        columns: union<List<Column>, Table>
-    ) -> result1: TaggedTable
-    ```
-
 ## `#!sds fun` addColumn {#safeds.data.tabular.containers.TaggedTable.addColumn data-toc-label='addColumn'}
 
 Return a new `TaggedTable` with the provided column attached at the end, as neither target nor feature column.
@@ -449,6 +393,34 @@ The original table is not modified.
     ) -> result1: TaggedTable
     ```
 
+## `#!sds fun` addColumnAsFeature {#safeds.data.tabular.containers.TaggedTable.addColumnAsFeature data-toc-label='addColumnAsFeature'}
+
+Return a new table with the provided column attached at the end, as a feature column.
+
+the original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `column` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column to be added. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature column. |
+
+??? quote "Source code in `tagged_table.sdsstub`"
+
+    ```sds linenums="35"
+    @Pure
+    @PythonName("add_column_as_feature")
+    fun addColumnAsFeature(
+        column: Column
+    ) -> result1: TaggedTable
+    ```
+
 ## `#!sds fun` addColumns {#safeds.data.tabular.containers.TaggedTable.addColumns data-toc-label='addColumns'}
 
 Return a new `TaggedTable` with multiple added columns, as neither target nor feature columns.
@@ -473,6 +445,34 @@ The original table is not modified.
     @Pure
     @PythonName("add_columns")
     fun addColumns(
+        columns: union<List<Column>, Table>
+    ) -> result1: TaggedTable
+    ```
+
+## `#!sds fun` addColumnsAsFeatures {#safeds.data.tabular.containers.TaggedTable.addColumnsAsFeatures data-toc-label='addColumnsAsFeatures'}
+
+Return a new `TaggedTable` with the provided columns attached at the end, as feature columns.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columns` | `#!sds union<List<Column<Any?>>, Table>` | The columns to be added as features. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature columns. |
+
+??? quote "Source code in `tagged_table.sdsstub`"
+
+    ```sds linenums="50"
+    @Pure
+    @PythonName("add_columns_as_features")
+    fun addColumnsAsFeatures(
         columns: union<List<Column>, Table>
     ) -> result1: TaggedTable
     ```

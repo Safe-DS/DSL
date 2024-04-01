@@ -76,32 +76,6 @@ Return a list of all column names saved in this schema.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
-## `#!sds fun` hasColumn {#safeds.data.tabular.typing.Schema.hasColumn data-toc-label='hasColumn'}
-
-Return whether the schema contains a given column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if the schema contains the column. |
-
-??? quote "Source code in `schema.sdsstub`"
-
-    ```sds linenums="23"
-    @Pure
-    @PythonName("has_column")
-    fun hasColumn(
-        @PythonName("column_name") columnName: String
-    ) -> result1: Boolean
-    ```
-
 ## `#!sds fun` getColumnType {#safeds.data.tabular.typing.Schema.getColumnType data-toc-label='getColumnType'}
 
 Return the type of the given column.
@@ -126,6 +100,32 @@ Return the type of the given column.
     fun getColumnType(
         @PythonName("column_name") columnName: String
     ) -> result1: ColumnType
+    ```
+
+## `#!sds fun` hasColumn {#safeds.data.tabular.typing.Schema.hasColumn data-toc-label='hasColumn'}
+
+Return whether the schema contains a given column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Boolean`][safeds.lang.Boolean] | True if the schema contains the column. |
+
+??? quote "Source code in `schema.sdsstub`"
+
+    ```sds linenums="23"
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Boolean
     ```
 
 ## `#!sds fun` toDict {#safeds.data.tabular.typing.Schema.toDict data-toc-label='toDict'}

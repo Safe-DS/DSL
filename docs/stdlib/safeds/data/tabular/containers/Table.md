@@ -762,292 +762,6 @@ Return the schema of the table.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-## `#!sds static fun` fromCsvFile {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='fromCsvFile'}
-
-Read data from a CSV file into a table.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the CSV file. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the CSV file. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="54"
-    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
-    @PythonName("from_csv_file")
-    static fun fromCsvFile(
-        path: String
-    ) -> result1: Table
-    ```
-
-## `#!sds static fun` fromExcelFile {#safeds.data.tabular.containers.Table.fromExcelFile data-toc-label='fromExcelFile'}
-
-Read data from an Excel file into a table.
-
-Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the Excel file. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the Excel file. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="69"
-    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
-    @PythonName("from_excel_file")
-    static fun fromExcelFile(
-        path: String
-    ) -> result1: Table
-    ```
-
-## `#!sds static fun` fromJsonFile {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='fromJsonFile'}
-
-Read data from a JSON file into a table.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the JSON file. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the JSON file. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="82"
-    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
-    @PythonName("from_json_file")
-    static fun fromJsonFile(
-        path: String
-    ) -> result1: Table
-    ```
-
-## `#!sds static fun` fromDict {#safeds.data.tabular.containers.Table.fromDict data-toc-label='fromDict'}
-
-Create a table from a dictionary that maps column names to column values.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `data` | [`Map<String, List<Any>>`][safeds.lang.Map] | The data. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="95"
-    @Pure
-    @PythonName("from_dict")
-    static fun fromDict(
-        data: Map<String, List<Any>>
-    ) -> result1: Table
-    ```
-
-## `#!sds static fun` fromColumns {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='fromColumns'}
-
-Return a table created from a list of columns.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columns` | [`List<Column<Any?>>`][safeds.lang.List] | The columns to be combined. They need to have the same size. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="108"
-    @Pure
-    @PythonName("from_columns")
-    static fun fromColumns(
-        columns: List<Column>
-    ) -> result1: Table
-    ```
-
-## `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
-
-Return a table created from a list of rows.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `rows` | [`List<Row>`][safeds.lang.List] | The rows to be combined. They need to have a matching schema. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="121"
-    @Pure
-    @PythonName("from_rows")
-    static fun fromRows(
-        rows: List<Row>
-    ) -> result1: Table
-    ```
-
-## `#!sds fun` getColumn {#safeds.data.tabular.containers.Table.getColumn data-toc-label='getColumn'}
-
-Return a column with the data of the specified column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="134"
-    @Pure
-    @PythonName("get_column")
-    fun getColumn(
-        @PythonName("column_name") columnName: String
-    ) -> result1: Column
-    ```
-
-## `#!sds fun` hasColumn {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='hasColumn'}
-
-Return whether the table contains a given column.
-
-Alias for self.schema.hasColumn(column_name: str) -> bool.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="149"
-    @Pure
-    @PythonName("has_column")
-    fun hasColumn(
-        @PythonName("column_name") columnName: String
-    ) -> result1: Boolean
-    ```
-
-## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='getColumnType'}
-
-Return the type of the given column.
-
-Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column to be queried. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="164"
-    @Pure
-    @PythonName("get_column_type")
-    fun getColumnType(
-        @PythonName("column_name") columnName: String
-    ) -> result1: ColumnType
-    ```
-
-## `#!sds fun` getRow {#safeds.data.tabular.containers.Table.getRow data-toc-label='getRow'}
-
-Return the row at a specified index.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `index` | [`Int`][safeds.lang.Int] | The index. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="177"
-    @Pure
-    @PythonName("get_row")
-    fun getRow(
-        index: Int
-    ) -> result1: Row
-    ```
-
-## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='summarizeStatistics'}
-
-Return a table with a number of statistical key values.
-
-The original table is not modified.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="190"
-    @Pure
-    @PythonName("summarize_statistics")
-    fun summarizeStatistics() -> result1: Table
-    ```
-
 ## `#!sds fun` addColumn {#safeds.data.tabular.containers.Table.addColumn data-toc-label='addColumn'}
 
 Return a new table with the provided column attached at the end.
@@ -1196,6 +910,86 @@ The original table is not modified.
     ) -> result1: Table
     ```
 
+## `#!sds fun` getColumn {#safeds.data.tabular.containers.Table.getColumn data-toc-label='getColumn'}
+
+Return a column with the data of the specified column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="134"
+    @Pure
+    @PythonName("get_column")
+    fun getColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Column
+    ```
+
+## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='getColumnType'}
+
+Return the type of the given column.
+
+Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column to be queried. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="164"
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        @PythonName("column_name") columnName: String
+    ) -> result1: ColumnType
+    ```
+
+## `#!sds fun` getRow {#safeds.data.tabular.containers.Table.getRow data-toc-label='getRow'}
+
+Return the row at a specified index.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `index` | [`Int`][safeds.lang.Int] | The index. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="177"
+    @Pure
+    @PythonName("get_row")
+    fun getRow(
+        index: Int
+    ) -> result1: Row
+    ```
+
 ## `#!sds fun` groupRowsBy {#safeds.data.tabular.containers.Table.groupRowsBy data-toc-label='groupRowsBy'}
 
 Return a dictionary with copies of the output tables as values and the keys from the key_selector.
@@ -1230,6 +1024,62 @@ The original table is not modified.
     ) -> result1: Map<T, Table>
     ```
 
+## `#!sds fun` hasColumn {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='hasColumn'}
+
+Return whether the table contains a given column.
+
+Alias for self.schema.hasColumn(column_name: str) -> bool.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="149"
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Boolean
+    ```
+
+## `#!sds fun` inverseTransformTable {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='inverseTransformTable'}
+
+Return a new `Table` with the inverted transformation applied by the given transformer.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `transformer` | [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer] | A transformer that was fitted with columns, which are all present in the table. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="591"
+    @Pure
+    @PythonName("inverse_transform_table")
+    fun inverseTransformTable(
+        transformer: InvertibleTableTransformer
+    ) -> result1: Table
+    ```
+
 ## `#!sds fun` keepOnlyColumns {#safeds.data.tabular.containers.Table.keepOnlyColumns data-toc-label='keepOnlyColumns'}
 
 Return a new table with only the given column(s).
@@ -1258,6 +1108,119 @@ Note: When removing the last column of the table, the `number_of_columns` proper
     fun keepOnlyColumns(
         @PythonName("column_names") columnNames: List<String>
     ) -> result1: Table
+    ```
+
+## `#!sds fun` plotBoxplots {#safeds.data.tabular.containers.Table.plotBoxplots data-toc-label='plotBoxplots'}
+
+Plot a boxplot for every numerical column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="644"
+    @Pure
+    @PythonName("plot_boxplots")
+    fun plotBoxplots() -> result1: Image
+    ```
+
+## `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.Table.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
+
+Plot a correlation heatmap for all numerical columns of this `Table`.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="602"
+    @Pure
+    @PythonName("plot_correlation_heatmap")
+    fun plotCorrelationHeatmap() -> result1: Image
+    ```
+
+## `#!sds fun` plotHistograms {#safeds.data.tabular.containers.Table.plotHistograms data-toc-label='plotHistograms'}
+
+Plot a histogram for every column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="653"
+    @Pure
+    @PythonName("plot_histograms")
+    fun plotHistograms() -> result1: Image
+    ```
+
+## `#!sds fun` plotLineplot {#safeds.data.tabular.containers.Table.plotLineplot data-toc-label='plotLineplot'}
+
+Plot two columns against each other in a lineplot.
+
+If there are multiple x-values for a y-value, the resulting plot will consist of a line representing the mean
+and the lower-transparency area around the line representing the 95% confidence interval.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `xColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | - |
+| `yColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="617"
+    @Pure
+    @PythonName("plot_lineplot")
+    fun plotLineplot(
+        @PythonName("x_column_name") xColumnName: String,
+        @PythonName("y_column_name") yColumnName: String
+    ) -> result1: Image
+    ```
+
+## `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.Table.plotScatterplot data-toc-label='plotScatterplot'}
+
+Plot two columns against each other in a scatterplot.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `xColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | - |
+| `yColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="632"
+    @Pure
+    @PythonName("plot_scatterplot")
+    fun plotScatterplot(
+        @PythonName("x_column_name") xColumnName: String,
+        @PythonName("y_column_name") yColumnName: String
+    ) -> result1: Image
     ```
 
 ## `#!sds fun` removeColumns {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='removeColumns'}
@@ -1613,6 +1576,26 @@ The original table is not modified.
     ) -> (result1: Table, result2: Table)
     ```
 
+## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='summarizeStatistics'}
+
+Return a table with a number of statistical key values.
+
+The original table is not modified.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="190"
+    @Pure
+    @PythonName("summarize_statistics")
+    fun summarizeStatistics() -> result1: Table
+    ```
+
 ## `#!sds fun` tagColumns {#safeds.data.tabular.containers.Table.tagColumns data-toc-label='tagColumns'}
 
 Return a new `TaggedTable` with columns marked as a target column or feature columns.
@@ -1675,6 +1658,148 @@ The original table is not modified.
     ) -> result1: TimeSeries
     ```
 
+## `#!sds fun` toColumns {#safeds.data.tabular.containers.Table.toColumns data-toc-label='toColumns'}
+
+Return a list of the columns.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="723"
+    @Pure
+    @PythonName("to_columns")
+    fun toColumns() -> result1: List<Column>
+    ```
+
+## `#!sds fun` toCsvFile {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='toCsvFile'}
+
+Write the data from the table into a CSV file.
+
+If the file and/or the directories do not exist they will be created. If the file already exists it will be
+overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="665"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_csv_file")
+    fun toCsvFile(
+        path: String
+    )
+    ```
+
+## `#!sds fun` toDict {#safeds.data.tabular.containers.Table.toDict data-toc-label='toDict'}
+
+Return a dictionary that maps column names to column values.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="705"
+    @Pure
+    @PythonName("to_dict")
+    fun toDict() -> result1: Map<String, List<Any>>
+    ```
+
+## `#!sds fun` toExcelFile {#safeds.data.tabular.containers.Table.toExcelFile data-toc-label='toExcelFile'}
+
+Write the data from the table into an Excel file.
+
+Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+If the file and/or the directories do not exist, they will be created. If the file already exists, it will be
+overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="680"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_excel_file")
+    fun toExcelFile(
+        path: String
+    )
+    ```
+
+## `#!sds fun` toHtml {#safeds.data.tabular.containers.Table.toHtml data-toc-label='toHtml'}
+
+Return an HTML representation of the table.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`String`][safeds.lang.String] | The generated HTML. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="714"
+    @Pure
+    @PythonName("to_html")
+    fun toHtml() -> result1: String
+    ```
+
+## `#!sds fun` toJsonFile {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='toJsonFile'}
+
+Write the data from the table into a JSON file.
+
+If the file and/or the directories do not exist, they will be created. If the file already exists it will be
+overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="694"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_json_file")
+    fun toJsonFile(
+        path: String
+    )
+    ```
+
+## `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
+
+Return a list of the rows.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="732"
+    @Pure
+    @PythonName("to_rows")
+    fun toRows() -> result1: List<Row>
+    ```
+
 ## `#!sds fun` transformColumn {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='transformColumn'}
 
 Return a new `Table` with the provided column transformed by calling the provided transformer.
@@ -1733,285 +1858,160 @@ The original table is not modified.
     ) -> result1: Table
     ```
 
-## `#!sds fun` inverseTransformTable {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='inverseTransformTable'}
+## `#!sds static fun` fromColumns {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='fromColumns'}
 
-Return a new `Table` with the inverted transformation applied by the given transformer.
-
-The original table is not modified.
+Return a table created from a list of columns.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `transformer` | [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer] | A transformer that was fitted with columns, which are all present in the table. | - |
+| `columns` | [`List<Column<Any?>>`][safeds.lang.List] | The columns to be combined. They need to have the same size. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
 ??? quote "Source code in `table.sdsstub`"
 
-    ```sds linenums="591"
+    ```sds linenums="108"
     @Pure
-    @PythonName("inverse_transform_table")
-    fun inverseTransformTable(
-        transformer: InvertibleTableTransformer
+    @PythonName("from_columns")
+    static fun fromColumns(
+        columns: List<Column>
     ) -> result1: Table
     ```
 
-## `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.Table.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
+## `#!sds static fun` fromCsvFile {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='fromCsvFile'}
 
-Plot a correlation heatmap for all numerical columns of this `Table`.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="602"
-    @Pure
-    @PythonName("plot_correlation_heatmap")
-    fun plotCorrelationHeatmap() -> result1: Image
-    ```
-
-## `#!sds fun` plotLineplot {#safeds.data.tabular.containers.Table.plotLineplot data-toc-label='plotLineplot'}
-
-Plot two columns against each other in a lineplot.
-
-If there are multiple x-values for a y-value, the resulting plot will consist of a line representing the mean
-and the lower-transparency area around the line representing the 95% confidence interval.
+Read data from a CSV file into a table.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `xColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | - |
-| `yColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the CSV file. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the CSV file. |
 
 ??? quote "Source code in `table.sdsstub`"
 
-    ```sds linenums="617"
-    @Pure
-    @PythonName("plot_lineplot")
-    fun plotLineplot(
-        @PythonName("x_column_name") xColumnName: String,
-        @PythonName("y_column_name") yColumnName: String
-    ) -> result1: Image
-    ```
-
-## `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.Table.plotScatterplot data-toc-label='plotScatterplot'}
-
-Plot two columns against each other in a scatterplot.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `xColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | - |
-| `yColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="632"
-    @Pure
-    @PythonName("plot_scatterplot")
-    fun plotScatterplot(
-        @PythonName("x_column_name") xColumnName: String,
-        @PythonName("y_column_name") yColumnName: String
-    ) -> result1: Image
-    ```
-
-## `#!sds fun` plotBoxplots {#safeds.data.tabular.containers.Table.plotBoxplots data-toc-label='plotBoxplots'}
-
-Plot a boxplot for every numerical column.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="644"
-    @Pure
-    @PythonName("plot_boxplots")
-    fun plotBoxplots() -> result1: Image
-    ```
-
-## `#!sds fun` plotHistograms {#safeds.data.tabular.containers.Table.plotHistograms data-toc-label='plotHistograms'}
-
-Plot a histogram for every column.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="653"
-    @Pure
-    @PythonName("plot_histograms")
-    fun plotHistograms() -> result1: Image
-    ```
-
-## `#!sds fun` toCsvFile {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='toCsvFile'}
-
-Write the data from the table into a CSV file.
-
-If the file and/or the directories do not exist they will be created. If the file already exists it will be
-overwritten.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="665"
-    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-    @PythonName("to_csv_file")
-    fun toCsvFile(
+    ```sds linenums="54"
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_csv_file")
+    static fun fromCsvFile(
         path: String
-    )
+    ) -> result1: Table
     ```
 
-## `#!sds fun` toExcelFile {#safeds.data.tabular.containers.Table.toExcelFile data-toc-label='toExcelFile'}
+## `#!sds static fun` fromDict {#safeds.data.tabular.containers.Table.fromDict data-toc-label='fromDict'}
 
-Write the data from the table into an Excel file.
+Create a table from a dictionary that maps column names to column values.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `data` | [`Map<String, List<Any>>`][safeds.lang.Map] | The data. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
+
+??? quote "Source code in `table.sdsstub`"
+
+    ```sds linenums="95"
+    @Pure
+    @PythonName("from_dict")
+    static fun fromDict(
+        data: Map<String, List<Any>>
+    ) -> result1: Table
+    ```
+
+## `#!sds static fun` fromExcelFile {#safeds.data.tabular.containers.Table.fromExcelFile data-toc-label='fromExcelFile'}
+
+Read data from an Excel file into a table.
 
 Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
-If the file and/or the directories do not exist, they will be created. If the file already exists, it will be
-overwritten.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the Excel file. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the Excel file. |
 
 ??? quote "Source code in `table.sdsstub`"
 
-    ```sds linenums="680"
-    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-    @PythonName("to_excel_file")
-    fun toExcelFile(
+    ```sds linenums="69"
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_excel_file")
+    static fun fromExcelFile(
         path: String
-    )
+    ) -> result1: Table
     ```
 
-## `#!sds fun` toJsonFile {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='toJsonFile'}
+## `#!sds static fun` fromJsonFile {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='fromJsonFile'}
 
-Write the data from the table into a JSON file.
-
-If the file and/or the directories do not exist, they will be created. If the file already exists it will be
-overwritten.
+Read data from a JSON file into a table.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the JSON file. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the JSON file. |
 
 ??? quote "Source code in `table.sdsstub`"
 
-    ```sds linenums="694"
-    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-    @PythonName("to_json_file")
-    fun toJsonFile(
+    ```sds linenums="82"
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_json_file")
+    static fun fromJsonFile(
         path: String
-    )
+    ) -> result1: Table
     ```
 
-## `#!sds fun` toDict {#safeds.data.tabular.containers.Table.toDict data-toc-label='toDict'}
+## `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
 
-Return a dictionary that maps column names to column values.
+Return a table created from a list of rows.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `rows` | [`List<Row>`][safeds.lang.List] | The rows to be combined. They need to have a matching schema. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
 ??? quote "Source code in `table.sdsstub`"
 
-    ```sds linenums="705"
+    ```sds linenums="121"
     @Pure
-    @PythonName("to_dict")
-    fun toDict() -> result1: Map<String, List<Any>>
-    ```
-
-## `#!sds fun` toHtml {#safeds.data.tabular.containers.Table.toHtml data-toc-label='toHtml'}
-
-Return an HTML representation of the table.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`String`][safeds.lang.String] | The generated HTML. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="714"
-    @Pure
-    @PythonName("to_html")
-    fun toHtml() -> result1: String
-    ```
-
-## `#!sds fun` toColumns {#safeds.data.tabular.containers.Table.toColumns data-toc-label='toColumns'}
-
-Return a list of the columns.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="723"
-    @Pure
-    @PythonName("to_columns")
-    fun toColumns() -> result1: List<Column>
-    ```
-
-## `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
-
-Return a list of the rows.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
-
-??? quote "Source code in `table.sdsstub`"
-
-    ```sds linenums="732"
-    @Pure
-    @PythonName("to_rows")
-    fun toRows() -> result1: List<Row>
+    @PythonName("from_rows")
+    static fun fromRows(
+        rows: List<Row>
+    ) -> result1: Table
     ```

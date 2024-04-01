@@ -46,17 +46,17 @@ Gradient boosting classification.
     }
     ```
 
-## `#!sds attr` numberOfTrees {#safeds.ml.classical.classification.GradientBoostingClassifier.numberOfTrees data-toc-label='numberOfTrees'}
-
-Get the number of trees (estimators) in the ensemble.
-
-**Type:** [`Int`][safeds.lang.Int]
-
 ## `#!sds attr` learningRate {#safeds.ml.classical.classification.GradientBoostingClassifier.learningRate data-toc-label='learningRate'}
 
 Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
+
+## `#!sds attr` numberOfTrees {#safeds.ml.classical.classification.GradientBoostingClassifier.numberOfTrees data-toc-label='numberOfTrees'}
+
+Get the number of trees (estimators) in the ensemble.
+
+**Type:** [`Int`][safeds.lang.Int]
 
 ## `#!sds fun` fit {#safeds.ml.classical.classification.GradientBoostingClassifier.fit data-toc-label='fit'}
 

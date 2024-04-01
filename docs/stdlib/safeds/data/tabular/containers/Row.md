@@ -140,30 +140,30 @@ Return the schema of the row.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-## `#!sds static fun` fromDict {#safeds.data.tabular.containers.Row.fromDict data-toc-label='fromDict'}
+## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='getColumnType'}
 
-Create a row from a dictionary that maps column names to column values.
+Return the type of the specified column.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `data` | [`Map<String, Any>`][safeds.lang.Map] | The data. | - |
+| `columnName` | [`String`][safeds.lang.String] | The column name. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Row`][safeds.data.tabular.containers.Row] | The created row. |
+| `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
 ??? quote "Source code in `row.sdsstub`"
 
-    ```sds linenums="33"
+    ```sds linenums="72"
     @Pure
-    @PythonName("from_dict")
-    static fun fromDict(
-        data: Map<String, Any>
-    ) -> result1: Row
+    @PythonName("get_column_type")
+    fun getColumnType(
+        @PythonName("column_name") columnName: String
+    ) -> result1: ColumnType
     ```
 
 ## `#!sds fun` getValue {#safeds.data.tabular.containers.Row.getValue data-toc-label='getValue'}
@@ -218,32 +218,6 @@ Check whether the row contains a given column.
     ) -> result1: Boolean
     ```
 
-## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='getColumnType'}
-
-Return the type of the specified column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The column name. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
-
-??? quote "Source code in `row.sdsstub`"
-
-    ```sds linenums="72"
-    @Pure
-    @PythonName("get_column_type")
-    fun getColumnType(
-        @PythonName("column_name") columnName: String
-    ) -> result1: ColumnType
-    ```
-
 ## `#!sds fun` toDict {#safeds.data.tabular.containers.Row.toDict data-toc-label='toDict'}
 
 Return a dictionary that maps column names to column values.
@@ -278,4 +252,30 @@ Return an HTML representation of the row.
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
+    ```
+
+## `#!sds static fun` fromDict {#safeds.data.tabular.containers.Row.fromDict data-toc-label='fromDict'}
+
+Create a row from a dictionary that maps column names to column values.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `data` | [`Map<String, Any>`][safeds.lang.Map] | The data. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Row`][safeds.data.tabular.containers.Row] | The created row. |
+
+??? quote "Source code in `row.sdsstub`"
+
+    ```sds linenums="33"
+    @Pure
+    @PythonName("from_dict")
+    static fun fromDict(
+        data: Map<String, Any>
+    ) -> result1: Row
     ```

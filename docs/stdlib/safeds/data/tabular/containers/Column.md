@@ -292,50 +292,6 @@ Return the type of the column.
 
 **Type:** [`ColumnType`][safeds.data.tabular.typing.ColumnType]
 
-## `#!sds fun` getUniqueValues {#safeds.data.tabular.containers.Column.getUniqueValues data-toc-label='getUniqueValues'}
-
-Return a list of all unique values in the column.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<T>`][safeds.lang.List] | List of unique values in the column. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="34"
-    @Pure
-    @PythonName("get_unique_values")
-    fun getUniqueValues() -> result1: List<T>
-    ```
-
-## `#!sds fun` getValue {#safeds.data.tabular.containers.Column.getValue data-toc-label='getValue'}
-
-Return column value at specified index, starting at 0.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `index` | [`Int`][safeds.lang.Int] | Index of requested element. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | `#!sds T` | Value at index in column. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="45"
-    @Pure
-    @PythonName("get_value")
-    fun getValue(
-        index: Int
-    ) -> result1: T
-    ```
-
 ## `#!sds fun` all {#safeds.data.tabular.containers.Column.all data-toc-label='all'}
 
 Check if all values have a given property.
@@ -386,109 +342,6 @@ Check if any value has a given property.
     ) -> result1: Boolean
     ```
 
-## `#!sds fun` none {#safeds.data.tabular.containers.Column.none data-toc-label='none'}
-
-Check if no values has a given property.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `predicate` | `#!sds (param1: T) -> (param2: Boolean)` | Callable that is used to find matches. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if none match. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="82"
-    @Pure
-    fun none(
-        predicate: (param1: T) -> param2: Boolean
-    ) -> result1: Boolean
-    ```
-
-## `#!sds fun` hasMissingValues {#safeds.data.tabular.containers.Column.hasMissingValues data-toc-label='hasMissingValues'}
-
-Return whether the column has missing values.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if missing values exist. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="92"
-    @Pure
-    @PythonName("has_missing_values")
-    fun hasMissingValues() -> result1: Boolean
-    ```
-
-## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
-
-Return a new column with a new name.
-
-The original column is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `newName` | [`String`][safeds.lang.String] | The new name of the column. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="105"
-    @Pure
-    fun rename(
-        @PythonName("new_name") newName: String
-    ) -> result1: Column
-    ```
-
-## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
-
-Apply a transform method to every data point.
-
-The original column is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `transformer` | `#!sds (param1: T) -> (param2: R)` | Function that will be applied to all data points. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The transformed column. |
-
-**Type parameters:**
-
-| Name | Upper Bound | Description | Default |
-|------|-------------|-------------|---------|
-| `R` | [`Any?`][safeds.lang.Any] | - | - |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="119"
-    @Pure
-    fun transform<R>(
-        transformer: (param1: T) -> param2: R
-    ) -> result1: Column
-    ```
-
 ## `#!sds fun` correlationWith {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='correlationWith'}
 
 Calculate Pearson correlation between this and another column. Both columns have to be numerical.
@@ -513,6 +366,68 @@ Calculate Pearson correlation between this and another column. Both columns have
     fun correlationWith(
         @PythonName("other_column") otherColumn: Column
     ) -> result1: Float
+    ```
+
+## `#!sds fun` getUniqueValues {#safeds.data.tabular.containers.Column.getUniqueValues data-toc-label='getUniqueValues'}
+
+Return a list of all unique values in the column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`List<T>`][safeds.lang.List] | List of unique values in the column. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="34"
+    @Pure
+    @PythonName("get_unique_values")
+    fun getUniqueValues() -> result1: List<T>
+    ```
+
+## `#!sds fun` getValue {#safeds.data.tabular.containers.Column.getValue data-toc-label='getValue'}
+
+Return column value at specified index, starting at 0.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `index` | [`Int`][safeds.lang.Int] | Index of requested element. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | `#!sds T` | Value at index in column. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="45"
+    @Pure
+    @PythonName("get_value")
+    fun getValue(
+        index: Int
+    ) -> result1: T
+    ```
+
+## `#!sds fun` hasMissingValues {#safeds.data.tabular.containers.Column.hasMissingValues data-toc-label='hasMissingValues'}
+
+Return whether the column has missing values.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Boolean`][safeds.lang.Boolean] | True if missing values exist. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="92"
+    @Pure
+    @PythonName("has_missing_values")
+    fun hasMissingValues() -> result1: Boolean
     ```
 
 ## `#!sds fun` idness {#safeds.data.tabular.containers.Column.idness data-toc-label='idness'}
@@ -641,6 +556,94 @@ Return the mode of the column.
     fun mode() -> result1: List<T>
     ```
 
+## `#!sds fun` none {#safeds.data.tabular.containers.Column.none data-toc-label='none'}
+
+Check if no values has a given property.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `predicate` | `#!sds (param1: T) -> (param2: Boolean)` | Callable that is used to find matches. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Boolean`][safeds.lang.Boolean] | True if none match. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="82"
+    @Pure
+    fun none(
+        predicate: (param1: T) -> param2: Boolean
+    ) -> result1: Boolean
+    ```
+
+## `#!sds fun` plotBoxplot {#safeds.data.tabular.containers.Column.plotBoxplot data-toc-label='plotBoxplot'}
+
+Plot this column in a boxplot. This function can only plot real numerical data.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="244"
+    @Pure
+    @PythonName("plot_boxplot")
+    fun plotBoxplot() -> result1: Image
+    ```
+
+## `#!sds fun` plotHistogram {#safeds.data.tabular.containers.Column.plotHistogram data-toc-label='plotHistogram'}
+
+Plot a column in a histogram.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="253"
+    @Pure
+    @PythonName("plot_histogram")
+    fun plotHistogram() -> result1: Image
+    ```
+
+## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
+
+Return a new column with a new name.
+
+The original column is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `newName` | [`String`][safeds.lang.String] | The new name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="105"
+    @Pure
+    fun rename(
+        @PythonName("new_name") newName: String
+    ) -> result1: Column
+    ```
+
 ## `#!sds fun` stability {#safeds.data.tabular.containers.Column.stability data-toc-label='stability'}
 
 Calculate the stability of this column.
@@ -701,59 +704,6 @@ Return the sum of the column. The column has to be numerical.
     fun sum() -> result1: Float
     ```
 
-## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
-
-Return the variance of the column. The column has to be numerical.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The variance of all values. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="236"
-    @Pure
-    fun variance() -> result1: Float
-    ```
-
-## `#!sds fun` plotBoxplot {#safeds.data.tabular.containers.Column.plotBoxplot data-toc-label='plotBoxplot'}
-
-Plot this column in a boxplot. This function can only plot real numerical data.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="244"
-    @Pure
-    @PythonName("plot_boxplot")
-    fun plotBoxplot() -> result1: Image
-    ```
-
-## `#!sds fun` plotHistogram {#safeds.data.tabular.containers.Column.plotHistogram data-toc-label='plotHistogram'}
-
-Plot a column in a histogram.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-??? quote "Source code in `column.sdsstub`"
-
-    ```sds linenums="253"
-    @Pure
-    @PythonName("plot_histogram")
-    fun plotHistogram() -> result1: Image
-    ```
-
 ## `#!sds fun` toHtml {#safeds.data.tabular.containers.Column.toHtml data-toc-label='toHtml'}
 
 Return an HTML representation of the column.
@@ -770,4 +720,54 @@ Return an HTML representation of the column.
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
+    ```
+
+## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
+
+Apply a transform method to every data point.
+
+The original column is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `transformer` | `#!sds (param1: T) -> (param2: R)` | Function that will be applied to all data points. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The transformed column. |
+
+**Type parameters:**
+
+| Name | Upper Bound | Description | Default |
+|------|-------------|-------------|---------|
+| `R` | [`Any?`][safeds.lang.Any] | - | - |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="119"
+    @Pure
+    fun transform<R>(
+        transformer: (param1: T) -> param2: R
+    ) -> result1: Column
+    ```
+
+## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
+
+Return the variance of the column. The column has to be numerical.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Float`][safeds.lang.Float] | The variance of all values. |
+
+??? quote "Source code in `column.sdsstub`"
+
+    ```sds linenums="236"
+    @Pure
+    fun variance() -> result1: Float
     ```

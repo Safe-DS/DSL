@@ -96,31 +96,6 @@ This regressor is not modified.
     ) -> fittedRegressor: Regressor
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.regression.Regressor.predict data-toc-label='predict'}
-
-Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `dataset` | [`Table`][safeds.data.tabular.containers.Table] | The dataset containing the feature vectors. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
-
-??? quote "Source code in `regressor.sdsstub`"
-
-    ```sds linenums="30"
-    @Pure
-    fun predict(
-        dataset: Table
-    ) -> prediction: TaggedTable
-    ```
-
 ## `#!sds fun` isFitted {#safeds.ml.classical.regression.Regressor.isFitted data-toc-label='isFitted'}
 
 Check if the classifier is fitted.
@@ -137,6 +112,32 @@ Check if the classifier is fitted.
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
+    ```
+
+## `#!sds fun` meanAbsoluteError {#safeds.ml.classical.regression.Regressor.meanAbsoluteError data-toc-label='meanAbsoluteError'}
+
+Compute the mean absolute error (MAE) of the regressor on the given data.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
+
+??? quote "Source code in `regressor.sdsstub`"
+
+    ```sds linenums="64"
+    @Pure
+    @PythonName("mean_absolute_error")
+    fun meanAbsoluteError(
+        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+    ) -> meanAbsoluteError: Float
     ```
 
 ## `#!sds fun` meanSquaredError {#safeds.ml.classical.regression.Regressor.meanSquaredError data-toc-label='meanSquaredError'}
@@ -165,28 +166,27 @@ Compute the mean squared error (MSE) on the given data.
     ) -> meanSquaredError: Float
     ```
 
-## `#!sds fun` meanAbsoluteError {#safeds.ml.classical.regression.Regressor.meanAbsoluteError data-toc-label='meanAbsoluteError'}
+## `#!sds fun` predict {#safeds.ml.classical.regression.Regressor.predict data-toc-label='predict'}
 
-Compute the mean absolute error (MAE) of the regressor on the given data.
+Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `dataset` | [`Table`][safeds.data.tabular.containers.Table] | The dataset containing the feature vectors. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
+| `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
 ??? quote "Source code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="30"
     @Pure
-    @PythonName("mean_absolute_error")
-    fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
-    ) -> meanAbsoluteError: Float
+    fun predict(
+        dataset: Table
+    ) -> prediction: TaggedTable
     ```

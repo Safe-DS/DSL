@@ -37,24 +37,6 @@ A map of keys to values.
     }
     ```
 
-## `#!sds fun` size {#safeds.lang.Map.size data-toc-label='size'}
-
-Returns the number of entries in the map.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `size` | [`Int`][safeds.lang.Int] | - |
-
-??? quote "Source code in `coreClasses.sdsstub`"
-
-    ```sds linenums="62"
-    @Pure
-    @PythonCall("len($this)")
-    fun size() -> size: Int
-    ```
-
 ## `#!sds fun` keys {#safeds.lang.Map.keys data-toc-label='keys'}
 
 Returns the keys of the map.
@@ -71,6 +53,24 @@ Returns the keys of the map.
     @Pure
     @PythonCall("list($this.keys())")
     fun keys() -> keys: List<K>
+    ```
+
+## `#!sds fun` size {#safeds.lang.Map.size data-toc-label='size'}
+
+Returns the number of entries in the map.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `size` | [`Int`][safeds.lang.Int] | - |
+
+??? quote "Source code in `coreClasses.sdsstub`"
+
+    ```sds linenums="62"
+    @Pure
+    @PythonCall("len($this)")
+    fun size() -> size: Int
     ```
 
 ## `#!sds fun` values {#safeds.lang.Map.values data-toc-label='values'}

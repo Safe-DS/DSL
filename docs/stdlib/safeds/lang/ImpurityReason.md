@@ -89,6 +89,10 @@ The function writes to a file and the file path is given by a parameter.
 |------|------|-------------|---------|
 | `parameterName` | [`String`][safeds.lang.String] | The name of the parameter that specifies the file path. | - |
 
+## Other {#safeds.lang.ImpurityReason.Other data-toc-label='Other'}
+
+The function is impure for some other reason. If possible, use a more specific reason.
+
 ## PotentiallyImpureParameterCall {#safeds.lang.ImpurityReason.PotentiallyImpureParameterCall data-toc-label='PotentiallyImpureParameterCall'}
 
 The function calls another, potentially impure function that gets passed as a parameter.
@@ -98,7 +102,3 @@ The function calls another, potentially impure function that gets passed as a pa
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `parameterName` | [`String`][safeds.lang.String] | The name of the parameter that accepts the function. | - |
-
-## Other {#safeds.lang.ImpurityReason.Other data-toc-label='Other'}
-
-The function is impure for some other reason. If possible, use a more specific reason.

@@ -58,17 +58,17 @@ Get the base learner used for training the ensemble.
 
 **Type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
-## `#!sds attr` maximumNumberOfLearners {#safeds.ml.classical.classification.AdaBoostClassifier.maximumNumberOfLearners data-toc-label='maximumNumberOfLearners'}
-
-Get the maximum number of learners in the ensemble.
-
-**Type:** [`Int`][safeds.lang.Int]
-
 ## `#!sds attr` learningRate {#safeds.ml.classical.classification.AdaBoostClassifier.learningRate data-toc-label='learningRate'}
 
 Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
+
+## `#!sds attr` maximumNumberOfLearners {#safeds.ml.classical.classification.AdaBoostClassifier.maximumNumberOfLearners data-toc-label='maximumNumberOfLearners'}
+
+Get the maximum number of learners in the ensemble.
+
+**Type:** [`Int`][safeds.lang.Int]
 
 ## `#!sds fun` fit {#safeds.ml.classical.classification.AdaBoostClassifier.fit data-toc-label='fit'}
 

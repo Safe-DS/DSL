@@ -120,17 +120,18 @@ This transformer is not modified.
     ) -> result1: TableTransformer
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.transformation.TableTransformer.transform data-toc-label='transform'}
+## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.TableTransformer.fitAndTransform data-toc-label='fitAndTransform'}
 
-Apply the learned transformation to a table.
+Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
-The table is not modified.
+The table is not modified. If you also need the fitted transformer, use `fit` and `transform` separately.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table to which the learned transformation is applied. | - |
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
+| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `None`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -140,10 +141,12 @@ The table is not modified.
 
 ??? quote "Source code in `table_transformer.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="85"
     @Pure
-    fun transform(
-        table: Table
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table,
+        @PythonName("column_names") columnNames: List<String>? = null
     ) -> result1: Table
     ```
 
@@ -219,18 +222,17 @@ Check if the transformer is fitted.
     fun isFitted() -> result1: Boolean
     ```
 
-## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.TableTransformer.fitAndTransform data-toc-label='fitAndTransform'}
+## `#!sds fun` transform {#safeds.data.tabular.transformation.TableTransformer.transform data-toc-label='transform'}
 
-Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+Apply the learned transformation to a table.
 
-The table is not modified. If you also need the fitted transformer, use `fit` and `transform` separately.
+The table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `None`, all columns are used. | `#!sds null` |
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table to which the learned transformation is applied. | - |
 
 **Results:**
 
@@ -240,11 +242,9 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 
 ??? quote "Source code in `table_transformer.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="34"
     @Pure
-    @PythonName("fit_and_transform")
-    fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+    fun transform(
+        table: Table
     ) -> result1: Table
     ```

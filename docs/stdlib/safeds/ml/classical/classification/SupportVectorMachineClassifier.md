@@ -72,6 +72,45 @@ Support vector machine.
     }
     ```
 
+## `#!sds attr` c {#safeds.ml.classical.classification.SupportVectorMachineClassifier.c data-toc-label='c'}
+
+Get the regularization strength.
+
+**Type:** [`Float`][safeds.lang.Float]
+
+## `#!sds attr` kernel {#safeds.ml.classical.classification.SupportVectorMachineClassifier.kernel data-toc-label='kernel'}
+
+Get the type of kernel used.
+
+**Type:** [`Kernel`][safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel]
+
+## `#!sds fun` fit {#safeds.ml.classical.classification.SupportVectorMachineClassifier.fit data-toc-label='fit'}
+
+Create a copy of this classifier and fit it with the given training data.
+
+This classifier is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fittedClassifier` | [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier] | The fitted classifier. |
+
+??? quote "Source code in `support_vector_machine.sdsstub`"
+
+    ```sds linenums="64"
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedClassifier: SupportVectorMachineClassifier
+    ```
+
 ## `#!sds enum` Kernel {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel data-toc-label='Kernel'}
 
 The kernel functions that can be used in the support vector machine.
@@ -118,49 +157,10 @@ A polynomial kernel.
 |------|------|-------------|---------|
 | `degree` | [`Int`][safeds.lang.Int] | The degree of the polynomial. | - |
 
-### Sigmoid {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.Sigmoid data-toc-label='Sigmoid'}
-
-A sigmoid kernel.
-
 ### RadialBasisFunction {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.RadialBasisFunction data-toc-label='RadialBasisFunction'}
 
 A radial basis function kernel.
 
-## `#!sds attr` c {#safeds.ml.classical.classification.SupportVectorMachineClassifier.c data-toc-label='c'}
+### Sigmoid {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.Sigmoid data-toc-label='Sigmoid'}
 
-Get the regularization strength.
-
-**Type:** [`Float`][safeds.lang.Float]
-
-## `#!sds attr` kernel {#safeds.ml.classical.classification.SupportVectorMachineClassifier.kernel data-toc-label='kernel'}
-
-Get the type of kernel used.
-
-**Type:** [`Kernel`][safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel]
-
-## `#!sds fun` fit {#safeds.ml.classical.classification.SupportVectorMachineClassifier.fit data-toc-label='fit'}
-
-Create a copy of this classifier and fit it with the given training data.
-
-This classifier is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `fittedClassifier` | [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier] | The fitted classifier. |
-
-??? quote "Source code in `support_vector_machine.sdsstub`"
-
-    ```sds linenums="64"
-    @Pure
-    fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
-    ) -> fittedClassifier: SupportVectorMachineClassifier
-    ```
+A sigmoid kernel.
