@@ -13,8 +13,8 @@ fun myFunction(
     // $TEST$ serialization Boolean
     f: unresolved<»T = Boolean«>,
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     g: MyClass<»unresolved«>,
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     h: MyClass<»T = unresolved«>,
 )

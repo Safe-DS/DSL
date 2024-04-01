@@ -786,7 +786,7 @@ class UnknownTypeClass extends Type {
     }
 
     override toString(): string {
-        return '$unknown';
+        return 'unknown';
     }
 
     override simplify(): Type {

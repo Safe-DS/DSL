@@ -4,5 +4,5 @@ package tests.typing.declarations.parameters.ofAnnotations
 // $TEST$ equivalence_class parameterType
 annotation MyAnnotation1(»p«: »Int«)
 
-// $TEST$ serialization $unknown
+// $TEST$ serialization unknown
 annotation MyAnnotation2(»p«)

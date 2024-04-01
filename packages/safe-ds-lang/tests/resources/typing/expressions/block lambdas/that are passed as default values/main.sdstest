@@ -6,31 +6,31 @@ fun higherOrderFunction1(
         yield r = 1;
         yield s = "";
     }«,
-    // $TEST$ serialization (p: String) -> (r: literal<1>, s: $unknown)
+    // $TEST$ serialization (p: String) -> (r: literal<1>, s: unknown)
     param2: (p: String) -> (r: Int, s: String) = »(p) {
         yield r, yield s = 1;
     }«,
 )
 
 fun higherOrderFunction2(
-    // $TEST$ serialization (p: $unknown) -> (r: literal<1>, s: literal<"">)
+    // $TEST$ serialization (p: unknown) -> (r: literal<1>, s: literal<"">)
     param1: () -> () = »(p) {
         yield r = 1;
         yield s = "";
     }«,
-    // $TEST$ serialization (p: $unknown) -> (r: literal<1>, s: $unknown)
+    // $TEST$ serialization (p: unknown) -> (r: literal<1>, s: unknown)
     param2: () -> () = »(p) {
         yield r, yield s = 1;
     }«,
 )
 
 fun normalFunction(
-    // $TEST$ serialization (p: $unknown) -> (r: literal<1>, s: literal<"">)
+    // $TEST$ serialization (p: unknown) -> (r: literal<1>, s: literal<"">)
     param1: Int = »(p) {
         yield r = 1;
         yield s = "";
     }«,
-    // $TEST$ serialization (p: $unknown) -> (r: literal<1>, s: $unknown)
+    // $TEST$ serialization (p: unknown) -> (r: literal<1>, s: unknown)
     param2: Int = »(p) {
         yield r, yield s = 1;
     }«,

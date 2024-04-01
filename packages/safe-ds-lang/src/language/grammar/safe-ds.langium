@@ -906,6 +906,7 @@ SdsPrimaryType returns SdsType:
   | SdsLiteralType
   | SdsNamedType
   | SdsUnionType
+  | SdsUnknownType
 ;
 
 interface SdsCallableType extends SdsCallable, SdsType {
@@ -973,6 +974,12 @@ SdsUnionTypeArgumentList returns SdsTypeArgumentList:
 
 SdsUnionTypeArgument returns SdsTypeArgument:
     value=SdsType
+;
+
+interface SdsUnknownType extends SdsType {}
+
+SdsUnknownType returns SdsType:
+    {SdsUnknownType} 'unknown'
 ;
 
 SdsParentType returns SdsType:

@@ -1,9 +1,9 @@
 package tests.typing.expressions.calls.ofUnresolved
 
 pipeline myPipeline {
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »unresolved()«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »unresolved?()«;
 }
