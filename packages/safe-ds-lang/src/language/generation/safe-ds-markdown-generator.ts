@@ -362,7 +362,7 @@ export class SafeDsMarkdownGenerator {
         if (this.builtinAnnotations.callsDeprecated(node)) {
             return ' :warning:{ title="Deprecated" }';
         } else if (this.builtinAnnotations.callsExperimental(node)) {
-            return ' :test-tube:{ title="Experimental" }';
+            return ' :test_tube:{ title="Experimental" }';
         } else {
             return '';
         }
