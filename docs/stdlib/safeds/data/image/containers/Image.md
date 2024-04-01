@@ -60,6 +60,9 @@ A container for image data.
          *
          * The original image is not modified.
          *
+         * @param newWidth The new width of the image.
+         * @param newHeight The new height of the image.
+         *
          * @result result1 The image with the given width and height.
          */
         @Pure
@@ -86,6 +89,11 @@ A container for image data.
          * Return a new `Image` that has been cropped to a given bounding rectangle.
          *
          * The original image is not modified.
+         *
+         * @param x The x coordinate of the top-left corner of the bounding rectangle.
+         * @param y The y coordinate of the top-left corner of the bounding rectangle.
+         * @param width The width of the bounding rectangle.
+         * @param height The height of the bounding rectangle.
          *
          * @result result1 The cropped image.
          */
@@ -378,8 +386,8 @@ The original image is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `newWidth` | [`Int`][safeds.lang.Int] | - | - |
-| `newHeight` | [`Int`][safeds.lang.Int] | - | - |
+| `newWidth` | [`Int`][safeds.lang.Int] | The new width of the image. | - |
+| `newHeight` | [`Int`][safeds.lang.Int] | The new height of the image. | - |
 
 **Results:**
 
@@ -389,7 +397,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="66"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -414,7 +422,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="79"
+    ```sds linenums="82"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> result1: Image
@@ -430,10 +438,10 @@ The original image is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `x` | [`Int`][safeds.lang.Int] | - | - |
-| `y` | [`Int`][safeds.lang.Int] | - | - |
-| `width` | [`Int`][safeds.lang.Int] | - | - |
-| `height` | [`Int`][safeds.lang.Int] | - | - |
+| `x` | [`Int`][safeds.lang.Int] | The x coordinate of the top-left corner of the bounding rectangle. | - |
+| `y` | [`Int`][safeds.lang.Int] | The y coordinate of the top-left corner of the bounding rectangle. | - |
+| `width` | [`Int`][safeds.lang.Int] | The width of the bounding rectangle. | - |
+| `height` | [`Int`][safeds.lang.Int] | The height of the bounding rectangle. | - |
 
 **Results:**
 
@@ -443,7 +451,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="90"
+    ```sds linenums="98"
     @Pure
     fun crop(
         const x: Int,
@@ -472,7 +480,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="110"
+    ```sds linenums="118"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> result1: Image
@@ -492,7 +500,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="121"
+    ```sds linenums="129"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> result1: Image
@@ -518,7 +526,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="138"
+    ```sds linenums="146"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -548,7 +556,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="155"
+    ```sds linenums="163"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -578,7 +586,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="175"
+    ```sds linenums="183"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -608,7 +616,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="195"
+    ```sds linenums="203"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -638,7 +646,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="213"
+    ```sds linenums="221"
     @Pure
     fun blur(
         const radius: Int
@@ -667,7 +675,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="232"
+    ```sds linenums="240"
     @Pure
     fun sharpen(
         const factor: Float
@@ -690,7 +698,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="246"
+    ```sds linenums="254"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> result1: Image
@@ -710,7 +718,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="257"
+    ```sds linenums="265"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> result1: Image
@@ -730,7 +738,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="268"
+    ```sds linenums="276"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> result1: Image
@@ -750,7 +758,7 @@ The original image is not modified.
 
 ??? quote "Source code in `image.sdsstub`"
 
-    ```sds linenums="279"
+    ```sds linenums="287"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> result1: Image
