@@ -53,7 +53,7 @@ Description of myAttribute2.
 
 **Type:** `#!sds Float`
 
-## `#!sds attr` myFunction1 {#tests.generation.markdown.classes.documented.MyClass6.myFunction1 data-toc-label='myFunction1'}
+## `#!sds fun` myFunction1 {#tests.generation.markdown.classes.documented.MyClass6.myFunction1 data-toc-label='myFunction1'}
 
 Description of myFunction1.
 
@@ -63,7 +63,7 @@ Description of myFunction1.
     @Pure fun myFunction1()
     ```
 
-## `#!sds static attr` myFunction2 {#tests.generation.markdown.classes.documented.MyClass6.myFunction2 data-toc-label='myFunction2'}
+## `#!sds static fun` myFunction2 {#tests.generation.markdown.classes.documented.MyClass6.myFunction2 data-toc-label='myFunction2'}
 
 Description of myFunction2.
 

@@ -247,7 +247,7 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeFunction(node: SdsFunction, level: number, knownUris: Set<string>): string {
-        const keyword = isStatic(node) ? 'static attr' : 'attr';
+        const keyword = isStatic(node) ? 'static fun' : 'fun';
         let result = this.renderPreamble(node, level, 'function', keyword);
 
         // Parameters

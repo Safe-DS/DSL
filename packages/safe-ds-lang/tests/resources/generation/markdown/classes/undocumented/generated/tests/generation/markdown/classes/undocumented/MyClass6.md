@@ -23,7 +23,7 @@
 
 **Type:** `#!sds Float`
 
-## `#!sds attr` myFunction1 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction1 data-toc-label='myFunction1'}
+## `#!sds fun` myFunction1 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction1 data-toc-label='myFunction1'}
 
 ??? quote "Source code in `main.sdsstub`"
 
@@ -31,7 +31,7 @@
     @Pure fun myFunction1()
     ```
 
-## `#!sds static attr` myFunction2 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction2 data-toc-label='myFunction2'}
+## `#!sds static fun` myFunction2 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction2 data-toc-label='myFunction2'}
 
 ??? quote "Source code in `main.sdsstub`"
 
