@@ -227,7 +227,18 @@ export class SafeDsMarkdownGenerator {
         }
 
         // Members
-        getClassMembers(node).forEach((member) => {
+        const members = getClassMembers(node).sort((a, b) => a.name.localeCompare(b.name));
+        [
+            // Instance members
+            ...members.filter((it) => !isStatic(it) && isSdsAttribute(it)),
+            ...members.filter((it) => !isStatic(it) && isSdsFunction(it)),
+
+            // Static members
+            ...members.filter((it) => isStatic(it) && isSdsAttribute(it)),
+            ...members.filter((it) => isStatic(it) && isSdsFunction(it)),
+            ...members.filter((it) => isSdsClass(it)),
+            ...members.filter((it) => isSdsEnum(it)),
+        ].forEach((member) => {
             result += `\n${this.describeClassMember(member, level + 1, knownPaths)}`;
         });
 

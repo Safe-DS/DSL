@@ -37,13 +37,23 @@ class MyClass5 sub MyClass1
  */
 class MyClass6 {
     /**
-     * Description of myAttribute1.
+     * Description of MyClass7.
      */
-    attr myAttribute1: MyClass1
+    class MyClass7 {
+        /**
+         * Description of myAttribute4.
+         */
+        attr myAttribut4: Int
+        /**
+         * Description of myAttribute3.
+         */
+        attr myAttribute3: Int
+    }
+
     /**
-     * Description of myAttribute2.
+     * Description of MyEnum1.
      */
-    static attr myAttribute2: Float
+    enum MyEnum1
 
     /**
      * Description of myFunction1.
@@ -55,17 +65,11 @@ class MyClass6 {
     @Pure static fun myFunction2()
 
     /**
-     * Description of MyClass7.
+     * Description of myAttribute1.
      */
-    class MyClass7 {
-        /**
-         * Description of myAttribute3.
-         */
-        attr myAttribute3: Int
-    }
-
+    attr myAttribute1: MyClass1
     /**
-     * Description of MyEnum1.
+     * Description of myAttribute2.
      */
-    enum MyEnum1
+    static attr myAttribute2: Float
 }

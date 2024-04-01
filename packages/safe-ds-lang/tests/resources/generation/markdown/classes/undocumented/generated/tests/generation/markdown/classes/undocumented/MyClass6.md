@@ -19,10 +19,6 @@
 
 **Type:** `#!sds Int`
 
-## `#!sds static attr` myAttribute2 {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute2 data-toc-label='myAttribute2'}
-
-**Type:** `#!sds Float`
-
 ## `#!sds fun` myFunction1 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction1 data-toc-label='myFunction1'}
 
 ??? quote "Source code in `main.sdsstub`"
@@ -30,6 +26,10 @@
     ```sds linenums="17"
     @Pure fun myFunction1()
     ```
+
+## `#!sds static attr` myAttribute2 {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute2 data-toc-label='myAttribute2'}
+
+**Type:** `#!sds Float`
 
 ## `#!sds static fun` myFunction2 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction2 data-toc-label='myFunction2'}
 
