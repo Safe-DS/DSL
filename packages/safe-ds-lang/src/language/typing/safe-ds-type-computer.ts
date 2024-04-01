@@ -42,6 +42,7 @@ import {
     isSdsTypeParameter,
     isSdsUnionType,
     isSdsUnknown,
+    isSdsUnknownType,
     isSdsYield,
     SdsAbstractResult,
     SdsAssignee,
@@ -605,6 +606,8 @@ export class SafeDsTypeComputer {
             return this.factory.createUnionType(
                 ...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)),
             );
+        } else if (isSdsUnknownType(node)) {
+            return UnknownType;
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
