@@ -1,0 +1,7 @@
+- tests
+    - generation
+        - markdown
+            - annotations
+                - undocumented
+                    - [MyAnnotation1](tests/generation/markdown/annotations/undocumented/MyAnnotation1.md)
+                    - [MyAnnotation2](tests/generation/markdown/annotations/undocumented/MyAnnotation2.md)

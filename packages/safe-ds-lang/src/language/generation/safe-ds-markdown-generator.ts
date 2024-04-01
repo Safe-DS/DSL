@@ -16,6 +16,7 @@ import {
     SdsEnum,
     SdsFunction,
     SdsModuleMember,
+    SdsParameter,
     SdsSchema,
     SdsSegment,
 } from '../generated/ast.js';
@@ -23,6 +24,7 @@ import {
     getColumns,
     getModuleMembers,
     getPackageName,
+    getParameters,
     getQualifiedName,
     isPrivate,
 } from '../helpers/nodeProperties.js';
@@ -75,7 +77,7 @@ export class SafeDsMarkdownGenerator {
         knownUris: Set<string>,
         options: GenerateOptions,
     ): TextDocument[] {
-        const content = this.describeModuleMember(node, knownUris, options);
+        const content = this.describeModuleMember(node, 1, knownUris, options);
         if (content === undefined) {
             return [];
         }
@@ -90,6 +92,7 @@ export class SafeDsMarkdownGenerator {
      */
     private describeModuleMember(
         node: SdsModuleMember,
+        level: number,
         knownUris: Set<string>,
         options: GenerateOptions,
     ): string | undefined {
@@ -99,13 +102,13 @@ export class SafeDsMarkdownGenerator {
         }
 
         if (isSdsAnnotation(node)) {
-            return this.describeAnnotation(node, knownUris, options);
+            return this.describeAnnotation(node, knownUris);
         } else if (isSdsClass(node)) {
-            return this.describeClass(node, knownUris, options);
+            return this.describeClass(node, level, knownUris, options);
         } else if (isSdsEnum(node)) {
-            return this.describeEnum(node, knownUris, options);
+            return this.describeEnum(node, level, knownUris, options);
         } else if (isSdsFunction(node)) {
-            return this.describeFunction(node, knownUris, options);
+            return this.describeFunction(node, level, knownUris, options);
         } else if (isSdsPipeline(node)) {
             // Pipelines cannot be called, so they are not documented
             return undefined;
@@ -119,24 +122,42 @@ export class SafeDsMarkdownGenerator {
         }
     }
 
-    private describeAnnotation(node: SdsAnnotation, knownUris: Set<string>, options: GenerateOptions): string {
-        // TODO
-        return 'Annotation details';
+    private describeAnnotation(node: SdsAnnotation, knownUris: Set<string>): string {
+        let result = this.renderPreamble(node, 1, 'annotation');
+
+        // Parameters
+        const parameters = this.renderParameters(getParameters(node), knownUris);
+        if (parameters) {
+            result += `\n**Parameters:**\n\n${parameters}`;
+        }
+
+        // Source code
+        const sourceCode = this.renderSourceCode(node);
+        if (sourceCode) {
+            result += `\n${sourceCode}`;
+        }
+
+        return result;
     }
 
-    private describeClass(node: SdsClass, knownUris: Set<string>, options: GenerateOptions): string {
+    private describeClass(node: SdsClass, level: number, knownUris: Set<string>, options: GenerateOptions): string {
         // TODO
         const description = this.documentationProvider.getDescription(node);
         const since = this.documentationProvider.getSince(node);
         return `Class details\n\n${description}\n\n${since}`;
     }
 
-    private describeEnum(node: SdsEnum, knownUris: Set<string>, options: GenerateOptions): string {
+    private describeEnum(node: SdsEnum, level: number, knownUris: Set<string>, options: GenerateOptions): string {
         // TODO
         return 'Enum details';
     }
 
-    private describeFunction(node: SdsFunction, knownUris: Set<string>, options: GenerateOptions): string {
+    private describeFunction(
+        node: SdsFunction,
+        level: number,
+        knownUris: Set<string>,
+        options: GenerateOptions,
+    ): string {
         // TODO
         return 'Function details';
     }
@@ -233,6 +254,28 @@ export class SafeDsMarkdownGenerator {
         }
 
         return result.trimEnd();
+    }
+
+    private renderParameters(parameters: SdsParameter[], knownUris: Set<string>): string {
+        if (isEmpty(parameters)) {
+            return '';
+        }
+
+        let result = '| Name | Type | Description | Default |\n';
+        result += '|------|------|-------------|---------|\n';
+
+        for (const parameter of parameters) {
+            const name = parameter.name;
+            const type = this.typeComputer.computeType(parameter.type);
+            const description = this.documentationProvider.getDescription(parameter) ?? '';
+            const defaultValue = parameter.defaultValue?.$cstNode
+                ? `\`${parameter.defaultValue.$cstNode.text}\``
+                : '_required_';
+
+            result += `| \`${name}\` | ${this.renderType(type, knownUris)} | ${description} | ${defaultValue} |\n`;
+        }
+
+        return result;
     }
 
     private renderType(type: Type, knownUris: Set<string>): string {
