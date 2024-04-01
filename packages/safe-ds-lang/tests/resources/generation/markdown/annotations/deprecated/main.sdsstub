@@ -1,0 +1,4 @@
+package tests.generation.markdown.annotations.deprecated
+
+@Deprecated
+annotation MyAnnotation1

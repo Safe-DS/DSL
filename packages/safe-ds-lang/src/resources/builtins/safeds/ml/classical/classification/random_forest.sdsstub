@@ -1,4 +1,4 @@
-package safeds.ml.classical.regression
+package safeds.ml.classical.classification
 
 from safeds.data.tabular.containers import Table, TaggedTable
 from safeds.ml.classical.classification import Classifier

@@ -1,0 +1,6 @@
+- tests
+    - generation
+        - markdown
+            - annotations
+                - deprecated
+                    - [MyAnnotation1](tests/generation/markdown/annotations/deprecated/MyAnnotation1.md)

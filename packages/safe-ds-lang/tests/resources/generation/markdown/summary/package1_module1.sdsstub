@@ -1,0 +1,5 @@
+package tests.generation.markdown.summary.package1
+
+class MyClass1
+
+class MyClass2

@@ -1,0 +1,17 @@
+package tests.generation.markdown.functions.undocumented
+
+@Pure
+fun myFunction1()
+
+@Pure
+fun myFunction2<TypeParam1, TypeParam2 sub Int, TypeParam3 = Int>(
+    param1: TypeParam1,
+    param2: TypeParam2,
+    param3: TypeParam3,
+)
+
+@Pure
+fun myFunction3(param1: Int, param2: Float = 1.0)
+
+@Pure
+fun myFunction4() -> (result1: Int, result2: Float)

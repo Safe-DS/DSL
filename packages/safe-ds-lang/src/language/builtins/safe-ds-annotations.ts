@@ -46,6 +46,24 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return hasAnnotationCallOf(node, this.Deprecated);
     }
 
+    getDeprecationInfo(node: SdsAnnotatedObject | undefined): DeprecationInfo | undefined {
+        if (!this.callsDeprecated(node)) {
+            return undefined;
+        }
+
+        const alternative = this.getParameterValue(node, this.Deprecated, 'alternative');
+        const reason = this.getParameterValue(node, this.Deprecated, 'reason');
+        const sinceVersion = this.getParameterValue(node, this.Deprecated, 'sinceVersion');
+        const removalVersion = this.getParameterValue(node, this.Deprecated, 'removalVersion');
+
+        return {
+            alternative: alternative instanceof StringConstant ? alternative.value : undefined,
+            reason: reason instanceof StringConstant ? reason.value : undefined,
+            sinceVersion: sinceVersion instanceof StringConstant ? sinceVersion.value : undefined,
+            removalVersion: removalVersion instanceof StringConstant ? removalVersion.value : undefined,
+        };
+    }
+
     private get Deprecated(): SdsAnnotation | undefined {
         return this.getAnnotation(MATURITY_URI, 'Deprecated');
     }
@@ -183,4 +201,11 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         const parameterValue = this.nodeMapper.callToParameterValue(annotationCall, parameterName);
         return this.partialEvaluator.evaluate(parameterValue);
     }
+}
+
+interface DeprecationInfo {
+    alternative?: string;
+    reason?: string;
+    sinceVersion?: string;
+    removalVersion?: string;
 }

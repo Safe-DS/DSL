@@ -2,7 +2,7 @@ import { AssertionError } from 'assert';
 import { AstNode, AstUtils, DocumentValidator, LangiumDocument, Reference, URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { clearDocuments, isRangeEqual, validationHelper } from 'langium/test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Location } from 'vscode-languageserver';
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { isLocationEqual, locationToString } from '../../../src/helpers/locations.js';
@@ -18,15 +18,6 @@ const builtinClasses = services.builtins.Classes;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 
 describe('scoping', async () => {
-    beforeEach(async () => {
-        // Load the builtin library
-        await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
-    });
-
-    afterEach(async () => {
-        await clearDocuments(services);
-    });
-
     it.each(await createScopingTests())('$testName', async (test) => {
         // Test is invalid
         if (test.error) {
@@ -34,7 +25,7 @@ describe('scoping', async () => {
         }
 
         // Load all documents
-        await loadDocuments(services, test.uris);
+        const documents = await loadDocuments(services, test.uris);
 
         // Ensure all expected references match
         for (const expectedReference of test.expectedReferences) {
@@ -73,6 +64,9 @@ describe('scoping', async () => {
                 }
             }
         }
+
+        // Clear documents
+        await clearDocuments(services, documents);
     });
 
     it('should not replace core declarations (annotation call)', async () => {

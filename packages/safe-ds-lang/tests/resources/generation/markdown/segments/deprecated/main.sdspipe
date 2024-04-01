@@ -1,0 +1,4 @@
+package tests.generation.markdown.segments.deprecated
+
+@Deprecated
+segment mySegment1() {}

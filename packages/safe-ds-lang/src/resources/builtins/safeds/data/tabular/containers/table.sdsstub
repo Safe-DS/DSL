@@ -10,13 +10,13 @@ from safeds.data.tabular.typing import ColumnType, Schema
  *
  * To create a `Table` call the constructor or use one of the following static methods:
  *
- * | Method                                                                       | Description                            |
- * | ---------------------------------------------------------------------------- | -------------------------------------- |
- * | [from_csv_file][safeds.data.tabular.containers._table.Table.from_csv_file]   | Create a table from a CSV file.        |
- * | [from_json_file][safeds.data.tabular.containers._table.Table.from_json_file] | Create a table from a JSON file.       |
- * | [from_dict][safeds.data.tabular.containers._table.Table.from_dict]           | Create a table from a dictionary.      |
- * | [from_columns][safeds.data.tabular.containers._table.Table.from_columns]     | Create a table from a list of columns. |
- * | [from_rows][safeds.data.tabular.containers._table.Table.from_rows]           | Create a table from a list of rows.    |
+ * | Method                                                            | Description                            |
+ * | ------------------------------------------------------------------| -------------------------------------- |
+ * | [fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]   | Create a table from a CSV file.        |
+ * | [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile] | Create a table from a JSON file.       |
+ * | [fromDict][safeds.data.tabular.containers.Table.fromDict]         | Create a table from a dictionary.      |
+ * | [fromColumns][safeds.data.tabular.containers.Table.fromColumns]   | Create a table from a list of columns. |
+ * | [fromRows][safeds.data.tabular.containers.Table.fromRows]         | Create a table from a list of rows.    |
  *
  * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
  *
