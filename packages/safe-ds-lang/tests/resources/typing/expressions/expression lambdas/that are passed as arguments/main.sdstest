@@ -12,18 +12,18 @@ segment mySegment() {
     // $TEST$ serialization (p: String) -> (result: literal<1>)
     higherOrderFunction1(param = »(p) -> 1«);
 
-    // $TEST$ serialization (p: $unknown) -> (result: literal<1>)
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
     higherOrderFunction2(»(p) -> 1«);
 
-    // $TEST$ serialization (p: $unknown) -> (result: literal<1>)
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
     higherOrderFunction2(param = »(p) -> 1«);
 
-    // $TEST$ serialization (p: $unknown) -> (result: literal<1>)
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
     normalFunction(»(p) -> 1«);
 
-    // $TEST$ serialization (p: $unknown) -> (result: literal<1>)
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
     normalFunction(param = »(p) -> 1«);
 
-    // $TEST$ serialization (p: $unknown) -> (result: literal<1>)
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
     parameterlessFunction(»(p) -> 1«);
 }

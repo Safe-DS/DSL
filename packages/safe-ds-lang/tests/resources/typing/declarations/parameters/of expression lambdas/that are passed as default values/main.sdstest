@@ -7,11 +7,11 @@ fun higherOrderFunction1(
 )
 
 fun higherOrderFunction2(
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     param: () -> r: String = (»p«) -> ""
 )
 
 fun normalFunction(
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     param: Int = (»p«) -> ""
 )

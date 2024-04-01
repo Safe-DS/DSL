@@ -1,9 +1,9 @@
 package tests.typing.expressions.indexedAccesses.onUnresolved
 
 segment mySegment() {
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »unresolved[0]«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »unresolved?[0]«;
 }

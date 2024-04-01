@@ -743,7 +743,7 @@ export class SafeDsTypeComputer {
     /**
      * Returns the upper bound for the given input. If no upper bound is specified explicitly, the result is `Any?`. If
      * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
-     * `$unknown` is returned. The result is simplified as much as possible.
+     * `unknown` is returned. The result is simplified as much as possible.
      */
     computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeUpperBoundOptions = {}): Type {
         let type: TypeParameterType;
