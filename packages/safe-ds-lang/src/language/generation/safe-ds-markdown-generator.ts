@@ -353,8 +353,7 @@ export class SafeDsMarkdownGenerator {
         if (deprecationWarning) {
             result += `\n${deprecationWarning}\n`;
         }
-
-        const description = this.documentationProvider.getDescription(node);
+        const description = this.renderDescription(node);
         if (description) {
             result += `\n${description}\n`;
         }
@@ -412,6 +411,16 @@ export class SafeDsMarkdownGenerator {
         return result.trimEnd();
     }
 
+    private renderDescription(node: SdsDeclaration) {
+        return this.documentationProvider.getDescription(node, (target, display) => {
+            if (target) {
+                return `[${display}][${getQualifiedName(target)}]`;
+            } else {
+                return display;
+            }
+        });
+    }
+
     private renderParameters(nodes: SdsParameter[], knownPaths: Set<string>): string {
         if (isEmpty(nodes)) {
             return '';
@@ -423,7 +432,7 @@ export class SafeDsMarkdownGenerator {
         for (const parameter of nodes) {
             const name = `\`${parameter.name}\``;
             const type = this.renderType(this.typeComputer.computeType(parameter.type), knownPaths);
-            const description = this.documentationProvider.getDescription(parameter) ?? '-';
+            const description = this.renderDescription(parameter) ?? '-';
             const defaultValue = parameter.defaultValue?.$cstNode
                 ? `\`#!sds ${parameter.defaultValue.$cstNode.text}\``
                 : '-';
@@ -445,7 +454,7 @@ export class SafeDsMarkdownGenerator {
         for (const node of nodes) {
             const name = `\`${node.name}\``;
             const type = this.renderType(this.typeComputer.computeType(node.type), knownPaths);
-            const description = this.documentationProvider.getDescription(node) ?? '-';
+            const description = this.renderDescription(node) ?? '-';
 
             result += `| ${name} | ${type} | ${description} |\n`;
         }
@@ -464,7 +473,7 @@ export class SafeDsMarkdownGenerator {
         for (const node of nodes) {
             const name = `\`${node.name}\``;
             const upperBound = this.renderType(this.typeComputer.computeUpperBound(node), knownPaths);
-            const description = this.documentationProvider.getDescription(node) ?? '-';
+            const description = this.renderDescription(node) ?? '-';
             const defaultValue = node.defaultValue
                 ? this.renderType(this.typeComputer.computeType(node.defaultValue), knownPaths)
                 : '-';

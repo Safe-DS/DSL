@@ -11,9 +11,11 @@ import {
 } from 'langium';
 import {
     isSdsCallable,
+    isSdsDeclaration,
     isSdsParameter,
     isSdsResult,
     isSdsTypeParameter,
+    SdsDeclaration,
     SdsParameter,
     SdsResult,
     SdsTypeParameter,
@@ -29,7 +31,7 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     /**
      * Returns the documentation of the given node as a Markdown string.
      */
-    override getDocumentation(node: AstNode): string | undefined {
+    override getDocumentation(node: AstNode, linkRenderer?: LinkRenderer): string | undefined {
         if (isSdsParameter(node) || isSdsResult(node) || isSdsTypeParameter(node)) {
             const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
             if (!containingCallable) {
@@ -42,10 +44,10 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                 return undefined;
             }
 
-            return this.getMatchingTagContent(comment, node)?.trim();
+            return this.getMatchingTagContent(comment, node, linkRenderer)?.trim();
         } else {
             const comment = this.getJSDocComment(node);
-            return comment?.toMarkdown(this.createRenderOptions(node))?.trim();
+            return comment?.toMarkdown(this.createRenderOptions(node, linkRenderer))?.trim();
         }
     }
 
@@ -55,9 +57,9 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
      * Compared to {@link getDocumentation}, this method also removes a single leading space from each line, if all
      * lines have one. Moreover, inline link tags are rendered differently.
      */
-    getDescription(node: AstNode): string | undefined {
+    getDescription(node: AstNode, linkRenderer?: LinkRenderer): string | undefined {
         if (isSdsParameter(node) || isSdsResult(node) || isSdsTypeParameter(node)) {
-            return this.getDocumentation(node);
+            return this.getDocumentation(node, linkRenderer);
         } else {
             const comment = this.getJSDocComment(node);
             if (!comment) {
@@ -72,7 +74,7 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
 
             // Remove a single leading space from each line
             const [first, ...rest] = comment
-                .toMarkdown(this.createRenderOptions(node))
+                .toMarkdown(this.createRenderOptions(node, linkRenderer))
                 .split('\n')
                 .map((it) => it.trimEnd());
 
@@ -105,6 +107,7 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     private getMatchingTagContent(
         comment: JSDocComment,
         node: SdsParameter | SdsResult | SdsTypeParameter,
+        linkRenderer?: LinkRenderer,
     ): string | undefined {
         const name = node.name;
         if (!name) {
@@ -117,7 +120,7 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
 
         return comment
             .getTags(tagName)
-            .map((it) => it.content.toMarkdown(this.createRenderOptions(node)))
+            .map((it) => it.content.toMarkdown(this.createRenderOptions(node, linkRenderer)))
             .find((it) => matchRegex.test(it))
             ?.match(matchRegex)
             ?.groups?.content?.replaceAll(/\s+/gu, ' ');
@@ -133,26 +136,34 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
         }
     }
 
-    private createRenderOptions(node: AstNode): JSDocRenderOptions {
+    private createRenderOptions(node: AstNode, linkRenderer?: LinkRenderer): JSDocRenderOptions {
         return {
-            renderLink: (link, display) => {
-                return this.documentationLinkRenderer(node, link, display);
-            },
             tag: 'bold',
             renderTag: (tag: JSDocTag) => {
-                return this.documentationTagRenderer(node, tag);
+                if (tag.name === PARAM_TAG || tag.name === RESULT_TAG || tag.name === TYPE_PARAM_TAG) {
+                    const contentMd = tag.content.toMarkdown();
+                    const [name, description] = contentMd.split(/\s(.*)/su);
+                    return `**@${tag.name}** *${name}* — ${(description ?? '').trim()}`;
+                } else {
+                    return super.documentationTagRenderer(node, tag);
+                }
+            },
+            renderLink: (name, display) => {
+                if (!linkRenderer) {
+                    return super.documentationLinkRenderer(node, name, display);
+                }
+
+                const description =
+                    this.findNameInPrecomputedScopes(node, name) ?? this.findNameInGlobalScope(node, name);
+                const target = description?.node;
+
+                if (isSdsDeclaration(target)) {
+                    return linkRenderer(target, display);
+                } else {
+                    return linkRenderer(undefined, display);
+                }
             },
         };
-    }
-
-    protected override documentationTagRenderer(node: AstNode, tag: JSDocTag): string | undefined {
-        if (tag.name === PARAM_TAG || tag.name === RESULT_TAG || tag.name === TYPE_PARAM_TAG) {
-            const contentMd = tag.content.toMarkdown();
-            const [name, description] = contentMd.split(/\s(.*)/su);
-            return `**@${tag.name}** *${name}* — ${(description ?? '').trim()}`;
-        } else {
-            return super.documentationTagRenderer(node, tag);
-        }
     }
 }
 
@@ -163,3 +174,5 @@ const isBlockTag = (element: JSDocElement): element is JSDocTag => {
 const isTag = (element: JSDocElement): element is JSDocTag => {
     return 'name' in element;
 };
+
+type LinkRenderer = (target: SdsDeclaration | undefined, display: string) => string | undefined;
