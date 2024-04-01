@@ -18,6 +18,7 @@ import {
     SdsResult,
     SdsTypeParameter,
 } from '../generated/ast.js';
+import { isEmpty } from '../../helpers/collections.js';
 
 const PARAM_TAG = 'param';
 const RESULT_TAG = 'result';
@@ -50,6 +51,9 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
 
     /**
      * Returns the description of the given node as a Markdown string, which is the documentation without tags.
+     *
+     * Compared to {@link getDocumentation}, this method also removes a single leading space from each line, if all
+     * lines have one. Moreover, inline link tags are rendered differently.
      */
     getDescription(node: AstNode): string | undefined {
         if (isSdsParameter(node) || isSdsResult(node) || isSdsTypeParameter(node)) {
@@ -66,7 +70,17 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                 comment.elements.splice(firstBlockTag);
             }
 
-            return comment.toMarkdown(this.createRenderOptions(node)).trim();
+            // Remove a single leading space from each line
+            const [first, ...rest] = comment
+                .toMarkdown(this.createRenderOptions(node))
+                .split('\n')
+                .map((it) => it.trimEnd());
+
+            if (rest.every((it) => isEmpty(it) || it.startsWith(' '))) {
+                return [first, ...rest.map((it) => it.slice(1))].join('\n');
+            } else {
+                return [first, ...rest].join('\n');
+            }
         }
     }
 

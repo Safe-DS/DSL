@@ -254,6 +254,19 @@ describe('SafeDsDocumentationProvider', () => {
                 predicate: isSdsFunction,
                 expectedDocumentation: `${testDocumentation} myFunction2 ${testDocumentation}`,
             },
+            {
+                testName: 'multiline test',
+                code: `
+                    /**
+                     * ${testDocumentation}
+                     *
+                     * ${testDocumentation}
+                     */
+                    fun myFunction<T>(param: String) -> result: String
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `${testDocumentation}\n\n${testDocumentation}`,
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
