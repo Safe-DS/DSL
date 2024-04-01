@@ -1,0 +1,26 @@
+package tests.generation.markdown.multiline
+
+/**
+ * Description of MyClass1.
+ *
+ * $$
+ * n
+ * $$
+ */
+class MyClass1
+
+/**
+ * Description of MyClass2.
+ *
+ * @param param1 Description of param1.
+ *     That spans
+ * multiple lines.
+ *
+ * @param param2
+ *     Description of param2.
+ *     That spans
+ * multiple lines.
+ *
+ * Some additional text.
+ */
+class MyClass2(param1: Int, param2: Int)
