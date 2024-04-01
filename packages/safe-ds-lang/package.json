@@ -44,7 +44,7 @@
     },
     "dependencies": {
         "chevrotain": "^11.0.3",
-        "glob": "^10.3.10",
+        "glob": "^10.3.12",
         "langium": "^3.0.0",
         "semver": "^7.6.0",
         "source-map": "^0.7.4",
