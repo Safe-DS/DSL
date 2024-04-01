@@ -11,9 +11,8 @@ schema MySchema1 {}
  * Description of MySchema2.
  */
 schema MySchema2 {
-    "column1": String,
+    "column1": MyClass,
     "column2": Int,
-    "column3": MyClass,
 }
 
 class MyClass

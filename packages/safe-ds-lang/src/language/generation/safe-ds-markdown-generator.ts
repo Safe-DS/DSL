@@ -14,6 +14,7 @@ import {
     SdsClass,
     SdsDeclaration,
     SdsEnum,
+    SdsEnumVariant,
     SdsFunction,
     SdsModuleMember,
     SdsParameter,
@@ -22,6 +23,7 @@ import {
 } from '../generated/ast.js';
 import {
     getColumns,
+    getEnumVariants,
     getModuleMembers,
     getPackageName,
     getParameters,
@@ -77,7 +79,7 @@ export class SafeDsMarkdownGenerator {
         knownUris: Set<string>,
         options: GenerateOptions,
     ): TextDocument[] {
-        const content = this.describeModuleMember(node, 1, knownUris, options);
+        const content = this.describeModuleMember(node, knownUris, options);
         if (content === undefined) {
             return [];
         }
@@ -92,7 +94,6 @@ export class SafeDsMarkdownGenerator {
      */
     private describeModuleMember(
         node: SdsModuleMember,
-        level: number,
         knownUris: Set<string>,
         options: GenerateOptions,
     ): string | undefined {
@@ -101,29 +102,31 @@ export class SafeDsMarkdownGenerator {
             return undefined;
         }
 
+        const level = 1;
+
         if (isSdsAnnotation(node)) {
-            return this.describeAnnotation(node, knownUris);
+            return this.describeAnnotation(node, level, knownUris);
         } else if (isSdsClass(node)) {
-            return this.describeClass(node, level, knownUris, options);
+            return this.describeClass(node, level, knownUris);
         } else if (isSdsEnum(node)) {
-            return this.describeEnum(node, level, knownUris, options);
+            return this.describeEnum(node, level, knownUris);
         } else if (isSdsFunction(node)) {
-            return this.describeFunction(node, level, knownUris, options);
+            return this.describeFunction(node, level, knownUris);
         } else if (isSdsPipeline(node)) {
             // Pipelines cannot be called, so they are not documented
             return undefined;
         } else if (isSdsSchema(node)) {
-            return this.describeSchema(node, knownUris, options);
+            return this.describeSchema(node, level, knownUris);
         } else if (isSdsSegment(node)) {
-            return this.describeSegment(node, knownUris, options);
+            return this.describeSegment(node, level, knownUris);
         } else {
             /* c8 ignore next 2 */
             throw new Error(`Unsupported module member type: ${node.$type}`);
         }
     }
 
-    private describeAnnotation(node: SdsAnnotation, knownUris: Set<string>): string {
-        let result = this.renderPreamble(node, 1, 'annotation');
+    private describeAnnotation(node: SdsAnnotation, level: number, knownUris: Set<string>): string {
+        let result = this.renderPreamble(node, level, 'annotation');
 
         // Parameters
         const parameters = this.renderParameters(getParameters(node), knownUris);
@@ -140,30 +143,49 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private describeClass(node: SdsClass, level: number, knownUris: Set<string>, options: GenerateOptions): string {
+    private describeClass(node: SdsClass, level: number, knownUris: Set<string>): string {
         // TODO
         const description = this.documentationProvider.getDescription(node);
         const since = this.documentationProvider.getSince(node);
         return `Class details\n\n${description}\n\n${since}`;
     }
 
-    private describeEnum(node: SdsEnum, level: number, knownUris: Set<string>, options: GenerateOptions): string {
-        // TODO
-        return 'Enum details';
+    private describeEnum(node: SdsEnum, level: number, knownUris: Set<string>): string {
+        let result = this.renderPreamble(node, level, 'enum');
+
+        // Source code
+        const sourceCode = this.renderSourceCode(node);
+        if (sourceCode) {
+            result += `\n${sourceCode}`;
+        }
+
+        // Enum variants
+        getEnumVariants(node).forEach((variant) => {
+            result += `\n${this.describeEnumVariant(variant, level + 1, knownUris)}`;
+        });
+
+        return result;
     }
 
-    private describeFunction(
-        node: SdsFunction,
-        level: number,
-        knownUris: Set<string>,
-        options: GenerateOptions,
-    ): string {
+    private describeEnumVariant(node: SdsEnumVariant, level: number, knownUris: Set<string>): string {
+        let result = this.renderPreamble(node, level, 'enum variant', '');
+
+        // Parameters
+        const parameters = this.renderParameters(getParameters(node), knownUris);
+        if (parameters) {
+            result += `\n**Parameters:**\n\n${parameters}`;
+        }
+
+        return result;
+    }
+
+    private describeFunction(node: SdsFunction, level: number, knownUris: Set<string>): string {
         // TODO
         return 'Function details';
     }
 
-    private describeSchema(node: SdsSchema, knownUris: Set<string>, options: GenerateOptions): string {
-        let result = this.renderPreamble(node, 1, 'schema');
+    private describeSchema(node: SdsSchema, level: number, knownUris: Set<string>): string {
+        let result = this.renderPreamble(node, level, 'schema');
 
         // Columns
         const columns = getColumns(node);
@@ -189,15 +211,15 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private describeSegment(node: SdsSegment, knownUris: Set<string>, options: GenerateOptions): string | undefined {
+    private describeSegment(node: SdsSegment, level: number, knownUris: Set<string>): string {
         // TODO
         return 'Segment details';
     }
 
-    private renderPreamble(node: SdsDeclaration, level: number, keyword: string): string {
+    private renderPreamble(node: SdsDeclaration, level: number, kind: string, keyword: string = kind): string {
         let result = this.renderHeading(node, level, keyword) + '\n';
 
-        const deprecationWarning = this.renderDeprecationWarning(node, keyword);
+        const deprecationWarning = this.renderDeprecationWarning(node, kind);
         if (deprecationWarning) {
             result += `\n${deprecationWarning}\n`;
         }
@@ -213,7 +235,11 @@ export class SafeDsMarkdownGenerator {
     private renderHeading(node: SdsDeclaration, level: number, keyword: string): string {
         let result = '#'.repeat(Math.min(level, 6));
         result += this.renderMaturity(node);
-        result += ` \`#!sds ${keyword}\``;
+
+        if (keyword) {
+            result += ` \`#!sds ${keyword}\``;
+        }
+
         result += ` ${node.name}`;
         result += ` {#${getQualifiedName(node)}}`;
         return result;

@@ -6,16 +6,14 @@ Description of MySchema2.
 
 | Name | Type |
 |------|------|
-| `column1` | `#!sds String` |
+| `column1` | [`#!sds MyClass`][#tests.generation.markdown.schemas.documented.MyClass] |
 | `column2` | `#!sds Int` |
-| `column3` | [`#!sds MyClass`][#tests.generation.markdown.schemas.documented.MyClass] |
 
 ??? quote "Source code in `main.sdsstub`"
 
     ```sds linenums="13"
     schema MySchema2 {
-        "column1": String,
+        "column1": MyClass,
         "column2": Int,
-        "column3": MyClass,
     }
     ```
