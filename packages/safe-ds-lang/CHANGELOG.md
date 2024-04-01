@@ -1,3 +1,24 @@
+## [0.9.0](https://github.com/Safe-DS/DSL/compare/v0.8.0...v0.9.0) (2024-04-01)
+
+
+### Features
+
+* `unknown` default value of stub parameters ([#952](https://github.com/Safe-DS/DSL/issues/952)) ([78103e3](https://github.com/Safe-DS/DSL/commit/78103e34d2a9f9399733f3cc94cc665b97a2f10e)), closes [#951](https://github.com/Safe-DS/DSL/issues/951)
+* `unknown` type ([#973](https://github.com/Safe-DS/DSL/issues/973)) ([4638249](https://github.com/Safe-DS/DSL/commit/4638249dbbbe0fc3875b018685d97231907ca4bd)), closes [#967](https://github.com/Safe-DS/DSL/issues/967)
+* add constraints to stubs ([#953](https://github.com/Safe-DS/DSL/issues/953)) ([dc5bf3b](https://github.com/Safe-DS/DSL/commit/dc5bf3bfcb0868c74188acceac9e3b1002e618ef))
+* allow any widening/narrowing type cast ([#948](https://github.com/Safe-DS/DSL/issues/948)) ([ce01628](https://github.com/Safe-DS/DSL/commit/ce01628f307554b6b43bacbfd538156497d37bef))
+* checking of parameter bounds ([#925](https://github.com/Safe-DS/DSL/issues/925)) ([610604f](https://github.com/Safe-DS/DSL/commit/610604ff2692a2770d282836bcad53aa2c6c7a7a)), closes [#18](https://github.com/Safe-DS/DSL/issues/18)
+* Markdown documentation generator ([#963](https://github.com/Safe-DS/DSL/issues/963)) ([77d04de](https://github.com/Safe-DS/DSL/commit/77d04dee4afc77a9a19b105ac1e4ff2ca3420791)), closes [#663](https://github.com/Safe-DS/DSL/issues/663)
+* stubs for `safe-ds` library ([#950](https://github.com/Safe-DS/DSL/issues/950)) ([155b1c0](https://github.com/Safe-DS/DSL/commit/155b1c045754a349bd7b41fef758b68adc3ec42c)), closes [#926](https://github.com/Safe-DS/DSL/issues/926)
+* VS Code command to dump diagnostics into a JSON file ([#928](https://github.com/Safe-DS/DSL/issues/928)) ([34fa884](https://github.com/Safe-DS/DSL/commit/34fa884299101df4d11d98dba39395cf2eda7bec)), closes [#927](https://github.com/Safe-DS/DSL/issues/927)
+
+
+### Bug Fixes
+
+* do not memoize calls containing lambdas calling segments ([#944](https://github.com/Safe-DS/DSL/issues/944)) ([114fee6](https://github.com/Safe-DS/DSL/commit/114fee68b57e12371d574d0a5f8944def7e61813))
+* language server crash on startup ([#947](https://github.com/Safe-DS/DSL/issues/947)) ([9923074](https://github.com/Safe-DS/DSL/commit/99230742a81ebfc39ae9f7a889b261415f6dfc82)), closes [#945](https://github.com/Safe-DS/DSL/issues/945)
+* type checking of two union types ([#949](https://github.com/Safe-DS/DSL/issues/949)) ([21fc485](https://github.com/Safe-DS/DSL/commit/21fc4850239ed4c13ef05457fcb1f6c546da6cbc))
+
 ## [0.8.0](https://github.com/Safe-DS/DSL/compare/v0.7.0...v0.8.0) (2024-02-26)
 
 
