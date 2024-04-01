@@ -244,9 +244,11 @@ export class SafeDsMarkdownGenerator {
         }
 
         // Enum variants
-        getEnumVariants(node).forEach((variant) => {
-            result += `\n${this.describeEnumVariant(variant, level + 1, knownPaths)}`;
-        });
+        getEnumVariants(node)
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .forEach((variant) => {
+                result += `\n${this.describeEnumVariant(variant, level + 1, knownPaths)}`;
+            });
 
         return result;
     }

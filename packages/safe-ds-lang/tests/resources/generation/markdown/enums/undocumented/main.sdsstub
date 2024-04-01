@@ -3,6 +3,6 @@ package tests.generation.markdown.enums.undocumented
 enum MyEnum1
 
 enum MyEnum2 {
-    MyVariant1
     MyVariant2(param1: Int, param2: Float = 1.0)
+    MyVariant1
 }

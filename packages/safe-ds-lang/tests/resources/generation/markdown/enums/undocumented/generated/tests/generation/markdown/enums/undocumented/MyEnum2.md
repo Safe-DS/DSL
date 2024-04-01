@@ -4,8 +4,8 @@
 
     ```sds linenums="5"
     enum MyEnum2 {
-        MyVariant1
         MyVariant2(param1: Int, param2: Float = 1.0)
+        MyVariant1
     }
     ```
 
