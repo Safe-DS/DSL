@@ -1,0 +1,12 @@
+package tests.generation.markdown.segments.undocumented
+
+segment mySegment1() {}
+
+internal segment mySegment2() {}
+
+segment mySegment3(param1: Int, param2: Float = 1.0) {}
+
+segment mySegment4() -> (result1: Int, result2: Float) {
+    yield result1 = 1;
+    yield result2 = 2.0;
+}

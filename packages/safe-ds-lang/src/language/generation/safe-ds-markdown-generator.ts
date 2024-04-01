@@ -18,6 +18,7 @@ import {
     SdsFunction,
     SdsModuleMember,
     SdsParameter,
+    SdsResult,
     SdsSchema,
     SdsSegment,
 } from '../generated/ast.js';
@@ -28,6 +29,8 @@ import {
     getPackageName,
     getParameters,
     getQualifiedName,
+    getResults,
+    isInternal,
     isPrivate,
 } from '../helpers/nodeProperties.js';
 import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
@@ -79,7 +82,7 @@ export class SafeDsMarkdownGenerator {
         knownUris: Set<string>,
         options: GenerateOptions,
     ): TextDocument[] {
-        const content = this.describeModuleMember(node, knownUris, options);
+        const content = this.describeModuleMember(node, knownUris);
         if (content === undefined) {
             return [];
         }
@@ -92,11 +95,7 @@ export class SafeDsMarkdownGenerator {
      * Returns a Markdown description for the given module member. If the member should not be documented, `undefined`
      * is returned.
      */
-    private describeModuleMember(
-        node: SdsModuleMember,
-        knownUris: Set<string>,
-        options: GenerateOptions,
-    ): string | undefined {
+    private describeModuleMember(node: SdsModuleMember, knownUris: Set<string>): string | undefined {
         if (isPrivate(node)) {
             // Private declarations cannot be used outside their module, so they are not documented
             return undefined;
@@ -212,8 +211,28 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeSegment(node: SdsSegment, level: number, knownUris: Set<string>): string {
-        // TODO
-        return 'Segment details';
+        const keyword = isInternal(node) ? 'internal segment' : 'segment';
+        let result = this.renderPreamble(node, level, 'segment', keyword);
+
+        // Parameters
+        const parameters = this.renderParameters(getParameters(node), knownUris);
+        if (parameters) {
+            result += `\n**Parameters:**\n\n${parameters}`;
+        }
+
+        // Results
+        const results = this.renderResults(getResults(node.resultList), knownUris);
+        if (results) {
+            result += `\n**Results:**\n\n${results}`;
+        }
+
+        // Source code
+        const sourceCode = this.renderSourceCode(node);
+        if (sourceCode) {
+            result += `\n${sourceCode}`;
+        }
+
+        return result;
     }
 
     private renderPreamble(node: SdsDeclaration, level: number, kind: string, keyword: string = kind): string {
@@ -282,15 +301,15 @@ export class SafeDsMarkdownGenerator {
         return result.trimEnd();
     }
 
-    private renderParameters(parameters: SdsParameter[], knownUris: Set<string>): string {
-        if (isEmpty(parameters)) {
+    private renderParameters(nodes: SdsParameter[], knownUris: Set<string>): string {
+        if (isEmpty(nodes)) {
             return '';
         }
 
         let result = '| Name | Type | Description | Default |\n';
         result += '|------|------|-------------|---------|\n';
 
-        for (const parameter of parameters) {
+        for (const parameter of nodes) {
             const name = parameter.name;
             const type = this.typeComputer.computeType(parameter.type);
             const description = this.documentationProvider.getDescription(parameter) ?? '';
@@ -299,6 +318,25 @@ export class SafeDsMarkdownGenerator {
                 : '_required_';
 
             result += `| \`${name}\` | ${this.renderType(type, knownUris)} | ${description} | ${defaultValue} |\n`;
+        }
+
+        return result;
+    }
+
+    private renderResults(nodes: SdsResult[], knownUris: Set<string>): string {
+        if (isEmpty(nodes)) {
+            return '';
+        }
+
+        let result = '| Name | Type | Description |\n';
+        result += '|------|------|-------------|\n';
+
+        for (const node of nodes) {
+            const name = node.name;
+            const type = this.typeComputer.computeType(node.type);
+            const description = this.documentationProvider.getDescription(node) ?? '';
+
+            result += `| \`${name}\` | ${this.renderType(type, knownUris)} | ${description} |\n`;
         }
 
         return result;

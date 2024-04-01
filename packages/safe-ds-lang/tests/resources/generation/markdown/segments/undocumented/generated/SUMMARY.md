@@ -1,0 +1,9 @@
+- tests
+    - generation
+        - markdown
+            - segments
+                - undocumented
+                    - [mySegment1](tests/generation/markdown/segments/undocumented/mySegment1.md)
+                    - [mySegment2](tests/generation/markdown/segments/undocumented/mySegment2.md)
+                    - [mySegment3](tests/generation/markdown/segments/undocumented/mySegment3.md)
+                    - [mySegment4](tests/generation/markdown/segments/undocumented/mySegment4.md)
