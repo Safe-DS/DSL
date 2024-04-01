@@ -33,5 +33,5 @@ Description of MyVariant2.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `param1` | [`#!sds MyClass1`][tests.generation.markdown.enums.documented.MyClass1] | Description of param1. | - |
+| `param1` | [`MyClass1`][tests.generation.markdown.enums.documented.MyClass1] | Description of param1. | - |
 | `param2` | `#!sds Float` | Description of param2. | `#!sds 1.0` |

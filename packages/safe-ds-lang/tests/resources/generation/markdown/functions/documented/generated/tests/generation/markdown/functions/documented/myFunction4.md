@@ -6,7 +6,7 @@ Description of myFunction4.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`#!sds MyClass1`][tests.generation.markdown.functions.documented.MyClass1] | Description of result1. |
+| `result1` | [`MyClass1`][tests.generation.markdown.functions.documented.MyClass1] | Description of result1. |
 | `result2` | `#!sds Float` | Description of result2. |
 
 ??? quote "Source code in `main.sdsstub`"

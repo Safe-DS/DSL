@@ -45,7 +45,7 @@ Description of MyClass6.
 
 Description of myAttribute1.
 
-**Type:** [`#!sds MyClass1`][tests.generation.markdown.classes.documented.MyClass1]
+**Type:** [`MyClass1`][tests.generation.markdown.classes.documented.MyClass1]
 
 ## `#!sds static attr` myAttribute2 {#tests.generation.markdown.classes.documented.MyClass6.myAttribute2 data-toc-label='myAttribute2'}
 

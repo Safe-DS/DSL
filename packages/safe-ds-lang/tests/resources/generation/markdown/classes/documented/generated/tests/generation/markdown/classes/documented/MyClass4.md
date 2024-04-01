@@ -6,7 +6,7 @@ Description of MyClass4.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `param1` | [`#!sds MyClass1`][tests.generation.markdown.classes.documented.MyClass1] | Description of param1. | - |
+| `param1` | [`MyClass1`][tests.generation.markdown.classes.documented.MyClass1] | Description of param1. | - |
 | `param2` | `#!sds Float` | Description of param2. | `#!sds 1.0` |
 
 ??? quote "Source code in `main.sdsstub`"

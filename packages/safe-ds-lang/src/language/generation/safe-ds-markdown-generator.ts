@@ -469,7 +469,7 @@ export class SafeDsMarkdownGenerator {
             const srcPath = realPath.replace(LIB, SRC);
 
             if (knownPaths.has(realPath) || knownPaths.has(srcPath)) {
-                return `[\`#!sds ${type}\`][${getQualifiedName(type.declaration)}]`;
+                return `[\`${type}\`][${getQualifiedName(type.declaration)}]`;
             }
         }
 

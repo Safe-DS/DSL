@@ -2,7 +2,7 @@
 
 Description of MyClass5.
 
-**Parent type:** [`#!sds MyClass1`][tests.generation.markdown.classes.documented.MyClass1]
+**Parent type:** [`MyClass1`][tests.generation.markdown.classes.documented.MyClass1]
 
 ??? quote "Source code in `main.sdsstub`"
 
