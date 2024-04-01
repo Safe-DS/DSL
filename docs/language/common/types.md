@@ -309,6 +309,10 @@ If exactly one result is expected, the surrounding parentheses may be also remov
 (a: Int, b: Int) -> r: Int
 ```
 
+### Unknown
+
+If the actual type of a declaration is not known, you can denote that with the special type `#!sds unknown`. However, to later use the declaration in any meaningful way, you will have to cast it to another type.
+
 ## Corresponding Python Code
 
 **Note:** This section is only relevant if you are interested in the [stub language][stub-language].
