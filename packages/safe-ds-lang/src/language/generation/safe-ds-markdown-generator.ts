@@ -46,6 +46,7 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedType, Type, TypeParameterType } from '../typing/model.js';
+import path from 'path';
 
 const INDENTATION = '    ';
 
@@ -503,10 +504,15 @@ export class SafeDsMarkdownGenerator {
     }
 
     private buildSummary(root: URI, uris: URI[]): Summary {
+        const rootPath = root.fsPath;
         const result: Summary = { children: new Map(), leaves: [] };
 
         for (const uri of uris) {
-            const segments = UriUtils.relative(root, uri).replace(/\.md$/u, '').split('/');
+            // `URIUtils.relative` has trouble with different capitalization of drive letters on Windows, so we use
+            // `path.relative` instead.
+
+            const uriPath = uri.fsPath;
+            const segments = path.relative(rootPath, uriPath).replace(/\.md$/u, '').split(/[/\\]/u);
 
             let current = result;
             for (let i = 0; i < segments.length; i++) {
