@@ -267,7 +267,7 @@ describe('SafeDsDocumentationProvider', () => {
                 expectedDocumentation: `${testDocumentation} myFunction2 ${testDocumentation}`,
             },
             {
-                testName: 'multiline text',
+                testName: 'multiline text (consistent indentation)',
                 code: `
                     /**
                      * ${testDocumentation}
@@ -278,6 +278,19 @@ describe('SafeDsDocumentationProvider', () => {
                 `,
                 predicate: isSdsFunction,
                 expectedDocumentation: `${testDocumentation}\n\n${testDocumentation}`,
+            },
+            {
+                testName: 'multiline text (mixed indentation)',
+                code: `
+                    /**
+                     * ${testDocumentation}
+                     * ${testDocumentation}
+                     *${testDocumentation}
+                     */
+                    fun myFunction()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `${testDocumentation}\n ${testDocumentation}\n${testDocumentation}`,
             },
         ];
 

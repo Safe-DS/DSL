@@ -8,7 +8,12 @@ segment mySegment1() {}
 /**
  * Description of mySegment2.
  */
-internal segment mySegment2() {}
+private segment mySegment2() {}
+
+/**
+ * Description of mySegment3.
+ */
+internal segment mySegment3() {}
 
 /**
  * Description of mySegment3.
@@ -16,7 +21,7 @@ internal segment mySegment2() {}
  * @param param1 Description of param1.
  * @param param2 Description of param2.
  */
-segment mySegment3(param1: MyClass1, param2: Float = 1.0) {}
+segment mySegment4(param1: MyClass1, param2: Float = 1.0) {}
 
 /**
  * Description of mySegment4.
@@ -24,7 +29,7 @@ segment mySegment3(param1: MyClass1, param2: Float = 1.0) {}
  * @result result1 Description of result1.
  * @result result2 Description of result2.
  */
-segment mySegment4() -> (result1: MyClass1, result2: Float) {
+segment mySegment5() -> (result1: MyClass1, result2: Float) {
     yield result1 = MyClass1();
     yield result2 = 2.0;
 }

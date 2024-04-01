@@ -1,0 +1,3 @@
+package tests.generation.markdown.pipelines
+
+pipeline myPipeline {}

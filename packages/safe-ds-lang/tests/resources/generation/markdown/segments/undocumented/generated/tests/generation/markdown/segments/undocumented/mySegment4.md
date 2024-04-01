@@ -1,17 +1,14 @@
 # `#!sds segment` mySegment4 {#tests.generation.markdown.segments.undocumented.mySegment4 data-toc-label='mySegment4'}
 
-**Results:**
+**Parameters:**
 
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | `#!sds Int` | - |
-| `result2` | `#!sds Float` | - |
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `param1` | `#!sds Int` | - | - |
+| `param2` | `#!sds Float` | - | `#!sds 1.0` |
 
 ??? quote "Source code in `main.sdspipe`"
 
     ```sds linenums="9"
-    segment mySegment4() -> (result1: Int, result2: Float) {
-        yield result1 = 1;
-        yield result2 = 2.0;
-    }
+    segment mySegment4(param1: Int, param2: Float = 1.0) {}
     ```

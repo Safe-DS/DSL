@@ -502,6 +502,7 @@ export class SafeDsMarkdownGenerator {
     private renderSourceCode(node: SdsDeclaration): string {
         const cstNode = node.$cstNode;
         if (!cstNode) {
+            /* c8 ignore next 2 */
             return '';
         }
 
@@ -593,6 +594,7 @@ export class SafeDsMarkdownGenerator {
             .forEach((leaf) => {
                 let href: string;
                 if (root === '') {
+                    /* c8 ignore next 2 */
                     href = `${leaf}.md`;
                 } else {
                     href = `${root}/${leaf}.md`;

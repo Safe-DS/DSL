@@ -1,14 +1,7 @@
-# `#!sds segment` mySegment3 {#tests.generation.markdown.segments.undocumented.mySegment3 data-toc-label='mySegment3'}
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `param1` | `#!sds Int` | - | - |
-| `param2` | `#!sds Float` | - | `#!sds 1.0` |
+# `#!sds internal segment` mySegment3 {#tests.generation.markdown.segments.undocumented.mySegment3 data-toc-label='mySegment3'}
 
 ??? quote "Source code in `main.sdspipe`"
 
     ```sds linenums="7"
-    segment mySegment3(param1: Int, param2: Float = 1.0) {}
+    internal segment mySegment3() {}
     ```
