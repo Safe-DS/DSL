@@ -6,7 +6,7 @@ Description of MyAnnotation2.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `param1` | [`#!sds MyEnum1`][#tests.generation.markdown.annotations.documented.MyEnum1] | Description of param1. | _required_ |
+| `param1` | [`#!sds MyEnum1`][#tests.generation.markdown.annotations.documented.MyEnum1] | Description of param1. | - |
 | `param2` | `#!sds Float` | Description of param2. | `1.0` |
 
 ??? quote "Source code in `main.sdsstub`"

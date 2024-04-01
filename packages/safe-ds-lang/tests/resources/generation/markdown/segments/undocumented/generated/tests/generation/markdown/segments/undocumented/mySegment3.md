@@ -4,8 +4,8 @@
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `param1` | `#!sds Int` |  | _required_ |
-| `param2` | `#!sds Float` |  | `1.0` |
+| `param1` | `#!sds Int` | - | - |
+| `param2` | `#!sds Float` | - | `1.0` |
 
 ??? quote "Source code in `main.sdspipe`"
 

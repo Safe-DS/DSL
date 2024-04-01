@@ -21,6 +21,7 @@ import {
     SdsResult,
     SdsSchema,
     SdsSegment,
+    SdsTypeParameter,
 } from '../generated/ast.js';
 import {
     getColumns,
@@ -30,6 +31,7 @@ import {
     getParameters,
     getQualifiedName,
     getResults,
+    getTypeParameters,
     isInternal,
     isPrivate,
 } from '../helpers/nodeProperties.js';
@@ -37,7 +39,7 @@ import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentat
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { NamedType, Type } from '../typing/model.js';
+import { NamedType, Type, TypeParameterType } from '../typing/model.js';
 import { expandToString } from 'langium/generate';
 
 const INDENTATION = '    ';
@@ -179,8 +181,33 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeFunction(node: SdsFunction, level: number, knownUris: Set<string>): string {
-        // TODO
-        return 'Function details';
+        let result = this.renderPreamble(node, level, 'function', 'fun');
+
+        // Parameters
+        const parameters = this.renderParameters(getParameters(node), knownUris);
+        if (parameters) {
+            result += `\n**Parameters:**\n\n${parameters}`;
+        }
+
+        // Results
+        const results = this.renderResults(getResults(node.resultList), knownUris);
+        if (results) {
+            result += `\n**Results:**\n\n${results}`;
+        }
+
+        // Type parameters
+        const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownUris);
+        if (typeParameters) {
+            result += `\n**Type parameters:**\n\n${typeParameters}`;
+        }
+
+        // Source code
+        const sourceCode = this.renderSourceCode(node);
+        if (sourceCode) {
+            result += `\n${sourceCode}`;
+        }
+
+        return result;
     }
 
     private describeSchema(node: SdsSchema, level: number, knownUris: Set<string>): string {
@@ -310,14 +337,12 @@ export class SafeDsMarkdownGenerator {
         result += '|------|------|-------------|---------|\n';
 
         for (const parameter of nodes) {
-            const name = parameter.name;
-            const type = this.typeComputer.computeType(parameter.type);
-            const description = this.documentationProvider.getDescription(parameter) ?? '';
-            const defaultValue = parameter.defaultValue?.$cstNode
-                ? `\`${parameter.defaultValue.$cstNode.text}\``
-                : '_required_';
+            const name = `\`${parameter.name}\``;
+            const type = this.renderType(this.typeComputer.computeType(parameter.type), knownUris);
+            const description = this.documentationProvider.getDescription(parameter) ?? '-';
+            const defaultValue = parameter.defaultValue?.$cstNode ? `\`${parameter.defaultValue.$cstNode.text}\`` : '-';
 
-            result += `| \`${name}\` | ${this.renderType(type, knownUris)} | ${description} | ${defaultValue} |\n`;
+            result += `| ${name} | ${type} | ${description} | ${defaultValue} |\n`;
         }
 
         return result;
@@ -332,18 +357,40 @@ export class SafeDsMarkdownGenerator {
         result += '|------|------|-------------|\n';
 
         for (const node of nodes) {
-            const name = node.name;
-            const type = this.typeComputer.computeType(node.type);
-            const description = this.documentationProvider.getDescription(node) ?? '';
+            const name = `\`${node.name}\``;
+            const type = this.renderType(this.typeComputer.computeType(node.type), knownUris);
+            const description = this.documentationProvider.getDescription(node) ?? '-';
 
-            result += `| \`${name}\` | ${this.renderType(type, knownUris)} | ${description} |\n`;
+            result += `| ${name} | ${type} | ${description} |\n`;
+        }
+
+        return result;
+    }
+
+    private renderTypeParameters(nodes: SdsTypeParameter[], knownUris: Set<string>): string {
+        if (isEmpty(nodes)) {
+            return '';
+        }
+
+        let result = '| Name | Upper Bound | Description | Default |\n';
+        result += '|------|-------------|-------------|---------|\n';
+
+        for (const node of nodes) {
+            const name = `\`${node.name}\``;
+            const upperBound = this.renderType(this.typeComputer.computeUpperBound(node), knownUris);
+            const description = this.documentationProvider.getDescription(node) ?? '-';
+            const defaultValue = node.defaultValue
+                ? this.renderType(this.typeComputer.computeType(node.defaultValue), knownUris)
+                : '-';
+
+            result += `| ${name} | ${upperBound} | ${description} | ${defaultValue} |\n`;
         }
 
         return result;
     }
 
     private renderType(type: Type, knownUris: Set<string>): string {
-        if (type instanceof NamedType) {
+        if (type instanceof NamedType && !(type instanceof TypeParameterType)) {
             const documentUri = AstUtils.getDocument(type.declaration).uri.toString();
             if (knownUris.has(documentUri)) {
                 return `[\`#!sds ${type}\`][#${getQualifiedName(type.declaration)}]`;

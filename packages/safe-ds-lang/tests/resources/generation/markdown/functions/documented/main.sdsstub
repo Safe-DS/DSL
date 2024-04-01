@@ -1,0 +1,41 @@
+package tests.generation.markdown.functions.documented
+
+/**
+ * Description of myFunction1.
+ */
+@Pure
+fun myFunction1()
+
+/**
+ * Description of myFunction2.
+ *
+ * @typeParam TypeParam1 Description of TypeParam1.
+ * @typeParam TypeParam2 Description of TypeParam2.
+ * @typeParam TypeParam3 Description of TypeParam3.
+ */
+@Pure
+fun myFunction2<TypeParam1, TypeParam2 sub MyClass1, TypeParam3 = MyClass1>(
+    param1: TypeParam1,
+    param2: TypeParam2,
+    param3: TypeParam3,
+)
+
+/**
+ * Description of myFunction3.
+ *
+ * @param param1 Description of param1.
+ * @param param2 Description of param2.
+ */
+@Pure
+fun myFunction3(param1: MyClass1, param2: Float = 1.0)
+
+/**
+ * Description of myFunction4.
+ *
+ * @result result1 Description of result1.
+ * @result result2 Description of result2.
+ */
+@Pure
+fun myFunction4() -> (result1: MyClass1, result2: Float)
+
+class MyClass1

@@ -1,4 +1,4 @@
-# `#!sds annotation` MyAnnotation2 {#tests.generation.markdown.annotations.undocumented.MyAnnotation2}
+# `#!sds fun` myFunction3 {#tests.generation.markdown.functions.undocumented.myFunction3}
 
 **Parameters:**
 
@@ -9,6 +9,6 @@
 
 ??? quote "Source code in `main.sdsstub`"
 
-    ```sds linenums="5"
-    annotation MyAnnotation2(param1: Int, param2: Float = 1.0)
+    ```sds linenums="14"
+    fun myFunction3(param1: Int, param2: Float = 1.0)
     ```

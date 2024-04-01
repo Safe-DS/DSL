@@ -4,8 +4,8 @@
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | `#!sds Int` |  |
-| `result2` | `#!sds Float` |  |
+| `result1` | `#!sds Int` | - |
+| `result2` | `#!sds Float` | - |
 
 ??? quote "Source code in `main.sdspipe`"
 
