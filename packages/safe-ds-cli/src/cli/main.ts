@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { generate } from './generate.js';
 import { check } from './check.js';
 import { format } from './format.js';
+import { doDocument } from './document.js';
 
 const program = new Command();
 
@@ -19,6 +20,14 @@ program
     .option('-s, --strict', 'whether the program should fail on warnings', false)
     .description('check Safe-DS code')
     .action(check);
+
+// Document command
+program
+    .command('document')
+    .argument('<paths...>', `list of files or directories to generate Markdown documentation for`)
+    .option('-o, --out <dir>', 'destination directory for generation', 'generated')
+    .description('generate Markdown documentation')
+    .action(doDocument);
 
 // Format command
 program
