@@ -29,7 +29,7 @@
         "@vitest/ui": "^1.2.2",
         "concurrently": "^8.2.2",
         "conventional-changelog-conventionalcommits": "^7.0.2",
-        "semantic-release": "^23.0.0",
+        "semantic-release": "^23.0.6",
         "shx": "^0.3.4",
         "svelte": "^4.2.12",
         "typescript": "^5.3.3",
