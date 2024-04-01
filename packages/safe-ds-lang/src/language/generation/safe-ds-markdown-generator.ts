@@ -46,7 +46,6 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedType, Type, TypeParameterType } from '../typing/model.js';
-import { expandToString } from 'langium/generate';
 
 const INDENTATION = '    ';
 
@@ -479,11 +478,7 @@ export class SafeDsMarkdownGenerator {
         const fileName = AstUtils.getDocument(node).uri.path.split('/').pop();
 
         let result = `??? quote "Source code in \`${fileName}\`"\n\n`;
-        result += this.indent(expandToString`
-            \`\`\`sds linenums="${startLine + 1}"
-            ${text}
-            \`\`\`
-        `);
+        result += this.indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\``);
 
         return result + '\n';
     }
