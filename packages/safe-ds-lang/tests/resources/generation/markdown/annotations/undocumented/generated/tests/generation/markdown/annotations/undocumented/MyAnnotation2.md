@@ -7,6 +7,21 @@
 | `param1` | `#!sds Int` | - | - |
 | `param2` | `#!sds Float` | - | `#!sds 1.0` |
 
+**Targets:**
+
+- `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
+- `Function`
+- `Module`
+- `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
+
 ??? quote "Source code in `main.sdsstub`"
 
     ```sds linenums="5"

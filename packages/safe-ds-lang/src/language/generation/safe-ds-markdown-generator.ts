@@ -163,6 +163,20 @@ export class SafeDsMarkdownGenerator {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
 
+        // Targets
+        const targets = this.builtinAnnotations
+            .streamValidTargets(node)
+            .map((it) => it.name)
+            .toArray()
+            .sort();
+
+        if (!isEmpty(targets)) {
+            result += '\n**Targets:**\n\n';
+            targets.forEach((target) => {
+                result += `- \`${target}\`\n`;
+            });
+        }
+
         // Source code
         const sourceCode = this.renderSourceCode(node);
         if (sourceCode) {
@@ -389,10 +403,10 @@ export class SafeDsMarkdownGenerator {
         result += '.\n\n';
 
         if (deprecationInfo.alternative) {
-            result += indent(`* **Alternative:** ${deprecationInfo.alternative}`) + `\n`;
+            result += indent(`- **Alternative:** ${deprecationInfo.alternative}`) + `\n`;
         }
         if (deprecationInfo.reason) {
-            result += indent(`* **Reason:** ${deprecationInfo.reason}`) + `\n`;
+            result += indent(`- **Reason:** ${deprecationInfo.reason}`) + `\n`;
         }
 
         return result.trimEnd();

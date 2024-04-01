@@ -3,3 +3,6 @@ package tests.generation.markdown.annotations.undocumented
 annotation MyAnnotation1
 
 annotation MyAnnotation2(param1: Int, param2: Float = 1.0)
+
+@Target(AnnotationTarget.Annotation)
+annotation MyAnnotation3

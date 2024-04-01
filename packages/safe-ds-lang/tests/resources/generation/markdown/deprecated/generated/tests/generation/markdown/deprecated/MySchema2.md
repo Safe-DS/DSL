@@ -4,7 +4,7 @@
 
     This schema is deprecated.
 
-    * **Alternative:** Something else
+    - **Alternative:** Something else
 
 ??? quote "Source code in `main.sdsstub`"
 

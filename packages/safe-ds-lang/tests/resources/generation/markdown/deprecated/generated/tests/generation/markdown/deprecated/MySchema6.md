@@ -4,8 +4,8 @@
 
     This schema is deprecated since version **1.0.0** and will be removed in version **2.0.0**.
 
-    * **Alternative:** Something else
-    * **Reason:** To annoy you
+    - **Alternative:** Something else
+    - **Reason:** To annoy you
 
 ??? quote "Source code in `main.sdsstub`"
 

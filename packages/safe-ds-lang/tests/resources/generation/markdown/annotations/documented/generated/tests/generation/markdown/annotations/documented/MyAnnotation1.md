@@ -2,6 +2,21 @@
 
 Description of MyAnnotation1.
 
+**Targets:**
+
+- `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
+- `Function`
+- `Module`
+- `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
+
 ??? quote "Source code in `main.sdsstub`"
 
     ```sds linenums="6"

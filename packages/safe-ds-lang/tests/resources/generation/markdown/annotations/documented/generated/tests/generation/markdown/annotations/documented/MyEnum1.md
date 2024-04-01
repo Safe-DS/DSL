@@ -2,6 +2,6 @@
 
 ??? quote "Source code in `main.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="22"
     enum MyEnum1
     ```
