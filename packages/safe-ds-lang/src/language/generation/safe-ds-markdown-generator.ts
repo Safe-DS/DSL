@@ -50,6 +50,8 @@ import path from 'path';
 import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
 
 const INDENTATION = '    ';
+const LIB = path.join('packages', 'safe-ds-lang', 'lib', 'resources');
+const SRC = path.join('packages', 'safe-ds-lang', 'src', 'resources');
 
 export class SafeDsMarkdownGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
@@ -63,8 +65,8 @@ export class SafeDsMarkdownGenerator {
     }
 
     generate(documents: LangiumDocument[], options: GenerateOptions): TextDocument[] {
-        const knownUris = new Set(documents.map((document) => document.uri.toString()));
-        const details = documents.flatMap((document) => this.generateDetailsForDocument(document, knownUris, options));
+        const knownPaths = new Set(documents.map((document) => document.uri.fsPath));
+        const details = documents.flatMap((document) => this.generateDetailsForDocument(document, knownPaths, options));
         const summary = this.generateSummary(details, options);
 
         return [...details, summary];
@@ -72,7 +74,7 @@ export class SafeDsMarkdownGenerator {
 
     private generateDetailsForDocument(
         document: LangiumDocument,
-        knownUris: Set<string>,
+        knownPaths: Set<string>,
         options: GenerateOptions,
     ): TextDocument[] {
         const root = document.parseResult.value;
@@ -82,16 +84,16 @@ export class SafeDsMarkdownGenerator {
         }
 
         return getModuleMembers(root).flatMap((member) =>
-            this.generateDetailsForModuleMember(member, knownUris, options),
+            this.generateDetailsForModuleMember(member, knownPaths, options),
         );
     }
 
     private generateDetailsForModuleMember(
         node: SdsModuleMember,
-        knownUris: Set<string>,
+        knownPaths: Set<string>,
         options: GenerateOptions,
     ): TextDocument[] {
-        const content = this.describeModuleMember(node, knownUris);
+        const content = this.describeModuleMember(node, knownPaths);
         if (content === undefined) {
             return [];
         }
@@ -104,7 +106,7 @@ export class SafeDsMarkdownGenerator {
      * Returns a Markdown description for the given module member. If the member should not be documented, `undefined`
      * is returned.
      */
-    private describeModuleMember(node: SdsModuleMember, knownUris: Set<string>): string | undefined {
+    private describeModuleMember(node: SdsModuleMember, knownPaths: Set<string>): string | undefined {
         if (isPrivate(node)) {
             // Private declarations cannot be used outside their module, so they are not documented
             return undefined;
@@ -113,20 +115,20 @@ export class SafeDsMarkdownGenerator {
         const level = 1;
 
         if (isSdsAnnotation(node)) {
-            return this.describeAnnotation(node, level, knownUris);
+            return this.describeAnnotation(node, level, knownPaths);
         } else if (isSdsClass(node)) {
-            return this.describeClass(node, level, knownUris);
+            return this.describeClass(node, level, knownPaths);
         } else if (isSdsEnum(node)) {
-            return this.describeEnum(node, level, knownUris);
+            return this.describeEnum(node, level, knownPaths);
         } else if (isSdsFunction(node)) {
-            return this.describeFunction(node, level, knownUris);
+            return this.describeFunction(node, level, knownPaths);
         } else if (isSdsPipeline(node)) {
             // Pipelines cannot be called, so they are not documented
             return undefined;
         } else if (isSdsSchema(node)) {
-            return this.describeSchema(node, level, knownUris);
+            return this.describeSchema(node, level, knownPaths);
         } else if (isSdsSegment(node)) {
-            return this.describeSegment(node, level, knownUris);
+            return this.describeSegment(node, level, knownPaths);
         } else {
             /* c8 ignore next 2 */
             throw new Error(`Unsupported module member type: ${node.$type}`);
@@ -137,26 +139,26 @@ export class SafeDsMarkdownGenerator {
      * Returns a Markdown description for the given class member. If the member should not be documented, `undefined`
      * is returned.
      */
-    private describeClassMember(node: SdsClassMember, level: number, knownUris: Set<string>): string | undefined {
+    private describeClassMember(node: SdsClassMember, level: number, knownPaths: Set<string>): string | undefined {
         if (isSdsAttribute(node)) {
-            return this.describeAttribute(node, level, knownUris);
+            return this.describeAttribute(node, level, knownPaths);
         } else if (isSdsClass(node)) {
-            return this.describeClass(node, level, knownUris);
+            return this.describeClass(node, level, knownPaths);
         } else if (isSdsEnum(node)) {
-            return this.describeEnum(node, level, knownUris);
+            return this.describeEnum(node, level, knownPaths);
         } else if (isSdsFunction(node)) {
-            return this.describeFunction(node, level, knownUris);
+            return this.describeFunction(node, level, knownPaths);
         } else {
             /* c8 ignore next 2 */
             throw new Error(`Unsupported class member type: ${node.$type}`);
         }
     }
 
-    private describeAnnotation(node: SdsAnnotation, level: number, knownUris: Set<string>): string {
+    private describeAnnotation(node: SdsAnnotation, level: number, knownPaths: Set<string>): string {
         let result = this.renderPreamble(node, level, 'annotation');
 
         // Parameters
-        const parameters = this.renderParameters(getParameters(node), knownUris);
+        const parameters = this.renderParameters(getParameters(node), knownPaths);
         if (parameters) {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
@@ -170,36 +172,36 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private describeAttribute(node: SdsAttribute, level: number, knownUris: Set<string>): string {
+    private describeAttribute(node: SdsAttribute, level: number, knownPaths: Set<string>): string {
         const keyword = isStatic(node) ? 'static attr' : 'attr';
         let result = this.renderPreamble(node, level, 'attribute', keyword);
 
         // Type
         const type = this.typeComputer.computeType(node.type);
-        result += `\n**Type:** ${this.renderType(type, knownUris)}\n`;
+        result += `\n**Type:** ${this.renderType(type, knownPaths)}\n`;
 
         return result;
     }
 
-    private describeClass(node: SdsClass, level: number, knownUris: Set<string>): string {
+    private describeClass(node: SdsClass, level: number, knownPaths: Set<string>): string {
         const keyword = node.parameterList ? 'class' : 'abstract class';
         let result = this.renderPreamble(node, level, 'class', keyword);
 
         // Parent type
         const parentTypes = getParentTypes(node);
         if (!isEmpty(parentTypes)) {
-            const firstParentType = this.renderType(this.typeComputer.computeType(parentTypes[0]), knownUris);
+            const firstParentType = this.renderType(this.typeComputer.computeType(parentTypes[0]), knownPaths);
             result += `\n**Parent type:** ${firstParentType}\n`;
         }
 
         // Parameters
-        const parameters = this.renderParameters(getParameters(node), knownUris);
+        const parameters = this.renderParameters(getParameters(node), knownPaths);
         if (parameters) {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
 
         // Type parameters
-        const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownUris);
+        const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownPaths);
         if (typeParameters) {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
         }
@@ -212,13 +214,13 @@ export class SafeDsMarkdownGenerator {
 
         // Members
         getClassMembers(node).forEach((member) => {
-            result += `\n${this.describeClassMember(member, level + 1, knownUris)}`;
+            result += `\n${this.describeClassMember(member, level + 1, knownPaths)}`;
         });
 
         return result;
     }
 
-    private describeEnum(node: SdsEnum, level: number, knownUris: Set<string>): string {
+    private describeEnum(node: SdsEnum, level: number, knownPaths: Set<string>): string {
         let result = this.renderPreamble(node, level, 'enum');
 
         // Source code
@@ -229,17 +231,17 @@ export class SafeDsMarkdownGenerator {
 
         // Enum variants
         getEnumVariants(node).forEach((variant) => {
-            result += `\n${this.describeEnumVariant(variant, level + 1, knownUris)}`;
+            result += `\n${this.describeEnumVariant(variant, level + 1, knownPaths)}`;
         });
 
         return result;
     }
 
-    private describeEnumVariant(node: SdsEnumVariant, level: number, knownUris: Set<string>): string {
+    private describeEnumVariant(node: SdsEnumVariant, level: number, knownPaths: Set<string>): string {
         let result = this.renderPreamble(node, level, 'enum variant', '');
 
         // Parameters
-        const parameters = this.renderParameters(getParameters(node), knownUris);
+        const parameters = this.renderParameters(getParameters(node), knownPaths);
         if (parameters) {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
@@ -247,24 +249,24 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private describeFunction(node: SdsFunction, level: number, knownUris: Set<string>): string {
+    private describeFunction(node: SdsFunction, level: number, knownPaths: Set<string>): string {
         const keyword = isStatic(node) ? 'static fun' : 'fun';
         let result = this.renderPreamble(node, level, 'function', keyword);
 
         // Parameters
-        const parameters = this.renderParameters(getParameters(node), knownUris);
+        const parameters = this.renderParameters(getParameters(node), knownPaths);
         if (parameters) {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
 
         // Results
-        const results = this.renderResults(getResults(node.resultList), knownUris);
+        const results = this.renderResults(getResults(node.resultList), knownPaths);
         if (results) {
             result += `\n**Results:**\n\n${results}`;
         }
 
         // Type parameters
-        const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownUris);
+        const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownPaths);
         if (typeParameters) {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
         }
@@ -278,7 +280,7 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private describeSchema(node: SdsSchema, level: number, knownUris: Set<string>): string {
+    private describeSchema(node: SdsSchema, level: number, knownPaths: Set<string>): string {
         let result = this.renderPreamble(node, level, 'schema');
 
         // Columns
@@ -292,7 +294,7 @@ export class SafeDsMarkdownGenerator {
                 const name = column.columnName.value;
                 const type = this.typeComputer.computeType(column.columnType);
 
-                result += `| \`${name}\` | ${this.renderType(type, knownUris)} |\n`;
+                result += `| \`${name}\` | ${this.renderType(type, knownPaths)} |\n`;
             }
         }
 
@@ -305,18 +307,18 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private describeSegment(node: SdsSegment, level: number, knownUris: Set<string>): string {
+    private describeSegment(node: SdsSegment, level: number, knownPaths: Set<string>): string {
         const keyword = isInternal(node) ? 'internal segment' : 'segment';
         let result = this.renderPreamble(node, level, 'segment', keyword);
 
         // Parameters
-        const parameters = this.renderParameters(getParameters(node), knownUris);
+        const parameters = this.renderParameters(getParameters(node), knownPaths);
         if (parameters) {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
 
         // Results
-        const results = this.renderResults(getResults(node.resultList), knownUris);
+        const results = this.renderResults(getResults(node.resultList), knownPaths);
         if (results) {
             result += `\n**Results:**\n\n${results}`;
         }
@@ -396,7 +398,7 @@ export class SafeDsMarkdownGenerator {
         return result.trimEnd();
     }
 
-    private renderParameters(nodes: SdsParameter[], knownUris: Set<string>): string {
+    private renderParameters(nodes: SdsParameter[], knownPaths: Set<string>): string {
         if (isEmpty(nodes)) {
             return '';
         }
@@ -406,7 +408,7 @@ export class SafeDsMarkdownGenerator {
 
         for (const parameter of nodes) {
             const name = `\`${parameter.name}\``;
-            const type = this.renderType(this.typeComputer.computeType(parameter.type), knownUris);
+            const type = this.renderType(this.typeComputer.computeType(parameter.type), knownPaths);
             const description = this.documentationProvider.getDescription(parameter) ?? '-';
             const defaultValue = parameter.defaultValue?.$cstNode
                 ? `\`#!sds ${parameter.defaultValue.$cstNode.text}\``
@@ -418,7 +420,7 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private renderResults(nodes: SdsResult[], knownUris: Set<string>): string {
+    private renderResults(nodes: SdsResult[], knownPaths: Set<string>): string {
         if (isEmpty(nodes)) {
             return '';
         }
@@ -428,7 +430,7 @@ export class SafeDsMarkdownGenerator {
 
         for (const node of nodes) {
             const name = `\`${node.name}\``;
-            const type = this.renderType(this.typeComputer.computeType(node.type), knownUris);
+            const type = this.renderType(this.typeComputer.computeType(node.type), knownPaths);
             const description = this.documentationProvider.getDescription(node) ?? '-';
 
             result += `| ${name} | ${type} | ${description} |\n`;
@@ -437,7 +439,7 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private renderTypeParameters(nodes: SdsTypeParameter[], knownUris: Set<string>): string {
+    private renderTypeParameters(nodes: SdsTypeParameter[], knownPaths: Set<string>): string {
         if (isEmpty(nodes)) {
             return '';
         }
@@ -447,10 +449,10 @@ export class SafeDsMarkdownGenerator {
 
         for (const node of nodes) {
             const name = `\`${node.name}\``;
-            const upperBound = this.renderType(this.typeComputer.computeUpperBound(node), knownUris);
+            const upperBound = this.renderType(this.typeComputer.computeUpperBound(node), knownPaths);
             const description = this.documentationProvider.getDescription(node) ?? '-';
             const defaultValue = node.defaultValue
-                ? this.renderType(this.typeComputer.computeType(node.defaultValue), knownUris)
+                ? this.renderType(this.typeComputer.computeType(node.defaultValue), knownPaths)
                 : '-';
 
             result += `| ${name} | ${upperBound} | ${description} | ${defaultValue} |\n`;
@@ -459,10 +461,14 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private renderType(type: Type, knownUris: Set<string>): string {
+    private renderType(type: Type, knownPaths: Set<string>): string {
         if (type instanceof NamedType && !(type instanceof TypeParameterType)) {
-            const documentUri = AstUtils.getDocument(type.declaration).uri.toString();
-            if (knownUris.has(documentUri)) {
+            const realPath = AstUtils.getDocument(type.declaration).uri.fsPath;
+            // When generating documentation for the standard library declarations in the `src` folder, references are
+            // resolved to the `lib` folder. To still create links, we also check this augmented path.
+            const srcPath = realPath.replace(LIB, SRC);
+
+            if (knownPaths.has(realPath) || knownPaths.has(srcPath)) {
                 return `[\`#!sds ${type}\`][${getQualifiedName(type.declaration)}]`;
             }
         }
