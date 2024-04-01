@@ -1,4 +1,4 @@
-# `#!sds class` InvertibleTableTransformer {#safeds.data.tabular.transformation.InvertibleTableTransformer data-toc-label='InvertibleTableTransformer'}
+# `#!sds abstract class` InvertibleTableTransformer {#safeds.data.tabular.transformation.InvertibleTableTransformer data-toc-label='InvertibleTableTransformer'}
 
 A `TableTransformer` that can also undo the learned transformation after it has been applied.
 
@@ -7,7 +7,7 @@ A `TableTransformer` that can also undo the learned transformation after it has 
 ??? quote "Source code in `table_transformer.sdsstub`"
 
     ```sds linenums="96"
-    class InvertibleTableTransformer() sub TableTransformer {
+    class InvertibleTableTransformer sub TableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
          *
