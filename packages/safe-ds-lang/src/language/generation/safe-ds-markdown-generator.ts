@@ -47,6 +47,7 @@ import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedType, Type, TypeParameterType } from '../typing/model.js';
 import path from 'path';
+import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
 
 const INDENTATION = '    ';
 
@@ -585,16 +586,5 @@ interface Summary {
 }
 
 const indent = (text: string): string => {
-    return text
-        .trim()
-        .split('\n')
-        .map((line) => `${INDENTATION}${line}`)
-        .join('\n');
-};
-
-const removeLinePrefix = (text: string, prefix: string): string => {
-    return text
-        .split('\n')
-        .map((line) => (line.startsWith(prefix) ? line.slice(prefix.length) : line))
-        .join('\n');
+    return addLinePrefix(text, INDENTATION);
 };
