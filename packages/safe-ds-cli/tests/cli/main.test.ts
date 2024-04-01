@@ -95,15 +95,20 @@ describe('safe-ds', () => {
 
     describe('document', () => {
         const testResourcesRoot = new URL('../resources/document/', import.meta.url);
+        const out = new URL('generated', testResourcesRoot);
         const spawnDocumentProcess = (additionalArguments: string[], paths: string[]) => {
             const fsPaths = paths.map((p) => fileURLToPath(new URL(p, testResourcesRoot)));
-            return spawnSync('node', ['./bin/cli', 'document', ...additionalArguments, ...fsPaths], {
-                cwd: projectRoot,
-            });
+            return spawnSync(
+                'node',
+                ['./bin/cli', 'document', '-o', fileURLToPath(out), ...additionalArguments, ...fsPaths],
+                {
+                    cwd: projectRoot,
+                },
+            );
         };
 
         afterAll(() => {
-            fs.rmSync(new URL('generated', testResourcesRoot), { recursive: true, force: true });
+            fs.rmSync(out, { recursive: true, force: true });
         });
 
         it('should show an error if no paths are passed', () => {
@@ -199,15 +204,20 @@ describe('safe-ds', () => {
 
     describe('generate', () => {
         const testResourcesRoot = new URL('../resources/generate/', import.meta.url);
+        const out = new URL('generated', testResourcesRoot);
         const spawnGenerateProcess = (additionalArguments: string[], paths: string[]) => {
             const fsPaths = paths.map((p) => fileURLToPath(new URL(p, testResourcesRoot)));
-            return spawnSync('node', ['./bin/cli', 'generate', ...additionalArguments, ...fsPaths], {
-                cwd: projectRoot,
-            });
+            return spawnSync(
+                'node',
+                ['./bin/cli', 'generate', '-o', fileURLToPath(out), ...additionalArguments, ...fsPaths],
+                {
+                    cwd: projectRoot,
+                },
+            );
         };
 
         afterAll(() => {
-            fs.rmSync(new URL('generated', testResourcesRoot), { recursive: true, force: true });
+            fs.rmSync(out, { recursive: true, force: true });
         });
 
         it('should show an error if no paths are passed', () => {
