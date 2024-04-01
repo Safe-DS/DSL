@@ -5,7 +5,7 @@
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `param1` | `#!sds Int` | - | - |
-| `param2` | `#!sds Float` | - | `1.0` |
+| `param2` | `#!sds Float` | - | `#!sds 1.0` |
 
 ??? quote "Source code in `main.sdspipe`"
 

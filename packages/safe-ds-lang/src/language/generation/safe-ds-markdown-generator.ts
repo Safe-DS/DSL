@@ -340,7 +340,9 @@ export class SafeDsMarkdownGenerator {
             const name = `\`${parameter.name}\``;
             const type = this.renderType(this.typeComputer.computeType(parameter.type), knownUris);
             const description = this.documentationProvider.getDescription(parameter) ?? '-';
-            const defaultValue = parameter.defaultValue?.$cstNode ? `\`${parameter.defaultValue.$cstNode.text}\`` : '-';
+            const defaultValue = parameter.defaultValue?.$cstNode
+                ? `\`#!sds ${parameter.defaultValue.$cstNode.text}\``
+                : '-';
 
             result += `| ${name} | ${type} | ${description} | ${defaultValue} |\n`;
         }

@@ -7,7 +7,7 @@ Description of myFunction3.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `param1` | [`#!sds MyClass1`][#tests.generation.markdown.functions.documented.MyClass1] | Description of param1. | - |
-| `param2` | `#!sds Float` | Description of param2. | `1.0` |
+| `param2` | `#!sds Float` | Description of param2. | `#!sds 1.0` |
 
 ??? quote "Source code in `main.sdsstub`"
 
