@@ -57,7 +57,7 @@ export interface ExternalManipulatingTableFilterHistoryEntry extends ExternalMan
 export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalManipulatingHistoryEntry {
     action: 'sortColumn';
     columnName: string;
-    sort: 'asc' | 'desc' | null;
+    sort: PossibleSorts;
 }
 
 export interface ExternalVisualizingNoColumnHistoryEntry extends ExternalVisualizingHistoryEntry {
@@ -179,13 +179,15 @@ export interface ProfilingDetailName extends ProfilingDetailBase {
 export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage | ProfilingDetailName;
 
 // ------------ Types for the Columns -----------
+type PossibleSorts = 'asc' | 'desc' | null;
+
 interface ColumnBase {
     type: 'numerical' | 'categorical';
     name: string;
     values: any;
     hidden: boolean;
     highlighted: boolean;
-    appliedSort: 'asc' | 'desc' | null;
+    appliedSort: PossibleSorts;
     profiling?: Profiling;
 }
 
