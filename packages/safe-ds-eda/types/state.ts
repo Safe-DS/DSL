@@ -151,17 +151,14 @@ export interface Profiling {
     other: ProfilingDetail[];
 }
 
-type BaseInterpretation = 'warn' | 'error' | 'default' | 'bold' | 'good';
+type BaseInterpretation = 'warn' | 'error' | 'default' | 'important' | 'good';
+
 interface ProfilingDetailBase {
     type: 'numerical' | 'image' | 'text';
     value: string | Base64Image;
 }
 
-interface ProfilingDetailText extends ProfilingDetailBase {
-    interpretation: BaseInterpretation;
-}
-
-export interface ProfilingDetailStatistical extends ProfilingDetailText {
+export interface ProfilingDetailStatistical extends ProfilingDetailBase {
     type: 'numerical';
     name: string;
     value: string;
@@ -173,7 +170,7 @@ export interface ProfilingDetailImage extends ProfilingDetailBase {
     value: Base64Image;
 }
 
-export interface ProfilingDetailName extends ProfilingDetailText {
+export interface ProfilingDetailName extends ProfilingDetailBase {
     type: 'text';
     value: string;
     interpretation: BaseInterpretation;
@@ -210,7 +207,7 @@ interface FilterBase {
     type: string;
 }
 
-export interface ColumnFilterBase extends FilterBase {
+interface ColumnFilterBase extends FilterBase {
     type: 'valueRange' | 'specificValue' | 'searchString';
     columnName: string;
 }
