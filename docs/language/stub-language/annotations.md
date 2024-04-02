@@ -53,7 +53,7 @@ To attach metainformation to a declaration, the annotation must be called on tha
 - [Type parameters][type-parameters]
 - [Pipelines][pipelines]
 
-The valid targets of an annotation can be restricted with the [`Target`][safeds-lang-target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds-lang-repeatable].
+The valid targets of an annotation can be restricted with the [`Target`][safeds.lang.Target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds.lang.Repeatable].
 
 Annotation calls are always located right in front of their target. Exception: In the case of compilations units they are located at the very top of the file. Here is an example that demonstrates how to call the annotation `#!sds OnlyForExperts` that we defined above on a [class][classes]:
 
@@ -87,10 +87,10 @@ The same [restrictions to arguments][argument-restrictions] as for [calls][calls
 
 ## Built-in Annotations
 
-The package `#!sds safeds.lang` contains several annotations that are processed by Safe-DS. Refer to the [API documentation][safeds-lang] for more details. Particularly important are the annotations
+The package `#!sds safeds.lang` contains several annotations that are processed by Safe-DS. Particularly important are the annotations
 
-- [`Target`][safeds-lang-target], which can restrict the possible targets of an annotation, and
-- [`Repeatable`][safeds-lang-repeatable], which allows an annotation to be called multiple times on the same declaration.
+- [`Target`][safeds.lang.Target], which can restrict the possible targets of an annotation, and
+- [`Repeatable`][safeds.lang.Repeatable], which allows an annotation to be called multiple times on the same declaration.
 
 [parameters]: ../common/parameters.md
 [types]: ../common/types.md
@@ -104,8 +104,5 @@ The package `#!sds safeds.lang` contains several annotations that are processed 
 [segments]: ../pipeline-language/segments.md
 [type-parameters]: type-parameters.md
 [pipelines]: ../pipeline-language/pipelines.md
-[safeds-lang]: ../../stdlib/safeds_lang.md
-[safeds-lang-repeatable]: ../../stdlib/safeds_lang.md#annotation-repeatable
-[safeds-lang-target]: ../../stdlib/safeds_lang.md#annotation-target
 [calls]: ../pipeline-language/expressions.md#calls
 [argument-restrictions]: ../pipeline-language/expressions.md#restrictions-for-arguments

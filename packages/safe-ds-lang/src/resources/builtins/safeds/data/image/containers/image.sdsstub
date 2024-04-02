@@ -58,6 +58,9 @@ class Image {
      *
      * The original image is not modified.
      *
+     * @param newWidth The new width of the image.
+     * @param newHeight The new height of the image.
+     *
      * @result result1 The image with the given width and height.
      */
     @Pure
@@ -84,6 +87,11 @@ class Image {
      * Return a new `Image` that has been cropped to a given bounding rectangle.
      *
      * The original image is not modified.
+     *
+     * @param x The x coordinate of the top-left corner of the bounding rectangle.
+     * @param y The y coordinate of the top-left corner of the bounding rectangle.
+     * @param width The width of the bounding rectangle.
+     * @param height The height of the bounding rectangle.
      *
      * @result result1 The cropped image.
      */

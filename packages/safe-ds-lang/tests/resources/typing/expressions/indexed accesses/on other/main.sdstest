@@ -1,16 +1,16 @@
 package tests.typing.expressions.indexedAccesses.onOther
 
 segment mySegment3(param1: String, param2: String?) {
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »param1[0]«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »param2[0]«;
 
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »param1?[0]«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »param2?[0]«;
 }

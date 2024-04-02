@@ -1,0 +1,12 @@
+package tests.generation.markdown.linkTag
+
+/**
+ * Description of MyClass1.
+ * {@link MyClass2}.
+ * {@link Broken}.
+ *
+ * @param param1 Description of param1. {@link MyClass2}.
+ */
+class MyClass1(param1: Int)
+
+class MyClass2

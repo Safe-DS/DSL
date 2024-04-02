@@ -175,9 +175,7 @@ export class EDAPanel {
             if (
                 !stateInfo.fromExisting ||
                 !stateInfo.state.table ||
-                !stateInfo.state.table!.columns.find(
-                    (c) => c[1].profiling.bottom.length > 0 || c[1].profiling.top.length > 0,
-                )
+                !stateInfo.state.table!.columns.find((c) => !c[1].profiling)
             ) {
                 const profiling = await EDAPanel.panelsMap
                     .get(tableIdentifier)!

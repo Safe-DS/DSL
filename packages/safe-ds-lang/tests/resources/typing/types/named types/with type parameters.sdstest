@@ -6,31 +6,31 @@ class MyClass3<T = Int>
 fun nonNullableNamedTypes(
     // $TEST$ serialization MyClass2<Int>
     a: »MyClass2<Int>«,
-    // $TEST$ serialization MyClass2<$unknown>
+    // $TEST$ serialization MyClass2<unknown>
     b: »MyClass2<unresolved>«,
-    // $TEST$ serialization MyClass2<$unknown>
+    // $TEST$ serialization MyClass2<unknown>
     c: »MyClass2«,
     // $TEST$ serialization MyClass2<Int>
     d: »MyClass2<T = Int, T = String>«,
 
     // $TEST$ serialization MyClass3<Int>
     y: »MyClass3«,
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     z: »unresolved<Int>«,
 )
 
 fun nullableNamedTypes(
     // $TEST$ serialization MyClass2<Int>?
     a: »MyClass2<Int>?«,
-    // $TEST$ serialization MyClass2<$unknown>?
+    // $TEST$ serialization MyClass2<unknown>?
     b: »MyClass2<unresolved>?«,
-    // $TEST$ serialization MyClass2<$unknown>?
+    // $TEST$ serialization MyClass2<unknown>?
     c: »MyClass2?«,
     // $TEST$ serialization MyClass2<Int>?
     d: »MyClass2<T = Int, T = String>?«,
 
     // $TEST$ serialization MyClass3<Int>?
     y: »MyClass3?«,
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     z: »unresolved<Int>?«,
 )

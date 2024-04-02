@@ -6,6 +6,7 @@ import {
     isEqualSet,
     isSubset,
     last,
+    partitionBy,
     uniqueOrUndefined,
 } from '../../src/helpers/collections.js';
 
@@ -76,6 +77,21 @@ describe('groupBy', () => {
         expect(groupBy([1, 2, 3, 4, 2], isEven).toArray()).toStrictEqual([
             [false, [1, 3]],
             [true, [2, 4, 2]],
+        ]);
+    });
+});
+
+describe('partitionBy', () => {
+    const isEven = (element: number) => element % 2 === 0;
+
+    it('should return empty lists given an empty iterable', () => {
+        expect(partitionBy([], isEven)).toStrictEqual([[], []]);
+    });
+
+    it('should group values together that get the same label', () => {
+        expect(partitionBy([1, 2, 3, 4, 2], isEven)).toStrictEqual([
+            [2, 4, 2],
+            [1, 3],
         ]);
     });
 });

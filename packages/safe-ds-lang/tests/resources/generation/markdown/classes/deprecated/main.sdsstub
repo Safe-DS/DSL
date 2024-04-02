@@ -1,0 +1,4 @@
+package tests.generation.markdown.classes.deprecated
+
+@Deprecated
+class MyClass1

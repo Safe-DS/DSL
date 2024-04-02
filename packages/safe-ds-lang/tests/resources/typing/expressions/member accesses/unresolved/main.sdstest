@@ -3,9 +3,9 @@ package tests.typing.expressions.memberAccesses.unresolved
 class C
 
 pipeline myPipeline {
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »C.unresolved«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »C?.unresolved«;
 }

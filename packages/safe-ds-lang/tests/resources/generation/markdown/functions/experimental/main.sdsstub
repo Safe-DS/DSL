@@ -1,0 +1,5 @@
+package tests.generation.markdown.functions.experimental
+
+@Experimental
+@Pure
+fun myFunction1()

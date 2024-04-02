@@ -1,79 +1,39 @@
 <script lang="ts">
-    import type { Profiling, ProfilingDetail } from '../../../types/state.ts';
+    import type { Profiling } from '../../../types/state';
 
     export let profiling: Profiling;
     export let imageWidth: number = 200;
-
-    const getProfilingItemColor = function (profilingItem: ProfilingDetail) {
-        if (profilingItem.interpretation === 'good') {
-            return 'var(--primary-color)';
-        } else if (profilingItem.interpretation === 'error') {
-            return 'var(--error-color)';
-        } else if (profilingItem.interpretation === 'warn') {
-            return 'var(--warn-color)';
-        } else if (profilingItem.interpretation === 'bold') {
-            return 'var(--font-dark)';
-        } else if (profilingItem.interpretation === 'default') {
-            return 'var(--font-light)';
-        } else if (profilingItem.interpretation === 'category') {
-            return 'var(--font-light)';
-        } else {
-            return 'var(--font-light)';
-        }
-    };
 </script>
 
 <div class="wrapper">
     <div class="profilingItemsTop">
-        {#each profiling.top as profilingTopItem}
-            {#if profilingTopItem.type === 'text'}
-                <div class="profilingItem">
-                    <span style="color: {getProfilingItemColor(profilingTopItem)};">{profilingTopItem.value}</span>
-                </div>
-            {:else if profilingTopItem.type === 'numerical'}
-                <div class="profilingItem">
-                    <span class="profilingItemFirst" style="color: {getProfilingItemColor(profilingTopItem)};"
-                        >{profilingTopItem.name}:</span
-                    >
-                    <span style="color: {getProfilingItemColor(profilingTopItem)};">{profilingTopItem.value}</span>
-                </div>
-            {:else if profilingTopItem.type === 'image'}
-                <div class="profilingItem">
-                    <img
-                        style="width: {imageWidth}px;"
-                        class="profilingImage"
-                        src={'data:image/' + profilingTopItem.value.format + ';base64,' + profilingTopItem.value.bytes}
-                        alt="profiling histogram"
-                    />
-                </div>
-            {/if}
-        {/each}
+        <div class="profilingItem">
+            <span class="profilingItemKey {profiling.validRatio.interpretation}">{profiling.validRatio.name}:</span>
+            <span class={profiling.validRatio.interpretation}>{profiling.validRatio.value}</span>
+        </div>
+        <div class="profilingItem">
+            <span class="profilingItemKey {profiling.missingRatio.interpretation}">{profiling.missingRatio.name}:</span>
+            <span class={profiling.missingRatio.interpretation}>{profiling.missingRatio.value}</span>
+        </div>
     </div>
     <div class="profilingItemsBottom">
-        {#each profiling.bottom as profilingBottomItem}
-            {#if profilingBottomItem.type === 'text'}
+        {#each profiling.other as profilingItem}
+            {#if profilingItem.type === 'text'}
                 <div class="profilingItem">
-                    <span style="color: {getProfilingItemColor(profilingBottomItem)};">{profilingBottomItem.value}</span
-                    >
+                    <span class={profilingItem.interpretation}>{profilingItem.value}</span>
                 </div>
-            {:else if profilingBottomItem.type === 'numerical'}
+            {:else if profilingItem.type === 'numerical'}
                 <div class="profilingItem">
-                    <span class="profilingItemFirst" style="color: {getProfilingItemColor(profilingBottomItem)};"
-                        >{profilingBottomItem.name}:</span
-                    >
-                    <span style="color: {getProfilingItemColor(profilingBottomItem)};">{profilingBottomItem.value}</span
-                    >
+                    <span class="profilingItemKey {profilingItem.interpretation}">{profilingItem.name}:</span>
+                    <span class={profilingItem.interpretation}>{profilingItem.value}</span>
                 </div>
-            {:else if profilingBottomItem.type === 'image'}
+            {:else if profilingItem.type === 'image'}
                 <div class="profilingItem">
                     <img
-                        style="width: {imageWidth}px;"
+                        style:width="{imageWidth}px"
                         class="profilingImage"
-                        src={'data:image/' +
-                            profilingBottomItem.value.format +
-                            ';base64,' +
-                            profilingBottomItem.value.bytes}
-                        alt="profiling histogram"
+                        src={'data:image/' + profilingItem.value.format + ';base64,' + profilingItem.value.bytes}
+                        alt="profiling plot"
                     />
                 </div>
             {/if}
@@ -95,7 +55,7 @@
         margin-bottom: 1px;
     }
 
-    .profilingItemFirst {
+    .profilingItemKey {
         margin-right: 10px;
     }
 
@@ -109,8 +69,32 @@
     }
 
     .profilingImage {
-        height: 150px;
+        height: 150px; /* default height, profiling height calculation works off this value */
         object-fit: cover;
         object-position: left;
+    }
+
+    .good {
+        color: var(--primary-color);
+    }
+
+    .error {
+        color: var(--error-color);
+    }
+
+    .warn {
+        color: var(--warn-color);
+    }
+
+    .important {
+        color: var(--font-dark);
+    }
+
+    .default {
+        color: var(--font-light);
+    }
+
+    .category {
+        color: var(--font-light);
     }
 </style>

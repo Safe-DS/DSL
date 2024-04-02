@@ -87,6 +87,10 @@ export const isInternal = (node: SdsDeclaration | undefined): boolean => {
     return isSdsSegment(node) && node.visibility === 'internal';
 };
 
+export const isPrivate = (node: SdsDeclaration | undefined): boolean => {
+    return isSdsSegment(node) && node.visibility === 'private';
+};
+
 export namespace Argument {
     export const isNamed = (node: SdsArgument | undefined): boolean => {
         return Boolean(node?.parameter);

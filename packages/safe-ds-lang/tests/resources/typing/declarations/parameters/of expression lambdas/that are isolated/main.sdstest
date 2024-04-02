@@ -1,6 +1,6 @@
 package tests.typing.declarations.parameters.ofExpressionLambdas.thatAreIsolated
 
 segment mySegment() {
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     (»p«) -> 1;
 }

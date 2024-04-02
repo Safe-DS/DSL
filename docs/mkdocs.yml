@@ -36,9 +36,7 @@ nav:
           - Enumerations: language/stub-language/enumerations.md
           - Annotations: language/stub-language/annotations.md
           - Type Parameters: language/stub-language/type-parameters.md
-  - Standard Library:
-      - stdlib/README.md
-      - safeds.lang: stdlib/safeds_lang.md
+  - Standard Library: stdlib/
   - Development:
       - Call Graph Testing: development/call-graph-testing.md
       - Formatting Testing: development/formatting-testing.md
@@ -73,6 +71,7 @@ theme:
       accent: indigo
   features:
     - content.code.copy
+    - content.tooltips
     - navigation.tabs
     - navigation.indexes
     - navigation.instant
@@ -80,6 +79,9 @@ theme:
     - navigation.top
 
 plugins:
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - autorefs
   - glightbox
   - same-dir
   - search
@@ -129,6 +131,9 @@ markdown_extensions:
   # Permalinks
   - toc:
       permalink: true
+
+extra_css:
+  - stylesheets/extra.css
 
 extra_javascript:
   - javascript/mathjax.js

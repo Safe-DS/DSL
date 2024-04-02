@@ -159,7 +159,7 @@ describe('type model', async () => {
                 factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
                 factory.createNamedTupleType(),
             ),
-            expectedString: '(p1: $unknown) -> ()',
+            expectedString: '(p1: unknown) -> ()',
         },
         {
             value: factory.createCallableType(
@@ -168,7 +168,7 @@ describe('type model', async () => {
                 factory.createNamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
                 factory.createNamedTupleType(),
             ),
-            expectedString: '(p2?: $unknown) -> ()',
+            expectedString: '(p2?: unknown) -> ()',
         },
         {
             value: factory.createLiteralType(new BooleanConstant(true)),
@@ -176,7 +176,7 @@ describe('type model', async () => {
         },
         {
             value: factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-            expectedString: '(p1: $unknown)',
+            expectedString: '(p1: unknown)',
         },
         {
             value: new ClassType(class1, new Map(), false),
@@ -220,11 +220,11 @@ describe('type model', async () => {
         },
         {
             value: factory.createUnionType(UnknownType),
-            expectedString: 'union<$unknown>',
+            expectedString: 'union<unknown>',
         },
         {
             value: UnknownType,
-            expectedString: '$unknown',
+            expectedString: 'unknown',
         },
     ];
     describe.each(toStringTests)('toString', ({ value, expectedString }) => {

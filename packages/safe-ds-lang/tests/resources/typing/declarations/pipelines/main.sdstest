@@ -1,4 +1,4 @@
 package tests.typing.declarations.pipelines
 
-// $TEST$ serialization $unknown
+// $TEST$ serialization unknown
 pipeline »myPipeline« {}

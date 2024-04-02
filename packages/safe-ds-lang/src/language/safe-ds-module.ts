@@ -42,6 +42,7 @@ import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
 import { SafeDsRunner } from './runner/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
+import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -53,6 +54,9 @@ export type SafeDsAddedServices = {
         Enums: SafeDsEnums;
         ImpurityReasons: SafeDsImpurityReasons;
     };
+    documentation: {
+        DocumentationProvider: SafeDsDocumentationProvider;
+    };
     evaluation: {
         PartialEvaluator: SafeDsPartialEvaluator;
     };
@@ -60,6 +64,7 @@ export type SafeDsAddedServices = {
         CallGraphComputer: SafeDsCallGraphComputer;
     };
     generation: {
+        MarkdownGenerator: SafeDsMarkdownGenerator;
         PythonGenerator: SafeDsPythonGenerator;
     };
     helpers: {
@@ -116,6 +121,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         CallGraphComputer: (services) => new SafeDsCallGraphComputer(services),
     },
     generation: {
+        MarkdownGenerator: (services) => new SafeDsMarkdownGenerator(services),
         PythonGenerator: (services) => new SafeDsPythonGenerator(services),
     },
     helpers: {
