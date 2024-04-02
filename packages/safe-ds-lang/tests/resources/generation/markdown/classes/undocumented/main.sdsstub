@@ -1,0 +1,22 @@
+package tests.generation.markdown.classes.undocumented
+
+class MyClass1
+
+class MyClass2()
+
+class MyClass3<TypeParam1, TypeParam2 sub Int, TypeParam3 = Int>
+
+class MyClass4(param1: Int, param2: Float = 1.0)
+
+class MyClass5 sub MyClass1
+
+class MyClass6 {
+    attr myAttribute1: Int
+    static attr myAttribute2: Float
+
+    @Pure fun myFunction1()
+    @Pure static fun myFunction2()
+
+    class MyClass7
+    enum MyEnum1
+}

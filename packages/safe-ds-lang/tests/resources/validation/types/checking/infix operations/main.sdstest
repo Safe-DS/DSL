@@ -8,8 +8,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
     // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
     »0« or »0«;
-    // $TEST$ error "Expected type 'Boolean' but got '$unknown'."
-    // $TEST$ error "Expected type 'Boolean' but got '$unknown'."
+    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
+    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
     »unresolved« or »unresolved«;
 
     // $TEST$ no error r"Expected type 'Boolean' but got .*\."
@@ -18,8 +18,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
     // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
     »0« and »0«;
-    // $TEST$ error "Expected type 'Boolean' but got '$unknown'."
-    // $TEST$ error "Expected type 'Boolean' but got '$unknown'."
+    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
+    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
     »unresolved« and »unresolved«;
 
 
@@ -32,8 +32,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« + »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« + »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -45,8 +45,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« - »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« - »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -58,8 +58,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« * »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« * »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -71,8 +71,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« / »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« / »unresolved«;
 
 
@@ -85,8 +85,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« < »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« < »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -98,8 +98,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« <= »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« <= »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -111,8 +111,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« >= »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« >= »unresolved«;
 
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
@@ -124,8 +124,8 @@ pipeline myPipeline {
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
     »""« > »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got '$unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« > »unresolved«;
 }
 

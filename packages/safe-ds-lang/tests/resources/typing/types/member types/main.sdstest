@@ -20,7 +20,7 @@ fun nonNullableMemberTypes(
     b: »MyClass.MyNestedEnum«,
     // $TEST$ equivalence_class myEnumVariant
     d: »MyEnum.MyEnumVariant«,
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     e: »MyEnum.unresolved«,
 )
 
@@ -31,6 +31,6 @@ fun nullableMemberTypes(
     b: »MyClass.MyNestedEnum?«,
     // $TEST$ serialization MyEnum.MyEnumVariant?
     d: »MyEnum.MyEnumVariant?«,
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     e: »MyEnum.unresolved?«,
 )

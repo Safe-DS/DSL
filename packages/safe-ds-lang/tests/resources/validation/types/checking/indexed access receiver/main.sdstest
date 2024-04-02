@@ -29,7 +29,7 @@ segment mySegment(
     »myList«[0];
     // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
     »myMap«[""];
-    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got '$unknown'."
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'unknown'."
     »unresolved«[0];
 }
 

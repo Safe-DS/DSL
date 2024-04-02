@@ -1,0 +1,32 @@
+package tests.generation.markdown.deprecated
+
+@Deprecated
+schema MySchema1 {}
+
+@Deprecated(
+    alternative = "Something else",
+)
+schema MySchema2 {}
+
+@Deprecated(
+    reason = "To annoy you",
+)
+schema MySchema3 {}
+
+@Deprecated(
+    sinceVersion = "1.0.0"
+)
+schema MySchema4 {}
+
+@Deprecated(
+    removalVersion = "2.0.0",
+)
+schema MySchema5 {}
+
+@Deprecated(
+    alternative = "Something else",
+    reason = "To annoy you",
+    sinceVersion = "1.0.0",
+    removalVersion = "2.0.0",
+)
+schema MySchema6 {}

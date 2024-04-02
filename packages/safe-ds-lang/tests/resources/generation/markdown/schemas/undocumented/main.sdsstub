@@ -1,0 +1,8 @@
+package tests.generation.markdown.schemas.undocumented
+
+schema MySchema1 {}
+
+schema MySchema2 {
+    "column1": String,
+    "column2": Int
+}

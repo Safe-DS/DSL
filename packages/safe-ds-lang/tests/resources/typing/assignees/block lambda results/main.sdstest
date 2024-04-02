@@ -11,7 +11,7 @@ segment mySegment() -> (r: Int) {
 
     () {
         // $TEST$ serialization literal<1>
-        // $TEST$ serialization $unknown
+        // $TEST$ serialization unknown
         yield »r«, yield »s« = 1;
     };
 

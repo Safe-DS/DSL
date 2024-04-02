@@ -204,7 +204,7 @@ class Column<T = Any?>(
      * \frac{\text{number of occurrences of most common non-null value}}{\text{number of non-null values}}
      * $$
      *
-     * The stability is not definded for a column with only null values.
+     * The stability is not defined for a column with only null values.
      *
      * @result result1 The stability of the column.
      */

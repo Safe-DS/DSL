@@ -6,12 +6,12 @@ pipeline myPipeline {
     // $TEST$ serialization C
     »C()«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »C()()«;
 
     // $TEST$ serialization C
     »C?()«;
 
-    // $TEST$ serialization $unknown
+    // $TEST$ serialization unknown
     »C?()?()«;
 }
