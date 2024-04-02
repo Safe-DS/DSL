@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Profiling, ProfilingDetail } from '../../../types/state';
+    import type { Profiling } from '../../../types/state';
 
     export let profiling: Profiling;
     export let imageWidth: number = 200;
