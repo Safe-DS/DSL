@@ -9,10 +9,11 @@ export interface State {
 
 type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'highlightColumn';
 type ExternalManipulatingAction = 'filterColumn' | 'sortColumn' | TableFilterTypes;
-type ExternalVisualizingAction = TabType;
+type ExternalVisualizingAction = TabType | 'refreshTab';
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
 
 interface HistoryEntryBase {
+    id: number;
     type: 'internal' | 'external-manipulating' | 'external-visualizing';
     alias: string;
     action: Action;
@@ -75,6 +76,11 @@ export interface ExternalVisualizingTwoColumnHistoryEntry extends ExternalVisual
     yAxisColumnName: string;
 }
 
+export interface ExternalVisualizingRefreshHistoryEntry extends ExternalVisualizingHistoryEntry {
+    action: 'refreshTab';
+    initalHistoryEntryId: number;
+}
+
 export type HistoryEntry =
     | InternalColumnWithValueHistoryEntry
     | InternalColumnHistoryEntry
@@ -92,6 +98,7 @@ type NoColumnTabTypes = 'heatmap';
 type TabType = TwoColumnTabTypes | OneColumnTabTypes | NoColumnTabTypes;
 
 interface TabObject {
+    initalHistoryEntryId: number;
     type: TabType;
     tabComment: string;
     content: Object;
