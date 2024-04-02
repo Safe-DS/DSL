@@ -6,14 +6,15 @@
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
     import type {
+        Column,
         PossibleColumnFilter,
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
     } from '../../types/state';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
-    import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { derived, writable, get } from 'svelte/store';
+    import ColumnFilters from './columnFilters/ColumnFilters.svelte';
 
     export let sidebarWidth: number;
 
@@ -31,7 +32,7 @@
             minTableWidth = 0;
             numRows = 0;
             maxProfilingItemCount = 0;
-            $currentState.table.columns.forEach((column) => {
+            $currentState.table.columns.forEach((column: [number, Column]) => {
                 if (column[1].values.length > numRows) {
                     numRows = column[1].values.length;
                 }
@@ -39,9 +40,11 @@
 
                 // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
                 // (cannot give to tallest one, as then it will all be small)
-                if (column[1].profiling.top.length > 0 || column[1].profiling.bottom.length > 0) {
+                if (column[1].profiling) {
                     let profilingItemCount = 0;
-                    for (const profilingItem of column[1].profiling.top.concat(column[1].profiling.bottom)) {
+                    if (column[1].profiling.validRatio) profilingItemCount += 1;
+                    if (column[1].profiling.missingRatio) profilingItemCount += 1;
+                    for (const profilingItem of column[1].profiling.other) {
                         profilingItemCount += calcProfilingItemValue(profilingItem);
                     }
                     if (profilingItemCount > maxProfilingItemCount) {
@@ -535,7 +538,10 @@
     const getOptionalProfilingHeight = function (profiling: Profiling): string {
         let profilingItemCount = 0;
 
-        for (const profilingItem of profiling.top.concat(profiling.bottom)) {
+        if (profiling.validRatio) profilingItemCount += 1;
+        if (profiling.missingRatio) profilingItemCount += 1;
+
+        for (const profilingItem of profiling.other) {
             profilingItemCount += calcProfilingItemValue(profilingItem);
         }
 
@@ -559,7 +565,14 @@
     const hasProfilingErrors = derived(currentState, ($currentState) => {
         if (!$currentState.table) return false;
         for (const column of $currentState.table!.columns) {
-            for (const profilingItem of column[1].profiling.top.concat(column[1].profiling.bottom)) {
+            if (!column[1].profiling) return false;
+            if (
+                column[1].profiling.missingRatio?.interpretation === 'error' ||
+                column[1].profiling.validRatio?.interpretation === 'error'
+            ) {
+                return true;
+            }
+            for (const profilingItem of column[1].profiling.other) {
                 if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'error') {
                     return true;
                 }
@@ -573,15 +586,15 @@
 
         const column = $currentState.table.columns[columnIndex][1];
 
+        if (!column.profiling) return [];
+
         const possibleColumnFilters: PossibleColumnFilter[] = [];
 
         if (column.type === 'categorical') {
-            const profilingCategories: ProfilingDetailStatistical[] = column.profiling.bottom
-                .concat(column.profiling.top)
-                .filter(
-                    (profilingItem) =>
-                        profilingItem.type === 'numerical' && profilingItem.interpretation === 'category',
-                ) as ProfilingDetailStatistical[];
+            const profilingCategories: ProfilingDetailStatistical[] = column.profiling.other.filter(
+                (profilingItem: ProfilingDetail) =>
+                    profilingItem.type === 'numerical' && profilingItem.interpretation === 'category',
+            ) as ProfilingDetailStatistical[];
 
             // If there is distinct categories in profiling, use those as filter options, else use search string
             if (profilingCategories.length > 0) {
@@ -644,13 +657,14 @@
         <div
             bind:this={fullHeadBackground}
             class="fullHeadBackground"
-            style="top: {scrollTop}px; height: {rowHeight * 2}px"
+            style:top="{scrollTop}px"
+            style:height="{rowHeight * 2}px"
         ></div>
-        <div class="contentWrapper" style="height: {numRows * rowHeight}px;">
+        <div class="contentWrapper" style:height="{numRows * rowHeight}px">
             <table>
                 <!-- Table Headers, mainly Column name and first/last row for indices -->
                 <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
-                    <tr class="headerRow" style="height: {rowHeight}px;">
+                    <tr class="headerRow" style:height="{rowHeight}px">
                         <th
                             class="borderColumn borderColumnHeader"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}>#</th
@@ -696,7 +710,7 @@
                     </tr>
                 </thead>
                 <!-- Profiling info -->
-                <tr bind:this={profilingInfo} class="hiddenProfilingWrapper noHover" style="top: {scrollTop}px;">
+                <tr bind:this={profilingInfo} class="hiddenProfilingWrapper noHover" style:top="{scrollTop}px">
                     <td
                         class="borderColumn borderRight profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -705,14 +719,13 @@
                         <td
                             class="profiling"
                             class:expanded={showProfiling}
-                            style="height: {showProfiling &&
-                            (column[1].profiling.top.length !== 0 || column[1].profiling.bottom.length !== 0)
+                            style="height: {showProfiling && column[1].profiling
                                 ? getOptionalProfilingHeight(column[1].profiling)
                                 : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                         >
                             <div class="content" class:expanded={showProfiling}>
-                                {#if column[1].profiling.top.length === 0 && column[1].profiling.bottom.length === 0}
+                                {#if !column[1].profiling}
                                     <div>Loading ...</div>
                                 {:else}
                                     <ProfilingInfo profiling={column[1].profiling} imageWidth={profilingImageWidth} />
@@ -727,7 +740,7 @@
                     ></td>
                 </tr>
                 <!-- Profiling banner, to toggle profiling info -->
-                <tr class="profilingBannerRow" style="height: {rowHeight}px; top: {scrollTop}px;">
+                <tr class="profilingBannerRow" style:height="{rowHeight}px" style:top="{scrollTop}px">
                     <td
                         class="borderColumn borderRight profilingBanner"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -770,7 +783,7 @@
                 <!-- Table contents -->
                 <tbody style="position: relative; top: {visibleStart * rowHeight}px;">
                     {#each Array(Math.min(visibleEnd, numRows) - visibleStart) as _, i}
-                        <tr style="height: {rowHeight}px;">
+                        <tr style:height="{rowHeight}px">
                             <td
                                 class="borderColumn cursorPointer"
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
@@ -780,7 +793,7 @@
                             >
                             {#each $currentState.table.columns as column, index}
                                 <td
-                                    style=" {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
+                                    style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
                                     on:click={handleMainCellClick}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     class:selectedColumn={selectedColumnIndexes.includes(index) ||
@@ -813,7 +826,8 @@
     {#if draggedColumnName}
         <th
             bind:this={reorderPrototype}
-            style="width: {$savedColumnWidths.get(draggedColumnName)}px; height: {rowHeight + 2.5}px;"
+            style:width="{$savedColumnWidths.get(draggedColumnName)}px"
+            style:height="{rowHeight + 2.5}px"
             class="dragging"
             >{draggedColumnName}
         </th>

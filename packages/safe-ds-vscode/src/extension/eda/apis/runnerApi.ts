@@ -183,7 +183,6 @@ export class RunnerApi {
                     highlighted: false,
                     appliedFilters: [],
                     appliedSort: null,
-                    profiling: { top: [], bottom: [] },
                     coloredHighLow: false,
                 };
                 table.columns.push([i++, column]);
@@ -331,9 +330,10 @@ export class RunnerApi {
                     profiling.push({
                         columnName: column[1].name,
                         profiling: {
-                            top: [validRatio, missingRatio],
-                            bottom: [
-                                { type: 'text', value: 'Categorical', interpretation: 'bold' },
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Categorical', interpretation: 'important' },
                                 ...uniqueProfilings,
                             ],
                         },
@@ -345,10 +345,11 @@ export class RunnerApi {
                     profiling.push({
                         columnName: column[1].name,
                         profiling: {
-                            top: [validRatio, missingRatio],
-                            bottom: [
-                                { type: 'text', value: 'Categorical', interpretation: 'bold' },
-                                { type: 'image', value: histogram, interpretation: 'default' },
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Categorical', interpretation: 'important' },
+                                { type: 'image', value: histogram },
                             ],
                         },
                     });
@@ -357,9 +358,10 @@ export class RunnerApi {
                     profiling.push({
                         columnName: column[1].name,
                         profiling: {
-                            top: [validRatio, missingRatio],
-                            bottom: [
-                                { type: 'text', value: 'Categorical', interpretation: 'bold' },
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Categorical', interpretation: 'important' },
                                 {
                                     type: 'text',
                                     value: uniqueValues + ' Distincts',
@@ -388,10 +390,11 @@ export class RunnerApi {
                 profiling.push({
                     columnName: column[1].name,
                     profiling: {
-                        top: [validRatio, missingRatio],
-                        bottom: [
-                            { type: 'text', value: 'Numerical', interpretation: 'bold' },
-                            { type: 'image', value: histogram, interpretation: 'default' },
+                        validRatio,
+                        missingRatio,
+                        other: [
+                            { type: 'text', value: 'Numerical', interpretation: 'important' },
+                            { type: 'image', value: histogram },
                         ],
                     },
                 });

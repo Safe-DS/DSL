@@ -71,21 +71,25 @@ export interface Table {
 
 // ------------ Types for the Profiling -----------
 export interface Profiling {
-    top: ProfilingDetail[];
-    bottom: ProfilingDetail[];
+    validRatio: ProfilingDetailStatistical;
+    missingRatio: ProfilingDetailStatistical;
+    other: ProfilingDetail[];
 }
 
 export interface ProfilingDetailBase {
     type: 'numerical' | 'image' | 'name';
     value: string;
-    interpretation: 'warn' | 'error' | 'default' | 'bold' | 'good';
 }
 
-export interface ProfilingDetailStatistical extends ProfilingDetailBase {
+interface ProfilingDetailText extends ProfilingDetailBase {
+    interpretation: 'warn' | 'error' | 'default' | 'important' | 'good';
+}
+
+export interface ProfilingDetailStatistical extends ProfilingDetailText {
     type: 'numerical';
     name: string;
     value: string;
-    interpretation: ProfilingDetailBase['interpretation'] | 'category'; // 'category' needed for filters, to show distinct values
+    interpretation: ProfilingDetailText['interpretation'] | 'category'; // 'category' needed for filters, to show distinct values
 }
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
@@ -93,7 +97,7 @@ export interface ProfilingDetailImage extends ProfilingDetailBase {
     value: Base64Image;
 }
 
-export interface ProfilingDetailName extends ProfilingDetailBase {
+export interface ProfilingDetailName extends ProfilingDetailText {
     type: 'text';
     value: string;
 }
@@ -108,7 +112,7 @@ export interface ColumnBase {
     hidden: boolean;
     highlighted: boolean;
     appliedSort: 'asc' | 'desc' | null;
-    profiling: Profiling;
+    profiling?: Profiling;
 }
 
 export interface NumericalColumn extends ColumnBase {
@@ -134,24 +138,23 @@ export interface ColumnFilterBase extends FilterBase {
     columnName: string;
 }
 
-export interface SearchStringFilter extends ColumnFilterBase {
-    type: 'searchString';
-    searchString: string;
-}
-
 export interface PossibleSearchStringFilter extends ColumnFilterBase {
     type: 'searchString';
 }
 
-export interface ValueRangeFilter extends ColumnFilterBase {
+export interface SearchStringFilter extends PossibleSearchStringFilter {
+    searchString: string;
+}
+
+export interface PossibleValueRangeFilter extends ColumnFilterBase {
     type: 'valueRange';
     min: number;
     max: number;
 }
 
-export interface SpecificValueFilter extends ColumnFilterBase {
-    type: 'specificValue';
-    value: string;
+export interface ValueRangeFilter extends PossibleValueRangeFilter {
+    currentMin: number;
+    currentMax: number;
 }
 
 export interface PossibleSpecificValueFilter extends ColumnFilterBase {
@@ -159,10 +162,15 @@ export interface PossibleSpecificValueFilter extends ColumnFilterBase {
     values: string[];
 }
 
+export interface SpecificValueFilter extends ColumnFilterBase {
+    type: 'specificValue';
+    value: string;
+}
+
 export type NumericalFilter = ValueRangeFilter;
 export type CategoricalFilter = SearchStringFilter | SpecificValueFilter;
 
-export type PossibleColumnFilter = ValueRangeFilter | PossibleSearchStringFilter | PossibleSpecificValueFilter;
+export type PossibleColumnFilter = PossibleValueRangeFilter | PossibleSearchStringFilter | PossibleSpecificValueFilter;
 
 export interface TableFilter extends FilterBase {
     type: 'hideMissingValueColumns' | 'hideNonNumericalColumns' | 'hideDuplicateRows' | 'hideRowsWithOutliers';
