@@ -93,6 +93,27 @@ an argument:
 fun sum(a: Int, b: Int): sum: Int
 ```
 
+To point to _static_ members of a [class][class] or an [enum variant][enum-variant] of an [enum][enum], write the name of
+the containing declaration followed by a dot and the name of the member or enum variant:
+
+```sds
+/**
+ * To create a Table, use {@link Table.fromCsv}.
+ */
+class Table
+```
+
+To point to an _instance_ member of a [class][class], write the name of the containing declaration followed by a hash and
+the name of the member:
+
+```sds
+/**
+ * An alias for {@link List#size}.
+ */
+fun size(list: List<Any?>): size: Int
+```
+
+
 #### `@param`
 
 Use `@param` to document a [parameter][parameter] of a callable declaration. This tag takes the name of the parameter
@@ -155,6 +176,9 @@ fun sum(a: Int, b: Int): sum: Int
 the [`@param`](#param), [`@result`](#result), and [`@typeParam`](#typeparam) tags on the containing declaration,
 respectively.
 
+[class]: ../stub-language/classes.md
+[enum]: ../stub-language/enumerations.md
+[enum-variant]: ../stub-language/enumerations.md#enum-variants
 [parameter]: parameters.md
 [result]: results.md
 [type-parameter]: ../stub-language/type-parameters.md
