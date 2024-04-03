@@ -1090,14 +1090,14 @@ export class SafeDsPythonGenerator {
         throw new Error('Callable of provided call does not exist or is not a declaration.');
     }
 
-    private getClassQualifiedNameForMember(expression: SdsClassMember): string {
-        const classMemberPath = [this.getPythonNameOrDefault(expression)];
-        let enclosingClass = AstUtils.getContainerOfType(expression.$container, isSdsClass);
+    private getClassQualifiedNameForMember(node: SdsClassMember): string {
+        const classMemberPath = [this.getPythonNameOrDefault(node)];
+        let enclosingClass = AstUtils.getContainerOfType(node.$container, isSdsClass);
         while (enclosingClass) {
-            classMemberPath.push(this.getPythonNameOrDefault(enclosingClass));
+            classMemberPath.unshift(this.getPythonNameOrDefault(enclosingClass));
             enclosingClass = AstUtils.getContainerOfType(enclosingClass.$container, isSdsClass);
         }
-        return classMemberPath.reverse().join('.');
+        return classMemberPath.join('.');
     }
 
     private getArgumentsMap(
