@@ -1,0 +1,5 @@
+package tests.generator.safeds
+
+pipeline test {
+    val a = Table();
+}
