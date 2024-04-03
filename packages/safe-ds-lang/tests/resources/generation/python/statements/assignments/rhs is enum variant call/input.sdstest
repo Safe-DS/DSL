@@ -1,0 +1,11 @@
+// Related to https://github.com/Safe-DS/DSL/issues/975
+
+package tests.generator.assignment.rhsIsEnumVariantCall
+
+enum MyEnum1 {
+    MyEnumVariant1(p: Int)
+}
+
+pipeline testPipeline {
+    val a = MyEnum1.MyEnumVariant1(1);
+}
