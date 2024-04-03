@@ -1033,7 +1033,9 @@ export class SafeDsPythonGenerator {
                         expression.receiver.receiver.receiver,
                         frame,
                     )}.${this.generateExpression(expression.receiver.member!, frame)}`
-                  : isSdsMemberAccess(expression.receiver) ? this.getClassQualifiedNameForMember(<SdsClassMember>callable) : this.generateExpression(expression.receiver, frame)
+                  : isSdsMemberAccess(expression.receiver)
+                    ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
+                    : this.generateExpression(expression.receiver, frame)
         }, [${generateThisParam ? thisParam : ''}${
             generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
         }${joinTracedToNode(expression.argumentList, 'arguments')(
