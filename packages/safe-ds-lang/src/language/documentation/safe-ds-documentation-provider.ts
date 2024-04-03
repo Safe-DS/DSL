@@ -7,11 +7,14 @@ import {
     JSDocElement,
     JSDocRenderOptions,
     type JSDocTag,
+    NameProvider,
     parseJSDoc,
 } from 'langium';
 import {
     isSdsCallable,
+    isSdsClass,
     isSdsDeclaration,
+    isSdsEnum,
     isSdsParameter,
     isSdsResult,
     isSdsTypeParameter,
@@ -21,6 +24,8 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { isEmpty } from '../../helpers/collections.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { getClassMembers, getEnumVariants, isStatic } from '../helpers/nodeProperties.js';
 
 const PARAM_TAG = 'param';
 const RESULT_TAG = 'result';
@@ -28,6 +33,14 @@ const SINCE_TAG = 'since';
 const TYPE_PARAM_TAG = 'typeParam';
 
 export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
+    private readonly nameProvider: NameProvider;
+
+    constructor(services: SafeDsServices) {
+        super(services);
+
+        this.nameProvider = services.references.NameProvider;
+    }
+
     /**
      * Returns the documentation of the given node as a Markdown string.
      */
@@ -148,22 +161,111 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                     return super.documentationTagRenderer(node, tag);
                 }
             },
-            renderLink: (name, display) => {
+            renderLink: (namePath, display) => {
+                const target = this.findTarget(node, namePath);
+                if (!target) {
+                    return display;
+                }
+
                 if (!linkRenderer) {
-                    return super.documentationLinkRenderer(node, name, display);
+                    const nameSegment = this.nameProvider.getNameNode(target);
+                    if (!nameSegment) {
+                        /* c8 ignore next 2 */
+                        return display;
+                    }
+
+                    const line = nameSegment.range.start.line + 1;
+                    const character = nameSegment.range.start.character + 1;
+                    const uri = AstUtils.getDocument(target).uri.with({ fragment: `L${line},${character}` });
+                    return `[${display}](${uri.toString()})`;
                 }
 
-                const description =
-                    this.findNameInPrecomputedScopes(node, name) ?? this.findNameInGlobalScope(node, name);
-                const target = description?.node;
-
-                if (isSdsDeclaration(target)) {
-                    return linkRenderer(target, display);
-                } else {
-                    return linkRenderer(undefined, display);
-                }
+                return linkRenderer(target, display);
             },
         };
+    }
+
+    private findTarget(node: AstNode, namePath: string): SdsDeclaration | undefined {
+        let [globalName, ...rest] = this.tokenizeNamepath(namePath);
+        // `rest` contains pairs of separators and names
+        if (!globalName || rest.length % 2 !== 0) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+
+        let current = this.findGlobalDeclaration(node, globalName);
+
+        while (current && !isEmpty(rest)) {
+            const [separator, name] = rest.slice(0, 2);
+            rest = rest.slice(2);
+
+            if (separator === '.') {
+                current = this.findStaticMember(current, name);
+            } else if (separator === '#') {
+                current = this.findInstanceMember(current, name);
+            } else {
+                /* c8 ignore next 2 */
+                return undefined;
+            }
+        }
+
+        return current;
+    }
+
+    private tokenizeNamepath(namePath: string): string[] {
+        const result = [];
+        let current = '';
+
+        for (const c of namePath) {
+            if (c === '.' || c === '#') {
+                result.push(current, c);
+                current = '';
+            } else {
+                current += c;
+            }
+        }
+
+        result.push(current);
+        return result;
+    }
+
+    private findGlobalDeclaration(node: AstNode, name: string): SdsDeclaration | undefined {
+        const description = this.findNameInPrecomputedScopes(node, name) ?? this.findNameInGlobalScope(node, name);
+        const target = description?.node;
+
+        if (isSdsDeclaration(target)) {
+            return target;
+        } else {
+            return undefined;
+        }
+    }
+
+    private findStaticMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
+        if (!name) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+
+        if (isSdsClass(node)) {
+            return getClassMembers(node).find((it) => isStatic(it) && it.name === name);
+        } else if (isSdsEnum(node)) {
+            return getEnumVariants(node).find((it) => it.name === name);
+        } else {
+            return undefined;
+        }
+    }
+
+    private findInstanceMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
+        if (!name) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+
+        if (isSdsClass(node)) {
+            return getClassMembers(node).find((it) => !isStatic(it) && it.name === name);
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -175,4 +277,4 @@ const isTag = (element: JSDocElement): element is JSDocTag => {
     return 'name' in element;
 };
 
-type LinkRenderer = (target: SdsDeclaration | undefined, display: string) => string | undefined;
+type LinkRenderer = (target: SdsDeclaration, display: string) => string | undefined;

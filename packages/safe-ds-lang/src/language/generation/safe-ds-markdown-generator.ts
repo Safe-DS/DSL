@@ -426,11 +426,7 @@ export class SafeDsMarkdownGenerator {
 
     private renderDescription(node: SdsDeclaration) {
         return this.documentationProvider.getDescription(node, (target, display) => {
-            if (target) {
-                return `[${display}][${getQualifiedName(target)}]`;
-            } else {
-                return display;
-            }
+            return `[${display}][${getQualifiedName(target)}]`;
         });
     }
 
