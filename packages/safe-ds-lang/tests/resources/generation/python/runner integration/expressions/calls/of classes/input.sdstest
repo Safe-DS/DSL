@@ -1,0 +1,9 @@
+// Related to https://github.com/Safe-DS/DSL/issues/980
+
+package tests.generator.runnerIntegration.expressions.calls.ofClasses
+
+class MyClass(p: Int)
+
+pipeline test {
+    val a = MyClass(0);
+}

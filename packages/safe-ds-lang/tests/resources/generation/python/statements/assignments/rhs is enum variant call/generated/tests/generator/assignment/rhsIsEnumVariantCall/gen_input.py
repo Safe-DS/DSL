@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.assignment.rhsIsEnumVariantCall import MyEnum1
+
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():

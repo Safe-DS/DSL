@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.partialRedundantImpurity import noPartialEvalInt
+
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():

@@ -1,5 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
+from tests.generator.indexedAccess import f
 from typing import Any, TypeVar
 
 # Type variables ---------------------------------------------------------------
