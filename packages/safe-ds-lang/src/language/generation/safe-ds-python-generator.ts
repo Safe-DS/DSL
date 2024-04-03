@@ -1097,7 +1097,7 @@ export class SafeDsPythonGenerator {
             classMemberPath.push(this.getPythonNameOrDefault(enclosingClass));
             enclosingClass = AstUtils.getContainerOfType(enclosingClass.$container, isSdsClass);
         }
-        return classMemberPath.reverse().join(".");
+        return classMemberPath.reverse().join('.');
     }
 
     private getArgumentsMap(
