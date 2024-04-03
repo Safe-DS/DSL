@@ -38,4 +38,7 @@ pipeline test {
     f(C().j(123));
     f(C().k("abc"));
     f(C.from_csv_file("abc.csv"));
+    val a = Table.fromCsvFile("abc.csv");
+    val v = a.getColumn("b");
+    f(v);
 }

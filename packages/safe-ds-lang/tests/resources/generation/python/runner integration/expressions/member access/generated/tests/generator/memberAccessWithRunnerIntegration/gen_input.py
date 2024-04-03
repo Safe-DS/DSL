@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from safeds.data.tabular.containers import Table
 from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, g, h
 from typing import Any, TypeVar
 
@@ -27,3 +28,8 @@ def test():
     f(safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.C.j", C.j, [safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []), 123], []))
     f(safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.C.k2", C.k2, [safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []), 'abc'], []))
     f(safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.C.from_csv_file", C.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')]))
+    a = safeds_runner.memoized_call("safeds.data.tabular.containers.Table.from_csv_file", Table.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')])
+    safeds_runner.save_placeholder('a', a)
+    v = safeds_runner.memoized_call("safeds.data.tabular.containers.Table.get_column", a.get_column, [a, 'b'], [])
+    safeds_runner.save_placeholder('v', v)
+    f(v)
