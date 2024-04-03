@@ -1,4 +1,4 @@
-package tests.generator.callWithRunnerIntegration
+package tests.generator.runnerIntegration.expressions.calls.main
 
 @Impure([ImpurityReason.Other]) fun f(param: Any?)
 

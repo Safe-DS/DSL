@@ -79,6 +79,7 @@ import {
     getParameters,
     getPlaceholderByName,
     getStatements,
+    isStatic,
     Parameter,
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
@@ -1017,7 +1018,7 @@ export class SafeDsPythonGenerator {
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
         // For a static function, the thisParam would be the class containing the function. We do not need to generate it in this case
-        const generateThisParam = !isSdsFunction(callable) || (!callable.isStatic && thisParam);
+        const generateThisParam = thisParam && isSdsFunction(callable) && !isStatic(callable);
         const containsOptionalArgs = sortedArgs.some((arg) =>
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
