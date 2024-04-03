@@ -1091,7 +1091,13 @@ export class SafeDsPythonGenerator {
     }
 
     private getClassQualifiedNameForMember(expression: SdsClassMember): string {
-        return `${this.getPythonNameOrDefault(AstUtils.getContainerOfType(expression.$container, isSdsDeclaration)!)}.${this.getPythonNameOrDefault(expression)}`;
+        const classMemberPath = [this.getPythonNameOrDefault(expression)];
+        let enclosingClass = AstUtils.getContainerOfType(expression.$container, isSdsClass);
+        while (enclosingClass) {
+            classMemberPath.push(this.getPythonNameOrDefault(enclosingClass));
+            enclosingClass = AstUtils.getContainerOfType(enclosingClass.$container, isSdsClass);
+        }
+        return classMemberPath.reverse().join(".");
     }
 
     private getArgumentsMap(

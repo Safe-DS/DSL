@@ -2,7 +2,7 @@
 
 import safeds_runner
 from safeds.data.tabular.containers import Table
-from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, g, h
+from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, factoryNested, g, h, Outer
 from typing import Any, TypeVar
 
 # Type variables ---------------------------------------------------------------
@@ -33,3 +33,9 @@ def test():
     v = safeds_runner.memoized_call("safeds.data.tabular.containers.Table.get_column", Table.get_column, [a, 'b'], [])
     safeds_runner.save_placeholder('v', v)
     f(v)
+    f(safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.f", Outer.Nested.f, [], []))
+    nestedInstance = safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.factoryNested", factoryNested, [], [])
+    safeds_runner.save_placeholder('nestedInstance', nestedInstance)
+    nestedResult = safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.g", Outer.Nested.g, [nestedInstance], [])
+    safeds_runner.save_placeholder('nestedResult', nestedResult)
+    f(nestedResult)
