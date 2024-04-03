@@ -60,7 +60,7 @@ class Table(
     /**
      * Read data from an Excel file into a table.
      *
-     * Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+     * Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
      *
      * @param path The path to the Excel file.
      *

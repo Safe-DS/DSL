@@ -119,7 +119,7 @@ class Column<T = Any?>(
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
-    ) -> result1: Column
+    ) -> result1: Column<R>
 
     /**
      * Calculate Pearson correlation between this and another column. Both columns have to be numerical.

@@ -61,7 +61,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
         /**
          * Read data from an Excel file into a table.
          *
-         * Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+         * Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
          *
          * @param path The path to the Excel file.
          *
@@ -1940,7 +1940,7 @@ Create a table from a dictionary that maps column names to column values.
 
 Read data from an Excel file into a table.
 
-Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
 
 **Parameters:**
 
