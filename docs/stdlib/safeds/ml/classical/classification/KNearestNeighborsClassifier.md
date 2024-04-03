@@ -12,7 +12,7 @@ K-nearest-neighbors classification.
 
 ??? quote "Source code in `k_nearest_neighbors.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="12"
     class KNearestNeighborsClassifier(
         @PythonName("number_of_neighbors") const numberOfNeighbors: Int
     ) sub Classifier where {
@@ -65,7 +65,7 @@ This classifier is not modified.
 
 ??? quote "Source code in `k_nearest_neighbors.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="31"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

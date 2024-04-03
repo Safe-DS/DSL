@@ -9,7 +9,6 @@ from safeds.ml.classical.regression import Regressor
  * @param c The strength of regularization. Must be strictly positive.
  * @param kernel The type of kernel to be used. Defaults to None.
  */
-@PythonName("SupportVectorMachine")
 class SupportVectorMachineRegressor(
     const c: Float = 1.0,
     kernel: SupportVectorMachineRegressor.Kernel = SupportVectorMachineRegressor.Kernel.RadialBasisFunction

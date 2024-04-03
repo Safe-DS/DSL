@@ -6,7 +6,6 @@ from safeds.ml.classical.regression import Regressor
 /**
  * Linear regression.
  */
-@PythonName("LinearRegression")
 class LinearRegressionRegressor() sub Regressor {
     /**
      * Create a copy of this regressor and fit it with the given training data.

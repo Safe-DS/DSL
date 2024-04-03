@@ -9,7 +9,6 @@ from safeds.ml.classical.classification import Classifier
  * @param c The strength of regularization. Must be strictly positive.
  * @param kernel The type of kernel to be used. Defaults to None.
  */
-@PythonName("SupportVectorMachine")
 class SupportVectorMachineClassifier(
     const c: Float = 1.0,
     kernel: SupportVectorMachineClassifier.Kernel = SupportVectorMachineClassifier.Kernel.RadialBasisFunction
