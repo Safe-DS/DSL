@@ -4,13 +4,13 @@
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `layers` | [`List<Any>`][safeds.lang.List] | - | - |
+| `layers` | [`List<FNNLayer>`][safeds.lang.List] | - | - |
 
 ??? quote "Source code in `regressor.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
     class NeuralNetworkRegressor(
-        layers: List<Any>
+        layers: List<FNNLayer>
     ) {
         /**
          * Check if the model is fitted.
@@ -88,7 +88,7 @@ The original model is not modified.
 
 ??? quote "Source code in `regressor.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="27"
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
@@ -122,7 +122,7 @@ The original Model is not modified.
 
 ??? quote "Source code in `regressor.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="48"
     @Pure
     fun predict(
         @PythonName("test_data") testData: Table

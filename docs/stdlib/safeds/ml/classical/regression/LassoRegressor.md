@@ -12,7 +12,7 @@ Lasso regression.
 
 ??? quote "Source code in `lasso_regression.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="11"
     class LassoRegressor(
         const alpha: Float = 1.0
     ) sub Regressor where {
@@ -65,7 +65,7 @@ This regressor is not modified.
 
 ??? quote "Source code in `lasso_regression.sdsstub`"
 
-    ```sds linenums="31"
+    ```sds linenums="30"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
