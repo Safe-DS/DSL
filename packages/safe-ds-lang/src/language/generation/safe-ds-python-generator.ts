@@ -64,6 +64,7 @@ import {
     SdsParameterList,
     SdsPipeline,
     SdsPlaceholder,
+    SdsReference,
     SdsSegment,
     SdsStatement,
 } from '../generated/ast.js';
@@ -905,9 +906,7 @@ export class SafeDsPythonGenerator {
             }
         } else if (isSdsReference(expression)) {
             const declaration = expression.target.ref!;
-            const referenceImport =
-                this.getExternalReferenceNeededImport(expression, declaration) ||
-                this.getInternalReferenceNeededImport(expression, declaration);
+            const referenceImport = this.createImportDataForReference(expression, declaration);
             frame.addImport(referenceImport);
             return traceToNode(expression)(referenceImport?.alias || this.getPythonNameOrDefault(declaration));
         }
@@ -1125,6 +1124,21 @@ export class SafeDsPythonGenerator {
                 ? expandToNode`${this.generateParameter(parameter, frame, false)}=`
                 : ''
         }${this.generateExpression(argument.value, frame)}`;
+    }
+
+    private createImportDataForReference(
+        reference: SdsReference,
+        declaration: SdsDeclaration | undefined,
+    ): ImportData | undefined {
+        if (!declaration) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+
+        return (
+            this.getExternalReferenceNeededImport(reference, declaration) ||
+            this.getInternalReferenceNeededImport(reference, declaration)
+        );
     }
 
     private getExternalReferenceNeededImport(
