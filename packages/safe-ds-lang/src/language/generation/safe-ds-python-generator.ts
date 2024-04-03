@@ -55,6 +55,7 @@ import {
     SdsBlock,
     SdsBlockLambda,
     SdsCall,
+    SdsClassMember,
     SdsDeclaration,
     SdsExpression,
     SdsModule,
@@ -1018,6 +1019,10 @@ export class SafeDsPythonGenerator {
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
+        if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
+            const referenceImport = this.createImportDataForReference(expression.receiver.member!);
+            frame.addImport(referenceImport);
+        }
         return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
@@ -1028,7 +1033,7 @@ export class SafeDsPythonGenerator {
                         expression.receiver.receiver.receiver,
                         frame,
                     )}.${this.generateExpression(expression.receiver.member!, frame)}`
-                  : this.generateExpression(expression.receiver, frame)
+                  : isSdsMemberAccess(expression.receiver) ? this.getClassQualifiedNameForMember(<SdsClassMember>callable) : this.generateExpression(expression.receiver, frame)
         }, [${generateThisParam ? thisParam : ''}${
             generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
         }${joinTracedToNode(expression.argumentList, 'arguments')(
@@ -1081,6 +1086,10 @@ export class SafeDsPythonGenerator {
         }
         /* c8 ignore next */
         throw new Error('Callable of provided call does not exist or is not a declaration.');
+    }
+
+    private getClassQualifiedNameForMember(expression: SdsClassMember): string {
+        return `${this.getPythonNameOrDefault(AstUtils.getContainerOfType(expression.$container, isSdsDeclaration)!)}.${this.getPythonNameOrDefault(expression)}`;
     }
 
     private getArgumentsMap(
