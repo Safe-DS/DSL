@@ -204,19 +204,6 @@ describe('SafeDsDocumentationProvider', () => {
             const normalizedExpected = normalizeLineBreaks(expectedDocumentation);
             expect(normalizedActual).toStrictEqual(normalizedExpected);
         });
-
-        it('should resolve links', async () => {
-            const code = `
-                /**
-                 * {@link myFunction2}
-                 */
-                fun myFunction1()
-
-                fun myFunction2()
-            `;
-            const node = await getNodeOfType(services, code, isSdsFunction);
-            expect(documentationProvider.getDocumentation(node)).toMatch(/\[myFunction2\]\(.*\)/u);
-        });
     });
 
     describe('getDescription', () => {
@@ -351,6 +338,175 @@ describe('SafeDsDocumentationProvider', () => {
             const normalizedActual = normalizeLineBreaks(documentationProvider.getSince(node));
             const normalizedExpected = normalizeLineBreaks(expectedDocumentation);
             expect(normalizedActual).toStrictEqual(normalizedExpected);
+        });
+    });
+
+    describe('findTarget', () => {
+        const testCases: DocumentationProviderTest[] = [
+            {
+                testName: 'link (global)',
+                code: `
+                    /**
+                     * {@link myFunction2}
+                     */
+                    fun myFunction1()
+
+                    fun myFunction2()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[myFunction2](`,
+            },
+            {
+                testName: 'link (instance attribute)',
+                code: `
+                    /**
+                     * {@link MyClass#myAttribute}
+                     */
+                    fun myFunction1()
+
+                    class MyClass {
+                        attr myAttribute: String
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyClass#myAttribute](`,
+            },
+            {
+                testName: 'link (static attribute)',
+                code: `
+                    /**
+                     * {@link MyClass.myAttribute}
+                     */
+                    fun myFunction1()
+
+                    class MyClass {
+                        static attr myAttribute: String
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyClass.myAttribute`,
+            },
+            {
+                testName: 'link (instance method)',
+                code: `
+                    /**
+                     * {@link MyClass#myMethod}
+                     */
+                    fun myFunction1()
+
+                    class MyClass {
+                        fun myMethod()
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyClass#myMethod](`,
+            },
+            {
+                testName: 'link (nested class)',
+                code: `
+                    /**
+                     * {@link MyClass.NestedClass}
+                     */
+                    fun myFunction1()
+
+                    class MyClass {
+                        class NestedClass
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyClass.NestedClass](`,
+            },
+            {
+                testName: 'link (nested enum)',
+                code: `
+                    /**
+                     * {@link MyClass.NestedEnum}
+                     */
+                    fun myFunction1()
+
+                    class MyClass {
+                        enum NestedEnum
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyClass.NestedEnum](`,
+            },
+            {
+                testName: 'link (enum variant)',
+                code: `
+                    /**
+                     * {@link MyEnum.Variant}
+                     */
+                    fun myFunction1()
+
+                    enum MyEnum {
+                        Variant
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyEnum.Variant](`,
+            },
+            {
+                testName: 'link (long chain)',
+                code: `
+                    /**
+                     * {@link MyClass.NestedClass#myMethod}
+                     */
+                    fun myFunction1()
+
+                    class MyClass {
+                        class NestedClass {
+                            fun myMethod()
+                        }
+                    }
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `[MyClass.NestedClass#myMethod](`,
+            },
+            {
+                testName: 'link (unresolved global)',
+                code: `
+                    /**
+                     * {@link myFunction2}
+                     */
+                    fun myFunction1()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `myFunction2`,
+            },
+            {
+                testName: 'link (wrong container for instance)',
+                code: `
+                    /**
+                     * {@link myFunction1#test}
+                     */
+                    fun myFunction1()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `myFunction1#test`,
+            },
+            {
+                testName: 'link (wrong container for static)',
+                code: `
+                    /**
+                     * {@link myFunction1.test}
+                     */
+                    fun myFunction1()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `myFunction1.test`,
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
+            const node = await getNodeOfType(services, code, predicate);
+            const actualDocumentation = documentationProvider.getDocumentation(node);
+
+            if (expectedDocumentation === undefined) {
+                expect(actualDocumentation).toBeUndefined();
+            } else {
+                expect(actualDocumentation).toMatch(expectedDocumentation);
+            }
         });
     });
 });
