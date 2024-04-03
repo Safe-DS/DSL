@@ -1135,23 +1135,9 @@ export class SafeDsPythonGenerator {
             return undefined;
         }
 
-        return (
-            this.getExternalReferenceNeededImport(reference, declaration) ||
-            this.getInternalReferenceNeededImport(reference, declaration)
-        );
-    }
-
-    private getExternalReferenceNeededImport(
-        expression: SdsExpression | undefined,
-        declaration: SdsDeclaration | undefined,
-    ): ImportData | undefined {
-        if (!expression || !declaration) {
-            /* c8 ignore next 2 */
-            return undefined;
-        }
-
+        // getExternalReferenceNeededImport
         // Root Node is always a module.
-        const currentModule = <SdsModule>AstUtils.findRootNode(expression);
+        const currentModule = <SdsModule>AstUtils.findRootNode(reference);
         const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
         for (const value of getImports(currentModule)) {
             // Verify same package
@@ -1184,16 +1170,8 @@ export class SafeDsPythonGenerator {
                 };
             }
         }
-        return undefined;
-    }
 
-    private getInternalReferenceNeededImport(
-        expression: SdsExpression,
-        declaration: SdsDeclaration,
-    ): ImportData | undefined {
-        // Root Node is always a module.
-        const currentModule = <SdsModule>AstUtils.findRootNode(expression);
-        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
+        // getInternalReferenceNeededImport
         if (currentModule !== targetModule && !isInStubFile(targetModule)) {
             return {
                 importPath: `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
@@ -1202,6 +1180,7 @@ export class SafeDsPythonGenerator {
                 declarationName: this.getPythonNameOrDefault(declaration),
             };
         }
+
         return undefined;
     }
 
