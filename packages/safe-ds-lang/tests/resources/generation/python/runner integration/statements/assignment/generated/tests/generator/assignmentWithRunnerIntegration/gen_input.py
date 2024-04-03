@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from tests.generator.assignmentWithRunnerIntegration import f1, f2, g
 
 # Segments ---------------------------------------------------------------------
 

@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from tests.generator.runnerIntegration.expressions.calls.ofClasses import MyClass
 
 # Pipelines --------------------------------------------------------------------
 

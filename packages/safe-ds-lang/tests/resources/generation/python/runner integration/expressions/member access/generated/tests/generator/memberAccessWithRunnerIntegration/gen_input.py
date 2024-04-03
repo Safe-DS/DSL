@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, g, h
 from typing import Any, TypeVar
 
 # Type variables ---------------------------------------------------------------

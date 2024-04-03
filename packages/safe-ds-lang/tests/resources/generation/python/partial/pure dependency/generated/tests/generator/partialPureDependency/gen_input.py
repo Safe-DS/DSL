@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.partialPureDependency import f, g, g2, g3, g4, noPartialEvalInt
+
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():

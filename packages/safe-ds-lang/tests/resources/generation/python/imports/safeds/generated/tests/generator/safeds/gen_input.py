@@ -1,10 +1,8 @@
 # Imports ----------------------------------------------------------------------
 
-from tests.generator.lists import f, h
+from safeds.data.tabular.containers import Table
 
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    f([])
-    f([1, 2, 3])
-    f([1, h(), (h()) + (5)])
+    a = Table()

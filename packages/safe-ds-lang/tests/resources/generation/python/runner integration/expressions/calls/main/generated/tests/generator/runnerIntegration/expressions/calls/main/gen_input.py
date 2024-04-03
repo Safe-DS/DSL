@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from tests.generator.runnerIntegration.expressions.calls.main import f, g, h, i, j, k, l, m, readFile
 from typing import Any, Callable, TypeVar
 
 # Type variables ---------------------------------------------------------------

@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from tests.generator.importsWithRunnerIntegration import impureFunction
 
 # Segments ---------------------------------------------------------------------
 

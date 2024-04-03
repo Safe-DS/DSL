@@ -3,6 +3,7 @@
 import safeds_runner
 from special_location import function1InCompilationUnitWithPythonModule, function2InCompilationUnitWithPythonModule as h
 from tests.generator.differentPackageWithRunnerIntegration import function1InDifferentPackage, function2InDifferentPackage as g
+from tests.generator.importsWithRunnerIntegration import f
 from tests.generator.importsWithRunnerIntegration.gen_context_same_package import segment1InSamePackage, segment2InSamePackage
 
 # Pipelines --------------------------------------------------------------------
