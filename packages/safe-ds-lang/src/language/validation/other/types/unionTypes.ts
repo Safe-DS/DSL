@@ -56,7 +56,7 @@ export const unionTypeMustHaveTypes = (node: SdsUnionType, accept: ValidationAcc
 };
 
 export const unionTypeShouldNotHaveDuplicateTypes = (services: SafeDsServices) => {
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsUnionType, accept: ValidationAcceptor): void => {
         const typeArguments = getTypeArguments(node.typeArgumentList);

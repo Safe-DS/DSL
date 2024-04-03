@@ -12,7 +12,7 @@ Random forest classification.
 
 ??? quote "Source code in `random_forest.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="11"
     class RandomForestClassifier(
         @PythonName("number_of_trees") const numberOfTrees: Int = 100
     ) sub Classifier where {
@@ -65,7 +65,7 @@ This classifier is not modified.
 
 ??? quote "Source code in `random_forest.sdsstub`"
 
-    ```sds linenums="31"
+    ```sds linenums="30"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

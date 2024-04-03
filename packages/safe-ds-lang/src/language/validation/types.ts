@@ -39,8 +39,8 @@ export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 
 export const callArgumentTypesMustMatchParameterTypes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsCall, accept: ValidationAcceptor) => {
         const substitutions = typeComputer.computeSubstitutionsForCall(node);
@@ -99,8 +99,8 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
 };
 
 export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         if (!node.receiver) {
@@ -120,9 +120,9 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
 
 export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) => {
     const coreClasses = services.builtins.Classes;
-    const coreTypes = services.types.CoreTypes;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const coreTypes = services.typing.CoreTypes;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
@@ -153,9 +153,9 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
 };
 
 export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const coreTypes = services.typing.CoreTypes;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsInfixOperation, accept: ValidationAcceptor): void => {
         const leftType = typeComputer.computeType(node.leftOperand);
@@ -214,7 +214,7 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
 };
 
 export const listMustNotContainNamedTuples = (services: SafeDsServices) => {
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsList, accept: ValidationAcceptor): void => {
         for (const element of node.elements) {
@@ -230,7 +230,7 @@ export const listMustNotContainNamedTuples = (services: SafeDsServices) => {
 };
 
 export const mapMustNotContainNamedTuples = (services: SafeDsServices) => {
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsMap, accept: ValidationAcceptor): void => {
         for (const entry of node.entries) {
@@ -257,8 +257,8 @@ export const mapMustNotContainNamedTuples = (services: SafeDsServices) => {
 
 export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsNamedType, accept: ValidationAcceptor): void => {
         const type = typeComputer.computeType(node);
@@ -294,8 +294,8 @@ export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) 
 };
 
 export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsParameter, accept: ValidationAcceptor) => {
         const defaultValue = node.defaultValue;
@@ -317,9 +317,9 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
 };
 
 export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const coreTypes = services.typing.CoreTypes;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsPrefixOperation, accept: ValidationAcceptor): void => {
         const operandType = typeComputer.computeType(node.operand);
@@ -354,8 +354,8 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
 };
 
 export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsTypeCast, accept: ValidationAcceptor): void => {
         const expressionType = typeComputer.computeType(node.expression);
@@ -377,8 +377,8 @@ export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) 
 };
 
 export const typeParameterDefaultValueMustMatchUpperBound = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsTypeParameter, accept: ValidationAcceptor): void => {
         if (!node.defaultValue || !node.upperBound) {
@@ -399,8 +399,8 @@ export const typeParameterDefaultValueMustMatchUpperBound = (services: SafeDsSer
 };
 
 export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsYield, accept: ValidationAcceptor) => {
         const result = node.result?.ref;

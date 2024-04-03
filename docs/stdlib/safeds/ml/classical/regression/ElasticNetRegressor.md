@@ -13,7 +13,7 @@ Elastic net regression.
 
 ??? quote "Source code in `elastic_net_regression.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
     class ElasticNetRegressor(
         const alpha: Float = 1.0,
         @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
@@ -79,7 +79,7 @@ This regressor is not modified.
 
 ??? quote "Source code in `elastic_net_regression.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="39"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

@@ -9,7 +9,6 @@ from safeds.ml.classical.classification import Classifier
  * @param numberOfNeighbors The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and
  * less than or equal to the sample size (validated when calling `fit`).
  */
-@PythonName("KNearestNeighbors")
 class KNearestNeighborsClassifier(
     @PythonName("number_of_neighbors") const numberOfNeighbors: Int
 ) sub Classifier where {

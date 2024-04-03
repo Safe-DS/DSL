@@ -3,7 +3,6 @@ package safeds.ml.nn
 from safeds.data.tabular.containers import Table, TaggedTable
 from safeds.ml.nn import FNNLayer
 
-@PythonName("ClassificationNeuralNetwork")
 class NeuralNetworkClassifier(
     layers: List<FNNLayer>
 ) {

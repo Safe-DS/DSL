@@ -76,7 +76,7 @@ export type SafeDsAddedServices = {
     purity: {
         PurityComputer: SafeDsPurityComputer;
     };
-    types: {
+    typing: {
         ClassHierarchy: SafeDsClassHierarchy;
         CoreTypes: SafeDsCoreTypes;
         TypeChecker: SafeDsTypeChecker;
@@ -148,7 +148,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeComputation: (services) => new SafeDsScopeComputation(services),
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
-    types: {
+    typing: {
         ClassHierarchy: (services) => new SafeDsClassHierarchy(services),
         CoreTypes: (services) => new SafeDsCoreTypes(services),
         TypeChecker: (services) => new SafeDsTypeChecker(services),

@@ -14,7 +14,7 @@ Ada Boost classification.
 
 ??? quote "Source code in `ada_boost.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="15"
     class AdaBoostClassifier(
         learner: Classifier = DecisionTreeClassifier(),
         @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
@@ -90,7 +90,7 @@ This classifier is not modified.
 
 ??? quote "Source code in `ada_boost.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="45"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

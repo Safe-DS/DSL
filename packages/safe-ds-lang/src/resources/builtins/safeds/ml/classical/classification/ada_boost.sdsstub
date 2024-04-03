@@ -12,7 +12,6 @@ from safeds.ml.classical.classification import Classifier
  * @param learningRate Weight applied to each classifier at each boosting iteration. A higher learning rate increases the contribution
  * of each classifier. Has to be greater than 0.
  */
-@PythonName("AdaBoost")
 class AdaBoostClassifier(
     learner: Classifier = DecisionTreeClassifier(),
     @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,

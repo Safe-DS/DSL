@@ -61,7 +61,7 @@ export class SafeDsMarkdownGenerator {
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
         this.documentationProvider = services.documentation.DocumentationProvider;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     generate(documents: LangiumDocument[], options: GenerateOptions): TextDocument[] {

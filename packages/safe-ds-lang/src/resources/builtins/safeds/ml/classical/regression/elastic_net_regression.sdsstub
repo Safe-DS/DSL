@@ -10,7 +10,6 @@ from safeds.ml.classical.regression import Regressor
  * @param lassoRatio Number between 0 and 1 that controls the ratio between Lasso and Ridge regularization. If 0, only Ridge
  * regularization is used. If 1, only Lasso regularization is used.
  */
-@PythonName("ElasticNetRegression")
 class ElasticNetRegressor(
     const alpha: Float = 1.0,
     @PythonName("lasso_ratio") const lassoRatio: Float = 0.5

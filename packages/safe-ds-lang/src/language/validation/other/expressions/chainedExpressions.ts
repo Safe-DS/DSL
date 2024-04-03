@@ -6,8 +6,8 @@ import { UnknownType } from '../../../typing/model.js';
 export const CODE_CHAINED_EXPRESSION_MISSING_NULL_SAFETY = 'chained-expression/missing-null-safety';
 
 export const chainedExpressionsMustBeNullSafeIfReceiverIsNullable = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsChainedExpression, accept: ValidationAcceptor): void => {
         if (node.isNullSafe) {

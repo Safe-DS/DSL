@@ -58,7 +58,7 @@ export class SafeDsCallGraphComputer {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
 
         this.callCache = new WorkspaceCache(services.shared);
         this.callGraphCache = new WorkspaceCache(services.shared);

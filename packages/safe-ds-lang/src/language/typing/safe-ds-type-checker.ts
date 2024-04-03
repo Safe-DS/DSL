@@ -30,9 +30,9 @@ export class SafeDsTypeChecker {
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
-        this.classHierarchy = services.types.ClassHierarchy;
-        this.coreTypes = services.types.CoreTypes;
-        this.typeComputer = () => services.types.TypeComputer;
+        this.classHierarchy = services.typing.ClassHierarchy;
+        this.coreTypes = services.typing.CoreTypes;
+        this.typeComputer = () => services.typing.TypeComputer;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 
 ??? quote "Source code in `classifier.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
     class NeuralNetworkClassifier(
         layers: List<FNNLayer>
     ) {
@@ -88,7 +88,7 @@ The original model is not modified.
 
 ??? quote "Source code in `classifier.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="27"
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
@@ -122,7 +122,7 @@ The original Model is not modified.
 
 ??? quote "Source code in `classifier.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="48"
     @Pure
     fun predict(
         @PythonName("test_data") testData: Table

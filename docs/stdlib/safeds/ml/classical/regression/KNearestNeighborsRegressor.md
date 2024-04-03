@@ -12,7 +12,7 @@ K-nearest-neighbors regression.
 
 ??? quote "Source code in `k_nearest_neighbors.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="12"
     class KNearestNeighborsRegressor(
         @PythonName("number_of_neighbors") const numberOfNeighbors: Int
     ) sub Regressor where {
@@ -65,7 +65,7 @@ This regressor is not modified.
 
 ??? quote "Source code in `k_nearest_neighbors.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="31"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

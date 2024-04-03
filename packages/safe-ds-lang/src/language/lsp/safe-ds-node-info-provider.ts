@@ -11,7 +11,7 @@ export class SafeDsNodeInfoProvider {
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     /**

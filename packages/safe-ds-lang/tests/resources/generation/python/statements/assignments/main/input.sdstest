@@ -1,4 +1,4 @@
-package tests.generator.assignment
+package tests.generator.assignment.main
 
 @Impure([ImpurityReason.Other]) fun f1(param: Any?)
 @Impure([ImpurityReason.PotentiallyImpureParameterCall("param")]) fun f2(param: () -> r: Int?)

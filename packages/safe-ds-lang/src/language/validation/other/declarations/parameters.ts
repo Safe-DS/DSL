@@ -28,8 +28,8 @@ export const constantParameterMustHaveConstantDefaultValue = (services: SafeDsSe
 };
 
 export const constantParameterMustHaveTypeThatCanBeEvaluatedToConstant = (services: SafeDsServices) => {
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsParameter, accept: ValidationAcceptor) => {
         if (!Parameter.isConstant(node) || !node.type) {

@@ -62,7 +62,7 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
 };
 
 export const typeParameterUpperBoundMustBeNamedType = (services: SafeDsServices) => {
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
         const boundType = typeComputer.computeType(node.upperBound);
