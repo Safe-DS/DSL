@@ -12,7 +12,9 @@ import {
 } from 'langium';
 import {
     isSdsCallable,
+    isSdsClass,
     isSdsDeclaration,
+    isSdsEnum,
     isSdsParameter,
     isSdsResult,
     isSdsTypeParameter,
@@ -23,6 +25,7 @@ import {
 } from '../generated/ast.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsServices } from '../safe-ds-module.js';
+import { getClassMembers, getEnumVariants, isStatic } from '../helpers/nodeProperties.js';
 
 const PARAM_TAG = 'param';
 const RESULT_TAG = 'result';
@@ -161,13 +164,13 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
             renderLink: (namePath, display) => {
                 const target = this.findTarget(node, namePath);
                 if (!target) {
-                    return undefined;
+                    return display;
                 }
 
                 if (!linkRenderer) {
                     const nameSegment = this.nameProvider.getNameNode(target);
                     if (!nameSegment) {
-                        return undefined;
+                        return display;
                     }
 
                     const line = nameSegment.range.start.line + 1;
@@ -182,13 +185,81 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     }
 
     private findTarget(node: AstNode, namePath: string): SdsDeclaration | undefined {
-        const description =
-            this.findNameInPrecomputedScopes(node, namePath) ?? this.findNameInGlobalScope(node, namePath);
+        let [globalName, ...rest] = this.tokenizeNamepath(namePath);
+        if (!globalName || rest.length % 2 !== 0) {
+            // `rest` contains pairs of separators and names
+            return undefined;
+        }
 
+        let current = this.findGlobalDeclaration(node, globalName);
+
+        while (current && !isEmpty(rest)) {
+            const [separator, name] = rest.slice(0, 2);
+            rest = rest.slice(2);
+
+            if (separator === '.') {
+                current = this.findStaticMember(current, name);
+            } else if (separator === '#') {
+                current = this.findInstanceMember(current, name);
+            } else {
+                return undefined;
+            }
+        }
+
+        return current;
+    }
+
+    private tokenizeNamepath(namePath: string): string[] {
+        const result = [];
+        let current = '';
+
+        for (const c of namePath) {
+            if (c === '.' || c === '#') {
+                result.push(current, c);
+                current = '';
+            } else {
+                current += c;
+            }
+        }
+
+        result.push(current);
+        return result;
+    }
+
+    private findGlobalDeclaration(node: AstNode, name: string): SdsDeclaration | undefined {
+        const description = this.findNameInPrecomputedScopes(node, name) ?? this.findNameInGlobalScope(node, name);
         const target = description?.node;
 
         if (isSdsDeclaration(target)) {
             return target;
+        } else {
+            return undefined;
+        }
+    }
+
+    private findStaticMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
+        if (!name) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+
+        if (isSdsClass(node)) {
+            return getClassMembers(node).find((it) => isStatic(it) && it.name === name);
+        } else if (isSdsEnum(node)) {
+            return getEnumVariants(node).find((it) => it.name === name);
+        } else {
+            return undefined;
+        }
+    }
+
+    private findInstanceMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
+        if (!name) {
+            /* c8 ignore next 2 */
+            return undefined;
+        }
+
+        if (isSdsClass(node)) {
+            return getClassMembers(node).find((it) => !isStatic(it) && it.name === name);
         } else {
             return undefined;
         }
