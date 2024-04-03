@@ -344,17 +344,6 @@ describe('SafeDsDocumentationProvider', () => {
     describe('findTarget', () => {
         const testCases: DocumentationProviderTest[] = [
             {
-                testName: 'link (unresolved)',
-                code: `
-                    /**
-                     * {@link myFunction2}
-                     */
-                    fun myFunction1()
-                `,
-                predicate: isSdsFunction,
-                expectedDocumentation: `myFunction2`,
-            },
-            {
                 testName: 'link (global)',
                 code: `
                     /**
@@ -473,6 +462,39 @@ describe('SafeDsDocumentationProvider', () => {
                 `,
                 predicate: isSdsFunction,
                 expectedDocumentation: `[MyClass.NestedClass#myMethod](`,
+            },
+            {
+                testName: 'link (unresolved global)',
+                code: `
+                    /**
+                     * {@link myFunction2}
+                     */
+                    fun myFunction1()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `myFunction2`,
+            },
+            {
+                testName: 'link (wrong container for instance)',
+                code: `
+                    /**
+                     * {@link myFunction1#test}
+                     */
+                    fun myFunction1()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `myFunction1#test`,
+            },
+            {
+                testName: 'link (wrong container for static)',
+                code: `
+                    /**
+                     * {@link myFunction1.test}
+                     */
+                    fun myFunction1()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: `myFunction1.test`,
             },
         ];
 

@@ -170,6 +170,7 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                 if (!linkRenderer) {
                     const nameSegment = this.nameProvider.getNameNode(target);
                     if (!nameSegment) {
+                        /* c8 ignore next 2 */
                         return display;
                     }
 
@@ -177,17 +178,18 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                     const character = nameSegment.range.start.character + 1;
                     const uri = AstUtils.getDocument(target).uri.with({ fragment: `L${line},${character}` });
                     return `[${display}](${uri.toString()})`;
-                } else {
-                    return linkRenderer(target, display);
                 }
+
+                return linkRenderer(target, display);
             },
         };
     }
 
     private findTarget(node: AstNode, namePath: string): SdsDeclaration | undefined {
         let [globalName, ...rest] = this.tokenizeNamepath(namePath);
+        // `rest` contains pairs of separators and names
         if (!globalName || rest.length % 2 !== 0) {
-            // `rest` contains pairs of separators and names
+            /* c8 ignore next 2 */
             return undefined;
         }
 
@@ -202,6 +204,7 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
             } else if (separator === '#') {
                 current = this.findInstanceMember(current, name);
             } else {
+                /* c8 ignore next 2 */
                 return undefined;
             }
         }
@@ -274,4 +277,4 @@ const isTag = (element: JSDocElement): element is JSDocTag => {
     return 'name' in element;
 };
 
-type LinkRenderer = (target: SdsDeclaration | undefined, display: string) => string | undefined;
+type LinkRenderer = (target: SdsDeclaration, display: string) => string | undefined;
