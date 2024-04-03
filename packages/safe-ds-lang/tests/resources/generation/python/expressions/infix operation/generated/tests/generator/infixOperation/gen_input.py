@@ -1,5 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
+from tests.generator.infixOperation import f, g, h, i
 from typing import TypeVar
 
 # Type variables ---------------------------------------------------------------

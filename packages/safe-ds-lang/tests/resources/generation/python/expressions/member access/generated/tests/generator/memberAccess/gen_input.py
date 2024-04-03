@@ -1,5 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
+from tests.generator.memberAccess import C, f, factory, g, h
 from typing import Any, TypeVar
 
 # Type variables ---------------------------------------------------------------

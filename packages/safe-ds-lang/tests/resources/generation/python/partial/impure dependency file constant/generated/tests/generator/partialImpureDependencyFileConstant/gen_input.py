@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.partialImpureDependencyFileConstant import iFileReadA, iFileReadB, iFileWriteA, iFileWriteB
+
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():

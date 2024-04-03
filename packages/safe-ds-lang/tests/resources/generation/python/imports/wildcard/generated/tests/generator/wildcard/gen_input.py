@@ -2,6 +2,7 @@
 
 from special_location import function1InCompilationUnitWithPythonModule, function2InCompilationUnitWithPythonModule
 from tests.generator.differentPackageWildcard import function1InDifferentPackage, function2InDifferentPackage
+from tests.generator.wildcard import f
 
 # Pipelines --------------------------------------------------------------------
 

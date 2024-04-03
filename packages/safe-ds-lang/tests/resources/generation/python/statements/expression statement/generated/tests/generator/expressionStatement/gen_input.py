@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.expressionStatement import f, g
+
 # Segments ---------------------------------------------------------------------
 
 def testSegment():

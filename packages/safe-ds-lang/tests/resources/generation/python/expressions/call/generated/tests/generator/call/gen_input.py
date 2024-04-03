@@ -1,5 +1,6 @@
 # Imports ----------------------------------------------------------------------
 
+from tests.generator.call import f, g, h, i, j, k
 from typing import Any, Callable, TypeVar
 
 # Type variables ---------------------------------------------------------------
