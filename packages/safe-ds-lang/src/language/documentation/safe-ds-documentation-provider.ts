@@ -7,6 +7,7 @@ import {
     JSDocElement,
     JSDocRenderOptions,
     type JSDocTag,
+    NameProvider,
     parseJSDoc,
 } from 'langium';
 import {
@@ -21,6 +22,7 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { isEmpty } from '../../helpers/collections.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 
 const PARAM_TAG = 'param';
 const RESULT_TAG = 'result';
@@ -28,6 +30,14 @@ const SINCE_TAG = 'since';
 const TYPE_PARAM_TAG = 'typeParam';
 
 export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
+    private readonly nameProvider: NameProvider;
+
+    constructor(services: SafeDsServices) {
+        super(services);
+
+        this.nameProvider = services.references.NameProvider;
+    }
+
     /**
      * Returns the documentation of the given node as a Markdown string.
      */
@@ -148,22 +158,40 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                     return super.documentationTagRenderer(node, tag);
                 }
             },
-            renderLink: (name, display) => {
-                if (!linkRenderer) {
-                    return super.documentationLinkRenderer(node, name, display);
+            renderLink: (namePath, display) => {
+                const target = this.findTarget(node, namePath);
+                if (!target) {
+                    return undefined;
                 }
 
-                const description =
-                    this.findNameInPrecomputedScopes(node, name) ?? this.findNameInGlobalScope(node, name);
-                const target = description?.node;
+                if (!linkRenderer) {
+                    const nameSegment = this.nameProvider.getNameNode(target);
+                    if (!nameSegment) {
+                        return undefined;
+                    }
 
-                if (isSdsDeclaration(target)) {
-                    return linkRenderer(target, display);
+                    const line = nameSegment.range.start.line + 1;
+                    const character = nameSegment.range.start.character + 1;
+                    const uri = AstUtils.getDocument(target).uri.with({ fragment: `L${line},${character}` });
+                    return `[${display}](${uri.toString()})`;
                 } else {
-                    return linkRenderer(undefined, display);
+                    return linkRenderer(target, display);
                 }
             },
         };
+    }
+
+    private findTarget(node: AstNode, namePath: string): SdsDeclaration | undefined {
+        const description =
+            this.findNameInPrecomputedScopes(node, namePath) ?? this.findNameInGlobalScope(node, namePath);
+
+        const target = description?.node;
+
+        if (isSdsDeclaration(target)) {
+            return target;
+        } else {
+            return undefined;
+        }
     }
 }
 
