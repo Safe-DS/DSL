@@ -12,7 +12,7 @@ import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const builtinClasses = services.builtins.Classes;
-const classHierarchy = services.types.ClassHierarchy;
+const classHierarchy = services.typing.ClassHierarchy;
 
 describe('SafeDsClassHierarchy', async () => {
     describe('isEqualToOrSubclassOf', () => {

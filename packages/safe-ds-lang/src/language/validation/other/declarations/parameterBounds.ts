@@ -130,9 +130,9 @@ const checkBound = (
 };
 
 export const parameterBoundParameterMustBeConstFloatOrInt = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const coreTypes = services.typing.CoreTypes;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsParameterBound, accept: ValidationAcceptor) => {
         const parameter = node.leftOperand?.ref;
@@ -161,9 +161,9 @@ export const parameterBoundParameterMustBeConstFloatOrInt = (services: SafeDsSer
 };
 
 export const parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const coreTypes = services.typing.CoreTypes;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
     const partialEvaluator = services.evaluation.PartialEvaluator;
     const one = new IntConstant(1n);
 

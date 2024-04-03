@@ -7,7 +7,7 @@ import { AssertionError } from 'assert';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const typeComputer = services.types.TypeComputer;
+const typeComputer = services.typing.TypeComputer;
 
 describe('streamProperSupertypes', async () => {
     const properSupertypesAsStrings = (type: ClassType | undefined) =>

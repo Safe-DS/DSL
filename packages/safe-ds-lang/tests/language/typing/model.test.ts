@@ -18,8 +18,8 @@ import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js'
 import { expectEqualTypes } from '../../helpers/testAssertions.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const coreTypes = services.types.CoreTypes;
-const factory = services.types.TypeFactory;
+const coreTypes = services.typing.CoreTypes;
+const factory = services.typing.TypeFactory;
 
 const code = `
     fun f1(p1, p2: Int = 0) -> r

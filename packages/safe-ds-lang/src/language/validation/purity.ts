@@ -49,7 +49,7 @@ export const functionPurityMustBeSpecified = (services: SafeDsServices) => {
 
 export const impurityReasonsOfOverridingMethodMustBeSubsetOfOverriddenMethod = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
-    const classHierarchy = services.types.ClassHierarchy;
+    const classHierarchy = services.typing.ClassHierarchy;
 
     return (node: SdsFunction, accept: ValidationAcceptor): void => {
         const overriddenMember = classHierarchy.getOverriddenMember(node);
@@ -93,7 +93,7 @@ export const impurityReasonParameterNameMustBelongToParameterOfCorrectType = (se
     const impurityReasons = services.builtins.ImpurityReasons;
     const nodeMapper = services.helpers.NodeMapper;
     const partialEvaluator = services.evaluation.PartialEvaluator;
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsFunction, accept: ValidationAcceptor) => {
         const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Impure);
@@ -219,7 +219,7 @@ export const impurityReasonShouldNotBeSetMultipleTimes = (services: SafeDsServic
 
 export const pureParameterDefaultValueMustBePure = (services: SafeDsServices) => {
     const purityComputer = services.purity.PurityComputer;
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsParameter, accept: ValidationAcceptor) => {
         if (!node.defaultValue) {
@@ -248,7 +248,7 @@ export const pureParameterDefaultValueMustBePure = (services: SafeDsServices) =>
 export const callArgumentAssignedToPureParameterMustBePure = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
     const purityComputer = services.purity.PurityComputer;
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsCall, accept: ValidationAcceptor) => {
         for (const argument of getArguments(node)) {

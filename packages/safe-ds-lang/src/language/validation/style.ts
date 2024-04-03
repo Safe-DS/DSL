@@ -222,8 +222,8 @@ export const constraintListShouldNotBeEmpty = (services: SafeDsServices) => {
 export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
     const partialEvaluator = services.evaluation.PartialEvaluator;
     const settingsProvider = services.workspace.SettingsProvider;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return async (node: SdsInfixOperation, accept: ValidationAcceptor) => {
         if (!(await settingsProvider.shouldValidateCodeStyle())) {
@@ -309,8 +309,8 @@ export const importedDeclarationAliasShouldDifferFromDeclarationName = (services
 
 export const chainedExpressionNullSafetyShouldBeNeeded = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return async (node: SdsChainedExpression, accept: ValidationAcceptor) => {
         if (!(await settingsProvider.shouldValidateCodeStyle())) {

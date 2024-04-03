@@ -94,6 +94,8 @@ import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-eva
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 import { FileRead, ImpurityReason } from '../purity/model.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { NamedTupleType } from '../typing/model.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -174,12 +176,14 @@ export class SafeDsPythonGenerator {
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly purityComputer: SafeDsPurityComputer;
+    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.purityComputer = services.purity.PurityComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     generate(document: LangiumDocument, options: GenerateOptions): TextDocument[] {
@@ -616,10 +620,9 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean,
     ): CompositeGeneratorNode {
-        const requiredAssignees = isSdsCall(assignment.expression)
-            ? getAbstractResults(this.nodeMapper.callToCallable(assignment.expression)).length
-            : /* c8 ignore next */
-              1;
+        const rhsType = this.typeComputer.computeType(assignment.expression);
+        const requiredAssignees = rhsType instanceof NamedTupleType ? rhsType.length : 1;
+
         const assignees = getAssignees(assignment);
         if (assignees.some((value) => !isSdsWildcard(value))) {
             const actualAssignees = assignees.map(this.generateAssignee);

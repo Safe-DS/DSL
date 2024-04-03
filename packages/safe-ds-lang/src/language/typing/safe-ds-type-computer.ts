@@ -126,11 +126,11 @@ export class SafeDsTypeComputer {
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.coreClasses = services.builtins.Classes;
-        this.coreTypes = services.types.CoreTypes;
-        this.factory = services.types.TypeFactory;
+        this.coreTypes = services.typing.CoreTypes;
+        this.factory = services.typing.TypeFactory;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
-        this.typeChecker = services.types.TypeChecker;
+        this.typeChecker = services.typing.TypeChecker;
 
         this.nodeTypeCache = new WorkspaceCache(services.shared);
     }

@@ -90,10 +90,10 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         super(services);
 
         this.astReflection = services.shared.AstReflection;
-        this.classHierarchy = services.types.ClassHierarchy;
+        this.classHierarchy = services.typing.ClassHierarchy;
         this.nodeMapper = services.helpers.NodeMapper;
         this.packageManager = services.workspace.PackageManager;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
 
         this.coreDeclarationCache = new WorkspaceCache(services.shared);
     }
