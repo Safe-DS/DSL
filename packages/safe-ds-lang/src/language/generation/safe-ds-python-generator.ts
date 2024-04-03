@@ -1091,8 +1091,8 @@ export class SafeDsPythonGenerator {
     }
 
     private getClassQualifiedNameForMember(node: SdsClassMember): string {
-        const classMemberPath = [this.getPythonNameOrDefault(node)];
-        let enclosingClass = AstUtils.getContainerOfType(node.$container, isSdsClass);
+        const classMemberPath = [];
+        let enclosingClass: SdsDeclaration | undefined = node;
         while (enclosingClass) {
             classMemberPath.unshift(this.getPythonNameOrDefault(enclosingClass));
             enclosingClass = AstUtils.getContainerOfType(enclosingClass.$container, isSdsClass);
