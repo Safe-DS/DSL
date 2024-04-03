@@ -7,8 +7,8 @@ export const CODE_INDEXED_ACCESS_INVALID_INDEX = 'indexed-access/invalid-index';
 
 export const indexedAccessIndexMustBeValid = (services: SafeDsServices) => {
     const partialEvaluator = services.evaluation.PartialEvaluator;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const indexValue = partialEvaluator.evaluate(node.index);

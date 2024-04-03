@@ -46,7 +46,7 @@ export class SafeDsNodeMapper {
     private readonly typeComputer: () => SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
-        this.typeComputer = () => services.types.TypeComputer;
+        this.typeComputer = () => services.typing.TypeComputer;
     }
 
     /**

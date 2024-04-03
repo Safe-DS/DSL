@@ -22,7 +22,7 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
 
     constructor(services: SafeDsServices) {
         super(services);
-        this.classHierarchy = services.types.ClassHierarchy;
+        this.classHierarchy = services.typing.ClassHierarchy;
         this.nodeKindProvider = services.shared.lsp.NodeKindProvider;
         this.nodeInfoProvider = services.lsp.NodeInfoProvider;
     }

@@ -31,7 +31,7 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
     constructor(services: SafeDsServices) {
         this.documentationProvider = services.documentation.DocumentationProvider;
         this.nodeMapper = services.helpers.NodeMapper;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     provideSignatureHelp(

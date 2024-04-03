@@ -16,9 +16,9 @@ export const CODE_INHERITANCE_NULLABLE = 'inheritance/nullable';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
-    const classHierarchy = services.types.ClassHierarchy;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const classHierarchy = services.typing.ClassHierarchy;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsClassMember, accept: ValidationAcceptor): void => {
         // Check whether the member overrides something
@@ -151,7 +151,7 @@ const isInSafedsLangAnyClass = (services: SafeDsServices, node: SdsClassMember):
 };
 
 export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
     const computeType = typeComputer.computeType.bind(typeComputer);
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
@@ -189,7 +189,7 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
 };
 
 export const classMustNotInheritItself = (services: SafeDsServices) => {
-    const classHierarchy = services.types.ClassHierarchy;
+    const classHierarchy = services.typing.ClassHierarchy;
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
         const superClasses = classHierarchy.streamProperSuperclasses(node);
