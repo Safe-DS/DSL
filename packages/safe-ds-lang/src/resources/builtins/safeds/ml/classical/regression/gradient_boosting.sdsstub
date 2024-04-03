@@ -11,7 +11,6 @@ from safeds.ml.classical.regression import Regressor
  * @param learningRate The larger the value, the more the model is influenced by each additional tree. If the learning rate is too
  * low, the model might underfit. If the learning rate is too high, the model might overfit.
  */
-@PythonName("GradientBoosting")
 class GradientBoostingRegressor(
     @PythonName("number_of_trees") const numberOfTrees: Int = 100,
     @PythonName("learning_rate") const learningRate: Float = 0.1

@@ -47,26 +47,4 @@ class Schema {
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, ColumnType>
-
-    /**
-     * Merge multiple schemas into one.
-     *
-     * For each type missmatch the new schema will have the least common supertype.
-     *
-     * The type hierarchy is as follows:
-     * * Anything
-     *     * RealNumber
-     *         * Integer
-     *     * Boolean
-     *     * String
-     *
-     * @param schemas the list of schemas you want to merge
-     *
-     * @result result1 the new merged schema
-     */
-    @Pure
-    @PythonName("merge_multiple_schemas")
-    static fun mergeMultipleSchemas(
-        schemas: List<Schema>
-    ) -> result1: Schema
 }

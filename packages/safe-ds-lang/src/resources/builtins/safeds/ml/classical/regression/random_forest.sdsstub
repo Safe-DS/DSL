@@ -8,7 +8,6 @@ from safeds.ml.classical.regression import Regressor
  *
  * @param numberOfTrees The number of trees to be used in the random forest. Has to be greater than 0.
  */
-@PythonName("RandomForest")
 class RandomForestRegressor(
     @PythonName("number_of_trees") const numberOfTrees: Int = 100
 ) sub Regressor where {
