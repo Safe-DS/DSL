@@ -1,5 +1,11 @@
-import { AstNode, DocumentationProvider } from 'langium';
-import { InlayHintKind, MarkupContent } from 'vscode-languageserver';
+import { AstNode, AstUtils, DocumentationProvider, interruptAndCheck, LangiumDocument } from 'langium';
+import {
+    CancellationToken,
+    type InlayHint,
+    InlayHintKind,
+    type InlayHintParams,
+    MarkupContent,
+} from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { isSdsArgument, isSdsBlockLambdaResult, isSdsPlaceholder, isSdsYield } from '../generated/ast.js';
 import { Argument } from '../helpers/nodeProperties.js';
@@ -25,7 +31,23 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
         this.typeComputer = services.typing.TypeComputer;
     }
 
-    override async computeInlayHint(node: AstNode, acceptor: InlayHintAcceptor) {
+    override async getInlayHints(
+        document: LangiumDocument,
+        params: InlayHintParams,
+        cancelToken = CancellationToken.None,
+    ): Promise<InlayHint[] | undefined> {
+        const root = document.parseResult.value;
+        const inlayHints: InlayHint[] = [];
+        const acceptor: InlayHintAcceptor = (hint) => inlayHints.push(hint);
+        for (const node of AstUtils.streamAst(root, { range: params.range })) {
+            await interruptAndCheck(cancelToken);
+            // We have to override this method to add this await
+            await this.computeInlayHint(node, acceptor);
+        }
+        return inlayHints;
+    }
+
+    override async computeInlayHint(node: AstNode, acceptor: InlayHintAcceptor): Promise<void> {
         const cstNode = node.$cstNode;
         if (!cstNode) {
             /* c8 ignore next 2 */
