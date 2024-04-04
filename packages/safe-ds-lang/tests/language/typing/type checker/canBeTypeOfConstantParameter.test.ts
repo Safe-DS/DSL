@@ -6,10 +6,10 @@ import { ClassType, EnumType, EnumVariantType, Type, UnknownType } from '../../.
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const coreTypes = services.types.CoreTypes;
-const factory = services.types.TypeFactory;
-const typeChecker = services.types.TypeChecker;
-const typeComputer = services.types.TypeComputer;
+const coreTypes = services.typing.CoreTypes;
+const factory = services.typing.TypeFactory;
+const typeChecker = services.typing.TypeChecker;
+const typeComputer = services.typing.TypeComputer;
 
 const code = `
     class MyClass

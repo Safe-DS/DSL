@@ -61,9 +61,9 @@
             const columnName = column.innerText.trim();
             if (get(savedColumnWidths).has(columnName)) continue; // Only set intital width if not already set
 
+            // // Example of how to calculate width based on content length, might be needed in place of profilingImageWidth approach again
             // const baseWidth = 35; // Minimum width
             // const scale = 55;
-
             // // Use the logarithm of the character count, and scale it
             // const width = baseWidth + Math.log(columnName.length + 1) * scale;
 

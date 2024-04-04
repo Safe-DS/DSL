@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.statementWithoutEffect import f
+
 # Segments ---------------------------------------------------------------------
 
 def testSegment():

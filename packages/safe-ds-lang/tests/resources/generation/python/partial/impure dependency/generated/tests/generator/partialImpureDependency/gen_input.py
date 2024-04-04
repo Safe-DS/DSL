@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.partialImpureDependency import fp, i1, iFileWrite, noPartialEvalInt
+
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():

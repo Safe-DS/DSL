@@ -12,9 +12,9 @@ import { expectEqualTypes } from '../../../helpers/testAssertions.js';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const coreTypes = services.types.CoreTypes;
-const factory = services.types.TypeFactory;
-const typeComputer = services.types.TypeComputer;
+const coreTypes = services.typing.CoreTypes;
+const factory = services.typing.TypeFactory;
+const typeComputer = services.typing.TypeComputer;
 
 const tests: ComputeClassTypeForLiteralTypeTest[] = [
     // Base cases

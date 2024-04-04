@@ -3,9 +3,8 @@ package safeds.ml.nn
 from safeds.data.tabular.containers import Table, TaggedTable
 from safeds.ml.nn import FNNLayer
 
-@PythonName("RegressionNeuralNetwork")
 class NeuralNetworkRegressor(
-    layers: List<Any>
+    layers: List<FNNLayer>
 ) {
     /**
      * Check if the model is fitted.

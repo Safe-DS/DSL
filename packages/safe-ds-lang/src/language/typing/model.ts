@@ -78,7 +78,7 @@ export class CallableType extends Type {
     ) {
         super();
 
-        this.factory = services.types.TypeFactory;
+        this.factory = services.typing.TypeFactory;
     }
 
     override get isFullySubstituted(): boolean {
@@ -159,8 +159,8 @@ export class LiteralType extends Type {
     ) {
         super();
 
-        this.coreTypes = services.types.CoreTypes;
-        this.factory = services.types.TypeFactory;
+        this.coreTypes = services.typing.CoreTypes;
+        this.factory = services.typing.TypeFactory;
     }
 
     override get isExplicitlyNullable(): boolean {
@@ -242,7 +242,7 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
     constructor(services: SafeDsServices, entries: NamedTupleEntry<T>[]) {
         super();
 
-        this.factory = services.types.TypeFactory;
+        this.factory = services.typing.TypeFactory;
         this.entries = entries;
     }
 
@@ -588,7 +588,7 @@ export class StaticType extends Type {
     ) {
         super();
 
-        this.factory = services.types.TypeFactory;
+        this.factory = services.typing.TypeFactory;
     }
 
     override equals(other: unknown): boolean {
@@ -636,9 +636,9 @@ export class UnionType extends Type {
     constructor(services: SafeDsServices, types: Type[]) {
         super();
 
-        this.coreTypes = services.types.CoreTypes;
-        this.factory = services.types.TypeFactory;
-        this.typeChecker = services.types.TypeChecker;
+        this.coreTypes = services.typing.CoreTypes;
+        this.factory = services.typing.TypeFactory;
+        this.typeChecker = services.typing.TypeChecker;
 
         this.types = types;
     }

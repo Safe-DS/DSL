@@ -40,7 +40,6 @@ import {
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsPrefixOperation,
-    isSdsQualifiedImport,
     isSdsReference,
     isSdsSegment,
     isSdsTemplateString,
@@ -49,7 +48,6 @@ import {
     isSdsTemplateStringPart,
     isSdsTemplateStringStart,
     isSdsWildcard,
-    isSdsWildcardImport,
     isSdsYield,
     SdsArgument,
     SdsAssignee,
@@ -57,6 +55,7 @@ import {
     SdsBlock,
     SdsBlockLambda,
     SdsCall,
+    SdsClassMember,
     SdsDeclaration,
     SdsExpression,
     SdsModule,
@@ -64,21 +63,21 @@ import {
     SdsParameterList,
     SdsPipeline,
     SdsPlaceholder,
+    SdsReference,
     SdsSegment,
     SdsStatement,
 } from '../generated/ast.js';
-import { isInStubFile, isStubFile } from '../helpers/fileExtensions.js';
+import { isStubFile } from '../helpers/fileExtensions.js';
 import { IdManager } from '../helpers/idManager.js';
 import {
     getAbstractResults,
     getArguments,
     getAssignees,
-    getImportedDeclarations,
-    getImports,
     getModuleMembers,
     getParameters,
     getPlaceholderByName,
     getStatements,
+    isStatic,
     Parameter,
     streamBlockLambdaResults,
 } from '../helpers/nodeProperties.js';
@@ -94,6 +93,9 @@ import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-eva
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 import { FileRead, ImpurityReason } from '../purity/model.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { NamedTupleType } from '../typing/model.js';
+import { getOutermostContainerOfType } from '../helpers/astUtils.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -174,12 +176,14 @@ export class SafeDsPythonGenerator {
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly purityComputer: SafeDsPurityComputer;
+    private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.purityComputer = services.purity.PurityComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     generate(document: LangiumDocument, options: GenerateOptions): TextDocument[] {
@@ -616,10 +620,9 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean,
     ): CompositeGeneratorNode {
-        const requiredAssignees = isSdsCall(assignment.expression)
-            ? getAbstractResults(this.nodeMapper.callToCallable(assignment.expression)).length
-            : /* c8 ignore next */
-              1;
+        const rhsType = this.typeComputer.computeType(assignment.expression);
+        const requiredAssignees = rhsType instanceof NamedTupleType ? rhsType.length : 1;
+
         const assignees = getAssignees(assignment);
         if (assignees.some((value) => !isSdsWildcard(value))) {
             const actualAssignees = assignees.map(this.generateAssignee);
@@ -901,11 +904,9 @@ export class SafeDsPythonGenerator {
             }
         } else if (isSdsReference(expression)) {
             const declaration = expression.target.ref!;
-            const referenceImport =
-                this.getExternalReferenceNeededImport(expression, declaration) ||
-                this.getInternalReferenceNeededImport(expression, declaration);
+            const referenceImport = this.createImportDataForReference(expression);
             frame.addImport(referenceImport);
-            return traceToNode(expression)(referenceImport?.alias || this.getPythonNameOrDefault(declaration));
+            return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
         }
         /* c8 ignore next 2 */
         throw new Error(`Unknown expression type: ${expression.$type}`);
@@ -1014,11 +1015,16 @@ export class SafeDsPythonGenerator {
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
         // For a static function, the thisParam would be the class containing the function. We do not need to generate it in this case
-        const generateThisParam = !isSdsFunction(callable) || (!callable.isStatic && thisParam);
+        const generateThisParam = thisParam && isSdsFunction(callable) && !isStatic(callable);
         const containsOptionalArgs = sortedArgs.some((arg) =>
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
+        if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
+            const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
+            const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
+            frame.addImport(referenceImport);
+        }
         return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
@@ -1029,7 +1035,9 @@ export class SafeDsPythonGenerator {
                         expression.receiver.receiver.receiver,
                         frame,
                     )}.${this.generateExpression(expression.receiver.member!, frame)}`
-                  : this.generateExpression(expression.receiver, frame)
+                  : isSdsMemberAccess(expression.receiver)
+                    ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
+                    : this.generateExpression(expression.receiver, frame)
         }, [${generateThisParam ? thisParam : ''}${
             generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
         }${joinTracedToNode(expression.argumentList, 'arguments')(
@@ -1084,6 +1092,16 @@ export class SafeDsPythonGenerator {
         throw new Error('Callable of provided call does not exist or is not a declaration.');
     }
 
+    private getClassQualifiedNameForMember(node: SdsClassMember): string {
+        const classMemberPath = [];
+        let enclosingClass: SdsDeclaration | undefined = node;
+        while (enclosingClass) {
+            classMemberPath.unshift(this.getPythonNameOrDefault(enclosingClass));
+            enclosingClass = AstUtils.getContainerOfType(enclosingClass.$container, isSdsClass);
+        }
+        return classMemberPath.join('.');
+    }
+
     private getArgumentsMap(
         argumentList: SdsArgument[],
         frame: GenerationInfoFrame,
@@ -1123,68 +1141,44 @@ export class SafeDsPythonGenerator {
         }${this.generateExpression(argument.value, frame)}`;
     }
 
-    private getExternalReferenceNeededImport(
-        expression: SdsExpression | undefined,
-        declaration: SdsDeclaration | undefined,
+    private createImportDataForNode(
+        declaration: SdsDeclaration,
+        context: AstNode,
+        refText: string = declaration.name,
     ): ImportData | undefined {
-        if (!expression || !declaration) {
+        const sourceModule = <SdsModule>AstUtils.findRootNode(context);
+        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
+
+        // Compute import path
+        let importPath: string | undefined = undefined;
+        if (isSdsPipeline(declaration) || isSdsSegment(declaration)) {
+            if (sourceModule !== targetModule) {
+                importPath = `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
+                    this.getModuleFileBaseName(targetModule),
+                )}`;
+            }
+        } else if (isSdsModule(declaration.$container)) {
+            importPath = this.getPythonModuleOrDefault(targetModule);
+        }
+
+        if (importPath) {
+            return {
+                importPath,
+                declarationName: this.getPythonNameOrDefault(declaration),
+                alias: refText === declaration.name ? undefined : refText,
+            };
+        } else {
+            return undefined;
+        }
+    }
+
+    private createImportDataForReference(reference: SdsReference): ImportData | undefined {
+        const target = reference.target.ref;
+        if (!target) {
             /* c8 ignore next 2 */
             return undefined;
         }
-
-        // Root Node is always a module.
-        const currentModule = <SdsModule>AstUtils.findRootNode(expression);
-        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
-        for (const value of getImports(currentModule)) {
-            // Verify same package
-            if (value.package !== targetModule.name) {
-                continue;
-            }
-            if (isSdsQualifiedImport(value)) {
-                const importedDeclarations = getImportedDeclarations(value);
-                for (const importedDeclaration of importedDeclarations) {
-                    if (declaration === importedDeclaration.declaration?.ref) {
-                        if (importedDeclaration.alias !== undefined) {
-                            return {
-                                importPath: this.getPythonModuleOrDefault(targetModule),
-                                declarationName: importedDeclaration.declaration?.ref?.name,
-                                alias: importedDeclaration.alias.alias,
-                            };
-                        } else {
-                            return {
-                                importPath: this.getPythonModuleOrDefault(targetModule),
-                                declarationName: importedDeclaration.declaration?.ref?.name,
-                            };
-                        }
-                    }
-                }
-            }
-            if (isSdsWildcardImport(value)) {
-                return {
-                    importPath: this.getPythonModuleOrDefault(targetModule),
-                    declarationName: declaration.name,
-                };
-            }
-        }
-        return undefined;
-    }
-
-    private getInternalReferenceNeededImport(
-        expression: SdsExpression,
-        declaration: SdsDeclaration,
-    ): ImportData | undefined {
-        // Root Node is always a module.
-        const currentModule = <SdsModule>AstUtils.findRootNode(expression);
-        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
-        if (currentModule !== targetModule && !isInStubFile(targetModule)) {
-            return {
-                importPath: `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
-                    this.getModuleFileBaseName(targetModule),
-                )}`,
-                declarationName: this.getPythonNameOrDefault(declaration),
-            };
-        }
-        return undefined;
+        return this.createImportDataForNode(target, reference, reference.target.$refText);
     }
 
     private getModuleFileBaseName(module: SdsModule): string {

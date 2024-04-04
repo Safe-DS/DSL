@@ -24,7 +24,19 @@ class C() {
     static fun from_csv_file(name: String) -> c: C
 }
 
+class Outer() {
+    class Nested() {
+        @Pure
+        static fun f() -> result: Boolean
+
+        @Pure
+        fun g() -> result: Boolean
+    }
+}
+
 @Pure fun factory() -> instance: C?
+
+@Pure fun factoryNested() -> instance: Outer.Nested
 
 pipeline test {
     f(g().result);
@@ -38,4 +50,12 @@ pipeline test {
     f(C().j(123));
     f(C().k("abc"));
     f(C.from_csv_file("abc.csv"));
+    val a = Table.fromCsvFile("abc.csv");
+    val v = a.getColumn("b");
+    val d = v.plotHistogram();
+    f(d);
+    f(Outer.Nested.f());
+    val nestedInstance = factoryNested();
+    val nestedResult = nestedInstance.g();
+    f(nestedResult);
 }

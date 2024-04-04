@@ -13,7 +13,7 @@ Support vector machine.
 
 ??? quote "Source code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="12"
     class SupportVectorMachineClassifier(
         const c: Float = 1.0,
         kernel: SupportVectorMachineClassifier.Kernel = SupportVectorMachineClassifier.Kernel.RadialBasisFunction
@@ -104,7 +104,7 @@ This classifier is not modified.
 
 ??? quote "Source code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="63"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -117,7 +117,7 @@ The kernel functions that can be used in the support vector machine.
 
 ??? quote "Source code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="21"
     enum Kernel {
         /**
          * A linear kernel.

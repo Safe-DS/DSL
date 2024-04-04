@@ -4,13 +4,13 @@ A table is a two-dimensional collection of data. It can either be seen as a list
 
 To create a `Table` call the constructor or use one of the following static methods:
 
-| Method                                                            | Description                            |
-| ------------------------------------------------------------------| -------------------------------------- |
-| [fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]   | Create a table from a CSV file.        |
-| [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile] | Create a table from a JSON file.       |
-| [fromDict][safeds.data.tabular.containers.Table.fromDict]         | Create a table from a dictionary.      |
-| [fromColumns][safeds.data.tabular.containers.Table.fromColumns]   | Create a table from a list of columns. |
-| [fromRows][safeds.data.tabular.containers.Table.fromRows]         | Create a table from a list of rows.    |
+| Method                     | Description                            |
+| ---------------------------| -------------------------------------- |
+| [Table.fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]  | Create a table from a CSV file.        |
+| [Table.fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile] | Create a table from a JSON file.       |
+| [Table.fromDict][safeds.data.tabular.containers.Table.fromDict]     | Create a table from a dictionary.      |
+| [Table.fromColumns][safeds.data.tabular.containers.Table.fromColumns]  | Create a table from a list of columns. |
+| [Table.fromRows][safeds.data.tabular.containers.Table.fromRows]     | Create a table from a list of rows.    |
 
 Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
 
@@ -61,7 +61,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
         /**
          * Read data from an Excel file into a table.
          *
-         * Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+         * Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
          *
          * @param path The path to the Excel file.
          *
@@ -1940,7 +1940,7 @@ Create a table from a dictionary that maps column names to column values.
 
 Read data from an Excel file into a table.
 
-Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
 
 **Parameters:**
 

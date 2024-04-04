@@ -6,7 +6,7 @@ Regularized logistic regression.
 
 ??? quote "Source code in `logistic_regression.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="9"
     class LogisticRegressionClassifier() sub Classifier {
         /**
          * Create a copy of this classifier and fit it with the given training data.
@@ -44,7 +44,7 @@ This classifier is not modified.
 
 ??? quote "Source code in `logistic_regression.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="19"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

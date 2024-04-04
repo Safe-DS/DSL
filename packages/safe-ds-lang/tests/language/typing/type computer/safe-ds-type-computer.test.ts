@@ -8,7 +8,7 @@ import { loadDocuments } from '../../../helpers/testResources.js';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const typeComputer = services.types.TypeComputer;
+const typeComputer = services.typing.TypeComputer;
 
 describe('typing', async () => {
     it.each(await createTypingTests())('$testName', async (test) => {

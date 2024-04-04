@@ -13,7 +13,7 @@ Gradient boosting classification.
 
 ??? quote "Source code in `gradient_boosting.sdsstub`"
 
-    ```sds linenums="15"
+    ```sds linenums="14"
     class GradientBoostingClassifier(
         @PythonName("number_of_trees") const numberOfTrees: Int = 100,
         @PythonName("learning_rate") const learningRate: Float = 0.1
@@ -78,7 +78,7 @@ This classifier is not modified.
 
 ??? quote "Source code in `gradient_boosting.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="39"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

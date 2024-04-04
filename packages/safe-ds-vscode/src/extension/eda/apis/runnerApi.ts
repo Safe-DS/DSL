@@ -1,5 +1,5 @@
-import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.ts';
-import { SafeDsServices, messages } from '@safe-ds/lang';
+import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
+import { SafeDsServices, ast, messages } from '@safe-ds/lang';
 import { LangiumDocument, AstNode } from 'langium';
 import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
@@ -11,13 +11,20 @@ export class RunnerApi {
     services: SafeDsServices;
     pipelinePath: vscode.Uri;
     pipelineName: string;
+    pipelineNode: ast.SdsPipeline;
     baseDocument: LangiumDocument<AstNode> | undefined;
     placeholderCounter = 0;
 
-    constructor(services: SafeDsServices, pipelinePath: vscode.Uri, pipelineName: string) {
+    constructor(
+        services: SafeDsServices,
+        pipelinePath: vscode.Uri,
+        pipelineName: string,
+        pipelineNode: ast.SdsPipeline,
+    ) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
+        this.pipelineNode = pipelineNode;
         getPipelineDocument(this.pipelinePath).then((doc) => {
             // Get here to avoid issues because of chanigng file
             // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
@@ -35,21 +42,15 @@ export class RunnerApi {
 
             const documentText = this.baseDocument.textDocument.getText();
 
-            // Find pattern "pipeline <pipelineName> {" and add the SDS code before the closing bracket of it
-            const pipelineStart = documentText.indexOf('pipeline ' + this.pipelineName);
-            if (pipelineStart === -1) {
+            const endOfPipeline = this.pipelineNode.$cstNode?.end;
+            if (!endOfPipeline) {
                 reject('Pipeline not found');
                 return;
             }
-            const nextCurlyBraceEnd = documentText.indexOf('}', pipelineStart);
-            if (nextCurlyBraceEnd === -1) {
-                reject('Internal error: Pipeline end not found');
-                return;
-            }
 
-            const beforeClosingBrace = documentText.substring(0, nextCurlyBraceEnd);
-            const afterClosingBrace = documentText.substring(nextCurlyBraceEnd);
-            const newDocumentText = beforeClosingBrace + addedLines + afterClosingBrace;
+            const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
+            const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
+            const newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
 
             const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
@@ -63,14 +64,24 @@ export class RunnerApi {
                 }
                 if (message.data === 'done') {
                     this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
+                    this.services.runtime.Runner.removeMessageCallback(errorCallback, 'runtime_error');
                     resolve();
                 }
             };
+            const errorCallback = (message: messages.RuntimeErrorMessage) => {
+                if (message.id !== pipelineExecutionId) {
+                    return;
+                }
+                this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
+                this.services.runtime.Runner.removeMessageCallback(errorCallback, 'runtime_error');
+                reject(message.data);
+            };
             this.services.runtime.Runner.addMessageCallback(runtimeCallback, 'runtime_progress');
+            this.services.runtime.Runner.addMessageCallback(errorCallback, 'runtime_error');
 
             setTimeout(() => {
                 reject('Pipeline execution timed out');
-            }, 30000);
+            }, 3000000);
         });
     }
 
@@ -86,20 +97,14 @@ export class RunnerApi {
             newPlaceholderName +
             ' = ' +
             tablePlaceholder +
-            '.get_column("' +
+            '.getColumn("' +
             columnName +
-            '").missing_value_ratio(); \n'
+            '").missingValueRatio(); \n'
         );
-    }
-
-    private sdsStringForColumnNames(tableIdentifier: string, newPlaceholderName: string): string {
-        return 'val ' + newPlaceholderName + ' = ' + tableIdentifier + '.column_names; \n';
     }
 
     private sdsStringForIDnessByColumnName(columnName: string, tablePlaceholder: string, newPlaceholderName: string) {
-        return (
-            'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.get_column("' + columnName + '").idness(); \n'
-        );
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.getColumn("' + columnName + '").idness(); \n';
     }
 
     private sdsStringForHistogramByColumnName(
@@ -112,9 +117,9 @@ export class RunnerApi {
             newPlaceholderName +
             ' = ' +
             tablePlaceholder +
-            '.get_column("' +
+            '.getColumn("' +
             columnName +
-            '").plot_histogram(); \n'
+            '").plotHistogram(); \n'
         );
     }
 
@@ -211,29 +216,29 @@ export class RunnerApi {
         const histogramMap = new Map<string, Base64Image | undefined>(); // Saved by random placeholder name
 
         // Generate SDS code to get missing value ratio for each column
-        for (let i = 0; i < columns.length; i++) {
+        outer: for (const column of columns) {
             const newMvPlaceholderName = this.genPlaceholderName();
-            columnNameToPlaceholderMVNameMap.set(columns[i]![1].name, newMvPlaceholderName);
+            columnNameToPlaceholderMVNameMap.set(column[1].name, newMvPlaceholderName);
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
-                columns[i]![1].name,
+                column[1].name,
                 table.name,
                 newMvPlaceholderName,
             );
 
             // Only need to check IDness for non-numerical columns
-            if (columns[i]![1].type !== 'numerical') {
+            if (column[1].type !== 'numerical') {
                 const newIDnessPlaceholderName = this.genPlaceholderName();
-                columnNameToPlaceholderIDnessNameMap.set(columns[i]![1].name, newIDnessPlaceholderName);
-                sdsStrings += this.sdsStringForIDnessByColumnName(
-                    columns[i]![1].name,
-                    table.name,
-                    newIDnessPlaceholderName,
-                );
+                columnNameToPlaceholderIDnessNameMap.set(column[1].name, newIDnessPlaceholderName);
+                sdsStrings += this.sdsStringForIDnessByColumnName(column[1].name, table.name, newIDnessPlaceholderName);
 
                 // Find unique values
+                // TODO reevaluate when image stuck problem fixed
                 let uniqueValues = new Set();
-                for (let j = 0; j < columns[i]![1].values.length; j++) {
-                    uniqueValues.add(columns[i]![1].values[j]);
+                for (let j = 0; j < column[1].values.length; j++) {
+                    uniqueValues.add(column[1].values[j]);
+                    if (uniqueValues.size > 10) {
+                        continue outer;
+                    }
                 }
                 if (uniqueValues.size <= 3 || uniqueValues.size > 10) {
                     // Must match conidtions below that choose to display histogram
@@ -243,9 +248,9 @@ export class RunnerApi {
 
             // Histogram for numerical columns or categorical columns with 4-10 unique values
             const newHistogramPlaceholderName = this.genPlaceholderName();
-            columnNameToPlaceholderHistogramNameMap.set(columns[i]![1].name, newHistogramPlaceholderName);
+            columnNameToPlaceholderHistogramNameMap.set(column[1].name, newHistogramPlaceholderName);
             sdsStrings += this.sdsStringForHistogramByColumnName(
-                columns[i]![1].name,
+                column[1].name,
                 table.name,
                 newHistogramPlaceholderName,
             );
@@ -253,7 +258,12 @@ export class RunnerApi {
 
         // Execute with generated SDS code
         const pipelineExecutionId = crypto.randomUUID();
-        await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings);
+        try {
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings);
+        } catch (e) {
+            printOutputMessage('Error during pipeline execution: ' + e);
+            throw e;
+        }
 
         // Get missing value ratio for each column
         for (const [, placeholderName] of columnNameToPlaceholderMVNameMap) {
@@ -402,14 +412,5 @@ export class RunnerApi {
         }
 
         return profiling;
-    }
-
-    public async getColumnNames(tableIdentifier: string): Promise<string[]> {
-        const newPlaceholderName = this.genPlaceholderName();
-        const columnNamesSdsCode = this.sdsStringForColumnNames(tableIdentifier, newPlaceholderName);
-        const pipelineExecutionId = crypto.randomUUID();
-        await this.addToAndExecutePipeline(pipelineExecutionId, columnNamesSdsCode);
-        const columnNames = await this.getPlaceholderValue(newPlaceholderName, pipelineExecutionId);
-        return columnNames as string[];
     }
 }

@@ -10,6 +10,7 @@ import { LangiumDocument, URI, AstUtils, AstNode } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
+import { Range } from 'vscode-languageclient';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -17,6 +18,7 @@ let lastFinishedPipelineExecutionId: string | undefined;
 let lastSuccessfulPipelineName: string | undefined;
 let lastSuccessfulTableName: string | undefined;
 let lastSuccessfulPipelinePath: vscode.Uri | undefined;
+let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
 
 // This function is called when the extension is activated.
 export const activate = async function (context: vscode.ExtensionContext) {
@@ -184,52 +186,27 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                     // Getting of pipeline name
                     const document = await getPipelineDocument(editor.document.uri);
                     if (!document) {
-                        vscode.window.showErrorMessage('Internal error!');
+                        vscode.window.showErrorMessage('Internal error');
                         return;
                     }
-                    const module = document.parseResult.value as ast.SdsModule;
-
-                    type CustomRangeType = {
-                        start: { line: number; character: number };
-                        end: { line: number; character: number };
-                    };
-                    const isRangeEqual = function (lhs: CustomRangeType, rhs: CustomRangeType): boolean {
-                        return (
-                            lhs.start.character === rhs.start.character &&
-                            lhs.start.line === rhs.start.line &&
-                            lhs.end.character === rhs.end.character &&
-                            lhs.end.line === rhs.end.line
-                        );
-                    };
 
                     // Find node of placeholder
-                    let placeholderNode: AstNode | undefined;
-                    for (const node of AstUtils.streamAllContents(module)) {
-                        // Entire node matches the range
-                        const actualRange = node.$cstNode?.range;
-                        if (actualRange && isRangeEqual(actualRange, range)) {
-                            placeholderNode = node;
-                        }
+                    let placeholderNode = findPlaceholderNode(document, range);
 
-                        // The node has a name node that matches the range
-                        const actualNameRange = services.references.NameProvider.getNameNode(node)?.range;
-                        if (actualNameRange && isRangeEqual(actualNameRange, range)) {
-                            placeholderNode = node;
-                        }
-                    }
                     if (!placeholderNode) {
-                        vscode.window.showErrorMessage('Internal error!');
+                        vscode.window.showErrorMessage('Internal error');
                         return;
                     }
 
                     // Get pipeline container
                     const container = AstUtils.getContainerOfType(placeholderNode, ast.isSdsPipeline);
                     if (!container) {
-                        vscode.window.showErrorMessage('Internal error!');
+                        vscode.window.showErrorMessage('Internal error');
                         return;
                     }
 
-                    const pipelineName = container?.name;
+                    const pipelineName = container.name;
+                    const pipelineNode = container;
 
                     // gen custom id for pipeline
                     const pipelineExecutionId = crypto.randomUUID();
@@ -271,6 +248,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                             lastSuccessfulPipelinePath = editor.document.uri;
                             lastSuccessfulTableName = requestedPlaceholderName;
                             lastSuccessfulPipelineName = pipelineName;
+                            lastSuccessfulPipelineNode = pipelineNode;
                             EDAPanel.createOrShow(
                                 context.extensionUri,
                                 context,
@@ -278,6 +256,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                                 services,
                                 editor.document.uri,
                                 pipelineName,
+                                pipelineNode,
                                 message.data.name,
                             );
                             services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
@@ -341,7 +320,8 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                 !lastSuccessfulPipelinePath ||
                 !lastFinishedPipelineExecutionId ||
                 !lastSuccessfulPipelineName ||
-                !lastSuccessfulTableName
+                !lastSuccessfulTableName ||
+                !lastSuccessfulPipelineNode
             ) {
                 vscode.window.showErrorMessage('No EDA Panel to refresh!');
                 return;
@@ -355,6 +335,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
                     services,
                     lastSuccessfulPipelinePath!,
                     lastSuccessfulPipelineName!,
+                    lastSuccessfulPipelineNode!,
                     lastSuccessfulTableName!,
                 );
             }, 100);
@@ -507,4 +488,32 @@ const registerVSCodeWatchers = function () {
             }
         }
     });
+};
+
+const isRangeEqual = function (lhs: Range, rhs: Range): boolean {
+    return (
+        lhs.start.character === rhs.start.character &&
+        lhs.start.line === rhs.start.line &&
+        lhs.end.character === rhs.end.character &&
+        lhs.end.line === rhs.end.line
+    );
+};
+
+const findPlaceholderNode = function (document: LangiumDocument<AstNode>, range: vscode.Range): AstNode | undefined {
+    let placeholderNode: AstNode | undefined;
+    const module = document.parseResult.value as ast.SdsModule;
+    for (const node of AstUtils.streamAllContents(module, { range })) {
+        // Entire node matches the range
+        const actualRange = node.$cstNode?.range;
+        if (actualRange && isRangeEqual(actualRange, range)) {
+            placeholderNode = node;
+        }
+
+        // The node has a name node that matches the range
+        const actualNameRange = services.references.NameProvider.getNameNode(node)?.range;
+        if (actualNameRange && isRangeEqual(actualNameRange, range)) {
+            placeholderNode = node;
+        }
+    }
+    return placeholderNode;
 };

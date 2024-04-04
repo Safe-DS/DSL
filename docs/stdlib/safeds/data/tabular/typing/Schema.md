@@ -45,28 +45,6 @@ Store column names and corresponding data types for a `Table` or `Row`.
         @Pure
         @PythonName("to_dict")
         fun toDict() -> result1: Map<String, ColumnType>
-    
-        /**
-         * Merge multiple schemas into one.
-         *
-         * For each type missmatch the new schema will have the least common supertype.
-         *
-         * The type hierarchy is as follows:
-         * * Anything
-         *     * RealNumber
-         *         * Integer
-         *     * Boolean
-         *     * String
-         *
-         * @param schemas the list of schemas you want to merge
-         *
-         * @result result1 the new merged schema
-         */
-        @Pure
-        @PythonName("merge_multiple_schemas")
-        static fun mergeMultipleSchemas(
-            schemas: List<Schema>
-        ) -> result1: Schema
     }
     ```
 
@@ -144,39 +122,4 @@ Return a dictionary that maps column names to column types.
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, ColumnType>
-    ```
-
-## `#!sds static fun` mergeMultipleSchemas {#safeds.data.tabular.typing.Schema.mergeMultipleSchemas data-toc-label='mergeMultipleSchemas'}
-
-Merge multiple schemas into one.
-
-For each type missmatch the new schema will have the least common supertype.
-
-The type hierarchy is as follows:
-* Anything
-    * RealNumber
-        * Integer
-    * Boolean
-    * String
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `schemas` | [`List<Schema>`][safeds.lang.List] | the list of schemas you want to merge | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Schema`][safeds.data.tabular.typing.Schema] | the new merged schema |
-
-??? quote "Source code in `schema.sdsstub`"
-
-    ```sds linenums="67"
-    @Pure
-    @PythonName("merge_multiple_schemas")
-    static fun mergeMultipleSchemas(
-        schemas: List<Schema>
-    ) -> result1: Schema
     ```

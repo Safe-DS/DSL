@@ -6,7 +6,7 @@ Decision tree regression.
 
 ??? quote "Source code in `decision_tree.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="9"
     class DecisionTreeRegressor() sub Regressor {
         /**
          * Create a copy of this regressor and fit it with the given training data.
@@ -44,7 +44,7 @@ This regressor is not modified.
 
 ??? quote "Source code in `decision_tree.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="19"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

@@ -8,7 +8,6 @@ from safeds.ml.classical.regression import Regressor
  *
  * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
  */
-@PythonName("LassoRegression")
 class LassoRegressor(
     const alpha: Float = 1.0
 ) sub Regressor where {

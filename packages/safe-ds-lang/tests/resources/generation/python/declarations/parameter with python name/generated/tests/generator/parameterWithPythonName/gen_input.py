@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.parameterWithPythonName import f1, f2
+
 # Segments ---------------------------------------------------------------------
 
 def test(param1, param_2, param_3=0):

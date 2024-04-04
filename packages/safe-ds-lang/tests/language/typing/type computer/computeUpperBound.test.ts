@@ -7,8 +7,8 @@ import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { expectEqualTypes } from '../../../helpers/testAssertions.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const coreTypes = services.types.CoreTypes;
-const typeComputer = services.types.TypeComputer;
+const coreTypes = services.typing.CoreTypes;
+const typeComputer = services.typing.TypeComputer;
 
 const code = `
     class MyClass<

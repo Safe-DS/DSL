@@ -1,3 +1,7 @@
+# Imports ----------------------------------------------------------------------
+
+from tests.generator.imports import impureFunction
+
 # Segments ---------------------------------------------------------------------
 
 def segment1InSamePackage():

@@ -128,7 +128,7 @@ A column is a named collection of values.
         @Pure
         fun transform<R>(
             transformer: (param1: T) -> param2: R
-        ) -> result1: Column
+        ) -> result1: Column<R>
     
         /**
          * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
@@ -738,7 +738,7 @@ The original column is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The transformed column. |
+| `result1` | [`Column<R>`][safeds.data.tabular.containers.Column] | The transformed column. |
 
 **Type parameters:**
 
@@ -752,7 +752,7 @@ The original column is not modified.
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
-    ) -> result1: Column
+    ) -> result1: Column<R>
     ```
 
 ## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}

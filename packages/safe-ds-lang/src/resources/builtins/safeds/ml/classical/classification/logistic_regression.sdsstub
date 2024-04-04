@@ -6,7 +6,6 @@ from safeds.ml.classical.classification import Classifier
 /**
  * Regularized logistic regression.
  */
-@PythonName("LogisticRegression")
 class LogisticRegressionClassifier() sub Classifier {
     /**
      * Create a copy of this classifier and fit it with the given training data.

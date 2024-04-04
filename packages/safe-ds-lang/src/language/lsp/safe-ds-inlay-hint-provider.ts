@@ -19,7 +19,7 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
 
         this.documentationProvider = services.documentation.DocumentationProvider;
         this.nodeMapper = services.helpers.NodeMapper;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     override computeInlayHint(node: AstNode, acceptor: InlayHintAcceptor) {

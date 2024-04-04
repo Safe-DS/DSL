@@ -61,7 +61,7 @@ export class SafeDsMarkdownGenerator {
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
         this.documentationProvider = services.documentation.DocumentationProvider;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
     }
 
     generate(documents: LangiumDocument[], options: GenerateOptions): TextDocument[] {
@@ -426,11 +426,7 @@ export class SafeDsMarkdownGenerator {
 
     private renderDescription(node: SdsDeclaration) {
         return this.documentationProvider.getDescription(node, (target, display) => {
-            if (target) {
-                return `[${display}][${getQualifiedName(target)}]`;
-            } else {
-                return display;
-            }
+            return `[${display}][${getQualifiedName(target)}]`;
         });
     }
 

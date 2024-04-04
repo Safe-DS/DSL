@@ -6,7 +6,6 @@ from safeds.ml.classical.regression import Regressor
 /**
  * Decision tree regression.
  */
-@PythonName("DecisionTree")
 class DecisionTreeRegressor() sub Regressor {
     /**
      * Create a copy of this regressor and fit it with the given training data.

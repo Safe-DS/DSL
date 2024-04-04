@@ -20,8 +20,8 @@ import semver from 'semver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
-const LOWEST_SUPPORTED_VERSION = '0.7.0';
-const LOWEST_UNSUPPORTED_VERSION = '0.8.0';
+const LOWEST_SUPPORTED_VERSION = '0.8.0';
+const LOWEST_UNSUPPORTED_VERSION = '0.9.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_VERSION} <${LOWEST_UNSUPPORTED_VERSION}`;
 const pipVersionRange = `>=${LOWEST_SUPPORTED_VERSION},<${LOWEST_UNSUPPORTED_VERSION}`;
 
