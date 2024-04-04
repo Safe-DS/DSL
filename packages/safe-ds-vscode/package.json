@@ -83,27 +83,37 @@
         "configuration": {
             "title": "Safe-DS",
             "properties": {
+                "safe-ds.inlayHints.assigneeTypes.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show inferred types for named assignees."
+                },
+                "safe-ds.inlayHints.parameterNames.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show parameter names for positional arguments."
+                },
                 "safe-ds.runner.command": {
                     "description": "Command to start the Safe-DS runner",
                     "type": "string",
                     "default": "safe-ds-runner"
                 },
-                "safe-ds.validation.codeStyle": {
+                "safe-ds.validation.codeStyle.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Show an info if code style can be improved."
                 },
-                "safe-ds.validation.experimentalLanguageFeature": {
+                "safe-ds.validation.experimentalLanguageFeatures.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Warn if an experimental language feature is used."
                 },
-                "safe-ds.validation.experimentalLibraryElement": {
+                "safe-ds.validation.experimentalLibraryElements.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Warn if an experimental library element is used."
                 },
-                "safe-ds.validation.nameConvention": {
+                "safe-ds.validation.nameConvention.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Warn if a name does not match the Safe-DS name convention."

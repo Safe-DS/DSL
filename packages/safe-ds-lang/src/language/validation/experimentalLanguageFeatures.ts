@@ -15,7 +15,7 @@ export const constraintListsShouldBeUsedWithCaution = (services: SafeDsServices)
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsConstraintList, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeature())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -32,7 +32,7 @@ export const literalTypesShouldBeUsedWithCaution = (services: SafeDsServices) =>
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsLiteralType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeature())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -49,7 +49,7 @@ export const mapsShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsMap, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeature())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -70,7 +70,7 @@ export const unionTypesShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsUnionType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeature())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
             /* c8 ignore next 2 */
             return;
         }

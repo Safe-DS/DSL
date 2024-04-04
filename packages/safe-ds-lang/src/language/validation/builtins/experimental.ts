@@ -17,7 +17,7 @@ export const assigneeAssignedResultShouldNotBeExperimental = (services: SafeDsSe
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsAssignee, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -44,7 +44,7 @@ export const annotationCallAnnotationShouldNotBeExperimental = (services: SafeDs
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -68,7 +68,7 @@ export const argumentCorrespondingParameterShouldNotBeExperimental = (services: 
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsArgument, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -91,7 +91,7 @@ export const namedTypeDeclarationShouldNotBeExperimental = (services: SafeDsServ
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsNamedType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
             /* c8 ignore next 2 */
             return;
         }
@@ -114,7 +114,7 @@ export const referenceTargetShouldNotExperimental = (services: SafeDsServices) =
     const settingsProvider = services.workspace.SettingsProvider;
 
     return async (node: SdsReference, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElement())) {
+        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
             /* c8 ignore next 2 */
             return;
         }
