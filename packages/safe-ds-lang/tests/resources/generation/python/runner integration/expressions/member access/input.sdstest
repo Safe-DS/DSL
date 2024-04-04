@@ -52,7 +52,8 @@ pipeline test {
     f(C.from_csv_file("abc.csv"));
     val a = Table.fromCsvFile("abc.csv");
     val v = a.getColumn("b");
-    f(v);
+    val d = v.plotHistogram();
+    f(d);
     f(Outer.Nested.f());
     val nestedInstance = factoryNested();
     val nestedResult = nestedInstance.g();
