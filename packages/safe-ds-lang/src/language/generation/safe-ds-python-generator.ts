@@ -1024,7 +1024,6 @@ export class SafeDsPythonGenerator {
             const referenceImport = this.createImportDataForNode(
                 classDeclaration,
                 expression.receiver.member!,
-                classDeclaration.name,
             );
             frame.addImport(referenceImport);
         }
@@ -1162,7 +1161,7 @@ export class SafeDsPythonGenerator {
     private createImportDataForNode(
         declaration: SdsDeclaration,
         context: AstNode,
-        refText: string,
+        refText: string = declaration.name,
     ): ImportData | undefined {
         const sourceModule = <SdsModule>AstUtils.findRootNode(context);
         const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
