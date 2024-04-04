@@ -1021,10 +1021,7 @@ export class SafeDsPythonGenerator {
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
             const classDeclaration = this.getOutermostContainerOfType(callable, isSdsClass)!;
-            const referenceImport = this.createImportDataForNode(
-                classDeclaration,
-                expression.receiver.member!,
-            );
+            const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
             frame.addImport(referenceImport);
         }
         return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
