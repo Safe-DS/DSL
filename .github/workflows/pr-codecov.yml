@@ -19,12 +19,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage
-          path: coverage.zip
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Unzip coverage
-        run: unzip coverage.zip
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
