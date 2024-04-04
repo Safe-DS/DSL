@@ -88,6 +88,11 @@
                     "default": true,
                     "description": "Show inferred types for named assignees."
                 },
+                "safe-ds.inlayHints.lambdaParameterTypes.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show inferred types for lambda parameters without manifest types."
+                },
                 "safe-ds.inlayHints.parameterNames.enabled": {
                     "type": "boolean",
                     "default": true,

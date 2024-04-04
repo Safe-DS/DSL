@@ -1,4 +1,4 @@
-import { AstNode, AstUtils, DocumentationProvider, interruptAndCheck, LangiumDocument } from 'langium';
+import { AstNode, AstUtils, CstNode, DocumentationProvider, interruptAndCheck, LangiumDocument } from 'langium';
 import {
     CancellationToken,
     type InlayHint,
@@ -7,11 +7,22 @@ import {
     MarkupContent,
 } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
-import { isSdsArgument, isSdsBlockLambdaResult, isSdsPlaceholder, isSdsYield } from '../generated/ast.js';
+import {
+    isSdsArgument,
+    isSdsBlockLambdaResult,
+    isSdsLambda,
+    isSdsParameter,
+    isSdsPlaceholder,
+    isSdsYield,
+    SdsArgument,
+    SdsBlockLambdaResult,
+    SdsPlaceholder,
+    SdsYield,
+} from '../generated/ast.js';
 import { Argument } from '../helpers/nodeProperties.js';
 import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { NamedType } from '../typing/model.js';
+import { NamedType, UnknownType } from '../typing/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { AbstractInlayHintProvider, InlayHintAcceptor } from 'langium/lsp';
 import { SafeDsSettingsProvider } from '../workspace/safe-ds-settings-provider.js';
@@ -54,31 +65,37 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
             return;
         }
 
-        // Show inferred types for named assignees
-        if (
-            (await this.settingsProvider.shouldShowAssigneeTypeInlayHints()) &&
-            (isSdsBlockLambdaResult(node) || isSdsPlaceholder(node) || isSdsYield(node))
-        ) {
-            const type = this.typeComputer.computeType(node);
-            let tooltip: MarkupContent | undefined = undefined;
-            if (type instanceof NamedType) {
-                tooltip = createMarkupContent(this.documentationProvider.getDocumentation(type.declaration));
-            }
-
-            acceptor({
-                position: cstNode.range.end,
-                label: `: ${type}`,
-                kind: InlayHintKind.Type,
-                tooltip,
-            });
+        if (await this.settingsProvider.shouldShowAssigneeTypeInlayHints()) {
+            this.computeAssigneeTypeInlayHint(node, cstNode, acceptor);
         }
 
-        // Show parameter names for positional arguments
-        if (
-            (await this.settingsProvider.shouldShowParameterNameInlayHints()) &&
-            isSdsArgument(node) &&
-            Argument.isPositional(node)
-        ) {
+        if (await this.settingsProvider.shouldShowLambdaParameterTypeInlayHints()) {
+            this.computeLambdaParameterTypeInlayHint(node, cstNode, acceptor);
+        }
+
+        if (await this.settingsProvider.shouldShowParameterNameInlayHints()) {
+            this.computeParameterNameInlayHint(node, cstNode, acceptor);
+        }
+    }
+
+    private computeAssigneeTypeInlayHint(
+        node: AstNode | SdsBlockLambdaResult | SdsPlaceholder | SdsYield,
+        cstNode: CstNode,
+        acceptor: InlayHintAcceptor,
+    ) {
+        if (isSdsBlockLambdaResult(node) || isSdsPlaceholder(node) || isSdsYield(node)) {
+            this.computeTypeInlayHint(node, cstNode, acceptor);
+        }
+    }
+
+    private computeLambdaParameterTypeInlayHint(node: AstNode, cstNode: CstNode, acceptor: InlayHintAcceptor) {
+        if (isSdsParameter(node) && AstUtils.hasContainerOfType(node, isSdsLambda) && !node.type) {
+            this.computeTypeInlayHint(node, cstNode, acceptor);
+        }
+    }
+
+    private computeParameterNameInlayHint(node: AstNode | SdsArgument, cstNode: CstNode, acceptor: InlayHintAcceptor) {
+        if (isSdsArgument(node) && Argument.isPositional(node)) {
             const parameter = this.nodeMapper.argumentToParameter(node);
             if (parameter) {
                 acceptor({
@@ -89,5 +106,24 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
                 });
             }
         }
+    }
+
+    private computeTypeInlayHint(node: AstNode, cstNode: CstNode, acceptor: InlayHintAcceptor) {
+        const type = this.typeComputer.computeType(node);
+        if (type === UnknownType) {
+            return;
+        }
+
+        let tooltip: MarkupContent | undefined = undefined;
+        if (type instanceof NamedType) {
+            tooltip = createMarkupContent(this.documentationProvider.getDocumentation(type.declaration));
+        }
+
+        acceptor({
+            position: cstNode.range.end,
+            label: `: ${type}`,
+            kind: InlayHintKind.Type,
+            tooltip,
+        });
     }
 }
