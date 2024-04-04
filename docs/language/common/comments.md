@@ -70,7 +70,7 @@ with no special meaning.
 
 Documentation comments support [Markdown](https://www.markdownguide.org/) to format the text. Here is an example:
 
-```sds
+```sds hl_lines="2"
 /**
  * This is a documentation comment with **bold** and *italic* text.
  */
@@ -86,40 +86,35 @@ Documentation comments can contain tags to provide structured information.
 `{@link}` is an **inline** tag that can be used to link to another declaration. It takes the name of the declaration as
 an argument:
 
-```sds
+```sds hl_lines="2"
 /**
  * Computes the sum of two {@link Int}s.
  */
 fun sum(a: Int, b: Int): sum: Int
 ```
 
-To point to _static_ members of a [class][class] or an [enum variant][enum-variant] of an [enum][enum], write the name of
-the containing declaration followed by a dot and the name of the member or enum variant:
+To point to a member of a [class][class] or an [enum variant][enum-variant] of an [enum][enum], write the name of the
+containing declaration followed by a dot and the name of the member or enum variant:
 
-```sds
+```sds hl_lines="2"
 /**
- * To create a Table, use {@link Table.fromCsv}.
+ * To create a Configuration, use {@link Configuration.fromFile}.
  */
-class Table
+class Configuration {
+
+    /**
+     * Creates a Configuration from a file.
+     */
+    fun fromFile(file: String) -> result: Configuration
+}
 ```
-
-To point to an _instance_ member of a [class][class], write the name of the containing declaration followed by a hash and
-the name of the member:
-
-```sds
-/**
- * An alias for {@link List#size}.
- */
-fun size(list: List<Any?>): size: Int
-```
-
 
 #### `@param`
 
 Use `@param` to document a [parameter][parameter] of a callable declaration. This tag takes the name of the parameter
 and its description as arguments. Since a callable can have multiple parameters, this tag can be used multiple times.
 
-```sds
+```sds  hl_lines="4 5"
 /**
  * ...
  *
@@ -134,7 +129,7 @@ fun sum(a: Int, b: Int): sum: Int
 Use `@result` to document a [result][result] of a callable declaration. This tag takes the name of the result and its
 description as arguments. Since a callable can have multiple results, this tag can be used multiple times.
 
-```sds
+```sds hl_lines="4"
 /**
  * ...
  *
@@ -149,7 +144,7 @@ Use `@typeParam` to document a [type parameter][type-parameter] of a generic dec
 type parameter and its description as arguments. Since a generic declaration can have multiple type parameters, this
 tag can be used multiple times.
 
-```sds
+```sds hl_lines="4"
 /**
  * ...
  *
@@ -163,7 +158,7 @@ class List<T>
 The `@since` tag can be used to specify when a declaration was added. It takes the version as argument and should be
 used only once.
 
-```sds
+```sds hl_lines="4"
 /**
  * ...
  *

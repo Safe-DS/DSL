@@ -25,7 +25,7 @@ import {
 } from '../generated/ast.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { getClassMembers, getEnumVariants, isStatic } from '../helpers/nodeProperties.js';
+import { getClassMembers, getEnumVariants } from '../helpers/nodeProperties.js';
 
 const PARAM_TAG = 'param';
 const RESULT_TAG = 'result';
@@ -186,9 +186,8 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
     }
 
     private findTarget(node: AstNode, namePath: string): SdsDeclaration | undefined {
-        let [globalName, ...rest] = this.tokenizeNamepath(namePath);
-        // `rest` contains pairs of separators and names
-        if (!globalName || rest.length % 2 !== 0) {
+        let [globalName, ...rest] = namePath.split('.');
+        if (!globalName) {
             /* c8 ignore next 2 */
             return undefined;
         }
@@ -196,37 +195,11 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
         let current = this.findGlobalDeclaration(node, globalName);
 
         while (current && !isEmpty(rest)) {
-            const [separator, name] = rest.slice(0, 2);
-            rest = rest.slice(2);
-
-            if (separator === '.') {
-                current = this.findStaticMember(current, name);
-            } else if (separator === '#') {
-                current = this.findInstanceMember(current, name);
-            } else {
-                /* c8 ignore next 2 */
-                return undefined;
-            }
+            const name = rest.shift();
+            current = this.findMember(current, name);
         }
 
         return current;
-    }
-
-    private tokenizeNamepath(namePath: string): string[] {
-        const result = [];
-        let current = '';
-
-        for (const c of namePath) {
-            if (c === '.' || c === '#') {
-                result.push(current, c);
-                current = '';
-            } else {
-                current += c;
-            }
-        }
-
-        result.push(current);
-        return result;
     }
 
     private findGlobalDeclaration(node: AstNode, name: string): SdsDeclaration | undefined {
@@ -240,29 +213,16 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
         }
     }
 
-    private findStaticMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
+    private findMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
         if (!name) {
             /* c8 ignore next 2 */
             return undefined;
         }
 
         if (isSdsClass(node)) {
-            return getClassMembers(node).find((it) => isStatic(it) && it.name === name);
+            return getClassMembers(node).find((it) => it.name === name);
         } else if (isSdsEnum(node)) {
             return getEnumVariants(node).find((it) => it.name === name);
-        } else {
-            return undefined;
-        }
-    }
-
-    private findInstanceMember(node: SdsDeclaration, name: string | undefined): SdsDeclaration | undefined {
-        if (!name) {
-            /* c8 ignore next 2 */
-            return undefined;
-        }
-
-        if (isSdsClass(node)) {
-            return getClassMembers(node).find((it) => !isStatic(it) && it.name === name);
         } else {
             return undefined;
         }
