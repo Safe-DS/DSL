@@ -1,7 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
-from safeds.data.tabular.containers import Table
+from safeds.data.tabular.containers import Column, Table
 from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, factoryNested, g, h, Outer
 from typing import Any, TypeVar
 
@@ -32,7 +32,9 @@ def test():
     safeds_runner.save_placeholder('a', a)
     v = safeds_runner.memoized_call("safeds.data.tabular.containers.Table.get_column", Table.get_column, [a, 'b'], [])
     safeds_runner.save_placeholder('v', v)
-    f(v)
+    d = safeds_runner.memoized_call("safeds.data.tabular.containers.Column.plot_histogram", Column.plot_histogram, [v], [])
+    safeds_runner.save_placeholder('d', d)
+    f(d)
     f(safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.f", Outer.Nested.f, [], []))
     nestedInstance = safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.factoryNested", factoryNested, [], [])
     safeds_runner.save_placeholder('nestedInstance', nestedInstance)
