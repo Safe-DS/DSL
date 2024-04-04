@@ -6,17 +6,17 @@ class E() sub C
 
 pipeline test {
     // $TEST$ error "This type cast can never succeed."
-    »D()« as E;
+    »D() as E«;
 
     // $TEST$ no error "This type cast can never succeed."
-    »C()« as C;
+    »C() as C«;
 
     // $TEST$ no error "This type cast can never succeed."
-    »C()« as D;
+    »C() as D«;
 
     // $TEST$ no error "This type cast can never succeed."
-    »D()« as C;
+    »D() as C«;
 
     // $TEST$ no error "This type cast can never succeed."
-    »unresolved« as Int;
+    »unresolved as Int«;
 }

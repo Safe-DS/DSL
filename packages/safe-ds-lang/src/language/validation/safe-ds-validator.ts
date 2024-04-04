@@ -171,7 +171,7 @@ import {
     parameterMustHaveTypeHint,
     prefixOperationOperandMustHaveCorrectType,
     resultMustHaveTypeHint,
-    typeCastExpressionMustHaveUnknownType,
+    typeCastMustNotAlwaysFail,
     typeParameterDefaultValueMustMatchUpperBound,
     yieldTypeMustMatchResultType,
 } from './types.js';
@@ -361,7 +361,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeCast: [typeCastExpressionMustHaveUnknownType(services)],
+        SdsTypeCast: [typeCastMustNotAlwaysFail(services)],
         SdsTypeParameter: [
             typeParameterDefaultValueMustMatchUpperBound(services),
             typeParameterMustBeUsedInCorrectPosition(services),
