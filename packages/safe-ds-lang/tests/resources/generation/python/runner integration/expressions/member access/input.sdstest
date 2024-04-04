@@ -54,8 +54,12 @@ pipeline test {
     val v = a.getColumn("b");
     val d = v.plotHistogram();
     val p = a.getColumn("b").plotHistogram();
+    val r = a.getColumn("b").plotHistogram().flipVertically();
+    val q = a.getColumn("b").plotHistogram().flipVertically().adjustContrast(1.2);
     f(d);
     f(p);
+    f(r);
+    f(q);
     f(Outer.Nested.f());
     val nestedInstance = factoryNested();
     val nestedResult = nestedInstance.g();
