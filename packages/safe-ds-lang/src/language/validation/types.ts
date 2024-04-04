@@ -353,7 +353,7 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
     };
 };
 
-export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) => {
+export const typeCastMustNotAlwaysFail = (services: SafeDsServices) => {
     const typeChecker = services.typing.TypeChecker;
     const typeComputer = services.typing.TypeComputer;
 
@@ -369,7 +369,7 @@ export const typeCastExpressionMustHaveUnknownType = (services: SafeDsServices) 
         ) {
             accept('error', 'This type cast can never succeed.', {
                 // Using property: "expression" does not work here, probably due to eclipse-langium/langium#1218
-                node: node.expression,
+                node,
                 code: CODE_TYPE_MISMATCH,
             });
         }
