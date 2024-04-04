@@ -13,6 +13,10 @@ export class SafeDsSettingsProvider {
         return (await this.getInlayHintsSettings()).assigneeTypes?.enabled ?? true;
     }
 
+    async shouldShowLambdaParameterTypeInlayHints(): Promise<boolean> {
+        return (await this.getInlayHintsSettings()).lambdaParameterTypes?.enabled ?? true;
+    }
+
     async shouldShowParameterNameInlayHints(): Promise<boolean> {
         return (await this.getInlayHintsSettings()).parameterNames?.enabled ?? true;
     }
@@ -48,6 +52,9 @@ export class SafeDsSettingsProvider {
 
 interface InlayHintsSettings {
     assigneeTypes: {
+        enabled: boolean;
+    };
+    lambdaParameterTypes: {
         enabled: boolean;
     };
     parameterNames: {
