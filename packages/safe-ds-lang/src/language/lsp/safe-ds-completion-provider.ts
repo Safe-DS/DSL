@@ -1,5 +1,5 @@
-import { CompletionValueItem, DefaultCompletionProvider } from 'langium/lsp';
-import { AstNode, AstNodeDescription } from 'langium';
+import { CompletionContext, CompletionValueItem, DefaultCompletionProvider } from 'langium/lsp';
+import { AstNode, AstNodeDescription, ReferenceInfo, Stream } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { CompletionItemTag, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
@@ -19,6 +19,17 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
         this.builtinAnnotations = service.builtins.Annotations;
         this.documentationProvider = service.documentation.DocumentationProvider;
         this.typeComputer = service.typing.TypeComputer;
+    }
+
+    protected override getReferenceCandidates(
+        refInfo: ReferenceInfo,
+        context: CompletionContext,
+    ): Stream<AstNodeDescription> {
+        // TODO filter by type (get the required type based on context, check whether the type matches)
+        //  context can be argument or operation
+        //  we have to consider, though that we might still the required type by accessing members of the type
+        // TODO also investigate why this does not work for member accesses
+        return super.getReferenceCandidates(refInfo, context);
     }
 
     protected override createReferenceCompletionItem(nodeDescription: AstNodeDescription): CompletionValueItem {
