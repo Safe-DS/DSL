@@ -95,6 +95,7 @@ import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 import { FileRead, ImpurityReason } from '../purity/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedTupleType } from '../typing/model.js';
+import {getOutermostContainerOfType} from "../helpers/astUtils.js";
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -1020,7 +1021,7 @@ export class SafeDsPythonGenerator {
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
-            const classDeclaration = this.getOutermostContainerOfType(callable, isSdsClass)!;
+            const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
             const referenceImport = this.createImportDataForNode(
                 classDeclaration,
                 expression.receiver.member!,
@@ -1141,21 +1142,6 @@ export class SafeDsPythonGenerator {
                 ? expandToNode`${this.generateParameter(parameter, frame, false)}=`
                 : ''
         }${this.generateExpression(argument.value, frame)}`;
-    }
-
-    private getOutermostContainerOfType<T extends AstNode>(
-        node: AstNode | undefined,
-        typePredicate: (n: AstNode) => n is T,
-    ): T | undefined {
-        let item = node;
-        let lastValidItem = undefined;
-        while (item) {
-            if (typePredicate(item)) {
-                lastValidItem = item;
-            }
-            item = item.$container;
-        }
-        return lastValidItem;
     }
 
     private createImportDataForNode(
