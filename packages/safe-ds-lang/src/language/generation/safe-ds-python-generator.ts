@@ -95,6 +95,7 @@ import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 import { FileRead, ImpurityReason } from '../purity/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedTupleType } from '../typing/model.js';
+import { getOutermostContainerOfType } from '../helpers/astUtils.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -1020,7 +1021,8 @@ export class SafeDsPythonGenerator {
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
-            const referenceImport = this.createImportDataForReference(expression.receiver.member!);
+            const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
+            const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
             frame.addImport(referenceImport);
         }
         return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
@@ -1139,38 +1141,44 @@ export class SafeDsPythonGenerator {
         }${this.generateExpression(argument.value, frame)}`;
     }
 
+    private createImportDataForNode(
+        declaration: SdsDeclaration,
+        context: AstNode,
+        refText: string = declaration.name,
+    ): ImportData | undefined {
+        const sourceModule = <SdsModule>AstUtils.findRootNode(context);
+        const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
+
+        // Compute import path
+        let importPath: string | undefined = undefined;
+        if (isSdsPipeline(declaration) || isSdsSegment(declaration)) {
+            if (sourceModule !== targetModule) {
+                importPath = `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
+                    this.getModuleFileBaseName(targetModule),
+                )}`;
+            }
+        } else if (isSdsModule(declaration.$container)) {
+            importPath = this.getPythonModuleOrDefault(targetModule);
+        }
+
+        if (importPath) {
+            return {
+                importPath,
+                declarationName: this.getPythonNameOrDefault(declaration),
+                alias: refText === declaration.name ? undefined : refText,
+            };
+        } else {
+            return undefined;
+        }
+    }
+
     private createImportDataForReference(reference: SdsReference): ImportData | undefined {
         const target = reference.target.ref;
         if (!target) {
             /* c8 ignore next 2 */
             return undefined;
         }
-
-        const sourceModule = <SdsModule>AstUtils.findRootNode(reference);
-        const targetModule = <SdsModule>AstUtils.findRootNode(target);
-
-        // Compute import path
-        let importPath: string | undefined = undefined;
-        if (isSdsPipeline(target) || isSdsSegment(target)) {
-            if (sourceModule !== targetModule) {
-                importPath = `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
-                    this.getModuleFileBaseName(targetModule),
-                )}`;
-            }
-        } else if (isSdsModule(target.$container)) {
-            importPath = this.getPythonModuleOrDefault(targetModule);
-        }
-
-        if (importPath) {
-            const refText = reference.target.$refText;
-            return {
-                importPath,
-                declarationName: this.getPythonNameOrDefault(target),
-                alias: refText === target.name ? undefined : refText,
-            };
-        } else {
-            return undefined;
-        }
+        return this.createImportDataForNode(target, reference, reference.target.$refText);
     }
 
     private getModuleFileBaseName(module: SdsModule): string {
