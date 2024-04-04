@@ -72,12 +72,55 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
         }
     }
 
-    /* c8 ignore start */
-    getCompletionItemKind(_nodeOrDescription: AstNode | AstNodeDescription) {
-        return CompletionItemKind.Reference;
-    }
+    getCompletionItemKind(nodeOrDescription: AstNode | AstNodeDescription): CompletionItemKind {
+        // The WorkspaceSymbolProvider only passes descriptions, where the node might be undefined
+        const node = this.getNode(nodeOrDescription);
+        if (isSdsFunction(node) && AstUtils.hasContainerOfType(node, isSdsClass)) {
+            return CompletionItemKind.Method;
+        }
 
-    /* c8 ignore stop */
+        const type = this.getNodeType(nodeOrDescription);
+        switch (type) {
+            case SdsAnnotation:
+                return CompletionItemKind.Interface;
+            case SdsAttribute:
+                return CompletionItemKind.Property;
+            /* c8 ignore next 2 */
+            case SdsBlockLambdaResult:
+                return CompletionItemKind.Variable;
+            case SdsClass:
+                return CompletionItemKind.Class;
+            case SdsEnum:
+                return CompletionItemKind.Enum;
+            case SdsEnumVariant:
+                return CompletionItemKind.EnumMember;
+            case SdsFunction:
+                return CompletionItemKind.Function;
+            case SdsModule:
+                return CompletionItemKind.Module;
+            /* c8 ignore next 2 */
+            case SdsParameter:
+                return CompletionItemKind.Variable;
+            case SdsPipeline:
+                return CompletionItemKind.Function;
+            /* c8 ignore next 2 */
+            case SdsPlaceholder:
+                return CompletionItemKind.Variable;
+            /* c8 ignore next 2 */
+            case SdsResult:
+                return CompletionItemKind.Variable;
+            case SdsSchema:
+                return CompletionItemKind.Struct;
+            case SdsSegment:
+                return CompletionItemKind.Function;
+            /* c8 ignore next 2 */
+            case SdsTypeParameter:
+                return CompletionItemKind.TypeParameter;
+            /* c8 ignore next 2 */
+            default:
+                return CompletionItemKind.Reference;
+        }
+    }
 
     private getNode(nodeOrDescription: AstNode | AstNodeDescription): AstNode | undefined {
         if (isAstNode(nodeOrDescription)) {
