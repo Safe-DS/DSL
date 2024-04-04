@@ -1185,32 +1185,7 @@ export class SafeDsPythonGenerator {
             /* c8 ignore next 2 */
             return undefined;
         }
-
-        const sourceModule = <SdsModule>AstUtils.findRootNode(reference);
-        const targetModule = <SdsModule>AstUtils.findRootNode(target);
-
-        // Compute import path
-        let importPath: string | undefined = undefined;
-        if (isSdsPipeline(target) || isSdsSegment(target)) {
-            if (sourceModule !== targetModule) {
-                importPath = `${this.getPythonModuleOrDefault(targetModule)}.${this.formatGeneratedFileName(
-                    this.getModuleFileBaseName(targetModule),
-                )}`;
-            }
-        } else if (isSdsModule(target.$container)) {
-            importPath = this.getPythonModuleOrDefault(targetModule);
-        }
-
-        if (importPath) {
-            const refText = reference.target.$refText;
-            return {
-                importPath,
-                declarationName: this.getPythonNameOrDefault(target),
-                alias: refText === target.name ? undefined : refText,
-            };
-        } else {
-            return undefined;
-        }
+        return this.createImportDataForNode(target, reference, reference.target.$refText);
     }
 
     private getModuleFileBaseName(module: SdsModule): string {
