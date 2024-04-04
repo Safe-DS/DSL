@@ -95,7 +95,7 @@ import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
 import { FileRead, ImpurityReason } from '../purity/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedTupleType } from '../typing/model.js';
-import {getOutermostContainerOfType} from "../helpers/astUtils.js";
+import { getOutermostContainerOfType } from '../helpers/astUtils.js';
 
 export const CODEGEN_PREFIX = '__gen_';
 const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
@@ -1022,10 +1022,7 @@ export class SafeDsPythonGenerator {
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
             const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
-            const referenceImport = this.createImportDataForNode(
-                classDeclaration,
-                expression.receiver.member!,
-            );
+            const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
             frame.addImport(referenceImport);
         }
         return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${

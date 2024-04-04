@@ -24,4 +24,4 @@ export const getOutermostContainerOfType = <T extends AstNode>(
         item = item.$container;
     }
     return lastValidItem;
-}
+};
