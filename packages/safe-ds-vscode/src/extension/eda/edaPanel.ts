@@ -3,7 +3,7 @@ import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
 import { State } from '@safe-ds/eda/types/state.js';
 import { logOutput, printOutputMessage } from '../output.ts';
-import { SafeDsServices } from '@safe-ds/lang';
+import { SafeDsServices, ast } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';
 
 export class EDAPanel {
@@ -32,13 +32,14 @@ export class EDAPanel {
         startPipelineExecutionId: string,
         pipelinePath: vscode.Uri,
         pipelineName: string,
+        pipelineNode: ast.SdsPipeline,
         tableName: string,
     ) {
         this.tableIdentifier = pipelineName + '.' + tableName;
         this.panel = panel;
         this.extensionUri = extensionUri;
         this.startPipelineExecutionId = startPipelineExecutionId;
-        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName);
+        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode);
         this.tableName = tableName;
 
         // Set the webview's initial html content
@@ -109,6 +110,7 @@ export class EDAPanel {
         services: SafeDsServices,
         pipelinePath: vscode.Uri,
         pipelineName: string,
+        pipelineNode: ast.SdsPipeline,
         tableName: string,
     ): Promise<void> {
         EDAPanel.context = context;
@@ -125,7 +127,7 @@ export class EDAPanel {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
             panel.startPipelineExecutionId = startPipelineExecutionId;
-            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName);
+            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode);
             panel.tableName = tableName;
             EDAPanel.panelsMap.set(tableIdentifier, panel);
 
@@ -155,6 +157,7 @@ export class EDAPanel {
                 startPipelineExecutionId,
                 pipelinePath,
                 pipelineName,
+                pipelineNode,
                 tableName,
             );
             EDAPanel.panelsMap.set(tableIdentifier, edaPanel);
@@ -175,7 +178,7 @@ export class EDAPanel {
             if (
                 !stateInfo.fromExisting ||
                 !stateInfo.state.table ||
-                !stateInfo.state.table!.columns.find((c) => !c[1].profiling)
+                !stateInfo.state.table!.columns.find((c) => c[1].profiling)
             ) {
                 const profiling = await EDAPanel.panelsMap
                     .get(tableIdentifier)!
