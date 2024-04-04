@@ -33,13 +33,13 @@ export class SafeDsCommentProvider extends DefaultCommentProvider {
     }
 }
 
-export const createMarkupContent = (documentation: string | undefined): MarkupContent | undefined => {
-    if (!documentation) {
+export const createMarkupContent = (value: string | undefined): MarkupContent | undefined => {
+    if (!value) {
         return undefined;
     }
 
     return {
         kind: 'markdown',
-        value: documentation,
+        value,
     };
 };
