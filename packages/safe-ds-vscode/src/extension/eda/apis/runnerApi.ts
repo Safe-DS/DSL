@@ -15,7 +15,12 @@ export class RunnerApi {
     baseDocument: LangiumDocument<AstNode> | undefined;
     placeholderCounter = 0;
 
-    constructor(services: SafeDsServices, pipelinePath: vscode.Uri, pipelineName: string, pipelineNode: ast.SdsPipeline) {
+    constructor(
+        services: SafeDsServices,
+        pipelinePath: vscode.Uri,
+        pipelineName: string,
+        pipelineNode: ast.SdsPipeline,
+    ) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
@@ -70,7 +75,7 @@ export class RunnerApi {
                 this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
                 this.services.runtime.Runner.removeMessageCallback(errorCallback, 'runtime_error');
                 reject(message.data);
-            }
+            };
             this.services.runtime.Runner.addMessageCallback(runtimeCallback, 'runtime_progress');
             this.services.runtime.Runner.addMessageCallback(errorCallback, 'runtime_error');
 
@@ -224,20 +229,16 @@ export class RunnerApi {
             if (column[1].type !== 'numerical') {
                 const newIDnessPlaceholderName = this.genPlaceholderName();
                 columnNameToPlaceholderIDnessNameMap.set(column[1].name, newIDnessPlaceholderName);
-                sdsStrings += this.sdsStringForIDnessByColumnName(
-                    column[1].name,
-                    table.name,
-                    newIDnessPlaceholderName,
-                );
+                sdsStrings += this.sdsStringForIDnessByColumnName(column[1].name, table.name, newIDnessPlaceholderName);
 
                 // Find unique values
                 // TODO reevaluate when image stuck problem fixed
                 let uniqueValues = new Set();
                 for (let j = 0; j < column[1].values.length; j++) {
                     uniqueValues.add(column[1].values[j]);
-                    if(uniqueValues.size > 10) {
+                    if (uniqueValues.size > 10) {
                         continue outer;
-                    };
+                    }
                 }
                 if (uniqueValues.size <= 3 || uniqueValues.size > 10) {
                     // Must match conidtions below that choose to display histogram

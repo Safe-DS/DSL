@@ -192,7 +192,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
 
                     // Find node of placeholder
                     let placeholderNode = findPlaceholderNode(document, range);
-                    
+
                     if (!placeholderNode) {
                         vscode.window.showErrorMessage('Internal error');
                         return;
@@ -516,4 +516,4 @@ const findPlaceholderNode = function (document: LangiumDocument<AstNode>, range:
         }
     }
     return placeholderNode;
-}
+};
