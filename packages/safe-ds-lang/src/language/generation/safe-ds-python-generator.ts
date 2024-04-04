@@ -1021,7 +1021,11 @@ export class SafeDsPythonGenerator {
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
             const classDeclaration = this.getOutermostContainerOfType(callable, isSdsClass)!;
-            const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!, classDeclaration.name);
+            const referenceImport = this.createImportDataForNode(
+                classDeclaration,
+                expression.receiver.member!,
+                classDeclaration.name,
+            );
             frame.addImport(referenceImport);
         }
         return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
@@ -1140,7 +1144,10 @@ export class SafeDsPythonGenerator {
         }${this.generateExpression(argument.value, frame)}`;
     }
 
-    private getOutermostContainerOfType<T extends AstNode>(node: AstNode | undefined, typePredicate: (n: AstNode) => n is T): T | undefined {
+    private getOutermostContainerOfType<T extends AstNode>(
+        node: AstNode | undefined,
+        typePredicate: (n: AstNode) => n is T,
+    ): T | undefined {
         let item = node;
         let lastValidItem = undefined;
         while (item) {
@@ -1152,7 +1159,11 @@ export class SafeDsPythonGenerator {
         return lastValidItem;
     }
 
-    private createImportDataForNode(declaration: SdsDeclaration, context: AstNode, refText: string): ImportData | undefined {
+    private createImportDataForNode(
+        declaration: SdsDeclaration,
+        context: AstNode,
+        refText: string,
+    ): ImportData | undefined {
         const sourceModule = <SdsModule>AstUtils.findRootNode(context);
         const targetModule = <SdsModule>AstUtils.findRootNode(declaration);
 
