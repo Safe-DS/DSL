@@ -669,14 +669,14 @@
     {#if !$currentState.table}
         <span>Loading ...</span>
     {:else}
-        <div
-            bind:this={fullHeadBackground}
-            class="fullHeadBackground"
-            style:top="{scrollTop}px"
-            style:height="{rowHeight * 2}px"
-        ></div>
         <div class="contentWrapper" style:height="{numRows * rowHeight}px">
             <table>
+                <div
+                    bind:this={fullHeadBackground}
+                    class="fullHeadBackground"
+                    style:top="{scrollTop}px"
+                    style:height="{rowHeight * 2}px"
+                ></div>
                 <!-- Table Headers, mainly Column name and first/last row for indices -->
                 <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
                     <tr class="headerRow" style:height="{rowHeight}px">
@@ -890,13 +890,13 @@
         left: 0;
         right: 0;
         background-color: var(--bg-dark);
+        overflow: visible;
     }
 
     .fullHeadBackground {
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
         width: 100%;
         background-color: white;
         z-index: 2;
@@ -907,6 +907,7 @@
         width: 100.1%; /* To prevent lagging on vert scroll */
         background-color: var(--bg-dark);
         overflow-x: scroll;
+        position: relative;
     }
 
     .headerRow {
