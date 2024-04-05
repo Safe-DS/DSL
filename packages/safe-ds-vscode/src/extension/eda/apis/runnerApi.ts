@@ -1,5 +1,5 @@
 import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
-import { SafeDsServices, ast, messages } from '@safe-ds/lang';
+import { SafeDsServices, ast, getPlaceholderByName, messages } from '@safe-ds/lang';
 import { LangiumDocument, AstNode } from 'langium';
 import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
@@ -12,6 +12,7 @@ export class RunnerApi {
     pipelinePath: vscode.Uri;
     pipelineName: string;
     pipelineNode: ast.SdsPipeline;
+    tablePlaceholder: string;
     baseDocument: LangiumDocument<AstNode> | undefined;
     placeholderCounter = 0;
 
@@ -20,11 +21,13 @@ export class RunnerApi {
         pipelinePath: vscode.Uri,
         pipelineName: string,
         pipelineNode: ast.SdsPipeline,
+        tablePlaceholder: string,
     ) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
         this.pipelineNode = pipelineNode;
+        this.tablePlaceholder = tablePlaceholder;
         getPipelineDocument(this.pipelinePath).then((doc) => {
             // Get here to avoid issues because of chanigng file
             // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
@@ -49,13 +52,32 @@ export class RunnerApi {
                 return;
             }
 
-            const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
-            const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
-            const newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
+            let newDocumentText;
+
+            const placeholderNode = getPlaceholderByName(this.pipelineNode.body, this.tablePlaceholder);
+            if (!placeholderNode || !placeholderNode.$cstNode) {
+                // If placeholder not found, add to the end of the pipeline
+                const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
+                const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
+                newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
+            } else {
+                // If placeholder found, add after the placeholder and ignore the rest of the pipeline
+                const placeholderEnd = placeholderNode.$cstNode.end;
+
+                // Find next "\n" after placeholder
+                let nextNewline = documentText.indexOf('\n', placeholderEnd);
+                if (nextNewline === -1) {
+                    reject('Could not find newline after placeholder');
+                }
+
+                const beforePipelineEnd = documentText.substring(0, nextNewline);
+                const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
+                newDocumentText = beforePipelineEnd + '\n' + addedLines + afterPipelineEnd;
+            }
 
             const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
-                this.pipelinePath,
+                this.pipelinePath.with({ path: 'test' }), // TODO find out what URI is for exactly with perm solution
             );
 
             const runtimeCallback = (message: messages.RuntimeProgressMessage) => {
