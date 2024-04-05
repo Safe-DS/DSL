@@ -5,14 +5,7 @@ import { CompletionItemTag, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
 import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import {
-    isSdsAnnotatedObject,
-    isSdsAttribute,
-    isSdsFunction,
-    isSdsNamedType,
-    isSdsReference,
-    isSdsSegment,
-} from '../generated/ast.js';
+import { isSdsAnnotatedObject, isSdsNamedType, isSdsReference } from '../generated/ast.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
 export class SafeDsCompletionProvider extends DefaultCompletionProvider {
@@ -72,22 +65,11 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
 
         return {
             nodeDescription,
-            detail: this.getDetails(node),
             documentation: this.getDocumentation(node),
             kind: this.nodeKindProvider.getCompletionItemKind(nodeDescription),
             tags: this.getTags(node),
             sortText: '0',
         };
-    }
-
-    private getDetails(node: AstNode | undefined): string | undefined {
-        if (isSdsAttribute(node)) {
-            return `${node.name}: ${this.typeComputer.computeType(node)}`;
-        } else if (isSdsFunction(node) || isSdsSegment(node)) {
-            return `${node.name}${this.typeComputer.computeType(node)?.toString()}`;
-        } else {
-            return undefined;
-        }
     }
 
     private getDocumentation(node: AstNode | undefined): MarkupContent | undefined {
