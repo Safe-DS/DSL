@@ -61,6 +61,18 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 expectedLabels: ['static', 'attr', 'class', 'enum', 'fun'],
             },
+
+            // Cross-references
+            {
+                testName: 'annotation call',
+                code: `
+                    annotation MyAnnotation
+
+                    @<|>
+                    class MyClass
+                `,
+                expectedLabels: ['MyAnnotation'],
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, expectedLabels, uri }) => {
