@@ -5,13 +5,13 @@ import { CompletionItemTag, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
 import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import { isSdsAnnotatedObject, isSdsNamedType, isSdsReference } from '../generated/ast.js';
-import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { isSdsAnnotatedObject, isSdsModule, isSdsNamedType, isSdsReference } from '../generated/ast.js';
+import { getPackageName } from '../helpers/nodeProperties.js';
+import { isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 
 export class SafeDsCompletionProvider extends DefaultCompletionProvider {
     private readonly builtinAnnotations: SafeDsAnnotations;
     private readonly documentationProvider: SafeDsDocumentationProvider;
-    private readonly typeComputer: SafeDsTypeComputer;
 
     readonly completionOptions = {
         triggerCharacters: ['.', '@'],
@@ -22,7 +22,6 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
 
         this.builtinAnnotations = service.builtins.Annotations;
         this.documentationProvider = service.documentation.DocumentationProvider;
-        this.typeComputer = service.typing.TypeComputer;
     }
 
     protected override getReferenceCandidates(
@@ -88,4 +87,28 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
             return undefined;
         }
     }
+
+    private illegalKeywordsInPipelineFile = new Set(['annotation', 'class', 'enum', 'fun', 'schema']);
+    private illegalKeywordsInStubFile = new Set(['pipeline', 'internal', 'private', 'segment']);
+
+    protected override filterKeyword(context: CompletionContext, keyword: Keyword): boolean {
+        // Filter out keywords that do not contain any word character
+        if (!/\p{L}/u.test(keyword.value)) {
+            return false;
+        }
+
+        if ((!context.node || isSdsModule(context.node)) && !getPackageName(context.node)) {
+            return keyword.value === 'package';
+        } else if (isSdsModule(context.node) && isInPipelineFile(context.node)) {
+            return !this.illegalKeywordsInPipelineFile.has(keyword.value);
+        } else if (isSdsModule(context.node) && isInStubFile(context.node)) {
+            return !this.illegalKeywordsInStubFile.has(keyword.value);
+        } else {
+            return true;
+        }
+    }
+}
+
+export interface Keyword {
+    value: string;
 }

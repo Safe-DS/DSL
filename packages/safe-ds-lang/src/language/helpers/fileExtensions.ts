@@ -38,17 +38,17 @@ export type SdSFileExtension = typeof PIPELINE_FILE_EXTENSION | typeof STUB_FILE
 /**
  * Returns whether the object is contained in a pipeline file.
  */
-export const isInPipelineFile = (node: AstNode) => isPipelineFile(AstUtils.getDocument(node));
+export const isInPipelineFile = (node: AstNode | undefined) => node && isPipelineFile(AstUtils.getDocument(node));
 
 /**
  * Returns whether the object is contained in a stub file.
  */
-export const isInStubFile = (node: AstNode) => isStubFile(AstUtils.getDocument(node));
+export const isInStubFile = (node: AstNode | undefined) => node && isStubFile(AstUtils.getDocument(node));
 
 /**
  * Returns whether the object is contained in a test file.
  */
-export const isInTestFile = (node: AstNode) => isTestFile(AstUtils.getDocument(node));
+export const isInTestFile = (node: AstNode | undefined) => node && isTestFile(AstUtils.getDocument(node));
 
 /**
  * Returns whether the resource represents a pipeline file.
