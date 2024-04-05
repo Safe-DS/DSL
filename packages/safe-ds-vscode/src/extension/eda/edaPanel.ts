@@ -40,7 +40,7 @@ export class EDAPanel {
         this.panel = panel;
         this.extensionUri = extensionUri;
         this.startPipelineExecutionId = startPipelineExecutionId;
-        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode);
+        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode, tableName);
         this.tableName = tableName;
 
         // Set the webview's initial html content
@@ -57,6 +57,7 @@ export class EDAPanel {
             if (updatedPanel.visible) {
                 this.column = updatedPanel.viewColumn;
             }
+            // TODO handle floating panels if at some point possible
         });
         this.disposables.push(this.viewStateChangeListener);
 
@@ -135,7 +136,7 @@ export class EDAPanel {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
             panel.startPipelineExecutionId = startPipelineExecutionId;
-            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode);
+            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode, tableName);
             panel.tableName = tableName;
             EDAPanel.panelsMap.set(tableIdentifier, panel);
 
