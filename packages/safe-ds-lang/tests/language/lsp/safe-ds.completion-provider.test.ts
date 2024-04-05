@@ -141,7 +141,7 @@ describe('SafeDsCompletionProvider', async () => {
                 code: `
                     class MyClass {
                         static attr a1: unknown
-                        static attr b2: unknown
+                        static fun b2()
                     }
 
                     pipeline myPipeline {
