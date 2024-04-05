@@ -5,7 +5,14 @@ import { CompletionItemTag, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
 import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import { isSdsAnnotatedObject, isSdsAttribute, isSdsFunction, isSdsSegment } from '../generated/ast.js';
+import {
+    isSdsAnnotatedObject,
+    isSdsAttribute,
+    isSdsFunction,
+    isSdsNamedType,
+    isSdsReference,
+    isSdsSegment,
+} from '../generated/ast.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 
 export class SafeDsCompletionProvider extends DefaultCompletionProvider {
@@ -25,11 +32,35 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
         refInfo: ReferenceInfo,
         context: CompletionContext,
     ): Stream<AstNodeDescription> {
-        // TODO filter by type (get the required type based on context, check whether the type matches)
-        //  context can be argument or operation
-        //  we have to consider, though that we might still the required type by accessing members of the type
-        // TODO also investigate why this does not work for member accesses
+        this.fixReferenceInfo(refInfo);
         return super.getReferenceCandidates(refInfo, context);
+    }
+
+    private fixReferenceInfo(refInfo: ReferenceInfo): void {
+        if (isSdsNamedType(refInfo.container) && refInfo.container.$containerProperty === 'declaration') {
+            const syntheticNode = refInfo.container.$container as AstNode;
+            if (isSdsNamedType(syntheticNode) && syntheticNode.$containerProperty === 'member') {
+                refInfo.container = {
+                    ...refInfo.container,
+                    $container: syntheticNode.$container,
+                    $containerProperty: 'member',
+                };
+            } else {
+                refInfo.container = {
+                    ...refInfo.container,
+                    $containerProperty: 'member',
+                };
+            }
+        } else if (isSdsReference(refInfo.container) && refInfo.container.$containerProperty === 'member') {
+            const syntheticNode = refInfo.container.$container as AstNode;
+            if (isSdsReference(syntheticNode) && syntheticNode.$containerProperty === 'member') {
+                refInfo.container = {
+                    ...refInfo.container,
+                    $container: syntheticNode.$container,
+                    $containerProperty: 'member',
+                };
+            }
+        }
     }
 
     protected override createReferenceCompletionItem(nodeDescription: AstNodeDescription): CompletionValueItem {
