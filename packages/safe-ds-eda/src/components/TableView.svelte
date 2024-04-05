@@ -11,7 +11,7 @@
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
-    } from '../../types/state.ts';
+    } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import { derived, writable, get } from 'svelte/store';
     import ColumnFilters from './columnFilters/ColumnFilters.svelte';
@@ -27,6 +27,7 @@
     let maxProfilingItemCount = 0;
     let savedColumnWidths = writable(new Map<string, number>());
 
+    //#region Startup
     $: {
         if ($currentState.table) {
             minTableWidth = 0;
@@ -78,15 +79,60 @@
 
         lastHeight = tableContainer.clientHeight; // For recalculateVisibleRowCount
     }
+    //#endregion
 
+    //#region Cell interaction
     const handleMainCellClick = function (): void {
         if (!$preventClicks) {
             selectedColumnIndexes = [];
             selectedRowIndexes = [];
         }
     };
+    //#endregion
 
-    // --- Column resizing ---
+    //#region Column interaction
+    let holdTimeout: NodeJS.Timeout;
+    let isClick = true; // Flag to distinguish between click and hold
+    let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
+
+    const handleColumnInteractionStart = function (event: MouseEvent, columnIndex: number): void {
+        // Check if the left or right mouse button was pressed
+        if (event.button !== 0 && event.button !== 2) return;
+
+        if (event.button === 2) {
+            // Right click
+            handleColumnRightClick(event, columnIndex);
+            return;
+        }
+
+        // Right click still allowed to happen
+        if ($preventClicks) {
+            return;
+        }
+
+        isClick = true; // Assume it's a click initially
+
+        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex), 300); // milliseconds delay for hold detection
+
+        // Define the handler function
+        currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
+            handleColumnMouseUp(mouseUpEvent, columnIndex);
+        };
+
+        // Add mouseup listener to clear the timeout if the button is released
+        document.addEventListener('mouseup', currentMouseUpHandler);
+    };
+
+    const handleColumnMouseUp = function (event: MouseEvent, columnIndex: number): void {
+        clearTimeout(holdTimeout);
+        if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
+
+        if (isClick) {
+            handleColumnClick(event, columnIndex);
+        }
+    };
+
+    //#region Column resizing
     let isResizeDragging = false;
     let startWidth: number;
     let startX: number;
@@ -125,18 +171,26 @@
         document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
     };
+    //#endregion
 
-    // --- Column reordering ---
+    //#region Column reordering
     let isReorderDragging = false;
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumnName: string | null = null;
     let reorderPrototype: HTMLElement;
     let savedColumnWidthBeforeReorder = 0;
-    let holdTimeout: NodeJS.Timeout;
-    let isClick = true; // Flag to distinguish between click and hold
 
-    let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
+    const handleReorderDragStart = function (columnIndex: number): void {
+        isClick = false; // If timeout completes, it's a hold
+        document.addEventListener('mouseup', handleReorderDragEnd);
+        savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
+        draggedColumnName = headerElements[columnIndex].innerText.trim();
+        isReorderDragging = true;
+        dragStartIndex = columnIndex;
+        dragCurrentIndex = columnIndex;
+        selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
+    };
 
     const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
         if (isReorderDragging && dragStartIndex !== null && draggedColumnName) {
@@ -149,53 +203,6 @@
     };
 
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
-
-    const handleColumnInteractionStart = function (event: MouseEvent, columnIndex: number): void {
-        // Check if the left or right mouse button was pressed
-        if (event.button !== 0 && event.button !== 2) return;
-
-        if (event.button === 2) {
-            // Right click
-            handleColumnRightClick(event, columnIndex);
-            return;
-        }
-
-        // Right click still allowed to happen
-        if ($preventClicks) {
-            return;
-        }
-
-        isClick = true; // Assume it's a click initially
-
-        holdTimeout = setTimeout(() => {
-            // Reorder drag start
-            isClick = false; // If timeout completes, it's a hold
-            document.addEventListener('mouseup', handleReorderDragEnd);
-            savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
-            draggedColumnName = headerElements[columnIndex].innerText.trim();
-            isReorderDragging = true;
-            dragStartIndex = columnIndex;
-            dragCurrentIndex = columnIndex;
-            selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
-        }, 300); // milliseconds delay for hold detection
-
-        // Define the handler function
-        currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
-            handleColumnMouseUp(mouseUpEvent, columnIndex);
-        };
-
-        // Add mouseup listener to clear the timeout if the button is released
-        document.addEventListener('mouseup', currentMouseUpHandler);
-    };
-
-    const handleColumnMouseUp = function (event: MouseEvent, columnIndex: number): void {
-        clearTimeout(holdTimeout);
-        if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
-
-        if (isClick) {
-            handleColumnClick(event, columnIndex);
-        }
-    };
 
     const handleReorderDragEnd = function (): void {
         if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
@@ -229,8 +236,9 @@
             dragCurrentIndex = null;
         }
     };
+    //#endregion
 
-    // --- Column selecting ---
+    //#region Column selecting
     let selectedColumnIndexes: number[] = [];
 
     const handleColumnClick = function (event: MouseEvent, columnIndex: number): void {
@@ -295,8 +303,10 @@
         // Replace the current selection with a new array to trigger reactivity
         selectedColumnIndexes = [columnIndex];
     };
+    //#endregion
+    //#endregion // Column interaction
 
-    // --- Row selecting ---
+    //#region Row selecting
     let selectedRowIndexes: number[] = [];
 
     const handleRowClick = function (event: MouseEvent, rowIndex: number): void {
@@ -334,8 +344,9 @@
             }
         }
     };
+    //#endregion
 
-    // --- Scroll loading ---
+    //#region Scroll loading
     let tableContainer: HTMLElement; // Reference to the table container
     const rowHeight = 33; // Adjust based on your row height
     const buffer = 40; // Number of rows to render outside the viewport
@@ -370,8 +381,9 @@
     };
 
     const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
+    //#endregion
 
-    // --- Right clicks ---
+    //#region Right clicks
     let currentContextMenu: HTMLElement | null = null;
 
     // Column header right click
@@ -517,8 +529,9 @@
         });
         originalCursorStyles.clear();
     };
+    //#endregion // Right clicks
 
-    // --- Profiling ---
+    //#region Profiling ---
     let fullHeadBackground: HTMLElement;
     let profilingInfo: HTMLElement;
 
@@ -629,8 +642,9 @@
 
         return possibleColumnFilters;
     };
+    //#endregion
 
-    // --- Lifecycle ---
+    //#region Lifecycle
     let interval: NodeJS.Timeout;
 
     onMount(() => {
@@ -648,6 +662,7 @@
             clearInterval(interval);
         };
     });
+    //#endregion
 </script>
 
 <div bind:this={tableContainer} class="tableContainer">

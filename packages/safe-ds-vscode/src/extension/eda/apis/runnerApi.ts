@@ -33,6 +33,7 @@ export class RunnerApi {
         });
     }
 
+    //#region Pipeline execution
     private async addToAndExecutePipeline(pipelineExecutionId: string, addedLines: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (!this.baseDocument) {
@@ -56,7 +57,6 @@ export class RunnerApi {
                 newDocumentText,
                 this.pipelinePath,
             );
-            await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
 
             const runtimeCallback = (message: messages.RuntimeProgressMessage) => {
                 if (message.id !== pipelineExecutionId) {
@@ -82,11 +82,13 @@ export class RunnerApi {
             setTimeout(() => {
                 reject('Pipeline execution timed out');
             }, 3000000);
+
+            await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
         });
     }
+    //#endregion
 
-    // --- SDS code generation ---
-
+    //#region SDS code generation
     private sdsStringForMissingValueRatioByColumnName(
         columnName: string,
         tablePlaceholder: string,
@@ -122,9 +124,9 @@ export class RunnerApi {
             '").plotHistogram(); \n'
         );
     }
+    //#endregion
 
-    // --- Placeholder handling ---
-
+    //#region Placeholder handling
     private genPlaceholderName(): string {
         return CODEGEN_PREFIX + this.placeholderCounter++;
     }
@@ -155,8 +157,9 @@ export class RunnerApi {
         });
     }
 
-    // --- Public API ---
+    //#region Public API
 
+    //#region Table fetching
     public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
@@ -200,7 +203,9 @@ export class RunnerApi {
             return undefined;
         }
     }
+    //#endregion
 
+    //#region Profiling
     public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
         const columns = table.columns;
 
@@ -413,4 +418,6 @@ export class RunnerApi {
 
         return profiling;
     }
+    //#endregion
+    //#endregion // Public API
 }

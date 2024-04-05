@@ -26,6 +26,7 @@ export class EDAPanel {
     private startPipelineExecutionId: string;
     private runnerApi: RunnerApi;
 
+    //#region Creation
     private constructor(
         panel: vscode.WebviewPanel,
         extensionUri: vscode.Uri,
@@ -82,7 +83,10 @@ export class EDAPanel {
                     if (!data.value) {
                         return;
                     }
-                    const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as [State, number][];
+                    const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as [
+                        State,
+                        number,
+                    ][];
 
                     let stateExists = false;
                     let newWebviewState: [State, number][] = existingStates.map((s) => {
@@ -195,7 +199,9 @@ export class EDAPanel {
             }
         }
     }
+    //#endregion
 
+    //#region Disposal
     public static kill(tableIdentifier: string) {
         printOutputMessage('kill ' + tableIdentifier);
         let panel = EDAPanel.panelsMap.get(tableIdentifier);
@@ -219,42 +225,21 @@ export class EDAPanel {
             }
         }
     }
+    //#endregion
 
-    private async _update() {
-        const webview = this.panel.webview;
-        this.panel.webview.html = await this._getHtmlForWebview(webview);
-        this.updateHtmlDone = true;
-    }
-
-    private waitForUpdateHtmlDone = (timeoutMs: number): Promise<void> => {
-        return new Promise((resolve, reject) => {
-            const startTime = Date.now();
-            // Function to check updateHtmlDone status
-            const check = () => {
-                if (this.updateHtmlDone) {
-                    resolve();
-                } else if (Date.now() - startTime > timeoutMs) {
-                    reject(new Error('Timeout waiting for updateHtmlDone'));
-                } else {
-                    setTimeout(check, 100); // Check every 100ms
-                }
-            };
-            check();
-        });
-    };
-
+    //#region State handling
     private findCurrentState(): State | undefined {
         const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as [State, number][];
         let foundState: State | undefined;
-        for(const state of existingStates) {
-            if(state[1] < Date.now() - 1000 * 60 * 60 * 24 * 7) {
+        for (const state of existingStates) {
+            if (state[1] < Date.now() - 1000 * 60 * 60 * 24 * 7) {
                 // Remove state if older than 7 days
                 // TODO implement checking if placeholder is still in pipeline
                 existingStates.splice(existingStates.indexOf(state), 1);
                 // Save the updated state
                 EDAPanel.context.globalState.update('webviewState', existingStates);
                 printOutputMessage('Removed state older than 7 days.');
-            } else if(state[0].tableIdentifier === this.tableIdentifier) {
+            } else if (state[0].tableIdentifier === this.tableIdentifier) {
                 foundState = state[0];
             }
         }
@@ -288,6 +273,31 @@ export class EDAPanel {
             }
         }
     }
+    //#endregion
+
+    //#region Html updating
+    private async _update() {
+        const webview = this.panel.webview;
+        this.panel.webview.html = await this._getHtmlForWebview(webview);
+        this.updateHtmlDone = true;
+    }
+
+    private waitForUpdateHtmlDone = (timeoutMs: number): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            const startTime = Date.now();
+            // Function to check updateHtmlDone status
+            const check = () => {
+                if (this.updateHtmlDone) {
+                    resolve();
+                } else if (Date.now() - startTime > timeoutMs) {
+                    reject(new Error('Timeout waiting for updateHtmlDone'));
+                } else {
+                    setTimeout(check, 100); // Check every 100ms
+                }
+            };
+            check();
+        });
+    };
 
     private async _getHtmlForWebview(webview: vscode.Webview) {
         // The uri we use to load this script in the webview
@@ -344,4 +354,5 @@ export class EDAPanel {
         }
         return text;
     }
+    //#endregion
 }
