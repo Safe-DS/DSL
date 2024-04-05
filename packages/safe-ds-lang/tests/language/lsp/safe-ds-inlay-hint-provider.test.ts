@@ -11,41 +11,11 @@ const inlayHintProvider = services.lsp.InlayHintProvider!;
 const parse = parseHelper(services);
 
 describe('SafeDsInlayHintProvider', async () => {
-    const testCases: InlayHintProviderTest[] = [
-        {
-            testName: 'resolved positional argument',
-            code: `
-                fun f(p: Int)
-
-                pipeline myPipeline {
-                    // $TEST$ before "p = "
-                    f(»«1);
-                }
-            `,
-        },
-        {
-            testName: 'unresolved positional argument',
-            code: `
-                fun f()
-
-                pipeline myPipeline {
-                    f(1);
-                }
-            `,
-        },
-        {
-            testName: 'named argument',
-            code: `
-                fun f(p: Int)
-
-                pipeline myPipeline {
-                    f(p = 1);
-                }
-            `,
-        },
-        {
-            testName: 'block lambda result',
-            code: `
+    describe('assignee types', () => {
+        const testCases: InlayHintProviderTest[] = [
+            {
+                testName: 'block lambda result',
+                code: `
                 pipeline myPipeline {
                     () {
                         // $TEST$ after ": literal<1>"
@@ -53,62 +23,45 @@ describe('SafeDsInlayHintProvider', async () => {
                     };
                 }
             `,
-        },
-        {
-            testName: 'placeholder',
-            code: `
+            },
+            {
+                testName: 'placeholder',
+                code: `
                 pipeline myPipeline {
                     // $TEST$ after ": literal<1>"
                     val x»« = 1;
                 }
             `,
-        },
-        {
-            testName: 'wildcard',
-            code: `
+            },
+            {
+                testName: 'wildcard',
+                code: `
                 pipeline myPipeline {
                     _ = 1;
                 }
             `,
-        },
-        {
-            testName: 'yield',
-            code: `
+            },
+            {
+                testName: 'yield',
+                code: `
                 segment s() -> r: Int {
                     // $TEST$ after ": literal<1>"
                     yield r»« = 1;
                 }
             `,
-        },
-    ];
-    it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
-        const actualInlayHints = await getActualSimpleInlayHints(code);
-        const expectedInlayHints = getExpectedSimpleInlayHints(code);
+            },
+        ];
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
+            const actualInlayHints = await getActualSimpleInlayHints(code);
+            const expectedInlayHints = getExpectedSimpleInlayHints(code);
 
-        expect(actualInlayHints).toStrictEqual(expectedInlayHints);
-    });
+            expect(actualInlayHints).toStrictEqual(expectedInlayHints);
+        });
 
-    it('should set the documentation of parameters as tooltip', async () => {
-        const code = `
-            /**
-             * @param p Lorem ipsum.
-             */
-            fun f(p: Int)
-
-            pipeline myPipeline {
-                f(1);
-            }
-        `;
-        const actualInlayHints = await getActualInlayHints(code);
-        const firstInlayHint = actualInlayHints?.[0];
-
-        expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
-    });
-
-    it.each([
-        {
-            testName: 'class',
-            code: `
+        it.each([
+            {
+                testName: 'class',
+                code: `
                 /**
                  * Lorem ipsum.
                  */
@@ -118,10 +71,10 @@ describe('SafeDsInlayHintProvider', async () => {
                     val a = C();
                 }
             `,
-        },
-        {
-            testName: 'enum',
-            code: `
+            },
+            {
+                testName: 'enum',
+                code: `
                 /**
                  * Lorem ipsum.
                  */
@@ -133,10 +86,10 @@ describe('SafeDsInlayHintProvider', async () => {
                     val a = f();
                 }
             `,
-        },
-        {
-            testName: 'enum variant',
-            code: `
+            },
+            {
+                testName: 'enum variant',
+                code: `
                 enum E {
                     /**
                      * Lorem ipsum.
@@ -148,12 +101,212 @@ describe('SafeDsInlayHintProvider', async () => {
                     val a = E.V;
                 }
             `,
-        },
-    ])('should set the documentation of named types as tooltip', async ({ code }) => {
-        const actualInlayHints = await getActualInlayHints(code);
-        const firstInlayHint = actualInlayHints?.[0];
+            },
+        ])('should set the documentation of named types as tooltip ($testName)', async ({ code }) => {
+            const actualInlayHints = await getActualInlayHints(code);
+            const firstInlayHint = actualInlayHints?.[0];
 
-        expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
+            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
+        });
+    });
+
+    describe('lambda parameter types', () => {
+        const testCases: InlayHintProviderTest[] = [
+            {
+                testName: 'standalone block lambda without manifest types',
+                code: `
+                pipeline myPipeline {
+                    (p) {};
+                }
+            `,
+            },
+            {
+                testName: 'standalone block lambda with manifest types',
+                code: `
+                pipeline myPipeline {
+                    (p: Int) {};
+                }
+            `,
+            },
+            {
+                testName: 'standalone expression lambda without manifest types',
+                code: `
+                pipeline myPipeline {
+                    (p) -> 1;
+                }
+            `,
+            },
+            {
+                testName: 'standalone expression lambda with manifest types',
+                code: `
+                pipeline myPipeline {
+                    (p: Int) -> 1;
+                }
+            `,
+            },
+            {
+                testName: 'assigned block lambda without manifest types',
+                code: `
+                fun f(callback: (p: Int) -> ())
+
+                pipeline myPipeline {
+                    // $TEST$ after ": Int"
+                    f(callback = (p»«) {});
+                }
+            `,
+            },
+            {
+                testName: 'assigned block lambda with manifest types',
+                code: `
+                fun f(callback: (p: Int) -> ())
+
+                pipeline myPipeline {
+                    f(callback = (p: Int) {});
+                }
+            `,
+            },
+            {
+                testName: 'assigned expression lambda without manifest types',
+                code: `
+                fun f(callback: (p: Int) -> (r: Int))
+
+                pipeline myPipeline {
+                    // $TEST$ after ": Int"
+                    f(callback = (p»«) -> 1);
+                }
+            `,
+            },
+            {
+                testName: 'assigned expression lambda with manifest types',
+                code: `
+                fun f(callback: (p: Int) -> (r: Int))
+
+                pipeline myPipeline {
+                    f(callback = (p: Int) -> 1);
+                }
+            `,
+            },
+        ];
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
+            const actualInlayHints = await getActualSimpleInlayHints(code);
+            const expectedInlayHints = getExpectedSimpleInlayHints(code);
+
+            expect(actualInlayHints).toStrictEqual(expectedInlayHints);
+        });
+
+        it.each([
+            {
+                testName: 'class',
+                code: `
+                /**
+                 * Lorem ipsum.
+                 */
+                class C()
+
+                fun f(callback: (p: C) -> ())
+
+                pipeline myPipeline {
+                    f(callback = (p) {});
+                }
+            `,
+            },
+            {
+                testName: 'enum',
+                code: `
+                /**
+                 * Lorem ipsum.
+                 */
+                enum E
+
+                fun f(callback: (p: E) -> ())
+
+                pipeline myPipeline {
+                    f(callback = (p) {});
+                }
+            `,
+            },
+            {
+                testName: 'enum variant',
+                code: `
+                enum E {
+                    /**
+                     * Lorem ipsum.
+                     */
+                    V
+                }
+
+                fun f(callback: (p: E.V) -> ())
+
+                pipeline myPipeline {
+                    f(callback = (p) {});
+                }
+            `,
+            },
+        ])('should set the documentation of named types as tooltip ($testName)', async ({ code }) => {
+            const actualInlayHints = await getActualInlayHints(code);
+            const firstInlayHint = actualInlayHints?.[0];
+
+            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
+        });
+    });
+
+    describe('parameter names', () => {
+        const testCases: InlayHintProviderTest[] = [
+            {
+                testName: 'resolved positional argument',
+                code: `
+                fun f(p: Int)
+
+                pipeline myPipeline {
+                    // $TEST$ before "p = "
+                    f(»«1);
+                }
+            `,
+            },
+            {
+                testName: 'unresolved positional argument',
+                code: `
+                fun f()
+
+                pipeline myPipeline {
+                    f(1);
+                }
+            `,
+            },
+            {
+                testName: 'named argument',
+                code: `
+                fun f(p: Int)
+
+                pipeline myPipeline {
+                    f(p = 1);
+                }
+            `,
+            },
+        ];
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
+            const actualInlayHints = await getActualSimpleInlayHints(code);
+            const expectedInlayHints = getExpectedSimpleInlayHints(code);
+
+            expect(actualInlayHints).toStrictEqual(expectedInlayHints);
+        });
+
+        it('should set the documentation of parameters as tooltip', async () => {
+            const code = `
+            /**
+             * @param p Lorem ipsum.
+             */
+            fun f(p: Int)
+
+            pipeline myPipeline {
+                f(1);
+            }
+        `;
+            const actualInlayHints = await getActualInlayHints(code);
+            const firstInlayHint = actualInlayHints?.[0];
+
+            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
+        });
     });
 });
 

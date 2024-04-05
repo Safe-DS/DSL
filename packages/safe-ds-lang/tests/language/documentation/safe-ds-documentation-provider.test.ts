@@ -360,7 +360,7 @@ describe('SafeDsDocumentationProvider', () => {
                 testName: 'link (instance attribute)',
                 code: `
                     /**
-                     * {@link MyClass#myAttribute}
+                     * {@link MyClass.myAttribute}
                      */
                     fun myFunction1()
 
@@ -369,7 +369,7 @@ describe('SafeDsDocumentationProvider', () => {
                     }
                 `,
                 predicate: isSdsFunction,
-                expectedDocumentation: `[MyClass#myAttribute](`,
+                expectedDocumentation: `[MyClass.myAttribute](`,
             },
             {
                 testName: 'link (static attribute)',
@@ -390,7 +390,7 @@ describe('SafeDsDocumentationProvider', () => {
                 testName: 'link (instance method)',
                 code: `
                     /**
-                     * {@link MyClass#myMethod}
+                     * {@link MyClass.myMethod}
                      */
                     fun myFunction1()
 
@@ -399,7 +399,7 @@ describe('SafeDsDocumentationProvider', () => {
                     }
                 `,
                 predicate: isSdsFunction,
-                expectedDocumentation: `[MyClass#myMethod](`,
+                expectedDocumentation: `[MyClass.myMethod](`,
             },
             {
                 testName: 'link (nested class)',
@@ -450,7 +450,7 @@ describe('SafeDsDocumentationProvider', () => {
                 testName: 'link (long chain)',
                 code: `
                     /**
-                     * {@link MyClass.NestedClass#myMethod}
+                     * {@link MyClass.NestedClass.myMethod}
                      */
                     fun myFunction1()
 
@@ -461,7 +461,7 @@ describe('SafeDsDocumentationProvider', () => {
                     }
                 `,
                 predicate: isSdsFunction,
-                expectedDocumentation: `[MyClass.NestedClass#myMethod](`,
+                expectedDocumentation: `[MyClass.NestedClass.myMethod](`,
             },
             {
                 testName: 'link (unresolved global)',
@@ -473,17 +473,6 @@ describe('SafeDsDocumentationProvider', () => {
                 `,
                 predicate: isSdsFunction,
                 expectedDocumentation: `myFunction2`,
-            },
-            {
-                testName: 'link (wrong container for instance)',
-                code: `
-                    /**
-                     * {@link myFunction1#test}
-                     */
-                    fun myFunction1()
-                `,
-                predicate: isSdsFunction,
-                expectedDocumentation: `myFunction1#test`,
             },
             {
                 testName: 'link (wrong container for static)',

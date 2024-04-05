@@ -38,7 +38,6 @@ import {
     getParameters,
     getResults,
     getTypeParameters,
-    isStatic,
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
@@ -224,11 +223,7 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
         accept,
     );
 
-    const instanceMembers = getClassMembers(node).filter((it) => !isStatic(it));
-    namesMustBeUnique(instanceMembers, (name) => `An instance member with name '${name}' exists already.`, accept);
-
-    const staticMembers = getClassMembers(node).filter(isStatic);
-    namesMustBeUnique(staticMembers, (name) => `A static member with name '${name}' exists already.`, accept);
+    namesMustBeUnique(getClassMembers(node), (name) => `A class member with name '${name}' exists already.`, accept);
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
