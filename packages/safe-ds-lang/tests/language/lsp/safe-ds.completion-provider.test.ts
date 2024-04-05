@@ -13,6 +13,7 @@ describe('SafeDsCompletionProvider', async () => {
                 testName: 'empty',
                 code: '<|>',
                 expectedLabels: ['package'],
+                comparison: 'equal',
             },
             {
                 testName: 'after package (sdspipe)',
@@ -22,6 +23,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test1.sdspipe`,
                 expectedLabels: ['from', 'pipeline', 'internal', 'private', 'segment'],
+                comparison: 'equal',
             },
             {
                 testName: 'after package (sdsstub)',
@@ -31,6 +33,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test2.sdsstub`,
                 expectedLabels: ['from', 'annotation', 'class', 'enum', 'fun', 'schema'],
+                comparison: 'equal',
             },
             {
                 testName: 'after package (sdstest)',
@@ -51,6 +54,7 @@ describe('SafeDsCompletionProvider', async () => {
                     'private',
                     'segment',
                 ],
+                comparison: 'equal',
             },
             {
                 testName: 'in class',
@@ -60,6 +64,7 @@ describe('SafeDsCompletionProvider', async () => {
                     }
                 `,
                 expectedLabels: ['static', 'attr', 'class', 'enum', 'fun'],
+                comparison: 'equal',
             },
 
             // Cross-references
@@ -72,10 +77,31 @@ describe('SafeDsCompletionProvider', async () => {
                     class MyClass
                 `,
                 expectedLabels: ['MyAnnotation'],
+                comparison: 'equal',
+            },
+            {
+                testName: 'arguments',
+                code: `
+                    fun f(p: unknown)
+
+                    pipeline myPipeline {
+                        f(<|>
+                    }
+                `,
+                expectedLabels: ['p'],
+            },
+            {
+                testName: 'yield',
+                code: `
+                    segment mySegment() -> (result: unknown) {
+                        yield <|>
+                    }
+                `,
+                expectedLabels: ['result'],
             },
         ];
 
-        it.each(testCases)('$testName', async ({ code, expectedLabels, uri }) => {
+        it.each(testCases)('$testName', async ({ code, uri, expectedLabels, comparison = 'superset' }) => {
             await expectCompletion(services)({
                 text: code,
                 index: 0,
@@ -84,7 +110,12 @@ describe('SafeDsCompletionProvider', async () => {
                 },
                 assert(completion) {
                     const labels = completion.items.map((item) => item.label);
-                    expect(labels).toStrictEqual(expectedLabels);
+
+                    if (comparison === 'equal') {
+                        expect(labels).toStrictEqual(expectedLabels);
+                    } else {
+                        expect(labels).to.containSubset(expectedLabels);
+                    }
                 },
                 disposeAfterCheck: true,
             });
@@ -115,4 +146,10 @@ interface CompletionTest {
      * The expected completion labels.
      */
     expectedLabels: string[];
+
+    /**
+     * If `equal`, the actual labels must be equal to the expected labels. If `superset`, the actual labels must be a
+     * superset of the expected labels.
+     */
+    comparison?: 'equal' | 'superset';
 }
