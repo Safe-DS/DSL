@@ -20,6 +20,10 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
     private readonly documentationProvider: SafeDsDocumentationProvider;
     private readonly typeComputer: SafeDsTypeComputer;
 
+    readonly completionOptions = {
+        triggerCharacters: ['.', '@'],
+    };
+
     constructor(service: SafeDsServices) {
         super(service);
 
