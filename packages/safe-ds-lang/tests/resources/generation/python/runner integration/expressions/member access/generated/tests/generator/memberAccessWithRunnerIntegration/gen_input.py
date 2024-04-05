@@ -1,6 +1,7 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
+from safeds.data.image.containers import Image
 from safeds.data.tabular.containers import Column, Table
 from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, factoryNested, g, h, Outer
 from typing import Any, TypeVar
@@ -34,7 +35,16 @@ def test():
     safeds_runner.save_placeholder('v', v)
     d = safeds_runner.memoized_call("safeds.data.tabular.containers.Column.plot_histogram", Column.plot_histogram, [v], [])
     safeds_runner.save_placeholder('d', d)
+    p = safeds_runner.memoized_call("safeds.data.tabular.containers.Column.plot_histogram", Column.plot_histogram, [safeds_runner.memoized_call("safeds.data.tabular.containers.Table.get_column", Table.get_column, [a, 'b'], [])], [])
+    safeds_runner.save_placeholder('p', p)
+    r = safeds_runner.memoized_call("safeds.data.image.containers.Image.flip_vertically", Image.flip_vertically, [safeds_runner.memoized_call("safeds.data.tabular.containers.Column.plot_histogram", Column.plot_histogram, [safeds_runner.memoized_call("safeds.data.tabular.containers.Table.get_column", Table.get_column, [a, 'b'], [])], [])], [])
+    safeds_runner.save_placeholder('r', r)
+    q = safeds_runner.memoized_call("safeds.data.image.containers.Image.adjust_contrast", Image.adjust_contrast, [safeds_runner.memoized_call("safeds.data.image.containers.Image.flip_vertically", Image.flip_vertically, [safeds_runner.memoized_call("safeds.data.tabular.containers.Column.plot_histogram", Column.plot_histogram, [safeds_runner.memoized_call("safeds.data.tabular.containers.Table.get_column", Table.get_column, [a, 'b'], [])], [])], []), 1.2], [])
+    safeds_runner.save_placeholder('q', q)
     f(d)
+    f(p)
+    f(r)
+    f(q)
     f(safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.f", Outer.Nested.f, [], []))
     nestedInstance = safeds_runner.memoized_call("tests.generator.memberAccessWithRunnerIntegration.factoryNested", factoryNested, [], [])
     safeds_runner.save_placeholder('nestedInstance', nestedInstance)
