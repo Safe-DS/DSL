@@ -9,20 +9,38 @@ export class SafeDsSettingsProvider {
         this.configurationProvider = services.shared.workspace.ConfigurationProvider;
     }
 
+    async shouldShowAssigneeTypeInlayHints(): Promise<boolean> {
+        return (await this.getInlayHintsSettings()).assigneeTypes?.enabled ?? true;
+    }
+
+    async shouldShowLambdaParameterTypeInlayHints(): Promise<boolean> {
+        return (await this.getInlayHintsSettings()).lambdaParameterTypes?.enabled ?? true;
+    }
+
+    async shouldShowParameterNameInlayHints(): Promise<boolean> {
+        return (await this.getInlayHintsSettings()).parameterNames?.enabled ?? true;
+    }
+
+    private async getInlayHintsSettings(): Promise<Partial<InlayHintsSettings>> {
+        return (
+            (await this.configurationProvider.getConfiguration(SafeDsLanguageMetaData.languageId, 'inlayHints')) ?? {}
+        );
+    }
+
     async shouldValidateCodeStyle(): Promise<boolean> {
-        return (await this.getValidationSettings()).codeStyle ?? true;
+        return (await this.getValidationSettings()).codeStyle?.enabled ?? true;
     }
 
-    async shouldValidateExperimentalLanguageFeature(): Promise<boolean> {
-        return (await this.getValidationSettings()).experimentalLanguageFeature ?? true;
+    async shouldValidateExperimentalLanguageFeatures(): Promise<boolean> {
+        return (await this.getValidationSettings()).experimentalLanguageFeatures?.enabled ?? true;
     }
 
-    async shouldValidateExperimentalLibraryElement(): Promise<boolean> {
-        return (await this.getValidationSettings()).experimentalLibraryElement ?? true;
+    async shouldValidateExperimentalLibraryElements(): Promise<boolean> {
+        return (await this.getValidationSettings()).experimentalLibraryElements?.enabled ?? true;
     }
 
     async shouldValidateNameConvention(): Promise<boolean> {
-        return (await this.getValidationSettings()).nameConvention ?? true;
+        return (await this.getValidationSettings()).nameConvention?.enabled ?? true;
     }
 
     private async getValidationSettings(): Promise<Partial<ValidationSettings>> {
@@ -32,9 +50,29 @@ export class SafeDsSettingsProvider {
     }
 }
 
+interface InlayHintsSettings {
+    assigneeTypes: {
+        enabled: boolean;
+    };
+    lambdaParameterTypes: {
+        enabled: boolean;
+    };
+    parameterNames: {
+        enabled: boolean;
+    };
+}
+
 interface ValidationSettings {
-    codeStyle: boolean;
-    experimentalLanguageFeature: boolean;
-    experimentalLibraryElement: boolean;
-    nameConvention: boolean;
+    codeStyle: {
+        enabled: boolean;
+    };
+    experimentalLanguageFeatures: {
+        enabled: boolean;
+    };
+    experimentalLibraryElements: {
+        enabled: boolean;
+    };
+    nameConvention: {
+        enabled: boolean;
+    };
 }
