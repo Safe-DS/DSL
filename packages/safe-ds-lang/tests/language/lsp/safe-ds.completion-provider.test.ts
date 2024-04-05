@@ -2,6 +2,7 @@ import { createSafeDsServices } from '../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import { expectCompletion } from 'langium/test';
 import { describe, expect, it } from 'vitest';
+import { CompletionItemTag } from 'vscode-languageserver';
 
 const services = (await createSafeDsServices(NodeFileSystem, { omitBuiltins: true })).SafeDs;
 
@@ -12,8 +13,9 @@ describe('SafeDsCompletionProvider', async () => {
             {
                 testName: 'empty',
                 code: '<|>',
-                expectedLabels: ['package'],
-                comparison: 'equal',
+                expectedLabels: {
+                    shouldEqual: ['package'],
+                },
             },
             {
                 testName: 'after package (sdspipe)',
@@ -22,8 +24,9 @@ describe('SafeDsCompletionProvider', async () => {
                     <|>
                 `,
                 uri: `file:///test1.sdspipe`,
-                expectedLabels: ['from', 'pipeline', 'internal', 'private', 'segment'],
-                comparison: 'equal',
+                expectedLabels: {
+                    shouldEqual: ['from', 'pipeline', 'internal', 'private', 'segment'],
+                },
             },
             {
                 testName: 'after package (sdsstub)',
@@ -32,8 +35,9 @@ describe('SafeDsCompletionProvider', async () => {
                     <|>
                 `,
                 uri: `file:///test2.sdsstub`,
-                expectedLabels: ['from', 'annotation', 'class', 'enum', 'fun', 'schema'],
-                comparison: 'equal',
+                expectedLabels: {
+                    shouldEqual: ['from', 'annotation', 'class', 'enum', 'fun', 'schema'],
+                },
             },
             {
                 testName: 'after package (sdstest)',
@@ -42,66 +46,151 @@ describe('SafeDsCompletionProvider', async () => {
                     <|>
                 `,
                 uri: `file:///test3.sdstest`,
-                expectedLabels: [
-                    'from',
-                    'annotation',
-                    'class',
-                    'enum',
-                    'fun',
-                    'schema',
-                    'pipeline',
-                    'internal',
-                    'private',
-                    'segment',
-                ],
-                comparison: 'equal',
+                expectedLabels: {
+                    shouldEqual: [
+                        'from',
+                        'annotation',
+                        'class',
+                        'enum',
+                        'fun',
+                        'schema',
+                        'pipeline',
+                        'internal',
+                        'private',
+                        'segment',
+                    ],
+                },
             },
             {
                 testName: 'in class',
                 code: `
                     class MyClass {
                         <|>
-                    }
                 `,
-                expectedLabels: ['static', 'attr', 'class', 'enum', 'fun'],
-                comparison: 'equal',
+                expectedLabels: {
+                    shouldEqual: ['static', 'attr', 'class', 'enum', 'fun'],
+                },
             },
 
             // Cross-references
             {
-                testName: 'annotation call',
+                testName: 'annotation call (no prefix)',
                 code: `
                     annotation MyAnnotation
 
                     @<|>
-                    class MyClass
                 `,
-                expectedLabels: ['MyAnnotation'],
-                comparison: 'equal',
+                expectedLabels: {
+                    shouldEqual: ['MyAnnotation'],
+                },
             },
             {
-                testName: 'arguments',
+                testName: 'annotation call (with prefix)',
+                code: `
+                    annotation MyAnnotation
+                    annotation OtherAnnotation
+
+                    @O<|>
+                `,
+                expectedLabels: {
+                    shouldEqual: ['OtherAnnotation'],
+                },
+            },
+            {
+                testName: 'arguments (no prefix)',
                 code: `
                     fun f(p: unknown)
 
                     pipeline myPipeline {
                         f(<|>
-                    }
                 `,
-                expectedLabels: ['p'],
+                expectedLabels: {
+                    shouldContain: ['p'],
+                },
             },
             {
-                testName: 'yield',
+                testName: 'arguments (with prefix)',
                 code: `
-                    segment mySegment() -> (result: unknown) {
+                    fun f(p1: unknown, q2: unknown)
+
+                    pipeline myPipeline {
+                        f(p<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['p1'],
+                    shouldNotContain: ['q2'],
+                },
+            },
+            {
+                testName: 'parameter bounds (no prefix)',
+                code: `
+                    fun f(p: unknown) where {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldEqual: ['p'],
+                },
+            },
+            {
+                testName: 'parameter bounds (with prefix)',
+                code: `
+                    fun f(p1: unknown, q2: unknown) where {
+                        p<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['p1'],
+                    shouldNotContain: ['q2'],
+                },
+            },
+            {
+                testName: 'type arguments (no prefix)',
+                code: `
+                    class MyClass<T> {
+                        attr a: MyClass<<|>
+                    }
+                `,
+                expectedLabels: {
+                    shouldContain: ['T'],
+                },
+            },
+            {
+                testName: 'type arguments (with prefix)',
+                code: `
+                    class MyClass<T1, U2> {
+                        attr a: MyClass<T<|>
+                    }
+                `,
+                expectedLabels: {
+                    shouldContain: ['T1'],
+                    shouldNotContain: ['U2'],
+                },
+            },
+            {
+                testName: 'yield (no prefix)',
+                code: `
+                    segment mySegment() -> (r: unknown) {
                         yield <|>
                     }
                 `,
-                expectedLabels: ['result'],
+                expectedLabels: {
+                    shouldContain: ['r'],
+                },
+            },
+            {
+                testName: 'yield (with prefix)',
+                code: `
+                    segment mySegment() -> (r1: unknown, s2: unknown) {
+                        yield r<|>
+                    }
+                `,
+                expectedLabels: {
+                    shouldContain: ['r1'],
+                    shouldNotContain: ['s2'],
+                },
             },
         ];
 
-        it.each(testCases)('$testName', async ({ code, uri, expectedLabels, comparison = 'superset' }) => {
+        it.each(testCases)('$testName', async ({ code, uri, expectedLabels }) => {
             await expectCompletion(services)({
                 text: code,
                 index: 0,
@@ -111,14 +200,60 @@ describe('SafeDsCompletionProvider', async () => {
                 assert(completion) {
                     const labels = completion.items.map((item) => item.label);
 
-                    if (comparison === 'equal') {
-                        expect(labels).toStrictEqual(expectedLabels);
-                    } else {
-                        expect(labels).to.containSubset(expectedLabels);
+                    if (expectedLabels.shouldEqual) {
+                        expect(labels).toStrictEqual(expectedLabels.shouldEqual);
+                    }
+
+                    if (expectedLabels.shouldContain) {
+                        expect(labels).to.containSubset(expectedLabels.shouldContain);
+                    }
+
+                    if (expectedLabels.shouldNotContain) {
+                        expect(labels).not.to.containSubset(expectedLabels.shouldNotContain);
                     }
                 },
                 disposeAfterCheck: true,
             });
+        });
+    });
+
+    it('should return documentation if available', async () => {
+        await expectCompletion(services)({
+            text: `
+                /**
+                 * My documentation
+                 */
+                annotation MyAnnotation
+
+                @<|>
+            `,
+            index: 0,
+            assert(completion) {
+                expect(completion.items).toHaveLength(1);
+                expect(completion.items[0]!.documentation).toStrictEqual({
+                    kind: 'markdown',
+                    value: 'My documentation',
+                });
+            },
+        });
+    });
+
+    it('should add deprecated tag if needed', async () => {
+        const servicesWithBuiltins = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+        await expectCompletion(servicesWithBuiltins)({
+            text: `
+                package test
+
+                @Deprecated
+                annotation MyAnnotation
+
+                @MyAnnotation<|>
+            `,
+            index: 0,
+            assert(completion) {
+                expect(completion.items).toHaveLength(1);
+                expect(completion.items[0]!.tags).toStrictEqual([CompletionItemTag.Deprecated]);
+            },
         });
     });
 });
@@ -145,11 +280,25 @@ interface CompletionTest {
     /**
      * The expected completion labels.
      */
-    expectedLabels: string[];
+    expectedLabels: ExpectedLabels;
+}
+
+/**
+ * The expected completion labels.
+ */
+interface ExpectedLabels {
+    /**
+     * The actual labels must be equal to these labels.
+     */
+    shouldEqual?: string[];
 
     /**
-     * If `equal`, the actual labels must be equal to the expected labels. If `superset`, the actual labels must be a
-     * superset of the expected labels.
+     * The actual labels must contain these labels.
      */
-    comparison?: 'equal' | 'superset';
+    shouldContain?: string[];
+
+    /**
+     * The actual labels must not contain these labels.
+     */
+    shouldNotContain?: string[];
 }
