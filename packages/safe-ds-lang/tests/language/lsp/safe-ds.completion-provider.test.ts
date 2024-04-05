@@ -122,6 +122,66 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
+                testName: 'member accesses (no prefix)',
+                code: `
+                    class MyClass {
+                        static attr a: unknown
+                    }
+
+                    pipeline myPipeline {
+                        MyClass.<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['a'],
+                    shouldNotContain: ['MyClass', 'myPipeline'],
+                },
+            },
+            {
+                testName: 'member accesses (with prefix)',
+                code: `
+                    class MyClass {
+                        static attr a1: unknown
+                        static attr b2: unknown
+                    }
+
+                    pipeline myPipeline {
+                        MyClass.a<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['a1'],
+                    shouldNotContain: ['MyClass', 'myPipeline'],
+                },
+            },
+            {
+                testName: 'member types (no prefix)',
+                code: `
+                    class MyClass {
+                        class NestedClass
+                    }
+
+                    fun f(p: MyClass.<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['NestedClass'],
+                    shouldNotContain: ['MyClass'],
+                },
+            },
+            {
+                testName: 'member types (with prefix)',
+                code: `
+                    class MyClass {
+                        class NestedClass
+                        class OtherClass
+                    }
+
+                    fun f(p: MyClass.N<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['NestedClass'],
+                    shouldNotContain: ['MyClass', 'OtherClass'],
+                },
+            },
+            {
                 testName: 'parameter bounds (no prefix)',
                 code: `
                     fun f(p: unknown) where {
@@ -147,7 +207,6 @@ describe('SafeDsCompletionProvider', async () => {
                 code: `
                     class MyClass<T> {
                         attr a: MyClass<<|>
-                    }
                 `,
                 expectedLabels: {
                     shouldContain: ['T'],
@@ -158,7 +217,6 @@ describe('SafeDsCompletionProvider', async () => {
                 code: `
                     class MyClass<T1, U2> {
                         attr a: MyClass<T<|>
-                    }
                 `,
                 expectedLabels: {
                     shouldContain: ['T1'],
@@ -170,7 +228,6 @@ describe('SafeDsCompletionProvider', async () => {
                 code: `
                     segment mySegment() -> (r: unknown) {
                         yield <|>
-                    }
                 `,
                 expectedLabels: {
                     shouldContain: ['r'],
@@ -181,7 +238,6 @@ describe('SafeDsCompletionProvider', async () => {
                 code: `
                     segment mySegment() -> (r1: unknown, s2: unknown) {
                         yield r<|>
-                    }
                 `,
                 expectedLabels: {
                     shouldContain: ['r1'],
