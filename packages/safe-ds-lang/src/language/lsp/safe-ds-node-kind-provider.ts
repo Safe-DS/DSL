@@ -29,13 +29,13 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
             return SymbolKind.Method;
         }
 
+        /* c8 ignore start */
         const type = this.getNodeType(nodeOrDescription);
         switch (type) {
             case SdsAnnotation:
                 return SymbolKind.Interface;
             case SdsAttribute:
                 return SymbolKind.Property;
-            /* c8 ignore next 2 */
             case SdsBlockLambdaResult:
                 return SymbolKind.Variable;
             case SdsClass:
@@ -48,28 +48,24 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
                 return SymbolKind.Function;
             case SdsModule:
                 return SymbolKind.Package;
-            /* c8 ignore next 2 */
             case SdsParameter:
                 return SymbolKind.Variable;
             case SdsPipeline:
                 return SymbolKind.Function;
-            /* c8 ignore next 2 */
             case SdsPlaceholder:
                 return SymbolKind.Variable;
-            /* c8 ignore next 2 */
             case SdsResult:
                 return SymbolKind.Variable;
             case SdsSchema:
                 return SymbolKind.Struct;
             case SdsSegment:
                 return SymbolKind.Function;
-            /* c8 ignore next 2 */
             case SdsTypeParameter:
                 return SymbolKind.TypeParameter;
-            /* c8 ignore next 2 */
             default:
                 return SymbolKind.Null;
         }
+        /* c8 ignore stop */
     }
 
     getCompletionItemKind(nodeOrDescription: AstNode | AstNodeDescription): CompletionItemKind {
@@ -79,13 +75,13 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
             return CompletionItemKind.Method;
         }
 
+        /* c8 ignore start */
         const type = this.getNodeType(nodeOrDescription);
         switch (type) {
             case SdsAnnotation:
                 return CompletionItemKind.Interface;
             case SdsAttribute:
                 return CompletionItemKind.Property;
-            /* c8 ignore next 2 */
             case SdsBlockLambdaResult:
                 return CompletionItemKind.Variable;
             case SdsClass:
@@ -98,28 +94,24 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
                 return CompletionItemKind.Function;
             case SdsModule:
                 return CompletionItemKind.Module;
-            /* c8 ignore next 2 */
             case SdsParameter:
                 return CompletionItemKind.Variable;
             case SdsPipeline:
                 return CompletionItemKind.Function;
-            /* c8 ignore next 2 */
             case SdsPlaceholder:
                 return CompletionItemKind.Variable;
-            /* c8 ignore next 2 */
             case SdsResult:
                 return CompletionItemKind.Variable;
             case SdsSchema:
                 return CompletionItemKind.Struct;
             case SdsSegment:
                 return CompletionItemKind.Function;
-            /* c8 ignore next 2 */
             case SdsTypeParameter:
                 return CompletionItemKind.TypeParameter;
-            /* c8 ignore next 2 */
             default:
                 return CompletionItemKind.Reference;
         }
+        /* c8 ignore stop */
     }
 
     private getNode(nodeOrDescription: AstNode | AstNodeDescription): AstNode | undefined {

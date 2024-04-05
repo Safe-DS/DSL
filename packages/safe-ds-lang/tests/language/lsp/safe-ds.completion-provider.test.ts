@@ -74,7 +74,7 @@ describe('SafeDsCompletionProvider', async () => {
 
             // Cross-references
             {
-                testName: 'annotation call (no prefix)',
+                testName: 'annotation calls (no prefix)',
                 code: `
                     annotation MyAnnotation
 
@@ -85,7 +85,7 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'annotation call (with prefix)',
+                testName: 'annotation calls (with prefix)',
                 code: `
                     annotation MyAnnotation
                     annotation OtherAnnotation
@@ -182,6 +182,30 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
+                testName: 'named types (no prefix)',
+                code: `
+                    class MyClass
+
+                    fun f(p: <|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['MyClass'],
+                },
+            },
+            {
+                testName: 'named types (with prefix)',
+                code: `
+                    class MyClass
+                    class OtherClass
+
+                    fun f(p: M<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['MyClass'],
+                    shouldNotContain: ['OtherClass'],
+                },
+            },
+            {
                 testName: 'parameter bounds (no prefix)',
                 code: `
                     fun f(p: unknown) where {
@@ -200,6 +224,32 @@ describe('SafeDsCompletionProvider', async () => {
                 expectedLabels: {
                     shouldContain: ['p1'],
                     shouldNotContain: ['q2'],
+                },
+            },
+            {
+                testName: 'reference (no prefix)',
+                code: `
+                    fun f()
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['f'],
+                },
+            },
+            {
+                testName: 'reference (with prefix)',
+                code: `
+                    fun f1()
+                    fun g2()
+
+                    pipeline myPipeline {
+                        f<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['f1'],
+                    shouldNotContain: ['g2'],
                 },
             },
             {
@@ -224,7 +274,7 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'yield (no prefix)',
+                testName: 'yields (no prefix)',
                 code: `
                     segment mySegment() -> (r: unknown) {
                         yield <|>
@@ -234,7 +284,7 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'yield (with prefix)',
+                testName: 'yields (with prefix)',
                 code: `
                     segment mySegment() -> (r1: unknown, s2: unknown) {
                         yield r<|>

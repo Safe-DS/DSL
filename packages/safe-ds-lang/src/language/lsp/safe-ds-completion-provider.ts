@@ -73,6 +73,7 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
 
     private getDocumentation(node: AstNode | undefined): MarkupContent | undefined {
         if (!node) {
+            /* c8 ignore next 2 */
             return undefined;
         }
 
