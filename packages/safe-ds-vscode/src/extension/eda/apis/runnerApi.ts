@@ -149,8 +149,8 @@ export class RunnerApi {
     //#endregion
 
     //#region Placeholder handling
-    private genPlaceholderName(): string {
-        return CODEGEN_PREFIX + this.placeholderCounter++;
+    private genPlaceholderName(suffix?: string): string {
+        return CODEGEN_PREFIX + this.placeholderCounter++ + (suffix ? '_' + suffix : '');
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -236,15 +236,14 @@ export class RunnerApi {
         const columnNameToPlaceholderMVNameMap = new Map<string, string>(); // Mapping random placeholder name for missing value ratio back to column name
         const missingValueRatioMap = new Map<string, number>(); // Saved by random placeholder name
 
-        const columnNameToPlaceholderIDnessNameMap = new Map<string, string>(); // Mapping random placeholder name for IDness back to column name
-        const idnessMap = new Map<string, number>(); // Saved by random placeholder name
-
         const columnNameToPlaceholderHistogramNameMap = new Map<string, string>(); // Mapping random placeholder name for histogram back to column name
         const histogramMap = new Map<string, Base64Image | undefined>(); // Saved by random placeholder name
 
+        const uniqueValuesMap = new Map<string, Set<any>>();
+
         // Generate SDS code to get missing value ratio for each column
-        outer: for (const column of columns) {
-            const newMvPlaceholderName = this.genPlaceholderName();
+        for (const column of columns) {
+            const newMvPlaceholderName = this.genPlaceholderName(column[1].name + '_mv');
             columnNameToPlaceholderMVNameMap.set(column[1].name, newMvPlaceholderName);
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
                 column[1].name,
@@ -252,29 +251,30 @@ export class RunnerApi {
                 newMvPlaceholderName,
             );
 
-            // Only need to check IDness for non-numerical columns
-            if (column[1].type !== 'numerical') {
-                const newIDnessPlaceholderName = this.genPlaceholderName();
-                columnNameToPlaceholderIDnessNameMap.set(column[1].name, newIDnessPlaceholderName);
-                sdsStrings += this.sdsStringForIDnessByColumnName(column[1].name, table.name, newIDnessPlaceholderName);
+            // Find unique values
+            // TODO reevaluate when image stuck problem fixed
+            let uniqueValues = new Set<any>();
+            for (let j = 0; j < column[1].values.length; j++) {
+                uniqueValues.add(column[1].values[j]);
+            }
+            uniqueValuesMap.set(column[1].name, uniqueValues);
 
-                // Find unique values
-                // TODO reevaluate when image stuck problem fixed
-                let uniqueValues = new Set();
-                for (let j = 0; j < column[1].values.length; j++) {
-                    uniqueValues.add(column[1].values[j]);
-                    if (uniqueValues.size > 10) {
-                        continue outer;
-                    }
-                }
+            // Different histogram conditions for numerical and categorical columns
+            if (column[1].type !== 'numerical') {
                 if (uniqueValues.size <= 3 || uniqueValues.size > 10) {
-                    // Must match conidtions below that choose to display histogram
+                    // Must match conidtions below that choose to display histogram for categorical columns
                     continue; // This historam only generated if between 4-10 categorigal uniques or numerical type
+                }
+            } else {
+                if (uniqueValues.size > column[1].values.length * 0.9) {
+                    // Must match conidtions below that choose to display histogram for numerical columns
+                    // If 90% of values are unique, it's not a good idea to display histogram
+                    continue;
                 }
             }
 
             // Histogram for numerical columns or categorical columns with 4-10 unique values
-            const newHistogramPlaceholderName = this.genPlaceholderName();
+            const newHistogramPlaceholderName = this.genPlaceholderName(column[1].name + '_hist');
             columnNameToPlaceholderHistogramNameMap.set(column[1].name, newHistogramPlaceholderName);
             sdsStrings += this.sdsStringForHistogramByColumnName(
                 column[1].name,
@@ -297,14 +297,6 @@ export class RunnerApi {
             const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (missingValueRatio) {
                 missingValueRatioMap.set(placeholderName, missingValueRatio as number);
-            }
-        }
-
-        // Get IDness for each column
-        for (const [, placeholderName] of columnNameToPlaceholderIDnessNameMap) {
-            const idness = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
-            if (idness) {
-                idnessMap.set(placeholderName, idness as number);
             }
         }
 
@@ -337,17 +329,15 @@ export class RunnerApi {
                 interpretation: missingValuesRatio > 0 ? 'error' : 'default',
             };
 
+            const uniqueValues = uniqueValuesMap.get(column[1].name)!.size;
             // If not numerical, add proper profilings according to idness results
             if (column[1].type !== 'numerical') {
-                const idness = idnessMap.get(columnNameToPlaceholderIDnessNameMap.get(column[1].name)!)!;
-                const uniqueValues = idness * column[1].values.length;
-
                 if (uniqueValues <= 3) {
                     // Can display each separate percentages of unique values
                     // Find all unique values and count them
                     const uniqueValueCounts = new Map<string, number>();
                     for (let i = 0; i < column[1].values.length; i++) {
-                        if (column[1].values[i])
+                        if (column[1].values[i] !== undefined && column[1].values[i] !== null)
                             uniqueValueCounts.set(
                                 column[1].values[i],
                                 (uniqueValueCounts.get(column[1].values[i]) || 0) + 1,
@@ -421,20 +411,49 @@ export class RunnerApi {
                     });
                 }
             } else {
-                // Display histogram for numerical columns
-                const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
+                if (uniqueValues > column[1].values.length * 0.9) {
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Categorical', interpretation: 'important' },
+                                {
+                                    type: 'text',
+                                    value: uniqueValues + ' Distincts',
+                                    interpretation: 'default',
+                                },
+                                {
+                                    type: 'text',
+                                    value:
+                                        Math.round(
+                                            column[1].values.length *
+                                                (1 -
+                                                    (missingValueRatioMap.get(
+                                                        columnNameToPlaceholderMVNameMap.get(column[1].name)!,
+                                                    ) || 0)),
+                                        ) + ' Total Valids',
+                                    interpretation: 'default',
+                                },
+                            ],
+                        },
+                    });
+                } else {
+                    const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
 
-                profiling.push({
-                    columnName: column[1].name,
-                    profiling: {
-                        validRatio,
-                        missingRatio,
-                        other: [
-                            { type: 'text', value: 'Numerical', interpretation: 'important' },
-                            { type: 'image', value: histogram },
-                        ],
-                    },
-                });
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Numerical', interpretation: 'important' },
+                                { type: 'image', value: histogram },
+                            ],
+                        },
+                    });
+                }
             }
         }
 
