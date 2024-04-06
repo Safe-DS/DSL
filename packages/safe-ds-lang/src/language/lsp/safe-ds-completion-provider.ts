@@ -10,6 +10,7 @@ import {
     isSdsModule,
     isSdsNamedType,
     isSdsReference,
+    isSdsTypeArgument,
     SdsAnnotation,
     SdsPipeline,
     SdsSchema,
@@ -64,6 +65,15 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
                     ...refInfo.container,
                     $container: syntheticNode.$container,
                     $containerProperty: 'member',
+                };
+            }
+        } else if (isSdsTypeArgument(refInfo.container) && refInfo.container.$containerProperty === 'typeParameter') {
+            const syntheticNode = refInfo.container.$container as AstNode;
+            if (isSdsNamedType(syntheticNode) && syntheticNode.$containerProperty === 'value') {
+                refInfo.container = {
+                    ...refInfo.container,
+                    $container: syntheticNode.$container,
+                    $containerProperty: 'typeParameter',
                 };
             }
         }

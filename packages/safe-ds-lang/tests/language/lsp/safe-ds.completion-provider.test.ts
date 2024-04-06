@@ -255,7 +255,9 @@ describe('SafeDsCompletionProvider', async () => {
             {
                 testName: 'type arguments (no prefix)',
                 code: `
-                    class MyClass<T> {
+                    class MyClass<T>
+
+                    class OtherClass {
                         attr a: MyClass<<|>
                 `,
                 expectedLabels: {
@@ -265,7 +267,9 @@ describe('SafeDsCompletionProvider', async () => {
             {
                 testName: 'type arguments (with prefix)',
                 code: `
-                    class MyClass<T1, U2> {
+                    class MyClass<T1, U2>
+
+                    class OtherClass {
                         attr a: MyClass<T<|>
                 `,
                 expectedLabels: {
