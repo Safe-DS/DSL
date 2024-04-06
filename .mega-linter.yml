@@ -21,4 +21,4 @@ TSX_ESLINT_FILE_EXTENSIONS:
 
 # Commands
 PRE_COMMANDS:
-  - command: npm i @lars-reimann/eslint-config-svelte eslint-plugin-vitest @lars-reimann/prettier-config-svelte
+  - command: npm i @lars-reimann/eslint-config-svelte eslint-plugin-vitest@0.4.0 @lars-reimann/prettier-config-svelte
