@@ -69,7 +69,12 @@
     },
     "Segment": {
         "prefix": ["segment"],
-        "body": ["${1|internal ,private |}segment ${2:mySegment}($3) ${4:-> ($5)} {", "    $0", "}"],
+        "body": ["${1|internal ,private |}segment ${2:mySegment}($3) ${4:-> ($5)} ${6:where {$7\\}} {", "    $0", "}"],
+        "description": "A segment."
+    },    
+    "Minimal Segment": {
+        "prefix": ["minimal-segment"],
+        "body": ["${1|internal ,private |}segment ${2:mySegment}($3) {", "    $0", "}"],
         "description": "A segment."
     },
     "Block Lambda": {

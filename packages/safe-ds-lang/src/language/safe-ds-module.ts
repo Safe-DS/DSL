@@ -43,6 +43,8 @@ import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
 import { SafeDsRunner } from './runner/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
+import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
+import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -129,6 +131,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     lsp: {
         CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
+        CompletionProvider: (services) => new SafeDsCompletionProvider(services),
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
@@ -168,6 +171,7 @@ export type SafeDsSharedServices = LangiumSharedServices;
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
     lsp: {
+        FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
