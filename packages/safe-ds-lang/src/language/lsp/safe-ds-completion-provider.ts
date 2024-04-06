@@ -5,7 +5,15 @@ import { CompletionItemTag, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
 import type { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import { isSdsAnnotatedObject, isSdsModule, isSdsNamedType, isSdsReference } from '../generated/ast.js';
+import {
+    isSdsAnnotatedObject,
+    isSdsModule,
+    isSdsNamedType,
+    isSdsReference,
+    SdsAnnotation,
+    SdsPipeline,
+    SdsSchema,
+} from '../generated/ast.js';
 import { getPackageName } from '../helpers/nodeProperties.js';
 import { isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 
@@ -29,7 +37,9 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
         context: CompletionContext,
     ): Stream<AstNodeDescription> {
         this.fixReferenceInfo(refInfo);
-        return super.getReferenceCandidates(refInfo, context);
+        return super
+            .getReferenceCandidates(refInfo, context)
+            .filter((description) => this.filterReferenceCandidate(refInfo, description));
     }
 
     private fixReferenceInfo(refInfo: ReferenceInfo): void {
@@ -56,6 +66,16 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
                     $containerProperty: 'member',
                 };
             }
+        }
+    }
+
+    private illegalNodeTypesForReferences = new Set([SdsAnnotation, SdsPipeline, SdsSchema]);
+
+    private filterReferenceCandidate(refInfo: ReferenceInfo, description: AstNodeDescription): boolean {
+        if (isSdsReference(refInfo.container)) {
+            return !this.illegalNodeTypesForReferences.has(description.type);
+        } else {
+            return true;
         }
     }
 

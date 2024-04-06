@@ -294,6 +294,42 @@ describe('SafeDsCompletionProvider', async () => {
                     shouldNotContain: ['s2'],
                 },
             },
+
+            // Filtering by node type
+            {
+                testName: 'reference to annotation',
+                code: `
+                    annotation MyAnnotation
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['MyAnnotation'],
+                },
+            },
+            {
+                testName: 'reference to pipeline',
+                code: `
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['myPipeline'],
+                },
+            },
+            {
+                testName: 'reference to schema',
+                code: `
+                    schema MySchema {}
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['MySchema'],
+                },
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, uri, expectedLabels }) => {
