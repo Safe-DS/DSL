@@ -146,7 +146,7 @@ const isInConstructor = (node: AstNode) => {
     return isSdsClass(parameterList?.$container);
 };
 
-const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsClass, reference: AstNode) => {
+export const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsClass, reference: AstNode) => {
     const containingClassMember = AstUtils.getContainerOfType(reference, isSdsClassMember);
 
     // Handle usage in constructor

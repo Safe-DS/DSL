@@ -301,6 +301,18 @@ describe('SafeDsCompletionProvider', async () => {
 
             // Filtering by node type
             {
+                testName: 'named type to type parameter of containing class',
+                code: `
+                    class MyClass<T1> {
+                        class MyNestedClass<T2>(p: <|>
+                    }
+                `,
+                expectedLabels: {
+                    shouldContain: ['T2'],
+                    shouldNotContain: ['T1'],
+                },
+            },
+            {
                 testName: 'reference to annotation',
                 code: `
                     annotation MyAnnotation
