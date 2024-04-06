@@ -1,3 +1,30 @@
+## [0.10.0](https://github.com/Safe-DS/DSL/compare/v0.9.0...v0.10.0) (2024-04-06)
+
+
+### Features
+
+* add settings to enable inlay hints individually ([#992](https://github.com/Safe-DS/DSL/issues/992)) ([b0f3e62](https://github.com/Safe-DS/DSL/commit/b0f3e620fe53dd2d16616f23d6170f36009f6823))
+* filter suggestions by node type ([#999](https://github.com/Safe-DS/DSL/issues/999)) ([8d22e67](https://github.com/Safe-DS/DSL/commit/8d22e67d828902fd76896a77300c9e81e23b8a4e)), closes [#998](https://github.com/Safe-DS/DSL/issues/998)
+* forbid instance and static class members with same name ([#988](https://github.com/Safe-DS/DSL/issues/988)) ([7fa6fd4](https://github.com/Safe-DS/DSL/commit/7fa6fd4baaae7fabc0770025f6a48b41b3221eca))
+* improved completion provider ([#997](https://github.com/Safe-DS/DSL/issues/997)) ([61e776b](https://github.com/Safe-DS/DSL/commit/61e776b97a767868635ebb9fb24de58fc14e4bdf)), closes [#41](https://github.com/Safe-DS/DSL/issues/41)
+* inlay hints for inferred types of lambda parameters ([#993](https://github.com/Safe-DS/DSL/issues/993)) ([c064e0e](https://github.com/Safe-DS/DSL/commit/c064e0e4a5d081f92b791a8a96efe580b1cefa98))
+* mark entire type cast as wrong if cast is impossible ([#991](https://github.com/Safe-DS/DSL/issues/991)) ([72d4e2e](https://github.com/Safe-DS/DSL/commit/72d4e2e655b77eeb8cf2ad4a8797f2ff48164468))
+* profiling in EDA tool ([#954](https://github.com/Safe-DS/DSL/issues/954)) ([854122c](https://github.com/Safe-DS/DSL/commit/854122ccb154e5e12728d17540bc4f61c07a0111)), closes [#929](https://github.com/Safe-DS/DSL/issues/929)
+* require `safe-ds-runner>=0.8.0,<0.9.0` ([#976](https://github.com/Safe-DS/DSL/issues/976)) ([1003e6c](https://github.com/Safe-DS/DSL/commit/1003e6c42db2f2fd8ab5f5b7fb22e7ada6240000))
+* resolve name paths in `{[@link](https://github.com/link) }` tags in documentation ([#978](https://github.com/Safe-DS/DSL/issues/978)) ([b59d6f0](https://github.com/Safe-DS/DSL/commit/b59d6f09eabc2cd8efac16b99c2f0e02d7c632e9))
+
+
+### Bug Fixes
+
+* catch internal errors caused by wrong synthetic nodes created by completion provider ([#1001](https://github.com/Safe-DS/DSL/issues/1001)) ([8a6ab99](https://github.com/Safe-DS/DSL/commit/8a6ab99388894c181415e8fcb53fa2f73b764dbb))
+* chained memoized calls ([#987](https://github.com/Safe-DS/DSL/issues/987)) ([df89291](https://github.com/Safe-DS/DSL/commit/df89291031ff3a449cd17c6a48ee39e4e0d943ca))
+* correctly import declarations for member functions ([#983](https://github.com/Safe-DS/DSL/issues/983)) ([79f9b08](https://github.com/Safe-DS/DSL/commit/79f9b085d0ed9fbb488440452e486909e4e5228b))
+* error in Python generator for assignments with class/enum variant call as RHS ([#977](https://github.com/Safe-DS/DSL/issues/977)) ([46b2bb2](https://github.com/Safe-DS/DSL/commit/46b2bb208845108ca9ff9a78260440aee994a194)), closes [#975](https://github.com/Safe-DS/DSL/issues/975)
+* generation of memoized class member calls ([#982](https://github.com/Safe-DS/DSL/issues/982)) ([ed06aef](https://github.com/Safe-DS/DSL/commit/ed06aef2dc804e7b04b53876514234f2ddbf1d13))
+* generation of Python imports ([#979](https://github.com/Safe-DS/DSL/issues/979)) ([f69d836](https://github.com/Safe-DS/DSL/commit/f69d83619a851f714888e7eeb49f10b38c762c99)), closes [#974](https://github.com/Safe-DS/DSL/issues/974)
+* invalid Python code generated for constructor calls ([#981](https://github.com/Safe-DS/DSL/issues/981)) ([c7d006f](https://github.com/Safe-DS/DSL/commit/c7d006f0309298dc65de7a4ad732ce6e8caa2243)), closes [#980](https://github.com/Safe-DS/DSL/issues/980)
+* Python generation for type casts ([#1000](https://github.com/Safe-DS/DSL/issues/1000)) ([621ab86](https://github.com/Safe-DS/DSL/commit/621ab868ee72a7c1ad4cf2b55a4fc201c770a363))
+
 ## [0.9.0](https://github.com/Safe-DS/DSL/compare/v0.8.0...v0.9.0) (2024-04-01)
 
 
