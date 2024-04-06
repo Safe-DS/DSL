@@ -330,6 +330,21 @@ describe('SafeDsCompletionProvider', async () => {
                     shouldNotContain: ['MySchema'],
                 },
             },
+
+            // Special cases
+            {
+                testName: 'fuzzy matching',
+                code: `
+                    annotation Annotation
+                    annotation MyAnnotation
+                    annotation OtherAnnotation
+
+                    @Anno<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['Annotation', 'MyAnnotation', 'OtherAnnotation'],
+                },
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, uri, expectedLabels }) => {
