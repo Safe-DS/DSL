@@ -4,6 +4,7 @@ import {
     isSdsClass,
     isSdsClassMember,
     isSdsDeclaration,
+    isSdsNamedType,
     isSdsNamedTypeDeclaration,
     isSdsParameter,
     isSdsParameterList,
@@ -93,7 +94,7 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
 
         AstUtils.findLocalReferences(node).forEach((it) => {
             const reference = it.$refNode?.astNode;
-            if (!reference) {
+            if (!reference || !isSdsNamedType(reference)) {
                 /* c8 ignore next 2 */
                 return;
             }
