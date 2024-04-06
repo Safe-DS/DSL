@@ -47,6 +47,7 @@ import {
     isSdsTemplateStringInner,
     isSdsTemplateStringPart,
     isSdsTemplateStringStart,
+    isSdsTypeCast,
     isSdsWildcard,
     isSdsYield,
     SdsArgument,
@@ -907,6 +908,8 @@ export class SafeDsPythonGenerator {
             const referenceImport = this.createImportDataForReference(expression);
             frame.addImport(referenceImport);
             return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
+        } else if (isSdsTypeCast(expression)) {
+            return traceToNode(expression)(this.generateExpression(expression.expression, frame));
         }
         /* c8 ignore next 2 */
         throw new Error(`Unknown expression type: ${expression.$type}`);
