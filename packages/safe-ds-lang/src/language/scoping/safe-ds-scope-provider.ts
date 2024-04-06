@@ -124,7 +124,12 @@ export class SafeDsScopeProvider extends DefaultScopeProvider {
         } else if (isSdsYield(node) && context.property === 'result') {
             return this.getScopeForYieldResult(node);
         } else {
-            return super.getScope(context);
+            try {
+                // May throw errors when triggered from the completion provider due to wrong synthetic nodes
+                return super.getScope(context);
+            } catch {
+                return EMPTY_SCOPE;
+            }
         }
     }
 
