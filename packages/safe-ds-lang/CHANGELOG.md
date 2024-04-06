@@ -11,7 +11,7 @@
 * mark entire type cast as wrong if cast is impossible ([#991](https://github.com/Safe-DS/DSL/issues/991)) ([72d4e2e](https://github.com/Safe-DS/DSL/commit/72d4e2e655b77eeb8cf2ad4a8797f2ff48164468))
 * profiling in EDA tool ([#954](https://github.com/Safe-DS/DSL/issues/954)) ([854122c](https://github.com/Safe-DS/DSL/commit/854122ccb154e5e12728d17540bc4f61c07a0111)), closes [#929](https://github.com/Safe-DS/DSL/issues/929)
 * require `safe-ds-runner>=0.8.0,<0.9.0` ([#976](https://github.com/Safe-DS/DSL/issues/976)) ([1003e6c](https://github.com/Safe-DS/DSL/commit/1003e6c42db2f2fd8ab5f5b7fb22e7ada6240000))
-* resolve name paths in `{[@link](https://github.com/link) }` tags in documentation ([#978](https://github.com/Safe-DS/DSL/issues/978)) ([b59d6f0](https://github.com/Safe-DS/DSL/commit/b59d6f09eabc2cd8efac16b99c2f0e02d7c632e9))
+* resolve name paths in `@link` tags in documentation ([#978](https://github.com/Safe-DS/DSL/issues/978)) ([b59d6f0](https://github.com/Safe-DS/DSL/commit/b59d6f09eabc2cd8efac16b99c2f0e02d7c632e9))
 
 
 ### Bug Fixes
