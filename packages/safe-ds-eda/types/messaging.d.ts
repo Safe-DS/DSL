@@ -46,4 +46,9 @@ interface FromExtensionSetStateMessage extends FromExtensionCommandMessage {
     value: defaultTypes.State;
 }
 
-export type FromExtensionMessage = FromExtensionSetStateMessage;
+interface FromExtensionSetProfilingMessage extends FromExtensionCommandMessage {
+    command: 'setProfiling';
+    value: { columnName: string; profiling: defaultTypes.Profiling }[];
+}
+
+export type FromExtensionMessage = FromExtensionSetStateMessage | FromExtensionSetProfilingMessage;

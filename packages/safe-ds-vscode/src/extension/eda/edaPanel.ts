@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
-import { Column, State, Table } from '@safe-ds/eda/types/state.js';
+import { State } from '@safe-ds/eda/types/state.js';
 import { logOutput, printOutputMessage } from '../output.ts';
-import { messages, SafeDsServices } from '@safe-ds/lang';
-
-export const undefinedPanelIdentifier = 'undefinedPanelIdentifier';
+import { SafeDsServices, ast } from '@safe-ds/lang';
+import { RunnerApi } from './apis/runnerApi.ts';
 
 export class EDAPanel {
     // Map to track multiple panels
@@ -18,24 +17,33 @@ export class EDAPanel {
     private readonly panel: vscode.WebviewPanel;
     private readonly extensionUri: vscode.Uri;
     private disposables: vscode.Disposable[] = [];
-    private tableIdentifier: string | undefined;
-    private startPipelineId: string = '';
+    private tableIdentifier: string;
+    private tableName: string;
     private column: vscode.ViewColumn | undefined;
     private webviewListener: vscode.Disposable | undefined;
     private viewStateChangeListener: vscode.Disposable | undefined;
+    private updateHtmlDone: boolean = false;
+    private startPipelineExecutionId: string;
+    private runnerApi: RunnerApi;
 
     private constructor(
         panel: vscode.WebviewPanel,
         extensionUri: vscode.Uri,
-        startPipeLineId: string,
-        tableIdentifier?: string,
+        startPipelineExecutionId: string,
+        pipelinePath: vscode.Uri,
+        pipelineName: string,
+        pipelineNode: ast.SdsPipeline,
+        tableName: string,
     ) {
+        this.tableIdentifier = pipelineName + '.' + tableName;
         this.panel = panel;
         this.extensionUri = extensionUri;
-        this.tableIdentifier = tableIdentifier;
-        this.startPipelineId = startPipeLineId;
+        this.startPipelineExecutionId = startPipelineExecutionId;
+        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode);
+        this.tableName = tableName;
 
         // Set the webview's initial html content
+        this.updateHtmlDone = false;
         this._update();
 
         // Listen for when the panel is disposed
@@ -95,34 +103,35 @@ export class EDAPanel {
         this.disposables.push(this.webviewListener);
     }
 
-    public static createOrShow(
+    public static async createOrShow(
         extensionUri: vscode.Uri,
         context: vscode.ExtensionContext,
-        startPipelineId: string,
-        servicess: SafeDsServices,
-        tableIdentifier?: string,
-    ) {
+        startPipelineExecutionId: string,
+        services: SafeDsServices,
+        pipelinePath: vscode.Uri,
+        pipelineName: string,
+        pipelineNode: ast.SdsPipeline,
+        tableName: string,
+    ): Promise<void> {
         EDAPanel.context = context;
-        EDAPanel.services = servicess;
+        EDAPanel.services = services;
+
+        let tableIdentifier = pipelineName + '.' + tableName;
 
         // Set column to the active editor if it exists
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
         // If we already have a panel, show it.
-        let panel = EDAPanel.panelsMap.get(tableIdentifier ?? undefinedPanelIdentifier);
+        let panel = EDAPanel.panelsMap.get(tableIdentifier);
         if (panel) {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
-            panel.startPipelineId = startPipelineId;
+            panel.startPipelineExecutionId = startPipelineExecutionId;
+            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode);
+            panel.tableName = tableName;
+            EDAPanel.panelsMap.set(tableIdentifier, panel);
 
-            // Have to update and construct state as table placeholder could've changed in code
-            panel._update();
-            panel.constructCurrentState().then((state) => {
-                webviewApi.postMessage(panel!.panel.webview, {
-                    command: 'setWebviewState',
-                    value: state,
-                });
-            });
+            // TODO: Display disclaimer that data can be outdated and show refresh button
             return;
         } else {
             // Otherwise, create a new panel.
@@ -142,19 +151,44 @@ export class EDAPanel {
                 },
             );
 
-            const edaPanel = new EDAPanel(newPanel, extensionUri, startPipelineId, tableIdentifier);
-            EDAPanel.panelsMap.set(tableIdentifier ?? undefinedPanelIdentifier, edaPanel);
+            const edaPanel = new EDAPanel(
+                newPanel,
+                extensionUri,
+                startPipelineExecutionId,
+                pipelinePath,
+                pipelineName,
+                pipelineNode,
+                tableName,
+            );
+            EDAPanel.panelsMap.set(tableIdentifier, edaPanel);
             edaPanel.column = column;
             edaPanel.panel.iconPath = {
                 light: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
                 dark: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
             };
-            edaPanel.constructCurrentState().then((state) => {
-                webviewApi.postMessage(edaPanel!.panel.webview, {
-                    command: 'setWebviewState',
-                    value: state,
-                });
+            await edaPanel.waitForUpdateHtmlDone(10000);
+            const stateInfo = await edaPanel.constructCurrentState();
+            webviewApi.postMessage(edaPanel!.panel.webview, {
+                command: 'setWebviewState',
+                value: stateInfo.state,
             });
+
+            // TODO: if from existing state, show disclaimer that updated data is loading and execute pipeline + history + profiling and send
+
+            if (
+                !stateInfo.fromExisting ||
+                !stateInfo.state.table ||
+                !stateInfo.state.table!.columns.find((c) => c[1].profiling)
+            ) {
+                const profiling = await EDAPanel.panelsMap
+                    .get(tableIdentifier)!
+                    .runnerApi.getProfiling(stateInfo.state.table!);
+
+                webviewApi.postMessage(edaPanel!.panel.webview, {
+                    command: 'setProfiling',
+                    value: profiling,
+                });
+            }
         }
     }
 
@@ -162,22 +196,13 @@ export class EDAPanel {
         printOutputMessage('kill ' + tableIdentifier);
         let panel = EDAPanel.panelsMap.get(tableIdentifier);
         if (panel) {
-            panel.dispose();
+            panel.panel.dispose();
             EDAPanel.panelsMap.delete(tableIdentifier);
         }
     }
 
-    public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, tableIdentifier: string) {
-        const existingPanel = EDAPanel.panelsMap.get(tableIdentifier);
-        if (existingPanel) {
-            existingPanel.dispose();
-        }
-        const revivedPanel = new EDAPanel(panel, extensionUri, existingPanel?.startPipelineId ?? '', tableIdentifier);
-        EDAPanel.panelsMap.set(tableIdentifier, revivedPanel);
-    }
-
     public dispose() {
-        EDAPanel.panelsMap.delete(this.tableIdentifier ?? undefinedPanelIdentifier);
+        EDAPanel.panelsMap.delete(this.tableIdentifier);
 
         // Clean up our panel
         this.panel.dispose();
@@ -194,81 +219,57 @@ export class EDAPanel {
     private async _update() {
         const webview = this.panel.webview;
         this.panel.webview.html = await this._getHtmlForWebview(webview);
+        this.updateHtmlDone = true;
     }
+
+    private waitForUpdateHtmlDone = (timeoutMs: number): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            const startTime = Date.now();
+            // Function to check updateHtmlDone status
+            const check = () => {
+                if (this.updateHtmlDone) {
+                    resolve();
+                } else if (Date.now() - startTime > timeoutMs) {
+                    reject(new Error('Timeout waiting for updateHtmlDone'));
+                } else {
+                    setTimeout(check, 100); // Check every 100ms
+                }
+            };
+            check();
+        });
+    };
 
     private findCurrentState(): State | undefined {
         const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
         return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
     }
 
-    private constructCurrentState(): Promise<State> {
-        return new Promise((resolve, reject) => {
-            const existingCurrentState = this.findCurrentState();
-            if (existingCurrentState) {
-                printOutputMessage('Found current State.');
-                resolve(existingCurrentState);
-                return;
-            }
+    private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
+        const existingCurrentState = this.findCurrentState();
+        if (existingCurrentState) {
+            printOutputMessage('Found current State.');
+            return { state: existingCurrentState, fromExisting: true };
+        }
 
-            if (!this.tableIdentifier) {
-                resolve({ tableIdentifier: undefined, history: [], defaultState: true });
-                return;
-            }
-
-            const placeholderValueCallback = (message: messages.PlaceholderValueMessage) => {
-                if (message.id !== this.startPipelineId || message.data.name !== this.tableIdentifier) {
-                    return;
-                }
-                EDAPanel.services.runtime.Runner.removeMessageCallback(placeholderValueCallback, 'placeholder_value');
-
-                const pythonTableColumns = message.data.value;
-                const table: Table = {
-                    totalRows: 0,
-                    name: this.tableIdentifier,
-                    columns: [] as Table['columns'],
-                    appliedFilters: [] as Table['appliedFilters'],
+        const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
+        if (!panel) {
+            throw new Error('RunnerApi panel not found.');
+        } else {
+            const table = await panel.runnerApi.getTableByPlaceholder(this.tableName, this.startPipelineExecutionId);
+            if (!table) {
+                throw new Error('Timeout waiting for placeholder value');
+            } else {
+                return {
+                    state: {
+                        tableIdentifier: panel.tableIdentifier,
+                        history: [],
+                        defaultState: false,
+                        table,
+                    },
+                    fromExisting: false,
                 };
-
-                let i = 0;
-                let currentMax = 0;
-                for (const [columnName, columnValues] of Object.entries(pythonTableColumns)) {
-                    if (!Array.isArray(columnValues)) {
-                        continue;
-                    }
-                    if (currentMax < columnValues.length) {
-                        currentMax = columnValues.length;
-                    }
-
-                    const isNumerical = typeof columnValues[0] === 'number';
-                    const columnType = isNumerical ? 'numerical' : 'categorical';
-
-                    const column: Column = {
-                        name: columnName,
-                        values: columnValues,
-                        type: columnType,
-                        hidden: false,
-                        highlighted: false,
-                        appliedFilters: [],
-                        appliedSort: null,
-                        profiling: { top: [], bottom: [] },
-                        coloredHighLow: false,
-                    };
-                    table.columns.push([i++, column]);
-                }
-                table.totalRows = currentMax;
-                table.visibleRows = currentMax;
-                printOutputMessage('Got placeholder from Runner!');
-                resolve({ tableIdentifier: this.tableIdentifier, history: [], defaultState: false, table });
-            };
-
-            EDAPanel.services.runtime.Runner.addMessageCallback(placeholderValueCallback, 'placeholder_value');
-            printOutputMessage('Getting placeholder from Runner ...');
-            EDAPanel.services.runtime.Runner.sendMessageToPythonServer(
-                messages.createPlaceholderQueryMessage(this.startPipelineId, this.tableIdentifier),
-            );
-
-            setTimeout(() => reject(new Error('Timeout waiting for placeholder value')), 30000);
-        });
+            }
+        }
     }
 
     private async _getHtmlForWebview(webview: vscode.Webview) {
@@ -310,7 +311,6 @@ export class EDAPanel {
       <link href="${stylesMainUri}" rel="stylesheet">
       <script nonce="${nonce}">
         window.injVscode = acquireVsCodeApi();
-        window.tableIdentifier = "${this.tableIdentifier}" === "undefined" ? undefined : "${this.tableIdentifier}";
       </script>
     </head>
     <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>

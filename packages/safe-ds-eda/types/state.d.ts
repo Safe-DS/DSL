@@ -71,32 +71,35 @@ export interface Table {
 
 // ------------ Types for the Profiling -----------
 export interface Profiling {
-    top: ProfilingDetail[];
-    bottom: ProfilingDetail[];
+    validRatio: ProfilingDetailStatistical;
+    missingRatio: ProfilingDetailStatistical;
+    other: ProfilingDetail[];
 }
 
 export interface ProfilingDetailBase {
     type: 'numerical' | 'image' | 'name';
-    name: string;
+    value: string;
 }
 
-export interface ProfilingDetailStatistical extends ProfilingDetailBase {
+interface ProfilingDetailText extends ProfilingDetailBase {
+    interpretation: 'warn' | 'error' | 'default' | 'important' | 'good';
+}
+
+export interface ProfilingDetailStatistical extends ProfilingDetailText {
     type: 'numerical';
     name: string;
-    value: number;
-    color?: string;
+    value: string;
+    interpretation: ProfilingDetailText['interpretation'] | 'category'; // 'category' needed for filters, to show distinct values
 }
 
 export interface ProfilingDetailImage extends ProfilingDetailBase {
     type: 'image';
-    name: string;
-    encodedImage: string;
+    value: Base64Image;
 }
 
-export interface ProfilingDetailName extends ProfilingDetailBase {
-    type: 'name';
-    name: string;
-    color?: string;
+export interface ProfilingDetailName extends ProfilingDetailText {
+    type: 'text';
+    value: string;
 }
 
 export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage | ProfilingDetailName;
@@ -109,7 +112,7 @@ export interface ColumnBase {
     hidden: boolean;
     highlighted: boolean;
     appliedSort: 'asc' | 'desc' | null;
-    profiling: Profiling;
+    profiling?: Profiling;
 }
 
 export interface NumericalColumn extends ColumnBase {
@@ -135,24 +138,39 @@ export interface ColumnFilterBase extends FilterBase {
     columnName: string;
 }
 
-export interface SearchStringFilter extends ColumnFilterBase {
+export interface PossibleSearchStringFilter extends ColumnFilterBase {
     type: 'searchString';
+}
+
+export interface SearchStringFilter extends PossibleSearchStringFilter {
     searchString: string;
 }
 
-export interface ValueRangeFilter extends ColumnFilterBase {
+export interface PossibleValueRangeFilter extends ColumnFilterBase {
     type: 'valueRange';
     min: number;
     max: number;
 }
 
-export interface SpecificValueFilter extends ColumnFilterBase {
-    type: 'specificValue';
-    value: number;
+export interface ValueRangeFilter extends PossibleValueRangeFilter {
+    currentMin: number;
+    currentMax: number;
 }
 
-export type NumericalFilter = ValueRangeFilter | SpecificValueFilter;
-export type CategoricalFilter = SearchStringFilter;
+export interface PossibleSpecificValueFilter extends ColumnFilterBase {
+    type: 'specificValue';
+    values: string[];
+}
+
+export interface SpecificValueFilter extends ColumnFilterBase {
+    type: 'specificValue';
+    value: string;
+}
+
+export type NumericalFilter = ValueRangeFilter;
+export type CategoricalFilter = SearchStringFilter | SpecificValueFilter;
+
+export type PossibleColumnFilter = PossibleValueRangeFilter | PossibleSearchStringFilter | PossibleSpecificValueFilter;
 
 export interface TableFilter extends FilterBase {
     type: 'hideMissingValueColumns' | 'hideNonNumericalColumns' | 'hideDuplicateRows' | 'hideRowsWithOutliers';
@@ -178,4 +196,11 @@ export interface ProfilingSettings extends ProfilingSettingsBase {
     standardDeviation: boolean;
     sum: boolean;
     variance: boolean;
+}
+
+// ------------ Types for general objects -----------
+
+export interface Base64Image {
+    format: string;
+    bytes: string;
 }

@@ -1,12 +1,15 @@
 :root {
     --primary-color: #036ed1;
     --primary-color-desaturated: rgb(3 109 209 / 16.4%);
+    --error-color: #a01417;
+    --warn-color: #a08b14;
     --bg-bright: white;
     --bg-dark: #f2f2f2;
     --bg-medium: #f9f9f9;
     --font-dark: #292929;
     --font-light: #6d6d6d;
     --font-bright: #fff;
+    --transparent: #ffffffa1;
 }
 
 .noSelect {

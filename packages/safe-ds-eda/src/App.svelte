@@ -37,9 +37,9 @@
 </script>
 
 <main>
-    <div class="sidebarWrapper" style="width: {sidebarWidth}px;" class:white-bg={sidebarWidth < 100}>
+    <div class="sidebarWrapper" style:width="{sidebarWidth}px" class:white-bg={sidebarWidth < 100}>
         <Sidebar width={sidebarWidth} />
-        <div class="resizer" on:mousedown={handleDrag}></div>
+        <button class="resizer" on:mousedown={handleDrag}></button>
     </div>
     <div class="tableWrapper">
         <TableView {sidebarWidth} />
@@ -68,7 +68,6 @@
 
     .tableWrapper {
         flex: 1;
-        overflow: scroll;
     }
 
     .resizer {

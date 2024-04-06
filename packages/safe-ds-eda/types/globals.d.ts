@@ -5,6 +5,5 @@ declare global {
         injVscode: {
             postMessage: (message: ToExtensionMessage) => void;
         };
-        tableIdentifier: string;
     }
 }
