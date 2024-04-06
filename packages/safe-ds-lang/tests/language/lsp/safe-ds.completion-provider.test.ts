@@ -255,7 +255,9 @@ describe('SafeDsCompletionProvider', async () => {
             {
                 testName: 'type arguments (no prefix)',
                 code: `
-                    class MyClass<T> {
+                    class MyClass<T>
+
+                    class OtherClass {
                         attr a: MyClass<<|>
                 `,
                 expectedLabels: {
@@ -265,7 +267,9 @@ describe('SafeDsCompletionProvider', async () => {
             {
                 testName: 'type arguments (with prefix)',
                 code: `
-                    class MyClass<T1, U2> {
+                    class MyClass<T1, U2>
+
+                    class OtherClass {
                         attr a: MyClass<T<|>
                 `,
                 expectedLabels: {
@@ -292,6 +296,69 @@ describe('SafeDsCompletionProvider', async () => {
                 expectedLabels: {
                     shouldContain: ['r1'],
                     shouldNotContain: ['s2'],
+                },
+            },
+
+            // Filtering by node type
+            {
+                testName: 'named type to type parameter of containing class',
+                code: `
+                    class MyClass<T1> {
+                        class MyNestedClass<T2>(p: <|>
+                    }
+                `,
+                expectedLabels: {
+                    shouldContain: ['T2'],
+                    shouldNotContain: ['T1'],
+                },
+            },
+            {
+                testName: 'reference to annotation',
+                code: `
+                    annotation MyAnnotation
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['MyAnnotation'],
+                },
+            },
+            {
+                testName: 'reference to pipeline',
+                code: `
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['myPipeline'],
+                },
+            },
+            {
+                testName: 'reference to schema',
+                code: `
+                    schema MySchema {}
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['MySchema'],
+                },
+            },
+
+            // Special cases
+            {
+                testName: 'fuzzy matching',
+                code: `
+                    annotation Annotation
+                    annotation MyAnnotation
+                    annotation OtherAnnotation
+
+                    @Anno<|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['Annotation', 'MyAnnotation', 'OtherAnnotation'],
                 },
             },
         ];
