@@ -361,6 +361,18 @@ describe('SafeDsCompletionProvider', async () => {
                     shouldContain: ['Annotation', 'MyAnnotation', 'OtherAnnotation'],
                 },
             },
+            {
+                testName: 'no error when completing block lambda result',
+                code: `
+                    pipeline myPipeline {
+                        (param1) {
+                            yield <|>
+                    }
+                `,
+                expectedLabels: {
+                    shouldEqual: [],
+                },
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, uri, expectedLabels }) => {
