@@ -10,6 +10,7 @@ import {
     ProgramCodeMap,
     PythonServerMessage,
     RuntimeErrorBacktraceFrame,
+    RuntimeErrorMessage,
 } from './messages.js';
 import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
 import treeKill from 'tree-kill';
@@ -56,6 +57,56 @@ export class SafeDsRunner {
             outputInfo(_value: string) {},
             displayError(_value: string) {},
         };
+        this.registerMessageLoggingCallbacks();
+    }
+
+    private registerMessageLoggingCallbacks() {
+        this.addMessageCallback((message) => {
+            this.logging.outputInfo(
+                `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
+            );
+        }, 'placeholder_value');
+        this.addMessageCallback((message) => {
+            this.logging.outputInfo(
+                `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+            );
+            const execInfo = this.getExecutionContext(message.id)!;
+            execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+            // this.sendMessageToPythonServer(
+            //    messages.createPlaceholderQueryMessage(message.id, message.data.name),
+            //);
+        }, 'placeholder_type');
+        this.addMessageCallback((message) => {
+            this.logging.outputInfo(`Runner-Progress (${message.id}): ${message.data}`);
+        }, 'runtime_progress');
+        this.addMessageCallback(async (message) => {
+            let readableStacktraceSafeDs: string[] = [];
+            const execInfo = this.getExecutionContext(message.id)!;
+            const readableStacktracePython = await Promise.all(
+                (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+                    const mappedFrame = await this.tryMapToSafeDSSource(message.id, frame);
+                    if (mappedFrame) {
+                        readableStacktraceSafeDs.push(
+                            `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
+                                mappedFrame.line
+                            })`,
+                        );
+                        return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
+                    }
+                    return `\tat ${frame.file} line ${frame.line}`;
+                }),
+            );
+            this.logging.outputError(
+                `Runner-RuntimeError (${message.id}): ${
+                    (<RuntimeErrorMessage>message).data.message
+                } \n${readableStacktracePython.join('\n')}`,
+            );
+            this.logging.outputError(
+                `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                    .reverse()
+                    .join('\n')}`,
+            );
+        }, 'runtime_error');
     }
 
     /**
