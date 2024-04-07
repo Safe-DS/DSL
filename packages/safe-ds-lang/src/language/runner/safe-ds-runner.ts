@@ -12,7 +12,7 @@ import {
     RuntimeErrorBacktraceFrame,
     RuntimeErrorMessage,
 } from './messages.js';
-import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
+import { SourceMapConsumer } from 'source-map-js';
 import treeKill from 'tree-kill';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
@@ -318,7 +318,7 @@ export class SafeDsRunner {
         if (!execInfo.sourceMappings.has(sourceMapKey)) {
             const sourceMapObject = JSON.parse(execInfo.generatedSource.get(sourceMapKey)!);
             sourceMapObject.sourcesContent = [execInfo.source];
-            const consumer = await new SourceMapConsumer(sourceMapObject);
+            const consumer = new SourceMapConsumer(sourceMapObject);
             execInfo.sourceMappings.set(sourceMapKey, consumer);
         }
         const outputPosition = execInfo.sourceMappings.get(sourceMapKey)!.originalPositionFor({
@@ -365,7 +365,7 @@ export class SafeDsRunner {
         // Store information about the run
         this.executionInformation.set(id, {
             generatedSource: lastGeneratedSources,
-            sourceMappings: new Map<string, BasicSourceMapConsumer>(),
+            sourceMappings: new Map<string, SourceMapConsumer>(),
             path: pipelineDocument.uri.fsPath,
             source: pipelineDocument.textDocument.getText(),
             calculatedPlaceholders: new Map<string, string>(),
@@ -599,7 +599,7 @@ export interface RunnerLoggingOutput {
 export interface PipelineExecutionInformation {
     source: string;
     generatedSource: Map<string, string>;
-    sourceMappings: Map<string, BasicSourceMapConsumer>;
+    sourceMappings: Map<string, SourceMapConsumer>;
     path: string;
     /**
      * Maps placeholder name to placeholder type
