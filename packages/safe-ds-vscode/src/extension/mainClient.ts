@@ -4,7 +4,7 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import { ast, createSafeDsServices, getModuleMembers, messages, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
+import { initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
 import { AstNode, AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
@@ -79,7 +79,7 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
         },
-        outputChannel: getSafeDSOutputChannel('[LanguageClient] '),
+        outputChannel: vscode.window.createOutputChannel('Safe-DS Language Client', 'log'),
     };
 
     // Create the language client and start the client.

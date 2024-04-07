@@ -31,13 +31,15 @@ export class SafeDsSettingsProvider {
         return this.cachedSettings.inlayHints?.parameterNames?.enabled ?? true;
     }
 
+    /* c8 ignore start */
     getRunnerCommand(): string {
         return this.cachedSettings.runner?.command ?? 'safe-ds-runner';
     }
+    /* c8 ignore stop */
 
-    onRunnerCommandUpdate(callback: (newValue: string) => void): Disposable {
-        const watcher: SettingsWatcher<string> = {
-            accessor: (settings) => settings.runner?.command ?? 'safe-ds-runner',
+    onRunnerCommandUpdate(callback: (newValue: string | undefined) => void): Disposable {
+        const watcher: SettingsWatcher<string | undefined> = {
+            accessor: (settings) => settings.runner?.command,
             callback,
         };
 
