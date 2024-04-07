@@ -1,4 +1,5 @@
 import vscode, { ExtensionContext, Uri } from 'vscode';
+import { SafeDsLanguageMetaData } from '../../../../safe-ds-lang/src/language/index.js';
 
 export const dumpDiagnostics = (context: ExtensionContext) => async () => {
     // Get the current document
@@ -6,7 +7,7 @@ export const dumpDiagnostics = (context: ExtensionContext) => async () => {
     if (!currentDocument) {
         vscode.window.showErrorMessage('No active document.');
         return;
-    } else if (currentDocument.languageId !== 'safe-ds') {
+    } else if (currentDocument.languageId !== SafeDsLanguageMetaData.languageId) {
         vscode.window.showErrorMessage('The active document is not a Safe-DS document.');
         return;
     }
