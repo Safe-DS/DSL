@@ -78,6 +78,9 @@ export type SafeDsAddedServices = {
     purity: {
         PurityComputer: SafeDsPurityComputer;
     };
+    runtime: {
+        Runner: SafeDsRunner;
+    };
     typing: {
         ClassHierarchy: SafeDsClassHierarchy;
         CoreTypes: SafeDsCoreTypes;
@@ -88,9 +91,6 @@ export type SafeDsAddedServices = {
     workspace: {
         PackageManager: SafeDsPackageManager;
         SettingsProvider: SafeDsSettingsProvider;
-    };
-    runtime: {
-        Runner: SafeDsRunner;
     };
 };
 
@@ -151,6 +151,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeComputation: (services) => new SafeDsScopeComputation(services),
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
+    runtime: {
+        Runner: (services) => new SafeDsRunner(services),
+    },
     typing: {
         ClassHierarchy: (services) => new SafeDsClassHierarchy(services),
         CoreTypes: (services) => new SafeDsCoreTypes(services),
@@ -161,9 +164,6 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     workspace: {
         PackageManager: (services) => new SafeDsPackageManager(services),
         SettingsProvider: (services) => new SafeDsSettingsProvider(services),
-    },
-    runtime: {
-        Runner: (services) => new SafeDsRunner(services),
     },
 };
 
