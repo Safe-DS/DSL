@@ -40,13 +40,6 @@ const plugins = [
         },
         watch,
     }),
-    // Needed to resolve source-maps in the extension
-    copy({
-        assets: {
-            from: ['../../node_modules/source-map/lib/mappings.wasm'],
-            to: ['./extension'],
-        },
-    }),
     {
         name: 'watch-plugin',
         setup(build) {
