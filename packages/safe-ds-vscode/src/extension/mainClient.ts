@@ -6,7 +6,7 @@ import { ast, createSafeDsServices, getModuleMembers, messages, SafeDsServices }
 import { NodeFileSystem } from 'langium/node';
 import { getSafeDSOutputChannel, initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
-import { LangiumDocument, URI, AstUtils, AstNode } from 'langium';
+import { AstNode, AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
@@ -91,61 +91,10 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
 };
 
 const acceptRunRequests = async function (context: vscode.ExtensionContext) {
-    // Register logging message callbacks
-    registerMessageLoggingCallbacks();
     // Register VS Code Entry Points
     registerVSCodeCommands(context);
     // Register watchers
     registerVSCodeWatchers();
-};
-
-const registerMessageLoggingCallbacks = function () {
-    services.runtime.Runner.addMessageCallback((message) => {
-        printOutputMessage(
-            `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
-        );
-    }, 'placeholder_value');
-    services.runtime.Runner.addMessageCallback((message) => {
-        printOutputMessage(
-            `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
-        );
-        const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
-        execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
-        // services.runtime.Runner.sendMessageToPythonServer(
-        //    messages.createPlaceholderQueryMessage(message.id, message.data.name),
-        //);
-    }, 'placeholder_type');
-    services.runtime.Runner.addMessageCallback((message) => {
-        printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
-    }, 'runtime_progress');
-    services.runtime.Runner.addMessageCallback(async (message) => {
-        let readableStacktraceSafeDs: string[] = [];
-        const execInfo = services.runtime.Runner.getExecutionContext(message.id)!;
-        const readableStacktracePython = await Promise.all(
-            (<messages.RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
-                const mappedFrame = await services.runtime.Runner.tryMapToSafeDSSource(message.id, frame);
-                if (mappedFrame) {
-                    readableStacktraceSafeDs.push(
-                        `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
-                            mappedFrame.line
-                        })`,
-                    );
-                    return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
-                }
-                return `\tat ${frame.file} line ${frame.line}`;
-            }),
-        );
-        logOutput(
-            `Runner-RuntimeError (${message.id}): ${
-                (<messages.RuntimeErrorMessage>message).data.message
-            } \n${readableStacktracePython.join('\n')}`,
-        );
-        printOutputMessage(
-            `Safe-DS Error (${message.id}): ${(<messages.RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
-                .reverse()
-                .join('\n')}`,
-        );
-    }, 'runtime_error');
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
