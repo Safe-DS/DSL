@@ -45,6 +45,7 @@ import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
+import { SafeDsMessagingProvider } from './lsp/safe-ds-messaging-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -73,6 +74,7 @@ export type SafeDsAddedServices = {
         NodeMapper: SafeDsNodeMapper;
     };
     lsp: {
+        MessagingProvider: SafeDsMessagingProvider;
         NodeInfoProvider: SafeDsNodeInfoProvider;
     };
     purity: {
@@ -135,6 +137,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
+        MessagingProvider: (services) => new SafeDsMessagingProvider(services),
         NodeInfoProvider: (services) => new SafeDsNodeInfoProvider(services),
         RenameProvider: (services) => new SafeDsRenameProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
