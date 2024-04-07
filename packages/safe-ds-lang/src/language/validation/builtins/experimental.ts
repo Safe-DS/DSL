@@ -16,8 +16,8 @@ export const CODE_EXPERIMENTAL_LIBRARY_ELEMENT = 'experimental/library-element';
 export const assigneeAssignedResultShouldNotBeExperimental = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsAssignee, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
+    return (node: SdsAssignee, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLibraryElements()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -43,8 +43,8 @@ export const assigneeAssignedResultShouldNotBeExperimental = (services: SafeDsSe
 export const annotationCallAnnotationShouldNotBeExperimental = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
+    return (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLibraryElements()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -67,8 +67,8 @@ export const annotationCallAnnotationShouldNotBeExperimental = (services: SafeDs
 export const argumentCorrespondingParameterShouldNotBeExperimental = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsArgument, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
+    return (node: SdsArgument, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLibraryElements()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -90,8 +90,8 @@ export const argumentCorrespondingParameterShouldNotBeExperimental = (services: 
 export const namedTypeDeclarationShouldNotBeExperimental = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsNamedType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
+    return (node: SdsNamedType, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLibraryElements()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -113,8 +113,8 @@ export const namedTypeDeclarationShouldNotBeExperimental = (services: SafeDsServ
 export const referenceTargetShouldNotExperimental = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsReference, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLibraryElements())) {
+    return (node: SdsReference, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLibraryElements()) {
             /* c8 ignore next 2 */
             return;
         }
