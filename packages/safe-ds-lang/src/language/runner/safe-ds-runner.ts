@@ -60,6 +60,7 @@ export class SafeDsRunner {
         this.registerMessageLoggingCallbacks();
     }
 
+    /* c8 ignore start */
     private registerMessageLoggingCallbacks() {
         this.addMessageCallback((message) => {
             this.logging.outputInfo(
@@ -108,6 +109,7 @@ export class SafeDsRunner {
             );
         }, 'runtime_error');
     }
+    /* c8 ignore stop */
 
     /**
      * Change the command to start the runner process. This will not cause the runner process to restart, if it is already running.
@@ -295,7 +297,7 @@ export class SafeDsRunner {
      * @param executionId Id that uniquely identifies the execution that produced this stack frame
      * @param frame Stack frame from the python execution
      */
-    public async tryMapToSafeDSSource(
+    private async tryMapToSafeDSSource(
         executionId: string,
         frame: RuntimeErrorBacktraceFrame | undefined,
     ): Promise<RuntimeErrorBacktraceFrame | undefined> {
