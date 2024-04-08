@@ -3,7 +3,7 @@ import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
 import { State } from '@safe-ds/eda/types/state.js';
 import { logOutput, printOutputMessage } from '../output.ts';
-import { SafeDsServices, ast } from '@safe-ds/lang';
+import { ast, SafeDsServices } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';
 
 export class EDAPanel {
@@ -79,19 +79,19 @@ export class EDAPanel {
                     break;
                 }
                 case 'setCurrentGlobalState': {
-                    if (!data.value) {
-                        return;
-                    }
-                    const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
-                    const stateExists = existingStates.some((s) => s.tableIdentifier === data.value.tableIdentifier);
+                    // if (!data.value) {
+                    //     return;
+                    // }
+                    // const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
+                    // const stateExists = existingStates.some((s) => s.tableIdentifier === data.value.tableIdentifier);
 
-                    const newWebviewState = stateExists
-                        ? (existingStates.map((s) =>
-                              s.tableIdentifier === data.value.tableIdentifier ? data.value : s,
-                          ) as State[])
-                        : existingStates.concat(data.value);
+                    // const newWebviewState = stateExists
+                    //     ? (existingStates.map((s) =>
+                    //           s.tableIdentifier === data.value.tableIdentifier ? data.value : s,
+                    //       ) as State[])
+                    //     : existingStates.concat(data.value);
 
-                    EDAPanel.context.globalState.update('webviewState', newWebviewState);
+                    // EDAPanel.context.globalState.update('webviewState', newWebviewState);
                     break;
                 }
                 case 'resetGlobalState': {
@@ -239,18 +239,18 @@ export class EDAPanel {
         });
     };
 
-    private findCurrentState(): State | undefined {
-        const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
-        return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
-    }
+    // private findCurrentState(): State | undefined {
+    //     const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
+    //     return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
+    // }
 
     private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
-        const existingCurrentState = this.findCurrentState();
-        if (existingCurrentState) {
-            printOutputMessage('Found current State.');
-            return { state: existingCurrentState, fromExisting: true };
-        }
-
+        // const existingCurrentState = this.findCurrentState();
+        // if (existingCurrentState) {
+        //     printOutputMessage('Found current State.');
+        //     return { state: existingCurrentState, fromExisting: true };
+        // }
+        //
         const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
         if (!panel) {
             throw new Error('RunnerApi panel not found.');
