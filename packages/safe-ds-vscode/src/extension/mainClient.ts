@@ -41,7 +41,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
     });
     await client.start();
 
-    await acceptRunRequests(context);
+    registerVSCodeCommands(context);
 };
 
 // This function is called when the extension is deactivated.
@@ -87,11 +87,6 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 
     // Create the language client
     return new LanguageClient('safe-ds', 'Safe-DS', serverOptions, clientOptions);
-};
-
-const acceptRunRequests = async function (context: vscode.ExtensionContext) {
-    // Register VS Code Entry Points
-    registerVSCodeCommands(context);
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
