@@ -118,7 +118,6 @@ export class SafeDsRunner {
             );
         }, 'runtime_error');
     }
-    /* c8 ignore stop */
 
     async connectToPort(port: number): Promise<void> {
         if (this.isPythonServerAvailable()) {
@@ -138,7 +137,6 @@ export class SafeDsRunner {
      *
      * @param command New Runner Command.
      */
-    /* c8 ignore start */
     public async updateRunnerCommand(command: string | undefined): Promise<void> {
         if (command) {
             this.runnerCommand = command;
