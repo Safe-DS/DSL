@@ -34,7 +34,6 @@ export class SafeDsRunner {
     private readonly generator: SafeDsPythonGenerator;
     private readonly messaging: SafeDsMessagingProvider;
 
-    private logging: RunnerLoggingOutput;
     private runnerCommand: string = 'safe-ds-runner';
     private runnerProcess: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
     private port: number | undefined = undefined;
@@ -58,10 +57,6 @@ export class SafeDsRunner {
         this.annotations = services.builtins.Annotations;
         this.generator = services.generation.PythonGenerator;
         this.messaging = services.lsp.MessagingProvider;
-
-        this.logging = {
-            displayError(_value: string) {},
-        };
 
         // Register listeners
         this.registerMessageLoggingCallbacks();
@@ -137,15 +132,6 @@ export class SafeDsRunner {
     }
 
     /**
-     * Change the output functions for runner logging and error information to those provided.
-     *
-     * @param logging New Runner output functions.
-     */
-    public updateRunnerLogging(logging: RunnerLoggingOutput): void {
-        this.logging = logging;
-    }
-
-    /**
      * Start the python server on the next usable port, starting at 5000.
      * Uses the 'safe-ds.runner.command' setting to execute the process.
      */
@@ -159,7 +145,7 @@ export class SafeDsRunner {
             const versionString = await this.getPythonServerVersion(pythonServerTest);
             if (!semver.satisfies(versionString, npmVersionRange)) {
                 this.error(`Installed runner version ${versionString} does not meet requirements: ${pipVersionRange}`);
-                this.logging.displayError(
+                this.messaging.showErrorMessage(
                     `The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${pipVersionRange}. Please update to a matching version.`,
                 );
                 return;
@@ -168,7 +154,7 @@ export class SafeDsRunner {
             }
         } catch (error) {
             this.error(`Could not start runner: ${error instanceof Error ? error.message : error}`);
-            this.logging.displayError(
+            this.messaging.showErrorMessage(
                 `The runner process could not be started: ${error instanceof Error ? error.message : error}`,
             );
             return;
@@ -595,13 +581,6 @@ export class SafeDsRunner {
     private error(message: string) {
         this.messaging.error(RUNNER_TAG, message);
     }
-}
-
-/**
- * Runner Logging interface
- */
-export interface RunnerLoggingOutput {
-    displayError: (value: string) => void;
 }
 
 /**

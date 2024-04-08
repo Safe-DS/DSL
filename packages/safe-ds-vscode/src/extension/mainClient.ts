@@ -32,13 +32,11 @@ export const activate = async function (context: vscode.ExtensionContext) {
                 error: logError,
             },
             runnerCommand: runnerCommandSetting,
+            userMessageProvider: {
+                showErrorMessage: vscode.window.showErrorMessage,
+            },
         })
     ).SafeDs;
-    services.runtime.Runner.updateRunnerLogging({
-        displayError(value: string): void {
-            vscode.window.showErrorMessage(value);
-        },
-    });
     await services.runtime.Runner.startPythonServer();
     acceptRunRequests(context);
 };
