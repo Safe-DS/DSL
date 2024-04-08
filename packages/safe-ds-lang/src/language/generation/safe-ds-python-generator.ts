@@ -1028,7 +1028,7 @@ export class SafeDsPythonGenerator {
             const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
             frame.addImport(referenceImport);
         }
-        return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
+        return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_static_call("${fullyQualifiedTargetName}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
             containsOptionalArgs
