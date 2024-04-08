@@ -1,4 +1,4 @@
-import { Logger, SafeDsServices, UserMessageProvider } from '../safe-ds-module.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { Connection } from 'vscode-languageserver';
 import { Disposable } from 'vscode-languageserver-protocol';
 
@@ -166,3 +166,53 @@ export class SafeDsMessagingProvider {
 }
 
 /* c8 ignore stop */
+
+/**
+ * A logging provider.
+ */
+export interface Logger {
+    /**
+     * Log the given data to the trace log.
+     */
+    trace?: (message: string, verbose?: string) => void;
+
+    /**
+     * Log a debug message.
+     */
+    debug?: (message: string) => void;
+
+    /**
+     * Log an information message.
+     */
+    info?: (message: string) => void;
+
+    /**
+     * Log a warning message.
+     */
+    warn?: (message: string) => void;
+
+    /**
+     * Log an error message.
+     */
+    error?: (message: string) => void;
+}
+
+/**
+ * A service for showing messages to the user.
+ */
+export interface UserMessageProvider {
+    /**
+     * Prominently show an information message. The message should be short and human-readable.
+     */
+    showInformationMessage?: (message: string) => void;
+
+    /**
+     * Prominently show a warning message. The message should be short and human-readable.
+     */
+    showWarningMessage?: (message: string) => void;
+
+    /**
+     * Prominently show an error message. The message should be short and human-readable.
+     */
+    showErrorMessage?: (message: string) => void;
+}

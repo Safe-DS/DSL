@@ -84,12 +84,7 @@ export class SafeDsSettingsProvider {
     }
 }
 
-interface SettingsWatcher<T> {
-    accessor: (settings: DeepPartial<Settings>) => T;
-    callback: (newValue: T) => void;
-}
-
-interface Settings {
+export interface Settings {
     inlayHints: InlayHintsSettings;
     runner: RunnerSettings;
     validation: ValidationSettings;
@@ -124,4 +119,9 @@ interface ValidationSettings {
     nameConvention: {
         enabled: boolean;
     };
+}
+
+interface SettingsWatcher<T> {
+    accessor: (settings: DeepPartial<Settings>) => T;
+    callback: (newValue: T) => void;
 }

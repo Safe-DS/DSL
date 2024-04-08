@@ -45,7 +45,7 @@ import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
-import { SafeDsMessagingProvider } from './lsp/safe-ds-messaging-provider.js';
+import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 
 /**
@@ -277,54 +277,4 @@ export interface ModuleOptions {
      * server connection, if available.
      */
     userMessageProvider?: UserMessageProvider;
-}
-
-/**
- * A logging provider.
- */
-export interface Logger {
-    /**
-     * Log the given data to the trace log.
-     */
-    trace?: (message: string, verbose?: string) => void;
-
-    /**
-     * Log a debug message.
-     */
-    debug?: (message: string) => void;
-
-    /**
-     * Log an information message.
-     */
-    info?: (message: string) => void;
-
-    /**
-     * Log a warning message.
-     */
-    warn?: (message: string) => void;
-
-    /**
-     * Log an error message.
-     */
-    error?: (message: string) => void;
-}
-
-/**
- * A service for showing messages to the user.
- */
-export interface UserMessageProvider {
-    /**
-     * Prominently show an information message. The message should be short and human-readable.
-     */
-    showInformationMessage?: (message: string) => void;
-
-    /**
-     * Prominently show a warning message. The message should be short and human-readable.
-     */
-    showWarningMessage?: (message: string) => void;
-
-    /**
-     * Prominently show an error message. The message should be short and human-readable.
-     */
-    showErrorMessage?: (message: string) => void;
 }
