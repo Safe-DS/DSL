@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { ast, createSafeDsServices, getModuleMembers, messages, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServices, getModuleMembers, messages, rpc, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
@@ -36,7 +36,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
     ).SafeDs;
 
     client = createLanguageClient(context);
-    client.onNotification('runner/started', async (port: number) => {
+    client.onNotification(rpc.runnerStarted, async (port: number) => {
         await services.runtime.Runner.connectToPort(port);
     });
     await client.start();

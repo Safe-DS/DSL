@@ -1,3 +1,5 @@
+import { RPC_RUNNER_STARTED } from './runner/safe-ds-runner.js';
+
 // Services
 export type { SafeDsServices } from './safe-ds-module.js';
 export { createSafeDsServices } from './safe-ds-module.js';
@@ -17,3 +19,8 @@ export { locationToString, positionToString, rangeToString } from '../helpers/lo
 
 // Messages
 export * as messages from './runner/messages.js';
+
+// Remote procedure calls
+export const rpc = {
+    runnerStarted: RPC_RUNNER_STARTED,
+};

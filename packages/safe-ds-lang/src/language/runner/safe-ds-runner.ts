@@ -22,6 +22,8 @@ import { SafeDsMessagingProvider } from '../lsp/safe-ds-messaging-provider.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
+export const RPC_RUNNER_STARTED = 'runner/started';
+
 const LOWEST_SUPPORTED_VERSION = '0.8.0';
 const LOWEST_UNSUPPORTED_VERSION = '0.9.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_VERSION} <${LOWEST_UNSUPPORTED_VERSION}`;
@@ -65,7 +67,7 @@ export class SafeDsRunner {
             this.updateRunnerCommand(newValue);
             await this.startPythonServer();
             if (this.isPythonServerAvailable()) {
-                await this.messaging.sendNotification('runner/started', this.port);
+                await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
             }
         });
 
