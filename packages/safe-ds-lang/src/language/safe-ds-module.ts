@@ -242,7 +242,11 @@ export const createSafeDsServices = async function (
     }
     if (options?.runnerCommand) {
         /* c8 ignore next 2 */
-        SafeDs.runtime.Runner.updateRunnerCommand(options?.runnerCommand);
+        SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+    }
+    if (options?.userMessageProvider) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
     }
 
     return { shared, SafeDs };
@@ -267,6 +271,12 @@ export interface ModuleOptions {
      * Command to start the runner.
      */
     runnerCommand?: string;
+
+    /**
+     * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
+     * server connection, if available.
+     */
+    userMessageProvider?: UserMessageProvider;
 }
 
 /**
@@ -297,4 +307,24 @@ export interface Logger {
      * Log an error message.
      */
     error?: (message: string) => void;
+}
+
+/**
+ * A service for showing messages to the user.
+ */
+export interface UserMessageProvider {
+    /**
+     * Prominently show an information message. The message should be short and human-readable.
+     */
+    showInformationMessage?: (message: string) => void;
+
+    /**
+     * Prominently show a warning message. The message should be short and human-readable.
+     */
+    showWarningMessage?: (message: string) => void;
+
+    /**
+     * Prominently show an error message. The message should be short and human-readable.
+     */
+    showErrorMessage?: (message: string) => void;
 }

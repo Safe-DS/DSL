@@ -1,4 +1,4 @@
-import { Logger, SafeDsServices } from '../safe-ds-module.js';
+import { Logger, SafeDsServices, UserMessageProvider } from '../safe-ds-module.js';
 import { Connection } from 'vscode-languageserver';
 import { Disposable } from 'vscode-languageserver-protocol';
 
@@ -10,16 +10,10 @@ import { Disposable } from 'vscode-languageserver-protocol';
 export class SafeDsMessagingProvider {
     private readonly connection: Connection | undefined;
     private logger: Logger | undefined = undefined;
+    private userMessageProvider: UserMessageProvider | undefined = undefined;
 
     constructor(services: SafeDsServices) {
         this.connection = services.shared.lsp.Connection;
-    }
-
-    /**
-     * Set the logger to use for logging messages.
-     */
-    setLogger(logger: Logger) {
-        this.logger = logger;
     }
 
     /**
@@ -93,7 +87,9 @@ export class SafeDsMessagingProvider {
      * notification center.
      */
     showInformationMessage(message: string): void {
-        if (this.connection) {
+        if (this.userMessageProvider?.showInformationMessage) {
+            this.userMessageProvider.showInformationMessage(message);
+        } else if (this.connection) {
             this.connection.window.showInformationMessage(message);
         }
     }
@@ -105,7 +101,9 @@ export class SafeDsMessagingProvider {
      * notification center.
      */
     showWarningMessage(message: string): void {
-        if (this.connection) {
+        if (this.userMessageProvider?.showWarningMessage) {
+            this.userMessageProvider.showWarningMessage(message);
+        } else if (this.connection) {
             this.connection.window.showWarningMessage(message);
         }
     }
@@ -117,7 +115,9 @@ export class SafeDsMessagingProvider {
      * notification center.
      */
     showErrorMessage(message: string): void {
-        if (this.connection) {
+        if (this.userMessageProvider?.showErrorMessage) {
+            this.userMessageProvider.showErrorMessage(message);
+        } else if (this.connection) {
             this.connection.window.showErrorMessage(message);
         }
     }
@@ -148,6 +148,20 @@ export class SafeDsMessagingProvider {
         if (this.connection) {
             await this.connection.sendNotification(method, params);
         }
+    }
+
+    /**
+     * Set the logger to use for logging messages.
+     */
+    setLogger(logger: Logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Set the user message provider to use for showing messages to the user.
+     */
+    setUserMessageProvider(userMessageProvider: UserMessageProvider) {
+        this.userMessageProvider = userMessageProvider;
     }
 }
 
