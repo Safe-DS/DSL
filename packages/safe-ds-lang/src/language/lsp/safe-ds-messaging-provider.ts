@@ -1,4 +1,4 @@
-import { SafeDsServices } from '../safe-ds-module.js';
+import { Logger, SafeDsServices } from '../safe-ds-module.js';
 import { Connection } from 'vscode-languageserver';
 import { Disposable } from 'vscode-languageserver-protocol';
 
@@ -9,17 +9,27 @@ import { Disposable } from 'vscode-languageserver-protocol';
  */
 export class SafeDsMessagingProvider {
     private readonly connection: Connection | undefined;
+    private logger: Logger | undefined = undefined;
 
     constructor(services: SafeDsServices) {
         this.connection = services.shared.lsp.Connection;
     }
 
     /**
+     * Set the logger to use for logging messages.
+     */
+    setLogger(logger: Logger) {
+        this.logger = logger;
+    }
+
+    /**
      * Log the given data to the trace log.
      */
     trace(tag: string, message: string, verbose?: string): void {
-        if (this.connection) {
-            const text = this.formatLogMessage(tag, message);
+        const text = this.formatLogMessage(tag, message);
+        if (this.logger?.trace) {
+            this.logger.trace(text, verbose);
+        } else if (this.connection) {
             this.connection.tracer.log(text, verbose);
         }
     }
@@ -28,8 +38,10 @@ export class SafeDsMessagingProvider {
      * Log a debug message.
      */
     debug(tag: string, message: string): void {
-        if (this.connection) {
-            const text = this.formatLogMessage(tag, message);
+        const text = this.formatLogMessage(tag, message);
+        if (this.logger?.debug) {
+            this.logger.debug(text);
+        } else if (this.connection) {
             this.connection.console.debug(text);
         }
     }
@@ -38,8 +50,10 @@ export class SafeDsMessagingProvider {
      * Log an information message.
      */
     info(tag: string, message: string): void {
-        if (this.connection) {
-            const text = this.formatLogMessage(tag, message);
+        const text = this.formatLogMessage(tag, message);
+        if (this.logger?.info) {
+            this.logger.info(text);
+        } else if (this.connection) {
             this.connection.console.info(text);
         }
     }
@@ -48,8 +62,10 @@ export class SafeDsMessagingProvider {
      * Log a warning message.
      */
     warn(tag: string, message: string): void {
-        if (this.connection) {
-            const text = this.formatLogMessage(tag, message);
+        const text = this.formatLogMessage(tag, message);
+        if (this.logger?.warn) {
+            this.logger.warn(text);
+        } else if (this.connection) {
             this.connection.console.warn(text);
         }
     }
@@ -58,8 +74,10 @@ export class SafeDsMessagingProvider {
      * Log an error message.
      */
     error(tag: string, message: string): void {
-        if (this.connection) {
-            const text = this.formatLogMessage(tag, message);
+        const text = this.formatLogMessage(tag, message);
+        if (this.logger?.error) {
+            this.logger.error(text);
+        } else if (this.connection) {
             this.connection.console.error(text);
         }
     }

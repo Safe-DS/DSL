@@ -233,6 +233,10 @@ export const createSafeDsServices = async function (
     }
 
     // Apply options
+    if (options?.logger) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setLogger(options.logger);
+    }
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
@@ -249,6 +253,12 @@ export const createSafeDsServices = async function (
  */
 export interface ModuleOptions {
     /**
+     * A logging provider. If the logger lacks a capability, we fall back to the logger provided by the language server
+     * connection, if available.
+     */
+    logger?: Logger;
+
+    /**
      * By default, builtins are loaded into the workspace. If this option is set to true, builtins are omitted.
      */
     omitBuiltins?: boolean;
@@ -257,4 +267,34 @@ export interface ModuleOptions {
      * Command to start the runner.
      */
     runnerCommand?: string;
+}
+
+/**
+ * A logging provider.
+ */
+export interface Logger {
+    /**
+     * Log the given data to the trace log.
+     */
+    trace?: (message: string, verbose?: string) => void;
+
+    /**
+     * Log a debug message.
+     */
+    debug?: (message: string) => void;
+
+    /**
+     * Log an information message.
+     */
+    info?: (message: string) => void;
+
+    /**
+     * Log a warning message.
+     */
+    warn?: (message: string) => void;
+
+    /**
+     * Log an error message.
+     */
+    error?: (message: string) => void;
 }
