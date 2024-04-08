@@ -418,6 +418,21 @@ export class SafeDsTypeChecker {
             })
         );
     }
+
+    /**
+     * Checks whether {@link type} represents a tabular data structure (i.e., a table).
+     */
+    isTabular(type: Type): boolean {
+        const tableOrNull = this.coreTypes.Table.withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, tableOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
 }
 
 /**

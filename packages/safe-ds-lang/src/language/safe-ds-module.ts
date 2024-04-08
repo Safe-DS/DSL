@@ -47,6 +47,7 @@ import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
 import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
+import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -145,6 +146,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     lsp: {
         CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
+        CodeLensProvider: (services) => new SafeDsCodeLensProvider(services),
         CompletionProvider: (services) => new SafeDsCompletionProvider(services),
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),

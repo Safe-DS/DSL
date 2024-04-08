@@ -80,6 +80,10 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.String);
     }
 
+    get Table(): Type {
+        return this.createCoreType(this.builtinClasses.Table);
+    }
+
     private createCoreType(coreClass: SdsClass | undefined, isNullable: boolean = false): Type {
         if (!coreClass) {
             /* c8 ignore next 2 */
