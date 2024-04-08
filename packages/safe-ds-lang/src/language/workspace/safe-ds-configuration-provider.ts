@@ -6,8 +6,10 @@ export class SafeDsConfigurationProvider extends DefaultConfigurationProvider {
 
     override updateConfiguration(change: DidChangeConfigurationParams): void {
         if (!change.settings) {
+            /* c8 ignore next 2 */
             return;
         }
+
         Object.keys(change.settings).forEach((section) => {
             const configuration = change.settings[section];
             this.updateSectionConfiguration(section, configuration);

@@ -12,11 +12,13 @@ export class SafeDsSettingsProvider {
     constructor(services: SafeDsServices) {
         this.configurationProvider = services.shared.workspace.ConfigurationProvider;
 
+        /* c8 ignore start */
         this.configurationProvider.onConfigurationSectionUpdate(async ({ section, configuration }) => {
             if (section === SafeDsLanguageMetaData.languageId) {
                 await this.updateCachedSettings(configuration);
             }
         });
+        /* c8 ignore stop */
     }
 
     shouldShowAssigneeTypeInlayHints(): boolean {
@@ -46,6 +48,7 @@ export class SafeDsSettingsProvider {
         this.watchers.add(watcher);
 
         return Disposable.create(() => {
+            /* c8 ignore next */
             this.watchers.delete(watcher);
         });
     }

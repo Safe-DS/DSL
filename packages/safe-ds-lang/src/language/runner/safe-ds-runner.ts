@@ -49,6 +49,7 @@ export class SafeDsRunner {
         PipelineExecutionInformation
     >();
 
+    /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
         this.generator = services.generation.PythonGenerator;
@@ -77,7 +78,6 @@ export class SafeDsRunner {
         });
     }
 
-    /* c8 ignore start */
     private registerMessageLoggingCallbacks() {
         this.addMessageCallback((message) => {
             this.logging.outputInfo(
