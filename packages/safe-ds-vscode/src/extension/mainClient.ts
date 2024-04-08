@@ -92,8 +92,6 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 const acceptRunRequests = async function (context: vscode.ExtensionContext) {
     // Register VS Code Entry Points
     registerVSCodeCommands(context);
-    // Register watchers
-    registerVSCodeWatchers();
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
@@ -417,19 +415,6 @@ const validateDocuments = async function (
         return 'Cannot run the main pipeline, because some files have errors.';
     }
     return undefined;
-};
-
-const registerVSCodeWatchers = function () {
-    vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('safe-ds.runner.command')) {
-            // Try starting runner
-            logOutput('Safe-DS Runner Command was updated');
-            services.runtime.Runner.updateRunnerCommand(
-                vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!,
-            );
-            services.runtime.Runner.startPythonServer();
-        }
-    });
 };
 
 const isRangeEqual = function (lhs: Range, rhs: Range): boolean {
