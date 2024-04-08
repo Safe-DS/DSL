@@ -3,6 +3,7 @@
 import safeds_runner
 from safeds.data.image.containers import Image
 from safeds.data.tabular.containers import Column, Table
+from safeds.data.tabular.transformation import OneHotEncoder, TableTransformer
 from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, factoryNested, g, h, Outer
 from typing import Any, TypeVar
 
@@ -51,3 +52,7 @@ def test():
     nestedResult = safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.g", Outer.Nested.g, [nestedInstance], [])
     safeds_runner.save_placeholder('nestedResult', nestedResult)
     f(nestedResult)
+    encoder = safeds_runner.memoized_dynamic_call("fit", [safeds_runner.memoized_static_call("safeds.data.tabular.transformation.OneHotEncoder", OneHotEncoder, [], []), a, ['b']], [])
+    safeds_runner.save_placeholder('encoder', encoder)
+    transformedTable = safeds_runner.memoized_dynamic_call("transform", [encoder, a], [])
+    safeds_runner.save_placeholder('transformedTable', transformedTable)

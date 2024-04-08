@@ -64,4 +64,6 @@ pipeline test {
     val nestedInstance = factoryNested();
     val nestedResult = nestedInstance.g();
     f(nestedResult);
+    val encoder = OneHotEncoder().fit(a, ["b"]);
+    val transformedTable = encoder.transform(a);
 }
