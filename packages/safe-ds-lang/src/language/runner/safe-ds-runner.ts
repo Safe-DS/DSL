@@ -64,11 +64,7 @@ export class SafeDsRunner {
         this.registerMessageLoggingCallbacks();
 
         services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
-            this.updateRunnerCommand(newValue);
-            await this.startPythonServer();
-            if (this.isPythonServerAvailable()) {
-                await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
-            }
+            await this.updateRunnerCommand(newValue);
         });
 
         services.shared.lsp.Connection?.onShutdown(async () => {
@@ -143,9 +139,13 @@ export class SafeDsRunner {
      * @param command New Runner Command.
      */
     /* c8 ignore start */
-    public updateRunnerCommand(command: string | undefined): void {
+    public async updateRunnerCommand(command: string | undefined): Promise<void> {
         if (command) {
             this.runnerCommand = command;
+            await this.startPythonServer();
+            if (this.isPythonServerAvailable()) {
+                await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
+            }
         }
     }
 
