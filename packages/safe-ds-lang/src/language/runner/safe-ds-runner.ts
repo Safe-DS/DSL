@@ -22,6 +22,8 @@ import { SafeDsMessagingProvider } from '../lsp/safe-ds-messaging-provider.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
+export const RPC_RUNNER_STARTED = 'runner/started';
+
 const LOWEST_SUPPORTED_VERSION = '0.8.0';
 const LOWEST_UNSUPPORTED_VERSION = '0.9.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_VERSION} <${LOWEST_UNSUPPORTED_VERSION}`;
@@ -62,8 +64,7 @@ export class SafeDsRunner {
         this.registerMessageLoggingCallbacks();
 
         services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
-            this.updateRunnerCommand(newValue);
-            await this.startPythonServer();
+            await this.updateRunnerCommand(newValue);
         });
 
         services.shared.lsp.Connection?.onShutdown(async () => {
@@ -117,17 +118,32 @@ export class SafeDsRunner {
             );
         }, 'runtime_error');
     }
-    /* c8 ignore stop */
+
+    async connectToPort(port: number): Promise<void> {
+        if (this.isPythonServerAvailable()) {
+            return;
+        }
+
+        this.port = port;
+        try {
+            await this.connectToWebSocket();
+        } catch (error) {
+            await this.stopPythonServer();
+        }
+    }
 
     /**
      * Change the command to start the runner process. This will not cause the runner process to restart, if it is already running.
      *
      * @param command New Runner Command.
      */
-    /* c8 ignore start */
-    public updateRunnerCommand(command: string | undefined): void {
+    public async updateRunnerCommand(command: string | undefined): Promise<void> {
         if (command) {
             this.runnerCommand = command;
+            await this.startPythonServer();
+            if (this.isPythonServerAvailable()) {
+                await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
+            }
         }
     }
 
@@ -136,6 +152,11 @@ export class SafeDsRunner {
      * Uses the 'safe-ds.runner.command' setting to execute the process.
      */
     public async startPythonServer(): Promise<void> {
+        if (this.isPythonServerAvailable()) {
+            this.info('As the Safe-DS Runner is currently successfully running, no attempt to start it will be made');
+            return;
+        }
+
         this.acceptsConnections = false;
         const runnerCommandParts = this.runnerCommand.split(/\s/u);
         const runnerCommand = runnerCommandParts.shift()!; // After shift, only the actual args are left

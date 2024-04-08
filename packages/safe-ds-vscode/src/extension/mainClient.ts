@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { ast, createSafeDsServices, getModuleMembers, messages, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServices, getModuleMembers, messages, rpc, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
 import { initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
@@ -23,22 +23,25 @@ let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
 // This function is called when the extension is activated.
 export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
-    client = startLanguageClient(context);
-    const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
     services = (
         await createSafeDsServices(NodeFileSystem, {
             logger: {
                 info: logOutput,
                 error: logError,
             },
-            runnerCommand: runnerCommandSetting,
             userMessageProvider: {
                 showErrorMessage: vscode.window.showErrorMessage,
             },
         })
     ).SafeDs;
-    await services.runtime.Runner.startPythonServer();
-    acceptRunRequests(context);
+
+    client = createLanguageClient(context);
+    client.onNotification(rpc.runnerStarted, async (port: number) => {
+        await services.runtime.Runner.connectToPort(port);
+    });
+    await client.start();
+
+    registerVSCodeCommands(context);
 };
 
 // This function is called when the extension is deactivated.
@@ -50,7 +53,7 @@ export const deactivate = async function (): Promise<void> {
     return;
 };
 
-const startLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
+const createLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
     const serverModule = context.asAbsolutePath(path.join('dist', 'extension', 'mainServer.cjs'));
     // The debug options for the server
     // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
@@ -82,19 +85,8 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
         outputChannel: vscode.window.createOutputChannel('Safe-DS Language Client', 'log'),
     };
 
-    // Create the language client and start the client.
-    const result = new LanguageClient('safe-ds', 'Safe-DS', serverOptions, clientOptions);
-
-    // Start the client. This will also launch the server
-    result.start();
-    return result;
-};
-
-const acceptRunRequests = async function (context: vscode.ExtensionContext) {
-    // Register VS Code Entry Points
-    registerVSCodeCommands(context);
-    // Register watchers
-    registerVSCodeWatchers();
+    // Create the language client
+    return new LanguageClient('safe-ds', 'Safe-DS', serverOptions, clientOptions);
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
@@ -418,25 +410,6 @@ const validateDocuments = async function (
         return 'Cannot run the main pipeline, because some files have errors.';
     }
     return undefined;
-};
-
-const registerVSCodeWatchers = function () {
-    vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('safe-ds.runner.command')) {
-            // Try starting runner
-            logOutput('Safe-DS Runner Command was updated');
-            services.runtime.Runner.updateRunnerCommand(
-                vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!,
-            );
-            if (!services.runtime.Runner.isPythonServerAvailable()) {
-                services.runtime.Runner.startPythonServer();
-            } else {
-                logOutput(
-                    'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',
-                );
-            }
-        }
-    });
 };
 
 const isRangeEqual = function (lhs: Range, rhs: Range): boolean {
