@@ -7,6 +7,7 @@ import {
     isSdsAnnotationCall,
     isSdsArgument,
     isSdsAttribute,
+    isSdsBlockLambdaResult,
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
@@ -149,6 +150,12 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
             return {
                 type: SemanticTokenTypes.property,
                 modifier,
+            };
+        } else if (isSdsBlockLambdaResult(node)) {
+            return {
+                // For lack of a better option, we use the token type for parameters here
+                type: SemanticTokenTypes.parameter,
+                modifier: additionalModifiers,
             };
         } else if (isSdsClass(node)) {
             const isBuiltinClass = this.builtinClasses.isBuiltinClass(node);
