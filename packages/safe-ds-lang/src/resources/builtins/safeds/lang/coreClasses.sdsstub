@@ -26,7 +26,15 @@ class Boolean
 /**
  * A number.
  */
-class Number
+class Number {
+
+    /**
+     * Converts the number to an integer.
+     */
+    @Pure
+    @PythonCall("int($this)")
+    fun toInt() -> i: Int
+}
 
 /**
  * An integer.
@@ -81,4 +89,14 @@ class Map<K, out V> {
 /**
  * Some text.
  */
-class String
+class String {
+
+    /**
+     * Converts the string to an integer.
+     *
+     * @base The base of the integer.
+     */
+    @Pure
+    @PythonCall("int($this, $base)")
+    fun toInt(base: Int = 10) -> i: Int
+}
