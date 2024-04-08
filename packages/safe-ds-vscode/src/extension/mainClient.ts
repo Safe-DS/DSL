@@ -428,13 +428,7 @@ const registerVSCodeWatchers = function () {
             services.runtime.Runner.updateRunnerCommand(
                 vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!,
             );
-            if (!services.runtime.Runner.isPythonServerAvailable()) {
-                services.runtime.Runner.startPythonServer();
-            } else {
-                logOutput(
-                    'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',
-                );
-            }
+            services.runtime.Runner.startPythonServer();
         }
     });
 };

@@ -136,6 +136,11 @@ export class SafeDsRunner {
      * Uses the 'safe-ds.runner.command' setting to execute the process.
      */
     public async startPythonServer(): Promise<void> {
+        if (this.isPythonServerAvailable()) {
+            this.info('As the Safe-DS Runner is currently successfully running, no attempt to start it will be made');
+            return;
+        }
+
         this.acceptsConnections = false;
         const runnerCommandParts = this.runnerCommand.split(/\s/u);
         const runnerCommand = runnerCommandParts.shift()!; // After shift, only the actual args are left
