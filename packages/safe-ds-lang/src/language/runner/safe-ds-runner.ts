@@ -574,6 +574,7 @@ export class SafeDsRunner {
         });
     }
 
+    /* c8 ignore start */
     private info(message: string) {
         this.messaging.info(RUNNER_TAG, message);
     }
@@ -581,6 +582,7 @@ export class SafeDsRunner {
     private error(message: string) {
         this.messaging.error(RUNNER_TAG, message);
     }
+    /* c8 ignore stop */
 }
 
 /**
