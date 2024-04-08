@@ -64,6 +64,9 @@ export class SafeDsRunner {
         services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
             this.updateRunnerCommand(newValue);
             await this.startPythonServer();
+            if (this.isPythonServerAvailable()) {
+                await this.messaging.sendNotification('runner/started', this.port);
+            }
         });
 
         services.shared.lsp.Connection?.onShutdown(async () => {
@@ -118,6 +121,19 @@ export class SafeDsRunner {
         }, 'runtime_error');
     }
     /* c8 ignore stop */
+
+    async connectToPort(port: number): Promise<void> {
+        if (this.isPythonServerAvailable()) {
+            return;
+        }
+
+        this.port = port;
+        try {
+            await this.connectToWebSocket();
+        } catch (error) {
+            await this.stopPythonServer();
+        }
+    }
 
     /**
      * Change the command to start the runner process. This will not cause the runner process to restart, if it is already running.

@@ -37,7 +37,12 @@ export const activate = async function (context: vscode.ExtensionContext) {
             },
         })
     ).SafeDs;
-    await services.runtime.Runner.startPythonServer();
+
+    client.onNotification('runner/started', async (port: number) => {
+        await services.runtime.Runner.connectToPort(port);
+    });
+
+    // await services.runtime.Runner.startPythonServer();
     acceptRunRequests(context);
 };
 
