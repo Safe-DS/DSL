@@ -25,18 +25,18 @@ export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     client = startLanguageClient(context);
     const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
-    services = (await createSafeDsServices(NodeFileSystem, { runnerCommand: runnerCommandSetting })).SafeDs;
-    services.runtime.Runner.updateRunnerLogging({
-        displayError(value: string): void {
-            vscode.window.showErrorMessage(value);
-        },
-        outputError(value: string): void {
-            logError(value);
-        },
-        outputInfo(value: string): void {
-            logOutput(value);
-        },
-    });
+    services = (
+        await createSafeDsServices(NodeFileSystem, {
+            logger: {
+                info: logOutput,
+                error: logError,
+            },
+            runnerCommand: runnerCommandSetting,
+            userMessageProvider: {
+                showErrorMessage: vscode.window.showErrorMessage,
+            },
+        })
+    ).SafeDs;
     await services.runtime.Runner.startPythonServer();
     acceptRunRequests(context);
 };

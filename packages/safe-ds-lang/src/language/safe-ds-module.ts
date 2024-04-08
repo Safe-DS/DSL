@@ -45,7 +45,7 @@ import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
-import { SafeDsMessagingProvider } from './lsp/safe-ds-messaging-provider.js';
+import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 
 /**
@@ -233,12 +233,20 @@ export const createSafeDsServices = async function (
     }
 
     // Apply options
+    if (options?.logger) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setLogger(options.logger);
+    }
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
     if (options?.runnerCommand) {
         /* c8 ignore next 2 */
-        SafeDs.runtime.Runner.updateRunnerCommand(options?.runnerCommand);
+        SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+    }
+    if (options?.userMessageProvider) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
     }
 
     return { shared, SafeDs };
@@ -249,6 +257,12 @@ export const createSafeDsServices = async function (
  */
 export interface ModuleOptions {
     /**
+     * A logging provider. If the logger lacks a capability, we fall back to the logger provided by the language server
+     * connection, if available.
+     */
+    logger?: Logger;
+
+    /**
      * By default, builtins are loaded into the workspace. If this option is set to true, builtins are omitted.
      */
     omitBuiltins?: boolean;
@@ -257,4 +271,10 @@ export interface ModuleOptions {
      * Command to start the runner.
      */
     runnerCommand?: string;
+
+    /**
+     * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
+     * server connection, if available.
+     */
+    userMessageProvider?: UserMessageProvider;
 }
