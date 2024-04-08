@@ -23,27 +23,25 @@ let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
 // This function is called when the extension is activated.
 export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
-    client = startLanguageClient(context);
-    const runnerCommandSetting = vscode.workspace.getConfiguration('safe-ds.runner').get<string>('command')!; // Default is set
     services = (
         await createSafeDsServices(NodeFileSystem, {
             logger: {
                 info: logOutput,
                 error: logError,
             },
-            runnerCommand: runnerCommandSetting,
             userMessageProvider: {
                 showErrorMessage: vscode.window.showErrorMessage,
             },
         })
     ).SafeDs;
 
+    client = createLanguageClient(context);
     client.onNotification('runner/started', async (port: number) => {
         await services.runtime.Runner.connectToPort(port);
     });
+    await client.start();
 
-    // await services.runtime.Runner.startPythonServer();
-    acceptRunRequests(context);
+    await acceptRunRequests(context);
 };
 
 // This function is called when the extension is deactivated.
@@ -55,7 +53,7 @@ export const deactivate = async function (): Promise<void> {
     return;
 };
 
-const startLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
+const createLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
     const serverModule = context.asAbsolutePath(path.join('dist', 'extension', 'mainServer.cjs'));
     // The debug options for the server
     // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
@@ -87,12 +85,8 @@ const startLanguageClient = function (context: vscode.ExtensionContext): Languag
         outputChannel: vscode.window.createOutputChannel('Safe-DS Language Client', 'log'),
     };
 
-    // Create the language client and start the client.
-    const result = new LanguageClient('safe-ds', 'Safe-DS', serverOptions, clientOptions);
-
-    // Start the client. This will also launch the server
-    result.start();
-    return result;
+    // Create the language client
+    return new LanguageClient('safe-ds', 'Safe-DS', serverOptions, clientOptions);
 };
 
 const acceptRunRequests = async function (context: vscode.ExtensionContext) {
