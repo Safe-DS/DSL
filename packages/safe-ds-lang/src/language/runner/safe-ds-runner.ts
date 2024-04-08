@@ -49,18 +49,35 @@ export class SafeDsRunner {
         PipelineExecutionInformation
     >();
 
+    /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
         this.generator = services.generation.PythonGenerator;
         this.logging = {
-            outputError(_value: string) {},
-            outputInfo(_value: string) {},
-            displayError(_value: string) {},
+            outputError(value: string) {
+                services.lsp.MessagingProvider.error('Runner', value);
+            },
+            outputInfo(value: string) {
+                services.lsp.MessagingProvider.info('Runner', value);
+            },
+            displayError(value: string) {
+                services.lsp.MessagingProvider.showErrorMessage(value);
+            },
         };
+
+        // Register listeners
         this.registerMessageLoggingCallbacks();
+
+        services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
+            this.updateRunnerCommand(newValue);
+            await this.startPythonServer();
+        });
+
+        services.shared.lsp.Connection?.onShutdown(async () => {
+            await this.stopPythonServer();
+        });
     }
 
-    /* c8 ignore start */
     private registerMessageLoggingCallbacks() {
         this.addMessageCallback((message) => {
             this.logging.outputInfo(
@@ -71,8 +88,8 @@ export class SafeDsRunner {
             this.logging.outputInfo(
                 `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
             );
-            const execInfo = this.getExecutionContext(message.id)!;
-            execInfo.calculatedPlaceholders.set(message.data.name, message.data.type);
+            const execInfo = this.getExecutionContext(message.id);
+            execInfo?.calculatedPlaceholders.set(message.data.name, message.data.type);
             // this.sendMessageToPythonServer(
             //    messages.createPlaceholderQueryMessage(message.id, message.data.name),
             //);

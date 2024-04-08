@@ -46,6 +46,7 @@ import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
 import { SafeDsMessagingProvider } from './lsp/safe-ds-messaging-provider.js';
+import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -96,11 +97,22 @@ export type SafeDsAddedServices = {
     };
 };
 
+export type SafeDsAddedSharedServices = {
+    workspace: {
+        ConfigurationProvider: SafeDsConfigurationProvider;
+    };
+};
+
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type SafeDsServices = LangiumServices & SafeDsAddedServices;
+export type SafeDsServices = LangiumServices &
+    SafeDsAddedServices & {
+        shared: SafeDsAddedSharedServices;
+    };
+
+export type SafeDsSharedServices = LangiumSharedServices & SafeDsAddedSharedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
@@ -170,14 +182,13 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
 };
 
-export type SafeDsSharedServices = LangiumSharedServices;
-
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
     lsp: {
         FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
+        ConfigurationProvider: (services) => new SafeDsConfigurationProvider(services),
         DocumentBuilder: (services) => new SafeDsDocumentBuilder(services),
         WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
     },
@@ -206,7 +217,11 @@ export const createSafeDsServices = async function (
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 }> {
-    const shared = inject(createDefaultSharedModule(context), SafeDsGeneratedSharedModule, SafeDsSharedModule);
+    const shared: SafeDsSharedServices = inject(
+        createDefaultSharedModule(context),
+        SafeDsGeneratedSharedModule,
+        SafeDsSharedModule,
+    );
     const SafeDs = inject(createDefaultModule({ shared }), SafeDsGeneratedModule, SafeDsModule);
 
     shared.ServiceRegistry.register(SafeDs);

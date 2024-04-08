@@ -99,9 +99,9 @@
                     "description": "Show parameter names for positional arguments."
                 },
                 "safe-ds.runner.command": {
-                    "description": "Command to start the Safe-DS runner",
                     "type": "string",
-                    "default": "safe-ds-runner"
+                    "default": "safe-ds-runner",
+                    "description": "Command to start the Safe-DS runner"
                 },
                 "safe-ds.trace.server": {
                     "scope": "window",

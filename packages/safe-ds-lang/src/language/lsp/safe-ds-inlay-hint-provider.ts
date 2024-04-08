@@ -1,11 +1,5 @@
-import { AstNode, AstUtils, CstNode, DocumentationProvider, interruptAndCheck, LangiumDocument } from 'langium';
-import {
-    CancellationToken,
-    type InlayHint,
-    InlayHintKind,
-    type InlayHintParams,
-    MarkupContent,
-} from 'vscode-languageserver';
+import { AstNode, AstUtils, CstNode, DocumentationProvider } from 'langium';
+import { InlayHintKind, MarkupContent } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import {
     isSdsArgument,
@@ -42,38 +36,22 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
         this.typeComputer = services.typing.TypeComputer;
     }
 
-    override async getInlayHints(
-        document: LangiumDocument,
-        params: InlayHintParams,
-        cancelToken = CancellationToken.None,
-    ): Promise<InlayHint[] | undefined> {
-        const root = document.parseResult.value;
-        const inlayHints: InlayHint[] = [];
-        const acceptor: InlayHintAcceptor = (hint) => inlayHints.push(hint);
-        for (const node of AstUtils.streamAst(root, { range: params.range })) {
-            await interruptAndCheck(cancelToken);
-            // We have to override this method to add this await
-            await this.computeInlayHint(node, acceptor);
-        }
-        return inlayHints;
-    }
-
-    override async computeInlayHint(node: AstNode, acceptor: InlayHintAcceptor): Promise<void> {
+    override computeInlayHint(node: AstNode, acceptor: InlayHintAcceptor): void {
         const cstNode = node.$cstNode;
         if (!cstNode) {
             /* c8 ignore next 2 */
             return;
         }
 
-        if (await this.settingsProvider.shouldShowAssigneeTypeInlayHints()) {
+        if (this.settingsProvider.shouldShowAssigneeTypeInlayHints()) {
             this.computeAssigneeTypeInlayHint(node, cstNode, acceptor);
         }
 
-        if (await this.settingsProvider.shouldShowLambdaParameterTypeInlayHints()) {
+        if (this.settingsProvider.shouldShowLambdaParameterTypeInlayHints()) {
             this.computeLambdaParameterTypeInlayHint(node, cstNode, acceptor);
         }
 
-        if (await this.settingsProvider.shouldShowParameterNameInlayHints()) {
+        if (this.settingsProvider.shouldShowParameterNameInlayHints()) {
             this.computeParameterNameInlayHint(node, cstNode, acceptor);
         }
     }
