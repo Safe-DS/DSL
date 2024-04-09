@@ -6,6 +6,6 @@ An integer.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="42"
     class Int sub Number
     ```

@@ -10,7 +10,7 @@ A list of elements.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="52"
     class List<out E> {
     
         /**
@@ -34,7 +34,7 @@ Returns the number of elements in the list.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="57"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int

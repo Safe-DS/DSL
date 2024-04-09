@@ -6,6 +6,6 @@ A floating-point number.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="47"
     class Float sub Number
     ```

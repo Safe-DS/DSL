@@ -11,7 +11,7 @@ A map of keys to values.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="57"
+    ```sds linenums="65"
     class Map<K, out V> {
     
         /**
@@ -49,7 +49,7 @@ Returns the keys of the map.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="69"
+    ```sds linenums="77"
     @Pure
     @PythonCall("list($this.keys())")
     fun keys() -> keys: List<K>
@@ -67,7 +67,7 @@ Returns the number of entries in the map.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="70"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int
@@ -85,7 +85,7 @@ Returns the values of the map.
 
 ??? quote "Source code in `coreClasses.sdsstub`"
 
-    ```sds linenums="76"
+    ```sds linenums="84"
     @Pure
     @PythonCall("list($this.values())")
     fun values() -> values: List<V>
