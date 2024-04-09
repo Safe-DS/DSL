@@ -1,9 +1,8 @@
 # Imports ----------------------------------------------------------------------
 
 import safeds_runner
-from safeds.data.image.containers import Image
-from safeds.data.tabular.containers import Column, Table
-from safeds.data.tabular.transformation import OneHotEncoder, TableTransformer
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import OneHotEncoder
 from tests.generator.memberAccessWithRunnerIntegration import C, f, factory, factoryNested, g, h, Outer
 from typing import Any, TypeVar
 
