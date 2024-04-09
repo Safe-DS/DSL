@@ -29,8 +29,8 @@ export class SafeDsSettingsProvider {
         return this.cachedSettings.inlayHints?.lambdaParameterTypes?.enabled ?? true;
     }
 
-    shouldShowParameterNameInlayHints(): boolean {
-        return this.cachedSettings.inlayHints?.parameterNames?.enabled ?? true;
+    shouldShowParameterNameInlayHints(): InlayHintsSettings['parameterNames']['enabled'] {
+        return this.cachedSettings.inlayHints?.parameterNames?.enabled ?? 'onlyLiterals';
     }
 
     /* c8 ignore start */
@@ -98,7 +98,7 @@ interface InlayHintsSettings {
         enabled: boolean;
     };
     parameterNames: {
-        enabled: boolean;
+        enabled: 'none' | 'onlyLiterals' | 'exceptReferences' | 'all';
     };
 }
 
