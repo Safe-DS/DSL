@@ -26,25 +26,31 @@ class Boolean
 /**
  * A number.
  */
-class Number {
+class Number
 
+/**
+ * An integer.
+ */
+class Int sub Number {
     /**
-     * Converts the number to an integer.
+     * Converts this integer to a floating-point number.
+     */
+    @Pure
+    @PythonCall("float($this)")
+    fun toFloat() -> f: Float
+}
+
+/**
+ * A floating-point number.
+ */
+class Float sub Number {
+    /**
+     * Converts this floating-point number to an integer by truncating the fractional part.
      */
     @Pure
     @PythonCall("int($this)")
     fun toInt() -> i: Int
 }
-
-/**
- * An integer.
- */
-class Int sub Number
-
-/**
- * A floating-point number.
- */
-class Float sub Number
 
 /**
  * A list of elements.
@@ -92,9 +98,16 @@ class Map<K, out V> {
 class String {
 
     /**
-     * Converts the string to an integer.
+     * Parses the string to a floating-point number.
+     */
+    @Pure
+    @PythonCall("float($this)")
+    fun toFloat() -> f: Float
+
+    /**
+     * Parses the string to an integer.
      *
-     * @base The base of the integer.
+     * @param base The base of the integer.
      */
     @Pure
     @PythonCall("int($this, $base)")

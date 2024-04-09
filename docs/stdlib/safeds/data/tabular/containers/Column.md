@@ -18,7 +18,7 @@ A column is a named collection of values.
 ??? quote "Source code in `column.sdsstub`"
 
     ```sds linenums="12"
-    class Column<T = Any?>(
+    class Column<out T = Any?>(
         name: String,
         data: List<T> = []
     ) {
