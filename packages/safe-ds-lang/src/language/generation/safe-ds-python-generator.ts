@@ -1083,7 +1083,7 @@ export class SafeDsPythonGenerator {
     }
 
     private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
-        const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
+        const impurityReasons = this.purityComputer.getImpurityReasonsForCallable(this.nodeMapper.callToCallable(expression));
         const hiddenParameters: CompositeGeneratorNode[] = [];
         for (const reason of impurityReasons) {
             if (reason instanceof FileRead) {
