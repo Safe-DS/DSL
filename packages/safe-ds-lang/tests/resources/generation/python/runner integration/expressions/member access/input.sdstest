@@ -47,6 +47,8 @@ pipeline test {
     f(factory()?.a);
     f(factory()?.b);
     f(C().i(1));
+    val c1 = C();
+    f(c1.i(1));
     f(C().j(123));
     f(C().k("abc"));
     f(C.from_csv_file("abc.csv"));
