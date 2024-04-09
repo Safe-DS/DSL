@@ -94,8 +94,26 @@
                     "description": "Show inferred types for lambda parameters without manifest types."
                 },
                 "safe-ds.inlayHints.parameterNames.enabled": {
-                    "type": "boolean",
-                    "default": true,
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "onlyLiterals",
+                        "exceptReferences",
+                        "all"
+                    ],
+                    "enumItemLabels": [
+                        "None",
+                        "Only literals",
+                        "Except references",
+                        "All"
+                    ],
+                    "enumDescriptions": [
+                        "Do not show any inlay hints.",
+                        "Show inlay hints only for literals.",
+                        "Show inlay hints for everything except references.",
+                        "Show all inlay hints."
+                    ],
+                    "default": "onlyLiterals",
                     "description": "Show parameter names for positional arguments."
                 },
                 "safe-ds.runner.command": {

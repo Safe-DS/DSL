@@ -16,91 +16,109 @@ describe('SafeDsInlayHintProvider', async () => {
             {
                 testName: 'block lambda result',
                 code: `
-                pipeline myPipeline {
-                    () {
-                        // $TEST$ after ": literal<1>"
-                        yield r»« = 1;
-                    };
-                }
-            `,
+                    pipeline myPipeline {
+                        () {
+                            // $TEST$ after ": literal<1>"
+                            yield r»« = 1;
+                        };
+                    }
+                `,
             },
             {
                 testName: 'placeholder',
                 code: `
-                pipeline myPipeline {
-                    // $TEST$ after ": literal<1>"
-                    val x»« = 1;
-                }
-            `,
+                    pipeline myPipeline {
+                        // $TEST$ after ": literal<1>"
+                        val x»« = 1;
+                    }
+                `,
             },
             {
                 testName: 'wildcard',
                 code: `
-                pipeline myPipeline {
-                    _ = 1;
-                }
-            `,
+                    pipeline myPipeline {
+                        _ = 1;
+                    }
+                `,
             },
             {
                 testName: 'yield',
                 code: `
-                segment s() -> r: Int {
-                    // $TEST$ after ": literal<1>"
-                    yield r»« = 1;
-                }
-            `,
+                    segment s() -> r: Int {
+                        // $TEST$ after ": literal<1>"
+                        yield r»« = 1;
+                    }
+                `,
+            },
+            {
+                testName: 'disabled inlay hints',
+                code: `
+                    pipeline myPipeline {
+                        val x = 1;
+                    }
+                `,
+                setting: false,
             },
         ];
-        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, setting }) => {
+            let oldMethod: any;
+            if (setting !== undefined) {
+                oldMethod = services.workspace.SettingsProvider.shouldShowAssigneeTypeInlayHints;
+                services.workspace.SettingsProvider.shouldShowAssigneeTypeInlayHints = () => setting;
+            }
+
             const actualInlayHints = await getActualSimpleInlayHints(code);
             const expectedInlayHints = getExpectedSimpleInlayHints(code);
-
             expect(actualInlayHints).toStrictEqual(expectedInlayHints);
+
+            if (oldMethod) {
+                services.workspace.SettingsProvider.shouldShowAssigneeTypeInlayHints = oldMethod;
+            }
         });
 
         it.each([
             {
                 testName: 'class',
                 code: `
-                /**
-                 * Lorem ipsum.
-                 */
-                class C()
+                    /**
+                     * Lorem ipsum.
+                     */
+                    class C()
 
-                pipeline myPipeline {
-                    val a = C();
-                }
-            `,
+                    pipeline myPipeline {
+                        val a = C();
+                    }
+                `,
             },
             {
                 testName: 'enum',
                 code: `
-                /**
-                 * Lorem ipsum.
-                 */
-                enum E
+                    /**
+                     * Lorem ipsum.
+                     */
+                    enum E
 
-                fun f() -> e: E
+                    fun f() -> e: E
 
-                pipeline myPipeline {
-                    val a = f();
-                }
-            `,
+                    pipeline myPipeline {
+                        val a = f();
+                    }
+                `,
             },
             {
                 testName: 'enum variant',
                 code: `
-                enum E {
-                    /**
-                     * Lorem ipsum.
-                     */
-                    V
-                }
+                    enum E {
+                        /**
+                         * Lorem ipsum.
+                         */
+                        V
+                    }
 
-                pipeline myPipeline {
-                    val a = E.V;
-                }
-            `,
+                    pipeline myPipeline {
+                        val a = E.V;
+                    }
+                `,
             },
         ])('should set the documentation of named types as tooltip ($testName)', async ({ code }) => {
             const actualInlayHints = await getActualInlayHints(code);
@@ -115,132 +133,152 @@ describe('SafeDsInlayHintProvider', async () => {
             {
                 testName: 'standalone block lambda without manifest types',
                 code: `
-                pipeline myPipeline {
-                    (p) {};
-                }
-            `,
+                    pipeline myPipeline {
+                        (p) {};
+                    }
+                `,
             },
             {
                 testName: 'standalone block lambda with manifest types',
                 code: `
-                pipeline myPipeline {
-                    (p: Int) {};
-                }
-            `,
+                    pipeline myPipeline {
+                        (p: Int) {};
+                    }
+                `,
             },
             {
                 testName: 'standalone expression lambda without manifest types',
                 code: `
-                pipeline myPipeline {
-                    (p) -> 1;
-                }
-            `,
+                    pipeline myPipeline {
+                        (p) -> 1;
+                    }
+                `,
             },
             {
                 testName: 'standalone expression lambda with manifest types',
                 code: `
-                pipeline myPipeline {
-                    (p: Int) -> 1;
-                }
-            `,
+                    pipeline myPipeline {
+                        (p: Int) -> 1;
+                    }
+                `,
             },
             {
                 testName: 'assigned block lambda without manifest types',
                 code: `
-                fun f(callback: (p: Int) -> ())
+                    fun f(callback: (p: Int) -> ())
 
-                pipeline myPipeline {
-                    // $TEST$ after ": Int"
-                    f(callback = (p»«) {});
-                }
-            `,
+                    pipeline myPipeline {
+                        // $TEST$ after ": Int"
+                        f(callback = (p»«) {});
+                    }
+                `,
             },
             {
                 testName: 'assigned block lambda with manifest types',
                 code: `
-                fun f(callback: (p: Int) -> ())
+                    fun f(callback: (p: Int) -> ())
 
-                pipeline myPipeline {
-                    f(callback = (p: Int) {});
-                }
-            `,
+                    pipeline myPipeline {
+                        f(callback = (p: Int) {});
+                    }
+                `,
             },
             {
                 testName: 'assigned expression lambda without manifest types',
                 code: `
-                fun f(callback: (p: Int) -> (r: Int))
+                    fun f(callback: (p: Int) -> (r: Int))
 
-                pipeline myPipeline {
-                    // $TEST$ after ": Int"
-                    f(callback = (p»«) -> 1);
-                }
-            `,
+                    pipeline myPipeline {
+                        // $TEST$ after ": Int"
+                        f(callback = (p»«) -> 1);
+                    }
+                `,
             },
             {
                 testName: 'assigned expression lambda with manifest types',
                 code: `
-                fun f(callback: (p: Int) -> (r: Int))
+                    fun f(callback: (p: Int) -> (r: Int))
 
-                pipeline myPipeline {
-                    f(callback = (p: Int) -> 1);
-                }
-            `,
+                    pipeline myPipeline {
+                        f(callback = (p: Int) -> 1);
+                    }
+                `,
+            },
+            {
+                testName: 'disabled inlay hints',
+                code: `
+                    fun f(callback: (p: Int) -> ())
+
+                    pipeline myPipeline {
+                        f(callback = (p) {});
+                    }
+                `,
+                setting: false,
             },
         ];
-        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, setting }) => {
+            let oldMethod: any;
+            if (setting !== undefined) {
+                oldMethod = services.workspace.SettingsProvider.shouldShowLambdaParameterTypeInlayHints;
+                services.workspace.SettingsProvider.shouldShowLambdaParameterTypeInlayHints = () => setting;
+            }
+
             const actualInlayHints = await getActualSimpleInlayHints(code);
             const expectedInlayHints = getExpectedSimpleInlayHints(code);
-
             expect(actualInlayHints).toStrictEqual(expectedInlayHints);
+
+            if (oldMethod) {
+                services.workspace.SettingsProvider.shouldShowLambdaParameterTypeInlayHints = oldMethod;
+            }
         });
 
         it.each([
             {
                 testName: 'class',
                 code: `
-                /**
-                 * Lorem ipsum.
-                 */
-                class C()
+                    /**
+                     * Lorem ipsum.
+                     */
+                    class C()
 
-                fun f(callback: (p: C) -> ())
+                    fun f(callback: (p: C) -> ())
 
-                pipeline myPipeline {
-                    f(callback = (p) {});
-                }
-            `,
+                    pipeline myPipeline {
+                        f(callback = (p) {});
+                    }
+                `,
             },
             {
                 testName: 'enum',
                 code: `
-                /**
-                 * Lorem ipsum.
-                 */
-                enum E
+                    /**
+                     * Lorem ipsum.
+                     */
+                    enum E
 
-                fun f(callback: (p: E) -> ())
+                    fun f(callback: (p: E) -> ())
 
-                pipeline myPipeline {
-                    f(callback = (p) {});
-                }
-            `,
+                    pipeline myPipeline {
+                        f(callback = (p) {});
+                    }
+                `,
             },
             {
                 testName: 'enum variant',
                 code: `
-                enum E {
-                    /**
-                     * Lorem ipsum.
-                     */
-                    V
-                }
+                    enum E {
+                        /**
+                         * Lorem ipsum.
+                         */
+                        V
+                    }
 
-                fun f(callback: (p: E.V) -> ())
+                    fun f(callback: (p: E.V) -> ())
 
-                pipeline myPipeline {
-                    f(callback = (p) {});
-                }
-            `,
+                    pipeline myPipeline {
+                        f(callback = (p) {});
+                    }
+                `,
             },
         ])('should set the documentation of named types as tooltip ($testName)', async ({ code }) => {
             const actualInlayHints = await getActualInlayHints(code);
@@ -255,53 +293,134 @@ describe('SafeDsInlayHintProvider', async () => {
             {
                 testName: 'resolved positional argument',
                 code: `
-                fun f(p: Int)
+                    fun f(p: Int)
 
-                pipeline myPipeline {
-                    // $TEST$ before "p = "
-                    f(»«1);
-                }
-            `,
+                    pipeline myPipeline {
+                        // $TEST$ before "p = "
+                        f(»«1);
+                    }
+                `,
+                setting: 'all',
             },
             {
                 testName: 'unresolved positional argument',
                 code: `
-                fun f()
+                    fun f()
 
-                pipeline myPipeline {
-                    f(1);
-                }
-            `,
+                    pipeline myPipeline {
+                        f(1);
+                    }
+                `,
+                setting: 'all',
             },
             {
                 testName: 'named argument',
                 code: `
-                fun f(p: Int)
+                    fun f(p: Int)
 
-                pipeline myPipeline {
-                    f(p = 1);
-                }
-            `,
+                    pipeline myPipeline {
+                        f(p = 1);
+                    }
+                `,
+                setting: 'all',
+            },
+            {
+                testName: 'reference (all)',
+                code: `
+                    fun f(p: Int)
+
+                    pipeline myPipeline {
+                        // $TEST$ before "p = "
+                        f(»«myPipeline);
+                    }
+                `,
+                setting: 'all',
+            },
+            {
+                testName: 'reference (exceptReferences)',
+                code: `
+                    fun f(p: Int)
+
+                    pipeline myPipeline {
+                        f(myPipeline);
+                    }
+                `,
+                setting: 'exceptReferences',
+            },
+            {
+                testName: 'other expression (exceptReferences)',
+                code: `
+                    fun f(p: Int)
+
+                    pipeline myPipeline {
+                        // $TEST$ before "p = "
+                        f(»«1 + 2);
+                    }
+                `,
+                setting: 'exceptReferences',
+            },
+            {
+                testName: 'other expression (onlyLiterals)',
+                code: `
+                    fun f(p: Int)
+
+                    pipeline myPipeline {
+                        f(1 + 2);
+                    }
+                `,
+                setting: 'onlyLiterals',
+            },
+            {
+                testName: 'literals (onlyLiterals)',
+                code: `
+                    fun f(p: Int)
+
+                    pipeline myPipeline {
+                        // $TEST$ before "p = "
+                        f(»«1);
+                    }
+                `,
+                setting: 'onlyLiterals',
+            },
+            {
+                testName: 'literals (none)',
+                code: `
+                    fun f(p: Int)
+
+                    pipeline myPipeline {
+                        f(1);
+                    }
+                `,
+                setting: 'none',
             },
         ];
-        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code }) => {
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, setting }) => {
+            let oldMethod: any;
+            if (setting !== undefined) {
+                oldMethod = services.workspace.SettingsProvider.shouldShowParameterNameInlayHints;
+                services.workspace.SettingsProvider.shouldShowParameterNameInlayHints = () => setting;
+            }
+
             const actualInlayHints = await getActualSimpleInlayHints(code);
             const expectedInlayHints = getExpectedSimpleInlayHints(code);
-
             expect(actualInlayHints).toStrictEqual(expectedInlayHints);
+
+            if (oldMethod) {
+                services.workspace.SettingsProvider.shouldShowParameterNameInlayHints = oldMethod;
+            }
         });
 
         it('should set the documentation of parameters as tooltip', async () => {
             const code = `
-            /**
-             * @param p Lorem ipsum.
-             */
-            fun f(p: Int)
+                /**
+                 * @param p Lorem ipsum.
+                 */
+                fun f(p: Int)
 
-            pipeline myPipeline {
-                f(1);
-            }
-        `;
+                pipeline myPipeline {
+                    f(1);
+                }
+            `;
             const actualInlayHints = await getActualInlayHints(code);
             const firstInlayHint = actualInlayHints?.[0];
 
@@ -388,6 +507,11 @@ interface InlayHintProviderTest {
      * The code to parse.
      */
     code: string;
+
+    /**
+     * The value of the corresponding setting to control which inlay hints should be shown.
+     */
+    setting?: any;
 }
 
 /**
