@@ -1023,6 +1023,23 @@ export class SafeDsPythonGenerator {
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
+        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
+            return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
+                containsOptionalArgs ? 'lambda *_ : ' : ''
+            }${
+                containsOptionalArgs
+                    ? this.generatePlainCall(expression, sortedArgs, frame)
+                    : "None"
+            }, [${generateThisParam ? thisParam : ''}${
+                generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
+            }${joinTracedToNode(expression.argumentList, 'arguments')(
+                memoizedArgs,
+                (arg) => this.generateExpression(arg, frame),
+                {
+                    separator: ', ',
+                },
+            )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+        }
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
             const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
             const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
