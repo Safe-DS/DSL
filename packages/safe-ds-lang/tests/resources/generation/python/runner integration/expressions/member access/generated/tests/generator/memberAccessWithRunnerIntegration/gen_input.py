@@ -34,6 +34,8 @@ def test():
     f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.from_csv_file", C.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')]))
     a = safeds_runner.memoized_static_call("safeds.data.tabular.containers.Table.from_csv_file", Table.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')])
     safeds_runner.save_placeholder('a', a)
+    a2 = safeds_runner.memoized_dynamic_call("remove_columns", None, [safeds_runner.memoized_static_call("safeds.data.tabular.containers.Table.from_csv_file", Table.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')]), ['u']], [])
+    safeds_runner.save_placeholder('a2', a2)
     v = safeds_runner.memoized_dynamic_call("get_column", None, [a, 'b'], [])
     safeds_runner.save_placeholder('v', v)
     d = safeds_runner.memoized_dynamic_call("plot_histogram", None, [v], [])

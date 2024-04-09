@@ -53,6 +53,7 @@ pipeline test {
     f(C().k("abc"));
     f(C.from_csv_file("abc.csv"));
     val a = Table.fromCsvFile("abc.csv");
+    val a2 = Table.fromCsvFile("abc.csv").removeColumns(["u"]);
     val v = a.getColumn("b");
     val d = v.plotHistogram();
     val p = a.getColumn("b").plotHistogram();
