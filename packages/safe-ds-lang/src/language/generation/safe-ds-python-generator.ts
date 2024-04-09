@@ -959,9 +959,21 @@ export class SafeDsPythonGenerator {
         const memoizedArgs = getParameters(callable).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
+        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
+            return expandTracedToNode(
+                expression,
+            )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(
+                callable,
+            )}", lambda *_ : ${generatedPythonCall}, [${thisParam}, ${joinTracedToNode(
+                expression.argumentList,
+                'arguments',
+            )(memoizedArgs, (arg) => this.generateExpression(arg, frame), {
+                separator: ', ',
+            })}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+        }
         return expandTracedToNode(
             expression,
-        )`${RUNNER_PACKAGE}.memoized_call("${this.generateFullyQualifiedFunctionName(
+        )`${RUNNER_PACKAGE}.memoized_static_call("${this.generateFullyQualifiedFunctionName(
             expression,
         )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
@@ -1023,26 +1035,36 @@ export class SafeDsPythonGenerator {
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
+        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
+            return expandTracedToNode(
+                expression,
+            )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
+                containsOptionalArgs ? 'lambda *_ : ' : ''
+            }${
+                containsOptionalArgs ? this.generatePlainCall(expression, sortedArgs, frame) : 'None'
+            }, [${generateThisParam ? thisParam : ''}${
+                generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
+            }${joinTracedToNode(expression.argumentList, 'arguments')(
+                memoizedArgs,
+                (arg) => this.generateExpression(arg, frame),
+                {
+                    separator: ', ',
+                },
+            )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+        }
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
             const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
             const referenceImport = this.createImportDataForNode(classDeclaration, expression.receiver.member!);
             frame.addImport(referenceImport);
         }
-        return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_call("${fullyQualifiedTargetName}", ${
+        return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_static_call("${fullyQualifiedTargetName}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
             containsOptionalArgs
                 ? this.generatePlainCall(expression, sortedArgs, frame)
-                : isSdsMemberAccess(expression.receiver) && isSdsCall(expression.receiver.receiver)
-                  ? isSdsMemberAccess(expression.receiver.receiver.receiver)
-                      ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
-                      : expandTracedToNode(expression.receiver)`${this.generateExpression(
-                            expression.receiver.receiver.receiver,
-                            frame,
-                        )}.${this.generateExpression(expression.receiver.member!, frame)}`
-                  : isSdsMemberAccess(expression.receiver)
-                    ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
-                    : this.generateExpression(expression.receiver, frame)
+                : isSdsMemberAccess(expression.receiver)
+                  ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
+                  : this.generateExpression(expression.receiver, frame)
         }, [${generateThisParam ? thisParam : ''}${
             generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
         }${joinTracedToNode(expression.argumentList, 'arguments')(
@@ -1055,7 +1077,9 @@ export class SafeDsPythonGenerator {
     }
 
     private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
-        const impurityReasons = this.purityComputer.getImpurityReasonsForExpression(expression);
+        const impurityReasons = this.purityComputer.getImpurityReasonsForCallable(
+            this.nodeMapper.callToCallable(expression),
+        );
         const hiddenParameters: CompositeGeneratorNode[] = [];
         for (const reason of impurityReasons) {
             if (reason instanceof FileRead) {

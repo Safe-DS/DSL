@@ -20,6 +20,22 @@ class C() {
     @Pure
     @PythonName("k2") fun k(param: Any?) -> result: Boolean
 
+    @Pure
+    @PythonCall("$param.i()")
+    static fun l(param: Any?) -> result: Boolean
+
+    @Pure
+    fun m(param: Int = 42) -> result: Boolean
+
+    @Pure
+    static fun n(param: Int = 42) -> result: Boolean
+
+    @Pure
+    static fun o(param: Int = 42) -> result: C
+
+    @Pure
+    static fun p() -> result: C
+
     @Impure([ImpurityReason.FileReadFromParameterizedPath("name")])
     static fun from_csv_file(name: String) -> c: C
 }
@@ -47,10 +63,20 @@ pipeline test {
     f(factory()?.a);
     f(factory()?.b);
     f(C().i(1));
+    val c1 = C();
+    f(c1.i(1));
     f(C().j(123));
     f(C().k("abc"));
+    f(C.l(2));
+    f(C().m(213));
+    f(c1.m(213));
+    f(C.n(213));
+    f(C.o().m(213));
+    f(C.o().j(213));
+    f(C.p().j(213));
     f(C.from_csv_file("abc.csv"));
     val a = Table.fromCsvFile("abc.csv");
+    val a2 = Table.fromCsvFile("abc.csv").removeColumns(["u"]);
     val v = a.getColumn("b");
     val d = v.plotHistogram();
     val p = a.getColumn("b").plotHistogram();
@@ -64,4 +90,6 @@ pipeline test {
     val nestedInstance = factoryNested();
     val nestedResult = nestedInstance.g();
     f(nestedResult);
+    val encoder = OneHotEncoder().fit(a, ["b"]);
+    val transformedTable = encoder.transform(a);
 }
