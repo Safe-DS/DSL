@@ -959,9 +959,20 @@ export class SafeDsPythonGenerator {
         const memoizedArgs = getParameters(callable).map(
             (parameter) => this.nodeMapper.callToParameterValue(expression, parameter)!,
         );
+        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
+            return expandTracedToNode(
+                expression,
+            )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(
+                callable,
+            )}", lambda *_ : ${generatedPythonCall}, [${thisParam}, ${joinTracedToNode(expression.argumentList, 'arguments')(
+                memoizedArgs,
+                (arg) => this.generateExpression(arg, frame),
+                { separator: ', ' },
+            )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+        }
         return expandTracedToNode(
             expression,
-        )`${RUNNER_PACKAGE}.memoized_call("${this.generateFullyQualifiedFunctionName(
+        )`${RUNNER_PACKAGE}.memoized_static_call("${this.generateFullyQualifiedFunctionName(
             expression,
         )}", lambda *_ : ${generatedPythonCall}, [${joinTracedToNode(expression.argumentList, 'arguments')(
             memoizedArgs,
