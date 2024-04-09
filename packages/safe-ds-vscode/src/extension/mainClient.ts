@@ -292,7 +292,10 @@ const runEda = function (
         );
         if (
             message.id === pipelineExecutionId &&
-            message.data.type === 'Table' &&
+            // Can be removed altogether if the EDA tool is only triggered via code lenses
+            (message.data.type === 'Table' ||
+                message.data.type === 'TaggedTable' ||
+                message.data.type === 'TimeSeries') &&
             message.data.name === requestedPlaceholderName
         ) {
             lastFinishedPipelineExecutionId = pipelineExecutionId;
