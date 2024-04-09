@@ -33,6 +33,9 @@ class C() {
     @Pure
     static fun o(param: Int = 42) -> result: C
 
+    @Pure
+    static fun p() -> result: C
+
     @Impure([ImpurityReason.FileReadFromParameterizedPath("name")])
     static fun from_csv_file(name: String) -> c: C
 }
@@ -69,6 +72,8 @@ pipeline test {
     f(c1.m(213));
     f(C.n(213));
     f(C.o().m(213));
+    f(C.o().j(213));
+    f(C.p().j(213));
     f(C.from_csv_file("abc.csv"));
     val a = Table.fromCsvFile("abc.csv");
     val a2 = Table.fromCsvFile("abc.csv").removeColumns(["u"]);
