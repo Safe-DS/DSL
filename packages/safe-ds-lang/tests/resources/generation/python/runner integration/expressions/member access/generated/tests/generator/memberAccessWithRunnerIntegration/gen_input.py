@@ -31,6 +31,7 @@ def test():
     f(safeds_runner.memoized_dynamic_call("i", lambda *_ : 1.i(c1), [c1, 1], []))
     f(safeds_runner.memoized_dynamic_call("j", None, [safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []), 123], []))
     f(safeds_runner.memoized_dynamic_call("k2", None, [safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []), 'abc'], []))
+    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.l", lambda *_ : 2.i(), [2], []))
     f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.from_csv_file", C.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')]))
     a = safeds_runner.memoized_static_call("safeds.data.tabular.containers.Table.from_csv_file", Table.from_csv_file, ['abc.csv'], [safeds_runner.file_mtime('abc.csv')])
     safeds_runner.save_placeholder('a', a)
