@@ -477,31 +477,3 @@ const findPlaceholderNode = function (document: LangiumDocument<AstNode>, range:
     }
     return placeholderNode;
 };
-
-const isRangeEqual = function (lhs: Range, rhs: Range): boolean {
-    return (
-        lhs.start.character === rhs.start.character &&
-        lhs.start.line === rhs.start.line &&
-        lhs.end.character === rhs.end.character &&
-        lhs.end.line === rhs.end.line
-    );
-};
-
-const findPlaceholderNode = function (document: LangiumDocument<AstNode>, range: vscode.Range): AstNode | undefined {
-    let placeholderNode: AstNode | undefined;
-    const module = document.parseResult.value as ast.SdsModule;
-    for (const node of AstUtils.streamAllContents(module, { range })) {
-        // Entire node matches the range
-        const actualRange = node.$cstNode?.range;
-        if (actualRange && isRangeEqual(actualRange, range)) {
-            placeholderNode = node;
-        }
-
-        // The node has a name node that matches the range
-        const actualNameRange = services.references.NameProvider.getNameNode(node)?.range;
-        if (actualNameRange && isRangeEqual(actualNameRange, range)) {
-            placeholderNode = node;
-        }
-    }
-    return placeholderNode;
-};
