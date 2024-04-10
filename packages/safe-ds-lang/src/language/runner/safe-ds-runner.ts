@@ -397,6 +397,7 @@ export class SafeDsRunner {
                     module: mainModuleName,
                     pipeline: pipelineName,
                 },
+                cwd: path.parse(pipelineDocument.uri.fsPath).dir,
             }),
         );
     }
