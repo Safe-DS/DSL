@@ -1,3 +1,26 @@
+## [0.11.0](https://github.com/Safe-DS/DSL/compare/v0.10.0...v0.11.0) (2024-04-10)
+
+
+### Features
+
+* add `toFloat` methods for `Int` and `String` ([#1018](https://github.com/Safe-DS/DSL/issues/1018)) ([55a2050](https://github.com/Safe-DS/DSL/commit/55a2050563028b04d88d4c73812ad64d0d001a30))
+* fine-grained control over inlay hints for parameter names ([#1016](https://github.com/Safe-DS/DSL/issues/1016)) ([2667caf](https://github.com/Safe-DS/DSL/commit/2667cafc15b53a5f11dcf29e2fc7fa14223498d8))
+* messaging service ([#1004](https://github.com/Safe-DS/DSL/issues/1004)) ([dcf4ecf](https://github.com/Safe-DS/DSL/commit/dcf4ecf54fa2c05acac18013ccfc2d5f51a033e4))
+* semantic highlighting of block lambda results ([#1011](https://github.com/Safe-DS/DSL/issues/1011)) ([228733c](https://github.com/Safe-DS/DSL/commit/228733c608cddfaf5145461cfa9043845b0f68f8))
+* start runner in language server ([#1006](https://github.com/Safe-DS/DSL/issues/1006)) ([ef4bb6f](https://github.com/Safe-DS/DSL/commit/ef4bb6fda4699939be9a04b7a25f836ec010b2f6))
+* stubs for int conversions ([#1008](https://github.com/Safe-DS/DSL/issues/1008)) ([b635f5a](https://github.com/Safe-DS/DSL/commit/b635f5a63902fab94bedbcd7cc28aaa5222878d8))
+* support relative paths ([#1019](https://github.com/Safe-DS/DSL/issues/1019)) ([3d3f28d](https://github.com/Safe-DS/DSL/commit/3d3f28d27442195c3a9ab9fb836ceafd41b8e5a7))
+* trigger EDA tool via code lenses ([#1010](https://github.com/Safe-DS/DSL/issues/1010)) ([eb6e4b6](https://github.com/Safe-DS/DSL/commit/eb6e4b6dec48fb64ad149b47e2b3065069d4fd99))
+
+
+### Bug Fixes
+
+* consumption of source maps ([#1005](https://github.com/Safe-DS/DSL/issues/1005)) ([ea3da87](https://github.com/Safe-DS/DSL/commit/ea3da8741d806ce58993aa8904d0c76ebc44ed2c))
+* disable global EDA panel cache ([#1014](https://github.com/Safe-DS/DSL/issues/1014)) ([f888027](https://github.com/Safe-DS/DSL/commit/f8880276623d2cb7e27a5e4f43aa8c7f3b145015)), closes [/github.com/Safe-DS/DSL/issues/986#issuecomment-2042731653](https://github.com/Safe-DS//github.com/Safe-DS/DSL/issues/986/issues/issuecomment-2042731653)
+* generation of dynamic member function calls with memoization + propagating of impurity information across chained calls ([#1015](https://github.com/Safe-DS/DSL/issues/1015)) ([19015c3](https://github.com/Safe-DS/DSL/commit/19015c34f797d3760a3279ba1bccda8ffe17d9f2)), closes [#1012](https://github.com/Safe-DS/DSL/issues/1012) [#1013](https://github.com/Safe-DS/DSL/issues/1013)
+* only spawn one runner process and shut it down properly ([#1009](https://github.com/Safe-DS/DSL/issues/1009)) ([2c72cee](https://github.com/Safe-DS/DSL/commit/2c72cee3d8c25d9c57309d9d33197755e833bcf9))
+* show EDA tool for `TaggedTable` and `TimeSeries` ([#1017](https://github.com/Safe-DS/DSL/issues/1017)) ([ffae98a](https://github.com/Safe-DS/DSL/commit/ffae98a1e4d5aae63942d1e794c898f401374915))
+
 ## [0.10.0](https://github.com/Safe-DS/DSL/compare/v0.9.0...v0.10.0) (2024-04-06)
 
 
