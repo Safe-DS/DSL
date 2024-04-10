@@ -1087,7 +1087,19 @@ export class SafeDsPythonGenerator {
             throw new Error(`No value passed for required parameter "${parameter.name}".`);
         }
 
-        return this.generateExpression(value, frame);
+        const result = this.generateExpression(value, frame);
+        if (!this.isMemoizedPath(parameter)) {
+            return result;
+        }
+
+        frame.addImport({ importPath: RUNNER_PACKAGE });
+        return expandToNode`${RUNNER_PACKAGE}.absolute_path(${result})`;
+    }
+
+    private isMemoizedPath(parameter: SdsParameter): boolean {
+        const callable = AstUtils.getContainerOfType(parameter, isSdsCallable);
+        const impurityReasons = this.purityComputer.getImpurityReasonsForCallable(callable);
+        return impurityReasons.some((reason) => reason instanceof FileRead && reason.path === parameter);
     }
 
     private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
