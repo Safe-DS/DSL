@@ -17,10 +17,8 @@ Safely develop Data Science programs with a statically checked domain specific l
     1. Install [Python](https://www.python.org/) (3.11 or 3.12).
     2. Run `pip install "safe-ds-runner>=0.10.0,<0.11.0"` in a command line to download the latest matching Runner version
        from [PyPI](https://pypi.org/project/safe-ds-runner/).
-    3. If the Visual Studio Code extension cannot start the runner, adjust the setting `safe-ds.runner.command`.
-       Enter the absolute path to the Runner executable, as seen in the image below.
-
-        ![vscode-settings-safeds-runner-path.png](./img/vscode-settings-safeds-runner-path.png)
+   3. If the Visual Studio Code extension cannot start the runner, adjust the setting `safe-ds.runner.command`.
+      Enter the absolute path to the Runner executable.
 
 ## Documentation
 
