@@ -150,7 +150,9 @@ export class RunnerApi {
 
     //#region Placeholder handling
     private genPlaceholderName(suffix?: string): string {
-        return CODEGEN_PREFIX + this.placeholderCounter++ + (suffix ? '_' + suffix : '');
+        // Filter out non-alphanumeric characters (allowing underscores), considering Unicode characters
+        const cleanedSuffix = suffix ? suffix.replace(/[^a-zA-Z0-9_]/gu, '') : undefined;
+        return CODEGEN_PREFIX + this.placeholderCounter++ + (cleanedSuffix ? '_' + cleanedSuffix : '');
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
