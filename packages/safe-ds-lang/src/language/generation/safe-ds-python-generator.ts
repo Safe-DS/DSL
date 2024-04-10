@@ -1061,17 +1061,33 @@ export class SafeDsPythonGenerator {
 
     private generateMemoizedArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
         const callable = this.nodeMapper.callToCallable(node);
-        const memoizedArgs = getParameters(callable).map(
-            (parameter) => this.nodeMapper.callToParameterValue(node, parameter)!,
-        );
+        const parameters = getParameters(callable);
+        const parametersToArgument = this.nodeMapper.parametersToArguments(parameters, getArguments(node));
 
         return joinTracedToNode(node.argumentList, 'arguments')(
-            memoizedArgs,
-            (arg) => this.generateExpression(arg, frame),
+            parameters,
+            (parameter) => {
+                const argument = parametersToArgument.get(parameter);
+                return this.generateMemoizedArgument(argument, parameter, frame);
+            },
             {
                 separator: ', ',
             },
         );
+    }
+
+    private generateMemoizedArgument(
+        argument: SdsArgument | undefined,
+        parameter: SdsParameter,
+        frame: GenerationInfoFrame,
+    ): Generated {
+        const value = argument?.value ?? parameter?.defaultValue;
+        if (!value) {
+            /* c8 ignore next 2 */
+            throw new Error(`No value passed for required parameter "${parameter.name}".`);
+        }
+
+        return this.generateExpression(value, frame);
     }
 
     private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
