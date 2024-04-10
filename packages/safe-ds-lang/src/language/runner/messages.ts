@@ -33,6 +33,7 @@ export interface ProgramMessage {
 export interface ProgramPackageMap {
     code: ProgramCodeMap;
     main: ProgramMainInformation;
+    cwd?: string;
 }
 
 /**
