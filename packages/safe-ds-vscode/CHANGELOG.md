@@ -16,7 +16,7 @@
 ### Bug Fixes
 
 * consumption of source maps ([#1005](https://github.com/Safe-DS/DSL/issues/1005)) ([ea3da87](https://github.com/Safe-DS/DSL/commit/ea3da8741d806ce58993aa8904d0c76ebc44ed2c))
-* disable global EDA panel cache ([#1014](https://github.com/Safe-DS/DSL/issues/1014)) ([f888027](https://github.com/Safe-DS/DSL/commit/f8880276623d2cb7e27a5e4f43aa8c7f3b145015)), closes [/github.com/Safe-DS/DSL/issues/986#issuecomment-2042731653](https://github.com/Safe-DS//github.com/Safe-DS/DSL/issues/986/issues/issuecomment-2042731653)
+* disable global EDA panel cache ([#1014](https://github.com/Safe-DS/DSL/issues/1014)) ([f888027](https://github.com/Safe-DS/DSL/commit/f8880276623d2cb7e27a5e4f43aa8c7f3b145015))
 * generation of dynamic member function calls with memoization + propagating of impurity information across chained calls ([#1015](https://github.com/Safe-DS/DSL/issues/1015)) ([19015c3](https://github.com/Safe-DS/DSL/commit/19015c34f797d3760a3279ba1bccda8ffe17d9f2)), closes [#1012](https://github.com/Safe-DS/DSL/issues/1012) [#1013](https://github.com/Safe-DS/DSL/issues/1013)
 * only spawn one runner process and shut it down properly ([#1009](https://github.com/Safe-DS/DSL/issues/1009)) ([2c72cee](https://github.com/Safe-DS/DSL/commit/2c72cee3d8c25d9c57309d9d33197755e833bcf9))
 * show EDA tool for `TaggedTable` and `TimeSeries` ([#1017](https://github.com/Safe-DS/DSL/issues/1017)) ([ffae98a](https://github.com/Safe-DS/DSL/commit/ffae98a1e4d5aae63942d1e794c898f401374915))
